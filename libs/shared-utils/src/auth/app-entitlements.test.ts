@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  isAppPermissionEntitled,
   isAppReadEntitled,
   isAppResourceEntitled,
   isExplicitAppResourceEntitled,
@@ -34,6 +35,17 @@ describe('application entitlement aliases', () => {
       isAppReadEntitled('APP.WORK', [{ ...permission('APP.WORK'), permissionCode: 'USE' }])
     ).toBe(false);
     expect(isAppReadEntitled('APP.WORK', [permission('APP.WORK')])).toBe(true);
+  });
+
+  it('requires the exact command code and applies explicit deny precedence', () => {
+    const create = { ...permission('APP.CALENDAR'), permissionCode: 'CREATE' };
+    expect(isAppPermissionEntitled('APP.CALENDAR', 'CREATE', [permission('APP.CALENDAR')])).toBe(
+      false
+    );
+    expect(isAppPermissionEntitled(' app.calendar ', ' create ', [create])).toBe(true);
+    expect(
+      isAppPermissionEntitled('APP.CALENDAR', 'CREATE', [create, { ...create, effect: 'DENY' }])
+    ).toBe(false);
   });
 
   it('keeps legacy empty-list compatibility out of governed Product work surfaces', () => {

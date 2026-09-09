@@ -15,16 +15,39 @@ const state = vi.hoisted(() => ({
     roles: ['MEMBER'],
     groups: [] as { groupRef: string }[],
   },
+  permissions: [] as Array<{
+    resourceType: string;
+    resourceKey: string;
+    permissionCode: string;
+    effect: 'ALLOW' | 'DENY';
+  }>,
   load: vi.fn(),
+  sourceLoad: vi.fn(),
+  create: vi.fn(),
+  adopt: vi.fn(),
+  select: vi.fn(),
+  execute: vi.fn(),
 }));
 vi.mock('@dwp-frontend/shared-utils/auth/auth-provider', () => ({
   useAuth: () => ({ user: state.user, isAuthenticated: true }),
 }));
 vi.mock('@dwp-frontend/shared-utils/auth/use-permissions', () => ({
-  usePermissions: () => ({ permissions: [] }),
+  usePermissions: () => ({ permissions: state.permissions }),
 }));
 vi.mock('./work-hub-controller', () => ({
-  createWorkHubController: () => ({ refresh: state.load }),
+  createWorkHubController: (...args: unknown[]) => {
+    state.create(...args);
+    return {
+      refresh: state.load,
+      adopt: state.adopt,
+      select: state.select,
+      execute: state.execute,
+    };
+  },
+}));
+vi.mock('./work-hub-loader', async (importOriginal) => ({
+  ...((await importOriginal()) as Record<string, unknown>),
+  loadWorkHub: state.sourceLoad,
 }));
 let client: QueryClient;
 let root: Root;
@@ -64,6 +87,12 @@ describe('Work queue scope ownership', () => {
       groups: [],
     };
     state.load.mockReset();
+    state.sourceLoad.mockReset();
+    state.create.mockReset();
+    state.adopt.mockReset();
+    state.select.mockReset();
+    state.execute.mockReset();
+    state.permissions = [];
     client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     host = document.createElement('div');
     document.body.append(host);
@@ -131,6 +160,133 @@ describe('Work queue scope ownership', () => {
     expect(host.textContent).toBe('My verified work');
     expect(runtime.query.data?.snapshot.completeness).toBe('UNAVAILABLE');
   });
+  it('enables assignments only for a numeric user and passes that actor to every source read', async () => {
+    state.user = { ...state.user, userId: '11' };
+    const assigned = snapshot([], 'work-assignments');
+    state.load.mockResolvedValue(assigned);
+    state.sourceLoad.mockResolvedValue(assigned);
+
+    await render();
+    await settle();
+
+    expect(runtime.enabledSources).toContain('work-assignments');
+    expect(state.create).toHaveBeenCalledWith(
+      expect.arrayContaining(['workspace', 'work-assignments', 'personal']),
+      undefined,
+      { canUpdatePersonal: false, actorId: 11 }
+    );
+
+    await act(async () => runtime.refreshSource('work-assignments'));
+    await settle();
+
+    expect(state.sourceLoad).toHaveBeenCalledWith({
+      enabledSources: ['work-assignments'],
+      canUpdatePersonal: false,
+      actorId: 11,
+    });
+  });
+  it('separates Calendar read access from the exact event-create command grant', async () => {
+    state.load.mockResolvedValue(snapshot([]));
+    state.permissions = [
+      {
+        resourceType: 'APP',
+        resourceKey: 'APP.WORK',
+        permissionCode: 'UPDATE',
+        effect: 'ALLOW',
+      },
+      {
+        resourceType: 'APP',
+        resourceKey: 'APP.CALENDAR',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+    ];
+    await render();
+    await settle();
+    expect(runtime.canUseCalendar).toBe(true);
+    expect(runtime.canCreateCalendarEvent).toBe(false);
+
+    state.permissions = [
+      ...state.permissions,
+      {
+        resourceType: 'APP',
+        resourceKey: 'APP.CALENDAR',
+        permissionCode: 'CREATE',
+        effect: 'ALLOW',
+      },
+    ];
+    await render();
+    await settle();
+    expect(runtime.canCreateCalendarEvent).toBe(true);
+
+    state.permissions = [
+      ...state.permissions,
+      {
+        resourceType: 'APP',
+        resourceKey: 'APP.CALENDAR',
+        permissionCode: 'CREATE',
+        effect: 'DENY',
+      },
+    ];
+    await render();
+    await settle();
+    expect(runtime.canCreateCalendarEvent).toBe(false);
+  });
+  it('publishes a scoped source refresh without discarding independently verified neighbours', async () => {
+    const workspaceItem = hubItem({
+      key: 'workspace:item',
+      sourceId: 'workspace',
+      title: 'Workspace neighbour',
+    });
+    const personalItem = hubItem({ key: 'personal:item', title: 'Old personal title' });
+    const initial: WorkHubSnapshot = {
+      ...snapshot([workspaceItem, personalItem]),
+      sources: [
+        { ...snapshot([workspaceItem], 'workspace').sources[0]!, items: [workspaceItem] },
+        { ...snapshot([personalItem], 'personal').sources[0]!, items: [personalItem] },
+      ],
+    };
+    const refreshedPersonal = {
+      ...personalItem,
+      title: 'Current personal title',
+      version: personalItem.version + 1,
+    };
+    const scoped: WorkHubSnapshot = {
+      ...snapshot([refreshedPersonal]),
+      sources: [
+        {
+          ...snapshot([], 'workspace').sources[0]!,
+          state: 'NOT_REQUESTED',
+          items: [],
+          receivedAt: null,
+        },
+        {
+          ...snapshot([refreshedPersonal], 'personal').sources[0]!,
+          items: [refreshedPersonal],
+        },
+      ],
+    };
+    state.load.mockResolvedValue(initial);
+    state.sourceLoad.mockResolvedValue(scoped);
+    await render();
+    await settle();
+
+    await act(async () => runtime.refreshSource('personal'));
+    await settle();
+
+    expect(state.sourceLoad).toHaveBeenCalledWith({
+      enabledSources: ['personal'],
+      canUpdatePersonal: false,
+      actorId: null,
+    });
+    expect(runtime.query.data?.snapshot.items.map((item) => item.title)).toEqual([
+      'Workspace neighbour',
+      'Current personal title',
+    ]);
+    expect(state.adopt).toHaveBeenCalledWith(
+      expect.objectContaining({ items: [workspaceItem, refreshedPersonal] })
+    );
+  });
   it.each([403, 404])(
     'does not resurrect rows after HTTP %s followed by a transport outage',
     async (failureStatus) => {
@@ -160,4 +316,90 @@ describe('Work queue scope ownership', () => {
       expect(host.textContent).toBe('');
     }
   );
+
+  it.each([
+    ['an aggregate outage', () => unavailable(), 503],
+    [
+      'a source outage',
+      () => {
+        const retained = snapshot([hubItem()]);
+        retained.completeness = 'PARTIAL';
+        retained.sources = [
+          { ...retained.sources[0]!, state: 'UNAVAILABLE', items: [], receivedAt: null },
+        ];
+        return retained;
+      },
+      409,
+    ],
+    ['fresh action availability drift', () => snapshot([{ ...hubItem(), actions: [] }]), 409],
+  ] as const)('does not dispatch after %s', async (_label, refreshed, status) => {
+    const ready = snapshot([hubItem()]);
+    state.load.mockResolvedValueOnce(ready).mockResolvedValueOnce(refreshed());
+    await render();
+    await settle();
+
+    await expect(runtime.changeStatus(runtime.query.data!.items[0]!, 'COMPLETED')).rejects.toEqual(
+      expect.objectContaining({ status })
+    );
+    expect(state.execute).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['version', { version: 1 }],
+    ['source identity', { sourceReference: 'another-task' }],
+  ])(
+    'rejects a public status command with a stale reviewed %s before source dispatch',
+    async (_label, changes) => {
+      state.load.mockResolvedValue(snapshot([hubItem()]));
+      await render();
+      await settle();
+      const stale = { ...runtime.query.data!.items[0]!, ...changes };
+      expect(runtime.canStatus(stale, 'COMPLETED')).toBe(false);
+      await expect(runtime.changeStatus(stale, 'COMPLETED')).rejects.toMatchObject({ status: 404 });
+      expect(state.execute).not.toHaveBeenCalled();
+    }
+  );
+
+  it('does not dispatch when a failed refetch returns cached READY data', async () => {
+    const ready = snapshot([hubItem()]);
+    state.load.mockResolvedValueOnce(ready).mockRejectedValue(new Error('offline'));
+    await render();
+    await settle();
+
+    await expect(runtime.changeStatus(runtime.query.data!.items[0]!, 'COMPLETED')).rejects.toEqual(
+      expect.objectContaining({ status: 503 })
+    );
+    expect(state.execute).not.toHaveBeenCalled();
+  });
+
+  it('dispatches from an exact fresh READY receipt and publishes its confirmed version', async () => {
+    const reviewed = hubItem();
+    const updated = {
+      ...reviewed,
+      lifecycle: 'COMPLETED' as const,
+      sourceStatus: 'COMPLETED',
+      version: reviewed.version + 1,
+      actions: [],
+    };
+    state.load
+      .mockResolvedValueOnce(snapshot([reviewed]))
+      .mockResolvedValueOnce(snapshot([reviewed]))
+      .mockResolvedValueOnce(snapshot([updated]));
+    state.execute.mockResolvedValue({
+      state: 'CONFIRMED',
+      outcome: 'STATUS_CHANGED',
+      sourceReference: reviewed.reference.sourceReference,
+      version: updated.version,
+      sourceStatus: updated.sourceStatus,
+    });
+    await render();
+    await settle();
+
+    await expect(
+      runtime.changeStatus(runtime.query.data!.items[0]!, 'COMPLETED')
+    ).resolves.toMatchObject({ version: updated.version, status: 'completed' });
+    expect(state.adopt).toHaveBeenCalledOnce();
+    expect(state.select).toHaveBeenCalledWith(reviewed.reference);
+    expect(state.execute).toHaveBeenCalledOnce();
+  });
 });

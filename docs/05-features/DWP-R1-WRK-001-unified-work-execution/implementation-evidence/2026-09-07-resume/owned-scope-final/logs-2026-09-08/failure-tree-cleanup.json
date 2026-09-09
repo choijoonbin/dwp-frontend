@@ -1,0 +1,2689 @@
+{
+  "recordedAt": "2026-09-08T10:27:43.337915+00:00",
+  "removedPath": "/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-07-resume/owned-scope-final/browser-2026-09-08-final",
+  "authorizedScope": "Exact old failure tree only, after all functional gates and whole246-case browser run passed.",
+  "successfulReplacementRun": "/private/tmp/dwp-work-final-green-20260908-v4",
+  "fileCount": 669,
+  "bytes": 171625996,
+  "files": [
+    {
+      "path": "canonical-final-1459/.last-run.json",
+      "sha256": "d27e9345daeab0f76941064faa84052280d7e25b456b98f94618fae20f26a06b"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-00719-dence-in-dark-high-contrast-chromium/03-1280-dark-contrast.png",
+      "sha256": "08cd933ea445e1acf6ba8e3e07e6e7171e549e87c1659d0c5b3ef757d3ee7cc1"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-00719-dence-in-dark-high-contrast-mobile/03-1280-dark-contrast.png",
+      "sha256": "0a8f971acccc56e6456530404568bdb92b7d1d4f57ecd59679b3d23fc8b04010"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-500d3-ins-operable-at-200-percent-chromium/M1-390-text-200-preview.png",
+      "sha256": "6f9af4544e118818765662d2a90ed30002e7070eace220d2eb264c3e7899ed87"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-500d3-ins-operable-at-200-percent-mobile/M1-390-text-200-preview.png",
+      "sha256": "db3e2118a6d3f4a5e00b8293855663e2084c8009ff9233f654b917126b562c3e"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-64a27-dence-in-dark-high-contrast-chromium/03-1440-dark-contrast.png",
+      "sha256": "81b0e6d44e8e8e642dd15920621680a0c59090fec6c0f0e8be8e7d07819c35ee"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-64a27-dence-in-dark-high-contrast-mobile/03-1440-dark-contrast.png",
+      "sha256": "b9173ffdc77b2c8164c398aaac695060b365086097337c9979200d083e9372eb"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-cb979-idence-and-keyboard-changes-chromium/M1-390-compact.png",
+      "sha256": "e5c7878d4bff24c280a2a655434ed4ddb6c60a429f979501d119f7d96a9e5545"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-cb979-idence-and-keyboard-changes-chromium/M1-390-keyboard.png",
+      "sha256": "7fd1277b3e2da3e3ffb25c61bd5b3087626a506ed3198122ec0d512dcec0054d"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-cb979-idence-and-keyboard-changes-mobile/M1-390-compact.png",
+      "sha256": "7d816c5a0f8cac00de219932402abeea21d63599fd829b861f8616fcb5d814f0"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-cb979-idence-and-keyboard-changes-mobile/M1-390-keyboard.png",
+      "sha256": "2ca7beef800193cb9bcebba736446c343f3a3a35805665058624bccf2ee5a847"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-f8f84-idence-and-keyboard-changes-chromium/M1-320-compact.png",
+      "sha256": "a231f5830c393166fe2314fe68cb8f6cc506caafaaccedff19c0c9f1cdde827e"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-f8f84-idence-and-keyboard-changes-chromium/M1-320-keyboard.png",
+      "sha256": "98952d2a9ff854250ff4872e7f8cc376397d83d76d16b3b8cd94e0960cb39d8b"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-f8f84-idence-and-keyboard-changes-mobile/M1-320-compact.png",
+      "sha256": "27586887cb5c382d82e140c08f4261bbd4281dd7406e450d5353bb1a9ba9caa2"
+    },
+    {
+      "path": "canonical-final-1459/work-access-review-respons-f8f84-idence-and-keyboard-changes-mobile/M1-320-keyboard.png",
+      "sha256": "7adcc0ddeff69083a9e3a35eebcd29fe05a97cf83ccd31b7669e4c706b7e5a10"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-0937c-Work-Activity-trigger-focus-chromium/activity-return-focus-320.png",
+      "sha256": "5b4187d6141d9dfbc033eb9e019111d8c35be84b3dc4e44b9773986ca34a02dd"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile/error-context.md",
+      "sha256": "855e9fed9d5a83f3c2dc7d90e76f2518b6b7a22cc1c1253d5269f797b12bf997"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile/test-failed-1.png",
+      "sha256": "48f72a8337f29a99e5b3600088ae4709e08a09278648220af07f550686f508a2"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-7a267-consumes-stale-focus-intent-mobile/error-context.md",
+      "sha256": "855e9fed9d5a83f3c2dc7d90e76f2518b6b7a22cc1c1253d5269f797b12bf997"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-7a267-consumes-stale-focus-intent-mobile/test-failed-1.png",
+      "sha256": "48f72a8337f29a99e5b3600088ae4709e08a09278648220af07f550686f508a2"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-a75c7-Work-Activity-trigger-focus-chromium/activity-return-focus-1280.png",
+      "sha256": "68a58c553b4395639e7e7b1e66a79d0f83153b971824c89a2487e67d097f3974"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-a75c7-Work-Activity-trigger-focus-mobile/activity-return-focus-1280.png",
+      "sha256": "06b3d00b0c59123624882d77c352f753d468f3adcb4f69e70d585342dd382cb8"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-e55d4-Work-Activity-trigger-focus-chromium/activity-return-focus-390.png",
+      "sha256": "354033f85683c661baccbd8a08b8597979d79c01de0eeb84288447056c02ab96"
+    },
+    {
+      "path": "canonical-final-1459/work-activity-return-focus-e55d4-Work-Activity-trigger-focus-mobile/activity-return-focus-390.png",
+      "sha256": "e3592028e83e72030fb29a95312676f5a24afd4cbb9056bf3246d852bbbfd5bd"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-320px--1bc22-he-input-viewport-contracts-chromium/attachments/personal-task-keyboard-320-1a51cf2f4a0813b78e26b6521c5042ac743d3500.png",
+      "sha256": "b236aa81d05316198307acfa8e7a3ab71cff16891a27b9061f843ea3b5c2dcb4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-320px--1bc22-he-input-viewport-contracts-chromium/personal-task-keyboard-320.png",
+      "sha256": "b236aa81d05316198307acfa8e7a3ab71cff16891a27b9061f843ea3b5c2dcb4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-390px--38c06-with-focus-and-state-intact-chromium/attachments/source-authority-390-fa18df366b93c0bbd52dc5d5389fdb11d0380fad.png",
+      "sha256": "f99f1ae76029e514ad996b1b6683a3b5cf5c50bab05baf7ff6f412456ab08ac1"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-390px--38c06-with-focus-and-state-intact-chromium/source-authority-390.png",
+      "sha256": "f99f1ae76029e514ad996b1b6683a3b5cf5c50bab05baf7ff6f412456ab08ac1"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-chromium/attachments/background-refresh-degraded-87c0b762609328065bc353390540d78571aa3e2e.png",
+      "sha256": "7437ccdda0cc85e140965dd36335a46cf6aac95769ed3bbe06aaa3d393c06178"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-chromium/attachments/background-refresh-degraded-full-f6708e4c83bf114a0f2ea8914fc1a39f38fda7ce.png",
+      "sha256": "d438c312cceccef71ac2687aa59a83a43109cbfa4489b282eead021aa14cde11"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-chromium/background-refresh-degraded-full.png",
+      "sha256": "d438c312cceccef71ac2687aa59a83a43109cbfa4489b282eead021aa14cde11"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-chromium/background-refresh-degraded.png",
+      "sha256": "7437ccdda0cc85e140965dd36335a46cf6aac95769ed3bbe06aaa3d393c06178"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-mobile/attachments/background-refresh-degraded-0112b1b85aa3d4e8cabe56ad633e1191dd2aac96.png",
+      "sha256": "f45c25b836856e911dc41271d2d868ceafc42822d6467725c1cc4f4a69018e41"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-mobile/attachments/background-refresh-degraded-full-adfaaff114dc4fc8c1fa6a842369089e6b9c7297.png",
+      "sha256": "658bbd18795f8bef50301d4a4afdd82c047fa08f632adb418306bc5cd2d027ac"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-mobile/background-refresh-degraded-full.png",
+      "sha256": "658bbd18795f8bef50301d4a4afdd82c047fa08f632adb418306bc5cd2d027ac"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-back-93b50-d-scope-visible-as-degraded-mobile/background-refresh-degraded.png",
+      "sha256": "f45c25b836856e911dc41271d2d868ceafc42822d6467725c1cc4f4a69018e41"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-crea-b71ae-nt-without-a-duplicate-POST-chromium/attachments/route-moved-personal-create-receipt-0d0c2c4239849fb19c6f4dda5756f68f250a4fee.png",
+      "sha256": "2eb7f4be1ea5ba2e8fd87ee847e8801ed3caf8840b6c0b9834451be97eb48065"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-crea-b71ae-nt-without-a-duplicate-POST-chromium/attachments/route-moved-personal-create-receipt-full-97ff38cb9c1da0433f05183ad66c8d3a760d328f.png",
+      "sha256": "c9c35d3d541b8c7bb919fa2f382612ec71067d245ef536a9dd675cc5ae4b6385"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-crea-b71ae-nt-without-a-duplicate-POST-chromium/route-moved-personal-create-receipt-full.png",
+      "sha256": "c9c35d3d541b8c7bb919fa2f382612ec71067d245ef536a9dd675cc5ae4b6385"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-a-crea-b71ae-nt-without-a-duplicate-POST-chromium/route-moved-personal-create-receipt.png",
+      "sha256": "2eb7f4be1ea5ba2e8fd87ee847e8801ed3caf8840b6c0b9834451be97eb48065"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-chromium/all-sources-unavailable-full.png",
+      "sha256": "1438e0c96a1bf4c6f8bc34ec6a848b59a8883e7da962175de9c18c74c0329992"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-chromium/all-sources-unavailable.png",
+      "sha256": "1438e0c96a1bf4c6f8bc34ec6a848b59a8883e7da962175de9c18c74c0329992"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-chromium/attachments/all-sources-unavailable-b9a53304df7bb45d6818a92b98affc1450ea2627.png",
+      "sha256": "1438e0c96a1bf4c6f8bc34ec6a848b59a8883e7da962175de9c18c74c0329992"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-chromium/attachments/all-sources-unavailable-full-d57d07d17e26a2abb9f90ff665b6a207d111a8de.png",
+      "sha256": "1438e0c96a1bf4c6f8bc34ec6a848b59a8883e7da962175de9c18c74c0329992"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-mobile/all-sources-unavailable-full.png",
+      "sha256": "f6ffde20efdab2ac945f01052afbc822e94927a36d6edcc63b6d305fc22f7560"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-mobile/all-sources-unavailable.png",
+      "sha256": "7b67e9a5157751d915d2c39b76f3f5c6a0beea7971f71d5eb2405fd1d2c73d9b"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-mobile/attachments/all-sources-unavailable-6909f85af19c0523f3df688fe3963c31b8e34bae.png",
+      "sha256": "7b67e9a5157751d915d2c39b76f3f5c6a0beea7971f71d5eb2405fd1d2c73d9b"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-all-92c52-d-retains-recovery-controls-mobile/attachments/all-sources-unavailable-full-52b2919a099e164f01053a9ae46acec72cf41d41.png",
+      "sha256": "f6ffde20efdab2ac945f01052afbc822e94927a36d6edcc63b6d305fc22f7560"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-chromium/attachments/in-flight-personal-batch-route-receipt-b60f7b1456a8e6fcb34ee493605076ca8bc00fbb.png",
+      "sha256": "077b8c2a87d6a30408d1c60ae50d40ad492d2448df9198e2fa28c668dd20fc6c"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-chromium/attachments/in-flight-personal-batch-route-receipt-full-e8bd8227b979414e03e500a550cd5c9be09f62fc.png",
+      "sha256": "d78af724555e4a7ae5b1dde70d9f3022c1df6f9a073e5570389aeaff4a71fd28"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-chromium/in-flight-personal-batch-route-receipt-full.png",
+      "sha256": "d78af724555e4a7ae5b1dde70d9f3022c1df6f9a073e5570389aeaff4a71fd28"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-chromium/in-flight-personal-batch-route-receipt.png",
+      "sha256": "077b8c2a87d6a30408d1c60ae50d40ad492d2448df9198e2fa28c668dd20fc6c"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-mobile/attachments/in-flight-personal-batch-route-receipt-89117e7ab407228e497bb2305c0a8e8485d7762e.png",
+      "sha256": "03f7e11be354d4739bcb74345655f3a41457f58abdafeab2eb4b856f52a32428"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-mobile/attachments/in-flight-personal-batch-route-receipt-full-a82cae444d20529396dbd4c801ea76c2d9e88f03.png",
+      "sha256": "677b92b298aec0e8154596cc2e16edcc7ce4aebadb9cb13b1c6604cc176f16eb"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-mobile/in-flight-personal-batch-route-receipt-full.png",
+      "sha256": "677b92b298aec0e8154596cc2e16edcc7ce4aebadb9cb13b1c6604cc176f16eb"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-an-in--6e4f3-y-after-a-Work-menu-remount-mobile/in-flight-personal-batch-route-receipt.png",
+      "sha256": "03f7e11be354d4739bcb74345655f3a41457f58abdafeab2eb4b856f52a32428"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-chromium/attachments/batch-confirmed-receipts-912a71715dc4d67b376ae8beac150a2aeb103ab3.png",
+      "sha256": "c9c8448320fe95e4b13d6eb91f82aebe5d0ab0e25d8cc60be7729ca97e3aae1c"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-chromium/attachments/batch-confirmed-receipts-full-03048d9fa1c8eb66610ae137b96327c014185f03.png",
+      "sha256": "98a62c05bea939902ee329ec85f21f7efa0f0c8024a3e9cdb9fae15b7e571758"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-chromium/batch-confirmed-receipts-full.png",
+      "sha256": "98a62c05bea939902ee329ec85f21f7efa0f0c8024a3e9cdb9fae15b7e571758"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-chromium/batch-confirmed-receipts.png",
+      "sha256": "c9c8448320fe95e4b13d6eb91f82aebe5d0ab0e25d8cc60be7729ca97e3aae1c"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-mobile/attachments/batch-confirmed-receipts-5ad30e08ab3eaa7f074f545e574a36964c32ef52.png",
+      "sha256": "d143fc150767aef871295c11cab639463aba1e09e6ec87654a6f4609b96a5cd6"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-mobile/attachments/batch-confirmed-receipts-full-2550c6d55a6c5d031fc6b2cab36a1594f4687657.png",
+      "sha256": "ca5d4838324df3dd5f022a6c14a528df04c5665550efc9eb09d24cb3d86a970e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-mobile/batch-confirmed-receipts-full.png",
+      "sha256": "ca5d4838324df3dd5f022a6c14a528df04c5665550efc9eb09d24cb3d86a970e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-atomic-5f158-em-level-confirmed-receipts-mobile/batch-confirmed-receipts.png",
+      "sha256": "d143fc150767aef871295c11cab639463aba1e09e6ec87654a6f4609b96a5cd6"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-chromium/attachments/canonical-personal-target-75350cdad37646aa00f4de16c30b658d6a333d61.png",
+      "sha256": "5a72c7e5f5ae093f2de2fc4a4bdc6ccd2d528537c50a19e8d8ac2aaaa0dc1b47"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-chromium/attachments/canonical-personal-target-full-0d5a1d6ec5c21c5ec9221b03eaeee4d979f4d68c.png",
+      "sha256": "24096ae4283713d2f9a169f1692e88a2b9d36644b1de094b5333b1dce914ed60"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-chromium/canonical-personal-target-full.png",
+      "sha256": "24096ae4283713d2f9a169f1692e88a2b9d36644b1de094b5333b1dce914ed60"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-chromium/canonical-personal-target.png",
+      "sha256": "5a72c7e5f5ae093f2de2fc4a4bdc6ccd2d528537c50a19e8d8ac2aaaa0dc1b47"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-mobile/attachments/canonical-personal-target-3ab659f48b7b351e98534e6666d407d14837ee3c.png",
+      "sha256": "b6c9b20bd3cfc2d32ce918df1220ddfe21d5e67c386e8264d481be306454fb7e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-mobile/attachments/canonical-personal-target-full-d2b929594d7eba536985121274f613c862c9ceae.png",
+      "sha256": "a6a80f7836b628581f7956f1829df492a5904b52bb5ead728d37edd6bf02f3d7"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-mobile/canonical-personal-target-full.png",
+      "sha256": "a6a80f7836b628581f7956f1829df492a5904b52bb5ead728d37edd6bf02f3d7"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-canoni-66049--resolve-the-requested-item-mobile/canonical-personal-target.png",
+      "sha256": "b6c9b20bd3cfc2d32ce918df1220ddfe21d5e67c386e8264d481be306454fb7e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-deskto-acb2c--retain-compatibility-state-chromium/attachments/unified-work-ia-desktop-e53d94a205f994fee030fda91a0b0afd6978484b.png",
+      "sha256": "7bfa2ca2e44aea9057f45f1f1173ca75405ab8a32765eb6bb49d045d3c60b065"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-deskto-acb2c--retain-compatibility-state-chromium/attachments/unified-work-ia-desktop-full-b869e6e6949f6f87571d3e36491f3c00cf243830.png",
+      "sha256": "222e934ad212eae369c0362ac413c076310762e33fa97c8a68650fc880db4191"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-deskto-acb2c--retain-compatibility-state-chromium/unified-work-ia-desktop-full.png",
+      "sha256": "222e934ad212eae369c0362ac413c076310762e33fa97c8a68650fc880db4191"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-deskto-acb2c--retain-compatibility-state-chromium/unified-work-ia-desktop.png",
+      "sha256": "7bfa2ca2e44aea9057f45f1f1173ca75405ab8a32765eb6bb49d045d3c60b065"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-keyboa-bcbba--completes-a-personal-start-chromium/attachments/keyboard-visible-focus-f79c256c1cd32a5303674d786dfa1524671e2f01.png",
+      "sha256": "1e104e6912b7b8add5f72cde66f95345c817eddd7ec8413582f1b219293b353e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-keyboa-bcbba--completes-a-personal-start-chromium/keyboard-visible-focus.png",
+      "sha256": "1e104e6912b7b8add5f72cde66f95345c817eddd7ec8413582f1b219293b353e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-keyboa-bcbba--completes-a-personal-start-mobile/attachments/keyboard-visible-focus-d9c5d8190265087ceea3cbee2a43f35f4f47fff1.png",
+      "sha256": "9e0297b14d7b14d0dc65ab44b056ea8871492a3f5eaa13f4993803d825c8bcec"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-keyboa-bcbba--completes-a-personal-start-mobile/keyboard-visible-focus.png",
+      "sha256": "9e0297b14d7b14d0dc65ab44b056ea8871492a3f5eaa13f4993803d825c8bcec"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-chromium/attachments/partial-empty-subset-0cef38ecd4376a25d9b5ea75da54be75066928c4.png",
+      "sha256": "9eceb25343911bbdabcab711650864d88351d40617c6164617910a20e06981ca"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-chromium/attachments/partial-empty-subset-full-cb8c204dd971a38120e2bcd4eff23a798f0326e0.png",
+      "sha256": "75ec1fdf166640725347265532f922b4e59f79624a5c90db14a52ac0e460360f"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-chromium/partial-empty-subset-full.png",
+      "sha256": "75ec1fdf166640725347265532f922b4e59f79624a5c90db14a52ac0e460360f"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-chromium/partial-empty-subset.png",
+      "sha256": "9eceb25343911bbdabcab711650864d88351d40617c6164617910a20e06981ca"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-mobile/attachments/partial-empty-subset-4e307060a2ab096e0bc68d28d4582a8ae5e5a5cb.png",
+      "sha256": "402099d4eeecd5735ecf44f819733d97af4e85319fe7a2ebc80c2c171497f7d3"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-mobile/attachments/partial-empty-subset-full-fd7d7084ea4709a538f2d8500cf23b20352e2afc.png",
+      "sha256": "07762fb92df5dd9dee2fb217fb7e6531b25ecdf75f41313e3439f5ae7059ed36"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-mobile/partial-empty-subset-full.png",
+      "sha256": "07762fb92df5dd9dee2fb217fb7e6531b25ecdf75f41313e3439f5ae7059ed36"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-partia-7dcc4-he-verified-subset-is-empty-mobile/partial-empty-subset.png",
+      "sha256": "402099d4eeecd5735ecf44f819733d97af4e85319fe7a2ebc80c2c171497f7d3"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-chromium/attachments/personal-completion-confirmed-329bc2c85666ca4171ac8b29cf1e970a53e6d99c.png",
+      "sha256": "57f1cfdd0c6fbe216b9209774cf81dcdf43f6675c6ebe305be588c282760f215"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-chromium/attachments/personal-completion-confirmed-full-08eee7d35e943748ff270b46ffe147b006b59f3e.png",
+      "sha256": "1bf53ff5e77ecf59939bc58f76656d9dc521188ef230a8fc1b73f189dd007abe"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-chromium/personal-completion-confirmed-full.png",
+      "sha256": "1bf53ff5e77ecf59939bc58f76656d9dc521188ef230a8fc1b73f189dd007abe"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-chromium/personal-completion-confirmed.png",
+      "sha256": "57f1cfdd0c6fbe216b9209774cf81dcdf43f6675c6ebe305be588c282760f215"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-mobile/attachments/personal-completion-confirmed-3b960b95401a0cb224fe6d1b3d291054aab76a98.png",
+      "sha256": "67052095fe7b2bf673c5d5cca820513a7461e7972586b9cc09265c31809914bf"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-mobile/attachments/personal-completion-confirmed-full-a72adfb57a61cdba57bf45cd2788d4543c8f981a.png",
+      "sha256": "828649ad5007f491982c91798aee68cc430414e6768b0a2d5c9f1cba95cdc133"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-mobile/personal-completion-confirmed-full.png",
+      "sha256": "828649ad5007f491982c91798aee68cc430414e6768b0a2d5c9f1cba95cdc133"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-person-34248-ith-versioned-UUID-commands-mobile/personal-completion-confirmed.png",
+      "sha256": "67052095fe7b2bf673c5d5cca820513a7461e7972586b9cc09265c31809914bf"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-chromium/attachments/cached-return-personal-start-da247c9d2b6b691d1b7ac63b3502674862b1eba6.png",
+      "sha256": "7df57d7dfbe944e31aec018695583a40884e3d3f229964a3b408dd4df3768427"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-chromium/attachments/cached-return-personal-start-full-088e45f92399b4e0b33fae99bdabfffa5143a4e9.png",
+      "sha256": "dd9bdc1ac4321b1f64d7573048e2cb029e7fdd46afc2e4f63bf2713b8e5089fa"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-chromium/cached-return-personal-start-full.png",
+      "sha256": "dd9bdc1ac4321b1f64d7573048e2cb029e7fdd46afc2e4f63bf2713b8e5089fa"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-chromium/cached-return-personal-start.png",
+      "sha256": "7df57d7dfbe944e31aec018695583a40884e3d3f229964a3b408dd4df3768427"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-mobile/attachments/cached-return-personal-start-1e64ae3f5e63884d151e0436015d0c01fae78f85.png",
+      "sha256": "4c1f9338ae4eb4e1d0704fd840a15286dc093de1cb088be57bf504cc257a2fb4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-mobile/attachments/cached-return-personal-start-full-99709eb5e1154178df1b62fa53fd3383db6397e3.png",
+      "sha256": "c8614127f2d75f54c219276f5dcff3b98e872bd24553d73a91bfd6cce61ca256"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-mobile/cached-return-personal-start-full.png",
+      "sha256": "c8614127f2d75f54c219276f5dcff3b98e872bd24553d73a91bfd6cce61ca256"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-return-f4473-e-before-a-personal-command-mobile/cached-return-personal-start.png",
+      "sha256": "4c1f9338ae4eb4e1d0704fd840a15286dc093de1cb088be57bf504cc257a2fb4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-chromium/attachments/source-owned-service-return-e05261451953069934f28be9beea08762d90b4a5.png",
+      "sha256": "27abb4affaed83ae85739b62b71e5e860d2e6ee7b4fa91c915f5a3c26227b944"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-chromium/attachments/source-owned-service-return-full-2ea2af9ece4a1431ae36bc7059cb7a6adb0921ca.png",
+      "sha256": "27abb4affaed83ae85739b62b71e5e860d2e6ee7b4fa91c915f5a3c26227b944"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-chromium/source-owned-service-return-full.png",
+      "sha256": "27abb4affaed83ae85739b62b71e5e860d2e6ee7b4fa91c915f5a3c26227b944"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-chromium/source-owned-service-return.png",
+      "sha256": "27abb4affaed83ae85739b62b71e5e860d2e6ee7b4fa91c915f5a3c26227b944"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-mobile/attachments/source-owned-service-return-972ff5a2a03430130f2fcf60db87c201ed93f554.png",
+      "sha256": "6885767e65581770418f6a2910e455cb6d362abaf6ac3ea38b21ee6b2304f0e4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-mobile/attachments/source-owned-service-return-full-142bee3c4a358741c0ae11b5ea88e694d321c647.png",
+      "sha256": "3a42f42842c3f923808abaa48d5fbbda1ceee69ecd3b0f3c698ca5eaae8fb1ad"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-mobile/source-owned-service-return-full.png",
+      "sha256": "3a42f42842c3f923808abaa48d5fbbda1ceee69ecd3b0f3c698ca5eaae8fb1ad"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-source-87b91-l-preserve-source-ownership-mobile/source-owned-service-return.png",
+      "sha256": "6885767e65581770418f6a2910e455cb6d362abaf6ac3ea38b21ee6b2304f0e4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/320-long-labels-full.png",
+      "sha256": "c965450001fb894a96d1ae563a440da2bf0ddb7f82dcd7dbeeb56395b3802602"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/320-long-labels.png",
+      "sha256": "30c847e5640ec1d7753445e990a392eded6a570fd635a894a1660fe97a0bffb1"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/attachments/320-long-labels-5731750b6b20a784655d91dc6e42694d6d533929.png",
+      "sha256": "30c847e5640ec1d7753445e990a392eded6a570fd635a894a1660fe97a0bffb1"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/attachments/320-long-labels-full-103ba965dacbd513b47a0ad848b486140037228a.png",
+      "sha256": "c965450001fb894a96d1ae563a440da2bf0ddb7f82dcd7dbeeb56395b3802602"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-mobile/320-long-labels-full.png",
+      "sha256": "05b638f4c5b362239600ae0e9f12e199663e8ca4b0025fa7b3e594309879316c"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-mobile/320-long-labels.png",
+      "sha256": "67d3cbae55e42519c779fe666d9fb3d6161b86f5a0a8a5b5eedbd0ea588e128e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-mobile/attachments/320-long-labels-8e3a1be265bd9a5c09f9953219decae8e2d579a8.png",
+      "sha256": "67d3cbae55e42519c779fe666d9fb3d6161b86f5a0a8a5b5eedbd0ea588e128e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-mobile/attachments/320-long-labels-full-be048f8845fe8e2f9d416077217af04980d4b982.png",
+      "sha256": "05b638f4c5b362239600ae0e9f12e199663e8ca4b0025fa7b3e594309879316c"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/1440-light-full.png",
+      "sha256": "8ba6b97487377fe99d0c0db0e2d0d7650a15375972a4a39759b456a6a135943f"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/1440-light.png",
+      "sha256": "6201c686374eda65274f6e1f08b89fd9004979409275195e9e1ec46ff14a2498"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/attachments/1440-light-961f18c6e3e58a6048159078fc95c9aa9a25f5df.png",
+      "sha256": "6201c686374eda65274f6e1f08b89fd9004979409275195e9e1ec46ff14a2498"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/attachments/1440-light-full-2306bb9bccff8cda67d3f1203bd6e0dca0c8302f.png",
+      "sha256": "8ba6b97487377fe99d0c0db0e2d0d7650a15375972a4a39759b456a6a135943f"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-mobile/1440-light-full.png",
+      "sha256": "1d5dff5fdccb414c45641eef63d61f7dad577a7b6ca2d92cfad2d4f7f8ba8bc2"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-mobile/1440-light.png",
+      "sha256": "adc8c3a1c8762a8a321e9371e6488c210ef779aaf05436af03ea7c90b12a69d4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-mobile/attachments/1440-light-81c82c11df86e39b038d7092ebcb32d2b220cf9d.png",
+      "sha256": "adc8c3a1c8762a8a321e9371e6488c210ef779aaf05436af03ea7c90b12a69d4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-mobile/attachments/1440-light-full-ac908e9a0d5203e43c2850cac311a0613fa0382a.png",
+      "sha256": "1d5dff5fdccb414c45641eef63d61f7dad577a7b6ca2d92cfad2d4f7f8ba8bc2"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/390-light-full.png",
+      "sha256": "5304c1704e1054868fb482626c9a206cf1ed9c64143095a3c135c65c205a7540"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/390-light.png",
+      "sha256": "0b5f0c9629dfdf6631278eb5db764bae2ff47f60329f6f0f2a066a853cab5bea"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/attachments/390-light-431021bb6f48bb6ad2a092d937b758be5f923c63.png",
+      "sha256": "0b5f0c9629dfdf6631278eb5db764bae2ff47f60329f6f0f2a066a853cab5bea"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/attachments/390-light-full-d0335114e63519df37a423decaa670a318728699.png",
+      "sha256": "5304c1704e1054868fb482626c9a206cf1ed9c64143095a3c135c65c205a7540"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-mobile/390-light-full.png",
+      "sha256": "4e6e5d3a6d4d89a02b5c5fd747a0e1817857cbef4551d182254f923aecfddece"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-mobile/390-light.png",
+      "sha256": "dde7dd2197589d4e11baf171324e1aed40c0c9a01b9bfc77f6b040b0c4b072aa"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-mobile/attachments/390-light-3dfc5b2a79c3eae67001a0b79c920704c10edb7b.png",
+      "sha256": "dde7dd2197589d4e11baf171324e1aed40c0c9a01b9bfc77f6b040b0c4b072aa"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-98927-remains-usable-at-390-light-mobile/attachments/390-light-full-f25da04844193a5a82e9eb90c160ff34bf4051c1.png",
+      "sha256": "4e6e5d3a6d4d89a02b5c5fd747a0e1817857cbef4551d182254f923aecfddece"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/1280-dark-full.png",
+      "sha256": "1b71f5bd0e1356493c7ba9afdf5ba94442335cf964b8443e3db91c8eb135f4f8"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/1280-dark.png",
+      "sha256": "501346a22dc23c0bd3bc9e688347cf7c11506bd6acde4afb77ef7ab0214720a9"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/attachments/1280-dark-574a3b8a988e7d82a1b90b40cd2fc2ff3acd0e86.png",
+      "sha256": "501346a22dc23c0bd3bc9e688347cf7c11506bd6acde4afb77ef7ab0214720a9"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/attachments/1280-dark-full-7146aa7cad869b29046f2dd893215131c0e09c73.png",
+      "sha256": "1b71f5bd0e1356493c7ba9afdf5ba94442335cf964b8443e3db91c8eb135f4f8"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-mobile/1280-dark-full.png",
+      "sha256": "7014b7225bea43045803d62f7f33d7a6c21dc35895d4c50225c204e383208d6a"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-mobile/1280-dark.png",
+      "sha256": "2fe44a81277823867e3079c3a645daac4d46e668c33da8afc0ae8369feb2c74b"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-mobile/attachments/1280-dark-60ad032328f9943b975eb56d39aa9fc1ecf7c37a.png",
+      "sha256": "2fe44a81277823867e3079c3a645daac4d46e668c33da8afc0ae8369feb2c74b"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-mobile/attachments/1280-dark-full-e3c9039b7a7ca52e5e96b5d960dc2cda8516f856.png",
+      "sha256": "7014b7225bea43045803d62f7f33d7a6c21dc35895d4c50225c204e383208d6a"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/1280-forced-colors-full.png",
+      "sha256": "acf9fe9134730b35c1c42fd8e6077670625bf2affba6407367450bd48983577e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/1280-forced-colors.png",
+      "sha256": "54e1b62f5d02b81f6221020d629a08bc349f43c2d22bf7a32cde755bb1ce21c4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/attachments/1280-forced-colors-3f677bb71d35fa0b54689bd58d3c6db15c99fb80.png",
+      "sha256": "54e1b62f5d02b81f6221020d629a08bc349f43c2d22bf7a32cde755bb1ce21c4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/attachments/1280-forced-colors-full-bdecb09c863e7418ef4053719b299066577a48d4.png",
+      "sha256": "acf9fe9134730b35c1c42fd8e6077670625bf2affba6407367450bd48983577e"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-mobile/1280-forced-colors-full.png",
+      "sha256": "f51148ba3cac6ed05cc6c3dcc04c542252481bcdb12c7bf7ce0d84ed074653e2"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-mobile/1280-forced-colors.png",
+      "sha256": "77dd8a68a0ccffec16ba783deee182509b82f34ab984d1211a8630dcb419dcf4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-mobile/attachments/1280-forced-colors-5d4c7fb3917ea5eecf4cb5960f6b84bd6aea163f.png",
+      "sha256": "77dd8a68a0ccffec16ba783deee182509b82f34ab984d1211a8630dcb419dcf4"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-mobile/attachments/1280-forced-colors-full-c2925f22459013382a96094638874fb714e02797.png",
+      "sha256": "f51148ba3cac6ed05cc6c3dcc04c542252481bcdb12c7bf7ce0d84ed074653e2"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/1280-200-percent-full.png",
+      "sha256": "efa1daf6eab5cde42ed05affcae4b32fc8b8e0131ec6787d03ead3bef44a6e57"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/1280-200-percent.png",
+      "sha256": "f137a6219396b39ebfae6c7c82f15f911932677b1d97d5c4dd630728bb5808b9"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/attachments/1280-200-percent-09953e76f17b00037408a8f1768d7a35373f36aa.png",
+      "sha256": "f137a6219396b39ebfae6c7c82f15f911932677b1d97d5c4dd630728bb5808b9"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/attachments/1280-200-percent-full-08f78032d54f625246eb37d2d0c6738b796d4b88.png",
+      "sha256": "efa1daf6eab5cde42ed05affcae4b32fc8b8e0131ec6787d03ead3bef44a6e57"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-mobile/1280-200-percent-full.png",
+      "sha256": "8012b13c1679781461ac4bdc4ba7d5a4cc6d1f010f0d5bc39c6158dc47c5f229"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-mobile/1280-200-percent.png",
+      "sha256": "497b336eeccebab10b2e943757a2a8d09ae9a12812a5f4f7f169d2fb628f9b44"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-mobile/attachments/1280-200-percent-892eb3906bcbabd57acfa63fd6d5f1f6d1e9c7ac.png",
+      "sha256": "497b336eeccebab10b2e943757a2a8d09ae9a12812a5f4f7f169d2fb628f9b44"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-mobile/attachments/1280-200-percent-full-c252f8b5b40ed9e5e232b5c68ccdce08bc4f973f.png",
+      "sha256": "8012b13c1679781461ac4bdc4ba7d5a4cc6d1f010f0d5bc39c6158dc47c5f229"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/320-dark-full.png",
+      "sha256": "8f5330d981ea124e7d8892a020209e083b95ae8e0309c867765d005b6e83c24d"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/320-dark.png",
+      "sha256": "0c5b3ce4e6384e25db7dee71ecd2f1144c102005373bc92d16fa9399fb625629"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/attachments/320-dark-82a3d9c5b8feb9f22f3f700e4ac3443565aaa44b.png",
+      "sha256": "0c5b3ce4e6384e25db7dee71ecd2f1144c102005373bc92d16fa9399fb625629"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/attachments/320-dark-full-4d25254cc61c91310e0635ceb61cbdf21b8ea377.png",
+      "sha256": "8f5330d981ea124e7d8892a020209e083b95ae8e0309c867765d005b6e83c24d"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-mobile/320-dark-full.png",
+      "sha256": "13efcb3257d46d1e445135ac2d2ddabdcd6b6a5972bf51e9872127f6732c0a93"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-mobile/320-dark.png",
+      "sha256": "d852a380868507ed24f8bee2e632e8791b0ae174f3dd9a983bbb759303be7136"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-mobile/attachments/320-dark-1aacb69539a7a8b1d2de1c589466402cc2e5dc9f.png",
+      "sha256": "d852a380868507ed24f8bee2e632e8791b0ae174f3dd9a983bbb759303be7136"
+    },
+    {
+      "path": "canonical-final-1459/work-hub-foundation-unified-queue-remains-usable-at-320-dark-mobile/attachments/320-dark-full-8a134dfa29243ef6d18d81d74b246502599fff9b.png",
+      "sha256": "13efcb3257d46d1e445135ac2d2ddabdcd6b6a5972bf51e9872127f6732c0a93"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--0e890-and-restores-the-More-focus-chromium/navigation-390-en.png",
+      "sha256": "08bc638338ca75917cf76f4284b154c91c73722803f4781945c534c9c92d7542"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--0e890-and-restores-the-More-focus-mobile/navigation-390-en.png",
+      "sha256": "df32f95e2c3583f8836039b9748d58722c85be35639e2caa07a57b0202c8c771"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--2130c-tore-the-triggering-control-chromium/M1-preview-focus-return.png",
+      "sha256": "44557ff04c3221784d3de88861f9106150e39f4e653dc22f021366c247e45e7a"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--2130c-tore-the-triggering-control-mobile/M1-preview-focus-return.png",
+      "sha256": "b161cc175148e2bcd5bded3d1963c1971092cce3be9ef0ff987f4a21cd0bd40f"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--21bc4-and-restores-the-More-focus-chromium/navigation-320-ko.png",
+      "sha256": "6d4388b34d070413706ae0c2e21446a726a8cf5cc8cc8ca434ba06d9b1e2e21d"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--21bc4-and-restores-the-More-focus-mobile/navigation-320-ko.png",
+      "sha256": "e6656c889238a9d2b27bf2482f1934b093084276f2ea6337a426464cdb5dffd5"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-chromium/work-200-reflow-forced-colors.png",
+      "sha256": "60adffe6b9ea33dc202bcbb50376b39c2558f1ded9407ac52e60b98d77be92ea"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-chromium/work-200-reflow-last-action.png",
+      "sha256": "7ae45e25a01b9244169287c501f4dca1fb31ee10126d2cc6feeb66b89a6f4609"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-mobile/work-200-text-forced-colors.png",
+      "sha256": "549dbc7a9e3d232635209841a65b9ad2503e4144fe0c2c5e8df080a5385078bc"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-mobile/work-200-text-last-action.png",
+      "sha256": "1ddca29ce0d87773da08dde8b70512990404928fba77bd1a64709ae78cb13389"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--4b736-ceipts-retain-touch-targets-chromium/work-mobile-receipt-320-200.png",
+      "sha256": "d807e30fb876a6801492669779049a4f9d415bdb2268e13aea14f4ca67b6e2c9"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--4b736-ceipts-retain-touch-targets-mobile/work-mobile-receipt-320-200.png",
+      "sha256": "4e2364a6eac2646eb0bc7cd8e8542d98f453e55663842879b982f7316089cadd"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--59d4e-and-restores-the-More-focus-chromium/navigation-320-en.png",
+      "sha256": "01f2cc1fad554ca82c29e405a27e03a20c9388ce70327f685f60ee8b2cecd771"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--59d4e-and-restores-the-More-focus-mobile/navigation-320-en.png",
+      "sha256": "75359e817f41a705c6ba44a9625bb5cb08c951ecc870902628cad5be3f494301"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--68c5e--provide-44px-touch-targets-chromium/work-touch-targets-390.png",
+      "sha256": "7484934c690140ea34a32f46c6373514a88b54146059943a69facd1567ca2e37"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--68c5e--provide-44px-touch-targets-mobile/work-touch-targets-390.png",
+      "sha256": "9ae486f01b180592efccbba6126f24ffcf5036420eeba58af12d314806f8cdf8"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--6bcba-and-restores-the-More-focus-chromium/navigation-390-ko.png",
+      "sha256": "18c2545c6b464fdeb6e3aeb44580ec84988c5384a47bc75f920d8ca92cd5b2ba"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--6bcba-and-restores-the-More-focus-mobile/navigation-390-ko.png",
+      "sha256": "d34fece6fed6b8809ff2020766bec1bb3278e2496be1e64d8cc4430ce3c1735f"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--7baa1--provide-44px-touch-targets-chromium/work-touch-targets-320.png",
+      "sha256": "4ceb90632da033ce06a0cd12d2340d6d75124ecba86e5e1570ea3231fe822efe"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--7baa1--provide-44px-touch-targets-mobile/work-touch-targets-320.png",
+      "sha256": "1b15a862a3745950b570340a0a1d4a144223a964dbee47aa96dd54332ca38f12"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--92a92-ceipts-retain-touch-targets-chromium/work-mobile-receipt-390-200.png",
+      "sha256": "a7fe43043eeabff78da9ba3e97cee4df3d1155ef5e37be59f1df6e00871ff7e0"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--92a92-ceipts-retain-touch-targets-mobile/work-mobile-receipt-390-200.png",
+      "sha256": "693c3887e9448aaa22bda6feced5d9170f2714875d9ccd5ca54095d11f114e11"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--bfe49--the-resulting-work-control-chromium/today-plan-keyboard-focus.png",
+      "sha256": "3e4c23276af3f74b6e51610bb98690cc10b9d79fe462ff1b17c593cf45d9e8ee"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--bfe49--the-resulting-work-control-mobile/today-plan-keyboard-focus.png",
+      "sha256": "9854b2c925e95b54e8663de9b01d14fa1d1c80231b13f57935b2896e505b6d88"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--e78d2-ithout-losing-the-M1-reason-chromium/M1-keyboard-navigation-restored.png",
+      "sha256": "b6117b1dbf7b4d564836aee81608264e178cae4b80bdb12cb173527b8e96500c"
+    },
+    {
+      "path": "canonical-final-1459/work-mobile-accessibility--e78d2-ithout-losing-the-M1-reason-mobile/M1-keyboard-navigation-restored.png",
+      "sha256": "28c65a372feca0f20bb6be378908b0bea235acbbb98ef74d220b328c4cab051b"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png",
+      "sha256": "5c1df04529ab7b205f66b5d40e1e4d78b8696630c32666516b1865622eb3949d"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-progress-390.png",
+      "sha256": "1fe19ae6c0fda7ef8a8cd71704246bc7bab9fdcb3a72f87c68df1a9bb69ae3b8"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/06-personal-edit-390.png",
+      "sha256": "769cffa7b6174fcb2e3284051018d93536a0995cd7571597ab35fb96a745ef00"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-03836-it-design-evidence-at-390px-mobile/05-personal-detail-390.png",
+      "sha256": "ded3eba3a4c2ae01c9afaf8f453dd24872a723b07785706e590d5d10d58fb6cf"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-03836-it-design-evidence-at-390px-mobile/05-personal-progress-390.png",
+      "sha256": "26050ed86619f52878dad3e325d21155cd0a1fe16d2486d8ed3999505a993c88"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-03836-it-design-evidence-at-390px-mobile/06-personal-edit-390.png",
+      "sha256": "456f72af6d928701ce6f6d0b53aeb932545bda3704b64a9ff91e219a587be73a"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-48c77-k-keyboard-capture-at-390px-chromium/personal-capture-390-keyboard-reflow.png",
+      "sha256": "7492e118dcd6a40049ec3ef1d6f422486a8c723c199c977aa4411a90e6d4b907"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-48c77-k-keyboard-capture-at-390px-mobile/personal-capture-390-keyboard-reflow.png",
+      "sha256": "703f613bab954eb5f96b8f4c00f6c229e7f6ac839ab57a2a8be91b4420b02405"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-5d687-ogress-and-keyboard-editing-chromium/05-dark-high-contrast.png",
+      "sha256": "8436edfb5b044a7436d6cb8025fe93580a3c10f32f389388fc596863ab7030f8"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-5d687-ogress-and-keyboard-editing-chromium/06-dark-high-contrast.png",
+      "sha256": "71f8a42f93eb4978c3e2725e7843dbcaf49d3fd4c2f8724e875b550a228ee92e"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-5d687-ogress-and-keyboard-editing-mobile/05-dark-high-contrast.png",
+      "sha256": "08142ec650c51ad9ef4257f610af9502c0ddbc085ffcdc701672af639521affc"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-5d687-ogress-and-keyboard-editing-mobile/06-dark-high-contrast.png",
+      "sha256": "b46c81a7e57b1da0ddffe6bf0a9c320ae9255de9ce4a4b41eea575d1a136ea2c"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png",
+      "sha256": "cb41f98a8e62c3e0c3d16a31924e3abbb30c34f09a9315a1534d443ee6bbb63e"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-mobile/personal-capture-320-keyboard-reflow.png",
+      "sha256": "818fd434b046b2faa2e4d148528515a0c3256a758f18b4ac0c374352a1ba3a4e"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-93fe3-it-design-evidence-at-320px-chromium/05-personal-detail-320.png",
+      "sha256": "ca23999dd4ed95e63de8ec80b328d69adde179dc84fa9440373836a01207eba0"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-93fe3-it-design-evidence-at-320px-chromium/05-personal-progress-320.png",
+      "sha256": "8410c0161aafc689b0836c8ec352aac9911915879a5cf3c6b99ebac0a8b761c5"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-93fe3-it-design-evidence-at-320px-chromium/06-personal-edit-320.png",
+      "sha256": "ba3d995865e7cfb6df014fbeb2a03e72f502c88cda8df51edffe4115339e1e37"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-93fe3-it-design-evidence-at-320px-mobile/05-personal-detail-320.png",
+      "sha256": "ccef7115d524f4acd7604486f7ea00e04ab165608a9918d21419f41c986c8024"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-93fe3-it-design-evidence-at-320px-mobile/05-personal-progress-320.png",
+      "sha256": "58a3c74e0f538320b2e1878e5757e8d96782cb17dca21a465a235afa8f09005d"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-93fe3-it-design-evidence-at-320px-mobile/06-personal-edit-320.png",
+      "sha256": "c13ee6b7ec4e69edca2c65b5c0d23cc903f3d7d99c2fdd69f16eabf193435fa3"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-chromium/05-zoom-200.png",
+      "sha256": "1c1146b2216b6e094703f6fcef757d54f82b6f2aa2cd992b73b0686a6fee7c3e"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-chromium/06-zoom-200.png",
+      "sha256": "869b303fd1ea2d9f0a4bef983532b6bf2a8224c0c422d26df2b9ddfcb3b25aac"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-mobile/05-zoom-200.png",
+      "sha256": "3856cd4843e2d4dffca93bef7672b6e34615d317c675422a43034c1ae5affabb"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-mobile/06-zoom-200.png",
+      "sha256": "ae5fee00ae807624a3c18fb53507345f129f40c32faca853401256d81f6b63c8"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-bb66f--a-new-version-can-be-saved-mobile/error-context.md",
+      "sha256": "5728c4bc7321428e7a59b9f4bc582b2b95b734ec30dfe6d7afc1b5924bfc7c32"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-bb66f--a-new-version-can-be-saved-mobile/test-failed-1.png",
+      "sha256": "73c2d2d838d96b45bb20002b5719d4a741b92994d79ceea3639d2f878c883e65"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile/error-context.md",
+      "sha256": "6c587131069557a8599d7fb83740ec7468d2ed5dc6099d8198e1f0bd468d3e8c"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile/test-failed-1.png",
+      "sha256": "fabb0e3193d7338b16449c74ac337ce56644eae5a2b73be0b1ce0d32df5142b3"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-chromium/05-personal-detail-1280.png",
+      "sha256": "ab69990e8cb52dd0cefb05434f4a7584ae53babce1dcac1ece373441b7548df2"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-chromium/05-personal-progress-1280.png",
+      "sha256": "46ea92db54eaeded5948eaa8e7494e68e4056423ed4983ef060c87d7a95052c2"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-chromium/06-personal-edit-1280.png",
+      "sha256": "ab0e1dbb2d742d9d8d2cd82d44dc83edfebb3d870f71ecc7e9af7e0ad294ab48"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-mobile/05-personal-detail-1280.png",
+      "sha256": "81375f6694286564199ec789dafab23196a278b107065146d076a8bc9c642ca8"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-mobile/05-personal-progress-1280.png",
+      "sha256": "b68982f906ef90a800f2178a047eedd84078d5774d1935d3880046f6348c65ba"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-mobile/06-personal-edit-1280.png",
+      "sha256": "b68982f906ef90a800f2178a047eedd84078d5774d1935d3880046f6348c65ba"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png",
+      "sha256": "fb37d6fdf97516c6c6c1b0d28c984eb539e66c26042996d0de024e9f87734361"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-progress-1440.png",
+      "sha256": "4c50104419499d812667aa52502d3a080f0ba22dbee15d6cb15c445a4c22517a"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png",
+      "sha256": "df14ed425a165c5520c5eef12ceae726189443baa128c48be3655a48a960666d"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-mobile/05-personal-detail-1440.png",
+      "sha256": "569215e4c94bd23a0351e1ccfb570d56d208cf94ea88db6b2ffc5749ff5d0f59"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-mobile/05-personal-progress-1440.png",
+      "sha256": "01a2cff5778bc3701893c919db064bc5495d12c5ea6e8c3b240ebe85633e0f51"
+    },
+    {
+      "path": "canonical-final-1459/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-mobile/06-personal-edit-1440.png",
+      "sha256": "4102039c2fd73ab8e5487fdc1e10a38ac4884353ad33efc064c41908a4c6ae94"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-6d06e-ail-closed-for-empty-access-chromium/work-route-empty-1280.png",
+      "sha256": "0d41ea77def980025f29c80fcc33cf4f936270d374cc38e9a17b14e40f50b54f"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-6d06e-ail-closed-for-empty-access-mobile/work-route-empty-1280.png",
+      "sha256": "448113090a32c3699e85b376c886fa6626864430f2415550cbd9501dbd88b566"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-94642--closed-for-provider-access-chromium/work-route-provider-1280.png",
+      "sha256": "38264702b1b2b90bf0306c09fe8e86505349d79d8f0bcdef2acb2db68ecca261"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-94642--closed-for-provider-access-mobile/work-route-provider-1280.png",
+      "sha256": "01fe023ab60daa6095df066670a36666b5a396344472d6423eec421967797f13"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-c8442-ail-closed-for-allow-access-chromium/work-route-allow-1280.png",
+      "sha256": "c19a2ffd8dc04fe4de55f0547a830e764e5795051177ecc6c095974b8cf87e88"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-c8442-ail-closed-for-allow-access-mobile/work-route-allow-1280.png",
+      "sha256": "d3a8f7739807c6cee942ad19018252ec02d2b868e093f31603b1c84586dfe42d"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-d0c75-fail-closed-for-deny-access-chromium/work-route-deny-1280.png",
+      "sha256": "0d41ea77def980025f29c80fcc33cf4f936270d374cc38e9a17b14e40f50b54f"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-1280px-W-d0c75-fail-closed-for-deny-access-mobile/work-route-deny-1280.png",
+      "sha256": "448113090a32c3699e85b376c886fa6626864430f2415550cbd9501dbd88b566"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-1cc2d-ail-closed-for-allow-access-chromium/work-route-allow-320.png",
+      "sha256": "26ca91ed3e33da68c36ac4db45b54c77c269b97f30f8848d126ea5a930ae12c2"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-1cc2d-ail-closed-for-allow-access-mobile/work-route-allow-320.png",
+      "sha256": "b0f1ddfbe8d5b4bfeeb5d559af4665d2d494c7590ae0b5a76ba5cc54d1b42212"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-7eafe--closed-for-provider-access-chromium/work-route-provider-320.png",
+      "sha256": "23c6ef9be57a894994955019c4d1e56c33512967c89dc4a172b88413ed523ff4"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-7eafe--closed-for-provider-access-mobile/work-route-provider-320.png",
+      "sha256": "d121d9a641366b88723fd0a5af46c49b3288d94a5dd03c47cd8a6c4cd9362b0e"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-d1345-fail-closed-for-deny-access-chromium/work-route-deny-320.png",
+      "sha256": "24160eb7a49af61050fde3127eac89816520cc46c276c048b142f7b5e3194652"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-d1345-fail-closed-for-deny-access-mobile/work-route-deny-320.png",
+      "sha256": "c8f72abe14dbf8c01145de1cf1e269b3668a7a1dc55625f92355b7142d5ffa14"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-fde0c-ail-closed-for-empty-access-chromium/work-route-empty-320.png",
+      "sha256": "24160eb7a49af61050fde3127eac89816520cc46c276c048b142f7b5e3194652"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-320px-Wo-fde0c-ail-closed-for-empty-access-mobile/work-route-empty-320.png",
+      "sha256": "c8f72abe14dbf8c01145de1cf1e269b3668a7a1dc55625f92355b7142d5ffa14"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-43a81-fail-closed-for-deny-access-chromium/work-route-deny-390.png",
+      "sha256": "5ad90b2639a3b97166c70bded02dcfd8c1fdc613ba9eb2a8bc170f99f6bbebc8"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-43a81-fail-closed-for-deny-access-mobile/work-route-deny-390.png",
+      "sha256": "72511351b87f56522a50b2c67d0e31fcbec463624d0249fe8a7014f510c45f2a"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-49139-ail-closed-for-empty-access-chromium/work-route-empty-390.png",
+      "sha256": "5ad90b2639a3b97166c70bded02dcfd8c1fdc613ba9eb2a8bc170f99f6bbebc8"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-49139-ail-closed-for-empty-access-mobile/work-route-empty-390.png",
+      "sha256": "72511351b87f56522a50b2c67d0e31fcbec463624d0249fe8a7014f510c45f2a"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-59943-ail-closed-for-allow-access-chromium/work-route-allow-390.png",
+      "sha256": "b4ffe7d7b249ebd3b05a3249dab140b5381183ff3dcc4bcbbeec784e4430b5d9"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-59943-ail-closed-for-allow-access-mobile/work-route-allow-390.png",
+      "sha256": "d2ea5804467491868e1ee2309f71773eadcd48e09f4a54f3c39215bb687b0486"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-8cb86--closed-for-provider-access-chromium/work-route-provider-390.png",
+      "sha256": "37c0d88b4e7836d8d0302e85dcb56e44191b99ccf43b3e9b99db6ccf8603e5ec"
+    },
+    {
+      "path": "canonical-final-1459/work-route-access-390px-Wo-8cb86--closed-for-provider-access-mobile/work-route-provider-390.png",
+      "sha256": "f76e343b29e1f5bb9f101e058e9918563e87a57281738ad0ee80be843afde29e"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-5a18f--discards-its-late-response-chromium/revoked-APP.WORK-late-result-discarded.png",
+      "sha256": "cb11dcce4fc5259d1256fd4742e2aa54b7fd996bb86d6d292294161371c7bb78"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-5a18f--discards-its-late-response-mobile/revoked-APP.WORK-late-result-discarded.png",
+      "sha256": "4fa378650eb9da4d9e8061098c801d1cf86c61fad51e85f561a75851e6d51cf6"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-7dce6-rsisted-expert-conversation-chromium/typed-selected-work-response.png",
+      "sha256": "417a344a1da2e4d1830f8d0877d8ba563e46328998633bf90a5510c955ec1664"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-7dce6-rsisted-expert-conversation-mobile/typed-selected-work-response.png",
+      "sha256": "71bdbda542506d95dcfac8dfdb54ba6f7ef3609f5d1787196cd11da360ecb65c"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-846ec--and-restores-trigger-focus-mobile/selected-work-assist-320-200-focus-restored.png",
+      "sha256": "3643406a69af4d95c5e195d7910ffe634fe1369bcf4df855f7af5af02c331565"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-846ec--and-restores-trigger-focus-mobile/selected-work-assist-320-200-panel.png",
+      "sha256": "8aea1fb45a80a4290327f48f41e43d6417d02272d7f3523115ab9ec72968ee48"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-8bd9e-rsisted-expert-conversation-chromium/typed-selected-work-response.png",
+      "sha256": "a78cdf7ecdcb380d63dc4129a6b8bbd05723eb6b643315f3e915b45258c48ca8"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-8bd9e-rsisted-expert-conversation-mobile/typed-selected-work-response.png",
+      "sha256": "a3983c5870f8921e7ba6358e1d85680f03bb21d98c36ac78cc46f55326358958"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-b2bdc--discards-its-late-response-chromium/revoked-APP.EMPLOYEE_SERVICES-late-result-discarded.png",
+      "sha256": "9bd39373158f817d49dd290da696302301a52258d351721fbe40cffbb5858f60"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-b2bdc--discards-its-late-response-mobile/revoked-APP.EMPLOYEE_SERVICES-late-result-discarded.png",
+      "sha256": "7f6c8e820c950a5fa763f23475d549c6501f87728e1d0e403abd7cdc20aeaaee"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-d48d4--discards-its-late-response-chromium/revoked-APP.ASK-late-result-discarded.png",
+      "sha256": "9bd39373158f817d49dd290da696302301a52258d351721fbe40cffbb5858f60"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-d48d4--discards-its-late-response-mobile/revoked-APP.ASK-late-result-discarded.png",
+      "sha256": "7f6c8e820c950a5fa763f23475d549c6501f87728e1d0e403abd7cdc20aeaaee"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-efb8f--discards-its-late-response-chromium/revoked-APP.APPROVALS-late-result-discarded.png",
+      "sha256": "c3a0157964ef35a2503699de45b59a3b964dde4b6620a2356762971c97fc361a"
+    },
+    {
+      "path": "canonical-final-1459/work-selected-assist-contr-efb8f--discards-its-late-response-mobile/revoked-APP.APPROVALS-late-result-discarded.png",
+      "sha256": "04c8c4f3cf4a0073547d9939d51c94275258dda694c043810cef8e8cfe9ade18"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-d9592-n-separate-from-remediation-chromium/access-revoke-preview.png",
+      "sha256": "0f53bd53f114f7f9338f7b00b8ad4a46c374039e3e75527390ad0923429e2d48"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-d9592-n-separate-from-remediation-chromium/access-revoke-receipt-focus.png",
+      "sha256": "b7a21c14b164b85c6f0f85c53f9bb6744aa182f4c5debd9a7b680e101e392fb7"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-d9592-n-separate-from-remediation-mobile/access-revoke-preview.png",
+      "sha256": "fe71b4277edc35b9adfcae719c02ce6d8fb717da622890518f47f7bfe51cc28d"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-d9592-n-separate-from-remediation-mobile/access-revoke-receipt-focus.png",
+      "sha256": "429eb1d1773b114cc62cc5381a521e901b26160fda35f796c2cc19b73bcc8abf"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-f7cbd-n-separate-from-remediation-chromium/access-approve-preview.png",
+      "sha256": "50fc28814ec6ace04fdd9484fd43a4a22fa7fab8c74de9a0bf225894cf166ff0"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-f7cbd-n-separate-from-remediation-chromium/access-approve-receipt-focus.png",
+      "sha256": "24ccbeef27dd8b115ec0b35a124e818dd593933ea1c8fa17156c151b7ac67b5f"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-f7cbd-n-separate-from-remediation-mobile/access-approve-preview.png",
+      "sha256": "956d6e43d6c003db5f368736a7a3122cf8d3cfb74a379b225a01516902bb959e"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-acce-f7cbd-n-separate-from-remediation-mobile/access-approve-receipt-focus.png",
+      "sha256": "31b99f20b8fa4850424419e65a55bb8163d6025b81485de55ed670484378a1ba"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-chromium/approval-handoff.png",
+      "sha256": "f1a371006620615aee34ff3fa107c05e46175e3b91f6e1007d62ac7a816ca20f"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-chromium/approval-owner-detail.png",
+      "sha256": "eb3f7aafe55d47610a38945fb674f9fafdbd9997015fb3108dbff46aefb557a4"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-mobile/approval-handoff.png",
+      "sha256": "9e435cfb4db3329625a8d07551901be24dbeac59d8beb274213e9dac41f8335a"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-mobile/approval-owner-detail.png",
+      "sha256": "66c71ca985c527d2917f168331b20e969f633c7205310b96dd1dc6ed6475fddb"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-70357-nd-sends-no-foreign-command-chromium/service-handoff.png",
+      "sha256": "db80e15965006174a118cfb6c94c4ca7ebc4e97c9e9063c56b26a49ee9600645"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-70357-nd-sends-no-foreign-command-chromium/service-owner-detail.png",
+      "sha256": "537e561817489ef81ed9f583bbc3ca5b8009b8c98d1fd9430a0dd63805d2fa8b"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-70357-nd-sends-no-foreign-command-mobile/service-handoff.png",
+      "sha256": "bc47cd196b9da98050178647eb6c325522df1e9cb52fa162d36edf5216de4a68"
+    },
+    {
+      "path": "canonical-final-1459/work-source-decisions-sour-70357-nd-sends-no-foreign-command-mobile/service-owner-detail.png",
+      "sha256": "99dc19bc7c903906d052a11109a7ddf002d97912742775cf7ac97e87c1881bf1"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png",
+      "sha256": "00ca07f71e67d927976e1e893c1d62a0606652772cb499ce9291303184e75121"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko.png",
+      "sha256": "eac136aaf9e636841e2d4a554c09d220bf7f1e7bd07de99b91fd34aa5c49357c"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png",
+      "sha256": "a8dfdac03844d0fe3a9d64c24bc081a9f794c48ea566e2a8ac2d33ec01ec44d4"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko.png",
+      "sha256": "f3c8979eb6af030492dd62748dad6903af64e50cff418d2c2b32a3ebe06f6698"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png",
+      "sha256": "ffbfa8ba2705ec5f5f463288fec90e72015ffdb1e56cb041b2895c50207c9cc3"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko.png",
+      "sha256": "623ab904a13d7778f90f5192f4fe38bf04b38f0f514534dd1515c0c61b52c5f0"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png",
+      "sha256": "bab05bc0c7b7fa83693854c1bc0a463d0ef418adb670780166eabbb73e846abc"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko.png",
+      "sha256": "e11ffba53e1248d98d5b655684fd835ffb13d8eb7154810d661318bea3400fd0"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png",
+      "sha256": "b2a7b7e1b44cdc0672efc29ca10f606e8d7c7e0ad3bf8f260a18d0765fa2c5a7"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko.png",
+      "sha256": "087166e1f12770150fd73282a91a05981686b3f8ec90b02b7aeb6cb50f35b590"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png",
+      "sha256": "ddda07b2152c82505fa5cd1dd5b1ed887bb6e2e3b750c5b0b94cce8e43f66fd9"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko.png",
+      "sha256": "1946c0e4ffb6c038d48c911cbcdecc8652d1dd5b6b30dd12ab1ff5a212b1f6d4"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview-full.png",
+      "sha256": "e894b597644436f0a5154b7aa6b3bb724a8b1193d6269b06235d5770f593ead5"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png",
+      "sha256": "15c99da8d1463bf2957c4d4d818e23662984e9c7d0b1306b59294a7682a6171a"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt-full.png",
+      "sha256": "8d976059bba06d7d79cf25cb7ef856c92e048516e0c61db74cacb74aea5b619b"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt.png",
+      "sha256": "9f88107065a7e3f1ef32325eccf89ca32df0c1bfcfc16d2600d0f49c4451cb12"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/02-1440-ko-full.png",
+      "sha256": "2f1d8b25e70e652e4c9c460a5d52da6f02af156d3b6c177bc86961d696194e9c"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/02-1440-ko.png",
+      "sha256": "8e0213ab40116ed19ab962bf68c0f54587e4a77cc53a084866b0604b721714ef"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/02-390-ko-full.png",
+      "sha256": "a73af6546f138abd56a622dc3f51f1e2c7ddfbc37bfea05313d676bd1abe9304"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/02-390-ko.png",
+      "sha256": "348044c9e31270bf23498708069d252ad81342b41611d1e3a3226192e6a46f9b"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/03-1440-ko-full.png",
+      "sha256": "98bafd1db4662f7d5c2b4ab60cd142f3440fc669817bf64969ad564d4925827d"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/03-1440-ko.png",
+      "sha256": "e7f5fe126374039a2ec1d246508065346faaa73598533caea09c74b1caaf275c"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/03-390-ko-full.png",
+      "sha256": "04db5a326208fb79ed94c8c7b888fa16b0be8da94413948c282cceebe6c75072"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/03-390-ko.png",
+      "sha256": "2e04cfe95f85ebfa5b3ce70702f667a04ed9f033d85ca97b4d0fe3434b99edb5"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/04-1440-ko-full.png",
+      "sha256": "98fde25de3265a313cf1540f399df95bb419ffccf271cc3db8924f6caf92d4ae"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/04-1440-ko.png",
+      "sha256": "78948d323858567960e39186ba27f3c9c6e09ba1dc4dfc05cb3fd5b138a23c1c"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/04-390-ko-full.png",
+      "sha256": "15a97af6823100bb952ffddbc865b6db20307bd307faf0c80247e0f69003d4d1"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/04-390-ko.png",
+      "sha256": "541a3c862f20380b61a9fa2165fd7c262f299f954cb812f63fec49c190e8abc1"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/M1-390-ko-decision-preview-full.png",
+      "sha256": "f4bb6afabb787940681f3319094120323d43b9c987f0840839c688e9ba6f084a"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/M1-390-ko-decision-preview.png",
+      "sha256": "1a95fcb9b0e61b7c64bfa46b308fa20b9e73b2165112044986417cf1805dc202"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/M1-390-ko-decision-receipt-full.png",
+      "sha256": "dabccbbb45ab57718cc5b8a5311b76a4b7f113f28f5b4735f4ec8d8e82c93b31"
+    },
+    {
+      "path": "canonical-final-1459/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-mobile/M1-390-ko-decision-receipt.png",
+      "sha256": "f3c4550c9065f38102a6b59c22c23d6aa6051be3f161edb87e14f924efdc48be"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png",
+      "sha256": "0a425b2af81b78d9d9b2f30072d604eb957be0127368d23af43f33cf293b0e99"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution.png",
+      "sha256": "7b7d34aba6315913fc10b39529551b9efc99e277a8b902fc3abdf139a0a15890"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-service-response-entry-full.png",
+      "sha256": "8607f6465d86766ff99d093f40256ea0676cf7ce38fb19568e7b1ff26b748700"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-service-response-entry.png",
+      "sha256": "d5f096cf240f89fae66c51ba8c6d0f44ad426eb0de418301be30feb04b90bb4f"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/attachments/10-flow-work-contribution-85ef421742061d3d3c1291b90691cad0972c20ce.png",
+      "sha256": "7b7d34aba6315913fc10b39529551b9efc99e277a8b902fc3abdf139a0a15890"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/attachments/10-flow-work-contribution-full-6b40ec905fe6395946b0d5c3137db302d5b3c62e.png",
+      "sha256": "0a425b2af81b78d9d9b2f30072d604eb957be0127368d23af43f33cf293b0e99"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/attachments/10-service-response-entry-d684702f8190b33887a2fc0d0b432f1a79ed9382.png",
+      "sha256": "d5f096cf240f89fae66c51ba8c6d0f44ad426eb0de418301be30feb04b90bb4f"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/attachments/10-service-response-entry-full-47e2d1e6a51813d99290fb30fa8dec6cbbc6e0b7.png",
+      "sha256": "8607f6465d86766ff99d093f40256ea0676cf7ce38fb19568e7b1ff26b748700"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-flow-work-contribution-full.png",
+      "sha256": "c98ec343baa5f73711d8c2b11f72ce29f022314ef744fa870be45c5cc459cb4d"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-flow-work-contribution.png",
+      "sha256": "36dfaeb0957e7f2c5193ccdd143058454f658079c1453e89d5a4a013fa9b3a67"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-service-response-entry-full.png",
+      "sha256": "cce8c6ad26585cbe4495fb76613598cd41e4e347f67704fae895b6fab0a58ebd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-service-response-entry.png",
+      "sha256": "70b5bcfdb128d4879f294edca13fb78ebbc525fc6ba28a5e6b48002ea3b46667"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/attachments/10-flow-work-contribution-fab53e927ddc5e6749d17571dbab199ddf399b41.png",
+      "sha256": "36dfaeb0957e7f2c5193ccdd143058454f658079c1453e89d5a4a013fa9b3a67"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/attachments/10-flow-work-contribution-full-1d199a91ec609b00cef319dd2dac09641241ebe3.png",
+      "sha256": "c98ec343baa5f73711d8c2b11f72ce29f022314ef744fa870be45c5cc459cb4d"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/attachments/10-service-response-entry-2bac6a58bfa43cc0ca7723ebbdf6818965c1502f.png",
+      "sha256": "70b5bcfdb128d4879f294edca13fb78ebbc525fc6ba28a5e6b48002ea3b46667"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/attachments/10-service-response-entry-full-e2ad0add6d936fb3c45a4647596bf75e1bf34cec.png",
+      "sha256": "cce8c6ad26585cbe4495fb76613598cd41e4e347f67704fae895b6fab0a58ebd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-chromium/05-personal-task-css-zoom-200-full.png",
+      "sha256": "4a5536ef12d636c41cd7d4f148b2395508da59554f7ab564561603d28442b2d6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-chromium/05-personal-task-css-zoom-200.png",
+      "sha256": "087a8aaecebd836ed7680b4f23bb825c47c6f3525ff725fbaac8ea0175188cdb"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-chromium/attachments/05-personal-task-css-zoom-200-fb32a678090c18ba8f04b9bb834731947b8ba474.png",
+      "sha256": "087a8aaecebd836ed7680b4f23bb825c47c6f3525ff725fbaac8ea0175188cdb"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-chromium/attachments/05-personal-task-css-zoom-200-full-0caffefca16bf331aff66d75101d5ea6bf43d46d.png",
+      "sha256": "4a5536ef12d636c41cd7d4f148b2395508da59554f7ab564561603d28442b2d6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-mobile/05-personal-task-css-zoom-200-full.png",
+      "sha256": "f297f9df5a11e5724cb7abdf3362e0480b8bb685a73fe687d10812e54b4c2c6e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-mobile/05-personal-task-css-zoom-200.png",
+      "sha256": "e3879ca1d86d50b8869975b60a7357d0719b04479ed79d9b8330c8d7579fdc4c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-mobile/attachments/05-personal-task-css-zoom-200-5e8f0d1029b55483b1adeed3a82a7dd17959608d.png",
+      "sha256": "e3879ca1d86d50b8869975b60a7357d0719b04479ed79d9b8330c8d7579fdc4c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-mobile/attachments/05-personal-task-css-zoom-200-full-404ba09d948f6d4ac963e01826d799fb41d845ca.png",
+      "sha256": "f297f9df5a11e5724cb7abdf3362e0480b8bb685a73fe687d10812e54b4c2c6e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-chromium/01-queue-dark-full.png",
+      "sha256": "ebd2649f139f23abe5c9341cc514077bd1fac9f8a568b0ac2ac2bb0f137b8ed9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-chromium/01-queue-dark.png",
+      "sha256": "8bb41ce27f2b5a00cd5bb82033565c987df53664f3a95bba5188107b0b3a09b6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-chromium/attachments/01-queue-dark-34342b7b7a5fb79c40cd1a629d0ad1941fcbd1b1.png",
+      "sha256": "8bb41ce27f2b5a00cd5bb82033565c987df53664f3a95bba5188107b0b3a09b6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-chromium/attachments/01-queue-dark-full-06544414dad639dcc3c875c7e5c067b1c73f5004.png",
+      "sha256": "ebd2649f139f23abe5c9341cc514077bd1fac9f8a568b0ac2ac2bb0f137b8ed9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-mobile/01-queue-dark-full.png",
+      "sha256": "9d2fae5cc38afe246e1ad072b1e2830b23b594073aab668378de7f87cc2f23e6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-mobile/01-queue-dark.png",
+      "sha256": "9c126ab14e6fd15bc845b00e2bb01ba23674a08a41b4c87fbf0ba73fc54d261e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-mobile/attachments/01-queue-dark-5d16dca59c045faf26ebb0fc1282912fecf5571c.png",
+      "sha256": "9c126ab14e6fd15bc845b00e2bb01ba23674a08a41b4c87fbf0ba73fc54d261e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-mobile/attachments/01-queue-dark-full-5edd69af830c236216b37a3da4e305723ca74632.png",
+      "sha256": "9d2fae5cc38afe246e1ad072b1e2830b23b594073aab668378de7f87cc2f23e6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "sha256": "846bbef3d9ecb3c0a5b175dfca88b70e94bb2a0f4d779e0269ca82f80d91fcae"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "sha256": "5df2813753546972f5b30e713a551af2f1489f34188dcff42150cecd6a57baa6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "sha256": "8347f7cd8b39c11fb4bed037f01159dd7e09b46a5c259a5603696dccd940d85a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "sha256": "a2291f6706dd9efc4654e348c39ab205d3b08b99c1023ce0639875a607f8de31"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "sha256": "e63bdea659c2370125cd5c0d1b81b7d99f4b37953859f7313e64e7b2171e25f4"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "sha256": "501d47a43c042e0a36158901ab72d910a1f5906111eef799c25dcde28b6ee3f4"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "sha256": "007270e79384dd2c576e6989dd7842bd460abd18751c16f86c6c4eb62af9be5b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/09-source-status.png",
+      "sha256": "0e6b6723a962496b0f260d0c9169da840f48fff658cd8c278ed4e8120220b419"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "sha256": "f398e87b7c758e97c5c3f007bb9c3ac13a2c6e61d81aa77a4ab65b7e79b96735"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "sha256": "3c884284a08f476785f4c0de24d2ae79d1710ddfb4a0ff64f135308247e0f353"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-3f9190deb357e625233f8c91ead758cff88db10c.png",
+      "sha256": "5df2813753546972f5b30e713a551af2f1489f34188dcff42150cecd6a57baa6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-ac15980c2b4fb48de1a790cc335f5a6824e51b75.png",
+      "sha256": "846bbef3d9ecb3c0a5b175dfca88b70e94bb2a0f4d779e0269ca82f80d91fcae"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/07-today-plan-2ee7bfd5e43f9d50aa0ccda242064bea3840c302.png",
+      "sha256": "a2291f6706dd9efc4654e348c39ab205d3b08b99c1023ce0639875a607f8de31"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-8318a305e52ce87b38d02721b9183f6f77b47183.png",
+      "sha256": "8347f7cd8b39c11fb4bed037f01159dd7e09b46a5c259a5603696dccd940d85a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-5239a19183e5a0364d9ca30f007426dd71f45d13.png",
+      "sha256": "501d47a43c042e0a36158901ab72d910a1f5906111eef799c25dcde28b6ee3f4"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-9e54ac4e8cc85858c2c9da30c3aa0f0db6e8e147.png",
+      "sha256": "e63bdea659c2370125cd5c0d1b81b7d99f4b37953859f7313e64e7b2171e25f4"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/09-source-status-c84a5121252ba6d7922360db54cc4bd5c407ca61.png",
+      "sha256": "0e6b6723a962496b0f260d0c9169da840f48fff658cd8c278ed4e8120220b419"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/09-source-status-full-e26da5fedf89f3cb2da431177a7dd00055dba61f.png",
+      "sha256": "007270e79384dd2c576e6989dd7842bd460abd18751c16f86c6c4eb62af9be5b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-3bb33ab6fb9470f5177721512b43722d1300ad7f.png",
+      "sha256": "3c884284a08f476785f4c0de24d2ae79d1710ddfb4a0ff64f135308247e0f353"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-e4047a0f754c087ad4a41d1296789a38139fdbe2.png",
+      "sha256": "f398e87b7c758e97c5c3f007bb9c3ac13a2c6e61d81aa77a4ab65b7e79b96735"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "sha256": "284c3c40b120472d0713e0b34f4309af802c565a1dc0986e12ba89d026cbd8bf"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "sha256": "a17c596265ec5d40ac35b47908a9f05eb886f8e65e524478176cfe96dbfec04a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "sha256": "7b051905feb3524a629a6b2d9eea6aabdc463773873f33f0d44ea8b65dd7ad0d"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "sha256": "c34483f20cb5004ad179e20b404df7602cd0721ca6ab8bf8d2ffd9450c6685cd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "sha256": "eabd2c36a91ed1d634924aecb924a2e0aff37a0951d56e3a1400883e578f765c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "sha256": "9dcb303ae99123b7bfe8462036555a7f160b514c9ea8734881d286407f4d0e4e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "sha256": "1dd600f8e74fb6270dd789af98b7c7ae825eb88f87b3f09ff903b0867da0e162"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/09-source-status.png",
+      "sha256": "314db2d4b885f71a667ce56b2912cf19417c8e9bd658580ba733ee7078ba5bd7"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "sha256": "674c5ae2bf94aed540b94a1c0bf1d102e48b214bcb024460093e29a1fd10f7f2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "sha256": "f910bde588a0f43e20b8079050a6f3bebfce47a01eae6efba07e5a0ebf294186"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/01-unified-queue-e7df815f50c8862f638e779aec68c84088220a0b.png",
+      "sha256": "a17c596265ec5d40ac35b47908a9f05eb886f8e65e524478176cfe96dbfec04a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-64287103289b9c09885ab1ebbdc11c382d0bebb7.png",
+      "sha256": "284c3c40b120472d0713e0b34f4309af802c565a1dc0986e12ba89d026cbd8bf"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/07-today-plan-5e54e380959a3b7ca7810d1a512e25eea3f4c0c3.png",
+      "sha256": "c34483f20cb5004ad179e20b404df7602cd0721ca6ab8bf8d2ffd9450c6685cd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-251367ac33f5545f6739ae89bd7dd036555ca1d8.png",
+      "sha256": "7b051905feb3524a629a6b2d9eea6aabdc463773873f33f0d44ea8b65dd7ad0d"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-c1b1bdfe826ea3f27bde6cdcc465928cd55f9336.png",
+      "sha256": "9dcb303ae99123b7bfe8462036555a7f160b514c9ea8734881d286407f4d0e4e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-8b63520c4c93773043d28c8b86151baac7bf166f.png",
+      "sha256": "eabd2c36a91ed1d634924aecb924a2e0aff37a0951d56e3a1400883e578f765c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/09-source-status-57a9a666df993b11189639781ee19da023fffdde.png",
+      "sha256": "314db2d4b885f71a667ce56b2912cf19417c8e9bd658580ba733ee7078ba5bd7"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/09-source-status-full-1138927f93168509ced4e7c680eaffc86479efe5.png",
+      "sha256": "1dd600f8e74fb6270dd789af98b7c7ae825eb88f87b3f09ff903b0867da0e162"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-6a9ed308d5b9346f0fc965e9efae4fc3e8c002da.png",
+      "sha256": "f910bde588a0f43e20b8079050a6f3bebfce47a01eae6efba07e5a0ebf294186"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-b54e6740f34c4121f25a9cad2bcb375318d0987c.png",
+      "sha256": "674c5ae2bf94aed540b94a1c0bf1d102e48b214bcb024460093e29a1fd10f7f2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "sha256": "bd283bfbecbcd35cf21426e2cd1b044978df5f24fa2a04a48e1cff3ddbb3b15c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "sha256": "6eecf6c8779eaad095cf9b98e44bb72b12621cb5e2b5e8ee31fab06173d5a21a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "sha256": "9231a707173a5848e44503372643bd005cb6b77bd386198fedb7bf2beb8a0f63"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "sha256": "5d6a95881cc9a0e2ff4e1af99653adfd5fee64cf1569f8201c52afb7e901111e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "sha256": "565e92c71b526c516083ed2051b2bfecba9665a955f5fdfecc0e8b821d7ee706"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "sha256": "196ec0799cc1b1322ddae33ea3c3f87d21d1ce136a882ebb05abce93c793f2f8"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "sha256": "6ec088c610fc24e718e6a4500c967a2d5a4fe17b930fa76a86ad5c2c0ce4d115"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status.png",
+      "sha256": "66d725309ff5d6c9b40e9d539eedc97b93411e04578d12c2d6abe29fcafcd4af"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "sha256": "3986eecaa44c0a0430a3e8e4761034c47e5f6887ba20d960e0f1df9d5e17fbfc"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "sha256": "35d9133ad2a1144cba97d749d40faf0ed2b14fed8634b70c79a74fa1fc92563a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/01-unified-queue-a03b20e01c87ac04fbb4137b79b346db0bd2ca73.png",
+      "sha256": "6eecf6c8779eaad095cf9b98e44bb72b12621cb5e2b5e8ee31fab06173d5a21a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-d54c3842e8116eeac75b83c28db919c1d6a89f04.png",
+      "sha256": "bd283bfbecbcd35cf21426e2cd1b044978df5f24fa2a04a48e1cff3ddbb3b15c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/07-today-plan-59f9567bcc1df5adf8c033958db772a33fe957ef.png",
+      "sha256": "5d6a95881cc9a0e2ff4e1af99653adfd5fee64cf1569f8201c52afb7e901111e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-7bbadfdd8df11669a5ca9d5ba5e293f66359734b.png",
+      "sha256": "9231a707173a5848e44503372643bd005cb6b77bd386198fedb7bf2beb8a0f63"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-2772c7f3e929a81bb500c61d3180d0303f81e743.png",
+      "sha256": "196ec0799cc1b1322ddae33ea3c3f87d21d1ce136a882ebb05abce93c793f2f8"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-af05190f227cbb514989040fd67b9a4775aa24a5.png",
+      "sha256": "565e92c71b526c516083ed2051b2bfecba9665a955f5fdfecc0e8b821d7ee706"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/09-source-status-92223bbcca5464d625074f982ef854c7f78a3663.png",
+      "sha256": "66d725309ff5d6c9b40e9d539eedc97b93411e04578d12c2d6abe29fcafcd4af"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/09-source-status-full-7506b7b7b18b86fb6c569c998b38fc2656b861c0.png",
+      "sha256": "6ec088c610fc24e718e6a4500c967a2d5a4fe17b930fa76a86ad5c2c0ce4d115"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-942b481455ec6524cb80f06d719a67dd13b55284.png",
+      "sha256": "35d9133ad2a1144cba97d749d40faf0ed2b14fed8634b70c79a74fa1fc92563a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-57afcc60efd4f63df2b0a3f7448c3bf96b7485bb.png",
+      "sha256": "3986eecaa44c0a0430a3e8e4761034c47e5f6887ba20d960e0f1df9d5e17fbfc"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "sha256": "6b85b9a7853d4d5ec3440d69b9eb053a58e170fbe27923a6a9641d6c5d476e8e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "sha256": "51bd8d21255421adc9a77fb7dce5269e4a1cb38a8245816bb95be4c862f32e40"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "sha256": "63b36f400da73c524b242a2953ce7056b2c29b56c45758bce93e224ce3aea118"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "sha256": "3518d363c934957f486da5625413a88b1ebfa2f16eeed5c247e494c43febf6ff"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "sha256": "40b7badaea982eedb611ebc9bfa9fd41e307cb8e0d15a43652c0a64faf1e3ba9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "sha256": "f90cea7db3a41d516db94ea77b2f800d02c531cc2088e124be795f596a55c928"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "sha256": "6fde067c138b699782b394d66f28b3fe93d85af41837f447f17f5bc9ea42bdcd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/09-source-status.png",
+      "sha256": "6386554d8d1b513dd7c35a59fe85b46a7454865dc9740a0682a670ac70575c3b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "sha256": "5ae2c4af307e88b2f9b44592ace86c7b0929eeb0b1ffec9ed96e6b4f02896828"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "sha256": "36bde2c4e03c1956dd86ca3b3851cf3bd327f3a0bb6eceda8b80dd8b30d2ea7c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/01-unified-queue-fd3b402dd740758f352a5cf2149df56dfb04e8fe.png",
+      "sha256": "51bd8d21255421adc9a77fb7dce5269e4a1cb38a8245816bb95be4c862f32e40"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-0210af7f1fb0a2c335c8e2be5b1c4af0e1f1ff31.png",
+      "sha256": "6b85b9a7853d4d5ec3440d69b9eb053a58e170fbe27923a6a9641d6c5d476e8e"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/07-today-plan-6052c1c0a235f0ca8c6fad64a9b73279c68a0b47.png",
+      "sha256": "3518d363c934957f486da5625413a88b1ebfa2f16eeed5c247e494c43febf6ff"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-872e71f05adc64e1b1e5a2e3e35a1c79fdbc34a6.png",
+      "sha256": "63b36f400da73c524b242a2953ce7056b2c29b56c45758bce93e224ce3aea118"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-813da729f56bcf3f14d153b96abe22d1f349e0a4.png",
+      "sha256": "f90cea7db3a41d516db94ea77b2f800d02c531cc2088e124be795f596a55c928"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-6091093a5a36e469e1bb63f14a35e45195e70bb6.png",
+      "sha256": "40b7badaea982eedb611ebc9bfa9fd41e307cb8e0d15a43652c0a64faf1e3ba9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/09-source-status-9ac52565b35dc5dc98575d2f3fcf83493bc1b5c3.png",
+      "sha256": "6386554d8d1b513dd7c35a59fe85b46a7454865dc9740a0682a670ac70575c3b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/09-source-status-full-d2be01637c3677dd41dca741c59905931439bdaf.png",
+      "sha256": "6fde067c138b699782b394d66f28b3fe93d85af41837f447f17f5bc9ea42bdcd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-ec07c4246489e88de7588d4f7298e3caa82372c8.png",
+      "sha256": "36bde2c4e03c1956dd86ca3b3851cf3bd327f3a0bb6eceda8b80dd8b30d2ea7c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-6fa4de7ec66a52b0a389530630cbe9e4a14b71ab.png",
+      "sha256": "5ae2c4af307e88b2f9b44592ace86c7b0929eeb0b1ffec9ed96e6b4f02896828"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-chromium/01-queue-high-contrast-full.png",
+      "sha256": "23293dc79e9c74cb64e35830da5242328942299495f41a3f9ba8c91ee8a8b51c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-chromium/01-queue-high-contrast.png",
+      "sha256": "6140b44f1639b4ee0971cf66489ec21187f1c7d41e4d18fcfecab5f40687338b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-chromium/attachments/01-queue-high-contrast-29760893fd9805c395c0ca4e930ff2fc5c197915.png",
+      "sha256": "6140b44f1639b4ee0971cf66489ec21187f1c7d41e4d18fcfecab5f40687338b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-chromium/attachments/01-queue-high-contrast-full-81e36d24e254f7537adaf75b5fb6b9b7782a64bc.png",
+      "sha256": "23293dc79e9c74cb64e35830da5242328942299495f41a3f9ba8c91ee8a8b51c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-mobile/01-queue-high-contrast-full.png",
+      "sha256": "04efd078c6e63da2c02120fa479f563ecc480a4b6d20483b21f88cddc0dc367f"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-mobile/01-queue-high-contrast.png",
+      "sha256": "8242d9bf527ff5d7f91efa952ffe137a03224068096b43da8237532ce5109482"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-mobile/attachments/01-queue-high-contrast-c2c1b6e1a6d414cf20b7edf58c5de40b61344927.png",
+      "sha256": "8242d9bf527ff5d7f91efa952ffe137a03224068096b43da8237532ce5109482"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-mobile/attachments/01-queue-high-contrast-full-c14ba3dcf4aacd76690b26ae0a1840aef8a23c81.png",
+      "sha256": "04efd078c6e63da2c02120fa479f563ecc480a4b6d20483b21f88cddc0dc367f"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "sha256": "68c481b9762e35f2fe02377cb6d8d803d20907c218f2844d4c24caf64367fc55"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "sha256": "8c87e1893adde3d34a2f3135f38744daf8b104ff54f343758f7e777b6c4a3b2b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "sha256": "ab64210b49b458ab98c4d3de564bc7f689ab06fd851b942e492cd63983b6e79d"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "sha256": "cd243331535da2a41e8d344cf331f6e9d82a3ba8bf7201eb78f84ad91e50fe54"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "sha256": "b6b3e6fb4b611fe3e2120a1e004a5ca8cb12eddff8561cf90d098b43a76baae9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "sha256": "cd8382a7d9e2cbaa0491e06d9c3ebfdc3bc0c757a3888e1515d208b6b0e066eb"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "sha256": "f618aef249d0979604d2713aac3eef3276f6a6c71d8a102b135e46f74760df44"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/09-source-status.png",
+      "sha256": "5924460117fd3ad2873bf1351b428d4054d8a7a458e43aadc687b1b9b8aabb3a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "sha256": "a6a0f3ad098d822e3b9d2bfb4fc5c050bfb959b48ce43ac60e8c708c0a26ab09"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "sha256": "da5c1d132fea5834f91e9309bc5bf7a15bf319e087e3b8e04ff8c70955592993"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/01-unified-queue-ed77676defb40a75bb362c585e82b3a8822c4bee.png",
+      "sha256": "8c87e1893adde3d34a2f3135f38744daf8b104ff54f343758f7e777b6c4a3b2b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-95b69563600c3f76e306a3f3c55879a0f9790e49.png",
+      "sha256": "68c481b9762e35f2fe02377cb6d8d803d20907c218f2844d4c24caf64367fc55"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/07-today-plan-5d79fb0b68a037428035e0240310db5347ffaccb.png",
+      "sha256": "cd243331535da2a41e8d344cf331f6e9d82a3ba8bf7201eb78f84ad91e50fe54"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-92492042ae477829b67665dc827e3d157df9ce0b.png",
+      "sha256": "ab64210b49b458ab98c4d3de564bc7f689ab06fd851b942e492cd63983b6e79d"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-0c15f4511654c8984ef5b7bbbde05ac2192ea1f2.png",
+      "sha256": "cd8382a7d9e2cbaa0491e06d9c3ebfdc3bc0c757a3888e1515d208b6b0e066eb"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-85283a1342e4f9594e356f6f720a0abad9697093.png",
+      "sha256": "b6b3e6fb4b611fe3e2120a1e004a5ca8cb12eddff8561cf90d098b43a76baae9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/09-source-status-ad8a50dc046faa3fc5980df10363026360e84f97.png",
+      "sha256": "5924460117fd3ad2873bf1351b428d4054d8a7a458e43aadc687b1b9b8aabb3a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/09-source-status-full-bcd988e6398645705c4d52b4f235e6b4326b2928.png",
+      "sha256": "f618aef249d0979604d2713aac3eef3276f6a6c71d8a102b135e46f74760df44"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-80734c5797fe55c08c91280b30be237d4a5080bd.png",
+      "sha256": "da5c1d132fea5834f91e9309bc5bf7a15bf319e087e3b8e04ff8c70955592993"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-6f58ca766a38b2d1271fbb1f7a3f65fff0642db8.png",
+      "sha256": "a6a0f3ad098d822e3b9d2bfb4fc5c050bfb959b48ce43ac60e8c708c0a26ab09"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "sha256": "088c80a3acd3ef1ca64c488c6a84cfdfb1f679e74fc344832fedd582949524e1"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "sha256": "22fc9e156418753225cf5db014c1e3155d1c1c2b35776ec1d7fe60bfc6b0aab2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "sha256": "4d21591a133e3037d091c22c0001add0793dd8d1821c5092bffcd3dc2673abe2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "sha256": "89368bcc8b1ac7fba6bfc9d9fa5dada3c47c1a1b064f3410b7b877a07419efd1"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "sha256": "0e815a2a71c2f783ace22478583bb0ebbcf61f7e49163d027990b6446215b223"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "sha256": "920a53d80a28d8c20a9c0395edd3fc4a556de9e391a755e6b74703d9ae160a18"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "sha256": "2f5f0b003dc5c4b29587b01fde63e10182f2fee023b8b1db29d62da74d2732cd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/09-source-status.png",
+      "sha256": "7e7551a7ca8735fe4f4e8087d8639c3296d83293561201aba6452ae5ca02b9dd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "sha256": "fc1e31b36e8722407ef8562d2345414a8cafe30015a7f7ee83ca02ecb343ec64"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "sha256": "4c50169c50454f7797dfc34675fffb8ff2a0419c0d16eee003608701328c2477"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/01-unified-queue-a2eae08606b626e39e5c633e9ea2a87237ae8b39.png",
+      "sha256": "22fc9e156418753225cf5db014c1e3155d1c1c2b35776ec1d7fe60bfc6b0aab2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-d680c65231dbf1064d1de7b644f9efd74d0c5c34.png",
+      "sha256": "088c80a3acd3ef1ca64c488c6a84cfdfb1f679e74fc344832fedd582949524e1"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/07-today-plan-f6e0a3e9e0d5baeef0aa3baff5da3ef527a48909.png",
+      "sha256": "89368bcc8b1ac7fba6bfc9d9fa5dada3c47c1a1b064f3410b7b877a07419efd1"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-12478194284db0d1685022c9caa46d0a7dd34725.png",
+      "sha256": "4d21591a133e3037d091c22c0001add0793dd8d1821c5092bffcd3dc2673abe2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-f86d201a55eca79200ba7ff7ac9cd8ab6f63f3b6.png",
+      "sha256": "920a53d80a28d8c20a9c0395edd3fc4a556de9e391a755e6b74703d9ae160a18"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-cf4726daa61cd1bf15d2d461534372228508291c.png",
+      "sha256": "0e815a2a71c2f783ace22478583bb0ebbcf61f7e49163d027990b6446215b223"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/09-source-status-7b0f72f3b6b167e364ec0a1f76437a09c468226a.png",
+      "sha256": "7e7551a7ca8735fe4f4e8087d8639c3296d83293561201aba6452ae5ca02b9dd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/09-source-status-full-9f86101b08edbb408cd446a04d20dd5a1bf80528.png",
+      "sha256": "2f5f0b003dc5c4b29587b01fde63e10182f2fee023b8b1db29d62da74d2732cd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-013c0a16c9cb39f7a73b3cae0c8e78fd733b4c90.png",
+      "sha256": "4c50169c50454f7797dfc34675fffb8ff2a0419c0d16eee003608701328c2477"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-11d540439ae279cf605cea0c89a4dd4f38418cb7.png",
+      "sha256": "fc1e31b36e8722407ef8562d2345414a8cafe30015a7f7ee83ca02ecb343ec64"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "sha256": "7693a208d8255dcce42acb550506e112d12708d31693861493cc107dabace039"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "sha256": "0815b18df1a431ac0f7b213ce3d1a704b994c8337add464ee834d5d205a27c63"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "sha256": "f7abe4febda33fa5177d56da19a9a63de294b1a270fdf8966b68888ef542caba"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "sha256": "18ff1ee70007a8ac480f8725e245a8d7f03ae00d236e30d7a1ac846bf2409ca0"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "sha256": "cf0c5d79afb9a3fb07f9cce7ad30228acae7110f239fe9570d999f83c97f8d49"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "sha256": "0b2078df1a160f2e296d6adeb17117c92e666c7cfaef9897941fc35a1dc45c07"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "sha256": "97fa32373659e40d7dd01d3da9e59b827b8981518cb17616e9cce8543060190b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/09-source-status.png",
+      "sha256": "739cd9b029fc966e1af1fae04cb954fd4577ab4151506371de35b7b0c8a1074a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "sha256": "063ae4ba685bafe6fc5077a00641ebc1e797dafbde9c6251765e2d2be7963d64"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "sha256": "72d7a6a69181ac66dfc9de6f800b6e1c557158912d698cd249bdae92bfa0d912"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-6b9a3cfedba009f3519def8e3d5de6d682830046.png",
+      "sha256": "0815b18df1a431ac0f7b213ce3d1a704b994c8337add464ee834d5d205a27c63"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-c7e3ca4f6f00e21a82f5f24d5216a86afedfaae9.png",
+      "sha256": "7693a208d8255dcce42acb550506e112d12708d31693861493cc107dabace039"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/07-today-plan-035855cb895740288439a5a063b84743df2c16ed.png",
+      "sha256": "18ff1ee70007a8ac480f8725e245a8d7f03ae00d236e30d7a1ac846bf2409ca0"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-8b344a1d83d428fff5e839ae2276f8fece2df32e.png",
+      "sha256": "f7abe4febda33fa5177d56da19a9a63de294b1a270fdf8966b68888ef542caba"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-e520da891a7b199383a2e7df4d53508216c6601e.png",
+      "sha256": "0b2078df1a160f2e296d6adeb17117c92e666c7cfaef9897941fc35a1dc45c07"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-420919a4d73392286e7f6abc0cd3d4c222324568.png",
+      "sha256": "cf0c5d79afb9a3fb07f9cce7ad30228acae7110f239fe9570d999f83c97f8d49"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/09-source-status-8dc2b4a577183fd05f8b79195983d7ac75c75dee.png",
+      "sha256": "739cd9b029fc966e1af1fae04cb954fd4577ab4151506371de35b7b0c8a1074a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/09-source-status-full-af0dd65fee977f278d39290d540f49dff49aca06.png",
+      "sha256": "97fa32373659e40d7dd01d3da9e59b827b8981518cb17616e9cce8543060190b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-0633f50fa70f46beecb763cd76c1c3e389fcf8c7.png",
+      "sha256": "72d7a6a69181ac66dfc9de6f800b6e1c557158912d698cd249bdae92bfa0d912"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-70ad0ea245415fb8c818bbfa4e3f1eeafe9386a7.png",
+      "sha256": "063ae4ba685bafe6fc5077a00641ebc1e797dafbde9c6251765e2d2be7963d64"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "sha256": "00a2577dcac0b9c5b67184efcd62373a3aa5202e4d1f879de1743a79a9080477"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "sha256": "87b62a957f69adaf8f1f3abd2cee4881ea7075523bcc92fb2d24e49384d5fe56"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "sha256": "bf0c28722b913d61da489ebbc4b3dae0b7e8c352089bdad38029cd7a5a31e3fa"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "sha256": "50f462c50a305745f7cab6485eb3ca2fec2203497b0e9613d546d69a9a226ac2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "sha256": "069ac341bf2aeb4611412a5a322100e51292b84817ba5b10d1651991366a0b33"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "sha256": "5eda8e2fb5fa4c74e1f0ad0bbe42688b2b85f5b76df39ca2a9f1a0b56c179ea6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "sha256": "0f30e3d780658ad79b0e89f29726c76a838440e7aa89e83a2690bc50ee35b27a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/09-source-status.png",
+      "sha256": "f18950846606a268e95d7ce509572c2c43f1e34dfda337fd1f646d81d4e052c9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "sha256": "73119f1d547fd30d02d0adf62285c76ba05cde4651bf172418c68da14d8cb4eb"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "sha256": "19ad0dec0e69413d796189448bfa7564b2eb48dc857a74600ca45330a4268171"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/01-unified-queue-9693d293538ff23260f3ee1b117205316386a408.png",
+      "sha256": "87b62a957f69adaf8f1f3abd2cee4881ea7075523bcc92fb2d24e49384d5fe56"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-35bcf14d2184a1c52e0ef6ff6abcf4cbb4f87b94.png",
+      "sha256": "00a2577dcac0b9c5b67184efcd62373a3aa5202e4d1f879de1743a79a9080477"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/07-today-plan-1427d0485f17248087739e0746e081ae366a4e26.png",
+      "sha256": "50f462c50a305745f7cab6485eb3ca2fec2203497b0e9613d546d69a9a226ac2"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-f476407be2b5e7c268bd59534f5a78f1cf54ecc6.png",
+      "sha256": "bf0c28722b913d61da489ebbc4b3dae0b7e8c352089bdad38029cd7a5a31e3fa"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-81dcdb880bd941874ddcbd5f12833ed82f2c6244.png",
+      "sha256": "5eda8e2fb5fa4c74e1f0ad0bbe42688b2b85f5b76df39ca2a9f1a0b56c179ea6"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-0dfbaae595a93238b486678dda6759ed7b7c6e42.png",
+      "sha256": "069ac341bf2aeb4611412a5a322100e51292b84817ba5b10d1651991366a0b33"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/09-source-status-739502361610baff8d2b484890c0e6de51b661ae.png",
+      "sha256": "f18950846606a268e95d7ce509572c2c43f1e34dfda337fd1f646d81d4e052c9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/09-source-status-full-3ee26dfa9120f5497cfcdc7d3545a7fe8e861f51.png",
+      "sha256": "0f30e3d780658ad79b0e89f29726c76a838440e7aa89e83a2690bc50ee35b27a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-ea614493d3c51c76c29b6613e9933420c5630459.png",
+      "sha256": "19ad0dec0e69413d796189448bfa7564b2eb48dc857a74600ca45330a4268171"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-7bc3fce78b8b2115c5d2f85e84a5f433f69982b8.png",
+      "sha256": "73119f1d547fd30d02d0adf62285c76ba05cde4651bf172418c68da14d8cb4eb"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "sha256": "37c866a06ea71eba306eb005e3c945d7e3e756e1a1e286e2f3962c991943e973"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "sha256": "3f93774f1119aae58d6346eeb39f14356165a64fda66bb52814e6e307f8afe9a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "sha256": "22da1b22b3796f1765d196a4f95359d5cbef11059313f75ee9176fee7b6d56d8"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "sha256": "234c77945718bc38dc6d9ad413aed1479bb624b2db0e83939da810c883936bc5"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "sha256": "ad165a94e1913bb3d285ac55f755a46f754255adc46d11a18891971eac4a1d35"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "sha256": "25fc5d1c134b7db6cb9fce5874f36ae05faa9bb9f84c159d099c3acd11f480e5"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "sha256": "54f9a5b1accd36f328306562a154b4eac9abaa622f39f12db4d9b067e41627ec"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/09-source-status.png",
+      "sha256": "5e88f649ab2af008d5c5a4cc0f296074b8f7bb3c17f551c9e663ee237889f5b8"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "sha256": "05af42a1a741e262323d0c9b13bef588096d5a95369d463d8148d7212a57290c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "sha256": "075e25725f73662a3d6996b0e84418cb0cb3b1ac9005e0e2fcc7cd879af31eba"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/01-unified-queue-312032e5b6c2ecef617fc13dd35cc3226a75abcc.png",
+      "sha256": "3f93774f1119aae58d6346eeb39f14356165a64fda66bb52814e6e307f8afe9a"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-3352bbe43a1afc575a57fceab51a5d2d03d2e288.png",
+      "sha256": "37c866a06ea71eba306eb005e3c945d7e3e756e1a1e286e2f3962c991943e973"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/07-today-plan-14c760f874a68ccc511757adf36a25d837189618.png",
+      "sha256": "234c77945718bc38dc6d9ad413aed1479bb624b2db0e83939da810c883936bc5"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-b36708f707c81255de25d372661365d7c922d003.png",
+      "sha256": "22da1b22b3796f1765d196a4f95359d5cbef11059313f75ee9176fee7b6d56d8"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-4f095f7bc328a5453e556c17d09be729a530ca10.png",
+      "sha256": "25fc5d1c134b7db6cb9fce5874f36ae05faa9bb9f84c159d099c3acd11f480e5"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-446757b156892938ecdcbcaf67bdcf79bc5069a9.png",
+      "sha256": "ad165a94e1913bb3d285ac55f755a46f754255adc46d11a18891971eac4a1d35"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/09-source-status-35fc82ab4016d5fa92f6d2dee441f2474ba3543e.png",
+      "sha256": "5e88f649ab2af008d5c5a4cc0f296074b8f7bb3c17f551c9e663ee237889f5b8"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/09-source-status-full-235b0a33466f147c0d0d1aecb8d52e77bb1883d7.png",
+      "sha256": "54f9a5b1accd36f328306562a154b4eac9abaa622f39f12db4d9b067e41627ec"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-57ff17685f4738f54661f383ce11fab86d25740c.png",
+      "sha256": "075e25725f73662a3d6996b0e84418cb0cb3b1ac9005e0e2fcc7cd879af31eba"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-0afaf422de7d77dfd5f57bba1ababf4344b6c58c.png",
+      "sha256": "05af42a1a741e262323d0c9b13bef588096d5a95369d463d8148d7212a57290c"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "sha256": "b88b2414897bf3da07492dee82a71029fd31e47b6f2f2411f1b61326d6d8e82b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "sha256": "905eb4784765aa5d235526eac3fa4f4286d40b00c1e457d814199def39039860"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "sha256": "30cc82792999397e8a5eebbb05102d5495a2104a6f87945d57ad1f36b72478b0"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "sha256": "b61c3e81a5d10857d5b487257293a64769112141c91bfbb6956841c918fae2bd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "sha256": "0c35d233d75a59de63225fdc8b9f4f25dd6de723ca99f90531fded8052c09876"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "sha256": "563bd7a59c3c41df622788029be20b5cf9fea2b1054f7b391d314a49a5bda631"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "sha256": "7991e12190b0c7d32ace9807275ca3daed9c5889dfad80d1ffd5f4554bac565b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/09-source-status.png",
+      "sha256": "9009174925ae68154ffaf9eed900bd8a49b5c52da1385a5a1fdc23dc803e4286"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "sha256": "9fc319ab9ea813e15b0287cd3c2efaf83ebee083150f960838e5e2fa008dd0e9"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "sha256": "6387ce65bc456ff94e4b20ea247dc10f9df3fb034a53bb9ff0e97037bb24c6dd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/01-unified-queue-f2d11f1ece5d0eb071bca1c114ed096f972fd6cd.png",
+      "sha256": "905eb4784765aa5d235526eac3fa4f4286d40b00c1e457d814199def39039860"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-08775f961594cc428073965362662745b48903e5.png",
+      "sha256": "b88b2414897bf3da07492dee82a71029fd31e47b6f2f2411f1b61326d6d8e82b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/07-today-plan-08ca9ecf07de58c22207bb26f5e8479fb2cfad5e.png",
+      "sha256": "b61c3e81a5d10857d5b487257293a64769112141c91bfbb6956841c918fae2bd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-108c06c92422c139b0f1ef3c64b1c03b2e46f3c3.png",
+      "sha256": "30cc82792999397e8a5eebbb05102d5495a2104a6f87945d57ad1f36b72478b0"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-e5fd42b5f0585c76598b8a199e67b737e3e79bfd.png",
+      "sha256": "563bd7a59c3c41df622788029be20b5cf9fea2b1054f7b391d314a49a5bda631"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-c5ed6d18e3bb9cadfcd9bed0d08c805543d67a37.png",
+      "sha256": "0c35d233d75a59de63225fdc8b9f4f25dd6de723ca99f90531fded8052c09876"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/09-source-status-4e75f8c0398d1c9527abce585f4ebe474d4ff2d8.png",
+      "sha256": "9009174925ae68154ffaf9eed900bd8a49b5c52da1385a5a1fdc23dc803e4286"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/09-source-status-full-68544c20e8d4faa6ccb1f69de0617039c8d049e1.png",
+      "sha256": "7991e12190b0c7d32ace9807275ca3daed9c5889dfad80d1ffd5f4554bac565b"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-702c0e2c192d4c976fc69b9bc217db00609da6f7.png",
+      "sha256": "6387ce65bc456ff94e4b20ea247dc10f9df3fb034a53bb9ff0e97037bb24c6dd"
+    },
+    {
+      "path": "canonical-final-1459/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-a77b714a98a64148a620df7d575f427a4d88cef1.png",
+      "sha256": "9fc319ab9ea813e15b0287cd3c2efaf83ebee083150f960838e5e2fa008dd0e9"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-01fc8-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "sha256": "e89d026aa4fadbb7625cd62341e5773ec5166f050a47d5f8ebb0042697fd1ce1"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-01fc8-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "sha256": "ac4718992e23ba3c0c8ed71b280ca4726017edd0a4ac7a127a9488fbdc3f3b75"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-0767a-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "sha256": "70a83942a13db721755ffe2b9665df7a1f700dabc05f116147c9826f17d931de"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-0767a-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "sha256": "f82d23c359c17f34ea520c48074ab6e7c304c18fc6673f6e6eb3956c4f888c9d"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-3db73-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "sha256": "0fb9de19b9aa22431bcb21165a551efcf9754f1555a4dbc9a6b75678343652cc"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-3db73-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "sha256": "56e8442138796ef3d8fc21cbcc3f550a0587e4fb2a3225eed9125635e55eb81a"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-63d33-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "sha256": "4039c32ba8721526c62adb8bba5a32b6a66b13619682b4e374cf6a27aaaca54c"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-63d33-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "sha256": "803a3e1e7ca9adc81c924d73d7dc1a6905ae9ba8974934ccae408250758599d1"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-dd4a5-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "sha256": "0a2995061a94923941ab7abeb066ccd3065e5e9748e96ef5c7fc481f0be51112"
+    },
+    {
+      "path": "canonical-final-1459/work-task-edit-conflict-ta-dd4a5-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "sha256": "6307006a0988ac3cd4fe8f2c86e810b7a325eed41c56d8ab4f1a2d229780f8eb"
+    },
+    {
+      "path": "isolated-failure-audit-1505/.last-run.json",
+      "sha256": "db5aea4c8d3389956d90632b8a0d5ba572154908837f16eb194a5d05f5280942"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile/error-context.md",
+      "sha256": "855e9fed9d5a83f3c2dc7d90e76f2518b6b7a22cc1c1253d5269f797b12bf997"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile/test-failed-1.png",
+      "sha256": "48f72a8337f29a99e5b3600088ae4709e08a09278648220af07f550686f508a2"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile-repeat1/error-context.md",
+      "sha256": "855e9fed9d5a83f3c2dc7d90e76f2518b6b7a22cc1c1253d5269f797b12bf997"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile-repeat1/test-failed-1.png",
+      "sha256": "48f72a8337f29a99e5b3600088ae4709e08a09278648220af07f550686f508a2"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-0937c-Work-Activity-trigger-focus-mobile-repeat2/activity-return-focus-320.png",
+      "sha256": "17c750344d98015cfd38a1edfdc69f0c64fb50237cebe218def0b75081df2fff"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-7a267-consumes-stale-focus-intent-mobile/error-context.md",
+      "sha256": "855e9fed9d5a83f3c2dc7d90e76f2518b6b7a22cc1c1253d5269f797b12bf997"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-7a267-consumes-stale-focus-intent-mobile/test-failed-1.png",
+      "sha256": "48f72a8337f29a99e5b3600088ae4709e08a09278648220af07f550686f508a2"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-a75c7-Work-Activity-trigger-focus-mobile/activity-return-focus-1280.png",
+      "sha256": "c83c38f90425a32536a569519f2edd57c60bd32dc379154e00c467a425f3f94a"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-a75c7-Work-Activity-trigger-focus-mobile-repeat1/activity-return-focus-1280.png",
+      "sha256": "d35cd74898090abb1a5771e845511c543bff0d714c7c03843d0315ff458cf16d"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-a75c7-Work-Activity-trigger-focus-mobile-repeat2/activity-return-focus-1280.png",
+      "sha256": "05a1df54acd041df9d3b37a2c83668583b8cb009c13081b7f7de98f19f8e5da7"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-e55d4-Work-Activity-trigger-focus-mobile/activity-return-focus-390.png",
+      "sha256": "965373546d58d53c58dd4e857ff33bdd17c9da354067566b0a992eeac038d6ea"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-e55d4-Work-Activity-trigger-focus-mobile-repeat1/activity-return-focus-390.png",
+      "sha256": "25406e2819fbd8bca19c639467112f0bbbfadefa9bd2986fffe42948eea8fa63"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-activity-return-focus-e55d4-Work-Activity-trigger-focus-mobile-repeat2/activity-return-focus-390.png",
+      "sha256": "25406e2819fbd8bca19c639467112f0bbbfadefa9bd2986fffe42948eea8fa63"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-bb66f--a-new-version-can-be-saved-mobile/error-context.md",
+      "sha256": "9fa2d077fdbc83b6600cfaa2dc13b22f0ee8546614bf134a7980680bd03301f0"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-bb66f--a-new-version-can-be-saved-mobile/test-failed-1.png",
+      "sha256": "73c2d2d838d96b45bb20002b5719d4a741b92994d79ceea3639d2f878c883e65"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-bb66f--a-new-version-can-be-saved-mobile-repeat1/error-context.md",
+      "sha256": "9fa2d077fdbc83b6600cfaa2dc13b22f0ee8546614bf134a7980680bd03301f0"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-bb66f--a-new-version-can-be-saved-mobile-repeat1/test-failed-1.png",
+      "sha256": "5d2c6fcb2399d685ad6ac92c72b6a797c01f3f71907a31b45e52287e12aac9f8"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile/error-context.md",
+      "sha256": "bc165972cd685ba5c7af41afcdabd4b068363a55082ef6578eb744ffc24009c2"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile/test-failed-1.png",
+      "sha256": "92dbe9a2b1d67da656153f1701950f6d7ba66cb0c919e46db5e73ace687a823f"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile-repeat1/error-context.md",
+      "sha256": "bc165972cd685ba5c7af41afcdabd4b068363a55082ef6578eb744ffc24009c2"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile-repeat1/test-failed-1.png",
+      "sha256": "fabb0e3193d7338b16449c74ac337ce56644eae5a2b73be0b1ce0d32df5142b3"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile-repeat2/error-context.md",
+      "sha256": "bc165972cd685ba5c7af41afcdabd4b068363a55082ef6578eb744ffc24009c2"
+    },
+    {
+      "path": "isolated-failure-audit-1505/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-mobile-repeat2/test-failed-1.png",
+      "sha256": "fabb0e3193d7338b16449c74ac337ce56644eae5a2b73be0b1ce0d32df5142b3"
+    },
+    {
+      "path": "source-decisions-after-context/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-acce-d9592-n-separate-from-remediation-chromium/access-revoke-preview.png",
+      "sha256": "f79b2bf2ae2618f07a768ff443c410c939a3b3830eb29c5c40dd5aa92f32a7a8"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-acce-d9592-n-separate-from-remediation-chromium/access-revoke-receipt-focus.png",
+      "sha256": "db25978d8f941ba84b92ee303fdea72bd274d1026a95619885c4771f1e08fcd7"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-acce-f7cbd-n-separate-from-remediation-chromium/access-approve-preview.png",
+      "sha256": "250cf3f53a843ce60c30f77231190c35c6452fb97abb508e86d80186f59d66c2"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-acce-f7cbd-n-separate-from-remediation-chromium/access-approve-receipt-focus.png",
+      "sha256": "85ce82729e6d5dacfbf737f6ff9b14a16570a41cda16e930767093b879e8dd1a"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-chromium/approval-handoff.png",
+      "sha256": "5ecc8c1252c7e81544d06e279028f44623b4757c6a559f15547a2a71b089ba52"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-chromium/approval-owner-detail.png",
+      "sha256": "eb3f7aafe55d47610a38945fb674f9fafdbd9997015fb3108dbff46aefb557a4"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-sour-70357-nd-sends-no-foreign-command-chromium/service-handoff.png",
+      "sha256": "6b49d07d875bb90eef1ec0b7a015c6fdbb452097f23044fd051c1865077180e7"
+    },
+    {
+      "path": "source-decisions-after-context/work-source-decisions-sour-70357-nd-sends-no-foreign-command-chromium/service-owner-detail.png",
+      "sha256": "537e561817489ef81ed9f583bbc3ca5b8009b8c98d1fd9430a0dd63805d2fa8b"
+    },
+    {
+      "path": "source-decisions-frozen/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-acce-d9592-n-separate-from-remediation-chromium/access-revoke-preview.png",
+      "sha256": "74e6ecf27462fbf209bef756a14ba79949dadc420854d6fa9ec8d892b37532c1"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-acce-d9592-n-separate-from-remediation-chromium/access-revoke-receipt-focus.png",
+      "sha256": "bc54d25f854211cab7ec4a7c099240f50ccb83f2488dc9c54dc157a720b210d3"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-acce-f7cbd-n-separate-from-remediation-chromium/access-approve-preview.png",
+      "sha256": "6662ece456d3fa06878f3a3655e8ffb23c370de42b26fe463b44d57652820532"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-acce-f7cbd-n-separate-from-remediation-chromium/access-approve-receipt-focus.png",
+      "sha256": "008e553f7b47fc49d766bca09222942c8c1a904d5a5f595fcb6642eba9cce83b"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-chromium/approval-handoff.png",
+      "sha256": "dcc92e282a7c051a23921673aa7e57b9c4ebc67da85d81476a0bd01bbd7671c7"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-sour-4d1f6-nd-sends-no-foreign-command-chromium/approval-owner-detail.png",
+      "sha256": "eb3f7aafe55d47610a38945fb674f9fafdbd9997015fb3108dbff46aefb557a4"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-sour-70357-nd-sends-no-foreign-command-chromium/service-handoff.png",
+      "sha256": "101428839dda97a41553a917d44c813607c48b3a6827f6f53288814bbcd98576"
+    },
+    {
+      "path": "source-decisions-frozen/work-source-decisions-sour-70357-nd-sends-no-foreign-command-chromium/service-owner-detail.png",
+      "sha256": "537e561817489ef81ed9f583bbc3ca5b8009b8c98d1fd9430a0dd63805d2fa8b"
+    },
+    {
+      "path": "source-detail-context/.last-run.json",
+      "sha256": "c070fe0df4ecfea5d7a19974f124a83d8d31d9b4bd26b5d20a863fd5d71f14e7"
+    },
+    {
+      "path": "source-detail-context/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/error-context.md",
+      "sha256": "a0fda35e5522bc63cfce814abd645b58e0a8c3b3993453521c6e6eeab2d630fa"
+    },
+    {
+      "path": "source-detail-context/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/test-failed-1.png",
+      "sha256": "8dcf582aa365f7149aab83e87919d32f5d723241b3ef2caa8d11a90d0fb85dc4"
+    },
+    {
+      "path": "source-detail-context-final/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png",
+      "sha256": "d1d5274675046794994859d99a8e96ec30840feeb2a1450793bf8d92ecd6a758"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko.png",
+      "sha256": "12209bfc6e3529e5e364f80fdb5511c834f5091528445cf9c092f7c9e66eca42"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png",
+      "sha256": "826ff00deab25a35f93d70a8c6a8eb59cea771c44602b1f98f71b49710ce910c"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko.png",
+      "sha256": "2687034b3edf20f7fb9122ecb15c651ec65e058e731db84e8ce0a0b9049b2171"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png",
+      "sha256": "fd321f49ac663a7ffa7c8aa832cd80027cd1d9961cb00c47e6fce506a9bf8330"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko.png",
+      "sha256": "e709ffd3d890f9a3e584e198d13062091b5828409585fecee59298e4e09c732d"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png",
+      "sha256": "1df13b4e0363a0c1dc56f54acdf9239cd0a1db8a7a8780bf49c242896343d62f"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko.png",
+      "sha256": "7c79a551a4a6b8892e98273339bf34b15edddc6bd0a5e7ce1167a78214690052"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png",
+      "sha256": "dfdfccd0714b4987d0d3fd08e214c8c72eb6dc48df600d3058ba3fdfa9e9b540"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko.png",
+      "sha256": "ab2c142e0e660038012d00719c7f70fa1959cdb5c1f6d043cd73eaf281cac7b8"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png",
+      "sha256": "7da5f0221344734ffaaeb5805e550f46ea47b90e86ec86a5d174ff9cc46aa9ec"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko.png",
+      "sha256": "10ec5bad09d44627cb0d1d003fdbb6903783b7e4296728203e2479eb9fc61342"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview-full.png",
+      "sha256": "a423e0171a8778359a109c9b8345d605b437baccc3c8d02d3277c3429e5c7e7d"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png",
+      "sha256": "15c99da8d1463bf2957c4d4d818e23662984e9c7d0b1306b59294a7682a6171a"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt-full.png",
+      "sha256": "3e46a296d76366d111459bd19f396cac7f9db8742c91007042eb8bf572881d53"
+    },
+    {
+      "path": "source-detail-context-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt.png",
+      "sha256": "758362dfbfa3a7b3ee7e6fbf6b8df4a2396199264c4f16cd65cc045abdadae9e"
+    },
+    {
+      "path": "source-detail-context-frozen/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png",
+      "sha256": "75e4eee9432d661fc27b0d2d44a6dca38ecf3b597dff020448054c50a6be6f2e"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko.png",
+      "sha256": "121936b5596a8c3e2eb4fd210baf26f89aca9ae496afa500cf9be008c8c3a128"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png",
+      "sha256": "51cb9a8db78066a0f18446209d18c61f2a2990e72ff2effc371c374061a5a951"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko.png",
+      "sha256": "13d1a790df7831db6014f3aca306085cbb866fe5bf7429645f8084c495d02f06"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png",
+      "sha256": "66302e0e1b41fbce005b6b17c70bc7bebd7ab243560df7614e1f2d0c9d12f323"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko.png",
+      "sha256": "efdc1bfc666d1bb9104eb80e43ca081df73169e73cbf85fa9c2d21ea811fcca8"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png",
+      "sha256": "42e451c23dae30c515e4738cc0e0b1577e357f33beed271b0cca10be1ef5c883"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko.png",
+      "sha256": "f0afc2da3963742a3703f4f216a841713472c21fa2be74aa6bd97c5008191177"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png",
+      "sha256": "1048c903640db5bc17e610873738a63b3633030857b739f484a55a34f3abed82"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko.png",
+      "sha256": "cf310dc7e9af2c657d9871c84259ec922bf4ff40bb6eb8a78aa8303a4a84114b"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png",
+      "sha256": "856ecff080fd021e949ff04295ec1e56dfcd0d5506c7d0626a98a74ebe7e2594"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko.png",
+      "sha256": "26766f5295c35df1c166ce4c2607370a742a40370dfc89c292e543e9484ae2fb"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview-full.png",
+      "sha256": "4e68d0d7b8a552a07e992390fe5c9848a77f33f4896aa5f15aca802dfd49a689"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png",
+      "sha256": "15c99da8d1463bf2957c4d4d818e23662984e9c7d0b1306b59294a7682a6171a"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt-full.png",
+      "sha256": "23d02629a76ba84705e17961c7028f65ea61e89817964f2e169228abcae0efbd"
+    },
+    {
+      "path": "source-detail-context-frozen/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt.png",
+      "sha256": "5de87e870d938e2eaec2a828e5a8fc1f1a1680d2cb07699ef387c29b99e058cf"
+    },
+    {
+      "path": "source-detail-context-rerun/.last-run.json",
+      "sha256": "c070fe0df4ecfea5d7a19974f124a83d8d31d9b4bd26b5d20a863fd5d71f14e7"
+    },
+    {
+      "path": "source-detail-context-rerun/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/error-context.md",
+      "sha256": "a0fda35e5522bc63cfce814abd645b58e0a8c3b3993453521c6e6eeab2d630fa"
+    },
+    {
+      "path": "source-detail-context-rerun/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/test-failed-1.png",
+      "sha256": "8dcf582aa365f7149aab83e87919d32f5d723241b3ef2caa8d11a90d0fb85dc4"
+    },
+    {
+      "path": "source-detail-context-rerun-2/.last-run.json",
+      "sha256": "c070fe0df4ecfea5d7a19974f124a83d8d31d9b4bd26b5d20a863fd5d71f14e7"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png",
+      "sha256": "77616c5c36d1a8b25f3056db9291ef1e6cd957629c23ff08bce896c31b1f0e45"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko.png",
+      "sha256": "4f1995cee4125f5dd58d175255bd3555a9179f7a6eca23f59eb4aef46a966647"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png",
+      "sha256": "035bd404a7c80e73997a751de2ada01417c16ef12ede16dbeb46b60cf327a89e"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko.png",
+      "sha256": "0ae8bae4997d66c5631cf61e8282c76b143881a92ffad736302f9bc3ea41f26d"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png",
+      "sha256": "787b08218929e5f688b3359d72e35c9f9ef0afc1be186574e8aa83d35e670d9a"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko.png",
+      "sha256": "1ec189d48edecd2f769b16a9d74633344eb3930a200346cd6fee379c3245a46e"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png",
+      "sha256": "072a77179c4dd5d3ee648399c92b10d6a2ecaafd874929ef3b257e9269a04b14"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko.png",
+      "sha256": "db8692e5e589a2ae22854c12074ad408a64076c9d7a6b692b3c00afa7235c4b9"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png",
+      "sha256": "2c016e53a011ed00c9f26d7a722092bd95c55939eea9f1c8654f2b52c4cbdf18"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko.png",
+      "sha256": "ef2660869939da6367a5212af7c45745440e114bc57f0af68923d26432fe1faf"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview-full.png",
+      "sha256": "94e3b2434dc4854636cf4d9b40e12954bd9b1ede9bbb20566b4bf0730e76b636"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png",
+      "sha256": "15c99da8d1463bf2957c4d4d818e23662984e9c7d0b1306b59294a7682a6171a"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt-full.png",
+      "sha256": "30fef63962638ae8ec7ba0295199c67a912c27d4b69c1d2c68d344318f64b247"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-receipt.png",
+      "sha256": "403e570bd574fd386bc3755b039f008209c4dce5bce9c2d3d0efb8db2f495288"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/error-context.md",
+      "sha256": "f743fd3dcfa974b89d73921bf04e83140721c7dbec7e8531c20aa0b9b5728131"
+    },
+    {
+      "path": "source-detail-context-rerun-2/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/test-failed-1.png",
+      "sha256": "35b5462df44b20411a14eb03b0aade2320ba0f6e635462b5b7fef406ed000096"
+    }
+  ],
+  "removalGateRun": "/private/tmp/dwp-work-final-green-20260908-v4",
+  "finalSuccessfulReplacementRun": "/tmp/dwp-work-final-green-20260908-v5",
+  "postRemovalRefinement": "After v4 whole-suite success and removal, actual viewport QA prompted the AI action avoidance fix. All gates and gallery were repeated/replaced with v5; original removal timestamp remains recorded."
+}

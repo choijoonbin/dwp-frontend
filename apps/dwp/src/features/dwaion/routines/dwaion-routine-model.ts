@@ -30,6 +30,8 @@ export type DwaionRoutine = {
   schedule: DwaionRoutineSchedule;
   consents: readonly DwaionRoutineConsent[];
   schedulingAvailable: boolean;
+  backgroundExecutionAvailable: boolean;
+  notificationDeliveryAvailable: boolean;
   dryRunAvailable: boolean;
   proposalDeliveryAvailable: boolean;
 };
@@ -60,7 +62,12 @@ export type DwaionRoutineCommandState =
   | { allowed: true }
   | {
       allowed: false;
-      reason: 'REVISION_CONFLICT' | 'CONSENT_REQUIRED' | 'NOT_DRY_RUN_ONLY' | 'LIFECYCLE_BLOCKED';
+      reason:
+        | 'REVISION_CONFLICT'
+        | 'CONSENT_REQUIRED'
+        | 'NOT_DRY_RUN_ONLY'
+        | 'LIFECYCLE_BLOCKED'
+        | 'DRY_RUN_UNAVAILABLE';
     };
 
 const REQUIRED_CONSENTS: readonly DwaionRoutineConsent['key'][] = [
@@ -104,6 +111,7 @@ export function routineCommandState(
   if (routine.executionMode !== 'DRY_RUN_ONLY') {
     return { allowed: false, reason: 'NOT_DRY_RUN_ONLY' };
   }
+  if (!routine.dryRunAvailable) return { allowed: false, reason: 'DRY_RUN_UNAVAILABLE' };
   if (routine.status !== 'DRAFT') return { allowed: false, reason: 'LIFECYCLE_BLOCKED' };
   if (!routineConsentComplete(routine.consents)) {
     return { allowed: false, reason: 'CONSENT_REQUIRED' };

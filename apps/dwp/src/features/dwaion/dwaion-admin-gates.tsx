@@ -1,242 +1,164 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
-  EnterpriseDataGrid,
   ErrorState,
+  FormDialog,
+  FormField,
+  foundationTokens,
+  InlineFeedback,
   LoadingState,
   PageCanvas,
+  SignalMetric,
 } from '@dwp-frontend/design-system';
 import {
+  bootstrapDwaionOperationalGates,
+  getDwaionOperationalGate,
   getDwaionOperationalGatePortfolio,
+  type BootstrapDwaionOperationalGatesRequest,
   type DwaionGateEnvironment,
   type DwaionOperationalGate,
   usePermissions,
 } from '@dwp-frontend/shared-utils';
 import {
   BadgeCheck,
-  ChevronRight,
+  CircleAlert,
   FileCheck2,
+  FileDown,
   FileSearch2,
+  History,
+  ListChecks,
+  LockKeyhole,
   ScanSearch,
   Settings2,
   ShieldCheck,
 } from 'lucide-react';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
 import { DwaionGateDialogHost, type GateDialogAction } from './dwaion-gate-dialogs';
-import {
-  GateStatusChip,
-  gateCategoryLabel,
-  gateDescription,
-  gateOptionLabel,
-  gateTitle,
-} from './dwaion-gate-ui';
-
-import type { GridColDef } from '@mui/x-data-grid';
+import { DwaionGateReview } from './dwaion-gate-review';
+import { gateCategoryLabel, gateDescription, gateOptionLabel, gateTitle } from './dwaion-gate-ui';
+import { DwaionAdminRegistry, useAdminRegistryCopy } from './dwaion-admin-registry';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const ENVIRONMENTS: DwaionGateEnvironment[] = ['DEVELOPMENT', 'STAGING', 'PRODUCTION'];
 
 export function DwaionAdminGates() {
   const { t } = useTranslation('work');
+  const copy = useAdminRegistryCopy();
+  const queryClient = useQueryClient();
+  const governBootstrap = useDwaionGovernedMutation(
+    'route.dwaion.management.gates-bootstrap.action'
+  );
   const { hasPermission } = usePermissions();
+  const [params, setParams] = useSearchParams();
+  const desktopInspector = useMediaQuery(useTheme().breakpoints.up('md'));
   const [environment, setEnvironment] = useState<DwaionGateEnvironment>('PRODUCTION');
   const [action, setAction] = useState<GateDialogAction>(null);
   const [saved, setSaved] = useState(false);
-  const canUpdate =
-    hasPermission('ADMIN.DWAION_GATES', 'UPDATE') || hasPermission('ADMIN.DWAION_GATES', 'MANAGE');
-  const canCreate =
-    hasPermission('ADMIN.DWAION_GATES', 'CREATE') || hasPermission('ADMIN.DWAION_GATES', 'MANAGE');
-  const canApprove =
-    hasPermission('ADMIN.DWAION_GATES', 'APPROVE') || hasPermission('ADMIN.DWAION_GATES', 'MANAGE');
+  const [bootstrap, setBootstrap] = useState<BootstrapDwaionOperationalGatesRequest | null>(null);
+  const canUpdate = hasPermission('ADMIN.DWAION_GATES', 'UPDATE');
+  const canCreate = hasPermission('ADMIN.DWAION_GATES', 'CREATE');
+  const canApprove = hasPermission('ADMIN.DWAION_GATES', 'APPROVE');
+  const canManage = hasPermission('ADMIN.DWAION_GATES', 'MANAGE');
+
   const query = useQuery({
     queryKey: ['dwaion', 'admin', 'gates', environment],
     queryFn: () => getDwaionOperationalGatePortfolio(environment),
     staleTime: 15_000,
   });
+  const portfolio = query.data;
+  const firstEntryId = portfolio?.gates[0]?.gateKey;
 
-  const columns = useMemo<GridColDef<DwaionOperationalGate>[]>(
-    () => [
-      {
-        field: 'gateKey',
-        headerName: t('dwaionAdmin.gates.columns.gate'),
-        minWidth: 280,
-        flex: 1.25,
-        renderCell: ({ row }) => (
-          <Stack sx={{ minWidth: 0, py: 0.75 }}>
-            <Typography variant="body2" fontWeight={680} noWrap>
-              {gateTitle(t, row.gateKey)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap>
-              {gateDescription(t, row.gateKey)}
-            </Typography>
-          </Stack>
-        ),
+  useEffect(() => {
+    if (!desktopInspector || !firstEntryId || params.has('entry')) return;
+    setParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.set('entry', firstEntryId);
+        return next;
       },
-      {
-        field: 'category',
-        headerName: t('dwaionAdmin.gates.columns.category'),
-        width: 154,
-        valueGetter: (_, row) => gateCategoryLabel(t, row.category),
-      },
-      {
-        field: 'selectedOption',
-        headerName: t('dwaionAdmin.gates.columns.option'),
-        minWidth: 190,
-        flex: 0.8,
-        renderCell: ({ row }) => {
-          const selected = row.selectedOption;
-          const recommended = row.options.find((item) => item.recommended)?.code;
-          if (!selected) {
-            return (
-              <Typography variant="body2" color="text.secondary">
-                {t('dwaionAdmin.gates.notSelected')}
-              </Typography>
-            );
-          }
-          return (
-            <Stack spacing={0.25} sx={{ minWidth: 0 }}>
-              <Typography variant="body2" noWrap>
-                {gateOptionLabel(t, row.gateKey, selected)}
-              </Typography>
-              {selected === recommended && (
-                <Typography variant="caption" color="primary.main">
-                  {t('dwaionAdmin.gates.recommended')}
-                </Typography>
-              )}
-            </Stack>
-          );
-        },
-      },
-      {
-        field: 'status',
-        headerName: t('dwaionAdmin.gates.columns.status'),
-        width: 154,
-        renderCell: ({ row }) => (
-          <GateStatusChip
-            status={row.status}
-            label={t(`dwaionAdmin.gates.statuses.${row.status}`)}
-          />
-        ),
-      },
-      {
-        field: 'evidenceCount',
-        headerName: t('dwaionAdmin.gates.columns.evidence'),
-        width: 110,
-        renderCell: ({ row }) => (
-          <Stack direction="row" spacing={0.75} alignItems="center">
-            <FileCheck2 size={16} />
-            <Typography variant="body2">{row.evidenceCount}</Typography>
-          </Stack>
-        ),
-      },
-      {
-        field: 'expiresAt',
-        headerName: t('dwaionAdmin.gates.columns.expires'),
-        width: 132,
-        valueFormatter: (value?: string | null) =>
-          value ? formatDate(value, { dateStyle: 'medium' }) : t('dwaionAdmin.gates.noExpiry'),
-      },
-      {
-        field: 'actions',
-        headerName: t('dwaionAdmin.gates.columns.actions'),
-        width: 430,
-        sortable: false,
-        filterable: false,
-        renderCell: ({ row }) => (
-          <Stack direction="row" spacing={0.25}>
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<FileSearch2 size={15} />}
-              onClick={() => setAction({ kind: 'REVIEW', gate: row })}
-              sx={{ minWidth: 'auto', px: 1 }}
-            >
-              {t('dwaionAdmin.gates.actions.review')}
+      { replace: true, preventScrollReset: true }
+    );
+  }, [desktopInspector, firstEntryId, params, setParams]);
+
+  const bootstrapMutation = useMutation({
+    mutationFn: (request: BootstrapDwaionOperationalGatesRequest) =>
+      governBootstrap((authority) =>
+        bootstrapDwaionOperationalGates(environment, request, authority)
+      ),
+    onSuccess: async (data) => {
+      setBootstrap(null);
+      setSaved(true);
+      queryClient.setQueryData(['dwaion', 'admin', 'gates', environment], data);
+      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'gates', environment] });
+    },
+  });
+
+  return (
+    <PageCanvas topInset="compact">
+      <DwaionAdminPageHeader
+        eyebrow={t('dwaionAdmin.shared.governance')}
+        title={t('dwaionAdmin.gates.title')}
+        description={t('dwaionAdmin.gates.description')}
+        actions={
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="stretch">
+            <ActionButton intent="secondary" startIcon={<History size={16} />} disabled>
+              {t('dwaionAdmin.gates.historyUnavailable')}
             </ActionButton>
-            {canUpdate && (
-              <ActionButton
-                intent={row.selectedOption ? 'quiet' : 'secondary'}
-                size="small"
-                startIcon={<Settings2 size={15} />}
-                onClick={() => setAction({ kind: 'CONFIGURE', gate: row })}
-                sx={{ minWidth: 'auto', px: 1 }}
-              >
-                {t(
-                  row.selectedOption
-                    ? 'dwaionAdmin.gates.actions.reconfigure'
-                    : 'dwaionAdmin.gates.actions.configure'
-                )}
-              </ActionButton>
-            )}
-            {canCreate &&
-              row.selectedOption &&
-              ['CONFIGURING', 'BLOCKED', 'READY_FOR_APPROVAL'].includes(row.status) && (
-                <ActionButton
-                  intent="quiet"
-                  size="small"
-                  startIcon={<FileCheck2 size={15} />}
-                  onClick={() => setAction({ kind: 'EVIDENCE', gate: row })}
-                  sx={{ minWidth: 'auto', px: 1 }}
-                >
-                  {t('dwaionAdmin.gates.actions.evidence')}
-                </ActionButton>
-              )}
-            {canUpdate && row.selectedOption && ['CONFIGURING', 'BLOCKED'].includes(row.status) && (
-              <ActionButton
-                intent="secondary"
-                size="small"
-                startIcon={<ScanSearch size={15} />}
-                onClick={() => setAction({ kind: 'VALIDATE', gate: row })}
-                sx={{ minWidth: 'auto', px: 1 }}
-              >
-                {t('dwaionAdmin.gates.actions.validate')}
-              </ActionButton>
-            )}
-            {canApprove && row.status === 'READY_FOR_APPROVAL' && (
+            <ActionButton intent="secondary" startIcon={<FileDown size={16} />} disabled>
+              {t('dwaionAdmin.gates.exportUnavailable')}
+            </ActionButton>
+            {!query.isLoading && !query.isError && portfolio?.gates.length === 0 && canManage ? (
               <ActionButton
                 intent="primary"
-                size="small"
-                startIcon={<BadgeCheck size={15} />}
-                onClick={() => setAction({ kind: 'DECIDE', gate: row })}
-                sx={{ minWidth: 'auto', px: 1 }}
+                startIcon={<ListChecks size={16} />}
+                onClick={() =>
+                  setBootstrap({
+                    idempotencyKey: crypto.randomUUID(),
+                    expectedExistingCount: 0,
+                    changeReason: '',
+                  })
+                }
               >
-                {t('dwaionAdmin.gates.actions.decide')}
+                {t('dwaionAdmin.gates.initialize')}
+              </ActionButton>
+            ) : (
+              <ActionButton intent="primary" startIcon={<LockKeyhole size={16} />} disabled>
+                {t('dwaionAdmin.gates.bulkAuthorizeUnavailable')}
               </ActionButton>
             )}
           </Stack>
-        ),
-      },
-    ],
-    [canApprove, canCreate, canUpdate, t]
-  );
+        }
+      />
 
-  const portfolio = query.data;
-  const readinessSeverity = portfolio?.deliveryReady
-    ? 'success'
-    : (portfolio?.blockedCount ?? 0) + (portfolio?.expiredCount ?? 0) > 0
-      ? 'warning'
-      : 'info';
+      {saved && (
+        <InlineFeedback
+          severity="success"
+          sx={{ mt: 2 }}
+          onClose={() => setSaved(false)}
+          closeLabel={t('dwaionAdmin.gates.review.close')}
+        >
+          {t('dwaionAdmin.gates.saved')}
+        </InlineFeedback>
+      )}
+      <InlineFeedback severity="info" sx={{ mt: 2 }}>
+        {t('dwaionAdmin.gates.contractNotice')}
+      </InlineFeedback>
 
-  if (query.isError) {
-    return (
-      <PageCanvas>
-        <DwaionAdminPageHeader
-          eyebrow={t('dwaionAdmin.shared.governance')}
-          title={t('dwaionAdmin.gates.title')}
-          description={t('dwaionAdmin.gates.description')}
-        />
+      {query.isError ? (
         <Box sx={{ mt: 3 }}>
           <ErrorState
             size="page"
@@ -247,220 +169,444 @@ export function DwaionAdminGates() {
             onRetry={() => void query.refetch()}
           />
         </Box>
-      </PageCanvas>
-    );
-  }
-
-  if (query.isLoading || !portfolio) {
-    return (
-      <PageCanvas>
-        <DwaionAdminPageHeader
-          eyebrow={t('dwaionAdmin.shared.governance')}
-          title={t('dwaionAdmin.gates.title')}
-          description={t('dwaionAdmin.gates.description')}
+      ) : query.isLoading || !portfolio ? (
+        <LoadingState
+          size="page"
+          variant="skeleton"
+          label={t('dwaionAdmin.gates.loading')}
+          skeletonRows={7}
         />
-        <LoadingState size="page" variant="skeleton" label={t('dwaionAdmin.gates.loading')} />
-      </PageCanvas>
-    );
-  }
-  return (
-    <PageCanvas>
-      <DwaionAdminPageHeader
-        eyebrow={t('dwaionAdmin.shared.governance')}
-        title={t('dwaionAdmin.gates.title')}
-        description={t('dwaionAdmin.gates.description')}
-      />
-      {saved && (
-        <Alert severity="success" sx={{ mt: 2 }} onClose={() => setSaved(false)}>
-          {t('dwaionAdmin.gates.saved')}
-        </Alert>
-      )}
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        alignItems={{ xs: 'stretch', md: 'center' }}
-        justifyContent="space-between"
-        gap={2}
-        sx={{ mt: 3 }}
-      >
-        <Stack direction="row" spacing={1} alignItems="center">
-          <ShieldCheck size={19} />
-          <Box>
-            <Typography variant="subtitle2">{t('dwaionAdmin.gates.environmentTitle')}</Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t('dwaionAdmin.gates.environmentDescription')}
-            </Typography>
+      ) : (
+        <>
+          <Box
+            component="section"
+            aria-label={t('dwaionAdmin.gates.summaryLabel')}
+            sx={{
+              mt: 2,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, minmax(0, 1fr))' },
+              gap: 1.5,
+            }}
+          >
+            <SignalMetric
+              label={t('dwaionAdmin.gates.summary.registered')}
+              value={String(portfolio.totalCount)}
+              detail={t('dwaionAdmin.gates.summary.registeredDetail', {
+                count: portfolio.requiredCount,
+              })}
+              icon={<ListChecks size={18} />}
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.gates.metrics.approved')}
+              value={`${portfolio.approvedCount} / ${portfolio.requiredCount}`}
+              detail={t('dwaionAdmin.gates.summary.approvedDetail', {
+                count: portfolio.readyForApprovalCount,
+              })}
+              icon={<BadgeCheck size={18} />}
+              tone="success"
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.gates.metrics.attention')}
+              value={String(portfolio.blockedCount + portfolio.expiredCount)}
+              detail={t('dwaionAdmin.gates.summary.attentionDetail', {
+                blocked: portfolio.blockedCount,
+                expired: portfolio.expiredCount,
+              })}
+              icon={<CircleAlert size={18} />}
+              tone="error"
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.gates.metrics.readiness')}
+              value={`${portfolio.completionPercent}%`}
+              detail={t('dwaionAdmin.gates.summary.readinessDetail')}
+              icon={<ShieldCheck size={18} />}
+              tone={portfolio.deliveryReady ? 'success' : 'warning'}
+              progress={portfolio.completionPercent}
+              progressLabel={t('dwaionAdmin.gates.metrics.readiness')}
+            />
           </Box>
-        </Stack>
-        <ToggleButtonGroup
-          exclusive
-          size="small"
-          value={environment}
-          aria-label={t('dwaionAdmin.gates.environmentTitle')}
-          onChange={(_, value: DwaionGateEnvironment | null) => value && setEnvironment(value)}
-        >
-          {ENVIRONMENTS.map((value) => (
-            <ToggleButton key={value} value={value}>
-              {t(`dwaionAdmin.gates.environments.${value}`)}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Stack>
-      <GateWorkflow />
-      <Box
-        sx={{
-          mt: 2,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, 1fr)' },
-          borderBlock: 1,
-          borderColor: 'divider',
-        }}
-      >
-        <GateMetric
-          label={t('dwaionAdmin.gates.metrics.readiness')}
-          value={`${portfolio.completionPercent}%`}
-        />
-        <GateMetric
-          label={t('dwaionAdmin.gates.metrics.approved')}
-          value={`${portfolio.approvedCount} / ${portfolio.requiredCount}`}
-        />
-        <GateMetric
-          label={t('dwaionAdmin.gates.metrics.review')}
-          value={String(portfolio.readyForApprovalCount)}
-        />
-        <GateMetric
-          label={t('dwaionAdmin.gates.metrics.attention')}
-          value={String(portfolio.blockedCount + portfolio.expiredCount)}
-          last
-        />
-      </Box>
-      <LinearProgress
-        variant="determinate"
-        value={portfolio.completionPercent}
-        color={portfolio.deliveryReady ? 'success' : 'primary'}
-        aria-label={t('dwaionAdmin.gates.metrics.readiness')}
-        sx={{ height: 3, borderRadius: 0 }}
-      />
-      <Alert severity={readinessSeverity} sx={{ mt: 2 }}>
-        {portfolio.deliveryReady ? t('dwaionAdmin.gates.ready') : t('dwaionAdmin.gates.notReady')}
-      </Alert>
-      <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 2 }}>
-        {(
-          [
-            'AI_RUNTIME',
-            'CONNECTIVITY',
-            'ACCESS_CONTROL',
-            'ASSURANCE',
-            'DATA_PROTECTION',
-            'OPERATIONS',
-          ] as const
-        ).map((category) => (
-          <Chip
-            key={category}
-            size="small"
-            variant="outlined"
-            label={`${gateCategoryLabel(t, category)} ${portfolio.gates.filter((gate) => gate.category === category && gate.status === 'APPROVED').length}/${portfolio.gates.filter((gate) => gate.category === category).length}`}
-          />
-        ))}
-      </Stack>
-      <Box sx={{ mt: 2, borderBlock: 1, borderColor: 'divider' }}>
-        <EnterpriseDataGrid
-          ariaLabel={t('dwaionAdmin.gates.tableLabel')}
-          rows={portfolio.gates}
-          columns={columns}
-          getRowId={(row) => row.gateKey}
-          loading={query.isLoading}
-          hideFooter
-          getRowHeight={() => 64}
-          sx={{ border: 0, borderRadius: 0 }}
-        />
-      </Box>
+
+          <InlineFeedback
+            severity={
+              portfolio.deliveryReady
+                ? 'success'
+                : portfolio.blockedCount + portfolio.expiredCount > 0
+                  ? 'warning'
+                  : 'info'
+            }
+            sx={{ mt: 2 }}
+          >
+            {portfolio.deliveryReady
+              ? t('dwaionAdmin.gates.ready')
+              : t('dwaionAdmin.gates.notReady')}
+          </InlineFeedback>
+
+          <Box
+            sx={{
+              mt: 2,
+              p: { xs: 1.5, md: 2 },
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.radius.surface + 'px',
+            }}
+          >
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              alignItems={{ xs: 'stretch', md: 'center' }}
+              justifyContent="space-between"
+              gap={2}
+            >
+              <Stack direction="row" spacing={1} alignItems="center">
+                <ShieldCheck size={19} />
+                <Box>
+                  <Typography component="h2" variant="h6">
+                    {t('dwaionAdmin.gates.environmentTitle')}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('dwaionAdmin.gates.environmentDescription')}
+                  </Typography>
+                </Box>
+              </Stack>
+              <ToggleButtonGroup
+                exclusive
+                size="small"
+                value={environment}
+                aria-label={t('dwaionAdmin.gates.environmentTitle')}
+                onChange={(_, value: DwaionGateEnvironment | null) => {
+                  if (value) setEnvironment(value);
+                }}
+              >
+                {ENVIRONMENTS.map((value) => (
+                  <ToggleButton key={value} value={value}>
+                    {t(`dwaionAdmin.gates.environments.${value}`)}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Stack>
+            <GateCoveragePipeline gates={portfolio.gates} />
+          </Box>
+
+          <Box
+            sx={{
+              mt: 2,
+              p: { xs: 1.5, md: 2 },
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.radius.surface + 'px',
+              minWidth: 0,
+            }}
+          >
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              gap={1}
+            >
+              <Box>
+                <Typography component="h2" variant="h6">
+                  {t('dwaionAdmin.gates.registryTitle')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('dwaionAdmin.gates.registryScope', {
+                    count: portfolio.gates.length,
+                    environment: t(`dwaionAdmin.gates.environments.${environment}`),
+                  })}
+                </Typography>
+              </Box>
+              <Chip size="small" variant="outlined" label={t('dwaionAdmin.gates.contract')} />
+            </Stack>
+            <DwaionAdminRegistry
+              key={environment}
+              label={t('dwaionAdmin.gates.tableLabel')}
+              notice={copy.gateRatio}
+              pageSize={7}
+              showInspectorFields={false}
+              inspectorMaxHeight="36rem"
+              items={portfolio.gates.map((row) => ({
+                id: row.gateKey,
+                title: gateTitle(t, row.gateKey),
+                description: gateDescription(t, row.gateKey),
+                state: t(`dwaionAdmin.gates.statuses.${row.status}`),
+                stateTone:
+                  row.status === 'APPROVED'
+                    ? 'success'
+                    : ['BLOCKED', 'EXPIRED'].includes(row.status)
+                      ? 'error'
+                      : row.status === 'READY_FOR_APPROVAL'
+                        ? 'info'
+                        : 'warning',
+                fields: [
+                  [t('dwaionAdmin.gates.review.owner'), row.ownerUserId || row.externalOwner],
+                  [t('dwaionAdmin.gates.columns.evidence'), row.evidenceCount],
+                  [t('dwaionAdmin.gates.columns.category'), gateCategoryLabel(t, row.category)],
+                  [
+                    t('dwaionAdmin.gates.review.policy'),
+                    row.selectedOption
+                      ? gateOptionLabel(t, row.gateKey, row.selectedOption)
+                      : t('dwaionAdmin.gates.notSelected'),
+                  ],
+                  [
+                    t('dwaionAdmin.gates.columns.expires'),
+                    row.expiresAt
+                      ? formatDate(row.expiresAt, { dateStyle: 'medium' })
+                      : t('dwaionAdmin.gates.noExpiry'),
+                  ],
+                  [copy.version, row.policyVersion],
+                  [
+                    copy.updated,
+                    formatDate(row.updatedAt, { dateStyle: 'medium', timeStyle: 'short' }),
+                  ],
+                ],
+                detail: <GateInspector gate={row} environment={environment} />,
+                actions: (
+                  <>
+                    <ActionButton
+                      intent="secondary"
+                      startIcon={<FileSearch2 size={16} />}
+                      onClick={() => setAction({ kind: 'REVIEW', gate: row })}
+                    >
+                      {t('dwaionAdmin.gates.actions.review')}
+                    </ActionButton>
+                    {canUpdate && (
+                      <ActionButton
+                        intent="secondary"
+                        startIcon={<Settings2 size={16} />}
+                        onClick={() => setAction({ kind: 'CONFIGURE', gate: row })}
+                      >
+                        {t(
+                          row.selectedOption
+                            ? 'dwaionAdmin.gates.actions.reconfigure'
+                            : 'dwaionAdmin.gates.actions.configure'
+                        )}
+                      </ActionButton>
+                    )}
+                    {canCreate &&
+                      row.selectedOption &&
+                      ['CONFIGURING', 'BLOCKED', 'READY_FOR_APPROVAL'].includes(row.status) && (
+                        <ActionButton
+                          intent="secondary"
+                          startIcon={<FileCheck2 size={16} />}
+                          onClick={() => setAction({ kind: 'EVIDENCE', gate: row })}
+                        >
+                          {t('dwaionAdmin.gates.actions.evidence')}
+                        </ActionButton>
+                      )}
+                    {canUpdate &&
+                      row.selectedOption &&
+                      ['CONFIGURING', 'BLOCKED'].includes(row.status) && (
+                        <ActionButton
+                          intent="secondary"
+                          startIcon={<ScanSearch size={16} />}
+                          onClick={() => setAction({ kind: 'VALIDATE', gate: row })}
+                        >
+                          {t('dwaionAdmin.gates.actions.validate')}
+                        </ActionButton>
+                      )}
+                    {canApprove && row.status === 'READY_FOR_APPROVAL' && (
+                      <ActionButton
+                        intent="primary"
+                        startIcon={<BadgeCheck size={16} />}
+                        onClick={() => setAction({ kind: 'DECIDE', gate: row })}
+                      >
+                        {t('dwaionAdmin.gates.actions.decide')}
+                      </ActionButton>
+                    )}
+                  </>
+                ),
+              }))}
+            />
+          </Box>
+        </>
+      )}
+
       <DwaionGateDialogHost
         action={action}
         environment={environment}
         onClose={() => setAction(null)}
         onCompleted={() => setSaved(true)}
       />
+      <FormDialog
+        open={Boolean(bootstrap)}
+        title={t('dwaionAdmin.gates.initializeTitle')}
+        description={t('dwaionAdmin.gates.initializeDescription')}
+        cancelLabel={t('dwaionAdmin.shared.cancel')}
+        submitLabel={t('dwaionAdmin.gates.initialize')}
+        submittingLabel={t('dwaionAdmin.shared.saving')}
+        busy={bootstrapMutation.isPending}
+        submitDisabled={!bootstrap || bootstrap.changeReason.trim().length < 10}
+        onClose={() => setBootstrap(null)}
+        onSubmit={() => {
+          if (bootstrap) bootstrapMutation.mutate(bootstrap);
+        }}
+      >
+        <Stack spacing={2}>
+          {bootstrapMutation.isError && (
+            <InlineFeedback severity="error">{t('dwaionAdmin.gates.error')}</InlineFeedback>
+          )}
+          <InlineFeedback severity="warning">
+            {t('dwaionAdmin.gates.initializeBoundary')}
+          </InlineFeedback>
+          {bootstrap && (
+            <FormField
+              label={t('dwaionAdmin.shared.reason')}
+              value={bootstrap.changeReason}
+              multiline
+              minRows={3}
+              onChange={(event) => setBootstrap({ ...bootstrap, changeReason: event.target.value })}
+              errorMessage={
+                bootstrap.changeReason && bootstrap.changeReason.trim().length < 10
+                  ? t('dwaionAdmin.shared.reasonError')
+                  : undefined
+              }
+            />
+          )}
+        </Stack>
+      </FormDialog>
     </PageCanvas>
   );
 }
 
-function GateWorkflow() {
+function GateInspector({
+  gate,
+  environment,
+}: {
+  gate: DwaionOperationalGate;
+  environment: DwaionGateEnvironment;
+}) {
   const { t } = useTranslation('work');
-  const steps = [
-    t('dwaionAdmin.gates.workflow.configure'),
-    t('dwaionAdmin.gates.workflow.evidence'),
-    t('dwaionAdmin.gates.workflow.validate'),
-    t('dwaionAdmin.gates.workflow.approve'),
-  ];
+  const query = useQuery({
+    queryKey: ['dwaion', 'admin', 'gates', environment, gate.gateKey],
+    queryFn: () => getDwaionOperationalGate(gate.gateKey, environment),
+    staleTime: 15_000,
+  });
 
   return (
-    <Stack
-      component="section"
-      aria-label={t('dwaionAdmin.gates.workflow.title')}
-      direction={{ xs: 'column', sm: 'row' }}
-      alignItems={{ xs: 'flex-start', sm: 'center' }}
-      spacing={{ xs: 0.75, sm: 1 }}
-      useFlexGap
-      flexWrap="wrap"
-      sx={{ mt: 2, pb: 1.5, borderBottom: 1, borderColor: 'divider' }}
-    >
-      <Typography variant="caption" color="text.secondary" sx={{ mr: { sm: 0.5 } }}>
-        {t('dwaionAdmin.gates.workflow.title')}
-      </Typography>
-      {steps.map((label, index) => (
-        <Stack key={label} direction="row" alignItems="center" spacing={1}>
-          <Box
-            sx={{
-              width: 22,
-              height: 22,
-              flex: '0 0 22px',
-              display: 'grid',
-              placeItems: 'center',
-              borderRadius: '50%',
-              bgcolor: 'action.selected',
-              color: 'text.primary',
-              typography: 'caption',
-              fontWeight: 700,
-            }}
-          >
-            {index + 1}
-          </Box>
-          <Typography variant="body2" fontWeight={600}>
-            {label}
-          </Typography>
-          {index < steps.length - 1 && <ChevronRight size={15} aria-hidden color="currentColor" />}
-        </Stack>
-      ))}
-    </Stack>
+    <Box component="section" aria-label={t('dwaionAdmin.gates.inspectorEvidence')}>
+      <Box component="dl" sx={{ m: 0, mb: 1.5, display: 'grid', gridTemplateColumns: '1fr auto' }}>
+        <Typography component="dt" variant="caption" color="text.secondary">
+          {t('dwaionAdmin.shared.version', { version: '' }).trim()}
+        </Typography>
+        <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+          {gate.policyVersion}
+        </Typography>
+      </Box>
+      <DwaionGateReview detail={query.data} loading={query.isLoading} error={query.isError} />
+      <InlineFeedback severity="info" sx={{ mt: 2 }}>
+        {t('dwaionAdmin.gates.unsupportedEvidence')}
+      </InlineFeedback>
+    </Box>
   );
 }
 
-function GateMetric({
-  label,
-  value,
-  last = false,
-}: {
-  label: string;
-  value: string;
-  last?: boolean;
-}) {
+function GateCoveragePipeline({ gates }: { gates: DwaionOperationalGate[] }) {
+  const { t } = useTranslation('work');
+  const groups = Array.from(new Set(gates.map((gate) => gate.category))).map((category) => {
+    const categoryGates = gates.filter((gate) => gate.category === category);
+    return {
+      category,
+      total: categoryGates.length,
+      approved: categoryGates.filter((gate) => gate.status === 'APPROVED').length,
+      ready: categoryGates.filter((gate) => gate.status === 'READY_FOR_APPROVAL').length,
+      attention: categoryGates.filter((gate) => ['BLOCKED', 'EXPIRED'].includes(gate.status))
+        .length,
+    };
+  });
+
   return (
     <Box
+      component="section"
+      aria-label={t('dwaionAdmin.gates.workflow.title')}
       sx={{
-        px: 2,
-        py: 1.75,
-        minWidth: 0,
-        borderRight: { xs: 0, lg: last ? 0 : 1 },
-        borderBottom: { xs: 1, lg: 0 },
+        mt: 2,
+        pt: 1.5,
+        borderTop: 1,
         borderColor: 'divider',
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: 'repeat(2, minmax(0, 1fr))',
+          sm: 'repeat(3, minmax(0, 1fr))',
+          lg: `repeat(${Math.min(groups.length, 6)}, minmax(0, 1fr))`,
+        },
+        gap: 1,
       }}
     >
-      <Typography variant="caption" color="text.secondary">
-        {label}
+      <Typography variant="caption" color="text.secondary" sx={{ gridColumn: '1 / -1' }}>
+        {t('dwaionAdmin.gates.workflow.title')}
       </Typography>
-      <Typography variant="h6" sx={{ mt: 0.25 }}>
-        {value}
-      </Typography>
+      {groups.map((group, index) => {
+        const percent = group.total ? Math.round((group.approved / group.total) * 100) : 0;
+        const tone = group.attention
+          ? 'error.main'
+          : group.approved === group.total
+            ? 'success.main'
+            : group.ready
+              ? 'info.main'
+              : 'text.secondary';
+        return (
+          <Box
+            key={group.category}
+            sx={{
+              p: 1,
+              minWidth: 0,
+              bgcolor: 'action.hover',
+              borderRadius: foundationTokens.radius.control + 'px',
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={0.75}>
+              <Box
+                sx={{
+                  width: 22,
+                  height: 22,
+                  display: 'grid',
+                  placeItems: 'center',
+                  flexShrink: 0,
+                  borderRadius: '50%',
+                  bgcolor: 'background.paper',
+                  color: tone,
+                  typography: 'caption',
+                  fontWeight: 'fontWeightBold',
+                }}
+              >
+                {index + 1}
+              </Box>
+              <Typography
+                variant="caption"
+                fontWeight="fontWeightBold"
+                sx={{ overflowWrap: 'anywhere' }}
+              >
+                {gateCategoryLabel(t, group.category)}
+              </Typography>
+            </Stack>
+            <Box
+              aria-hidden="true"
+              sx={{
+                mt: 0.75,
+                height: 4,
+                overflow: 'hidden',
+                borderRadius: (theme) => Number(theme.shape.borderRadius) * 999 + 'px',
+                bgcolor: 'divider',
+              }}
+            >
+              <Box sx={{ width: `${percent}%`, height: 1, bgcolor: tone }} />
+            </Box>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              noWrap
+              sx={{ display: 'block', mt: 0.5 }}
+            >
+              {group.approved} / {group.total} ·{' '}
+              {group.attention
+                ? t('dwaionAdmin.gates.metrics.attention')
+                : group.ready
+                  ? t('dwaionAdmin.gates.statuses.READY_FOR_APPROVAL')
+                  : t('dwaionAdmin.gates.statuses.NOT_CONFIGURED')}
+            </Typography>
+          </Box>
+        );
+      })}
     </Box>
   );
 }

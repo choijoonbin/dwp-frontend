@@ -8,7 +8,6 @@ import {
   CirclePlay,
   ClipboardPlus,
   GripVertical,
-  Plus,
   Save,
   Target,
   X,
@@ -16,7 +15,6 @@ import {
 import {
   ActionButton,
   EmptyState,
-  FormField,
   InlineFeedback,
   LoadingState,
   useDateTimePolicy,
@@ -28,12 +26,13 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { workHubReferenceKey, type WorkHubItem } from './work-hub-contracts';
 import { workHubDisplayId, workHubStatusLabelKey } from './work-hub-presentation';
 import { useWorkTodayPlanFocus } from './use-work-today-plan-focus';
+import { WorkTodayPlanCandidatePicker } from './work-today-plan-candidate-picker';
+import { isWorkDueOnPlanDate } from './work-today-plan-candidate-model';
+import { canUseWorkHubGenericAdjunct } from './work-hub-command-authority';
 import {
   addDayPlanReference,
   moveDayPlanReference,
@@ -54,6 +53,7 @@ export type WorkTodayPlanPanelProps = {
   plan?: PersonalDayPlan | null;
   intentVersion?: string | number;
   date: string;
+  now?: number;
   loading?: boolean;
   pending?: boolean;
   disabled?: boolean;
@@ -77,7 +77,11 @@ export function workTodayPlanRows(
   draft: readonly WorkSourceReference[],
   plan: PersonalDayPlan | null = null
 ): WorkTodayPlanRow[] {
-  const byKey = new Map(items.map((item) => [item.key, item]));
+  const byKey = new Map(
+    items
+      .filter((item) => canUseWorkHubGenericAdjunct(item, 'DAY_PLAN'))
+      .map((item) => [item.key, item])
+  );
   return draft.map((reference) => ({
     reference,
     item: (() => {
@@ -93,7 +97,12 @@ export function workTodayPlanCandidates(
   plan: PersonalDayPlan | null = null
 ): WorkHubItem[] {
   const selected = new Set(resolveDayPlanReferences(plan, draft).map(workHubReferenceKey));
-  return items.filter((item) => !selected.has(item.key) && !terminal.has(item.lifecycle));
+  return items.filter(
+    (item) =>
+      canUseWorkHubGenericAdjunct(item, 'DAY_PLAN') &&
+      !selected.has(item.key) &&
+      !terminal.has(item.lifecycle)
+  );
 }
 
 function saveKey() {
@@ -106,6 +115,7 @@ export function WorkTodayPlanPanel({
   plan = null,
   intentVersion = 0,
   date,
+  now = Date.now(),
   loading = false,
   pending = false,
   disabled = false,
@@ -119,29 +129,17 @@ export function WorkTodayPlanPanel({
   const { timeZone } = useDateTimePolicy();
   const selectedHeadingId = useId();
   const candidatesHeadingId = useId();
-  const [query, setQuery] = useState('');
-  const [candidateScope, setCandidateScope] = useState('all');
+  const dateContext = useMemo(() => ({ date, timeZone, now }), [date, timeZone, now]);
   const dragIndex = useRef<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
   const intent = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
   const focus = useWorkTodayPlanFocus(draft);
   const rows = useMemo(() => workTodayPlanRows(items, draft, plan), [draft, items, plan]);
-  const candidates = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase();
-    return workTodayPlanCandidates(items, draft, plan).filter(
-      (item) =>
-        (candidateScope !== 'actionable' || item.waitingFor === 'ME') &&
-        (candidateScope !== 'due' || Boolean(item.dueAt)) &&
-        (!normalized ||
-          [
-            item.title,
-            t(`workHub.sources.${item.reference.sourceSystem}`, {
-              defaultValue: t('workHub.sources.OTHER'),
-            }),
-          ].some((value) => value.toLocaleLowerCase().includes(normalized)))
-    );
-  }, [draft, items, plan, query, t, candidateScope]);
+  const candidates = useMemo(
+    () => workTodayPlanCandidates(items, draft, plan),
+    [items, draft, plan]
+  );
   const busy = pending || saving;
   const controlsDisabled = busy || disabled;
   const full = draft.length >= MAX_PLAN_ITEMS;
@@ -217,7 +215,8 @@ export function WorkTodayPlanPanel({
             { key: 'selectedMetric', value: rows.length, color: 'primary.main', Icon: Target },
             {
               key: 'dueMetric',
-              value: rows.filter((row) => row.item?.dueAt).length,
+              value: rows.filter((row) => row.item && isWorkDueOnPlanDate(row.item, dateContext))
+                .length,
               color: 'error.main',
               Icon: CalendarClock,
             },
@@ -317,7 +316,11 @@ export function WorkTodayPlanPanel({
                       onDragOver={(event) => event.preventDefault()}
                       onDrop={(event) => {
                         event.preventDefault();
-                        if (dragIndex.current !== null && dragIndex.current !== index)
+                        if (
+                          !controlsDisabled &&
+                          dragIndex.current !== null &&
+                          dragIndex.current !== index
+                        )
                           replace(moveDayPlanReference(draft, dragIndex.current, index));
                         dragIndex.current = null;
                       }}
@@ -499,100 +502,28 @@ export function WorkTodayPlanPanel({
             )}
           </Box>
 
-          <Paper
-            component="section"
-            variant="outlined"
-            aria-labelledby={candidatesHeadingId}
-            sx={{
-              p: 2,
-              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-              minWidth: 0,
-              alignSelf: 'start',
+          <WorkTodayPlanCandidatePicker
+            candidates={candidates}
+            context={dateContext}
+            remaining={MAX_PLAN_ITEMS - draft.length}
+            disabled={controlsDisabled}
+            headingId={candidatesHeadingId}
+            registerEntry={(element) => {
+              focus.candidatesHeading.current = element;
             }}
-          >
-            <Typography
-              ref={focus.candidatesHeading}
-              id={candidatesHeadingId}
-              component="h3"
-              variant="subtitle1"
-              tabIndex={-1}
-            >
-              {t('workHub.todayPlan.candidateHeading')}
-            </Typography>
-            <ToggleButtonGroup
-              size="small"
-              exclusive
-              value={candidateScope}
-              onChange={(_, value) => value && setCandidateScope(value)}
-              sx={{ mt: 1, width: 1, '& .MuiToggleButton-root': { flex: 1, minHeight: 44 } }}
-              aria-label={t('workHub.todayPlan.candidateFilter')}
-            >
-              {['all', 'due', 'actionable'].map((value) => (
-                <ToggleButton key={value} value={value}>
-                  {t(`workHub.todayPlan.candidateScopes.${value}`)}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-            <FormField
-              label={t('workHub.todayPlan.searchLabel')}
-              value={query}
-              disabled={busy}
-              sx={{ mt: 1.5 }}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <Stack component="ul" spacing={1} sx={{ p: 0, m: 0, mt: 1.5, listStyle: 'none' }}>
-              {candidates.map((item) => (
-                <Box
-                  component="li"
-                  key={item.key}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'stretch',
-                    gap: 1,
-                    minWidth: 0,
-                    p: 1.5,
-                    bgcolor: 'var(--dwp-product-soft)',
-                    borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-                  }}
-                >
-                  <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="body2" fontWeight="fontWeightBold">
-                      {item.title}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t(workHubStatusLabelKey(item))} ·{' '}
-                      {item.dueAt
-                        ? formatDate(item.dueAt, { dateStyle: 'medium', timeStyle: 'short' })
-                        : t('workHub.todayPlan.noDueDate')}{' '}
-                      ·{' '}
-                      {t(`workHub.sources.${item.reference.sourceSystem}`, {
-                        defaultValue: t('workHub.sources.OTHER'),
-                      })}
-                    </Typography>
-                  </Box>
-                  <ActionButton
-                    ref={focus.register('candidate', item.key)}
-                    intent="secondary"
-                    startIcon={<Plus size={17} aria-hidden="true" />}
-                    disabled={controlsDisabled || full}
-                    sx={{ minHeight: 44, flexShrink: 0, alignSelf: 'flex-end' }}
-                    onClick={(event) => {
-                      focus.request('selected', item.key, event.detail);
-                      replace(addDayPlanReference(draft, item.reference));
-                    }}
-                  >
-                    {t('workHub.todayPlan.add')}
-                  </ActionButton>
-                </Box>
-              ))}
-            </Stack>
-            {candidates.length === 0 && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-                {t(query ? 'workHub.todayPlan.noSearchResults' : 'workHub.todayPlan.noCandidates')}
-              </Typography>
-            )}
-          </Paper>
+            registerCandidate={(key) => focus.register('candidate', key)}
+            onAdd={(additions, clickDetail) => {
+              if (controlsDisabled || draft.length + additions.length > MAX_PLAN_ITEMS) return;
+              focus.request('selected', additions[0]!.key, clickDetail);
+              replace(
+                additions.reduce(
+                  (next, item) => addDayPlanReference(next, item.reference),
+                  [...draft]
+                )
+              );
+            }}
+            onAddedFocus={(key) => focus.moveTo('selected', key)}
+          />
         </Box>
 
         <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>

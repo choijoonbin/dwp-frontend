@@ -230,6 +230,93 @@ for (const viewport of [
   });
 }
 
+for (const viewport of [
+  { width: 1280, height: 900 },
+  { width: 390, height: 844 },
+  { width: 320, height: 568 },
+]) {
+  test(`${viewport.width}px Personal Work opens its exact Activity ledger and restores trigger focus`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize(viewport);
+    const { runtime } = await setup(page);
+    const requests: URL[] = [];
+    const commandId = '90000000-0000-4000-8000-000000000002';
+    const auditId = '90000000-0000-4000-8000-000000000003';
+    await page.route('**/api/platform/v1/workspace/activity?*', (route) => {
+      requests.push(new URL(route.request().url()));
+      return fulfillSuccess(route, {
+        events: [
+          {
+            id: '90000000-0000-4000-8000-000000000001',
+            occurredAt: '2026-09-08T01:00:00Z',
+            actor: 'PERSON',
+            actorName: 'Mina Kim',
+            state: 'COMPLETED',
+            title: 'Personal work command recorded',
+            objectType: 'WORK_ITEM',
+            objectId: work.personalId,
+            objectLabel: work.personalTitle,
+            source: 'PERSONAL_TASK',
+            sourceReference: work.personalId,
+            sourceAccess: 'AVAILABLE',
+            sourceRoute: personalTaskRoute(work.personalId),
+            sourceEventId: `personal-work-command:900018:${commandId}`,
+            resourceVersion: 1,
+            idempotencyKey: commandId,
+            resultState: 'COMPLETED',
+            eventKind: 'CHANGE',
+            workStatus: 'COMPLETED',
+            dataProvenance: 'LIVE',
+            auditStatus: 'VERIFIED',
+            auditRecordId: auditId,
+            auditId: null,
+            auditAccess: 'RESTRICTED',
+          },
+        ],
+        generatedAt: '2026-09-08T01:01:00Z',
+        snapshotAt: '2026-09-08T01:01:00Z',
+        hasMore: false,
+        nextCursor: null,
+        startCursor: null,
+      });
+    });
+    const returnTo = personalTaskRoute(work.personalId);
+    await page.goto(returnTo);
+    await expect(
+      page.getByRole('heading', { name: work.personalTitle, exact: true })
+    ).toBeVisible();
+    await page.locator('[data-work-activity-trigger]').click();
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === '/activity/timeline' &&
+        url.searchParams.get('objectType') === 'WORK_ITEM' &&
+        url.searchParams.get('objectId') === work.personalId &&
+        url.searchParams.get('source') === 'PERSONAL_TASK'
+    );
+    await expect(
+      page.getByText('Personal work command recorded', { exact: true }).first()
+    ).toBeVisible();
+    expect(
+      requests.some(
+        (url) =>
+          url.searchParams.get('source') === 'PERSONAL_TASK' &&
+          url.searchParams.get('objectId') === work.personalId
+      )
+    ).toBe(true);
+    const reads = runtime.personalReads;
+    await page.goBack();
+    await expect(page).toHaveURL((url) => `${url.pathname}${url.search}${url.hash}` === returnTo);
+    await expect(page.locator('[data-work-activity-trigger]')).toBeFocused();
+    expect(runtime.personalReads).toBeGreaterThan(reads);
+    await expectNoHorizontalOverflow(page);
+    await page.screenshot({
+      path: testInfo.outputPath(`personal-activity-return-focus-${viewport.width}.png`),
+      fullPage: true,
+    });
+  });
+}
+
 test('a 20KB+ owner scope preserves the governed Activity handoff and return focus', async ({
   page,
 }) => {
@@ -302,14 +389,21 @@ test('a different selected item consumes the prior Activity intent without navig
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await setup(page);
-  await openActivity(page);
+  const previousWork = await openActivity(page);
+  const previousKey = new URL(previousWork, 'https://dwp.invalid').searchParams.get('work');
   const otherWork = personalTaskRoute(work.secondaryPersonalId);
 
   await page.goto(otherWork);
 
   await expect(page).toHaveURL(otherWork);
   await expect(page.getByRole('heading', { name: work.secondaryTitle, exact: true })).toBeVisible();
-  await expect(page.locator('[data-work-activity-trigger]')).toHaveCount(0);
+  const trigger = page.locator(
+    `[data-work-activity-trigger="PERSONAL_TASK:${work.secondaryPersonalId}:"]`
+  );
+  await expect(trigger).toBeVisible();
+  await expect(trigger).not.toBeFocused();
+  await expect(page.locator(`[data-work-activity-trigger="${previousKey}"]`)).toHaveCount(0);
   await page.waitForTimeout(100);
   await expect(page).toHaveURL(otherWork);
+  await expect(trigger).not.toBeFocused();
 });

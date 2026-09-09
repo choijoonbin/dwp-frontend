@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-09-08T11:54:29.949151+00:00",
+  "files": 116,
+  "maxLines": 489,
+  "maxLineFiles": [
+    "apps/dwp/src/features/dwaion/dwaion-workspace-answer.tsx",
+    "apps/dwp/src/features/dwaion/dwaion-workspace.tsx"
+  ],
+  "allUnder500": true,
+  "sharedPrivateMismatches": [],
+  "selection": [
+    "apps/dwp/src/features/dwaion/**/*.ts",
+    "apps/dwp/src/features/dwaion/**/*.tsx",
+    "apps/dwp/src/components/dwaion-assistant/**/*.ts",
+    "apps/dwp/src/components/dwaion-assistant/**/*.tsx",
+    "libs/shared-utils/src/api/*agent*.ts",
+    "libs/shared-utils/src/api/*dwaion*.ts"
+  ],
+  "excludes": "*.test.*"
+}

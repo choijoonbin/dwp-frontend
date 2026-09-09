@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "evidenceType": "dwaion-agent-conversation-artifact-provenance-verification",
+  "recordedDate": "2026-09-09",
+  "repository": {
+    "path": "/Users/a10697/Work/DWP/dwp_agent",
+    "runtime": "Python 3.14.6",
+    "testRunner": "pytest 9.1.1"
+  },
+  "scope": {
+    "feature": "Server-validated conversation-to-artifact provenance binding",
+    "requestShape": {
+      "sourceConversation": {
+        "conversationId": "UUID",
+        "assistantMessageId": "UUID"
+      }
+    },
+    "verifiedBehavior": [
+      "The conversation is loaded with the authenticated tenant ID, user ID, and requested conversation ID.",
+      "The returned conversation ID must equal the bound conversation ID.",
+      "The bound message must exist and have the ASSISTANT role.",
+      "Only ANSWER_GROUNDED and ANSWER_GROUNDED_FALLBACK messages are accepted.",
+      "A bound answer must contain at least one citation.",
+      "The submitted artifact body must exactly equal the stored assistant message content.",
+      "Client-supplied sources cannot be combined with sourceConversation.",
+      "Artifact source references are derived server-side as conversation:<conversationId>:message:<assistantMessageId>:citation:<sourceId> while preserving citation sourceType.",
+      "Conversation not-found failures map to governed 404 responses, invalid bindings map to governed 409 responses, and conversation-store unavailability maps to governed 503 responses.",
+      "Derived references retain the existing UNVERIFIED artifact-source semantics."
+    ],
+    "implementationFiles": [
+      "src/dwp_agent/artifact_contracts.py",
+      "src/dwp_agent/artifact_api.py",
+      "tests/test_artifact_conversation_source_api.py",
+      "contracts/openapi/agent-public.json"
+    ]
+  },
+  "postgresEnvironment": {
+    "containerName": "dwp-agent-verify-20260908",
+    "image": "postgres:16-alpine",
+    "publishedEndpoint": "127.0.0.1:55439",
+    "databaseUser": "agent",
+    "credentialScope": "Ephemeral local test-only credentials; no production credential was used.",
+    "cleanDatabases": [
+      "agent_integration_test",
+      "agent_envelope_test",
+      "agent_personal_domain_test",
+      "agent_lease_upgrade_verify"
+    ],
+    "cleanResetCommand": "docker exec dwp-agent-verify-20260908 sh -lc 'set -eu\nfor database in agent_integration_test agent_envelope_test agent_personal_domain_test agent_lease_upgrade_verify; do\n  dropdb -U agent --if-exists --force \"$database\"\n  createdb -U agent \"$database\"\ndone'",
+    "lifecycleNote": "The container was running during the clean PostgreSQL verification and was no longer present when this evidence file was written."
+  },
+  "testEnvironment": {
+    "DWP_AGENT_INTEGRATION_DATABASE_URL": "postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_integration_test",
+    "DWP_AGENT_ENVELOPE_TEST_DATABASE_URL": "postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_envelope_test",
+    "DWP_AGENT_PERSONAL_DOMAIN_TEST_DATABASE_URL": "postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_personal_domain_test",
+    "DWP_AGENT_LEASE_UPGRADE_TEST_DATABASE_URL": "postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_lease_upgrade_verify",
+    "DWP_AGENT_KEY_PROVIDER": "[REDACTED_TEST_VALUE]",
+    "DWP_AGENT_DATA_KEY": "[REDACTED_TEST_VALUE]",
+    "DWP_AGENT_DATA_KEY_VERSION": "[REDACTED_TEST_VALUE]",
+    "DWP_AGENT_PRIVACY_HASH_SECRET": "[REDACTED_TEST_VALUE]",
+    "DWP_AGENT_SAFETY_SECRET": "[REDACTED_TEST_VALUE]"
+  },
+  "executions": [
+    {
+      "id": "focused-provenance-api",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "command": ".venv/bin/pytest -q tests/test_artifact_conversation_source_api.py",
+      "result": {
+        "status": "PASS",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 0.52,
+        "exitCode": 0
+      }
+    },
+    {
+      "id": "related-personal-domain-api",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "command": ".venv/bin/pytest -q tests/test_artifact_conversation_source_api.py tests/test_personal_domain_api.py",
+      "result": {
+        "status": "PASS",
+        "passed": 27,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 1.4,
+        "exitCode": 0
+      }
+    },
+    {
+      "id": "openapi-regeneration",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "command": ".venv/bin/python scripts/export_openapi.py --write && .venv/bin/python scripts/export_openapi.py --check",
+      "result": {
+        "status": "PASS",
+        "exitCode": 0,
+        "outputSummary": [
+          "Wrote contracts/openapi/agent-public.json",
+          "PASS Agent OpenAPI snapshot matches the runtime contract."
+        ]
+      }
+    },
+    {
+      "id": "python-compile",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "command": ".venv/bin/python -m compileall -q src tests/test_artifact_conversation_source_api.py",
+      "result": {
+        "status": "PASS",
+        "exitCode": 0,
+        "outputSummary": "No output under quiet mode."
+      }
+    },
+    {
+      "id": "openapi-snapshot-check",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "command": ".venv/bin/python scripts/export_openapi.py --check",
+      "result": {
+        "status": "PASS",
+        "exitCode": 0,
+        "outputSummary": "PASS Agent OpenAPI snapshot matches the runtime contract."
+      }
+    },
+    {
+      "id": "owned-diff-check",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "command": "git diff --check -- src/dwp_agent/artifact_contracts.py src/dwp_agent/artifact_api.py tests/test_artifact_conversation_source_api.py contracts/openapi/agent-public.json",
+      "result": {
+        "status": "PASS",
+        "exitCode": 0,
+        "outputSummary": "No whitespace errors reported."
+      }
+    },
+    {
+      "id": "full-agent-suite-clean-postgres",
+      "workingDirectory": "/Users/a10697/Work/DWP/dwp_agent",
+      "preconditionCommand": "docker exec dwp-agent-verify-20260908 sh -lc 'set -eu\nfor database in agent_integration_test agent_envelope_test agent_personal_domain_test agent_lease_upgrade_verify; do\n  dropdb -U agent --if-exists --force \"$database\"\n  createdb -U agent \"$database\"\ndone'",
+      "command": "DWP_AGENT_INTEGRATION_DATABASE_URL='postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_integration_test' \\\nDWP_AGENT_ENVELOPE_TEST_DATABASE_URL='postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_envelope_test' \\\nDWP_AGENT_PERSONAL_DOMAIN_TEST_DATABASE_URL='postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_personal_domain_test' \\\nDWP_AGENT_LEASE_UPGRADE_TEST_DATABASE_URL='postgresql://agent:[REDACTED_TEST_PASSWORD]@127.0.0.1:55439/agent_lease_upgrade_verify' \\\nDWP_AGENT_KEY_PROVIDER='local-inline' \\\nDWP_AGENT_DATA_KEY='[REDACTED_TEST_VALUE]' \\\nDWP_AGENT_DATA_KEY_VERSION='artifact-provenance-test-v1' \\\nDWP_AGENT_PRIVACY_HASH_SECRET='[REDACTED_TEST_VALUE]' \\\nDWP_AGENT_SAFETY_SECRET='[REDACTED_TEST_VALUE]' \\\n.venv/bin/pytest -q",
+      "result": {
+        "status": "PASS",
+        "passed": 472,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 13.43,
+        "exitCode": 0
+      }
+    }
+  ],
+  "aggregateResult": {
+    "status": "PASS",
+    "focused": "10/10",
+    "related": "27/27",
+    "fullSuite": "472/472",
+    "compileall": "PASS",
+    "openapiRegeneration": "PASS",
+    "openapiSnapshot": "PASS",
+    "diffCheck": "PASS"
+  },
+  "evidenceWriteScope": {
+    "createdFile": "/Users/a10697/Work/DWP/dwp-frontend/docs/01-product/dwaion-design-ai-2026-09-04/implementation-evidence/2026-09-09/live-35-completion/agent-verification.json",
+    "sourceFilesModifiedByThisEvidenceTask": []
+  },
+  "redactionNote": "Ephemeral test credentials are intentionally redacted from durable evidence."
+}

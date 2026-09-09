@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ActionButton } from '@dwp-frontend/design-system';
@@ -24,7 +25,14 @@ import { MeetingHomeResults } from './meeting-home-results';
 import { MeetingHomeResources } from './meeting-home-resources';
 import { MeetingHomeWorkQueue } from './meeting-home-work-queue';
 import { MeetingHomeCandidateQueue } from './meeting-home-candidate-queue';
+import { MeetingHomeManualFollowUps } from './meeting-home-manual-follow-ups';
+import {
+  initialMeetingHomeQueueState,
+  type MeetingHomeQueueState,
+} from './meeting-home-queue-state';
+import { useMeetingHomeManualOutcomes } from './use-meeting-home-manual-outcomes';
 import { homeFocusMeeting, homeUnavailableReason } from './meeting-home-model';
+import { meetingHomeInset } from './meeting-home-presentation';
 
 export function MeetingHome() {
   const { user, isAuthenticated } = useAuth();
@@ -61,6 +69,24 @@ function MeetingHomeContent({
   const [joinCode, setJoinCode] = useState('');
   const [clock, setClock] = useState(() => Date.now());
   const [regionalPreference, setRegionalPreference] = useState(readRegionalPreference);
+  const [queueState, setQueueState] = useState<
+    Record<'recap' | 'work' | 'candidate', MeetingHomeQueueState>
+  >({
+    recap: initialMeetingHomeQueueState,
+    work: initialMeetingHomeQueueState,
+    candidate: initialMeetingHomeQueueState,
+  });
+  const updateQueueState = useCallback(
+    (source: keyof typeof queueState, state: MeetingHomeQueueState) => {
+      setQueueState((current) => {
+        const previous = current[source];
+        return previous.status === state.status && previous.count === state.count
+          ? current
+          : { ...current, [source]: state };
+      });
+    },
+    []
+  );
   const timeZone =
     regionalPreference.timeZone === 'system'
       ? resolveSystemTimeZone('UTC')
@@ -111,6 +137,12 @@ function MeetingHomeContent({
       if (mounted.current) toast.error(t('errors.operation'));
     },
   });
+  const manualOutcomes = useMeetingHomeManualOutcomes({
+    recent: query.data?.recent ?? [],
+    scope,
+    actorId,
+    enabled: authenticated && Boolean(query.data),
+  });
 
   if (!authenticated || query.isLoading)
     return (
@@ -142,6 +174,17 @@ function MeetingHomeContent({
     ? serverTime + Math.max(0, clock - query.dataUpdatedAt)
     : clock;
   const disabled = !available || instantMutation.isPending;
+  const manualFollowUpCount = manualOutcomes.entries
+    .filter((entry) => entry.followUp)
+    .slice(0, 1).length;
+  const authoritativeQueueCount = Object.values(queueState).reduce(
+    (total, state) => total + state.count,
+    0
+  );
+  const queueCount = manualFollowUpCount + authoritativeQueueCount;
+  const queueLoading =
+    manualOutcomes.loading || Object.values(queueState).some((state) => state.status === 'loading');
+  const queueError = Object.values(queueState).some((state) => state.status === 'error');
 
   return (
     <PageCanvas mode="workspace" topInset="compact">
@@ -187,7 +230,11 @@ function MeetingHomeContent({
         data-testid="meeting-day-lists"
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 2fr) minmax(280px, 1fr)' },
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr)',
+            lg: 'minmax(0, 2fr) minmax(280px, 1fr)',
+            xl: 'minmax(0, 7fr) minmax(400px, 5fr)',
+          },
           gap: { xs: 2.5, lg: 3 },
           alignItems: 'start',
           mt: 3,
@@ -211,31 +258,75 @@ function MeetingHomeContent({
               <Typography component="h2" variant="subtitle1" sx={{ fontWeight: 'fontWeightBold' }}>
                 {t('home.design.queueTitle')}
               </Typography>
+              <Chip
+                size="small"
+                color={queueCount > 0 ? 'primary' : 'default'}
+                label={t('home.results.count', { count: queueCount })}
+                aria-label={t('home.manual.queueCount', { count: queueCount })}
+              />
             </Stack>
             <ActionButton
               intent="quiet"
               size="small"
-              onClick={() => navigate('/meetings/follow-ups')}
+              onClick={() =>
+                navigate(
+                  authoritativeQueueCount === 0 && manualFollowUpCount > 0
+                    ? '/meetings/history'
+                    : '/meetings/follow-ups'
+                )
+              }
             >
               {t('actions.viewAll')}
             </ActionButton>
           </Stack>
           <Typography variant="caption" color="text.secondary" component="p" sx={{ mb: 1.5 }}>
-            {t('home.design.queueDescription')}
+            {t(
+              authoritativeQueueCount === 0 && manualFollowUpCount > 0
+                ? 'home.manual.queueDescription'
+                : 'home.design.queueDescription'
+            )}
           </Typography>
-          <MeetingHomeResults
-            embedded
-            recent={data.recent}
-            section="queue"
-            timeZone={displayTimeZone}
-          />
-          <MeetingHomeWorkQueue
-            embedded
-            scope={scope}
-            actorId={actorId}
-            timeZone={displayTimeZone}
-          />
-          <MeetingHomeCandidateQueue recent={data.recent} scope={scope} enabled={authenticated} />
+          <Stack gap={1.25} data-testid="meeting-home-queue-content">
+            <MeetingHomeResults
+              embedded
+              recent={data.recent}
+              section="queue"
+              timeZone={displayTimeZone}
+              onStateChange={(state) => updateQueueState('recap', state)}
+            />
+            <MeetingHomeManualFollowUps outcomes={manualOutcomes.entries} />
+            <MeetingHomeWorkQueue
+              embedded
+              scope={scope}
+              actorId={actorId}
+              timeZone={displayTimeZone}
+              onStateChange={(state) => updateQueueState('work', state)}
+            />
+            <MeetingHomeCandidateQueue
+              recent={data.recent}
+              scope={scope}
+              enabled={authenticated}
+              onStateChange={(state) => updateQueueState('candidate', state)}
+            />
+            {!queueLoading && !queueError && queueCount === 0 && (
+              <Box
+                role="status"
+                data-testid="meeting-home-queue-empty"
+                sx={(theme) => ({
+                  ...meetingHomeInset(theme),
+                  px: 1.5,
+                  py: 1.25,
+                  minHeight: 64,
+                  display: 'flex',
+                  alignItems: 'center',
+                })}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  {t('home.manual.queueEmpty')}
+                </Typography>
+              </Box>
+            )}
+          </Stack>
         </Box>
       </Box>
       <Box
@@ -249,7 +340,12 @@ function MeetingHomeContent({
         }}
       >
         <Box data-testid="meeting-home-recent" sx={{ minWidth: 0 }}>
-          <MeetingHomeResults recent={data.recent} section="recent" timeZone={displayTimeZone} />
+          <MeetingHomeResults
+            recent={data.recent}
+            section="recent"
+            timeZone={displayTimeZone}
+            manualOutcomes={manualOutcomes.entries}
+          />
         </Box>
         <MeetingHomeResources />
       </Box>

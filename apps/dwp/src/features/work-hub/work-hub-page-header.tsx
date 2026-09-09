@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DatabaseZap, Plus } from 'lucide-react';
 import { ActionButton, LiveStatus } from '@dwp-frontend/design-system';
@@ -8,6 +9,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { WorkHubView } from './work-hub-view-navigation';
+import { useWorkHubKeyboardShortcuts } from './use-work-hub-keyboard-shortcuts';
 
 export function WorkHubPageHeader({
   view,
@@ -33,6 +35,8 @@ export function WorkHubPageHeader({
   onCreate: () => void;
 }) {
   const { t } = useTranslation('work');
+  const createHelpId = useId();
+  useWorkHubKeyboardShortcuts({ onCreate: canCreate && !refreshing ? onCreate : undefined });
   return (
     <Stack
       direction={{ xs: 'column', md: 'row' }}
@@ -75,6 +79,11 @@ export function WorkHubPageHeader({
               : 'work:workHub.header.description'
           )}
         </Typography>
+        {canCreate && (
+          <Typography id={createHelpId} variant="caption" color="text.secondary" component="p">
+            {t('workHub.keyboardShortcuts.createHelp')}
+          </Typography>
+        )}
       </Box>
       <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
         <Box
@@ -115,6 +124,8 @@ export function WorkHubPageHeader({
             intent="primary"
             startIcon={<Plus size={17} />}
             onClick={onCreate}
+            aria-keyshortcuts="Alt+Shift+N Meta+N Control+N"
+            aria-describedby={createHelpId}
             sx={{ '@media (max-width:899.95px)': { minHeight: 44 } }}
           >
             {t('work:workHub.actions.createTask')}

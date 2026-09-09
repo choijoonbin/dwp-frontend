@@ -4,6 +4,12 @@ import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
+
+const LEGACY_AUTHORITY = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' } as const;
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -30,6 +36,8 @@ export type DwaionOperationalGateProblem = {
   context: Record<string, string | string[]>;
 };
 export type DwaionOperationalGatePortfolio = AgentSchemas['OperationalGatePortfolio'];
+export type BootstrapDwaionOperationalGatesRequest =
+  AgentSchemas['BootstrapOperationalGatesRequest'];
 
 export function toDwaionOperationalGateProblem(error: unknown): DwaionOperationalGateProblem {
   if (!(error instanceof HttpError)) {
@@ -67,6 +75,22 @@ export async function getDwaionOperationalGatePortfolio(
   return response.data.data;
 }
 
+export async function bootstrapDwaionOperationalGates(
+  environment: DwaionGateEnvironment,
+  request: BootstrapDwaionOperationalGatesRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionOperationalGatePortfolio> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionOperationalGatePortfolio>,
+    BootstrapDwaionOperationalGatesRequest
+  >(
+    `/api/agent/v1/admin/gates/bootstrap?environment=${environment}`,
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
 export async function getDwaionOperationalGate(
   gateKey: DwaionGateKey,
   environment: DwaionGateEnvironment
@@ -87,12 +111,17 @@ export async function configureDwaionOperationalGate(
     notes?: string;
     expectedVersion: number;
     changeReason: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionOperationalGateDetail> {
   const response = await axiosInstance.patch<
     ApiResponse<DwaionOperationalGateDetail>,
     typeof request
-  >(`/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}?environment=${environment}`, request);
+  >(
+    `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}?environment=${environment}`,
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
@@ -107,14 +136,16 @@ export async function addDwaionOperationalGateEvidence(
     notes?: string;
     expectedVersion: number;
     changeReason: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionOperationalGateDetail> {
   const response = await axiosInstance.post<
     ApiResponse<DwaionOperationalGateDetail>,
     typeof request
   >(
     `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}/evidence?environment=${environment}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -127,14 +158,16 @@ export async function validateDwaionOperationalGate(
     validationSummary: string;
     expectedVersion: number;
     changeReason: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionOperationalGateDetail> {
   const response = await axiosInstance.post<
     ApiResponse<DwaionOperationalGateDetail>,
     typeof request
   >(
     `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}/validation?environment=${environment}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -147,14 +180,16 @@ export async function decideDwaionOperationalGate(
     validDays: number;
     expectedVersion: number;
     changeReason: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionOperationalGateDetail> {
   const response = await axiosInstance.post<
     ApiResponse<DwaionOperationalGateDetail>,
     typeof request
   >(
     `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}/decision?environment=${environment}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }

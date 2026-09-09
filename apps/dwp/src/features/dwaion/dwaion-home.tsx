@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ShieldCheck } from 'lucide-react';
+import { Circle, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
 import {
   createDwaionQuestionLaunchState,
@@ -29,14 +29,19 @@ import {
 } from './dwaion-contract';
 import { DwaionHomeContent } from './dwaion-home-content';
 import { homeLoadState, homePriorityWork, homeVerifiedAt } from './dwaion-home-model';
+import { DwaionHomeProposals } from './dwaion-home-proposals';
 import { DwaionHomeQuestion } from './dwaion-home-question';
 import { DwaionHomeSignals, type HomeSignal } from './dwaion-home-signals';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const USER_AGENT_KEYS = new Set([DWAION_AGENT_KEY, DWAION_APPROVAL_EXPERT_AGENT_KEY]);
 
 export function DwaionHome() {
   const { t } = useTranslation('work');
   const navigate = useNavigate();
+  const governQuestionLaunch = useDwaionGovernedMutation(
+    'route.dwaion.work.question-launch-create.action'
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const auth = useAuth();
   const { permissions } = usePermissions();
@@ -51,7 +56,7 @@ export function DwaionHome() {
   });
   const work = useQuery({
     queryKey: ['workspace', 'work-queue'],
-    queryFn: getWorkspaceWorkQueue,
+    queryFn: ({ signal }) => getWorkspaceWorkQueue(signal),
     staleTime: 30_000,
   });
   const agents = useQuery({
@@ -66,7 +71,7 @@ export function DwaionHome() {
   });
   const proposals = useQuery({
     queryKey: ['dwaion', 'proposals', 'ACTIVE', 'home'],
-    queryFn: () => getDwaionProposals('ACTIVE', 1),
+    queryFn: () => getDwaionProposals('ACTIVE', 2),
     staleTime: 20_000,
   });
   const canUseApprovalExpert = isAppResourceEntitled('APP.APPROVALS', permissions);
@@ -82,6 +87,9 @@ export function DwaionHome() {
   const priorityWork = useMemo(() => homePriorityWork(work.data?.items ?? []), [work.data?.items]);
   const resources = [work, conversations, proposals, agents, actions];
   const refreshing = resources.some((resource) => resource.isFetching);
+  const failedResources = resources.filter((resource) => resource.isError).length;
+  const verifiedAt = homeVerifiedAt(resources);
+  const tenant = auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback');
   const signals: HomeSignal[] = [
     {
       key: 'priorityWork',
@@ -129,7 +137,9 @@ export function DwaionHome() {
     setLaunchPending(true);
     setLaunchFailed(false);
     try {
-      const receipt = await createQuestionLaunch(normalized);
+      const receipt = await governQuestionLaunch((authority) =>
+        createQuestionLaunch(normalized, authority)
+      );
       const state = createDwaionQuestionLaunchState(receipt.launchId);
       if (!state) throw new Error('Question launch receipt is invalid.');
       navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { state });
@@ -149,14 +159,79 @@ export function DwaionHome() {
   }, [searchParams, setSearchParams]);
 
   return (
-    <PageCanvas>
-      <Box data-testid="dwaion-home" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
+    <PageCanvas topInset="compact">
+      <Box
+        data-testid="dwaion-home"
+        sx={{ minWidth: 0, overflowWrap: 'anywhere', display: 'flex', flexDirection: 'column' }}
+      >
+        <Stack
+          component="aside"
+          aria-label={t('dwaionHome.environment.label')}
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={1.5}
+          sx={{
+            order: -1,
+            minHeight: { xs: 34, md: 42 },
+            px: { xs: 1.25, md: 1.75 },
+            py: { xs: 0.55, md: 0.8 },
+            mb: { xs: 1.25, md: 2 },
+            borderRadius: (theme) => Number(theme.shape.borderRadius) * 1.25 + 'px',
+            bgcolor: 'var(--dwp-product-soft)',
+            color: 'text.secondary',
+          }}
+        >
+          <Stack direction="row" alignItems="center" gap={0.75} sx={{ minWidth: 0 }}>
+            <Circle
+              size={9}
+              fill="currentColor"
+              color={
+                failedResources
+                  ? 'var(--mui-palette-warning-main)'
+                  : 'var(--mui-palette-success-main)'
+              }
+              aria-hidden="true"
+            />
+            <Typography variant="caption" fontWeight="fontWeightBold" noWrap>
+              {tenant} ·{' '}
+              {t(
+                refreshing
+                  ? 'dwaionHome.environment.refreshing'
+                  : failedResources
+                    ? 'dwaionHome.environment.partial'
+                    : 'dwaionHome.environment.connected'
+              )}
+            </Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" gap={0.65} sx={{ minWidth: 0 }}>
+            <LockKeyhole size={14} aria-hidden="true" style={{ flexShrink: 0 }} />
+            <Typography
+              variant="caption"
+              noWrap
+              sx={{ display: { xs: 'none', sm: 'block' }, maxWidth: { sm: 320 } }}
+            >
+              {[auth.user?.displayName?.trim(), t('askPage.readOnly')].filter(Boolean).join(' · ')}
+            </Typography>
+            {verifiedAt && (
+              <Typography variant="caption" noWrap sx={{ display: { xs: 'block', sm: 'none' } }}>
+                {t('askPage.readOnly')}
+              </Typography>
+            )}
+          </Stack>
+        </Stack>
         <Stack
           component="header"
-          direction={{ xs: 'column', md: 'row' }}
+          direction="row"
           justifyContent="space-between"
-          alignItems={{ xs: 'flex-start', md: 'center' }}
+          alignItems="flex-end"
           gap={2}
+          sx={{
+            order: 0,
+            pb: { xs: 1.25, md: 0 },
+            borderBottom: { xs: 1, md: 0 },
+            borderColor: 'divider',
+          }}
         >
           <Box sx={{ minWidth: 0 }}>
             <Stack direction="row" spacing={0.75} alignItems="center">
@@ -173,11 +248,20 @@ export function DwaionHome() {
             <Typography
               component="h1"
               variant="h4"
-              sx={{ mt: 0.6, fontSize: 24, lineHeight: 1.4, fontWeight: 750 }}
+              sx={{
+                mt: 0.4,
+                fontSize: { xs: 'h4.fontSize', md: 'h2.fontSize' },
+                lineHeight: 'h3.lineHeight',
+                fontWeight: 'fontWeightBold',
+              }}
             >
               {t('dwaionHome.title', { name: auth.user?.displayName ?? t('dwaionHome.member') })}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.75, display: { xs: 'none', md: 'block' } }}
+            >
               {t('dwaionHome.description')}
             </Typography>
           </Box>
@@ -185,7 +269,7 @@ export function DwaionHome() {
             direction="row"
             spacing={0.75}
             alignItems="center"
-            sx={{ color: 'success.main', maxWidth: 300 }}
+            sx={{ color: 'success.main', maxWidth: 300, display: { xs: 'none', md: 'flex' } }}
           >
             <ShieldCheck size={17} aria-hidden="true" style={{ flexShrink: 0 }} />
             <Typography variant="caption" color="text.secondary">
@@ -193,45 +277,58 @@ export function DwaionHome() {
             </Typography>
           </Stack>
         </Stack>
-        <DwaionHomeQuestion
-          value={query}
-          loading={launchPending}
-          failed={launchFailed}
-          onChange={(value) => {
-            setQuery(value);
-            setLaunchFailed(false);
-          }}
-          onStart={(value) => void start(value)}
-        />
-        <DwaionHomeSignals
-          items={signals}
-          refreshing={refreshing}
-          verifiedAt={homeVerifiedAt(resources)}
-          onRefresh={() => {
-            resources.forEach((resource) => {
-              void resource.refetch();
-            });
-          }}
-        />
-        <DwaionHomeContent
-          work={{
-            items: priorityWork,
-            state: homeLoadState(work),
-            retry: () => void work.refetch(),
-          }}
-          conversations={{
-            items: conversations.data ?? [],
-            state: homeLoadState(conversations),
-            retry: () => void conversations.refetch(),
-          }}
-          agents={{
-            items: visibleAgents,
-            state: homeLoadState(agents),
-            retry: () => void agents.refetch(),
-          }}
-          launchPending={launchPending}
-          onStartAgent={(key) => void start('', key)}
-        />
+        <Box sx={{ order: { xs: 2, md: 1 } }}>
+          <DwaionHomeQuestion
+            value={query}
+            loading={launchPending}
+            failed={launchFailed}
+            onChange={(value) => {
+              setQuery(value);
+              setLaunchFailed(false);
+            }}
+            onStart={(value) => void start(value)}
+          />
+        </Box>
+        <Box sx={{ order: { xs: 1, md: 2 } }}>
+          <DwaionHomeSignals
+            items={signals}
+            refreshing={refreshing}
+            verifiedAt={verifiedAt}
+            onRefresh={() => {
+              resources.forEach((resource) => {
+                void resource.refetch();
+              });
+            }}
+          />
+        </Box>
+        <Box sx={{ order: 3 }}>
+          <DwaionHomeProposals
+            items={proposals.data?.items ?? []}
+            state={homeLoadState(proposals)}
+            onRetry={() => void proposals.refetch()}
+          />
+        </Box>
+        <Box sx={{ order: 4 }}>
+          <DwaionHomeContent
+            work={{
+              items: priorityWork,
+              state: homeLoadState(work),
+              retry: () => void work.refetch(),
+            }}
+            conversations={{
+              items: conversations.data ?? [],
+              state: homeLoadState(conversations),
+              retry: () => void conversations.refetch(),
+            }}
+            agents={{
+              items: visibleAgents,
+              state: homeLoadState(agents),
+              retry: () => void agents.refetch(),
+            }}
+            launchPending={launchPending}
+            onStartAgent={(key) => void start('', key)}
+          />
+        </Box>
       </Box>
     </PageCanvas>
   );

@@ -117,6 +117,19 @@
         "flaky": 0
       },
       "projects": ["chromium", "mobile"]
+    },
+    {
+      "path": "/tmp/dwp-meeting-approved-frames-final-20260908.json",
+      "sha256": "379191068fad4c631059824adf6e838c22261051d0185da1b89abd166a00fddb",
+      "stats": {
+        "startTime": "2026-09-08T01:38:29.077Z",
+        "duration": 74231.84700000001,
+        "expected": 24,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "projects": ["chromium", "mobile"]
     }
   ]
 }

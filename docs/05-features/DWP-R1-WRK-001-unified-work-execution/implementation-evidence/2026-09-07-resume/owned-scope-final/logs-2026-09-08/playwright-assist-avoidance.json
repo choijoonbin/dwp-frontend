@@ -1,0 +1,554 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/dwp-frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/dwp-work-assist-avoidance-20260908",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/tmp/dwp-work-assist-avoidance-20260908",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 1,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://127.0.0.1:4423",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "work-stitch-design-sync.spec.ts",
+      "file": "work-stitch-design-sync.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "desktop-1440",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7557,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T10:32:39.784Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/01-unified-queue-fb17d14178e27ee46cdd29f9e39be587bed1fef5.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-523990b679fdcba11fd3846c5eddba08601606dc.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIuyYpOuKmCDqs4Ttmo0iLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/07-today-plan-9863559bcd2aace23d62270bbeeee797b6f75bdc.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-4cd1e24a0bbf43a0ba6602936b41fd17c897dd2e.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-6de88fe8b37204c286ef9bd1f2809f4daa8397a8.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-1886da894db1a16e9d489fd339fc86f77c948c6b.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/09-source-status-c9b7044123b775ecbbb3b74f9f5f483c67d46f24.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/09-source-status-full-cd49662382a68b6fec0901d0e0440a6004e5b262.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-bf9a4dc4a4262b61643c6d648d15e86351c7be50.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-ed980dd69c4df5cb95db441e051dcf39807e99c5.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-abdafb90c1c473c053c9",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            },
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile",
+                  "projectName": "mobile",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7812,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T10:32:55.794Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/01-unified-queue-789f2bb438e31b405b5be38d102eba7874f5eca1.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-00a96522d43a3e0f0cae7b44b74382ba243433c3.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIuyYpOuKmCDqs4Ttmo0iLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/07-today-plan-5367d8f550bb0c1db257bdae2d1937729fbaa276.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-8e67d958de5d31762b9f089ef8ada83f80ee153f.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-9182a7ab907ee123bc0e68802a2d368ab6f07830.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-1a30c86bad176dcce9f6357088aefd4a34c2e150.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/09-source-status-44882ad7653a87d27360cc37f65e8b37c111d372.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/09-source-status-full-c7a2a15ccee977325a32f5591b1cefa85d32c125.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-2fc61714aa575b5fdb0902ababdc046b38d894a6.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-93830c3a288e5e9f6c8fdd58c9ac1ae6ca2e147d.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-ee7eb95aca92f0c4302c",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "desktop-1280",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7185,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T10:32:47.819Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-b5d376a7ff5f1ea57b1ac7c833c715d4e9993ea7.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-80d82437fe7ed0bf781e0be90971646cfc29f433.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIuyYpOuKmCDqs4Ttmo0iLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/07-today-plan-a6ccb020393e88ff00464d1f6d9dc1afc6106b98.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-baf397015708744dd6bc14d3d768094b10b6cc1e.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-64942ea9ade772b40f6c757c297d5ce74088409c.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-7de01257e760c6e1115f85aa2177da5a2c542745.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/09-source-status-793378ce973d428ca04b4c715a4ec62a0057241c.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/09-source-status-full-7490c88840d67133b8b0a71fa941a421eff036e3.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-f6383a9033817697f558ef6866e21c6bc1edbd17.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-ecd399eeccb0a50a09f104c1cfdc233ff4307320.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-cb6f4c97b19521b4e81c",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            },
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile",
+                  "projectName": "mobile",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7183,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T10:33:04.159Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/01-unified-queue-e1944132bba199c1ec4fa23bde15d6051fa76aca.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/01-unified-queue-full-693b82960eb265f9cc3e5b33fab79b64cb5fbc6d.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIuyYpOuKmCDqs4Ttmo0iLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/07-today-plan-734bc7665b7e1cbc96746682bbe7d9263e4214ae.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/07-today-plan-full-c0024bd70397216ca15de5af0d1c483f26e875c7.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-86c8217bb24bba823f510ef4d59e808595de5341.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/08-calendar-handoff-full-960433105c9a51ed2addc09cb29483e7af203d61.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/09-source-status-6fb71c6e9182ba25e99bc823be7a55d412a30d59.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/09-source-status-full-d6d576e456291be1921cf06364e71bb17878e73a.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-f677d1d39e9b42ef38aa6b97fe9861948853898b.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/tmp/dwp-work-assist-avoidance-20260908/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/attachments/11-selected-work-ai-assist-full-3d2741e2e214847035aef82ca585fc19f09c6529.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-1e8806f4d834b5841e1a",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-08T10:32:36.784Z",
+    "duration": 34643.505,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

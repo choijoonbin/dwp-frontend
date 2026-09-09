@@ -1,0 +1,8 @@
+{
+  "removedAt": "2026-09-08T12:11:12.429676+00:00",
+  "path": "/tmp/dwaion-final-checkout-20260908/.vite-validation",
+  "files": 541,
+  "bytes": 26770970,
+  "reason": "Private Vite dependency cache generated for isolated browser validation was not source and was included by repository-wide eslint.",
+  "productSourceChanged": false
+}

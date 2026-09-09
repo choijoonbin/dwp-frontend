@@ -30,6 +30,7 @@ import type {
   NotificationSummary,
   NotificationView,
 } from '@dwp-frontend/shared-utils/api/notification-api';
+import type { ReactNode } from 'react';
 
 const VIEWS = [
   { key: 'ALL', icon: Inbox },
@@ -45,6 +46,7 @@ export function NotificationFilterBar({
   filters,
   summary,
   appOptions,
+  savedViewControl,
   onViewChange,
   onChange,
 }: {
@@ -52,6 +54,7 @@ export function NotificationFilterBar({
   filters: CenterFilters;
   summary?: NotificationSummary;
   appOptions: Array<[string, string]>;
+  savedViewControl?: ReactNode;
   onViewChange: (view: NotificationView) => void;
   onChange: (filters: CenterFilters) => void;
 }) {
@@ -125,7 +128,10 @@ export function NotificationFilterBar({
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(220px, 1fr) auto' },
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr) auto',
+            md: 'minmax(220px, 1fr) auto auto',
+          },
           gap: 1,
           py: 1.5,
         }}
@@ -144,17 +150,22 @@ export function NotificationFilterBar({
               ),
             },
           }}
-          sx={{ minWidth: 0 }}
+          sx={{ minWidth: 0, gridColumn: { xs: '1 / -1', md: 'auto' } }}
         />
         <ActionButton
           intent="secondary"
           startIcon={<SlidersHorizontal size={17} />}
           onClick={() => setFiltersOpen(true)}
-          sx={{ display: { xs: 'flex', md: 'none' }, minHeight: 44 }}
+          sx={{ display: { xs: 'flex', md: 'none' }, minHeight: 44, width: 1 }}
         >
           {t('filters.open')}
         </ActionButton>
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>{renderFilters()}</Box>
+        {savedViewControl && (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {savedViewControl}
+          </Box>
+        )}
       </Box>
       <Drawer
         anchor="bottom"

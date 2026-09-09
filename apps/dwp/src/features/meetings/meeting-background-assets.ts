@@ -1,6 +1,7 @@
 import { fetchSameOriginStaticAsset } from '@dwp-frontend/shared-utils/browser-static-asset';
 import {
   MeetingBackgroundError,
+  type MeetingBackgroundImage,
   type MeetingBackgroundSegmenter,
 } from './meeting-background-types';
 
@@ -8,14 +9,15 @@ const APPROVED_SHA256 = {
   model: '490e9ea734313e0de10fa0cd9e3c6133e36ea4db2b7a49bde9ef019f72796b8e',
   loader: 'abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054',
   wasm: '38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97',
+  office: '1f206bb431463f91a988dd8e0c31656cbc89c004509a3058d51dc6d60bb02949',
 };
-const ASSET_PATH = 'assets/meeting-background/mediapipe-0.10.14/';
 
-export function meetingBackgroundAssetUrl(name: 'model' | 'loader' | 'wasm'): string {
+export function meetingBackgroundAssetUrl(name: keyof typeof APPROVED_SHA256): string {
   const filenames = {
-    model: 'selfie-segmenter-landscape-v1.tflite',
-    loader: 'vision_wasm_nosimd_internal.js',
-    wasm: 'vision_wasm_nosimd_internal.wasm',
+    model: 'assets/meeting-background/mediapipe-0.10.14/selfie-segmenter-landscape-v1.tflite',
+    loader: 'assets/meeting-background/mediapipe-0.10.14/vision_wasm_nosimd_internal.js',
+    wasm: 'assets/meeting-background/mediapipe-0.10.14/vision_wasm_nosimd_internal.wasm',
+    office: 'assets/meeting-background/presets/office-neutral-v1.svg',
   };
   if (!Object.hasOwn(filenames, name)) throw new MeetingBackgroundError('ASSET_UNTRUSTED');
   const deploymentBase: unknown = import.meta.env.BASE_URL;
@@ -25,7 +27,7 @@ export function meetingBackgroundAssetUrl(name: 'model' | 'loader' | 'wasm'): st
     throw new MeetingBackgroundError('ASSET_UNTRUSTED');
   let url: URL;
   try {
-    url = new URL(`${deploymentBase}${ASSET_PATH}${filenames[name]}`, location.origin);
+    url = new URL(`${deploymentBase}${filenames[name]}`, location.origin);
   } catch {
     throw new MeetingBackgroundError('ASSET_UNTRUSTED');
   }
@@ -33,6 +35,56 @@ export function meetingBackgroundAssetUrl(name: 'model' | 'loader' | 'wasm'): st
     throw new MeetingBackgroundError('ASSET_UNTRUSTED');
   }
   return url.href;
+}
+
+export async function loadMeetingOfficeBackground(
+  signal: AbortSignal
+): Promise<MeetingBackgroundImage> {
+  let bytes: Uint8Array | undefined;
+  let objectUrl: string | undefined;
+  let image: HTMLImageElement | undefined;
+  try {
+    bytes = await readApprovedAsset('office', signal);
+    signal.throwIfAborted();
+    objectUrl = URL.createObjectURL(
+      new Blob([Uint8Array.from(bytes).buffer], { type: 'image/svg+xml' })
+    );
+    image = new Image();
+    image.decoding = 'async';
+    image.src = objectUrl;
+    const aborted = new Promise<never>((_, reject) =>
+      signal.addEventListener('abort', () => reject(new MeetingBackgroundError('SUPERSEDED')), {
+        once: true,
+      })
+    );
+    await Promise.race([image.decode(), aborted]);
+    signal.throwIfAborted();
+    const width = image.naturalWidth || image.width;
+    const height = image.naturalHeight || image.height;
+    if (!width || !height) throw new MeetingBackgroundError('ASSET_UNTRUSTED');
+    let active = true;
+    const assetUrl = objectUrl;
+    return {
+      source: image,
+      width,
+      height,
+      close() {
+        if (!active) return;
+        active = false;
+        image!.src = '';
+        URL.revokeObjectURL(assetUrl);
+      },
+    };
+  } catch (error) {
+    if (image) image.src = '';
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    if (signal.aborted) throw new MeetingBackgroundError('SUPERSEDED');
+    throw error instanceof MeetingBackgroundError
+      ? error
+      : new MeetingBackgroundError('ASSET_UNAVAILABLE');
+  } finally {
+    bytes?.fill(0);
+  }
 }
 
 async function readApprovedAsset(name: keyof typeof APPROVED_SHA256, signal: AbortSignal) {

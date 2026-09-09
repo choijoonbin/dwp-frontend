@@ -5,7 +5,7 @@ import {
   selectedWorkConversationRoute,
   type SelectedWorkQuestion,
 } from './agent-selected-work-api';
-import type { AskDwpResponse } from './agent-runtime-api';
+import type { AskDwpRequest, AskDwpResponse } from './agent-runtime-api';
 
 const input: SelectedWorkQuestion = {
   selection: {
@@ -17,13 +17,68 @@ const input: SelectedWorkQuestion = {
   locale: 'en',
   route: '/work/queue?work=opaque#detail',
 };
+const secureAuthority = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
+
+function abstainedResponse(request: AskDwpRequest): AskDwpResponse {
+  return {
+    runId: 'run-selected-work',
+    auditId: 'audit-selected-work',
+    requestId: request.requestId,
+    correlationId: 'correlation-selected-work',
+    state: 'ABSTAINED',
+    answer: null,
+    confidence: null,
+    citations: [],
+    sourceCount: 0,
+    policy: {
+      outcome: 'DENY',
+      riskTier: 'L1',
+      code: 'SELECTED_WORK_UNAVAILABLE',
+      explanation: 'The selected work is unavailable.',
+      modelAllowed: false,
+      mutationAllowed: false,
+    },
+    modelRoute: {
+      state: 'NOT_INVOKED',
+      provider: null,
+      model: null,
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+      latencyMs: 0,
+    },
+    agentRegistry: {
+      entryKey: request.agentKey ?? 'DWP_ASSISTANT',
+      revision: 1,
+      artifactVersion: 'selected-work-v1',
+      riskTier: 'MEDIUM',
+      resolution: 'ACTIVE',
+    },
+    statusCode: 'SELECTED_WORK_UNAVAILABLE',
+    completedAt: '2026-09-08T00:00:00Z',
+    conversationId: null,
+    userMessageId: null,
+    assistantMessageId: null,
+    selectedWork: request.pageContext?.selectedWork ?? null,
+  };
+}
 
 describe('selected-work governed Ask boundary', () => {
   it('submits only the question and exact binding through the existing stream client', async () => {
-    const client = vi.fn().mockResolvedValue({ state: 'ABSTAINED' });
+    const client = vi.fn(async (request: AskDwpRequest) => abstainedResponse(request));
     const controller = new AbortController();
     const progress = vi.fn();
-    await askSelectedWorkStream(input, { signal: controller.signal, onProgress: progress }, client);
+    await askSelectedWorkStream(
+      input,
+      { signal: controller.signal, onProgress: progress, authority: secureAuthority },
+      client
+    );
     expect(client).toHaveBeenCalledWith(
       {
         requestId: expect.any(String),
@@ -40,13 +95,13 @@ describe('selected-work governed Ask boundary', () => {
           selectedWork: input.selection,
         },
       },
-      { signal: controller.signal, onProgress: progress }
+      { signal: controller.signal, onProgress: progress, authority: secureAuthority }
     );
     expect(JSON.stringify(client.mock.calls)).not.toContain('opaque');
   });
 
   it('binds the approval expert and exact task version and obligation', async () => {
-    const client = vi.fn().mockResolvedValue({});
+    const client = vi.fn(async (request: AskDwpRequest) => abstainedResponse(request));
     await askSelectedWorkStream(
       {
         ...input,
@@ -103,6 +158,82 @@ describe('selected-work governed Ask boundary', () => {
     await expect(
       askSelectedWorkStream(input, { signal: controller.signal }, client)
     ).rejects.toThrow();
+  });
+
+  it('rejects a response whose request id does not match the generated request id', async () => {
+    const client = vi.fn(async (request: AskDwpRequest) => ({
+      ...abstainedResponse(request),
+      requestId: 'another-request',
+    }));
+
+    await expect(askSelectedWorkStream(input, {}, client)).rejects.toThrow(
+      'Selected work response binding is invalid.'
+    );
+  });
+
+  it('continues only the exact persisted conversation returned by the selected-work runtime', async () => {
+    const conversationId = 'cefaef98-4cf6-46ee-a057-984c5e9c6cc8';
+    const client = vi.fn(async (request: AskDwpRequest) => ({
+      ...abstainedResponse(request),
+      conversationId: request.conversationId ?? null,
+    }));
+
+    await expect(
+      askSelectedWorkStream({ ...input, conversationId }, {}, client)
+    ).resolves.toMatchObject({ conversationId });
+    expect(client.mock.calls[0]?.[0]).toMatchObject({ conversationId });
+
+    client.mockImplementationOnce(async (request: AskDwpRequest) => ({
+      ...abstainedResponse(request),
+      conversationId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    }));
+    await expect(askSelectedWorkStream({ ...input, conversationId }, {}, client)).rejects.toThrow(
+      'Selected work response binding is invalid.'
+    );
+  });
+
+  it.each([
+    ['source system', { sourceSystem: 'SERVICE_REQUEST' as const }],
+    ['source reference', { sourceReference: 'c2222222-2222-4222-8222-222222222222' }],
+    ['expected version', { expectedVersion: 4 }],
+    ['obligation', { obligationKey: 'forged-obligation' }],
+  ])('rejects a response with a mismatched selected-work %s', async (_label, patch) => {
+    const client = vi.fn(async (request: AskDwpRequest) => ({
+      ...abstainedResponse(request),
+      selectedWork: {
+        ...request.pageContext?.selectedWork,
+        ...patch,
+      } as SelectedWorkQuestion['selection'],
+    }));
+
+    await expect(askSelectedWorkStream(input, {}, client)).rejects.toThrow(
+      'Selected work response binding is invalid.'
+    );
+  });
+
+  it('rejects a selected-work response that omits the echoed binding', async () => {
+    const client = vi.fn(async (request: AskDwpRequest) => ({
+      ...abstainedResponse(request),
+      selectedWork: null,
+    }));
+
+    await expect(askSelectedWorkStream(input, {}, client)).rejects.toThrow(
+      'Selected work response binding is invalid.'
+    );
+  });
+
+  it('rejects a response resolved by an agent other than the requested selected-work agent', async () => {
+    const client = vi.fn(async (request: AskDwpRequest) => ({
+      ...abstainedResponse(request),
+      agentRegistry: {
+        ...abstainedResponse(request).agentRegistry,
+        entryKey: 'DWP_APPROVAL_EXPERT',
+      },
+    }));
+
+    await expect(askSelectedWorkStream(input, {}, client)).rejects.toThrow(
+      'Selected work response binding is invalid.'
+    );
   });
 
   it('opens an approval conversation with its expert but no query text', () => {

@@ -65,9 +65,24 @@ export function meetingContextRequest(search: string): MeetingContextRequest {
   return { view, template: { templateId: templateId.toLowerCase(), version: Number(revision) } };
 }
 
-export function meetingPreparationPath(meetingId: string): string {
+/** Leave a contextual screen without discarding the authorized list's filters or selection. */
+export function meetingListPath(search = ''): string {
+  const params = new URLSearchParams(search);
+  ['view', 'meetingId', 'templateId', 'templateVersion'].forEach((key) => params.delete(key));
+  const query = params.toString();
+  return `/meetings/mine${query ? '?' + query : ''}`;
+}
+
+export function meetingListContextPath(view: 'schedule' | 'personal-room', search = ''): string {
+  const path = meetingListPath(search);
+  return `${path}${path.includes('?') ? '&' : '?'}view=${view}`;
+}
+
+export function meetingPreparationPath(meetingId: string, search = ''): string {
   if (!uuid.test(meetingId)) throw new Error('A valid meeting reference is required.');
-  return `/meetings/mine?${new URLSearchParams({ view: 'preparation', meetingId: meetingId.toLowerCase() })}`;
+  const path = meetingListPath(search);
+  const context = new URLSearchParams({ view: 'preparation', meetingId: meetingId.toLowerCase() });
+  return `${path}${path.includes('?') ? '&' : '?'}${context}`;
 }
 
 /** Only opaque identity/version enter browser history. Agenda and purpose never do. */

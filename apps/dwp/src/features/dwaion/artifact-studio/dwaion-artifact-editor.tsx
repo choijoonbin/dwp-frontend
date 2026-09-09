@@ -1,4 +1,4 @@
-import { Download, Files, FileSearch2, ShieldCheck } from 'lucide-react';
+import { CircleHelp, Download, Files, FileSearch2, ListChecks, ShieldCheck } from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { ActionButton, FormField, InlineFeedback } from '@dwp-frontend/design-system';
 
+import { DwaionArtifactExportStatus } from './dwaion-artifact-export-status';
 import { DWAION_ARTIFACT_COPY_KO } from './dwaion-artifact-copy';
 import { artifactExportCapability, artifactPublishCapability } from './dwaion-artifact-model';
 
@@ -67,6 +68,9 @@ export function DwaionArtifactEditor({
     permitted: canExport,
   });
   const saved = ['IDLE', 'SAVED'].includes(artifact.autosaveState);
+  const sourceReferences = artifact.sources.map(
+    (source) => `${source.sourceType} ${copy.separator} ${source.reference}`
+  );
 
   return (
     <Box component="section" aria-labelledby="dwaion-artifact-editor-heading" sx={{ minWidth: 0 }}>
@@ -153,7 +157,15 @@ export function DwaionArtifactEditor({
             loadingLabel={copy.publishing}
             disabled={!publish.allowed}
             onClick={() => {
-              if (preflight && publish.allowed) onPublish(artifact, preflight);
+              if (
+                preflight &&
+                artifactPublishCapability({
+                  artifact,
+                  preflight,
+                  permitted: canPublish,
+                }).allowed
+              )
+                onPublish(artifact, preflight);
             }}
             sx={{ minHeight: 44 }}
           >
@@ -181,6 +193,40 @@ export function DwaionArtifactEditor({
           {copy.recipientSharingUnavailable} {copy.exportHelp}
         </Typography>
       </InlineFeedback>
+
+      <Box component="section" aria-labelledby="dwaion-artifact-structure-title" sx={{ mt: 1.5 }}>
+        <Stack direction="row" alignItems="center" gap={0.75}>
+          <ListChecks size={17} aria-hidden="true" />
+          <Typography id="dwaion-artifact-structure-title" component="h3" variant="subtitle2">
+            {copy.structureTitle}
+          </Typography>
+        </Stack>
+        <Typography variant="caption" color="text.secondary">
+          {copy.structureUnavailable}
+        </Typography>
+        <Box
+          sx={{
+            mt: 1,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.35fr) minmax(210px, 0.8fr)' },
+            gap: 1,
+          }}
+        >
+          <StructureCard
+            title={copy.verifiedFacts}
+            value={
+              artifact.capabilities.sourceVerificationAvailable
+                ? copy.evidenceMapped.replace('{{count}}', String(artifact.sources.length))
+                : copy.evidenceUnverified.replace('{{count}}', String(artifact.sources.length))
+            }
+            tone={artifact.capabilities.sourceVerificationAvailable ? 'success' : 'warning'}
+            items={sourceReferences}
+            prominent
+          />
+          <StructureCard title={copy.openRisks} value={copy.riskUnmodeled} tone="warning" />
+          <StructureCard title={copy.actionPlan} value={copy.actionUnmodeled} tone="neutral" />
+        </Box>
+      </Box>
 
       {!publish.allowed && artifact.state !== 'PUBLISHED' ? (
         <Typography
@@ -236,18 +282,13 @@ export function DwaionArtifactEditor({
         </Box>
       ) : null}
       {exportReceipt ? (
-        <InlineFeedback severity="success" sx={{ mt: 1.25 }}>
-          <Typography variant="body2" fontWeight="fontWeightBold">
-            {copy.exportReceipt}
-          </Typography>
-          <Typography variant="caption">
-            {copy.exportReceiptDetail.replace(
-              '{{format}}',
-              copy.exportFormats[exportReceipt.exportFormat]
-            )}{' '}
-            {copy.separator} {exportReceipt.exportJobId}
-          </Typography>
-        </InlineFeedback>
+        <DwaionArtifactExportStatus
+          key={exportReceipt.exportJobId}
+          artifactId={artifact.artifactId}
+          receipt={exportReceipt}
+          permitted={canExport}
+          copy={copy}
+        />
       ) : null}
 
       <Stack gap={1.5} sx={{ mt: 1.5 }}>
@@ -267,7 +308,7 @@ export function DwaionArtifactEditor({
           label={copy.editorLabel}
           value={artifact.body}
           multiline
-          minRows={18}
+          minRows={8}
           fullWidth
           required
           disabled={!canEdit}
@@ -279,6 +320,70 @@ export function DwaionArtifactEditor({
           }
         />
       </Stack>
+    </Box>
+  );
+}
+
+function StructureCard({
+  title,
+  value,
+  tone,
+  items = [],
+  prominent = false,
+}: {
+  title: string;
+  value: string;
+  tone: 'success' | 'warning' | 'neutral';
+  items?: readonly string[];
+  prominent?: boolean;
+}) {
+  return (
+    <Box
+      sx={{
+        minHeight: prominent ? 172 : 82,
+        p: 1.25,
+        gridRow: prominent ? { md: 'span 2' } : undefined,
+        bgcolor:
+          tone === 'warning' ? 'var(--dwp-semantic-warning-soft)' : 'var(--dwp-product-soft)',
+        border: 1,
+        borderColor: tone === 'warning' ? 'warning.light' : 'divider',
+        borderRadius: (theme) => Number(theme.shape.borderRadius) * 1.5 + 'px',
+      }}
+    >
+      <Stack direction="row" gap={0.5} alignItems="center">
+        {tone === 'warning' ? (
+          <CircleHelp size={15} aria-hidden="true" />
+        ) : (
+          <ShieldCheck size={15} aria-hidden="true" />
+        )}
+        <Typography variant="subtitle2">{title}</Typography>
+      </Stack>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+        {value}
+      </Typography>
+      {items.length ? (
+        <Stack component="ul" gap={0.65} sx={{ p: 0, m: 0, mt: 1.25, listStyle: 'none' }}>
+          {items.map((item, index) => (
+            <Stack
+              component="li"
+              key={`${item}:${index}`}
+              direction="row"
+              alignItems="flex-start"
+              gap={0.75}
+              sx={{
+                p: 0.8,
+                bgcolor: 'background.paper',
+                borderRadius: (theme) => Number(theme.shape.borderRadius) * 1 + 'px',
+              }}
+            >
+              <FileSearch2 size={14} aria-hidden="true" style={{ flexShrink: 0, marginTop: 2 }} />
+              <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
+                {item}
+              </Typography>
+            </Stack>
+          ))}
+        </Stack>
+      ) : null}
     </Box>
   );
 }

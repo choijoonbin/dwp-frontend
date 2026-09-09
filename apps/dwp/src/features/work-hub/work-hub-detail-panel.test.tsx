@@ -10,7 +10,14 @@ import type { ComponentProps } from 'react';
 import type { Root } from 'react-dom/client';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, options?: { date?: string }) =>
+      options?.date === undefined ? key : `${key}:${options.date}`,
+  }),
+}));
+
+vi.mock('@dwp-frontend/shared-i18n', () => ({
+  formatDate: (value: string) => `formatted:${value}`,
 }));
 
 let host: HTMLDivElement;
@@ -19,6 +26,7 @@ let root: Root;
 const defaults: ComponentProps<typeof WorkHubDetailPanel> = {
   item: hubItem(),
   now: NOW,
+  verifiedAt: '2026-09-04T02:00:00Z',
   mobile: false,
   inTodayPlan: false,
   canManagePlan: false,
@@ -38,6 +46,12 @@ async function render(props: Partial<ComponentProps<typeof WorkHubDetailPanel>> 
 function activityButton() {
   return [...host.querySelectorAll<HTMLButtonElement>('button')].find(
     (button) => button.textContent?.trim() === 'workHub.actions.OPEN_ACTIVITY'
+  );
+}
+
+function button(label: string) {
+  return [...host.querySelectorAll<HTMLButtonElement>('button')].find(
+    (candidate) => candidate.textContent?.trim() === label
   );
 }
 
@@ -87,17 +101,101 @@ describe('WorkHubDetailPanel Activity handoff', () => {
     expect(host.textContent).not.toContain('workHub.urgency.SCHEDULED');
   });
 
-  it('disables every detail command while the snapshot is not current', async () => {
+  it('shows the source verification receipt instead of the item modification time', async () => {
     await render({
+      item: hubItem({ updatedAt: '2026-09-03T01:00:00Z' }),
+      verifiedAt: '2026-09-04T02:00:00Z',
+    });
+
+    expect(host.textContent).toContain('workHub.detail.verifiedAt:formatted:2026-09-04T02:00:00Z');
+    expect(host.textContent).not.toContain('formatted:2026-09-03T01:00:00Z');
+  });
+
+  it('keeps read-only source handoffs available while stale-state commands stay disabled', async () => {
+    const onAction = vi.fn();
+    const onOpenActivity = vi.fn();
+    await render({
+      item: hubItem({
+        actions: [
+          { kind: 'PERSONAL_COMPLETE', availability: 'AVAILABLE' },
+          { kind: 'OPEN_SOURCE', availability: 'AVAILABLE' },
+        ],
+      }),
       commandsDisabled: true,
       canManagePlan: true,
       canSchedule: true,
       canAskAi: true,
-      onOpenActivity: vi.fn(),
+      onAction,
+      onOpenActivity,
     });
 
-    const buttons = [...host.querySelectorAll<HTMLButtonElement>('button')];
-    expect(buttons.length).toBeGreaterThan(0);
-    expect(buttons.every((candidate) => candidate.disabled)).toBe(true);
+    const source = button('workHub.actions.OPEN_SOURCE');
+    const activity = button('workHub.actions.OPEN_ACTIVITY');
+    expect(source?.disabled).toBe(false);
+    expect(activity?.disabled).toBe(false);
+
+    for (const label of [
+      'workHub.actions.PERSONAL_COMPLETE',
+      'workHub.actions.addToPlan',
+      'workHub.actions.schedule',
+      'workHub.actions.askAi',
+    ]) {
+      expect(button(label)?.disabled).toBe(true);
+    }
+
+    await act(async () => source!.click());
+    await act(async () => activity!.click());
+    expect(onAction).toHaveBeenCalledWith('OPEN_SOURCE');
+    expect(onOpenActivity).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps assignment identity out of generic detail actions and DOM metadata', async () => {
+    const assignmentId = '11111111-2222-4333-8444-555555555555';
+    const assignment = hubItem({
+      key: `WORK_ASSIGNMENT:${assignmentId}:`,
+      reference: { sourceSystem: 'WORK_ASSIGNMENT', sourceReference: assignmentId },
+      sourceId: 'work-assignments',
+      title: 'Reviewed assignment',
+      lifecycle: 'OPEN',
+      sourceStatus: 'OPEN',
+      actions: [
+        { kind: 'OPEN_SOURCE', availability: 'AVAILABLE' },
+        { kind: 'PERSONAL_START', availability: 'AVAILABLE' },
+      ],
+      sourceContext: {
+        kind: 'WORK_ASSIGNMENT',
+        assignmentState: 'PENDING',
+        workState: 'OPEN',
+        requesterIsMe: false,
+        assigneeIsMe: true,
+        sourceAvailability: 'NOT_REQUESTED',
+      },
+    });
+
+    await render({
+      item: assignment,
+      canManagePlan: true,
+      canSchedule: true,
+      canAskAi: true,
+      onOpenActivity: vi.fn(),
+      specializedContent: <div>safe assignment detail</div>,
+    });
+
+    for (const label of [
+      'workHub.actions.OPEN_SOURCE',
+      'workHub.actions.OPEN_ACTIVITY',
+      'workHub.actions.PERSONAL_START',
+      'workHub.actions.addToPlan',
+      'workHub.actions.schedule',
+      'workHub.actions.askAi',
+    ]) {
+      expect(button(label)).toBeUndefined();
+    }
+    expect(host.innerHTML).not.toContain(assignmentId);
+    expect(host.querySelector('[data-work-source-trigger]')).toBeNull();
+    expect(host.querySelector('[data-work-activity-trigger]')).toBeNull();
+    expect(host.querySelector('[data-work-item-key]')).toBeNull();
+    expect(host.textContent).toContain('workHub.detail.assignmentOwnerNotice');
+    expect(host.textContent).not.toContain('workHub.detail.sourceOwnerNotice');
   });
 });

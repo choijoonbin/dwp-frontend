@@ -26,6 +26,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DwaionCitationDialog } from '../../components/dwaion-assistant/dwaion-citation-dialog';
+import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 import {
   verifiedWorkAssistExcerpt,
   workHubAssistDisposition,
@@ -75,6 +76,8 @@ export function WorkHubAssistPanel({
   const [draftText, setDraftText] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<AskCitation | null>(null);
   const composing = useRef(false);
+  const actionBoundary = useRef<HTMLElement>(null);
+  useShellAuxiliaryAvoidance({ boundaryRef: actionBoundary });
   const heading = useRef<HTMLHeadingElement | null>(null);
   const request = useRef<AbortController | null>(null);
   const requestSequence = useRef(0);
@@ -234,6 +237,7 @@ export function WorkHubAssistPanel({
 
   return (
     <Box
+      ref={actionBoundary}
       component="aside"
       data-testid="work-assist-panel"
       aria-label={t('work:workHub.assist.panelTitle')}
@@ -508,7 +512,11 @@ export function WorkHubAssistPanel({
           </InlineFeedback>
         )}
         {response?.answer && (
-          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+          <Stack
+            data-shell-auxiliary-avoidance="inline-end"
+            direction={{ xs: 'column', sm: 'row' }}
+            gap={1}
+          >
             {serviceDraft && (
               <ActionButton
                 intent="primary"
@@ -537,6 +545,7 @@ export function WorkHubAssistPanel({
         )}
         <Box
           component="form"
+          data-shell-auxiliary-avoidance="inline-end"
           onSubmit={(event) => {
             event.preventDefault();
             if (!composing.current) void submit();
@@ -578,20 +587,23 @@ export function WorkHubAssistPanel({
             {t('work:workHub.assist.askHere')}
           </ActionButton>
         </Box>
-        <ActionButton
-          intent="quiet"
-          endIcon={<ArrowUpRight size={15} />}
-          loading={continuing}
-          disabled={busy || !conversationRoute}
-          onClick={() => void continueConversation()}
-          sx={{
-            justifyContent: 'flex-start',
-            textAlign: 'start',
-            minHeight: { xs: 44, md: 32 },
-          }}
-        >
-          {t('work:workHub.assist.continueConversation')}
-        </ActionButton>
+        <Box data-shell-auxiliary-avoidance="inline-end">
+          <ActionButton
+            intent="quiet"
+            endIcon={<ArrowUpRight size={15} />}
+            loading={continuing}
+            disabled={busy || !conversationRoute}
+            onClick={() => void continueConversation()}
+            sx={{
+              width: 1,
+              justifyContent: 'flex-start',
+              textAlign: 'start',
+              minHeight: { xs: 44, md: 32 },
+            }}
+          >
+            {t('work:workHub.assist.continueConversation')}
+          </ActionButton>
+        </Box>
         <Typography variant="caption" color="text.secondary">
           {t('work:workHub.assist.safety')}
         </Typography>

@@ -231,7 +231,8 @@ describe('U03 runtime safety and workflow', () => {
     expect(runtime.draftCommit).not.toHaveBeenCalled();
     expect(runtime.people).not.toHaveBeenCalled();
     expect(button('scheduleWorkspace.saveDraft').disabled).toBe(false);
-    expect(mount.textContent).toContain('scheduleWorkspace.availabilityUnavailable');
+    expect(mount.textContent).toContain('scheduleWorkspace.availability.scope');
+    expect(button('scheduleWorkspace.availability.check').disabled).toBe(true);
     expect(mount.textContent).toContain('scheduleWorkspace.recordingUnavailable');
   });
   it('creates only explicitly with safe media, typed agenda and immutable template tracing', async () => {

@@ -23,6 +23,7 @@ const scopes: readonly WorkHubFilters['scope'][] = [
 export function WorkHubFilterControls({
   filters,
   sourceSystems,
+  showAssignmentRoleFilter,
   resultCount,
   onChange,
   counts,
@@ -31,6 +32,7 @@ export function WorkHubFilterControls({
 }: {
   filters: WorkHubFilters;
   sourceSystems: readonly string[];
+  showAssignmentRoleFilter: boolean;
   resultCount: number;
   onChange: (values: Record<string, string | null>) => void;
   counts?: Partial<Record<WorkHubFilters['scope'], number>>;
@@ -57,6 +59,15 @@ export function WorkHubFilterControls({
             key: 'urgency',
             label: t(`workHub.urgency.${filters.urgency}`),
             onRemove: () => onChange({ urgency: null }),
+          },
+        ]
+      : []),
+    ...(showAssignmentRoleFilter && filters.assignmentRole
+      ? [
+          {
+            key: 'assignmentRole',
+            label: t(`workHub.assignment.filters.${filters.assignmentRole}`),
+            onRemove: () => onChange({ assignmentRole: null }),
           },
         ]
       : []),
@@ -161,6 +172,21 @@ export function WorkHubFilterControls({
           onValueChange={(value) => onChange({ source: value === 'ALL' ? null : String(value) })}
           sx={{ minWidth: 130, flex: { xs: '1 1 130px', sm: '0 1 160px' } }}
         />
+        {showAssignmentRoleFilter && (
+          <SelectField
+            size="small"
+            label={t('workHub.assignment.filters.label')}
+            value={filters.assignmentRole ?? 'ALL'}
+            options={['ALL', 'ASSIGNEE', 'REQUESTER'].map((value) => ({
+              value,
+              label: t(`workHub.assignment.filters.${value}`),
+            }))}
+            onValueChange={(value) =>
+              onChange({ assignmentRole: value === 'ALL' ? null : String(value) })
+            }
+            sx={{ minWidth: 140, flex: { xs: '1 1 140px', sm: '0 1 180px' } }}
+          />
+        )}
         <SelectField
           size="small"
           label={t('workHub.filters.urgencyLabel')}
@@ -209,7 +235,7 @@ export function WorkHubFilterControls({
           <ActionButton
             size="small"
             intent="quiet"
-            onClick={() => onChange({ q: null, source: null, urgency: null })}
+            onClick={() => onChange({ q: null, source: null, urgency: null, assignmentRole: null })}
             sx={{ '@media (max-width:899.95px)': { minHeight: 44 } }}
           >
             {t('workHub.filters.reset')}

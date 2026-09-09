@@ -79,11 +79,24 @@ async function mockDesignJourneys(
     fulfillSuccess(route, { items: [], page: 0, size: 100, totalElements: 0, hasMore: false })
   );
   await page.route('**/api/agent/v1/ask/stream', async (route) => {
-    aiQueries.push(route.request().postDataJSON());
+    const request = route.request().postDataJSON() as {
+      requestId: string;
+      agentKey: string;
+      conversationId?: string;
+      pageContext?: { selectedWork?: unknown };
+    };
+    aiQueries.push(request);
     const response = {
       ...ASK_RUNTIME_FIXTURE,
+      requestId: request.requestId,
+      conversationId: request.conversationId ?? null,
+      selectedWork: request.pageContext?.selectedWork,
       answer: draftAnswer,
       sourceCount: 1,
+      agentRegistry: {
+        ...ASK_RUNTIME_FIXTURE.agentRegistry,
+        entryKey: request.agentKey,
+      },
       citations: [
         {
           sourceId: 'src-01',
@@ -144,6 +157,47 @@ const variants = [
   // 1440 physical pixels at 200% expose 720 CSS pixels: verify the same reflow boundary.
   { name: 'zoom-200-reflow', width: 720, height: 500, scale: 2 },
 ];
+
+async function expectAssistActionsClearOfLauncher(page: Page) {
+  const panel = page.getByTestId('work-assist-panel');
+  const launcher = page.getByTestId('dwaion-launcher');
+  const submit = panel.getByRole('button', { name: '선택 업무 질문하기', exact: true });
+  const actions = [
+    submit,
+    panel.getByRole('button', { name: '답변 복사', exact: true }),
+    panel.getByRole('button', { name: 'DWAI·ON 전체 화면에서 이어서 대화하기', exact: true }),
+  ];
+  await expect(launcher).toBeVisible();
+  if ((await launcher.getAttribute('data-shell-auxiliary-placement')) === 'floating') {
+    await submit.scrollIntoViewIfNeeded();
+    await submit.evaluate((element) => {
+      const floating = document
+        .querySelector('[data-testid="dwaion-launcher"]')!
+        .getBoundingClientRect();
+      const button = element.getBoundingClientRect();
+      window.scrollBy(0, button.top + button.height / 2 - floating.top - floating.height / 2);
+    });
+    await expect(panel.locator('form')).toHaveAttribute(
+      'data-shell-auxiliary-avoidance-active',
+      'true'
+    );
+  }
+  const separated = async () => {
+    const floating = await launcher.boundingBox();
+    const controls = await Promise.all(actions.map((action) => action.boundingBox()));
+    if (!floating || controls.some((control) => !control)) return false;
+    return controls.every(
+      (control) =>
+        control!.y + control!.height <= floating.y ||
+        control!.y >= floating.y + floating.height ||
+        control!.x + control!.width + 12 <= floating.x ||
+        control!.x >= floating.x + floating.width + 12
+    );
+  };
+  await expect.poll(separated).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(separated).toBe(true);
+}
 
 for (const variant of variants) {
   test.describe(variant.name, () => {
@@ -237,6 +291,7 @@ for (const variant of variants) {
       expect(runtime.sourceMutations).toEqual([]);
       if (variant.width < 900)
         await assistant.evaluate((element) => element.scrollIntoView({ block: 'start' }));
+      if (variant.width >= 1200) await expectAssistActionsClearOfLauncher(page);
       await capture(page, testInfo, '11-selected-work-ai-assist', variant.width < 900);
       await expect(
         assistant.getByRole('button', { name: '초안을 업무 폼에 적용', exact: true })

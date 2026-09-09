@@ -37,7 +37,12 @@ export function MeetingPrejoinDevices({
 }) {
   const { t } = useTranslation('meetings');
   const { preview, choices } = session;
-  const [backgroundSupported] = useState(meetingBackgroundSupported);
+  const [backgroundSupport] = useState(() => ({
+    blur: meetingBackgroundSupported('blur'),
+    office: meetingBackgroundSupported('office'),
+  }));
+  const selectedBackgroundSupported =
+    session.backgroundMode === 'original' || backgroundSupport[session.backgroundMode];
   const options = (kind: MediaDeviceKind, selected: string) => {
     const devices = preview.devices.filter(
       (item) => item.kind === kind && item.deviceId && item.deviceId !== 'default'
@@ -259,36 +264,38 @@ export function MeetingPrejoinDevices({
             <Stack role="group" aria-label={t('room.preJoin.design.background')} gap={0.75}>
               <ActionButton
                 size="small"
-                intent={!session.backgroundBlur ? 'primary' : 'secondary'}
-                aria-pressed={!session.backgroundBlur}
+                intent={session.backgroundMode === 'original' ? 'primary' : 'secondary'}
+                aria-pressed={session.backgroundMode === 'original'}
                 disabled={busy}
-                onClick={() => session.selectBackgroundBlur(false)}
+                onClick={() => session.selectBackgroundMode('original')}
                 sx={{ minHeight: 44 }}
               >
                 {t('room.preJoin.design.backgroundOriginal')}
               </ActionButton>
               <Stack direction="row" gap={0.75}>
                 <ActionButton
-                  intent={session.backgroundBlur ? 'primary' : 'secondary'}
-                  aria-pressed={session.backgroundBlur}
-                  disabled={busy || !backgroundSupported}
+                  intent={session.backgroundMode === 'blur' ? 'primary' : 'secondary'}
+                  aria-pressed={session.backgroundMode === 'blur'}
+                  disabled={busy || !backgroundSupport.blur}
                   size="small"
-                  onClick={() => session.selectBackgroundBlur(true)}
+                  onClick={() => session.selectBackgroundMode('blur')}
                   sx={{ flex: 1, minHeight: 44, minWidth: 0, whiteSpace: 'normal' }}
                 >
                   {t('room.preJoin.design.backgroundBlur')}
                 </ActionButton>
                 <ActionButton
-                  intent="secondary"
-                  disabled
+                  intent={session.backgroundMode === 'office' ? 'primary' : 'secondary'}
+                  aria-pressed={session.backgroundMode === 'office'}
+                  disabled={busy || !backgroundSupport.office}
                   size="small"
+                  onClick={() => session.selectBackgroundMode('office')}
                   sx={{ flex: 1, minHeight: 44, minWidth: 0, whiteSpace: 'normal' }}
                 >
                   {t('room.preJoin.design.backgroundOffice')}
                 </ActionButton>
               </Stack>
             </Stack>
-            {(!backgroundSupported ||
+            {(!selectedBackgroundSupported ||
               preview.backgroundState === 'loading' ||
               preview.backgroundState === 'failed') && (
               <Typography
@@ -297,7 +304,7 @@ export function MeetingPrejoinDevices({
                 role="status"
               >
                 {t(
-                  !backgroundSupported
+                  !selectedBackgroundSupported
                     ? 'preferences.video.backgroundUnsupported'
                     : preview.backgroundState === 'failed'
                       ? 'preferences.video.backgroundFailed'

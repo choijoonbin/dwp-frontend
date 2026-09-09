@@ -16,6 +16,7 @@ import { MyMeetings } from './my-meetings';
 import {
   meetingContextRequest,
   meetingDraftFromCurrentTemplate,
+  meetingListPath,
   meetingPreparationPath,
   type MeetingTemplateReference,
 } from './meeting-context-routing';
@@ -33,11 +34,11 @@ export function MeetingContextWorkspace() {
     user?.tenantId,
     user?.userId,
   ]);
-  const back = () => navigate('/meetings/mine');
+  const back = () => navigate(meetingListPath(search));
   const enter = (meetingId: string) => navigate('/meetings/room/' + encodeURIComponent(meetingId));
   const created = (meetingId: string) => {
     void client.invalidateQueries({ queryKey: ['meetings'] });
-    navigate(meetingPreparationPath(meetingId), { replace: true });
+    navigate(meetingPreparationPath(meetingId, search), { replace: true });
   };
   switch (request.view) {
     case 'list':
@@ -48,7 +49,7 @@ export function MeetingContextWorkspace() {
           key={scope}
           onBack={back}
           onEnterMeeting={enter}
-          onOpenMeeting={(id) => navigate(meetingPreparationPath(id))}
+          onOpenMeeting={(id) => navigate(meetingPreparationPath(id, search))}
           onCheckDevices={() => navigate('/meetings/preferences')}
         />
       );

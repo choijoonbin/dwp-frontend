@@ -14,6 +14,7 @@ import { ActionIconButton } from '@dwp-frontend/design-system/components/actions
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { resolveProductExperienceTones } from '@dwp-frontend/design-system/foundation/product-experience-tokens';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
+import { isAppPermissionEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -31,11 +32,23 @@ import {
 } from '../features/shell/shell-mobile-navigation';
 import { WORK_NAVIGATION } from '../features/work/work-navigation';
 import { WorkMobileNavigation } from './work-mobile-navigation';
+import { shouldScheduleWorkMobileFocusScroll } from './work-mobile-focus-scroll';
+import { useOwnerScopedState } from './use-owner-scoped-state';
 import {
   workHubViewFromPath,
   workHubViewLocation,
   type WorkHubView,
 } from '../features/work-hub/work-hub-view-navigation';
+import { useWorkHubOperationOwner } from '../features/work-hub/use-work-hub-operation-owner';
+import { canUpdatePersonalWork } from '../features/work-hub/work-hub-command-authority';
+import {
+  createWorkScheduleCoordinator,
+  type WorkScheduleCoordinator,
+} from '../features/work-hub/work-hub-schedule-coordinator';
+import {
+  createWorkTaskSaveCoordinator,
+  type WorkTaskSaveCoordinator,
+} from '../features/work-hub/work-hub-task-save-coordinator';
 
 export type WorkNavigationState = {
   counts: Partial<Record<WorkHubView, number>>;
@@ -47,18 +60,25 @@ export type WorkLayoutContext = {
   setWorkNavigationState: Dispatch<SetStateAction<WorkNavigationState | null>>;
   /** CSS layout width, including page zoom that does not change media queries. */
   availableWidth: number;
+  scheduleCoordinator: WorkScheduleCoordinator;
+  taskSaveCoordinator: WorkTaskSaveCoordinator;
 };
 
 /** Six execution views share source receipts and the established DWP session controls. */
 export function WorkLayout() {
   const { t } = useTranslation(['work', 'shell']);
   const { preference } = useAppearance();
-  const { hasPermission } = usePermissions();
+  const { permissions } = usePermissions();
+  const operationOwner = useWorkHubOperationOwner();
   const location = useLocation();
   const navigate = useNavigate();
-  const [navigationState, setWorkNavigationState] = useState<WorkNavigationState | null>(null);
+  const [navigationState, setWorkNavigationState] = useOwnerScopedState<WorkNavigationState | null>(
+    operationOwner,
+    null
+  );
   const shellElement = useRef<HTMLDivElement>(null);
   const focusFrame = useRef<number | null>(null);
+  const pointerActive = useRef(false);
   const [availableWidth, setAvailableWidth] = useState(() => window.innerWidth);
   useLayoutEffect(() => {
     const element = shellElement.current;
@@ -71,13 +91,49 @@ export function WorkLayout() {
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  useLayoutEffect(
-    () => () => {
+  useLayoutEffect(() => {
+    const endPointerActivation = () => {
+      pointerActive.current = false;
+    };
+    window.addEventListener('pointerup', endPointerActivation, true);
+    window.addEventListener('pointercancel', endPointerActivation, true);
+    return () => {
+      window.removeEventListener('pointerup', endPointerActivation, true);
+      window.removeEventListener('pointercancel', endPointerActivation, true);
       if (focusFrame.current !== null) cancelAnimationFrame(focusFrame.current);
-    },
-    []
+    };
+  }, []);
+  const taskSaveAllowed = canUpdatePersonalWork(permissions);
+  const scheduleAllowed =
+    taskSaveAllowed && isAppPermissionEntitled('APP.CALENDAR', 'CREATE', permissions);
+  const scheduleCoordinator = useMemo(
+    () => createWorkScheduleCoordinator(scheduleAllowed ? operationOwner : null),
+    [operationOwner, scheduleAllowed]
   );
-  const context = useMemo(() => ({ setWorkNavigationState, availableWidth }), [availableWidth]);
+  const taskSaveCoordinator = useMemo(
+    () => createWorkTaskSaveCoordinator(taskSaveAllowed ? operationOwner : null),
+    [operationOwner, taskSaveAllowed]
+  );
+  const mountedCoordinators = useRef<{
+    schedule: WorkScheduleCoordinator;
+    taskSave: WorkTaskSaveCoordinator;
+  } | null>(null);
+  useLayoutEffect(() => {
+    const mounted = { schedule: scheduleCoordinator, taskSave: taskSaveCoordinator };
+    mountedCoordinators.current = mounted;
+    return () => {
+      if (mountedCoordinators.current === mounted) mountedCoordinators.current = null;
+      globalThis.queueMicrotask(() => {
+        const replacement = mountedCoordinators.current;
+        if (replacement?.schedule !== scheduleCoordinator) scheduleCoordinator.dispose();
+        if (replacement?.taskSave !== taskSaveCoordinator) taskSaveCoordinator.dispose();
+      });
+    };
+  }, [scheduleCoordinator, taskSaveCoordinator]);
+  const context = useMemo(
+    () => ({ setWorkNavigationState, availableWidth, scheduleCoordinator, taskSaveCoordinator }),
+    [availableWidth, scheduleCoordinator, setWorkNavigationState, taskSaveCoordinator]
+  );
   const desktop = availableWidth >= 1200;
   const profile = getProductExperienceProfile('work');
   const navigation = useDesktopNavigation({ ...shellRegistry.work, desktopNavigationWidth: 240 });
@@ -103,7 +159,7 @@ export function WorkLayout() {
       />
       <Divider />
       <Box sx={{ p: compact ? 1 : 1.5 }}>
-        {hasPermission('APP.WORK', 'UPDATE') && (
+        {taskSaveAllowed && (
           <Tooltip title={compact ? t('work:workHub.navigation.createTask') : ''} placement="right">
             <ActionButton
               intent="primary"
@@ -340,14 +396,31 @@ export function WorkLayout() {
         component="main"
         id="dwp-main-content"
         tabIndex={-1}
+        onPointerDownCapture={() => {
+          pointerActive.current = true;
+          if (focusFrame.current !== null) {
+            cancelAnimationFrame(focusFrame.current);
+            focusFrame.current = null;
+          }
+        }}
         onFocusCapture={(event) => {
-          if (availableWidth >= 900) return;
           const target = event.target;
-          if (!(target instanceof HTMLElement) || !event.currentTarget.contains(target)) return;
+          if (
+            !shouldScheduleWorkMobileFocusScroll({
+              availableWidth,
+              pointerActive: pointerActive.current,
+              target,
+              container: event.currentTarget,
+            })
+          )
+            return;
+          if (!(target instanceof HTMLElement)) return;
           if (focusFrame.current !== null) cancelAnimationFrame(focusFrame.current);
           // Browser focus scrolling does not account for the fixed mobile navigation.
           focusFrame.current = requestAnimationFrame(() => {
-            if (document.activeElement !== target || !target.isConnected) return;
+            focusFrame.current = null;
+            if (pointerActive.current || document.activeElement !== target || !target.isConnected)
+              return;
             const shell = shellElement.current;
             const header = shell?.querySelector('[data-testid="work-header"]');
             const nav = shell?.querySelector('[data-testid="work-mobile-bottom-navigation"]');

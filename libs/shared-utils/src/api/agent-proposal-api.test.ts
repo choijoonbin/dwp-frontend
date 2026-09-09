@@ -11,6 +11,13 @@ import {
 } from './agent-proposal-api';
 
 const PROPOSAL_ID = '00000000-0000-4000-8000-000000000201';
+const SECURE_AUTHORITY = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
 
 function proposal() {
   return {
@@ -87,13 +94,18 @@ describe('Agent proposal API', () => {
       .mockResolvedValueOnce(response({ success: true, data: receipt }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(decideDwaionProposal(PROPOSAL_ID, 'ACCEPT', 1)).resolves.toEqual(receipt);
+    await expect(
+      decideDwaionProposal(PROPOSAL_ID, 'ACCEPT', 1, undefined, SECURE_AUTHORITY)
+    ).resolves.toEqual(receipt);
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      `/api/agent/v1/proposals/${PROPOSAL_ID}/decisions`,
+      `/api/agent/v1/proposals/${PROPOSAL_ID}/decisions?contextScopeKey=scope-dwaion-self`,
       expect.objectContaining({
         method: 'POST',
         body: expect.stringContaining('"decision":"ACCEPT"'),
+        headers: expect.objectContaining({
+          'X-DWP-Expected-Decision-Revision': 'psr-current',
+        }),
       })
     );
   });

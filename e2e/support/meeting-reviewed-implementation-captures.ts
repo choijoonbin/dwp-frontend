@@ -9,8 +9,8 @@ import type { MeetingApprovedFrameId } from './meeting-approved-frame-contract';
 // Reviewed implementation snapshots only. Immutable Stitch ZIP/screen/code provenance is separate.
 export const implementationCaptureEvidence = {
   'U01-D': fullDocumentEvidence(
-    1279,
-    '709c637c670742610294e25a64af9ae78ac84eeafaf07cc2951526c262a7bf71',
+    1411,
+    '47ca8994abe0b84f30b79d237e18a3ed3d52be910d6741a204fb7cf273f7cd8c',
     [
       '[data-testid="meeting-home-context"]',
       '[data-testid="meeting-command-primary"]',
@@ -20,8 +20,8 @@ export const implementationCaptureEvidence = {
     '[data-testid="meeting-home-continuation"]'
   ),
   'U01-M': fullDocumentEvidence(
-    2165,
-    '27d3feee45ffa131e54a91d4e65612df76e0145ce50013d29d9a1c65478d36fa',
+    2295,
+    '1507cc496d92ad469a156a20d55b1137efc1d0ceaf70c08d288bb60d8a1d51a7',
     [
       '#dwp-main-content h1',
       '[data-testid="meeting-day-lists"]',
@@ -45,7 +45,7 @@ export const implementationCaptureEvidence = {
   ),
   'U03-D': fullDocumentEvidence(
     2239,
-    'bff8c879608d21e1ff114c628cdb08180a641759f29c08f430bc7b587c062f48',
+    '8a7cddd659dc57b050669d589427de9ed98040606c527cf0afb2ea9033984775',
     [
       '[data-testid="meeting-schedule-workspace"] h1',
       '[data-testid="meeting-schedule-workspace"] aside',
@@ -62,14 +62,14 @@ export const implementationCaptureEvidence = {
     '[data-testid="meeting-schedule-workspace"]'
   ),
   'U04-D': fullDocumentEvidence(
-    1532,
-    '77f1a22418427c596a4d7e60944e5a2f059760b655b98c99db60df4fa199d4dc',
+    1719,
+    'b694c2f1f90aa9c6af32c1bbd98810cd4593d0b8db3013489b71f6b5bdb8c7ab',
     ['#preparation-title', '#preparation-agenda'],
     '[data-testid="meeting-preparation"]'
   ),
   'U04-M': fullDocumentEvidence(
-    2342,
-    'be31033a26d2aba8c4f993a0c85d0f65e0434820382cbb9827981a1141c79b30',
+    2774,
+    '0138c05a2f4ec0def861e5969002ab259568678198b3bd3b1b8c7b7461ff47fe',
     ['#preparation-title', '#preparation-agenda'],
     '[data-testid="meeting-preparation"]'
   ),
@@ -80,8 +80,8 @@ export const implementationCaptureEvidence = {
     '.dwp-meeting-prejoin'
   ),
   'U05-M': fullDocumentEvidence(
-    2737,
-    'd3f26af497f89cb955f60a2032d123dbfbc213b757810a917b08fa07e26fb4af',
+    2725,
+    '0480f275f80ce860afcac62f69b79986fe0794b8f3bd132020ea08b6edd1ab24',
     [
       '[data-testid="meeting-prejoin-context"]',
       '#dwp-main-content h1',
@@ -102,33 +102,38 @@ export const implementationCaptureEvidence = {
   ),
   'U07-D': fullDocumentEvidence(
     1545,
-    'be2a38be4e4dd2f1593dd4a5168d0ba9dc5141ec4f8dac34fc0c58f4717d8455',
+    'ffb814370cf1e281cb132f4883b84bf021e1350e2d5f92bbf820fc5f50b0c512',
     ['#dwp-main-content h1', '[data-testid="meeting-library-workspace"]'],
     '[data-testid="meeting-library-workspace"]'
   ),
   'U07-M': fullDocumentEvidence(
-    1337,
-    'b9b3248a380efe062cfd7fd643e596bfaafc916a84c128cae0cbbb2fe1d5a30c',
+    1487,
+    '8fd743dba570b5315ec8546c5f8b39d12b6a6a4071802ab08602dbe336223ae7',
     ['#dwp-main-content h1', '[data-testid="meeting-library-workspace"]'],
     '[data-testid="meeting-library-workspace"]',
     true
   ),
   'U08-D': fullDocumentEvidence(
-    2329,
-    '4cd7d96b774db1fec81ee5a35fec2306435274151ebdb3fd296e84d35a86cdd2',
-    ['#meeting-recap-title', '[data-testid="meeting-recap-overview"]'],
-    '[data-testid="meeting-recap-overview"]'
+    2474,
+    '5bb224ad35c1c6c297cb3ddeda02e159dd81873cffe210959037c08bb48b9033',
+    [
+      '#meeting-recap-title',
+      '[data-testid="meeting-recap-overview"]',
+      '[data-testid="meeting-recap-distribution"]',
+    ],
+    '[data-testid="meeting-recap-distribution"]'
   ),
   'U08-M': fullDocumentEvidence(
-    2128,
-    '1d8ae135da75d7069ee244bafecb0d2dfb21504b669b9082761f2666d2eca9e5',
+    2458,
+    'a56ae3d66438cedd0c65b9e5b2f2af79bca7f4fc4865b36bd2f24feb8a1d400d',
     [
       '#meeting-recap-title',
       '[data-testid="meeting-recap-overview"]',
       '[data-testid="meeting-recap-evidence-rail"]',
       '[data-testid="meeting-recap-analysis-disclosure"]',
+      '[data-testid="meeting-recap-distribution"]',
     ],
-    '[data-testid="meeting-recap-overview"]',
+    '[data-testid="meeting-recap-distribution"]',
     true
   ),
   'U09-D': fullDocumentEvidence(
@@ -149,8 +154,8 @@ export const implementationCaptureEvidence = {
     true
   ),
   'U10-D': fullDocumentEvidence(
-    1268,
-    'd61f1fd423a268dcbd7cade9d5cf445f0a401bbfcffd3afbd82190296b491f64',
+    1262,
+    '426e30f8c86eff1e117cda6378bb14c5032dbdedfb7c2bf19b9e0b4e1c4aec2e',
     [
       '[data-testid="meeting-templates"] h1',
       '[data-testid="template-search-scope"]',
@@ -193,8 +198,8 @@ export const implementationCaptureEvidence = {
     true
   ),
   'U12-D': fullDocumentEvidence(
-    2715,
-    '8397124bc5998b692ed43260415584eec80e5e0d0828e3a6c936af18b4ccfd10',
+    2717,
+    '43584280d31fed503da9998bc19ee526bee2f42cc0759af8f630f9a0a00821a1',
     [
       '[data-testid="meeting-preferences-workspace"] h1',
       '#meeting-preferences-join',
@@ -204,8 +209,8 @@ export const implementationCaptureEvidence = {
   ),
   'U12-M': {
     ...fullDocumentEvidence(
-      2901,
-      '7279c46e443f2ad69fb2cdbc5f5ebfd4488962f1dfa68d58157c333923b20640',
+      2882,
+      '1caf4ff0cc4690111f03223a4e8df2b1d74a0c4227d5adfe47b2e55ae32ef70d',
       [
         '#dwp-main-content h1',
         '#meeting-preferences-join',
@@ -245,8 +250,8 @@ export const implementationCaptureEvidence = {
     '[data-testid="meeting-admin-telemetry-inspector"]'
   ),
   'U14-D': fullDocumentEvidence(
-    2626,
-    'd5e4eea7a6bb31765900f0ea4006a0335046b7876aefe8937ff06fbe25e02cfe',
+    2690,
+    'bbe81840766dd8cfd9dfabfc865e53b63a5f2b29bc70dc117e16cc0f80ffb1a3',
     [
       '#dwp-main-content h1',
       '[data-dwp-page-canvas="workspace"] details[role="region"]:first-of-type',
@@ -255,8 +260,8 @@ export const implementationCaptureEvidence = {
     '[data-dwp-page-canvas="workspace"] details[role="region"]:last-of-type'
   ),
   'U14-M': fullDocumentEvidence(
-    1788,
-    '08034098d51bc5c4eeb932e04478562b5c62b4034842ccfbb67b26722d5e521f',
+    1852,
+    'f480c2d2f8abdce460899d57b4d46e97c019bc443ac8f7364f388d472b69e761',
     [
       '#dwp-main-content h1',
       '#dwp-main-content details[role="region"]',

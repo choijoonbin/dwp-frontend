@@ -55,6 +55,18 @@ const desktopScenarios: readonly WidthScenario[] = [
     root: '[data-dwp-page-canvas="workspace"] > :first-child',
   },
   {
+    name: 'dwaion new conversation',
+    path: '/dwaion/new',
+    roles: ['WORKSPACE_MEMBER'],
+    root: '[data-testid="dwaion-studio"]',
+  },
+  {
+    name: 'dwaion conversations',
+    path: '/dwaion/conversations',
+    roles: ['WORKSPACE_MEMBER'],
+    root: '[data-testid="dwaion-archive"]',
+  },
+  {
     name: 'hcm',
     path: '/hr/home',
     roles: ['HR_ADMIN'],
@@ -160,10 +172,15 @@ test.describe('shared workspace page width', () => {
         type: 'workspace-width',
         description: `${scenario.name}: canvas=${metrics.canvasWidth}px root=${metrics.rootWidth}px gutter=${metrics.paddingInlineStart}px`,
       });
-      if (scenario.name === 'calendar' || scenario.name === 'mail') {
-        const screenshotPath = testInfo.outputPath(`${scenario.name}-workspace-1920.png`);
+      if (
+        scenario.name === 'calendar' ||
+        scenario.name === 'mail' ||
+        scenario.name.startsWith('dwaion ')
+      ) {
+        const screenshotName = scenario.name.replaceAll(' ', '-');
+        const screenshotPath = testInfo.outputPath(`${screenshotName}-workspace-1920.png`);
         await page.screenshot({ path: screenshotPath, fullPage: false });
-        await testInfo.attach(`${scenario.name}-workspace-1920`, {
+        await testInfo.attach(`${screenshotName}-workspace-1920`, {
           path: screenshotPath,
           contentType: 'image/png',
         });

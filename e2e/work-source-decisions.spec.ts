@@ -36,6 +36,17 @@ async function capture(page: Page, testInfo: TestInfo, name: string) {
   expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport + 1);
 }
 
+function collectMissingDisplayMessages(page: Page) {
+  const messages: string[] = [];
+  page.on('console', (message) => {
+    const text = message.text();
+    if (text.includes('[i18n] Missing key:') || text.includes('[display-dictionary] Unmapped')) {
+      messages.push(text);
+    }
+  });
+  return () => expect(messages, 'the source handoff emitted an unmapped display code').toEqual([]);
+}
+
 for (const source of [
   {
     name: 'approval',
@@ -55,6 +66,7 @@ for (const source of [
   test(`source-owned ${source.name} work uses a document handoff and sends no foreign command`, async ({
     page,
   }, testInfo) => {
+    const expectMappedDisplayCodes = collectMissingDisplayMessages(page);
     const runtime = await mockWorkHubFoundation(page, { designDetails: true });
     await page.goto(source.route);
     const detail = page.getByRole('article');
@@ -97,6 +109,7 @@ for (const source of [
     await capture(page, testInfo, `${source.name}-owner-detail`);
     expect(runtime.sourceMutations).toEqual([]);
     expect(runtime.forbiddenWorkspaceMutations).toEqual([]);
+    expectMappedDisplayCodes();
   });
 }
 
@@ -214,3 +227,55 @@ test('authority lost after preview is checked again before any access decision',
   await expect(page.getByText(/It may belong to another reviewer/u)).toBeVisible();
   expect(runtime.sourceMutations).toEqual([]);
 });
+
+for (const forged of [
+  {
+    name: 'different rationale',
+    override: { decisionReason: 'A different rationale was returned by the owner.' },
+  },
+  { name: 'skipped version', override: { version: 5 } },
+] as const) {
+  test(`a 2xx access-review receipt with a ${forged.name} never publishes success`, async ({
+    page,
+  }, testInfo) => {
+    await mockWorkHubFoundation(page, { designDetails: true, accessReview: true });
+    const submitted: unknown[] = [];
+    await page.route(`**${reviewPath}/decision`, async (route) => {
+      submitted.push(route.request().postDataJSON());
+      await fulfillSuccess(route, {
+        workItemRef: reviewId,
+        subjectUserId: 88,
+        roleId: 1,
+        accessSourceType: 'DIRECT',
+        decision: 'APPROVE',
+        decisionReason: rationale,
+        decidedAt: '2026-09-08T00:00:00.000Z',
+        remediationState: 'NOT_REQUIRED',
+        version: 4,
+        ...forged.override,
+      });
+    });
+    await openReview(page);
+    await page.getByRole('button', { name: 'Keep access', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Decision reason' }).fill(rationale);
+    await page.getByRole('button', { name: 'Review decision before submitting' }).click();
+    const preview = page.getByRole('dialog', { name: 'Keep this access?' });
+    await preview.getByRole('button', { name: 'Keep access', exact: true }).click();
+
+    await expect(
+      preview.getByRole('alert').filter({
+        hasText: 'The decision could not be saved. Refresh the evidence and try again.',
+      })
+    ).toBeVisible();
+    await expect(preview).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: 'The access review decision was recorded.',
+        exact: true,
+      })
+    ).toHaveCount(0);
+    await expect(preview.getByText(rationale, { exact: true })).toBeVisible();
+    expect(submitted).toEqual([{ decision: 'APPROVE', reason: rationale, version: 3 }]);
+    await capture(page, testInfo, `access-forged-${forged.name.replaceAll(' ', '-')}`);
+  });
+}

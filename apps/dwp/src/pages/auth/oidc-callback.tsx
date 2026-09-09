@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -13,6 +13,25 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import type { OidcCallbackResult } from '@dwp-frontend/shared-utils';
+
+export const STEP_UP_POPUP_CLOSE_GRACE_MS = 250;
+
+export function closeStepUpPopupWithFallback({
+  closePopup,
+  isPopupClosed,
+  schedule,
+  navigateFallback,
+}: {
+  closePopup: () => void;
+  isPopupClosed: () => boolean;
+  schedule: (callback: () => void, delayMs: number) => void;
+  navigateFallback: () => void;
+}): void {
+  closePopup();
+  schedule(() => {
+    if (!isPopupClosed()) navigateFallback();
+  }, STEP_UP_POPUP_CLOSE_GRACE_MS);
+}
 
 export function resolveOidcCallbackDestination(
   result: OidcCallbackResult,
@@ -29,8 +48,12 @@ export default function OidcCallbackPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [errorKey, setErrorKey] = useState<'invalid' | 'sessionUnverified' | 'failed' | null>(null);
+  const callbackStarted = useRef(false);
 
   useEffect(() => {
+    if (callbackStarted.current) return;
+    callbackStarted.current = true;
+
     const run = async () => {
       const code = searchParams.get('code');
       const state = searchParams.get('state');
@@ -58,8 +81,15 @@ export default function OidcCallbackPage() {
             window.location.origin,
             window.opener
           );
-          window.close();
-          if (window.closed) return;
+          closeStepUpPopupWithFallback({
+            closePopup: () => window.close(),
+            isPopupClosed: () => window.closed,
+            schedule: (callback, delayMs) => {
+              window.setTimeout(callback, delayMs);
+            },
+            navigateFallback: () => navigate(destination, { replace: true }),
+          });
+          return;
         }
         navigate(destination, { replace: true });
       } catch {

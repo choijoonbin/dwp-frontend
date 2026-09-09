@@ -77,6 +77,7 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
       answer: fallbackAnswer,
       confidence: 'LOW',
       statusCode: 'ANSWER_GROUNDED_FALLBACK',
+      personalization: { state: 'BYPASSED', appliedKinds: [] },
       modelRoute: {
         state: 'COMPLETED',
         provider: 'DWP_GROUNDED_FALLBACK',
@@ -97,21 +98,27 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
   await expect(
     page.getByRole('heading', { name: 'Work evidence within your access', exact: true })
   ).toBeVisible();
-  if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: /Verification panel/ }).click();
-  }
-  await expect(page.getByText('Evidence-only fallback')).toHaveCount(2);
+  await expect(
+    page.getByTestId('dwaion-workspace-result').getByText('Evidence-only fallback')
+  ).toBeVisible();
   await expect(page.getByText('This response is a direct evidence summary')).toBeVisible();
-  await expect(page.getByText('Verified source evidence only')).toBeVisible();
+  await expect(
+    page.getByText('Verified source evidence was prioritized without AI synthesis.')
+  ).toBeVisible();
+  if (testInfo.project.name !== 'mobile') {
+    await expect(page.getByText('Bypassed for a safe default answer')).toBeVisible();
+  }
   await expect(page.getByText('Verified answer', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('Low confidence')).toBeVisible();
+  await expect(
+    page.getByTestId('dwaion-workspace-result').getByText('Low confidence')
+  ).toBeVisible();
   expect(new URL(page.url()).searchParams.has('q')).toBe(false);
   expect(submittedQuery).toBe(
     'Summarize what I should handle today by priority and deadline risk.'
   );
   expect(submittedSources).toEqual(['WORK_ITEM', 'MAIL', 'CALENDAR']);
 
-  await page.route('**/api/agent/v1/conversations/fallback-conversation', (route) =>
+  await page.route('**/api/agent/v1/conversations/fallback-conversation**', (route) =>
     route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
@@ -122,6 +129,13 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
             title: 'Today’s work brief',
             locale: 'en',
             messageCount: 2,
+            agentKey: 'DWP_ASSISTANT',
+            sourceSystems: ['Microsoft 365'],
+            evidenceCount: 2,
+            summaryExcerpt: fallbackAnswer,
+            lastAnswerStatus: 'ANSWER_GROUNDED_FALLBACK',
+            retentionUntil: '2026-11-09T01:00:01Z',
+            legalHold: false,
             createdAt: '2026-08-11T01:00:00Z',
             updatedAt: '2026-08-11T01:00:01Z',
             lastMessageAt: '2026-08-11T01:00:01Z',
@@ -157,7 +171,9 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
   ).toBeVisible();
 });
 
-test('voice input requires transcript review and never submits automatically', async ({ page }) => {
+test('voice input requires transcript review and never submits automatically', async ({
+  page,
+}, testInfo) => {
   await page.addInitScript(() => {
     const stream = {
       getTracks: () => [{ stop: () => undefined }],
@@ -244,6 +260,9 @@ test('voice input requires transcript review and never submits automatically', a
   ).toBeVisible();
   expect(transcriptionRequests).toBe(1);
   expect(askRequests).toBe(0);
+  await page.screenshot({
+    path: testInfo.outputPath('U10-voice-transcript-review-before-send.png'),
+  });
 });
 
 test('pending microphone permission is released when the voice surface unmounts', async ({
@@ -454,7 +473,7 @@ test('failed speech playback releases its temporary audio resource before retry'
 
 test('run activity presents privacy-minimized, policy-aware execution evidence', async ({
   page,
-}) => {
+}, testInfo) => {
   const question = 'Confidential acquisition review';
   await page.route('**/api/agent/v1/runs?**', (route) =>
     route.fulfill({
@@ -490,12 +509,18 @@ test('run activity presents privacy-minimized, policy-aware execution evidence',
   await expect(page.getByRole('region', { name: 'AI run status summary' })).toContainText(
     'Retrieved runs'
   );
-  await expect(page.getByText('DWAI·ON work agent')).toBeVisible();
-  await expect(page.getByText('Risk L0 · 4 sources · 820 ms')).toBeVisible();
-  await expect(page.getByText(question)).toHaveCount(0);
   await expect(
-    page.getByText('Question and answer content is not shown in plaintext in this run list.')
+    page.getByText('DWAI·ON work agent').filter({ visible: true }).first()
   ).toBeVisible();
+  await expect(
+    page.getByText('Risk L0 · 4 sources · 820 ms').filter({ visible: true }).first()
+  ).toBeVisible();
+  await expect(page.getByText(question)).toHaveCount(0);
+  if (testInfo.project.name !== 'mobile') {
+    await expect(
+      page.getByText('Question and answer content is not shown in plaintext in this run list.')
+    ).toBeVisible();
+  }
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -508,6 +533,7 @@ test('run activity presents privacy-minimized, policy-aware execution evidence',
 test('agent inbox keeps proactive proposals evidence-led and under explicit user control', async ({
   page,
 }, testInfo) => {
+  await page.clock.setFixedTime(new Date('2026-08-27T08:00:00Z'));
   await page.setViewportSize(
     testInfo.project.name === 'mobile' ? { width: 390, height: 844 } : { width: 1440, height: 900 }
   );
@@ -642,14 +668,21 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
         }),
       });
     }
-    const active = !accepted && !cleared && requestUrl.searchParams.get('view') === 'ACTIVE';
+    const view = requestUrl.searchParams.get('view');
+    const active = !accepted && !cleared;
+    const visible =
+      !cleared &&
+      (view === 'ALL' || (view === 'ACTIVE' && active) || (view === 'HANDLED' && accepted));
+    const canonical = accepted
+      ? { ...proposal, state: 'ACCEPTED', revision: 2, decidedAt: '2026-08-27T08:05:00Z' }
+      : proposal;
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
         data: {
-          items: active ? [proposal] : [],
+          items: visible ? [canonical] : [],
           summary: {
             active: active ? 1 : 0,
             highPriority: active ? 1 : 0,
@@ -664,7 +697,7 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
 
   await page.goto('/dwaion/proposals');
   await expect(page.getByRole('heading', { name: 'AI proposals', exact: true })).toBeVisible();
-  const analysisControls = page.getByRole('region', { name: 'Workspace analysis' });
+  const analysisControls = page.getByRole('region', { name: 'Analysis engine' });
   const analyzeButton = analysisControls.getByRole('button', { name: 'Analyze now' });
   await expect(analyzeButton).toBeDisabled();
   await analysisControls.getByRole('switch', { name: 'Allow analysis for my account' }).click();
@@ -685,7 +718,12 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
     true
   );
   await expect(page.getByText('Customer migration plan')).toBeVisible();
-  await expect(page.getByText('Why this was proposed')).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name:
+        testInfo.project.name === 'mobile' ? 'AI analysis recommendation' : 'Why this was proposed',
+    })
+  ).toBeVisible();
   if (process.env.DWP_CAPTURE_VISUAL_EVIDENCE === 'true') {
     await page.screenshot({
       path: `/tmp/dwaion-proposals-${testInfo.project.name}.png`,
@@ -704,7 +742,7 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
   await expect(clearDialog).toContainText('Source records in their owning apps are not changed.');
   await clearDialog.getByRole('button', { name: 'Clear proposal data' }).click();
   await expect(clearDialog).toHaveCount(0);
-  await expect(page.getByText('There are no proposals to review')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'There are no proposals' })).toBeVisible();
   expect(clearRequests).toBe(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true

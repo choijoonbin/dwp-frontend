@@ -1,4 +1,6 @@
-import type { SavedViewConfiguration } from '@dwp-frontend/shared-utils';
+import { isAppReadEntitled } from '@dwp-frontend/shared-utils';
+
+import type { PermissionDTO, SavedViewConfiguration } from '@dwp-frontend/shared-utils';
 
 export type CalendarScheduleView = 'day' | 'week' | 'month' | 'agenda';
 
@@ -50,6 +52,8 @@ export function calendarScheduleReturnTarget(value: unknown): string | null {
   }
 
   try {
+    const decoded = decodeURIComponent(value);
+    if (decoded.includes('\\') || hasControlCharacter(decoded)) return null;
     const resolved = new URL(value, 'https://calendar.internal');
     const canonical = `${resolved.pathname}${resolved.search}${resolved.hash}`;
     const workOwnedPath = resolved.pathname === '/work' || resolved.pathname.startsWith('/work/');
@@ -60,6 +64,13 @@ export function calendarScheduleReturnTarget(value: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+export function authorizedCalendarWorkReturnTarget(
+  value: unknown,
+  permissions: readonly PermissionDTO[]
+): string | null {
+  return isAppReadEntitled('APP.WORK', permissions) ? calendarScheduleReturnTarget(value) : null;
 }
 
 export function calendarScheduleCalendarIds(value: unknown): string[] | null {

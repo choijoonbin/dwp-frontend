@@ -32,13 +32,20 @@ export function DwaionPanelHeader({
       direction="row"
       alignItems="center"
       gap={1}
-      sx={{ px: 1.75, py: 1.3, borderBottom: 1, borderColor: 'divider', flex: '0 0 auto' }}
+      sx={{
+        minHeight: 62,
+        px: { xs: 1.25, sm: 1.75 },
+        py: 1,
+        borderBottom: 1,
+        borderColor: 'divider',
+        flex: '0 0 auto',
+      }}
     >
       <Box
         component="img"
         src="/assets/assistants/dwaion-link-v1.png"
         alt=""
-        sx={{ width: 42, height: 42, flex: '0 0 auto', objectFit: 'contain' }}
+        sx={{ width: 36, height: 36, flex: '0 0 auto', objectFit: 'contain' }}
       />
       <Box minWidth={0} flex={1}>
         <Stack direction="row" alignItems="center" gap={0.75}>
@@ -73,6 +80,7 @@ export function DwaionPanelHeader({
         size="small"
         disabled={!hasQuestion}
         onClick={onNewQuestion}
+        sx={{ width: 44, height: 44, display: { xs: 'none', sm: 'inline-flex' } }}
       >
         <Plus size={17} aria-hidden="true" />
       </ActionIconButton>
@@ -81,10 +89,16 @@ export function DwaionPanelHeader({
         size="small"
         disabled={!canExpand}
         onClick={onExpand}
+        sx={{ width: 44, height: 44, display: { xs: 'none', sm: 'inline-flex' } }}
       >
         <Maximize2 size={17} aria-hidden="true" />
       </ActionIconButton>
-      <ActionIconButton label={t('dwaion.close')} size="small" onClick={onClose}>
+      <ActionIconButton
+        label={t('dwaion.close')}
+        size="small"
+        onClick={onClose}
+        sx={{ width: 44, height: 44, order: { xs: -1, sm: 0 } }}
+      >
         <X size={18} aria-hidden="true" />
       </ActionIconButton>
     </Stack>

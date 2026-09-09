@@ -3,6 +3,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import { synthesizeDwaionSpeech, transcribeDwaionVoice } from './agent-voice-api';
 
+const SECURE_AUTHORITY = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
+
 function jsonResponse(payload: unknown): Response {
   return {
     ok: true,
@@ -33,13 +41,15 @@ describe('Agent voice API', () => {
       );
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(transcribeDwaionVoice(recording, 'ko-KR')).resolves.toEqual({
+    await expect(
+      transcribeDwaionVoice(recording, 'ko-KR', undefined, SECURE_AUTHORITY)
+    ).resolves.toEqual({
       text: '오늘 우선순위를 알려주세요.',
       language: 'ko-KR',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      '/api/agent/v1/voice/transcriptions',
+      '/api/agent/v1/voice/transcriptions?contextScopeKey=scope-dwaion-self',
       expect.objectContaining({
         method: 'POST',
         body: recording,
@@ -47,6 +57,7 @@ describe('Agent voice API', () => {
         headers: expect.objectContaining({
           'Content-Type': 'audio/webm',
           'X-DWP-Voice-Locale': 'ko-KR',
+          'X-DWP-Expected-Decision-Revision': 'psr-current',
         }),
       })
     );

@@ -47,6 +47,7 @@ test('an older source run resolves by ID even when the source list is empty', as
           eventKind: 'EXECUTION_SNAPSHOT',
           occurredAt: '2026-08-01T00:00:00Z',
           sourceObservedAt: new Date().toISOString(),
+          sourceEventId: runId,
           executionId: runId,
           executionVersion: 2,
           attempt: 1,
@@ -55,6 +56,7 @@ test('an older source run resolves by ID even when the source list is empty', as
           auditStatus: 'NOT_LINKED',
           auditRecordId: null,
           auditId: null,
+          auditAccess: 'RESTRICTED',
         },
       },
     })

@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
+import Box from '@mui/material/Box';
+
 import { ProductAdminSurface } from '../../components/product-admin-surface';
 import {
   NotificationAdminOverviewPage,
@@ -35,7 +37,7 @@ function NotificationAdminSurface({
       title={t(`admin.product.${view}.title`)}
       description={t(`admin.product.${view}.description`)}
     >
-      {content}
+      <Box sx={{ width: 1, maxWidth: 1720, mx: 'auto' }}>{content}</Box>
     </ProductAdminSurface>
   );
 }

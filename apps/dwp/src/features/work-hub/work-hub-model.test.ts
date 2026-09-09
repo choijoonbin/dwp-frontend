@@ -92,6 +92,17 @@ describe('Work Hub canonical model', () => {
     expect(approvalTaskToHub(task, 'approval-inbox')).toMatchObject({
       sourceRoute: '/approvals/inbox?task=approval-1',
       actions: [{ kind: 'OPEN_SOURCE', availability: 'AVAILABLE' }],
+      sourceContext: {
+        kind: 'APPROVAL_TASK',
+        requestId: 'request-1',
+        requesterName: null,
+        requesterOrgName: null,
+        submittedAt: null,
+        workflowNameKo: '접근 검토',
+        workflowNameEn: 'Access review',
+        currentStep: { key: 'manager', name: 'Manager review', sequence: 1 },
+        riskScore: 30,
+      },
     });
   });
   it('permits only restore for an archived personal task', () => {
@@ -141,18 +152,34 @@ describe('Work Hub canonical model', () => {
   it('treats requester input as my action and provider work as waiting for others', () => {
     const request = {
       requestId: 's-1',
+      requestNumber: 'SR-001',
+      serviceKey: 'it-support',
       summary: 'Fix access',
       serviceNameKo: 'IT',
       serviceNameEn: 'IT',
+      dataClassification: 'INTERNAL',
       status: 'AWAITING_REQUESTER',
       priority: 'NORMAL',
+      assignedGroup: 'IT Service',
+      assignedTo: 'Alex Kim',
+      submittedAt: '2026-09-04T00:00:00Z',
+      slaDueAt: null,
       version: 1,
       updatedAt: new Date(NOW).toISOString(),
-    } as ServiceRequestSummary;
+    } satisfies ServiceRequestSummary;
     expect(serviceRequestToHub(request)).toMatchObject({
       lifecycle: 'OPEN',
       waitingFor: 'ME',
       sourceRoute: '/services/my/s-1',
+      sourceContext: {
+        kind: 'SERVICE_REQUEST',
+        serviceKey: 'it-support',
+        serviceNameKo: 'IT',
+        serviceNameEn: 'IT',
+        assignedGroup: 'IT Service',
+        assignedTo: 'Alex Kim',
+        submittedAt: '2026-09-04T00:00:00Z',
+      },
     });
     expect(serviceRequestToHub({ ...request, status: 'DRAFT' }).sourceRoute).toBe(
       '/services/drafts/s-1'
@@ -163,10 +190,41 @@ describe('Work Hub canonical model', () => {
     });
   });
   it('opens requester information in the official approval list with its detail selected', () => {
-    const request = { requestId: 'request/1', status: 'NEEDS_INFO' } as ApprovalRequest;
-    expect(approvalRequestToHub(request).sourceRoute).toBe(
-      '/approvals/requests/needs-info?request=request%2F1'
-    );
+    const request = {
+      requestId: 'request/1',
+      requestNumber: 'APR-002',
+      title: 'Provide cost evidence',
+      summary: 'Cost evidence is required',
+      workflowNameKo: '구매 승인',
+      workflowNameEn: 'Purchase approval',
+      currentStepKey: 'REQUEST_INFORMATION',
+      currentStepName: '보완 요청',
+      currentStepSequence: 2,
+      totalSteps: 3,
+      status: 'NEEDS_INFO',
+      priority: 'HIGH',
+      dataClassification: 'INTERNAL',
+      latestInformationRequest: '비교 견적을 추가해 주세요.',
+      submittedAt: '2026-09-04T00:00:00Z',
+      dueAt: null,
+      completedAt: null,
+      version: 4,
+    } satisfies ApprovalRequest;
+    expect(approvalRequestToHub(request)).toMatchObject({
+      sourceRoute: '/approvals/requests/needs-info?request=request%2F1',
+      sourceContext: {
+        kind: 'APPROVAL_REQUEST',
+        submittedAt: '2026-09-04T00:00:00Z',
+        workflowNameKo: '구매 승인',
+        workflowNameEn: 'Purchase approval',
+        currentStep: {
+          key: 'REQUEST_INFORMATION',
+          name: '보완 요청',
+          sequence: 2,
+          totalSteps: 3,
+        },
+      },
+    });
   });
   it('never hydrates a reference-only source from missing or denied evidence', () => {
     const source = {

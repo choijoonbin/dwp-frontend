@@ -1,6 +1,8 @@
 import {
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
+  isAccessReviewDecisionSource,
+  isExactAccessReviewDecisionReceipt,
 } from '@dwp-frontend/shared-utils/api/access-review-work-api';
 import { transitionPersonalWorkTask } from '@dwp-frontend/shared-utils/api/personal-work-api';
 import {
@@ -13,6 +15,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import type { WorkHubActionKind, WorkHubItem } from './work-hub-contracts';
+import { isPersonalTaskLifecycleReceipt } from './work-hub-personal-save-receipt';
 
 export type WorkHubCommand =
   | { kind: 'OPEN_SOURCE' | 'WORKSPACE_START' | 'WORKSPACE_COMPLETE' }
@@ -53,12 +56,26 @@ export const workHubActionClients = {
   updateWorkspaceWorkStatus,
 };
 export type WorkHubActionClients = typeof workHubActionClients;
+export type WorkHubActionGuard = {
+  signal?: AbortSignal;
+  canContinue?: () => boolean;
+};
 
 function denied(): WorkHubActionResult {
   return { state: 'FORBIDDEN', retryable: false };
 }
 function conflict(): WorkHubActionResult {
   return { state: 'CONFLICT', retryable: true };
+}
+function cancelled(): WorkHubActionResult {
+  return { state: 'UNAVAILABLE', retryable: false };
+}
+function unconfirmed(): WorkHubActionResult {
+  return { state: 'UNAVAILABLE', retryable: true };
+}
+
+function isAdvancedVersion(value: unknown, reviewedVersion: number): value is number {
+  return Number.isSafeInteger(value) && (value as number) > reviewedVersion;
 }
 
 /**
@@ -79,8 +96,11 @@ export function openWorkHubSourceRoute(
 export async function executeWorkHubAction(
   item: WorkHubItem,
   command: WorkHubCommand,
-  clients: WorkHubActionClients = workHubActionClients
+  clients: WorkHubActionClients = workHubActionClients,
+  guard: WorkHubActionGuard = {}
 ): Promise<WorkHubActionResult> {
+  const canContinue = () => !guard.signal?.aborted && (guard.canContinue?.() ?? true);
+  if (!canContinue()) return cancelled();
   if (!item.actions.some((action) => action.kind === command.kind)) return denied();
   const sourceReference = item.reference.sourceReference;
   try {
@@ -92,18 +112,31 @@ export async function executeWorkHubAction(
     }
     if (command.kind === 'WORKSPACE_START' || command.kind === 'WORKSPACE_COMPLETE') {
       if (item.reference.sourceSystem !== 'WORKSPACE') return denied();
-      const current = (await clients.getWorkspaceWorkQueue()).items.find(
-        (row) => row.workItemId === sourceReference
-      );
+      const queue = guard.signal
+        ? await clients.getWorkspaceWorkQueue(guard.signal)
+        : await clients.getWorkspaceWorkQueue();
+      if (!canContinue()) return cancelled();
+      const current = queue.items.find((row) => row.workItemId === sourceReference);
       if (!current) return denied();
       if (current.version !== item.version) return conflict();
       const status = command.kind === 'WORKSPACE_START' ? 'IN_PROGRESS' : 'COMPLETED';
       if (!canChangeWorkspaceWorkStatus(current, status)) return denied();
-      const result = await clients.updateWorkspaceWorkStatus(
-        current.workItemId,
-        status,
-        current.version
-      );
+      const result = guard.signal
+        ? await clients.updateWorkspaceWorkStatus(
+            current.workItemId,
+            status,
+            current.version,
+            guard.signal
+          )
+        : await clients.updateWorkspaceWorkStatus(current.workItemId, status, current.version);
+      if (!canContinue()) return cancelled();
+      const expectedStatus = status === 'COMPLETED' ? 'completed' : 'in-progress';
+      if (
+        result.workItemId !== sourceReference ||
+        result.status !== expectedStatus ||
+        !isAdvancedVersion(result.version, current.version)
+      )
+        return unconfirmed();
       return {
         state: 'CONFIRMED',
         outcome: 'STATUS_CHANGED',
@@ -115,18 +148,32 @@ export async function executeWorkHubAction(
     if (command.kind === 'ACCESS_REVIEW_DECIDE') {
       if (
         item.reference.sourceSystem !== 'IDENTITY_GOVERNANCE' ||
-        command.reason.trim().length < 10
+        (command.decision !== 'APPROVE' && command.decision !== 'REVOKE') ||
+        command.reason.trim().length < 10 ||
+        command.reason.trim().length > 1000
       )
         return denied();
+      if (item.version !== command.expectedVersion) return conflict();
       if (!(await command.authorize(sourceReference, command.expectedVersion))) return denied();
-      const current = await clients.getAccessReviewWorkDetail(sourceReference);
+      if (!canContinue()) return cancelled();
+      const current = guard.signal
+        ? await clients.getAccessReviewWorkDetail(sourceReference, guard.signal)
+        : await clients.getAccessReviewWorkDetail(sourceReference);
+      if (!canContinue()) return cancelled();
+      if (current.workItemRef !== sourceReference) return unconfirmed();
       if (current.version !== command.expectedVersion) return conflict();
       if (current.decision !== 'PENDING') return denied();
-      const result = await clients.decideAccessReviewWork(sourceReference, {
+      if (!isAccessReviewDecisionSource(current)) return unconfirmed();
+      const decision = {
         decision: command.decision,
         reason: command.reason.trim(),
         version: current.version,
-      });
+      };
+      const result = guard.signal
+        ? await clients.decideAccessReviewWork(sourceReference, decision, guard.signal)
+        : await clients.decideAccessReviewWork(sourceReference, decision);
+      if (!canContinue()) return cancelled();
+      if (!isExactAccessReviewDecisionReceipt(result, current, decision)) return unconfirmed();
       return {
         state: 'CONFIRMED',
         outcome: 'DECISION_RECORDED',
@@ -154,20 +201,54 @@ export async function executeWorkHubAction(
           : command.kind === 'PERSONAL_ARCHIVE'
             ? 'archive'
             : 'status';
-    const result = await clients.transitionPersonalWorkTask(
-      sourceReference,
-      lifecycleCommand,
-      {
+    if (!canContinue()) return cancelled();
+    const transition = {
+      version: item.version,
+      ...(lifecycleCommand === 'status'
+        ? {
+            status:
+              command.kind === 'PERSONAL_START' ? ('IN_PROGRESS' as const) : ('WAITING' as const),
+          }
+        : {}),
+    };
+    const result = guard.signal
+      ? await clients.transitionPersonalWorkTask(
+          sourceReference,
+          lifecycleCommand,
+          transition,
+          command.idempotencyKey,
+          guard.signal
+        )
+      : await clients.transitionPersonalWorkTask(
+          sourceReference,
+          lifecycleCommand,
+          transition,
+          command.idempotencyKey
+        );
+    if (!canContinue()) return cancelled();
+    const expectedStatus =
+      command.kind === 'PERSONAL_START'
+        ? 'IN_PROGRESS'
+        : command.kind === 'PERSONAL_WAIT'
+          ? 'WAITING'
+          : command.kind === 'PERSONAL_COMPLETE'
+            ? 'COMPLETED'
+            : command.kind === 'PERSONAL_ARCHIVE'
+              ? 'ARCHIVED'
+              : 'OPEN';
+    if (
+      !isPersonalTaskLifecycleReceipt(result, {
+        taskId: sourceReference,
+        title: item.title,
+        description: item.summary,
+        priority: item.priority,
+        dueAt: item.dueAt,
+        status: expectedStatus,
         version: item.version,
-        ...(lifecycleCommand === 'status'
-          ? {
-              status:
-                command.kind === 'PERSONAL_START' ? ('IN_PROGRESS' as const) : ('WAITING' as const),
-            }
-          : {}),
-      },
-      command.idempotencyKey
-    );
+        updatedAt: item.updatedAt,
+      })
+    )
+      return unconfirmed();
     return {
       state: 'CONFIRMED',
       outcome: 'STATUS_CHANGED',
@@ -176,6 +257,9 @@ export async function executeWorkHubAction(
       sourceStatus: result.status,
     };
   } catch (error) {
+    if (!canContinue() || (error instanceof DOMException && error.name === 'AbortError')) {
+      return cancelled();
+    }
     if (error instanceof HttpError) {
       if (error.status === 409) return conflict();
       if (error.status === 401 || error.status === 403 || error.status === 404) return denied();

@@ -73,6 +73,7 @@ const props = (): MeetingPreJoinProps => ({
     videoDeviceId: 'default',
     speakerDeviceId: 'default',
     noiseSuppression: false,
+    backgroundMode: 'original',
   },
   busy: false,
   onCancel: vi.fn(),

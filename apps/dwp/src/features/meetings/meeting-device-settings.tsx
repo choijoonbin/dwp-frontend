@@ -24,7 +24,11 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
-import type { MeetingDevicePreferences } from './meeting-preferences-model';
+import {
+  resolveMeetingBackgroundMode,
+  type MeetingDevicePreferences,
+} from './meeting-preferences-model';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 import { useMeetingDevicePreview } from './use-meeting-device-preview';
 import { isMeetingBackgroundSupported } from './meeting-background-processor';
 import { meetingSurface, meetingShape } from './meeting-visual-system';
@@ -44,11 +48,18 @@ export function MeetingDeviceSettings({
 }) {
   const { t } = useTranslation('meetings');
   const preview = useMeetingDevicePreview(revocation);
-  const backgroundSupported = isMeetingBackgroundSupported();
-  const selectBackground = (backgroundBlur: boolean) => {
+  const backgroundMode = resolveMeetingBackgroundMode(value);
+  const backgroundSupport = {
+    blur: isMeetingBackgroundSupported('blur'),
+    office: isMeetingBackgroundSupported('office'),
+  };
+  const selectedBackgroundSupported =
+    backgroundMode === 'original' || backgroundSupport[backgroundMode];
+  const selectBackground = (nextMode: MeetingBackgroundMode) => {
     const wasPreviewing = preview.states.video !== 'idle';
     preview.stop('video');
-    const next = { ...value, backgroundBlur };
+    const next = { ...value, backgroundMode: nextMode };
+    Reflect.deleteProperty(next, 'backgroundBlur');
     onChange(next);
     if (wasPreviewing) void preview.start('video', next);
   };
@@ -362,48 +373,51 @@ export function MeetingDeviceSettings({
                 mt: 0.75,
               }}
             >
-              {[
-                { key: 'none', icon: CircleOff },
-                { key: 'blur', icon: Sparkles },
-                { key: 'office', icon: Building2 },
-                { key: 'image', icon: ImagePlus },
-              ].map(({ key, icon: Icon }) => (
-                <ActionButton
-                  key={key}
-                  intent={
-                    (value.backgroundBlur ? key === 'blur' : key === 'none') ? 'secondary' : 'quiet'
-                  }
-                  disabled={
-                    key === 'office' || key === 'image' || (key === 'blur' && !backgroundSupported)
-                  }
-                  aria-pressed={value.backgroundBlur ? key === 'blur' : key === 'none'}
-                  aria-label={t('stitch.devices.' + key)}
-                  onClick={() => {
-                    if (key === 'none' || key === 'blur') selectBackground(key === 'blur');
-                  }}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 0.75,
-                    py: 1.25,
-                    px: 0.5,
-                    fontSize: 'caption.fontSize',
-                    lineHeight: 'caption.lineHeight',
-                    borderRadius: meetingShape.control,
-                    border: 1,
-                    borderStyle: key === 'image' ? 'dashed' : 'solid',
-                    borderColor: (value.backgroundBlur ? key === 'blur' : key === 'none')
-                      ? 'primary.main'
-                      : 'divider',
-                    bgcolor: (value.backgroundBlur ? key === 'blur' : key === 'none')
-                      ? 'action.selected'
-                      : 'action.hover',
-                  }}
-                >
-                  <Icon size={19} />
-                  {t('stitch.devices.' + key)}
-                </ActionButton>
-              ))}
+              {(
+                [
+                  { key: 'none', icon: CircleOff },
+                  { key: 'blur', icon: Sparkles },
+                  { key: 'office', icon: Building2 },
+                  { key: 'image', icon: ImagePlus },
+                ] as const
+              ).map(({ key, icon: Icon }) => {
+                const optionMode = key === 'none' ? 'original' : key;
+                const selected = optionMode === backgroundMode;
+                const supported =
+                  optionMode === 'original' ||
+                  optionMode === 'image' ||
+                  backgroundSupport[optionMode];
+                return (
+                  <ActionButton
+                    key={key}
+                    intent={selected ? 'secondary' : 'quiet'}
+                    disabled={key === 'image' || !supported}
+                    aria-pressed={selected}
+                    aria-label={t('stitch.devices.' + key)}
+                    onClick={() => {
+                      if (optionMode !== 'image') selectBackground(optionMode);
+                    }}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 0.75,
+                      py: 1.25,
+                      px: 0.5,
+                      fontSize: 'caption.fontSize',
+                      lineHeight: 'caption.lineHeight',
+                      borderRadius: meetingShape.control,
+                      border: 1,
+                      borderStyle: key === 'image' ? 'dashed' : 'solid',
+                      minHeight: 64,
+                      borderColor: selected ? 'primary.main' : 'divider',
+                      bgcolor: selected ? 'action.selected' : 'action.hover',
+                    }}
+                  >
+                    <Icon size={19} />
+                    {t('stitch.devices.' + key)}
+                  </ActionButton>
+                );
+              })}
             </Box>
           </Box>
           {preview.backgroundState === 'loading' && (
@@ -416,7 +430,7 @@ export function MeetingDeviceSettings({
               {t('preferences.video.backgroundFailed')}
             </InlineFeedback>
           )}
-          {!backgroundSupported && (
+          {!selectedBackgroundSupported && (
             <Typography variant="caption" color="text.secondary">
               {t('preferences.video.backgroundUnsupported')}
             </Typography>

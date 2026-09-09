@@ -506,12 +506,16 @@ export async function evaluateProductSurfaceAccess(
 }
 
 export async function evaluateGovernedRouteAccess(
-  request: GovernedRouteEvaluationRequest
+  request: GovernedRouteEvaluationRequest,
+  options: { signal?: AbortSignal } = {}
 ): Promise<GovernedRouteEvaluationData> {
   const response = await axiosInstance.post<
     ApiResponse<GovernedRouteEvaluationData>,
     GovernedRouteEvaluationRequest
-  >(GOVERNED_ROUTE_EVALUATION_ENDPOINT, request, { timeoutMs: 8_000 });
+  >(GOVERNED_ROUTE_EVALUATION_ENDPOINT, request, {
+    timeoutMs: 8_000,
+    ...(options.signal ? { signal: options.signal } : {}),
+  });
   return response.data.data;
 }
 

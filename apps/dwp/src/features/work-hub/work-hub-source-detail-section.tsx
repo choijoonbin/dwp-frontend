@@ -39,7 +39,7 @@ export function WorkSourceDetailSection({
           px: { xs: 1.5, sm: 2 },
           py: 1.25,
           bgcolor: tone === 'neutral' ? 'action.hover' : `${tone}.lighter`,
-          color: tone === 'neutral' ? 'text.primary' : `${tone}.dark`,
+          color: 'text.primary',
           borderBottom: 1,
           borderColor: 'divider',
         }}

@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "reportDate": "2026-09-09",
+  "project": {
+    "id": "13391261371843159731",
+    "url": "https://stitch.withgoogle.com/projects/13391261371843159731"
+  },
+  "audit": {
+    "status": "PASS_BEFORE_USER_INTERRUPTION",
+    "method": "Authenticated direct inspection of the live Google Stitch project canvas and node-by-node comparison with the archived design-reference manifest.",
+    "exactObservedAt": null,
+    "exactObservedAtReason": "The direct comparison completed in the active 2026-09-09 task before the accidental user interruption, but an exact timestamp was not captured.",
+    "laterReopen": {
+      "attempted": true,
+      "status": "BLOCKED_LOCAL_MAC_LOCKED",
+      "countedAsAuditEvidence": false,
+      "note": "The later UI reopen could not proceed because the local Mac was locked. This does not replace or extend the completed pre-interruption audit."
+    }
+  },
+  "archivedReference": {
+    "path": "../../design-reference/manifest.json",
+    "sha256": "a655ec178d0bc03d773a0a21dfc8d717c174ac2d264048171f205bb3eac81cf2",
+    "identifiedNodes": 18
+  },
+  "result": {
+    "liveNodesObserved": 18,
+    "archivedNodesExpected": 18,
+    "matchedNodes": 18,
+    "missingNodeIds": [],
+    "unexpectedNodeIds": [],
+    "routeContracts": 6
+  },
+  "routes": [
+    { "view": "queue", "path": "/work/queue", "scope": "ALL" },
+    {
+      "view": "action-required",
+      "path": "/work/action-required",
+      "scope": "ACTIONABLE"
+    },
+    { "view": "day-plan", "path": "/work/day-plan", "scope": "TODAY" },
+    {
+      "view": "in-progress",
+      "path": "/work/in-progress",
+      "scope": "IN_PROGRESS"
+    },
+    {
+      "view": "awaiting-response",
+      "path": "/work/awaiting-response",
+      "scope": "WAITING"
+    },
+    { "view": "completed", "path": "/work/completed", "scope": "COMPLETED" }
+  ],
+  "nodes": [
+    {
+      "key": "01-D",
+      "nodeId": "f2666a9b9262439cad5f2eb122cd7dff",
+      "screenId": "WRK-Q01-1440-LIGHT-NORMAL",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "01-M",
+      "nodeId": "063df120026a45ae936b6613f706d64b",
+      "screenId": "WRK-Q01-390-LIGHT-NORMAL",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "02-D",
+      "nodeId": "e80ba5ed05ff4965bad14dadf5474890",
+      "screenId": "WRK-D01-1440-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "02-M",
+      "nodeId": "22191fe61bef415dbe21969b6cefd185",
+      "screenId": "WRK-D01-390-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "03-D",
+      "nodeId": "56760cf188524664980aecc5768f0dac",
+      "screenId": "WRK-D02-1440-DESKTOP",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "03-M",
+      "nodeId": "508b6f597f7340929ef9975e798d22e1",
+      "screenId": "WRK-D02-390-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "04-D",
+      "nodeId": "cdc190616dcc475e95704abffd161cfb",
+      "screenId": "WRK-D03-1440-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "04-M",
+      "nodeId": "b1f433ceee9b4d1a9fb19a6d28851553",
+      "screenId": "WRK-D03-390-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "05-D",
+      "nodeId": "147c9f3bef474835b2607cb1eeaa955e",
+      "screenId": "WRK-D04-1440-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "05-M",
+      "nodeId": "d77b26f438c342e9bceacbcf9f675adf",
+      "screenId": "WRK-D04-390-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "06-D",
+      "nodeId": "db0b89c861f14e3b916c9e084ed46fde",
+      "screenId": "WRK-F01-1440-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "07-D",
+      "nodeId": "1b1133dcf79043298a823eae2274e073",
+      "screenId": "WRK-P01",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "08-D",
+      "nodeId": "d6d32fb8b9c74cb38981680eaefdb1d0",
+      "screenId": "WRK-C01",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "09-D",
+      "nodeId": "166e08cc9fb24866a88b1684346b53ba",
+      "screenId": "WRK-R01",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "10-D",
+      "nodeId": "dd34ee457b1e44cbb339c1a005886ef3",
+      "screenId": "WRK-H01-1440-LIGHT",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "11-D",
+      "nodeId": "941feb59256e4dc79f0586cd40f80618",
+      "screenId": "WRK-A01",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "12-M1",
+      "nodeId": "fcf4bcb954aa425e81cd611b24f410fb",
+      "screenId": "WRK-M01-M1",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    },
+    {
+      "key": "12-M2",
+      "nodeId": "6953f797f9ef4baeb2967a1aef0a777d",
+      "screenId": "WRK-M01-M2",
+      "status": "MATCHED_LIVE_BEFORE_INTERRUPTION"
+    }
+  ],
+  "qualifications": {
+    "pixelPerfect": false,
+    "liveTenant": false,
+    "productionDeploy": false,
+    "fixtureMode": "CONTROLLED_FICTIONAL_FIXTURES",
+    "note": "This record proves live-node inventory agreement. Product behavior and responsive evidence are recorded separately; it is not a pixel-equality or production-readiness certification."
+  }
+}

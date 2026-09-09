@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowUpRight,
   CheckCircle2,
@@ -44,6 +44,7 @@ export function MyMeetingsInspector({
 }) {
   const { t } = useTranslation('meetings');
   const navigate = useNavigate();
+  const { search } = useLocation();
   const progress = meetingInvitationProgress(evidence?.preparation);
   const preparation = evidence?.preparation;
   const content = useQuery({
@@ -250,7 +251,7 @@ export function MyMeetingsInspector({
             <ActionButton
               intent="quiet"
               size="small"
-              onClick={() => navigate(meetingPreparationPath(meeting.meetingId))}
+              onClick={() => navigate(meetingPreparationPath(meeting.meetingId, search))}
             >
               {t('mine.design.manageMaterials')}
             </ActionButton>
@@ -266,7 +267,7 @@ export function MyMeetingsInspector({
               <ActionButton
                 intent="quiet"
                 startIcon={<FileText size={16} aria-hidden="true" />}
-                onClick={() => navigate(meetingPreparationPath(meeting.meetingId))}
+                onClick={() => navigate(meetingPreparationPath(meeting.meetingId, search))}
                 sx={{
                   textAlign: 'left',
                   justifyContent: 'flex-start',
@@ -297,7 +298,7 @@ export function MyMeetingsInspector({
           navigate(
             meeting.lifecycleState === 'ENDED'
               ? `/meetings/history?meeting=${encodeURIComponent(meeting.meetingId)}`
-              : meetingPreparationPath(meeting.meetingId)
+              : meetingPreparationPath(meeting.meetingId, search)
           )
         }
       >

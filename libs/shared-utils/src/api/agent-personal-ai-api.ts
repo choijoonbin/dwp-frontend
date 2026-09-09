@@ -10,10 +10,31 @@ import {
   isAgentRecord,
   newAgentCommand,
 } from './agent-governed-api';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 type AgentSchemas = AgentComponents['schemas'];
 
-export type DwaionPersonalAiControls = AgentSchemas['PersonalAiControls'];
+type GovernanceBoundaryKey =
+  | 'automaticMemoryInference'
+  | 'sensitiveMemoryAllowed'
+  | 'backgroundCredentialStorage'
+  | 'teamMemoryAvailable'
+  | 'externalActionWithoutApproval';
+export type DwaionPersonalAiControls = Omit<
+  AgentSchemas['PersonalAiControls'],
+  GovernanceBoundaryKey
+> &
+  Record<GovernanceBoundaryKey, boolean | null>;
+const GOVERNANCE_BOUNDARY_KEYS: readonly GovernanceBoundaryKey[] = [
+  'automaticMemoryInference',
+  'sensitiveMemoryAllowed',
+  'backgroundCredentialStorage',
+  'teamMemoryAvailable',
+  'externalActionWithoutApproval',
+];
 export type DwaionAiSourceKey = AgentSchemas['AiSourceKey'];
 export type DwaionAiSourcePreference = AgentSchemas['AiSourcePreference'];
 export type DwaionPersonalMemory = AgentSchemas['PersonalMemory'];
@@ -28,37 +49,54 @@ export type DwaionDeletionJob = AgentSchemas['DeletionJob'];
 
 const CONTROL_BASE = '/api/agent/v1/ai-controls';
 const PERSONAL_DATA_BASE = '/api/agent/v1/personal-data';
+const LEGACY_AUTHORITY = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' } as const;
 
 export async function getDwaionPersonalAiControls(): Promise<DwaionPersonalAiControls> {
   const response = await axiosInstance.get<ApiResponse<unknown>>(CONTROL_BASE);
-  return expectAgentData(
-    response.data.data,
-    isControls,
-    'Personal AI controls response is invalid.'
-  );
+  return normalizeControls(response.data.data);
 }
 
 export async function updateDwaionMemoryPreference(
   expectedRevision: number,
-  memoryState: Extract<DwaionMemoryPreferenceState, 'ENABLED' | 'DISABLED'>
+  memoryState: Extract<DwaionMemoryPreferenceState, 'ENABLED' | 'DISABLED'>,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalAiControls> {
   const body: AgentSchemas['UpdateMemoryPreferenceRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_MEMORY_PREFERENCE'),
     memoryState,
     changeReason: 'The user explicitly changed personal AI memory storage.',
   };
-  const response = await axiosInstance.put<ApiResponse<unknown>, typeof body>(CONTROL_BASE, body);
-  return expectAgentData(
-    response.data.data,
-    isControls,
-    'Personal AI controls response is invalid.'
+  const response = await axiosInstance.put<ApiResponse<unknown>, typeof body>(
+    CONTROL_BASE,
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
+  return normalizeControls(response.data.data);
+}
+
+export async function updateDwaionMemoryRuntimePreference(
+  expectedRevision: number,
+  runtimeApplicationState: Extract<DwaionMemoryPreferenceState, 'ENABLED' | 'DISABLED'>,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionPersonalAiControls> {
+  const body: AgentSchemas['UpdateMemoryRuntimePreferenceRequest'] = {
+    ...newAgentCommand(expectedRevision, 'USER_MEMORY_RUNTIME'),
+    runtimeApplicationState,
+    changeReason: 'The user explicitly changed personal AI answer personalization.',
+  };
+  const response = await axiosInstance.put<ApiResponse<unknown>, typeof body>(
+    `${CONTROL_BASE}/runtime`,
+    body,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return normalizeControls(response.data.data);
 }
 
 export async function updateDwaionSourcePreference(
   sourceKey: DwaionAiSourceKey,
   expectedRevision: number,
-  enabled: boolean
+  enabled: boolean,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionAiSourcePreference> {
   const body: AgentSchemas['UpdateAiSourcePreferenceRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_SOURCE_PREFERENCE'),
@@ -67,7 +105,8 @@ export async function updateDwaionSourcePreference(
   };
   const response = await axiosInstance.put<ApiResponse<unknown>, typeof body>(
     `${CONTROL_BASE}/sources/${encodeURIComponent(sourceKey)}`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return expectAgentData(
     response.data.data,
@@ -87,50 +126,69 @@ export async function getDwaionPersonalMemories(): Promise<DwaionPersonalMemory[
 
 export async function createDwaionPersonalMemory(
   kind: DwaionMemoryKind,
-  value: string
+  value: string,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalMemory> {
   const body: AgentSchemas['CreateMemoryRequest'] = {
     ...newAgentCommand(0, 'USER_MEMORY_CREATE'),
     kind,
     memory: { value },
   };
-  return mutateMemory(`${CONTROL_BASE}/memories`, body, 'post');
+  return mutateMemory(`${CONTROL_BASE}/memories`, body, 'post', authority);
 }
 
 export async function updateDwaionPersonalMemory(
   memoryId: string,
   expectedRevision: number,
-  value: string
+  value: string,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalMemory> {
   const body: AgentSchemas['UpdateMemoryRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_MEMORY_UPDATE'),
     memory: { value },
   };
-  return mutateMemory(`${CONTROL_BASE}/memories/${encodeMemoryId(memoryId)}`, body, 'put');
+  return mutateMemory(
+    `${CONTROL_BASE}/memories/${encodeMemoryId(memoryId)}`,
+    body,
+    'put',
+    authority
+  );
 }
 
 export async function changeDwaionPersonalMemoryState(
   memoryId: string,
   expectedRevision: number,
-  memoryState: Extract<DwaionMemoryState, 'ACTIVE' | 'DISABLED'>
+  memoryState: Extract<DwaionMemoryState, 'ACTIVE' | 'DISABLED'>,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalMemory> {
   const body: AgentSchemas['ChangeMemoryStateRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_MEMORY_STATE'),
     memoryState,
     changeReason: 'The user explicitly changed a personal AI memory state.',
   };
-  return mutateMemory(`${CONTROL_BASE}/memories/${encodeMemoryId(memoryId)}/state`, body, 'post');
+  return mutateMemory(
+    `${CONTROL_BASE}/memories/${encodeMemoryId(memoryId)}/state`,
+    body,
+    'post',
+    authority
+  );
 }
 
 export async function deleteDwaionPersonalMemory(
   memoryId: string,
-  expectedRevision: number
+  expectedRevision: number,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalMemory> {
   const body: AgentSchemas['DeleteMemoryRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_MEMORY_DELETE'),
     changeReason: 'The user explicitly deleted this personal AI memory.',
   };
-  return mutateMemory(`${CONTROL_BASE}/memories/${encodeMemoryId(memoryId)}/delete`, body, 'post');
+  return mutateMemory(
+    `${CONTROL_BASE}/memories/${encodeMemoryId(memoryId)}/delete`,
+    body,
+    'post',
+    authority
+  );
 }
 
 export async function getDwaionRetentionPolicies(): Promise<DwaionPersonalRetentionPolicy[]> {
@@ -155,7 +213,8 @@ export async function getDwaionPersonalDataCapabilities(): Promise<DwaionPersona
 }
 
 export async function requestDwaionPersonalDataDeletion(
-  domains: DwaionDeletionDomain[]
+  domains: DwaionDeletionDomain[],
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionDeletionJob> {
   const body: AgentSchemas['RequestDeletionRequest'] = {
     ...newAgentCommand(0, 'USER_DATA_DELETION'),
@@ -164,7 +223,8 @@ export async function requestDwaionPersonalDataDeletion(
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `${PERSONAL_DATA_BASE}/deletions`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return expectAgentData(
     response.data.data,
@@ -190,12 +250,14 @@ export async function getDwaionPersonalDataDeletion(
 async function mutateMemory(
   url: string,
   body: object,
-  method: 'post' | 'put'
+  method: 'post' | 'put',
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalMemory> {
+  const config = productSurfaceGovernedMutationConfig(authority);
   const response =
     method === 'post'
-      ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body)
-      : await axiosInstance.put<ApiResponse<unknown>, object>(url, body);
+      ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body, config)
+      : await axiosInstance.put<ApiResponse<unknown>, object>(url, body, config);
   return expectAgentData(response.data.data, isMemory, 'Personal AI memory response is invalid.');
 }
 
@@ -204,15 +266,44 @@ function encodeMemoryId(memoryId: string): string {
   return encodeURIComponent(memoryId);
 }
 
-function isControls(value: unknown): value is DwaionPersonalAiControls {
+function normalizeControls(value: unknown): DwaionPersonalAiControls {
+  const controls = expectAgentData(
+    value,
+    isControlsRecord,
+    'Personal AI controls response is invalid.'
+  );
+  const runtimeState = controls.runtimeApplicationState;
+  const hasRuntimeContract =
+    ['UNSET', 'DISABLED', 'ENABLED'].includes(String(runtimeState)) &&
+    typeof controls.runtimeApplicationEnabled === 'boolean' &&
+    typeof controls.runtimeApplicationAvailable === 'boolean';
+  return {
+    ...controls,
+    ...Object.fromEntries(
+      GOVERNANCE_BOUNDARY_KEYS.map((key) => [
+        key,
+        typeof controls[key] === 'boolean' ? controls[key] : null,
+      ])
+    ),
+    memoryEffective: hasRuntimeContract ? controls.memoryEffective : false,
+    runtimeApplicationState: hasRuntimeContract
+      ? (runtimeState as DwaionMemoryPreferenceState)
+      : 'UNSET',
+    runtimeApplicationEnabled: hasRuntimeContract ? controls.runtimeApplicationEnabled : false,
+    runtimeApplicationAvailable: hasRuntimeContract ? controls.runtimeApplicationAvailable : false,
+  } as DwaionPersonalAiControls;
+}
+
+function isControlsRecord(value: unknown): value is Record<string, unknown> {
   return (
     isAgentRecord(value) &&
-    typeof value.memoryState === 'string' &&
+    ['UNSET', 'DISABLED', 'ENABLED'].includes(String(value.memoryState)) &&
     Number.isInteger(value.revision) &&
     typeof value.memoryEnabled === 'boolean' &&
     typeof value.memoryEffective === 'boolean' &&
     Array.isArray(value.sourcePreferences) &&
-    value.sourcePreferences.every(isSourcePreference)
+    value.sourcePreferences.every(isSourcePreference) &&
+    GOVERNANCE_BOUNDARY_KEYS.every((key) => value[key] == null || typeof value[key] === 'boolean')
   );
 }
 

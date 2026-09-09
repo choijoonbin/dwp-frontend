@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react';
+import { useId, useRef, type ReactNode } from 'react';
 import { AlertTriangle, CircleHelp } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -25,6 +25,9 @@ export type ConfirmDialogProps = {
   onConfirm: () => void | Promise<void>;
   busy?: boolean;
   intent?: ConfirmDialogIntent;
+  focusCancelAfterOpen?: boolean;
+  minimumActionHeight?: number;
+  keepTitleWords?: boolean;
 };
 
 export function ConfirmDialog({
@@ -39,7 +42,11 @@ export function ConfirmDialog({
   onConfirm,
   busy = false,
   intent = 'primary',
+  focusCancelAfterOpen = false,
+  minimumActionHeight,
+  keepTitleWords = false,
 }: ConfirmDialogProps) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const descriptionId = useId();
   const destructive = intent === 'danger';
@@ -52,9 +59,25 @@ export function ConfirmDialog({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       onClose={busy ? undefined : onClose}
-      slotProps={{ paper: { role: destructive ? 'alertdialog' : 'dialog' } }}
+      slotProps={{
+        paper: { role: destructive ? 'alertdialog' : 'dialog' },
+        transition: {
+          onEntered: () => {
+            if (focusCancelAfterOpen) cancelRef.current?.focus();
+          },
+        },
+      }}
     >
-      <DialogTitle id={titleId}>{title}</DialogTitle>
+      <DialogTitle
+        id={titleId}
+        sx={
+          keepTitleWords
+            ? { wordBreak: 'keep-all', overflowWrap: 'normal', textWrap: 'balance' }
+            : undefined
+        }
+      >
+        {title}
+      </DialogTitle>
       <DialogContent sx={{ pt: '8px !important' }}>
         <Stack direction="row" alignItems="flex-start" gap={1.5}>
           <Box
@@ -74,7 +97,14 @@ export function ConfirmDialog({
         {details ? <Box sx={{ mt: 2 }}>{details}</Box> : null}
       </DialogContent>
       <DialogActions>
-        <ActionButton autoFocus intent="quiet" onClick={onClose} disabled={busy}>
+        <ActionButton
+          ref={cancelRef}
+          autoFocus
+          intent="quiet"
+          onClick={onClose}
+          disabled={busy}
+          sx={minimumActionHeight === undefined ? undefined : { minHeight: minimumActionHeight }}
+        >
           {cancelLabel}
         </ActionButton>
         <ActionButton
@@ -82,6 +112,7 @@ export function ConfirmDialog({
           loading={busy}
           loadingLabel={confirmingLabel}
           onClick={() => void onConfirm()}
+          sx={minimumActionHeight === undefined ? undefined : { minHeight: minimumActionHeight }}
         >
           {confirmLabel}
         </ActionButton>

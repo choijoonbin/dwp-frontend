@@ -33,7 +33,9 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('DWAI·ON opens as an overlay without shifting the personal home', async ({ page }) => {
+test('DWAI·ON opens as an overlay without shifting the personal home', async ({
+  page,
+}, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
@@ -45,7 +47,9 @@ test('DWAI·ON opens as an overlay without shifting the personal home', async ({
   await expect(trigger).toBeVisible();
   await expect(mascotMotion).toHaveCSS('animation-name', 'none');
   await expect(mascotGreeting).toHaveCSS('animation-name', 'none');
-  expect(await mascot.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await expect
+    .poll(() => mascot.evaluate((image: HTMLImageElement) => image.naturalWidth))
+    .toBeGreaterThan(0);
 
   const mainBefore = await page.getByTestId('personal-home-main').boundingBox();
   await trigger.click();
@@ -60,6 +64,7 @@ test('DWAI·ON opens as an overlay without shifting the personal home', async ({
   await expect(panel.getByRole('button', { name: 'User guide' })).toBeVisible();
   await expect(panel.getByRole('button', { name: 'Contact directory' })).toBeVisible();
   await expect(panel.getByRole('button', { name: 'Service status' })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('U10-panel-1440.png') });
   await panel.getByRole('button', { name: 'User guide' }).click();
   await expect(panel.getByRole('region', { name: 'User guide' })).toContainText(
     'Get started with home tools'
@@ -250,6 +255,15 @@ test('DWAI·ON full-screen panel reflows internally at 200% text', async ({ page
   }));
   expect(geometry.overflow).toBeLessThanOrEqual(1);
   expect(geometry.bounds.height).toBeGreaterThanOrEqual(899);
+  const policyCaption = panel
+    .locator('form')
+    .getByText('Connections follow your permissions and organization policies.', { exact: true });
+  await expect(policyCaption).toBeVisible();
+  const typography = await policyCaption.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { fontSize: parseFloat(style.fontSize), lineHeight: parseFloat(style.lineHeight) };
+  });
+  expect(typography.lineHeight).toBeGreaterThanOrEqual(typography.fontSize);
   await expect(panel.getByRole('textbox', { name: 'Ask DWAI·ON' })).toBeVisible();
   await expect(panel.getByRole('button', { name: 'Close DWAI·ON' })).toBeVisible();
 });

@@ -9,10 +9,15 @@ import {
   ThumbsUp,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  foundationTokens,
+  InlineFeedback,
+} from '@dwp-frontend/design-system';
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import { recordDwaionFeedback } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -21,6 +26,7 @@ import Typography from '@mui/material/Typography';
 import type { AskCitation, AskDwpResponse, AskProgressStage } from '@dwp-frontend/shared-utils';
 
 import { DwaionSpeechButton } from './dwaion-voice-controls';
+import { useDwaionGovernedMutation } from '../use-dwaion-governed-mutation';
 
 export type DwaionPanelRequestState = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -45,6 +51,10 @@ const thinkingPulse = keyframes`
   50% { opacity: 1; transform: scale(1); }
 `;
 
+const CONTROL_RADIUS = foundationTokens.radius.control + 'px';
+const SURFACE_RADIUS = foundationTokens.radius.surface + 'px';
+const MESSAGE_TAIL_RADIUS = foundationTokens.radius.compact / 2 + 'px';
+
 export function DwaionPanelResult({
   query,
   requestState,
@@ -56,8 +66,10 @@ export function DwaionPanelResult({
   onSelectCitation,
 }: DwaionPanelResultProps) {
   const { t, i18n } = useTranslation('home');
+  const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
   const [feedback, setFeedback] = useState<'UP' | 'DOWN' | null>(null);
   const [feedbackError, setFeedbackError] = useState(false);
+  const governFeedback = useDwaionGovernedMutation('route.dwaion.work.feedback.action');
 
   useEffect(() => {
     setFeedback(null);
@@ -68,7 +80,9 @@ export function DwaionPanelResult({
     if (!response || feedback) return;
     setFeedbackError(false);
     try {
-      await recordDwaionFeedback(response.runId, rating);
+      await governFeedback((authority) =>
+        recordDwaionFeedback(response.runId, rating, [], undefined, authority)
+      );
       setFeedback(rating);
     } catch {
       setFeedbackError(true);
@@ -83,7 +97,8 @@ export function DwaionPanelResult({
             maxWidth: '88%',
             px: 1.3,
             py: 0.9,
-            borderRadius: '8px 8px 2px 8px',
+            borderRadius: SURFACE_RADIUS,
+            borderEndEndRadius: MESSAGE_TAIL_RADIUS,
             bgcolor: 'primary.main',
             color: 'primary.contrastText',
           }}
@@ -97,18 +112,14 @@ export function DwaionPanelResult({
       {requestState === 'loading' && <ThinkingState progressStage={progressStage} />}
 
       {requestState === 'error' && (
-        <Alert
-          severity="error"
-          variant="outlined"
-          action={
+        <InlineFeedback severity="error" sx={{ mt: 1.25, alignItems: 'center' }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+            <Typography variant="caption">{t('dwaion.error')}</Typography>
             <ActionIconButton label={t('dwaion.retry')} size="small" onClick={onRetry}>
               <RotateCcw size={16} aria-hidden="true" />
             </ActionIconButton>
-          }
-          sx={{ mt: 1.25, alignItems: 'center' }}
-        >
-          <Typography variant="caption">{t('dwaion.error')}</Typography>
-        </Alert>
+          </Stack>
+        </InlineFeedback>
       )}
 
       {requestState === 'ready' && response && (
@@ -116,33 +127,38 @@ export function DwaionPanelResult({
           data-testid="dwaion-answer"
           sx={{
             mt: 1.25,
-            pl: 1.3,
-            pr: 1,
-            py: 1.15,
-            borderLeft: 3,
-            borderColor: response.state === 'COMPLETED' ? 'primary.main' : 'warning.main',
-            bgcolor: 'action.hover',
-            animation: `${responseReveal} 220ms ease-out both`,
+            p: 1.4,
+            border: 1,
+            borderLeftWidth: 3,
+            borderColor: response.state === 'COMPLETED' ? 'primary.light' : 'warning.light',
+            borderLeftColor: response.state === 'COMPLETED' ? 'primary.main' : 'warning.main',
+            borderRadius: SURFACE_RADIUS,
+            bgcolor: 'background.paper',
+            animation: (theme) =>
+              `${responseReveal} ${foundationTokens.duration.standard}ms ${theme.transitions.easing.easeOut} both`,
             '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
           }}
         >
           {response.state === 'COMPLETED' && response.answer ? (
-            <Typography
-              variant="body2"
-              sx={{
-                whiteSpace: 'pre-wrap',
-                lineHeight: 1.65,
-                display: '-webkit-box',
-                WebkitLineClamp: 7,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
-              {response.answer}
-            </Typography>
+            <>
+              <Typography component="h3" variant="subtitle2" fontWeight="fontWeightBold">
+                {t('dwaion.name')} {korean ? '분석 답변' : 'answer'}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  mt: 0.75,
+                  whiteSpace: 'pre-wrap',
+                  lineHeight: 'body2.lineHeight',
+                  overflowWrap: 'anywhere',
+                }}
+              >
+                {response.answer}
+              </Typography>
+            </>
           ) : (
             <>
-              <Typography variant="subtitle2" fontWeight={750}>
+              <Typography variant="subtitle2" fontWeight="fontWeightBold">
                 {outcomeTitle(t, response)}
               </Typography>
               <Typography
@@ -199,6 +215,39 @@ export function DwaionPanelResult({
             </Stack>
           )}
 
+          {response.answer && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap={0.75}
+              sx={{
+                mt: 0.9,
+                p: 0.65,
+                pr: 1,
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: CONTROL_RADIUS,
+                bgcolor: 'action.hover',
+              }}
+            >
+              <DwaionSpeechButton
+                text={response.answer}
+                locale={i18n.resolvedLanguage || i18n.language || 'en'}
+                namespace="home"
+              />
+              <Box minWidth={0} flex={1}>
+                <Typography variant="caption" fontWeight="fontWeightBold">
+                  {korean ? '답변 음성 재생' : 'Play answer audio'}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                  {korean
+                    ? '재생을 누를 때만 승인된 음성 경로로 요청합니다.'
+                    : 'Audio is requested through the approved route only when you press play.'}
+                </Typography>
+              </Box>
+            </Stack>
+          )}
+
           <Stack
             direction="row"
             alignItems="center"
@@ -221,13 +270,6 @@ export function DwaionPanelResult({
               <span />
             )}
             <Stack direction="row" alignItems="center" spacing={0.25}>
-              {response.answer && (
-                <DwaionSpeechButton
-                  text={response.answer}
-                  locale={i18n.resolvedLanguage || i18n.language || 'en'}
-                  namespace="home"
-                />
-              )}
               <ActionIconButton
                 label={t('dwaion.feedback.helpful')}
                 size="small"
@@ -285,14 +327,15 @@ function ThinkingState({ progressStage }: { progressStage: AskProgressStage | nu
               height: 6,
               borderRadius: '50%',
               bgcolor: 'primary.main',
-              animation: `${thinkingPulse} 900ms ${index * 120}ms ease-in-out infinite`,
+              animation: (theme) =>
+                `${thinkingPulse} ${foundationTokens.duration.standard * 5}ms ${foundationTokens.duration.fast * index}ms ${theme.transitions.easing.easeInOut} infinite`,
               '@media (prefers-reduced-motion: reduce)': { animation: 'none', opacity: 0.7 },
             }}
           />
         ))}
       </Stack>
       <Box minWidth={0}>
-        <Typography variant="caption" fontWeight={700}>
+        <Typography variant="caption" fontWeight="fontWeightBold">
           {progressStage ? t(`dwaion.progress.${progressStage}`) : t('dwaion.thinking.title')}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>

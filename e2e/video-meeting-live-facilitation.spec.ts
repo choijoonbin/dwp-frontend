@@ -333,6 +333,20 @@ async function expectNarrowRoomHeader(page: Page, width: 320 | 390) {
     )
   ).toEqual([]);
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await page.mouse.move(0, 0);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
+  if (width === 320) {
+    const compactDeviceLabels = page.locator(
+      '.dwp-meeting-control-bar__group .dwp-meeting-control > span'
+    );
+    await expect(compactDeviceLabels).toHaveCount(2);
+    expect(
+      await compactDeviceLabels.evaluateAll((labels) =>
+        labels.every((label) => getComputedStyle(label).display === 'none')
+      )
+    ).toBe(true);
+  }
 }
 
 test('narrow live-room header keeps identity and icon actions in separate accessible rows', async ({

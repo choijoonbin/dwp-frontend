@@ -13,6 +13,7 @@ import {
   expectNoBlockingA11y,
   expectNoHorizontalOverflow,
 } from './support/video-meeting-visual-accessibility';
+import en from '../libs/shared-i18n/src/locales/en/meetings.json' with { type: 'json' };
 
 // Review captures are implementation evidence, NOT automatic approval against the Stitch source.
 // Original U02/U03 desktop/mobile frames remain immutable and require direct human/agent comparison.
@@ -103,7 +104,7 @@ const prep = (index: number, accepted = false) => {
     observedAt: '2026-09-04T04:00:00Z',
   };
 };
-async function mine(page: Page, locale: 'ko' | 'en' = 'ko', dark = false) {
+async function mine(page: Page, locale: 'ko' | 'en' = 'ko', dark = false, paginated = false) {
   await mockMeetingVisualSession(page, { locale, colorScheme: dark ? 'dark' : 'light' });
   const calls: Array<Record<string, unknown>> = [];
   let accepted = false;
@@ -174,7 +175,12 @@ async function mine(page: Page, locale: 'ko' | 'en' = 'ko', dark = false) {
         updatedAt: '2026-09-04T04:00:00Z',
       });
     if (index >= 0) return scheduleResponse(route, meetings[index]);
-    return scheduleResponse(route, { items: meetings, total: 4, page: 0, pageSize: 10 });
+    return scheduleResponse(route, {
+      items: meetings,
+      total: paginated ? 24 : 4,
+      page: paginated ? Number(new URL(route.request().url()).searchParams.get('page')) : 0,
+      pageSize: 10,
+    });
   });
   return {
     calls,
@@ -499,3 +505,57 @@ for (const menu of ['U02', 'U03'] as const) {
     });
   });
 }
+
+test('My Meetings restores search, page and selection after preparation and schedule navigation', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize(
+    testInfo.project.name === 'mobile' ? { width: 390, height: 844 } : { width: 1440, height: 960 }
+  );
+  await mockScheduleWorkspace(page, { locale: 'en' });
+  await mine(page, 'en', false, true);
+  const filters = new URLSearchParams({
+    page: '2',
+    q: 'Q3',
+    time: 'ALL',
+    role: 'HOST',
+    date: '2026-09-04',
+    series: 'RECURRING',
+    meeting: ids[0],
+  });
+  const expectListContext = async () => {
+    await expect(page).toHaveURL(
+      (url) =>
+        !url.searchParams.has('view') &&
+        [...filters].every(([key, value]) => url.searchParams.get(key) === value)
+    );
+    await expect(
+      page.getByTestId('my-meetings-list').getByRole('heading', { name: titles[0] })
+    ).toBeVisible();
+    await expect(page.getByTestId('my-meetings-page-status')).toContainText('3');
+  };
+  await page.goto('/meetings/mine?' + filters);
+  await expectListContext();
+  const prepare = page
+    .getByTestId('my-meetings-list')
+    .getByRole('button', { name: en.home.focus.prepare, exact: true });
+  await prepare.click();
+  await expect(page).toHaveURL((url) => url.searchParams.get('view') === 'preparation');
+  await page.getByRole('button', { name: en.preparation.back, exact: true }).click();
+  await expectListContext();
+  await page.getByRole('button', { name: en.home.schedule.action, exact: true }).click();
+  await expect(page).toHaveURL((url) => url.searchParams.get('view') === 'schedule');
+  await page.getByRole('button', { name: en.actions.cancel, exact: true }).first().click();
+  await expectListContext();
+  await page.reload();
+  await expectListContext();
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: en.mine.filters.label, exact: true }).click();
+  }
+  await expect(
+    page.getByRole('textbox', { name: en.mine.filters.search, exact: true })
+  ).toHaveValue('Q3');
+  await expectNoHorizontalOverflow(page, 'U02 restored context');
+  await expectNoBlockingA11y(page, 'U02 restored context');
+  await page.screenshot({ path: testInfo.outputPath('U02-restored-context.png'), fullPage: true });
+});

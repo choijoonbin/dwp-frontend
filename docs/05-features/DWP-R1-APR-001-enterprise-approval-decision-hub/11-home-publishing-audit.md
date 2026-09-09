@@ -1,6 +1,6 @@
 # Approval Home Publishing Audit
 
-Date: 2026-09-07. Primary user: a requester or approver checking today's work.
+Date: 2026-09-08. Primary user: a requester or approver checking today's work.
 Operational question: which decision needs attention first, and where are my submissions?
 Primary action: open the highest-priority review. Archetype: operational dashboard, not an Inbox menu.
 
@@ -71,6 +71,27 @@ and workspace personalization contract. It was not copied as a parallel Next.js/
     before exercising their assertions. The adapter now verifies a canonical, contiguous
     `1..latestAliasVersion` lineage with exact bundle keys and SHA-256 values, while each Approval
     case remains pinned to its earliest required registry version.
+13. The OIDC step-up callback exchanged its one-time authorization code twice under React
+    StrictMode and checked `window.closed` immediately after requesting popup closure. The callback
+    is now single-flight, completion is signalled before closure, and a bounded grace period uses
+    only the server-normalized fallback destination when the browser keeps the popup open. The
+    high-risk browser fixture also exposes the two step-up response headers through CORS, matching
+    the Gateway contract instead of silently treating the response as an ordinary login.
+14. A canonical `/work/**` return target was initially sufficient to render the Approval-to-Work
+    handoff even after the destination product entitlement had been revoked. Rendering and
+    activation now both require the exact current `APP.WORK:VIEW` authority in addition to the
+    canonical target and Approval record authority. The raw permission set is evaluated with DENY
+    precedence, a runtime session refresh removes the control immediately, and a stale click cannot
+    navigate after the revocation.
+15. Work-owned decisions and information responses originally resolved mutation authority only from
+    the actor's selected Approval administration scope. A legitimate Work task therefore reached the
+    independent Approval owner PEP but failed with `AUTHORITY_RESOLUTION_UNAVAILABLE` when the actor
+    had no unrelated admin scope selection. Work commands now lock the current Approval object and
+    bind authorization to its database-canonical `management_resource_set_key`. The exact
+    `route.approvals.work.*` decision context is required when supplied, and any simultaneous admin
+    context must identify the same object scope. PostgreSQL regressions prove that a team-scoped
+    decision or information response updates only the intended team object while a sibling team's
+    object remains unchanged.
 
 ## Verification Contract
 
@@ -90,11 +111,11 @@ and workspace personalization contract. It was not copied as a parallel Next.js/
 Reproduce with Node 24 and an isolated canonical test server:
 
 ```sh
-E2E_BASE_URL=http://127.0.0.1:4325 E2E_REUSE_EXISTING_SERVER=true PLAYWRIGHT_OUTPUT_DIR=test-results-approval-home-audit corepack yarn playwright test e2e/approval-home-publishing.spec.ts e2e/approval-command-center-resilience.spec.ts e2e/approval-experience.spec.ts e2e/approval-work-handoff.spec.ts --project=chromium --project=mobile --workers=1
-corepack yarn vitest run apps/dwp/src/features/approvals libs/design-system/src
+DWP_FRONTEND_DEV_PORT=4325 E2E_BASE_URL=http://127.0.0.1:4325 PLAYWRIGHT_OUTPUT_DIR=test-results-approval-final corepack yarn playwright test e2e/approval-home-publishing.spec.ts e2e/approval-command-center-resilience.spec.ts e2e/approval-experience.spec.ts e2e/approval-authority-revalidation.spec.ts e2e/approval-high-risk-commands.spec.ts e2e/approval-work-handoff.spec.ts --project=chromium --project=mobile --workers=1
+corepack yarn vitest run apps/dwp/src/features/approvals apps/dwp/src/pages/auth/oidc-callback.test.ts libs/shared-utils/src/api/auth-api.test.ts libs/shared-utils/src/auth/product-surface-step-up-popup.test.ts
 corepack yarn typecheck --incremental false
 corepack yarn nx run dwp-approvals:build --skip-nx-cache
-(cd ../dwp-backend && ./gradlew :dwp-approval-server:check --no-daemon --max-workers=1 --rerun-tasks)
+(cd ../dwp-backend && ./gradlew :dwp-approval-server:check checkSourceSize --no-daemon --max-workers=1)
 ```
 
 ## Integration Boundary
@@ -112,34 +133,48 @@ by this publishing audit. No commit or push is part of this task.
 
 ## Verified Results
 
-- Final immutable publishing suite: 22/22 PASS, Chromium and mobile profiles. Axe serious/critical
-  violations: zero. The final quick-action routing regression also passes 2/2.
-- Latest live-server focused matrix: all 36 desktop/mobile cases verified. The initial command
-  reported 35/36 because its only reload assertion overlapped the intentional Vite configuration
-  restart at 21:23:56; the exact failed desktop case passed immediately after restart, while its
-  mobile counterpart had already passed on the restarted server.
-- Home, experience and command-center regression suites passed 90/90 together before the final
-  token-only surface adjustment. The affected publishing coverage was then rerun 22/22 from an
-  immutable snapshot, so this is not a claim that one 92-test command was executed.
-- Latest Approval feature unit tests: 13 files, 68/68 PASS. The broader Approval, route and shared
-  API unit checkpoint remains 16 files, 93/93 PASS.
-- Work return handoff regression: 10/10 PASS across desktop and mobile profiles, covering successful
+- Final combined Approval browser regression: 160/160 PASS, split evenly between desktop Chromium
+  and mobile profiles, with zero failures and zero skips. One isolated Node 24 command exercised the
+  Home publishing, command-center resilience, experience, authority-revalidation, high-risk command
+  and Work handoff suites against a dedicated test-mode Vite server on port 4325.
+- The browser matrix covers 1920/1440/1280/390/320px, Korean/English, dark and forced colors,
+  200 percent text, keyboard operation, responsive list/detail transitions and Axe. The generated
+  desktop Home, Inbox and 320px mobile captures were inspected after the run; content does not
+  overlap or escape its viewport.
+- Work return handoff regression: 18/18 PASS across desktop and mobile profiles, covering successful
   task decisions, information responses, exact query/hash return, immediate authority revocation,
-  version conflict at 320px and untrusted-target suppression.
-- Final combined Approval browser regression: 102/102 PASS on the integrated local server, split
-  evenly across desktop Chromium and mobile profiles, with zero failures and zero skips.
-- Final live `:4200` representative rerun: 6/6 PASS across desktop and mobile, covering the 1920px
-  Korean Home plus pointer and keyboard Inbox disclosure behavior after all shared-tree updates.
-- Approval backend module check: 224/224 PASS with zero failures, errors or skips. The signed pilot
+  destination entitlement revocation, mixed ALLOW/DENY precedence, version conflict at 320px and
+  untrusted-target suppression, including asynchronous Product Surface bootstrap.
+- Authority revalidation and high-risk command regression: 50/50 PASS across Chromium and mobile,
+  including exact callback single-flight, popup completion, reconfirmation, mutation single-flight,
+  deterministic rejection, transport retry, typed conflict/replay, proof expiry, provider selection,
+  popup block/timeout and stale or foreign completion suppression.
+- Approval and step-up callback/API protocol unit checkpoint: 16 files, 92/92 PASS.
+- Product Surface Approval pilot: 67 PASS, 9 intentional project skips and zero failures across
+  Chromium and mobile. Its 1,296-line E2E source remains exactly within the maintenance budget.
+- Approval backend module check: 32 suites, 226/226 PASS with zero failures, errors or skips. The
+  database-backed scope regressions execute real Work decision and information-response commands.
+  The signed pilot
   fixture also passes its 71 cases, 46 negative cases and 41 generator mutation controls at the
   current v6 registry lineage.
+- Integrated local-stack evidence uses real Gateway and owner-service paths. Work item `SKAX-42-1`
+  opened its exact Approval task, returned HTTP 200 from the versioned decision command, changed the
+  task from pending to approved and the request from in-review to approved, then returned to the
+  exact Work query/hash with no browser console error. Supplement item `SKAX-900018-2` likewise
+  submitted its information response with HTTP 200, changed the request from needs-info version 1 to
+  in-review version 2, returned to Work and disappeared from the terminal queue without a failed
+  response or console error.
+- Final shared-tree integration checkpoint: 518 frontend test files, 4,235/4,235 tests PASS;
+  non-incremental TypeScript, full application build, Workspace build, static architecture and
+  formatting gates PASS at the recorded Work-owned snapshot before the isolated Approval browser
+  run. No Approval production source changed between those checkpoints.
 - Full non-incremental TypeScript check, full repository lint, generated OpenAPI checks,
   design-system adoption, architecture, i18n, owned ESLint/Prettier, feature/API boundaries and
   `git diff --check`: PASS.
-- Approval product production build and budgets: PASS. Initial raw 880.6/900 KiB, gzip
-  269.9/280 KiB, requests 5/5; largest async raw 535.3/800 KiB, gzip 143.8/260 KiB.
-- Full application production build and budgets: PASS. Initial raw 1061.8/1074.2 KiB, gzip
-  309.5/317.4 KiB, requests 4/5; largest async raw 504.1/537.1 KiB, gzip 118.6/166.0 KiB.
+- Approval product production build and budgets: PASS. Initial raw 882.2/900 KiB, gzip
+  270.2/280 KiB, requests 5/5; largest async raw 535.4/800 KiB, gzip 143.9/260 KiB.
+- Full application production build and budgets: PASS. Initial raw 1063.0/1074.2 KiB, gzip
+  309.7/317.4 KiB, requests 4/5; largest async raw 505.5/537.1 KiB, gzip 119.0/166.0 KiB.
 - Runtime health: `/approvals/home`, Gateway, all nine Java owner services and Agent return HTTP
   200 with readiness/health `UP` on the local integrated stack.
 

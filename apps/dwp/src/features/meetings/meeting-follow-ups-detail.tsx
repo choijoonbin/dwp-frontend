@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import { CheckCheck, FileCheck2, RefreshCw, X } from 'lucide-react';
 import {
@@ -13,6 +14,7 @@ import {
   SelectField,
 } from '@dwp-frontend/design-system';
 import type { WorkAssignmentTransition } from '@dwp-frontend/shared-utils/api/work-assignment-contracts';
+import { workAssignmentWorkRoute } from '@dwp-frontend/shared-utils/api/work-assignment-navigation';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -38,6 +40,7 @@ type Props = {
 
 export function MeetingFollowUpsDetail(props: Props) {
   const { t, i18n } = useTranslation('meetings');
+  const navigate = useNavigate();
   const state = useFollowUpDetail(props);
   const [confirm, setConfirm] = useState<WorkAssignmentTransition | null>(null);
   const [reason, setReason] = useState('');
@@ -255,12 +258,14 @@ export function MeetingFollowUpsDetail(props: Props) {
             </Stack>
           </Box>
           <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
-            <ActionButton intent="secondary" disabled fullWidth>
+            <ActionButton
+              intent="secondary"
+              disabled={state.busy || state.conflict || state.uncertain || state.query.isFetching}
+              fullWidth
+              onClick={() => navigate(workAssignmentWorkRoute(task.assignmentId))}
+            >
               {t('followUps.openWork')}
             </ActionButton>
-            <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
-              {t('followUps.workRouteUnavailable')}
-            </Typography>
             <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
               {t('followUps.reassignUnavailable')}
             </Typography>

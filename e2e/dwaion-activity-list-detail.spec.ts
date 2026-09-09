@@ -20,7 +20,7 @@ const runs = [
 
 test('one recent-window request powers URL-preserved client filtering and exact selection', async ({
   page,
-}) => {
+}, testInfo) => {
   const requests = await mockActivity(page);
   await page.goto('/dwaion/activity');
 
@@ -35,6 +35,13 @@ test('one recent-window request powers URL-preserved client filtering and exact 
       .getByRole('region', { name: 'AI run status summary' })
       .getByRole('button', { name: /Retrieved runs:/ })
   ).toBeVisible();
+
+  const originalViewport = page.viewportSize();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({
+    path: testInfo.outputPath('U09-activity-list-only-1440.png'),
+    fullPage: false,
+  });
 
   await page.getByRole('button', { name: 'In progress', exact: true }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'RUNNING');
@@ -58,6 +65,20 @@ test('one recent-window request powers URL-preserved client filtering and exact 
   await expect(
     inspector.getByRole('complementary', { name: 'Signal detail' }).getByText('Verified run detail')
   ).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath('U09-activity-selected-1440.png'),
+    fullPage: false,
+  });
+  await expect(
+    inspector.getByRole('complementary', { name: 'Signal detail' }).getByText('Agent run', {
+      exact: true,
+    })
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole('complementary', { name: 'Signal detail' }).getByText('AGENT_RUN', {
+      exact: true,
+    })
+  ).toHaveCount(0);
   expect(requests.detailRequests.length).toBeGreaterThan(0);
   expect(new Set(requests.detailRequests)).toEqual(new Set([COMPLETED_RUN]));
   const receipt = inspector.getByRole('region', { name: 'Recent run response' });
@@ -77,6 +98,12 @@ test('one recent-window request powers URL-preserved client filtering and exact 
   await expect(inspector.locator('[data-stage-key="RETRIEVING"]')).toContainText(
     'Retrieving evidence'
   );
+  const sourceAndAudit = inspector.getByRole('button', {
+    name: 'Source and audit linkage details',
+  });
+  await expect(sourceAndAudit).toHaveAttribute('aria-expanded', 'false');
+  await sourceAndAudit.click();
+  await expect(sourceAndAudit).toHaveAttribute('aria-expanded', 'true');
   await expect(inspector.getByRole('heading', { name: 'Run source status' })).toBeVisible();
   await expect(inspector.getByText('WORK_ITEM', { exact: true })).toBeVisible();
   await expect(inspector.getByText('Linked to a Platform audit record')).toBeVisible();
@@ -89,14 +116,36 @@ test('one recent-window request powers URL-preserved client filtering and exact 
   expect(
     audit.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? ''))
   ).toEqual([]);
+  if (originalViewport) await page.setViewportSize(originalViewport);
 });
 
-test('390 and 320 layouts use a drawer that closes with Escape and restores row focus', async ({
+test('390 and 320 layouts keep the inspector inline and restore row focus on Escape', async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await mockActivity(page);
+  const requests = await mockActivity(page);
   await page.goto('/dwaion/activity');
+  const mobileHeader = page.getByTestId('dwaion-header');
+  await expect(mobileHeader.getByText('U09', { exact: true })).toBeVisible();
+  await expect(mobileHeader.getByText('Execution History', { exact: true })).toBeVisible();
+  const mobileNavigation = page.getByTestId('dwaion-mobile-navigation');
+  await expect(mobileNavigation.getByRole('link', { name: 'Activity' })).toHaveAttribute(
+    'aria-current',
+    'page'
+  );
+  await expect(mobileNavigation.getByRole('button', { name: 'More' })).toHaveCount(0);
+  await expect(page.locator('#dwaion-activity-filters')).toHaveCount(1);
+  await mobileHeader.getByRole('button', { name: 'Move to run state filters' }).click();
+  await expect(page.getByRole('button', { name: 'All', exact: true })).toBeFocused();
+  const requestCountBeforeRefresh = requests.runRequests.length;
+  await mobileHeader.getByRole('button', { name: 'Refresh run activity' }).click();
+  await expect.poll(() => requests.runRequests.length).toBeGreaterThan(requestCountBeforeRefresh);
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+  await page.mouse.move(1, 300);
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
+  await page.evaluate(() => globalThis.scrollTo(0, 0));
   const selected = page.getByTestId(`dwaion-run-${COMPLETED_RUN}`);
   await expect(selected).toBeVisible();
   for (const width of [390, 320]) {
@@ -114,7 +163,7 @@ test('390 and 320 layouts use a drawer that closes with Escape and restores row 
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)
     ).toBe(true);
-    await expect(selected.getByText('DWAI·ON work agent', { exact: true })).toBeInViewport({
+    await expect(selected.getByText('DWAI·ON work agent', { exact: true }).last()).toBeInViewport({
       ratio: 1,
     });
     await expect(selected).toHaveAttribute('aria-label', new RegExp(COMPLETED_RUN));
@@ -130,22 +179,24 @@ test('390 and 320 layouts use a drawer that closes with Escape and restores row 
   await page.setViewportSize({ width: 390, height: 844 });
   await selected.focus();
   await selected.press('Enter');
-  await expect(page.getByRole('complementary', { name: 'Selected run details' })).toBeVisible();
+  const inspector = page.getByRole('complementary', { name: 'Selected run details' });
+  await expect(inspector).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Selected run details' })).toHaveCount(0);
 
   for (const width of [390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)
     ).toBe(true);
-    const receipt = page.getByRole('region', { name: 'Recent run response' });
-    const runIdLabel = receipt.getByText('Run ID', { exact: true });
-    const runIdValue = receipt.getByText(COMPLETED_RUN, { exact: true });
-    expect(
-      Math.abs((await runIdLabel.boundingBox())!.y - (await runIdValue.boundingBox())!.y)
-    ).toBeLessThan(1);
+    await inspector.scrollIntoViewIfNeeded();
+    const inspectorBounds = await inspector.boundingBox();
+    expect(inspectorBounds?.x).toBeGreaterThanOrEqual(0);
+    expect(inspectorBounds?.width).toBeLessThanOrEqual(width);
+    await expect(inspector.getByTitle(COMPLETED_RUN)).toBeVisible();
+    await page.evaluate(() => globalThis.scrollTo(0, 0));
     await page.screenshot({
-      path: testInfo.outputPath(`dwaion-activity-detail-${width}.png`),
-      fullPage: false,
+      path: testInfo.outputPath(`dwaion-activity-inline-detail-${width}.png`),
+      fullPage: true,
     });
     const detailAudit = await new AxeBuilder({ page }).analyze();
     expect(
@@ -165,24 +216,11 @@ test('summary metrics drill into the exact attention evidence set and preserve i
   const requests = await mockActivity(page, { attentionEvidence: true });
   await page.goto(`/dwaion/activity?run=${COMPLETED_RUN}`);
   await expect(page.getByRole('complementary', { name: 'Selected run details' })).toBeVisible();
-  const drawerOpen = (page.viewportSize()?.width ?? 1280) < 1200;
-  if (drawerOpen) {
-    await page.getByRole('button', { name: 'Close selected execution' }).click();
-    await expect(page.getByRole('dialog', { name: 'Selected run details' })).toHaveCount(0);
-  }
   const summary = page.getByRole('region', { name: 'AI run status summary' });
-  const compactSummaryToggle = summary.getByRole('button', { name: /^AI run status summary:/ });
-  if (
-    (await compactSummaryToggle.isVisible()) &&
-    (await compactSummaryToggle.getAttribute('aria-expanded')) === 'false'
-  ) {
-    await compactSummaryToggle.click();
-  }
   await summary.getByRole('button', { name: /Attention signals/ }).click();
   await expect(page).toHaveURL(
     (url) =>
-      url.searchParams.get('state') === 'ATTENTION' &&
-      (drawerOpen ? !url.searchParams.has('run') : url.searchParams.get('run') === COMPLETED_RUN)
+      url.searchParams.get('state') === 'ATTENTION' && url.searchParams.get('run') === COMPLETED_RUN
   );
   await expect(page.getByText(/3 of 5 retrieved runs/)).toBeVisible();
   const list = page.getByRole('list', { name: 'Recently retrieved AI runs' });
@@ -199,24 +237,20 @@ test('summary metrics drill into the exact attention evidence set and preserve i
 
   await summary.getByRole('button', { name: /Retrieved runs/ }).click();
   await expect(page).toHaveURL((url) => !url.searchParams.has('state'));
-  if (!drawerOpen) {
-    await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveAttribute(
-      'aria-current',
-      'true'
-    );
-  }
+  await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveAttribute(
+    'aria-current',
+    'true'
+  );
 });
 
-test('a short mobile viewport keeps the first run visible and preserves expandable summary filters', async ({
+test('a short mobile viewport keeps compact summary filters and exposes the first run', async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await mockActivity(page);
   await page.goto('/dwaion/activity');
   const summary = page.getByRole('region', { name: 'AI run status summary' });
-  const toggle = summary.getByRole('button', { name: /^AI run status summary:/ });
-  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-  expect((await toggle.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  await expect(summary.getByRole('button')).toHaveCount(4);
   await expect(
     page
       .getByTestId(`dwaion-run-${COMPLETED_RUN}`)
@@ -227,14 +261,13 @@ test('a short mobile viewport keeps the first run visible and preserves expandab
     fullPage: false,
   });
 
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await summary.getByRole('button', { name: /Attention signals:/ }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'ATTENTION');
   await expect(page.getByText(/1 of 3 retrieved runs/)).toBeVisible();
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-  await expect(summary.getByRole('button', { name: /Attention signals:/ })).toHaveCount(0);
+  await expect(summary.getByRole('button', { name: /Attention signals:/ })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
 });
 
 test('APP.ASK-only access shows list receipt but never requests common activity detail', async ({
@@ -291,7 +324,7 @@ test('a failed exact-run revalidation removes the stale receipt and conversation
   await expect(inspector.getByRole('button', { name: 'Open conversation' })).toBeVisible();
   const initialRequestCount = requests.exactRunRequests.length;
   requests.revokeExactRun();
-  await page.getByRole('button', { name: 'Refresh AI run activity' }).click();
+  await inspector.getByRole('button', { name: 'Refresh AI run activity' }).click();
   await expect(inspector.getByText('This run record cannot be displayed')).toBeVisible();
   await expect(inspector.getByText('Recent run response')).toHaveCount(0);
   await expect(inspector.getByRole('button', { name: 'Open conversation' })).toHaveCount(0);
@@ -308,7 +341,7 @@ test('a failed recent-window access revalidation removes cached run metadata', a
   const inspector = page.getByRole('complementary', { name: 'Selected run details' });
   await expect(inspector.getByText('Recent run response')).toBeVisible();
   requests.revokeRunList();
-  await page.getByRole('button', { name: 'Refresh AI run activity' }).click();
+  await inspector.getByRole('button', { name: 'Refresh AI run activity' }).click();
   await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveCount(0);
   await expect(inspector.getByText('Recent run response')).toHaveCount(0);
   await expect(inspector.getByRole('button', { name: 'Open conversation' })).toHaveCount(0);
@@ -514,6 +547,7 @@ function activityEvent(runId: string) {
     source: 'DWAI_ON',
     sourceAccess: 'AVAILABLE',
     sourceRoute: `/dwaion/activity?run=${runId}`,
+    sourceEventId: runId,
     eventKind: 'EXECUTION_SNAPSHOT',
     executionId: runId,
     executionVersion: 4,
@@ -523,5 +557,6 @@ function activityEvent(runId: string) {
     auditStatus: 'VERIFIED',
     auditRecordId: AUDIT_RECORD,
     auditId: '61000000-0000-4000-8000-000000000002',
+    auditAccess: 'RESTRICTED',
   };
 }

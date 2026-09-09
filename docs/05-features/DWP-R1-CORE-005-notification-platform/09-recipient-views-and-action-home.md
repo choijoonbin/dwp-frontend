@@ -1,6 +1,6 @@
 # Recipient Views and Action Home
 
-기준일: 2026-09-04. 이 문서는 기존 기획의 미구현 제안과 현재 구현을 구분하는 최신 기준이다.
+기준일: 2026-09-09. 이 문서는 기존 기획의 미구현 제안과 현재 구현을 구분하는 최신 기준이다.
 
 ## 업무 정의
 
@@ -47,6 +47,11 @@
 - 보기 이동은 history push, 세부 필터/검색은 replace. Back/Forward에서 URL이 정본이며
   사용자 이벤트에서만 URL을 변경해 상호 effect의 경쟁을 제거한다.
 - 모바일은 보기 선택기와 bottom filter sheet를 사용한다. 가로로 숨겨진 메뉴를 탐색할 필요가 없다.
+- 현재 조건은 공통 Governed Saved View API로 개인 보기에 저장·복원할 수 있다. 기본 조치 필요,
+  읽지 않음, 멘션 보기는 동일한 설정 schema를 사용하는 내장 보기다.
+- 데스크톱은 목록과 상세를 함께 보여주고 선택 항목의 주 작업은 상세에만 한 번 노출한다.
+  모바일은 Drawer 상세를 사용하며 `/notifications/center/:notificationId`가 직접 진입 정본이다.
+- 기존 `/notifications/inbox` 링크는 query/hash를 보존해 Center로 호환 이동한다.
 
 ## 서버 계약 보정
 
@@ -87,24 +92,21 @@ ROLE은 정확한 ROLE이다. 잘못된 readState는 400으로 거부한다. 미
 - Backend `NotificationReasonQueryPostgresIntegrationTest`: 실제 PostgreSQL 마이그레이션·RLS,
   alias·필터 조합·사용자 격리·keyset. mocked browser와 실제 DB 증적을 구분한다.
 
-이번 범위에 개인 SavedView 저장은 포함하지 않는다. 기존 플랫폼 저장 테이블은 재사용할 수 있으나
-`notifications.center` surface 허용, exact entitlement, PERSONAL 제한, 설정 schema 검증이 먼저다.
-현재 URL로 조회 상태를 보존하며 저장 버튼이 작동하는 척하지 않는다.
 반응 전용/회의 초대/구독 스레드/owner inline 승인과 외부 채널 HA·부하·DR은 별도 계약과 운영 Gate다.
 이 메뉴 개선 완료를 모든 앱의 이벤트 발행 또는 Production 출시 완료로 해석하지 않는다.
 
 ## 실행 증적 (2026-09-04)
 
-| 검사                                              | 결과                           | 경계                                                            |
-| ------------------------------------------------- | ------------------------------ | --------------------------------------------------------------- |
-| Notification backend `check`                      | 219 PASS, 실패/스킵 0          | 담당 아키텍처 에이전트 실행 결과                                |
-| reason 타깃                                       | 64 PASS                        | 단위 48 + 실제 PostgreSQL 16, 위 219에 포함                     |
-| Notification frontend 단위 검사                   | 8 files / 53 PASS              | center/model/filter/navigation 및 arrival/header 관련 선택 집합 |
-| 브라우저 회귀                                     | 35 PASS / 31 명시적 skip       | 3 spec의 중복 프로젝트 실행 제외. 실패/재시도 0                 |
-| 전체 TypeScript / scoped ESLint                   | PASS / 오류·경고 0             | Notification 변경 경계                                          |
-| architecture / source-size / i18n / design-system | PASS                           | 기준 상향 없음                                                  |
-| 전체 `yarn build`                                 | 마지막 bundle budget 단계 FAIL | lint/tsc/Vite 컴파일은 PASS                                     |
-| local Notification runtime                        | `8008/actuator/health` UP      | Notification만 재기동, 기존 DB/Redis/Kafka 재사용               |
+| 검사                                              | 결과                      | 경계                                                            |
+| ------------------------------------------------- | ------------------------- | --------------------------------------------------------------- |
+| Notification backend `check`                      | 219 PASS, 실패/스킵 0     | 담당 아키텍처 에이전트 실행 결과                                |
+| reason 타깃                                       | 64 PASS                   | 단위 48 + 실제 PostgreSQL 16, 위 219에 포함                     |
+| Notification frontend 단위 검사                   | 8 files / 53 PASS         | center/model/filter/navigation 및 arrival/header 관련 선택 집합 |
+| 브라우저 회귀                                     | 35 PASS / 31 명시적 skip  | 3 spec의 중복 프로젝트 실행 제외. 실패/재시도 0                 |
+| 전체 TypeScript / scoped ESLint                   | PASS / 오류·경고 0        | Notification 변경 경계                                          |
+| architecture / source-size / i18n / design-system | PASS                      | 기준 상향 없음                                                  |
+| 전체 `yarn build`                                 | PASS                      | lint/tsc/Vite/bundle budget 포함                                |
+| local Notification runtime                        | `8008/actuator/health` UP | Notification만 재기동, 기존 DB/Redis/Kafka 재사용               |
 
 브라우저 회귀는 실제 Chromium/WebKit 화면을 API fixture와 함께 실행한 UI 증적이다.
 기존 로그인 계정의 비모킹 실서버 종단 테스트를 의미하지 않는다. 사용자 Chrome 탭 연결은
@@ -126,9 +128,8 @@ corepack yarn build
 스크린샷은 `artifacts/notification-final-e2e/`에 보관한다. 테스트용 제목/계정이 포함된 화면이며
 운영 사용자의 실데이터 캡처로 제시하지 않는다.
 
-남은 공통 빌드 차단: initial raw **1172.7 / 1074.2 KiB**, gzip **333.5 / 317.4 KiB**.
-초기 요청 수 5/5와 최대 비동기 청크 예산은 통과했다. 이 작업에서 공유 번들 정책이나
-허용량을 수정하지 않았으며, 공통 초기 의존 그래프 최적화가 필요하다.
+이후 공통 초기 의존 그래프를 최적화해 당시 bundle budget 차단은 해소됐다. 최신 01-14 구현과
+검증 수치는 [구현 매트릭스](11-design-01-14-implementation-matrix.md)를 따른다.
 
 추가로 처리한 결함은 reason alias 오분류, unknown의 DIRECT 위장, URL 상호 effect 경합,
 키보드의 이전 선택 참조, 잘못된 상세 응답이 정상 도착 알림까지 중단하는 문제다.

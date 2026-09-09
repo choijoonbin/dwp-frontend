@@ -1,0 +1,24 @@
+{
+  "name": "work-unit-owned-final",
+  "command": [
+    "corepack",
+    "yarn",
+    "test",
+    "apps/dwp/src/features/work-hub",
+    "apps/dwp/src/features/work/",
+    "apps/dwp/src/layouts/work-mobile-focus-scroll.test.ts",
+    "apps/dwp/src/layouts/use-owner-scoped-state.test.tsx",
+    "apps/dwp/src/components/product-surface-focus-handoff.test.ts",
+    "apps/dwp/src/features/home/flow-home/home-contribution-provider-routing.test.ts",
+    "libs/shared-utils/src/api/personal-work-api.test.ts",
+    "libs/shared-utils/src/api/work-hub-api.test.ts",
+    "libs/shared-utils/src/api/work-hub-calendar-api.test.ts",
+    "libs/shared-utils/src/api/access-review-work-api.test.ts",
+    "--maxWorkers=2"
+  ],
+  "startedAt": "2026-09-08T10:18:21.075241+00:00",
+  "completedAt": "2026-09-08T10:18:48.416031+00:00",
+  "durationSeconds": 27.34,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/work-unit-owned-final.log"
+}

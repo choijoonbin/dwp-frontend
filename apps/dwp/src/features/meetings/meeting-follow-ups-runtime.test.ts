@@ -184,6 +184,10 @@ async function render(initialEntry = '/') {
         path: '/meetings/history',
         element: createElement('div', null, 'Exact report destination'),
       },
+      {
+        path: '/work/queue',
+        element: createElement('div', null, 'Canonical Work destination'),
+      },
     ],
     { initialEntries: [initialEntry] }
   );
@@ -269,6 +273,26 @@ describe('meeting follow-up Work runtime', () => {
     expect(runtime.detail).not.toHaveBeenCalled();
     expect(runtime.create).not.toHaveBeenCalled();
   });
+  it('selects an exact URL candidate only after the bounded current list contains it', async () => {
+    enableCandidate();
+    await render(`/?scope=CANDIDATES&candidateId=${candidateSource.candidateId}`);
+
+    expect(runtime.home).toHaveBeenCalledOnce();
+    expect(runtime.published).toHaveBeenCalledWith(id);
+    expect(
+      document.querySelector('[data-testid="meeting-follow-up-candidate-review"]')
+    ).toBeTruthy();
+    expect(document.body.textContent).toContain('Publish rollout checklist');
+    expect(runtime.create).not.toHaveBeenCalled();
+  });
+  it('does not select or fetch a candidate absent from the bounded current list', async () => {
+    enableCandidate();
+    await render('/?scope=CANDIDATES&candidateId=99000000-0000-4000-8000-000000000099');
+
+    expect(document.querySelector('[data-testid="meeting-follow-up-candidate-review"]')).toBeNull();
+    expect(runtime.exactReport).not.toHaveBeenCalled();
+    expect(runtime.create).not.toHaveBeenCalled();
+  });
   it('opens only the selected canonical detail and keeps accept separate from start', async () => {
     await render();
     await selectTask();
@@ -276,9 +300,16 @@ describe('meeting follow-up Work runtime', () => {
     expect(runtime.detail).toHaveBeenCalledWith(id);
     expect(button('followUps.actions.accept')).toBeTruthy();
     expect(mount.textContent).not.toContain('followUps.actions.start');
-    expect(button('followUps.openWork').disabled).toBe(true);
+    expect(button('followUps.openWork').disabled).toBe(false);
     expect(runtime.create).not.toHaveBeenCalled();
     expect(runtime.reassign).not.toHaveBeenCalled();
+  });
+  it('opens the canonical Work-owned assignment identity from the inspected detail', async () => {
+    await render();
+    await selectTask();
+    await click('followUps.openWork');
+    expect(router.state.location.pathname).toBe('/work/queue');
+    expect(router.state.location.search).toBe(`?work=WORK_ASSIGNMENT%3A${id}%3A`);
   });
   it('sends a confirmed command with exact version, assignment revision, and UUID key', async () => {
     await render();
@@ -542,21 +573,66 @@ describe('meeting follow-up Work runtime', () => {
     expect(runtime.create).not.toHaveBeenCalled();
     expect(runtime.reassign).not.toHaveBeenCalled();
   });
-  it('keeps confirmed candidate promotion closed until current Meeting authority is available', async () => {
+  it('submits confirmed candidate promotion for the server-owned current authority decision', async () => {
     enableCandidate();
+    runtime.create.mockImplementation((_input, commandId) => ({
+      assignment: {
+        ...task,
+        assignmentId: '99000000-0000-4000-8000-000000000010',
+        createdByUserId: 1,
+        assignedByUserId: 1,
+        assigneeUserId: 1,
+        title: 'Publish rollout checklist',
+        priority: 'NORMAL',
+        assignmentRevision: 0,
+        version: 0,
+        source: {
+          availability: 'AVAILABLE',
+          reference: candidateSource,
+          sourceVersion: 8,
+          sourceRoute: '/meetings/follow-ups',
+        },
+      },
+      receipt: {
+        assignmentId: '99000000-0000-4000-8000-000000000010',
+        commandId,
+        operation: 'CREATE',
+        appliedVersion: 0,
+        appliedAssignmentRevision: 0,
+        appliedAt: '2026-09-04T02:00:00Z',
+        replayed: false,
+      },
+    }));
     await render();
     await click('followUps.tabs.CANDIDATES');
-    expect(mount.textContent).toContain('followUps.candidates.promotionBlockedTitle');
     const createButton = Array.from(mount.querySelectorAll('button')).find(
       (button) => button.textContent === 'followUps.createCandidate'
     );
     expect(createButton).toBeDefined();
-    expect((createButton as HTMLButtonElement).disabled).toBe(true);
+    expect((createButton as HTMLButtonElement).disabled).toBe(false);
     await click('followUps.candidates.reviewCandidate');
     expect(document.body.textContent).toContain('followUps.candidates.reviewTitle');
     expect(document.body.textContent).toContain('designReview.followUps.sourceEvidenceHint');
     expect(document.body.textContent).toContain('followUps.candidates.impactHint');
-    expect(runtime.create).not.toHaveBeenCalled();
+    const mobileCreate = document.querySelector<HTMLButtonElement>(
+      '[data-testid="meeting-follow-up-candidate-create-mobile"]'
+    );
+    expect(mobileCreate).toBeTruthy();
+    await act(async () => mobileCreate?.click());
+    await vi.waitFor(() =>
+      expect(document.body.textContent).toContain('followUps.candidates.confirmTitle')
+    );
+    const confirmCreation = button('followUps.candidates.confirmAction');
+    await act(async () => {
+      confirmCreation.click();
+      confirmCreation.click();
+    });
+    await settle();
+    expect(runtime.create).toHaveBeenCalledOnce();
+    expect(runtime.create).toHaveBeenCalledWith(
+      { source: candidateSource, expectedSourceVersion: 8 },
+      expect.stringMatching(/^[0-9a-f-]{36}$/u)
+    );
     expect(runtime.bySource).not.toHaveBeenCalled();
   });
   it('loads only the exact selected source on explicit evidence review and removes it after denial', async () => {

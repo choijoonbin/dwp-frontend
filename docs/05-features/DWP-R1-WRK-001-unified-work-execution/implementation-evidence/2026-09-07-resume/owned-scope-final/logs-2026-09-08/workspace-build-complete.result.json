@@ -1,0 +1,13 @@
+{
+  "name": "workspace-build-complete",
+  "command": [
+    "node",
+    "scripts/build-product-app.mjs",
+    "workspace"
+  ],
+  "startedAt": "2026-09-08T10:24:10.154849+00:00",
+  "completedAt": "2026-09-08T10:24:11.633102+00:00",
+  "durationSeconds": 1.48,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/workspace-build-complete.log"
+}

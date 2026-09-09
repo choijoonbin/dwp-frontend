@@ -4,6 +4,10 @@ import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -24,7 +28,11 @@ const AUDIO_TYPES = new Set([
 export async function transcribeDwaionVoice(
   recording: Blob,
   locale: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
 ): Promise<DwaionVoiceTranscription> {
   const normalizedLocale = validateLocale(locale);
   const mediaType = recording.type.split(';', 1)[0]?.trim().toLowerCase();
@@ -39,11 +47,15 @@ export async function transcribeDwaionVoice(
   const response = await axiosInstance.post<ApiResponse<unknown>, Blob>(
     '/api/agent/v1/voice/transcriptions',
     recording,
-    {
-      headers: { 'X-DWP-Voice-Locale': normalizedLocale },
-      signal,
-      timeoutMs: 35_000,
-    }
+    (() => {
+      const governed = productSurfaceGovernedMutationConfig(authority);
+      return {
+        ...governed,
+        headers: { ...governed.headers, 'X-DWP-Voice-Locale': normalizedLocale },
+        signal,
+        timeoutMs: 35_000,
+      };
+    })()
   );
   if (!isTranscription(response.data.data)) {
     throw new HttpError('DWAI-ON voice transcription response is invalid.', 502, response.data);
@@ -54,7 +66,11 @@ export async function transcribeDwaionVoice(
 export async function synthesizeDwaionSpeech(
   text: string,
   locale: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
 ): Promise<Blob> {
   const normalizedText = text.trim();
   const normalizedLocale = validateLocale(locale);
@@ -64,7 +80,12 @@ export async function synthesizeDwaionSpeech(
   const response = await axiosInstance.post<Blob, AgentSchemas['VoiceSpeechRequest']>(
     '/api/agent/v1/voice/speech',
     { text: normalizedText, locale: normalizedLocale },
-    { responseType: 'blob', signal, timeoutMs: 35_000 }
+    {
+      ...productSurfaceGovernedMutationConfig(authority),
+      responseType: 'blob',
+      signal,
+      timeoutMs: 35_000,
+    }
   );
   if (
     !(response.data instanceof Blob) ||

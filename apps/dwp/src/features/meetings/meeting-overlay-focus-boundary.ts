@@ -11,6 +11,7 @@ type FocusBoundaryEvent = {
   key: string;
   shiftKey: boolean;
   preventDefault: () => void;
+  target?: EventTarget | null;
 };
 
 function isTabbable(element: HTMLElement): boolean {
@@ -44,6 +45,8 @@ export function containMeetingOverlayTab(
   if (rail?.dataset.meetingFocusOverlay === 'false') return false;
   // The mobile rail is one overlay, including its roving navigation tabs.
   if (rail) container = rail;
+  // React portal events bubble through the panel, but belong to the nested dialog's trap.
+  if (event.target instanceof Node && !container.contains(event.target)) return false;
   const focusable = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
     isTabbable
   );

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
@@ -42,6 +43,7 @@ import type {
   DwaionArtifactVersion,
   DwaionDlpPreflight,
 } from './artifact-studio/dwaion-artifact-model';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const ARTIFACTS_KEY = ['dwaion', 'governed-artifacts'] as const;
 
@@ -53,6 +55,15 @@ export function DwaionArtifacts() {
   const { isLoaded, hasPermission } = usePermissions();
   const queryClient = useQueryClient();
   const toast = useToast();
+  const governAutosave = useDwaionGovernedMutation('route.dwaion.work.artifact-autosave.action');
+  const governCreate = useDwaionGovernedMutation('route.dwaion.work.artifact-create.action');
+  const governVersion = useDwaionGovernedMutation(
+    'route.dwaion.work.artifact-version-create.action'
+  );
+  const governPreflight = useDwaionGovernedMutation('route.dwaion.work.artifact-preflight.action');
+  const governPublish = useDwaionGovernedMutation('route.dwaion.work.artifact-publish.action');
+  const governExport = useDwaionGovernedMutation('route.dwaion.work.artifact-export.action');
+  const [searchParams, setSearchParams] = useSearchParams();
   const identity = `${user?.tenantId ?? ''}:${user?.userId ?? ''}`;
   const canView = isAuthenticated && isLoaded && hasPermission('APP.DWAION_ARTIFACTS', 'VIEW');
   const canCreate = canView && hasPermission('APP.DWAION_ARTIFACTS', 'CREATE');
@@ -68,11 +79,21 @@ export function DwaionArtifacts() {
     retry: retryGovernedQuery,
     meta: { accessSensitive: true },
   });
-  const [selectedId, setSelectedId] = useState<string>();
-  const effectiveSelectedId = artifactsQuery.data?.some(
-    (artifact) => artifact.artifactId === selectedId
-  )
-    ? selectedId
+  const requestedArtifactId = searchParams.get('artifact')?.trim() || undefined;
+  const [deniedVersion, setDeniedVersion] = useState<{
+    artifactId: string;
+    versionNumber: number;
+  } | null>(null);
+  const requestedArtifactAvailable = artifactsQuery.data?.some(
+    (artifact) => artifact.artifactId === requestedArtifactId
+  );
+  const requestedArtifactUnavailable = Boolean(
+    requestedArtifactId && artifactsQuery.isSuccess && !requestedArtifactAvailable
+  );
+  const effectiveSelectedId = requestedArtifactId
+    ? requestedArtifactAvailable
+      ? requestedArtifactId
+      : undefined
     : artifactsQuery.data?.[0]?.artifactId;
   const detailQuery = useQuery({
     queryKey: [...ARTIFACTS_KEY, 'detail', identity, effectiveSelectedId],
@@ -99,10 +120,19 @@ export function DwaionArtifacts() {
     meta: { accessSensitive: true },
   });
 
+  const accessDenied = !canView || isAccessDenied(artifactsQuery.error);
+  const selectionAccessDenied =
+    requestedArtifactUnavailable ||
+    [detailQuery.error, versionsQuery.error, preflightQuery.error].some(isAccessDenied) ||
+    Boolean(deniedVersion && deniedVersion.artifactId === effectiveSelectedId);
+  const selectionAvailable = !accessDenied && !selectionAccessDenied;
+
   const [commandError, setCommandError] = useState<
     'REVISION_CONFLICT' | 'COMMAND_FAILED' | undefined
   >();
-  const [exportReceipt, setExportReceipt] = useState<DwaionArtifactExportEvidence | null>(null);
+  const [exportReceipt, setExportReceipt] = useState<
+    (DwaionArtifactExportEvidence & { ownerIdentity: string }) | null
+  >(null);
 
   const handleCommandError = useCallback(
     (error: unknown) => {
@@ -121,40 +151,57 @@ export function DwaionArtifacts() {
       content: { title: string; body: string },
       sources: DwaionArtifactDocument['sources']
     ) => {
-      const saved = await autosaveDwaionArtifact(
-        artifactId,
-        expectedRevision,
-        { ...content, format: 'MARKDOWN' },
-        [...sources]
+      const saved = await governAutosave((authority) =>
+        autosaveDwaionArtifact(
+          artifactId,
+          expectedRevision,
+          { ...content, format: 'MARKDOWN' },
+          [...sources],
+          authority
+        )
       );
-      queryClient.setQueryData([...ARTIFACTS_KEY, 'detail', identity, artifactId], saved);
+      const rejected = ['detail', 'versions', 'preflight'].some((scope) =>
+        isAccessDenied(
+          queryClient.getQueryState([...ARTIFACTS_KEY, scope, identity, artifactId])?.error
+        )
+      );
+      if (!rejected) {
+        queryClient.setQueryData([...ARTIFACTS_KEY, 'detail', identity, artifactId], saved);
+      }
       void queryClient.invalidateQueries({ queryKey: [...ARTIFACTS_KEY, identity] });
       setCommandError(undefined);
       return toDocument(saved, 'SAVED');
     },
-    [identity, queryClient]
+    [governAutosave, identity, queryClient]
   );
 
   const serverArtifact =
     detailQuery.data ??
     artifactsQuery.data?.find((artifact) => artifact.artifactId === effectiveSelectedId) ??
     null;
-  const serverDocument = serverArtifact ? toDocument(serverArtifact, 'IDLE') : null;
+  const serverDocument =
+    selectionAvailable && serverArtifact ? toDocument(serverArtifact, 'IDLE') : null;
   const autosave = useDwaionArtifactAutosave({
     serverDocument,
+    enabled: canEdit && selectionAvailable,
     save: saveArtifact,
     onError: handleCommandError,
   });
 
   const createMutation = useMutation({
     mutationFn: (input: { artifactType: DwaionArtifactType; title: string; body: string }) =>
-      createDwaionArtifact({
-        artifactType: input.artifactType,
-        content: { title: input.title, body: input.body, format: 'MARKDOWN' },
-        sources: [],
-      }),
+      governCreate((authority) =>
+        createDwaionArtifact(
+          {
+            artifactType: input.artifactType,
+            content: { title: input.title, body: input.body, format: 'MARKDOWN' },
+            sources: [],
+          },
+          authority
+        )
+      ),
     onSuccess: async (artifact) => {
-      setSelectedId(artifact.artifactId);
+      setSearchParams({ artifact: artifact.artifactId }, { replace: true });
       setCommandError(undefined);
       await queryClient.invalidateQueries({ queryKey: ARTIFACTS_KEY });
       toast.success(copy.save);
@@ -163,19 +210,31 @@ export function DwaionArtifacts() {
   });
   const preflightMutation = useMutation({
     mutationFn: async (artifact: DwaionArtifactDocument) => {
-      const version = await createDwaionArtifactVersion(artifact.artifactId, artifact.revision);
-      return runDwaionArtifactPreflight(
-        artifact.artifactId,
-        version.artifactRevision,
-        version.versionNumber
+      const version = await governVersion((authority) =>
+        createDwaionArtifactVersion(artifact.artifactId, artifact.revision, authority)
+      );
+      return governPreflight((authority) =>
+        runDwaionArtifactPreflight(
+          artifact.artifactId,
+          version.artifactRevision,
+          version.versionNumber,
+          authority
+        )
       );
     },
     onSuccess: async (receipt) => {
       setCommandError(undefined);
-      queryClient.setQueryData(
-        [...ARTIFACTS_KEY, 'preflight', identity, receipt.artifactId],
-        receipt
-      );
+      if (
+        !isAccessDenied(
+          queryClient.getQueryState([...ARTIFACTS_KEY, 'preflight', identity, receipt.artifactId])
+            ?.error
+        )
+      ) {
+        queryClient.setQueryData(
+          [...ARTIFACTS_KEY, 'preflight', identity, receipt.artifactId],
+          receipt
+        );
+      }
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [...ARTIFACTS_KEY, identity] }),
         queryClient.invalidateQueries({
@@ -191,17 +250,20 @@ export function DwaionArtifacts() {
   });
   const publishMutation = useMutation({
     mutationFn: (input: { artifact: DwaionArtifactDocument; preflight: DwaionDlpPreflight }) =>
-      publishDwaionArtifact(
-        input.artifact.artifactId,
-        input.artifact.revision,
-        input.preflight.versionNumber,
-        input.preflight.preflightId
+      governPublish((authority) =>
+        publishDwaionArtifact(
+          input.artifact.artifactId,
+          input.artifact.revision,
+          input.preflight.versionNumber,
+          input.preflight.preflightId,
+          authority
+        )
       ),
     onSuccess: async (receipt) => {
       setCommandError(undefined);
       await queryClient.invalidateQueries({ queryKey: ARTIFACTS_KEY });
       toast.success(copy.publish);
-      setSelectedId(receipt.artifactId);
+      setSearchParams({ artifact: receipt.artifactId }, { replace: true });
     },
     onError: handleCommandError,
   });
@@ -210,21 +272,27 @@ export function DwaionArtifacts() {
       artifact: DwaionArtifactDocument;
       preflight: DwaionDlpPreflight;
       format: UiExportFormat;
+      ownerIdentity: string;
     }) =>
-      requestDwaionArtifactExport(
-        input.artifact.artifactId,
-        input.artifact.revision,
-        input.preflight.versionNumber,
-        input.preflight.preflightId,
-        input.format as DwaionArtifactExportFormat
+      governExport((authority) =>
+        requestDwaionArtifactExport(
+          input.artifact.artifactId,
+          input.artifact.revision,
+          input.preflight.versionNumber,
+          input.preflight.preflightId,
+          input.format as DwaionArtifactExportFormat,
+          authority
+        )
       ),
-    onSuccess: async (receipt) => {
+    onSuccess: async (receipt, input) => {
       setExportReceipt({
+        artifactId: receipt.artifactId,
+        ownerIdentity: input.ownerIdentity,
         exportJobId: receipt.exportJobId,
         exportFormat: receipt.exportFormat,
-        state: 'PENDING',
-        executionAvailable: false,
-        fileAvailable: false,
+        state: receipt.state,
+        executionAvailable: receipt.executionAvailable,
+        fileAvailable: receipt.fileAvailable,
       });
       setCommandError(undefined);
       await queryClient.invalidateQueries({ queryKey: ARTIFACTS_KEY });
@@ -234,18 +302,16 @@ export function DwaionArtifacts() {
   });
 
   const summaries = useMemo(
-    () => (artifactsQuery.data ?? []).map(toSummary),
-    [artifactsQuery.data]
+    () => (accessDenied ? [] : (artifactsQuery.data ?? [])).map(toSummary),
+    [accessDenied, artifactsQuery.data]
   );
   const versions = useMemo(
-    () => (versionsQuery.data ?? []).map(toVersionSummary),
-    [versionsQuery.data]
+    () => (selectionAvailable ? (versionsQuery.data ?? []) : []).map(toVersionSummary),
+    [selectionAvailable, versionsQuery.data]
   );
-  const preflight = preflightQuery.data ? toPreflight(preflightQuery.data) : null;
+  const preflight =
+    selectionAvailable && preflightQuery.data ? toPreflight(preflightQuery.data) : null;
   const evidence = (autosave.document?.sources ?? []).map(toEvidence);
-  const accessDenied =
-    !canView ||
-    (artifactsQuery.error instanceof HttpError && [401, 403].includes(artifactsQuery.error.status));
   const state = !isLoaded
     ? 'loading'
     : accessDenied
@@ -255,52 +321,81 @@ export function DwaionArtifacts() {
         : artifactsQuery.isError
           ? 'error'
           : 'ready';
-  const partialError =
-    detailQuery.isError || versionsQuery.isError || preflightQuery.isError
+  const partialError = requestedArtifactUnavailable
+    ? copy.selectionUnavailableDescription
+    : selectionAccessDenied ||
+        detailQuery.isError ||
+        versionsQuery.isError ||
+        preflightQuery.isError
       ? copy.partial
       : undefined;
 
   return (
     <DwaionArtifactStudio
+      key={`${identity}:${effectiveSelectedId}:${selectionAvailable}`}
       state={state}
+      selectionAccessDenied={selectionAccessDenied}
+      selectionMissing={requestedArtifactUnavailable}
       artifacts={summaries}
       document={autosave.document}
       evidence={evidence}
       versions={versions}
       preflight={preflight}
-      exportReceipt={exportReceipt}
+      exportReceipt={
+        selectionAvailable &&
+        exportReceipt &&
+        exportReceipt.artifactId === effectiveSelectedId &&
+        exportReceipt.ownerIdentity === identity
+          ? exportReceipt
+          : null
+      }
       partialError={partialError}
       commandError={commandError}
-      canCreate={canCreate}
-      canEdit={canEdit}
-      canPublish={canPublish}
-      canExport={canExport}
+      canCreate={canCreate && !accessDenied}
+      canEdit={canEdit && selectionAvailable}
+      canPublish={canPublish && selectionAvailable}
+      canExport={canExport && selectionAvailable}
       createBusy={createMutation.isPending}
       preflightBusy={preflightMutation.isPending}
       publishBusy={publishMutation.isPending}
       exportBusy={exportMutation.isPending}
-      onRetry={() =>
+      onRetry={() => {
         void Promise.all([
           artifactsQuery.refetch(),
-          detailQuery.refetch(),
-          versionsQuery.refetch(),
-          preflightQuery.refetch(),
-        ])
-      }
+          ...(effectiveSelectedId
+            ? [detailQuery.refetch(), versionsQuery.refetch(), preflightQuery.refetch()]
+            : []),
+        ]);
+        if (deniedVersion && deniedVersion.artifactId === effectiveSelectedId) {
+          void getDwaionArtifactVersion(deniedVersion.artifactId, deniedVersion.versionNumber)
+            .then(() => setDeniedVersion((current) => (current === deniedVersion ? null : current)))
+            .catch(() => undefined);
+        }
+      }}
       onCreate={(input) => createMutation.mutateAsync(input).then(() => undefined)}
       onSelect={(artifactId) => {
-        setSelectedId(artifactId);
+        setSearchParams({ artifact: artifactId }, { replace: true });
         setExportReceipt(null);
       }}
       onDraftChange={autosave.update}
       onLoadVersion={async (versionNumber) => {
         if (!effectiveSelectedId) throw new Error('Artifact is not selected.');
-        return toVersionDetail(await getDwaionArtifactVersion(effectiveSelectedId, versionNumber));
+        try {
+          return toVersionDetail(
+            await getDwaionArtifactVersion(effectiveSelectedId, versionNumber)
+          );
+        } catch (error) {
+          if (isAccessDenied(error))
+            setDeniedVersion({ artifactId: effectiveSelectedId, versionNumber });
+          throw error;
+        }
       }}
       onRunPreflight={(artifact) => preflightMutation.mutate(artifact)}
       onPublish={(artifact, receipt) => publishMutation.mutate({ artifact, preflight: receipt })}
       onExport={(artifact, receipt, format) =>
-        exportMutation.mutateAsync({ artifact, preflight: receipt, format }).then(() => undefined)
+        exportMutation
+          .mutateAsync({ artifact, preflight: receipt, format, ownerIdentity: identity })
+          .then(() => undefined)
       }
       copy={copy}
       formatTimestamp={(value) =>
@@ -347,14 +442,20 @@ function toDocument(
 
 function toCapabilities(artifact: DwaionGovernedArtifact) {
   return {
-    immutableVersionsAvailable: artifact.capabilities?.immutableVersionsAvailable ?? true,
-    deterministicPreflightAvailable: artifact.capabilities?.deterministicPreflightAvailable ?? true,
+    collaborativeEditingAvailable: artifact.capabilities?.collaborativeEditingAvailable ?? false,
+    enterpriseDlpConnectorAvailable:
+      artifact.capabilities?.enterpriseDlpConnectorAvailable ?? false,
+    externalSharingAvailable: artifact.capabilities?.externalSharingAvailable ?? false,
+    immutableVersionsAvailable: artifact.capabilities?.immutableVersionsAvailable ?? false,
+    deterministicPreflightAvailable:
+      artifact.capabilities?.deterministicPreflightAvailable ?? false,
     sourceVerificationAvailable: artifact.capabilities?.sourceVerificationAvailable ?? false,
     sourceFreshnessAvailable: artifact.capabilities?.sourceFreshnessAvailable ?? false,
-    personalPublishStateAvailable: artifact.capabilities?.personalPublishStateAvailable ?? true,
+    personalPublishStateAvailable: artifact.capabilities?.personalPublishStateAvailable ?? false,
     recipientSharingAvailable: artifact.capabilities?.recipientSharingAvailable ?? false,
-    exportRequestAvailable: artifact.capabilities?.exportRequestAvailable ?? true,
+    exportRequestAvailable: artifact.capabilities?.exportRequestAvailable ?? false,
     exportExecutionAvailable: artifact.capabilities?.exportExecutionAvailable ?? false,
+    versionRestoreAvailable: artifact.capabilities?.versionRestoreAvailable ?? false,
   };
 }
 
@@ -409,4 +510,8 @@ function toEvidence(source: DwaionArtifactDocument['sources'][number]): DwaionAr
     freshness: 'UNKNOWN',
     verifiedAt: null,
   };
+}
+
+function isAccessDenied(error: unknown): boolean {
+  return error instanceof HttpError && [401, 403, 404].includes(error.status);
 }

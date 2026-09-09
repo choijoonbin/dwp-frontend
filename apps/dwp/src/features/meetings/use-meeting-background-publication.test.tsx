@@ -10,6 +10,7 @@ import type {
 const factory = vi.hoisted(() => vi.fn());
 vi.mock('./meeting-background-processor', () => ({ createMeetingBackgroundProcessor: factory }));
 import { useMeetingBackgroundPublication } from './use-meeting-background-publication';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 
 type Owner = {
   destroy: ReturnType<typeof vi.fn>;
@@ -20,13 +21,13 @@ let mount: HTMLDivElement;
 let owners: Owner[];
 let publication: ReturnType<typeof useMeetingBackgroundPublication>;
 let mounted: boolean;
-function Harness({ enabled, scope }: { enabled: boolean; scope: string }) {
-  publication = useMeetingBackgroundPublication(enabled, scope);
+function Harness({ mode, scope }: { mode: MeetingBackgroundMode; scope: string }) {
+  publication = useMeetingBackgroundPublication(mode, scope);
   return createElement('output', null, publication.state?.state ?? 'none');
 }
-async function render(enabled: boolean, scope = 'scope-a', strict = false) {
+async function render(mode: MeetingBackgroundMode, scope = 'scope-a', strict = false) {
   await act(async () => {
-    const element = createElement(Harness, { enabled, scope });
+    const element = createElement(Harness, { mode, scope });
     root.render(strict ? createElement(StrictMode, null, element) : element);
   });
 }
@@ -55,27 +56,32 @@ describe('background publication lifecycle owner', () => {
   });
 
   it('creates a fail-closed capture owner, stable across same-setting renders', async () => {
-    await render(true);
+    await render('blur');
     const owner = publication.processor;
     expect(factory).toHaveBeenCalledWith(
-      expect.objectContaining({ stopInputOnFailure: true, onStateChange: expect.any(Function) })
+      expect.objectContaining({
+        mode: 'blur',
+        stopInputOnFailure: true,
+        onStateChange: expect.any(Function),
+      })
     );
-    await render(true);
+    await render('blur');
     expect(publication.processor).toBe(owner);
     expect(factory).toHaveBeenCalledOnce();
     await act(async () => owners[0].event({ state: 'ready' }));
     expect(publication.state).toEqual({ state: 'ready' });
   });
 
-  it('does not create a processor for explicitly disabled background blur', async () => {
-    await render(false);
+  it('does not create a processor for explicit original mode', async () => {
+    await render('original');
     expect(factory).not.toHaveBeenCalled();
     expect(publication.processor).toBeUndefined();
     expect(publication.state).toBeUndefined();
   });
 
   it('does not destroy the reused active processor during StrictMode effect replay', async () => {
-    await render(true, 'scope-a', true);
+    await render('office', 'scope-a', true);
+    expect(factory).toHaveBeenCalledWith(expect.objectContaining({ mode: 'office' }));
     const owner = publication.processor as unknown as Owner;
     await act(async () => Promise.resolve());
     expect(owner.destroy).not.toHaveBeenCalled();
@@ -87,10 +93,10 @@ describe('background publication lifecycle owner', () => {
   });
 
   it('destroys the old owner after true to false and suppresses its late failure', async () => {
-    await render(true);
+    await render('blur');
     const owner = owners[0];
     await act(async () => owner.event({ state: 'ready' }));
-    await render(false);
+    await render('original');
     expect(owner.destroy).toHaveBeenCalledOnce();
     await act(async () => owner.event({ state: 'failed', reason: 'PROCESSING_FAILED' }));
     expect(publication.processor).toBeUndefined();
@@ -99,10 +105,10 @@ describe('background publication lifecycle owner', () => {
   });
 
   it('does not let a superseded owner overwrite the new active ready state', async () => {
-    await render(true);
+    await render('blur');
     const old = owners[0];
-    await render(false);
-    await render(true);
+    await render('original');
+    await render('office');
     const current = owners[1];
     await act(async () => current.event({ state: 'ready' }));
     await act(async () => old.event({ state: 'failed', reason: 'PROCESSING_FAILED' }));
@@ -111,9 +117,9 @@ describe('background publication lifecycle owner', () => {
   });
 
   it('preserves current failure warning when a superseded owner sends a late ready event', async () => {
-    await render(true);
+    await render('blur');
     const old = owners[0];
-    await render(true, 'scope-b');
+    await render('office', 'scope-b');
     const current = owners[1];
     await act(async () => current.event({ state: 'failed', reason: 'PROCESSING_FAILED' }));
     await act(async () => old.event({ state: 'ready' }));
@@ -122,9 +128,9 @@ describe('background publication lifecycle owner', () => {
   });
 
   it('replaces scope owner in the same mounted tree and blocks prior scope callbacks', async () => {
-    await render(true);
+    await render('blur');
     const old = owners[0];
-    await render(true, 'scope-b');
+    await render('office', 'scope-b');
     const current = owners[1];
     expect(old.destroy).toHaveBeenCalledOnce();
     await act(async () => current.event({ state: 'ready' }));
@@ -134,7 +140,7 @@ describe('background publication lifecycle owner', () => {
   });
 
   it('does not render late callback results after unmount', async () => {
-    await render(true);
+    await render('blur');
     const owner = owners[0];
     await act(async () => root.unmount());
     mounted = false;

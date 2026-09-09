@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   artifactExportCapability,
@@ -30,6 +30,9 @@ const artifact: DwaionArtifactDocument = {
   autosaveState: 'SAVED',
   lastSavedAt: '2026-09-04T00:00:00Z',
   capabilities: {
+    collaborativeEditingAvailable: false,
+    enterpriseDlpConnectorAvailable: false,
+    externalSharingAvailable: false,
     immutableVersionsAvailable: true,
     deterministicPreflightAvailable: true,
     sourceVerificationAvailable: false,
@@ -38,6 +41,7 @@ const artifact: DwaionArtifactDocument = {
     recipientSharingAvailable: false,
     exportRequestAvailable: true,
     exportExecutionAvailable: false,
+    versionRestoreAvailable: false,
   },
 };
 
@@ -69,6 +73,34 @@ const version = (
 });
 
 describe('DWAI governed artifact model', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-04T00:05:00Z'));
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('requires a valid unexpired preflight for publication and export', () => {
+    const published = { ...artifact, state: 'PUBLISHED' as const, publishedVersionNumber: 1 };
+    expect(artifactPublishCapability({ artifact, preflight, permitted: true }).allowed).toBe(true);
+    expect(
+      artifactExportCapability({ artifact: published, preflight, permitted: true }).allowed
+    ).toBe(true);
+    vi.setSystemTime(new Date(preflight.expiresAt));
+    for (const expiresAt of [preflight.expiresAt, '', 'invalid', undefined]) {
+      const expired = { ...preflight, expiresAt } as DwaionDlpPreflight;
+      expect(artifactPublishCapability({ artifact, preflight: expired, permitted: true })).toEqual({
+        allowed: false,
+        reason: 'PREFLIGHT_REQUIRED',
+      });
+      expect(
+        artifactExportCapability({ artifact: published, preflight: expired, permitted: true })
+      ).toEqual({
+        allowed: false,
+        reason: 'PREFLIGHT_REQUIRED',
+      });
+      expect(artifactPreflightIsCurrent(artifact, expired)).toBe(false);
+    }
+  });
   it('allows personal publication only for a saved current version with passing preflight', () => {
     expect(artifactPublishCapability({ artifact, preflight, permitted: true })).toEqual({
       allowed: true,

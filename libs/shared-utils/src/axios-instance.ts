@@ -21,6 +21,8 @@ export type EventStreamMessage = {
 export type EventStreamConfig = {
   signal?: AbortSignal;
   timeoutMs?: number;
+  headers?: Record<string, string>;
+  contextScopeKey?: string;
   onOpen?: () => void;
   onMessage: (message: EventStreamMessage) => void;
 };
@@ -370,7 +372,8 @@ async function streamRequest<B>(
   allowCsrfRetry: boolean,
   accessFailureRegistration = authorizationAccessFailureRegistration
 ): Promise<void> {
-  const headers = buildHeaders(body, { Accept: 'text/event-stream' });
+  const headers = buildHeaders(body, { Accept: 'text/event-stream', ...config.headers });
+  const scopedUrl = withContextScope(url, config.contextScopeKey);
   if (isMutation(method)) {
     const csrf = await loadCsrfToken();
     headers[csrf.headerName] = csrf.token;
@@ -384,7 +387,7 @@ async function streamRequest<B>(
     : undefined;
 
   try {
-    const response = await fetch(API_URL + url, {
+    const response = await fetch(API_URL + scopedUrl, {
       method,
       headers,
       credentials: 'include',
@@ -403,7 +406,10 @@ async function streamRequest<B>(
           response.status,
           payload,
           {
-            contextScopeKey: requestContextScopeKey(body),
+            contextScopeKey: requestContextScopeKey(body, config.contextScopeKey),
+            rejectedDecisionRevision: requestDecisionRevision(config.headers),
+            serverDecisionRevision:
+              response.headers?.get(RESPONSE_DECISION_REVISION_HEADER)?.trim() || undefined,
           },
           accessFailureRegistration
         );

@@ -65,7 +65,21 @@ export type NotificationTypeContract = {
   state: NotificationContractState;
   contractHealth: 'HEALTHY' | 'ATTENTION' | 'BROKEN';
   volume24Hours: number;
+  minSchemaVersion: number;
+  maxSchemaVersion: number;
+  /** @deprecated Use minSchemaVersion and maxSchemaVersion for the accepted range. */
   schemaVersion: number;
+  dataClassification: string;
+  audienceMode: string;
+  interruptionLevel: string;
+  userConfigurable: boolean;
+  previewPolicy: string;
+  requiredVariables: string[];
+  deepLinkTemplate?: string | null;
+  dedupeStrategy: string;
+  endEventType?: string | null;
+  retentionPolicy: string;
+  runbookUrl?: string | null;
   version: NotificationEntityVersion;
   updatedAt: string;
 };
@@ -129,6 +143,32 @@ export type TenantNotificationPolicyPreview = {
     defaultDeliveryAdmitted: boolean;
   }>;
   riskFlags: string[];
+  simulation: NotificationPolicySimulationOutcome;
+};
+
+export type NotificationPolicySimulationContext = {
+  persona: 'KNOWLEDGE_WORKER' | 'FRONTLINE' | 'EXECUTIVE' | 'ON_CALL';
+  timeZone: string;
+  localTime: string;
+  focusMode: boolean;
+  quietHoursActive: boolean;
+};
+
+export type NotificationPolicySimulationChannelOutcome = {
+  channel: NotificationChannel;
+  outcome: 'IMMEDIATE' | 'DEFERRED' | 'SUPPRESSED';
+  reason: 'POLICY_ADMITTED' | 'POLICY_MUTED' | 'QUIET_HOURS' | 'FOCUS_MODE' | 'DIGEST_WINDOW';
+  maxPerWindow?: number | null;
+};
+
+export type NotificationPolicySimulationOutcome = {
+  context: NotificationPolicySimulationContext;
+  channels: NotificationPolicySimulationChannelOutcome[];
+  immediateChannelCount: number;
+  deferredChannelCount: number;
+  suppressedChannelCount: number;
+  attentionRisk: 'LOW' | 'MEDIUM' | 'HIGH';
+  providerCostState: 'NOT_APPLICABLE' | 'RATE_CARD_REQUIRED';
 };
 
 export type TenantNotificationPolicyChangeInput = {
@@ -140,11 +180,17 @@ export type TenantNotificationPolicyChangeInput = {
   channels: NotificationPolicyChannelRule[];
   changeReason: string;
   expectedVersion: NotificationEntityVersion;
+  simulation?: NotificationPolicySimulationContext | null;
 };
 
 export type NotificationPolicyPublishInput = {
   expectedVersion: NotificationEntityVersion;
   approvalReason: string;
+};
+
+export type NotificationDraftDecisionInput = {
+  expectedVersion: NotificationEntityVersion;
+  reason: string;
 };
 
 export type NotificationTemplateContent = {
@@ -431,6 +477,41 @@ export function publishNotificationTenantPolicy(
     .then((response) => response.data.data);
 }
 
+function decideNotificationTenantPolicyDraft(
+  policyId: string,
+  decision: 'withdraw' | 'reject',
+  input: NotificationDraftDecisionInput,
+  idempotencyKey: string
+): Promise<TenantNotificationPolicy> {
+  const body = {
+    ...input,
+    expectedVersion: requireDecimalVersion(input.expectedVersion, 'expectedVersion'),
+  };
+  return axiosInstance
+    .post<ApiResponse<TenantNotificationPolicy>, typeof body>(
+      `${NOTIFICATION_API_BASE}/admin/policies/${encodeURIComponent(policyId)}/${decision}`,
+      body,
+      { headers: mutationHeaders(idempotencyKey) }
+    )
+    .then((response) => response.data.data);
+}
+
+export function withdrawNotificationTenantPolicyDraft(
+  policyId: string,
+  input: NotificationDraftDecisionInput,
+  idempotencyKey: string
+): Promise<TenantNotificationPolicy> {
+  return decideNotificationTenantPolicyDraft(policyId, 'withdraw', input, idempotencyKey);
+}
+
+export function rejectNotificationTenantPolicyDraft(
+  policyId: string,
+  input: NotificationDraftDecisionInput,
+  idempotencyKey: string
+): Promise<TenantNotificationPolicy> {
+  return decideNotificationTenantPolicyDraft(policyId, 'reject', input, idempotencyKey);
+}
+
 export function getNotificationTemplateWorkspace(
   signal?: AbortSignal
 ): Promise<NotificationTemplateWorkspace> {
@@ -505,6 +586,41 @@ export function retireNotificationTemplateDraft(
       { headers: mutationHeaders(idempotencyKey) }
     )
     .then((response) => response.data.data);
+}
+
+function decideNotificationTemplateDraft(
+  revisionId: string,
+  decision: 'withdraw' | 'reject',
+  input: NotificationDraftDecisionInput,
+  idempotencyKey: string
+): Promise<NotificationTemplateRevision> {
+  const body = {
+    ...input,
+    expectedVersion: requireDecimalVersion(input.expectedVersion, 'expectedVersion'),
+  };
+  return axiosInstance
+    .post<ApiResponse<NotificationTemplateRevision>, typeof body>(
+      `${NOTIFICATION_API_BASE}/admin/templates/${encodeURIComponent(revisionId)}/${decision}`,
+      body,
+      { headers: mutationHeaders(idempotencyKey) }
+    )
+    .then((response) => response.data.data);
+}
+
+export function withdrawNotificationTemplateDraft(
+  revisionId: string,
+  input: NotificationDraftDecisionInput,
+  idempotencyKey: string
+): Promise<NotificationTemplateRevision> {
+  return decideNotificationTemplateDraft(revisionId, 'withdraw', input, idempotencyKey);
+}
+
+export function rejectNotificationTemplateDraft(
+  revisionId: string,
+  input: NotificationDraftDecisionInput,
+  idempotencyKey: string
+): Promise<NotificationTemplateRevision> {
+  return decideNotificationTemplateDraft(revisionId, 'reject', input, idempotencyKey);
 }
 
 export function getNotificationSuppressions(

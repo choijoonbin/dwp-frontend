@@ -8,8 +8,10 @@ export const DWAION_ACTIVITY_FILTERS = [
   'ATTENTION',
   'FAILED',
 ] as const;
+export const DWAION_ACTIVITY_PERIODS = ['DAY', 'WEEK', 'MONTH'] as const;
 
 export type DwaionActivityFilter = (typeof DWAION_ACTIVITY_FILTERS)[number];
+export type DwaionActivityPeriod = (typeof DWAION_ACTIVITY_PERIODS)[number];
 
 export type DwaionActivityWindowSummary = {
   total: number;
@@ -24,6 +26,26 @@ export function resolveDwaionActivityFilter(value: string | null): DwaionActivit
   return DWAION_ACTIVITY_FILTERS.includes(normalized as DwaionActivityFilter)
     ? (normalized as DwaionActivityFilter)
     : 'ALL';
+}
+
+export function resolveDwaionActivityPeriod(value: string | null): DwaionActivityPeriod {
+  const normalized = value?.trim().toUpperCase();
+  return DWAION_ACTIVITY_PERIODS.includes(normalized as DwaionActivityPeriod)
+    ? (normalized as DwaionActivityPeriod)
+    : 'MONTH';
+}
+
+export function filterDwaionActivityPeriod(
+  runs: readonly DwaionUserRun[],
+  period: DwaionActivityPeriod,
+  now = Date.now()
+): DwaionUserRun[] {
+  const days = period === 'DAY' ? 1 : period === 'WEEK' ? 7 : 30;
+  const cutoff = now - days * 24 * 60 * 60 * 1_000;
+  return runs.filter((run) => {
+    const timestamp = Date.parse(run.createdAt);
+    return Number.isFinite(timestamp) && timestamp >= cutoff && timestamp <= now + 60_000;
+  });
 }
 
 export function filterDwaionActivityWindow(
@@ -71,6 +93,16 @@ export function updateDwaionActivityFilter(
   const next = new URLSearchParams(current);
   if (filter === 'ALL') next.delete('state');
   else next.set('state', filter);
+  return next;
+}
+
+export function updateDwaionActivityPeriod(
+  current: URLSearchParams,
+  period: DwaionActivityPeriod
+): URLSearchParams {
+  const next = new URLSearchParams(current);
+  if (period === 'MONTH') next.delete('period');
+  else next.set('period', period);
   return next;
 }
 

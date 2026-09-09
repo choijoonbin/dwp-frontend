@@ -5,6 +5,37 @@ export const DWAION_PERSONAL_CONTROLS_COPY_KO = {
   title: '나의 AI 제어',
   description:
     'DWAI·ON이 참조할 정보 경계와 사용자가 직접 저장한 선호, 보존·삭제 요청을 한곳에서 관리합니다.',
+  tabsLabel: '개인 AI 제어 영역',
+  tabs: {
+    sources: '업무 신호 분석 허용',
+    memories: '개인 명시적 메모리',
+    cleanup: '데이터 비우기',
+    compliance: '컴플라이언스',
+  },
+  livePolicy: '서버 정책 응답 확인',
+  partialPolicy: '일부 정책 응답 미확인',
+  savedMemoryCount: '저장한 선호',
+  deletionUnavailableBadge: '삭제 실행 미지원',
+  revalidate: '권한·정책 다시 확인',
+  governanceTitle: '보안 경계 증거',
+  governanceDescription: '현재 API 계약으로 확인한 개인 AI 안전 경계입니다.',
+  governanceFacts: {
+    inference: '대화 자동 추론',
+    sensitive: '민감정보 메모리',
+    credential: '자격 증명 저장',
+    team: '팀 공유 메모리',
+    external: '승인 없는 외부 실행',
+  },
+  allowed: '허용',
+  blocked: '차단',
+  boundaryUnknown: '확인되지 않음',
+  deletionStatusError:
+    '삭제 요청은 접수되었지만 최신 처리 상태를 확인하지 못했습니다. 완료로 간주하지 마세요. 상태를 다시 확인할 수 있습니다.',
+  auditUnavailable: '개인 감사 이벤트 목록 API는 제공되지 않습니다.',
+  cleanupTitle: '데이터 삭제 및 비우기',
+  cleanupDescription:
+    '제안함은 즉시 숨김 처리하고, 다른 개인 데이터는 서버 삭제 작업을 요청합니다.',
+  cleanupBoundary: '원본 업무·메일·일정과 필수 감사 메타데이터는 삭제하지 않습니다.',
   loading: '개인 AI 설정을 불러오는 중입니다',
   errorTitle: '개인 AI 설정을 불러오지 못했습니다',
   permissionTitle: '개인 AI 설정을 볼 권한이 없습니다',
@@ -19,10 +50,16 @@ export const DWAION_PERSONAL_CONTROLS_COPY_KO = {
   memoryPreferenceDescription:
     '내가 직접 입력한 선호만 암호화해 저장합니다. 대화에서 자동 추론하거나 자격 증명을 저장하지 않습니다.',
   memoryPreferenceStates: { UNSET: '선택 필요', DISABLED: '사용 안 함', ENABLED: '사용' },
-  memoryEffective: '저장 허용됨',
-  memoryNotEffective: '저장 중지됨',
+  memoryEffective: '답변 개인화 켜짐',
+  memoryNotEffective: '답변 개인화 꺼짐',
+  memoryStorageTitle: '선호 저장',
+  memoryStorageDescription: '직접 입력한 선호를 암호화해 저장하고 언제든 수정하거나 삭제합니다.',
+  runtimePreferenceTitle: '답변에 선호 적용',
+  runtimePreferenceDescription:
+    '활성 선호를 답변 생성에 전달합니다. 선호는 표현 방식에만 사용되며 사실·권한·정책을 바꾸지 않습니다.',
+  runtimeRequiresStorage: '답변에 적용하려면 먼저 명시적 메모리 저장을 켜야 합니다.',
   runtimeUnavailable:
-    '저장과 관리는 가능하지만 현재 답변 생성 런타임에는 아직 자동 적용되지 않습니다.',
+    '현재 연결된 런타임이 답변 개인화 계약을 지원하지 않습니다. 선호는 저장만 되고 답변에 전달되지 않습니다.',
   sourceTitle: '업무 신호 분석 범위',
   sourceDescription:
     '출처별로 허용 여부를 정합니다. 유효한 출처는 개인 루틴의 드라이런에서 참조 식별자만 사용합니다.',
@@ -38,6 +75,8 @@ export const DWAION_PERSONAL_CONTROLS_COPY_KO = {
   effective: '유효',
   notEffective: '적용 안 됨',
   referenceOnly: '원문 복제 없음',
+  routineScope: '개인 루틴 검증에만 사용',
+  unknownScope: '적용 범위 확인 필요',
   memoryTitle: '내가 저장한 선호',
   memoryDescription:
     '응답 형식·길이·말투·업무 방식만 저장할 수 있습니다. 계정·결제·규제 식별정보는 저장할 수 없습니다.',
@@ -91,7 +130,12 @@ export const DWAION_PERSONAL_CONTROLS_COPY_KO = {
   requestedAt: '요청 시각',
   executionUnavailable:
     '현재 버전은 삭제 요청 접수까지만 지원합니다. 실행 완료로 표시하지 않습니다.',
-  sourceUnaffected: '메일·일정·업무 원본 데이터와 필수 감사 메타데이터는 삭제 대상이 아닙니다.',
+  executionRunning: '서버 삭제 작업 상태를 조회하고 있습니다.',
+  completionUnverified: '완료 주장 권한 없음',
+  completionVerificationAvailable: '완료 증거 확인 가능',
+  completedAt: '완료 시각',
+  sourceUnaffected:
+    '메일·일정·업무 원본 데이터와 필수 감사 메타데이터는 삭제 대상이 아닙니다. 백업 삭제와 암호화 키 폐기는 지원하지 않습니다.',
   privacyUnavailable: '보존·삭제 정책을 볼 권한이 없어 해당 영역을 표시하지 않습니다.',
   retentionTitle: '보존 경계',
   retentionDays: '보존 {{days}}일 · 삭제 유예 {{grace}}일',
@@ -106,6 +150,37 @@ export const DWAION_PERSONAL_CONTROLS_COPY_EN: DwaionPersonalControlsCopy = {
   title: 'My AI controls',
   description:
     'Manage the information boundaries DWAI·ON may reference, explicit preferences, and retention or deletion requests in one place.',
+  tabsLabel: 'Personal AI control sections',
+  tabs: {
+    sources: 'Work signal access',
+    memories: 'Explicit memories',
+    cleanup: 'Clean up data',
+    compliance: 'Compliance',
+  },
+  livePolicy: 'Server policy response received',
+  partialPolicy: 'Some policy responses unavailable',
+  savedMemoryCount: 'Saved preferences',
+  deletionUnavailableBadge: 'Deletion execution unavailable',
+  revalidate: 'Recheck access and policy',
+  governanceTitle: 'Security boundary evidence',
+  governanceDescription: 'Personal AI safety boundaries confirmed by the current API contract.',
+  governanceFacts: {
+    inference: 'Conversation inference',
+    sensitive: 'Sensitive memories',
+    credential: 'Credential storage',
+    team: 'Team-shared memory',
+    external: 'External action without approval',
+  },
+  allowed: 'Allowed',
+  blocked: 'Blocked',
+  boundaryUnknown: 'Not verified',
+  deletionStatusError:
+    'The deletion request was accepted, but its latest status could not be verified. Do not treat it as completed. You can retry the status check.',
+  auditUnavailable: 'A personal audit-event list API is not available.',
+  cleanupTitle: 'Data deletion and cleanup',
+  cleanupDescription:
+    'The proposal inbox is hidden immediately; other personal data starts a server deletion job.',
+  cleanupBoundary: 'Source work, mail, calendar data, and required audit metadata are retained.',
   loading: 'Loading personal AI controls',
   errorTitle: 'Personal AI controls could not be loaded',
   permissionTitle: 'You do not have access to personal AI controls',
@@ -120,10 +195,17 @@ export const DWAION_PERSONAL_CONTROLS_COPY_EN: DwaionPersonalControlsCopy = {
   memoryPreferenceDescription:
     'Only preferences you enter are encrypted and stored. Conversations are not inferred and credentials are never stored.',
   memoryPreferenceStates: { UNSET: 'Choice required', DISABLED: 'Off', ENABLED: 'On' },
-  memoryEffective: 'Storage allowed',
-  memoryNotEffective: 'Storage stopped',
+  memoryEffective: 'Answer personalization on',
+  memoryNotEffective: 'Answer personalization off',
+  memoryStorageTitle: 'Store preferences',
+  memoryStorageDescription:
+    'Encrypt preferences you enter so you can review, edit, or delete them at any time.',
+  runtimePreferenceTitle: 'Apply preferences to answers',
+  runtimePreferenceDescription:
+    'Send active preferences to answer generation for presentation only. They cannot change facts, access, or policy.',
+  runtimeRequiresStorage: 'Turn on explicit memory storage before applying preferences to answers.',
   runtimeUnavailable:
-    'Preferences can be stored and managed, but are not yet applied automatically to answer generation.',
+    'The connected runtime does not support answer personalization. Preferences remain stored and are not sent to answer generation.',
   sourceTitle: 'Work signal analysis scope',
   sourceDescription:
     'Choose each source independently. Effective sources expose reference identifiers only to routine dry runs.',
@@ -139,6 +221,8 @@ export const DWAION_PERSONAL_CONTROLS_COPY_EN: DwaionPersonalControlsCopy = {
   effective: 'Effective',
   notEffective: 'Not applied',
   referenceOnly: 'No raw content copy',
+  routineScope: 'Personal routine validation only',
+  unknownScope: 'Application scope not verified',
   memoryTitle: 'Preferences I saved',
   memoryDescription:
     'Store response format, length, tone, or working style only. Account, payment, and regulated identifiers are rejected.',
@@ -192,8 +276,12 @@ export const DWAION_PERSONAL_CONTROLS_COPY_EN: DwaionPersonalControlsCopy = {
   requestedAt: 'Requested at',
   executionUnavailable:
     'This release accepts deletion requests only. It does not claim execution is complete.',
+  executionRunning: 'Checking the server deletion job state.',
+  completionUnverified: 'Completion claim unavailable',
+  completionVerificationAvailable: 'Completion evidence can be verified',
+  completedAt: 'Completed at',
   sourceUnaffected:
-    'Source mail, calendar, work records, and required audit metadata are unaffected.',
+    'Source mail, calendar, work records, and required audit metadata are unaffected. Backup deletion and encryption-key destruction are unavailable.',
   privacyUnavailable:
     'Retention and deletion controls are hidden because permission is unavailable.',
   retentionTitle: 'Retention boundaries',

@@ -34,6 +34,7 @@ import { createMeetingDepartureSynchronizer } from './meeting-departure-sync';
 import { createMeetingEndSynchronizer } from './meeting-end-sync';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingPreJoin } from './meeting-prejoin';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 import {
   meetingPreferenceScope,
   meetingDevicePreferencesEqual,
@@ -48,6 +49,7 @@ import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
 const LazyLiveVideoMeetingRoom = lazy(() => import('./live-video-meeting-room'));
 const meetingAuthorizationDenied = (error: unknown) =>
   error instanceof HttpError && [401, 403, 404].includes(error.status);
+type RoomIntent = { active: boolean; authorizationScope: string; meetingId: string };
 
 export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const { t, i18n } = useTranslation('meetings');
@@ -65,6 +67,9 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const [preJoin, setPreJoin] = useState(false);
   const [choices, setChoices] = useState<LocalUserChoices | null>(null);
   const [credential, setCredential] = useState<VideoMeetingJoinCredential | null>(null);
+  const currentCredential = useRef(credential);
+  const hostTerminatedCredential = useRef<VideoMeetingJoinCredential | null>(null);
+  currentCredential.current = credential;
   const [localError, setLocalError] = useState<string | null>(null);
   const [accessRevoked, setAccessRevoked] = useState(false);
   const [ended, setEnded] = useState(false);
@@ -73,6 +78,20 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const [browserDevicePreferences, setBrowserDevicePreferences] = useState(() =>
     readBrowserMeetingDevicePreferences(preferenceScope)
   );
+  const roomIntent = useMemo<RoomIntent>(
+    () => ({ active: true, authorizationScope: preferenceScope, meetingId }),
+    [meetingId, preferenceScope]
+  );
+  const currentRoomIntent = useRef(roomIntent);
+  const credentialIntent = useRef<RoomIntent | null>(null);
+  currentRoomIntent.current = roomIntent;
+  const ownsIntent = (intent: RoomIntent) => intent.active && currentRoomIntent.current === intent;
+  useEffect(() => {
+    roomIntent.active = true;
+    return () => {
+      roomIntent.active = false;
+    };
+  }, [roomIntent]);
   const departureEffectGeneration = useRef({ value: 0 });
   const deviceInventoryGeneration = useRef(0);
   const activeDevicePreferenceContext = useRef({
@@ -108,23 +127,34 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     meta: { accessSensitive: true },
   });
   const connectionSynchronizer = useMemo(
-    () => createMeetingConnectionSynchronizer(() => confirmVideoMeetingConnected(meetingId)),
-    [meetingId]
+    () =>
+      createMeetingConnectionSynchronizer(() =>
+        roomIntent.active && currentRoomIntent.current === roomIntent
+          ? confirmVideoMeetingConnected(meetingId)
+          : Promise.resolve()
+      ),
+    [meetingId, roomIntent]
   );
   const departureSynchronizer = useMemo(
     () =>
       createMeetingDepartureSynchronizer((keepalive) =>
-        leaveVideoMeeting(meetingId, { keepalive })
+        currentRoomIntent.current.authorizationScope === roomIntent.authorizationScope
+          ? leaveVideoMeeting(meetingId, { keepalive })
+          : Promise.resolve()
       ),
-    [meetingId]
+    [meetingId, roomIntent]
   );
   const endSynchronizer = useMemo(
     () =>
       createMeetingEndSynchronizer(
         (sessionId) => connectionSynchronizer.settle(sessionId),
-        (expectedVersion) => endVideoMeeting(meetingId, expectedVersion)
+        (expectedVersion) => {
+          if (!roomIntent.active || currentRoomIntent.current !== roomIntent)
+            return Promise.reject(new Error('Meeting operation is no longer current'));
+          return endVideoMeeting(meetingId, expectedVersion);
+        }
       ),
-    [connectionSynchronizer, meetingId]
+    [connectionSynchronizer, meetingId, roomIntent]
   );
   useEffect(() => {
     setAccessRevoked(false);
@@ -132,9 +162,12 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     setChoices(null);
     setPreJoin(false);
     setLocalError(null);
+    setEnded(false);
+    setDeparture(null);
   }, [meetingId, preferenceScope]);
   useEffect(() => {
     if (!meetingAuthorizationDenied(query.error)) return;
+    roomIntent.active = false;
     setAccessRevoked(true);
     setCredential(null);
     setChoices(null);
@@ -143,18 +176,20 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     if (credential) connectionSynchronizer.end(credential.sessionId);
     void queryClient.cancelQueries({ queryKey });
     queryClient.removeQueries({ queryKey, exact: true });
-  }, [connectionSynchronizer, credential, query.error, queryClient, queryKey]);
+  }, [connectionSynchronizer, credential, query.error, queryClient, queryKey, roomIntent]);
   const admissionMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (_intent: RoomIntent) =>
       requestVideoMeetingJoin(meetingId, {
         displayName: auth.user?.displayName ?? '',
         idempotencyKey: crypto.randomUUID(),
       }),
-    onSuccess: async () => {
+    onSuccess: async (_result, intent) => {
+      if (!ownsIntent(intent)) return;
       setLocalError(null);
       await queryClient.invalidateQueries({ queryKey });
     },
-    onError: (error) => {
+    onError: (error, intent) => {
+      if (!ownsIntent(intent)) return;
       if (meetingAuthorizationDenied(error)) setAccessRevoked(true);
       else setLocalError(t('join.requestError'));
     },
@@ -163,31 +198,40 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     mutationFn: async ({
       meeting,
       nextChoices,
+      intent,
     }: {
       meeting: VideoMeetingSummary;
       nextChoices: LocalUserChoices;
+      intent: RoomIntent;
     }) => {
       await lastDepartureRequest.current?.catch(() => undefined);
+      if (!ownsIntent(intent)) return null;
       let activeMeeting = meeting;
       if (meeting.canHost && meeting.lifecycleState !== 'LIVE') {
         activeMeeting = await startVideoMeeting(meeting.meetingId, meeting.version);
       }
+      // Never issue a credential under a new account after an older start request settles.
+      if (!ownsIntent(intent)) return null;
       const nextCredential = await issueVideoMeetingToken(meeting.meetingId, {
         joinRequestId,
       });
       return { meeting: activeMeeting, choices: nextChoices, credential: nextCredential };
     },
-    onSuccess: ({ meeting, choices: nextChoices, credential: nextCredential }) => {
+    onSuccess: (result, { intent }) => {
+      if (!result || !ownsIntent(intent)) return;
+      const { meeting, choices: nextChoices, credential: nextCredential } = result;
       departureSynchronizer.reset(nextCredential.sessionId);
       connectionSynchronizer.start(nextCredential.sessionId);
       lastDepartureRequest.current = null;
       queryClient.setQueryData(queryKey, meeting);
+      credentialIntent.current = intent;
       setChoices(nextChoices);
       setCredential(nextCredential);
       setDeparture(null);
       setLocalError(null);
     },
-    onError: (error) => {
+    onError: (error, { intent }) => {
+      if (!ownsIntent(intent)) return;
       if (meetingAuthorizationDenied(error)) {
         setAccessRevoked(true);
         setCredential(null);
@@ -196,9 +240,10 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     },
   });
   const endMutation = useMutation({
-    mutationFn: (input: { sessionId: string; expectedVersion: number }) =>
+    mutationFn: (input: { sessionId: string; expectedVersion: number; intent: RoomIntent }) =>
       endSynchronizer.synchronize(input),
     onSuccess: (meeting, input) => {
+      if (!ownsIntent(input.intent)) return;
       connectionSynchronizer.end(input.sessionId);
       queryClient.setQueryData(queryKey, meeting);
       setCredential(null);
@@ -206,7 +251,8 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       setEnded(true);
       void queryClient.invalidateQueries({ queryKey: ['meetings'] });
     },
-    onError: (error) => {
+    onError: (error, input) => {
+      if (!ownsIntent(input.intent)) return;
       if (meetingAuthorizationDenied(error)) {
         setAccessRevoked(true);
         setCredential(null);
@@ -220,10 +266,16 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     const generation = ++generationTracker.value;
     if (!credential) return undefined;
     const synchronizeDeparture = () => {
+      if (hostTerminatedCredential.current === credential) return;
+      if (currentRoomIntent.current.authorizationScope !== roomIntent.authorizationScope) return;
       void connectionSynchronizer
         .settle(credential.sessionId)
         .catch(() => undefined)
-        .then(() => departureSynchronizer.synchronize(credential.sessionId, { keepalive: true }))
+        .then(() => {
+          if (currentRoomIntent.current.authorizationScope !== roomIntent.authorizationScope)
+            return;
+          return departureSynchronizer.synchronize(credential.sessionId, { keepalive: true });
+        })
         .catch(() => undefined);
     };
     window.addEventListener('pagehide', synchronizeDeparture);
@@ -233,7 +285,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
         if (generationTracker.value === generation) synchronizeDeparture();
       });
     };
-  }, [connectionSynchronizer, credential, departureSynchronizer]);
+  }, [connectionSynchronizer, credential, departureSynchronizer, roomIntent]);
 
   useEffect(() => {
     const generation = ++deviceInventoryGeneration.current;
@@ -242,7 +294,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     return () => {
       if (deviceInventoryGeneration.current === generation) deviceInventoryGeneration.current += 1;
     };
-  }, [preferenceScope]);
+  }, [preferenceScope, roomIntent]);
 
   const openDevicePreview = async () => {
     if (preparingDevices) return;
@@ -272,7 +324,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     };
     writeBrowserMeetingDevicePreferences(preferenceScope, selected);
     setBrowserDevicePreferences(selected);
-    return joinMutation.mutateAsync({ meeting: query.data!, nextChoices });
+    return joinMutation.mutateAsync({ meeting: query.data!, nextChoices, intent: roomIntent });
   };
 
   const selectPreJoinSpeaker = (speakerId: string) => {
@@ -283,9 +335,10 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     });
   };
 
-  const selectPreJoinBackgroundBlur = (backgroundBlur: boolean) => {
+  const selectPreJoinBackgroundMode = (backgroundMode: MeetingBackgroundMode) => {
     setBrowserDevicePreferences((current) => {
-      const selected = { ...current, backgroundBlur };
+      const selected = { ...current, backgroundMode };
+      Reflect.deleteProperty(selected, 'backgroundBlur');
       writeBrowserMeetingDevicePreferences(preferenceScope, selected);
       return selected;
     });
@@ -434,7 +487,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
               setPreJoin(true);
               return;
             }
-            joinMutation.mutate({ meeting, nextChoices: choices });
+            joinMutation.mutate({ meeting, nextChoices: choices, intent: roomIntent });
           }}
           onHome={() => navigate('/meetings/home')}
           onHistory={() => navigate('/meetings/history')}
@@ -443,7 +496,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     );
   }
 
-  if (credential && choices) {
+  if (credential && choices && credentialIntent.current === roomIntent) {
     return (
       <Suspense fallback={<LoadingState label={t('room.connecting')} />}>
         <LazyLiveVideoMeetingRoom
@@ -453,20 +506,37 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           choices={choices}
           speakerDeviceId={preJoinDefaults.speakerDeviceId}
           noiseSuppression={preJoinDefaults.noiseSuppression}
-          backgroundBlur={preJoinDefaults.backgroundBlur === true}
+          backgroundMode={preJoinDefaults.backgroundMode}
           onSpeakerDeviceFallback={() =>
             clearUnavailableSpeakerPreference(preferenceScope, credential.sessionId)
           }
           ending={endMutation.isPending}
           operationError={localError ?? (query.isError ? t('errors.lifecycleSync') : null)}
           onConnected={() => {
+            if (!ownsIntent(roomIntent) || currentCredential.current !== credential) return;
             void connectionSynchronizer
               .synchronize(credential.sessionId)
-              .then(() => setLocalError(null))
-              .catch(() => setLocalError(t('errors.attendanceSync')));
+              .then(() => {
+                if (ownsIntent(roomIntent) && currentCredential.current === credential)
+                  setLocalError(null);
+              })
+              .catch(() => {
+                if (ownsIntent(roomIntent) && currentCredential.current === credential)
+                  setLocalError(t('errors.attendanceSync'));
+              });
           }}
           onLeave={(reason) => {
+            if (!ownsIntent(roomIntent) || currentCredential.current !== credential) return;
             const sessionId = credential.sessionId;
+            if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
+              hostTerminatedCredential.current = credential;
+              connectionSynchronizer.end(sessionId);
+              setCredential(null);
+              setChoices(null);
+              setLocalError(null);
+              setDeparture('REMOVED');
+              return;
+            }
             const connectionRequest = connectionSynchronizer.settle(sessionId);
             connectionSynchronizer.end(sessionId);
             const departureRequest = connectionRequest
@@ -475,7 +545,9 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
             lastDepartureRequest.current = departureRequest;
             void departureRequest
               .then(() => queryClient.invalidateQueries({ queryKey }))
-              .catch(() => setLocalError(t('errors.leaveSync')));
+              .catch(() => {
+                if (ownsIntent(roomIntent)) setLocalError(t('errors.leaveSync'));
+              });
             setCredential(null);
             if (
               reason === DisconnectReason.ROOM_DELETED ||
@@ -490,6 +562,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
             endMutation.mutate({
               sessionId: credential.sessionId,
               expectedVersion: meeting.version,
+              intent: roomIntent,
             })
           }
         />
@@ -518,7 +591,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           }}
           onError={() => setLocalError(t('errors.mediaPermission'))}
           onSpeakerDeviceChange={selectPreJoinSpeaker}
-          onBackgroundBlurChange={selectPreJoinBackgroundBlur}
+          onBackgroundModeChange={selectPreJoinBackgroundMode}
           onSubmit={joinWithChoices}
         />
       </PageCanvas>
@@ -638,7 +711,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
                 intent="primary"
                 loading={admissionMutation.isPending}
                 loadingLabel={t('join.requesting')}
-                onClick={() => admissionMutation.mutate()}
+                onClick={() => admissionMutation.mutate(roomIntent)}
               >
                 {t('join.request')}
               </ActionButton>

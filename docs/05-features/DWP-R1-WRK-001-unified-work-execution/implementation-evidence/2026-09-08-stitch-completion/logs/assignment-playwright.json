@@ -1,0 +1,1333 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/dwp-frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/dwp-work-assignment-final-byte",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/tmp/dwp-work-assignment-final-byte",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 1,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://127.0.0.1:45183",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "work-assignment-integration.spec.ts",
+      "file": "work-assignment-integration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "canonical assignment deep link loads every page and preserves role and command boundaries",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12874,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:14:59.661Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-0df3101f072700e98d87",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 568,
+          "column": 1
+        },
+        {
+          "title": "work-assignment-1440-light renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3823,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:12.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-0b041438546dd7c926b7",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "work-assignment-1280-200-percent renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2228,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:16.795Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-d07f14a96944faa39b97",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "work-assignment-390-dark renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1986,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:19.027Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-67ca817a3c1293cc4116",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "work-assignment-320-forced-colors renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1864,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:21.020Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-aca576db7697e660c751",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "accept sends the exact reviewed version and keeps execution not started",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1814,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:22.890Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-a28a90bb053bf3dd9a3c",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 659,
+          "column": 1
+        },
+        {
+          "title": "decline requires a policy reason and preserves the open execution state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2119,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:24.708Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-1c523999e01488dc04df",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 682,
+          "column": 1
+        },
+        {
+          "title": "accepted work advances through start wait restart and complete with each latest version",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2722,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:26.830Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-eda9a2485adb6cf2f7f4",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 712,
+          "column": 1
+        },
+        {
+          "title": "requester can only cancel and cancellation preserves the pending assignment state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1987,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:29.555Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-cf058289e3510793c643",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 750,
+          "column": 1
+        },
+        {
+          "title": "preflight drift shows the latest task and sends no command",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1723,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:31.546Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-ba494c4a90689154a4ee",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 787,
+          "column": 1
+        },
+        {
+          "title": "a 409 loads the latest state without automatically resending the command",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1918,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:33.272Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-f4e2299136c27efd0b43",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 802,
+          "column": 1
+        },
+        {
+          "title": "an unavailable source does not suppress Work-owned assignment commands",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1337,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:35.193Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-1bfbb708ebfa389149f2",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 820,
+          "column": 1
+        },
+        {
+          "title": "a lost accept response is recovered by receipt without sending a duplicate command",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1869,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:36.533Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-76eea1ec38d92557bb6c",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 835,
+          "column": 1
+        },
+        {
+          "title": "revoked assignment access purges the previously rendered task",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1487,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:38.405Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-97630c6fb52b068d30d1",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 855,
+          "column": 1
+        },
+        {
+          "title": "keyboard opens an assignment, restores the command trigger, and returns mobile focus",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1573,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:39.895Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-6147a7857971c72874ba",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 866,
+          "column": 1
+        },
+        {
+          "title": "long Korean assignment and policy reason text reflows at 390px and 320px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1635,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:41.471Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-c788d3aaeceb68cfe878",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 901,
+          "column": 1
+        },
+        {
+          "title": "assignment role filter remains available when the enabled source returns zero rows",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1528,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:43.110Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-82976b8775cb4c95a99e",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 951,
+          "column": 1
+        },
+        {
+          "title": "canonical assignment deep link loads every page and preserves role and command boundaries",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10142,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:45.326Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-a1e899cc1bef01a01bff",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 568,
+          "column": 1
+        },
+        {
+          "title": "work-assignment-1440-light renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "One deterministic evidence image is enough.",
+                  "location": {
+                    "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                    "line": 631,
+                    "column": 10
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 133,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:55.805Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "One deterministic evidence image is enough.",
+                      "location": {
+                        "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                        "line": 631,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-1e6d124935523bc49605",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "work-assignment-1280-200-percent renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "One deterministic evidence image is enough.",
+                  "location": {
+                    "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                    "line": 631,
+                    "column": 10
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 114,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:55.947Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "One deterministic evidence image is enough.",
+                      "location": {
+                        "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                        "line": 631,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-06012a206ca29829d094",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "work-assignment-390-dark renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "One deterministic evidence image is enough.",
+                  "location": {
+                    "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                    "line": 631,
+                    "column": 10
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 111,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:56.065Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "One deterministic evidence image is enough.",
+                      "location": {
+                        "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                        "line": 631,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-53f15bf3db852fab3080",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "work-assignment-320-forced-colors renders a privacy-safe assignment evidence screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "One deterministic evidence image is enough.",
+                  "location": {
+                    "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                    "line": 631,
+                    "column": 10
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 111,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:56.180Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "One deterministic evidence image is enough.",
+                      "location": {
+                        "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/work-assignment-integration.spec.ts",
+                        "line": 631,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-5bf0f5fdf218b52205da",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 628,
+          "column": 3
+        },
+        {
+          "title": "accept sends the exact reviewed version and keeps execution not started",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1720,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:56.295Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-164799ed7cee1884bd66",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 659,
+          "column": 1
+        },
+        {
+          "title": "decline requires a policy reason and preserves the open execution state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2116,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:15:58.019Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-9baedbe8545dffa65208",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 682,
+          "column": 1
+        },
+        {
+          "title": "accepted work advances through start wait restart and complete with each latest version",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2663,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:00.139Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-f43c9189ff5cb7e723d6",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 712,
+          "column": 1
+        },
+        {
+          "title": "requester can only cancel and cancellation preserves the pending assignment state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:02.806Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-9dc429607ca9f3e8839b",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 750,
+          "column": 1
+        },
+        {
+          "title": "preflight drift shows the latest task and sends no command",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1646,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:04.886Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-f9922c4ec8bddf17d2c6",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 787,
+          "column": 1
+        },
+        {
+          "title": "a 409 loads the latest state without automatically resending the command",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2013,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:06.536Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-2ceb54bc03a1b5d37a98",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 802,
+          "column": 1
+        },
+        {
+          "title": "an unavailable source does not suppress Work-owned assignment commands",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1283,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:08.553Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-8a9f5884ff01f70856ce",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 820,
+          "column": 1
+        },
+        {
+          "title": "a lost accept response is recovered by receipt without sending a duplicate command",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1747,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:09.839Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-dfa1e8eac93d6099223e",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 835,
+          "column": 1
+        },
+        {
+          "title": "revoked assignment access purges the previously rendered task",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1516,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:11.590Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-71406de51891d3c277e9",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 855,
+          "column": 1
+        },
+        {
+          "title": "keyboard opens an assignment, restores the command trigger, and returns mobile focus",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1692,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:13.109Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-69d0286e52d74559b901",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 866,
+          "column": 1
+        },
+        {
+          "title": "long Korean assignment and policy reason text reflows at 390px and 320px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1555,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:14.805Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-1e93f2157805b259ffc9",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 901,
+          "column": 1
+        },
+        {
+          "title": "assignment role filter remains available when the enabled source returns zero rows",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1444,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T16:16:16.364Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64369bed98686b0b5fe5-d35746ad5114c6c5cc28",
+          "file": "work-assignment-integration.spec.ts",
+          "line": 951,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-08T16:14:59.029Z",
+    "duration": 78826.822,
+    "expected": 30,
+    "skipped": 4,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

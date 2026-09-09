@@ -1,0 +1,13 @@
+{
+  "name": "git-diff-final",
+  "command": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "startedAt": "2026-09-08T10:44:03.250904+00:00",
+  "completedAt": "2026-09-08T10:44:03.484098+00:00",
+  "durationSeconds": 0.23,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/git-diff-final.log"
+}

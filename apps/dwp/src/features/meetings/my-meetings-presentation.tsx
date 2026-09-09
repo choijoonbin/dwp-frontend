@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   CalendarClock,
   CheckCircle2,
@@ -175,13 +175,14 @@ export function MyMeetingCard({
 }) {
   const { t, i18n } = useTranslation('meetings');
   const navigate = useNavigate();
+  const { search } = useLocation();
   const progress = meetingInvitationProgress(evidence?.preparation);
   const schedule = evidence?.schedule;
   const active = !['ENDED', 'CANCELLED'].includes(meeting.lifecycleState);
   const prepare = () =>
     navigate(
       active
-        ? meetingPreparationPath(meeting.meetingId)
+        ? meetingPreparationPath(meeting.meetingId, search)
         : `/meetings/history?meeting=${encodeURIComponent(meeting.meetingId)}`
     );
   return (
@@ -371,7 +372,7 @@ export function MyMeetingCard({
               <ActionButton
                 intent="quiet"
                 startIcon={<Paperclip size={16} aria-hidden="true" />}
-                onClick={() => navigate(meetingPreparationPath(meeting.meetingId))}
+                onClick={() => navigate(meetingPreparationPath(meeting.meetingId, search))}
                 sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
               >
                 {t('preparation.materials')}

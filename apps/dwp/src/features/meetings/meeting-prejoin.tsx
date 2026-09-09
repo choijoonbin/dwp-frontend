@@ -14,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { VideoMeetingSummary } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import type { MeetingPreJoinPreferenceDefaults } from './meeting-preferences-model';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 import { formatMeetingDateTime } from './meeting-components';
 import { MeetingContentPreJoin } from './meeting-content-governance';
 import { MeetingPrejoinDevices } from './meeting-prejoin-devices';
@@ -29,7 +30,7 @@ export type MeetingPreJoinProps = {
   onCancel: () => void;
   onError: (error: Error) => void;
   onSpeakerDeviceChange: (speakerDeviceId: string) => void;
-  onBackgroundBlurChange?: (enabled: boolean) => void;
+  onBackgroundModeChange?: (mode: MeetingBackgroundMode) => void;
   onSubmit: (choices: LocalUserChoices) => unknown | Promise<unknown>;
 };
 
@@ -40,11 +41,11 @@ export function MeetingPreJoin({
   onCancel,
   onError,
   onSpeakerDeviceChange,
-  onBackgroundBlurChange,
+  onBackgroundModeChange,
   onSubmit,
 }: MeetingPreJoinProps) {
   const { t, i18n } = useTranslation('meetings');
-  const session = useMeetingPrejoinSession(defaults, onBackgroundBlurChange);
+  const session = useMeetingPrejoinSession(defaults, onBackgroundModeChange);
   const [submissionError, setSubmissionError] = useState(false);
   const [contentGuarded, setContentGuarded] = useState(true);
   const [submitting, setSubmitting] = useState(false);

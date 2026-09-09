@@ -9,6 +9,13 @@ import {
 } from './agent-routine-api';
 
 const ROUTINE_ID = '00000000-0000-4000-8000-000000000241';
+const SECURE_AUTHORITY = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
 
 const definition = {
   name: 'Morning review',
@@ -36,7 +43,13 @@ function routine() {
     definition,
     schedulingAvailable: false,
     nextRunAt: null,
-    capabilities: { activationAvailable: false, dryRunAvailable: true },
+    capabilities: {
+      activationAvailable: false,
+      backgroundExecutionAvailable: false,
+      dryRunAvailable: true,
+      notificationDeliveryAvailable: false,
+      proposalDeliveryAvailable: false,
+    },
     createdAt: '2026-09-04T01:00:00Z',
     updatedAt: '2026-09-04T01:00:00Z',
   };
@@ -66,6 +79,17 @@ describe('Agent personal routine API', () => {
 
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ success: true, data: [{}] })));
     await expect(getDwaionRoutines()).rejects.toMatchObject({ status: 502 });
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        response({
+          success: true,
+          data: [{ ...routine(), capabilities: { dryRunAvailable: true } }],
+        })
+      )
+    );
+    await expect(getDwaionRoutines()).rejects.toMatchObject({ status: 502 });
   });
 
   it('creates routines and records explicit scoped consent commands', async () => {
@@ -76,20 +100,26 @@ describe('Agent personal routine API', () => {
       .mockResolvedValueOnce(response({ success: true, data: routine() }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await createDwaionRoutine({ ...definition, sources: [...definition.sources] });
-    await changeDwaionRoutineConsent(ROUTINE_ID, 1, 'SOURCE_ACCESS', 'ENABLED');
+    await createDwaionRoutine(
+      { ...definition, sources: [...definition.sources] },
+      SECURE_AUTHORITY
+    );
+    await changeDwaionRoutineConsent(ROUTINE_ID, 1, 'SOURCE_ACCESS', 'ENABLED', SECURE_AUTHORITY);
 
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      '/api/agent/v1/routines',
+      '/api/agent/v1/routines?contextScopeKey=scope-dwaion-self',
       expect.objectContaining({
         method: 'POST',
         body: expect.stringContaining('"expectedRevision":0'),
+        headers: expect.objectContaining({
+          'X-DWP-Expected-Decision-Revision': 'psr-current',
+        }),
       })
     );
     expect(fetchMock).toHaveBeenNthCalledWith(
       3,
-      `/api/agent/v1/routines/${ROUTINE_ID}/consent`,
+      `/api/agent/v1/routines/${ROUTINE_ID}/consent?contextScopeKey=scope-dwaion-self`,
       expect.objectContaining({
         method: 'POST',
         body: expect.stringContaining('"scope":"SOURCE_ACCESS"'),

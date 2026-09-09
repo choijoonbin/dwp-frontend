@@ -27,6 +27,7 @@ async function openPersonalIntelligence(
   permissions: SessionPermission[] = [...FULL_PRODUCT_PERMISSIONS, ...DWAION_PERSONAL_PERMISSIONS],
   appearance?: SessionAppearance
 ) {
+  await page.clock.setFixedTime(new Date('2026-09-04T00:05:00Z'));
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'en',
@@ -67,27 +68,62 @@ test('personal routines stay dry-run only and require explicit consent', async (
   await expect(dialog.getByRole('button', { name: 'Save routine' })).toBeDisabled();
 });
 
-test('personal AI controls expose real boundaries without claiming runtime memory', async ({
+test('personal AI controls separate encrypted storage from answer application consent', async ({
   page,
 }) => {
-  await openPersonalIntelligence(page, '/dwaion/personal-controls');
+  const probe = await openPersonalIntelligence(page, '/dwaion/personal-controls');
 
   await expect(page.getByRole('heading', { name: 'My AI controls' })).toBeVisible();
+  await expect(page.getByText('Store preferences', { exact: true })).toBeVisible();
+  const answerApplication = page.getByRole('switch', {
+    name: 'Apply preferences to answers: On',
+  });
+  await expect(answerApplication).toBeChecked();
+  await answerApplication.click();
+  await expect.poll(() => probe.runtimePreferenceUpdates).toBe(1);
+  expect(probe.lastRuntimeApplicationState).toBe('DISABLED');
   await expect(
-    page.getByText(
-      'Preferences can be stored and managed, but are not yet applied automatically to answer generation.'
-    )
-  ).toBeVisible();
+    page.getByRole('switch', { name: 'Apply preferences to answers: Off' })
+  ).not.toBeChecked();
+  await expect(page.getByRole('button', { name: 'Add preference' })).toBeEnabled();
   await expect(page.getByText('Use a concise, direct tone.')).toBeVisible();
   await expect(page.getByText('Tone', { exact: true })).toBeVisible();
   await expect(page.getByText('TONE', { exact: true })).toHaveCount(0);
   await expect(page.getByText('No raw content copy')).toHaveCount(3);
+  await expect(page.getByText('Personal routine validation only')).toHaveCount(3);
+  await expect(page.getByText('PERSONAL_ROUTINE_DRY_RUN_ONLY')).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Clean up data' }).click();
   const dialog = page.getByRole('dialog', { name: 'Clean up personal AI data' });
   await expect(dialog.getByText(/create a deletion request/i).first()).toBeVisible();
   await expect(dialog.getByRole('checkbox', { name: 'Personal AI routines' })).not.toBeChecked();
   await expect(dialog.getByRole('button', { name: 'Submit request' })).toBeDisabled();
+});
+
+test('personal data deletion follows the server job until a supported completion claim', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date('2026-09-04T00:05:00Z'));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    displayName: 'Mina Kim',
+    permissions: [...FULL_PRODUCT_PERMISSIONS, ...DWAION_PERSONAL_PERMISSIONS],
+  });
+  const probe = await mockDwaionPersonalIntelligence(page, {
+    deletionExecutionAvailable: true,
+  });
+  await page.goto('/dwaion/personal-controls');
+
+  await page.getByRole('button', { name: 'Clean up data' }).first().click();
+  const dialog = page.getByRole('dialog', { name: 'Clean up personal AI data' });
+  await dialog.getByRole('checkbox', { name: 'Explicit memories' }).check();
+  await dialog.getByRole('button', { name: 'Submit request' }).click();
+
+  await expect.poll(() => probe.deletionRequests).toBe(1);
+  await expect.poll(() => probe.deletionStatusReads, { timeout: 5_000 }).toBeGreaterThanOrEqual(2);
+  await expect(dialog.getByText('Completed', { exact: true })).toBeVisible();
+  await expect(dialog.getByText('Completion claim unavailable')).toHaveCount(0);
 });
 
 test('personal data controls remain available with privacy-only delegated access', async ({
@@ -129,6 +165,8 @@ test('artifact autosave invalidates stale publication preflight and never implie
   await expect(
     page.getByText('Source authenticity and freshness verification are not connected yet.')
   ).toBeVisible();
+  await expect(page.getByText('Work item', { exact: true })).toBeVisible();
+  await expect(page.getByText('WORK_ITEM', { exact: true })).toHaveCount(0);
   if (await page.getByRole('button', { name: 'Close panel' }).isVisible()) {
     await page.getByRole('button', { name: 'Close panel' }).click();
   }
@@ -138,12 +176,13 @@ test('artifact autosave invalidates stale publication preflight and never implie
 
   await page.getByRole('textbox', { name: 'Title' }).fill('Launch readiness plan revised');
   await expect.poll(() => probe.artifactAutosaves).toBe(1);
-  await expect(page.getByText('Autosaved')).toBeVisible();
+  await expect(page.getByText('Autosaved', { exact: true })).toBeVisible();
   await expect(publish).toBeDisabled();
   await expect(
     page.getByText('Run preflight against the current immutable version.')
   ).toBeVisible();
-  await expect(page.getByText(/download a file/i)).toBeVisible();
+  await expect(page.getByText(/An export request is not a completed file/i)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Download verified file' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /share/i })).toHaveCount(0);
 });
 

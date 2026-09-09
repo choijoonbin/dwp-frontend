@@ -1,13 +1,22 @@
 import type { DwaionConversationSummary } from '@dwp-frontend/shared-utils';
 
-export type ArchivePeriod = 'all' | 'day' | 'week' | 'month';
-export type ArchiveSort = 'recent' | 'oldest' | 'messages';
+export type ArchivePeriod = 'all' | 'day' | 'week' | 'month' | 'hold';
+export type ArchiveSort = 'recent' | 'oldest' | 'messages' | 'evidence';
 const DAY = 86_400_000;
-const WINDOWS: Record<Exclude<ArchivePeriod, 'all'>, number> = {
-  day: DAY,
+const WINDOWS: Record<Extract<ArchivePeriod, 'week' | 'month'>, number> = {
   week: 7 * DAY,
   month: 30 * DAY,
 };
+
+function isLocalCalendarDay(value: number, now: number) {
+  const date = new Date(value);
+  const today = new Date(now);
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+}
 
 export function archiveConversations(
   items: DwaionConversationSummary[],
@@ -19,10 +28,17 @@ export function archiveConversations(
   const query = search.normalize('NFC').trim().toLocaleLowerCase();
   return items
     .filter((item) => {
-      if (!item.title.normalize('NFC').toLocaleLowerCase().includes(query)) return false;
+      const searchable = [item.title, item.summaryExcerpt ?? '', ...item.sourceSystems]
+        .join('\n')
+        .normalize('NFC')
+        .toLocaleLowerCase();
+      if (!searchable.includes(query)) return false;
       if (period === 'all') return true;
+      if (period === 'hold') return item.legalHold;
       const time = Date.parse(item.lastMessageAt);
-      return Number.isFinite(time) && time <= now && time >= now - WINDOWS[period];
+      if (!Number.isFinite(time) || time > now) return false;
+      if (period === 'day') return isLocalCalendarDay(time, now);
+      return time >= now - WINDOWS[period];
     })
     .sort((a, b) => {
       const timeA = Date.parse(a.lastMessageAt) || 0;
@@ -30,9 +46,11 @@ export function archiveConversations(
       const primary =
         sort === 'messages'
           ? b.messageCount - a.messageCount
-          : sort === 'oldest'
-            ? timeA - timeB
-            : timeB - timeA;
+          : sort === 'evidence'
+            ? b.evidenceCount - a.evidenceCount
+            : sort === 'oldest'
+              ? timeA - timeB
+              : timeB - timeA;
       return primary || timeB - timeA || a.conversationId.localeCompare(b.conversationId);
     });
 }

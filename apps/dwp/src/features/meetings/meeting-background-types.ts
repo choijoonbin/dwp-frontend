@@ -1,6 +1,20 @@
 export type MeetingBackgroundFailure =
   'UNSUPPORTED' | 'ASSET_UNAVAILABLE' | 'ASSET_UNTRUSTED' | 'PROCESSING_FAILED' | 'SUPERSEDED';
 
+export type MeetingBackgroundMode = 'original' | 'blur' | 'office';
+export type MeetingProcessedBackgroundMode = Exclude<MeetingBackgroundMode, 'original'>;
+
+export function isMeetingBackgroundMode(value: unknown): value is MeetingBackgroundMode {
+  return value === 'original' || value === 'blur' || value === 'office';
+}
+
+export type MeetingBackgroundImage = {
+  source: CanvasImageSource;
+  width: number;
+  height: number;
+  close(): void;
+};
+
 export type MeetingBackgroundState = {
   state: 'loading' | 'ready' | 'failed' | 'stopped';
   reason?: MeetingBackgroundFailure;
@@ -26,7 +40,9 @@ export interface MeetingBackgroundSegmenter {
   close(): void;
 }
 
-export function isMeetingBackgroundSupported(): boolean {
+export function isMeetingBackgroundSupported(
+  mode: MeetingProcessedBackgroundMode = 'blur'
+): boolean {
   if (
     typeof document === 'undefined' ||
     typeof MediaStream === 'undefined' ||
@@ -38,7 +54,17 @@ export function isMeetingBackgroundSupported(): boolean {
     return false;
   try {
     const context = document.createElement('canvas').getContext('2d');
-    if (!context || !('filter' in context)) return false;
+    if (!context) return false;
+    if (mode === 'office') {
+      return (
+        typeof Image !== 'undefined' &&
+        typeof Image.prototype.decode === 'function' &&
+        typeof Blob !== 'undefined' &&
+        typeof URL?.createObjectURL === 'function' &&
+        typeof URL?.revokeObjectURL === 'function'
+      );
+    }
+    if (!('filter' in context)) return false;
     context.filter = 'blur(16px)';
     return context.filter === 'blur(16px)';
   } catch {

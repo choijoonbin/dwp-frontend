@@ -1,5 +1,15 @@
 {
   "recordedAt": "2026-09-07T03:30:16.553451+00:00",
+  "evidenceStatus": "HISTORICAL_SUPERSEDED",
+  "supersededAt": "2026-09-08",
+  "currentUiVerified": false,
+  "evidenceScope": "All PASS/FAIL labels, test counts, log paths, captures, and hashes below describe the preserved 2026-09-07 run only; they are not current UI validation.",
+  "currentProductContract": {
+    "workRoutesAndMenus": 6,
+    "approvalAndServiceDetails": "Rich read-only source details with validated owner-app handoff. Work exposes no approve, reject, or service-response command.",
+    "selectedWorkAi": "Read answers, inspect citations, copy, and continue the conversation. There is no direct draft application to a Work form.",
+    "flowContributionOwner": "Shared Home"
+  },
   "scope": {
     "approvedReferenceFrames": 18,
     "desktop": 11,
@@ -47,18 +57,13 @@
       "passed": 2,
       "artifactDirectory": "/tmp/work-command-center-current"
     },
-    "widths": [
-      1440,
-      1280,
-      390,
-      320
-    ],
+    "widths": [1440, 1280, 390, 320],
     "cssZoomPercent": 200,
     "accessibility": {
       "automatedSeriousCriticalViolations": 0,
       "scope": "Covered journeys only; keyboard, dark and forced-colors checks. Not a claim covering every assistive device."
     },
-    "data": "Controlled API and AI fixtures in the real React application, including serialized source commands and authorization failures."
+    "data": "Controlled API and AI fixtures in the historical 2026-09-07 React snapshot. This is not evidence for the current UI."
   },
   "backend": {
     "status": "PASS",
@@ -104,7 +109,7 @@
     "log": "logs/final-production-build.txt",
     "output": "/tmp/dwp-work-production-build-20260907",
     "warning": "Vite initial-vendor chunk exceeds 700 kB. This is not a claim that the full repository build/release or bundle-budget gates passed.",
-    "timing": "Final production compilation includes the final Flow service-entry and display-dictionary changes.",
+    "timing": "Historical 2026-09-07 compilation included the now-retired Flow service-response entry and the display-dictionary changes from that snapshot.",
     "exitCode": 0,
     "durationSeconds": 1.98
   },
@@ -112,9 +117,9 @@
     "origin": "http://localhost:4200",
     "status": "PASS",
     "observed": [
-      "Six Work sidebar destinations visible in the signed-in application.",
-      "Fresh tab renders source approval document, workflow, schema and timeline.",
-      "An actionable approval displays enabled decision buttons."
+      "The 2026-09-07 snapshot showed six Work sidebar destinations.",
+      "A fresh tab in that snapshot rendered the source approval document, workflow, schema, and timeline.",
+      "The retired 2026-09-07 Work approval design displayed enabled decision buttons; current Work does not."
     ],
     "writesPerformed": false,
     "note": "An older shared tab showed stale source authority; the same item in a new tab loaded correctly. Added 9 enforced111 boundary/recovery regressions without weakening policy.",
@@ -124,18 +129,19 @@
       "8001": 200,
       "8002": 200,
       "8080": 200
-    }
+    },
+    "currentCorrection": "Current approval and service source details are rich read-only views with owner-app handoff. Work has no approve, reject, or service-response command."
   },
   "remainingConditions": [
     {
       "kind": "GOVERNED_ACTIVATION",
-      "status": "PENDING",
-      "description": "Tenant 1 product-surfaces remains v3 ACTIVE; new service response action requires independently approved v6 activation.",
+      "status": "HISTORICAL_PENDING_SUPERSEDED",
+      "description": "The 2026-09-07 snapshot treated tenant v6 activation as pending for a Work service response action. That Work action is retired, so this is not a current release gate.",
       "review": "../../2026-09-07-service-response-activation.md"
     },
     {
       "kind": "DESIGN_DIFFERENCE",
-      "description": "10 Flow provides Work/plan contributions within the existing shared Flow layout; the whole original dashboard layout is not reproduced."
+      "description": "Current Work and plan contributions belong to shared Home; the original standalone Flow dashboard reference is not a Work-owned screen."
     },
     {
       "kind": "SOURCE_DATA_CONTRACT",
@@ -143,12 +149,12 @@
     },
     {
       "kind": "VISUAL_ACCEPTANCE",
-      "description": "18 references are mapped to implementation captures; zero pixel difference and every real OS virtual keyboard are not certified."
+      "description": "18 design references were mapped to historical 2026-09-07 captures. Their hashes do not verify current UI, zero pixel difference, or every real OS virtual keyboard."
     }
   ],
-  "overall": "Implemented and verified Work screen/function remediation with declared remaining activation and design differences; not unconditional 100% live or pixel-identical acceptance.",
+  "overall": "HISTORICAL/SUPERSEDED 2026-09-07 validation snapshot. Preserve it for audit history; do not use its pass counts, captures, hashes, direct Work actions, or activation condition as a claim about the current product.",
   "galleryIntegrity": {
-    "status": "PASS",
+    "status": "HISTORICAL_PASS",
     "cards": 18,
     "comparisonImages": 36,
     "localLinksChecked": 108,
@@ -156,16 +162,18 @@
     "browserFilterVisibleMobileFrames": 7,
     "jumpResetsFilterAndPreservesTargetPosition": true,
     "preview": "http://127.0.0.1:8427/implementation-evidence/2026-09-07/index.html",
-    "additionalStateImages": 15
+    "additionalStateImages": 15,
+    "hashScope": "Hashes verify preserved 2026-09-07 files only, not the current UI."
   },
   "additionalFlowServiceRegression": {
-    "status": "PASS",
+    "status": "HISTORICAL_PASS_SUPERSEDED",
     "unitTests": 33,
     "unitFiles": 3,
     "chromiumCases": 1,
-    "overlap": "Existing provider/model cases are rechecks; do not add all 33 to the previous unit total. The Flow browser case belongs to the combined 54 and now also checks service response entry.",
+    "overlap": "Historical provider/model rechecks from 2026-09-07. The Flow browser case covered the now-retired Work service-response entry and must not be counted as current validation.",
     "review": "independent-flow-service-review.md",
-    "source": "Independent route/architecture agent verification"
+    "source": "Independent route/architecture agent verification",
+    "currentCorrection": "Flow contribution belongs to shared Home. Current Work service detail is rich and read-only and hands off to Services for any response."
   },
   "integrationFollowUp": {
     "recordedAt": "2026-09-07T04:34:36.023398+00:00",

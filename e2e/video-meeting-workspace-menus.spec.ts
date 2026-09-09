@@ -431,11 +431,19 @@ test('U10 and U12 retain reviewed source blocks and responsive product actions',
   );
   await expect(page.locator('#meeting-preferences-video video')).toHaveCount(1);
   await expect(page.getByTestId('meeting-background-options').getByRole('button')).toHaveCount(4);
-  for (const key of ['office', 'image'] as const) {
-    await expect(
-      page.getByRole('button', { name: en.stitch.devices[key], exact: true })
-    ).toBeDisabled();
-  }
+  const office = page.getByRole('button', {
+    name: en.stitch.devices.office,
+    exact: true,
+  });
+  await expect(office).toBeEnabled();
+  await office.click();
+  await expect(office).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.evaluate(() => Reflect.get(window, '__meetingMediaCalls'))).toBe(0);
+  await page.getByRole('button', { name: en.stitch.devices.none, exact: true }).click();
+  await expect(office).toHaveAttribute('aria-pressed', 'false');
+  await expect(
+    page.getByRole('button', { name: en.stitch.devices.image, exact: true })
+  ).toBeDisabled();
   const blur = page.getByRole('button', { name: en.stitch.devices.blur, exact: true });
   if (testInfo.project.name === 'chromium') {
     await expect(blur).toBeEnabled();

@@ -4,6 +4,7 @@ import {
   Bell,
   BellRing,
   Bookmark,
+  CalendarDays,
   CheckCircle2,
   ChevronRight,
   CircleAlert,
@@ -11,6 +12,7 @@ import {
   Mail,
   MessageCircle,
   ShieldAlert,
+  UsersRound,
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
@@ -36,7 +38,13 @@ import type { ReactNode } from 'react';
 
 const SOURCE_ICON: Record<string, LucideIcon> = {
   approval: CheckCircle2,
+  approvals: CheckCircle2,
+  calendar: CalendarDays,
+  hcm: UsersRound,
   mail: Mail,
+  meetings: CalendarDays,
+  messaging: MessageCircle,
+  space: MessageCircle,
   spaces: MessageCircle,
   security: ShieldAlert,
 };
@@ -164,20 +172,20 @@ export function NotificationPageHeading({
         justifyContent: 'space-between',
         flexDirection: { xs: 'column', md: 'row' },
         gap: 2,
-        pb: 2.5,
+        pb: 2,
         borderBottom: 1,
         borderColor: 'divider',
       }}
     >
-      <Stack direction="row" gap={1.5} alignItems="flex-start">
-        <GlyphSurface size={42} variant="soft">
-          <BellRing size={21} strokeWidth={1.8} />
+      <Stack direction="row" gap={1.25} alignItems="center">
+        <GlyphSurface size={38} variant="soft">
+          <BellRing size={19} strokeWidth={1.8} />
         </GlyphSurface>
         <Box minWidth={0}>
-          <Typography component="h1" variant="h4">
+          <Typography component="h1" variant="h5">
             {title}
           </Typography>
-          <Typography color="text.secondary" sx={{ mt: 0.35 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
             {description}
           </Typography>
         </Box>
@@ -209,7 +217,7 @@ export function NotificationItemRow({
   now?: number;
 }) {
   const { t } = useTranslation('notifications');
-  const Icon = SOURCE_ICON[item.source.appKey] ?? Bell;
+  const Icon = SOURCE_ICON[item.source.appKey.toLocaleLowerCase('en-US')] ?? Bell;
   const timestamp = relativeTimestamp(item.lastActivityAt, now);
   const absoluteTimestamp = formatDate(item.lastActivityAt, {
     dateStyle: 'medium',

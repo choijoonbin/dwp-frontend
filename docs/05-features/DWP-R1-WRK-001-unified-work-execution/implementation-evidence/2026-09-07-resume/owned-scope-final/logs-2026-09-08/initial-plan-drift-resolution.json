@@ -1,0 +1,33 @@
+{
+  "reason": "Final browser found legitimate initial DayPlan version0/items[]/updatedAt:null rejected by receipt guard and one stale personal Activity trigger absence assertion. Guard corrected narrowly; null-initial direct/recovery regressions added.",
+  "before": "6a09f5d51ce69474d2e6f3d305cf7ba0fc943b44d7b03cdbc791730d23375e58",
+  "after": "f161865510124f4a9a83f97cd1f3ddf3e9d07653320ba8729b33207ae2192798",
+  "files": [
+    {
+      "path": "apps/dwp/src/features/work-hub/use-work-hub-created-task-recovery.test.tsx",
+      "before": "0300abfc10fe5fa7981f651c7fc3044f3f1b891ebff0e31ac85143746c450977",
+      "after": "5ffe23a40c9b0a0ff4dc0e4b6609768ef9a8731ef1286f7da8661169696c3128"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/use-work-hub-task-save.test.tsx",
+      "before": "d2c855ad65425a2b418dc27dd78412d3f1f5c3b07b0b8785cc209df40d4304ed",
+      "after": "cbd9cac6869890ea8df9e436e1db4747a61ecca597c6b06d9fc549612c9549d1"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-personal-save-receipt.test.ts",
+      "before": "95a68e145549b9baadea43624f788d48a41c074659ab082e275f7a7498e70646",
+      "after": "68bb486ee5897b787d3e19d3167080906a36504c6eaf5994cef69c4f4260a2e8"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-personal-save-receipt.ts",
+      "before": "2e89ae728f3483391c384d66936078193d1996960590f134e2b5f355f34bbb8d",
+      "after": "8af63919598a5324b0411068afe5ef4430383f0bd8f61b6370bef5d5c0f65fe4"
+    },
+    {
+      "path": "e2e/work-activity-return-focus.spec.ts",
+      "before": "6b65e9cfd064341e38c74628d3fd38a8a744370b9630478dfd42ed04e0a6cc34",
+      "after": "9b757de121c33195c1a14a97b4ec341bd8002bd7adaf13511894e5645d72ead9"
+    }
+  ],
+  "resolution": "Rerun focused Work and full repository unit suites, nonincremental TypeScript, full build/static gates and workspace build, scoped browser regression then all13 specs in both projects."
+}

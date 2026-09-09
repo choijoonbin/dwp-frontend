@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { workspaceWorkActivityRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import { isAppReadEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
@@ -11,6 +10,7 @@ import {
   workHubActivityCurrentLocation,
   workHubActivityHandoffRoute,
   workHubActivityOwnerFingerprint,
+  workHubItemActivityRoute,
 } from './work-hub-activity-return';
 
 import type { WorkHubItem } from './work-hub-contracts';
@@ -18,6 +18,7 @@ import type { WorkHubItem } from './work-hub-contracts';
 type WorkHubActivityRefreshResult = {
   data?: { snapshot?: { items: readonly { key: string; version: number }[] } };
   isSuccess: boolean;
+  isRefetchError: boolean;
 };
 
 function useActivityOwnerFingerprint(ownerKey: string | null): string | null | undefined {
@@ -41,13 +42,13 @@ function useActivityOwnerFingerprint(ownerKey: string | null): string | null | u
 
 /** Restores Activity trigger focus only after fresh owner-scoped Work data confirms the item. */
 export function useWorkHubActivityReturn(
-  item: Pick<WorkHubItem, 'key' | 'legacyItem' | 'version'> | undefined,
+  item: Pick<WorkHubItem, 'key' | 'legacyItem' | 'version' | 'sourceId' | 'reference'> | undefined,
   ready: boolean,
   refetch: () => Promise<WorkHubActivityRefreshResult>
 ) {
   const itemKey = item?.key ?? null;
   const itemVersion = item?.version ?? null;
-  const activityRoute = item?.legacyItem ? workspaceWorkActivityRoute(item.legacyItem) : null;
+  const activityRoute = item ? workHubItemActivityRoute(item) : null;
   const location = useLocation();
   const navigate = useNavigate();
   const ownerKey = useWorkHubOperationOwner();
@@ -75,6 +76,7 @@ export function useWorkHubActivityReturn(
         if (
           !active ||
           !result.isSuccess ||
+          result.isRefetchError ||
           !result.data?.snapshot?.items.some(
             (item) => item.key === itemKey && item.version === itemVersion
           )

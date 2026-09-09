@@ -1,0 +1,9 @@
+{
+  "copiedAt": "2026-09-08T12:09:21.572577+00:00",
+  "reason": "The isolated validation copy omitted the tracked generated Nginx route composition required by the repository build gate.",
+  "source": "/Users/a10697/Work/DWP/dwp-frontend/deploy/nginx/dwp-product-routes.conf",
+  "target": "/tmp/dwaion-final-checkout-20260908/deploy/nginx/dwp-product-routes.conf",
+  "sha256": "ad417b2d1c4722ab9422bcd1fdd2dd8ca95d5fcf92d6893dd99582389a100258",
+  "sourceEqualsHead": true,
+  "dwaionProductSourceChanged": false
+}

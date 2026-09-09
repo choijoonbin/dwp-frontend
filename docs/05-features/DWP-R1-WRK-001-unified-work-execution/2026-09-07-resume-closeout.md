@@ -1,6 +1,6 @@
 # 통합업무함 중단 작업 재개 및 최종 검증
 
-> 후속 Work 자체 감사에서 사용자·권한 전환, 편집 충돌, URL 선택 상태와 모바일 200% 확대 결함을 추가 보완했다. 최신 상태와 외부 소유 작업 요청은 [업무 앱 자체 고도화 최종 마감](2026-09-07-owned-scope-closeout.md)을 기준으로 한다.
+> **HISTORICAL / SUPERSEDED — 2026-09-07 당시 기록.** 이 문서의 완료 상태·수치·Services 범위는 현재 Work 검증 근거가 아니다. 현재 상태는 [업무 앱 자체 고도화 최종 마감](2026-09-07-owned-scope-closeout.md), [최종 검증 결과](implementation-evidence/2026-09-07-resume/owned-scope-final/validation.json), [현재 18개 화면 갤러리](implementation-evidence/2026-09-07-resume/owned-scope-final/gallery-2026-09-08/index.html)를 기준으로 한다.
 
 2026-09-07 기준. 사용자 제공 [Stitch 프로젝트](https://stitch.withgoogle.com/projects/13391261371843159731)의 **18개 프레임(데스크톱 11개·모바일 7개)**을 기준으로 구현과 대표 여정을 다시 점검했다. Work와 Services 보완 제출의 이번 개발 범위는 마감했다. 실제 테넌트의 새 서비스 응답 권한 활성화와 저장소 전체 릴리스 승인은 완료되지 않았다.
 

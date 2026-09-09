@@ -37,7 +37,11 @@ import {
   VideoOff,
 } from 'lucide-react';
 
-import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type {
+  VideoMeetingEffectivePermissions,
+  VideoMeetingParticipant,
+  VideoMeetingRole,
+} from '@dwp-frontend/shared-utils/api/video-meeting-api';
 
 import { MeetingCollaborationRuntime } from './meeting-collaboration-runtime';
 import { MeetingLeaveControl } from './meeting-leave-control';
@@ -57,6 +61,8 @@ type MeetingConferenceProps = {
   permissions: VideoMeetingEffectivePermissions;
   canModerate: boolean;
   meetingLive: boolean;
+  participantRecords?: VideoMeetingParticipant[];
+  myRole?: VideoMeetingRole | null;
   onDeviceError: (error: Error) => void;
   onLeaveError: () => void;
   onOverlayPanelChange: (open: boolean) => void;
@@ -88,6 +94,8 @@ export function MeetingConference({
   permissions,
   canModerate,
   meetingLive,
+  participantRecords,
+  myRole,
   onDeviceError,
   onLeaveError,
   onOverlayPanelChange,
@@ -264,7 +272,14 @@ export function MeetingConference({
                 />
               )}
               {sidePanel === 'participants' && (
-                <MeetingParticipantsPanel onClose={closeSidePanel} />
+                <MeetingParticipantsPanel
+                  onClose={closeSidePanel}
+                  meetingId={meetingId}
+                  authorizationScope={authorizationScope}
+                  canModerate={canModerate}
+                  myRole={myRole}
+                  participantRecords={participantRecords}
+                />
               )}
             </div>
           )}

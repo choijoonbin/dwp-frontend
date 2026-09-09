@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
   Bot,
@@ -23,8 +23,10 @@ import {
   PageCanvas,
   foundationTokens,
 } from '@dwp-frontend/design-system';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
+import { useAuth, useToast } from '@dwp-frontend/shared-utils';
 import { getVideoMeetingAdminOverview } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { downloadVideoMeetingAdminOperations } from '@dwp-frontend/shared-utils/api/video-meeting-admin-operations-api';
 import { getVideoMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
 
 import Box from '@mui/material/Box';
@@ -49,9 +51,22 @@ import {
   adminPanel,
 } from './meeting-admin-presentation';
 
+function downloadOperationsReport(blob: Blob) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = 'dwp-meeting-operations.csv';
+  anchor.style.display = 'none';
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
 export function MeetingAdminOperations() {
   const { t, i18n } = useTranslation('meetings');
   const { user, isAuthenticated } = useAuth();
+  const toast = useToast();
   const identityScope = JSON.stringify([
     isAuthenticated,
     user?.identityPlane ?? null,
@@ -77,6 +92,14 @@ export function MeetingAdminOperations() {
     retry: 1,
     gcTime: 0,
     meta: { accessSensitive: true },
+  });
+  const exportMutation = useMutation({
+    mutationFn: () => downloadVideoMeetingAdminOperations(resolveSystemTimeZone('UTC')),
+    onSuccess: (blob) => {
+      downloadOperationsReport(blob);
+      toast.success(t('admin.operations.exportCompleted'));
+    },
+    onError: () => toast.error(t('admin.operations.exportFailed')),
   });
   const readiness = readinessQuery.data
     ? projectMeetingAdminIntelligenceReadiness(readinessQuery.data)
@@ -172,7 +195,8 @@ export function MeetingAdminOperations() {
                 <ActionButton
                   intent="quiet"
                   size="small"
-                  disabled
+                  loading={exportMutation.isPending}
+                  onClick={() => exportMutation.mutate()}
                   startIcon={<Download size={15} aria-hidden="true" />}
                 >
                   {t('admin.design.exportReport')}

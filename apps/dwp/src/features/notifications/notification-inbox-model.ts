@@ -59,6 +59,14 @@ export function mergeNotificationInboxPages(
 }
 
 const SAFE_TARGET_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$/u;
+const MACHINE_ACTOR_REFERENCE =
+  /^(?:[A-Za-z][A-Za-z0-9+.-]{1,31}:|[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$)/iu;
+
+export function displayNotificationActorLabel(value?: string | null): string | null {
+  const label = value?.trim();
+  if (!label || label.length > 120 || MACHINE_ACTOR_REFERENCE.test(label)) return null;
+  return label;
+}
 
 export function groupNotificationStream(
   items: readonly NotificationItem[]

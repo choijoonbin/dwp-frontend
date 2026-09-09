@@ -1,0 +1,13 @@
+{
+  "name": "global-format-final",
+  "command": [
+    "corepack",
+    "yarn",
+    "format:check"
+  ],
+  "startedAt": "2026-09-08T10:44:03.250904+00:00",
+  "completedAt": "2026-09-08T10:44:19.572499+00:00",
+  "durationSeconds": 16.32,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/global-format-final.log"
+}

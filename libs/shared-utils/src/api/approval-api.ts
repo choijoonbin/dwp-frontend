@@ -319,11 +319,12 @@ export async function getApprovalTasks(
 }
 export async function getApprovalTask(
   taskId: string,
-  contextScopeKey?: string
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<ApprovalTaskDetail> {
   const response = await axiosInstance.get<ApiResponse<ApprovalTaskDetail>>(
     `${base}/tasks/${taskId}`,
-    { contextScopeKey }
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
@@ -372,11 +373,12 @@ export async function getApprovalRequest(requestId: string): Promise<ApprovalReq
 }
 export async function getApprovalRequestDetail(
   requestId: string,
-  contextScopeKey?: string
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<ApprovalRequestDetail> {
   const response = await axiosInstance.get<ApiResponse<ApprovalRequestDetail>>(
     `${base}/requests/${requestId}/detail`,
-    { contextScopeKey }
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }

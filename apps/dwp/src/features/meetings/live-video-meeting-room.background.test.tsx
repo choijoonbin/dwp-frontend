@@ -95,7 +95,7 @@ const props = (): Props => ({
   },
   speakerDeviceId: 'default',
   noiseSuppression: true,
-  backgroundBlur: true,
+  backgroundMode: 'office',
   ending: false,
   onConnected: vi.fn(),
   onLeave: vi.fn(),
@@ -183,7 +183,7 @@ describe('room camera background publication privacy boundary', () => {
       transport.options?.videoCaptureDefaults?.processor
     );
     expect(mocks.factory).toHaveBeenCalledWith(
-      expect.objectContaining({ stopInputOnFailure: true })
+      expect.objectContaining({ mode: 'office', stopInputOnFailure: true })
     );
   });
 
@@ -250,16 +250,16 @@ describe('room camera background publication privacy boundary', () => {
   });
 
   it('allows raw original mode only when the setting is explicitly false', async () => {
-    await render({ backgroundBlur: false });
+    await render({ backgroundMode: 'original' });
     expect(transport.video).toEqual({ deviceId: 'default' });
     expect(transport.options?.videoCaptureDefaults?.processor).toBeUndefined();
     expect(mocks.factory).not.toHaveBeenCalled();
   });
 
-  it.each([undefined, null, 'false'])(
+  it.each([undefined, null, 'remote'])(
     'does not silently publish raw input for invalid background setting %s',
-    async (backgroundBlur) => {
-      await render({ backgroundBlur: backgroundBlur as unknown as boolean });
+    async (backgroundMode) => {
+      await render({ backgroundMode: backgroundMode as Props['backgroundMode'] });
       expect(mount.querySelector('[data-transport]')).toBeNull();
       expect(mocks.factory).not.toHaveBeenCalled();
       expect(mount.querySelector('[role="alert"]')?.textContent).toContain(
@@ -330,7 +330,7 @@ describe('room camera background publication privacy boundary', () => {
   it('ignores stale failure after explicit original mode and after room unmount', async () => {
     await render();
     const old = owners[0];
-    await render({ backgroundBlur: false });
+    await render({ backgroundMode: 'original' });
     await act(async () => old.event({ state: 'failed', reason: 'PROCESSING_FAILED' }));
     expect(mocks.participant.setCameraEnabled).not.toHaveBeenCalled();
     expect(mount.querySelector('[role="alert"]')).toBeNull();

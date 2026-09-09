@@ -4,9 +4,13 @@ import {
   type MeetingBackgroundProcessor,
   type MeetingBackgroundState,
 } from './meeting-background-processor';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 
 /** Install at capture time, never after an unprocessed track has been published. */
-export function useMeetingBackgroundPublication(enabled: boolean, authorizationScope: string) {
+export function useMeetingBackgroundPublication(
+  mode: MeetingBackgroundMode,
+  authorizationScope: string
+) {
   const [snapshot, setSnapshot] = useState<{
     owner: MeetingBackgroundProcessor;
     state: MeetingBackgroundState;
@@ -18,8 +22,9 @@ export function useMeetingBackgroundPublication(enabled: boolean, authorizationS
     alive: boolean;
   }>({ generation: 0, scope: authorizationScope, alive: true });
   const processor = useMemo(() => {
-    if (!enabled) return undefined;
+    if (mode === 'original') return undefined;
     const next = createMeetingBackgroundProcessor({
+      mode,
       stopInputOnFailure: true,
       onStateChange: (state) => {
         if (
@@ -31,7 +36,7 @@ export function useMeetingBackgroundPublication(enabled: boolean, authorizationS
       },
     });
     return next;
-  }, [enabled, authorizationScope]);
+  }, [mode, authorizationScope]);
   fence.current.processor = processor;
   fence.current.scope = authorizationScope;
   useEffect(() => {

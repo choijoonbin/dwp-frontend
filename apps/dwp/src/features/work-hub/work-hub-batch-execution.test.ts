@@ -47,6 +47,69 @@ describe('source-confirmed mixed batch execution', () => {
     await executeWorkHubBatch('COMPLETED', [item], second, clients);
     expect(clients.transitionPersonalWorkTask).toHaveBeenCalledTimes(2);
   });
+  it('recovers the original receipt after the current snapshot has already advanced', async () => {
+    const reviewed = hubItem();
+    const clients = {
+      transitionPersonalWorkTask: vi
+        .fn()
+        .mockRejectedValueOnce(new Error('Response lost after commit'))
+        .mockResolvedValueOnce(personal({ status: 'COMPLETED', version: 3 })),
+      updateWorkspaceWorkStatuses: vi.fn(),
+    };
+    const unknown = await executeWorkHubBatch('COMPLETED', [reviewed], [], clients);
+    const current = hubItem({
+      lifecycle: 'COMPLETED',
+      sourceStatus: 'COMPLETED',
+      version: 9,
+      actions: [{ kind: 'PERSONAL_REOPEN', availability: 'AVAILABLE' }],
+    });
+
+    const recovered = await executeWorkHubBatch('COMPLETED', [current], unknown, clients);
+
+    expect(recovered[0]).toMatchObject({
+      item: current,
+      state: 'CONFIRMED',
+      version: 3,
+      reviewedCommand: {
+        kind: 'PERSONAL_COMPLETE',
+        lifecycle: 'OPEN',
+        version: reviewed.version,
+      },
+    });
+    expect(clients.transitionPersonalWorkTask.mock.calls[1]).toEqual(
+      clients.transitionPersonalWorkTask.mock.calls[0]
+    );
+  });
+  it('replays the reviewed IN_PROGRESS status payload after the live item changes', async () => {
+    const reviewed = hubItem();
+    const clients = {
+      transitionPersonalWorkTask: vi
+        .fn()
+        .mockRejectedValueOnce(new Error('Response lost after commit'))
+        .mockResolvedValueOnce(personal({ status: 'IN_PROGRESS', version: 3 })),
+      updateWorkspaceWorkStatuses: vi.fn(),
+    };
+    const unknown = await executeWorkHubBatch('IN_PROGRESS', [reviewed], [], clients);
+    const current = hubItem({
+      lifecycle: 'IN_PROGRESS',
+      sourceStatus: 'IN_PROGRESS',
+      version: 8,
+      actions: [{ kind: 'PERSONAL_COMPLETE', availability: 'AVAILABLE' }],
+    });
+
+    const recovered = await executeWorkHubBatch('IN_PROGRESS', [current], unknown, clients);
+
+    expect(recovered[0].state).toBe('CONFIRMED');
+    expect(clients.transitionPersonalWorkTask.mock.calls[0].slice(0, 4)).toEqual([
+      reviewed.reference.sourceReference,
+      'status',
+      { version: reviewed.version, status: 'IN_PROGRESS' },
+      unknown[0].idempotencyKey,
+    ]);
+    expect(clients.transitionPersonalWorkTask.mock.calls[1]).toEqual(
+      clients.transitionPersonalWorkTask.mock.calls[0]
+    );
+  });
   it('does not mistake a receipt for a different item or an unchanged version for success', async () => {
     const item = hubItem();
     const clients = {
@@ -58,6 +121,15 @@ describe('source-confirmed mixed batch execution', () => {
     expect((await executeWorkHubBatch('COMPLETED', [item], [], clients))[0].state).toBe('UNKNOWN');
     clients.transitionPersonalWorkTask.mockResolvedValue(
       personal({ status: 'COMPLETED', version: item.version })
+    );
+    expect((await executeWorkHubBatch('COMPLETED', [item], [], clients))[0].state).toBe('UNKNOWN');
+    clients.transitionPersonalWorkTask.mockResolvedValue({
+      ...personal({ status: 'COMPLETED', version: 3 }),
+      version: undefined,
+    });
+    expect((await executeWorkHubBatch('COMPLETED', [item], [], clients))[0].state).toBe('UNKNOWN');
+    clients.transitionPersonalWorkTask.mockResolvedValue(
+      personal({ status: 'COMPLETED', version: Number.NaN })
     );
     expect((await executeWorkHubBatch('COMPLETED', [item], [], clients))[0].state).toBe('UNKNOWN');
   });

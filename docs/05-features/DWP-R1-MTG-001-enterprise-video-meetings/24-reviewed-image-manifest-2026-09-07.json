@@ -1,6 +1,15 @@
 {
   "kind": "reviewed-implementation-regression",
+  "scope": "PARTIAL_HISTORICAL_REVIEW_ASSOCIATIONS",
   "userDesignApproval": false,
+  "canonicalSourceOfTruth": "e2e/support/meeting-approved-frame-contract.ts and repository snapshot files",
+  "reviewedEvidencePathPolicy": "Temporary reviewedEvidence paths are historical aids, not canonical current-tree proof.",
+  "supersededReviewedEvidenceAssociations": [
+    "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-forced-colors-320-chromium-darwin.png",
+    "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-text-200-chromium-darwin.png",
+    "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-text-200-chromium-darwin.png",
+    "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-recap-published-en-1440-dark-chromium-darwin.png"
+  ],
   "sourceZipSha256": "0a2fc4d7881a01f9b3ba0e6f164f3b9f980f8aa8afc53c29ea53afecb5d22787",
   "sourceAndPixelThresholdsChanged": false,
   "excluded": "U14 and other owners; approved-size source comparison images",

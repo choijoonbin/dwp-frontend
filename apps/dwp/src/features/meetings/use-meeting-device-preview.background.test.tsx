@@ -46,7 +46,7 @@ let processors: {
   destroy: ReturnType<typeof vi.fn>;
   event: (event: Event) => void;
 }[];
-const selection = { ...DEFAULT_MEETING_DEVICE_PREFERENCES, backgroundBlur: true };
+const selection = { ...DEFAULT_MEETING_DEVICE_PREFERENCES, backgroundMode: 'office' as const };
 function Harness({ signal }: { signal?: AbortSignal }) {
   preview = useMeetingDevicePreview(signal);
   return createElement('video', { ref: preview.video });
@@ -107,14 +107,17 @@ describe('processed preview privacy boundary', () => {
     });
     expect((source() as MediaStream).getVideoTracks()).toEqual([output]);
     expect(preview.states.video).toBe('active');
+    expect(processing.create).toHaveBeenCalledWith(
+      expect.objectContaining({ mode: 'office', onStateChange: expect.any(Function) })
+    );
   });
-  it('clears an existing raw preview synchronously and stays off if blur initialization fails', async () => {
+  it('clears an existing raw preview synchronously and stays off if office initialization fails', async () => {
     const first = track('first-raw');
     const next = track('new-raw');
     media.getUserMedia
       .mockResolvedValueOnce(new PreviewStream([first]))
       .mockResolvedValueOnce(new PreviewStream([next]));
-    await act(async () => preview.start('video', { ...selection, backgroundBlur: false }));
+    await act(async () => preview.start('video', { ...selection, backgroundMode: 'original' }));
     expect((source() as MediaStream).getVideoTracks()).toEqual([first]);
     const operation = await start();
     expect(source()).toBeNull();

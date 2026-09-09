@@ -44,10 +44,12 @@ export async function mockScheduleWorkspace(
     sourceRevokedDraft?: boolean;
     locale?: 'ko' | 'en';
     dark?: boolean;
+    personPublicId?: string;
   } = {}
 ) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     userId: 42,
+    personPublicId: options.personPublicId,
     locale: options.locale ?? 'en',
     displayName: 'Mina Kim',
     email: 'mina.kim@sk.com',

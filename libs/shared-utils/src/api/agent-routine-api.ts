@@ -10,6 +10,10 @@ import {
   isAgentRecord,
   newAgentCommand,
 } from './agent-governed-api';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -21,6 +25,7 @@ export type DwaionRoutineConsentState = AgentSchemas['RoutineConsentState'];
 export type DwaionRoutineLifecycleAction = AgentSchemas['RoutineLifecycleAction'];
 
 const ROUTINE_BASE = '/api/agent/v1/routines';
+const LEGACY_AUTHORITY = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' } as const;
 
 export async function getDwaionRoutines(): Promise<DwaionPersonalRoutine[]> {
   const response = await axiosInstance.get<ApiResponse<unknown>>(ROUTINE_BASE);
@@ -40,32 +45,35 @@ export async function getDwaionRoutine(routineId: string): Promise<DwaionPersona
 }
 
 export async function createDwaionRoutine(
-  definition: DwaionRoutineDefinition
+  definition: DwaionRoutineDefinition,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
   const body: AgentSchemas['CreateRoutineRequest'] = {
     ...newAgentCommand(0, 'USER_CREATE'),
     definition,
   };
-  return mutateRoutine(ROUTINE_BASE, body, 'post');
+  return mutateRoutine(ROUTINE_BASE, body, 'post', authority);
 }
 
 export async function updateDwaionRoutine(
   routineId: string,
   expectedRevision: number,
-  definition: DwaionRoutineDefinition
+  definition: DwaionRoutineDefinition,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
   const body: AgentSchemas['UpdateRoutineRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_UPDATE'),
     definition,
   };
-  return mutateRoutine(`${ROUTINE_BASE}/${encodeRoutineId(routineId)}`, body, 'put');
+  return mutateRoutine(`${ROUTINE_BASE}/${encodeRoutineId(routineId)}`, body, 'put', authority);
 }
 
 export async function changeDwaionRoutineConsent(
   routineId: string,
   expectedRevision: number,
   scope: DwaionRoutineConsentScope,
-  consentState: Extract<DwaionRoutineConsentState, 'ENABLED' | 'DISABLED'>
+  consentState: Extract<DwaionRoutineConsentState, 'ENABLED' | 'DISABLED'>,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
   const body: AgentSchemas['ChangeRoutineConsentRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_CONSENT_CHANGE'),
@@ -73,25 +81,37 @@ export async function changeDwaionRoutineConsent(
     consentState,
     changeReason: 'The user explicitly changed this personal routine consent.',
   };
-  return mutateRoutine(`${ROUTINE_BASE}/${encodeRoutineId(routineId)}/consent`, body, 'post');
+  return mutateRoutine(
+    `${ROUTINE_BASE}/${encodeRoutineId(routineId)}/consent`,
+    body,
+    'post',
+    authority
+  );
 }
 
 export async function changeDwaionRoutineLifecycle(
   routineId: string,
   expectedRevision: number,
-  action: DwaionRoutineLifecycleAction
+  action: DwaionRoutineLifecycleAction,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
   const body: AgentSchemas['ChangeRoutineLifecycleRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_LIFECYCLE_CHANGE'),
     action,
     changeReason: 'The user explicitly changed this personal routine lifecycle.',
   };
-  return mutateRoutine(`${ROUTINE_BASE}/${encodeRoutineId(routineId)}/lifecycle`, body, 'post');
+  return mutateRoutine(
+    `${ROUTINE_BASE}/${encodeRoutineId(routineId)}/lifecycle`,
+    body,
+    'post',
+    authority
+  );
 }
 
 export async function dryRunDwaionRoutine(
   routineId: string,
-  expectedRevision: number
+  expectedRevision: number,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionRoutineDryRunReceipt> {
   const body: AgentSchemas['DryRunRoutineRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_DRY_RUN'),
@@ -99,7 +119,8 @@ export async function dryRunDwaionRoutine(
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `${ROUTINE_BASE}/${encodeRoutineId(routineId)}/dry-runs`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return expectAgentData(
     response.data.data,
@@ -110,24 +131,32 @@ export async function dryRunDwaionRoutine(
 
 export async function archiveDwaionRoutine(
   routineId: string,
-  expectedRevision: number
+  expectedRevision: number,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
   const body: AgentSchemas['ArchiveRoutineRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_ARCHIVE'),
     changeReason: 'The user explicitly archived this personal routine.',
   };
-  return mutateRoutine(`${ROUTINE_BASE}/${encodeRoutineId(routineId)}/archive`, body, 'post');
+  return mutateRoutine(
+    `${ROUTINE_BASE}/${encodeRoutineId(routineId)}/archive`,
+    body,
+    'post',
+    authority
+  );
 }
 
 async function mutateRoutine(
   url: string,
   body: object,
-  method: 'post' | 'put'
+  method: 'post' | 'put',
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
+  const config = productSurfaceGovernedMutationConfig(authority);
   const response =
     method === 'post'
-      ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body)
-      : await axiosInstance.put<ApiResponse<unknown>, object>(url, body);
+      ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body, config)
+      : await axiosInstance.put<ApiResponse<unknown>, object>(url, body, config);
   return expectAgentData(response.data.data, isRoutine, 'Personal routine response is invalid.');
 }
 
@@ -141,7 +170,12 @@ function isRoutineList(value: unknown): value is DwaionPersonalRoutine[] {
 }
 
 function isRoutine(value: unknown): value is DwaionPersonalRoutine {
-  if (!isAgentRecord(value) || !isAgentRecord(value.definition) || !isAgentRecord(value.consents)) {
+  if (
+    !isAgentRecord(value) ||
+    !isAgentRecord(value.definition) ||
+    !isAgentRecord(value.consents) ||
+    !isAgentRecord(value.capabilities)
+  ) {
     return false;
   }
   return (
@@ -153,6 +187,10 @@ function isRoutine(value: unknown): value is DwaionPersonalRoutine {
     typeof value.definition.name === 'string' &&
     typeof value.definition.objective === 'string' &&
     Array.isArray(value.definition.sources) &&
+    typeof value.capabilities.backgroundExecutionAvailable === 'boolean' &&
+    typeof value.capabilities.dryRunAvailable === 'boolean' &&
+    typeof value.capabilities.notificationDeliveryAvailable === 'boolean' &&
+    typeof value.capabilities.proposalDeliveryAvailable === 'boolean' &&
     isAgentDate(value.createdAt) &&
     isAgentDate(value.updatedAt)
   );

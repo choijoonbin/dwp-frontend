@@ -93,15 +93,17 @@ export function synchronizeProductSurfaceFocus(
 ): void {
   const captured = focusProvenance;
   if (!captured) return;
-  if (captured.identityKey !== identityKey) {
+  if (
+    captured.identityKey !== identityKey ||
+    captured.plane !== plane ||
+    captured.location !== location
+  ) {
     clearProductSurfaceFocus();
     return;
   }
   if (captured.target.isConnected && container.contains(captured.target)) {
-    focusProvenance = { ...captured, container, plane, location };
-    return;
+    focusProvenance = { ...captured, container };
   }
-  if (captured.location !== location) clearProductSurfaceFocus();
 }
 
 export function clearProductSurfaceFocusAfterNavigation(location: string): void {

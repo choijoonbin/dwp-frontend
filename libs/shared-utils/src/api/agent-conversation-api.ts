@@ -11,6 +11,15 @@ import {
 } from './agent-plan-api';
 import type { AskCitation } from './agent-runtime-api';
 import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
+import {
+  isSelectedWorkBinding,
+  matchesSelectedWorkBinding,
+  selectedWorkAgentKey,
+} from './agent-selected-work-api';
+import {
   DWAION_ACTION_KEYS,
   type DwaionActionKey,
   type DwaionHandoffInputValue,
@@ -76,20 +85,50 @@ export async function getDwaionConversation(
       response.data.data.messages.some(
         (message) =>
           message.role === 'ASSISTANT' && (message.agentKey ?? 'DWP_ASSISTANT') !== agentKey
-      ))
+      )) ||
+    !hasConsistentSelectedWorkScope(response.data.data, agentKey)
   ) {
     throw new HttpError('Conversation scope does not match.', 409);
   }
   return response.data.data;
 }
 
+function hasConsistentSelectedWorkScope(
+  conversation: DwaionConversation,
+  requestedAgentKey?: string
+): boolean {
+  let expected: AgentSchemas['AskSelectedWork'] | null = null;
+  let selectedWorkStarted = false;
+
+  for (const message of conversation.messages) {
+    if (message.role !== 'ASSISTANT') continue;
+    if (message.selectedWork == null) {
+      if (selectedWorkStarted) return false;
+      continue;
+    }
+    if (!isSelectedWorkBinding(message.selectedWork)) return false;
+    selectedWorkStarted = true;
+    expected ??= message.selectedWork;
+    if (
+      !matchesSelectedWorkBinding(message.selectedWork, expected) ||
+      selectedWorkAgentKey(message.selectedWork) !==
+        (requestedAgentKey ?? message.agentKey ?? 'DWP_ASSISTANT')
+    )
+      return false;
+  }
+
+  return true;
+}
+
 export async function renameDwaionConversation(
   conversationId: string,
-  title: string
+  title: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<DwaionConversation> {
   const response = await axiosInstance.patch<ApiResponse<unknown>, { title: string }>(
     `/api/agent/v1/conversations/${encodeURIComponent(conversationId)}`,
-    { title }
+    { title },
+    productSurfaceGovernedMutationConfig(authority)
   );
   if (!isConversation(response.data.data)) {
     throw new HttpError('Conversation rename response is invalid.', 502, response.data);
@@ -97,21 +136,31 @@ export async function renameDwaionConversation(
   return response.data.data;
 }
 
-export async function deleteDwaionConversation(conversationId: string): Promise<void> {
-  await axiosInstance.delete(`/api/agent/v1/conversations/${encodeURIComponent(conversationId)}`);
+export async function deleteDwaionConversation(
+  conversationId: string,
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<void> {
+  await axiosInstance.delete(
+    `/api/agent/v1/conversations/${encodeURIComponent(conversationId)}`,
+    productSurfaceGovernedMutationConfig(authority)
+  );
 }
 
 export async function recordDwaionFeedback(
   runId: string,
   rating: 'UP' | 'DOWN',
   reasonCodes: string[] = [],
-  comment?: string
+  comment?: string,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
 ): Promise<void> {
-  await axiosInstance.put(`/api/agent/v1/runs/${encodeURIComponent(runId)}/feedback`, {
-    rating,
-    reasonCodes,
-    comment,
-  });
+  await axiosInstance.put(
+    `/api/agent/v1/runs/${encodeURIComponent(runId)}/feedback`,
+    { rating, reasonCodes, comment },
+    productSurfaceGovernedMutationConfig(authority)
+  );
 }
 
 export async function getWorkplaceActions(): Promise<WorkplaceAction[]> {
@@ -129,6 +178,10 @@ export async function previewWorkplaceAction(
     inputs?: Record<string, unknown>;
     sourceReferences?: string[];
     origin: AgentActionHandoffOrigin;
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
   }
 ): Promise<WorkplaceActionPreview> {
   const response = await axiosInstance.post<ApiResponse<unknown>>(
@@ -138,7 +191,8 @@ export async function previewWorkplaceAction(
       inputs: input.inputs ?? {},
       sourceReferences: input.sourceReferences ?? [],
       origin: input.origin,
-    }
+    },
+    productSurfaceGovernedMutationConfig(authority)
   );
   const value = response.data.data as WorkplaceActionPreview | undefined;
   if (
@@ -169,7 +223,17 @@ function isSummary(value: unknown): value is DwaionConversationSummary {
     typeof item.conversationId === 'string' &&
     typeof item.title === 'string' &&
     typeof item.locale === 'string' &&
-    typeof item.messageCount === 'number' &&
+    Number.isInteger(item.messageCount) &&
+    Number(item.messageCount) >= 0 &&
+    (typeof item.agentKey === 'string' || item.agentKey === null) &&
+    Array.isArray(item.sourceSystems) &&
+    item.sourceSystems.every((sourceSystem) => typeof sourceSystem === 'string') &&
+    Number.isInteger(item.evidenceCount) &&
+    Number(item.evidenceCount) >= 0 &&
+    (typeof item.summaryExcerpt === 'string' || item.summaryExcerpt === null) &&
+    (typeof item.lastAnswerStatus === 'string' || item.lastAnswerStatus === null) &&
+    (typeof item.retentionUntil === 'string' || item.retentionUntil === null) &&
+    typeof item.legalHold === 'boolean' &&
     typeof item.createdAt === 'string' &&
     typeof item.updatedAt === 'string' &&
     typeof item.lastMessageAt === 'string'
@@ -190,7 +254,8 @@ function isConversation(value: unknown): value is DwaionConversation {
         (record.role === 'USER' || record.role === 'ASSISTANT') &&
         typeof record.content === 'string' &&
         Array.isArray(record.citations) &&
-        typeof record.createdAt === 'string'
+        typeof record.createdAt === 'string' &&
+        (record.selectedWork == null || isSelectedWorkBinding(record.selectedWork))
       );
     })
   );

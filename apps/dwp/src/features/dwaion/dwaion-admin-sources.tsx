@@ -1,19 +1,36 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Pencil, ShieldCheck } from 'lucide-react';
 import {
-  ActionIconButton,
+  Database,
+  FileDown,
+  Link2,
+  Pencil,
+  PlugZap,
+  RefreshCw,
+  ShieldAlert,
+  ShieldCheck,
+} from 'lucide-react';
+import {
+  ActionButton,
   ErrorState,
-  EnterpriseDataGrid,
   FormDialog,
   FormField,
+  foundationTokens,
+  InlineFeedback,
+  LoadingState,
+  LocalErrorState,
   PageCanvas,
   SelectField,
+  SignalMetric,
 } from '@dwp-frontend/design-system';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
+  bootstrapDwaionDataSourcePolicies,
   getDwaionDataSourcePolicies,
   updateDwaionDataSourcePolicy,
+  type BootstrapDwaionGovernancePoliciesRequest,
   type DwaionDataClassification,
   type DwaionDataSourcePolicy,
   type DwaionSourceAccessMode,
@@ -26,139 +43,176 @@ import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
-
-import type { GridColDef } from '@mui/x-data-grid';
+import {
+  DwaionAdminChangeReview,
+  DwaionAdminRegistry,
+  useAdminRegistryCopy,
+} from './dwaion-admin-registry';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 type SourceEditor = DwaionDataSourcePolicy & { changeReason: string };
+type BootstrapEditor = BootstrapDwaionGovernancePoliciesRequest;
+
 const CLASSIFICATION_OPTIONS = (['INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'] as const).map(
   (value) => ({ value, label: value })
 );
 const ACCESS_OPTIONS = (['SOURCE_PERMISSIONS', 'TENANT_ALLOWLIST', 'BLOCKED'] as const).map(
   (value) => ({ value, label: value })
 );
+const EMPTY_SOURCES: DwaionDataSourcePolicy[] = [];
 
 export function DwaionAdminSources() {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
+  const copy = useAdminRegistryCopy();
   const queryClient = useQueryClient();
+  const governUpdate = useDwaionGovernedMutation('route.dwaion.management.source-update.action');
+  const governBootstrap = useDwaionGovernedMutation(
+    'route.dwaion.management.sources-bootstrap.action'
+  );
   const { hasPermission } = usePermissions();
-  const canUpdate =
-    hasPermission('ADMIN.DWAION_SOURCES', 'UPDATE') ||
-    hasPermission('ADMIN.DWAION_SOURCES', 'MANAGE');
+  const canUpdate = hasPermission('ADMIN.DWAION_SOURCES', 'UPDATE');
+  const canManage = hasPermission('ADMIN.DWAION_SOURCES', 'MANAGE');
+  const [params, setParams] = useSearchParams();
+  const desktopInspector = useMediaQuery(useTheme().breakpoints.up('md'));
   const [editor, setEditor] = useState<SourceEditor | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [bootstrap, setBootstrap] = useState<BootstrapEditor | null>(null);
+  const [notice, setNotice] = useState<'saved' | 'initialized' | null>(null);
+  const editorSession = useRef(0);
+
+  useEffect(
+    () => () => {
+      editorSession.current += 1;
+    },
+    []
+  );
+
   const query = useQuery({
     queryKey: ['dwaion', 'admin', 'sources'],
     queryFn: getDwaionDataSourcePolicies,
     staleTime: 20_000,
   });
+  const sources = query.data ?? EMPTY_SOURCES;
+  const firstEntryId = sources[0]?.sourceKey;
+  const summary = useMemo(
+    () => ({
+      enabled: sources.filter((source) => source.enabled).length,
+      configured: sources.filter((source) => source.connectionState === 'CONNECTED').length,
+      sourcePermission: sources.filter((source) => source.accessMode === 'SOURCE_PERMISSIONS')
+        .length,
+    }),
+    [sources]
+  );
+
+  useEffect(() => {
+    if (!desktopInspector || !firstEntryId || params.has('entry')) return;
+    setParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.set('entry', firstEntryId);
+        return next;
+      },
+      { replace: true, preventScrollReset: true }
+    );
+  }, [desktopInspector, firstEntryId, params, setParams]);
+
   const mutation = useMutation({
     mutationFn: (value: SourceEditor) =>
-      updateDwaionDataSourcePolicy(value.sourceKey, {
-        enabled: value.enabled,
-        accessMode: value.accessMode,
-        classification: value.classification,
-        connectorRef: value.connectorRef,
-        expectedVersion: value.policyVersion,
-        changeReason: value.changeReason.trim(),
-      }),
+      governUpdate((authority) =>
+        updateDwaionDataSourcePolicy(
+          value.sourceKey,
+          {
+            enabled: value.enabled,
+            accessMode: value.accessMode,
+            classification: value.classification,
+            connectorRef: value.connectorRef,
+            expectedVersion: value.policyVersion,
+            changeReason: value.changeReason.trim(),
+          },
+          authority
+        )
+      ),
     onSuccess: async () => {
+      editorSession.current += 1;
       setEditor(null);
-      setSaved(true);
+      setNotice('saved');
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'sources'] });
     },
   });
-
-  const columns = useMemo<GridColDef<DwaionDataSourcePolicy>[]>(
-    () => [
-      {
-        field: 'displayName',
-        headerName: t('dwaionAdmin.sources.columns.source'),
-        minWidth: 210,
-        flex: 1,
-        valueGetter: (_, row) =>
-          t(`dwaionAdmin.sources.sourceNames.${row.sourceKey}`, { defaultValue: row.displayName }),
-      },
-      { field: 'providerType', headerName: t('dwaionAdmin.sources.columns.provider'), width: 148 },
-      {
-        field: 'classification',
-        headerName: t('dwaionAdmin.sources.columns.classification'),
-        width: 144,
-      },
-      {
-        field: 'accessMode',
-        headerName: t('dwaionAdmin.sources.columns.access'),
-        minWidth: 170,
-        flex: 0.8,
-      },
-      {
-        field: 'connectionState',
-        headerName: t('dwaionAdmin.sources.columns.state'),
-        width: 148,
-        renderCell: ({ row }) => (
-          <Chip
-            size="small"
-            variant="outlined"
-            color={row.connectionState === 'CONNECTED' ? 'info' : 'default'}
-            label={t(`dwaionAdmin.sources.connectionStates.${row.connectionState}`, {
-              defaultValue: row.connectionState,
-            })}
-          />
-        ),
-      },
-      {
-        field: 'enabled',
-        headerName: t('dwaionAdmin.sources.columns.enabled'),
-        width: 92,
-        renderCell: ({ row }) => (
-          <Chip
-            size="small"
-            color={row.enabled ? 'success' : 'default'}
-            variant="outlined"
-            label={row.enabled ? t('dwaionAdmin.shared.enabled') : t('dwaionAdmin.shared.disabled')}
-          />
-        ),
-      },
-      {
-        field: 'actions',
-        headerName: '',
-        width: 64,
-        sortable: false,
-        filterable: false,
-        renderCell: ({ row }) =>
-          canUpdate ? (
-            <ActionIconButton
-              label={t('dwaionAdmin.sources.edit')}
-              tooltip={t('dwaionAdmin.sources.edit')}
-              onClick={() => setEditor({ ...row, changeReason: '' })}
-            >
-              <Pencil size={17} />
-            </ActionIconButton>
-          ) : null,
-      },
-    ],
-    [canUpdate, t]
-  );
+  const bootstrapMutation = useMutation({
+    mutationFn: (request: BootstrapDwaionGovernancePoliciesRequest) =>
+      governBootstrap((authority) => bootstrapDwaionDataSourcePolicies(request, authority)),
+    onSuccess: async (data) => {
+      setBootstrap(null);
+      setNotice('initialized');
+      queryClient.setQueryData(['dwaion', 'admin', 'sources'], data);
+      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'sources'] });
+    },
+  });
 
   const invalid = Boolean(
     !editor ||
     editor.changeReason.trim().length < 10 ||
     (editor.enabled && editor.accessMode === 'BLOCKED')
   );
+
+  const connectionLabel = (row: DwaionDataSourcePolicy) =>
+    t(`dwaionAdmin.sources.connectionStates.${row.connectionState}`, {
+      defaultValue: row.connectionState,
+    });
+  const accessLabel = (value: DwaionSourceAccessMode) =>
+    t(`dwaionAdmin.sources.accessModes.${value}`, { defaultValue: value });
+  const classificationLabel = (value: DwaionDataClassification) =>
+    t(`dwaionAdmin.sources.classifications.${value}`, { defaultValue: value });
+
   return (
-    <PageCanvas>
+    <PageCanvas topInset="compact">
       <DwaionAdminPageHeader
-        eyebrow={t('dwaionAdmin.shared.governance')}
+        eyebrow={t('dwaionAdmin.sources.eyebrow')}
         title={t('dwaionAdmin.sources.title')}
         description={t('dwaionAdmin.sources.description')}
+        actions={
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="stretch">
+            <ActionButton intent="secondary" startIcon={<RefreshCw size={16} />} disabled>
+              {t('dwaionAdmin.sources.healthCheckUnavailable')}
+            </ActionButton>
+            <ActionButton intent="secondary" startIcon={<FileDown size={16} />} disabled>
+              {t('dwaionAdmin.sources.exportUnavailable')}
+            </ActionButton>
+            {!query.isLoading && !query.isError && sources.length === 0 && canManage ? (
+              <ActionButton
+                intent="primary"
+                startIcon={<Database size={16} />}
+                onClick={() =>
+                  setBootstrap({
+                    idempotencyKey: crypto.randomUUID(),
+                    expectedExistingCount: 0,
+                    changeReason: '',
+                  })
+                }
+              >
+                {t('dwaionAdmin.sources.initialize')}
+              </ActionButton>
+            ) : (
+              <ActionButton intent="primary" startIcon={<PlugZap size={16} />} disabled>
+                {t('dwaionAdmin.sources.newConnectorUnavailable')}
+              </ActionButton>
+            )}
+          </Stack>
+        }
       />
-      {saved && (
-        <Alert severity="success" sx={{ mt: 2 }} onClose={() => setSaved(false)}>
-          {t('dwaionAdmin.sources.saved')}
+
+      {notice && (
+        <Alert severity="success" sx={{ mt: 2 }} onClose={() => setNotice(null)}>
+          {t(`dwaionAdmin.sources.${notice}`)}
         </Alert>
       )}
-      {mutation.isError && (
+      {(mutation.isError || bootstrapMutation.isError) && !editor && !bootstrap && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {t('dwaionAdmin.sources.error')}
         </Alert>
@@ -166,6 +220,7 @@ export function DwaionAdminSources() {
       <Alert severity="info" icon={<ShieldCheck size={19} />} sx={{ mt: 2 }}>
         {t('dwaionAdmin.sources.secretBoundary')}
       </Alert>
+
       {query.isError ? (
         <Box sx={{ mt: 3 }}>
           <ErrorState
@@ -178,18 +233,153 @@ export function DwaionAdminSources() {
           />
         </Box>
       ) : (
-        <Box sx={{ mt: 3, borderBlock: 1, borderColor: 'divider' }}>
-          <EnterpriseDataGrid
-            ariaLabel={t('dwaionAdmin.sources.tableLabel')}
-            rows={query.data ?? []}
-            columns={columns}
-            getRowId={(row) => row.sourceKey}
-            loading={query.isLoading}
-            hideFooter
-            sx={{ border: 0, borderRadius: 0 }}
-          />
-        </Box>
+        <>
+          <Box
+            component="section"
+            aria-label={t('dwaionAdmin.sources.summaryLabel')}
+            sx={{
+              mt: 2,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, minmax(0, 1fr))' },
+              gap: 1.5,
+            }}
+          >
+            <SignalMetric
+              label={t('dwaionAdmin.sources.summary.registered')}
+              value={String(sources.length)}
+              detail={t('dwaionAdmin.sources.summary.registeredDetail')}
+              icon={<Database size={18} aria-hidden="true" />}
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.sources.summary.enabled')}
+              value={String(summary.enabled)}
+              detail={t('dwaionAdmin.sources.summary.enabledDetail')}
+              icon={<ShieldCheck size={18} aria-hidden="true" />}
+              tone="success"
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.sources.summary.configured')}
+              value={String(summary.configured)}
+              detail={t('dwaionAdmin.sources.summary.configuredDetail')}
+              icon={<Link2 size={18} aria-hidden="true" />}
+              tone="info"
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.sources.summary.sourcePermission')}
+              value={String(summary.sourcePermission)}
+              detail={t('dwaionAdmin.sources.summary.sourcePermissionDetail')}
+              icon={<ShieldAlert size={18} aria-hidden="true" />}
+              tone="warning"
+            />
+          </Box>
+
+          <InlineFeedback severity="info" sx={{ mt: 2 }}>
+            {t('dwaionAdmin.sources.unsupportedNotice')}
+          </InlineFeedback>
+
+          <Box
+            sx={{
+              mt: 2,
+              p: { xs: 1.5, md: 2 },
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.radius.surface + 'px',
+            }}
+          >
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              gap={1}
+            >
+              <Box>
+                <Typography component="h2" variant="h6">
+                  {t('dwaionAdmin.sources.registryTitle')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('dwaionAdmin.sources.registryScope', { count: sources.length })}
+                </Typography>
+              </Box>
+              <Chip size="small" variant="outlined" label={t('dwaionAdmin.sources.contract')} />
+            </Stack>
+            {query.isLoading ? (
+              <LoadingState size="page" variant="skeleton" label={copy.loading} />
+            ) : (
+              <DwaionAdminRegistry
+                label={t('dwaionAdmin.sources.tableLabel')}
+                notice={copy.sourceBoundary}
+                items={sources.map((row) => ({
+                  id: row.sourceKey,
+                  title: t(`dwaionAdmin.sources.sourceNames.${row.sourceKey}`, {
+                    defaultValue: row.displayName,
+                  }),
+                  description: row.description,
+                  state: connectionLabel(row),
+                  stateTone:
+                    row.connectionState === 'BLOCKED'
+                      ? 'error'
+                      : row.connectionState === 'CONNECTED'
+                        ? 'info'
+                        : 'warning',
+                  fields: [
+                    [t('dwaionAdmin.sources.columns.provider'), row.providerType],
+                    [t('dwaionAdmin.sources.columns.access'), accessLabel(row.accessMode)],
+                    [
+                      t('dwaionAdmin.sources.columns.classification'),
+                      classificationLabel(row.classification),
+                    ],
+                    [
+                      t('dwaionAdmin.sources.columns.enabled'),
+                      row.enabled
+                        ? t('dwaionAdmin.shared.enabled')
+                        : t('dwaionAdmin.shared.disabled'),
+                    ],
+                    [
+                      t('dwaionAdmin.sources.fields.connector'),
+                      row.connectorRef || t('dwaionAdmin.sources.notLinked'),
+                    ],
+                    [copy.version, row.policyVersion],
+                    [
+                      copy.updated,
+                      formatDate(
+                        row.updatedAt,
+                        { dateStyle: 'medium', timeStyle: 'short' },
+                        locale
+                      ),
+                    ],
+                  ],
+                  detail: (
+                    <SourceContractBoundary
+                      connectionState={connectionLabel(row)}
+                      accessMode={accessLabel(row.accessMode)}
+                      updatedAt={formatDate(
+                        row.updatedAt,
+                        { dateStyle: 'medium', timeStyle: 'short' },
+                        locale
+                      )}
+                    />
+                  ),
+                  actions: canUpdate ? (
+                    <ActionButton
+                      startIcon={<Pencil size={17} />}
+                      intent="secondary"
+                      onClick={() => {
+                        editorSession.current += 1;
+                        mutation.reset();
+                        setEditor({ ...row, changeReason: '' });
+                      }}
+                    >
+                      {t('dwaionAdmin.sources.edit')}
+                    </ActionButton>
+                  ) : undefined,
+                }))}
+              />
+            )}
+          </Box>
+        </>
       )}
+
       <FormDialog
         open={Boolean(editor)}
         title={t('dwaionAdmin.sources.dialogTitle')}
@@ -205,13 +395,69 @@ export function DwaionAdminSources() {
         submittingLabel={t('dwaionAdmin.shared.saving')}
         busy={mutation.isPending}
         submitDisabled={invalid}
-        onClose={() => setEditor(null)}
+        onClose={() => {
+          editorSession.current += 1;
+          setEditor(null);
+        }}
         onSubmit={() => {
-          if (editor) mutation.mutate(editor);
+          if (editor) {
+            editorSession.current += 1;
+            mutation.mutate(editor);
+          }
         }}
       >
         {editor && (
           <Stack spacing={2}>
+            {mutation.isError && (
+              <LocalErrorState
+                title={t('dwaionAdmin.sources.error')}
+                size="compact"
+                retryLabel={copy.refreshVersion}
+                retrying={query.isFetching}
+                onRetry={() => {
+                  const session = editorSession.current;
+                  const key = editor.sourceKey;
+                  void query.refetch().then((result) => {
+                    const latest = result.isSuccess
+                      ? result.data?.find((row) => row.sourceKey === key)
+                      : undefined;
+                    if (latest && editorSession.current === session) {
+                      setEditor((current) =>
+                        current?.sourceKey === key
+                          ? { ...current, policyVersion: latest.policyVersion }
+                          : current
+                      );
+                      mutation.reset();
+                    }
+                  });
+                }}
+              />
+            )}
+            <DwaionAdminChangeReview
+              fields={[
+                [
+                  t('dwaionAdmin.sources.fields.enabled'),
+                  query.data?.find((row) => row.sourceKey === editor.sourceKey)?.enabled,
+                  editor.enabled,
+                ],
+                [
+                  t('dwaionAdmin.sources.fields.access'),
+                  query.data?.find((row) => row.sourceKey === editor.sourceKey)?.accessMode,
+                  editor.accessMode,
+                ],
+                [
+                  t('dwaionAdmin.sources.fields.connector'),
+                  query.data?.find((row) => row.sourceKey === editor.sourceKey)?.connectorRef,
+                  editor.connectorRef,
+                ],
+                [
+                  t('dwaionAdmin.sources.fields.classification'),
+                  query.data?.find((row) => row.sourceKey === editor.sourceKey)?.classification,
+                  editor.classification,
+                ],
+                [copy.version, editor.policyVersion, editor.policyVersion],
+              ]}
+            />
             <FormControlLabel
               control={
                 <Switch
@@ -270,6 +516,109 @@ export function DwaionAdminSources() {
           </Stack>
         )}
       </FormDialog>
+
+      <FormDialog
+        open={Boolean(bootstrap)}
+        title={t('dwaionAdmin.sources.initializeTitle')}
+        description={t('dwaionAdmin.sources.initializeDescription')}
+        cancelLabel={t('dwaionAdmin.shared.cancel')}
+        submitLabel={t('dwaionAdmin.sources.initialize')}
+        submittingLabel={t('dwaionAdmin.shared.saving')}
+        busy={bootstrapMutation.isPending}
+        submitDisabled={!bootstrap || bootstrap.changeReason.trim().length < 10}
+        onClose={() => setBootstrap(null)}
+        onSubmit={() => {
+          if (bootstrap) bootstrapMutation.mutate(bootstrap);
+        }}
+      >
+        <Stack spacing={2}>
+          {bootstrapMutation.isError && (
+            <LocalErrorState title={t('dwaionAdmin.sources.error')} size="compact" />
+          )}
+          <InlineFeedback severity="warning">
+            {t('dwaionAdmin.sources.initializeBoundary')}
+          </InlineFeedback>
+          <FormField
+            label={t('dwaionAdmin.shared.reason')}
+            value={bootstrap?.changeReason ?? ''}
+            multiline
+            minRows={3}
+            onChange={(event) =>
+              setBootstrap((current) =>
+                current ? { ...current, changeReason: event.target.value } : current
+              )
+            }
+            errorMessage={
+              bootstrap?.changeReason && bootstrap.changeReason.trim().length < 10
+                ? t('dwaionAdmin.shared.reasonError')
+                : undefined
+            }
+          />
+        </Stack>
+      </FormDialog>
     </PageCanvas>
+  );
+}
+
+function SourceContractBoundary({
+  connectionState,
+  accessMode,
+  updatedAt,
+}: {
+  connectionState: string;
+  accessMode: string;
+  updatedAt: string;
+}) {
+  const { t } = useTranslation('work');
+  return (
+    <Box component="section" aria-labelledby="dwaion-source-contract-boundary">
+      <Typography id="dwaion-source-contract-boundary" component="h3" variant="subtitle2">
+        {t('dwaionAdmin.sources.evidence.title')}
+      </Typography>
+      <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.25 }}>
+        {t('dwaionAdmin.sources.evidence.description')}
+      </Typography>
+      <EvidenceValue
+        label={t('dwaionAdmin.sources.evidence.configurationState')}
+        value={connectionState}
+      />
+      <EvidenceValue
+        label={t('dwaionAdmin.sources.evidence.permissionEnforcement')}
+        value={accessMode}
+      />
+      <EvidenceValue label={t('dwaionAdmin.sources.evidence.policyFreshness')} value={updatedAt} />
+      {(['lastSync', 'latency', 'credentialHealth'] as const).map((key) => (
+        <EvidenceValue
+          key={key}
+          label={t(`dwaionAdmin.sources.evidence.${key}`)}
+          value={t('dwaionAdmin.sources.evidence.unavailable')}
+          muted
+        />
+      ))}
+    </Box>
+  );
+}
+
+function EvidenceValue({
+  label,
+  value,
+  muted = false,
+}: {
+  label: string;
+  value: string;
+  muted?: boolean;
+}) {
+  return (
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      justifyContent="space-between"
+      gap={0.5}
+      sx={{ py: 1, borderBottom: 1, borderColor: 'divider' }}
+    >
+      <Typography variant="body2">{label}</Typography>
+      <Typography variant="caption" color={muted ? 'text.secondary' : 'text.primary'}>
+        {value}
+      </Typography>
+    </Stack>
   );
 }

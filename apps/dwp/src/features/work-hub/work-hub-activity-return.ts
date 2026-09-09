@@ -1,3 +1,6 @@
+import { workspaceWorkActivityRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
+import type { WorkHubItem } from './work-hub-contracts';
+
 export type WorkHubActivityReturnInput = {
   activityRoute: string;
   itemKey: string;
@@ -49,12 +52,39 @@ function canonicalWorkReturnTarget(value: string): string | null {
   return `${parsed.pathname}${parsed.search}${parsed.hash}`;
 }
 
+/** Personal command projections use the same WORK_ITEM ledger with an exact PERSONAL_TASK source. */
+export function workHubItemActivityRoute(
+  item: Pick<WorkHubItem, 'key' | 'sourceId' | 'reference' | 'legacyItem'>
+): string | null {
+  if (item.sourceId === 'personal' && item.reference.sourceSystem === 'PERSONAL_TASK') {
+    const taskId = item.reference.sourceReference;
+    if (
+      !UUID_PATTERN.test(taskId) ||
+      item.reference.obligationKey ||
+      item.key !== `PERSONAL_TASK:${encodeURIComponent(taskId)}:`
+    )
+      return null;
+    const params = new URLSearchParams({
+      objectType: 'WORK_ITEM',
+      objectId: taskId,
+      source: 'PERSONAL_TASK',
+    });
+    return `/activity/timeline?${params.toString()}`;
+  }
+  return item.legacyItem ? workspaceWorkActivityRoute(item.legacyItem) : null;
+}
+
 export function workHubActivityHandoffRoute(value: string): string | null {
   const parsed = internalUrl(value);
   if (
     !parsed ||
     parsed.pathname !== '/activity/timeline' ||
     parsed.hash ||
+    [...parsed.searchParams.keys()].some(
+      (key) => !['objectType', 'objectId', 'source'].includes(key)
+    ) ||
+    parsed.searchParams.getAll('source').length > 1 ||
+    (parsed.searchParams.has('source') && parsed.searchParams.get('source') !== 'PERSONAL_TASK') ||
     parsed.searchParams.getAll('objectType').length !== 1 ||
     parsed.searchParams.get('objectType') !== 'WORK_ITEM' ||
     parsed.searchParams.getAll('objectId').length !== 1 ||
@@ -67,8 +97,9 @@ export function workHubActivityHandoffRoute(value: string): string | null {
 function activityRouteMatchesItem(activityRoute: string, itemKey: string): boolean {
   const target = workHubActivityHandoffRoute(activityRoute);
   if (!target) return false;
-  const objectId = new URL(target, 'https://dwp.invalid').searchParams.get('objectId');
-  return itemKey === `WORKSPACE:${encodeURIComponent(objectId ?? '')}:`;
+  const params = new URL(target, 'https://dwp.invalid').searchParams;
+  const source = params.get('source') === 'PERSONAL_TASK' ? 'PERSONAL_TASK' : 'WORKSPACE';
+  return itemKey === `${source}:${encodeURIComponent(params.get('objectId') ?? '')}:`;
 }
 
 export function workHubActivityCurrentLocation(location: WorkHubBrowserLocation): string | null {

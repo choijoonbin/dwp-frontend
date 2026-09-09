@@ -57,8 +57,8 @@ function versionCommand(input: WorkAssignmentVersionCommand): WorkAssignmentVers
   };
 }
 
-function commandConfig(commandId: string) {
-  return { headers: { 'Idempotency-Key': requireUuid(commandId) } };
+function commandConfig(commandId: string, signal?: AbortSignal) {
+  return { headers: { 'Idempotency-Key': requireUuid(commandId) }, signal };
 }
 
 export async function getWorkAssignments(
@@ -78,9 +78,17 @@ export async function getWorkAssignments(
   ).data.data;
 }
 
-export async function getWorkAssignment(assignmentId: string): Promise<WorkAssignmentTask> {
+export async function getWorkAssignment(
+  assignmentId: string,
+  signal?: AbortSignal
+): Promise<WorkAssignmentTask> {
   return (
-    await axiosInstance.get<ApiResponse<WorkAssignmentTask>>(`${base}/${requireUuid(assignmentId)}`)
+    await axiosInstance.get<ApiResponse<WorkAssignmentTask>>(
+      `${base}/${requireUuid(assignmentId)}`,
+      {
+        signal,
+      }
+    )
   ).data.data;
 }
 
@@ -100,26 +108,30 @@ export async function getWorkAssignmentBySource(
 
 /** Use the original command ID to resolve a response that was lost after the server committed. */
 export async function getWorkAssignmentCommand(
-  commandId: string
+  commandId: string,
+  signal?: AbortSignal
 ): Promise<WorkAssignmentMutationResult> {
   return (
     await axiosInstance.get<ApiResponse<WorkAssignmentMutationResult>>(
-      `${base}/commands/${requireUuid(commandId)}`
+      `${base}/commands/${requireUuid(commandId)}`,
+      { signal }
     )
   ).data.data;
 }
 
 export async function getWorkAssignmentEvents(
   assignmentId: string,
-  options: { afterVersion?: number; size?: number } = {}
+  options: { afterVersion?: number; size?: number } = {},
+  signal?: AbortSignal
 ): Promise<WorkAssignmentEventPage> {
   const path = `${base}/${requireUuid(assignmentId)}/events`;
   const params = new URLSearchParams({
     afterVersion: String(requireInteger(options.afterVersion ?? -1, -1)),
     size: String(requireInteger(options.size ?? 100, 1, 100)),
   });
-  return (await axiosInstance.get<ApiResponse<WorkAssignmentEventPage>>(`${path}?${params}`)).data
-    .data;
+  return (
+    await axiosInstance.get<ApiResponse<WorkAssignmentEventPage>>(`${path}?${params}`, { signal })
+  ).data.data;
 }
 
 export async function createWorkAssignment(
@@ -144,7 +156,8 @@ export async function transitionWorkAssignment(
   assignmentId: string,
   transition: WorkAssignmentTransition,
   input: WorkAssignmentVersionCommand,
-  commandId: string
+  commandId: string,
+  signal?: AbortSignal
 ): Promise<WorkAssignmentMutationResult> {
   if (!transitions.includes(transition))
     throw new Error('An explicit assignment command is required.');
@@ -153,7 +166,7 @@ export async function transitionWorkAssignment(
     await axiosInstance.post<
       ApiResponse<WorkAssignmentMutationResult>,
       WorkAssignmentVersionCommand
-    >(path, versionCommand(input), commandConfig(commandId))
+    >(path, versionCommand(input), commandConfig(commandId, signal))
   ).data.data;
 }
 

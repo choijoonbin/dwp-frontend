@@ -89,10 +89,12 @@
     "CONFLICT": "변경 충돌",
     "DENY": "거부됨",
     "DENIED": "거부됨",
+    "DEFERRED": "지연 전달",
     "FAIL": "실패",
     "FAILED": "실패",
     "FORBIDDEN": "권한 없음",
     "HANDOFF": "인계됨",
+    "IMMEDIATE": "즉시 전달",
     "NOT_FOUND": "대상을 찾을 수 없음",
     "PARTIAL": "부분 완료",
     "PASS": "통과",
@@ -100,6 +102,7 @@
     "REJECTED": "거절됨",
     "SUCCEEDED": "성공",
     "SUCCESS": "성공",
+    "SUPPRESSED": "전달 억제",
     "VALIDATED": "검증 완료",
     "WARN": "경고와 함께 통과"
   },
@@ -155,14 +158,19 @@
     "TENANT_LIFECYCLE": "테넌트 수명주기"
   },
   "auditActions": {
+    "ACCEPT": "배정 수락",
     "ARCHIVE": "메일 보관",
     "ARCHIVE_NOW": "즉시 보관",
     "APPLY": "적용",
     "APPROVE": "승인",
     "BLOCKED": "반출 처리 차단",
+    "CANCEL": "업무 취소",
     "CANCELLED": "반출 요청 취소",
     "CLAIMED": "작업자가 반출 요청 선점",
     "COMPLETED": "반출 산출물 완료",
+    "COMPLETE": "업무 완료",
+    "CREATE": "배정 업무 생성",
+    "DECLINE": "배정 거절",
     "EXPIRED": "반출 산출물 만료",
     "FAILED": "반출 처리 실패",
     "PUBLISH": "발행",
@@ -174,8 +182,10 @@
     "RETRY_SCHEDULED": "반출 재시도 예약",
     "SNOOZE": "알림 다시 보기 예약",
     "SPAM": "메일을 스팸으로 이동",
+    "START": "업무 시작",
     "TRASH": "메일을 휴지통으로 이동",
     "UNSAVE": "알림 저장 해제",
+    "WAIT": "응답 대기로 전환",
     "ACCESS_REVIEW_CAMPAIGN_ACTIVATED": "접근 검토 캠페인 활성화",
     "ACCESS_REVIEW_CAMPAIGN_COMPLETED": "접근 검토 캠페인 완료",
     "ACCESS_REVIEW_CAMPAIGN_CREATED": "접근 검토 캠페인 생성",
@@ -250,6 +260,7 @@
     "PERSONAL_PREFERENCE_EXCEPTION_REQUESTED": "관리형 설정 예외 요청",
     "ROLE_ASSIGNMENT_DENIED": "역할 할당 거부",
     "REQUEST_CANCELLED": "서비스 요청 취소",
+    "REQUEST_CREATED": "서비스 요청 생성",
     "REQUESTER_RESPONDED": "서비스 요청 보완 응답",
     "REQUEST_SUBMITTED": "서비스 요청 제출",
     "REQUEST_DRAFTED": "결재 초안 생성",
@@ -319,12 +330,15 @@
     "WORKSPACE_SEARCH_RESULT_SELECTED": "워크스페이스 검색 결과 선택"
   },
   "sourceTypes": {
+    "CALENDAR": "일정",
     "CUSTOM": "사용자 정의 원천",
+    "MAIL": "메일",
     "ORACLE_HCM": "Oracle HCM",
     "SAP_HCM": "SAP HCM",
     "SCIM": "SCIM",
     "SYSTEM": "시스템",
-    "WORKDAY": "Workday"
+    "WORKDAY": "Workday",
+    "WORK_ITEM": "업무 항목"
   },
   "connectorTypes": {
     "CUSTOM_REST": "사용자 정의 REST API",
@@ -403,6 +417,7 @@
     "MEDIUM": "보통"
   },
   "objectTypes": {
+    "AGENT_RUN": "에이전트 실행",
     "COLUMN": "컬럼",
     "DATABASE": "데이터베이스",
     "MATERIALIZED_VIEW": "구체화 뷰",
@@ -411,7 +426,8 @@
     "SCHEMA": "스키마",
     "SYSTEM_TABLE": "시스템 테이블",
     "TABLE": "테이블",
-    "VIEW": "뷰"
+    "VIEW": "뷰",
+    "WORK_ITEM": "업무"
   },
   "roleNames": {
     "ADMIN": "관리자",

@@ -1,21 +1,11 @@
+import { lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ProductSurfaceLocalNotFound } from '../components/product-surface-local-not-found';
-import { MeetingAdminOperations, MeetingAdminPolicies } from '../features/meetings/meeting-admin';
-import { MeetingAdminIntelligencePage } from '../features/meetings/meeting-admin-intelligence-page';
-import { MeetingHistory } from '../features/meetings/meeting-history';
-import { MeetingFollowUps } from '../features/meetings/meeting-follow-ups';
-import { MeetingHome } from '../features/meetings/meeting-home';
-import { MeetingJoin } from '../features/meetings/meeting-join';
-import { MeetingRoomExperience } from '../features/meetings/meeting-room-experience';
-import { MeetingContextWorkspace } from '../features/meetings/meeting-context-workspace';
 import {
   meetingPersonalRoomRequest,
   meetingTemplateSchedulePath,
 } from '../features/meetings/meeting-context-routing';
-import { MeetingPersonalRoomInvitation } from '../features/meetings/meeting-personal-room-invitation';
-import { MeetingPreferences } from '../features/meetings/meeting-preferences';
-import { MeetingTemplates } from '../features/meetings/meeting-templates';
 import {
   MeetingMobileNavigation,
   meetingMobileNavigationVisible,
@@ -26,6 +16,68 @@ import {
   MEETINGS_NAVIGATION,
 } from '../features/meetings/meetings-navigation';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
+import { RouteFallback } from '../routes/route-support';
+
+const MeetingAdminOperations = lazy(() =>
+  import('../features/meetings/meeting-admin').then((module) => ({
+    default: module.MeetingAdminOperations,
+  }))
+);
+const MeetingAdminPolicies = lazy(() =>
+  import('../features/meetings/meeting-admin').then((module) => ({
+    default: module.MeetingAdminPolicies,
+  }))
+);
+const MeetingAdminIntelligencePage = lazy(() =>
+  import('../features/meetings/meeting-admin-intelligence-page').then((module) => ({
+    default: module.MeetingAdminIntelligencePage,
+  }))
+);
+const MeetingContextWorkspace = lazy(() =>
+  import('../features/meetings/meeting-context-workspace').then((module) => ({
+    default: module.MeetingContextWorkspace,
+  }))
+);
+const MeetingFollowUps = lazy(() =>
+  import('../features/meetings/meeting-follow-ups').then((module) => ({
+    default: module.MeetingFollowUps,
+  }))
+);
+const MeetingHistory = lazy(() =>
+  import('../features/meetings/meeting-history').then((module) => ({
+    default: module.MeetingHistory,
+  }))
+);
+const MeetingHome = lazy(() =>
+  import('../features/meetings/meeting-home').then((module) => ({
+    default: module.MeetingHome,
+  }))
+);
+const MeetingJoin = lazy(() =>
+  import('../features/meetings/meeting-join').then((module) => ({
+    default: module.MeetingJoin,
+  }))
+);
+const MeetingPersonalRoomInvitation = lazy(() =>
+  import('../features/meetings/meeting-personal-room-invitation').then((module) => ({
+    default: module.MeetingPersonalRoomInvitation,
+  }))
+);
+const MeetingPreferences = lazy(() =>
+  import('../features/meetings/meeting-preferences').then((module) => ({
+    default: module.MeetingPreferences,
+  }))
+);
+const MeetingRoomExperience = lazy(() =>
+  import('../features/meetings/meeting-room-experience').then((module) => ({
+    default: module.MeetingRoomExperience,
+  }))
+);
+const MeetingTemplates = lazy(() =>
+  import('../features/meetings/meeting-templates').then((module) => ({
+    default: module.MeetingTemplates,
+  }))
+);
 
 export default function MeetingsPage() {
   const { pathname, search } = useLocation();
@@ -40,7 +92,9 @@ export default function MeetingsPage() {
     if (!joinAccess) return <ProductSurfaceLocalNotFound />;
     return (
       <ProductAreaNavigationItemAccessGuard item={joinAccess}>
-        <MeetingRoomExperience meetingId={meetingId} />
+        <Suspense fallback={<RouteFallback />}>
+          <MeetingRoomExperience meetingId={meetingId} />
+        </Suspense>
       </ProductAreaNavigationItemAccessGuard>
     );
   }
@@ -77,11 +131,13 @@ export default function MeetingsPage() {
 
   return (
     <ProductAreaNavigationItemAccessGuard item={page}>
-      {mobileNavigation ? (
-        <MeetingMobileNavigation activeView={page.view}>{content}</MeetingMobileNavigation>
-      ) : (
-        content
-      )}
+      <Suspense fallback={<RouteFallback />}>
+        {mobileNavigation ? (
+          <MeetingMobileNavigation activeView={page.view}>{content}</MeetingMobileNavigation>
+        ) : (
+          content
+        )}
+      </Suspense>
     </ProductAreaNavigationItemAccessGuard>
   );
 }

@@ -1,4 +1,5 @@
 import type { VideoMeetingPreferences } from '@dwp-frontend/shared-utils/api/video-meeting-preferences-api';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 
 export type MeetingPreferenceValues = Omit<VideoMeetingPreferences, 'version' | 'updatedAt'>;
 
@@ -35,7 +36,9 @@ export type MeetingDevicePreferences = {
   cameraId: string;
   speakerId: string;
   noiseSuppression: boolean;
-  /** Legacy browser records omit this; only literal true enables local processing. */
+  /** Canonical local-only choice. Unknown values always fail back to original. */
+  backgroundMode?: MeetingBackgroundMode;
+  /** Read-only migration input for v1 browser records; new writes omit it. */
   backgroundBlur?: boolean;
 };
 
@@ -47,8 +50,20 @@ export type MeetingPreJoinPreferenceDefaults = {
   videoDeviceId: string;
   speakerDeviceId: string;
   noiseSuppression: boolean;
-  backgroundBlur?: boolean;
+  backgroundMode: MeetingBackgroundMode;
 };
+
+export function resolveMeetingBackgroundMode(
+  value: Pick<MeetingDevicePreferences, 'backgroundMode' | 'backgroundBlur'>
+): MeetingBackgroundMode {
+  if (
+    value.backgroundMode === 'original' ||
+    value.backgroundMode === 'blur' ||
+    value.backgroundMode === 'office'
+  )
+    return value.backgroundMode;
+  return value.backgroundBlur === true ? 'blur' : 'original';
+}
 
 export function meetingPreferenceScope(input: {
   isAuthenticated: boolean;
@@ -78,7 +93,7 @@ export function resolveMeetingPreJoinPreferenceDefaults(
     videoDeviceId: devices.cameraId,
     speakerDeviceId: devices.speakerId,
     noiseSuppression: devices.noiseSuppression,
-    backgroundBlur: devices.backgroundBlur === true,
+    backgroundMode: resolveMeetingBackgroundMode(devices),
   };
 }
 
@@ -88,7 +103,7 @@ export const DEFAULT_MEETING_DEVICE_PREFERENCES: Readonly<MeetingDevicePreferenc
     cameraId: 'default',
     speakerId: 'default',
     noiseSuppression: true,
-    backgroundBlur: false,
+    backgroundMode: 'original',
   }
 );
 
@@ -114,7 +129,14 @@ export function readMeetingDevicePreferences(
       cameraId: deviceId('cameraId'),
       speakerId: deviceId('speakerId'),
       noiseSuppression: record.noiseSuppression !== false,
-      backgroundBlur: record.backgroundBlur === true,
+      backgroundMode:
+        record.backgroundMode === 'original' ||
+        record.backgroundMode === 'blur' ||
+        record.backgroundMode === 'office'
+          ? record.backgroundMode
+          : record.backgroundBlur === true
+            ? 'blur'
+            : 'original',
     };
   } catch {
     return { ...DEFAULT_MEETING_DEVICE_PREFERENCES };
@@ -142,7 +164,7 @@ export function writeMeetingDevicePreferences(
       cameraId: value.cameraId,
       speakerId: value.speakerId,
       noiseSuppression: value.noiseSuppression,
-      backgroundBlur: value.backgroundBlur === true,
+      backgroundMode: resolveMeetingBackgroundMode(value),
     })
   );
 }
@@ -211,6 +233,6 @@ export function meetingDevicePreferencesEqual(
     left.cameraId === right.cameraId &&
     left.speakerId === right.speakerId &&
     left.noiseSuppression === right.noiseSuppression &&
-    (left.backgroundBlur === true) === (right.backgroundBlur === true)
+    resolveMeetingBackgroundMode(left) === resolveMeetingBackgroundMode(right)
   );
 }

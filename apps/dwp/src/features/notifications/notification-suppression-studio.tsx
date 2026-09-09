@@ -290,94 +290,184 @@ export function NotificationSuppressionStudio() {
           size="page"
         />
       ) : (
-        <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <Table
-            size="small"
+        <>
+          <Stack
+            component="ul"
             aria-label={t('admin.suppressions.tableLabel')}
-            sx={{ minWidth: 980 }}
+            gap={1}
+            sx={{ display: { xs: 'flex', md: 'none' }, p: 0, m: 0, listStyle: 'none' }}
           >
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('admin.suppressions.columns.scope')}</TableCell>
-                <TableCell>{t('admin.suppressions.columns.channel')}</TableCell>
-                <TableCell>{t('admin.suppressions.columns.window')}</TableCell>
-                <TableCell>{t('admin.suppressions.columns.critical')}</TableCell>
-                <TableCell>{t('admin.suppressions.columns.reason')}</TableCell>
-                <TableCell>{t('admin.suppressions.columns.state')}</TableCell>
-                <TableCell align="right">{t('admin.suppressions.columns.actions')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.map((item) => {
-                const state = stateOf(item);
-                return (
-                  <TableRow key={item.suppressionId}>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight={700}>
+            {items.map((item) => {
+              const state = stateOf(item);
+              return (
+                <Box
+                  component="li"
+                  key={item.suppressionId}
+                  data-testid={`notification-suppression-mobile-${item.suppressionId}`}
+                  sx={{
+                    p: 1.5,
+                    border: 1,
+                    borderColor: 'divider',
+                    borderRadius: 'shape.borderRadius',
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" gap={1} alignItems="start">
+                    <Box minWidth={0}>
+                      <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
                         {item.scopeKey}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {t(`admin.suppressions.scope.${item.scopeType}`)}
+                        {t(`admin.suppressions.scope.${item.scopeType}`)} ·{' '}
+                        {item.channel === 'ALL'
+                          ? t('admin.suppressions.allChannels')
+                          : t(`channels.${item.channel}`)}
                       </Typography>
-                    </TableCell>
-                    <TableCell>
-                      {item.channel === 'ALL'
-                        ? t('admin.suppressions.allChannels')
-                        : t(`channels.${item.channel}`)}
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="caption" display="block">
-                        {formatDate(item.startsAt ?? item.createdAt, {
-                          dateStyle: 'medium',
-                          timeStyle: 'short',
-                        })}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {formatDate(item.expiresAt, { dateStyle: 'medium', timeStyle: 'short' })}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        color={item.criticalBypass ? 'success' : 'error'}
-                        label={
-                          item.criticalBypass
-                            ? t('admin.suppressions.criticalBypass')
-                            : t('admin.suppressions.criticalBlocked')
-                        }
-                      />
-                    </TableCell>
-                    <TableCell sx={{ maxWidth: 280 }}>
-                      <Typography variant="body2" noWrap title={item.reason}>
-                        {item.reason}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        color={stateColor(state)}
-                        label={t(`admin.suppressions.state.${state}`)}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      {canManage && ['ACTIVE', 'SCHEDULED'].includes(state) && (
-                        <ActionButton
-                          intent="danger"
+                    </Box>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      color={stateColor(state)}
+                      label={t(`admin.suppressions.state.${state}`)}
+                    />
+                  </Stack>
+                  <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      color={item.criticalBypass ? 'success' : 'error'}
+                      label={
+                        item.criticalBypass
+                          ? t('admin.suppressions.criticalBypass')
+                          : t('admin.suppressions.criticalBlocked')
+                      }
+                    />
+                  </Stack>
+                  <Typography variant="body2" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
+                    {item.reason}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    sx={{ mt: 1 }}
+                  >
+                    {formatDate(item.startsAt ?? item.createdAt, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })}{' '}
+                    - {formatDate(item.expiresAt, { dateStyle: 'medium', timeStyle: 'short' })}
+                  </Typography>
+                  {canManage && ['ACTIVE', 'SCHEDULED'].includes(state) && (
+                    <ActionButton
+                      intent="danger"
+                      size="small"
+                      onClick={() => setRevokeTarget(item)}
+                      sx={{ mt: 1.25, width: 1 }}
+                    >
+                      {t('admin.suppressions.revoke')}
+                    </ActionButton>
+                  )}
+                </Box>
+              );
+            })}
+          </Stack>
+          <Box
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              overflowX: 'auto',
+              borderTop: 1,
+              borderBottom: 1,
+              borderColor: 'divider',
+            }}
+          >
+            <Table
+              size="small"
+              aria-label={t('admin.suppressions.tableLabel')}
+              sx={{ minWidth: 980 }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t('admin.suppressions.columns.scope')}</TableCell>
+                  <TableCell>{t('admin.suppressions.columns.channel')}</TableCell>
+                  <TableCell>{t('admin.suppressions.columns.window')}</TableCell>
+                  <TableCell>{t('admin.suppressions.columns.critical')}</TableCell>
+                  <TableCell>{t('admin.suppressions.columns.reason')}</TableCell>
+                  <TableCell>{t('admin.suppressions.columns.state')}</TableCell>
+                  <TableCell align="right">{t('admin.suppressions.columns.actions')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {items.map((item) => {
+                  const state = stateOf(item);
+                  return (
+                    <TableRow key={item.suppressionId}>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight={700}>
+                          {item.scopeKey}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {t(`admin.suppressions.scope.${item.scopeType}`)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        {item.channel === 'ALL'
+                          ? t('admin.suppressions.allChannels')
+                          : t(`channels.${item.channel}`)}
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="caption" display="block">
+                          {formatDate(item.startsAt ?? item.createdAt, {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatDate(item.expiresAt, { dateStyle: 'medium', timeStyle: 'short' })}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
                           size="small"
-                          onClick={() => setRevokeTarget(item)}
-                        >
-                          {t('admin.suppressions.revoke')}
-                        </ActionButton>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </Box>
+                          variant="outlined"
+                          color={item.criticalBypass ? 'success' : 'error'}
+                          label={
+                            item.criticalBypass
+                              ? t('admin.suppressions.criticalBypass')
+                              : t('admin.suppressions.criticalBlocked')
+                          }
+                        />
+                      </TableCell>
+                      <TableCell sx={{ maxWidth: 280 }}>
+                        <Typography variant="body2" noWrap title={item.reason}>
+                          {item.reason}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          color={stateColor(state)}
+                          label={t(`admin.suppressions.state.${state}`)}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {canManage && ['ACTIVE', 'SCHEDULED'].includes(state) && (
+                          <ActionButton
+                            intent="danger"
+                            size="small"
+                            onClick={() => setRevokeTarget(item)}
+                          >
+                            {t('admin.suppressions.revoke')}
+                          </ActionButton>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Box>
+        </>
       )}
 
       <FormDialog

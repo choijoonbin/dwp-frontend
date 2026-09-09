@@ -1,4 +1,7 @@
 {
+  "status": "HISTORICAL_SUPERSEDED",
+  "currentUiVerified": false,
+  "supersededBy": "owned-scope-final/gallery-2026-09-08/manifest.json",
   "recordedAt": "2026-09-07T09:08:43.457010+00:00",
   "frameCount": 18,
   "desktopCount": 11,
@@ -14,14 +17,11 @@
       "implementation": {
         "path": "screens/01-D.png",
         "sha256": "099ab2479aa9cc303df1d8efb4689cad51e71aa1208eeb9d4a8f0fbb457caf63",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue.png"
       },
       "note": "6개 업무 보기, 원천별 업무 검색·상태·책임과 선택 상세를 제공합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/01-unified-queue/desktop/screen.png",
         "provenance": "stitch-zip"
@@ -35,14 +35,11 @@
       "implementation": {
         "path": "screens/01-M.png",
         "sha256": "b6fa260010fdafda86a78d9d80952a1f63d3f5dc4fda405ee08e591f824de89c",
-        "pixels": [
-          390,
-          844
-        ],
+        "pixels": [390, 844],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue.png"
       },
       "note": "6개 업무 보기, 원천별 업무 검색·상태·책임과 선택 상세를 제공합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/01-unified-queue/mobile/screen.png",
         "provenance": "stitch-zip"
@@ -56,14 +53,11 @@
       "implementation": {
         "path": "screens/02-D.png",
         "sha256": "a9baa76e8fb275a962bc7f01736a86e7b5605ccd9a677647d82c711dfe78fbf4",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/foundation-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko.png"
       },
       "note": "Work에서 요약을 확인한 뒤 Approvals의 실제 결재 상세로 이동합니다. 결재 양식·명령은 소유 앱에서 실행합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/02-detail-approval/desktop/screen.png",
         "provenance": "stitch-zip"
@@ -77,14 +71,11 @@
       "implementation": {
         "path": "screens/02-M.png",
         "sha256": "124481dd5b769ed38129694e317d0563b11d0bdbcbda686ea1fe36380ccb3129",
-        "pixels": [
-          390,
-          844
-        ],
+        "pixels": [390, 844],
         "sourcePath": "implementation-evidence/2026-09-07-resume/foundation-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko.png"
       },
       "note": "Work에서 요약을 확인한 뒤 Approvals의 실제 결재 상세로 이동합니다. 결재 양식·명령은 소유 앱에서 실행합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/02-detail-approval/mobile/screen.png",
         "provenance": "stitch-zip"
@@ -98,14 +89,11 @@
       "implementation": {
         "path": "screens/03-D.png",
         "sha256": "0625d5d2b2b0c376919f4556cc9fd76ab09d727a3921ad7cb5a72a61c1357fc8",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/foundation-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko.png"
       },
       "note": "권한 근거, 유지·회수, 사유와 제출 미리보기를 제공합니다. 결정 저장과 실제 원천 권한 반영을 구분합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/03-detail-access-review/desktop/screen.png",
         "provenance": "stitch-zip"
@@ -119,14 +107,11 @@
       "implementation": {
         "path": "screens/03-M.png",
         "sha256": "92938893007b795e8ae0c82d53f2853236a9b3e44de459e8a8dda7c66909d33c",
-        "pixels": [
-          390,
-          844
-        ],
+        "pixels": [390, 844],
         "sourcePath": "implementation-evidence/2026-09-07-resume/foundation-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko.png"
       },
       "note": "권한 근거, 유지·회수, 사유와 제출 미리보기를 제공합니다. 결정 저장과 실제 원천 권한 반영을 구분합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/03-detail-access-review/mobile/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -140,14 +125,11 @@
       "implementation": {
         "path": "screens/04-D.png",
         "sha256": "c9c2978e08faa913a1ff69ba9843396edcfa44bc1d4741f2ddb88c33b25d6aed",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/foundation-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko.png"
       },
       "note": "Work 요약에서 Services의 공식 내 신청 상세로 이동해 보완 답변을 검토·제출합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/04-detail-service/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -161,14 +143,11 @@
       "implementation": {
         "path": "screens/04-M.png",
         "sha256": "079e0a0db9ab7c608d9c3c5885235b4a61fa239730ef6354cc9d266a36f84cb9",
-        "pixels": [
-          390,
-          844
-        ],
+        "pixels": [390, 844],
         "sourcePath": "implementation-evidence/2026-09-07-resume/foundation-final/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko.png"
       },
       "note": "Work 요약에서 Services의 공식 내 신청 상세로 이동해 보완 답변을 검토·제출합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/04-detail-service/mobile/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -182,14 +161,11 @@
       "implementation": {
         "path": "screens/05-D.png",
         "sha256": "936b39e13969fb35e3c2b4519d7336ca52e5cec50b47568e6bb7b1365b4999db",
-        "pixels": [
-          1440,
-          1408
-        ],
+        "pixels": [1440, 1408],
         "sourcePath": "implementation-evidence/2026-09-07-resume/checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png"
       },
       "note": "개인 상태·체크리스트·원천 연결·편집·삭제를 제공합니다. 진행률은 저장된 결과를 기준으로 합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/05-detail-native-task/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -203,14 +179,11 @@
       "implementation": {
         "path": "screens/05-M.png",
         "sha256": "0ffc1ef92057310d5c4a1f4159cb652c827ea0f8acc4f195f733df206a6562a9",
-        "pixels": [
-          390,
-          1577
-        ],
+        "pixels": [390, 1577],
         "sourcePath": "implementation-evidence/2026-09-07-resume/checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png"
       },
       "note": "개인 상태·체크리스트·원천 연결·편집·삭제를 제공합니다. 진행률은 저장된 결과를 기준으로 합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/05-detail-native-task/mobile/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -224,14 +197,11 @@
       "implementation": {
         "path": "screens/06-D.png",
         "sha256": "f38751e38e585d792bb4d3a02b735da534ad32cc7b5f6e8e9bf7920659fd1751",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png"
       },
       "note": "제목·원천·기한·우선순위·오늘 계획·체크리스트를 작성하며 충돌 시 입력을 유지합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/06-task-create-capture-edit/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -245,14 +215,11 @@
       "implementation": {
         "path": "screens/07-D.png",
         "sha256": "9b78a87de21c46f1bbaba36cf73333bd77914147f0eb7847ced36d61a782c2d0",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan.png"
       },
       "note": "오늘 선택한 업무를 정렬·제거·열고 수행 시간을 연결합니다. 원본의 예시 성공률은 실제 지표로 복제하지 않습니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/07-today-plan/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -266,14 +233,11 @@
       "implementation": {
         "path": "screens/08-D.png",
         "sha256": "086cecc24b67942ad0214c3f03c9fb2b339dc75c11a0af0533c50666de98499d",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff.png"
       },
       "note": "개인 집중 시간을 Calendar에 생성하고 업무 참조만 연결합니다. 일정 저장은 업무 완료가 아닙니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/08-calendar-handoff/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -287,14 +251,11 @@
       "implementation": {
         "path": "screens/09-D.png",
         "sha256": "b65d7568295a1665a37c445f9f6060b923284b5ce70db6c6ad6a86fe9c40faa4",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status.png"
       },
       "note": "원천별 연결 상태와 일괄 처리의 확인·충돌·권한 없음·결과 불명을 구분합니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/09-source-status-batch-results/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -308,14 +269,11 @@
       "implementation": {
         "path": "screens/10-D.png",
         "sha256": "31505442de4a9747760058b51c0f587a2d57b1539654d2403efd62fea56bcbaa",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution.png"
       },
       "note": "기존 Flow 홈의 개인 업무·계획 기여와 정확한 업무 진입을 제공합니다. 전사 Flow 전체를 Work 전용 대시보드로 바꾸지는 않습니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/10-flow-work-contribution/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -329,14 +287,11 @@
       "implementation": {
         "path": "screens/11-D.png",
         "sha256": "c364556b1ba04e90ad08c1da5de0970fcea1484ffb971e77997d952b57a29c51",
-        "pixels": [
-          1440,
-          1000
-        ],
+        "pixels": [1440, 1000],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png"
       },
       "note": "선택 업무에 대한 질문·응답·인용·복사를 제공합니다. 원천 앱의 입력 양식을 복제하거나 자동 제출하지 않습니다.",
-      "originalImageIsCurrent": true,
+      "originalImageIsCurrent": false,
       "design": {
         "path": "../../design-reference/11-selected-work-ai-assist/desktop/screen.png",
         "provenance": "chrome-render-from-stitch-code"
@@ -350,10 +305,7 @@
       "implementation": {
         "path": "screens/12-M1.png",
         "sha256": "ded46f37169bebba91c303f0ade1055a18826d69bb298920222a48af270c7b7f",
-        "pixels": [
-          390,
-          1347
-        ],
+        "pixels": [390, 1347],
         "sourcePath": "implementation-evidence/2026-09-07-final/mobile-review-final-layout/work-access-review-respons-cb979-idence-and-keyboard-changes-chromium/M1-390-compact.png"
       },
       "note": "최신 Polished 원본의 접힌 근거·2열 결정·사유 여정을 반영했습니다. 공통 셸, 실제 권한 정보와 복구 상태 때문에 높이와 표현이 다릅니다.",
@@ -367,10 +319,7 @@
       "implementation": {
         "path": "screens/12-M2.png",
         "sha256": "19a3740479cc21a6187e0927fe6b0ee56f2235e26701fd14185ccdcb47ffe51b",
-        "pixels": [
-          320,
-          440
-        ],
+        "pixels": [320, 440],
         "sourcePath": "implementation-evidence/2026-09-07-resume/personal-plan-final/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png"
       },
       "note": "최신 Polished 원본의 빈 큐→기록→계획→수행 시간 여정을 검토했습니다. 실제 320px와 키보드 높이 축소에서 작성·저장을 검증했습니다.",

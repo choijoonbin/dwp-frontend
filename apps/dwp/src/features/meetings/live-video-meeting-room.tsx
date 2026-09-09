@@ -30,6 +30,7 @@ import type {
 
 import { applyMeetingAudioOutput } from './meeting-audio-output';
 import { useMeetingBackgroundPublication } from './use-meeting-background-publication';
+import { isMeetingBackgroundMode, type MeetingBackgroundMode } from './meeting-background-types';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingConference } from './meeting-conference';
 import { MeetingContentControl } from './meeting-content-governance';
@@ -65,7 +66,7 @@ export function LiveVideoMeetingRoom({
   choices,
   speakerDeviceId,
   noiseSuppression,
-  backgroundBlur,
+  backgroundMode,
   ending,
   operationError,
   onConnected,
@@ -79,7 +80,7 @@ export function LiveVideoMeetingRoom({
   choices: LocalUserChoices;
   speakerDeviceId: string;
   noiseSuppression: boolean;
-  backgroundBlur: boolean;
+  backgroundMode: MeetingBackgroundMode;
   ending: boolean;
   operationError?: string | null;
   onConnected: () => void;
@@ -93,7 +94,9 @@ export function LiveVideoMeetingRoom({
   const [permissionError, setPermissionError] = useState<string | null>(null);
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false);
   const handleOutputError = useCallback(() => setPermissionError(t('errors.mediaPermission')), [t]);
-  const background = useMeetingBackgroundPublication(backgroundBlur === true, authorizationScope);
+  const backgroundSettingValid = isMeetingBackgroundMode(backgroundMode);
+  const effectiveBackgroundMode = backgroundSettingValid ? backgroundMode : 'original';
+  const background = useMeetingBackgroundPublication(effectiveBackgroundMode, authorizationScope);
   const captureOptions = useMemo(
     () => ({
       deviceId: choices.videoDeviceId,
@@ -105,9 +108,10 @@ export function LiveVideoMeetingRoom({
     () => ({ audioCaptureDefaults: { noiseSuppression }, videoCaptureDefaults: captureOptions }),
     [noiseSuppression, captureOptions]
   );
-  const backgroundFailed = backgroundBlur && background.state?.state === 'failed';
+  const backgroundFailed =
+    effectiveBackgroundMode !== 'original' && background.state?.state === 'failed';
 
-  if (typeof backgroundBlur !== 'boolean') {
+  if (!backgroundSettingValid) {
     return (
       <InlineFeedback severity="error">
         {t('preferences.video.backgroundFailed')}
@@ -173,6 +177,8 @@ export function LiveVideoMeetingRoom({
             authorizationScope={authorizationScope}
             permissions={credential.effectivePermissions}
             canModerate={meeting.canModerate}
+            myRole={meeting.myRole}
+            participantRecords={meeting.participants}
             meetingLive={meeting.lifecycleState === 'LIVE'}
             onDeviceError={() => setPermissionError(t('errors.mediaPermission'))}
             onLeaveError={() => setConnectionError(t('errors.leaveSync'))}

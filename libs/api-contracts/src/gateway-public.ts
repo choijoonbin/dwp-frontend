@@ -1893,6 +1893,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/admin/operations/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_adminOperationsExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/admin/overview": {
         parameters: {
             query?: never;
@@ -2709,6 +2725,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/meetings/{meetingId}/intelligence/reports/{reportId}/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_export"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/meetings/{meetingId}/intelligence/reports/{reportId}/publish": {
         parameters: {
             query?: never;
@@ -2959,6 +2991,22 @@ export interface paths {
         get?: never;
         put: operations["meeting_updateMyPreparation"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/participants/{participantId}/disconnect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_disconnect"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6597,7 +6645,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revision}": {
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revisionNumber}": {
         parameters: {
             query?: never;
             header?: never;
@@ -6613,7 +6661,7 @@ export interface paths {
         patch: operations["platform_updateRevision_1"];
         trace?: never;
     };
-    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revision}/activate": {
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revisionNumber}/activate": {
         parameters: {
             query?: never;
             header?: never;
@@ -6629,7 +6677,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revision}/retire": {
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revisionNumber}/retire": {
         parameters: {
             query?: never;
             header?: never;
@@ -10669,6 +10717,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Read a self-owned Agent audit receipt
+         * @description Requires APP.ACTIVITY:VIEW and APP.ASK:VIEW plus exact tenant, actor, dwp-agent-runtime source, and AGENT_RUN target. Missing, pending ingestion and unreadable records are indistinguishable 404 responses.
+         */
         get: operations["platform_agentEvidence"];
         put?: never;
         post?: never;
@@ -10701,6 +10753,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Read an authorized native activity audit receipt
+         * @description Rechecks current source ACL. Audit hash and checkpoint require ADMIN.AUDIT_VIEW:VIEW; other viewers receive RESTRICTED without audit data.
+         */
         get: operations["platform_evidence"];
         put?: never;
         post?: never;
@@ -10733,6 +10789,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Read personal source synchronization observations
+         * @description Requires APP.ACTIVITY:VIEW and the source's APP.MAIL:VIEW or APP.CALENDAR:VIEW. Empty coverage is not a healthy-rate assertion.
+         */
         get: operations["platform_sources"];
         put?: never;
         post?: never;
@@ -16622,6 +16682,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseDisconnectResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_DisconnectResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseFacilitationCommandResponsePollResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_FacilitationCommandResponsePollResponse"];
@@ -17297,6 +17367,20 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        meeting_DisconnectCommand: {
+            /** Format: int64 */
+            expectedVersion?: number;
+        };
+        meeting_DisconnectResponse: {
+            blockedForCurrentSession?: boolean;
+            /** Format: uuid */
+            commandId?: string;
+            /** Format: uuid */
+            meetingId?: string;
+            /** Format: uuid */
+            participantId?: string;
+            state?: string;
+        };
         meeting_DraftAgendaItem: {
             /** Format: uuid */
             itemId?: string;
@@ -17338,6 +17422,11 @@ export interface components {
             participantList?: boolean;
             reactions?: boolean;
             screenShare?: boolean;
+        };
+        meeting_ExportCommand: {
+            /** Format: int64 */
+            expectedReportVersion: number;
+            format: string;
         };
         meeting_FacilitationCommandResponsePollResponse: {
             resource?: components["schemas"]["meeting_PollResponse"];
@@ -17442,7 +17531,11 @@ export interface components {
             /** Format: int32 */
             participantPeak?: number;
             participantRole?: string;
+            publicationState?: string;
             recordingAvailable?: boolean;
+            retentionState?: string;
+            /** Format: date-time */
+            retentionUntil?: string;
             title?: string;
             transcriptAvailable?: boolean;
         };
@@ -22236,6 +22329,8 @@ export interface components {
             executionVersion?: number;
             /** Format: uuid */
             id?: string;
+            /** Format: uuid */
+            idempotencyKey?: string;
             objectId?: string;
             objectLabel?: string;
             objectType?: string;
@@ -22243,16 +22338,42 @@ export interface components {
             occurredAt?: string;
             /** Format: int32 */
             progress?: number;
+            /** Format: int64 */
+            resourceVersion?: number;
+            resultState?: string;
             resumeCursor?: string;
             source?: string;
             sourceAccess?: string;
             sourceEventId?: string;
+            sourceReference?: string;
             sourceRoute?: string;
             state?: string;
             summary?: string;
             title?: string;
             tool?: string;
             workStatus?: string;
+        };
+        /** @description Authorized audit linkage and the audit owner's reported daily checkpoint, not a compliance attestation. */
+        platform_ActivityEvidenceReceipt: {
+            /** @enum {string} */
+            auditAccess?: "AVAILABLE" | "RESTRICTED";
+            /** Format: uuid */
+            auditRecordId?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** @enum {string|null} */
+            hashAlgorithm?: "SHA-256" | null;
+            /** @enum {string} */
+            integrityScope?: "DAILY_CHECKPOINT_REPORTED";
+            /** @enum {string} */
+            integrityStatus?: "VERIFIED" | "FAILED" | "PENDING" | "UNAVAILABLE";
+            /** @enum {string} */
+            linkStatus?: "LINKED" | "NOT_LINKED";
+            /** Format: date-time */
+            observedAt?: string;
+            recordHash?: string | null;
+            /** Format: date-time */
+            verifiedAt?: string;
         };
         platform_ActivityFeed: {
             coverage?: components["schemas"]["platform_ActivityCoverage"];
@@ -22264,6 +22385,28 @@ export interface components {
             /** Format: date-time */
             snapshotAt?: string;
             startCursor?: string;
+        };
+        /** @description A personal source ledger observation; LOCAL_FIXTURE is explicitly seeded development data. */
+        platform_ActivitySourceStatus: {
+            label?: string;
+            /** Format: date-time */
+            lastAttemptAt?: string;
+            /** Format: date-time */
+            lastSuccessAt?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            /** @enum {string} */
+            resourceKind?: "MAIL" | "CALENDAR";
+            /** @enum {string} */
+            semantics?: "PERSONAL_SYNC_LEDGER" | "LOCAL_FIXTURE";
+            sourceId?: string;
+            /** @enum {string} */
+            status?: "READY" | "SYNCING" | "STALE" | "RESET_REQUIRED" | "AUTHENTICATION_REQUIRED" | "SUSPENDED" | "NOT_CONNECTED" | "REAUTHORIZATION_REQUIRED" | "REVOKED" | "CONFIGURATION_REQUIRED" | "DEGRADED" | "UNAVAILABLE" | "DRAFT" | "REVIEW_REQUIRED" | "BLOCKED";
+        };
+        platform_ActivitySourceStatuses: {
+            /** Format: date-time */
+            observedAt?: string;
+            sources?: components["schemas"]["platform_ActivitySourceStatus"][];
         };
         platform_AddressBook: {
             contacts?: components["schemas"]["platform_ContactPage"];
@@ -22347,6 +22490,29 @@ export interface components {
             /** Format: int32 */
             sharedAccounts?: number;
             sharedInboxes?: components["schemas"]["platform_SharedInboxSummary"][];
+        };
+        platform_AgentCatalogProfile: {
+            boundaries: components["schemas"]["platform_LocalizedCatalogText"][];
+            capabilities: components["schemas"]["platform_LocalizedCatalogText"][];
+            /** @enum {string} */
+            category: "GENERAL" | "APPROVAL";
+            description: components["schemas"]["platform_LocalizedCatalogText"];
+            displayName: components["schemas"]["platform_LocalizedCatalogText"];
+            humanConfirmationRequired?: boolean;
+            safetySummary: components["schemas"]["platform_LocalizedCatalogText"];
+            /** Format: int32 */
+            schemaVersion: number;
+            sources: components["schemas"]["platform_AgentCatalogSource"][];
+            starterPrompts: components["schemas"]["platform_LocalizedCatalogText"][];
+        };
+        platform_AgentCatalogSource: {
+            /** @enum {string} */
+            accessMode: "READ_ONLY";
+            displayName: components["schemas"]["platform_LocalizedCatalogText"];
+            /** @enum {string} */
+            permissionMatch: "ANY_OF";
+            requiredPermissions: string[];
+            sourceSystem: string;
         };
         platform_AnnouncementDefinition: {
             /** Format: date-time */
@@ -22450,9 +22616,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseActivityEvidenceReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ActivityEvidenceReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseActivityFeed: {
             correlationId?: string;
             data?: components["schemas"]["platform_ActivityFeed"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseActivitySourceStatuses: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ActivitySourceStatuses"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -22903,16 +23089,6 @@ export interface components {
         platform_ApiResponseEventSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_EventSummary"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseEvidence: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_Evidence"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -24063,16 +24239,6 @@ export interface components {
         platform_ApiResponseSiteCampusAssignment: {
             correlationId?: string;
             data?: components["schemas"]["platform_SiteCampusAssignment"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseSourceStatuses: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_SourceStatuses"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -26011,22 +26177,6 @@ export interface components {
             /** @enum {string} */
             visibility?: "DEFAULT" | "PUBLIC" | "PRIVATE" | "CONFIDENTIAL";
         };
-        platform_Evidence: {
-            auditAccess?: string;
-            /** Format: uuid */
-            auditRecordId?: string;
-            /** Format: uuid */
-            eventId?: string;
-            hashAlgorithm?: string;
-            integrityScope?: string;
-            integrityStatus?: string;
-            linkStatus?: string;
-            /** Format: date-time */
-            observedAt?: string;
-            recordHash?: string;
-            /** Format: date-time */
-            verifiedAt?: string;
-        };
         platform_ExecutionSummary: {
             /** Format: int64 */
             cancelled?: number;
@@ -26712,6 +26862,10 @@ export interface components {
         platform_LifecycleResult: {
             deleted?: boolean;
             thread?: components["schemas"]["platform_ThreadSummary"];
+        };
+        platform_LocalizedCatalogText: {
+            en: string;
+            ko: string;
         };
         platform_LocalizedCopy: {
             headline?: string;
@@ -27551,6 +27705,7 @@ export interface components {
             history?: components["schemas"]["platform_RegistryEntryResponse"][];
         };
         platform_RegistryEntryResponse: {
+            agentCatalogProfile?: components["schemas"]["platform_AgentCatalogProfile"];
             artifactVersion?: string;
             description?: string;
             entryKey?: string;
@@ -27977,6 +28132,7 @@ export interface components {
             setKey?: string;
         };
         platform_RuntimeRegistryEntry: {
+            agentCatalogProfile?: components["schemas"]["platform_AgentCatalogProfile"];
             artifactVersion?: string;
             description?: string;
             entryKey?: string;
@@ -27988,6 +28144,8 @@ export interface components {
             revision?: number;
             /** @enum {string} */
             riskTier?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+            /** Format: date-time */
+            updatedAt?: string;
         };
         platform_SaveConnectorRequest: {
             /** @enum {string} */
@@ -28269,24 +28427,6 @@ export interface components {
             until: string;
             /** Format: int64 */
             version: number;
-        };
-        platform_SourceStatus: {
-            label?: string;
-            /** Format: date-time */
-            lastAttemptAt?: string;
-            /** Format: date-time */
-            lastSuccessAt?: string;
-            /** Format: date-time */
-            observedAt?: string;
-            resourceKind?: string;
-            semantics?: string;
-            sourceId?: string;
-            status?: string;
-        };
-        platform_SourceStatuses: {
-            /** Format: date-time */
-            observedAt?: string;
-            sources?: components["schemas"]["platform_SourceStatus"][];
         };
         platform_Subject: {
             /** Format: uuid */
@@ -35781,6 +35921,30 @@ export interface operations {
             };
         };
     };
+    meeting_adminOperationsExport: {
+        parameters: {
+            query?: {
+                timeZone?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
     meeting_adminOverview: {
         parameters: {
             query?: {
@@ -36058,6 +36222,8 @@ export interface operations {
                 page?: number;
                 pageSize?: number;
                 favoriteOnly?: boolean;
+                publication?: "ALL" | "NONE" | "DRAFT" | "APPROVED" | "PUBLISHED" | "REJECTED";
+                retention?: "ALL" | "UNCONFIGURED" | "ACTIVE" | "EXPIRING_SOON" | "EXPIRED" | "LEGAL_HOLD";
             };
             header?: never;
             path?: never;
@@ -36103,6 +36269,8 @@ export interface operations {
         parameters: {
             query?: {
                 timeZone?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -36199,6 +36367,8 @@ export interface operations {
             query?: {
                 page?: number;
                 pageSize?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -36219,10 +36389,15 @@ export interface operations {
     };
     meeting_schedule_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -37356,6 +37531,41 @@ export interface operations {
             };
         };
     };
+    meeting_export: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                meetingId: string;
+                reportId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_ExportCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                    "text/markdown": string;
+                };
+            };
+        };
+    };
     meeting_publish: {
         parameters: {
             query?: never;
@@ -37789,6 +37999,41 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
+    meeting_disconnect: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                meetingId: string;
+                participantId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_DisconnectCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseDisconnectResponse"];
                 };
             };
         };
@@ -39223,6 +39468,8 @@ export interface operations {
             query?: {
                 beforeSequence?: number;
                 limit?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path: {
@@ -39245,9 +39492,14 @@ export interface operations {
     };
     messaging_sendMessage: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 conversationId: string;
@@ -39692,7 +39944,10 @@ export interface operations {
     };
     messaging_home: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -40291,6 +40546,8 @@ export interface operations {
                 reason?: string;
                 from?: string;
                 to?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -40411,9 +40668,14 @@ export interface operations {
     };
     notification_read: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 notificationId: string;
@@ -40787,7 +41049,10 @@ export interface operations {
     };
     notification_byApp: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -44604,6 +44869,8 @@ export interface operations {
                 query?: string;
                 page?: number;
                 size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -44624,9 +44891,14 @@ export interface operations {
     };
     platform_create_13: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -44650,7 +44922,10 @@ export interface operations {
     };
     platform_detail_5: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 entryKey: string;
@@ -44672,9 +44947,14 @@ export interface operations {
     };
     platform_createRevision_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 entryKey: string;
@@ -44700,13 +44980,18 @@ export interface operations {
     };
     platform_updateRevision_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 entryKey: string;
-                revision: number;
+                revisionNumber: number;
             };
             cookie?: never;
         };
@@ -44729,13 +45014,18 @@ export interface operations {
     };
     platform_activateRevision_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 entryKey: string;
-                revision: number;
+                revisionNumber: number;
             };
             cookie?: never;
         };
@@ -44758,13 +45048,18 @@ export interface operations {
     };
     platform_retireRevision_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 entryKey: string;
-                revision: number;
+                revisionNumber: number;
             };
             cookie?: never;
         };
@@ -48839,6 +49134,8 @@ export interface operations {
             query: {
                 from: string;
                 to: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: {
                 "Accept-Language"?: string;
@@ -48861,10 +49158,15 @@ export interface operations {
     };
     platform_create_8: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -49083,6 +49385,8 @@ export interface operations {
         parameters: {
             query?: {
                 timeZone?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: {
                 "Accept-Language"?: string;
@@ -51676,7 +51980,10 @@ export interface operations {
     };
     platform_home: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -51696,9 +52003,14 @@ export interface operations {
     };
     platform_compose: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -52017,6 +52329,8 @@ export interface operations {
                 query?: string;
                 page?: number;
                 pageSize?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -52932,9 +53246,14 @@ export interface operations {
     };
     platform_informationResponse: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -53058,11 +53377,16 @@ export interface operations {
     };
     platform_createWorkplaceBooking: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
                 "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -53206,6 +53530,8 @@ export interface operations {
                 floorId?: string;
                 from: string;
                 to: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: {
                 "Accept-Language"?: string;
@@ -53228,7 +53554,10 @@ export interface operations {
     };
     platform_workplaceFloorBackground: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 floorId: string;
@@ -53398,14 +53727,35 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Authorized observation */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseEvidence"];
+                    "*/*": components["schemas"]["platform_ApiResponseActivityEvidenceReceipt"];
                 };
+            };
+            /** @description Trusted tenant and user identity is required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Personal Activity permission is required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Evidence is unavailable or its source is no longer accessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -53444,14 +53794,35 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Authorized observation */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseEvidence"];
+                    "*/*": components["schemas"]["platform_ApiResponseActivityEvidenceReceipt"];
                 };
+            };
+            /** @description Trusted tenant and user identity is required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Personal Activity permission is required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Evidence is unavailable or its source is no longer accessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -53484,14 +53855,35 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Authorized observation */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseSourceStatuses"];
+                    "*/*": components["schemas"]["platform_ApiResponseActivitySourceStatuses"];
                 };
+            };
+            /** @description Trusted tenant and user identity is required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Personal Activity permission is required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Evidence is unavailable or its source is no longer accessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -56830,7 +57222,10 @@ export interface operations {
     };
     space_home: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -56872,9 +57267,14 @@ export interface operations {
     };
     space_createRequest: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -56972,7 +57372,10 @@ export interface operations {
     };
     space_content: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 spaceKey: string;

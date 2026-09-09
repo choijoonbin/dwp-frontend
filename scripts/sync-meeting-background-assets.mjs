@@ -38,4 +38,15 @@ for (const [name, expected] of Object.entries(artifacts)) {
     throw new Error(`Background asset checksum mismatch: ${name}`);
   }
 }
-console.log('Meeting background assets: 3 approved local artifacts PASS');
+const officePreset = path.join(
+  root,
+  'public/assets/meeting-background/presets/office-neutral-v1.svg'
+);
+const officeBytes = await readFile(officePreset);
+if (
+  createHash('sha256').update(officeBytes).digest('hex') !==
+  '1f206bb431463f91a988dd8e0c31656cbc89c004509a3058d51dc6d60bb02949'
+) {
+  throw new Error('Background asset checksum mismatch: presets/office-neutral-v1.svg');
+}
+console.log('Meeting background assets: 4 approved local artifacts PASS');

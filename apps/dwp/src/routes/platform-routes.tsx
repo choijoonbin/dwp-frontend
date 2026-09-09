@@ -1,9 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, type RouteObject } from 'react-router-dom';
 
-import { AuthLayout } from '../layouts/auth-layout';
-import { routeFallback } from './route-support';
+import { authenticationFallback, routeFallback } from './route-support';
 
+const AuthLayout = lazy(() =>
+  import('../layouts/auth-layout').then((module) => ({ default: module.AuthLayout }))
+);
 const SignInPage = lazy(() => import('../pages/sign-in'));
 const OidcCallbackPage = lazy(() => import('../pages/auth/oidc-callback'));
 const AccountActivationPage = lazy(() => import('../pages/auth/account-activation'));
@@ -12,7 +14,11 @@ const PageNotFound = lazy(() => import('../pages/page-not-found'));
 
 export const platformRoutes: RouteObject[] = [
   {
-    element: <AuthLayout />,
+    element: (
+      <Suspense fallback={authenticationFallback}>
+        <AuthLayout />
+      </Suspense>
+    ),
     children: [
       {
         path: 'sign-in',

@@ -92,7 +92,10 @@ export function DwaionSourceControls({
                       {preference.unavailableReason ?? preference.description}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {copy.referenceOnly} {copy.separator} {preference.effectScope}
+                      {copy.referenceOnly} {copy.separator}{' '}
+                      {preference.effectScope === 'PERSONAL_ROUTINE_DRY_RUN_ONLY'
+                        ? copy.routineScope
+                        : copy.unknownScope}
                     </Typography>
                   </Box>
                 </Stack>

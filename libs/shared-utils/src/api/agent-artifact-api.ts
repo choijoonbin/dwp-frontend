@@ -11,6 +11,10 @@ import {
   isAgentRecord,
   newAgentCommand,
 } from './agent-governed-api';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -26,7 +30,24 @@ export type DwaionArtifactPublicationReceipt = AgentSchemas['ArtifactPublication
 export type DwaionArtifactExportReceipt = AgentSchemas['ArtifactExportReceipt'];
 export type DwaionArtifactExportFormat = AgentSchemas['ExportFormat'];
 
+export type DwaionArtifactConversationSource = AgentSchemas['ArtifactConversationSource'];
+
+export type CreateDwaionArtifactInput = {
+  artifactType: DwaionArtifactType;
+  content: DwaionArtifactDraftContent;
+} & (
+  | {
+      sourceConversation: DwaionArtifactConversationSource;
+      sources?: never;
+    }
+  | {
+      sourceConversation?: never;
+      sources?: DwaionArtifactSourceReference[];
+    }
+);
+
 const ARTIFACT_BASE = '/api/agent/v1/artifacts';
+const LEGACY_AUTHORITY = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' } as const;
 
 export async function getDwaionArtifacts(): Promise<DwaionGovernedArtifact[]> {
   const response = await axiosInstance.get<ApiResponse<unknown>>(ARTIFACT_BASE);
@@ -44,44 +65,67 @@ export async function getDwaionArtifact(artifactId: string): Promise<DwaionGover
   return expectAgentData(response.data.data, isArtifact, 'Governed artifact response is invalid.');
 }
 
-export async function createDwaionArtifact(input: {
-  artifactType: DwaionArtifactType;
-  content: DwaionArtifactDraftContent;
-  sources?: DwaionArtifactSourceReference[];
-}): Promise<DwaionGovernedArtifact> {
+export async function createDwaionArtifact(
+  input: CreateDwaionArtifactInput,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionGovernedArtifact> {
+  if (input.sourceConversation) {
+    assertAgentUuid(
+      input.sourceConversation.conversationId,
+      'Artifact source conversation identifier'
+    );
+    assertAgentUuid(
+      input.sourceConversation.assistantMessageId,
+      'Artifact source assistant message identifier'
+    );
+  }
+  const sourceConversation = input.sourceConversation
+    ? {
+        conversationId: input.sourceConversation.conversationId,
+        assistantMessageId: input.sourceConversation.assistantMessageId,
+      }
+    : undefined;
   const body: AgentSchemas['CreateArtifactRequest'] = {
     ...newAgentCommand(0, 'USER_ARTIFACT_CREATE'),
     artifactType: input.artifactType,
     content: input.content,
-    sources: input.sources ?? [],
+    ...(sourceConversation ? { sourceConversation } : { sources: input.sources ?? [] }),
   };
-  return mutateArtifact(ARTIFACT_BASE, body, 'post');
+  return mutateArtifact(ARTIFACT_BASE, body, 'post', authority);
 }
 
 export async function autosaveDwaionArtifact(
   artifactId: string,
   expectedRevision: number,
   content: DwaionArtifactDraftContent,
-  sources: DwaionArtifactSourceReference[]
+  sources: DwaionArtifactSourceReference[],
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionGovernedArtifact> {
   const body: AgentSchemas['AutosaveArtifactRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_ARTIFACT_AUTOSAVE'),
     content,
     sources,
   };
-  return mutateArtifact(`${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/draft`, body, 'put');
+  return mutateArtifact(
+    `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/draft`,
+    body,
+    'put',
+    authority
+  );
 }
 
 export async function createDwaionArtifactVersion(
   artifactId: string,
-  expectedRevision: number
+  expectedRevision: number,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionArtifactVersionReceipt> {
   const body: AgentSchemas['CreateArtifactVersionRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_ARTIFACT_VERSION'),
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/versions`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return expectAgentData(
     response.data.data,
@@ -145,7 +189,8 @@ export async function getCurrentDwaionArtifactPreflight(
 export async function runDwaionArtifactPreflight(
   artifactId: string,
   expectedRevision: number,
-  versionNumber: number
+  versionNumber: number,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionArtifactPreflightReceipt> {
   const body: AgentSchemas['RunArtifactPreflightRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_ARTIFACT_PREFLIGHT'),
@@ -153,7 +198,8 @@ export async function runDwaionArtifactPreflight(
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/preflights`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return expectAgentData(
     response.data.data,
@@ -166,7 +212,8 @@ export async function publishDwaionArtifact(
   artifactId: string,
   expectedRevision: number,
   versionNumber: number,
-  preflightId: string
+  preflightId: string,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionArtifactPublicationReceipt> {
   assertAgentUuid(preflightId, 'Artifact preflight identifier');
   const body: AgentSchemas['PublishArtifactRequest'] = {
@@ -177,7 +224,8 @@ export async function publishDwaionArtifact(
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/publish`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return expectAgentData(
     response.data.data,
@@ -191,7 +239,8 @@ export async function requestDwaionArtifactExport(
   expectedRevision: number,
   versionNumber: number,
   preflightId: string,
-  exportFormat: DwaionArtifactExportFormat
+  exportFormat: DwaionArtifactExportFormat,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionArtifactExportReceipt> {
   assertAgentUuid(preflightId, 'Artifact preflight identifier');
   const body: AgentSchemas['ExportArtifactRequest'] = {
@@ -203,24 +252,74 @@ export async function requestDwaionArtifactExport(
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/exports`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
-  return expectAgentData(
+  const receipt = expectAgentData(
     response.data.data,
     isExportReceipt,
     'Artifact export response is invalid.'
   );
+  if (
+    receipt.artifactId !== artifactId ||
+    receipt.versionNumber !== versionNumber ||
+    receipt.exportFormat !== exportFormat
+  ) {
+    throw new HttpError('Artifact export response binding is invalid.', 502);
+  }
+  return receipt;
+}
+
+export async function getDwaionArtifactExport(
+  artifactId: string,
+  exportJobId: string
+): Promise<DwaionArtifactExportReceipt> {
+  assertAgentUuid(exportJobId, 'Artifact export identifier');
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
+    `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/exports/${exportJobId}`
+  );
+  const receipt = expectAgentData(
+    response.data.data,
+    isExportReceipt,
+    'Artifact export response is invalid.'
+  );
+  if (receipt.artifactId !== artifactId || receipt.exportJobId !== exportJobId) {
+    throw new HttpError('Artifact export response binding is invalid.', 502);
+  }
+  return receipt;
+}
+
+export async function downloadDwaionArtifactExport(
+  receipt: DwaionArtifactExportReceipt
+): Promise<Blob> {
+  if (!isExportReceipt(receipt) || !receipt.fileAvailable) {
+    throw new TypeError('Artifact export file evidence is unavailable.');
+  }
+  assertAgentUuid(receipt.exportJobId, 'Artifact export identifier');
+  const response = await axiosInstance.get<Blob>(
+    `${ARTIFACT_BASE}/${encodeArtifactId(receipt.artifactId)}/exports/${receipt.exportJobId}/download`,
+    { responseType: 'blob' }
+  );
+  if (
+    response.data.size !== receipt.byteSize ||
+    response.headers?.get('X-DWP-Content-Fingerprint') !== receipt.contentFingerprint
+  ) {
+    throw new HttpError('Artifact export file evidence does not match.', 502);
+  }
+  return response.data;
 }
 
 async function mutateArtifact(
   url: string,
   body: object,
-  method: 'post' | 'put'
+  method: 'post' | 'put',
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionGovernedArtifact> {
+  const config = productSurfaceGovernedMutationConfig(authority);
   const response =
     method === 'post'
-      ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body)
-      : await axiosInstance.put<ApiResponse<unknown>, object>(url, body);
+      ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body, config)
+      : await axiosInstance.put<ApiResponse<unknown>, object>(url, body, config);
   return expectAgentData(response.data.data, isArtifact, 'Governed artifact response is invalid.');
 }
 
@@ -247,6 +346,15 @@ function isArtifact(value: unknown): value is DwaionGovernedArtifact {
     typeof value.content.body === 'string' &&
     Array.isArray(value.sources) &&
     isAgentRecord(value.capabilities) &&
+    typeof value.capabilities.immutableVersionsAvailable === 'boolean' &&
+    typeof value.capabilities.deterministicPreflightAvailable === 'boolean' &&
+    typeof value.capabilities.personalPublishStateAvailable === 'boolean' &&
+    typeof value.capabilities.exportRequestAvailable === 'boolean' &&
+    typeof value.capabilities.exportExecutionAvailable === 'boolean' &&
+    typeof value.capabilities.recipientSharingAvailable === 'boolean' &&
+    typeof value.capabilities.externalSharingAvailable === 'boolean' &&
+    typeof value.capabilities.sourceVerificationAvailable === 'boolean' &&
+    typeof value.capabilities.sourceFreshnessAvailable === 'boolean' &&
     isAgentDate(value.createdAt) &&
     isAgentDate(value.updatedAt)
   );
@@ -317,8 +425,27 @@ function isExportReceipt(value: unknown): value is DwaionArtifactExportReceipt {
     typeof value.artifactId === 'string' &&
     Number.isInteger(value.artifactRevision) &&
     Number.isInteger(value.versionNumber) &&
-    value.executionAvailable === false &&
-    value.fileAvailable === false &&
+    ['MARKDOWN', 'DOCX', 'PDF'].includes(String(value.exportFormat)) &&
+    ['PENDING', 'CLAIMED', 'SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELLED'].includes(
+      String(value.state)
+    ) &&
+    typeof value.executionAvailable === 'boolean' &&
+    typeof value.fileAvailable === 'boolean' &&
+    value.fileAvailable === (value.state === 'SUCCEEDED') &&
+    (value.fileAvailable
+      ? typeof value.fileName === 'string' &&
+        value.fileName.length > 0 &&
+        typeof value.mediaType === 'string' &&
+        value.mediaType.length > 0 &&
+        Number.isInteger(value.byteSize) &&
+        Number(value.byteSize) > 0 &&
+        typeof value.contentFingerprint === 'string' &&
+        /^[0-9a-f]{64}$/.test(value.contentFingerprint) &&
+        isAgentDate(value.completedAt)
+      : [value.fileName, value.mediaType, value.byteSize, value.contentFingerprint].every(
+          (field) => field == null
+        )) &&
+    (value.state !== 'FAILED' || isAgentDate(value.completedAt)) &&
     value.externalWritePerformed === false
   );
 }

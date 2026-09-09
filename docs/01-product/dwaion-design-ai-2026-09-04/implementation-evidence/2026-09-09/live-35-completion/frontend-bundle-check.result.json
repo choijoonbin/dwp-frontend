@@ -1,0 +1,43 @@
+{
+  "command": "corepack yarn bundle:check",
+  "cwd": "/Users/a10697/Work/DWP/dwp-frontend",
+  "exitCode": 0,
+  "result": "PASS",
+  "vite": {
+    "version": "8.2.1",
+    "modulesTransformed": 5200,
+    "builtInSeconds": 1.64
+  },
+  "bundleBudget": {
+    "entryRawKiB": {
+      "actual": 0.7,
+      "limit": 449.2
+    },
+    "entryGzipKiB": {
+      "actual": 0.4,
+      "limit": 136.7
+    },
+    "initialRawKiB": {
+      "actual": 1063.4,
+      "limit": 1074.2
+    },
+    "initialGzipKiB": {
+      "actual": 309.1,
+      "limit": 317.4
+    },
+    "initialRequests": {
+      "actual": 4,
+      "limit": 5
+    },
+    "largestAsyncRawKiB": {
+      "actual": 482.5,
+      "limit": 537.1
+    },
+    "largestAsyncGzipKiB": {
+      "actual": 123.1,
+      "limit": 166
+    }
+  },
+  "log": "frontend-bundle-check.log",
+  "logSha256": "34f628bab5300d0919bf09d06036e29e43471f2ec60c353a5490e2365aef2aa4"
+}

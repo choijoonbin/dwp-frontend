@@ -19,6 +19,7 @@ const runtime = vi.hoisted(() => ({
   removeMaterial: vi.fn(),
   accessMaterial: vi.fn(),
   personalPreparation: vi.fn(),
+  delivery: vi.fn(),
   enter: vi.fn(),
   back: vi.fn(),
   success: vi.fn(),
@@ -42,6 +43,9 @@ vi.mock('@dwp-frontend/shared-utils/api/video-meeting-preparation-api', async (o
   removeVideoMeetingMaterial: runtime.removeMaterial,
   issueVideoMeetingMaterialAccessTicket: runtime.accessMaterial,
   replaceMyVideoMeetingPreparation: runtime.personalPreparation,
+}));
+vi.mock('@dwp-frontend/shared-utils/api/video-meeting-schedule-api', () => ({
+  getVideoMeetingSchedule: runtime.delivery,
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
@@ -179,6 +183,12 @@ async function type(label: string, value: string) {
 
 describe('meeting preparation runtime', () => {
   beforeEach(() => {
+    runtime.delivery.mockResolvedValue({
+      meetingId: id,
+      meetingVersion: 1,
+      invitationRevision: 1,
+      deliveryState: 'PENDING',
+    });
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
     vi.clearAllMocks();
     runtime.auth = { userId: 1, tenantId: 1, identityPlane: 'TENANT' };
@@ -246,9 +256,49 @@ describe('meeting preparation runtime', () => {
     expect(mount.textContent).toContain('preparation.materialVerificationNotice');
     expect(mount.textContent).toContain('preparation.addMaterial');
     expect(mount.textContent).toContain('preparation.chatUnavailable');
-    expect(mount.textContent).toContain('preparation.briefingUnavailable');
+    expect(mount.textContent).toContain('preparation.briefing.source');
+    expect(
+      mount.querySelector('[data-testid="meeting-preparation-briefing"]')?.textContent
+    ).toContain('Review release');
     expect(runtime.agenda).not.toHaveBeenCalled();
     expect(runtime.enter).not.toHaveBeenCalled();
+  });
+  it('shows delivery pending separately from RSVP and removes mismatched or denied receipts', async () => {
+    await render();
+    expect(
+      mount.querySelector('[data-testid="meeting-invitation-delivery"]')?.textContent
+    ).toContain('preparation.delivery.states.PENDING');
+    expect(runtime.respond).not.toHaveBeenCalled();
+    runtime.delivery.mockResolvedValueOnce({
+      meetingId: id,
+      meetingVersion: 1,
+      invitationRevision: 2,
+      deliveryState: 'DELIVERED',
+    });
+    await click('preparation.delivery.refresh');
+    expect(
+      mount.querySelector('[data-testid="meeting-invitation-delivery"]')?.textContent
+    ).toContain('preparation.delivery.error');
+    expect(
+      mount.querySelector('[data-testid="meeting-invitation-delivery"]')?.textContent
+    ).not.toContain('preparation.delivery.states.DELIVERED');
+    runtime.delivery.mockRejectedValueOnce(new HttpError('Access revoked', 403));
+    await click('preparation.delivery.refresh');
+    expect(
+      mount.querySelector('[data-testid="meeting-invitation-delivery"]')?.textContent
+    ).not.toContain('preparation.delivery.states.PENDING');
+  });
+  it('opens source agenda from the briefing without marking personal preparation complete', async () => {
+    const scroll = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scroll,
+    });
+    await render();
+    await click('preparation.briefing.openAgenda');
+    expect(document.activeElement?.id).toBe('preparation-agenda');
+    expect(runtime.personalPreparation).not.toHaveBeenCalled();
+    expect(scroll).toHaveBeenCalled();
   });
   it('fails closed when the preparation material contract is incomplete', async () => {
     runtime.preparation.mockResolvedValue({

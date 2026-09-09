@@ -3,6 +3,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import { askDwp, askDwpStream } from './agent-runtime-api';
 
+const secureAuthority = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
+
 function jsonResponse(status: number, payload: unknown): Response {
   return {
     ok: status >= 200 && status < 300,
@@ -134,6 +142,14 @@ describe('Ask runtime API', () => {
       'fallback status is paired with an external model provider',
       { statusCode: 'ANSWER_GROUNDED_FALLBACK' },
     ],
+    [
+      'applied personalization has no accepted preference',
+      { personalization: { state: 'APPLIED', appliedKinds: [] } },
+    ],
+    [
+      'non-applied personalization exposes preference kinds',
+      { personalization: { state: 'DISABLED', appliedKinds: ['TONE'] } },
+    ],
   ])('fails closed when %s', async (_label, patch) => {
     const safe = groundedResponse();
     const unsafePatch = patch as Record<string, Record<string, unknown> | unknown>;
@@ -161,6 +177,26 @@ describe('Ask runtime API', () => {
     await expect(
       askDwp({ requestId: 'request-ask-1', query: 'Question', locale: 'en' })
     ).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('accepts value-free answer personalization evidence', async () => {
+    const response = {
+      ...groundedResponse(),
+      personalization: { state: 'APPLIED', appliedKinds: ['TONE', 'OUTPUT_FORMAT'] },
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, { data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(
+        jsonResponse(200, { status: 'SUCCESS', message: 'OK', data: response })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      askDwp({ requestId: 'request-ask-1', query: 'Question', locale: 'en' })
+    ).resolves.toEqual(response);
   });
 
   it('accepts an explicitly identified evidence-only fallback', async () => {
@@ -253,18 +289,21 @@ describe('Ask runtime API', () => {
           sourceScopes: ['WORK_ITEM'],
           pageContext: { route: '/work', appKey: 'APP.WORK' },
         },
-        { onProgress: (stage) => progress.push(stage) }
+        { onProgress: (stage) => progress.push(stage), authority: secureAuthority }
       )
     ).resolves.toEqual(response);
 
     expect(progress).toEqual(['AUTHORIZING', 'RETRIEVING']);
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      '/api/agent/v1/ask/stream',
+      '/api/agent/v1/ask/stream?contextScopeKey=scope-dwaion-self',
       expect.objectContaining({
         method: 'POST',
         credentials: 'include',
         body: expect.stringContaining('"sourceScopes":["WORK_ITEM"]'),
+        headers: expect.objectContaining({
+          'X-DWP-Expected-Decision-Revision': 'psr-current',
+        }),
       })
     );
   });

@@ -77,7 +77,19 @@ describe('WorkHubBatchDialog', () => {
           items={[item]}
           outcome="UNKNOWN"
           busy={false}
-          receipts={[{ item, state: 'UNKNOWN', reason: 'CANCELLED', idempotencyKey: 'original' }]}
+          receipts={[
+            {
+              item,
+              state: 'UNKNOWN',
+              reason: 'CANCELLED',
+              idempotencyKey: 'original',
+              reviewedCommand: {
+                kind: 'PERSONAL_COMPLETE',
+                lifecycle: item.lifecycle,
+                version: item.version,
+              },
+            },
+          ]}
           onRetryUnconfirmed={vi.fn()}
           onClose={vi.fn()}
           onConfirm={vi.fn()}
@@ -86,5 +98,32 @@ describe('WorkHubBatchDialog', () => {
     );
     expect(document.body.textContent).toContain('work:workHub.batch.cancelledUnknown');
     expect(document.body.textContent).not.toContain('work:workHub.batch.retryUnconfirmed');
+  });
+
+  it('offers an explicit current-state review and reports when the fresh read is unavailable', async () => {
+    const onReviewItem = vi.fn();
+    await act(async () =>
+      root.render(
+        <WorkHubBatchDialog
+          target="COMPLETED"
+          selectedCount={1}
+          items={[item]}
+          outcome="UNKNOWN"
+          busy={false}
+          reviewUnavailable
+          onReviewItem={onReviewItem}
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
+        />
+      )
+    );
+
+    expect(document.body.textContent).toContain('work:workHub.batch.reviewUnavailable');
+    const review = document.querySelector<HTMLButtonElement>(
+      '[aria-label="work:workHub.batch.reviewItemLabel"]'
+    );
+    expect(review).not.toBeNull();
+    await act(async () => review?.click());
+    expect(onReviewItem).toHaveBeenCalledWith(item);
   });
 });

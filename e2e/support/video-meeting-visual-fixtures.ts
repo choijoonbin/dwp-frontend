@@ -1,15 +1,20 @@
 import { mockShellSession } from './shell-session';
 import { mockMeetingRecordBookmarks } from './video-meeting-record-bookmark-fixtures';
+import { MEETING_VISUAL_RECENT_ID } from './video-meeting-home-report-fixtures';
+
+export {
+  MEETING_VISUAL_RECENT_ID,
+  mockMeetingVisualHomeReports,
+} from './video-meeting-home-report-fixtures';
 
 import type { Page, Route } from '@playwright/test';
 
 export const MEETING_VISUAL_NOW = new Date('2026-08-31T04:20:00.000Z');
 export const MEETING_VISUAL_ID = '81000000-0000-0000-0000-000000000301';
-export const MEETING_VISUAL_RECENT_ID = '81000000-0000-0000-0000-000000000304';
 
 type MeetingVisualLocale = 'en' | 'ko';
 type MeetingVisualColorScheme = 'light' | 'dark';
-type MeetingVisualHomeState = 'EMPTY' | 'NEXT' | 'LIVE' | 'BLOCKED' | 'SAMPLE';
+type MeetingVisualHomeState = 'EMPTY' | 'NEXT' | 'LIVE' | 'BLOCKED' | 'SAMPLE' | 'SAFE_SEEDED';
 type MeetingVisualReadinessState = 'BLOCKED' | 'READY';
 
 const MEMBER_PERMISSIONS = ['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
@@ -347,7 +352,10 @@ export async function mockMeetingVisualHome(page: Page, state: MeetingVisualHome
       pageSize,
     });
   });
-  const nextMeeting = state === 'NEXT' || state === 'SAMPLE' ? MEETING_VISUAL_SUMMARY : null;
+  const nextMeeting =
+    state === 'NEXT' || state === 'SAMPLE' || state === 'SAFE_SEEDED'
+      ? MEETING_VISUAL_SUMMARY
+      : null;
   const activeMeeting =
     state === 'LIVE'
       ? {
@@ -364,7 +372,7 @@ export async function mockMeetingVisualHome(page: Page, state: MeetingVisualHome
       : null;
   const available = state !== 'BLOCKED';
   const today =
-    state === 'SAMPLE'
+    state === 'SAMPLE' || state === 'SAFE_SEEDED'
       ? [
           MEETING_VISUAL_SUMMARY,
           {
@@ -397,6 +405,36 @@ export async function mockMeetingVisualHome(page: Page, state: MeetingVisualHome
   await page.route('**/api/meetings/v1/meetings/*/intelligence/reports/latest*', (route) =>
     fulfill(route, null)
   );
+  await page.route(`**/api/meetings/v1/meetings/${MEETING_VISUAL_RECENT_ID}`, (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return fulfill(route, {
+      ...ENDED_MEETING,
+      meetingId: MEETING_VISUAL_RECENT_ID,
+      decisions:
+        state === 'SAFE_SEEDED'
+          ? [
+              {
+                decision:
+                  '[화면점검 · 수동 기록 · AI 결과 아님] 홈의 정보 밀도와 모바일 우선순위를 함께 검증합니다.',
+                ownerUserId: 42,
+                status: 'CONFIRMED',
+              },
+            ]
+          : [],
+      followUpActions:
+        state === 'SAFE_SEEDED'
+          ? [
+              {
+                action:
+                  '[화면점검 · 수동 후속 초안 · 실제 업무 아님] 넓은 화면의 열 비율과 빈 상태를 재확인합니다.',
+                ownerUserId: 42,
+                dueInDays: 2,
+                status: 'OPEN',
+              },
+            ]
+          : [],
+    });
+  });
   await page.route('**/api/meetings/v1/home*', (route) =>
     fulfill(route, {
       serverNow: MEETING_VISUAL_NOW.toISOString(),
@@ -429,8 +467,22 @@ export async function mockMeetingVisualHome(page: Page, state: MeetingVisualHome
               },
             ],
       metrics: {
-        meetingsToday: state === 'SAMPLE' ? 3 : activeMeeting ? 2 : nextMeeting ? 1 : 0,
-        meetingMinutesToday: state === 'SAMPLE' ? 125 : activeMeeting ? 62 : nextMeeting ? 50 : 0,
+        meetingsToday:
+          state === 'SAMPLE' || state === 'SAFE_SEEDED'
+            ? 3
+            : activeMeeting
+              ? 2
+              : nextMeeting
+                ? 1
+                : 0,
+        meetingMinutesToday:
+          state === 'SAMPLE' || state === 'SAFE_SEEDED'
+            ? 125
+            : activeMeeting
+              ? 62
+              : nextMeeting
+                ? 50
+                : 0,
         waitingForApproval: activeMeeting ? 3 : 0,
         qualityScore: activeMeeting ? 94 : null,
         averageJoinSeconds: activeMeeting ? 11 : null,
@@ -634,56 +686,6 @@ export async function mockMeetingVisualPrejoin(page: Page) {
       updatedAt: MEETING_VISUAL_NOW.toISOString(),
     })
   );
-}
-
-export async function mockMeetingVisualHomeReports(page: Page) {
-  let revoked = false;
-  const citation = { segmentId: 'seg-18', startMillis: 221_000, endMillis: 238_000 };
-  await page.route(
-    `**/api/meetings/v1/meetings/${MEETING_VISUAL_RECENT_ID}/intelligence/reports/latest*`,
-    (route) => {
-      if (revoked) {
-        return route.fulfill({
-          status: 403,
-          contentType: 'application/json',
-          body: JSON.stringify({ status: 'ERROR', message: 'Report access revoked' }),
-        });
-      }
-      const published = new URL(route.request().url()).pathname.endsWith('/latest-published');
-      return fulfill(route, {
-        reportId: published
-          ? '88000000-0000-0000-0000-000000000304'
-          : '88000000-0000-0000-0000-000000000305',
-        meetingId: MEETING_VISUAL_RECENT_ID,
-        runId: '87000000-0000-0000-0000-000000000304',
-        state: published ? 'PUBLISHED' : 'DRAFT',
-        audience: published ? 'MEETING_PARTICIPANTS' : 'REVIEWERS',
-        schemaVersion: 'meeting-intelligence-v1',
-        retentionUntil: '2026-09-28T01:50:00Z',
-        legalHold: false,
-        approvedAt: published ? '2026-08-29T02:00:00Z' : null,
-        publishedAt: published ? '2026-08-29T02:02:00Z' : null,
-        canCurrentViewerReview: !published,
-        version: 2,
-        analysis: {
-          executiveSummary: {
-            text: published
-              ? 'The group approved a staged launch with an explicit regional checkpoint.'
-              : 'Private unreviewed draft text must never appear on the home screen.',
-            citations: [citation],
-          },
-          topics: [],
-          decisions: [],
-          actionItems: [],
-          openQuestions: [],
-          risks: [],
-          conversationClimate: { label: 'ALIGNED', signals: [], citations: [citation] },
-        },
-        reviews: [],
-      });
-    }
-  );
-  return { revoke: () => (revoked = true) };
 }
 
 export async function mockMeetingVisualPublishedRecap(page: Page, rich = false) {

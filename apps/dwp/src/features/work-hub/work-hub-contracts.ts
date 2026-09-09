@@ -6,6 +6,7 @@ import type { WorkspaceWorkItem } from '@dwp-frontend/shared-utils/api/workspace
 
 export type WorkHubSourceId =
   | 'workspace'
+  | 'work-assignments'
   | 'approval-inbox'
   | 'approval-completed'
   | 'approval-needs-info'
@@ -24,6 +25,53 @@ export type WorkHubActionKind =
   | 'PERSONAL_COMPLETE'
   | 'PERSONAL_REOPEN'
   | 'PERSONAL_ARCHIVE';
+
+export type WorkHubSourceContext =
+  | {
+      kind: 'APPROVAL_TASK';
+      requestId: string;
+      requesterName: string | null;
+      requesterOrgName: string | null;
+      submittedAt: string | null;
+      workflowNameKo: string;
+      workflowNameEn: string;
+      currentStep: {
+        key: string;
+        name: string;
+        sequence: number;
+      };
+      riskScore: number;
+    }
+  | {
+      kind: 'APPROVAL_REQUEST';
+      submittedAt: string | null;
+      workflowNameKo: string;
+      workflowNameEn: string;
+      currentStep: {
+        key: string | null;
+        name: string | null;
+        sequence: number | null;
+        totalSteps: number;
+      };
+    }
+  | {
+      kind: 'SERVICE_REQUEST';
+      serviceKey: string;
+      serviceNameKo: string;
+      serviceNameEn: string;
+      assignedGroup: string;
+      assignedTo: string | null;
+      submittedAt: string | null;
+    }
+  | {
+      kind: 'WORK_ASSIGNMENT';
+      assignmentState: 'PENDING' | 'ACCEPTED' | 'DECLINED';
+      workState: 'OPEN' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETED' | 'CANCELLED';
+      requesterIsMe: boolean;
+      assigneeIsMe: boolean;
+      /** List responses intentionally do not inspect the Meeting owner. */
+      sourceAvailability: 'NOT_REQUESTED';
+    };
 
 export type WorkHubItem = {
   key: string;
@@ -44,6 +92,8 @@ export type WorkHubItem = {
   reason: string | null;
   dataClassification: string | null;
   actions: Array<{ kind: WorkHubActionKind; availability: 'AVAILABLE' | 'DETAIL_REQUIRED' }>;
+  /** Read-only decision context already authorized and returned by the source list. */
+  sourceContext?: WorkHubSourceContext;
   /** Compatibility identity for existing links during the staged queue migration. */
   legacyItem?: WorkspaceWorkItem;
 };

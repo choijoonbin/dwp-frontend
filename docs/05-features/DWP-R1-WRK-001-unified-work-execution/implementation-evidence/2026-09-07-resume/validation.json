@@ -1,4 +1,7 @@
 {
+  "status": "HISTORICAL_SUPERSEDED",
+  "currentUiVerified": false,
+  "supersededBy": "owned-scope-final/validation.json",
   "recordedAt": "2026-09-07T09:21:14.270754+00:00",
   "scope": "Work app and Services information-response owner handoff",
   "referenceFrames": 18,
@@ -115,9 +118,7 @@
     {
       "name": "Repository display dictionary",
       "result": "BLOCKED_OTHER_ACTIVE_CHANGE",
-      "details": [
-        "Meetings prejoin states.STATUS is missing from ko/en display dictionary"
-      ],
+      "details": ["Meetings prejoin states.STATUS is missing from ko/en display dictionary"],
       "log": "logs/display-closeout.log"
     },
     {

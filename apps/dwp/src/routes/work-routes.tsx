@@ -15,6 +15,9 @@ const WorkPage = lazy(() => import('../pages/work'));
 const WorkLayout = lazy(() =>
   import('../layouts/work-layout').then(({ WorkLayout }) => ({ default: WorkLayout }))
 );
+const DwaionWorkCalendarContext = lazy(
+  () => import('../components/dwaion-assistant/dwaion-work-calendar-context')
+);
 
 export const workRoutes: RouteObject[] = [
   {
@@ -33,6 +36,14 @@ export const workRoutes: RouteObject[] = [
     children: [
       { index: true, element: <WorkQueueRedirect /> },
       { path: 'home', element: <WorkQueueRedirect /> },
+      {
+        path: 'calendar',
+        element: (
+          <Suspense fallback={routeFallback}>
+            <DwaionWorkCalendarContext />
+          </Suspense>
+        ),
+      },
       ...WORK_HUB_VIEWS.map(({ view }) => ({
         path: view,
         element: (

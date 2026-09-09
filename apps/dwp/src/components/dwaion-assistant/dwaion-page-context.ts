@@ -7,6 +7,11 @@ export type DwaionSurfaceContext = {
 
 const surfaces: readonly (DwaionSurfaceContext & { prefix: string })[] = [
   {
+    prefix: '/work/calendar',
+    pageContext: { route: '/work/calendar', appKey: 'APP.CALENDAR', surface: 'work-calendar' },
+    suggestionKeys: ['calendarBrief', 'meetingConflict', 'meetingPrep'],
+  },
+  {
     prefix: '/calendar',
     pageContext: { route: '/calendar', appKey: 'APP.CALENDAR', surface: 'schedule' },
     suggestionKeys: ['calendarBrief', 'meetingConflict', 'meetingPrep'],

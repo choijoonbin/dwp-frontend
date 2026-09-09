@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
-import { mockShellSession } from './support/shell-session';
+import { expect, test, type Page } from '@playwright/test';
+import { fulfillSuccess, mockShellSession } from './support/shell-session';
 import {
   expectNoHorizontalOverflow,
   mockNotificationCenter,
@@ -33,6 +33,77 @@ const items = reasons.map((kind, index) => ({
   actionable: index === 0,
   reason: { kind, label: reasonLabels[index] },
 }));
+
+type NotificationSavedView = {
+  savedViewId: string;
+  surfaceKey: string;
+  name: string;
+  scope: 'PERSONAL';
+  ownerUserId: number;
+  ownerGroupRef: null;
+  lifecycleState: 'ACTIVE';
+  retentionUntil: null;
+  editable: true;
+  favorite: boolean;
+  defaultView: boolean;
+  configuration: Record<string, unknown>;
+  version: number;
+  lastUsedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+async function mockNotificationSavedViews(page: Page) {
+  let views: NotificationSavedView[] = [];
+  let createdPayload: Record<string, unknown> | null = null;
+  let usedViewId: string | null = null;
+
+  await page.route('**/api/platform/v1/workspace/saved-views**', async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const method = request.method();
+    if (url.pathname.endsWith('/saved-views') && method === 'GET') {
+      return fulfillSuccess(route, views);
+    }
+    if (url.pathname.endsWith('/saved-views') && method === 'POST') {
+      createdPayload = request.postDataJSON() as Record<string, unknown>;
+      const created: NotificationSavedView = {
+        savedViewId: 'notification-saved-view-1',
+        surfaceKey: url.searchParams.get('surfaceKey') ?? '',
+        name: String(createdPayload.name),
+        scope: 'PERSONAL',
+        ownerUserId: 900018,
+        ownerGroupRef: null,
+        lifecycleState: 'ACTIVE',
+        retentionUntil: null,
+        editable: true,
+        favorite: Boolean(createdPayload.favorite),
+        defaultView: Boolean(createdPayload.defaultView),
+        configuration: createdPayload.configuration as Record<string, unknown>,
+        version: 1,
+        lastUsedAt: null,
+        createdAt: '2026-09-08T13:00:00Z',
+        updatedAt: '2026-09-08T13:00:00Z',
+      };
+      views = [created];
+      return fulfillSuccess(route, created);
+    }
+    if (url.pathname.endsWith('/use') && method === 'POST') {
+      usedViewId = url.pathname.split('/').at(-2) ?? null;
+      return route.fulfill({ status: 204 });
+    }
+    return route.abort('failed');
+  });
+
+  return {
+    get createdPayload() {
+      return createdPayload;
+    },
+    get usedViewId() {
+      return usedViewId;
+    },
+  };
+}
 
 test.beforeEach(async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Explicit desktop and mobile viewport matrix.');
@@ -76,7 +147,8 @@ test('홈 요약 선택은 해당 알림을 서버 조회하고 홈 안에서 �
   await expect(page.getByRole('article')).toHaveCount(1);
   await expect(page.getByRole('heading', { name: '수신 이유 MENTION', exact: true })).toBeVisible();
   await mentions.click();
-  await expect(page.getByRole('article')).toHaveCount(6);
+  await expect(page.getByRole('article')).toHaveCount(5);
+  await expect(page.getByRole('link', { name: '1건 더 보기' })).toBeVisible();
   await page.mouse.move(0, 0);
   await expect(page.locator('.MuiTouchRipple-rippleVisible')).toHaveCount(0);
   await page.screenshot({
@@ -161,6 +233,54 @@ test('필터 결과 없음은 받은 알림이 없는 상태와 구분한다', a
   await expect(page.getByRole('heading', { name: '조건에 맞는 알림이 없습니다' })).toBeVisible();
   await page.getByRole('button', { name: '필터 초기화' }).click();
   await expect(page.getByRole('article')).toHaveCount(6);
+});
+
+test('현재 알림 조건을 개인 보기로 저장하고 동일한 서버 조회 범위를 복원한다', async ({
+  page,
+}, testInfo) => {
+  const store = await mockNotificationSavedViews(page);
+  await page.goto('/notifications/center?view=all&read=unread&reason=direct');
+
+  await page.getByRole('button', { name: /^저장된 뷰:/ }).click();
+  await page.getByRole('menuitem', { name: '현재 조건 저장' }).click();
+  await page.getByLabel('뷰 이름').fill('직접 수신 미확인');
+  await page.getByRole('button', { name: '생성', exact: true }).click();
+
+  await expect(page.getByRole('button', { name: '저장된 뷰: 직접 수신 미확인' })).toBeVisible();
+  expect(store.createdPayload).toMatchObject({
+    name: '직접 수신 미확인',
+    scope: 'PERSONAL',
+    configuration: {
+      contract: 'dwp.notifications.center.saved-view',
+      version: 1,
+      scope: {
+        view: 'ALL',
+        query: '',
+        appKey: '',
+        priority: 'ALL',
+        readState: 'UNREAD',
+        reason: 'DIRECT',
+      },
+    },
+  });
+
+  await page
+    .getByRole('navigation', { name: '알림 센터 보기' })
+    .getByRole('button', { name: /^조치 필요/ })
+    .click();
+  await expect(page).toHaveURL(/view=priority/);
+  await page.getByRole('button', { name: /^저장된 뷰:/ }).click();
+  await page.getByRole('menuitem').filter({ hasText: '직접 수신 미확인' }).click();
+
+  await expect(page).toHaveURL(/view=all&read=unread&reason=direct/);
+  await expect(page.getByRole('button', { name: '저장된 뷰: 직접 수신 미확인' })).toBeVisible();
+  await expect.poll(() => store.usedViewId).toBe('notification-saved-view-1');
+  await expectNoHorizontalOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath('notification-saved-view-applied.png'),
+    animations: 'disabled',
+    fullPage: true,
+  });
 });
 
 test('알림 정리에 실패하면 낙관적으로 숨긴 항목을 복원한다', async ({ page }) => {

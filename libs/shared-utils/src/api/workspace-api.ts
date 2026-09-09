@@ -75,6 +75,10 @@ export type WorkspaceActivityEvent = {
   updatedAt?: string | null;
   sourceEventId?: string | null;
   objectId?: string | null;
+  sourceReference?: string | null;
+  resourceVersion?: number | null;
+  idempotencyKey?: string | null;
+  resultState?: 'OPEN' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETED' | 'ARCHIVED' | 'DELETED' | null;
   executionId?: string | null;
   executionVersion?: number | null;
   attempt?: number | null;
@@ -291,6 +295,10 @@ const ACTIVITY_EVENT_KEYS = new Set([
   'updatedAt',
   'sourceEventId',
   'objectId',
+  'sourceReference',
+  'resourceVersion',
+  'idempotencyKey',
+  'resultState',
   'executionId',
   'executionVersion',
   'attempt',
@@ -313,6 +321,14 @@ const ACTIVITY_LINKED_AUDIT_STATUSES = new Set(['VERIFIED', 'LINKED', 'PENDING']
 const ACTIVITY_EVENT_KINDS = new Set(['CHANGE', 'EXECUTION', 'EXECUTION_SNAPSHOT', 'USAGE']);
 const ACTIVITY_PROVENANCE = new Set(['LIVE', 'LEGACY', 'SAMPLE', 'QUARANTINED']);
 const ACTIVITY_SOURCE_ACCESS = new Set(['AVAILABLE', 'FORBIDDEN', 'DELETED', 'UNAVAILABLE']);
+const PERSONAL_WORK_RESULT_STATES = new Set([
+  'OPEN',
+  'IN_PROGRESS',
+  'WAITING',
+  'COMPLETED',
+  'ARCHIVED',
+  'DELETED',
+]);
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 
 const launchModeMap: Record<RawWorkspaceApp['launchMode'], WorkspaceAppLaunchMode> = {
@@ -357,10 +373,10 @@ function mapApp(app: RawWorkspaceApp): WorkspaceApp {
   };
 }
 
-export async function getWorkspaceWorkQueue(): Promise<WorkspaceWorkQueue> {
+export async function getWorkspaceWorkQueue(signal?: AbortSignal): Promise<WorkspaceWorkQueue> {
   const response = await axiosInstance.get<ApiResponse<RawWorkspaceWorkQueue>>(
     '/api/platform/v1/workspace/work-items',
-    { timeoutMs: 8000 }
+    { timeoutMs: 8000, signal }
   );
   return normalizeWorkspaceWorkQueue(response.data.data);
 }
@@ -372,15 +388,20 @@ export function normalizeWorkspaceWorkQueue(queue: RawWorkspaceWorkQueue): Works
 export async function updateWorkspaceWorkStatus(
   workItemId: string,
   status: 'IN_PROGRESS' | 'WAITING' | 'COMPLETED',
-  version: number
+  version: number,
+  signal?: AbortSignal
 ): Promise<WorkspaceWorkItem> {
   const response = await axiosInstance.patch<
     ApiResponse<RawWorkspaceWorkItem>,
     { status: string; version: number }
-  >(`/api/platform/v1/workspace/work-items/${encodeURIComponent(workItemId)}/status`, {
-    status,
-    version,
-  });
+  >(
+    `/api/platform/v1/workspace/work-items/${encodeURIComponent(workItemId)}/status`,
+    {
+      status,
+      version,
+    },
+    { signal }
+  );
   return mapWorkItem(response.data.data);
 }
 
@@ -490,6 +511,12 @@ function isValidRawActivityEvent(value: unknown): value is RawWorkspaceActivityE
     !isOptionalNullableDate(value.updatedAt) ||
     !isOptionalNullableString(value.sourceEventId) ||
     !isOptionalNullableString(value.objectId) ||
+    !isOptionalNullableString(value.sourceReference) ||
+    !isOptionalNullableInteger(value.resourceVersion, 0) ||
+    !isOptionalNullableUuid(value.idempotencyKey) ||
+    !(
+      value.resultState === null || isOptionalEnum(value.resultState, PERSONAL_WORK_RESULT_STATES)
+    ) ||
     !isOptionalNullableString(value.executionId) ||
     !isOptionalNullableInteger(value.executionVersion, 0) ||
     !isOptionalNullableInteger(value.attempt, 1) ||
@@ -534,6 +561,42 @@ function isValidRawActivityEvent(value: unknown): value is RawWorkspaceActivityE
       typeof value.attempt === 'number' &&
       value.attempt >= 1 &&
       isDate(value.sourceObservedAt)
+    );
+  }
+  if (value.source === 'PERSONAL_TASK') {
+    const sourceReference = String(value.sourceReference ?? '');
+    const idempotencyKey = String(value.idempotencyKey ?? '');
+    const expectedRoute = `/work/queue?work=${encodeURIComponent(`PERSONAL_TASK:${sourceReference}:`)}`;
+    const resultState = String(value.resultState ?? '');
+    const projectedWorkStatus = ['IN_PROGRESS', 'WAITING', 'COMPLETED'].includes(resultState)
+      ? resultState
+      : null;
+    return (
+      UUID_PATTERN.test(String(value.id)) &&
+      value.actor === 'PERSON' &&
+      value.state === 'COMPLETED' &&
+      value.objectType === 'WORK_ITEM' &&
+      value.eventKind === 'CHANGE' &&
+      value.dataProvenance === 'LIVE' &&
+      (value.sourceAccess === 'AVAILABLE' || value.sourceAccess === 'DELETED') &&
+      value.auditAccess === 'RESTRICTED' &&
+      value.auditStatus === 'VERIFIED' &&
+      typeof value.auditRecordId === 'string' &&
+      UUID_PATTERN.test(value.auditRecordId) &&
+      UUID_PATTERN.test(String(value.objectId)) &&
+      UUID_PATTERN.test(sourceReference) &&
+      sourceReference.toLowerCase() === String(value.objectId).toLowerCase() &&
+      typeof value.resourceVersion === 'number' &&
+      value.resourceVersion >= 0 &&
+      UUID_PATTERN.test(idempotencyKey) &&
+      new RegExp(`^personal-work-command:[1-9][0-9]*:${idempotencyKey}$`, 'iu').test(
+        String(value.sourceEventId)
+      ) &&
+      PERSONAL_WORK_RESULT_STATES.has(resultState) &&
+      (value.workStatus ?? null) === projectedWorkStatus &&
+      (value.sourceAccess === 'DELETED'
+        ? value.sourceRoute === null
+        : value.sourceRoute === expectedRoute)
     );
   }
   return true;

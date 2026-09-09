@@ -1,0 +1,25 @@
+{
+  "reason": "v4 whole246-case run passed, but actual viewport inspection confirmed global FAB overlap with the Work AI submit surface. Applied existing auxiliary avoidance inside Work AI copy/form/continue wrappers and added actual geometry assertions to existing desktop1440/1280 journeys in both projects.",
+  "beforeSha256": "70fa3afdd8992d8140448bee05c64dcc4cea78422ee5eb425976a299d0c3f3bc",
+  "afterSha256": "4cdc185b3d2e0040720a45a21691878a2c48ef6a6f5fa9e1bf1f359fea8f68f2",
+  "files": [
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-assist-dialog.tsx",
+      "before": "fb4804bd6e5186f2fb82cea755f52bb629f2ff4bcf58373c98716b5b624e1777",
+      "after": "cc46eef0ab27c0cec437ba62fb65e9ce80db416cf0a31e981748717e508fea90"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-assist-panel.test.tsx",
+      "before": "d50603ba88393e53573d921bba4186d9de589c2a09667236d4f8513c16b551b3",
+      "after": "543b2a064e4f0e544977e43ef5e1e23e4812cc950b5ee1cb481995c8dc1af843"
+    },
+    {
+      "path": "e2e/work-stitch-design-sync.spec.ts",
+      "before": "ebe2fb0ce3b3973b88d8dc3a795a73077d5bf43d945130229d2a3e284ff6d409",
+      "after": "e6122303ac478a376f15dfeffaa42798ee1935a9e58b9fbd13b73cfceffdc5a0"
+    }
+  ],
+  "supersededPassingRun": "/tmp/dwp-work-final-green-20260908-v4",
+  "finalRun": "/tmp/dwp-work-final-green-20260908-v5",
+  "resolution": "Repeat affected browser regression, focused/full unit suites, nonincremental TypeScript, full build/static gates, Workspace build and the complete13-spec two-project run; replace gallery from final successful run."
+}

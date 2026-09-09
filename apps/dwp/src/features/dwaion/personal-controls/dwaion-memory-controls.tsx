@@ -81,8 +81,8 @@ export function DwaionMemoryControls({
   return (
     <Box component="section" aria-labelledby="dwaion-memory-title">
       <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        alignItems={{ sm: 'flex-start' }}
+        direction={{ xs: 'column', md: 'row' }}
+        alignItems={{ md: 'flex-start' }}
         justifyContent="space-between"
         gap={2}
       >
@@ -102,7 +102,7 @@ export function DwaionMemoryControls({
           startIcon={<Plus size={17} aria-hidden="true" />}
           disabled={!canCreate || busy}
           onClick={() => openEditor('new')}
-          sx={{ minHeight: 44 }}
+          sx={{ minHeight: 44, flexShrink: 0, alignSelf: { xs: 'flex-start', md: 'auto' } }}
         >
           {copy.addMemory}
         </ActionButton>

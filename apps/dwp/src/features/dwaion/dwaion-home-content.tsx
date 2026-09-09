@@ -8,8 +8,9 @@ import {
   FileCheck2,
   MessageSquare,
   MessageSquarePlus,
+  ShieldCheck,
 } from 'lucide-react';
-import { ActionButton, GuidedEmptyState } from '@dwp-frontend/design-system';
+import { ActionButton, GuidedEmptyState, foundationTokens } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import type {
   DwaionConversationSummary,
@@ -39,7 +40,7 @@ const ROW_STYLE = {
   width: 1,
   minWidth: 0,
   textAlign: 'left',
-  p: 1.75,
+  p: { xs: 1.5, md: 1.25 },
   gap: 1.5,
   border: 1,
   borderColor: 'divider',
@@ -68,9 +69,12 @@ export function DwaionHomeContent({
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1.35fr) minmax(0, 1fr)' },
-        gap: 3,
-        mt: 3,
+        gridTemplateColumns: {
+          xs: 'minmax(0, 1fr)',
+          lg: 'minmax(0, 1.75fr) minmax(280px, 0.8fr)',
+        },
+        gap: { xs: 2, md: 2 },
+        mt: { xs: 2.5, md: 3 },
         alignItems: 'start',
       }}
     >
@@ -94,6 +98,27 @@ export function DwaionHomeContent({
                       ...ROW_STYLE,
                       alignItems: 'stretch',
                       flexDirection: { xs: 'column', sm: 'row' },
+                      position: 'relative',
+                      overflow: 'hidden',
+                      borderColor:
+                        item.priority === 'high'
+                          ? 'error.light'
+                          : item.priority === 'medium'
+                            ? 'warning.light'
+                            : 'divider',
+                      '&::before': {
+                        content: '""',
+                        display: { xs: 'block', sm: 'none' },
+                        position: 'absolute',
+                        inset: '0 auto 0 0',
+                        width: 4,
+                        bgcolor:
+                          item.priority === 'high'
+                            ? 'error.main'
+                            : item.priority === 'medium'
+                              ? 'warning.main'
+                              : 'divider',
+                      },
                     }}
                   >
                     <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -125,6 +150,34 @@ export function DwaionHomeContent({
                         <Typography variant="caption" color="text.secondary">
                           {item.sourceSystem}
                         </Typography>
+                        {item.sourceReference && (
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: { xs: 'none', md: 'block' } }}
+                          >
+                            {item.sourceReference}
+                          </Typography>
+                        )}
+                        {item.dataClassification && (
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={item.dataClassification}
+                            sx={{
+                              display: { xs: 'none', md: 'inline-flex' },
+                              height: 20,
+                              '& .MuiChip-label': { px: 0.65, fontSize: 'overline.fontSize' },
+                            }}
+                          />
+                        )}
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: { xs: 'none', md: 'block' } }}
+                        >
+                          {item.owner}
+                        </Typography>
                       </Stack>
                       <Typography component="h3" variant="body2" fontWeight="fontWeightBold">
                         {item.title}
@@ -132,16 +185,17 @@ export function DwaionHomeContent({
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        sx={{ display: 'block', mt: 0.5 }}
+                        sx={{ display: { xs: 'none', sm: 'block' }, mt: 0.5 }}
                       >
                         {item.reason || item.summary || item.recommendedNext}
                       </Typography>
                     </Box>
                     <Stack
+                      direction={{ xs: 'row', sm: 'column' }}
                       gap={1}
-                      alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                      alignItems={{ xs: 'center', sm: 'flex-end' }}
                       justifyContent="space-between"
-                      sx={{ maxWidth: { sm: 150 }, flexShrink: 0 }}
+                      sx={{ width: { xs: 1, sm: 'auto' }, maxWidth: { sm: 150 }, flexShrink: 0 }}
                     >
                       <Stack
                         direction="row"
@@ -176,7 +230,7 @@ export function DwaionHomeContent({
           )}
         </DwaionHomeResource>
       </DwaionHomeSection>
-      <Stack spacing={3} sx={{ minWidth: 0 }}>
+      <Stack spacing={2} sx={{ minWidth: 0 }}>
         <DwaionHomeSection
           title={t('dwaionHome.recent.title')}
           description={t('dwaionHome.recent.description')}
@@ -186,12 +240,15 @@ export function DwaionHomeContent({
           <DwaionHomeResource state={conversations.state} onRetry={conversations.retry}>
             {conversations.items.length ? (
               <Stack spacing={1}>
-                {homeRecentConversations(conversations.items).map((conversation) => (
+                {homeRecentConversations(conversations.items).map((conversation, index) => (
                   <ButtonBase
                     key={conversation.conversationId}
                     component={RouterLink}
                     to={`/dwaion/conversations/${encodeURIComponent(conversation.conversationId)}`}
-                    sx={ROW_STYLE}
+                    sx={{
+                      ...ROW_STYLE,
+                      display: { xs: index > 1 ? 'none' : 'flex', md: 'flex' },
+                    }}
                   >
                     <MessageSquare size={17} aria-hidden="true" style={{ flexShrink: 0 }} />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -208,6 +265,16 @@ export function DwaionHomeContent({
                           { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
                           locale
                         )}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 0.35 }}
+                      >
+                        {t('dwaionHome.recent.messageEvidence', {
+                          messages: conversation.messageCount,
+                          evidence: conversation.evidenceCount,
+                        })}
                       </Typography>
                     </Box>
                     <ArrowUpRight size={15} aria-hidden="true" style={{ flexShrink: 0 }} />
@@ -233,7 +300,13 @@ export function DwaionHomeContent({
         >
           <DwaionHomeResource state={agents.state} onRetry={agents.retry}>
             {agents.items.length ? (
-              <Stack spacing={1}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', md: 'minmax(0, 1fr)' },
+                  gap: 1,
+                }}
+              >
                 {agents.items.map((agent) => {
                   const approval = agent.entryKey === DWAION_APPROVAL_EXPERT_AGENT_KEY;
                   const Icon = approval ? FileCheck2 : Bot;
@@ -241,7 +314,7 @@ export function DwaionHomeContent({
                     <Stack
                       key={agent.entryKey}
                       direction="row"
-                      alignItems="center"
+                      alignItems="flex-start"
                       spacing={1.25}
                       sx={{
                         p: 1.5,
@@ -249,8 +322,10 @@ export function DwaionHomeContent({
                         borderColor: 'divider',
                         borderRadius: (theme: Theme) => `${theme.shape.borderRadius}px`,
                         bgcolor: 'background.paper',
-                        flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                        flexWrap: 'wrap',
                         rowGap: 1,
+                        minWidth: 0,
+                        position: 'relative',
                       }}
                     >
                       <Box
@@ -278,6 +353,26 @@ export function DwaionHomeContent({
                         >
                           {agent.description}
                         </Typography>
+                        <Stack
+                          direction="row"
+                          gap={0.65}
+                          useFlexGap
+                          flexWrap="wrap"
+                          sx={{ mt: 0.65, display: { xs: 'none', md: 'flex' } }}
+                        >
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={agent.riskTier}
+                            sx={{
+                              height: 20,
+                              '& .MuiChip-label': { px: 0.65, fontSize: 'overline.fontSize' },
+                            }}
+                          />
+                          <Typography variant="caption" color="text.secondary">
+                            {agent.artifactVersion}
+                          </Typography>
+                        </Stack>
                       </Box>
                       <ActionButton
                         intent="quiet"
@@ -286,14 +381,25 @@ export function DwaionHomeContent({
                         disabled={launchPending}
                         onClick={() => onStartAgent(agent.entryKey)}
                         aria-label={t('dwaionHome.agents.startNamed', { name: agent.name })}
-                        sx={{ flexShrink: 0 }}
+                        sx={{
+                          flexShrink: 0,
+                          width: { md: '100%' },
+                          border: { md: 1 },
+                          borderColor: 'divider',
+                          '@media (max-width: 599.95px)': {
+                            position: 'absolute',
+                            inset: 0,
+                            minWidth: 0,
+                            opacity: 0,
+                          },
+                        }}
                       >
                         {t('dwaionHome.agents.start')}
                       </ActionButton>
                     </Stack>
                   );
                 })}
-              </Stack>
+              </Box>
             ) : (
               <GuidedEmptyState
                 kind="empty"
@@ -303,6 +409,25 @@ export function DwaionHomeContent({
             )}
           </DwaionHomeResource>
         </DwaionHomeSection>
+        <Box
+          component="section"
+          sx={{
+            p: 2,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: foundationTokens.radius.surface + 'px',
+          }}
+        >
+          <Stack direction="row" gap={0.75} alignItems="center">
+            <ShieldCheck size={16} aria-hidden="true" color="var(--mui-palette-success-main)" />
+            <Typography component="h2" variant="subtitle2">
+              {t('dwaionStudio.trustTitle')}
+            </Typography>
+          </Stack>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
+            {t('askPage.evidence.privacy')}
+          </Typography>
+        </Box>
       </Stack>
     </Box>
   );

@@ -1,0 +1,9 @@
+{
+  "checks": {
+    "voice": true,
+    "quality1440No320": true,
+    "quality320Has320": true,
+    "rejectFailedReport": true
+  },
+  "passed": true
+}

@@ -7,6 +7,7 @@ import { ActionIconButton } from '@dwp-frontend/design-system';
 import type { AskPageContext } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import Popover from '@mui/material/Popover';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -134,6 +135,17 @@ export function DwaionLauncher({
         },
       }}
     >
+      <GlobalStyles
+        styles={{
+          '@container dwp-shell-header (max-width: 360px)': {
+            // Reserve one complete touch target for the docked assistant. The
+            // product mark keeps its tenant-aware accessible name, while its
+            // optional tenant suffix yields space before any global action.
+            'header:has([data-testid="dwaion-launcher"][data-shell-auxiliary-placement="header"]) [data-testid="tenant-brand-context"]':
+              { display: 'none' },
+          },
+        }}
+      />
       <ActionIconButton
         label={t(open ? 'dwaion.close' : 'dwaion.open')}
         tooltip={t(open ? 'dwaion.close' : 'dwaion.open')}
@@ -252,8 +264,8 @@ export function DwaionLauncher({
             sx: {
               position: fullScreenPanel ? 'fixed' : 'absolute',
               inset: fullScreenPanel ? 0 : 'auto',
-              width: fullScreenPanel ? '100vw' : 420,
-              maxWidth: fullScreenPanel ? 'none' : 420,
+              width: fullScreenPanel ? '100vw' : 440,
+              maxWidth: fullScreenPanel ? 'none' : 440,
               height: fullScreenPanel ? '100dvh' : 'auto',
               maxHeight: fullScreenPanel ? '100dvh' : 'none',
               m: 0,

@@ -1,10 +1,15 @@
 import type { Track, TrackProcessor, ProcessorOptions } from 'livekit-client';
 
-import { loadMeetingBackgroundSegmenter } from './meeting-background-assets';
+import {
+  loadMeetingBackgroundSegmenter,
+  loadMeetingOfficeBackground,
+} from './meeting-background-assets';
 import { createMeetingBackgroundCompositor } from './meeting-background-compositor';
 import {
   isMeetingBackgroundSupported,
   MeetingBackgroundError,
+  type MeetingBackgroundImage,
+  type MeetingProcessedBackgroundMode,
   type MeetingBackgroundSegmenter,
   type MeetingBackgroundState,
 } from './meeting-background-types';
@@ -17,6 +22,7 @@ export {
 export type { MeetingBackgroundState, MeetingBackgroundFailure } from './meeting-background-types';
 
 export type MeetingBackgroundOptions = {
+  mode?: MeetingProcessedBackgroundMode;
   onStateChange?: (state: MeetingBackgroundState) => void;
   /** LiveKit capture owns its input; failed setup must stop it before publish. */
   stopInputOnFailure?: boolean;
@@ -28,6 +34,7 @@ type Session = {
   abort: AbortController;
   video: HTMLVideoElement;
   compositor?: ReturnType<typeof createMeetingBackgroundCompositor>;
+  office?: MeetingBackgroundImage;
   segmenter?: MeetingBackgroundSegmenter;
   frame?: number;
   timer?: ReturnType<typeof setTimeout>;
@@ -36,12 +43,17 @@ type Session = {
 
 /** Reusable after destroy: every start, device replacement and reconnect gets a new fence. */
 export class MeetingBackgroundProcessor implements TrackProcessor<Track.Kind.Video> {
-  readonly name = 'dwp-local-background-blur-v1';
+  readonly name: string;
   processedTrack?: MediaStreamTrack;
   private generation = 0;
   private current?: Session;
 
-  constructor(private readonly options: MeetingBackgroundOptions = {}) {}
+  private readonly mode: MeetingProcessedBackgroundMode;
+
+  constructor(private readonly options: MeetingBackgroundOptions = {}) {
+    this.mode = options.mode ?? 'blur';
+    this.name = `dwp-local-background-${this.mode}-v1`;
+  }
 
   private emit(session: Session, state: MeetingBackgroundState) {
     if (this.current === session && session.generation === this.generation) {
@@ -71,6 +83,12 @@ export class MeetingBackgroundProcessor implements TrackProcessor<Track.Kind.Vid
       /* The derived track is stopped before canvas disposal. */
     }
     session.compositor = undefined;
+    try {
+      session.office?.close();
+    } catch {
+      /* The verified local image has no retained user content. */
+    }
+    session.office = undefined;
     try {
       session.segmenter?.close();
     } catch {
@@ -144,14 +162,12 @@ export class MeetingBackgroundProcessor implements TrackProcessor<Track.Kind.Vid
     this.emit(session, { state: 'loading' });
     try {
       if (
-        !isMeetingBackgroundSupported() ||
+        !isMeetingBackgroundSupported(this.mode) ||
         input.kind !== 'video' ||
         input.readyState !== 'live'
       ) {
         throw new MeetingBackgroundError('UNSUPPORTED');
       }
-      session.compositor = createMeetingBackgroundCompositor();
-      this.processedTrack = session.compositor.track;
       session.input.addEventListener('ended', session.ended, { once: true });
       session.video.muted = true;
       session.video.playsInline = true;
@@ -170,12 +186,19 @@ export class MeetingBackgroundProcessor implements TrackProcessor<Track.Kind.Vid
       const prepare = async () => {
         await session.video.play();
         this.assertCurrent(session);
+        const office =
+          this.mode === 'office'
+            ? await loadMeetingOfficeBackground(session.abort.signal)
+            : undefined;
+        if (office) session.office = office;
         const segmenter = await loadMeetingBackgroundSegmenter(session.abort.signal);
         if (session.abort.signal.aborted || this.current !== session) {
           segmenter.close();
           throw new MeetingBackgroundError('SUPERSEDED');
         }
         session.segmenter = segmenter;
+        session.compositor = createMeetingBackgroundCompositor(this.mode, session.office);
+        this.processedTrack = session.compositor.track;
         while (session.video.readyState < 2 || !session.video.videoWidth)
           await this.nextFrame(session);
         this.assertCurrent(session);

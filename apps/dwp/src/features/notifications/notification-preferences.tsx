@@ -20,12 +20,15 @@ import {
   deleteNotificationSubscriptionRule,
   getNotificationCapabilities,
   getNotificationDeliveryProfile,
+  getNotificationDeliveryEndpoints,
   getNotificationEffectiveSettings,
   putNotificationSubscriptionRule,
+  revokeNotificationDeliveryEndpoint,
   updateNotificationDeliveryProfile,
   type NotificationAppSetting,
   type NotificationChannel,
   type NotificationDeliveryProfile,
+  type NotificationDeliveryEndpoint,
   type NotificationTypeSetting,
 } from '@dwp-frontend/shared-utils/api/notification-api';
 import { useToast } from '@dwp-frontend/shared-utils';
@@ -70,6 +73,7 @@ import {
   UnavailableChannelChip,
 } from './notification-type-setting-rows';
 import { NotificationPageHeading } from './notification-ui';
+import { NotificationDeliveryStatusPanel } from './notification-delivery-status';
 import { useOnlineStatus } from './use-notification-runtime';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
 
@@ -250,6 +254,12 @@ export function NotificationPreferences() {
     staleTime: 5 * 60_000,
     retry: 1,
   });
+  const endpointsQuery = useQuery({
+    queryKey: notificationQueryKeys.deliveryEndpoints(),
+    queryFn: ({ signal }) => getNotificationDeliveryEndpoints(signal),
+    staleTime: 30_000,
+    retry: 1,
+  });
   const enabledChannels = useMemo<ReadonlySet<NotificationChannel>>(
     () => new Set(capabilitiesQuery.data?.enabledChannels ?? ['IN_APP']),
     [capabilitiesQuery.data?.enabledChannels]
@@ -318,6 +328,29 @@ export function NotificationPreferences() {
       setDraft(latest.data ?? profileQuery.data ?? null);
       setSaveState('error');
       toast.error(t('preferences.feedback.profileError'));
+    },
+  });
+
+  const endpointRevokeMutation = useMutation({
+    mutationFn: (endpoint: NotificationDeliveryEndpoint) =>
+      revokeNotificationDeliveryEndpoint(
+        endpoint.endpointId,
+        endpoint.version,
+        createNotificationIdempotencyKey('delivery-endpoint-revoke')
+      ),
+    onSuccess: (revoked) => {
+      queryClient.setQueryData<NotificationDeliveryEndpoint[]>(
+        notificationQueryKeys.deliveryEndpoints(),
+        (current) =>
+          current?.map((endpoint) =>
+            endpoint.endpointId === revoked.endpointId ? revoked : endpoint
+          ) ?? [revoked]
+      );
+      toast.success(t('preferences.endpoints.feedback.revoked'));
+    },
+    onError: async () => {
+      await endpointsQuery.refetch();
+      toast.error(t('preferences.endpoints.feedback.revokeFailed'));
     },
   });
 
@@ -486,6 +519,34 @@ export function NotificationPreferences() {
           {t('preferences.apps.effectivePolicyUnavailable')}
         </Alert>
       )}
+      <NotificationDeliveryStatusPanel
+        capabilities={capabilitiesQuery.data}
+        profile={draft}
+        effectiveSettings={effectiveQuery.data}
+        effectiveSettingsFailed={effectiveQuery.isError}
+        refreshing={
+          profileQuery.isFetching ||
+          effectiveQuery.isFetching ||
+          capabilitiesQuery.isFetching ||
+          endpointsQuery.isFetching
+        }
+        onRefresh={() => {
+          void Promise.all([
+            profileQuery.refetch(),
+            effectiveQuery.refetch(),
+            capabilitiesQuery.refetch(),
+            endpointsQuery.refetch(),
+          ]);
+        }}
+        endpoints={endpointsQuery.data}
+        endpointsLoading={endpointsQuery.isLoading}
+        endpointsFailed={endpointsQuery.isError}
+        revokingEndpointId={endpointRevokeMutation.variables?.endpointId}
+        onRetryEndpoints={() => void endpointsQuery.refetch()}
+        onRevokeEndpoint={async (endpoint) => {
+          await endpointRevokeMutation.mutateAsync(endpoint);
+        }}
+      />
       <NotificationPreferenceNavigation />
 
       <PreferenceSection

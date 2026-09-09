@@ -4,7 +4,7 @@
 
 ## dwp-frontend
 
-총 344개 경로.
+총 352개 경로.
 
 - `apps/dwp/src/features/meetings/live-video-meeting-room.background.test.tsx`
 - `apps/dwp/src/features/meetings/live-video-meeting-room.css`
@@ -26,6 +26,7 @@
 - `apps/dwp/src/features/meetings/meeting-background-compositor.ts`
 - `apps/dwp/src/features/meetings/meeting-background-processor.test.ts`
 - `apps/dwp/src/features/meetings/meeting-background-processor.ts`
+- `apps/dwp/src/features/meetings/meeting-background-types.test.ts`
 - `apps/dwp/src/features/meetings/meeting-background-types.ts`
 - `apps/dwp/src/features/meetings/meeting-components.tsx`
 - `apps/dwp/src/features/meetings/meeting-conference.authorization.test.tsx`
@@ -108,6 +109,7 @@
 - `apps/dwp/src/features/meetings/meeting-record-retention-control.tsx`
 - `apps/dwp/src/features/meetings/meeting-room-context-panel.runtime.test.tsx`
 - `apps/dwp/src/features/meetings/meeting-room-context-panel.tsx`
+- `apps/dwp/src/features/meetings/meeting-room-device-preferences.runtime.test.tsx`
 - `apps/dwp/src/features/meetings/meeting-room-experience.tsx`
 - `apps/dwp/src/features/meetings/meeting-room-stage-context.css`
 - `apps/dwp/src/features/meetings/meeting-room-stage-context.tsx`
@@ -334,6 +336,9 @@
 - `libs/shared-i18n/src/locales/ko/meetings.json`
 - `libs/shared-utils/src/api/video-meeting-api.test.ts`
 - `libs/shared-utils/src/api/video-meeting-api.ts`
+- `libs/shared-utils/src/api/video-meeting-admin-operations-api.test.ts`
+- `libs/shared-utils/src/api/video-meeting-admin-operations-api.ts`
+- `libs/shared-utils/src/api/video-meeting-history-api.ts`
 - `libs/shared-utils/src/api/video-meeting-intelligence-api.test.ts`
 - `libs/shared-utils/src/api/video-meeting-intelligence-api.ts`
 - `libs/shared-utils/src/api/video-meeting-preparation-api.test.ts`
@@ -342,6 +347,7 @@
 - `libs/shared-utils/src/api/video-meeting-record-preferences-api.ts`
 - `libs/shared-utils/src/api/video-meeting-record-retention-api.test.ts`
 - `libs/shared-utils/src/api/video-meeting-record-retention-api.ts`
+- `libs/shared-utils/src/api/video-meeting-summary-contract.ts`
 - `libs/shared-utils/src/api/video-meeting-transcript-api.test.ts`
 - `libs/shared-utils/src/api/video-meeting-transcript-api.ts`
 - `public/assets/meeting-background/mediapipe-0.10.14/LICENSE`
@@ -349,14 +355,19 @@
 - `public/assets/meeting-background/mediapipe-0.10.14/selfie-segmenter-landscape-v1.tflite`
 - `public/assets/meeting-background/mediapipe-0.10.14/vision_wasm_nosimd_internal.js`
 - `public/assets/meeting-background/mediapipe-0.10.14/vision_wasm_nosimd_internal.wasm`
+- `public/assets/meeting-background/presets/office-neutral-v1.svg`
+- `scripts/build-product-app.mjs`
 - `scripts/sync-meeting-background-assets.mjs`
 
 ## dwp-backend
 
-총 36개 경로.
+총 46개 경로.
 
+- `contracts/openapi/meeting.json`
 - `docs/workspace/meeting-record-bookmarks-2026-09-07.md`
 - `docs/workspace/meeting-record-retention-2026-09-07.md`
+- `dwp-meeting-server/scripts/LOCAL_UI_DEMO.md`
+- `dwp-meeting-server/scripts/seed-local-ui-demo.sql`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/security/MeetingSecurityFilter.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/api/MeetingRecordBookmarkController.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/api/MeetingRecordBookmarkDtos.java`
@@ -365,6 +376,9 @@
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/api/VideoMeetingController.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/api/VideoMeetingDtos.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/audit/MeetingRecordRetentionAuditRecorder.java`
+- `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/audit/VideoMeetingAuditRecorder.java`
+- `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/domain/MeetingAdminOperationsExportService.java`
+- `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/domain/MeetingHistoryProjectionRepository.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordBookmarkRepository.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordBookmarkService.java`
 - `dwp-meeting-server/src/main/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordDispositionRepository.java`
@@ -383,11 +397,15 @@
 - `dwp-meeting-server/src/main/resources/db/migration/V38__govern_expired_meeting_record_disposition.sql`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/security/MeetingProductSurfaceV4DraftConsumerTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/api/VideoMeetingHistoryProjectionTest.java`
+- `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingAdminOperationsExportPostgresTest.java`
+- `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingHistoryProjectionPostgresTest.java`
+- `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingLocalUiDemoSeedPostgresTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordBookmarkHttpPostgresTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordBookmarkPostgresTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordRetentionHttpPostgresTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordRetentionPostgresTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingRecordRetentionWiringTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingRuntimeWiringTest.java`
+- `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingWorkspaceHttpPostgresTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/VideoMeetingAdminIntelligenceReadinessServiceTest.java`
 - `dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/VideoMeetingServiceTest.java`

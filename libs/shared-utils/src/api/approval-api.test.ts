@@ -7,6 +7,7 @@ import {
   decideApprovalTask,
   getApprovalHome,
   getApprovalTask,
+  getApprovalRequestDetail,
   getApprovalTasks,
   getApprovalWorkflows,
   respondToApprovalInformationRequest,
@@ -50,10 +51,13 @@ describe('approval API boundary', () => {
       .mockResolvedValueOnce(jsonResponse({ task: { taskId: 'task-1' } }));
     vi.stubGlobal('fetch', fetchMock);
 
+    const controller = new AbortController();
     await expect(getApprovalTasks('INBOX', 'scope-decision-a')).resolves.toEqual([]);
-    await expect(getApprovalTask('task-1', 'scope-decision-a')).resolves.toEqual({
-      task: { taskId: 'task-1' },
-    });
+    await expect(getApprovalTask('task-1', 'scope-decision-a', controller.signal)).resolves.toEqual(
+      {
+        task: { taskId: 'task-1' },
+      }
+    );
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/approvals/v1/tasks?view=INBOX&contextScopeKey=scope-decision-a'
@@ -61,6 +65,8 @@ describe('approval API boundary', () => {
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
       '/api/approvals/v1/tasks/task-1?contextScopeKey=scope-decision-a'
     );
+    const requestSignal = (fetchMock.mock.calls[1]?.[1] as RequestInit).signal;
+    expect(requestSignal).toBeInstanceOf(AbortSignal);
   });
 
   it('binds management reads to the selected opaque scope query', async () => {
@@ -79,6 +85,32 @@ describe('approval API boundary', () => {
     expect(request.signal).toBeInstanceOf(AbortSignal);
     expect(request.headers).not.toHaveProperty('X-DWP-Context-Scope');
     expect(request.headers).not.toHaveProperty('X-DWP-Scope');
+  });
+
+  it('cancels a requester detail read when its Work selection is abandoned', async () => {
+    const fetchMock = vi.fn().mockImplementation(
+      (_url, init: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          init.signal?.addEventListener(
+            'abort',
+            () => reject(new DOMException('Aborted', 'AbortError')),
+            { once: true }
+          );
+        })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+    const read = getApprovalRequestDetail('request-1', 'scope-requester', controller.signal);
+    const rejection = expect(read).rejects.toThrow();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      '/api/approvals/v1/requests/request-1/detail?contextScopeKey=scope-requester'
+    );
+    const requestSignal = (fetchMock.mock.calls[0][1] as RequestInit).signal!;
+    expect(requestSignal.aborted).toBe(false);
+    controller.abort();
+    await rejection;
+    expect(requestSignal.aborted).toBe(true);
   });
 
   it('sends a versioned decision through the shared CSRF contract', async () => {

@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowDownRight, ArrowUpRight, Download, FlaskConical, History, Minus } from 'lucide-react';
+import { Download, FlaskConical, History } from 'lucide-react';
 import { ActionButton, GuidedEmptyState } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import type { DwaionEvaluationRun, DwaionEvaluationRunSummary } from '@dwp-frontend/shared-utils';
@@ -13,13 +12,12 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { compareEvaluationRuns, evaluationResultTrend } from './dwaion-evaluation-comparison';
+import { evaluationRuleSample } from './dwaion-evaluation-results';
 
 type Props = {
   runs: DwaionEvaluationRunSummary[];
   selectedRunId: string | null;
   run?: DwaionEvaluationRun;
-  baseline?: DwaionEvaluationRun;
   loading: boolean;
   canExport: boolean;
   exporting: boolean;
@@ -31,7 +29,6 @@ export function DwaionEvaluationHistory({
   runs,
   selectedRunId,
   run,
-  baseline,
   loading,
   canExport,
   exporting,
@@ -39,7 +36,6 @@ export function DwaionEvaluationHistory({
   onExport,
 }: Props) {
   const { t, i18n } = useTranslation('work');
-  const comparison = useMemo(() => compareEvaluationRuns(run, baseline), [run, baseline]);
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
 
   return (
@@ -87,7 +83,7 @@ export function DwaionEvaluationHistory({
             display: 'grid',
             gridTemplateColumns: {
               xs: 'minmax(0, 1fr)',
-              lg: 'minmax(190px, .55fr) minmax(320px, 1.45fr)',
+              lg: 'minmax(9rem, .7fr) minmax(0, 1.3fr)',
             },
             borderBlock: 1,
             borderColor: 'divider',
@@ -119,6 +115,13 @@ export function DwaionEvaluationHistory({
                         display: 'flex',
                         justifyContent: 'space-between',
                         textAlign: 'left',
+                        gap: 1,
+                        flexWrap: 'wrap',
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: -2,
+                        },
                         bgcolor:
                           selectedRunId === item.evaluationRunId
                             ? 'action.selected'
@@ -127,7 +130,11 @@ export function DwaionEvaluationHistory({
                       }}
                     >
                       <Box sx={{ minWidth: 0 }}>
-                        <Typography variant="body2" fontWeight={800} noWrap>
+                        <Typography
+                          variant="body2"
+                          fontWeight={800}
+                          sx={{ overflowWrap: 'anywhere' }}
+                        >
                           {formatDate(
                             item.createdAt,
                             { dateStyle: 'medium', timeStyle: 'short' },
@@ -148,18 +155,15 @@ export function DwaionEvaluationHistory({
                               ? 'error'
                               : 'warning'
                         }
-                        label={item.passRate == null ? item.runState : `${item.passRate}%`}
+                        sx={{ bgcolor: 'background.paper' }}
+                        label={evaluationRuleSample(item) ?? item.runState}
                       />
                     </ButtonBase>
                   </Box>
                 ))}
           </Box>
           <Box sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
-            {run ? (
-              <EvaluationRunResult run={run} baseline={baseline} comparison={comparison} />
-            ) : (
-              <Skeleton variant="rounded" height={220} />
-            )}
+            {run ? <EvaluationRunResult run={run} /> : <Skeleton variant="rounded" height={220} />}
           </Box>
         </Box>
       )}
@@ -167,20 +171,8 @@ export function DwaionEvaluationHistory({
   );
 }
 
-function EvaluationRunResult({
-  run,
-  baseline,
-  comparison,
-}: {
-  run: DwaionEvaluationRun;
-  baseline?: DwaionEvaluationRun;
-  comparison: ReturnType<typeof compareEvaluationRuns>;
-}) {
+function EvaluationRunResult({ run }: { run: DwaionEvaluationRun }) {
   const { t } = useTranslation('work');
-  const baselineByCase = useMemo(
-    () => new Map(baseline?.results.map((item) => [item.evaluationCaseId, item])),
-    [baseline]
-  );
   return (
     <Box>
       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1}>
@@ -191,20 +183,6 @@ function EvaluationRunResult({
           </Typography>
           <Chip size="small" variant="outlined" label={run.runState} />
         </Stack>
-        {comparison && (
-          <Stack direction="row" spacing={0.6} alignItems="center">
-            {comparison.delta > 0 ? (
-              <ArrowUpRight size={16} color="var(--dwp-color-success, #15803d)" />
-            ) : comparison.delta < 0 ? (
-              <ArrowDownRight size={16} color="var(--dwp-color-danger, #b91c1c)" />
-            ) : (
-              <Minus size={16} />
-            )}
-            <Typography variant="body2" fontWeight={800}>
-              {t('dwaionAdmin.evaluation.history.delta', { value: comparison.delta })}
-            </Typography>
-          </Stack>
-        )}
       </Stack>
       <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
         <Chip
@@ -224,31 +202,42 @@ function EvaluationRunResult({
             count: run.configurationRequiredCount,
           })}
         />
-        {comparison && (
-          <Chip
-            variant="outlined"
-            label={t('dwaionAdmin.evaluation.history.regressions', {
-              improved: comparison.improved,
-              regressed: comparison.regressed,
-            })}
-          />
-        )}
       </Stack>
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+        {t('dwaionAdmin.evaluation.ruleSample', { passed: run.passedCount, total: run.caseCount })}
+      </Typography>
+      <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1 }}>
+        {t('dwaionAdmin.evaluation.comparisonUnavailable')}
+      </Typography>
       <Box sx={{ mt: 1.5, borderBlock: 1, borderColor: 'divider' }}>
         {run.results.map((result, index) => {
-          const trend = evaluationResultTrend(result, baselineByCase.get(result.evaluationCaseId));
           return (
             <Box key={result.evaluationCaseId}>
               {index > 0 && <Divider />}
-              <Stack direction="row" justifyContent="space-between" gap={2} sx={{ py: 1.2 }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                gap={2}
+                flexWrap="wrap"
+                sx={{ py: 1.2 }}
+              >
                 <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="body2" fontWeight={750} noWrap>
+                  <Typography variant="body2" fontWeight={750} sx={{ overflowWrap: 'anywhere' }}>
                     {result.caseName}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
+                    {t('dwaionAdmin.evaluation.ruleObserved', {
+                      matched: result.expectedTermsMatched,
+                      total: result.expectedTermsTotal,
+                      grounded: t(
+                        result.grounded
+                          ? 'dwaionAdmin.evaluation.groundedYes'
+                          : 'dwaionAdmin.evaluation.groundedNo'
+                      ),
+                    })}
+                    {' · '}
                     {result.statusCode} ·{' '}
                     {t('dwaionAdmin.evaluation.latency', { count: result.latencyMs })}
-                    {trend && ` · ${t(`dwaionAdmin.evaluation.history.trends.${trend}`)}`}
                   </Typography>
                 </Box>
                 <Chip

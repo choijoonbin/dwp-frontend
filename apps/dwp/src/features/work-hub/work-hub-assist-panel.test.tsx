@@ -8,6 +8,9 @@ import { hubItem } from './work-hub.test-support';
 import type { AskDwpResponse } from '@dwp-frontend/shared-utils/api/agent-runtime-api';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+vi.mock('../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance', () => ({
+  useShellAuxiliaryAvoidance: () => undefined,
+}));
 const answer = '업무 목적과 접속 대상 및 기간을 구체적으로 확인해 주세요.';
 const response = {
   state: 'COMPLETED',

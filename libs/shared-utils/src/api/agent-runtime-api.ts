@@ -2,6 +2,10 @@ import type { AgentComponents } from '@dwp-frontend/api-contracts';
 
 import { HttpError } from '../http-error';
 import { axiosInstance, postEventStream } from '../axios-instance';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 import type { ApiResponse } from '../types';
 import type { AgentRegistryResolution, AgentRiskTier } from './agent-plan-api';
@@ -13,6 +17,8 @@ export type AskPolicyOutcome = AgentSchemas['PolicyOutcome'];
 export type AskModelRouteState = AgentSchemas['ModelRouteState'];
 export type AskConfidence = AgentSchemas['AnswerConfidence'];
 export type AskCitationSourceType = AgentSchemas['CitationSourceType'];
+export type AskPersonalization = AgentSchemas['AskPersonalization'];
+export type AskPersonalizationState = AgentSchemas['AskPersonalizationState'];
 export type AskProgressStage =
   'AUTHORIZING' | 'RETRIEVING' | 'REASONING' | 'VERIFYING' | 'PERSISTING' | 'COMPLETED';
 
@@ -38,6 +44,7 @@ export type AskDwpOptions = {
   signal?: AbortSignal;
   timeoutMs?: number;
   onProgress?: (stage: AskProgressStage) => void;
+  authority?: ProductSurfaceGovernedMutationAuthority;
 };
 
 export type AskPolicyDecision = Omit<AgentSchemas['AskPolicyDecision'], 'mutationAllowed'> & {
@@ -88,6 +95,21 @@ const MODEL_STATES: ReadonlySet<AskModelRouteState> = new Set([
 ]);
 const GROUNDED_FALLBACK_PROVIDER = 'DWP_GROUNDED_FALLBACK';
 const RISK_TIERS: ReadonlySet<AgentRiskTier> = new Set(['L0', 'L1', 'L2', 'L3']);
+const PERSONALIZATION_STATES: ReadonlySet<AskPersonalizationState> = new Set([
+  'NOT_EVALUATED',
+  'NOT_PERMITTED',
+  'DISABLED',
+  'EMPTY',
+  'APPLIED',
+  'BYPASSED',
+  'UNAVAILABLE',
+]);
+const PERSONALIZATION_KINDS = new Set([
+  'RESPONSE_LENGTH',
+  'OUTPUT_FORMAT',
+  'TONE',
+  'WORKING_STYLE',
+]);
 
 function nonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
@@ -172,6 +194,24 @@ function isRegistry(value: unknown): value is AgentRegistryResolution {
   );
 }
 
+function isPersonalization(value: unknown): value is AskPersonalization {
+  if (typeof value !== 'object' || value === null) return false;
+  const personalization = value as Record<string, unknown>;
+  const state = personalization.state;
+  const appliedKinds = personalization.appliedKinds;
+  if (
+    typeof state !== 'string' ||
+    !PERSONALIZATION_STATES.has(state as AskPersonalizationState) ||
+    !Array.isArray(appliedKinds) ||
+    appliedKinds.length > 4 ||
+    new Set(appliedKinds).size !== appliedKinds.length ||
+    !appliedKinds.every((kind) => PERSONALIZATION_KINDS.has(String(kind)))
+  ) {
+    return false;
+  }
+  return state === 'APPLIED' ? appliedKinds.length > 0 : appliedKinds.length === 0;
+}
+
 function isAskResponse(value: unknown): value is AskDwpResponse {
   if (typeof value !== 'object' || value === null) return false;
   const response = value as Record<string, unknown>;
@@ -194,6 +234,7 @@ function isAskResponse(value: unknown): value is AskDwpResponse {
     !isPolicy(response.policy) ||
     !isModelRoute(response.modelRoute) ||
     !isRegistry(response.agentRegistry) ||
+    !(response.personalization === undefined || isPersonalization(response.personalization)) ||
     !nonEmptyString(response.statusCode) ||
     !nonEmptyString(response.completedAt) ||
     Number.isNaN(Date.parse(response.completedAt)) ||
@@ -224,13 +265,20 @@ export async function askDwp(
   request: AskDwpRequest,
   options: AskDwpOptions = {}
 ): Promise<AskDwpResponse> {
+  const governed = options.authority
+    ? productSurfaceGovernedMutationConfig(options.authority)
+    : undefined;
   const response = await axiosInstance.post<ApiResponse<unknown>, AskDwpRequest>(
     '/api/agent/v1/ask',
     {
       ...request,
       agentKey: request.agentKey ?? 'DWP_ASSISTANT',
     },
-    { signal: options.signal, timeoutMs: options.timeoutMs ?? 60_000 }
+    {
+      signal: options.signal,
+      timeoutMs: options.timeoutMs ?? 60_000,
+      ...governed,
+    }
   );
   if (!isAskResponse(response.data.data)) {
     throw new HttpError('Ask runtime response is invalid.', 502, response.data);
@@ -243,12 +291,16 @@ export async function askDwpStream(
   options: AskDwpOptions = {}
 ): Promise<AskDwpResponse> {
   let result: AskDwpResponse | null = null;
+  const governed = options.authority
+    ? productSurfaceGovernedMutationConfig(options.authority)
+    : undefined;
   await postEventStream(
     '/api/agent/v1/ask/stream',
     { ...request, agentKey: request.agentKey ?? 'DWP_ASSISTANT' },
     {
       signal: options.signal,
       timeoutMs: options.timeoutMs ?? 60_000,
+      ...governed,
       onMessage: ({ event, data }) => {
         const record =
           typeof data === 'object' && data !== null ? (data as Record<string, unknown>) : null;

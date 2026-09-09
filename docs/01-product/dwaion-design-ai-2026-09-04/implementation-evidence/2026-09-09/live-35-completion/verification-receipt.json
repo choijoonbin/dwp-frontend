@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-08T15:10:43.880Z",
+  "decisionScope": "Live Stitch 35-frame mapping and the currently implemented, server-supported DWAI·ON product scope",
+  "stitch": {
+    "projectUrl": "https://stitch.withgoogle.com/projects/13391261371843159731",
+    "projectId": "13391261371843159731",
+    "liveFrameCount": 35,
+    "coreExportFrameCount": 32,
+    "crossProductFrames": [
+      {
+        "name": "WRK-A01",
+        "nodeId": "941feb59256e4dc79f0586cd40f80618"
+      },
+      {
+        "name": "DWAI Activity desktop",
+        "nodeId": "aeaa8d7c29584294870c5e6d77983f10"
+      },
+      {
+        "name": "DWAI Activity mobile",
+        "nodeId": "038415e19b844e319754f2f8e46619ec"
+      }
+    ],
+    "exportManifest": {
+      "file": "stitch-export-manifest.json",
+      "sha256": "18041347c1fe5191e891822ccd9ba123382b5bb6f78ee0f8ce95cd19377386a8",
+      "fileCount": 64,
+      "htmlCount": 32,
+      "pngCount": 32,
+      "mismatchCount": 0,
+      "mismatches": []
+    }
+  },
+  "browserRuns": {
+    "dwaionCurrent": {
+      "startTime": "2026-09-08T14:42:29.055Z",
+      "durationMs": 175634.54499999998,
+      "testFiles": [
+        "dwaion-activity-list-detail.spec.ts",
+        "dwaion-admin-conflicts.spec.ts",
+        "dwaion-agentic-work-os.spec.ts",
+        "dwaion-answer-artifact.spec.ts",
+        "dwaion-bound-action-review.spec.ts",
+        "dwaion-catalogs.spec.ts",
+        "dwaion-conversation-controls.spec.ts",
+        "dwaion-conversation-design.spec.ts",
+        "dwaion-conversation-route.spec.ts",
+        "dwaion-home-design.spec.ts",
+        "dwaion-launcher-header-contract.spec.ts",
+        "dwaion-launcher.spec.ts",
+        "dwaion-personal-access-revalidation.spec.ts",
+        "dwaion-personal-intelligence-visual.spec.ts",
+        "dwaion-personal-intelligence.spec.ts",
+        "dwaion-proposal-review.spec.ts",
+        "dwaion-proposal-selection.spec.ts",
+        "dwaion-selected-conversation.spec.ts",
+        "dwaion-stitch-coverage.spec.ts"
+      ],
+      "testFileCount": 19,
+      "total": 280,
+      "passed": 280,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "unexpected": 0,
+      "retries": 0,
+      "report": "dwaion-current-280-report.json",
+      "sha256": "7a450d12778b34ec603843f8019a873b439c7d27fdbc778eeab960b3246c7a98"
+    },
+    "spacing": {
+      "startTime": "2026-09-08T14:59:56.992Z",
+      "durationMs": 3794.7429999999995,
+      "testFiles": ["workspace-page-width.spec.ts"],
+      "testFileCount": 1,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "unexpected": 0,
+      "retries": 0,
+      "report": "spacing-2-report.json",
+      "sha256": "cd26af2e8b90fe53e7b534f8c31103f2a933c8da6a22b8f1fc861d3eeeb777d9"
+    },
+    "menu": {
+      "startTime": "2026-09-08T15:05:41.534Z",
+      "durationMs": 18828.005,
+      "testFiles": ["menu-route-contract.spec.ts"],
+      "testFileCount": 1,
+      "total": 36,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "unexpected": 0,
+      "retries": 0,
+      "report": "menu-36-report.json",
+      "sha256": "5ae8a7849c81e4e43d4d14034a49c4e46044b2fe2ce7ae560d8483bc5e63915f"
+    },
+    "workCross": {
+      "startTime": "2026-09-08T15:23:58.581Z",
+      "durationMs": 17231.035,
+      "testFiles": ["work-stitch-design-sync.spec.ts"],
+      "testFileCount": 1,
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "unexpected": 0,
+      "retries": 0,
+      "report": "work-cross-5-report.json",
+      "sha256": "1b640e779fd269ac4b3c921c4a6e122443ab1c75cff2a2cd6eb18f88e1873c74",
+      "sourceSnapshot": "work-cross-source-snapshot.json",
+      "sourceSnapshotCount": 78,
+      "sourceStableDuringRun": true
+    },
+    "activityQuality": {
+      "startTime": "2026-09-08T15:07:34.896Z",
+      "durationMs": 60663.644,
+      "testFiles": ["activity-stitch-visual-quality.spec.ts"],
+      "testFileCount": 1,
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "unexpected": 0,
+      "retries": 0,
+      "report": "activity-quality-4-report.json",
+      "sha256": "0e5d902ca080ed67687280b60c7be29696751bacf390120f3583d3d04c9a572b"
+    }
+  },
+  "screenshotCounts": {
+    "dwaionCurrent": 205,
+    "workCross": 100,
+    "activityQuality": 80,
+    "spacing": 4
+  },
+  "preservedScreenshots": {
+    "answerArtifactDesktop": {
+      "file": "answer-artifact-desktop.png",
+      "sha256": "b03132f5032caca16a3a183acf6a18560f4a86bd95cf32f2cdefad1e520e0ac1"
+    },
+    "answerArtifactMobile": {
+      "file": "answer-artifact-mobile.png",
+      "sha256": "48b46468ffc004981e09ce882eb7b7b3d6be6652084afc5b29a2af7e3ab0bedd"
+    },
+    "newConversation1920": {
+      "file": "new-conversation-1920.png",
+      "sha256": "f0118d44177187daf791438b5fbe6037f4ba0ac10f1191269c2aff91984a14e4"
+    },
+    "conversations1920": {
+      "file": "my-conversations-1920.png",
+      "sha256": "5afc4c49c2712b3912dbea12c3f382090f199af1098bb1ffa82630cddc58ed72"
+    }
+  },
+  "spacingMetrics": {
+    "viewportWidth": 1920,
+    "canvasWidth": 1672,
+    "rootWidth": 1608,
+    "gutterInlineStart": 32,
+    "gutterInlineEnd": 32,
+    "contractTolerancePx": 1.5
+  },
+  "codeInventory": {
+    "file": "dwaion-current-source-inventory.json",
+    "count": 117,
+    "maxLines": 491,
+    "maxLineFiles": ["apps/dwp/src/features/dwaion/dwaion-workspace-answer.tsx"]
+  },
+  "additionalValidation": {
+    "frontendFocusedUnit": {
+      "files": 20,
+      "tests": 114,
+      "result": "PASS"
+    },
+    "frontendTypecheck": {
+      "result": "PASS",
+      "resultFile": "frontend-typecheck.result.json"
+    },
+    "frontendLint": "PASS",
+    "frontendPrettier": "PASS",
+    "frontendAgentOpenApiSync": "PASS",
+    "frontendSourceSize": "PASS (1940 production files)",
+    "frontendDiffCheck": "PASS",
+    "agentConversationProvenanceFocused": {
+      "tests": 10,
+      "result": "PASS"
+    },
+    "agentRelatedApi": {
+      "tests": 27,
+      "result": "PASS"
+    },
+    "agentPostgresqlSuite": {
+      "tests": 472,
+      "result": "PASS"
+    },
+    "agentCompileAll": "PASS",
+    "agentOpenApiGenerateAndCheck": "PASS",
+    "agentDiffCheck": "PASS",
+    "platformAuthorization": {
+      "tests": 2,
+      "result": "PASS"
+    },
+    "frontendProductionBundle": {
+      "result": "PASS",
+      "resultFile": "frontend-bundle-check.result.json",
+      "initialRawKiB": "1063.4 / 1074.2",
+      "initialGzipKiB": "309.1 / 317.4",
+      "initialRequests": "4 / 5"
+    },
+    "agentVerificationEvidence": "agent-verification.json"
+  },
+  "aggregationWarning": "Browser runs and targeted checks overlap. Do not add their counts into one total.",
+  "conditionalCoverage": {
+    "activityNativeBrowserZoomExtensionRunInLatestActivityReport": false,
+    "note": "The latest Activity quality report covers light-ko, dark-en, forced-colors-ko, and enlarged-text-ko. Native browser extension zoom is conditional; current DWAI browser coverage separately includes 200% root-font reflow."
+  },
+  "lastUpdatedAt": "2026-09-08T15:25:52.415Z"
+}

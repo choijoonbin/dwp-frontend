@@ -1,6 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ChevronRight, ScrollText, Search, ShieldCheck } from 'lucide-react';
+import {
+  AlertTriangle,
+  BookOpen,
+  Braces,
+  ChevronRight,
+  Link2,
+  Search,
+  ShieldCheck,
+} from 'lucide-react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -41,6 +49,8 @@ import Typography from '@mui/material/Typography';
 
 import { NotificationAdminOverviewTrend } from './notification-admin-overview-trend';
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationOperationsWorkbench } from './notification-operations-workbench';
+import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
 import { useOnlineStatus } from './use-notification-runtime';
 
 import type { ReactNode } from 'react';
@@ -188,6 +198,7 @@ export function NotificationAdminOverviewPage({
   onOpenFinding?: (finding: NotificationOperationalFinding) => void;
 }) {
   const { t } = useTranslation('notifications');
+  const navigate = useNavigate();
   const online = useOnlineStatus();
   const query = useQuery({
     queryKey: notificationQueryKeys.adminOverview(),
@@ -374,7 +385,16 @@ export function NotificationAdminOverviewPage({
           title={t('admin.findings.title')}
           description={t('admin.findings.description')}
         >
-          <FindingQueue findings={data.findings} onOpenFinding={onOpenFinding} />
+          <FindingQueue
+            findings={data.findings}
+            onOpenFinding={
+              onOpenFinding ??
+              ((finding) =>
+                navigate(
+                  `/notifications/admin/operations?finding=${encodeURIComponent(finding.findingId)}`
+                ))
+            }
+          />
         </AdminSection>
       </Box>
     </Stack>
@@ -383,11 +403,55 @@ export function NotificationAdminOverviewPage({
 
 function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
   const { t } = useTranslation('notifications');
+  const schemaRange = `v${contract.minSchemaVersion ?? contract.schemaVersion}-v${
+    contract.maxSchemaVersion ?? contract.schemaVersion
+  }`;
   const fields = [
     [t('admin.contracts.fields.owner'), contract.ownerLabel],
     [t('admin.contracts.fields.sourceEvent'), contract.sourceEventType],
     [t('admin.contracts.fields.priority'), t(`priority.${contract.priority}`)],
-    [t('admin.contracts.fields.schemaVersion'), `v${contract.schemaVersion}`],
+    [t('admin.contracts.fields.schemaVersion'), schemaRange],
+    [t('admin.contracts.fields.classification'), contract.dataClassification],
+    [
+      t('admin.contracts.fields.audience'),
+      t(`admin.contracts.audience.${contract.audienceMode}`, {
+        defaultValue: contract.audienceMode,
+      }),
+    ],
+    [
+      t('admin.contracts.fields.interruption'),
+      t(`admin.contracts.interruption.${contract.interruptionLevel}`, {
+        defaultValue: contract.interruptionLevel,
+      }),
+    ],
+    [
+      t('admin.contracts.fields.mandatory'),
+      t(`admin.contracts.${contract.mandatory ? 'yes' : 'no'}`),
+    ],
+    [
+      t('admin.contracts.fields.userControl'),
+      t(`admin.contracts.${contract.userConfigurable ? 'configurable' : 'managed'}`),
+    ],
+    [
+      t('admin.contracts.fields.previewPolicy'),
+      t(`admin.contracts.previewPolicy.${contract.previewPolicy}`, {
+        defaultValue: contract.previewPolicy,
+      }),
+    ],
+    [
+      t('admin.contracts.fields.dedupe'),
+      t(`admin.contracts.dedupe.${contract.dedupeStrategy}`, {
+        defaultValue: contract.dedupeStrategy,
+      }),
+    ],
+    [t('admin.contracts.fields.endEvent'), contract.endEventType || t('admin.contracts.none')],
+    [
+      t('admin.contracts.fields.retention'),
+      t(`admin.contracts.retention.${contract.retentionPolicy}`, {
+        defaultValue: contract.retentionPolicy,
+      }),
+    ],
+    [t('admin.contracts.fields.entityVersion'), `v${contract.version}`],
     [t('admin.contracts.fields.volume'), formatNumber(contract.volume24Hours)],
     [
       t('admin.contracts.fields.updated'),
@@ -395,7 +459,12 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
     ],
   ];
   return (
-    <Box component="aside" aria-label={t('admin.contracts.detailLabel')} sx={{ p: 2.5 }}>
+    <Box
+      component="aside"
+      aria-label={t('admin.contracts.detailLabel')}
+      data-testid="notification-contract-detail"
+      sx={{ p: 2.5 }}
+    >
       <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
         <Chip size="small" variant="outlined" label={contract.appName} />
         <Chip
@@ -417,14 +486,20 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
         {contract.description}
       </Typography>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ display: 'block', mt: 0.75, fontFamily: 'monospace' }}
-      >
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
         {contract.typeKey}
       </Typography>
-      <Box component="dl" sx={{ m: 0, mt: 2.5, borderTop: 1, borderColor: 'divider' }}>
+      <Box
+        component="dl"
+        sx={{
+          m: 0,
+          mt: 2.5,
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', xl: 'repeat(2, minmax(0, 1fr))' },
+          borderTop: 1,
+          borderColor: 'divider',
+        }}
+      >
         {fields.map(([label, value]) => (
           <Box
             key={label}
@@ -433,6 +508,7 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
               gridTemplateColumns: 'minmax(120px, .4fr) minmax(0, 1fr)',
               gap: 1.5,
               py: 1.25,
+              pr: { xl: 2 },
               borderBottom: 1,
               borderColor: 'divider',
             }}
@@ -447,14 +523,73 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
         ))}
       </Box>
       <Box component="section" sx={{ mt: 2.5 }}>
-        <Typography component="h4" variant="subtitle2">
-          {t('admin.contracts.channels')}
-        </Typography>
-        <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
-          {contract.channels.map((channel) => (
-            <Chip key={channel} size="small" variant="outlined" label={t(`channels.${channel}`)} />
-          ))}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, minmax(0, 1fr))' },
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Stack direction="row" gap={0.75} alignItems="center">
+              <ShieldCheck size={17} aria-hidden />
+              <Typography component="h4" variant="subtitle2">
+                {t('admin.contracts.channels')}
+              </Typography>
+            </Stack>
+            <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+              {contract.channels.map((channel) => (
+                <Chip
+                  key={channel}
+                  size="small"
+                  variant="outlined"
+                  label={t(`channels.${channel}`)}
+                />
+              ))}
+            </Stack>
+          </Box>
+          <Box>
+            <Stack direction="row" gap={0.75} alignItems="center">
+              <Braces size={17} aria-hidden />
+              <Typography component="h4" variant="subtitle2">
+                {t('admin.contracts.variables')}
+              </Typography>
+            </Stack>
+            <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+              {(contract.requiredVariables ?? []).length > 0 ? (
+                (contract.requiredVariables ?? []).map((variable) => (
+                  <Chip key={variable} size="small" variant="outlined" label={`{{${variable}}}`} />
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  {t('admin.contracts.noVariables')}
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+        </Box>
+      </Box>
+
+      <Box component="section" sx={{ mt: 2.5, borderTop: 1, borderColor: 'divider', pt: 1.5 }}>
+        <Stack direction="row" gap={0.75} alignItems="center">
+          <Link2 size={17} aria-hidden />
+          <Typography component="h4" variant="subtitle2">
+            {t('admin.contracts.deepLink')}
+          </Typography>
         </Stack>
+        <Typography variant="body2" sx={{ mt: 0.75, overflowWrap: 'anywhere' }}>
+          {contract.deepLinkTemplate || t('admin.contracts.none')}
+        </Typography>
+        {contract.runbookUrl && (
+          <ButtonBase
+            component="a"
+            href={contract.runbookUrl}
+            sx={{ mt: 1.5, minHeight: 36, px: 1.25, gap: 0.75, color: 'primary.main' }}
+          >
+            <BookOpen size={17} aria-hidden />
+            <Typography variant="button">{t('admin.contracts.openRunbook')}</Typography>
+          </ButtonBase>
+        )}
       </Box>
     </Box>
   );
@@ -463,10 +598,13 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
 export function NotificationTypeCatalogPage() {
   const { t } = useTranslation('notifications');
   const [queryText, setQueryText] = useState('');
+  const [appKey, setAppKey] = useState('');
   const [state, setState] = useState<NotificationContractState | 'ALL'>('ALL');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+  const [knownApps, setKnownApps] = useState<Map<string, string>>(new Map());
   const query = useInfiniteQuery({
-    queryKey: notificationQueryKeys.adminTypes({ query: queryText.trim(), state }),
+    queryKey: notificationQueryKeys.adminTypes({ query: queryText.trim(), appKey, state }),
     initialPageParam: null as string | null,
     queryFn: ({ pageParam, signal }) =>
       getNotificationTypeContracts(
@@ -474,6 +612,7 @@ export function NotificationTypeCatalogPage() {
           cursor: pageParam,
           limit: 40,
           query: queryText,
+          appKey: appKey || undefined,
           state: state === 'ALL' ? undefined : state,
         },
         signal
@@ -487,7 +626,21 @@ export function NotificationTypeCatalogPage() {
     () => query.data?.pages.flatMap((page) => page.items) ?? [],
     [query.data?.pages]
   );
-
+  useEffect(() => {
+    if (contracts.length === 0) return;
+    setKnownApps((current) => {
+      const next = new Map(current);
+      for (const contract of contracts) next.set(contract.appKey, contract.appName);
+      return next.size === current.size &&
+        [...next].every(([key, value]) => current.get(key) === value)
+        ? current
+        : next;
+    });
+  }, [contracts]);
+  const appOptions = useMemo(
+    () => [...knownApps.entries()].sort((left, right) => left[1].localeCompare(right[1])),
+    [knownApps]
+  );
   if (!NOTIFICATION_API_CAPABILITIES.tenantAdmin) {
     return <NotificationAdminCapabilityUnavailable />;
   }
@@ -495,9 +648,10 @@ export function NotificationTypeCatalogPage() {
     contracts.find((contract) => contract.contractId === selectedId) ?? contracts[0] ?? null;
 
   return (
-    <Stack gap={2}>
+    <Stack gap={2} data-testid="notification-contract-catalog">
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25}>
         <FormField
+          fullWidth={false}
           value={queryText}
           onChange={(event) => setQueryText(event.target.value)}
           placeholder={t('admin.contracts.searchPlaceholder')}
@@ -510,14 +664,34 @@ export function NotificationTypeCatalogPage() {
               ),
             },
           }}
-          sx={{ flex: 1, maxWidth: 520 }}
+          sx={{
+            width: { xs: '100%', sm: 'auto' },
+            minWidth: 0,
+            flex: { xs: '0 0 auto', sm: '1 1 320px' },
+          }}
         />
         <FormField
+          fullWidth={false}
+          select
+          label={t('admin.contracts.appFilter')}
+          value={appKey}
+          onChange={(event) => setAppKey(event.target.value)}
+          sx={{ width: { xs: '100%', sm: 220 }, flex: '0 0 auto' }}
+        >
+          <MenuItem value="">{t('admin.contracts.allApps')}</MenuItem>
+          {appOptions.map(([value, label]) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </FormField>
+        <FormField
+          fullWidth={false}
           select
           label={t('admin.contracts.stateFilter')}
           value={state}
           onChange={(event) => setState(event.target.value as NotificationContractState | 'ALL')}
-          sx={{ minWidth: 180 }}
+          sx={{ width: { xs: '100%', sm: 220 }, flex: '0 0 auto' }}
         >
           <MenuItem value="ALL">{t('admin.contracts.allStates')}</MenuItem>
           {(['DRAFT', 'IN_REVIEW', 'ACTIVE', 'DEPRECATED', 'RETIRED', 'QUARANTINED'] as const).map(
@@ -553,102 +727,93 @@ export function NotificationTypeCatalogPage() {
           size="page"
         />
       ) : (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: 'minmax(420px, .9fr) minmax(360px, 1.1fr)' },
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            overflow: 'hidden',
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Box
-            sx={{
-              minWidth: 0,
-              borderRight: { lg: 1 },
-              borderColor: 'divider',
-              maxHeight: 700,
-              overflowY: 'auto',
-            }}
-          >
-            {contracts.map((contract) => (
-              <ButtonBase
-                key={contract.contractId}
-                onClick={() => setSelectedId(contract.contractId)}
-                aria-current={contract.contractId === selected?.contractId ? 'true' : undefined}
-                sx={{
-                  width: 1,
-                  px: 1.75,
-                  py: 1.4,
-                  display: 'grid',
-                  gridTemplateColumns: 'minmax(0, 1fr) auto',
-                  gap: 1,
-                  textAlign: 'left',
-                  borderBottom: 1,
-                  borderColor: 'divider',
-                  bgcolor:
-                    contract.contractId === selected?.contractId ? 'action.selected' : undefined,
-                  '&:hover': { bgcolor: 'action.hover' },
-                }}
-              >
-                <Box minWidth={0}>
-                  <Typography variant="subtitle2" noWrap>
-                    {contract.displayName}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    noWrap
-                    sx={{ display: 'block' }}
-                  >
-                    {contract.appName} · {contract.typeKey}
-                  </Typography>
-                  <Stack direction="row" gap={0.5} sx={{ mt: 0.75 }}>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={healthColor(contract.state)}
-                      label={t(`admin.contractState.${contract.state}`)}
-                    />
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={healthColor(contract.contractHealth)}
-                      label={t(`admin.contractHealth.${contract.contractHealth}`)}
-                    />
-                  </Stack>
-                </Box>
-                <ChevronRight size={18} />
-              </ButtonBase>
-            ))}
-            {query.hasNextPage && (
-              <Box sx={{ p: 1.5, display: 'grid', placeItems: 'center' }}>
-                <ActionButton
-                  intent="secondary"
-                  loading={query.isFetchingNextPage}
-                  onClick={() => void query.fetchNextPage()}
+        <NotificationResponsiveCatalog
+          testId="notification-contract-results"
+          detailOpen={mobileDetailOpen}
+          onBack={() => setMobileDetailOpen(false)}
+          backLabel={t('admin.backToCatalog')}
+          listLabel={t('admin.contracts.catalogLabel')}
+          detailLabel={t('admin.contracts.detailLabel')}
+          desktopColumns="minmax(420px, .9fr) minmax(360px, 1.1fr)"
+          listMaxHeight={700}
+          list={
+            <>
+              {contracts.map((contract) => (
+                <ButtonBase
+                  key={contract.contractId}
+                  data-testid={`notification-contract-row-${contract.contractId}`}
+                  onClick={() => {
+                    setSelectedId(contract.contractId);
+                    setMobileDetailOpen(true);
+                  }}
+                  aria-pressed={contract.contractId === selected?.contractId}
+                  sx={{
+                    width: 1,
+                    px: 1.75,
+                    py: 1.4,
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(0, 1fr) auto',
+                    gap: 1,
+                    textAlign: 'left',
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    bgcolor:
+                      contract.contractId === selected?.contractId ? 'action.selected' : undefined,
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
                 >
-                  {t('actions.loadMore')}
-                </ActionButton>
-              </Box>
-            )}
-          </Box>
-          {selected && <ContractDetail contract={selected} />}
-        </Box>
+                  <Box minWidth={0}>
+                    <Typography variant="subtitle2" noWrap>
+                      {contract.displayName}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      noWrap
+                      sx={{ display: 'block' }}
+                    >
+                      {contract.appName} · {contract.typeKey}
+                    </Typography>
+                    <Stack direction="row" gap={0.5} sx={{ mt: 0.75 }}>
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        color={healthColor(contract.state)}
+                        label={t(`admin.contractState.${contract.state}`)}
+                      />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        color={healthColor(contract.contractHealth)}
+                        label={t(`admin.contractHealth.${contract.contractHealth}`)}
+                      />
+                    </Stack>
+                  </Box>
+                  <ChevronRight size={18} />
+                </ButtonBase>
+              ))}
+              {query.hasNextPage && (
+                <Box sx={{ p: 1.5, display: 'grid', placeItems: 'center' }}>
+                  <ActionButton
+                    intent="secondary"
+                    loading={query.isFetchingNextPage}
+                    onClick={() => void query.fetchNextPage()}
+                  >
+                    {t('actions.loadMore')}
+                  </ActionButton>
+                </Box>
+              )}
+            </>
+          }
+          detail={selected && <ContractDetail contract={selected} />}
+        />
       )}
     </Stack>
   );
 }
 
-export function NotificationDeliveryOperationsPage({
-  onOpenFinding,
-}: {
-  onOpenFinding?: (finding: NotificationOperationalFinding) => void;
-}) {
+export function NotificationDeliveryOperationsPage() {
   const { t } = useTranslation('notifications');
-  const navigate = useNavigate();
   const { hasPermission } = usePermissions();
   const online = useOnlineStatus();
   const canViewCentralAudit = hasPermission('ADMIN.AUDIT_VIEW', 'VIEW');
@@ -688,179 +853,12 @@ export function NotificationDeliveryOperationsPage({
   }
   const data = query.data;
   return (
-    <Stack gap={3}>
-      <Stack
-        direction={{ xs: 'column-reverse', sm: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'stretch', sm: 'center' }}
-        gap={1}
-      >
-        {canViewCentralAudit ? (
-          <ActionButton
-            intent="secondary"
-            startIcon={<ScrollText size={17} />}
-            onClick={() =>
-              navigate('/admin/governance/audit-events?mode=events&query=notification.')
-            }
-          >
-            {t('admin.operations.openCentralAudit')}
-          </ActionButton>
-        ) : (
-          <Box />
-        )}
-        <LiveStatus
-          state={
-            !online ? 'stale' : data.partial ? 'degraded' : query.isFetching ? 'syncing' : 'live'
-          }
-          label={
-            !online ? t('states.offline') : data.partial ? t('states.degraded') : t('states.live')
-          }
-          detail={formatDate(data.generatedAt, { dateStyle: 'medium', timeStyle: 'short' })}
-          refreshLabel={t('actions.refresh')}
-          onRefresh={() => void query.refetch()}
-          refreshing={query.isFetching}
-        />
-      </Stack>
-      <OperationalKpiStrip
-        ariaLabel={t('admin.operations.metricsLabel')}
-        items={[
-          {
-            key: 'retry',
-            label: t('admin.operations.retryQueue'),
-            value: formatNumber(data.retryQueue),
-            tone: data.retryQueue ? 'warning' : 'success',
-          },
-          {
-            key: 'dlq',
-            label: t('admin.operations.deadLetter'),
-            value: formatNumber(data.deadLetterQueue),
-            tone: data.deadLetterQueue ? 'critical' : 'success',
-          },
-          {
-            key: 'unknown',
-            label: t('admin.operations.unknown'),
-            value: formatNumber(data.unknownOutcomes),
-            tone: data.unknownOutcomes ? 'warning' : 'success',
-          },
-        ]}
-      />
-      <AdminSection
-        title={t('admin.operations.lanesTitle')}
-        description={t('admin.operations.lanesDescription')}
-      >
-        <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <Table size="small" aria-label={t('admin.operations.lanesTable')} sx={{ minWidth: 720 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('admin.operations.columns.lane')}</TableCell>
-                <TableCell align="right">{t('admin.operations.columns.queued')}</TableCell>
-                <TableCell align="right">{t('admin.operations.columns.oldest')}</TableCell>
-                <TableCell align="right">{t('admin.operations.columns.throughput')}</TableCell>
-                <TableCell align="right">{t('admin.operations.columns.failureRate')}</TableCell>
-                <TableCell>{t('admin.operations.columns.state')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.lanes.map((lane) => (
-                <TableRow key={lane.lane}>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={700}>
-                      {t(`admin.lanes.${lane.lane}`)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">{formatNumber(lane.queued)}</TableCell>
-                  <TableCell align="right">
-                    {t('admin.operations.seconds', { count: lane.oldestAgeSeconds })}
-                  </TableCell>
-                  <TableCell align="right">{formatNumber(lane.throughputPerMinute)}</TableCell>
-                  <TableCell align="right">
-                    {formatNumber(lane.failureRatePercent, { maximumFractionDigits: 2 })}%
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={healthColor(lane.state)}
-                      label={t(`admin.laneState.${lane.state}`)}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </AdminSection>
-      <AdminSection
-        title={t('admin.operations.providersTitle')}
-        description={t('admin.operations.providersDescription')}
-      >
-        <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <Table
-            size="small"
-            aria-label={t('admin.operations.providersTable')}
-            sx={{ minWidth: 760 }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('admin.operations.columns.provider')}</TableCell>
-                <TableCell>{t('admin.operations.columns.channel')}</TableCell>
-                <TableCell>{t('admin.operations.columns.state')}</TableCell>
-                <TableCell align="right">{t('admin.operations.columns.successRate')}</TableCell>
-                <TableCell align="right">{t('admin.operations.columns.latency')}</TableCell>
-                <TableCell>{t('admin.operations.columns.circuit')}</TableCell>
-                <TableCell>{t('admin.operations.columns.checked')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.providers.map((provider) => (
-                <TableRow key={provider.providerKey}>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={700}>
-                      {provider.displayName}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>{t(`channels.${provider.channel}`)}</TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={healthColor(provider.state)}
-                      label={t(`admin.providerState.${provider.state}`)}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    {formatNumber(provider.successRatePercent, { maximumFractionDigits: 2 })}%
-                  </TableCell>
-                  <TableCell align="right">
-                    {t('admin.operations.milliseconds', {
-                      count: formatNumber(provider.p95LatencyMs),
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={healthColor(provider.circuitState)}
-                      label={t(`admin.circuitState.${provider.circuitState}`)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {formatDate(provider.lastCheckedAt, {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </AdminSection>
-      <AdminSection title={t('admin.findings.title')} description={t('admin.findings.description')}>
-        <FindingQueue findings={data.findings} onOpenFinding={onOpenFinding} />
-      </AdminSection>
-    </Stack>
+    <NotificationOperationsWorkbench
+      data={data}
+      online={online}
+      refreshing={query.isFetching}
+      canViewCentralAudit={canViewCentralAudit}
+      onRefresh={() => void query.refetch()}
+    />
   );
 }

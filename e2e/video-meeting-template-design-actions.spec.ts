@@ -4,8 +4,10 @@ import ko from '../libs/shared-i18n/src/locales/ko/meetings.json' with { type: '
 
 test('template import reviews only editable structure before making an explicit personal-template command', async ({
   page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 960 });
+}, testInfo) => {
+  await page.setViewportSize(
+    testInfo.project.name === 'mobile' ? { width: 320, height: 844 } : { width: 1440, height: 960 }
+  );
   await mockApprovedTemplatesAndPreferences(page, true);
   const commands: Record<string, unknown>[] = [];
   await page.route('**/api/meetings/v1/templates', async (route) => {
@@ -73,6 +75,31 @@ test('template import reviews only editable structure before making an explicit 
       },
     ],
   });
+});
+
+test('template category and favorite filters restart pagination and expose their selected state', async ({
+  page,
+}) => {
+  await mockApprovedTemplatesAndPreferences(page, true);
+  const queries: URLSearchParams[] = [];
+  await page.route('**/api/meetings/v1/templates?**', (route) => {
+    queries.push(new URL(route.request().url()).searchParams);
+    return route.fallback();
+  });
+  for (const filter of [
+    { label: ko.templates.categories.DECISION, key: 'category', value: 'DECISION' },
+    { label: ko.templates.favorites, key: 'favoritesOnly', value: 'true' },
+  ]) {
+    await page.goto('/meetings/templates?page=2');
+    const button = page.getByRole('button', { name: filter.label, exact: true });
+    await expect(button).toBeVisible();
+    await button.click();
+    await expect(page).toHaveURL((url) => !url.searchParams.has('page'));
+    await expect(button).toHaveAttribute('aria-pressed', 'true');
+    await expect.poll(() => queries.at(-1)?.get('page')).toBe('0');
+    await expect.poll(() => queries.at(-1)?.get(filter.key)).toBe(filter.value);
+    await expect(page.getByTestId('template-list')).toBeVisible();
+  }
 });
 
 test('template sharing copies only the same-origin selection URL without participant or consent data', async ({

@@ -1,6 +1,10 @@
 import { expect, type Locator, type Page, type TestInfo } from '@playwright/test';
 
 import type { ProductMenuRoute } from '../../apps/dwp/src/routes/product-menu-manifest';
+import {
+  DWAION_PERSONAL_PERMISSIONS,
+  mockDwaionPersonalIntelligence,
+} from './dwaion-personal-intelligence-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './shell-session';
 
 const isExpectedFixtureTransportError = (text: string) =>
@@ -19,6 +23,11 @@ export async function exerciseGovernedMenuRoute(
   productRoute: ProductMenuRoute,
   options: { allowFixtureTransportErrors?: boolean } = {}
 ): Promise<Locator> {
+  const isPersonalIntelligenceRoute = [
+    'dwaion.routines',
+    'dwaion.personal-controls',
+    'dwaion.artifacts',
+  ].includes(productRoute.id);
   const pageErrors: string[] = [];
   const javascriptConsoleErrors: string[] = [];
   const javascriptConsoleWarnings: string[] = [];
@@ -44,7 +53,11 @@ export async function exerciseGovernedMenuRoute(
   });
   await page.clock.install({
     time: new Date(
-      productRoute.shell === 'provider' ? '2026-08-11T00:00:30Z' : '2026-08-11T00:20:00Z'
+      isPersonalIntelligenceRoute
+        ? '2026-09-04T00:05:00Z'
+        : productRoute.shell === 'provider'
+          ? '2026-08-11T00:00:30Z'
+          : '2026-08-11T00:20:00Z'
     ),
   });
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
@@ -52,9 +65,12 @@ export async function exerciseGovernedMenuRoute(
     locale: 'ko',
     displayName: productRoute.shell === 'provider' ? 'Provider Admin' : '박현우',
     jobTitle: productRoute.shell === 'provider' ? 'Platform operations lead' : '회사 관리자',
-    permissions: FULL_PRODUCT_PERMISSIONS,
+    permissions: isPersonalIntelligenceRoute
+      ? [...FULL_PRODUCT_PERMISSIONS, ...DWAION_PERSONAL_PERMISSIONS]
+      : FULL_PRODUCT_PERMISSIONS,
     appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
   });
+  if (isPersonalIntelligenceRoute) await mockDwaionPersonalIntelligence(page);
   await page.goto(productRoute.path);
   await page.waitForLoadState('domcontentloaded');
   await expect

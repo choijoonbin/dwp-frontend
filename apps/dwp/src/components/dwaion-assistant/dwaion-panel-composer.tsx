@@ -1,4 +1,5 @@
 import { ArrowUp, ShieldCheck, Square } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionIconButton, FormField } from '@dwp-frontend/design-system';
 
@@ -16,6 +17,7 @@ type DwaionPanelComposerProps = {
   onSubmit: (event: React.FormEvent) => void;
   onSend: () => void;
   onCancel: () => void;
+  voiceReviewContainer?: HTMLElement | null;
 };
 
 export function DwaionPanelComposer({
@@ -26,15 +28,30 @@ export function DwaionPanelComposer({
   onSubmit,
   onSend,
   onCancel,
+  voiceReviewContainer,
 }: DwaionPanelComposerProps) {
   const { t, i18n } = useTranslation('home');
+  const [voiceReviewHost, setVoiceReviewHost] = useState<HTMLDivElement | null>(null);
 
   return (
     <Box
       component="form"
       onSubmit={onSubmit}
-      sx={{ px: 1.5, pt: 1.15, pb: 1.2, borderTop: 1, borderColor: 'divider', flex: '0 0 auto' }}
+      sx={{
+        px: 1.5,
+        pt: 1.15,
+        pb: 1.2,
+        borderTop: 1,
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        flex: '0 0 auto',
+      }}
     >
+      <Box
+        ref={setVoiceReviewHost}
+        data-testid="dwaion-composer-voice-review"
+        sx={{ '&:empty': { display: 'none' } }}
+      />
       <Box
         sx={{
           display: 'grid',
@@ -70,6 +87,11 @@ export function DwaionPanelComposer({
           locale={i18n.resolvedLanguage || i18n.language || 'en'}
           disabled={!enabled || busy}
           onTranscript={(text) => onChange([value.trim(), text].filter(Boolean).join(' '))}
+          transcriptValue={value}
+          onTranscriptChange={onChange}
+          onDiscardTranscript={() => onChange('')}
+          onSendTranscript={onSend}
+          reviewContainer={voiceReviewContainer ?? voiceReviewHost}
         />
         <ActionIconButton
           label={busy ? t('dwaion.composer.cancel') : t('dwaion.composer.send')}
@@ -99,7 +121,7 @@ export function DwaionPanelComposer({
         sx={{ mt: 0.65, px: 0.25, color: 'text.secondary' }}
       >
         <ShieldCheck size={13} strokeWidth={1.8} aria-hidden="true" />
-        <Typography variant="caption" sx={{ lineHeight: '15px' }}>
+        <Typography variant="caption" sx={{ lineHeight: 1.25 }}>
           {t('dwaion.governed')}
         </Typography>
       </Stack>

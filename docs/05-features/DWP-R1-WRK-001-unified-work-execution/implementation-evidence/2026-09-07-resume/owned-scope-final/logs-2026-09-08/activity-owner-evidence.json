@@ -1,0 +1,78 @@
+{
+  "evidencePath": "/Users/a10697/Work/DWP/output/activity-closeout-2026-09-08/backend/full-platform-summary.json",
+  "classes": 202,
+  "totals": {
+    "tests": 1131,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 1130
+  },
+  "activity": [
+    {
+      "name": "com.dwp.services.platform.activity.ActivityControllerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.ActivityCursorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.ActivityEvidenceControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.ActivityEvidencePostgresTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.ActivityEvidenceServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.ActivityPostgresIntegrationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.PersonalWorkActivityBackfillPostgresTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    },
+    {
+      "name": "com.dwp.services.platform.activity.PersonalWorkActivityPostgresIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures_detail": []
+    }
+  ],
+  "scope": "local isolated backend tests; not a production tenant attestation"
+}

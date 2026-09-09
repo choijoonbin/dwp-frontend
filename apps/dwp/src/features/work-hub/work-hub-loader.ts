@@ -2,6 +2,8 @@ import { getApprovalRequests, getApprovalTasks } from '@dwp-frontend/shared-util
 import { getServiceMyRequests } from '@dwp-frontend/shared-utils/api/service-center-api';
 import { getPersonalWorkTasks } from '@dwp-frontend/shared-utils/api/personal-work-api';
 import { getWorkspaceWorkQueue } from '@dwp-frontend/shared-utils/api/workspace-api';
+import { getWorkAssignments } from '@dwp-frontend/shared-utils/api/work-assignment-api';
+import type { WorkAssignmentScope } from '@dwp-frontend/shared-utils/api/work-assignment-contracts';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import {
   approvalRequestToHub,
@@ -10,6 +12,12 @@ import {
   serviceRequestToHub,
   workspaceWorkToHub,
 } from './work-hub-source-adapters';
+import {
+  checkedWorkAssignmentPage,
+  mergeWorkAssignmentTasks,
+  workAssignmentToHub,
+  WORK_ASSIGNMENT_PAGE_SIZE,
+} from './work-hub-assignment-model';
 import type {
   WorkHubItem,
   WorkHubSnapshot,
@@ -19,6 +27,7 @@ import type {
 
 export type WorkHubSourceReader = (authority: {
   canUpdatePersonal: boolean;
+  actorId: number | null;
 }) => Promise<{ items: WorkHubItem[]; generatedAt?: string | null; hasMore?: boolean }>;
 export type WorkHubSourceReaders = Record<WorkHubSourceId, WorkHubSourceReader>;
 
@@ -27,6 +36,45 @@ export const workHubSourceReaders: WorkHubSourceReaders = {
   workspace: async () => {
     const queue = await getWorkspaceWorkQueue();
     return { items: queue.items.map(workspaceWorkToHub), generatedAt: queue.generatedAt };
+  },
+  'work-assignments': async ({ actorId }) => {
+    if (typeof actorId !== 'number' || !Number.isSafeInteger(actorId) || actorId < 1)
+      throw new Error('A verified Work actor is required');
+    const scopes: readonly WorkAssignmentScope[] = ['ASSIGNED_TO_ME', 'ASSIGNED_BY_ME'];
+    const pages = await Promise.all(
+      scopes.map(async (scope) => {
+        const result = [];
+        const seen = new Set<string>();
+        let totalElements: number | null = null;
+        for (let page = 0; page <= 10_000; page += 1) {
+          const checked = checkedWorkAssignmentPage(
+            await getWorkAssignments({ scope, page, size: WORK_ASSIGNMENT_PAGE_SIZE }),
+            actorId,
+            scope,
+            page
+          );
+          if (totalElements !== null && checked.totalElements !== totalElements)
+            throw new Error('Work assignment pagination total changed');
+          totalElements = checked.totalElements;
+          if (checked.items.some((item) => seen.has(item.assignmentId)))
+            throw new Error('Work assignment pagination repeated an item');
+          checked.items.forEach((item) => seen.add(item.assignmentId));
+          result.push(checked);
+          if (!checked.hasMore) {
+            if (seen.size !== checked.totalElements)
+              throw new Error('Work assignment pagination omitted an item');
+            return result;
+          }
+        }
+        throw new Error('Work assignment pagination exceeded its contract');
+      })
+    );
+    return {
+      items: mergeWorkAssignmentTasks(pages.flat()).map((item) =>
+        workAssignmentToHub(item, actorId)
+      ),
+      hasMore: false,
+    };
   },
   'approval-inbox': async () => {
     const items = await getApprovalTasks('INBOX');
@@ -82,6 +130,7 @@ export async function loadWorkHub(options: {
   readers?: WorkHubSourceReaders;
   now?: () => number;
   canUpdatePersonal?: boolean;
+  actorId?: number | null;
 }): Promise<WorkHubSnapshot> {
   const readers = options.readers ?? workHubSourceReaders;
   const now = options.now ?? Date.now;
@@ -101,6 +150,7 @@ export async function loadWorkHub(options: {
       try {
         const result = await readers[sourceId]({
           canUpdatePersonal: options.canUpdatePersonal === true,
+          actorId: options.actorId ?? null,
         });
         return {
           sourceId,
@@ -126,6 +176,13 @@ export async function loadWorkHub(options: {
       }
     })
   );
+  return assembleWorkHubSnapshot(sources, new Date(now()).toISOString());
+}
+
+export function assembleWorkHubSnapshot(
+  sources: WorkHubSourceSnapshot[],
+  receivedAt: string
+): WorkHubSnapshot {
   const requested = sources.filter((source) => source.state !== 'NOT_REQUESTED');
   const ready = requested.filter((source) => source.state === 'READY');
   // Exact source obligation identity only. Request and approval-step obligations remain distinct.
@@ -146,7 +203,7 @@ export async function loadWorkHub(options: {
   return {
     items: [...unique.values()],
     sources,
-    receivedAt: new Date(now()).toISOString(),
+    receivedAt,
     completeness:
       ready.length === 0
         ? 'UNAVAILABLE'

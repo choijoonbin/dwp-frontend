@@ -2,19 +2,28 @@ import { useTranslation } from 'react-i18next';
 import { CheckCircle2, CircleAlert, LockKeyhole, MinusCircle } from 'lucide-react';
 import { ActionButton, FormDialog } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { WorkHubSourceSnapshot } from './work-hub-contracts';
+import type { WorkHubSourceId, WorkHubSourceSnapshot } from './work-hub-contracts';
+
+const sourceListRoutes: Partial<Record<WorkHubSourceId, string>> = {
+  'approval-inbox': '/approvals/inbox',
+  'approval-completed': '/approvals/completed',
+  'approval-needs-info': '/approvals/requests/needs-info',
+  services: '/services/my',
+};
 
 export function WorkHubSourceStatusDialog({
   open,
   sources,
   onClose,
   onRetry,
+  onRetrySource,
   retrying,
   onOpenBatchResults,
   batchResultCount = 0,
@@ -23,6 +32,7 @@ export function WorkHubSourceStatusDialog({
   sources: readonly WorkHubSourceSnapshot[];
   onClose: () => void;
   onRetry: () => void;
+  onRetrySource?: (sourceId: WorkHubSourceId) => void;
   retrying: boolean;
   onOpenBatchResults?: () => void;
   batchResultCount?: number;
@@ -136,6 +146,33 @@ export function WorkHubSourceStatusDialog({
                   }
                 />
               </Stack>
+              {source.state !== 'NOT_REQUESTED' && (
+                <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1.5 }}>
+                  {onRetrySource && (
+                    <ActionButton
+                      intent="secondary"
+                      disabled={retrying}
+                      onClick={() => onRetrySource(source.sourceId)}
+                      aria-label={t('work:workHub.sourcesDialog.retrySourceLabel', {
+                        source: t(`work:workHub.sourceIds.${source.sourceId}`),
+                      })}
+                      sx={{ minHeight: 44 }}
+                    >
+                      {t('work:workHub.sourcesDialog.retrySource')}
+                    </ActionButton>
+                  )}
+                  {sourceListRoutes[source.sourceId] && source.state !== 'FORBIDDEN' && (
+                    <ActionButton
+                      intent="quiet"
+                      component={Link}
+                      to={sourceListRoutes[source.sourceId]}
+                      sx={{ minHeight: 44 }}
+                    >
+                      {t('work:workHub.sourcesDialog.openSource')}
+                    </ActionButton>
+                  )}
+                </Stack>
+              )}
             </Box>
           );
         })}

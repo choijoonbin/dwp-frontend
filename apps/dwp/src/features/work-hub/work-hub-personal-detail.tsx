@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useId, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, FileClock, Link2, Pencil, Trash2 } from 'lucide-react';
 import {
@@ -14,9 +14,6 @@ import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   getPersonalWorkTask,
   getPersonalWorkTimeline,
-  updatePersonalWorkTask,
-  deletePersonalWorkTask,
-  transitionPersonalWorkTask,
 } from '@dwp-frontend/shared-utils/api/personal-work-api';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 
@@ -31,12 +28,18 @@ import { WorkPersonalChecklist } from './work-personal-checklist';
 import { WorkSourceDetailSection } from './work-hub-source-detail-section';
 import { openWorkHubSourceRoute } from './work-hub-actions';
 import { workHubSourceStatusLabelKey } from './work-hub-presentation';
+import {
+  personalWorkStatusActionKind,
+  useWorkHubPersonalCommand,
+} from './use-work-hub-personal-command';
+import { canExecuteWorkHubAction } from './work-hub-command-authority';
+import type { WorkTaskSaveCoordinator } from './work-hub-task-save-coordinator';
+import { useWorkHubKeyboardShortcuts } from './use-work-hub-keyboard-shortcuts';
 
 import type {
   PersonalWorkPage,
   PersonalWorkTask,
   PersonalWorkTimelineEvent,
-  PersonalWorkChecklistItem,
   PersonalWorkStatus,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 import type { WorkHubItem, WorkHubSnapshot } from './work-hub-contracts';
@@ -47,7 +50,8 @@ const LAST_SUPPORTED_TIMELINE_PAGE = 10_000;
 type PersonalWorkTimelineReader = (
   taskId: string,
   page: number,
-  size: number
+  size: number,
+  signal?: AbortSignal
 ) => Promise<PersonalWorkPage<PersonalWorkTimelineEvent>>;
 
 type TimelineActionTranslator = (key: string, options: { defaultValue: string }) => string;
@@ -63,15 +67,50 @@ export function personalWorkTimelineActionLabel(
   });
 }
 
+/** Status commands are always built from the latest owner-scoped detail receipt shown to the user. */
+export function personalWorkStatusCommand(task: PersonalWorkTask, status: PersonalWorkStatus) {
+  return { kind: 'STATUS' as const, version: task.version, status };
+}
+
+export function canSelectPersonalWorkStatus(
+  task: PersonalWorkTask,
+  item: WorkHubItem,
+  snapshot: WorkHubSnapshot | undefined,
+  status: PersonalWorkStatus
+): boolean {
+  const action = personalWorkStatusActionKind(status);
+  return (
+    status !== task.status &&
+    isPersonalWorkDetailCurrent(task, item) &&
+    action !== null &&
+    canExecuteWorkHubAction(snapshot, item, action)
+  );
+}
+
+export function isPersonalWorkDetailCurrent(task: PersonalWorkTask, item: WorkHubItem): boolean {
+  return (
+    item.reference.sourceSystem === 'PERSONAL_TASK' &&
+    task.taskId === item.reference.sourceReference &&
+    task.version === item.version &&
+    task.status === item.lifecycle &&
+    task.status === item.sourceStatus
+  );
+}
+
 /** Loads the complete, page-based timeline without following a stalled server response forever. */
 export async function loadCompletePersonalWorkTimeline(
   taskId: string,
-  readPage: PersonalWorkTimelineReader = getPersonalWorkTimeline
+  readPage: PersonalWorkTimelineReader = getPersonalWorkTimeline,
+  signal?: AbortSignal
 ): Promise<PersonalWorkTimelineEvent[]> {
   const events = new Map<string, PersonalWorkTimelineEvent>();
 
   for (let page = 0; page <= LAST_SUPPORTED_TIMELINE_PAGE; page += 1) {
-    const result = await readPage(taskId, page, TIMELINE_PAGE_SIZE);
+    signal?.throwIfAborted();
+    const result = signal
+      ? await readPage(taskId, page, TIMELINE_PAGE_SIZE, signal)
+      : await readPage(taskId, page, TIMELINE_PAGE_SIZE);
+    signal?.throwIfAborted();
     if (result.page !== page) throw new Error('Personal task timeline pagination did not advance');
 
     const previousSize = events.size;
@@ -89,99 +128,71 @@ export async function loadCompletePersonalWorkTimeline(
 
 export function WorkHubPersonalDetail({
   item,
+  ownerFingerprint,
   canEdit,
+  preflight,
+  mutationCoordinator,
   onEdit,
   snapshot,
   onDeleted,
   onOpenSource,
-  onStatusAction,
-  statusActionPending = false,
 }: {
   item: WorkHubItem;
+  ownerFingerprint: string | null;
   canEdit: boolean;
+  preflight: () => Promise<WorkHubSnapshot | null>;
+  mutationCoordinator?: WorkTaskSaveCoordinator;
   onEdit: (task: PersonalWorkTask) => void;
   snapshot?: WorkHubSnapshot;
   onDeleted?: () => void;
   onOpenSource?: (route: string) => void;
-  onStatusAction?: (status: PersonalWorkStatus) => boolean;
-  statusActionPending?: boolean;
 }) {
   const { t } = useTranslation('work');
+  const shortcutHelpId = useId();
   const display = useDisplayDictionary();
   const queryClient = useQueryClient();
   const [deleteVersion, setDeleteVersion] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const commandIntent = useRef<{ fingerprint: string; key: string } | null>(null);
-  const permission = useRef(canEdit);
-  permission.current = canEdit;
+  const [retainedDetail, setRetainedDetail] = useState<{
+    ownerFingerprint: string;
+    task: PersonalWorkTask;
+  } | null>(null);
   const taskId = item.reference.sourceReference;
-  const selectedTask = useRef<string | null>(taskId);
-  selectedTask.current = taskId;
-  useEffect(() => {
-    selectedTask.current = taskId;
-    return () => {
-      selectedTask.current = null;
-    };
-  }, [taskId]);
   const detail = useQuery({
-    queryKey: ['workspace', 'work-hub', 'personal-detail', taskId, item.version],
-    queryFn: () => getPersonalWorkTask(taskId),
+    queryKey: ['workspace', 'work-hub', 'personal-detail', taskId, item.version, ownerFingerprint],
+    queryFn: async ({ signal }) => {
+      const result = await getPersonalWorkTask(taskId, signal);
+      if (result.taskId !== taskId)
+        throw new HttpError('Personal work detail identity changed', 409);
+      return result;
+    },
+    enabled: ownerFingerprint !== null,
     retry: false,
     meta: { accessSensitive: true },
   });
   const timeline = useQuery({
-    queryKey: ['workspace', 'work-hub', 'personal-timeline', taskId, item.version],
-    queryFn: () => loadCompletePersonalWorkTimeline(taskId),
+    queryKey: [
+      'workspace',
+      'work-hub',
+      'personal-timeline',
+      taskId,
+      item.version,
+      ownerFingerprint,
+    ],
+    queryFn: ({ signal }) =>
+      loadCompletePersonalWorkTimeline(taskId, getPersonalWorkTimeline, signal),
+    enabled: ownerFingerprint !== null,
     retry: false,
     meta: { accessSensitive: true },
   });
-  type Command =
-    | { kind: 'CHECKLIST'; version: number; checklist: PersonalWorkChecklistItem[] }
-    | { kind: 'DELETE'; version: number }
-    | { kind: 'STATUS'; version: number; status: PersonalWorkStatus };
-  const command = useMutation({
-    mutationFn: async (input: Command) => {
-      if (!permission.current || selectedTask.current !== taskId)
-        throw new HttpError('Personal work access changed', 403);
-      const latest = await getPersonalWorkTask(taskId);
-      if (!permission.current || selectedTask.current !== taskId)
-        throw new HttpError('Personal work access changed', 403);
-      if (latest.taskId !== taskId || latest.version !== input.version)
-        throw new HttpError('Personal work version changed', 409);
-      const fingerprint = JSON.stringify([taskId, input]);
-      if (commandIntent.current?.fingerprint !== fingerprint)
-        commandIntent.current = { fingerprint, key: crypto.randomUUID() };
-      const key = commandIntent.current.key;
-      if (input.kind === 'DELETE')
-        return deletePersonalWorkTask(taskId, { version: input.version }, key);
-      if (input.kind === 'CHECKLIST')
-        return updatePersonalWorkTask(
-          taskId,
-          {
-            title: latest.title,
-            description: latest.description,
-            priority: latest.priority,
-            dueAt: latest.dueAt,
-            checklist: input.checklist,
-            version: input.version,
-          },
-          key
-        );
-      const transition =
-        input.status === 'COMPLETED'
-          ? 'complete'
-          : input.status === 'OPEN' && ['COMPLETED', 'ARCHIVED'].includes(latest.status)
-            ? 'reopen'
-            : 'status';
-      return transitionPersonalWorkTask(
-        taskId,
-        transition,
-        { version: input.version, ...(transition === 'status' ? { status: input.status } : {}) },
-        key
-      );
-    },
-    onSuccess: async (_result, input) => {
-      commandIntent.current = null;
+  const command = useWorkHubPersonalCommand({
+    ownerFingerprint,
+    taskId,
+    reviewedItem: item,
+    preflight,
+    canEdit,
+    mutationCoordinator,
+    onConfirmed: async (_result, input) => {
       setDeleteVersion(null);
       setFeedback(
         input.kind === 'DELETE'
@@ -191,7 +202,10 @@ export function WorkHubPersonalDetail({
             : 'statusSaved'
       );
       if (input.kind === 'DELETE') onDeleted?.();
-      await queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] }),
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'activity'] }),
+      ]);
     },
     onError: async (error) => {
       setDeleteVersion(null);
@@ -212,12 +226,63 @@ export function WorkHubPersonalDetail({
   useEffect(() => {
     setDeleteVersion(null);
     setFeedback(null);
-    commandIntent.current = null;
-  }, [taskId]);
+  }, [ownerFingerprint, taskId]);
 
-  if (detail.isPending)
+  const detailAccessChanged =
+    detail.isError &&
+    detail.error instanceof HttpError &&
+    detail.error.status < 500 &&
+    detail.error.status !== 408 &&
+    detail.error.status !== 429;
+  useEffect(() => {
+    if (ownerFingerprint === null || detailAccessChanged) {
+      setRetainedDetail(null);
+    } else if (detail.isSuccess && detail.data.taskId === taskId) {
+      setRetainedDetail({ ownerFingerprint, task: detail.data });
+    } else {
+      setRetainedDetail((previous) =>
+        previous?.ownerFingerprint === ownerFingerprint && previous.task.taskId === taskId
+          ? previous
+          : null
+      );
+    }
+  }, [detail.data, detail.isSuccess, detailAccessChanged, ownerFingerprint, taskId]);
+  // A version refresh must not unmount an unsaved checklist. Retained receipts are
+  // display-only and cannot cross a task, owner, or revoked-access boundary.
+  const task =
+    ownerFingerprint === null || detailAccessChanged
+      ? undefined
+      : ((detail.isSuccess && detail.data.taskId === taskId ? detail.data : undefined) ??
+        (retainedDetail?.ownerFingerprint === ownerFingerprint &&
+        retainedDetail.task.taskId === taskId
+          ? retainedDetail.task
+          : undefined));
+
+  const canManage = Boolean(
+    task &&
+    canEdit &&
+    ownerFingerprint !== null &&
+    isPersonalWorkDetailCurrent(task, item) &&
+    detail.isSuccess &&
+    !detail.isFetching &&
+    !command.isPending
+  );
+  const canModify = canManage && task?.status !== 'ARCHIVED';
+  const canComplete = Boolean(
+    task && canManage && canSelectPersonalWorkStatus(task, item, snapshot, 'COMPLETED')
+  );
+  const completeTask = () => {
+    if (task && canComplete)
+      void command.run(personalWorkStatusCommand(task, 'COMPLETED')).catch(() => undefined);
+  };
+  const onShortcut = useWorkHubKeyboardShortcuts({
+    onComplete: canComplete && deleteVersion === null ? completeTask : undefined,
+    onEdit: task && canModify && deleteVersion === null ? () => onEdit(task) : undefined,
+  });
+
+  if (detail.isPending && !task)
     return <LoadingState size="standard" label={t('workHub.personal.loading')} />;
-  if (detail.isError || !detail.data) {
+  if (!task) {
     return (
       <LocalErrorState
         size="standard"
@@ -229,12 +294,36 @@ export function WorkHubPersonalDetail({
       />
     );
   }
-  const task = detail.data;
-  const canManage = canEdit && !detail.isFetching && !command.isPending;
-  const canModify = canManage && task.status !== 'ARCHIVED';
   const sources = task.sources ?? (task.source ? [task.source] : []);
   return (
-    <Stack gap={2}>
+    <Stack
+      gap={2}
+      role="region"
+      tabIndex={0}
+      aria-label={t('workHub.keyboardShortcuts.personalRegion')}
+      aria-describedby={shortcutHelpId}
+      onKeyDown={onShortcut}
+      sx={{
+        '&:focus-visible': {
+          outline: '2px solid',
+          outlineColor: 'primary.main',
+          outlineOffset: 4,
+        },
+      }}
+    >
+      <Typography id={shortcutHelpId} variant="caption" color="text.secondary">
+        {t('workHub.keyboardShortcuts.personalHelp')}
+      </Typography>
+      {detail.isError && (
+        <LocalErrorState
+          size="compact"
+          title={t('workHub.personal.unavailableTitle')}
+          description={t('workHub.personal.unavailableDescription')}
+          retryLabel={t('workPage.retry')}
+          onRetry={() => void detail.refetch()}
+          retrying={detail.isFetching}
+        />
+      )}
       {feedback && (
         <InlineFeedback
           severity={
@@ -255,9 +344,8 @@ export function WorkHubPersonalDetail({
           bgcolor: 'action.hover',
         }}
         onChange={(_event, status: PersonalWorkStatus | null) => {
-          if (status && status !== task.status && canManage && !statusActionPending) {
-            if (onStatusAction?.(status)) return;
-            command.mutate({ kind: 'STATUS', version: task.version, status });
+          if (status && canManage && canSelectPersonalWorkStatus(task, item, snapshot, status)) {
+            void command.run(personalWorkStatusCommand(task, status)).catch(() => undefined);
           }
         }}
       >
@@ -265,12 +353,8 @@ export function WorkHubPersonalDetail({
           <ToggleButton
             key={status}
             value={status}
-            disabled={
-              !canManage ||
-              statusActionPending ||
-              status === task.status ||
-              (['COMPLETED', 'ARCHIVED'].includes(task.status) && status !== 'OPEN')
-            }
+            aria-keyshortcuts={status === 'COMPLETED' && canComplete ? 'C' : undefined}
+            disabled={!canManage || !canSelectPersonalWorkStatus(task, item, snapshot, status)}
             sx={{ minHeight: 44, minWidth: 0, px: 0.5, overflowWrap: 'anywhere' }}
           >
             {t(`workHub.lifecycle.${status}`)}
@@ -303,6 +387,7 @@ export function WorkHubPersonalDetail({
                 startIcon={<Pencil size={16} />}
                 sx={{ minHeight: 44 }}
                 onClick={() => onEdit(task)}
+                aria-keyshortcuts="E"
               >
                 {t('workHub.personal.edit')}
               </ActionButton>
@@ -418,11 +503,11 @@ export function WorkHubPersonalDetail({
       </WorkSourceDetailSection>
 
       <WorkPersonalChecklist
-        key={task.taskId}
+        key={`${ownerFingerprint}:${task.taskId}`}
         task={task}
         disabled={!canModify}
         onSave={async (checklist, version) => {
-          await command.mutateAsync({ kind: 'CHECKLIST', checklist, version });
+          await command.run({ kind: 'CHECKLIST', checklist, version });
         }}
       />
 
@@ -492,9 +577,7 @@ export function WorkHubPersonalDetail({
         onClose={() => setDeleteVersion(null)}
         onSubmit={async () => {
           if (canManage && deleteVersion !== null && deleteVersion === task.version)
-            await command
-              .mutateAsync({ kind: 'DELETE', version: deleteVersion })
-              .catch(() => undefined);
+            await command.run({ kind: 'DELETE', version: deleteVersion }).catch(() => undefined);
         }}
         mobileFullScreen
       >

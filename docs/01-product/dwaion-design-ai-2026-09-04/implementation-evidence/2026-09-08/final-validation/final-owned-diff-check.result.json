@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-09-08T12:26:17.522367+00:00",
+  "completedAt": "2026-09-08T12:26:17.659582+00:00",
+  "durationSeconds": 0.14,
+  "exitCode": 0,
+  "command": [
+    "git",
+    "diff",
+    "--check",
+    "--",
+    "apps/dwp/src/features/dwaion",
+    "apps/dwp/src/components/dwaion-assistant",
+    "libs/shared-utils/src/api",
+    "e2e",
+    "docs/01-product/dwaion-design-ai-2026-09-04"
+  ]
+}

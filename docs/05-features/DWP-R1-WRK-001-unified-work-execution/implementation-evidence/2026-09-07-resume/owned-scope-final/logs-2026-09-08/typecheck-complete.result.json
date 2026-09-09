@@ -1,0 +1,16 @@
+{
+  "name": "typecheck-complete",
+  "command": [
+    "corepack",
+    "yarn",
+    "tsc",
+    "--noEmit",
+    "--incremental",
+    "false"
+  ],
+  "startedAt": "2026-09-08T10:22:17.727035+00:00",
+  "completedAt": "2026-09-08T10:23:05.789977+00:00",
+  "durationSeconds": 48.06,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/typecheck-complete.log"
+}

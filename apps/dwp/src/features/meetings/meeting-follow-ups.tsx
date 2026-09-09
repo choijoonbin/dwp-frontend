@@ -166,7 +166,11 @@ function FollowUpsWorkspace({
         ) : tab === 'CANDIDATES' ? (
           <>
             {tabControls}
-            <MeetingFollowUpCandidates identity={identity} actorId={actorId} />
+            <MeetingFollowUpCandidates
+              identity={identity}
+              actorId={actorId}
+              requestedCandidate={navigation.candidate}
+            />
           </>
         ) : (
           <FollowUpsPage

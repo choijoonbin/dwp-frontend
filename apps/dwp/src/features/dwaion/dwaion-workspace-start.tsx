@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { conversationCopy } from './dwaion-conversation-copy';
 import {
   ArrowRight,
   CalendarCheck2,
@@ -7,10 +9,11 @@ import {
   KeyRound,
   Sparkles,
 } from 'lucide-react';
-import { ActionButton, ErrorState } from '@dwp-frontend/design-system';
+import { ActionButton, ErrorState, foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
+import Chip from '@mui/material/Chip';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -70,7 +73,9 @@ export function DwaionWorkspaceStart({
   onToggleSource,
   onCancel,
 }: DwaionWorkspaceStartProps) {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
+  const copy = conversationCopy(locale);
   const theme = useTheme();
 
   return (
@@ -79,7 +84,16 @@ export function DwaionWorkspaceStart({
         direction="row"
         gap={2}
         alignItems="center"
-        sx={{ px: { xs: 1.5, sm: 2 }, py: 2, mb: 2, bgcolor: 'action.selected', borderRadius: 1 }}
+        sx={{
+          px: { xs: 1.5, sm: 2 },
+          py: 2,
+          mb: 2,
+          bgcolor: 'background.paper',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: foundationTokens.radius.surface + 'px',
+          boxShadow: 'none',
+        }}
       >
         <Box
           component="img"
@@ -127,7 +141,12 @@ export function DwaionWorkspaceStart({
       />
 
       <Box component="section" aria-labelledby="dwaion-modes-heading" sx={{ mt: 3.5 }}>
-        <Typography id="dwaion-modes-heading" component="h2" variant="subtitle1" fontWeight={800}>
+        <Typography
+          id="dwaion-modes-heading"
+          component="h2"
+          variant="subtitle1"
+          fontWeight="fontWeightBold"
+        >
           {t(expert ? 'askPage.approvalExpert.modes.title' : 'askPage.modes.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
@@ -137,7 +156,7 @@ export function DwaionWorkspaceStart({
           sx={{
             mt: 1.5,
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
             gap: 1,
           }}
         >
@@ -153,16 +172,20 @@ export function DwaionWorkspaceStart({
                 aria-label={t(`${itemKey}.title`)}
                 onClick={() => onChooseMode(key, prompt)}
                 sx={{
-                  minHeight: 96,
+                  minHeight: { xs: 104, sm: 96 },
                   border: 1,
                   borderColor: 'divider',
-                  borderRadius: 1,
+                  borderRadius: foundationTokens.radius.surface + 'px',
                   bgcolor: 'background.paper',
-                  px: 2,
-                  py: 1.75,
+                  px: { xs: 1.25, sm: 2 },
+                  py: { xs: 1.25, sm: 1.75 },
                   display: 'grid',
-                  gridTemplateColumns: '40px minmax(0, 1fr) 20px',
-                  gap: 1.25,
+                  gridTemplateColumns: {
+                    xs: 'minmax(0, 1fr) 20px',
+                    sm: '40px minmax(0, 1fr) 20px',
+                  },
+                  gridTemplateRows: { xs: '32px minmax(0, 1fr)', sm: 'auto' },
+                  gap: { xs: 0.75, sm: 1.25 },
                   alignItems: 'center',
                   textAlign: 'left',
                   transition: (theme) =>
@@ -171,10 +194,13 @@ export function DwaionWorkspaceStart({
                     }),
                   '&:hover': {
                     borderColor: tone,
-                    boxShadow: `0 10px 24px ${alpha(tone, 0.12)}`,
+                    boxShadow: (theme) => theme.shadows[3],
                     transform: 'translateY(-1px)',
                   },
-                  '&:focus-visible': { outline: `3px solid ${alpha(tone, 0.3)}`, outlineOffset: 2 },
+                  '&:focus-visible': {
+                    outline: `3px solid ${alpha(tone, 0.3)}`,
+                    outlineOffset: 2,
+                  },
                   '@media (prefers-reduced-motion: reduce)': {
                     transition: 'none',
                     '&:hover': { transform: 'none' },
@@ -183,30 +209,47 @@ export function DwaionWorkspaceStart({
               >
                 <Box
                   sx={{
-                    width: 40,
-                    height: 40,
+                    width: { xs: 32, sm: 40 },
+                    height: { xs: 32, sm: 40 },
                     display: 'grid',
                     placeItems: 'center',
-                    borderRadius: 1,
+                    borderRadius: foundationTokens.radius.surface + 'px',
                     bgcolor: alpha(tone, 0.1),
                     color: tone,
+                    gridColumn: 1,
+                    gridRow: 1,
                   }}
                 >
-                  <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
+                  <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
                 </Box>
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography component="h3" variant="subtitle2" fontWeight={800}>
+                <Box
+                  sx={{
+                    minWidth: 0,
+                    gridColumn: { xs: '1 / -1', sm: 2 },
+                    gridRow: { xs: 2, sm: 1 },
+                  }}
+                >
+                  <Typography component="h3" variant="subtitle2" fontWeight="fontWeightBold">
                     {t(`${itemKey}.title`)}
                   </Typography>
                   <Typography
                     variant="caption"
                     color="text.secondary"
-                    sx={{ display: 'block', mt: 0.25, lineHeight: 1.45 }}
+                    sx={{
+                      display: '-webkit-box',
+                      mt: 0.25,
+                      lineHeight: 'caption.lineHeight',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
                   >
                     {t(`${itemKey}.description`)}
                   </Typography>
                 </Box>
-                <ArrowRight size={17} color={tone} aria-hidden="true" />
+                <Box sx={{ gridColumn: { xs: 2, sm: 3 }, gridRow: 1, alignSelf: 'center' }}>
+                  <ArrowRight size={17} color={tone} aria-hidden="true" />
+                </Box>
               </ButtonBase>
             );
           })}
@@ -215,13 +258,20 @@ export function DwaionWorkspaceStart({
 
       {!expert && (
         <Box component="section" aria-labelledby="dwaion-work-context-heading" sx={{ mt: 4 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'end' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: 2,
+              alignItems: 'end',
+            }}
+          >
             <Box>
               <Typography
                 id="dwaion-work-context-heading"
                 component="h2"
                 variant="subtitle1"
-                fontWeight={800}
+                fontWeight="fontWeightBold"
               >
                 {t('askPage.recentContext')}
               </Typography>
@@ -229,9 +279,23 @@ export function DwaionWorkspaceStart({
                 {t('askPage.workContextDescription')}
               </Typography>
             </Box>
+            {!workLoading && !workError && (
+              <Chip
+                size="small"
+                color={workItems.length ? 'primary' : 'default'}
+                variant="outlined"
+                label={t('askPage.recentContextCount', { count: workItems.length })}
+                sx={{ height: 24, flex: '0 0 auto' }}
+              />
+            )}
           </Box>
 
-          <Box sx={{ mt: 1.5, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+          <Box
+            sx={{
+              mt: 1.5,
+              border: 0,
+            }}
+          >
             {workLoading ? (
               <Stack spacing={1.25} sx={{ py: 2 }}>
                 {[0, 1, 2].map((item) => (
@@ -246,16 +310,22 @@ export function DwaionWorkspaceStart({
                 onRetry={onRetryWork}
               />
             ) : workItems.length ? (
-              workItems.map((item, index) => (
+              workItems.map((item) => (
                 <Box
                   key={item.workItemId}
                   sx={{
-                    py: 1.5,
+                    p: { xs: 1.1, sm: 1.25 },
+                    bgcolor: 'background.paper',
+                    borderRadius: foundationTokens.radius.control + 'px',
+                    mb: 0.75,
                     display: 'grid',
-                    gridTemplateColumns: { xs: 'minmax(0, 1fr) auto', sm: '1fr 140px auto' },
+                    gridTemplateColumns: {
+                      xs: 'minmax(0, 1fr) auto',
+                      sm: 'minmax(0, 1fr) auto',
+                    },
                     gap: 1.5,
                     alignItems: 'center',
-                    borderTop: index === 0 ? 0 : 1,
+                    border: 1,
                     borderColor: 'divider',
                   }}
                 >
@@ -267,18 +337,65 @@ export function DwaionWorkspaceStart({
                     >
                       {item.title}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" noWrap display="block">
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      display={{ xs: 'none', sm: '-webkit-box' }}
+                      sx={{
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }}
+                    >
                       {item.summary || item.recommendedNext || item.sourceSystem}
                     </Typography>
+                    <Stack
+                      direction="row"
+                      gap={0.65}
+                      useFlexGap
+                      flexWrap="wrap"
+                      alignItems="center"
+                      sx={{ mt: 0.4 }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        {item.sourceSystem}
+                      </Typography>
+                      {item.sourceReference && (
+                        <Typography variant="caption" color="text.secondary">
+                          · {item.sourceReference}
+                        </Typography>
+                      )}
+                      {item.dataClassification && (
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label={item.dataClassification}
+                          sx={{
+                            display: { xs: 'none', sm: 'inline-flex' },
+                            height: 20,
+                            '& .MuiChip-label': { px: 0.65, fontSize: 'caption.fontSize' },
+                          }}
+                        />
+                      )}
+                    </Stack>
+                    {item.dueAt && !Number.isNaN(Date.parse(item.dueAt)) && (
+                      <Typography
+                        component="time"
+                        dateTime={item.dueAt}
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                        sx={{ mt: 0.5 }}
+                      >
+                        {copy.due} ·{' '}
+                        {formatDate(
+                          item.dueAt,
+                          { dateStyle: 'medium', timeStyle: 'short' },
+                          locale
+                        )}
+                      </Typography>
+                    )}
                   </Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    noWrap
-                    sx={{ display: { xs: 'none', sm: 'block' } }}
-                  >
-                    {item.sourceSystem}
-                  </Typography>
                   <ActionButton
                     size="small"
                     intent="quiet"

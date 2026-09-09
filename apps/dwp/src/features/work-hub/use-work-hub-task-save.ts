@@ -13,7 +13,22 @@ import { workHubReferenceKey, type WorkHubItem, type WorkHubSnapshot } from './w
 import type { createWorkHubController } from './work-hub-controller';
 import type { WorkTaskDialogSubmission, WorkTaskDialogSubmitContext } from './work-task-dialog';
 import type { WorkHubOperationFeedback } from './work-hub-page-helpers';
+import { runWorkHubCreatePlanLane } from './work-hub-create-plan-lane';
+import {
+  isPersonalTaskConflictReceipt,
+  isPersonalTaskReviewedReceipt,
+} from './work-hub-personal-save-receipt';
+import {
+  isWorkHubItemCommandReady,
+  isWorkHubSourceCommandReady,
+} from './work-hub-command-authority';
+import { personalWorkToHub } from './work-hub-source-adapters';
+import { dayPlanHasReference } from './work-hub-model';
 import { useWorkHubOperationOwner } from './use-work-hub-operation-owner';
+import type {
+  WorkTaskCreateClaim,
+  WorkTaskSaveCoordinator,
+} from './work-hub-task-save-coordinator';
 
 export function useWorkHubTaskSave({
   controller,
@@ -26,6 +41,9 @@ export function useWorkHubTaskSave({
   onPlanError,
   onFeedback,
   onCreated,
+  taskSaveCoordinator,
+  enabled,
+  preflight,
 }: {
   controller: ReturnType<typeof createWorkHubController>;
   snapshot: WorkHubSnapshot | undefined;
@@ -37,30 +55,35 @@ export function useWorkHubTaskSave({
   onPlanError: (message: string | null) => void;
   onFeedback: (feedback: WorkHubOperationFeedback) => void;
   onCreated: (reference: WorkSourceReference) => void;
+  taskSaveCoordinator?: WorkTaskSaveCoordinator;
+  enabled: boolean;
+  /** Returns a newly read aggregate snapshot before create or edit can dispatch. */
+  preflight: () => Promise<WorkHubSnapshot | null>;
 }) {
   const { t } = useTranslation('work');
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const owner = useWorkHubOperationOwner();
-  const current = useRef({ owner, controller, taskId: editingTask?.taskId });
-  current.current = { owner, controller, taskId: editingTask?.taskId };
+  const current = useRef({ owner, controller, taskId: editingTask?.taskId, enabled });
+  current.current = { owner, controller, taskId: editingTask?.taskId, enabled };
   const search = useRef(searchParams);
   search.current = searchParams;
   const mounted = useRef(false);
-  const activeRun = useRef<object | null>(null);
+  const activeRun = useRef<{ abort: AbortController } | null>(null);
   useEffect(() => {
     mounted.current = true;
     activeRun.current = null;
     return () => {
       mounted.current = false;
+      activeRun.current?.abort.abort();
       activeRun.current = null;
     };
-  }, [owner, controller]);
+  }, [owner, controller, enabled]);
   return async (value: WorkTaskDialogSubmission, context: WorkTaskDialogSubmitContext) => {
     const identity = current.current;
-    if (!owner || !mounted.current || activeRun.current)
+    if (!owner || !identity.enabled || !mounted.current || activeRun.current)
       throw new DOMException('Work operation unavailable', 'AbortError');
-    const run = {};
+    const run = { abort: new AbortController() };
     activeRun.current = run;
     let ownDialogClosed = false;
     const isCurrent = () =>
@@ -68,27 +91,102 @@ export function useWorkHubTaskSave({
       activeRun.current === run &&
       current.current.owner === identity.owner &&
       current.current.controller === identity.controller &&
+      current.current.enabled &&
       (ownDialogClosed || current.current.taskId === identity.taskId);
     const assertCurrent = () => {
       if (!isCurrent()) throw new DOMException('Work owner changed', 'AbortError');
     };
     const { version, ...input } = value;
+    let claimedCreate: WorkTaskCreateClaim | null = null;
+    let editMutationFingerprint: string | null = null;
     try {
+      const commandSnapshot = await preflight();
+      assertCurrent();
+      if (!commandSnapshot || !isWorkHubSourceCommandReady(commandSnapshot, 'personal')) {
+        throw new HttpError('Personal work source is unavailable', 503);
+      }
+      const reviewedItem = editingTask
+        ? snapshot?.items.find(
+            (candidate) =>
+              candidate.sourceId === 'personal' &&
+              candidate.reference.sourceSystem === 'PERSONAL_TASK' &&
+              candidate.reference.sourceReference === editingTask.taskId
+          )
+        : null;
+      const currentItem = reviewedItem
+        ? commandSnapshot.items.find(
+            (candidate) => candidate.sourceId === 'personal' && candidate.key === reviewedItem.key
+          )
+        : null;
+      if (editingTask) {
+        if (
+          !reviewedItem ||
+          !currentItem ||
+          !isWorkHubItemCommandReady(commandSnapshot, reviewedItem)
+        ) {
+          throw new HttpError('Personal work changed', 409);
+        }
+        const currentTask = await getPersonalWorkTask(editingTask.taskId, run.abort.signal);
+        assertCurrent();
+        if (
+          !isPersonalTaskReviewedReceipt(currentTask, editingTask.taskId, editingTask.version) ||
+          currentTask.status !== editingTask.status
+        ) {
+          throw new HttpError('Personal work changed', 409);
+        }
+      }
       let createdReference: WorkHubItem['reference'] | null = null;
+      let createdPlanIntent: { date: string; idempotencyKey: string } | null = null;
+      let createdTask: PersonalWorkTask | null = null;
       if (editingTask) {
         if (version === undefined) throw new Error('version required');
-        const item = snapshot?.items.find(
-          (candidate) =>
-            candidate.reference.sourceSystem === 'PERSONAL_TASK' &&
-            candidate.reference.sourceReference === editingTask.taskId
-        );
-        if (!item || !snapshot) throw new Error('task unavailable');
-        controller.adopt(snapshot);
-        controller.select(item.reference);
-        await controller.savePersonalTask({ ...input, version }, context.idempotencyKey);
+        controller.adopt(commandSnapshot);
+        controller.select(currentItem!.reference);
+        const editInput = { ...input, version };
+        editMutationFingerprint = `EDIT:${JSON.stringify([editingTask.taskId, editInput])}`;
+        const idempotencyKey = taskSaveCoordinator
+          ? taskSaveCoordinator.mutationKey(owner, editMutationFingerprint, context.idempotencyKey)
+          : context.idempotencyKey;
+        await controller.savePersonalTask(editInput, idempotencyKey, {
+          signal: run.abort.signal,
+          canContinue: isCurrent,
+          expectedStatus: editingTask.status,
+          reviewedTask: editingTask,
+        });
         assertCurrent();
+        taskSaveCoordinator?.acknowledgeMutation(owner, editMutationFingerprint);
+        editMutationFingerprint = null;
       } else {
-        const created = await controller.capture(input, context.idempotencyKey);
+        const planIntent = context.addToTodayPlan
+          ? { date: today, idempotencyKey: crypto.randomUUID() }
+          : null;
+        const confirmation = taskSaveCoordinator
+          ? await taskSaveCoordinator.runCreate(
+              owner,
+              input,
+              context.idempotencyKey,
+              (replayInput, idempotencyKey, guard) =>
+                controller.capture(replayInput, idempotencyKey, guard),
+              planIntent
+            )
+          : {
+              confirmationId: 0,
+              planIntent,
+              task: await controller.capture(input, context.idempotencyKey, {
+                signal: run.abort.signal,
+                canContinue: isCurrent,
+              }),
+            };
+        const created = confirmation.task;
+        createdTask = created;
+        createdPlanIntent = confirmation.planIntent;
+        if (taskSaveCoordinator) {
+          const claim = taskSaveCoordinator.claimCreate(owner, confirmation.confirmationId);
+          if (!claim) {
+            throw new DOMException('Work create receipt already claimed', 'AbortError');
+          }
+          claimedCreate = claim;
+        }
         assertCurrent();
         createdReference = {
           sourceSystem: 'PERSONAL_TASK',
@@ -112,32 +210,77 @@ export function useWorkHubTaskSave({
           replace: true,
         });
       let planSaveFailed = false;
-      if (createdReference && context.addToTodayPlan) {
-        const next = controller.addToPlan(createdReference);
-        onPlanDraftChange(next);
-        try {
-          const planResult = await controller.savePlan(today, next, crypto.randomUUID());
-          assertCurrent();
-          if (planResult.state === 'SAVED') {
-            onPlanDraftChange(controller.state().planDraft);
-            onPlanError(null);
-          } else {
-            planSaveFailed = true;
-            onPlanDraftChange([...planResult.draft]);
-            onPlanError(
-              t(
-                `work:workHub.todayPlan.${
-                  planResult.state === 'CONFLICT' ? 'conflict' : 'saveFailed'
-                }`
+      if (createdReference && createdPlanIntent && createdTask) {
+        const planReference = createdReference;
+        const planIntent = createdPlanIntent;
+        const verifiedCreatedTask = createdTask;
+        await runWorkHubCreatePlanLane(
+          taskSaveCoordinator,
+          { signal: run.abort.signal, canContinue: isCurrent },
+          async () => {
+            const planSnapshot = await preflight();
+            assertCurrent();
+            if (!isWorkHubItemCommandReady(planSnapshot, personalWorkToHub(verifiedCreatedTask))) {
+              throw new HttpError('Created personal work is unavailable', 503);
+            }
+            await controller.loadPlan(planIntent.date, {
+              signal: run.abort.signal,
+              canContinue: isCurrent,
+            });
+            assertCurrent();
+            const submissionSnapshot = await preflight();
+            assertCurrent();
+            if (
+              !isWorkHubItemCommandReady(submissionSnapshot, personalWorkToHub(verifiedCreatedTask))
+            ) {
+              throw new HttpError('Created personal work is unavailable', 503);
+            }
+            if (
+              dayPlanHasReference(
+                controller.state().plan,
+                controller.state().planDraft,
+                planReference
               )
-            );
+            ) {
+              onPlanDraftChange(controller.state().planDraft);
+              onPlanError(null);
+              return;
+            }
+            const next = controller.addToPlan(planReference);
+            onPlanDraftChange(next);
+            try {
+              const planResult = await controller.savePlan(
+                planIntent.date,
+                next,
+                planIntent.idempotencyKey,
+                { signal: run.abort.signal, canContinue: isCurrent }
+              );
+              assertCurrent();
+              if (planResult.state === 'SAVED') {
+                onPlanDraftChange(controller.state().planDraft);
+                onPlanError(null);
+              } else {
+                planSaveFailed = true;
+                onPlanDraftChange([...planResult.draft]);
+                onPlanError(
+                  t(
+                    `work:workHub.todayPlan.${
+                      planResult.state === 'CONFLICT' ? 'conflict' : 'saveFailed'
+                    }`
+                  )
+                );
+              }
+            } catch (error) {
+              assertCurrent();
+              planSaveFailed = true;
+              onPlanError(t('work:workHub.todayPlan.saveFailed'));
+              if (error instanceof HttpError) throw error;
+            }
           }
-        } catch {
-          assertCurrent();
-          planSaveFailed = true;
-          onPlanError(t('work:workHub.todayPlan.saveFailed'));
-        }
+        );
       }
+      await queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] });
+      assertCurrent();
       onFeedback({
         severity: planSaveFailed ? 'warning' : 'success',
         title: t('work:workHub.taskForm.savedTitle'),
@@ -145,16 +288,37 @@ export function useWorkHubTaskSave({
           ? `${t('work:workHub.taskForm.savedDetail')} ${t('work:workHub.todayPlan.saveFailed')}`
           : t('work:workHub.taskForm.savedDetail'),
       });
-      await queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] });
+      if (claimedCreate !== null) {
+        if (planSaveFailed) taskSaveCoordinator?.releaseCreate(owner, claimedCreate);
+        else taskSaveCoordinator?.acknowledgeCreate(owner, claimedCreate);
+        claimedCreate = null;
+      }
     } catch (error) {
+      if (claimedCreate !== null) {
+        taskSaveCoordinator?.releaseCreate(owner, claimedCreate);
+        claimedCreate = null;
+      }
       if (!isCurrent()) throw error;
       if (editingTask && error instanceof HttpError && error.status === 409) {
         try {
-          const latest = await getPersonalWorkTask(editingTask.taskId);
+          const latest = await getPersonalWorkTask(editingTask.taskId, run.abort.signal);
           assertCurrent();
+          if (
+            !isPersonalTaskConflictReceipt(
+              latest,
+              editingTask.taskId,
+              version ?? editingTask.version
+            )
+          ) {
+            throw new Error('Unverified personal task conflict receipt');
+          }
+          if (editMutationFingerprint) {
+            taskSaveCoordinator?.acknowledgeMutation(owner, editMutationFingerprint);
+            editMutationFingerprint = null;
+          }
           onEditingTaskChange(latest);
           queryClient.setQueryData(
-            ['workspace', 'work-hub', 'personal-detail', latest.taskId, latest.version],
+            ['workspace', 'work-hub', 'personal-detail', latest.taskId, latest.version, owner],
             latest
           );
           await queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] });
@@ -173,6 +337,10 @@ export function useWorkHubTaskSave({
         error instanceof HttpError &&
         [401, 403, 404].includes(error.status)
       ) {
+        if (editMutationFingerprint) {
+          taskSaveCoordinator?.acknowledgeMutation(owner, editMutationFingerprint);
+          editMutationFingerprint = null;
+        }
         queryClient.removeQueries({
           queryKey: ['workspace', 'work-hub', 'personal-detail', editingTask.taskId],
         });

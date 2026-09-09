@@ -33,6 +33,8 @@ import { useAuth } from '@dwp-frontend/shared-utils';
 import {
   getVideoMeetingHistory,
   type VideoMeetingHistoryItem,
+  type VideoMeetingHistoryPublicationFilter,
+  type VideoMeetingHistoryRetentionFilter,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import { getLatestPublishedVideoMeetingIntelligenceReport } from '@dwp-frontend/shared-utils/api/video-meeting-intelligence-api';
 import type { VideoMeetingRecordBookmark } from '@dwp-frontend/shared-utils/api/video-meeting-record-preferences-api';
@@ -128,6 +130,8 @@ export function MeetingHistory() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [evidence, setEvidence] = useState<HistoryEvidenceFilter>('ALL');
+  const [publication, setPublication] = useState<VideoMeetingHistoryPublicationFilter>('ALL');
+  const [retention, setRetention] = useState<VideoMeetingHistoryRetentionFilter>('ALL');
   const [navigation, setNavigation] = useState<MeetingHistoryNavigation>('ALL');
   const [role, setRole] = useState<HistoryRoleFilter>('ALL');
   const [periodDays, setPeriodDays] = useState('ALL');
@@ -144,10 +148,20 @@ export function MeetingHistory() {
     user?.userId,
   ]);
   const query = useQuery({
-    queryKey: ['meetings', 'history', scope, navigation === 'FAVORITES', page],
+    queryKey: [
+      'meetings',
+      'history',
+      scope,
+      navigation === 'FAVORITES',
+      publication,
+      retention,
+      page,
+    ],
     queryFn: ({ signal }) =>
       getVideoMeetingHistory(page, MEETING_HISTORY_PAGE_SIZE, {
         favoriteOnly: navigation === 'FAVORITES',
+        publication,
+        retention,
         signal,
       }),
     staleTime: 30_000,
@@ -337,6 +351,8 @@ export function MeetingHistory() {
                 setSearch('');
                 setRole('ALL');
                 setEvidence('ALL');
+                setPublication('ALL');
+                setRetention('ALL');
                 setNavigation('ALL');
                 setPage(0);
                 setOrganizer('ALL');
@@ -402,25 +418,44 @@ export function MeetingHistory() {
                 label: t(`history.filters.evidence.${value}`),
               }))}
             />
-            {(['publication', 'retention'] as const).map((axis) => (
-              <SelectField
-                key={axis}
-                sx={{
-                  display: { xs: showFilters ? 'block' : 'none', sm: 'block' },
-                  gridColumn: { xs: '1 / -1', sm: 'auto' },
-                }}
-                size="small"
-                disabled
-                onValueChange={() => {
-                  /* Requires an authoritative server projection. */
-                }}
-                label={t(`designReview.library.${axis}Label`)}
-                value="UNAVAILABLE"
-                options={[
-                  { value: 'UNAVAILABLE', label: t('designReview.library.projectionPending') },
-                ]}
-              />
-            ))}
+            <SelectField
+              sx={{
+                display: { xs: showFilters ? 'block' : 'none', sm: 'block' },
+                gridColumn: { xs: '1 / -1', sm: 'auto' },
+              }}
+              size="small"
+              label={t('designReview.library.publicationLabel')}
+              value={publication}
+              onValueChange={(value) => {
+                setPublication((value ?? 'ALL') as VideoMeetingHistoryPublicationFilter);
+                setPage(0);
+              }}
+              options={(['ALL', 'PUBLISHED', 'DRAFT', 'APPROVED', 'REJECTED', 'NONE'] as const).map(
+                (value) => ({
+                  value,
+                  label: t(`designReview.library.publication.${value}`),
+                })
+              )}
+            />
+            <SelectField
+              sx={{
+                display: { xs: showFilters ? 'block' : 'none', sm: 'block' },
+                gridColumn: { xs: '1 / -1', sm: 'auto' },
+              }}
+              size="small"
+              label={t('designReview.library.retentionLabel')}
+              value={retention}
+              onValueChange={(value) => {
+                setRetention((value ?? 'ALL') as VideoMeetingHistoryRetentionFilter);
+                setPage(0);
+              }}
+              options={(
+                ['ALL', 'ACTIVE', 'EXPIRING_SOON', 'LEGAL_HOLD', 'EXPIRED', 'UNCONFIGURED'] as const
+              ).map((value) => ({
+                value,
+                label: t(`designReview.library.retention.${value}`),
+              }))}
+            />
             <SelectField
               sx={{
                 display: { xs: showFilters ? 'block' : 'none', sm: 'block' },
@@ -667,7 +702,13 @@ function MeetingHistoryRow({
             `${t('designReview.library.organizer')} · ${t('followUps.notSet')}`}
         </Typography>
         {meeting.averageQualityScore != null && (
-          <Typography variant="caption" color="success.dark" sx={{ ml: 'auto' }}>
+          <Typography
+            variant="caption"
+            sx={(theme) => ({
+              ml: 'auto',
+              color: theme.palette.mode === 'dark' ? 'success.light' : 'success.dark',
+            })}
+          >
             {t('history.quality', { value: meeting.averageQualityScore })}
           </Typography>
         )}
@@ -682,6 +723,33 @@ function MeetingHistoryRow({
           size="small"
           icon={<UsersRound size={13} aria-hidden="true" />}
           label={t('history.peak', { count: meeting.participantPeak })}
+        />
+        <Chip
+          size="small"
+          color={meeting.publicationState === 'PUBLISHED' ? 'success' : 'default'}
+          variant="outlined"
+          label={t(`designReview.library.publication.${meeting.publicationState}`)}
+        />
+        <Chip
+          size="small"
+          color={
+            meeting.retentionState === 'EXPIRED'
+              ? 'error'
+              : meeting.retentionState === 'EXPIRING_SOON'
+                ? 'warning'
+                : meeting.retentionState === 'LEGAL_HOLD'
+                  ? 'info'
+                  : 'default'
+          }
+          variant="outlined"
+          label={
+            meeting.retentionUntil
+              ? t('designReview.library.retentionValue', {
+                  state: t(`designReview.library.retention.${meeting.retentionState}`),
+                  date: formatMeetingDateTime(meeting.retentionUntil, i18n.language),
+                })
+              : t(`designReview.library.retention.${meeting.retentionState}`)
+          }
         />
         {meeting.recordingAvailable && (
           <Chip

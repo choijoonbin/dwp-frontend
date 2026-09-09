@@ -15,6 +15,8 @@ import {
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
   HttpError,
+  isAccessReviewDecisionSource,
+  isExactAccessReviewDecisionReceipt,
   useProductSurfaceAuthority,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -35,9 +37,12 @@ import {
   mapGovernedRouteEvaluation,
   useGovernedRouteAccessDecision,
 } from '../../routes/governed-route-access-guard';
+import { useWorkHubOperationOwner } from '../../components/use-work-hub-operation-owner';
+import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 
 import type {
   AccessReviewWorkDecision,
+  AccessReviewDecisionReceiptSource,
   DecideAccessReviewWorkRequest,
 } from '@dwp-frontend/shared-utils';
 import type { GovernedRouteEvaluationRequest } from '@dwp-frontend/shared-utils/api/auth-api';
@@ -51,6 +56,16 @@ type DecisionPreview = DecideAccessReviewWorkRequest & {
   workItemRef: string;
   subjectDisplayName: string;
   roleName: string;
+  assignment: AccessReviewDecisionReceiptSource;
+};
+
+type DecisionRun = {
+  confirmed: DecisionPreview;
+  owner: string;
+  accessScope: string;
+  commandsEnabled: true;
+  preflight: () => Promise<boolean>;
+  controller: AbortController;
 };
 
 export type AccessReviewWorkErrorState = 'not-found' | 'stale' | 'unavailable';
@@ -60,6 +75,20 @@ export function classifyAccessReviewWorkError(error: unknown): AccessReviewWorkE
   if (error.status === 403 || error.status === 404) return 'not-found';
   if (error.status === 409) return 'stale';
   return 'unavailable';
+}
+
+function validateAccessReviewDetail(
+  detail: Awaited<ReturnType<typeof getAccessReviewWorkDetail>>,
+  expectedWorkItemRef: string
+) {
+  if (
+    detail.workItemRef !== expectedWorkItemRef ||
+    !Number.isSafeInteger(detail.version) ||
+    detail.version < 0
+  ) {
+    throw new HttpError('Access review detail response is invalid', 502);
+  }
+  return detail;
 }
 
 function governedRequest(
@@ -109,8 +138,20 @@ function GuardFallback({
   );
 }
 
-export function AccessReviewWorkItem({ workItemRef }: { workItemRef: string }) {
+export function AccessReviewWorkItem({
+  workItemRef,
+  commandsEnabled,
+  commandScope,
+  preflight,
+}: {
+  workItemRef: string;
+  commandsEnabled: boolean;
+  commandScope: string;
+  preflight: () => Promise<boolean>;
+}) {
+  const { t } = useTranslation('work');
   const authority = useProductSurfaceAuthority();
+  const operationOwner = useWorkHubOperationOwner();
   return (
     <GovernedRouteAccessGuard
       request={governedRequest(DETAIL_ROUTE_CONTRACT, workItemRef)}
@@ -118,36 +159,68 @@ export function AccessReviewWorkItem({ workItemRef }: { workItemRef: string }) {
         <GuardFallback decision={decision} onRetry={() => void authority.revalidate()} />
       )}
     >
-      <AuthorizedAccessReviewWorkItem key={workItemRef} workItemRef={workItemRef} />
+      {operationOwner ? (
+        <AuthorizedAccessReviewWorkItem
+          key={JSON.stringify([operationOwner, workItemRef])}
+          workItemRef={workItemRef}
+          operationOwner={operationOwner}
+          commandsEnabled={commandsEnabled}
+          commandScope={commandScope}
+          preflight={preflight}
+        />
+      ) : (
+        <LoadingState label={t('workPage.accessReview.authorizing')} size="page" />
+      )}
     </GovernedRouteAccessGuard>
   );
 }
 
-function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }) {
+function AuthorizedAccessReviewWorkItem({
+  workItemRef,
+  operationOwner,
+  commandsEnabled,
+  commandScope,
+  preflight,
+}: {
+  workItemRef: string;
+  operationOwner: string;
+  commandsEnabled: boolean;
+  commandScope: string;
+  preflight: () => Promise<boolean>;
+}) {
   const { t } = useTranslation('work');
   const toast = useToast();
   const queryClient = useQueryClient();
   const authority = useProductSurfaceAuthority();
   const theme = useTheme();
+  const actionBoundary = useRef<HTMLDivElement>(null);
+  useShellAuxiliaryAvoidance({ boundaryRef: actionBoundary });
   const compact = useMediaQuery(theme.breakpoints.down('sm'));
   const [evidenceExpanded, setEvidenceExpanded] = useState(false);
   const [decision, setDecision] = useState<Exclude<AccessReviewWorkDecision, 'PENDING'>>();
   const [reason, setReason] = useState('');
   const [preview, setPreview] = useState<DecisionPreview | null>(null);
   const [conflict, setConflict] = useState(false);
-  const mounted = useRef(true);
+  const [submissionError, setSubmissionError] = useState(false);
+  const mounted = useRef(false);
+  const ownerRef = useRef(operationOwner);
+  ownerRef.current = operationOwner;
+  const activeDecision = useRef<DecisionRun | null>(null);
   const decisionOutcome = useRef<HTMLHeadingElement | null>(null);
   const focusDecisionOutcome = useRef(false);
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-  const detailQueryKey = ['work', 'access-review-item', workItemRef] as const;
+  const detailQueryKey = ['work', 'access-review-item', operationOwner, workItemRef] as const;
   const detail = useQuery({
     queryKey: detailQueryKey,
-    queryFn: () => getAccessReviewWorkDetail(workItemRef),
+    queryFn: async ({ signal }) => {
+      const loaded = validateAccessReviewDetail(
+        await getAccessReviewWorkDetail(workItemRef, signal),
+        workItemRef
+      );
+      if (ownerRef.current !== operationOwner || signal.aborted) {
+        throw new DOMException('Work owner changed', 'AbortError');
+      }
+      return loaded;
+    },
     retry: false,
     staleTime: 0,
     meta: { accessSensitive: true },
@@ -157,6 +230,43 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
       ? governedRequest(DECISION_ROUTE_CONTRACT, workItemRef, String(detail.data.version))
       : null
   );
+  const authorityRevision =
+    authority.status === 'ready'
+      ? `${authority.snapshot?.envelope.activeAccessMode ?? ''}:${authority.snapshot?.envelope.decisionRevision ?? ''}`
+      : authority.status;
+  const actionAccessRevision =
+    actionAccess.state === 'allowed'
+      ? `${actionAccess.decisionRevision}:${String(actionAccess.effectiveReadOnly)}`
+      : actionAccess.state;
+  const accessScope = JSON.stringify([
+    operationOwner,
+    authorityRevision,
+    actionAccessRevision,
+    commandsEnabled,
+    commandScope,
+  ]);
+  const accessScopeRef = useRef(accessScope);
+  accessScopeRef.current = accessScope;
+  const commandsEnabledRef = useRef(commandsEnabled);
+  commandsEnabledRef.current = commandsEnabled;
+  const isCurrent = (run: DecisionRun) =>
+    mounted.current &&
+    run.commandsEnabled &&
+    commandsEnabledRef.current &&
+    ownerRef.current === run.owner &&
+    accessScopeRef.current === run.accessScope &&
+    activeDecision.current === run &&
+    !run.controller.signal.aborted;
+  useEffect(() => {
+    mounted.current = true;
+    activeDecision.current?.controller.abort();
+    activeDecision.current = null;
+    return () => {
+      mounted.current = false;
+      activeDecision.current?.controller.abort();
+      activeDecision.current = null;
+    };
+  }, [accessScope]);
   useEffect(() => {
     if (!focusDecisionOutcome.current || detail.data?.decision === 'PENDING') return;
     focusDecisionOutcome.current = false;
@@ -164,13 +274,22 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
     return () => cancelAnimationFrame(frame);
   }, [detail.data?.decision]);
   const decide = useMutation({
-    mutationFn: async (confirmed: DecisionPreview) => {
-      const latest = await getAccessReviewWorkDetail(confirmed.workItemRef);
+    mutationFn: async (run: DecisionRun) => {
+      const { confirmed } = run;
+      if (!isCurrent(run)) throw new DOMException('Work owner changed', 'AbortError');
+      const latest = validateAccessReviewDetail(
+        await getAccessReviewWorkDetail(confirmed.workItemRef, run.controller.signal),
+        confirmed.workItemRef
+      );
+      if (!isCurrent(run)) throw new DOMException('Work owner changed', 'AbortError');
       queryClient.setQueryData(detailQueryKey, latest);
       if (
-        latest.workItemRef !== confirmed.workItemRef ||
+        !isAccessReviewDecisionSource(latest) ||
         latest.version !== confirmed.version ||
-        latest.decision !== 'PENDING'
+        latest.subjectUserId !== confirmed.assignment.subjectUserId ||
+        latest.roleId !== confirmed.assignment.roleId ||
+        latest.accessSourceType !== confirmed.assignment.accessSourceType ||
+        (latest.sourceKey ?? null) !== (confirmed.assignment.sourceKey ?? null)
       ) {
         throw new HttpError('Access review changed after preview', 409);
       }
@@ -179,7 +298,10 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
         confirmed.workItemRef,
         String(confirmed.version)
       );
-      const evaluation = await authority.evaluateGoverned(request);
+      const evaluation = await authority.evaluateGoverned(request, {
+        signal: run.controller.signal,
+      });
+      if (!isCurrent(run)) throw new DOMException('Work owner changed', 'AbortError');
       const access = mapGovernedRouteEvaluation(
         evaluation,
         request,
@@ -191,37 +313,59 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
       if (access.state !== 'allowed' || access.effectiveReadOnly) {
         throw new HttpError('Access review decision is unavailable', 403);
       }
-      if (!mounted.current) throw new DOMException('Review closed', 'AbortError');
-      return decideAccessReviewWork(confirmed.workItemRef, {
-        decision: confirmed.decision,
-        reason: confirmed.reason,
-        version: confirmed.version,
-      });
+      if (!isCurrent(run)) throw new DOMException('Work owner changed', 'AbortError');
+      const aggregateAuthorized = await run.preflight();
+      if (!isCurrent(run)) throw new DOMException('Work owner changed', 'AbortError');
+      if (!aggregateAuthorized) throw new HttpError('Access review changed after preview', 409);
+      const updated = await decideAccessReviewWork(
+        confirmed.workItemRef,
+        {
+          decision: confirmed.decision,
+          reason: confirmed.reason,
+          version: confirmed.version,
+        },
+        run.controller.signal
+      );
+      if (!isCurrent(run)) throw new DOMException('Work owner changed', 'AbortError');
+      if (
+        !isExactAccessReviewDecisionReceipt(updated, latest, {
+          decision: confirmed.decision,
+          reason: confirmed.reason,
+          version: confirmed.version,
+        })
+      ) {
+        throw new HttpError('Access review decision receipt is invalid', 502);
+      }
+      return updated;
     },
-    onSuccess: async (updated) => {
+    onSuccess: async (updated, run) => {
+      if (!isCurrent(run)) return;
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-queue'] }),
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] }),
+      ]);
+      if (!isCurrent(run)) return;
       focusDecisionOutcome.current = true;
       queryClient.setQueryData(detailQueryKey, updated);
       setDecision(undefined);
       setPreview(null);
       setConflict(false);
+      setSubmissionError(false);
       setReason('');
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-queue'] }),
-        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] }),
-        queryClient.invalidateQueries({ queryKey: detailQueryKey }),
-      ]);
       toast.success(t('workPage.accessReview.decisionSaved'));
     },
-    onError: (error) => {
-      if (!mounted.current) return;
+    onError: (error, run) => {
+      if (!isCurrent(run)) return;
       const state = classifyAccessReviewWorkError(error);
       if (state === 'stale') {
         setPreview(null);
         setConflict(true);
+        setSubmissionError(false);
         toast.error(t('workPage.accessReview.staleDescription'));
         void detail.refetch();
         return;
       }
+      setSubmissionError(true);
       toast.error(
         t(
           state === 'not-found'
@@ -229,6 +373,9 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
             : 'workPage.accessReview.decisionError'
         )
       );
+    },
+    onSettled: (_data, _error, run) => {
+      if (activeDecision.current === run) activeDecision.current = null;
     },
   });
 
@@ -263,11 +410,12 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
 
   const record = detail.data;
   const canDecide =
+    commandsEnabled &&
     actionAccess.state === 'allowed' &&
     !actionAccess.effectiveReadOnly &&
     record.decision === 'PENDING';
   return (
-    <Box>
+    <Box ref={actionBoundary}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
         <Box>
           <Typography component="h3" variant="h6">
@@ -454,6 +602,7 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
             {t('workHub.accessEvidence.decisionSection')}
           </Typography>
           <Stack
+            data-shell-auxiliary-avoidance="inline-end"
             direction="row"
             gap={1}
             role="group"
@@ -499,6 +648,7 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
             </InlineFeedback>
           )}
           <Box
+            data-shell-auxiliary-avoidance="inline-end"
             sx={{
               position: 'sticky',
               bottom: { xs: 'calc(72px + env(safe-area-inset-bottom, 0px))', md: 12 },
@@ -531,6 +681,15 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
                   reason: reason.trim(),
                   subjectDisplayName: record.subjectDisplayName,
                   roleName: record.roleName,
+                  assignment: {
+                    workItemRef,
+                    subjectUserId: record.subjectUserId,
+                    roleId: record.roleId,
+                    accessSourceType: record.accessSourceType,
+                    sourceKey: record.sourceKey,
+                    decision: record.decision,
+                    version: record.version,
+                  },
                 })
               }
             >
@@ -591,12 +750,29 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
         }
         onClose={() => {
           setPreview(null);
+          setSubmissionError(false);
         }}
         onSubmit={() => {
-          if (preview) decide.mutate(preview);
+          if (!preview || !canDecide || activeDecision.current || !mounted.current) return;
+          setSubmissionError(false);
+          const run: DecisionRun = {
+            confirmed: preview,
+            owner: operationOwner,
+            accessScope,
+            commandsEnabled: true,
+            preflight,
+            controller: new AbortController(),
+          };
+          activeDecision.current = run;
+          decide.mutate(run);
         }}
       >
         <Stack gap={1.5}>
+          {submissionError && (
+            <InlineFeedback severity="error">
+              {t('workPage.accessReview.decisionError')}
+            </InlineFeedback>
+          )}
           {preview && preview.version !== record.version && (
             <InlineFeedback severity="warning">
               {t('workPage.accessReview.staleDescription')}

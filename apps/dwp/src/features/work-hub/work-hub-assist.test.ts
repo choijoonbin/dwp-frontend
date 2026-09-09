@@ -7,7 +7,10 @@ import {
   workHubAssistDraft,
 } from './work-hub-assist';
 import type { WorkHubItem } from './work-hub-contracts';
-import type { AskDwpResponse } from '@dwp-frontend/shared-utils/api/agent-runtime-api';
+import type {
+  AskDwpRequest,
+  AskDwpResponse,
+} from '@dwp-frontend/shared-utils/api/agent-runtime-api';
 import { askDwpStream } from '@dwp-frontend/shared-utils/api/agent-runtime-api';
 
 vi.mock('@dwp-frontend/shared-utils/api/agent-runtime-api', () => ({ askDwpStream: vi.fn() }));
@@ -40,7 +43,16 @@ describe('selected work AI handoff', () => {
   beforeEach(() => {
     vi.mocked(askDwpStream)
       .mockReset()
-      .mockResolvedValue({ state: 'COMPLETED' } as AskDwpResponse);
+      .mockImplementation(
+        async (request: AskDwpRequest) =>
+          ({
+            state: 'COMPLETED',
+            requestId: request.requestId,
+            agentRegistry: { entryKey: request.agentKey },
+            selectedWork: request.pageContext?.selectedWork,
+            ...(request.conversationId ? { conversationId: request.conversationId } : {}),
+          }) as AskDwpResponse
+      );
   });
   it.each(['PERSONAL_TASK', 'SERVICE_REQUEST', 'APPROVAL_TASK', 'APPROVAL_REQUEST'] as const)(
     'sends only the question and typed %s reference through the shared helper',

@@ -2,7 +2,7 @@
 
 공통 후속 상태는 [2026-09-04 CLOSED / FROZEN 보고서](../../DWP-R1-CORE-006-product-surface-separation/11-2026-09-04-closeout.md)를 따른다. 공유 트리의 전체 단위 385개 파일·2,606개와 production build가 통과했고, 초기 raw 1,050.5 KiB·gzip 306.8 KiB는 기존 예산 이내다. signedWorkload registry와 기존 U09 배정 SDK 소비·도달성 차단은 해소됐다. 외부 출시 증적 37건 BLOCKED, 후보 승격·재배정 NO-GO, 새 Work 디자인·화면 대기는 별도로 유지한다. 아래 Work 배정의 개별 검증 수치를 공통 전체 검사나 운영 승인과 합산하지 않는다.
 
-상태: 2026-09-04 현재 Work 공개 DTO·service·원천 송신부와 소유권 합의를 대조한 인계입니다. Work 배정 [backend 42개](evidence/backend-tests.json)(실제 PostgreSQL 15개 포함, 실패/오류/skip 0), [shared API의 기존 단위 검증 11개](evidence/frontend-tests.json) 통과를 확인했습니다. [프런트 검사·도달성 결과와 source SHA](evidence/frontend-checks.json)도 기록했습니다. Meeting U09에서 기존 Work 배정의 목록·상세·수락/수행 API를 소비하는 코드와 production 도달성은 확인했으며, 실제 Gateway·브라우저 E2E 완료는 확인하지 않았습니다.
+상태: 2026-09-04의 Work 공개 DTO·service·원천 송신부와 소유권 합의 기록을 보존하며, 2026-09-09에 Work 배정 목록·상세·수락/수행 API의 브라우저 종단과 복구·반응형 계약을 완료했습니다. backend 42개는 `--rerun-tasks`로 다시 통과했고, 최신 프런트 결과는 [완료 보고](../2026-09-09-stitch-completion-remediation.md)와 [검증 JSON](../implementation-evidence/2026-09-08-stitch-completion/validation.json)을 기준으로 합니다. 과거 [backend 증거](evidence/backend-tests.json), [shared API 단위 증거](evidence/frontend-tests.json), [프런트 검사·source SHA](evidence/frontend-checks.json)는 당시 snapshot으로 유지합니다.
 
 회의에서 사람이 검토·확정한 후보를 Work의 독립 배정 업무로 만들고, 지정된 담당자가 수락하거나 거절한 뒤 수행합니다. Meeting은 후보·원문·인용·승격을, Work는 확정 업무 조건·배정·수락·진행·완료를 소유합니다. 기존 `PersonalWorkTask`에 다른 사람의 소유권을 덧붙이지 않습니다.
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  authorizedCalendarWorkReturnTarget,
   calendarInternalPath,
   calendarScheduleCalendarIds,
   calendarScheduleDate,
@@ -64,7 +65,28 @@ describe('calendar schedule state', () => {
     expect(calendarScheduleReturnTarget('/calendar/schedule')).toBeNull();
     expect(calendarScheduleReturnTarget('/work/../admin')).toBeNull();
     expect(calendarScheduleReturnTarget('/work\\queue')).toBeNull();
+    expect(calendarScheduleReturnTarget('/work/%5cadmin')).toBeNull();
+    expect(calendarScheduleReturnTarget('/work/%2e%2e/admin')).toBeNull();
+    expect(calendarScheduleReturnTarget('/work/queue\u0000')).toBeNull();
+    expect(calendarScheduleReturnTarget('/work/queue?filter=%0A')).toBeNull();
     expect(calendarScheduleReturnTarget(`/work/${'a'.repeat(2_048)}`)).toBeNull();
+  });
+
+  it('requires an explicit non-denied Work VIEW grant for a return target', () => {
+    const permission = (permissionCode: string, effect: 'ALLOW' | 'DENY' = 'ALLOW') => ({
+      resourceType: 'APP',
+      resourceKey: 'APP.WORK',
+      permissionCode,
+      effect,
+    });
+    const target = '/work/queue?scope=mine';
+
+    expect(authorizedCalendarWorkReturnTarget(target, [permission('VIEW')])).toBe(target);
+    expect(authorizedCalendarWorkReturnTarget(target, [])).toBeNull();
+    expect(authorizedCalendarWorkReturnTarget(target, [permission('MANAGE')])).toBeNull();
+    expect(
+      authorizedCalendarWorkReturnTarget(target, [permission('VIEW'), permission('VIEW', 'DENY')])
+    ).toBeNull();
   });
 
   it('preserves every opaque scope value during calendar-internal navigation', () => {

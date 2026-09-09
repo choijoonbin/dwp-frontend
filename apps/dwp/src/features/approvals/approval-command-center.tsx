@@ -9,6 +9,7 @@ import {
   decideApprovalTask,
   getApprovalTask,
   getApprovalTasks,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
@@ -34,7 +35,7 @@ import {
 } from './use-approval-governed-mutation';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { useApprovalQueueClock } from './use-approval-queue-clock';
-import { approvalWorkReturnTarget } from './approval-return-target';
+import { authorizedApprovalWorkReturnTarget } from './approval-return-target';
 
 import type { ApprovalBatchResult, ApprovalQueueFilter } from './approval-command-center-model';
 import type { ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
@@ -55,7 +56,13 @@ export function ApprovalCommandCenter() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTaskId = searchParams.get('task') ?? undefined;
-  const returnTarget = approvalWorkReturnTarget(searchParams.get('returnTo'));
+  const { permissions } = usePermissions();
+  const requestedReturnTarget = searchParams.get('returnTo');
+  const returnTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
+  const returnToWork = () => {
+    const currentTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
+    if (currentTarget) navigate(currentTarget);
+  };
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
@@ -431,7 +438,7 @@ export function ApprovalCommandCenter() {
               intent="quiet"
               size="small"
               startIcon={<ArrowLeft size={16} />}
-              onClick={() => navigate(returnTarget)}
+              onClick={returnToWork}
             >
               {t('common:productSurface.actions.returnToWork')}
             </ActionButton>

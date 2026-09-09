@@ -1,0 +1,17 @@
+{
+  "name": "repository-unit-complete",
+  "command": [
+    "corepack",
+    "yarn",
+    "test",
+    "--maxWorkers=2",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/tmp/dwp-work-final-20260908-v2/repository-unit-complete.json"
+  ],
+  "startedAt": "2026-09-08T10:19:20.108111+00:00",
+  "completedAt": "2026-09-08T10:22:17.620439+00:00",
+  "durationSeconds": 177.51,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/repository-unit-complete.log"
+}

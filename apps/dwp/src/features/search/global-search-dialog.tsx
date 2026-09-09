@@ -50,6 +50,7 @@ import {
 import type { HomeAppDefinition } from '../../components/workspace-composer/app-launchpad-model';
 import type { GlobalSearchItem, GlobalSearchKind } from './global-search-model';
 import type { GlobalSearchAuditSource } from '@dwp-frontend/shared-utils';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const resultIcon: Record<GlobalSearchKind, typeof Search> = {
   app: AppWindow,
@@ -85,6 +86,9 @@ export function GlobalSearchDialog({
   includeProvider,
   onClose,
 }: GlobalSearchDialogProps) {
+  const governQuestionLaunch = useDwaionGovernedMutation(
+    'route.dwaion.work.question-launch-create.action'
+  );
   const { t } = useTranslation('shell');
   const display = useDisplayDictionary();
   const { t: tWork } = useTranslation('work');
@@ -100,7 +104,7 @@ export function GlobalSearchDialog({
   const [launchingAsk, setLaunchingAsk] = useState(false);
   const workQuery = useQuery({
     queryKey: ['workspace', 'work-queue'],
-    queryFn: getWorkspaceWorkQueue,
+    queryFn: ({ signal }) => getWorkspaceWorkQueue(signal),
     enabled: open && includeWork,
     staleTime: 30_000,
     retry: 1,
@@ -390,7 +394,9 @@ export function GlobalSearchDialog({
     }
     setLaunchingAsk(true);
     try {
-      const receipt = await createQuestionLaunch(normalizedQuery);
+      const receipt = await governQuestionLaunch((authority) =>
+        createQuestionLaunch(normalizedQuery, authority)
+      );
       const state = createDwaionQuestionLaunchState(receipt.launchId);
       if (!state) throw new Error('Question launch receipt is invalid.');
       close();

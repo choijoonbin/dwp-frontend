@@ -4,8 +4,17 @@ import { resetCsrfToken } from '../axios-instance';
 import {
   getDwaionPersonalAiControls,
   requestDwaionPersonalDataDeletion,
+  updateDwaionMemoryRuntimePreference,
   updateDwaionSourcePreference,
 } from './agent-personal-ai-api';
+
+const SECURE_AUTHORITY = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
 
 function response(payload: unknown, status = 200): Response {
   return {
@@ -15,6 +24,14 @@ function response(payload: unknown, status = 200): Response {
     headers: new Headers(),
   } as Response;
 }
+
+const governanceUnknown = {
+  automaticMemoryInference: null,
+  sensitiveMemoryAllowed: null,
+  backgroundCredentialStorage: null,
+  teamMemoryAvailable: null,
+  externalActionWithoutApproval: null,
+};
 
 const source = {
   sourceKey: 'CALENDAR',
@@ -34,7 +51,7 @@ describe('Agent personal AI controls API', () => {
     vi.unstubAllGlobals();
   });
 
-  it('validates capability-backed controls instead of assuming availability', async () => {
+  it('fails runtime application closed while an older runtime contract is rolling out', async () => {
     const controls = {
       memoryState: 'UNSET',
       revision: 0,
@@ -45,7 +62,51 @@ describe('Agent personal AI controls API', () => {
       sourcePreferences: [source],
     };
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ success: true, data: controls })));
-    await expect(getDwaionPersonalAiControls()).resolves.toEqual(controls);
+    await expect(getDwaionPersonalAiControls()).resolves.toEqual({
+      ...controls,
+      ...governanceUnknown,
+      runtimeApplicationState: 'UNSET',
+      runtimeApplicationEnabled: false,
+      runtimeApplicationAvailable: false,
+    });
+  });
+
+  it('updates answer personalization independently with revision-bound consent', async () => {
+    const controls = {
+      memoryState: 'ENABLED',
+      revision: 3,
+      memoryEnabled: true,
+      memoryEffective: true,
+      explicitMemoryStorageAvailable: true,
+      runtimeApplicationState: 'ENABLED',
+      runtimeApplicationEnabled: true,
+      runtimeApplicationAvailable: true,
+      sourcePreferences: [source],
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ data: { token: 'csrf', headerName: 'X-XSRF-TOKEN' } }))
+      .mockResolvedValueOnce(response({ success: true, data: controls }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      updateDwaionMemoryRuntimePreference(2, 'ENABLED', SECURE_AUTHORITY)
+    ).resolves.toEqual({ ...controls, ...governanceUnknown });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/agent/v1/ai-controls/runtime?contextScopeKey=scope-dwaion-self',
+      expect.objectContaining({
+        body: expect.stringContaining('"runtimeApplicationState":"ENABLED"'),
+        headers: expect.objectContaining({
+          'X-DWP-Expected-Decision-Revision': 'psr-current',
+        }),
+      })
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/agent/v1/ai-controls/runtime?contextScopeKey=scope-dwaion-self',
+      expect.objectContaining({ body: expect.stringContaining('"expectedRevision":2') })
+    );
   });
 
   it('sends revision-bound source updates and deletion requests', async () => {
@@ -81,4 +142,27 @@ describe('Agent personal AI controls API', () => {
       expect.objectContaining({ body: expect.stringContaining('"domains":["MEMORY"]') })
     );
   });
+  it.each(Object.keys(governanceUnknown))(
+    'preserves unknown and rejects invalid %s security evidence',
+    async (key) => {
+      const controls = {
+        memoryState: 'UNSET',
+        revision: 0,
+        memoryEnabled: false,
+        memoryEffective: false,
+        sourcePreferences: [],
+      };
+      const fetchMock = vi.fn();
+      vi.stubGlobal('fetch', fetchMock);
+      for (const value of [undefined, null, false, true]) {
+        fetchMock.mockResolvedValue(response({ data: { ...controls, [key]: value } }));
+        const result = await getDwaionPersonalAiControls();
+        expect(result[key as keyof typeof governanceUnknown]).toBe(value ?? null);
+      }
+      for (const value of ['false', 0, {}, []]) {
+        fetchMock.mockResolvedValue(response({ data: { ...controls, [key]: value } }));
+        await expect(getDwaionPersonalAiControls()).rejects.toMatchObject({ status: 502 });
+      }
+    }
+  );
 });

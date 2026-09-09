@@ -16,6 +16,7 @@ export type ActivityEventDetailModel = {
   sourceObservedAt: string | null;
   updatedAt: string | null;
   workStatusAtChange: string | null;
+  resultState: string | null;
   actorFields: ActivityDetailField[];
   objectFields: ActivityDetailField[];
   sourceFields: ActivityDetailField[];
@@ -74,6 +75,7 @@ export function activityEventDetailModel(event: WorkspaceActivityEvent): Activit
     sourceObservedAt: presentString(event.sourceObservedAt),
     updatedAt: presentString(event.updatedAt),
     workStatusAtChange: kind === 'CHANGE' ? presentString(event.workStatus) : null,
+    resultState: presentString(event.resultState),
     actorFields: fields(
       optionalField('actorName', event.actorName),
       optionalField('actorType', event.actor)
@@ -85,6 +87,7 @@ export function activityEventDetailModel(event: WorkspaceActivityEvent): Activit
     ),
     sourceFields: fields(
       optionalField('source', event.source),
+      optionalField('sourceReference', presentString(event.sourceReference)),
       optionalField('tool', presentString(event.tool)),
       optionalField('sourceAccess', event.sourceAccess)
     ),
@@ -96,6 +99,8 @@ export function activityEventDetailModel(event: WorkspaceActivityEvent): Activit
     traceFields: fields(
       optionalField('recordId', event.id),
       optionalField('sourceEventId', presentString(event.sourceEventId)),
+      optionalField('resourceVersion', event.resourceVersion),
+      optionalField('idempotencyKey', presentString(event.idempotencyKey)),
       optionalField('correlationId', presentString(event.correlationId)),
       optionalField('dataProvenance', event.dataProvenance)
     ),

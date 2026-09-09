@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-09T01:24:45+09:00",
+  "status": "PASS",
+  "finalDecision": "PASS",
+  "scope": "2026-09-09 Work and Stitch completion remediation on the final shared worktree snapshot",
+  "reference": {
+    "liveStitchAudit": "live-stitch-audit.json",
+    "liveNodesMatched": 18,
+    "liveNodesExpected": 18,
+    "routesImplemented": 6,
+    "routesExpected": 6,
+    "referenceManifest": "../../design-reference/manifest.json",
+    "referenceManifestSha256": "a655ec178d0bc03d773a0a21dfc8d717c174ac2d264048171f205bb3eac81cf2"
+  },
+  "confirmedFocusedChecks": [
+    {
+      "name": "Focused Work assignment unit suite",
+      "status": "PASS",
+      "files": 16,
+      "passed": 139,
+      "failed": 0,
+      "log": "logs/focused-assignment-unit.log",
+      "durationSeconds": 4.53
+    },
+    {
+      "name": "Work assignment integration browser suite",
+      "status": "PASS",
+      "registered": 34,
+      "passed": 30,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0,
+      "projects": [
+        "chromium",
+        "mobile"
+      ],
+      "skipReason": "Four mobile-project evidence-capture duplicates are explicitly skipped because deterministic evidence PNG generation runs once in Chromium; mobile behavior tests still execute in the same spec.",
+      "log": "logs/assignment-playwright.log",
+      "report": "logs/assignment-playwright.json",
+      "durationSeconds": 78.83
+    }
+  ],
+  "browserCoverage": {
+    "viewports": [
+      1440,
+      1280,
+      390,
+      320
+    ],
+    "themesAndPreferences": [
+      "light",
+      "dark",
+      "forced-colors",
+      "reduced-motion"
+    ],
+    "zoom": "CSS zoom at 2x; native browser menu zoom is not certified.",
+    "accessibility": "Axe critical/serious checks in main plus explicit overflow, 44px target, keyboard and focus assertions. This is not a claim of zero violations at every WCAG impact level.",
+    "screens": "screens/manifest.json"
+  },
+  "externalConditions": {
+    "createBySource": "NO_GO_EXTERNAL_CONTRACT",
+    "reassign": "NO_GO_EXTERNAL_CONTRACT",
+    "reason": "Current Meeting authority, People target eligibility, safe assignee/policy selection contract and receiver end-to-end proof are absent. This is not a Work UI omission.",
+    "workOwnedExistingAssignmentActions": "IMPLEMENTED"
+  },
+  "qualifications": {
+    "pixelPerfect": false,
+    "liveTenant": false,
+    "productionDeploy": false,
+    "fixtureMode": "CONTROLLED_FICTIONAL_FIXTURES",
+    "commit": false,
+    "push": false
+  },
+  "completionRule": "PASS requires all finalChecks to pass, zero unexpected/flaky browser results, no Work source drift during final verification, and the external NO-GO boundaries to remain fail closed.",
+  "scopeDecision": "WORK_OWNED_COMPLETE_WITH_EXTERNAL_CONTRACT_NO_GO",
+  "finalChecks": [
+    {
+      "name": "Full Work and cross-product browser regression",
+      "status": "PASS",
+      "registered": 346,
+      "passed": 322,
+      "skipped": 24,
+      "unexpected": 0,
+      "flaky": 0,
+      "projects": [
+        "chromium",
+        "mobile"
+      ],
+      "durationSeconds": 777.96,
+      "log": "logs/work-playwright.log",
+      "report": "logs/work-playwright.json",
+      "skipReason": "Explicit project/evidence duplicate skips declared in the specifications; responsive and mobile behavior remains exercised by dedicated cases."
+    },
+    {
+      "name": "Full repository unit suite",
+      "status": "PASS",
+      "files": 546,
+      "passed": 4459,
+      "failed": 0,
+      "skipped": 0,
+      "log": "logs/full-unit.log",
+      "report": null,
+      "durationSeconds": 91.19
+    },
+    {
+      "name": "Nonincremental TypeScript",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "logs/typescript.log"
+    },
+    {
+      "name": "Work assignment backend suite",
+      "status": "PASS",
+      "files": 5,
+      "passed": 42,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "freshExecution": true,
+      "log": "logs/backend-assignment-tests.log",
+      "report": "../../../../../../dwp-backend/dwp-platform-server/build/test-results/test/TEST-com.dwp.services.platform.workhub.assignment.*.xml"
+    },
+    {
+      "name": "Full repository build and required static gates",
+      "status": "PASS",
+      "exitCode": 0,
+      "includes": [
+        "package manager policy",
+        "asset and OpenAPI sync",
+        "authorization and internal closure",
+        "architecture and boundaries",
+        "cycle/reachability/internal export checks",
+        "source-size and maintenance-size budgets",
+        "design-system and i18n checks",
+        "ESLint",
+        "TypeScript",
+        "Vite production build",
+        "bundle budget"
+      ],
+      "log": "logs/build.log"
+    },
+    {
+      "name": "Repository Prettier format check",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "logs/format-check.log"
+    },
+    {
+      "name": "Repository git diff whitespace check",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "logs/diff-check.log"
+    },
+    {
+      "name": "Final Work source integrity snapshot",
+      "status": "PASS",
+      "files": 192,
+      "beforeSha256": "8a451208109ba327ffbd223736052450054cbb391a16a81e2d5bcbe036a8aa65",
+      "afterSha256": "8a451208109ba327ffbd223736052450054cbb391a16a81e2d5bcbe036a8aa65",
+      "drift": false,
+      "beforeManifest": "source-files.before.sha256",
+      "afterManifest": "source-files.after.sha256"
+    }
+  ],
+  "verificationSequence": {
+    "fullBrowserRegression": "Executed before deterministic Prettier-only normalization of ten Work files; no product logic changed.",
+    "afterFormatting": [
+      "full repository unit suite",
+      "full production build and all static gates",
+      "nonincremental TypeScript",
+      "focused 16-file/139-test Work suite",
+      "34-case assignment browser suite and evidence capture",
+      "source integrity comparison"
+    ],
+    "qualification": "The final assignment browser suite and build execute the formatted production bytes. The full browser result remains valid for the same parsed program because subsequent Work changes were formatter-only."
+  }
+}

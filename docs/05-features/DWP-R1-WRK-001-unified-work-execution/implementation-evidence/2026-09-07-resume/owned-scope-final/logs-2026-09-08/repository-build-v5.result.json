@@ -1,0 +1,13 @@
+{
+  "name": "repository-build-v5",
+  "command": [
+    "corepack",
+    "yarn",
+    "build"
+  ],
+  "startedAt": "2026-09-08T10:37:47.287934+00:00",
+  "completedAt": "2026-09-08T10:38:55.124280+00:00",
+  "durationSeconds": 67.83,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/repository-build-v5.log"
+}

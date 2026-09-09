@@ -1,10 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createHash } from 'node:crypto';
 
 import { resetCsrfToken } from '../axios-instance';
 
 import {
   createVideoMeetingIntelligenceRun,
   deleteVideoMeetingIntelligenceReport,
+  downloadVideoMeetingIntelligenceReport,
   getLatestPublishedVideoMeetingIntelligenceReport,
   getLatestVisibleVideoMeetingIntelligenceReport,
   getVideoMeetingIntelligenceReport,
@@ -295,6 +297,123 @@ describe('video meeting intelligence API boundary', () => {
       '/reports/report-1/acl/41/REVIEW?expectedReportVersion=3'
     );
     expect(requestAt(fetchMock, 5).method).toBe('DELETE');
+  });
+
+  it('downloads an exact version-bound report only through the audited owner endpoint', async () => {
+    const exportBlob = new Blob(['published recap'], { type: 'text/markdown' });
+    const exportDigest = createHash('sha256').update('published recap').digest('hex');
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers({
+          'Content-Type': 'text/markdown',
+          'X-DWP-Report-Version': '7',
+          'X-DWP-Content-SHA256': exportDigest,
+        }),
+        blob: async () => exportBlob,
+      } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      downloadVideoMeetingIntelligenceReport(
+        'meeting/1',
+        'report/1',
+        7,
+        'MARKDOWN',
+        {
+          mode: 'SECURE',
+          rolloutState: '111',
+          expectedDecisionRevision: 'decision-revision-7',
+          contextKey: 'meeting-context',
+          contextScopeKey: 'meeting-scope',
+        },
+        'recap-export-001'
+      )
+    ).resolves.toBe(exportBlob);
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/meetings/v1/meetings/meeting%2F1/intelligence/reports/report%2F1/exports?contextScopeKey=meeting-scope'
+    );
+    const request = requestAt(fetchMock, 1);
+    expect(request.method).toBe('POST');
+    expect(request.headers).toMatchObject({
+      Accept: 'text/markdown',
+      'Content-Type': 'application/json',
+      'X-Correlation-ID': 'recap-export-001',
+      'X-DWP-Expected-Decision-Revision': 'decision-revision-7',
+      'X-XSRF-TOKEN': 'csrf',
+    });
+    expect(JSON.parse(String(request.body))).toEqual({
+      expectedReportVersion: 7,
+      format: 'MARKDOWN',
+    });
+  });
+
+  it('rejects a response whose version evidence does not match the observed report', async () => {
+    const content = 'published recap';
+    const exportBlob = new Blob([content], { type: 'application/json' });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'X-DWP-Report-Version': '6',
+          'X-DWP-Content-SHA256': createHash('sha256').update(content).digest('hex'),
+        }),
+        blob: async () => exportBlob,
+      } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      downloadVideoMeetingIntelligenceReport('meeting-1', 'report-1', 7, 'JSON', {
+        mode: 'LEGACY_COMPATIBILITY',
+        rolloutState: '100',
+      })
+    ).rejects.toThrow('export evidence is invalid');
+  });
+
+  it('rejects a response whose content digest evidence does not match', async () => {
+    const exportBlob = new Blob(['substituted recap'], { type: 'application/json' });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'X-DWP-Report-Version': '7',
+          'X-DWP-Content-SHA256': '0'.repeat(64),
+        }),
+        blob: async () => exportBlob,
+      } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      downloadVideoMeetingIntelligenceReport('meeting-1', 'report-1', 7, 'JSON', {
+        mode: 'LEGACY_COMPATIBILITY',
+        rolloutState: '100',
+      })
+    ).rejects.toThrow('integrity check failed');
+  });
+
+  it('rejects an invalid export version before requesting CSRF or report content', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      downloadVideoMeetingIntelligenceReport('meeting-1', 'report-1', 0, 'JSON', {
+        mode: 'LEGACY_COMPATIBILITY',
+        rolloutState: '100',
+      })
+    ).rejects.toThrow('valid report version');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('rejects an unsafe idempotency key before requesting CSRF or report generation', async () => {

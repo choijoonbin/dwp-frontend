@@ -21,17 +21,20 @@ import {
   projectMeetingHomeWorkQueue,
 } from './meeting-home-work-queue-model';
 import { meetingHomeCard } from './meeting-home-presentation';
+import type { MeetingHomeQueueState } from './meeting-home-queue-state';
 
 export function MeetingHomeWorkQueue({
   scope,
   actorId,
   timeZone,
   embedded = false,
+  onStateChange,
 }: {
   scope: string;
   actorId: number;
   timeZone: string;
   embedded?: boolean;
+  onStateChange?: (state: MeetingHomeQueueState) => void;
 }) {
   const { t, i18n } = useTranslation('meetings');
   const navigate = useNavigate();
@@ -61,6 +64,25 @@ export function MeetingHomeWorkQueue({
     [client, queryKey]
   );
   const items = query.isError || query.isRefetchError || query.isFetching ? [] : (query.data ?? []);
+  useEffect(() => {
+    if (!onStateChange) return;
+    onStateChange({
+      status:
+        query.isLoading || query.isFetching
+          ? 'loading'
+          : query.isError || query.isRefetchError
+            ? 'error'
+            : 'ready',
+      count: items.length,
+    });
+  }, [
+    items.length,
+    onStateChange,
+    query.isError,
+    query.isFetching,
+    query.isLoading,
+    query.isRefetchError,
+  ]);
   const formatDue = (value: string) =>
     formatDate(
       value,
@@ -165,11 +187,7 @@ export function MeetingHomeWorkQueue({
             </Box>
           ))}
         </Stack>
-      ) : embedded ? (
-        <Typography variant="caption" color="text.secondary">
-          {t('home.workQueue.emptyTitle')}
-        </Typography>
-      ) : (
+      ) : embedded ? null : (
         <GuidedEmptyState
           kind="empty"
           size="compact"

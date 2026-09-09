@@ -106,6 +106,13 @@ export function GovernedSavedViewControl({
     staleTime: 60_000,
   });
   const views = viewsQuery.data ?? EMPTY_VIEWS;
+  const matchedServerViewId = useMemo(
+    () =>
+      views.find((view) => JSON.stringify(view.configuration) === configurationSignature)
+        ?.savedViewId ?? null,
+    [configurationSignature, views]
+  );
+  const activeServerViewId = selectedServerViewId ?? matchedServerViewId;
   const canPublish = Boolean(
     auth.user?.roles.some((role) => SHARED_EDITOR_ROLES.has(role.toUpperCase()))
   );
@@ -272,7 +279,7 @@ export function GovernedSavedViewControl({
         emptyLabel={viewsQuery.isLoading ? t('savedViews.loading') : t('savedViews.empty')}
         saveCurrentLabel={t('savedViews.saveCurrent')}
         manageLabel={t('savedViews.manage')}
-        selectedViewId={selectedServerViewId ?? selectedBuiltInViewId}
+        selectedViewId={activeServerViewId ?? selectedBuiltInViewId}
         views={menuViews}
         loading={viewsQuery.isLoading}
         canSave

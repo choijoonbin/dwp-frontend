@@ -110,13 +110,17 @@ describe('auth login API', () => {
       },
       { signal: evaluationController.signal }
     );
-    await evaluateGovernedRouteAccess({
-      subject: { type: 'GOVERNED_CONTEXT' },
-      navigationContextId: 'work.work',
-      routeContractKey: 'route.context.work__work.review-decision.action',
-      target: { opaqueTargetRef: 'work-ref', expectedObjectVersion: '7' },
-      contextKey: 'governed-ctx-1',
-    });
+    const governedController = new AbortController();
+    await evaluateGovernedRouteAccess(
+      {
+        subject: { type: 'GOVERNED_CONTEXT' },
+        navigationContextId: 'work.work',
+        routeContractKey: 'route.context.work__work.review-decision.action',
+        target: { opaqueTargetRef: 'work-ref', expectedObjectVersion: '7' },
+        contextKey: 'governed-ctx-1',
+      },
+      { signal: governedController.signal }
+    );
 
     expect(fetchMock.mock.calls[1]?.[0]).toBe(PRODUCT_SURFACE_EVALUATION_ENDPOINT);
     expect((fetchMock.mock.calls[1]?.[1] as RequestInit).signal).toBeInstanceOf(AbortSignal);
@@ -131,6 +135,7 @@ describe('auth login API', () => {
       contextScopeKey: 'scope-1',
     });
     expect(fetchMock.mock.calls[2]?.[0]).toBe(GOVERNED_ROUTE_EVALUATION_ENDPOINT);
+    expect((fetchMock.mock.calls[2]?.[1] as RequestInit).signal).toBeInstanceOf(AbortSignal);
     const governedBody = JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body));
     expect(governedBody).toEqual({
       subject: { type: 'GOVERNED_CONTEXT' },
@@ -141,6 +146,43 @@ describe('auth login API', () => {
     });
     expect(governedBody.subject).not.toHaveProperty('productKey');
     expect(governedBody.subject).not.toHaveProperty('surfaceKey');
+  });
+
+  it('propagates caller cancellation to a governed route evaluation', async () => {
+    setTenantId('11');
+    let networkSignal: AbortSignal | undefined;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'csrf-one', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockImplementationOnce((_url: string, init: RequestInit) => {
+        networkSignal = init.signal as AbortSignal;
+        return new Promise<Response>((_resolve, reject) => {
+          networkSignal?.addEventListener(
+            'abort',
+            () => reject(new DOMException('cancelled', 'AbortError')),
+            { once: true }
+          );
+        });
+      });
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+    const pending = evaluateGovernedRouteAccess(
+      {
+        subject: { type: 'GOVERNED_CONTEXT' },
+        navigationContextId: 'work.work',
+        routeContractKey: 'route.context.work__work.review-decision.action',
+        target: { opaqueTargetRef: 'work-ref', expectedObjectVersion: '7' },
+      },
+      { signal: controller.signal }
+    );
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+
+    expect(networkSignal?.aborted).toBe(false);
+    controller.abort();
+    expect(networkSignal?.aborted).toBe(true);
+    await expect(pending).rejects.toMatchObject({ reason: 'ABORT' });
   });
 
   it('posts only the exact server-issued step-up command binding fields', async () => {

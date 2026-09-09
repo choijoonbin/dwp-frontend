@@ -22,6 +22,7 @@ import Typography from '@mui/material/Typography';
 
 import { DwaionGateReview } from './dwaion-gate-review';
 import { gateOptionLabel, gateTitle } from './dwaion-gate-ui';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 export type GateDialogKind = 'REVIEW' | 'CONFIGURE' | 'EVIDENCE' | 'VALIDATE' | 'DECIDE';
 export type GateDialogAction = { kind: GateDialogKind; gate: DwaionOperationalGate } | null;
@@ -47,6 +48,14 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
   const { t } = useTranslation('work');
   const auth = useAuth();
   const queryClient = useQueryClient();
+  const governConfigure = useDwaionGovernedMutation(
+    'route.dwaion.management.gate-configure.action'
+  );
+  const governEvidence = useDwaionGovernedMutation('route.dwaion.management.gate-evidence.action');
+  const governValidation = useDwaionGovernedMutation(
+    'route.dwaion.management.gate-validation.action'
+  );
+  const governDecision = useDwaionGovernedMutation('route.dwaion.management.gate-decision.action');
   const gate = action?.gate;
   const [selectedOption, setSelectedOption] = useState('');
   const [ownerUserId, setOwnerUserId] = useState('');
@@ -93,41 +102,69 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
       const current = action.gate;
       const expectedVersion = detailQuery.data?.gate.policyVersion ?? current.policyVersion;
       if (action.kind === 'CONFIGURE') {
-        return configureDwaionOperationalGate(current.gateKey, environment, {
-          selectedOption,
-          ownerUserId: ownerUserId.trim(),
-          configurationRef: configurationRef.trim() || undefined,
-          notes: notes.trim() || undefined,
-          expectedVersion,
-          changeReason: changeReason.trim(),
-        });
+        return governConfigure((authority) =>
+          configureDwaionOperationalGate(
+            current.gateKey,
+            environment,
+            {
+              selectedOption,
+              ownerUserId: ownerUserId.trim(),
+              configurationRef: configurationRef.trim() || undefined,
+              notes: notes.trim() || undefined,
+              expectedVersion,
+              changeReason: changeReason.trim(),
+            },
+            authority
+          )
+        );
       }
       if (action.kind === 'EVIDENCE') {
-        return addDwaionOperationalGateEvidence(current.gateKey, environment, {
-          evidenceType,
-          title: evidenceTitle.trim(),
-          reference: evidenceReference.trim(),
-          expectedVersion,
-          changeReason: changeReason.trim(),
-        });
+        return governEvidence((authority) =>
+          addDwaionOperationalGateEvidence(
+            current.gateKey,
+            environment,
+            {
+              evidenceType,
+              title: evidenceTitle.trim(),
+              reference: evidenceReference.trim(),
+              expectedVersion,
+              changeReason: changeReason.trim(),
+            },
+            authority
+          )
+        );
       }
       if (action.kind === 'VALIDATE') {
-        return validateDwaionOperationalGate(current.gateKey, environment, {
-          outcome: validationOutcome,
-          validationSummary: validationSummary.trim(),
-          expectedVersion,
-          changeReason: changeReason.trim(),
-        });
+        return governValidation((authority) =>
+          validateDwaionOperationalGate(
+            current.gateKey,
+            environment,
+            {
+              outcome: validationOutcome,
+              validationSummary: validationSummary.trim(),
+              expectedVersion,
+              changeReason: changeReason.trim(),
+            },
+            authority
+          )
+        );
       }
       if (action.kind !== 'DECIDE') {
         throw new Error('Read-only gate review cannot submit a mutation.');
       }
-      return decideDwaionOperationalGate(current.gateKey, environment, {
-        decision,
-        validDays: Math.max(1, Math.min(Number(validDays) || 365, 730)),
-        expectedVersion,
-        changeReason: changeReason.trim(),
-      });
+      return governDecision((authority) =>
+        decideDwaionOperationalGate(
+          current.gateKey,
+          environment,
+          {
+            decision,
+            validDays: Math.max(1, Math.min(Number(validDays) || 365, 730)),
+            expectedVersion,
+            changeReason: changeReason.trim(),
+          },
+          authority
+        )
+      );
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'gates'] });

@@ -787,6 +787,12 @@
   }
 }
 
+@media (max-width: 359px) {
+  .dwp-meeting-control-bar__group .dwp-meeting-control > span {
+    display: none;
+  }
+}
+
 @media (max-height: 479px) {
   .dwp-video-meeting-room {
     --dwp-meeting-room-header-height: 50px;

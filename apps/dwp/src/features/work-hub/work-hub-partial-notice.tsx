@@ -4,6 +4,7 @@ import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
 import type { WorkHubSnapshot } from './work-hub-contracts';
+import type { WorkHubOperationFeedback } from './work-hub-page-helpers';
 
 export function workHubPartialCopy(snapshot: WorkHubSnapshot) {
   const failed = snapshot.sources.some(
@@ -45,5 +46,68 @@ export function WorkHubPartialNotice({
         </ActionButton>
       </Stack>
     </InlineFeedback>
+  );
+}
+
+export function WorkHubPageNotices({
+  queryError,
+  snapshot,
+  showBatchReportAction,
+  onInspectSources,
+  onReopenBatchReport,
+  feedback,
+  onDismissFeedback,
+}: {
+  queryError: boolean;
+  snapshot: WorkHubSnapshot;
+  showBatchReportAction: boolean;
+  onInspectSources: () => void;
+  onReopenBatchReport: () => void;
+  feedback: WorkHubOperationFeedback | null;
+  onDismissFeedback: () => void;
+}) {
+  const { t } = useTranslation(['work', 'common']);
+
+  return (
+    <>
+      {queryError && (
+        <InlineFeedback severity="warning" title={t('work:workPage.loadErrorTitle')} sx={{ mt: 2 }}>
+          {t('work:workPage.loadErrorDescription')}
+        </InlineFeedback>
+      )}
+      {snapshot.completeness === 'UNAVAILABLE' && snapshot.items.length > 0 && (
+        <InlineFeedback
+          severity="warning"
+          title={t('work:workPage.freshness.degraded')}
+          sx={{ mt: 2 }}
+        >
+          {t('work:workPage.loadErrorDescription')}
+        </InlineFeedback>
+      )}
+      {snapshot.completeness === 'PARTIAL' && snapshot.items.length > 0 && (
+        <WorkHubPartialNotice snapshot={snapshot} onInspect={onInspectSources} />
+      )}
+      {showBatchReportAction && (
+        <ActionButton
+          intent="quiet"
+          size="small"
+          onClick={onReopenBatchReport}
+          sx={{ minHeight: { xs: 44, md: 32 } }}
+        >
+          {t('work:workHub.batch.reopenReport')}
+        </ActionButton>
+      )}
+      {feedback && (
+        <InlineFeedback
+          severity={feedback.severity}
+          title={feedback.title}
+          onClose={onDismissFeedback}
+          closeLabel={t('common:actions.close')}
+          sx={{ mt: 2 }}
+        >
+          {feedback.detail}
+        </InlineFeedback>
+      )}
+    </>
   );
 }

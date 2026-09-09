@@ -8,10 +8,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { FormDialog, InlineFeedback } from '@dwp-frontend/design-system';
+import { ActionButton, FormDialog, InlineFeedback } from '@dwp-frontend/design-system';
 
 import { DWAION_PERSONAL_CONTROLS_COPY_KO } from './dwaion-personal-controls-copy';
-import { clearRequestIsValid } from './dwaion-personal-controls-model';
+import { clearRequestIsValid, deletionCompletionVerified } from './dwaion-personal-controls-model';
 
 import type { DwaionPersonalControlsCopy } from './dwaion-personal-controls-copy';
 import type { DwaionClearEvidence, DwaionClearScope } from './dwaion-personal-controls-model';
@@ -21,6 +21,8 @@ export function DwaionDataClearDialog({
   busy = false,
   availableScopes,
   evidence = [],
+  statusError,
+  onStatusRetry,
   onClose,
   onClear,
   copy = DWAION_PERSONAL_CONTROLS_COPY_KO,
@@ -30,6 +32,8 @@ export function DwaionDataClearDialog({
   busy?: boolean;
   availableScopes: readonly DwaionClearScope[];
   evidence?: readonly DwaionClearEvidence[];
+  statusError?: string;
+  onStatusRetry?: () => void;
   onClose: () => void;
   onClear: (scopes: readonly DwaionClearScope[]) => void | Promise<void>;
   copy?: DwaionPersonalControlsCopy;
@@ -64,6 +68,14 @@ export function DwaionDataClearDialog({
     >
       <Stack gap={2}>
         <InlineFeedback severity="warning">{copy.sourceUnaffected}</InlineFeedback>
+        {statusError ? (
+          <InlineFeedback severity="warning">
+            <Typography variant="body2">{statusError}</Typography>
+            <ActionButton intent="quiet" onClick={onStatusRetry}>
+              {copy.retry}
+            </ActionButton>
+          </InlineFeedback>
+        ) : null}
         <Box component="fieldset" sx={{ border: 0, p: 0, m: 0 }}>
           <Typography component="legend" variant="subtitle2">
             {copy.clearDescription}
@@ -120,7 +132,22 @@ export function DwaionDataClearDialog({
                       <Typography variant="body2" fontWeight="fontWeightBold">
                         {copy.deletionRequested}
                       </Typography>
-                      <Chip size="small" variant="outlined" label={copy.requestState[item.state]} />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        color={
+                          item.state === 'FAILED' || item.state === 'BLOCKED_LEGAL_HOLD'
+                            ? 'warning'
+                            : deletionCompletionVerified(item)
+                              ? 'success'
+                              : 'default'
+                        }
+                        label={
+                          item.state === 'COMPLETED' && !deletionCompletionVerified(item)
+                            ? copy.completionUnverified
+                            : copy.requestState[item.state]
+                        }
+                      />
                     </Stack>
                     <Box component="dl" sx={{ m: 0, mt: 1 }}>
                       <EvidenceRow label={copy.receiptId} value={item.receiptId} />
@@ -128,10 +155,20 @@ export function DwaionDataClearDialog({
                         label={copy.requestedAt}
                         value={formatTimestamp(item.requestedAt)}
                       />
+                      {item.completedAt ? (
+                        <EvidenceRow
+                          label={copy.completedAt}
+                          value={formatTimestamp(item.completedAt)}
+                        />
+                      ) : null}
                     </Box>
                     {!item.deletionExecutionAvailable ? (
                       <Typography variant="caption" color="warning.main">
                         {copy.executionUnavailable}
+                      </Typography>
+                    ) : ['REQUESTED', 'RUNNING'].includes(item.state) ? (
+                      <Typography variant="caption" color="info.main">
+                        {copy.executionRunning}
                       </Typography>
                     ) : null}
                   </Box>

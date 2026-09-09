@@ -2,10 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import {
   filterDwaionActivityWindow,
+  filterDwaionActivityPeriod,
   findExactDwaionRun,
   resolveDwaionActivityFilter,
+  resolveDwaionActivityPeriod,
   summarizeDwaionActivityWindow,
   updateDwaionActivityFilter,
+  updateDwaionActivityPeriod,
   updateDwaionActivitySelection,
 } from './dwaion-activity-model';
 
@@ -31,6 +34,17 @@ describe('DWAI activity recent-window model', () => {
       runs[2]?.runId,
       runs[4]?.runId,
     ]);
+  });
+
+  it('applies an explicit date range only to timestamps returned by the run API', () => {
+    const now = Date.parse('2026-09-09T00:00:00Z');
+    expect(resolveDwaionActivityPeriod('week')).toBe('WEEK');
+    expect(resolveDwaionActivityPeriod('unsupported')).toBe('MONTH');
+    expect(filterDwaionActivityPeriod(runs, 'DAY', now)).toEqual([]);
+    expect(filterDwaionActivityPeriod(runs, 'WEEK', now)).toHaveLength(runs.length);
+    expect(updateDwaionActivityPeriod(new URLSearchParams('run=exact'), 'DAY').toString()).toBe(
+      'run=exact&period=DAY'
+    );
   });
 
   it('keeps local samples out of operational totals without hiding them from the recent list', () => {

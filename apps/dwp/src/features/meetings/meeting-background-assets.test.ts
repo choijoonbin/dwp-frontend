@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  loadMeetingOfficeBackground,
   loadMeetingBackgroundSegmenter,
   meetingBackgroundAssetUrl,
 } from './meeting-background-assets';
@@ -11,13 +12,22 @@ const base = new URL(
   '../../../../../public/assets/meeting-background/mediapipe-0.10.14/',
   import.meta.url
 );
+const office = new URL(
+  '../../../../../public/assets/meeting-background/presets/office-neutral-v1.svg',
+  import.meta.url
+);
 let network: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   vi.clearAllMocks();
   vi.stubEnv('BASE_URL', '/');
   vi.stubGlobal('location', { origin: 'https://meetings.example' });
   network = vi.fn(
-    async (url: string) => new Response(await readFile(new URL(url.split('/').at(-1)!, base)))
+    async (url: string) =>
+      new Response(
+        await readFile(
+          url.endsWith('office-neutral-v1.svg') ? office : new URL(url.split('/').at(-1)!, base)
+        )
+      )
   );
   vi.stubGlobal('fetch', network);
 });
@@ -41,6 +51,15 @@ describe('approved local background assets', () => {
           `https://meetings.example${deploymentBase}assets/meeting-background/mediapipe-0.10.14/${files[name]}`
         );
       }
+    }
+  );
+  it.each(['/', '/assets/dwp/meetings/'])(
+    'keeps the curated office plate in the same deployment namespace %s',
+    (deploymentBase) => {
+      vi.stubEnv('BASE_URL', deploymentBase);
+      expect(meetingBackgroundAssetUrl('office')).toBe(
+        `https://meetings.example${deploymentBase}assets/meeting-background/presets/office-neutral-v1.svg`
+      );
     }
   );
   it.each([
@@ -78,7 +97,7 @@ describe('approved local background assets', () => {
       expect(factory).not.toHaveBeenCalled();
     }
   );
-  it('exposes only three fixed same-origin versioned assets and rejects unknown selectors', () => {
+  it('exposes only four fixed same-origin versioned assets and rejects unknown selectors', () => {
     expect(meetingBackgroundAssetUrl('model')).toBe(
       'https://meetings.example/assets/meeting-background/mediapipe-0.10.14/selfie-segmenter-landscape-v1.tflite'
     );
@@ -87,6 +106,42 @@ describe('approved local background assets', () => {
     );
     vi.stubGlobal('location', { origin: 'file:///private/device' });
     expect(() => meetingBackgroundAssetUrl('model')).toThrow('ASSET_UNTRUSTED');
+  });
+  it('hash-verifies and decodes the local office plate without a remote image request', async () => {
+    const revoke = vi.spyOn(URL, 'revokeObjectURL');
+    vi.stubGlobal(
+      'Image',
+      class {
+        decoding = 'auto';
+        src = '';
+        naturalWidth = 1600;
+        naturalHeight = 900;
+        width = 1600;
+        height = 900;
+        async decode() {}
+      }
+    );
+    const asset = await loadMeetingOfficeBackground(new AbortController().signal);
+    expect(network).toHaveBeenCalledExactlyOnceWith(meetingBackgroundAssetUrl('office'), {
+      signal: expect.any(AbortSignal),
+      credentials: 'omit',
+      redirect: 'error',
+      mode: 'same-origin',
+      cache: 'force-cache',
+    });
+    expect(asset).toMatchObject({ width: 1600, height: 900 });
+    asset.close();
+    asset.close();
+    expect(revoke).toHaveBeenCalledOnce();
+  });
+  it('rejects a substituted office plate before image decoding', async () => {
+    network.mockResolvedValue(new Response('changed-office'));
+    const image = vi.fn();
+    vi.stubGlobal('Image', image);
+    await expect(loadMeetingOfficeBackground(new AbortController().signal)).rejects.toMatchObject({
+      code: 'ASSET_UNTRUSTED',
+    });
+    expect(image).not.toHaveBeenCalled();
   });
   it('blocks a substituted model before importing or creating an inference engine', async () => {
     network.mockResolvedValue(new Response('unapproved-model'));

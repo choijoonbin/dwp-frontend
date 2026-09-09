@@ -267,10 +267,18 @@ test('keyboard plan additions and removals move focus to the resulting work cont
   await page.goto('/work/day-plan');
   const plan = page.getByTestId('work-today-plan-page');
   await expect(plan).toBeVisible();
-  const candidate = plan.locator('ul > li').filter({ hasText: fixture.secondaryTitle });
-  const add = candidate.getByRole('button', { name: 'Add', exact: true });
+  const openCandidates = plan.getByRole('button', {
+    name: 'Find work to add to the plan',
+    exact: true,
+  });
+  await openCandidates.focus();
+  await page.keyboard.press('Enter');
+  const picker = page.getByRole('dialog', { name: 'Work to add', exact: true });
+  await picker.getByRole('checkbox', { name: fixture.secondaryTitle, exact: true }).check();
+  const add = picker.getByRole('button', { name: 'Add selected work (1)', exact: true });
   await add.focus();
   await page.keyboard.press('Enter');
+  await expect(picker).not.toBeVisible();
   const added = plan.locator('ol > li').filter({ hasText: fixture.secondaryTitle });
   const title = added.getByRole('button', { name: fixture.secondaryTitle, exact: true });
   await expect(title).toBeFocused();
@@ -280,7 +288,7 @@ test('keyboard plan additions and removals move focus to the resulting work cont
   });
   await remove.focus();
   await page.keyboard.press('Enter');
-  await expect(add).toBeFocused();
+  await expect(openCandidates).toBeFocused();
   await noOverflow(page);
   await page.screenshot({ path: info.outputPath('today-plan-keyboard-focus.png') });
 });

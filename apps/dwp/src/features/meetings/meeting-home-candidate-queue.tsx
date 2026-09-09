@@ -12,16 +12,19 @@ import Typography from '@mui/material/Typography';
 import { createMeetingHomeCandidateLoader } from './meeting-home-candidate-model';
 import { meetingHomeResultUnexpired } from './meeting-home-results-model';
 import { meetingHomeCard } from './meeting-home-presentation';
+import type { MeetingHomeQueueState } from './meeting-home-queue-state';
 
 /** A published suggestion stays a suggestion; this surface never creates an assignment. */
 export function MeetingHomeCandidateQueue({
   recent,
   scope,
   enabled,
+  onStateChange,
 }: {
   recent: VideoMeetingSummary[];
   scope: string;
   enabled: boolean;
+  onStateChange?: (state: MeetingHomeQueueState) => void;
 }) {
   const { t } = useTranslation('meetings');
   const navigate = useNavigate();
@@ -52,18 +55,20 @@ export function MeetingHomeCandidateQueue({
     enabled && !query.isError && !query.isFetching
       ? query.data?.entries.find((candidate) => meetingHomeResultUnexpired(candidate, now))
       : null;
+  const unavailable = query.isError || Boolean(query.data?.unavailable);
+  useEffect(() => {
+    if (!onStateChange) return;
+    onStateChange({
+      status: query.isFetching ? 'loading' : unavailable ? 'error' : 'ready',
+      count: entry ? 1 : 0,
+    });
+  }, [entry, onStateChange, query.isFetching, unavailable]);
   if (!entry)
-    return (
+    return query.isFetching || unavailable ? (
       <Typography variant="caption" color="text.secondary">
-        {t(
-          query.isFetching
-            ? 'followUps.candidates.loading'
-            : query.isError || query.data?.unavailable
-              ? 'followUps.candidates.loadError'
-              : 'followUps.candidates.emptyTitle'
-        )}
+        {t(query.isFetching ? 'followUps.candidates.loading' : 'followUps.candidates.loadError')}
       </Typography>
-    );
+    ) : null;
   return (
     <Box
       component="article"

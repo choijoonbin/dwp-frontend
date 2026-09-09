@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Search, Sparkles, Users, Zap } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
 import { ErrorState } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -30,13 +30,35 @@ export function DwaionHomeQuestion({
 }) {
   const { t } = useTranslation('work');
   return (
-    <Box component="section" aria-labelledby="dwaion-home-question" sx={{ mt: 3 }}>
+    <Box
+      component="section"
+      aria-label={t('dwaionHome.askTitle')}
+      sx={{
+        mt: { xs: 2, md: 2.5 },
+        p: { xs: 1.5, md: 2.5 },
+        bgcolor: 'background.paper',
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: (theme) => `${Number(theme.shape.borderRadius) * 2}px`,
+        boxShadow: 'none',
+        '& [data-testid="dwaion-workspace-composer"]': { boxShadow: 'none' },
+        '@media (max-width: 899.95px)': {
+          '& [data-testid="dwaion-workspace-composer"]': {
+            border: 0,
+            boxShadow: 'none',
+            p: 0,
+            borderRadius: 0,
+          },
+        },
+      }}
+    >
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         gap={1}
         alignItems={{ xs: 'flex-start', md: 'center' }}
         justifyContent="space-between"
         mb={1.5}
+        sx={{ display: { xs: 'none', md: 'flex' } }}
       >
         <Stack direction="row" alignItems="center" gap={0.75}>
           <Sparkles size={16} aria-hidden="true" />
@@ -61,7 +83,21 @@ export function DwaionHomeQuestion({
         onSubmit={() => onStart(value)}
       />
       {failed && <ErrorState size="compact" title={t('dwaionHome.launchUnavailable')} />}
-      <Stack direction="row" gap={1} useFlexGap flexWrap="wrap" sx={{ mt: 1.5 }}>
+      <Stack
+        direction="row"
+        gap={{ xs: 0.75, md: 1 }}
+        useFlexGap
+        flexWrap={{ xs: 'nowrap', md: 'wrap' }}
+        sx={{
+          mt: { xs: 1.25, md: 1.5 },
+          pt: { xs: 1.25, md: 0 },
+          borderTop: { xs: 1, md: 0 },
+          borderColor: 'divider',
+          overflowX: { xs: 'auto', md: 'visible' },
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
+        }}
+      >
         {QUICK_PROMPTS.map(({ key, icon: Icon, color }) => (
           <ActionButton
             key={key}
@@ -78,6 +114,8 @@ export function DwaionHomeQuestion({
               border: 1,
               borderColor: 'divider',
               minHeight: 44,
+              borderRadius: foundationTokens.radius.control + 'px',
+              flexShrink: 0,
               px: 1.25,
               '& .MuiButton-startIcon': { color },
               '&:active': { transform: 'scale(.98)' },

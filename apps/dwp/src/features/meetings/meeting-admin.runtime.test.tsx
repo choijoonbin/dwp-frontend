@@ -2,6 +2,7 @@
 
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as SharedUtils from '@dwp-frontend/shared-utils';
@@ -19,6 +20,7 @@ const runtime = vi.hoisted(() => ({
   getOverview: vi.fn(),
   getPolicy: vi.fn(),
   getReadiness: vi.fn(),
+  downloadOperations: vi.fn(),
   updatePolicy: vi.fn(),
   success: vi.fn(),
   error: vi.fn(),
@@ -37,6 +39,9 @@ vi.mock('@dwp-frontend/shared-utils/api/video-meeting-api', () => ({
 }));
 vi.mock('@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api', () => ({
   getVideoMeetingAdminIntelligenceReadiness: runtime.getReadiness,
+}));
+vi.mock('@dwp-frontend/shared-utils/api/video-meeting-admin-operations-api', () => ({
+  downloadVideoMeetingAdminOperations: runtime.downloadOperations,
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -146,7 +151,9 @@ let client: QueryClient;
 
 async function render(component: React.ReactNode) {
   await act(async () => {
-    root?.render(createElement(QueryClientProvider, { client }, component));
+    root?.render(
+      createElement(QueryClientProvider, { client }, createElement(MemoryRouter, null, component))
+    );
     await new Promise((resolve) => setTimeout(resolve, 0));
   });
 }
@@ -221,6 +228,9 @@ describe('meeting admin policy conflict and authority scope', () => {
     runtime.getOverview.mockReset().mockResolvedValue(overview);
     runtime.getPolicy.mockReset().mockResolvedValue(policy());
     runtime.getReadiness.mockReset().mockResolvedValue(readiness);
+    runtime.downloadOperations
+      .mockReset()
+      .mockResolvedValue(new Blob(['aggregate-only'], { type: 'text/csv' }));
     runtime.updatePolicy.mockReset();
     runtime.success.mockReset();
     runtime.error.mockReset();
@@ -238,6 +248,7 @@ describe('meeting admin policy conflict and authority scope', () => {
     client.clear();
     container.remove();
     document.querySelectorAll('.MuiModal-root').forEach((modal) => modal.remove());
+    vi.restoreAllMocks();
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = false;
   });
 
@@ -390,5 +401,26 @@ describe('meeting admin policy conflict and authority scope', () => {
       expect(query.meta).toMatchObject({ accessSensitive: true });
       expect(query.gcTime).toBe(0);
     });
+  });
+
+  it('downloads the audited metadata-only operations export and confirms completion', async () => {
+    const createObjectUrl = vi.fn(() => 'blob:meeting-operations');
+    const revokeObjectUrl = vi.fn();
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: createObjectUrl });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: revokeObjectUrl });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
+    await render(createElement(MeetingAdminOperations));
+    await shown('admin.operations.title');
+    await shown('admin.design.exportReport');
+
+    await click(button('admin.design.exportReport'));
+    await vi.waitFor(() => expect(runtime.downloadOperations).toHaveBeenCalledOnce());
+    await vi.waitFor(() =>
+      expect(runtime.success).toHaveBeenCalledWith('admin.operations.exportCompleted')
+    );
+    expect(createObjectUrl).toHaveBeenCalledOnce();
+    expect(document.querySelector('a[download="dwp-meeting-operations.csv"]')).toBeNull();
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 0)));
+    expect(revokeObjectUrl).toHaveBeenCalledWith('blob:meeting-operations');
   });
 });

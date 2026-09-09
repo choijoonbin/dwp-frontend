@@ -1,0 +1,18 @@
+{
+  "initialSnapshot": "source-before-gates.json",
+  "finalSnapshot": "source-before-final.json",
+  "changedFiles": [
+    "apps/dwp/src/features/dwaion/dwaion-admin-gates.tsx",
+    "apps/dwp/src/features/work-hub/work-hub-schedule-links.test.tsx",
+    "e2e/approval-work-handoff.spec.ts",
+    "libs/shared-utils/src/api/workspace-api.ts",
+    "scripts/maintenance-source-size-baseline.json"
+  ],
+  "classification": "Owner-confirmed Prettier-only formatting and removal of one obsolete Meetings maintenance exception; no behavior changes",
+  "affectedRevalidation": [
+    "affected-format-unit: 15 files, 90 tests",
+    "typecheck-final",
+    "repository-build (includes full ESLint and static gates)",
+    "final Work E2E (includes Work Activity and source handoff)"
+  ]
+}

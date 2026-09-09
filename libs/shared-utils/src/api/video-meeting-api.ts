@@ -7,48 +7,44 @@ import {
   serializeVideoMeetingPreparationSource,
   type VideoMeetingPreparationSource,
 } from './video-meeting-preparation-api';
+import type { VideoMeetingHistoryItem } from './video-meeting-history-api';
+import type {
+  VideoMeetingAccessScope,
+  VideoMeetingArtifact,
+  VideoMeetingArtifactState,
+  VideoMeetingArtifactType,
+  VideoMeetingDecision,
+  VideoMeetingFollowUpAction,
+  VideoMeetingLifecycleState,
+  VideoMeetingSummary,
+} from './video-meeting-summary-contract';
 
 export { leaveVideoMeeting, VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
+export {
+  getVideoMeetingHistory,
+  type VideoMeetingHistoryItem,
+  type VideoMeetingHistoryPublicationFilter,
+  type VideoMeetingHistoryPublicationState,
+  type VideoMeetingHistoryRetentionFilter,
+  type VideoMeetingHistoryRetentionState,
+} from './video-meeting-history-api';
 export type {
   VideoMeetingAttendanceState,
   VideoMeetingParticipant,
   VideoMeetingRole,
 } from './video-meeting-lifecycle-contract';
+export type {
+  VideoMeetingAccessScope,
+  VideoMeetingArtifact,
+  VideoMeetingArtifactState,
+  VideoMeetingArtifactType,
+  VideoMeetingDecision,
+  VideoMeetingFollowUpAction,
+  VideoMeetingLifecycleState,
+  VideoMeetingSummary,
+} from './video-meeting-summary-contract';
 
-export type VideoMeetingLifecycleState =
-  'DRAFT' | 'SCHEDULED' | 'LOBBY' | 'LIVE' | 'ENDED' | 'CANCELLED';
-export type VideoMeetingAccessScope = 'INTERNAL' | 'INVITED' | 'PUBLIC_CODE';
-export type VideoMeetingJoinState = 'WAITING' | 'APPROVED' | 'DENIED' | 'EXPIRED';
-export type VideoMeetingArtifactType =
-  'RECORDING' | 'TRANSCRIPT' | 'SUMMARY' | 'ATTENDANCE' | 'CHAT_EXPORT';
-export type VideoMeetingArtifactState =
-  'NONE' | 'PROCESSING' | 'AVAILABLE' | 'UNAVAILABLE' | 'FAILED' | 'DELETED';
-
-export type VideoMeetingArtifact = {
-  artifactId: string;
-  artifactType: VideoMeetingArtifactType;
-  artifactState: VideoMeetingArtifactState;
-  contentType?: string | null;
-  sizeBytes?: number | null;
-  retentionUntil?: string | null;
-  metadata: Record<string, unknown>;
-  version: number;
-};
-
-export type VideoMeetingDecision = {
-  decision: string;
-  ownerUserId?: number | null;
-  status?: string | null;
-  sourceTimestampSeconds?: number | null;
-};
-
-export type VideoMeetingFollowUpAction = {
-  action: string;
-  ownerUserId?: number | null;
-  dueInDays?: number | null;
-  status?: string | null;
-  sourceTimestampSeconds?: number | null;
-};
+export type VideoMeetingJoinState = 'WAITING' | 'APPROVED' | 'DENIED';
 
 export type VideoMeetingCapabilities = {
   available: boolean;
@@ -79,41 +75,6 @@ export type VideoMeetingPerson = {
   organizationName?: string | null;
 };
 
-export type VideoMeetingSummary = {
-  meetingId: string;
-  meetingCode: string;
-  title: string;
-  description?: string | null;
-  agenda?: string | null;
-  startsAt: string;
-  endsAt: string;
-  durationMinutes: number;
-  timeZone: string;
-  accessScope: VideoMeetingAccessScope;
-  waitingRoomEnabled: boolean;
-  guestAccessEnabled: boolean;
-  allowJoinBeforeHost: boolean;
-  defaultMicrophoneEnabled: boolean;
-  defaultCameraEnabled: boolean;
-  lifecycleState: VideoMeetingLifecycleState;
-  organizerUserId?: number | null;
-  organizerName: string;
-  attendeeCount: number;
-  participantLimit?: number | null;
-  myRole?: VideoMeetingRole | null;
-  canHost: boolean;
-  canModerate: boolean;
-  provider?: string | null;
-  startedAt?: string | null;
-  endedAt?: string | null;
-  participants: VideoMeetingParticipant[];
-  decisions: VideoMeetingDecision[];
-  followUpActions: VideoMeetingFollowUpAction[];
-  artifacts: VideoMeetingArtifact[];
-  aiNotesAvailable: boolean;
-  version: number;
-};
-
 export type VideoMeetingHome = {
   serverNow: string;
   timeZone: string;
@@ -129,15 +90,6 @@ export type VideoMeetingHome = {
     averageJoinSeconds?: number | null;
   };
   capabilities: VideoMeetingCapabilities;
-};
-
-export type VideoMeetingHistoryItem = VideoMeetingSummary & {
-  endedAt: string;
-  actualDurationMinutes: number;
-  participantPeak: number;
-  averageQualityScore?: number | null;
-  recordingAvailable: boolean;
-  transcriptAvailable: boolean;
 };
 
 export type VideoMeetingPage<T> = {
@@ -187,8 +139,6 @@ export type VideoMeetingJoinRequest = {
   state: VideoMeetingJoinState;
   displayName: string;
   requestedAt: string;
-  decidedAt?: string | null;
-  expiresAt: string;
 };
 
 export type VideoMeetingJoinCredential = {
@@ -389,23 +339,9 @@ type WireJoinCodeResolution = {
   denialReason?: string | null;
   waitingRoomRequired: boolean;
 };
-type WireHistoryItem = {
-  meetingId: string;
-  title: string;
-  organizerUserId?: number;
-  organizerName?: string;
-  participantRole?: VideoMeetingRole;
-  canHost?: boolean;
-  endedAt: string;
-  actualDurationMinutes: number;
-  participantPeak: number;
-  averageQualityScore?: number | null;
-  recordingAvailable: boolean;
-  transcriptAvailable: boolean;
-};
 type WireJoinRequest = {
   requestId: string;
-  state: VideoMeetingJoinState;
+  state: string;
   displayName: string;
   email?: string | null;
   organizationName?: string | null;
@@ -608,57 +544,19 @@ function normalizeCapability(capability: WireCapability): VideoMeetingCapabiliti
   };
 }
 
-function normalizeHistory(item: WireHistoryItem): VideoMeetingHistoryItem {
-  const endsAt = fallbackDate(item.endedAt);
-  return {
-    meetingId: item.meetingId,
-    meetingCode: '',
-    title: item.title,
-    startsAt: endsAt,
-    endsAt,
-    durationMinutes: item.actualDurationMinutes,
-    timeZone: '',
-    accessScope: 'INVITED',
-    waitingRoomEnabled: false,
-    guestAccessEnabled: false,
-    allowJoinBeforeHost: false,
-    defaultMicrophoneEnabled: false,
-    defaultCameraEnabled: false,
-    lifecycleState: 'ENDED',
-    organizerUserId: item.organizerUserId,
-    organizerName: item.organizerName ?? '',
-    attendeeCount: item.participantPeak,
-    myRole: item.participantRole ?? null,
-    canHost: item.canHost === true,
-    canModerate: false,
-    participants: [],
-    decisions: [],
-    followUpActions: [],
-    artifacts: [],
-    aiNotesAvailable: false,
-    version: 0,
-    endedAt: endsAt,
-    actualDurationMinutes: item.actualDurationMinutes,
-    participantPeak: item.participantPeak,
-    averageQualityScore: item.averageQualityScore,
-    recordingAvailable: item.recordingAvailable,
-    transcriptAvailable: item.transcriptAvailable,
-  };
-}
-
 function normalizeJoinRequest(
   meetingId: string,
   request: WireJoinRequest
 ): VideoMeetingJoinRequest {
-  const requestedAt = request.requestedAt;
+  if (!['WAITING', 'APPROVED', 'DENIED'].includes(request.state)) {
+    throw new Error('The meeting provider returned an unsupported join request state.');
+  }
   return {
     requestId: request.requestId,
     meetingId,
-    state: request.state,
+    state: request.state as VideoMeetingJoinState,
     displayName: request.displayName,
-    requestedAt,
-    decidedAt: request.state === 'WAITING' ? null : new Date().toISOString(),
-    expiresAt: new Date(Date.parse(requestedAt) + 10 * 60_000).toISOString(),
+    requestedAt: request.requestedAt,
   };
 }
 
@@ -728,6 +626,9 @@ export async function getVideoMeetingHome(
         averageQualityScore: null,
         recordingAvailable: false,
         transcriptAvailable: false,
+        publicationState: 'NONE',
+        retentionState: 'UNCONFIGURED',
+        retentionUntil: null,
       };
     }),
     metrics: home.metrics,
@@ -748,24 +649,6 @@ export async function getVideoMeetings(
     page: result.page ?? page,
     pageSize: result.pageSize ?? pageSize,
     total: result.total ?? result.items.length,
-  };
-}
-
-export async function getVideoMeetingHistory(
-  page = 0,
-  pageSize = 30,
-  options: { favoriteOnly?: boolean; signal?: AbortSignal } = {}
-): Promise<VideoMeetingPage<VideoMeetingHistoryItem>> {
-  const response = await axiosInstance.get<ApiResponse<VideoMeetingPage<WireHistoryItem>>>(
-    `${VIDEO_MEETING_API_BASE}/history?page=${encodeURIComponent(String(page))}&pageSize=${encodeURIComponent(String(pageSize))}${options.favoriteOnly ? '&favoriteOnly=true' : ''}`,
-    { signal: options.signal }
-  );
-  const result = response.data.data;
-  return {
-    items: result.items.map(normalizeHistory),
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
   };
 }
 

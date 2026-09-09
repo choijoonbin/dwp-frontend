@@ -9,6 +9,8 @@ import {
 } from './workspace-api';
 import type { RawWorkspaceActivityEvent } from './workspace-api';
 
+const UUID_FOR_OTHER_TASK = 'e5555555-5555-4555-8555-555555555555';
+
 const event: RawWorkspaceActivityEvent = {
   id: 'event-old',
   occurredAt: '2026-09-01T09:00:00Z',
@@ -107,6 +109,48 @@ describe('workspace activity API foundation', () => {
     expect(() => normalizeWorkspaceActivityEvent({ ...event, title: '' })).toThrow(
       'Activity response is invalid.'
     );
+  });
+
+  it('accepts only an exactly bound personal Work command projection', () => {
+    const taskId = 'b1111111-1111-4111-8111-111111111111';
+    const commandId = 'c2222222-2222-4222-8222-222222222222';
+    const personal: RawWorkspaceActivityEvent = {
+      ...event,
+      id: 'a3333333-3333-4333-8333-333333333333',
+      source: 'PERSONAL_TASK',
+      sourceEventId: `personal-work-command:900018:${commandId}`,
+      objectId: taskId,
+      sourceReference: taskId,
+      resourceVersion: 3,
+      idempotencyKey: commandId,
+      resultState: 'COMPLETED',
+      workStatus: 'COMPLETED',
+      sourceRoute: `/work/queue?work=PERSONAL_TASK%3A${taskId}%3A`,
+      auditId: 'd4444444-4444-4444-8444-444444444444',
+      auditRecordId: 'd4444444-4444-4444-8444-444444444444',
+      auditStatus: 'VERIFIED',
+      auditAccess: 'RESTRICTED',
+    };
+
+    expect(normalizeWorkspaceActivityEvent(personal)).toMatchObject({
+      actor: 'person',
+      source: 'PERSONAL_TASK',
+      sourceReference: taskId,
+      resourceVersion: 3,
+      idempotencyKey: commandId,
+      resultState: 'COMPLETED',
+    });
+    for (const invalid of [
+      { ...personal, sourceReference: UUID_FOR_OTHER_TASK },
+      { ...personal, sourceEventId: `personal-work-command:900018:${UUID_FOR_OTHER_TASK}` },
+      { ...personal, resourceVersion: -1 },
+      { ...personal, workStatus: 'WAITING' },
+      { ...personal, sourceRoute: `/work/queue?work=PERSONAL_TASK%3A${UUID_FOR_OTHER_TASK}%3A` },
+    ]) {
+      expect(() => normalizeWorkspaceActivityEvent(invalid)).toThrow(
+        'Activity response is invalid.'
+      );
+    }
   });
 
   it('never converts event counts into the current execution summary', async () => {

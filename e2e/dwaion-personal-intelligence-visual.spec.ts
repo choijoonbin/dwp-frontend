@@ -51,5 +51,6 @@ for (const surface of SURFACES) {
       maxDiffPixelRatio: 0.002,
       timeout: 15_000,
     });
+    await main.screenshot({ path: testInfo.outputPath(`dwaion-personal-${surface.id}.png`) });
   });
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  displayNotificationActorLabel,
   groupNotificationStream,
   isNotificationShortcutTarget,
   kpiView,
@@ -65,6 +66,14 @@ describe('notification inbox model', () => {
       'CONVERSATIONS',
       'UPDATES',
     ]);
+  });
+
+  it('shows human actor names but conceals internal actor references', () => {
+    expect(displayNotificationActorLabel('  이서윤  ')).toBe('이서윤');
+    expect(displayNotificationActorLabel('user:900018')).toBeNull();
+    expect(displayNotificationActorLabel('urn:dwp:meetings')).toBeNull();
+    expect(displayNotificationActorLabel('A72E7930-7D2B-4D9E-86C4-45DCEB42F331')).toBeNull();
+    expect(displayNotificationActorLabel('   ')).toBeNull();
   });
 
   it('maps KPI selections to server-backed views', () => {

@@ -29,9 +29,13 @@ export function resolveProductSurfaceTaskKind(
     }
   }
 
+  if (productKey === 'dwaion') {
+    if (surfaceKey === 'dwaion.work') return 'WORK';
+    if (surfaceKey === 'dwaion.management') return 'ADMINISTRATION';
+  }
+
   if (
     (productKey === 'calendar' && surfaceKey === 'calendar.work') ||
-    (productKey === 'dwaion' && surfaceKey === 'dwaion.work') ||
     (productKey === 'mail' && surfaceKey === 'mail.work') ||
     (productKey === 'meetings' && surfaceKey === 'meetings.work') ||
     (productKey === 'messaging' && surfaceKey === 'messaging.work') ||

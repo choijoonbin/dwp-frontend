@@ -5,6 +5,9 @@ export type DwaionArtifactType = 'DOCUMENT' | 'WORK_PLAN' | 'COMPARISON';
 export type DwaionArtifactState = 'DRAFT' | 'REVIEW_REQUIRED' | 'PUBLISHED' | 'ARCHIVED';
 
 export type DwaionArtifactCapabilities = {
+  collaborativeEditingAvailable: boolean;
+  enterpriseDlpConnectorAvailable: boolean;
+  externalSharingAvailable: boolean;
   immutableVersionsAvailable: boolean;
   deterministicPreflightAvailable: boolean;
   sourceVerificationAvailable: boolean;
@@ -13,6 +16,7 @@ export type DwaionArtifactCapabilities = {
   recipientSharingAvailable: boolean;
   exportRequestAvailable: boolean;
   exportExecutionAvailable: boolean;
+  versionRestoreAvailable: boolean;
 };
 
 export type DwaionArtifactSummary = {
@@ -89,11 +93,12 @@ export type DwaionDlpPreflight = {
 };
 
 export type DwaionArtifactExportEvidence = {
+  artifactId: string;
   exportJobId: string;
   exportFormat: 'MARKDOWN' | 'DOCX' | 'PDF';
-  state: 'PENDING';
-  executionAvailable: false;
-  fileAvailable: false;
+  state: 'PENDING' | 'CLAIMED' | 'SUCCEEDED' | 'PARTIAL' | 'FAILED' | 'CANCELLED';
+  executionAvailable: boolean;
+  fileAvailable: boolean;
 };
 
 export type DwaionArtifactReleaseCapability =
@@ -171,6 +176,7 @@ function artifactVersionedCapability(
   if (
     !preflight ||
     !preflight.current ||
+    !(Date.parse(preflight.expiresAt) > Date.now()) ||
     preflight.artifactId !== artifact.artifactId ||
     preflight.versionNumber !== artifact.currentVersionNumber ||
     (operation === 'publish' && preflight.artifactRevision !== artifact.revision)
@@ -194,6 +200,7 @@ export function artifactPreflightIsCurrent(
   return Boolean(
     preflight &&
     preflight.current &&
+    Date.parse(preflight.expiresAt) > Date.now() &&
     preflight.artifactId === artifact.artifactId &&
     preflight.versionNumber === artifact.currentVersionNumber
   );

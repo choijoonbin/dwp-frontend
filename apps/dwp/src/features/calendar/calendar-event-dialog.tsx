@@ -178,7 +178,7 @@ export function CalendarEventDialog({
   });
   const calendarsQuery = useQuery({
     queryKey: ['calendar', 'calendars'],
-    queryFn: getCalendars,
+    queryFn: ({ signal }) => getCalendars(signal),
     enabled: open && canMutate,
     staleTime: 60_000,
     retry: 1,

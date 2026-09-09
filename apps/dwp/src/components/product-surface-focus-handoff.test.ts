@@ -8,6 +8,7 @@ import {
   consumeRemovedProductSurfaceFocus,
   deferProductSurfaceFocusClear,
   recordProductSurfaceFocus,
+  synchronizeProductSurfaceFocus,
 } from './product-surface-focus-handoff';
 
 function focusedSurfaceControl() {
@@ -55,6 +56,25 @@ describe('product surface focus handoff provenance', () => {
     control.remove();
     history.replaceState(null, '', '/apps');
     clearProductSurfaceFocusAfterNavigation('/approvals/admin/overview');
+    history.replaceState(null, '', '/approvals/admin/overview');
+
+    expect(consumeRemovedProductSurfaceFocus('management', 'TENANT:1:11')).toBeUndefined();
+  });
+
+  it('does not retarget connected provenance across a route or plane transition', () => {
+    history.replaceState(null, '', '/approvals/admin/overview');
+    const { container, control } = focusedSurfaceControl();
+    recordProductSurfaceFocus(
+      container,
+      control,
+      'management',
+      'TENANT:1:11',
+      '/approvals/admin/overview'
+    );
+
+    history.replaceState(null, '', '/approvals/home');
+    synchronizeProductSurfaceFocus(container, 'work', 'TENANT:1:11', '/approvals/home');
+    control.remove();
     history.replaceState(null, '', '/approvals/admin/overview');
 
     expect(consumeRemovedProductSurfaceFocus('management', 'TENANT:1:11')).toBeUndefined();

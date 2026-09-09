@@ -37,6 +37,7 @@ export default function NotificationsPage() {
   const navigate = useNavigate();
   const { notificationId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.toString();
   const initialView = VIEW_BY_QUERY[searchParams.get('view') ?? ''] ?? 'PRIORITY';
   const readState =
     READ_STATE_BY_QUERY[searchParams.get('read') as keyof typeof READ_STATE_BY_QUERY];
@@ -60,6 +61,17 @@ export default function NotificationsPage() {
     },
     [initialView, searchParams, setSearchParams]
   );
+  const handleDetailChange = useCallback(
+    (nextNotificationId: string | null) => {
+      const path = nextNotificationId
+        ? `/notifications/center/${encodeURIComponent(nextNotificationId)}`
+        : '/notifications/center';
+      navigate(`${path}${searchQuery ? `?${searchQuery}` : ''}`, {
+        replace: nextNotificationId == null,
+      });
+    },
+    [navigate, searchQuery]
+  );
 
   return (
     <NotificationCenter
@@ -73,6 +85,7 @@ export default function NotificationsPage() {
       onOpenSettings={() => navigate('/notifications/settings')}
       onOpenTarget={(href) => navigate(href)}
       onScopeChange={handleScopeChange}
+      onDetailChange={handleDetailChange}
     />
   );
 }

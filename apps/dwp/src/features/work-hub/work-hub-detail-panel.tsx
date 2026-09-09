@@ -11,11 +11,13 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { workHubUrgency, type WorkHubActionKind, type WorkHubItem } from './work-hub-contracts';
-import { workHubStatusLabelKey } from './work-hub-presentation';
+import { canUseWorkHubGenericAdjunct } from './work-hub-command-authority';
+import { workHubDisplayId, workHubStatusLabelKey } from './work-hub-presentation';
 
 export type WorkHubDetailPanelProps = {
   item: WorkHubItem;
   now: number;
+  verifiedAt: string | null;
   mobile: boolean;
   busyAction?: WorkHubActionKind | null;
   commandsDisabled?: boolean;
@@ -44,6 +46,7 @@ const personalActionKinds: WorkHubActionKind[] = [
 export function WorkHubDetailPanel({
   item,
   now,
+  verifiedAt,
   mobile,
   busyAction,
   commandsDisabled = false,
@@ -64,15 +67,23 @@ export function WorkHubDetailPanel({
   const titleId = useId();
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const urgency = workHubUrgency(item, now);
+  const genericActionsAllowed = canUseWorkHubGenericAdjunct(item, 'ACTIVITY');
   const available = new Set(
-    item.actions
-      .filter((action) => action.availability === 'AVAILABLE')
-      .map((action) => action.kind)
+    genericActionsAllowed
+      ? item.actions
+          .filter((action) => action.availability === 'AVAILABLE')
+          .map((action) => action.kind)
+      : []
   );
   const active = !['COMPLETED', 'CANCELLED', 'ARCHIVED'].includes(item.lifecycle);
-  const commandBusy = Boolean(busyAction) || commandsDisabled;
+  const actionBusy = Boolean(busyAction);
+  const commandBusy = actionBusy || commandsDisabled;
   const personalDetail =
     item.reference.sourceSystem === 'PERSONAL_TASK' && Boolean(specializedContent);
+  const displayId = workHubDisplayId(item);
+  const sourceLabel = t(`workHub.sources.${item.reference.sourceSystem}`, {
+    defaultValue: t('workHub.sources.OTHER'),
+  });
 
   useEffect(() => {
     if (!mobile) return;
@@ -117,16 +128,10 @@ export function WorkHubDetailPanel({
         >
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="overline" color="primary.main">
-              <Box
-                component="span"
-                title={item.reference.sourceReference}
-                sx={{ fontWeight: 'fontWeightBold', mr: 1 }}
-              >
-                {item.displayId ?? item.reference.sourceReference.slice(0, 8)}
+              <Box component="span" sx={{ fontWeight: 'fontWeightBold', mr: 1 }}>
+                {displayId ?? sourceLabel}
               </Box>
-              {t(`workHub.sources.${item.reference.sourceSystem}`, {
-                defaultValue: t('workHub.sources.OTHER'),
-              })}
+              {displayId ? sourceLabel : null}
             </Typography>
             <Typography
               ref={titleRef}
@@ -147,8 +152,8 @@ export function WorkHubDetailPanel({
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               {t('workHub.detail.verifiedAt', {
-                date: item.updatedAt
-                  ? formatDate(item.updatedAt, { dateStyle: 'medium', timeStyle: 'short' })
+                date: verifiedAt
+                  ? formatDate(verifiedAt, { dateStyle: 'medium', timeStyle: 'short' })
                   : t('workHub.detail.unknownTime'),
               })}
             </Typography>
@@ -344,25 +349,25 @@ export function WorkHubDetailPanel({
               data-work-source-trigger
               data-work-item-key={item.key}
               intent="secondary"
-              disabled={commandBusy}
+              disabled={actionBusy}
               endIcon={<ArrowUpRight size={16} />}
               onClick={() => onAction('OPEN_SOURCE')}
             >
               {t('workHub.actions.OPEN_SOURCE')}
             </ActionButton>
           )}
-          {onOpenActivity && (
+          {onOpenActivity && genericActionsAllowed && (
             <ActionButton
               data-work-activity-trigger={item.key}
               intent="secondary"
-              disabled={commandBusy}
+              disabled={actionBusy}
               startIcon={<History size={16} aria-hidden="true" />}
               onClick={onOpenActivity}
             >
               {t('workHub.actions.OPEN_ACTIVITY')}
             </ActionButton>
           )}
-          {active && (canManagePlan || canSchedule || canAskAi) && (
+          {active && genericActionsAllowed && (canManagePlan || canSchedule || canAskAi) && (
             <>
               {canManagePlan && (
                 <ActionButton
@@ -403,7 +408,9 @@ export function WorkHubDetailPanel({
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
           {item.reference.sourceSystem === 'PERSONAL_TASK'
             ? t('workHub.detail.personalOwnerNotice')
-            : t('workHub.detail.sourceOwnerNotice')}
+            : item.reference.sourceSystem === 'WORK_ASSIGNMENT'
+              ? t('workHub.detail.assignmentOwnerNotice')
+              : t('workHub.detail.sourceOwnerNotice')}
         </Typography>
       </Box>
     </Box>

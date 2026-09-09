@@ -1,0 +1,84 @@
+{
+  "report": "/private/tmp/dwaion-final-20260908/quality-final-v2.json",
+  "reportReady": true,
+  "counting": "One tests[] entry per case; expected=passed, unexpected=failed; flaky and skipped are separate. Retry attempts are not added to case totals.",
+  "expectedTotal": 5,
+  "overall": {
+    "passed": 5,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unknown": 0,
+    "total": 5,
+    "attempts": 5,
+    "extraAttempts": 0
+  },
+  "administrator": {
+    "passed": 0,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unknown": 0,
+    "total": 0,
+    "attempts": 0,
+    "extraAttempts": 0
+  },
+  "administratorSpecs": {
+    "dwaion-stitch-coverage.spec.ts": {
+      "passed": 0,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "total": 0,
+      "attempts": 0,
+      "extraAttempts": 0
+    },
+    "dwaion-admin-conflicts.spec.ts": {
+      "passed": 0,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "total": 0,
+      "attempts": 0,
+      "extraAttempts": 0
+    }
+  },
+  "projects": {
+    "chromium": 5
+  },
+  "reportedStats": {
+    "startTime": "2026-09-08T12:04:59.001Z",
+    "duration": 84172.689,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "globalErrors": [],
+  "allPassed": true,
+  "notPassed": [],
+  "validationIssues": [],
+  "runReceipt": {
+    "name": "quality-final-v2",
+    "cwd": "/tmp/dwaion-final-checkout-20260908",
+    "command": [
+      "corepack",
+      "yarn",
+      "playwright",
+      "test",
+      "e2e/activity-stitch-visual-quality.spec.ts",
+      "--grep",
+      "품질 매트릭스|DWAI·ON",
+      "--project=chromium",
+      "--workers=1",
+      "--reporter=line,json"
+    ],
+    "startedAt": "2026-09-08T12:04:57.949206+00:00",
+    "source": "isolated validation checkout with DWAI product and test hashes matched to shared merge",
+    "completedAt": "2026-09-08T12:06:23.239979+00:00",
+    "durationSeconds": 85.29,
+    "exitCode": 0
+  }
+}

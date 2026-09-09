@@ -55,12 +55,23 @@ export function isAppReadEntitled(
   resourceKey: string,
   permissions: readonly AppEntitlementPermission[]
 ): boolean {
+  return isAppPermissionEntitled(resourceKey, 'VIEW', permissions);
+}
+
+/** Exact, deny-precedence application command entitlement. */
+export function isAppPermissionEntitled(
+  resourceKey: string,
+  permissionCode: string,
+  permissions: readonly AppEntitlementPermission[]
+): boolean {
   const resourceKeys = new Set(appResourceAliasCandidates(resourceKey));
+  const expectedCode = permissionCode.trim().toUpperCase();
+  if (!expectedCode) return false;
   const matching = permissions.filter(
     (permission) =>
       permission.resourceType.trim().toUpperCase() === 'APP' &&
       resourceKeys.has(permission.resourceKey.trim().toUpperCase()) &&
-      permission.permissionCode.trim().toUpperCase() === 'VIEW'
+      permission.permissionCode.trim().toUpperCase() === expectedCode
   );
   if (matching.some((permission) => permission.effect.trim().toUpperCase() === 'DENY')) {
     return false;

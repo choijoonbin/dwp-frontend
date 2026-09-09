@@ -45,6 +45,7 @@
     "errorDescription": "Check the connection and try again. Existing notification state has not changed.",
     "summaryLabel": "Notification summary",
     "appDistribution": "Unread notifications by app",
+    "openAppNotifications": "View {{app}} notifications",
     "metrics": {
       "actionable": "Action required",
       "actionableDetail": "Unread actionable items",
@@ -76,12 +77,19 @@
       "UNREAD_SHARE": "Unread share of inbox",
       "UNREAD_SHARE_VALUE": "{{value}}% unread"
     },
+    "kpisCompact": {
+      "ACTIONABLE": "Action",
+      "UNREAD": "Unread",
+      "MENTIONS": "Mentions",
+      "SNOOZED": "Later"
+    },
     "digest": {
       "title": "DWP work briefing",
       "withLead": "You have {{count}} actionable notifications. Start with ‘{{title}}’.",
       "withoutLead": "{{count}} actionable notifications remain outside the current view.",
       "clear": "There are no notifications requiring immediate action.",
       "review": "Review priority items",
+      "reviewCompact": "Review",
       "dismiss": "Dismiss briefing"
     },
     "groups": {
@@ -96,7 +104,8 @@
       "UPDATES": {
         "title": "Work updates",
         "description": "Status changes and notices from your apps."
-      }
+      },
+      "more": "View {{count}} more"
     },
     "shortcuts": {
       "label": "Quick triage",
@@ -125,6 +134,14 @@
       "completed": "Updated ‘{{title}}’.",
       "failed": "Could not update ‘{{title}}’."
     }
+  },
+  "savedViews": {
+    "builtIn": {
+      "priority": "Priority",
+      "unread": "Unread",
+      "mentions": "Mentions"
+    },
+    "invalid": "This saved view uses an incompatible notification center format and was not applied."
   },
   "settings": {
     "eyebrow": "Personal notification settings",
@@ -330,6 +347,12 @@
     "timelineTitle": "Related changes",
     "notificationReceived": "Notification received",
     "protected": "Protected content",
+    "context": {
+      "source": "Source app",
+      "reason": "Delivery basis",
+      "actor": "From",
+      "due": "Due"
+    },
     "targetState": {
       "DELETED": "The related work was deleted.",
       "EXPIRED": "The related work has expired.",
@@ -371,6 +394,85 @@
     "channelToggle": "Use {{channel}} for {{type}}",
     "channelUnavailable": "Connection pending",
     "externalChannelsUnavailable": "Only DWP in-app notifications are currently enabled. Email, browser and mobile push, and collaboration delivery become available after tenant integration and operational verification.",
+    "status": {
+      "title": "My delivery status",
+      "verifiedAt": "Verified {{time}}",
+      "verifying": "Checking delivery contract",
+      "recheck": "Recheck delivery status",
+      "rechecking": "Checking delivery status",
+      "channelsLabel": "Channel availability",
+      "channelReady": "{{channel}} available",
+      "channelUnavailable": "{{channel}} awaiting connection",
+      "state": {
+        "CHECKING": "Checking",
+        "READY": "In-app delivery ready",
+        "BLOCKED": "Review delivery settings",
+        "PARTIAL": "Some policies need review"
+      },
+      "inApp": {
+        "label": "In-app notifications",
+        "enabled": "Receiving",
+        "disabled": "Disabled",
+        "detail": "Canonical Notification Center channel"
+      },
+      "external": {
+        "label": "External delivery",
+        "enabled": "{{count}} channels available",
+        "disabled": "Connection pending",
+        "detail": "Only operationally verified channels are shown"
+      },
+      "focus": {
+        "label": "Focus schedule",
+        "enabled": "{{start}}-{{end}}",
+        "disabled": "Not used"
+      },
+      "policy": {
+        "label": "Policy and digest",
+        "CHECKING": "Checking policy",
+        "CURRENT": "Current policy applied",
+        "PARTIAL": "Partial policy applied",
+        "UNAVAILABLE": "Policy composition needs review"
+      },
+      "digest": {
+        "OFF": "Digest disabled",
+        "DAILY": "Daily digest",
+        "WEEKLY": "Weekly digest"
+      },
+      "runtime": {
+        "storeLabel": "Notification store",
+        "storeDetail": "Durably stores read, saved, and snoozed state",
+        "realtimeLabel": "Live synchronization",
+        "realtimeDetail": "Reconciles the durable ledger after a live signal",
+        "POSTGRESQL": "PostgreSQL",
+        "SSE_HINT_WITH_DURABLE_SYNC": "SSE + durable sync",
+        "UNKNOWN": "Check required",
+        "unknown": "Check required"
+      }
+    },
+    "endpoints": {
+      "title": "Registered devices and push connections",
+      "description": "Only browsers and mobile devices linked to your account are shown. Push tokens and subscription URLs are never exposed.",
+      "activeCount": "{{count}} active",
+      "loading": "Checking registered devices",
+      "loadFailed": "Registered device status could not be loaded.",
+      "empty": "No browser or mobile device is registered.",
+      "meta": "{{channel}} · {{hint}} · last verified {{time}}",
+      "revoke": "Disconnect",
+      "revoking": "Disconnecting",
+      "revokeTitle": "Disconnect device notifications",
+      "revokeDescription": "{{device}} will no longer receive DWP push notifications.",
+      "revokeConfirm": "Disconnect",
+      "revokeWarning": "To receive alerts again, notification permission must be registered from this device.",
+      "state": {
+        "ACTIVE": "Active",
+        "REVOKED": "Disconnected",
+        "EXPIRED": "Expired"
+      },
+      "feedback": {
+        "revoked": "The device notification connection was disconnected.",
+        "revokeFailed": "The device could not be disconnected. Refresh its latest state and try again."
+      }
+    },
     "save": {
       "auto": "Changes save automatically",
       "saving": "Saving",
@@ -531,6 +633,7 @@
   "admin": {
     "title": "Notification operations",
     "description": "Manage notification contracts, user impact, delivery health, and operational exceptions for this tenant.",
+    "backToCatalog": "Back to list",
     "navigationLabel": "Notification operations navigation",
     "navigation": {
       "overview": "Overview",
@@ -605,21 +708,76 @@
       "emptyTitle": "No immediate action required",
       "emptyDescription": "Contracts, policies, templates, and delivery paths are within their healthy range."
     },
+    "governance": {
+      "comparisonTitle": "Current and proposed values",
+      "current": "Current",
+      "proposed": "Proposed",
+      "changed": "Changed",
+      "unchanged": "Unchanged",
+      "noCurrentValue": "No current value",
+      "channelSummary": "{{delivery}} · {{mode}} · {{control}}"
+    },
     "contracts": {
+      "catalogLabel": "Notification contract list",
       "searchPlaceholder": "Search type, app, or owner",
+      "appFilter": "Work app",
+      "allApps": "All apps",
       "stateFilter": "Contract state",
       "allStates": "All states",
       "emptyTitle": "No notification contracts match",
       "emptyDescription": "Change the search or state filter.",
       "detailLabel": "Selected notification contract details",
       "channels": "Allowed delivery channels",
+      "variables": "Required template variables",
+      "noVariables": "This contract uses a fixed message with no required variables.",
+      "deepLink": "Source-work deep link",
+      "openRunbook": "Open operations runbook",
+      "none": "None",
+      "yes": "Mandatory",
+      "no": "Optional",
+      "configurable": "User configurable",
+      "managed": "Managed by policy",
+      "audience": {
+        "DIRECT": "Named recipients",
+        "ROLE": "Role audience",
+        "ORGANIZATION": "Organization audience",
+        "SUBSCRIPTION": "Subscribers"
+      },
+      "interruption": {
+        "PASSIVE": "Deliver quietly",
+        "ACTIVE": "Standard alert",
+        "TIME_SENSITIVE": "Time sensitive",
+        "CRITICAL": "Critical interruption"
+      },
+      "previewPolicy": {
+        "FULL": "Full preview",
+        "TITLE_ONLY": "Title only",
+        "HIDDEN": "Content hidden",
+        "CLASSIFICATION_AWARE": "Based on information classification"
+      },
+      "dedupe": {
+        "SOURCE_EVENT_RECIPIENT": "Source event and recipient"
+      },
+      "retention": {
+        "TENANT_DEFAULT_LEGAL_HOLD_AWARE": "Tenant default with legal-hold protection"
+      },
       "fields": {
         "owner": "Owner",
         "sourceEvent": "Source event",
         "priority": "Default priority",
-        "schemaVersion": "Schema version",
+        "schemaVersion": "Accepted schema range",
+        "classification": "Data classification",
+        "audience": "Audience",
+        "interruption": "Interruption level",
+        "userControl": "User control",
+        "previewPolicy": "Preview policy",
+        "dedupe": "Deduplication",
+        "endEvent": "End event",
+        "retention": "Retention policy",
         "volume": "Last 24 hours",
-        "updated": "Last updated"
+        "updated": "Last updated",
+        "mandatory": "Mandatory delivery",
+        "entityVersion": "Concurrency version"
       }
     },
     "contractState": {
@@ -636,6 +794,8 @@
       "BROKEN": "Contract error"
     },
     "policies": {
+      "catalogLabel": "Notification policy list",
+      "detailLabel": "Selected notification policy details",
       "governanceNotice": "Provider contracts are not edited here. Company policy is published only after a change proposal, impact preview, independent approval, and retained audit evidence.",
       "reviewQueueTitle": "Pending approval",
       "reviewQueueDescription": "A reviewer other than the author must verify risk and user impact before publication.",
@@ -648,6 +808,17 @@
       "proposeChange": "Propose change",
       "reviewAndPublish": "Review and publish",
       "independentApprovalRequired": "Another approver required",
+      "withdrawDraft": "Withdraw my draft",
+      "rejectDraft": "Reject",
+      "withdrawTitle": "Withdraw notification policy draft",
+      "withdrawDescription": "Withdraw your unpublished policy draft and record an auditable reason.",
+      "rejectTitle": "Reject notification policy draft",
+      "rejectDescription": "Close the policy draft without applying it as an independent reviewer.",
+      "withdrawConfirm": "Withdraw draft",
+      "rejectConfirm": "Reject draft",
+      "processingDecision": "Processing",
+      "decisionTarget": "Close the {{scope}} policy v{{version}} draft. The current published policy will not change.",
+      "decisionReasonHelp": "Record the decision basis and follow-up plan using at least 10 characters.",
       "source": {
         "PROVIDER_POLICY": "Provider default",
         "TENANT_POLICY": "Company policy"
@@ -688,7 +859,8 @@
         "changeReason": "Change reason",
         "changeReasonHelp": "Enter at least 10 characters including the user impact and business purpose.",
         "approvalReason": "Approval evidence",
-        "approvalReasonHelp": "Enter at least 10 characters documenting an independent review of impact and risk."
+        "approvalReasonHelp": "Enter at least 10 characters documenting an independent review of impact and risk.",
+        "decisionReason": "Decision reason"
       },
       "editorTitle": "Propose {{scope}} policy change",
       "editorDescription": "Create a new immutable version from the current effective policy.",
@@ -698,6 +870,7 @@
       "certificationRequired": "Connection certification required",
       "previewImpact": "Preview impact",
       "previewing": "Calculating impact",
+      "backToEdit": "Back to editing",
       "previewTitle": "Policy change impact",
       "previewDescription": "Review affected notification types, recently observed users, and risk signals before creating a draft.",
       "runtimePreviewTitle": "Runtime decision",
@@ -726,6 +899,43 @@
         "USER_OVERRIDE_RESTRICTED": "User override restricted",
         "DEFAULT_MUTED": "Muted by default"
       },
+      "simulation": {
+        "title": "User-context simulation",
+        "description": "Calculate the effective delivery outcome for a persona, local time, and focus state before publication.",
+        "persona": "Persona",
+        "timeZone": "Time zone",
+        "localTime": "Local time",
+        "focusMode": "Focus mode active",
+        "quietHoursActive": "Inside quiet hours",
+        "resultTitle": "Contextual delivery decision",
+        "contextSummary": "{{persona}} · {{timeZone}} {{localTime}}",
+        "attentionRisk": "Attention risk {{risk}}",
+        "channelOutcome": "{{channel}} · {{outcome}} · {{reason}}",
+        "rateCardRequired": "External-channel cost is calculated after a Provider rate card is connected.",
+        "personas": {
+          "KNOWLEDGE_WORKER": "Knowledge worker",
+          "FRONTLINE": "Frontline worker",
+          "EXECUTIVE": "Executive",
+          "ON_CALL": "On-call responder"
+        },
+        "risk": {
+          "LOW": "Low",
+          "MEDIUM": "Medium",
+          "HIGH": "High"
+        },
+        "outcomes": {
+          "IMMEDIATE": "Immediate",
+          "DEFERRED": "Deferred",
+          "SUPPRESSED": "Suppressed"
+        },
+        "reasons": {
+          "POLICY_ADMITTED": "Policy admitted",
+          "POLICY_MUTED": "Policy muted",
+          "QUIET_HOURS": "Quiet hours",
+          "FOCUS_MODE": "Focus mode",
+          "DIGEST_WINDOW": "Awaiting digest"
+        }
+      },
       "approvalTitle": "Approve {{scope}} policy",
       "approvalDescription": "As an independent reviewer, verify the purpose, impact scope, and channel constraints.",
       "makerCheckerApproval": "You cannot approve a version you authored. Approval is retained as audit evidence with the policy version.",
@@ -736,10 +946,16 @@
         "draftCreated": "The policy draft was created and requires independent approval.",
         "saveFailed": "The policy draft could not be created. Refresh the current version and try again.",
         "published": "The company notification policy was published.",
-        "publishFailed": "The policy could not be published. Check approval access and the current version."
+        "publishFailed": "The policy could not be published. Check approval access and the current version.",
+        "withdrawn": "Your policy draft was withdrawn.",
+        "withdrawFailed": "The policy draft could not be withdrawn. Check the author and current version.",
+        "rejected": "The policy draft was rejected.",
+        "rejectFailed": "The policy draft could not be rejected. Check independent approval access and the current version."
       }
     },
     "templates": {
+      "catalogLabel": "Notification template list",
+      "detailLabel": "Selected notification template details",
       "governanceNotice": "Provider templates are immutable here. Company templates use validated plain text and allowed variables, then pass preview, draft, independent approval, and retained audit evidence.",
       "reviewQueueTitle": "Templates awaiting approval",
       "reviewQueueDescription": "A reviewer other than the author verifies the rendered result and change purpose.",
@@ -755,6 +971,7 @@
       "openDraftExists": "Awaiting approval",
       "noVariables": "This template has no replacement variables.",
       "effectivePreview": "Current user-facing content",
+      "effectivePreviewFailed": "The effective template could not be rendered",
       "historyTitle": "Revision history",
       "historyDescription": "Restore prior published wording as a new approval draft without changing existing evidence.",
       "current": "Current",
@@ -769,12 +986,27 @@
       "independentApprovalRequired": "Another approver required",
       "retireDraft": "Retire draft",
       "retireReason": "Retire the unapproved notification template draft following an operational request.",
+      "withdrawDraft": "Withdraw my draft",
+      "withdrawTitle": "Withdraw template draft",
+      "withdrawDescription": "Withdraw your unpublished draft and record an auditable reason.",
+      "withdrawConfirm": "Withdraw draft",
+      "withdrawing": "Withdrawing",
+      "withdrawTarget": "Withdraw the {{type}} r{{revision}} draft. The published template will not change.",
+      "withdrawReasonHelp": "Record the withdrawal reason and follow-up plan using at least 10 characters.",
+      "rejectDraft": "Reject",
+      "rejectTitle": "Reject template draft",
+      "rejectDescription": "Close the template draft without publishing it as an independent reviewer.",
+      "rejectConfirm": "Reject draft",
+      "rejecting": "Rejecting",
+      "rejectTarget": "Reject the {{type}} r{{revision}} draft. The published template will not change.",
+      "rejectReasonHelp": "Record the rejection basis and required changes using at least 10 characters.",
       "editorTitle": "Propose {{type}} company template",
       "editorDescription": "Compose user-facing wording within the variables allowed by the Provider contract.",
       "editorGovernanceNotice": "HTML and undeclared variables are blocked. Only drafts that pass rendered preview validation can enter independent approval.",
       "validateAndPreview": "Validate and preview",
       "previewing": "Validating render",
       "renderedPreview": "Rendered sample",
+      "validationWarningsTitle": "Resolve these validation warnings before creating a draft",
       "previewEmptyTitle": "A validated preview is required",
       "previewEmptyDescription": "Review wording and sample values, then validate the actual user-facing result.",
       "sampleValueHelp": "Test value used for this variable in the rendered preview.",
@@ -785,6 +1017,7 @@
       "approvalDescription": "As an independent reviewer, verify rendering, wording accuracy, and personal-data exposure.",
       "makerCheckerApproval": "You cannot approve your own draft. Approval evidence and the checksum are retained in the central audit trail.",
       "proposedPreview": "User-facing content to publish",
+      "checksum": "Checksum {{checksum}}",
       "publish": "Publish template",
       "publishing": "Publishing",
       "approvalReasonHelp": "Enter at least 10 characters documenting review of accuracy, sensitive data, and user impact.",
@@ -797,7 +1030,9 @@
         "body": "Body template",
         "actionLabel": "Primary action label",
         "changeReason": "Change reason",
-        "approvalReason": "Approval evidence"
+        "approvalReason": "Approval evidence",
+        "withdrawReason": "Withdrawal reason",
+        "rejectReason": "Rejection reason"
       },
       "feedback": {
         "previewFailed": "Template validation failed. Check allowed variables and plain-text constraints.",
@@ -806,7 +1041,11 @@
         "published": "The company notification template was published.",
         "publishFailed": "The template could not be published. Check approval access and the current revision.",
         "retired": "The unapproved template draft was retired.",
-        "retireFailed": "The template draft could not be retired. Refresh its current state."
+        "retireFailed": "The template draft could not be retired. Refresh its current state.",
+        "withdrawn": "Your template draft was withdrawn.",
+        "withdrawFailed": "The template draft could not be withdrawn. Check the author and current state.",
+        "rejected": "The template draft was rejected.",
+        "rejectFailed": "The template draft could not be rejected. Check independent approval access and the current state."
       }
     },
     "operations": {
@@ -823,6 +1062,37 @@
       "providersTable": "Channel provider health",
       "seconds": "{{count}} seconds",
       "milliseconds": "{{count}} ms",
+      "findingCount": "{{count}} affected",
+      "category": {
+        "CONTRACT": "Contract",
+        "POLICY": "Policy",
+        "TEMPLATE": "Template",
+        "DELIVERY": "Delivery",
+        "NOISE": "Noise",
+        "SECURITY": "Security"
+      },
+      "investigation": {
+        "title": "Delivery incident investigation",
+        "description": "Select an operational finding to review its impact, evidence path, and safe next actions.",
+        "listLabel": "Delivery incidents and operational findings",
+        "detailLabel": "Selected delivery incident investigation",
+        "back": "Back to incident list",
+        "emptyTitle": "No operational findings to investigate",
+        "emptyDescription": "The current snapshot contains no delivery finding that requires action.",
+        "findingId": "Investigation ID",
+        "affected": "Affected",
+        "owner": "Owner",
+        "ownerUnassigned": "Notification platform operations",
+        "detectedAt": "Detected",
+        "snapshotAt": "Operations snapshot",
+        "nextTitle": "Recommended next action",
+        "deliveryGuidance": "Recheck the live state, then correlate the source event and delivery result in central audit evidence.",
+        "governanceGuidance": "Review the contract, policy, or template on its governed surface and correct it through the approved workflow.",
+        "recheck": "Recheck status",
+        "openGovernedSurface": "Review related settings",
+        "openEvidence": "Open audit evidence",
+        "replayUnavailable": "Ad hoc replay can create duplicate notifications and side effects. Until a governed replay contract is available, verify the work state in the source application."
+      },
       "columns": {
         "lane": "Queue",
         "queued": "Queued",

@@ -1,8 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as BackgroundTypes from './meeting-background-types';
 
-const mocks = vi.hoisted(() => ({ supported: vi.fn(), load: vi.fn(), compose: vi.fn() }));
-vi.mock('./meeting-background-assets', () => ({ loadMeetingBackgroundSegmenter: mocks.load }));
+const mocks = vi.hoisted(() => ({
+  supported: vi.fn(),
+  load: vi.fn(),
+  loadOffice: vi.fn(),
+  compose: vi.fn(),
+}));
+vi.mock('./meeting-background-assets', () => ({
+  loadMeetingBackgroundSegmenter: mocks.load,
+  loadMeetingOfficeBackground: mocks.loadOffice,
+}));
 vi.mock('./meeting-background-compositor', () => ({
   createMeetingBackgroundCompositor: mocks.compose,
 }));
@@ -57,6 +65,7 @@ beforeEach(() => {
   videos = [];
   mocks.supported.mockReturnValue(true);
   mocks.load.mockImplementation(async () => segmenter());
+  mocks.loadOffice.mockResolvedValue({ source: {}, width: 1600, height: 900, close: vi.fn() });
   mocks.compose.mockImplementation(() => {
     const track = input();
     const item = { track, render: vi.fn(), destroy: vi.fn(() => track.stop()) };
@@ -153,6 +162,18 @@ describe('meeting background fail-closed processor', () => {
     await processor.destroy();
     expect(raw.stop).not.toHaveBeenCalled();
     expect(output.stop).toHaveBeenCalledOnce();
+  });
+  it('loads the approved office plate before composing and releases it with the capture owner', async () => {
+    const office = { source: {}, width: 1600, height: 900, close: vi.fn() };
+    mocks.loadOffice.mockResolvedValue(office);
+    const processor = createMeetingBackgroundProcessor({ mode: 'office' });
+    await processor.start(input());
+    expect(processor.name).toBe('dwp-local-background-office-v1');
+    expect(mocks.supported).toHaveBeenCalledWith('office');
+    expect(mocks.loadOffice).toHaveBeenCalledOnce();
+    expect(mocks.compose).toHaveBeenCalledWith('office', office);
+    await processor.destroy();
+    expect(office.close).toHaveBeenCalledOnce();
   });
   it('never resolves during model loading and closes a late model after destroy', async () => {
     const pending = deferred<ReturnType<typeof segmenter>>();

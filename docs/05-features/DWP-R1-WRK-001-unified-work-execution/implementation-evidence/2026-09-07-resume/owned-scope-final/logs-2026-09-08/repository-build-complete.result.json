@@ -1,0 +1,13 @@
+{
+  "name": "repository-build-complete",
+  "command": [
+    "corepack",
+    "yarn",
+    "build"
+  ],
+  "startedAt": "2026-09-08T10:23:05.857098+00:00",
+  "completedAt": "2026-09-08T10:24:10.072064+00:00",
+  "durationSeconds": 64.21,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/repository-build-complete.log"
+}

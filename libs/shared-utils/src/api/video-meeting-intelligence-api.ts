@@ -1,5 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 import type { ApiResponse } from '../types';
 
@@ -15,6 +19,9 @@ export type VideoMeetingIntelligenceReportState =
 export type VideoMeetingIntelligenceAudience = 'PRIVATE_REVIEWERS' | 'MEETING_PARTICIPANTS';
 export type VideoMeetingIntelligenceReviewDecision = 'APPROVE' | 'REJECT';
 export type VideoMeetingIntelligencePermission = 'VIEW' | 'REVIEW' | 'MANAGE';
+export type VideoMeetingIntelligenceExportFormat = 'JSON' | 'MARKDOWN';
+const MAX_INTELLIGENCE_EXPORT_BYTES = 2_000_000;
+const sha256Digest = /^[0-9a-f]{64}$/u;
 export type VideoMeetingIntelligenceClimateLabel =
   'ALIGNED' | 'MIXED' | 'CONTESTED' | 'INSUFFICIENT_EVIDENCE';
 export type VideoMeetingIntelligenceClimateSignal =
@@ -353,4 +360,66 @@ export async function revokeVideoMeetingIntelligenceAccess(
     )}?${search.toString()}`,
     commandHeaders({ correlationId })
   );
+}
+
+export async function downloadVideoMeetingIntelligenceReport(
+  meetingId: string,
+  reportId: string,
+  expectedReportVersion: number,
+  format: VideoMeetingIntelligenceExportFormat,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  correlationId?: string,
+  signal?: AbortSignal
+): Promise<Blob> {
+  if (!Number.isSafeInteger(expectedReportVersion) || expectedReportVersion <= 0) {
+    throw new Error('Meeting intelligence exports require a valid report version.');
+  }
+  const command = commandHeaders({ correlationId });
+  const governed = productSurfaceGovernedMutationConfig(authority);
+  const response = await axiosInstance.post<
+    Blob,
+    { expectedReportVersion: number; format: VideoMeetingIntelligenceExportFormat }
+  >(
+    intelligencePath(meetingId, `reports/${encodeURIComponent(reportId)}/exports`),
+    { expectedReportVersion, format },
+    {
+      responseType: 'blob',
+      signal,
+      contextScopeKey: governed.contextScopeKey,
+      headers: {
+        ...governed.headers,
+        ...command?.headers,
+        Accept: format === 'JSON' ? 'application/json' : 'text/markdown',
+      },
+    }
+  );
+  if (!(response.data instanceof Blob)) {
+    throw new Error('Meeting intelligence export evidence is invalid.');
+  }
+  const expectedType = format === 'JSON' ? 'application/json' : 'text/markdown';
+  const contentType = response.data.type.split(';', 1)[0]?.toLowerCase();
+  const responseVersion = response.headers?.get('X-DWP-Report-Version')?.trim();
+  const expectedDigest = response.headers?.get('X-DWP-Content-SHA256')?.trim().toLowerCase();
+  if (
+    !response.data.size ||
+    response.data.size > MAX_INTELLIGENCE_EXPORT_BYTES ||
+    contentType !== expectedType ||
+    responseVersion !== String(expectedReportVersion) ||
+    !expectedDigest ||
+    !sha256Digest.test(expectedDigest) ||
+    !globalThis.crypto?.subtle
+  ) {
+    throw new Error('Meeting intelligence export evidence is invalid.');
+  }
+  const digest = await globalThis.crypto.subtle.digest(
+    'SHA-256',
+    await response.data.arrayBuffer()
+  );
+  const actualDigest = [...new Uint8Array(digest)]
+    .map((value) => value.toString(16).padStart(2, '0'))
+    .join('');
+  if (actualDigest !== expectedDigest) {
+    throw new Error('Meeting intelligence export integrity check failed.');
+  }
+  return response.data;
 }

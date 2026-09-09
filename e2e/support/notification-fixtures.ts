@@ -357,6 +357,51 @@ export async function mockNotificationProfile(page: Page, previewMode: 'FULL' | 
 }
 
 export async function mockNotificationPreferences(page: Page) {
+  const endpointRevokeRequests: Array<Record<string, unknown>> = [];
+  let endpoints = [
+    {
+      endpointId: '24000000-0000-0000-0000-000000000001',
+      channel: 'WEB_PUSH',
+      displayName: '업무용 Chrome · MacBook Pro',
+      platform: 'WEB',
+      endpointHint: 'Chrome 141 · Seoul',
+      state: 'ACTIVE',
+      lastSeenAt: '2026-09-03T03:48:00Z',
+      createdAt: '2026-08-21T00:00:00Z',
+      revokedAt: null,
+      version: '1',
+    },
+    {
+      endpointId: '24000000-0000-0000-0000-000000000002',
+      channel: 'MOBILE_PUSH',
+      displayName: 'iPhone 17 Pro',
+      platform: 'IOS',
+      endpointHint: 'DWP Mobile · iOS',
+      state: 'ACTIVE',
+      lastSeenAt: '2026-09-03T02:00:00Z',
+      createdAt: '2026-08-24T00:00:00Z',
+      revokedAt: null,
+      version: '2',
+    },
+  ];
+  await page.route('**/api/notifications/v1/me/delivery-endpoints**', (route) => {
+    const request = route.request();
+    if (request.method() === 'GET') return fulfillSuccess(route, endpoints);
+    endpointRevokeRequests.push(request.postDataJSON() as Record<string, unknown>);
+    const endpointId = new URL(request.url()).pathname.split('/').at(-2);
+    const current = endpoints.find((endpoint) => endpoint.endpointId === endpointId);
+    if (!current) return route.abort();
+    const revoked = {
+      ...current,
+      state: 'REVOKED',
+      revokedAt: '2026-09-03T04:02:00Z',
+      version: String(Number(current.version) + 1),
+    };
+    endpoints = endpoints.map((endpoint) =>
+      endpoint.endpointId === endpointId ? revoked : endpoint
+    );
+    return fulfillSuccess(route, revoked);
+  });
   await page.route('**/api/notifications/v1/capabilities', (route) =>
     fulfillSuccess(route, {
       enabledChannels: ['IN_APP'],
@@ -414,6 +459,7 @@ export async function mockNotificationPreferences(page: Page) {
       generatedAt: '2026-09-03T04:00:00Z',
     })
   );
+  return { endpointRevokeRequests };
 }
 
 export async function mockNotificationAdminOverview(page: Page) {

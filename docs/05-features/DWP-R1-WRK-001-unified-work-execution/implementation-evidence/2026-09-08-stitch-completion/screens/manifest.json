@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-09T01:17:03+09:00",
+  "sourceSpec": "../../../../../../e2e/work-assignment-integration.spec.ts",
+  "sourceReport": "../logs/assignment-playwright.json",
+  "fixtureMode": "CONTROLLED_FICTIONAL_FIXTURES",
+  "captures": [
+    {
+      "file": "work-assignment-1440-light.png",
+      "sha256": "1d3dd2be080f0723dadaf9425b3010d09e0f058bff63638ccc42a49415667999",
+      "width": 1440,
+      "height": 1000,
+      "theme": "light",
+      "zoom": 1,
+      "forcedColors": false
+    },
+    {
+      "file": "work-assignment-1280-200-percent.png",
+      "sha256": "31fc17a67df629de10d118a8cb052cbb0206876203039f46870ec5004da54a48",
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "zoom": 2,
+      "zoomMethod": "CSS_DOCUMENT_ELEMENT_ZOOM",
+      "nativeBrowserZoomCertified": false,
+      "forcedColors": false
+    },
+    {
+      "file": "work-assignment-390-dark.png",
+      "sha256": "9e20c08f8ee2521b58deffc83ed0dab07310585cb1352ae11cab44e4ca3430d6",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "zoom": 1,
+      "forcedColors": false
+    },
+    {
+      "file": "work-assignment-320-forced-colors.png",
+      "sha256": "9f7dd0c7bdade7da290299bfa6f16f59435dece683bffba50f290b42beeeea48",
+      "width": 320,
+      "height": 740,
+      "theme": "light",
+      "zoom": 1,
+      "forcedColors": true,
+      "reducedMotion": true
+    }
+  ],
+  "assertions": {
+    "pageHorizontalOverflowMaximumPixels": 1,
+    "visibleDetailButtonMinimumWidthPixels": 44,
+    "visibleDetailButtonMinimumHeightPixels": 44,
+    "axeScope": "main",
+    "axeCriticalViolations": 0,
+    "axeSeriousViolations": 0,
+    "allWcagLevelsZeroClaimed": false,
+    "sensitiveAssignmentIdentifiersAbsentFromRenderedTextAndMarkup": true,
+    "rawPolicyReasonCodesAbsentFromRenderedTextAndMarkup": true
+  },
+  "qualifications": {
+    "pixelPerfect": false,
+    "liveTenant": false,
+    "productionDeploy": false,
+    "note": "Screens demonstrate responsive product behavior with controlled fixtures. They are not live-tenant or pixel-equality evidence. Recompute every file SHA256 if the evidence spec regenerates a capture."
+  }
+}

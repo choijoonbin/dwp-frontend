@@ -317,11 +317,18 @@ function MeetingTemplatesContent({
             <ActionButton
               intent="secondary"
               startIcon={<Upload size={16} />}
+              aria-label={t('stitch.templates.import')}
               disabled={busy || revoked || query.isError}
               onClick={() => setImportOpen(true)}
-              sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
+              sx={{
+                minHeight: { xs: 44, lg: 32 },
+                minWidth: { xs: 44, lg: 'auto' },
+                '& .MuiButton-startIcon': { mr: { xs: 0, lg: 1 }, ml: { xs: 0, lg: -0.5 } },
+              }}
             >
-              {t('stitch.templates.import')}
+              <Box component="span" sx={{ display: { xs: 'none', lg: 'inline' } }}>
+                {t('stitch.templates.import')}
+              </Box>
             </ActionButton>
             <ActionButton
               intent="primary"
@@ -477,7 +484,8 @@ function MeetingTemplatesContent({
           <ActionButton
             intent={!category ? 'primary' : 'quiet'}
             size="small"
-            onClick={() => changeParams({ category: null, template: null })}
+            aria-pressed={!category}
+            onClick={() => changeParams({ category: null, page: null, template: null })}
             sx={{ whiteSpace: 'nowrap', minHeight: { xs: 44, md: 32 } }}
           >
             {t('templates.categories.ALL')}
@@ -487,7 +495,8 @@ function MeetingTemplatesContent({
               key={value}
               intent={category === value ? 'primary' : 'quiet'}
               size="small"
-              onClick={() => changeParams({ category: value, template: null })}
+              aria-pressed={category === value}
+              onClick={() => changeParams({ category: value, page: null, template: null })}
               sx={{ whiteSpace: 'nowrap', minHeight: { xs: 44, md: 32 } }}
             >
               {t('templates.categories.' + value)}
@@ -497,8 +506,9 @@ function MeetingTemplatesContent({
             intent={favoritesOnly ? 'primary' : 'quiet'}
             size="small"
             startIcon={<Star size={14} aria-hidden="true" />}
+            aria-pressed={favoritesOnly}
             onClick={() =>
-              changeParams({ favorites: favoritesOnly ? null : 'true', template: null })
+              changeParams({ favorites: favoritesOnly ? null : 'true', page: null, template: null })
             }
             sx={{ whiteSpace: 'nowrap', minHeight: { xs: 44, md: 32 } }}
           >

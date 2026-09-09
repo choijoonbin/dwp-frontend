@@ -36,7 +36,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
   const { gate } = detail;
   const evidenceTypes = new Set(detail.evidence.map((item) => item.evidenceType));
   return (
-    <Stack spacing={2.5}>
+    <Stack spacing={1.5}>
       <section>
         <ReviewHeading icon={<ShieldCheck size={17} />}>
           {t('dwaionAdmin.gates.review.policyTitle')}
@@ -45,7 +45,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-            columnGap: 3,
+            columnGap: 2,
             borderBlock: 1,
             borderColor: 'divider',
           }}
@@ -83,7 +83,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
         <ReviewHeading icon={<FileCheck2 size={17} />}>
           {t('dwaionAdmin.gates.review.evidenceTitle')}
         </ReviewHeading>
-        <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mb: 1.5 }}>
+        <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mb: 1 }}>
           {gate.requiredEvidenceTypes.map((type) => {
             const present = evidenceTypes.has(type);
             return (
@@ -99,7 +99,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
           })}
         </Stack>
         {detail.missingEvidenceTypes.length > 0 && (
-          <Alert severity="warning" sx={{ mb: 1.5 }}>
+          <Alert severity="warning" sx={{ mb: 1 }}>
             {t('dwaionAdmin.gates.review.missingEvidence', {
               evidence: evidenceLabels(detail.missingEvidenceTypes, t),
             })}
@@ -112,7 +112,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
         ) : (
           <Stack divider={<Divider flexItem />} sx={{ borderBlock: 1, borderColor: 'divider' }}>
             {detail.evidence.map((item) => (
-              <Box key={item.evidenceId} sx={{ py: 1.25 }}>
+              <Box key={item.evidenceId} sx={{ py: 0.75 }}>
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
                   justifyContent="space-between"
@@ -155,7 +155,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
         ) : (
           <Stack divider={<Divider flexItem />} sx={{ borderBlock: 1, borderColor: 'divider' }}>
             {detail.events.map((event) => (
-              <Box key={event.eventId} sx={{ py: 1.25 }}>
+              <Box key={event.eventId} sx={{ py: 0.75 }}>
                 <Stack direction="row" justifyContent="space-between" gap={2}>
                   <Typography variant="body2" fontWeight={650}>
                     {auditEventLabel(event.eventType, t)}
@@ -207,7 +207,7 @@ function ApprovalEligibility({ detail }: { detail: DwaionOperationalGateDetail }
 
 function ReviewHeading({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mb: 1 }}>
+    <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mb: 0.75 }}>
       {icon}
       <Typography variant="subtitle2">{children}</Typography>
     </Stack>
@@ -216,7 +216,7 @@ function ReviewHeading({ icon, children }: { icon: React.ReactNode; children: Re
 
 function ReviewValue({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <Box sx={{ py: 1.25, minWidth: 0 }}>
+    <Box sx={{ py: 0.75, minWidth: 0 }}>
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.25 }}>
         {label}
       </Typography>

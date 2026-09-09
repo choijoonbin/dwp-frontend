@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ConnectionQualityIndicator, useParticipants } from '@livekit/components-react';
 import { Mic, MicOff, MonitorUp, Video, VideoOff, X } from 'lucide-react';
 
-import type { VideoMeetingRole } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type {
+  VideoMeetingParticipant,
+  VideoMeetingRole,
+} from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { MeetingParticipantDisconnect } from './meeting-participant-disconnect';
 
 import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
 
@@ -38,7 +42,21 @@ function initials(name: string): string {
     .toUpperCase();
 }
 
-export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
+export function MeetingParticipantsPanel({
+  onClose,
+  meetingId,
+  authorizationScope,
+  canModerate,
+  myRole,
+  participantRecords = [],
+}: {
+  onClose: () => void;
+  meetingId?: string;
+  authorizationScope?: string;
+  canModerate?: boolean;
+  myRole?: VideoMeetingRole | null;
+  participantRecords?: VideoMeetingParticipant[];
+}) {
   const { t } = useTranslation('meetings');
   const participants = useParticipants();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -63,6 +81,7 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
       aria-labelledby="meeting-participants-title"
       onKeyDownCapture={(event) => containMeetingOverlayTab(event, panelRef.current)}
       onKeyDown={(event) => {
+        if (!event.currentTarget.contains(event.target as Node)) return;
         if (event.key !== 'Escape') return;
         event.preventDefault();
         onClose();
@@ -89,6 +108,18 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
         {orderedParticipants.map((participant) => {
           const name = participant.name || participant.identity;
           const role = participantRole(participant.metadata);
+          const record = participantRecords.find(
+            (entry) =>
+              participant.identity.includes(
+                `:meeting:${meetingId}:participant:${entry.participantId}:incarnation:`
+              ) && participant.identity.endsWith(`:user:${entry.userId}`)
+          );
+          const canDisconnect =
+            canModerate &&
+            !participant.isLocal &&
+            record &&
+            record.participantRole !== 'ORGANIZER' &&
+            (record.participantRole !== 'CO_HOST' || myRole === 'ORGANIZER');
           const mediaState = [
             participant.isScreenShareEnabled ? t('room.controls.screenSharing') : null,
             t(
@@ -119,6 +150,13 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
                   {participant.isLocal && <small>{t('room.controls.participantYou')}</small>}
                 </span>
                 <small>{t(`room.roles.${role}`)}</small>
+                {canDisconnect && meetingId && authorizationScope && (
+                  <MeetingParticipantDisconnect
+                    meetingId={meetingId}
+                    authorizationScope={authorizationScope}
+                    participant={record}
+                  />
+                )}
               </span>
               <span
                 className="dwp-meeting-participant__media"

@@ -5,7 +5,6 @@ import {
   Camera,
   Copy,
   Mic,
-  Sparkles,
   Volume2,
   ClipboardList,
   FileText,
@@ -33,6 +32,8 @@ import Typography from '@mui/material/Typography';
 import { preparationEntryAllowed, preparationInvitationChanged } from './meeting-preparation-model';
 import { MeetingStatusChip } from './meeting-components';
 import { MeetingPreparationMaterials } from './meeting-preparation-materials';
+import { MeetingPreparationBriefing } from './meeting-preparation-briefing';
+import { MeetingInvitationDelivery } from './meeting-invitation-delivery';
 import { MeetingPreparationDisclosure } from './meeting-preparation-disclosure';
 import {
   meetingInsetSurface as meetingInset,
@@ -259,26 +260,7 @@ export function MeetingPreparationContent({
         <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
           {meeting.description || t('preparation.noPurpose')}
         </Typography>
-        <Stack
-          gap={1}
-          sx={(theme) => ({ ...meetingInset(theme, 'primary'), p: 2 })}
-          data-testid="meeting-preparation-briefing"
-        >
-          <SectionHeader
-            icon={Sparkles}
-            glyph="plain"
-            density="compact"
-            title={t('preparation.design.briefing')}
-          />
-          <Typography variant="body2" color="text.secondary">
-            {t('preparation.briefingUnavailable')}
-          </Typography>
-          <MeetingPreparationDisclosure label={t('preparation.design.moreInformation')}>
-            <Typography variant="caption" color="text.secondary">
-              {t('preparation.design.briefingEvidence')}
-            </Typography>
-          </MeetingPreparationDisclosure>
-        </Stack>
+        <MeetingPreparationBriefing preparation={preparation} timeZone={meeting.timeZone} />
       </PreparationSection>
       <PreparationSection
         id="preparation-agenda"
@@ -524,6 +506,13 @@ export function MeetingPreparationPeople({
     <Stack gap={{ xs: 2, md: 3 }} sx={{ minWidth: 0 }}>
       <PreparationSection id="preparation-people" icon={UsersRound} title={t('preparation.people')}>
         <Typography variant="body2">{t('preparation.responseCounts', counts)}</Typography>
+        {meeting.startsAt && meeting.endsAt && (
+          <MeetingInvitationDelivery
+            meetingId={meeting.meetingId}
+            meetingVersion={preparation.meetingVersion}
+            invitationRevision={preparation.invitationRevision}
+          />
+        )}
         {preparation.myResponse && (
           <Box
             sx={{

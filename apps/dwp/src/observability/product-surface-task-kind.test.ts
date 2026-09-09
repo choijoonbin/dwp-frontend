@@ -9,6 +9,7 @@ const BACKEND_TASK_ALLOWLIST = {
   'calendar.work': ['WORK'],
   'communications.management': ['OPERATIONS'],
   'communications.work': ['WORK'],
+  'dwaion.management': ['ADMINISTRATION'],
   'dwaion.work': ['WORK'],
   'hcm.management': [
     'ADMINISTRATION',
@@ -63,6 +64,14 @@ describe('governed mutation telemetry task classification', () => {
     expect(task('route.hcm.management.integration-execute.action')).toBe('INTEGRATION');
     expect(task('route.hcm.management.controlled-export-create.action')).toBe('REPORTING');
     expect(task('route.hcm.management.reference-update.action')).toBe('CONFIGURATION');
+
+    expect(
+      resolveProductSurfaceTaskKind({
+        productKey: 'dwaion',
+        surfaceKey: 'dwaion.management',
+        routeContractKey: 'route.dwaion.management.action-policy-update.action',
+      })
+    ).toBe('ADMINISTRATION');
   });
 
   it('fails closed for a new, mismatched, or unclassified ACTION', () => {

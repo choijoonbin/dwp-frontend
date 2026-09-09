@@ -52,17 +52,24 @@ export function DwaionHomeSignals({
   const failed = items.filter((item) => item.state === 'error');
   const available = items.filter((item) => item.state === 'ready').length;
   return (
-    <Box component="section" aria-label={t('dwaionHome.signalSummary')} sx={{ mt: 3 }}>
+    <Box
+      component="section"
+      aria-label={t('dwaionHome.signalSummary')}
+      sx={{ mt: { xs: 1.5, md: 2.5 }, minWidth: 0 }}
+    >
       <Box
         sx={{
-          display: 'grid',
+          display: { xs: 'flex', md: 'grid' },
           gridTemplateColumns: {
-            xs: 'repeat(2, minmax(0, 1fr))',
-            sm: 'repeat(2, minmax(0, 1fr))',
-            lg: 'repeat(5, minmax(0, 1fr))',
+            md: 'repeat(5, minmax(0, 1fr))',
           },
-          gap: 1.5,
-          '@media (max-width: 359px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
+          gap: { xs: 0.75, md: 1.5 },
+          overflowX: { xs: 'auto', md: 'visible' },
+          mx: { xs: -2, md: 0 },
+          px: { xs: 2, md: 0 },
+          pb: { xs: 0.25, md: 0 },
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
         {items.map((item) => {
@@ -78,16 +85,22 @@ export function DwaionHomeSignals({
               sx={{
                 ...HOME_INTERACTION,
                 minWidth: 0,
-                display: 'block',
+                flex: { xs: '0 0 auto', md: 'initial' },
+                display: { xs: 'flex', md: 'block' },
+                alignItems: 'center',
+                gap: { xs: 0.75, md: 0 },
                 textAlign: 'left',
-                p: 1.75,
+                p: { xs: '7px 10px', md: 1.75 },
                 border: 1,
                 borderColor: emphasis ? 'primary.main' : 'divider',
-                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-                bgcolor: 'background.paper',
+                borderRadius: (theme) => ({
+                  xs: Number(theme.shape.borderRadius) * 1.5 + 'px',
+                  md: Number(theme.shape.borderRadius) * 1 + 'px',
+                }),
+                bgcolor: emphasis ? 'var(--dwp-product-soft)' : 'background.paper',
                 color: 'text.primary',
-                minHeight: 122,
-                '&:last-child': { gridColumn: { xs: '1 / -1', lg: 'auto' } },
+                minHeight: { xs: 36, md: 112 },
+                whiteSpace: { xs: 'nowrap', md: 'normal' },
                 '&:hover': {
                   bgcolor: 'action.hover',
                   borderColor: 'primary.main',
@@ -100,20 +113,35 @@ export function DwaionHomeSignals({
                 },
               }}
             >
-              <Stack direction="row" spacing={0.75} alignItems="center" sx={{ color }}>
-                <Icon size={15} aria-hidden="true" />
+              <Stack direction="row" spacing={0.75} alignItems="center" sx={{ color, minWidth: 0 }}>
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    display: { xs: 'block', md: 'none' },
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: 'currentColor',
+                    flexShrink: 0,
+                  }}
+                />
+                <Box sx={{ display: { xs: 'none', md: 'contents' } }}>
+                  <Icon size={15} aria-hidden="true" style={{ flexShrink: 0 }} />
+                </Box>
                 <Typography variant="caption" fontWeight="fontWeightBold" sx={{ flex: 1 }}>
                   {t(`dwaionHome.metrics.${item.key}`)}
                 </Typography>
-                <ArrowUpRight size={14} aria-hidden="true" />
+                <Box sx={{ display: { xs: 'none', md: 'contents' } }}>
+                  <ArrowUpRight size={14} aria-hidden="true" />
+                </Box>
               </Stack>
               <Typography
                 component="div"
                 sx={{
-                  fontSize: (theme) => theme.typography.h4.fontSize,
-                  lineHeight: (theme) => theme.typography.h4.lineHeight,
+                  fontSize: (theme) => ({ xs: 14, md: theme.typography.h4.fontSize }),
+                  lineHeight: (theme) => ({ xs: 1.2, md: theme.typography.h4.lineHeight }),
                   fontWeight: 'fontWeightBold',
-                  mt: 1,
+                  mt: { xs: 0, md: 1 },
                   color: emphasis ? 'primary.main' : 'text.primary',
                   fontVariantNumeric: 'tabular-nums',
                 }}
@@ -137,7 +165,7 @@ export function DwaionHomeSignals({
               <Typography
                 variant="caption"
                 color={item.state === 'error' ? 'warning.main' : 'text.secondary'}
-                sx={{ display: 'block', mt: 0.5 }}
+                sx={{ display: { xs: 'none', md: 'block' }, mt: 0.5 }}
               >
                 {item.state === 'loading'
                   ? t('dwaionHome.loading')
@@ -154,6 +182,7 @@ export function DwaionHomeSignals({
         gap={1}
         alignItems={{ xs: 'stretch', md: 'center' }}
         sx={{
+          display: { xs: 'none', md: 'flex' },
           mt: 2,
           px: 1.5,
           py: 1,

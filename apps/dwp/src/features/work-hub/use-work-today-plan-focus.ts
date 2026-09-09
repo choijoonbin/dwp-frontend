@@ -8,7 +8,7 @@ type FocusArea = 'selected' | 'candidate';
 export function useWorkTodayPlanFocus(draft: readonly WorkSourceReference[]) {
   const controls = useRef(new Map<string, HTMLElement>());
   const selectedHeading = useRef<HTMLHeadingElement>(null);
-  const candidatesHeading = useRef<HTMLHeadingElement>(null);
+  const candidatesHeading = useRef<HTMLElement>(null);
   const pending = useRef<{ area: FocusArea; key: string } | null>(null);
 
   useLayoutEffect(() => {
@@ -23,6 +23,10 @@ export function useWorkTodayPlanFocus(draft: readonly WorkSourceReference[]) {
   return {
     selectedHeading,
     candidatesHeading,
+    moveTo: (area: FocusArea, key: string) => {
+      const fallback = area === 'selected' ? selectedHeading.current : candidatesHeading.current;
+      (controls.current.get(`${area}:${key}`) ?? fallback)?.focus();
+    },
     register: (area: FocusArea, key: string) => (element: HTMLElement | null) => {
       const controlKey = `${area}:${key}`;
       if (element) controls.current.set(controlKey, element);

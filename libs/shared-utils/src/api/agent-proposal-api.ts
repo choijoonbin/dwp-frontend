@@ -2,8 +2,10 @@ import type { AgentComponents } from '@dwp-frontend/api-contracts';
 
 import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
+import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
 
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -46,7 +48,11 @@ export async function decideDwaionProposal(
   proposalId: string,
   decision: DwaionProposalDecision,
   expectedRevision: number,
-  snoozeUntil?: string
+  snoozeUntil?: string,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
 ): Promise<DwaionProposalDecisionReceipt> {
   if (!UUID_PATTERN.test(proposalId)) throw new TypeError('Agent proposal identifier is invalid.');
   if (!Number.isInteger(expectedRevision) || expectedRevision < 1) {
@@ -64,7 +70,8 @@ export async function decideDwaionProposal(
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     `/api/agent/v1/proposals/${encodeURIComponent(proposalId)}/decisions`,
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   if (!isProposalDecisionReceipt(response.data.data)) {
     throw new HttpError('Agent proposal decision response is invalid.', 502, response.data);
@@ -72,13 +79,19 @@ export async function decideDwaionProposal(
   return response.data.data;
 }
 
-export async function analyzeDwaionProposals(): Promise<DwaionProposalAnalysisReceipt> {
+export async function analyzeDwaionProposals(
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
+): Promise<DwaionProposalAnalysisReceipt> {
   const body: AgentSchemas['AnalyzeProposalsRequest'] = {
     commandId: globalThis.crypto.randomUUID(),
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     '/api/agent/v1/proposals/analyze',
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   if (!isProposalAnalysisReceipt(response.data.data)) {
     throw new HttpError('Agent proposal analysis response is invalid.', 502, response.data);
@@ -98,7 +111,11 @@ export async function getDwaionProposalAnalysisPreference(): Promise<DwaionPropo
 
 export async function updateDwaionProposalAnalysisPreference(
   expectedRevision: number,
-  proactiveAnalysisEnabled: boolean
+  proactiveAnalysisEnabled: boolean,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
 ): Promise<DwaionProposalAnalysisPreference> {
   if (!Number.isInteger(expectedRevision) || expectedRevision < 0) {
     throw new TypeError('Agent proposal preference revision is invalid.');
@@ -110,7 +127,8 @@ export async function updateDwaionProposalAnalysisPreference(
   };
   const response = await axiosInstance.put<ApiResponse<unknown>, typeof body>(
     '/api/agent/v1/proposals/preferences',
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   if (!isProposalAnalysisPreference(response.data.data)) {
     throw new HttpError('Agent proposal preference response is invalid.', 502, response.data);
@@ -118,13 +136,19 @@ export async function updateDwaionProposalAnalysisPreference(
   return response.data.data;
 }
 
-export async function clearDwaionProposalInbox(): Promise<DwaionProposalClearReceipt> {
+export async function clearDwaionProposalInbox(
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
+): Promise<DwaionProposalClearReceipt> {
   const body: AgentSchemas['ClearProposalInboxRequest'] = {
     commandId: globalThis.crypto.randomUUID(),
   };
   const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
     '/api/agent/v1/proposals/clear',
-    body
+    body,
+    productSurfaceGovernedMutationConfig(authority)
   );
   if (!isProposalClearReceipt(response.data.data)) {
     throw new HttpError('Agent proposal clear response is invalid.', 502, response.data);

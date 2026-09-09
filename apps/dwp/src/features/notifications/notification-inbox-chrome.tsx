@@ -47,15 +47,15 @@ export function NotificationWorkbenchHeader({
       justifyContent="space-between"
       alignItems="center"
       gap={1}
-      sx={{ pb: 2.25, borderBottom: 1, borderColor: 'divider' }}
+      sx={{ pb: 1.5, borderBottom: 1, borderColor: 'divider' }}
     >
-      <Stack direction="row" spacing={1.5} alignItems="flex-start" minWidth={0}>
-        <GlyphSurface size={42} variant="soft">
-          <BellRing size={21} strokeWidth={1.9} />
+      <Stack direction="row" spacing={1.25} alignItems="center" minWidth={0}>
+        <GlyphSurface size={38} variant="soft">
+          <BellRing size={19} strokeWidth={1.9} />
         </GlyphSurface>
         <Box minWidth={0}>
           <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-            <Typography component="h1" variant="h4">
+            <Typography component="h1" variant="h5">
               {t('workbench.title')}
             </Typography>
             <Chip
@@ -124,15 +124,16 @@ export function NotificationKpiFilterBar({
       role="group"
       aria-label={t('home.summaryLabel')}
       sx={{
-        mt: 2,
-        display: 'grid',
-        gap: '1px',
-        gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(5, minmax(0, 1fr))' },
+        mt: 1.5,
+        p: { xs: 0.5, sm: 0.75 },
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: { xs: 'nowrap', sm: 'wrap' },
+        gap: { xs: 0.25, sm: 0.75 },
         border: 1,
         borderColor: 'divider',
         borderRadius: 'shape.borderRadius',
-        overflow: 'hidden',
-        bgcolor: 'divider',
+        bgcolor: 'background.paper',
       }}
     >
       {KPI_ITEMS.map(({ key, icon: Icon }) => {
@@ -142,38 +143,66 @@ export function NotificationKpiFilterBar({
           <ButtonBase
             key={key}
             aria-pressed={active}
+            aria-label={`${notificationKpiCount(summary, key)} ${t(`workbench.kpis.${key}`)}`}
             onClick={() => onSelect(key)}
             sx={{
               minWidth: 0,
-              minHeight: 72,
-              px: 1.75,
-              py: 1.25,
+              minHeight: 36,
+              px: { xs: 0.4, sm: 1.25 },
+              py: 0.65,
+              flex: { xs: '1 1 0', sm: '0 0 auto' },
               justifyContent: 'flex-start',
               textAlign: 'left',
-              bgcolor: active ? 'var(--dwp-product-selection)' : 'background.paper',
-              color: active ? 'var(--dwp-product-accent)' : 'text.primary',
-              '&:hover': { bgcolor: active ? 'var(--dwp-product-selection)' : 'action.hover' },
+              borderRadius: 'shape.borderRadius',
+              bgcolor: active ? 'primary.main' : 'transparent',
+              color: active ? 'primary.contrastText' : 'text.primary',
+              boxShadow: active ? 1 : 0,
+              '&:hover': { bgcolor: active ? 'primary.dark' : 'action.hover' },
               '&:focus-visible': {
                 outline: '2px solid',
                 outlineColor: 'primary.main',
-                outlineOffset: -2,
+                outlineOffset: 2,
               },
             }}
           >
-            <Stack direction="row" spacing={1.1} alignItems="center" minWidth={0}>
-              <Icon size={17} aria-hidden="true" />
-              <Box minWidth={0}>
-                <Typography variant="h6" component="span" fontWeight="fontWeightBold">
-                  {notificationKpiCount(summary, key)}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  component="span"
-                  display="block"
-                  color="text.secondary"
-                  noWrap
-                >
+            <Stack
+              direction="row"
+              spacing={{ xs: 0.35, sm: 0.75 }}
+              justifyContent="center"
+              alignItems="center"
+              minWidth={0}
+              width={1}
+            >
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'grid' } }}>
+                <Icon size={15} aria-hidden="true" />
+              </Box>
+              <Typography variant="caption" component="span" fontWeight="fontWeightBold" noWrap>
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
                   {t(`workbench.kpis.${key}`)}
+                </Box>
+                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                  {t(`workbench.kpisCompact.${key}`)}
+                </Box>
+              </Typography>
+              <Box
+                component="span"
+                sx={{
+                  minWidth: { xs: 18, sm: 20 },
+                  height: { xs: 18, sm: 20 },
+                  px: { xs: 0.35, sm: 0.55 },
+                  display: 'inline-grid',
+                  placeItems: 'center',
+                  borderRadius: '50%',
+                  bgcolor: active ? 'primary.dark' : 'action.selected',
+                }}
+              >
+                <Typography
+                  component="span"
+                  variant="caption"
+                  fontWeight="fontWeightBold"
+                  color="inherit"
+                >
+                  {notificationKpiCount(summary, key)}
                 </Typography>
               </Box>
             </Stack>
@@ -182,13 +211,18 @@ export function NotificationKpiFilterBar({
       })}
       <Box
         sx={{
-          minHeight: 72,
-          px: 1.75,
-          py: 1.25,
-          display: 'flex',
+          minHeight: 36,
+          ml: { xs: 0, md: 'auto' },
+          mt: { xs: 0.25, md: 0 },
+          pt: { xs: 0.75, md: 0 },
+          pl: { xs: 0.25, md: 1.5 },
+          pr: 0.75,
+          display: { xs: 'none', sm: 'flex' },
           alignItems: 'center',
-          bgcolor: 'background.paper',
-          gridColumn: { xs: '1 / -1', lg: 'auto' },
+          flex: { xs: '1 0 100%', md: '0 0 auto' },
+          borderTop: { xs: 1, md: 0 },
+          borderLeft: { xs: 0, md: 1 },
+          borderColor: 'divider',
         }}
       >
         <Stack
@@ -198,14 +232,14 @@ export function NotificationKpiFilterBar({
           width={1}
           gap={1.5}
         >
-          <Box sx={{ flexShrink: 0 }}>
-            <Typography component="span" variant="h6" fontWeight="fontWeightBold">
-              {inboxTotal}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+          <Stack direction="row" alignItems="baseline" gap={0.55} sx={{ flexShrink: 0 }}>
+            <Typography variant="caption" color="text.secondary" noWrap>
               {t('workbench.kpis.INBOX')}
             </Typography>
-          </Box>
+            <Typography component="span" variant="subtitle2" fontWeight="fontWeightBold">
+              {inboxTotal}
+            </Typography>
+          </Stack>
           <Box
             role="progressbar"
             aria-label={t('workbench.kpis.UNREAD_SHARE')}
@@ -214,7 +248,7 @@ export function NotificationKpiFilterBar({
             aria-valuenow={unreadShare}
             title={t('workbench.kpis.UNREAD_SHARE_VALUE', { value: unreadShare })}
             sx={{
-              width: { xs: 84, lg: 60, xl: 84 },
+              width: { xs: 96, md: 72, xl: 96 },
               minWidth: 24,
               height: 6,
               overflow: 'hidden',
@@ -260,21 +294,24 @@ export function NotificationDigestBanner({
       component="section"
       aria-labelledby="notification-digest-title"
       sx={(theme) => ({
-        mt: 1.5,
-        px: { xs: 1.5, md: 2 },
-        py: 1.4,
+        mt: 1.25,
+        px: { xs: 1.25, md: 1.5 },
+        py: 1.15,
+        border: 1,
         borderLeft: 3,
-        borderColor: 'primary.main',
-        bgcolor: alpha(theme.palette.primary.main, 0.07),
+        borderColor: alpha(theme.palette.primary.main, 0.28),
+        borderLeftColor: 'primary.main',
+        borderRadius: 'shape.borderRadius',
+        bgcolor: alpha(theme.palette.primary.main, 0.055),
       })}
     >
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        alignItems={{ xs: 'stretch', sm: 'center' }}
-        gap={1.25}
-      >
+      <Stack direction="row" alignItems="center" gap={{ xs: 0.75, sm: 1.25 }}>
         <Stack direction="row" spacing={1.2} alignItems="flex-start" minWidth={0} sx={{ flex: 1 }}>
-          <Sparkles size={18} color="var(--dwp-product-accent)" aria-hidden="true" />
+          <Box sx={{ display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
+            <GlyphSurface size={32} variant="soft">
+              <Sparkles size={16} color="var(--dwp-product-accent)" aria-hidden="true" />
+            </GlyphSurface>
+          </Box>
           <Box minWidth={0}>
             <Typography
               id="notification-digest-title"
@@ -287,7 +324,14 @@ export function NotificationDigestBanner({
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ mt: 0.2, overflowWrap: 'anywhere' }}
+              sx={{
+                mt: 0.2,
+                overflowWrap: 'anywhere',
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: { xs: 2, sm: 1 },
+                overflow: 'hidden',
+              }}
             >
               {lead
                 ? t('workbench.digest.withLead', {
@@ -298,9 +342,14 @@ export function NotificationDigestBanner({
             </Typography>
           </Box>
         </Stack>
-        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+        <Stack direction="row" spacing={0.25} justifyContent="flex-end" flexShrink={0}>
           <ActionButton intent="primary" size="small" onClick={onReview}>
-            {t('workbench.digest.review')}
+            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+              {t('workbench.digest.review')}
+            </Box>
+            <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+              {t('workbench.digest.reviewCompact')}
+            </Box>
           </ActionButton>
           <ActionIconButton
             label={t('workbench.digest.dismiss')}
@@ -333,6 +382,14 @@ export function NotificationStreamGroupHeading({
       : groupKey === 'CONVERSATIONS'
         ? MessageSquareText
         : BellRing;
+  const tone =
+    groupKey === 'ACTION_REQUIRED'
+      ? 'error.main'
+      : groupKey === 'CONVERSATIONS'
+        ? 'success.main'
+        : 'primary.main';
+  const chipColor =
+    groupKey === 'ACTION_REQUIRED' ? 'error' : groupKey === 'CONVERSATIONS' ? 'success' : 'primary';
   return (
     <Stack
       direction="row"
@@ -342,7 +399,9 @@ export function NotificationStreamGroupHeading({
       sx={{ py: 1.15 }}
     >
       <Stack direction="row" alignItems="center" gap={0.75}>
-        <Icon size={16} color="var(--dwp-product-accent)" aria-hidden="true" />
+        <Box aria-hidden="true" sx={{ color: tone, display: 'grid' }}>
+          <Icon size={16} />
+        </Box>
         <Typography
           id={headingId}
           component={headingComponent}
@@ -351,7 +410,7 @@ export function NotificationStreamGroupHeading({
         >
           {t(`workbench.groups.${groupKey}.title`)}
         </Typography>
-        <Chip size="small" label={count} sx={{ height: 20 }} />
+        <Chip size="small" color={chipColor} variant="outlined" label={count} sx={{ height: 20 }} />
       </Stack>
       {groupKey === 'ACTION_REQUIRED' && (
         <Typography

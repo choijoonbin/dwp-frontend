@@ -1,0 +1,685 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/dwp-frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 5
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 9,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://127.0.0.1:4318",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "work-stitch-design-sync.spec.ts",
+      "file": "work-stitch-design-sync.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "desktop-1440",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14489,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T15:23:59.705Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/01-unified-queue-89143ee1bcc1cfb89b4757562abf7f76e084fec2.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-2a2993e05703b49549c5000a7e57be20d1178a98.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIuyYpOuKmCDqs4Ttmo0iLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/07-today-plan-bd24c21aba0ba4043210330514b616addf8520c3.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-0eefb382ff1d9a946ecc1238d2255ad8fb950d77.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-5ac6cd9447bb205142f12999b254a2fdb2f0804c.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-41a6547f28149593bef9cf9e07060ac577e89222.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/09-source-status-3644aa7e155e758b2582400241c5ccb611c09df1.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/09-source-status-full-a459429df3d7fe944a63f255cd1dfc970d151751.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTQ0MCwKICAiZG9jdW1lbnRXaWR0aCI6IDE0NDAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-707120edf13ff30f07f39c5af7467c446ee4ce5d.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-7577bea6eed2be77e6fa7d5b9de7b4a40fd49cd6.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-abdafb90c1c473c053c9",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "desktop-1280",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 15011,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T15:23:59.675Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-46ccdf285980d47e00e8c7419cb5d3c5d7c97733.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-e5f00ec4bb21d927bc6e561490c024bcd6a619b7.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIuyYpOuKmCDqs4Ttmo0iLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/07-today-plan-5cad68d1353dbbcee0ee3d17a6c331c0a8fefbf3.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-d5d1551c193c7b9249688aa1b8911f5b878f0ada.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-df8d978d313c41a062ca1fe2fe3309f2ec1237a0.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-bebc22718e097c1f40d3768a4ce3133c2299ea69.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/09-source-status-deda8cffe8f2b70a97758c82c2f3ccd430bcf9bc.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/09-source-status-full-75860744f15ee59028593e9aea32a6ed9f21f16c.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMTI4MCwKICAiZG9jdW1lbnRXaWR0aCI6IDEyODAsCiAgInRpdGxlIjogIu2Gte2VqeyXheustO2VqCIsCiAgImhvcml6b250YWxPdmVyZmxvdyI6IDAKfQ=="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-0e860ca303be5742661e7b69287072a1c096ca0b.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-15aef9ca28a07e2addb70d946e344400d4ffabd7.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-cb6f4c97b19521b4e81c",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "mobile-390",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 12464,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T15:23:59.652Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzkwLAogICJkb2N1bWVudFdpZHRoIjogMzkwLAogICJ0aXRsZSI6ICLthrXtlansl4XrrLTtlagiLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-ef15f19b03f965597b3ac99b08cd9a2847e5444b.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-1fa083b638ee748062d288370dda16c79843eed6.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzkwLAogICJkb2N1bWVudFdpZHRoIjogMzkwLAogICJ0aXRsZSI6ICLsmKTripgg6rOE7ZqNIiwKICAiaG9yaXpvbnRhbE92ZXJmbG93IjogMAp9"
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/07-today-plan-ff83ae8d1cd00acfaf65f59203e3343431cb9905.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-43f30b8fefcb4b3361ecf1c9ef234250f1503289.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzkwLAogICJkb2N1bWVudFdpZHRoIjogMzkwLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-c1da965c375a99ba0f008118eae6f4aa632121d9.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-ee27d3c6ebaa9d9e4e45049c40e088ac1ca2dfcd.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzkwLAogICJkb2N1bWVudFdpZHRoIjogMzkwLAogICJ0aXRsZSI6ICLthrXtlansl4XrrLTtlagiLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/09-source-status-dfa5096f2190ccd58e2eb83ace9de0212345df1c.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/09-source-status-full-4d2baf1098c9cf313115b13744b7a10c2e8220a2.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzkwLAogICJkb2N1bWVudFdpZHRoIjogMzkwLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-f9ecb946b271aa7ac287af555f3c327e1ab7c595.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-1a15070b7f6d8389a0b749efa3298c352d4cc26d.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-ba490fa642c18a81896b",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "mobile-320",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 14765,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T15:23:59.742Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzIwLAogICJkb2N1bWVudFdpZHRoIjogMzIwLAogICJ0aXRsZSI6ICLthrXtlansl4XrrLTtlagiLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/01-unified-queue-baf87720e9a04294666e0dcd88e900beb7a9d304.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-f46a6c5346c65e8a4828632cb40b4759b82ed5bc.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzIwLAogICJkb2N1bWVudFdpZHRoIjogMzIwLAogICJ0aXRsZSI6ICLsmKTripgg6rOE7ZqNIiwKICAiaG9yaXpvbnRhbE92ZXJmbG93IjogMAp9"
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/07-today-plan-b74b60def11882dfea7b7d732a14c9371adf85ea.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-8d2ee69b187b5be22e878839b74d5feb9738ffdc.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzIwLAogICJkb2N1bWVudFdpZHRoIjogMzIwLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-39242462e1afa13c997769f507d087462543da6a.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-f99b704871bcebc0d68978b7b71357a275c30976.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzIwLAogICJkb2N1bWVudFdpZHRoIjogMzIwLAogICJ0aXRsZSI6ICLthrXtlansl4XrrLTtlagiLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/09-source-status-5d544e4095204b516cd1b2d8a2dd2fda2d0b8088.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/09-source-status-full-3eaaf152eeee280e0744cf2561f36dfe47513e6f.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogMzIwLAogICJkb2N1bWVudFdpZHRoIjogMzIwLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-ccc17e608a95ebffd85af339101ea9b619c861b3.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-aeefb7a386ec741aa89bafa448a5a58f95babe8d.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-5606bdac508fb5fea3d5",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "zoom-200-reflow",
+          "file": "work-stitch-design-sync.spec.ts",
+          "line": 203,
+          "column": 8,
+          "specs": [
+            {
+              "title": "01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 15191,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T15:23:59.772Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "01-unified-queue-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogNzIwLAogICJkb2N1bWVudFdpZHRoIjogNzIwLAogICJ0aXRsZSI6ICLthrXtlansl4XrrLTtlagiLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "01-unified-queue",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/01-unified-queue-01359d4838dd462a8f36ed4b1c8da01bd0704bd1.png"
+                        },
+                        {
+                          "name": "01-unified-queue-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/01-unified-queue-full-2d406727e2878f92823b4b9acfc4e000254c9a3c.png"
+                        },
+                        {
+                          "name": "07-today-plan-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogNzIwLAogICJkb2N1bWVudFdpZHRoIjogNzIwLAogICJ0aXRsZSI6ICLsmKTripgg6rOE7ZqNIiwKICAiaG9yaXpvbnRhbE92ZXJmbG93IjogMAp9"
+                        },
+                        {
+                          "name": "07-today-plan",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/07-today-plan-7aecac25be13f6c7c4e4983963b60240ea737bd8.png"
+                        },
+                        {
+                          "name": "07-today-plan-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/07-today-plan-full-5003bc98c3ecce4425264a3e8abf4c9319716be0.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogNzIwLAogICJkb2N1bWVudFdpZHRoIjogNzIwLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "08-calendar-handoff",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-3cf9ec0a200d1e5de6b4d34aca2f1e1fabbd2cbf.png"
+                        },
+                        {
+                          "name": "08-calendar-handoff-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/08-calendar-handoff-full-6bc545e8b3800a3c8b64ea8346b238c231f0d3a0.png"
+                        },
+                        {
+                          "name": "09-source-status-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogNzIwLAogICJkb2N1bWVudFdpZHRoIjogNzIwLAogICJ0aXRsZSI6ICLthrXtlansl4XrrLTtlagiLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "09-source-status",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/09-source-status-12ca412d18103d7bba117b489819f7a824139d6a.png"
+                        },
+                        {
+                          "name": "09-source-status-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/09-source-status-full-4973c9ac9123edcc0375937c795823196718d539.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-layout",
+                          "contentType": "application/json",
+                          "body": "ewogICJ2aWV3cG9ydFdpZHRoIjogNzIwLAogICJkb2N1bWVudFdpZHRoIjogNzIwLAogICJob3Jpem9udGFsT3ZlcmZsb3ciOiAwCn0="
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-9f5eda296ab8a2d6ad78332da2811042f787eae6.png"
+                        },
+                        {
+                          "name": "11-selected-work-ai-assist-full",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/work-cross-final-results/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/attachments/11-selected-work-ai-assist-full-fbb6e2ecbf1f8db4ce7dc190ff7d0a805b3dd28c.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "547c4e1acdf2d1ccbf42-2f2a547a4ce30ba870c3",
+              "file": "work-stitch-design-sync.spec.ts",
+              "line": 209,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-08T15:23:58.581Z",
+    "duration": 17231.035,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

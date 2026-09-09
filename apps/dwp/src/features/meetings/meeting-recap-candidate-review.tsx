@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { ActionButton, ContentDialog, InlineFeedback } from '@dwp-frontend/design-system';
+import { useNavigate } from 'react-router-dom';
+import { ActionButton, ContentDialog } from '@dwp-frontend/design-system';
 import type { VideoMeetingIntelligenceReport } from '@dwp-frontend/shared-utils/api/video-meeting-intelligence-api';
-import { LockKeyhole } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -20,6 +21,7 @@ export function MeetingRecapCandidateReview({
   onClose: () => void;
 }) {
   const { t } = useTranslation('meetings');
+  const navigate = useNavigate();
   const item = candidate ? report?.analysis?.actionItems[candidate.actionItemIndex] : null;
   return (
     <ContentDialog
@@ -56,9 +58,6 @@ export function MeetingRecapCandidateReview({
             <Typography variant="body2" color="text.secondary">
               {t('designReview.recap.candidateMetadataPending')}
             </Typography>
-            <InlineFeedback severity="info" title={t('followUps.candidates.promotionBlockedTitle')}>
-              {t('followUps.candidates.promotionBlockedHint')}
-            </InlineFeedback>
           </>
         ) : (
           <Typography role="status">
@@ -67,10 +66,20 @@ export function MeetingRecapCandidateReview({
         )}
         <ActionButton
           intent="primary"
-          disabled
-          startIcon={<LockKeyhole size={16} aria-hidden="true" />}
+          disabled={!item || !candidate}
+          endIcon={<ArrowRight size={16} aria-hidden="true" />}
+          onClick={() => {
+            if (!item || !candidate) return;
+            onClose();
+            navigate(
+              `/meetings/follow-ups?${new URLSearchParams({
+                scope: 'CANDIDATES',
+                candidateId: candidate.candidateId,
+              })}`
+            );
+          }}
         >
-          {t('followUps.createCandidate')}
+          {t('followUps.candidates.continueCreation')}
         </ActionButton>
       </Stack>
     </ContentDialog>

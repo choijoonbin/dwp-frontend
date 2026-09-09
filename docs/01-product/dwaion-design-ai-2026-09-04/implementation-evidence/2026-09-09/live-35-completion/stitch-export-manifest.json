@@ -1,0 +1,327 @@
+{
+  "project": "13391261371843159731",
+  "captureDate": "2026-09-08",
+  "source": "Stitch UI ZIP export",
+  "files": [
+    {
+      "path": "dwai_on_10._assistant_voice_1440px_u10/code.html",
+      "bytes": 31943,
+      "sha256": "6f81c0dd245460b459bdedaf5eca9e8c58836bea3a138bdac357f1d6292c9a52"
+    },
+    {
+      "path": "dwai_on_10._assistant_voice_1440px_u10/screen.png",
+      "bytes": 359843,
+      "sha256": "6f6858e0822b3425dbe7c7ba7cbb57df7ed550169d8aed21347783f981a1bc0b"
+    },
+    {
+      "path": "dwai_on_06._proposal_review_1440px_u06/code.html",
+      "bytes": 38560,
+      "sha256": "6eb21b531b8da439a1a521e549d208f62088c5018fb727e6e30f3a53f35989c3"
+    },
+    {
+      "path": "dwai_on_06._proposal_review_1440px_u06/screen.png",
+      "bytes": 600500,
+      "sha256": "b915fe13cadf548ec11bb8e8e28e2807069149c01a86230dbbf6e2da3b269b39"
+    },
+    {
+      "path": "dwai_on_01._home_390px_u01/code.html",
+      "bytes": 22880,
+      "sha256": "7d3a3dc6c052f87b8f1dfaab702ba417d3f3e4fb94e20aacd84489bf88428c61"
+    },
+    {
+      "path": "dwai_on_01._home_390px_u01/screen.png",
+      "bytes": 187343,
+      "sha256": "43217e27d53bccca072fc37a1c29755fa13948170b27b5ace6dfd0ce95224948"
+    },
+    {
+      "path": "dwai_on_02._new_conversation_1440px_u02/code.html",
+      "bytes": 37239,
+      "sha256": "1cefe6b59572daa40615512cf7feee39c709d7a2cb866c3e77ec80c6407009bd"
+    },
+    {
+      "path": "dwai_on_02._new_conversation_1440px_u02/screen.png",
+      "bytes": 291291,
+      "sha256": "0551414d0fc6552b84d96f9369af20227ed2ccebce013ed94d9edd5b67caef4c"
+    },
+    {
+      "path": "dwai_on_01._home_1440px_partial_failure/code.html",
+      "bytes": 42747,
+      "sha256": "a30c3565f1d3fa78976980f307d2e577422da282dd5da7ff0db61a0d5f0c06f7"
+    },
+    {
+      "path": "dwai_on_01._home_1440px_partial_failure/screen.png",
+      "bytes": 502535,
+      "sha256": "f0ac2ff9ca097abb25075d8a80d2e69ac0d2ffd8929017714e61290f3987dc94"
+    },
+    {
+      "path": "dwai_on_a08._audit_retention_1440px/code.html",
+      "bytes": 43090,
+      "sha256": "5437c43a0d905e86011fd703c432cea37a6f8abfb7e7bad8c1b0adfcee367095"
+    },
+    {
+      "path": "dwai_on_a08._audit_retention_1440px/screen.png",
+      "bytes": 696101,
+      "sha256": "59135f7d1e280acbe7c31b32c164de85652d4bea02d3d4d7b5cd23cf31311b75"
+    },
+    {
+      "path": "dwai_on_06._proposal_review_390px_u06/code.html",
+      "bytes": 17680,
+      "sha256": "5754fe5721636866b502b4b65fee8e3e9dab6e676794209b88fea56c454da475"
+    },
+    {
+      "path": "dwai_on_06._proposal_review_390px_u06/screen.png",
+      "bytes": 269273,
+      "sha256": "d207bbe6afbfcb1ba8e224f3d3e6c02d35c2b99003258a955902ef7642d2ba52"
+    },
+    {
+      "path": "dwai_on_02._new_conversation_390px_u02/code.html",
+      "bytes": 27627,
+      "sha256": "16662b191ad4a164dbc80138df75ecc15a18bf3c140f68b8e0dfb88fa781f7d7"
+    },
+    {
+      "path": "dwai_on_02._new_conversation_390px_u02/screen.png",
+      "bytes": 227148,
+      "sha256": "d00d00056c14e08f6035eb699d43ffc58788632f26b00bc7771be77548b2e5fc"
+    },
+    {
+      "path": "dwai_on_10._assistant_voice_390px_u10/code.html",
+      "bytes": 14541,
+      "sha256": "9e9d416b56579ca2d5b83f598130833c2c101dcfdfc38f7bc35873d661698f22"
+    },
+    {
+      "path": "dwai_on_10._assistant_voice_390px_u10/screen.png",
+      "bytes": 222547,
+      "sha256": "34c06316148a8a166b80919a0f6632da38e2aa48a123c57daf0ad19ede0a54fa"
+    },
+    {
+      "path": "dwai_on_a07._readiness_gates_1440px/code.html",
+      "bytes": 43106,
+      "sha256": "5173470f5e7c9e146537ed1519286b44a7644f94a391afd8a0435678beed22cd"
+    },
+    {
+      "path": "dwai_on_a07._readiness_gates_1440px/screen.png",
+      "bytes": 750170,
+      "sha256": "b49a95d0e308039507b94c2edecb459df2d7e48d832f4d779d40eaf66f8e2016"
+    },
+    {
+      "path": "dwai_on_03._answer_evidence_390px_u03/code.html",
+      "bytes": 27037,
+      "sha256": "6bfb71822a86404868f2219429e68d42bdf68e8f746857e2b2e9348406e255a3"
+    },
+    {
+      "path": "dwai_on_03._answer_evidence_390px_u03/screen.png",
+      "bytes": 224051,
+      "sha256": "50c313d7570988e36b3b2e15b88d6e753183c400d5a01f3446640649ff5aa55c"
+    },
+    {
+      "path": "dwai_on_ai_x02._personal_controls_1440px/code.html",
+      "bytes": 47329,
+      "sha256": "47fd541701b3bdd5e891cfeaa74911336180baa6843abad5f4efea31cd7303f0"
+    },
+    {
+      "path": "dwai_on_ai_x02._personal_controls_1440px/screen.png",
+      "bytes": 539521,
+      "sha256": "0fe4cb8f27e942ab83840537d076b6a060d26c3c0944168b9e36972226b2a6c0"
+    },
+    {
+      "path": "dwai_on_ai_09._run_activity_inspector_390px_u09/code.html",
+      "bytes": 29877,
+      "sha256": "ea90df8f062c6213ffadd6c797342a5cf59ac20a08fc209fd5272a4e7d15cf83"
+    },
+    {
+      "path": "dwai_on_ai_09._run_activity_inspector_390px_u09/screen.png",
+      "bytes": 217546,
+      "sha256": "ece082106000eaee45254265ad7495a783295b472fc2ee2500b335ce9f78e8df"
+    },
+    {
+      "path": "dwai_on_a04._actions_policy_1440px/code.html",
+      "bytes": 41552,
+      "sha256": "45f51523fc99c61b825d01052bf137df15b4402963e8ad7635e130e3803d8f2b"
+    },
+    {
+      "path": "dwai_on_a04._actions_policy_1440px/screen.png",
+      "bytes": 712583,
+      "sha256": "dba98e2edafaa2d64eb850c066a3fddfb1408f30032eb0f6595c762116e3f32a"
+    },
+    {
+      "path": "dwai_on_01._home_1440px_u01/code.html",
+      "bytes": 40481,
+      "sha256": "b3a85b3d62545447c083b076277fc96789d39c7c48250212b192552409a8484d"
+    },
+    {
+      "path": "dwai_on_01._home_1440px_u01/screen.png",
+      "bytes": 375040,
+      "sha256": "9aa037dd7b43885c73a4f26ea46032098590632c0a7a4ae0f3b05fb0413640c9"
+    },
+    {
+      "path": "dwai_on_04._my_conversations_390px_u04/code.html",
+      "bytes": 29650,
+      "sha256": "81e120652e8caadd18e5334e6e82ca4bcb048f183ee6ff40fca658108c96aea4"
+    },
+    {
+      "path": "dwai_on_04._my_conversations_390px_u04/screen.png",
+      "bytes": 224957,
+      "sha256": "984fd07da8411461c0790a976c8b3c5f1190ea2427c443e1a2aa7aed2851aa7d"
+    },
+    {
+      "path": "dwai_on_a05._safety_policy_1440px/code.html",
+      "bytes": 45731,
+      "sha256": "e49338c218602f50c8407b79657d033785751434da114f893e2ef9239199cc0b"
+    },
+    {
+      "path": "dwai_on_a05._safety_policy_1440px/screen.png",
+      "bytes": 740978,
+      "sha256": "e4cc3ec6bf8d6352747a3e0a9c8d96fe86a40507422ee98e6eeb5eed2322bbae"
+    },
+    {
+      "path": "dwai_on_ai_a01._overview_1440px/code.html",
+      "bytes": 38516,
+      "sha256": "c0a15a330653686106544261c6003560aba80a9ae75d6569cc31fd3764a09ec9"
+    },
+    {
+      "path": "dwai_on_ai_a01._overview_1440px/screen.png",
+      "bytes": 570871,
+      "sha256": "c0bd7d3bab99d04bbde0d95a3d72ef01ac992d3eb074787355c863189ed47273"
+    },
+    {
+      "path": "dwai_on_x03._artifact_studio_1440px/code.html",
+      "bytes": 41223,
+      "sha256": "5906c2cf792683f54f900e19cb7e6e4f630aa8c167e417844e61f0fe0b3aab16"
+    },
+    {
+      "path": "dwai_on_x03._artifact_studio_1440px/screen.png",
+      "bytes": 592315,
+      "sha256": "72c5f323dfec004f80f007468ccd94c2eb903bb990f42300a7d961a322b04e4e"
+    },
+    {
+      "path": "dwai_on_08._actions_review_1440px_u08/code.html",
+      "bytes": 34887,
+      "sha256": "b4742d4455d9b36e327ce95c587dfa2e2a7615bc35f8022298a0a733c2c13061"
+    },
+    {
+      "path": "dwai_on_08._actions_review_1440px_u08/screen.png",
+      "bytes": 595642,
+      "sha256": "d32a102085f51a10a2830ccaff50553660621ec1f931d3b75e7afef1b8408879"
+    },
+    {
+      "path": "dwai_on_a02._agents_registry_1440px/code.html",
+      "bytes": 46872,
+      "sha256": "9dc04ab8eadcdb925bd60ae21efdef38bd79954b6feb3e355e5aa913482abd31"
+    },
+    {
+      "path": "dwai_on_a02._agents_registry_1440px/screen.png",
+      "bytes": 612995,
+      "sha256": "7b608ff595fc81846dc22ca16fa2e6b80c623450ab5aa158daa3e136845ea859"
+    },
+    {
+      "path": "dwai_on_a03._data_sources_1440px/code.html",
+      "bytes": 45250,
+      "sha256": "3f8e577d570d87bcc91e20669f170428bdb1ef932c84244e2b2ae5e37301b0f8"
+    },
+    {
+      "path": "dwai_on_a03._data_sources_1440px/screen.png",
+      "bytes": 674593,
+      "sha256": "89fa7fef7ea8cdd4c51065e81fb0a845c29a4d9b1fcb0b878aa345dd161d3ccf"
+    },
+    {
+      "path": "dwai_on_07._agent_catalog_390px_u07/code.html",
+      "bytes": 17285,
+      "sha256": "48893fe0e7ba0c5f7d24c50bc2796935fe62bed9bc0df91ac2ffabeabb8da04c"
+    },
+    {
+      "path": "dwai_on_07._agent_catalog_390px_u07/screen.png",
+      "bytes": 230074,
+      "sha256": "26b8f84b7cd03126eccbcc4618e19d20bf60428b057d10e177b80ebc44ee898d"
+    },
+    {
+      "path": "dwai_on_04._my_conversations_1440px_u04/code.html",
+      "bytes": 40456,
+      "sha256": "d50a74984d9b8b671aec9506f4c52a0b488fd1a85b13bbd0fd9cf142d117115f"
+    },
+    {
+      "path": "dwai_on_04._my_conversations_1440px_u04/screen.png",
+      "bytes": 583646,
+      "sha256": "4c65e35e4014d61ddcacfa475ce414e1924c43c480c4450e896a5823b8c0b675"
+    },
+    {
+      "path": "dwai_on_ai_05._proposals_inbox_390px_u05/code.html",
+      "bytes": 21367,
+      "sha256": "2c1a8818304b6414ba9a8afe288f30f5db40a8d809d848a1cf2cfb56b35d31c2"
+    },
+    {
+      "path": "dwai_on_ai_05._proposals_inbox_390px_u05/screen.png",
+      "bytes": 237621,
+      "sha256": "e25f8d96b420f986f6f04729b6ff6c9f35b8021850addc9b30a49bbc3e343c29"
+    },
+    {
+      "path": "dwai_on_ai_09._run_activity_inspector_1440px_u09/code.html",
+      "bytes": 39352,
+      "sha256": "8e7994ea4d31e10a68a62c9f4792378a402018376253dfe08baca0fe0408a2b6"
+    },
+    {
+      "path": "dwai_on_ai_09._run_activity_inspector_1440px_u09/screen.png",
+      "bytes": 556616,
+      "sha256": "0387128fe3f8912202b8df6fd56fa26910beab399ffb4c26a9087292196354ae"
+    },
+    {
+      "path": "dwai_on_ai_05._proposals_inbox_1440px_u05/code.html",
+      "bytes": 38439,
+      "sha256": "d550ef3bea2c8da352a310ad4c6c67861a68c844e1fdbeb06694e39c90336bc1"
+    },
+    {
+      "path": "dwai_on_ai_05._proposals_inbox_1440px_u05/screen.png",
+      "bytes": 528140,
+      "sha256": "67e525234fecd9c3545106b39c791232749210926656f5d4dbed235638ad91cc"
+    },
+    {
+      "path": "dwai_on_a06._evaluation_workbench_1440px/code.html",
+      "bytes": 43138,
+      "sha256": "949dc48a5cd67d1a6d33c2f6dc73eff340c25139638c72fb6b934fdc34a34280"
+    },
+    {
+      "path": "dwai_on_a06._evaluation_workbench_1440px/screen.png",
+      "bytes": 655275,
+      "sha256": "8a7f137ddfe77281dc438c8961bf26e2b381733c420c43bcbc870a228507af68"
+    },
+    {
+      "path": "dwai_on_ai_x01._personal_routines_1440px/code.html",
+      "bytes": 39580,
+      "sha256": "4c1f992a384bea5dc00af296c1cfa7fafe5a3ebc6a1ff59a648d8c43d8c482e4"
+    },
+    {
+      "path": "dwai_on_ai_x01._personal_routines_1440px/screen.png",
+      "bytes": 645487,
+      "sha256": "a1831138c275873a900736c64f63138fdf6a7d551f72e30a6f440a34972129a7"
+    },
+    {
+      "path": "dwai_on_07._agent_catalog_inspector_1440px_u07/code.html",
+      "bytes": 35008,
+      "sha256": "4e88687017279709048ab95236201dac410633ff8af9fc231cc948ab12aa129d"
+    },
+    {
+      "path": "dwai_on_07._agent_catalog_inspector_1440px_u07/screen.png",
+      "bytes": 530527,
+      "sha256": "3974ffca551fb0bed8207054dd103b9953a63456146c64672eb10865daa18442"
+    },
+    {
+      "path": "dwai_on_03._answer_evidence_1440px_u03/code.html",
+      "bytes": 36738,
+      "sha256": "07d0cef3ab4373004e39fe3f5731d8b371b404d850946183af8de2676dbb0a68"
+    },
+    {
+      "path": "dwai_on_03._answer_evidence_1440px_u03/screen.png",
+      "bytes": 588492,
+      "sha256": "9b014b63967db765bb33ad0ccc5166d95b7733d491d4e2b9b1c9be859888a01c"
+    },
+    {
+      "path": "dwai_on_08._actions_review_390px_u08/code.html",
+      "bytes": 24656,
+      "sha256": "99ed1d6dfa10c9b3b1e123c7bfa53fa45662dc6730bc4cabd9f7fa3a481e96ce"
+    },
+    {
+      "path": "dwai_on_08._actions_review_390px_u08/screen.png",
+      "bytes": 293775,
+      "sha256": "891fa606056c1d7ba2d96ecbf23ca1c83ad413abe4730e9ac098bae51e2a7094"
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+[
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-actions.ts",
+    "sha256": "e29553ddfaaae0d0d1b22fe1ad38e7d40e99b05528a7c87942d56500e08d7287"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-activity-return.ts",
+    "sha256": "2eef10b47d94b98acd746ba27cba442f68f5b4e6ab8fd45ff28ec95ee720c28c"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-assignment-detail.ts",
+    "sha256": "27a142c0f8f51f9378cbf27bbc0050c70e3b1f14a83f5ecfa60a79faa9036b9b"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-assignment-history.ts",
+    "sha256": "14cd9f47dd42a189797b7ca70cda5cada76f137cb27d1adc45f04b03f718da3e"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-batch.ts",
+    "sha256": "24d301999ccdbc79a11e81fbe27d21f53873da470ba713eece3da3cc32a56348"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-create-recovery.ts",
+    "sha256": "50b5ba8520374de466a9fb5bc99c3780c8cada4276e0bd3a591c0cf0022fe3c8"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-created-task-recovery.ts",
+    "sha256": "2d54427cb0fe245de3292bac3d646559aea5d5a50840befe478f9e418e621307"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-keyboard-shortcuts.ts",
+    "sha256": "91e644c7faacc4270878f7380a09426ecc5aae4505cf09db34fb68025a80cb7b"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-operation-owner.ts",
+    "sha256": "d680c81eb419f1381ee1d5ed64d74a003c796470afc17b3ba2b3575258308593"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-personal-command.ts",
+    "sha256": "8007465c1bb19194e85ef577a22eb0e3d02461485917d22bb34c1b5407f06697"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-plan-save.ts",
+    "sha256": "f5d0327a0c6804671b6ad84fd7425cbad6e15527a031d9a2906d40ac351f6d18"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-return-handoff.ts",
+    "sha256": "e5e2b1a7d2a6f6cd6722d84deb908527fcc206f2e4af1586fa8730131100578b"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-runtime.ts",
+    "sha256": "23f62f9fa9da4fc0c053ef0c518f10efd164de3bd2347a36af114e0480a6b5e8"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-source-owned-detail.ts",
+    "sha256": "2a4aee3a8ecea135f02a31dd71b998727ffc26530d44c64702738fbe0bb8915d"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-hub-task-save.ts",
+    "sha256": "dbffd1f40b6ec24ce2c5c7197b61a80b47ff9324cb977def333bef37f159b877"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/use-work-today-plan-focus.ts",
+    "sha256": "7f431b9177e51087bcaa6d62fc5053e23c0c6415e43ae39438dfb08a4e85c609"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-actions.ts",
+    "sha256": "6f444c5a857a0e22f02a1529b11c8226ed2a49a446d83c3545fdb537fe925416"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-activity-return.ts",
+    "sha256": "6863d7c06c4f008a8ec59ffa8c3e657e296cd2f44b9665eed887e32915a76871"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-assignment-detail.tsx",
+    "sha256": "d9e1e89f77f5a8cb8b01a43ff2ef59e01d64693bdbbf2bdc20f9a198b205d0ce"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-assignment-history-model.ts",
+    "sha256": "62dd0ded687be6153fdf1e43a09df70951277a44124923fea3cf6d0ff3947dd4"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-assignment-history.tsx",
+    "sha256": "d456ef86bccf7f08aeb8be6d272bbe8f82f1fa33be52e3683c547eb4df984a7f"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-assignment-model.ts",
+    "sha256": "787258e501f88ecd0561246d807719961e70d92577096f14d4a8ccd7237672de"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-assist-dialog.tsx",
+    "sha256": "cc46eef0ab27c0cec437ba62fb65e9ce80db416cf0a31e981748717e508fea90"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-assist.ts",
+    "sha256": "5bb9e628978469e35d1519fd853bcaaa628f1c932572f800bff036769fe0399f"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-batch-dialog.tsx",
+    "sha256": "2c9dd3addeb26ed33449693fd11598ab6a7b0c856576ae1e23ba43ce27a24a25"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-batch-execution.ts",
+    "sha256": "f89992ccd8a9433a7b32ff4518bc1ef5457a3a8f2949a3c31d62be839f8c71a3"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-batch-receipt-storage.ts",
+    "sha256": "62b4a759dac23049ae81a8cc898ebbd184e911f896de9d616ec4a1c56bf57767"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-command-authority.ts",
+    "sha256": "dfd523745acba7eff6c316743b2a77007109fb33453c2ea86eb3bb1e6eb671cd"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-contracts.ts",
+    "sha256": "e2b884bb6735c141fac9de1a0f6c417611f5509010cfd2e1c0f44c464c51d005"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-controller.ts",
+    "sha256": "b874f31feb3cee17b84f69550863e64dff2ea1c2125426437baa28c6e57d7b48"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-create-plan-lane.ts",
+    "sha256": "9f2e1ace059ae6b1c74919affd327bc5c7bb4c85016f90e1471f5e0b426f102d"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-detail-panel.tsx",
+    "sha256": "bacffcbe3aa5421758582e9389c6ed6f344eb707551c65f94085663330a2b756"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-filter-controls.tsx",
+    "sha256": "b44f98de907cc05c3db4622a913759a04e99a4effb5df92445646d67536f866a"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-list.tsx",
+    "sha256": "1294e48376dd5082052a51d241e91b294e6fb66c464433d3cad5ea641bc50e66"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-loader.ts",
+    "sha256": "55d02fbe19b7e369a2d658e218009c7825d523efc9ca3b205169c6dd35f86927"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-model.ts",
+    "sha256": "ea778e9c8e335a7f2386b789c4b94998997da3fec7d4f9da3641b71856084026"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-no-selection.tsx",
+    "sha256": "3c12120014125dae852bb9d90cb14304cbafd837223852c866cb70a56d440bd8"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-page-dialogs.tsx",
+    "sha256": "d3c6e9c5e4521cc793dbf94d43753849157a7497ebfd1ce9ecdeaed6c227606b"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-page-header.tsx",
+    "sha256": "a76ba75400e60400808ede1f0ed318712014a721c3cd3e3574fda3faabefd43a"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-page-helpers.ts",
+    "sha256": "aa0189c5e33b561a4dcb3b3f60803277a795fb42aff3b5fadcc457aa7edb64bc"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-partial-notice.tsx",
+    "sha256": "74dbf1866482e2952e2f45d136ac38fd50ac5e1885f0324b66b7045ea9b5dcdf"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-personal-detail.tsx",
+    "sha256": "09dd3816f81f2b2d93e3f3be9897cd0916c3d402cefab3e720ec9a7bc261fb9d"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-personal-save-receipt.ts",
+    "sha256": "8af63919598a5324b0411068afe5ef4430383f0bd8f61b6370bef5d5c0f65fe4"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-presentation.ts",
+    "sha256": "d38ff74b14c847f20c0803e1bf860e38d1100533fe64fe59680007439435bdc6"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-recovery-dialogs.tsx",
+    "sha256": "6d0feba38760e6a3b86f2d3dbc2b23ef710d79005f3bbcccdf56de27180e48de"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-refresh-policy.ts",
+    "sha256": "e07945f708578ec8a8825c96bb8fd0c3f33d00419d96a0c48e61de936c277275"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-return-handoff.ts",
+    "sha256": "9bc5545a57867cb7ed84055f26ddf74a45045e06ab8b4162410558cf26f40afd"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-schedule-coordinator.ts",
+    "sha256": "7510a5100b375fb93b47b76e06c2589712e8f4f938eefa2a0808a91294fafdee"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-schedule-dialog.tsx",
+    "sha256": "35ebc8f6361d58e783824300c10ae5dd0730e3e309042f4787c5fed142967d1f"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-schedule-intent-storage.ts",
+    "sha256": "78bbd37f1532d9578f4164041b87a16b5376ba9747c43216c1986c59a4c70a36"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-schedule-links.tsx",
+    "sha256": "651db0bdbef824e678e7ae11207d84101817881c4061a8288ba923d5efd6e79b"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-scheduling.ts",
+    "sha256": "ee2312df6e047cfd1cf0b2396284633504e7cc3f80adb01c28ef30832ae10d6e"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-selection-toolbar.tsx",
+    "sha256": "56cb3c22c54c12780ffc2815ee00d7fe44ba555f329b8f60dc6649a6ac2fbf73"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-adapters.ts",
+    "sha256": "ee1e97159a0bbb53c1de97e04e778225811c78484d6498fcd7096d49eb2d0c5e"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-detail-section.tsx",
+    "sha256": "c8ebcc609a785c9028723f2c5f32c01e600967ad47ce9120878af48a60dca154"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-hydration.ts",
+    "sha256": "16eb1c5dd0a07a608538170f8d3c42f6aa81872e4d594eb33634b5468b6e6a26"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-owned-detail-model.ts",
+    "sha256": "21cc5a497230f52a6430863937758cd9e917c47754c25f38af4573ea28b1cf10"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-owned-detail.tsx",
+    "sha256": "753036a51c275c0f3bbc599e83c2464126d0646b4c9da700e9a428842de2927c"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-owned-evidence.tsx",
+    "sha256": "4cd176289c3e76ddf636bfb9b343af7901d2095c7d5e091e41dc1a5420b64ab8"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-owned-history.tsx",
+    "sha256": "8b4f8d4fe98448d8d4707944e6ef5b65a620438589cc67124f39bf547fa31a73"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-refresh.ts",
+    "sha256": "f92dad3c8765ee0894c00ce7440e5e9db76ab0c596febf978ffe184b8985b626"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-source-status-dialog.tsx",
+    "sha256": "8113fd901aa7dbc30b733cec2428dad917e917e696c14bc9823e85b52df37b0c"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-task-save-coordinator.ts",
+    "sha256": "81e3af71c340ec823896a6683412780e81949820debba4313e0fa1f5c75db7bc"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-view-contract.ts",
+    "sha256": "dbbf9272a429e3831a07b22ecc23d559dfbb9e17edd61b7e30e99ecfbc0e9f2d"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub-view-navigation.ts",
+    "sha256": "a9844e7acc6025a580bd0dcfcd836c06d65b84f8f94ec6f34dee728f38958d5f"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-hub.test-support.ts",
+    "sha256": "8061819c118661bf1c1ceb46e07462568cfb6b2ee1e4f4cdc0c8f5c2b6b4e752"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-personal-checklist.tsx",
+    "sha256": "84dd2e8a8ea105627324453f1d7457dbdda1832afb0355ea7a4989c353b8dc83"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-task-checklist-editor.tsx",
+    "sha256": "68ca4599395400000397329c436807940db14447fce6731a101e3e477d78aaf5"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-task-conflict-review.tsx",
+    "sha256": "0bb7ca4cde6ffae40114dd6fe3232b994895b687d0c4a57ce1f63f63c05b0a3a"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-task-dialog.tsx",
+    "sha256": "cdb7b827165dcb606f76f1b28533afe844fc0090ca6bf06d24b15d0932c9576e"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-task-source-editor.tsx",
+    "sha256": "a1abd33de8114bfb72104b421e275aa0b714ada2ebc291303859ebbf30d7314c"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-today-plan-candidate-model.ts",
+    "sha256": "a8f54eb4bd9eae54681f83bed6c06f80d39a382265d3b6416336ded84e3a2735"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-today-plan-candidate-picker.tsx",
+    "sha256": "435ca4e7799b98a6410ef748c55f28d80b0d3bf29eb946cc798e7a88a95e67d0"
+  },
+  {
+    "path": "apps/dwp/src/features/work-hub/work-today-plan-panel.tsx",
+    "sha256": "723fb6f4443075808fe29175a15bf943bc53aaa4d174931cbd4a32183852efd1"
+  },
+  {
+    "path": "apps/dwp/src/layouts/work-layout.tsx",
+    "sha256": "3cb0a779005d02d7f2b74a0d76da5dfba12caac98a88b8fa371651e8ead15d49"
+  },
+  {
+    "path": "apps/dwp/src/pages/work.tsx",
+    "sha256": "364ee157d57e9d046a21f64ba0af500e68a129863c0542bf591ee49def5d3cc2"
+  },
+  {
+    "path": "libs/shared-i18n/src/locales/en/work.json",
+    "sha256": "6503711107f161b4772cb75d027d62eff8f8b797cc7696049c5b999c8e698258"
+  },
+  {
+    "path": "libs/shared-i18n/src/locales/ko/work.json",
+    "sha256": "183b75fb56b4d96cdd691dd890cd8be0698ef58d7f0bc979af73bf2d712a8518"
+  }
+]

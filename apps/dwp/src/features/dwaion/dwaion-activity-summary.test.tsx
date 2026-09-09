@@ -41,7 +41,7 @@ describe('DWAI compact run summary', () => {
       expect(html).toContain(`dwaionActivity.mobileMetrics.${key}`);
       expect(html).toContain(`dwaionActivity.metrics.${key}Detail`);
     }
-    expect(html).toContain('dwaionActivity.mobileWindowNotice');
+    expect(html).toContain('dwaionActivity.windowNotice');
     expect(html).toContain('data-testid="dwaion-sample-summary"');
     expect(html).toContain('dwaionActivity.observability.sample.summaryExcluded');
     expect(html).toContain(`color:${theme.palette.success[mode === 'dark' ? 'light' : 'dark']}`);

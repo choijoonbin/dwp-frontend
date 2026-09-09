@@ -62,7 +62,7 @@ const EXPECTED_AUTHORIZATION_COUNTS = Object.freeze({
   3: authorizationCounts(62, 14, 8, 25, 129),
   4: authorizationCounts(71, 22, 16, 33, 155),
   5: authorizationCounts(72, 22, 16, 33, 160),
-  6: authorizationCounts(73, 22, 16, 33, 161),
+  6: authorizationCounts(119, 22, 16, 34, 250),
 });
 const STEP_UP_HEADER_FIELDS = ['alg', 'kid', 'typ'];
 const STEP_UP_CLAIM_FIELDS = [

@@ -4,6 +4,13 @@ import { resetCsrfToken } from '../axios-instance';
 import { consumeQuestionLaunch, createQuestionLaunch } from './agent-question-launch-api';
 
 const LAUNCH_ID = '00000000-0000-4000-8000-000000000016';
+const SECURE_AUTHORITY = {
+  mode: 'SECURE',
+  rolloutState: '110',
+  expectedDecisionRevision: 'psr-current',
+  contextKey: 'psc-dwaion',
+  contextScopeKey: 'scope-dwaion-self',
+} as const;
 
 function jsonResponse(status: number, payload: unknown): Response {
   return {
@@ -37,17 +44,22 @@ describe('Agent question launch API', () => {
       );
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(createQuestionLaunch('  confidential work question  ')).resolves.toEqual({
+    await expect(
+      createQuestionLaunch('  confidential work question  ', SECURE_AUTHORITY)
+    ).resolves.toEqual({
       launchId: LAUNCH_ID,
       expiresAt: '2026-08-27T03:01:00Z',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      '/api/agent/v1/question-launches',
+      '/api/agent/v1/question-launches?contextScopeKey=scope-dwaion-self',
       expect.objectContaining({
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({ question: 'confidential work question' }),
+        headers: expect.objectContaining({
+          'X-DWP-Expected-Decision-Revision': 'psr-current',
+        }),
       })
     );
   });
@@ -63,10 +75,12 @@ describe('Agent question launch API', () => {
       );
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(consumeQuestionLaunch(LAUNCH_ID)).resolves.toBe('confidential work question');
+    await expect(consumeQuestionLaunch(LAUNCH_ID, SECURE_AUTHORITY)).resolves.toBe(
+      'confidential work question'
+    );
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      '/api/agent/v1/question-launches/consume',
+      '/api/agent/v1/question-launches/consume?contextScopeKey=scope-dwaion-self',
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ launchId: LAUNCH_ID }),

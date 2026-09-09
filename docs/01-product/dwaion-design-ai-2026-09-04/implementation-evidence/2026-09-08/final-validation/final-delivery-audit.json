@@ -1,0 +1,12 @@
+{
+  "auditedAt": "2026-09-08T12:25:52.216980+00:00",
+  "durableJsonParsed": 19,
+  "markdownFiles": 11,
+  "localLinksChecked": 136,
+  "stitchPngRefs": 32,
+  "stitchHtmlRefs": 32,
+  "productApiFiles": 116,
+  "maxLines": 489,
+  "issues": [],
+  "passed": true
+}

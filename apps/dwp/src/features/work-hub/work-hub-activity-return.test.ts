@@ -6,7 +6,9 @@ import {
   workHubActivityCurrentLocation,
   workHubActivityHandoffRoute,
   workHubActivityOwnerFingerprint,
+  workHubItemActivityRoute,
 } from './work-hub-activity-return';
+import { hubItem } from './work-hub.test-support';
 
 function memoryStorage() {
   const values = new Map<string, string>();
@@ -50,9 +52,94 @@ describe('Work Activity return focus intent', () => {
     '/activity/timeline?objectType=WORK_ITEM&objectId=unsafe',
     '/activity/timeline?objectType=WORK_ITEM&objectType=WORK_ITEM&objectId=10420000-0000-0000-0000-000000000001',
     '/activity/timeline?objectType=WORK_ITEM&objectId=10420000-0000-0000-0000-000000000001#foreign',
+    `${activityRoute}&source=PERSONAL_TASK&source=PERSONAL_TASK`,
+    `${activityRoute}&source=SERVICE_REQUEST`,
+    `${activityRoute}&event=foreign-event`,
     '/activity/home?objectType=WORK_ITEM&objectId=10420000-0000-0000-0000-000000000001',
   ])('rejects a mismatched or unsafe Activity target: %s', (route) => {
     expect(workHubActivityHandoffRoute(route)).toBeNull();
+  });
+
+  it('routes the exact personal task to its own Activity projection and restores it once', () => {
+    const item = hubItem();
+    const personalRoute = `/activity/timeline?objectType=WORK_ITEM&objectId=${item.reference.sourceReference}&source=PERSONAL_TASK`;
+    expect(workHubItemActivityRoute(item)).toBe(personalRoute);
+    const storage = memoryStorage();
+    const target = `/work/queue?work=${encodeURIComponent(item.key)}`;
+    expect(
+      recordWorkHubActivityReturnIntent(
+        {
+          activityRoute: personalRoute,
+          itemKey: item.key,
+          itemVersion: item.version,
+          ownerFingerprint,
+          returnTo: target,
+        },
+        storage,
+        1000
+      )
+    ).toBe(true);
+    expect(
+      consumeWorkHubActivityReturnIntent(
+        {
+          canUseActivity: true,
+          itemKey: item.key,
+          itemVersion: item.version,
+          ownerFingerprint,
+          returnTo: target,
+        },
+        storage,
+        1500
+      )
+    ).toBe(true);
+    expect(
+      consumeWorkHubActivityReturnIntent(
+        {
+          canUseActivity: true,
+          itemKey: item.key,
+          itemVersion: item.version,
+          ownerFingerprint,
+          returnTo: target,
+        },
+        storage,
+        1500
+      )
+    ).toBe(false);
+    expect(
+      recordWorkHubActivityReturnIntent(
+        {
+          activityRoute: personalRoute,
+          itemKey: `WORKSPACE:${item.reference.sourceReference}:`,
+          itemVersion: item.version,
+          ownerFingerprint,
+          returnTo: target,
+        },
+        storage,
+        1000
+      )
+    ).toBe(false);
+    expect(
+      recordWorkHubActivityReturnIntent(
+        {
+          activityRoute: personalRoute.replace('&source=PERSONAL_TASK', ''),
+          itemKey: item.key,
+          itemVersion: item.version,
+          ownerFingerprint,
+          returnTo: target,
+        },
+        storage,
+        1000
+      )
+    ).toBe(false);
+  });
+
+  it.each([
+    { key: 'PERSONAL_TASK:other:' },
+    { reference: { sourceSystem: 'PERSONAL_TASK', sourceReference: 'not-a-uuid' } },
+    { reference: { ...hubItem().reference, obligationKey: 'foreign-obligation' } },
+    { sourceId: 'services' as const },
+  ])('does not route a mismatched personal task identity to Activity: %s', (changes) => {
+    expect(workHubItemActivityRoute(hubItem(changes))).toBeNull();
   });
 
   it('records and consumes an exact intent once', () => {

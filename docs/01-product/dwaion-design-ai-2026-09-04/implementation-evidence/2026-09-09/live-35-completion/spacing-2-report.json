@@ -1,0 +1,203 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/dwp-frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/spacing-final-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/spacing-final-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 9,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://127.0.0.1:4317",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "workspace-page-width.spec.ts",
+      "file": "workspace-page-width.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "shared workspace page width",
+          "file": "workspace-page-width.spec.ts",
+          "line": 148,
+          "column": 6,
+          "specs": [
+            {
+              "title": "dwaion new conversation consumes the shared fluid workspace width at 1920px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "workspace-width",
+                      "description": "dwaion new conversation: canvas=1672px root=1608px gutter=32px"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2518,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T14:59:57.858Z",
+                      "annotations": [
+                        {
+                          "type": "workspace-width",
+                          "description": "dwaion new conversation: canvas=1672px root=1608px gutter=32px"
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "dwaion-new-conversation-workspace-1920",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/spacing-final-results/workspace-page-width-share-c6662-d-workspace-width-at-1920px-chromium/attachments/dwaion-new-conversation-workspace-1920-1fdd1c5e50ce2f2c1135be8e4ba8245909175dc0.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4cf99d497cd10c7d432a-78324aa6c4668f26e414",
+              "file": "workspace-page-width.spec.ts",
+              "line": 152,
+              "column": 5
+            },
+            {
+              "title": "dwaion conversations consumes the shared fluid workspace width at 1920px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "workspace-width",
+                      "description": "dwaion conversations: canvas=1672px root=1608px gutter=32px"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1872,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-08T14:59:57.890Z",
+                      "annotations": [
+                        {
+                          "type": "workspace-width",
+                          "description": "dwaion conversations: canvas=1672px root=1608px gutter=32px"
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "dwaion-conversations-workspace-1920",
+                          "contentType": "image/png",
+                          "path": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/spacing-final-results/workspace-page-width-share-d5814-d-workspace-width-at-1920px-chromium/attachments/dwaion-conversations-workspace-1920-a492b98e28071bfe8eef026a7241972d6e5cc9f8.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4cf99d497cd10c7d432a-6cbaad8e4e7536dd1426",
+              "file": "workspace-page-width.spec.ts",
+              "line": 152,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-08T14:59:56.992Z",
+    "duration": 3794.7429999999995,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

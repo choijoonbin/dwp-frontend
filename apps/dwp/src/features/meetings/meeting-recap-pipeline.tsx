@@ -71,73 +71,83 @@ export function MeetingRecapPipeline({
           listStyle: 'none',
         }}
       >
-        {stages.map(({ key, icon: Icon, ready }) => (
-          <Stack
-            component="li"
-            key={key}
-            aria-label={`${t(`designReview.pipeline.${key}`)}: ${t(ready ? 'designReview.pipeline.verified' : 'designReview.pipeline.unavailable')}`}
-            gap={0.5}
-            sx={(theme) => ({
-              minWidth: 0,
-              p: { xs: 0.5, sm: compact ? 0.5 : 1.25 },
-              borderRadius: meetingShape.inset,
-              bgcolor: {
-                xs: 'transparent',
-                sm: published && key === 'published' ? 'primary.main' : 'background.paper',
-              },
-              color: {
-                xs: ready
-                  ? theme.palette.mode === 'dark'
-                    ? 'success.main'
-                    : 'success.dark'
-                  : 'text.secondary',
-                sm:
-                  published && key === 'published'
+        {stages.map(({ key, icon: Icon, ready }) => {
+          const highlighted = published && key === 'published';
+          return (
+            <Stack
+              component="li"
+              key={key}
+              aria-label={`${t(`designReview.pipeline.${key}`)}: ${t(ready ? 'designReview.pipeline.verified' : 'designReview.pipeline.unavailable')}`}
+              gap={0.5}
+              sx={(theme) => ({
+                minWidth: 0,
+                p: { xs: 0.5, sm: compact ? 0.5 : 1.25 },
+                borderRadius: meetingShape.inset,
+                bgcolor: {
+                  xs: 'transparent',
+                  sm: highlighted ? 'primary.main' : 'background.paper',
+                },
+                color: {
+                  xs: ready
+                    ? theme.palette.mode === 'dark'
+                      ? 'success.main'
+                      : 'success.dark'
+                    : 'text.secondary',
+                  sm: highlighted
                     ? 'primary.contrastText'
                     : ready
                       ? theme.palette.mode === 'dark'
                         ? 'success.main'
                         : 'success.dark'
                       : 'text.secondary',
-              },
-              border: { xs: 0, sm: `1px solid ${alpha(theme.palette.primary.main, 0.06)}` },
-            })}
-          >
-            <Stack
-              direction={{ xs: 'column', sm: compact ? 'column' : 'row' }}
-              gap={0.5}
-              alignItems="center"
+                },
+                border: { xs: 0, sm: `1px solid ${alpha(theme.palette.primary.main, 0.06)}` },
+                ...(highlighted && {
+                  '& .MuiTypography-root': {
+                    color: { xs: 'inherit', sm: 'primary.contrastText' },
+                  },
+                }),
+              })}
             >
-              <Icon size={14} aria-hidden="true" style={{ flexShrink: 0 }} />
-              <Typography
-                variant="caption"
-                fontWeight="fontWeightBold"
-                sx={{
-                  ...meetingType.micro,
-                  overflowWrap: compact ? 'normal' : 'anywhere',
-                  textAlign: { xs: 'center', sm: compact ? 'center' : 'left' },
-                }}
+              <Stack
+                direction={{ xs: 'column', sm: compact ? 'column' : 'row' }}
+                gap={0.5}
+                alignItems="center"
               >
-                {t(`designReview.pipeline.${embedded ? 'mobile.' : ''}${key}`)}
-              </Typography>
+                <Icon size={14} aria-hidden="true" style={{ flexShrink: 0 }} />
+                <Typography
+                  variant="caption"
+                  color="inherit"
+                  fontWeight="fontWeightBold"
+                  sx={{
+                    ...meetingType.micro,
+                    overflowWrap: compact ? 'normal' : 'anywhere',
+                    textAlign: { xs: 'center', sm: compact ? 'center' : 'left' },
+                  }}
+                >
+                  {t(`designReview.pipeline.${embedded ? 'mobile.' : ''}${key}`)}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                gap={0.4}
+                alignItems="center"
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+              >
+                {ready ? (
+                  <CheckCircle2 size={11} aria-hidden="true" />
+                ) : (
+                  <CircleDashed size={11} aria-hidden="true" />
+                )}
+                <Typography variant="caption" color="inherit" sx={meetingType.micro}>
+                  {t(
+                    ready ? 'designReview.pipeline.verified' : 'designReview.pipeline.unavailable'
+                  )}
+                </Typography>
+              </Stack>
             </Stack>
-            <Stack
-              direction="row"
-              gap={0.4}
-              alignItems="center"
-              sx={{ display: { xs: 'none', sm: 'flex' } }}
-            >
-              {ready ? (
-                <CheckCircle2 size={11} aria-hidden="true" />
-              ) : (
-                <CircleDashed size={11} aria-hidden="true" />
-              )}
-              <Typography variant="caption" sx={meetingType.micro}>
-                {t(ready ? 'designReview.pipeline.verified' : 'designReview.pipeline.unavailable')}
-              </Typography>
-            </Stack>
-          </Stack>
-        ))}
+          );
+        })}
       </Box>
     </Box>
   );

@@ -19,10 +19,20 @@ import {
   mockMeetingVisualPublishedRecap,
   mockMeetingVisualSession,
 } from './support/video-meeting-visual-fixtures';
-import { emulateVisualTransparency } from './support/visual-media';
+import {
+  expectPageReady,
+  expectCleanMeetingRuntime,
+  expectVisualSnapshot,
+  trackMeetingRuntime,
+} from './support/meeting-visual-runtime';
 import { expectFocusClearance, expectKeyboardFocusVisible } from './support/meeting-visual-focus';
 import { mockImplementationMeetingPreparation } from './support/meeting-implementation-regression-fixtures';
-import { withMeetingDocumentCapture } from './support/meeting-document-capture';
+import {
+  annotateJ01Source,
+  expectFocusCanvasGutter,
+  expectJ01JoinWorkspace,
+  mockJ01ResolvedMeeting,
+} from './support/meeting-j01-visual';
 
 import type { Locator, Page } from '@playwright/test';
 
@@ -40,63 +50,7 @@ const VIEWPORT = {
   minimum: { width: 320, height: 720 },
 } as const;
 
-const runtimeDiagnostics = new WeakMap<Page, string[]>();
-
-test.beforeEach(async ({ page }) => {
-  await emulateVisualTransparency(page);
-  const diagnostics: string[] = [];
-  runtimeDiagnostics.set(page, diagnostics);
-  page.on('console', (message) => {
-    const text = message.text();
-    if (message.type() === 'error' || /\[i18n\]\s+Missing key:/u.test(text)) {
-      diagnostics.push(`${message.type()}: ${text}`);
-    }
-  });
-  page.on('pageerror', (error) => diagnostics.push(`pageerror: ${error.message}`));
-  page.on('response', (response) => {
-    if (response.status() >= 500) {
-      diagnostics.push(`http ${response.status()}: ${response.url()}`);
-    }
-  });
-});
-
-async function expectPageReady(page: Page) {
-  await expect(
-    page.getByRole('progressbar', { name: /Loading page|페이지 불러오는 중/u })
-  ).toHaveCount(0, { timeout: 15_000 });
-  const main = page.locator('#dwp-main-content');
-  await expect(main).toBeVisible({ timeout: 15_000 });
-  await expect(main.locator('.MuiSkeleton-root')).toHaveCount(0, { timeout: 15_000 });
-  return main;
-}
-
-async function expectCleanMeetingRuntime(page: Page, label: string) {
-  expect(runtimeDiagnostics.get(page) ?? [], `${label}: runtime diagnostics`).toEqual([]);
-  const visibleDiagnosticText = await page.evaluate(() => {
-    const findings = new Set<string>();
-    const visit = (root: Document | ShadowRoot) => {
-      for (const element of root.querySelectorAll<HTMLElement>('*')) {
-        if (element.shadowRoot) visit(element.shadowRoot);
-        if (element.children.length > 0) continue;
-        const bounds = element.getBoundingClientRect();
-        if (bounds.width <= 0 || bounds.height <= 0) continue;
-        const text = (element.innerText || element.textContent || '').trim();
-        if (/^\d+\s*\/\s*\d+$/u.test(text)) findings.add(`checker badge: ${text}`);
-        for (const match of text.matchAll(
-          /\b(?:admin|history|home|join|lobby|prejoin|room|schedule)\.[a-z][\w.-]*/gu
-        )) {
-          findings.add(`raw i18n key: ${match[0]}`);
-        }
-        for (const match of text.matchAll(/\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+){2,}\b/gu)) {
-          findings.add(`raw internal code: ${match[0]}`);
-        }
-      }
-    };
-    visit(document);
-    return [...findings];
-  });
-  expect(visibleDiagnosticText, `${label}: visible checker/i18n diagnostics`).toEqual([]);
-}
+trackMeetingRuntime();
 
 async function expectSharedWorkspaceGutter(page: Page, label: string, expectedPixels: number) {
   const canvas = page.locator('[data-dwp-page-canvas="workspace"]').first();
@@ -112,39 +66,6 @@ async function expectSharedWorkspaceGutter(page: Page, label: string, expectedPi
   expect(layout.paddingLeft, `${label}: shared left gutter`).toBe(expectedPixels);
   expect(layout.paddingRight, `${label}: shared right gutter`).toBe(expectedPixels);
   expect(layout.maxWidth, `${label}: operational canvas remains fluid`).toBe('none');
-}
-
-async function expectVisualSnapshot(
-  page: Page,
-  name: string,
-  options: Readonly<{ fullPage?: boolean }> = {}
-) {
-  await page.evaluate(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.querySelector<HTMLElement>('#dwp-main-content')?.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'auto',
-    });
-  });
-  await expect
-    .poll(() =>
-      page.evaluate(() => ({
-        page: window.scrollY,
-        main: document.querySelector<HTMLElement>('#dwp-main-content')?.scrollTop ?? 0,
-      }))
-    )
-    .toEqual({ page: 0, main: 0 });
-  const capture = () =>
-    expect.soft(page).toHaveScreenshot(name, {
-      animations: 'disabled',
-      caret: 'hide',
-      fullPage: options.fullPage ?? true,
-      maxDiffPixelRatio: 0.002,
-      timeout: 15_000,
-    });
-  if (options.fullPage === false) await capture();
-  else await withMeetingDocumentCapture(page, capture);
 }
 
 async function expectHomeWorkspace(page: Page, options: { desktopLayout?: boolean } = {}) {
@@ -896,25 +817,114 @@ test('home uses authorized review tasks and published excerpts then redacts revo
   );
 });
 
-test('join focus form has visible keyboard focus and a 44px action at 390px Korean', async ({
+test('J01 code join keeps a compact work and support composition at 1440 and 1280', async ({
   page,
 }, testInfo) => {
   useVisualProject(testInfo, 'chromium');
+  await mockMeetingVisualSession(page, { locale: 'en', reducedMotion: true });
+
+  for (const viewport of [VIEWPORT.desktop, VIEWPORT.laptop]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/meetings/join');
+    await expectPageReady(page);
+    await expectJ01JoinWorkspace(page, 'desktop');
+    await expectFocusCanvasGutter(page, `J01 join ${viewport.width} en`, 24);
+    const code = page.locator('input[autocomplete="one-time-code"]');
+    await expect(code).not.toBeFocused();
+    await code.fill('ABCD-EFGH-JKMN');
+    const resolve = page.getByTestId('meeting-join-actions').getByRole('button');
+    await expectMinimumTarget(resolve, `J01 ${viewport.width} primary action`);
+    await expectKeyboardFocusVisible(page, resolve, `J01 ${viewport.width} primary action`);
+    await expectNoHorizontalOverflow(page, `J01 join ${viewport.width} en`);
+    await expectNoBlockingA11y(page, `J01 join ${viewport.width} en`);
+    await expectCleanMeetingRuntime(page, `J01 join ${viewport.width} en`);
+  }
+});
+
+test('J01 code join reflows at 390 and survives 320px forced colors with 200% text', async ({
+  page,
+}, testInfo) => {
+  useVisualProject(testInfo, 'mobile');
+  await mockMeetingVisualSession(page, {
+    locale: 'ko',
+    colorScheme: 'dark',
+    reducedMotion: true,
+  });
+
   await page.setViewportSize(VIEWPORT.mobile);
+  await page.goto('/meetings/join');
+  await expectPageReady(page);
+  await expectJ01JoinWorkspace(page, 'mobile');
+  await expectFocusCanvasGutter(page, 'J01 join 390 ko dark', 16);
+  let code = page.locator('input[autocomplete="one-time-code"]');
+  await code.fill('ABCD-EFGH-JKMN');
+  let resolve = page.getByTestId('meeting-join-actions').getByRole('button');
+  await expectMinimumTarget(resolve, 'J01 390 primary action');
+  await expectKeyboardFocusVisible(page, resolve, 'J01 390 primary action');
+  await expectNoHorizontalOverflow(page, 'J01 join 390 ko dark');
+  await expectNoBlockingA11y(page, 'J01 join 390 ko dark');
+  await expectCleanMeetingRuntime(page, 'J01 join 390 ko dark');
+
+  await page.emulateMedia({
+    colorScheme: 'light',
+    forcedColors: 'active',
+    reducedMotion: 'reduce',
+  });
+  await page.setViewportSize(VIEWPORT.minimum);
+  await page.goto('/meetings/join');
+  await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+  await expectPageReady(page);
+  await expectJ01JoinWorkspace(page, 'mobile', { compactRail: false });
+  await expectFocusCanvasGutter(page, 'J01 join 320 ko forced colors 200 percent', 16);
+  code = page.locator('input[autocomplete="one-time-code"]');
+  await code.fill('ABCD-EFGH-JKMN');
+  resolve = page.getByTestId('meeting-join-actions').getByRole('button');
+  await expectMinimumTarget(resolve, 'J01 320 primary action');
+  await expectKeyboardFocusVisible(page, resolve, 'J01 320 primary action');
+  await expectViewportInset(resolve, 'J01 320 primary action');
+  await expectNoHorizontalOverflow(page, 'J01 join 320 ko forced colors 200 percent');
+  await expectNoBlockingA11y(page, 'J01 join 320 ko forced colors 200 percent');
+  await expectCleanMeetingRuntime(page, 'J01 join 320 ko forced colors 200 percent');
+});
+
+test('J01 desktop initial state remains stable against its exact Stitch source node', async ({
+  page,
+}, testInfo) => {
+  useVisualProject(testInfo, 'chromium');
+  annotateJ01Source(testInfo, 'desktop');
+  await page.setViewportSize(VIEWPORT.desktop);
   await mockMeetingVisualSession(page, { locale: 'ko', reducedMotion: true });
 
   await page.goto('/meetings/join');
-  await expect(page.getByRole('heading', { level: 1, name: '회의 참여' })).toBeVisible();
   await expectPageReady(page);
-  const code = page.locator('input[autocomplete="one-time-code"]');
-  await code.fill('DWPX-MEET-2026');
-  const findMeeting = page.getByRole('button', { name: '회의 찾기' });
-  await expectMinimumTarget(findMeeting, 'join primary action');
-  await expectKeyboardFocusVisible(page, findMeeting, 'join primary action');
-  await expectNoHorizontalOverflow(page, 'join 390 ko');
-  await expectNoBlockingA11y(page, 'join 390 ko');
-  await expectCleanMeetingRuntime(page, 'join 390 ko');
-  await expectVisualSnapshot(page, 'meeting-join-ko-390-light.png');
+  await expectJ01JoinWorkspace(page, 'desktop');
+  await expectNoHorizontalOverflow(page, 'J01 desktop source review 1440 ko');
+  await expectNoBlockingA11y(page, 'J01 desktop source review 1440 ko');
+  await expectCleanMeetingRuntime(page, 'J01 desktop source review 1440 ko');
+  await expectVisualSnapshot(page, 'meeting-j01-initial-ko-1440-light.png');
+});
+
+test('J01 mobile resolved approval state remains stable against its exact Stitch source node', async ({
+  page,
+}, testInfo) => {
+  useVisualProject(testInfo, 'mobile');
+  annotateJ01Source(testInfo, 'mobile');
+  await page.setViewportSize(VIEWPORT.mobile);
+  await mockMeetingVisualSession(page, { locale: 'ko', reducedMotion: true });
+  await mockJ01ResolvedMeeting(page);
+
+  await page.goto('/meetings/join?code=ABCDEFGHJKMN');
+  await page.getByTestId('meeting-join-actions').getByRole('button').click();
+  await expect(page.getByTestId('meeting-join-summary')).toBeVisible();
+  await expectPageReady(page);
+  await expectJ01JoinWorkspace(page, 'mobile');
+  await expect(
+    page.getByTestId('meeting-join-step-rail').locator('[aria-current="step"]')
+  ).toHaveText(/입장|승인/u);
+  await expectNoHorizontalOverflow(page, 'J01 mobile source review 390 ko');
+  await expectNoBlockingA11y(page, 'J01 mobile source review 390 ko');
+  await expectCleanMeetingRuntime(page, 'J01 mobile source review 390 ko');
+  await expectVisualSnapshot(page, 'meeting-j01-resolved-approval-ko-390-light.png');
 });
 
 test('published AI recap remains evidence-led at 1440px English dark mode', async ({

@@ -147,7 +147,16 @@ test('알림 홈은 실제 집계와 우선 업무를 반응형 실행 허브로
     reason: { kind: 'MENTION', label: '나를 직접 언급함' },
     actionable: false,
     priority: 'NORMAL',
-    actions: [],
+    actions: [
+      {
+        actionKey: 'open-conversation',
+        label: '대화 열기',
+        href: '/messages/inbox?conversation=home-conversation-1&message=home-message-1',
+        enabled: true,
+        disabledReason: null,
+        primary: true,
+      },
+    ],
   } as const;
   const updateNotification = {
     ...notification,
@@ -182,7 +191,25 @@ test('알림 홈은 실제 집계와 우선 업무를 반응형 실행 허브로
     await expect(page.getByRole('heading', { name: '멘션 및 대화' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '업무 업데이트' })).toBeVisible();
     await expect(page.getByText('전자결재', { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: '전자결재 알림만 보기' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: '답장 내용' })).toBeVisible();
     await expectNoHorizontalOverflow(page);
+    const kpiBounds = await page.getByRole('group', { name: '알림 요약' }).boundingBox();
+    const firstCardBounds = await page.locator('[data-notification-card]').first().boundingBox();
+    expect(kpiBounds).not.toBeNull();
+    expect(firstCardBounds).not.toBeNull();
+    expect(kpiBounds?.height ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(
+      width <= 390 ? 64 : 80
+    );
+    expect(firstCardBounds?.height ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(190);
+    if (width <= 390) {
+      expect(firstCardBounds?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(520);
+    }
+    await page.screenshot({
+      path: testInfo.outputPath(`notification-home-${width}.png`),
+      animations: 'disabled',
+      fullPage: true,
+    });
   }
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
@@ -230,6 +257,9 @@ test('알림 설정은 긴 정책 화면을 섹션 바로가기로 탐색하고 
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/notifications/settings');
+    await expect(page.getByRole('heading', { name: '내 수신 상태' })).toBeVisible();
+    await expect(page.getByText('앱 내 수신 가능', { exact: true })).toBeVisible();
+    await expect(page.getByText('연결 준비 중', { exact: true }).first()).toBeVisible();
     const navigation = page.getByRole('navigation', { name: '알림 설정 바로가기' });
     await expect(navigation).toBeVisible();
     await navigation.getByRole('button', { name: '앱별 알림' }).click();

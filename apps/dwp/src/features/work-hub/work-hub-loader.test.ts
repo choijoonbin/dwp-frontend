@@ -11,6 +11,7 @@ function readers(): WorkHubSourceReaders {
   const reader = () => vi.fn().mockResolvedValue({ items: [] });
   return {
     workspace: reader(),
+    'work-assignments': reader(),
     'approval-inbox': reader(),
     'approval-completed': reader(),
     'approval-needs-info': reader(),
@@ -152,7 +153,7 @@ describe('Work Hub source aggregation', () => {
         hasMore: false,
       })
       .mockResolvedValueOnce({ items: [], page: 0, hasMore: false });
-    const result = await workHubSourceReaders.personal({ canUpdatePersonal: true });
+    const result = await workHubSourceReaders.personal({ canUpdatePersonal: true, actorId: null });
     expect(result.items).toHaveLength(101);
     expect(result.items[100].reference.sourceReference).toBe('task-100');
     expect(result.hasMore).toBe(false);
@@ -163,8 +164,8 @@ describe('Work Hub source aggregation', () => {
       page: 0,
       hasMore: true,
     });
-    await expect(workHubSourceReaders.personal({ canUpdatePersonal: false })).rejects.toThrow(
-      'pagination'
-    );
+    await expect(
+      workHubSourceReaders.personal({ canUpdatePersonal: false, actorId: null })
+    ).rejects.toThrow('pagination');
   });
 });

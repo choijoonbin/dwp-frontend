@@ -20,8 +20,10 @@ const accessibleFeedbackSx = {
 
 export function ActivityIntegrityEvidence({
   query,
+  density = 'default',
 }: {
   query: UseQueryResult<WorkspaceActivityEvidence, Error>;
+  density?: 'default' | 'compact';
 }) {
   const { t } = useTranslation('work');
   if (query.isLoading) {
@@ -48,7 +50,7 @@ export function ActivityIntegrityEvidence({
   const severity =
     integrityStatus === 'VERIFIED' ? 'success' : integrityStatus === 'FAILED' ? 'error' : 'warning';
   return (
-    <Stack gap={1.25} data-integrity-status={integrityStatus}>
+    <Stack gap={density === 'compact' ? 0.65 : 1.25} data-integrity-status={integrityStatus}>
       <Stack direction="row" gap={0.75} flexWrap="wrap">
         <Chip
           size="small"
@@ -76,11 +78,32 @@ export function ActivityIntegrityEvidence({
       <InlineFeedback
         severity={severity}
         title={t(`activityFoundation.detail.integrity.result.${integrityStatus}.title`)}
-        sx={accessibleFeedbackSx}
+        sx={{
+          ...accessibleFeedbackSx,
+          ...(density === 'compact'
+            ? {
+                px: 0.75,
+                py: 0.25,
+                '& .MuiAlert-icon': { color: 'text.primary', mr: 0.75, py: 0.25 },
+                '& .MuiAlert-message': { py: 0.25 },
+              }
+            : {}),
+        }}
       >
-        {t(`activityFoundation.detail.integrity.result.${integrityStatus}.description`)}
+        {density === 'compact'
+          ? null
+          : t(`activityFoundation.detail.integrity.result.${integrityStatus}.description`)}
       </InlineFeedback>
-      <Box component="dl" sx={{ m: 0, display: 'grid', gap: 0.75 }}>
+      <Box
+        component="dl"
+        sx={{
+          m: 0,
+          display: 'grid',
+          gridTemplateColumns:
+            density === 'compact' ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+          gap: density === 'compact' ? 0.5 : 0.75,
+        }}
+      >
         <EvidenceField
           label={t('activityFoundation.detail.integrity.observedAt')}
           value={formatDate(evidence.observedAt, { dateStyle: 'medium', timeStyle: 'short' })}
@@ -98,10 +121,16 @@ export function ActivityIntegrityEvidence({
             })}
             value={evidence.recordHash}
             mono
+            compact={density === 'compact'}
           />
         )}
       </Box>
-      <Typography variant="caption" color="text.secondary" component="p">
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        component="p"
+        sx={{ display: density === 'compact' ? 'none' : 'block' }}
+      >
         {t('activityFoundation.detail.integrity.scopeNotice')}
       </Typography>
     </Stack>
@@ -112,10 +141,12 @@ function EvidenceField({
   label,
   value,
   mono = false,
+  compact = false,
 }: {
   label: string;
   value: string;
   mono?: boolean;
+  compact?: boolean;
 }) {
   return (
     <Box sx={{ minWidth: 0 }}>
@@ -130,7 +161,11 @@ function EvidenceField({
           mt: 0.2,
           overflowWrap: 'anywhere',
           fontFamily: mono ? foundationTokens.font.mono : undefined,
+          ...(compact
+            ? { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
+            : {}),
         }}
+        title={compact ? value : undefined}
       >
         {value}
       </Typography>

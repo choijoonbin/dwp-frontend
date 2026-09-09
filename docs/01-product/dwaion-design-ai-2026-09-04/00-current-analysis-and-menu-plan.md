@@ -86,7 +86,7 @@ DWAI·ON은 DWP의 AI 브랜드이자 권한 안에서 업무를 이해하고 �
 | 영역            | 현재 적용                                                                            | 후속 활성화에 필요한 계약                                                  |
 | --------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
 | 내 AI 루틴      | 사용자 메뉴, 명시 동의, 시간대/활성 구간/quiet-hours preview, dry-run, pause/archive | durable scheduler, 위임 token exchange, 예산, 알림·제안 outbox 운영 worker |
-| 개인 AI 제어    | 소스별 preference, 명시적 memory, 보존 경계, 삭제 요청·부분 실패 영수증              | answer runtime memory 적용, 승인된 물리 삭제/crypto-shred executor         |
+| 개인 AI 제어    | 소스별 preference, 명시적 memory, 독립 동의에 따른 답변 표현 적용, 보존·삭제 요청    | 승인된 물리 삭제/crypto-shred executor                                     |
 | 결과물 스튜디오 | 직렬 autosave, 불변 version/reference, preflight, 개인 게시, export request          | connector source verifier, 조직 DLP, 공유 권한, 외부 파일 export worker    |
 | Agent Studio    | 에이전트 관리의 후속 확장                                                            | 선언형 도구/소스, 버전 평가, 게시/롤백, secret 격리                        |
 | 장기 실행 계획  | AI 실행 이력의 후속 확장                                                             | durable workflow, 단계 receipt, 재시도/취소/보상                           |
@@ -120,7 +120,7 @@ DWAI·ON은 DWP의 AI 브랜드이자 권한 안에서 업무를 이해하고 �
 | 제안→실행 여정           | 부분 완성                     | 수락/인계/확정 결과의 연결과 표현         |
 | 음성                     | 검토형 입력/출력 단계         | 실시간 양방향 모드는 별도                 |
 | 개인 루틴                | 검증 전용 기반 완성           | scheduler·예산·알림·제안 전달 운영 worker |
-| 개인 AI 제어             | 저장·보존 경계 완성           | answer runtime 적용·물리 삭제 executor    |
+| 개인 AI 제어             | 저장·답변 적용 동의·보존 경계 | 물리 삭제 executor                        |
 | 개인 결과물              | 편집·버전·개인 게시 기반 완성 | source verifier·조직 DLP·공유·파일 export |
 | 팀 결과물/Agent Studio   | 확장 설계 필요                | 공동 편집·공유·평가·게시·롤백             |
 

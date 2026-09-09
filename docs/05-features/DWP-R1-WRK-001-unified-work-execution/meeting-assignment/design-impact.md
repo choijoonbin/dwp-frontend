@@ -1,6 +1,6 @@
 # Work 배정 업무 — 기존 시안에 추가할 디자인 요구
 
-이 문서는 기존 00~12 프롬프트의 원본을 수정하지 않는 **배정 업무 유형 전용 추가 지시**입니다. API 계약은 [contract.md](contract.md)를 함께 전달합니다. 실제 Meeting adapter·승격 통합과 새 화면 구현은 아직 완료로 확인하지 않았습니다.
+이 문서는 기존 00~12 프롬프트의 원본을 수정하지 않는 **배정 업무 유형 전용 추가 지시**입니다. API 계약은 [contract.md](contract.md)를 함께 전달합니다. 2026-09-09 현재 Work 소유 목록·상세·활성 명령·복구·반응형 화면은 [완료 보고](../2026-09-09-stitch-completion-remediation.md)와 [검증 증거](../implementation-evidence/2026-09-08-stitch-completion/validation.json)로 후속 확인했습니다. 실제 Meeting authority·People 적격성·안전한 대상 선택 계약이 필요한 CREATE/by-source/REASSIGN은 별도 **NO-GO**입니다.
 
 사용법: 아래 ‘공통 추가 프롬프트’ 전체와 필요한 01/05/09/12 추가 프롬프트를 함께 복사하여 해당 기존 시안과 전달합니다. 기존 개인 할 일은 그대로 두고, `Work 배정 업무` 유형에만 추가 규칙을 적용합니다. 새 영구 메뉴·별도 업무 홈·조직 전체 관리 대시보드를 만들지 않습니다.
 

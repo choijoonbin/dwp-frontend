@@ -1,0 +1,173 @@
+{
+  "method": "All18 actual final-v5 images viewed individually by root and three reviewers;11-D was checked in both full-page and viewport PNGs. Hashes bind every reviewed image to the final gallery.",
+  "reviewedKeys": [
+    "01-D",
+    "01-M",
+    "02-D",
+    "02-M",
+    "03-D",
+    "03-M",
+    "04-D",
+    "04-M",
+    "05-D",
+    "05-M",
+    "06-D",
+    "07-D",
+    "08-D",
+    "09-D",
+    "10-D",
+    "11-D",
+    "12-M1",
+    "12-M2"
+  ],
+  "scope": "No blank canvas, horizontal overflow, text collision or loss of principal action labels observed in the reviewed captures. Static inspection supplements browser assertions.",
+  "captureLimitations": [
+    "Full-page mobile fixed bottom navigation can cross the middle of the long image; this is not evidence of permanent inaccessibility.",
+    "06-D checklist extension lies partly beyond the modal scroll viewport; Save/Cancel are fully visible.",
+    "10-D explicitly displays partial Home source delays; Work contribution and day-plan rows remain visible."
+  ],
+  "M1Selection": "Use existing same-run M1 viewport PNG to preserve the fixed confirmation dialog/backdrop without full-page compositing.",
+  "resolvedOverlap": {
+    "frame": "03-D",
+    "finding": "Global DWAI launcher touched revoke button border in superseded run.",
+    "fix": "Work Access Review action groups now participate in existing shared auxiliary-layer avoidance; unchanged13-spec suite verifies actual viewport separation in both browser projects.",
+    "finalVisualResult": "03-D Access action and launcher remain clearly separated in v5."
+  },
+  "sourceRun": "playwright-v5.json",
+  "sourceSha256": "4cdc185b3d2e0040720a45a21691878a2c48ef6a6f5fa9e1bf1f359fea8f68f2",
+  "captures": [
+    {
+      "key": "01-D",
+      "path": "../gallery-2026-09-08/screens/01-D.png",
+      "sha256": "d617e6a06a9ac40719043733593f5a7f26165026bfd3774b25e3a22296e46e7b",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/01-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue-full.png"
+    },
+    {
+      "key": "01-M",
+      "path": "../gallery-2026-09-08/screens/01-M.png",
+      "sha256": "555cb6c454cb50af33ed2e45b5efe8a7ea1d03f66cd6c39ca6d97456c92a6e17",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/01-M.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue-full.png"
+    },
+    {
+      "key": "02-D",
+      "path": "../gallery-2026-09-08/screens/02-D.png",
+      "sha256": "0a2e7e431d666c353bf0a068b99f5ba2ab19b200d5fbe295a875f4744d07a542",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/02-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png"
+    },
+    {
+      "key": "02-M",
+      "path": "../gallery-2026-09-08/screens/02-M.png",
+      "sha256": "85b092f1341cb0cbe5ef973cb70d8492ecd618cf6e00f5367f54a64f08f6b2cf",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/02-M.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png"
+    },
+    {
+      "key": "03-D",
+      "path": "../gallery-2026-09-08/screens/03-D.png",
+      "sha256": "1df4a5c4a8c3bcbb1022eaf7f6cda963d7347cc5a454478ae2eae43da0d26f93",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/03-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png"
+    },
+    {
+      "key": "03-M",
+      "path": "../gallery-2026-09-08/screens/03-M.png",
+      "sha256": "d3d5315ab7d9f9ccbd4b86e9dcbfb736496aebae2fd27e4f9278f221da359b3b",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/03-M.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png"
+    },
+    {
+      "key": "04-D",
+      "path": "../gallery-2026-09-08/screens/04-D.png",
+      "sha256": "278034f70a02f3a81bfc3657c2a609943586974e4198bdbadc5f56d0a232f803",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/04-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png"
+    },
+    {
+      "key": "04-M",
+      "path": "../gallery-2026-09-08/screens/04-M.png",
+      "sha256": "c1681cba1162b54fcb8cc0571e0cabb0477172ddeb682191e50fb1d134ec005c",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/04-M.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png"
+    },
+    {
+      "key": "05-D",
+      "path": "../gallery-2026-09-08/screens/05-D.png",
+      "sha256": "119978feaebe5a881ad586ff38ca964a7115f9f0bf65f28a9f3428984e7b862a",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/05-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png"
+    },
+    {
+      "key": "05-M",
+      "path": "../gallery-2026-09-08/screens/05-M.png",
+      "sha256": "33fa466d6258d5c3616f2383f2107e71bb7d7f0a0f05e92c3dece7ca2c3b127e",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/05-M.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png"
+    },
+    {
+      "key": "06-D",
+      "path": "../gallery-2026-09-08/screens/06-D.png",
+      "sha256": "f8447ec6405c7c9b6a55406ccbc09eee3ebca776cfa2fe85ad06914b2832895f",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/06-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png"
+    },
+    {
+      "key": "07-D",
+      "path": "../gallery-2026-09-08/screens/07-D.png",
+      "sha256": "dfa17ecf2ac4b79a176028f62fc4983db577086056f85225f38002921ab0ad9d",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/07-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png"
+    },
+    {
+      "key": "08-D",
+      "path": "../gallery-2026-09-08/screens/08-D.png",
+      "sha256": "7a3ed95827796c504f523f015fb6156b8dd87dc2a10861c58647c70c7af52a66",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/08-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png"
+    },
+    {
+      "key": "09-D",
+      "path": "../gallery-2026-09-08/screens/09-D.png",
+      "sha256": "703ef7388c6b3c9deb5c50c24ac3e3ca05cee7fd3c8670c7ef7e792655073881",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/09-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status-full.png"
+    },
+    {
+      "key": "10-D",
+      "path": "../gallery-2026-09-08/screens/10-D.png",
+      "sha256": "790265822cfdf4dd857c45ce0fae9c015d1f9d706adaa8908c98ab1bbcef0a72",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/10-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png"
+    },
+    {
+      "key": "11-D",
+      "path": "../gallery-2026-09-08/screens/11-D.png",
+      "sha256": "66a5e39249d15281324dae045b938b6bee6822121263a769550a863a14278b27",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/11-D.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png"
+    },
+    {
+      "key": "12-M1",
+      "path": "../gallery-2026-09-08/screens/12-M1.png",
+      "sha256": "15c99da8d1463bf2957c4d4d818e23662984e9c7d0b1306b59294a7682a6171a",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/12-M1.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png"
+    },
+    {
+      "key": "12-M2",
+      "path": "../gallery-2026-09-08/screens/12-M2.png",
+      "sha256": "9de407d189b1ad5422ef366f4a85f07c04054e07991fda35550880fb6c749fec",
+      "implementationBundlePath": "../gallery-2026-09-08/screens/12-M2.png",
+      "originalEphemeralPath": "/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png"
+    }
+  ],
+  "resolvedAssistOverlap": {
+    "frame": "11-D",
+    "result": "Actual viewport and full-page review show about16px horizontal gap between submit/form right edge and FAB; copy/continue actions remain visible.",
+    "geometryEvidence": "playwright-assist-avoidance.json:4passed across1440/1280 andchromium/mobile; complete13-spec run repeats the same geometry assertions."
+  },
+  "originalEphemeralSourceRun": "/tmp/dwp-work-final-green-20260908-v5",
+  "evidencePathPolicy": "Canonical paths are relative to this review file. originalEphemeralSourceRun and originalEphemeralPath record historical provenance only."
+}

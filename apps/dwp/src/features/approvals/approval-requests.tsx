@@ -34,10 +34,10 @@ import {
   respondToApprovalInformationRequest,
   submitApprovalRequest,
   updateApprovalDraft,
+  usePermissions,
   useToast,
   withdrawApprovalRequest,
 } from '@dwp-frontend/shared-utils';
-
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -55,7 +55,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-
 import { ApprovalSurface, PriorityChip, StatusChip } from './approval-ui';
 import {
   ApprovalQueryErrorAlert,
@@ -64,7 +63,7 @@ import {
 } from './approval-request-form-context';
 import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
 import { ApprovalInformationResponseFields } from './approval-information-response-fields';
-import { approvalWorkReturnTarget } from './approval-return-target';
+import { authorizedApprovalWorkReturnTarget } from './approval-return-target';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
@@ -87,7 +86,6 @@ const viewMap = {
 export function ApprovalRequests({ view }: { view: 'new' | keyof typeof viewMap }) {
   return view === 'new' ? <NewApprovalRequest /> : <ApprovalRequestList view={view} />;
 }
-
 function NewApprovalRequest() {
   const { t, i18n } = useTranslation('approvals');
   const toast = useToast();
@@ -233,7 +231,6 @@ function NewApprovalRequest() {
     onError: (error) =>
       !isProductSurfaceOperationCancelledError(error) && toast.error(t('requests.createError')),
   });
-
   return (
     <Box
       sx={{
@@ -546,14 +543,19 @@ function NewApprovalRequest() {
     </Box>
   );
 }
-
 function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const { t, i18n } = useTranslation('approvals');
   const toast = useToast();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedId = searchParams.get('request');
-  const returnTarget = approvalWorkReturnTarget(searchParams.get('returnTo'));
+  const { permissions } = usePermissions();
+  const requestedReturnTarget = searchParams.get('returnTo');
+  const returnTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
+  const returnToWork = () => {
+    const currentTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
+    if (currentTarget) navigate(currentTarget);
+  };
   const openedRequestRef = useRef<string | undefined>(undefined);
   const { canUpdateRequests } = useApprovalExperience();
   const queryClient = useQueryClient();
@@ -744,7 +746,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
               intent="quiet"
               size="small"
               startIcon={<ArrowLeft size={16} />}
-              onClick={() => navigate(returnTarget)}
+              onClick={returnToWork}
             >
               {t('common:productSurface.actions.returnToWork')}
             </ActionButton>
@@ -983,7 +985,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
         requestId={detailId}
         canUpdateRequests={requestActionsReady}
         onClose={closeDetail}
-        onReturnToWork={returnTarget ? () => navigate(returnTarget) : undefined}
+        onReturnToWork={returnTarget ? returnToWork : undefined}
         onRespond={(request) => {
           closeDetail();
           setRequestAction({ kind: 'respond', request });

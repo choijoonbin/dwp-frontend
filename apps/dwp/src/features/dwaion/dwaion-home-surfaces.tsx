@@ -38,7 +38,18 @@ export function DwaionHomeSection({
   children: ReactNode;
 }) {
   return (
-    <Box component="section" aria-label={title} sx={{ minWidth: 0 }}>
+    <Box
+      component="section"
+      aria-label={title}
+      sx={{
+        minWidth: 0,
+        p: { xs: 1.5, md: 2 },
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: (theme) => `${Number(theme.shape.borderRadius) * 1.5}px`,
+        bgcolor: 'background.paper',
+      }}
+    >
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -47,10 +58,22 @@ export function DwaionHomeSection({
         mb={1.5}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" variant="h6" fontWeight="fontWeightBold">
+          <Typography
+            component="h2"
+            variant="h6"
+            fontWeight="fontWeightBold"
+            sx={{
+              fontSize: { xs: 'body1.fontSize', md: 'h5.fontSize' },
+              lineHeight: 'h3.lineHeight',
+            }}
+          >
             {title}
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.4, display: 'block' }}>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ mt: 0.4, display: { xs: 'none', md: 'block' } }}
+          >
             {description}
           </Typography>
         </Box>
@@ -59,7 +82,7 @@ export function DwaionHomeSection({
           size="small"
           endIcon={<ArrowRight size={14} />}
           onClick={onAction}
-          sx={{ flexShrink: 0 }}
+          sx={{ flexShrink: 0, minHeight: { xs: 36, md: 40 }, px: { xs: 0.5, md: 1 } }}
         >
           {actionLabel}
         </ActionButton>

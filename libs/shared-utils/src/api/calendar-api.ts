@@ -410,10 +410,14 @@ export async function getCalendarHome(timeZone = 'Asia/Seoul'): Promise<Calendar
   return response.data.data;
 }
 
-export async function getCalendars(): Promise<CalendarSummary[]> {
-  const response = await axiosInstance.get<ApiResponse<CalendarSummary[]>>(
-    '/api/platform/v1/calendar/calendars'
-  );
+export function getCalendars(): Promise<CalendarSummary[]>;
+export function getCalendars(signal: AbortSignal): Promise<CalendarSummary[]>;
+export async function getCalendars(signal?: AbortSignal): Promise<CalendarSummary[]> {
+  const path = '/api/platform/v1/calendar/calendars';
+  const callerSignal = signal instanceof AbortSignal ? signal : undefined;
+  const response = callerSignal
+    ? await axiosInstance.get<ApiResponse<CalendarSummary[]>>(path, { signal: callerSignal })
+    : await axiosInstance.get<ApiResponse<CalendarSummary[]>>(path);
   return response.data.data;
 }
 
@@ -456,18 +460,33 @@ export async function deleteCalendarShare(
   );
 }
 
-export async function getCalendarEvents(from: string, to: string): Promise<CalendarEvent[]> {
-  const response = await axiosInstance.get<ApiResponse<CalendarEvent[]>>(
-    `/api/platform/v1/calendar/events?${rangeQuery(from, to)}`
-  );
+export function getCalendarEvents(
+  from: string,
+  to: string,
+  signal?: AbortSignal
+): Promise<CalendarEvent[]>;
+export async function getCalendarEvents(
+  from: string,
+  to: string,
+  signal?: AbortSignal
+): Promise<CalendarEvent[]> {
+  const path = `/api/platform/v1/calendar/events?${rangeQuery(from, to)}`;
+  const response = signal
+    ? await axiosInstance.get<ApiResponse<CalendarEvent[]>>(path, { signal })
+    : await axiosInstance.get<ApiResponse<CalendarEvent[]>>(path);
   return response.data.data;
 }
 
-export async function createCalendarEvent(input: CreateCalendarEventInput): Promise<CalendarEvent> {
-  const response = await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(
-    '/api/platform/v1/calendar/events',
-    input
-  );
+export async function createCalendarEvent(
+  input: CreateCalendarEventInput,
+  signal?: AbortSignal
+): Promise<CalendarEvent> {
+  const path = '/api/platform/v1/calendar/events';
+  const response = signal
+    ? await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(path, input, {
+        signal,
+      })
+    : await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(path, input);
   return response.data.data;
 }
 

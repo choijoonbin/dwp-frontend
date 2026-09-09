@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
@@ -121,16 +121,13 @@ export function SpacesAdminLegacyIndexRedirect() {
   const destination = SPACE_ADMIN_NAVIGATION_CONTRACTS.find((item) =>
     canAccessProductAreaNavigationItem(item, hasPermission)
   )?.path;
-  return (
-    <Navigate
-      to={
-        destination
-          ? { pathname: destination, search: location.search, hash: location.hash }
-          : '/403'
-      }
-      replace
-    />
-  );
+  const target = destination ? `${destination}${location.search}${location.hash}` : '/403';
+  return <ProductApplicationRedirect target={target} />;
+}
+
+export function ProductApplicationRedirect({ target }: { target: string }) {
+  useEffect(() => window.location.replace(target), [target]);
+  return routeFallback;
 }
 
 function productAdminLegacyRedirect(path: string): RouteObject {
@@ -176,7 +173,7 @@ function ProductAdminLegacyDestination({ redirectId }: { redirectId: string }) {
     PRODUCT_LEGACY_ROUTE_SOURCE.filter((redirect) => redirect.redirectId === redirectId),
     ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
   );
-  return resolved ? <Navigate to={resolved.target} replace /> : <Navigate to="/404" replace />;
+  return <ProductApplicationRedirect target={resolved?.target ?? '/404'} />;
 }
 
 const productAdminLegacyRoutes: RouteObject[] = [

@@ -22,22 +22,37 @@ function fulfillSuccess(route: Route, data: unknown) {
   });
 }
 
-async function prepareApprovalHandoff(page: Page, includeWorkPermission: boolean) {
+async function prepareApprovalHandoff(
+  page: Page,
+  includeWorkPermission: boolean,
+  includeWorkDenial = false
+) {
+  const permissions = [
+    ...APPROVAL_MEMBER_PERMISSIONS,
+    ...(includeWorkPermission
+      ? [
+          {
+            resourceType: 'APP',
+            resourceKey: 'APP.WORK',
+            permissionCode: 'VIEW',
+            effect: 'ALLOW' as const,
+          },
+        ]
+      : []),
+    ...(includeWorkDenial
+      ? [
+          {
+            resourceType: 'APP',
+            resourceKey: 'APP.WORK',
+            permissionCode: 'VIEW',
+            effect: 'DENY' as const,
+          },
+        ]
+      : []),
+  ];
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
-    permissions: [
-      ...APPROVAL_MEMBER_PERMISSIONS,
-      ...(includeWorkPermission
-        ? [
-            {
-              resourceType: 'APP',
-              resourceKey: 'APP.WORK',
-              permissionCode: 'VIEW',
-              effect: 'ALLOW' as const,
-            },
-          ]
-        : []),
-    ],
+    permissions,
   });
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
   await page.route(
@@ -51,6 +66,12 @@ async function prepareApprovalHandoff(page: Page, includeWorkPermission: boolean
       canDecide: true,
     })
   );
+  return {
+    revokeWork: () => {
+      const index = permissions.findIndex((permission) => permission.resourceKey === 'APP.WORK');
+      if (index >= 0) permissions.splice(index, 1);
+    },
+  };
 }
 
 async function prepareApprovalRequestHandoff(page: Page) {
@@ -120,6 +141,31 @@ test('업무함에서 연 결재는 결정 뒤에도 검증된 복귀 위치를 
   await expect(page).toHaveURL((url) => `${url.pathname}${url.search}${url.hash}` === returnTarget);
 });
 
+test('업무함 deep link는 비동기 권한 부트스트랩에도 요청한 결재를 보존한다', async ({ page }) => {
+  await prepareApprovalHandoff(page, true);
+  await page.route(
+    '**/api/auth/product-surface-contexts',
+    async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await route.fallback();
+    },
+    { times: 1 }
+  );
+  const returnTarget =
+    '/work/queue?work=APPROVAL_TASK%3Aapproval-task-1%3ASECURITY_REVIEW#approval-task-1';
+  const query = new URLSearchParams({ task: 'approval-task-1', returnTo: returnTarget });
+
+  await page.goto(`/approvals/inbox?${query.toString()}`);
+  await expect(page.getByRole('heading', { name: '고객 분석 환경 접근 연장' })).toBeVisible();
+  await expect(page).toHaveURL((url) => {
+    return (
+      url.pathname === '/approvals/inbox' &&
+      url.searchParams.get('task') === 'approval-task-1' &&
+      url.searchParams.get('returnTo') === returnTarget
+    );
+  });
+});
+
 test('전자결재 복귀 링크는 외부 또는 비정규 경로를 표시하지 않는다', async ({ page }) => {
   await prepareApprovalHandoff(page, false);
 
@@ -127,6 +173,42 @@ test('전자결재 복귀 링크는 외부 또는 비정규 경로를 표시하�
     `/approvals/inbox?${new URLSearchParams({ returnTo: 'https://evil.test/work' }).toString()}`
   );
   await expect(page.getByRole('button', { name: '업무로 돌아가기', exact: true })).toHaveCount(0);
+});
+
+test('유효한 업무 복귀 위치도 APP.WORK 권한 없이는 표시하지 않는다', async ({ page }) => {
+  await prepareApprovalHandoff(page, false);
+
+  await page.goto(
+    `/approvals/inbox?${new URLSearchParams({ returnTo: '/work/queue?view=mine' }).toString()}`
+  );
+
+  await expect(page.getByRole('button', { name: '업무로 돌아가기', exact: true })).toHaveCount(0);
+});
+
+test('APP.WORK VIEW 거부는 동일 권한 허용보다 우선해 복귀를 닫는다', async ({ page }) => {
+  await prepareApprovalHandoff(page, true, true);
+
+  await page.goto(
+    `/approvals/inbox?${new URLSearchParams({ returnTo: '/work/queue?view=mine' }).toString()}`
+  );
+
+  await expect(page.getByRole('button', { name: '업무로 돌아가기', exact: true })).toHaveCount(0);
+});
+
+test('열린 결재 화면은 APP.WORK 권한 회수 즉시 업무 복귀를 닫는다', async ({ page }) => {
+  const session = await prepareApprovalHandoff(page, true);
+  const returnTarget = '/work/queue?work=approval-task-1#approval-task-1';
+
+  await page.goto(
+    `/approvals/inbox?${new URLSearchParams({ task: 'approval-task-1', returnTo: returnTarget }).toString()}`
+  );
+  await expect(page.getByRole('button', { name: '업무로 돌아가기', exact: true })).toBeVisible();
+
+  session.revokeWork();
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+
+  await expect(page.getByRole('button', { name: '업무로 돌아가기', exact: true })).toHaveCount(0);
+  await expect(page).toHaveURL((url) => url.pathname === '/approvals/inbox');
 });
 
 test('업무함에서 연 보완 요청은 답변 뒤에도 정확한 업무 위치로 돌아간다', async ({ page }) => {

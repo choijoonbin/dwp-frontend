@@ -108,6 +108,21 @@ export function approvalTaskToHub(task: ApprovalTask, sourceId: WorkHubSourceId)
     reason: null,
     dataClassification: task.dataClassification,
     actions: [{ kind: 'OPEN_SOURCE', availability: 'AVAILABLE' }],
+    sourceContext: {
+      kind: 'APPROVAL_TASK',
+      requestId: task.requestId,
+      requesterName: task.requesterName ?? null,
+      requesterOrgName: task.requesterOrgName ?? null,
+      submittedAt: task.submittedAt ?? null,
+      workflowNameKo: task.workflowNameKo,
+      workflowNameEn: task.workflowNameEn,
+      currentStep: {
+        key: task.stepKey,
+        name: task.stepName,
+        sequence: task.stepSequence,
+      },
+      riskScore: task.riskScore,
+    },
   });
 }
 
@@ -134,6 +149,18 @@ export function approvalRequestToHub(request: ApprovalRequest): WorkHubItem {
     reason: request.latestInformationRequest ?? null,
     dataClassification: request.dataClassification,
     actions: [{ kind: 'OPEN_SOURCE', availability: 'AVAILABLE' }],
+    sourceContext: {
+      kind: 'APPROVAL_REQUEST',
+      submittedAt: request.submittedAt ?? null,
+      workflowNameKo: request.workflowNameKo,
+      workflowNameEn: request.workflowNameEn,
+      currentStep: {
+        key: request.currentStepKey ?? null,
+        name: request.currentStepName ?? null,
+        sequence: request.currentStepSequence ?? null,
+        totalSteps: request.totalSteps,
+      },
+    },
   });
 }
 
@@ -167,6 +194,15 @@ export function serviceRequestToHub(request: ServiceRequestSummary): WorkHubItem
     reason: null,
     dataClassification: request.dataClassification ?? null,
     actions: [{ kind: 'OPEN_SOURCE', availability: 'AVAILABLE' }],
+    sourceContext: {
+      kind: 'SERVICE_REQUEST',
+      serviceKey: request.serviceKey,
+      serviceNameKo: request.serviceNameKo,
+      serviceNameEn: request.serviceNameEn,
+      assignedGroup: request.assignedGroup,
+      assignedTo: request.assignedTo ?? null,
+      submittedAt: request.submittedAt ?? null,
+    },
   });
 }
 

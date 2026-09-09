@@ -185,9 +185,100 @@
       "surfaceId": "communications.work"
     },
     {
+      "routeContractKey": "route.dwaion.management.actions.page",
+      "routeId": "dwaion.management.actions",
+      "pattern": "/dwaion/admin/actions",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.agents.page",
+      "routeId": "dwaion.management.agents",
+      "pattern": "/dwaion/admin/agents",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.audit.page",
+      "routeId": "dwaion.management.audit",
+      "pattern": "/dwaion/admin/audit",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.evaluation.page",
+      "routeId": "dwaion.management.evaluation",
+      "pattern": "/dwaion/admin/evaluation",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.gates.page",
+      "routeId": "dwaion.management.gates",
+      "pattern": "/dwaion/admin/gates",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.overview.page",
+      "routeId": "dwaion.management.overview",
+      "pattern": "/dwaion/admin/overview",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.safety.page",
+      "routeId": "dwaion.management.safety",
+      "pattern": "/dwaion/admin/safety",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.management.sources.page",
+      "routeId": "dwaion.management.sources",
+      "pattern": "/dwaion/admin/sources",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.actions.page",
+      "routeId": "dwaion.work.actions",
+      "pattern": "/dwaion/actions",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.artifacts.page",
+      "routeId": "dwaion.work.artifacts",
+      "pattern": "/dwaion/artifacts",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
       "routeContractKey": "route.dwaion.work.home.page",
       "routeId": "dwaion.work.home",
       "pattern": "/dwaion/home",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.personal-controls.page",
+      "routeId": "dwaion.work.personal-controls",
+      "pattern": "/dwaion/personal-controls",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.proposals.page",
+      "routeId": "dwaion.work.proposals",
+      "pattern": "/dwaion/proposals",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.routines.page",
+      "routeId": "dwaion.work.routines",
+      "pattern": "/dwaion/routines",
       "productId": "dwaion",
       "surfaceId": "dwaion.work"
     },

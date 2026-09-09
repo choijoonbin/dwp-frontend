@@ -23,7 +23,11 @@ import {
   LocalErrorState,
   SectionHeader,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import {
+  formatDate,
+  resolveDisplayCodeWithFallback,
+  resolveSupportedLocale,
+} from '@dwp-frontend/shared-i18n';
 import type {
   DwaionUserRun,
   WorkspaceActivityEvent,
@@ -44,6 +48,10 @@ import {
 } from './activity-detail-model';
 import { ActivityIntegrityEvidence } from './activity-integrity-evidence';
 import { ActivityRunObservability } from './activity-run-observability';
+import {
+  consumeActivitySourceReturnFocus,
+  recordActivitySourceReturnFocus,
+} from './activity-source-focus-handoff';
 
 import type { ActivityDetailField } from './activity-detail-model';
 
@@ -160,10 +168,12 @@ export function ActivityEventDetail({
   onClose,
 }: ActivityEventDetailProps) {
   const { t, i18n } = useTranslation('work');
+  const { t: displayT } = useTranslation('display');
   const locale = resolveSupportedLocale(i18n?.resolvedLanguage, i18n?.language);
   const navigate = useNavigate();
   const [sourceUnavailable, setSourceUnavailable] = useState<string | null>(null);
   const drawerContentRef = useRef<HTMLDivElement | null>(null);
+  const sourceActionRef = useRef<HTMLButtonElement | null>(null);
   const activeEventRef = useRef<string | null>(eventId);
   activeEventRef.current = eventId;
   useEffect(() => {
@@ -186,6 +196,22 @@ export function ActivityEventDetail({
     return () => globalThis.cancelAnimationFrame(frame);
   }, [eventId, variant]);
 
+  useEffect(() => {
+    if (!selected?.id) return;
+    const focusEvent = {
+      id: selected.id,
+      sourceAccess: selected.sourceAccess,
+      sourceRoute: selected.sourceRoute,
+    };
+    // Consume inside the frame so React StrictMode's probe cleanup cannot discard the intent.
+    const frame = globalThis.requestAnimationFrame(() => {
+      if (consumeActivitySourceReturnFocus(focusEvent)) {
+        sourceActionRef.current?.focus({ preventScroll: true });
+      }
+    });
+    return () => globalThis.cancelAnimationFrame(frame);
+  }, [selected?.id, selected?.sourceAccess, selected?.sourceRoute]);
+
   const openSource = async () => {
     setSourceUnavailable(null);
     // Revalidate source ACL at the moment of navigation, including after a stale snapshot.
@@ -194,8 +220,10 @@ export function ActivityEventDetail({
     if (activeEventRef.current !== eventId) return;
     const event = !latest.isError ? selectedActivityEvent(eventId, latest.data) : undefined;
     const route = event ? availableActivitySourceRoute(event) : null;
-    if (route) navigate(route);
-    else setSourceUnavailable(eventId);
+    if (event && route) {
+      recordActivitySourceReturnFocus(event);
+      navigate(route);
+    } else setSourceUnavailable(eventId);
   };
 
   const formatTimestamp = (value: string) =>
@@ -208,6 +236,9 @@ export function ActivityEventDetail({
     });
 
   const localizeFieldValue = (field: ActivityDetailField): string => {
+    if (field.key === 'objectType') {
+      return resolveDisplayCodeWithFallback(displayT, 'objectTypes', field.value, field.value);
+    }
     if (field.key === 'actorType') {
       return t(`labels.actor.${field.value}`, { defaultValue: field.value });
     }
@@ -220,6 +251,9 @@ export function ActivityEventDetail({
       return t(`activityFoundation.detail.provenance.${field.value}`, {
         defaultValue: field.value,
       });
+    }
+    if (field.key === 'resultState') {
+      return t(`activityFoundation.resultState.${field.value}`, { defaultValue: field.value });
     }
     return field.value;
   };
@@ -306,6 +340,17 @@ export function ActivityEventDetail({
                       },
                     ]
                   : []),
+                ...(model.resultState
+                  ? [
+                      {
+                        key: 'resultState',
+                        label: t('activityFoundation.detail.fields.resultState'),
+                        value: t(`activityFoundation.resultState.${model.resultState}`, {
+                          defaultValue: model.resultState,
+                        }),
+                      },
+                    ]
+                  : []),
               ]}
             />
           </Box>
@@ -327,6 +372,7 @@ export function ActivityEventDetail({
               )}
               {showSourceAction && availableActivitySourceRoute(selected) && (
                 <ActionButton
+                  ref={sourceActionRef}
                   intent="primary"
                   fullWidth
                   endIcon={<ArrowUpRight size={16} aria-hidden="true" />}

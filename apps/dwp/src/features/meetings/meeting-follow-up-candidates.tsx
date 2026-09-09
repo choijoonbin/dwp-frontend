@@ -40,16 +40,14 @@ import { followUpAccessDenied } from './meeting-follow-ups-state';
 
 type Attempt = { candidate: MeetingFollowUpCandidate; commandId: string };
 
-// A signed Work request is not a current Meeting authority decision. Keep promotion visibly
-// closed until the approved owner-service authority port is available for every action.
-const CURRENT_AUTHORITY_READY = false;
-
 export function MeetingFollowUpCandidates({
   identity,
   actorId,
+  requestedCandidate,
 }: {
   identity: string;
   actorId: number;
+  requestedCandidate: string | null;
 }) {
   const { t } = useTranslation('meetings');
   const theme = useTheme();
@@ -57,11 +55,13 @@ export function MeetingFollowUpCandidates({
   const client = useQueryClient();
   const mounted = useRef(true);
   const attempt = useRef<Attempt | null>(null);
+  const pendingMobileConfirmation = useRef<MeetingFollowUpCandidate | null>(null);
   const [confirm, setConfirm] = useState<MeetingFollowUpCandidate | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [uncertain, setUncertain] = useState(false);
   const [completed, setCompleted] = useState<Record<string, string>>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const appliedNavigation = useRef<string | null>(null);
   const queryKey = useMemo(
     () => ['meetings', 'follow-ups', identity, 'candidates'] as const,
     [identity]
@@ -97,11 +97,13 @@ export function MeetingFollowUpCandidates({
     return () => {
       mounted.current = false;
       attempt.current = null;
+      pendingMobileConfirmation.current = null;
       client.removeQueries({ queryKey });
     };
   }, [client, queryKey]);
   const revoke = useCallback(() => {
     attempt.current = null;
+    pendingMobileConfirmation.current = null;
     setConfirm(null);
     setBusyId(null);
     setUncertain(false);
@@ -112,6 +114,19 @@ export function MeetingFollowUpCandidates({
   useEffect(() => {
     if (followUpAccessDenied(query.error)) revoke();
   }, [query.error, revoke]);
+  useEffect(() => {
+    if (
+      !query.isSuccess ||
+      query.isFetching ||
+      !requestedCandidate ||
+      appliedNavigation.current === requestedCandidate
+    )
+      return;
+    appliedNavigation.current = requestedCandidate;
+    // The URL nominates a target; only the current bounded authorized list may select it.
+    if (query.data.some((candidate) => candidate.source.candidateId === requestedCandidate))
+      setSelectedId(requestedCandidate);
+  }, [query.isSuccess, query.isFetching, query.data, requestedCandidate]);
 
   const resolveDuplicate = async (issued: Attempt) => {
     const task = checkedCandidateAssignment(
@@ -177,11 +192,27 @@ export function MeetingFollowUpCandidates({
     }
   };
   const create = () => {
-    if (!CURRENT_AUTHORITY_READY || !confirm || attempt.current || busyId) return;
+    if (!confirm || attempt.current || busyId) return;
     const issued = { candidate: confirm, commandId: crypto.randomUUID() };
     attempt.current = issued;
     setConfirm(null);
     void run(issued, 'CREATE');
+  };
+  const requestCreation = (candidate: MeetingFollowUpCandidate) => {
+    if (attempt.current || busyId || completed[candidate.source.candidateId]) return;
+    setConfirm(candidate);
+  };
+  const requestMobileCreation = (candidate: MeetingFollowUpCandidate) => {
+    if (
+      attempt.current ||
+      pendingMobileConfirmation.current ||
+      busyId ||
+      completed[candidate.source.candidateId]
+    )
+      return;
+    // Close the full-screen review first so its focus trap cannot compete with confirmation.
+    pendingMobileConfirmation.current = candidate;
+    setSelectedId(null);
   };
 
   if (followUpAccessDenied(query.error)) {
@@ -338,11 +369,9 @@ export function MeetingFollowUpCandidates({
                       ) : (
                         <ActionButton
                           intent="primary"
-                          disabled={
-                            !CURRENT_AUTHORITY_READY || Boolean(attempt.current) || Boolean(busyId)
-                          }
+                          disabled={Boolean(attempt.current) || Boolean(busyId)}
                           loading={busyId === candidate.source.candidateId}
-                          onClick={() => setConfirm(candidate)}
+                          onClick={() => requestCreation(candidate)}
                           startIcon={<ClipboardList size={16} aria-hidden="true" />}
                           sx={{ minHeight: 44, flexShrink: 0 }}
                         >
@@ -367,13 +396,6 @@ export function MeetingFollowUpCandidates({
           gap={1.5}
           sx={{ minWidth: 0, order: 2, position: { lg: 'sticky' }, top: { lg: 24 } }}
         >
-          {!CURRENT_AUTHORITY_READY && (
-            <InlineFeedback severity="info" title={t('followUps.candidates.promotionBlockedTitle')}>
-              <Typography variant="body2">
-                {t('followUps.candidates.promotionBlockedHint')}
-              </Typography>
-            </InlineFeedback>
-          )}
           {desktop &&
             (selectedCandidate ? (
               <CandidateReview candidate={selectedCandidate} scope={identity} />
@@ -421,6 +443,8 @@ export function MeetingFollowUpCandidates({
         confirmLabel={t('followUps.candidates.confirmAction')}
         cancelLabel={t('actions.cancel')}
         busy={Boolean(busyId)}
+        focusCancelAfterOpen
+        minimumActionHeight={44}
         onClose={() => setConfirm(null)}
         onConfirm={create}
       />
@@ -434,6 +458,47 @@ export function MeetingFollowUpCandidates({
           fullScreen
           contentDividers
           contentSx={{ pt: 2 }}
+          footerSx={{ px: 2, py: 1.5 }}
+          slotProps={{
+            transition: {
+              onExited: () => {
+                const pending = pendingMobileConfirmation.current;
+                pendingMobileConfirmation.current = null;
+                if (pending && mounted.current) setConfirm(pending);
+              },
+            },
+          }}
+          footerContent={
+            selectedCandidate ? (
+              completed[selectedCandidate.source.candidateId] ? (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap={0.75}
+                  role="status"
+                  aria-live="polite"
+                  sx={{ minHeight: 44, width: 1 }}
+                >
+                  <CheckCircle2 size={18} aria-hidden="true" />
+                  <Typography variant="body2">{t('followUps.candidates.created')}</Typography>
+                </Stack>
+              ) : (
+                <ActionButton
+                  data-testid="meeting-follow-up-candidate-create-mobile"
+                  intent="primary"
+                  fullWidth
+                  disabled={Boolean(attempt.current) || Boolean(busyId)}
+                  loading={busyId === selectedCandidate.source.candidateId}
+                  onClick={() => requestMobileCreation(selectedCandidate)}
+                  startIcon={<ClipboardList size={16} aria-hidden="true" />}
+                  sx={{ minHeight: 44 }}
+                >
+                  {t('followUps.createCandidate')}
+                </ActionButton>
+              )
+            ) : undefined
+          }
         >
           {selectedCandidate && (
             <CandidateReview

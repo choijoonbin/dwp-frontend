@@ -1,0 +1,26 @@
+{
+  "name": "playwright-checklist-final",
+  "command": [
+    "corepack",
+    "yarn",
+    "playwright",
+    "test",
+    "e2e/work-personal-design-actions.spec.ts",
+    "e2e/work-source-design-evidence.spec.ts",
+    "e2e/work-activity-return-focus.spec.ts",
+    "e2e/work-hub-foundation.spec.ts",
+    "--grep",
+    "a concurrent checklist|02 03 04 and M1|a create plus today-plan intent survives|a different selected item",
+    "--project=chromium",
+    "--project=mobile",
+    "--workers=1",
+    "--max-failures=1",
+    "--retries=0",
+    "--reporter=line,json"
+  ],
+  "startedAt": "2026-09-08T10:15:42.393183+00:00",
+  "completedAt": "2026-09-08T10:16:18.426978+00:00",
+  "durationSeconds": 36.03,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/playwright-checklist-final.log"
+}

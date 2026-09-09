@@ -11,14 +11,17 @@ import {
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ActionButton, DetailInspector, InlineFeedback } from '@dwp-frontend/design-system';
 
 import { DWAION_ROUTINE_COPY_KO } from './dwaion-routine-copy';
-import { routineConsentComplete, routineDryRunIsCurrent } from './dwaion-routine-model';
+import {
+  routineCommandState,
+  routineConsentComplete,
+  routineDryRunIsCurrent,
+} from './dwaion-routine-model';
 
 import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type { DwaionRoutine, DwaionRoutineDryRunReceipt } from './dwaion-routine-model';
@@ -60,7 +63,7 @@ export function DwaionRoutineInspector({
     : null;
   const archived = routine.status === 'ARCHIVED';
   const dryRunEnabled =
-    routine.status === 'DRAFT' && consentReady && routine.dryRunAvailable && canManage && !busy;
+    routineCommandState(routine, routine.revision).allowed && canManage && !busy;
 
   return (
     <DetailInspector
@@ -68,12 +71,16 @@ export function DwaionRoutineInspector({
       variant={variant}
       width={480}
       title={routine.title}
-      subtitle={`${copy.status[routine.status]} ${copy.separator} ${copy.revisionPrefix}${routine.revision}`}
+      subtitle={`${
+        routine.status === 'DRAFT' && !consentReady
+          ? copy.filters.ATTENTION
+          : copy.status[routine.status]
+      } ${copy.separator} ${copy.revisionPrefix}${routine.revision}`}
       closeLabel={copy.close}
       onClose={onClose}
       status={<Chip size="small" variant="outlined" color="info" label={copy.proposalOnly} />}
     >
-      <Stack gap={2.5}>
+      <Stack gap={2}>
         <InlineFeedback severity="info">
           <Typography variant="body2" fontWeight="fontWeightBold">
             {copy.schedulerUnavailable}
@@ -83,36 +90,71 @@ export function DwaionRoutineInspector({
           </Typography>
         </InlineFeedback>
 
-        <RoutineDefinition routine={routine} copy={copy} />
-        <Divider />
-
         <Box component="section" aria-labelledby="routine-consent-title">
           <Stack direction="row" alignItems="center" gap={0.75}>
             <ShieldCheck size={17} aria-hidden="true" />
             <Typography id="routine-consent-title" component="h3" variant="subtitle2">
-              {copy.consent}
+              {copy.contractTitle}
             </Typography>
           </Stack>
-          <Stack component="ul" sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }} gap={0.5}>
-            {routine.consents.map((consent) => (
-              <Stack
-                component="li"
-                key={consent.key}
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                gap={1}
-                sx={{ minHeight: 44 }}
-              >
-                <Typography variant="body2">{copy.consentLabels[consent.key]}</Typography>
-                <Chip
-                  size="small"
-                  color={consent.state === 'ENABLED' ? 'success' : 'warning'}
-                  variant="outlined"
-                  label={copy.consentStates[consent.state]}
-                />
+          <Stack component="ol" sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }} gap={0.6}>
+            <ContractStep
+              number={1}
+              title={copy.contractSteps.purpose}
+              value={routine.description}
+            />
+            <ContractStep
+              number={2}
+              title={copy.contractSteps.source}
+              value={routine.sourceKeys
+                .map(
+                  (source) => copy.sourceLabels[source as keyof typeof copy.sourceLabels] ?? source
+                )
+                .join(' · ')}
+            />
+            <ContractStep
+              number={3}
+              title={copy.contractSteps.trigger}
+              value={`${copy.cadence[routine.schedule.cadence]} · ${routine.schedule.localTime.slice(0, 5)} · ${routine.schedule.timeZone}. ${copy.contractValues.triggerPreview}`}
+              warning={!routine.schedulingAvailable || !routine.backgroundExecutionAvailable}
+            />
+            <ContractStep
+              number={4}
+              title={copy.contractSteps.handoff}
+              value={
+                routine.proposalDeliveryAvailable
+                  ? copy.proposalOnlyHelp
+                  : copy.contractValues.handoffUnavailable
+              }
+              warning={!routine.proposalDeliveryAvailable}
+            />
+            <ContractStep
+              number={5}
+              title={copy.contractSteps.guardrail}
+              value={copy.contractValues.guardrail}
+            />
+            <ContractStep
+              number={6}
+              title={copy.contractSteps.consent}
+              value={
+                consentReady
+                  ? copy.contractValues.consentComplete
+                  : copy.contractValues.consentIncomplete
+              }
+              warning={!consentReady}
+            >
+              <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{ mt: 0.75 }}>
+                {routine.consents.map((consent) => (
+                  <Chip
+                    key={consent.key}
+                    size="small"
+                    color={consent.state === 'ENABLED' ? 'success' : 'warning'}
+                    variant="outlined"
+                    label={`${copy.consentLabels[consent.key]} · ${copy.consentStates[consent.state]}`}
+                  />
+                ))}
               </Stack>
-            ))}
+            </ContractStep>
           </Stack>
         </Box>
 
@@ -134,12 +176,27 @@ export function DwaionRoutineInspector({
                 <Typography variant="caption" color="text.secondary">
                   {formatTimestamp(currentReceipt.evaluatedAt)}
                 </Typography>
-                <Typography variant="body2" sx={{ mt: 0.75 }}>
-                  {copy.dryRunEvidence.replace(
-                    '{{count}}',
-                    String(currentReceipt.validatedSources.length)
-                  )}
-                </Typography>
+                <Box
+                  sx={{
+                    mt: 1,
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                    gap: 0.75,
+                  }}
+                >
+                  <ReceiptMetric
+                    label={copy.dryRunMetrics.sources}
+                    value={currentReceipt.evidenceCount}
+                  />
+                  <ReceiptMetric
+                    label={copy.dryRunMetrics.records}
+                    value={currentReceipt.businessEvidenceCount}
+                  />
+                  <ReceiptMetric
+                    label={copy.dryRunMetrics.proposals}
+                    value={currentReceipt.proposalsCreated}
+                  />
+                </Box>
                 <Stack direction="row" gap={0.75} alignItems="center" sx={{ mt: 0.75 }}>
                   <Clock3 size={15} aria-hidden="true" />
                   <Typography variant="caption" color="text.secondary">
@@ -210,37 +267,67 @@ export function DwaionRoutineInspector({
   );
 }
 
-function RoutineDefinition({ routine, copy }: { routine: DwaionRoutine; copy: DwaionRoutineCopy }) {
-  const sourceLabels = routine.sourceKeys.map(
-    (source) => copy.sourceLabels[source as keyof typeof copy.sourceLabels] ?? source
-  );
-  const rows = [
-    [
-      copy.schedule,
-      `${copy.cadence[routine.schedule.cadence]} ${copy.separator} ${routine.schedule.localTime.slice(0, 5)}`,
-    ],
-    [copy.timeZone, routine.schedule.timeZone],
-    [copy.sources, sourceLabels.join(', ')],
-  ] as const;
-
+function ContractStep({
+  number,
+  title,
+  value,
+  warning = false,
+  children,
+}: {
+  number: number;
+  title: string;
+  value: string;
+  warning?: boolean;
+  children?: React.ReactNode;
+}) {
   return (
-    <Box component="dl" sx={{ m: 0 }}>
-      {rows.map(([label, value]) => (
-        <Stack
-          key={label}
-          direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
-          gap={0.5}
-          sx={{ minHeight: 44, py: 1, borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Typography component="dt" variant="caption" color="text.secondary">
-            {label}
-          </Typography>
-          <Typography component="dd" variant="body2" sx={{ m: 0, overflowWrap: 'anywhere' }}>
-            {value}
-          </Typography>
-        </Stack>
-      ))}
+    <Box
+      component="li"
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: '28px minmax(0, 1fr)',
+        gap: 1,
+        p: 1,
+        bgcolor: warning ? 'var(--dwp-semantic-warning-soft)' : 'var(--dwp-product-soft)',
+        borderRadius: (theme) => Number(theme.shape.borderRadius) * 1.5 + 'px',
+      }}
+    >
+      <Box
+        aria-hidden="true"
+        sx={{
+          width: 24,
+          height: 24,
+          display: 'grid',
+          placeItems: 'center',
+          borderRadius: '50%',
+          bgcolor: warning ? 'warning.main' : 'primary.main',
+          color: 'primary.contrastText',
+          fontSize: 'caption.fontSize',
+          fontWeight: 'fontWeightBold',
+        }}
+      >
+        {number}
+      </Box>
+      <Box sx={{ minWidth: 0 }}>
+        <Typography variant="subtitle2">{title}</Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+          {value}
+        </Typography>
+        {children}
+      </Box>
+    </Box>
+  );
+}
+
+function ReceiptMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <Box sx={{ p: 0.75, bgcolor: 'background.paper', textAlign: 'center' }}>
+      <Typography variant="subtitle2" color={value ? 'success.main' : 'text.primary'}>
+        {value}
+      </Typography>
+      <Typography variant="caption" color="text.secondary">
+        {label}
+      </Typography>
     </Box>
   );
 }

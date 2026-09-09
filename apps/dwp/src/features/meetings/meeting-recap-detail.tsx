@@ -52,6 +52,7 @@ import { OutcomeEmpty } from './meeting-recap-analysis';
 import { MeetingRecapPipeline } from './meeting-recap-pipeline';
 import { MeetingRecapMobileHeader } from './meeting-recap-mobile-header';
 import type { VideoMeetingIntelligenceReport } from '@dwp-frontend/shared-utils/api/video-meeting-intelligence-api';
+import { MeetingRecapDistribution } from './meeting-recap-distribution';
 
 type RecapTab = 'overview' | 'artifacts' | 'follow-ups' | 'attendance';
 
@@ -402,6 +403,14 @@ export function MeetingRecapDetail({
             />
           )}
         </Box>
+
+        {tab === 'overview' && publishedRecap.state === 'READY' && publishedRecapQuery.data && (
+          <MeetingRecapDistribution
+            key={`${publishedRecapQuery.data.reportId}:${publishedRecapQuery.data.version}`}
+            meetingId={meeting.meetingId}
+            report={publishedRecapQuery.data}
+          />
+        )}
       </Box>
     </MeetingPlaybackSyncProvider>
   );

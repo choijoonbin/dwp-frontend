@@ -356,7 +356,7 @@ export function MeetingScheduleSections({
         />
         <Box sx={(theme) => ({ ...meetingInsetSurface(theme), p: 1.5 })}>
           <Typography variant="body2" color="text.secondary">
-            {t('scheduleWorkspace.availabilityUnavailable')}
+            {t('scheduleWorkspace.availability.reviewHint')}
           </Typography>
         </Box>
       </Section>

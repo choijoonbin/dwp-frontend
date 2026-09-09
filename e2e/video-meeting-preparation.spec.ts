@@ -138,6 +138,30 @@ async function setup(
     const method = route.request().method();
     if (url.pathname.endsWith('/preparation'))
       return fulfill(route, state.revoked ? null : state.data, state.revoked ? 403 : 200);
+    if (method === 'GET' && url.pathname.endsWith('/schedule'))
+      return fulfill(
+        route,
+        state.revoked
+          ? null
+          : {
+              meetingId,
+              lifecycleState: detail.lifecycleState,
+              startsAt: detail.startsAt,
+              endsAt: detail.endsAt,
+              timeZone: detail.timeZone,
+              meetingVersion: state.data.meetingVersion,
+              invitationRevision: state.data.invitationRevision,
+              deliveryState: 'PENDING',
+              seriesId: null,
+              occurrenceIndex: null,
+              occurrenceCount: null,
+              frequency: null,
+              recurrenceInterval: null,
+              seriesVersion: null,
+              exceptionState: 'NONE',
+            },
+        state.revoked ? 403 : 200
+      );
     if (method === 'GET' && url.pathname.endsWith(meetingId)) return fulfill(route, detail);
     if (url.pathname.endsWith('/access-ticket') && method === 'POST') {
       const body = route.request().postDataJSON();
@@ -523,6 +547,11 @@ test('320px forced-colors checklist remains keyboard operable without horizontal
   await expect(checkbox).toBeFocused();
   await page.keyboard.press('Space');
   await expect(checkbox).toBeChecked();
+  const savedFeedback = page.getByText('Your private preparation checklist was saved.', {
+    exact: true,
+  });
+  await expect(savedFeedback).toBeVisible();
+  await expect(savedFeedback).toBeHidden({ timeout: 10_000 });
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
   ).toBeLessThanOrEqual(1);

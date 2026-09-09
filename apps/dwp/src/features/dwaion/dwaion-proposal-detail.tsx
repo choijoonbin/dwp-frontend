@@ -1,31 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
-  ArrowRight,
+  ArrowLeft,
   Bot,
-  Check,
   CheckCircle2,
   Clock3,
-  ExternalLink,
+  FileCheck2,
   ShieldCheck,
-  X,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
-import { ActionButton, ActionIconButton, ConfirmDialog } from '@dwp-frontend/design-system';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { proposalCanDecide, proposalSnoozeTime } from './dwaion-proposal-model';
+import { DwaionProposalDecisionPanel } from './dwaion-proposal-decision-panel';
+import { DwaionProposalEvidence } from './dwaion-proposal-evidence';
+import { DwaionProposalContextStrip } from './dwaion-proposal-mobile-toolbar';
+import { proposalIsHighPriority, proposalTimeZone } from './dwaion-proposal-model';
 
-import type { ProposalSnoozeOption } from './dwaion-proposal-model';
 import type { DwaionProposal } from '@dwp-frontend/shared-utils';
 
 export function DwaionProposalDetail({
@@ -48,269 +46,591 @@ export function DwaionProposalDetail({
   onDismiss: (proposal: DwaionProposal) => void;
 }) {
   const { t } = useTranslation('work');
-  const navigate = useNavigate();
-  const [snoozeAnchor, setSnoozeAnchor] = useState<HTMLElement | null>(null);
-  const [dismissOpen, setDismissOpen] = useState(false);
-  const actionable = proposal ? proposalCanDecide(proposal) : false;
-  const chooseSnooze = (option: ProposalSnoozeOption) => {
-    setSnoozeAnchor(null);
-    if (proposal) onSnooze(proposal, proposalSnoozeTime(option));
-  };
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open && proposal) detailRef.current?.focus({ preventScroll: true });
+  }, [open, proposal]);
+
+  if (!open || !proposal) return null;
+
+  const timeZone = proposalTimeZone();
+  const evidenceCount = proposal.content.evidence?.length ?? 0;
 
   return (
-    <>
-      <Drawer
-        anchor="right"
-        open={open && Boolean(proposal)}
-        onClose={busy ? undefined : onClose}
-        slotProps={{
-          paper: {
-            role: 'dialog',
-            'aria-modal': true,
-            'aria-label': t('dwaionProposals.detail.agentProposal'),
-            sx: {
-              width: { xs: '100%', sm: 460 },
-              maxWidth: '100vw',
-              borderLeft: 1,
-              borderColor: 'divider',
-              boxShadow: '0 16px 42px rgba(15, 23, 42, 0.14)',
-            },
-          },
+    <Box
+      ref={detailRef}
+      role="dialog"
+      aria-label={t('dwaionProposals.detail.agentProposal')}
+      aria-modal="false"
+      tabIndex={-1}
+      data-testid="dwaion-proposal-detail-page"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && event.target === event.currentTarget && !busy) onClose();
+      }}
+      sx={{ outline: 'none', pb: { xs: 16, md: 0 } }}
+    >
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={1}
+        sx={{ display: 'none' }}
+      >
+        <ActionButton
+          intent="quiet"
+          startIcon={<ArrowLeft size={22} aria-hidden="true" />}
+          aria-label={t('dwaionProposals.detail.close')}
+          onClick={onClose}
+          disabled={busy}
+          sx={{
+            minHeight: 44,
+            px: 0.5,
+            fontSize: (theme) => theme.typography.pxToRem(18),
+            fontWeight: 'fontWeightBold',
+          }}
+        >
+          {t('dwaionProposals.detail.routeTitle')}
+        </ActionButton>
+      </Stack>
+
+      <DwaionProposalContextStrip compact />
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        gap={1}
+        sx={{ display: { xs: 'none', md: 'flex' }, mb: 2 }}
+      >
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            {t('dwaionProposals.title')} · {t('dwaionProposals.detail.routeTitle')}
+          </Typography>
+          <Stack direction="row" alignItems="center" gap={0.75} sx={{ mt: 0.35 }}>
+            <Bot size={17} color="var(--dwp-product-accent)" aria-hidden="true" />
+            <Typography variant="subtitle2" color="text.secondary">
+              {t('dwaionProposals.detail.agentProposal')}
+            </Typography>
+          </Stack>
+        </Box>
+        <ActionButton
+          intent="quiet"
+          startIcon={<ArrowLeft size={17} aria-hidden="true" />}
+          onClick={onClose}
+          disabled={busy}
+          sx={{ minHeight: 44 }}
+        >
+          {t('dwaionProposals.detail.close')}
+        </ActionButton>
+      </Stack>
+
+      <Stack
+        direction="row"
+        alignItems="center"
+        gap={1}
+        useFlexGap
+        flexWrap="wrap"
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          mb: 1.5,
+          px: 1.5,
+          py: 0.9,
+          borderRadius: foundationTokens.radius.surface + 'px',
+          bgcolor: 'action.hover',
+          color: 'text.secondary',
         }}
       >
-        {proposal && (
-          <Stack sx={{ minHeight: '100%', p: { xs: 2, sm: 2.5 } }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Stack direction="row" spacing={0.8} alignItems="center">
-                <Bot size={18} color="var(--dwp-product-accent)" aria-hidden="true" />
-                <Typography variant="overline" fontWeight={850} color="text.secondary">
-                  {t('dwaionProposals.detail.agentProposal')}
-                </Typography>
-              </Stack>
-              <ActionIconButton
-                label={t('dwaionProposals.detail.close')}
-                tooltipPlacement="bottom"
-                onClick={onClose}
-                disabled={busy}
-              >
-                <X size={18} aria-hidden="true" />
-              </ActionIconButton>
-            </Stack>
+        <Typography variant="caption" sx={{ fontFamily: foundationTokens.font.mono }}>
+          #{proposal.proposalId}
+        </Typography>
+        <Typography variant="caption">·</Typography>
+        <Typography variant="caption" sx={{ fontFamily: foundationTokens.font.mono }}>
+          {t('dwaionProposals.detail.revision')} #{proposal.revision}
+        </Typography>
+        <Typography variant="caption">·</Typography>
+        <Typography variant="caption">
+          {t('dwaionProposals.detail.proposedAt')}:{' '}
+          {formatDate(proposal.proposedAt, { dateStyle: 'medium', timeStyle: 'short' }, locale)}
+        </Typography>
+        <Typography variant="caption">· {timeZone}</Typography>
+      </Stack>
 
-            <Box sx={{ mt: 2 }}>
-              <Stack direction="row" spacing={0.75} flexWrap="wrap">
-                <Chip size="small" label={t(`dwaionProposals.kinds.${proposal.kind}`)} />
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  label={t(`dwaionProposals.states.${proposal.state}`)}
-                />
-              </Stack>
-              <Typography component="h2" variant="h5" fontWeight={850} sx={{ mt: 1.5 }}>
-                {proposal.content.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.8, lineHeight: 1.65 }}>
-                {proposal.content.summary}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2.5 }} />
-            <DetailSection title={t('dwaionProposals.detail.why')}>
-              <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
-                {proposal.content.rationale}
-              </Typography>
-            </DetailSection>
-
-            <DetailSection title={t('dwaionProposals.detail.evidence')}>
-              {proposal.content.evidence?.length ? (
-                <Stack gap={1}>
-                  {proposal.content.evidence.map((evidence) => (
-                    <Stack
-                      key={`${evidence.sourceType}:${evidence.referenceId}`}
-                      direction="row"
-                      spacing={1}
-                      alignItems="flex-start"
-                    >
-                      <ShieldCheck
-                        size={16}
-                        color="var(--dwp-product-secondary)"
-                        aria-hidden="true"
-                      />
-                      <Box sx={{ minWidth: 0 }}>
-                        <Typography
-                          variant="body2"
-                          fontWeight={700}
-                          sx={{ overflowWrap: 'anywhere' }}
-                        >
-                          {evidence.label}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {evidence.sourceType} · {evidence.referenceId}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  ))}
-                </Stack>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  {t('dwaionProposals.detail.noEvidence')}
-                </Typography>
-              )}
-            </DetailSection>
-
-            <DetailSection title={t('dwaionProposals.detail.timing')}>
-              <Stack component="dl" gap={0.8} sx={{ m: 0 }}>
-                <DetailTerm
-                  label={t('dwaionProposals.detail.proposedAt')}
-                  value={formatDate(
-                    proposal.proposedAt,
-                    { dateStyle: 'medium', timeStyle: 'short' },
-                    locale
-                  )}
-                />
-                <DetailTerm
-                  label={t('dwaionProposals.detail.expiresAt')}
-                  value={formatDate(
-                    proposal.expiresAt,
-                    { dateStyle: 'medium', timeStyle: 'short' },
-                    locale
-                  )}
-                />
-              </Stack>
-            </DetailSection>
-
-            <Box sx={{ flex: 1, minHeight: 24 }} />
-            <Box
+      <Paper
+        component="header"
+        variant="outlined"
+        sx={{
+          p: { xs: 1.5, sm: 2, lg: 2.25 },
+          overflow: 'hidden',
+          borderColor: 'divider',
+          background:
+            'linear-gradient(110deg, var(--mui-palette-background-paper) 58%, var(--dwp-product-soft) 100%)',
+          boxShadow: (theme) => theme.shadows[2],
+        }}
+      >
+        <Stack
+          direction={{ xs: 'column-reverse', lg: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ lg: 'flex-start' }}
+          gap={1.5}
+        >
+          <Box sx={{ minWidth: 0, maxWidth: 780 }}>
+            <Typography
+              variant="overline"
+              color="primary.main"
+              fontWeight="fontWeightBold"
+              sx={{ display: { xs: 'none', md: 'block' } }}
+            >
+              {t('dwaionProposals.detail.decisionTrigger')}
+            </Typography>
+            <Typography
+              component="h1"
+              variant="h3"
+              fontWeight="fontWeightBold"
               sx={{
-                position: 'sticky',
-                bottom: 0,
-                bgcolor: 'background.paper',
-                pt: 1.5,
-                borderTop: 1,
-                borderColor: 'divider',
+                mt: 0.4,
+                overflowWrap: 'anywhere',
+                fontSize: (theme) => ({
+                  xs: theme.typography.pxToRem(26),
+                  md: theme.typography.pxToRem(34),
+                }),
               }}
             >
-              {actionable ? (
-                <>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-                    <ActionButton
-                      intent="primary"
-                      fullWidth
-                      startIcon={<Check size={16} aria-hidden="true" />}
-                      loading={busy}
-                      loadingLabel={t('dwaionProposals.actions.saving')}
-                      onClick={() => onAccept(proposal)}
-                    >
-                      {t('dwaionProposals.actions.accept')}
-                    </ActionButton>
-                    <ActionButton
-                      fullWidth
-                      startIcon={<Clock3 size={16} aria-hidden="true" />}
-                      disabled={busy}
-                      onClick={(event) => setSnoozeAnchor(event.currentTarget)}
-                    >
-                      {t('dwaionProposals.actions.snooze')}
-                    </ActionButton>
-                  </Stack>
-                  <ActionButton
-                    intent="quiet"
-                    fullWidth
-                    disabled={busy}
-                    onClick={() => setDismissOpen(true)}
-                    sx={{ mt: 0.5 }}
-                  >
-                    {t('dwaionProposals.actions.dismiss')}
-                  </ActionButton>
-                </>
-              ) : proposal.state === 'ACCEPTED' && proposal.actionKey ? (
-                <ActionButton
-                  intent="primary"
-                  fullWidth
-                  endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                  onClick={() => navigate('/dwaion/actions')}
-                >
-                  {t('dwaionProposals.actions.openReview')}
-                </ActionButton>
-              ) : (
-                <Stack
-                  direction="row"
-                  spacing={0.8}
-                  alignItems="center"
-                  justifyContent="center"
-                  sx={{ py: 1 }}
-                >
-                  <CheckCircle2 size={16} color="var(--dwp-product-secondary)" aria-hidden="true" />
-                  <Typography variant="body2" color="text.secondary">
-                    {t(`dwaionProposals.states.${proposal.state}`)}
-                  </Typography>
-                </Stack>
+              {proposal.content.title}
+            </Typography>
+          </Box>
+          <Stack
+            direction="row"
+            gap={0.75}
+            flexWrap="wrap"
+            sx={{
+              '& .MuiChip-root': { height: 'auto', minHeight: 28 },
+              '& .MuiChip-label': { whiteSpace: 'normal', py: 0.25 },
+            }}
+          >
+            <Chip
+              size="small"
+              color="primary"
+              label={t(`dwaionProposals.states.${proposal.state}`)}
+            />
+            <Chip
+              size="small"
+              color={proposalIsHighPriority(proposal) ? 'warning' : 'default'}
+              label={t('dwaionProposals.detail.priority', {
+                priority: t(`dwaionProposals.priorities.${proposal.priority}`),
+              })}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              icon={<Clock3 size={14} aria-hidden="true" />}
+              label={formatDate(
+                proposal.expiresAt,
+                { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
+                locale
               )}
-              {proposal.actionKey && actionable && (
-                <Stack
-                  direction="row"
-                  spacing={0.6}
-                  alignItems="center"
-                  justifyContent="center"
-                  sx={{ mt: 1 }}
-                >
-                  <ExternalLink size={13} aria-hidden="true" />
-                  <Typography variant="caption" color="text.secondary">
-                    {t('dwaionProposals.actions.reviewBoundary')}
-                  </Typography>
-                </Stack>
-              )}
-            </Box>
+            />
           </Stack>
-        )}
-      </Drawer>
+        </Stack>
 
-      <Menu
-        anchorEl={snoozeAnchor}
-        open={Boolean(snoozeAnchor)}
-        onClose={() => setSnoozeAnchor(null)}
-      >
-        {(['TWO_HOURS', 'TOMORROW', 'NEXT_WEEK'] as const).map((option) => (
-          <MenuItem key={option} onClick={() => chooseSnooze(option)}>
-            {t(`dwaionProposals.snooze.${option}`)}
-          </MenuItem>
-        ))}
-      </Menu>
-      <ConfirmDialog
-        open={dismissOpen}
-        title={t('dwaionProposals.dismiss.title')}
-        description={t('dwaionProposals.dismiss.description')}
-        cancelLabel={t('dwaionProposals.dismiss.cancel')}
-        confirmLabel={t('dwaionProposals.dismiss.confirm')}
-        confirmingLabel={t('dwaionProposals.actions.saving')}
-        busy={busy}
-        onClose={() => setDismissOpen(false)}
-        onConfirm={() => {
-          setDismissOpen(false);
-          if (proposal) onDismiss(proposal);
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '40px minmax(0, 1fr)', md: '48px minmax(0, 1fr)' },
+            gap: 1.5,
+            mt: { xs: 1.75, md: 2 },
+            p: { xs: 1.5, md: 2 },
+            borderRadius: foundationTokens.radius.surface + foundationTokens.radius.compact + 'px',
+            bgcolor: 'var(--dwp-product-soft)',
+          }}
+        >
+          <Box
+            aria-hidden="true"
+            sx={{
+              width: { xs: 40, md: 48 },
+              height: { xs: 40, md: 48 },
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: {
+                xs: '50%',
+                md: foundationTokens.radius.surface + foundationTokens.radius.compact / 2 + 'px',
+              },
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+            }}
+          >
+            <Sparkles size={21} />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              component="h2"
+              variant="subtitle1"
+              color="primary.main"
+              fontWeight="fontWeightBold"
+            >
+              <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+                {t('dwaionProposals.detail.analysisRecommendation')}
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+                {t('dwaionProposals.detail.why')}
+              </Box>
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                mt: 0.35,
+                lineHeight: 'typography.body1.lineHeight',
+                display: { xs: 'none', md: 'block' },
+              }}
+            >
+              {proposal.content.rationale}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                mt: { xs: 0.45, md: 0.6 },
+                lineHeight: 'typography.body2.lineHeight',
+              }}
+            >
+              {proposal.content.summary}
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 420px' },
+          alignItems: 'start',
+          gap: { xs: 2, lg: 3 },
+          mt: { xs: 2, lg: 3 },
         }}
-      />
-    </>
+      >
+        <Stack gap={3} sx={{ minWidth: 0 }}>
+          <DetailSection
+            id="dwaion-proposal-evidence-title"
+            title={t('dwaionProposals.detail.evidenceTitle')}
+            meta={t('dwaionProposals.evidenceCount', { count: evidenceCount })}
+            icon={<ShieldCheck size={22} />}
+          >
+            <DwaionProposalEvidence proposal={proposal} locale={locale} />
+            {evidenceCount < 2 && (
+              <Paper
+                variant="outlined"
+                sx={{ mt: 1.25, p: 1.5, borderStyle: 'dashed', color: 'text.secondary' }}
+              >
+                <Typography variant="body2">
+                  {t('dwaionProposals.detail.additionalEvidenceUnavailable')}
+                </Typography>
+              </Paper>
+            )}
+          </DetailSection>
+
+          <DetailSection
+            id="dwaion-proposal-impact-title"
+            title={t('dwaionProposals.detail.impactTitle')}
+            meta={t('dwaionProposals.detail.readOnly')}
+            icon={<FileCheck2 size={22} />}
+          >
+            <Paper
+              variant="outlined"
+              sx={{
+                p: { xs: 1.5, md: 2 },
+                bgcolor: { xs: 'var(--dwp-product-soft)', md: 'background.paper' },
+              }}
+            >
+              <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    width: 42,
+                    height: 42,
+                    display: 'grid',
+                    placeItems: 'center',
+                    borderRadius:
+                      foundationTokens.radius.surface + foundationTokens.radius.compact / 2 + 'px',
+                    bgcolor: 'primary.main',
+                    color: 'primary.contrastText',
+                  }}
+                >
+                  <CheckCircle2 size={22} />
+                </Box>
+                <Typography component="h3" variant="h6" fontWeight="fontWeightBold">
+                  {t('dwaionProposals.detail.effectTitle')}
+                </Typography>
+                <Chip size="small" color="success" label={t('dwaionProposals.detail.readOnly')} />
+              </Stack>
+              <Typography
+                variant="body1"
+                sx={{ mt: 1.25, lineHeight: 'typography.body1.lineHeight' }}
+              >
+                {proposal.actionKey
+                  ? t('dwaionProposals.preview.reviewAction')
+                  : t('dwaionProposals.preview.reviewOnly')}
+              </Typography>
+              <Stack direction="row" alignItems="flex-start" gap={0.8} sx={{ mt: 1.25 }}>
+                <ShieldCheck size={18} color="var(--dwp-product-secondary)" aria-hidden="true" />
+                <Typography variant="body2" color="text.primary" fontWeight="fontWeightBold">
+                  {t('dwaionProposals.detail.effectSafe')}
+                </Typography>
+              </Stack>
+
+              <Typography
+                component="h3"
+                variant="subtitle2"
+                color="text.secondary"
+                fontWeight="fontWeightBold"
+                sx={{ display: { xs: 'none', md: 'block' }, mt: 2, mb: 1 }}
+              >
+                {t('dwaionProposals.detail.technicalContracts')}
+              </Typography>
+              <Box
+                component="dl"
+                sx={{
+                  m: 0,
+                  display: { xs: 'none', md: 'grid' },
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+                  gap: 1.25,
+                }}
+              >
+                <ContractCard
+                  label={t('dwaionProposals.preview.nextStep')}
+                  value={t(
+                    proposal.actionKey
+                      ? 'dwaionProposals.preview.reviewAction'
+                      : 'dwaionProposals.preview.reviewOnly'
+                  )}
+                />
+                <ContractCard
+                  label={t('dwaionProposals.detail.actionContract')}
+                  value={proposal.actionKey ?? t('dwaionProposals.detail.noActionContract')}
+                />
+                <ContractCard
+                  label={t('dwaionProposals.detail.agentContract')}
+                  value={proposal.agentKey}
+                />
+              </Box>
+              <Stack
+                direction="row"
+                alignItems="flex-start"
+                gap={0.8}
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  mt: 1.5,
+                  p: 1.25,
+                  borderRadius: foundationTokens.radius.surface + 'px',
+                  bgcolor: 'var(--dwp-product-soft)',
+                }}
+              >
+                <ShieldCheck size={17} color="var(--dwp-product-secondary)" aria-hidden="true" />
+                <Typography variant="body2" color="text.secondary">
+                  {t('dwaionProposals.actions.reviewBoundary')}
+                </Typography>
+              </Stack>
+            </Paper>
+          </DetailSection>
+
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            <DetailSection
+              id="dwaion-proposal-savings-title"
+              title={t('dwaionProposals.detail.savingsTitle')}
+              icon={<Zap size={22} />}
+            >
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '42px minmax(0, 1fr)',
+                  gap: 1.25,
+                  alignItems: 'center',
+                  p: { xs: 1.5, md: 2 },
+                  bgcolor: 'var(--dwp-product-soft)',
+                }}
+              >
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    width: 42,
+                    height: 42,
+                    display: 'grid',
+                    placeItems: 'center',
+                    borderRadius: foundationTokens.radius.surface + 'px',
+                    bgcolor: 'background.paper',
+                    color: 'primary.main',
+                  }}
+                >
+                  <Zap size={22} />
+                </Box>
+                <Box>
+                  <Typography variant="subtitle1" color="primary.main" fontWeight="fontWeightBold">
+                    {t('dwaionProposals.detail.savingsUnavailable')}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('dwaionProposals.detail.savingsDescription')}
+                  </Typography>
+                </Box>
+              </Paper>
+            </DetailSection>
+          </Box>
+
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <DetailSection
+              id="dwaion-proposal-timing-title"
+              title={t('dwaionProposals.detail.timing')}
+              icon={<Clock3 size={22} />}
+            >
+              <Paper variant="outlined" sx={{ p: { xs: 1.5, md: 2 } }}>
+                <Stack component="dl" gap={1} sx={{ m: 0 }}>
+                  <DetailTerm
+                    label={t('dwaionProposals.detail.proposedAt')}
+                    value={formatDate(
+                      proposal.proposedAt,
+                      { dateStyle: 'medium', timeStyle: 'short' },
+                      locale
+                    )}
+                  />
+                  <DetailTerm
+                    label={t('dwaionProposals.detail.expiresAt')}
+                    value={formatDate(
+                      proposal.expiresAt,
+                      { dateStyle: 'medium', timeStyle: 'short' },
+                      locale
+                    )}
+                  />
+                  <DetailTerm label={t('dwaionProposals.detail.timeZoneLabel')} value={timeZone} />
+                </Stack>
+              </Paper>
+            </DetailSection>
+          </Box>
+        </Stack>
+
+        <DwaionProposalDecisionPanel
+          proposal={proposal}
+          busy={busy}
+          locale={locale}
+          onAccept={onAccept}
+          onSnooze={onSnooze}
+          onDismiss={onDismiss}
+        />
+      </Box>
+
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        gap={1}
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          mt: 3,
+          p: 1.25,
+          borderRadius:
+            foundationTokens.radius.surface + foundationTokens.radius.compact / 2 + 'px',
+          bgcolor: 'var(--dwp-product-soft)',
+          color: 'text.secondary',
+          textAlign: 'center',
+        }}
+      >
+        <FileCheck2 size={18} color="var(--dwp-product-accent)" aria-hidden="true" />
+        <Typography variant="body2">{t('dwaionProposals.detail.privacyNotice')}</Typography>
+      </Stack>
+
+      <Stack
+        direction="row"
+        alignItems="center"
+        gap={1}
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          mt: 3,
+          p: 1.5,
+          borderRadius:
+            foundationTokens.radius.surface + foundationTokens.radius.compact / 2 + 'px',
+          bgcolor: 'grey.900',
+          color: 'common.white',
+        }}
+      >
+        <ShieldCheck size={19} color={foundationTokens.color.status.success} aria-hidden="true" />
+        <Typography variant="body2">{t('dwaionProposals.detail.safeguard')}</Typography>
+      </Stack>
+    </Box>
   );
 }
 
-function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
+function DetailSection({
+  id,
+  title,
+  meta,
+  icon,
+  children,
+}: {
+  id: string;
+  title: string;
+  meta?: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <Box component="section" sx={{ mb: 2.5 }}>
-      <Typography component="h3" variant="subtitle2" fontWeight={850} sx={{ mb: 1 }}>
-        {title}
-      </Typography>
+    <Box component="section" aria-labelledby={id}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        gap={1}
+        sx={{ mb: 1 }}
+      >
+        <Stack direction="row" alignItems="center" gap={0.75}>
+          <Box aria-hidden="true" sx={{ display: 'grid', color: 'primary.main' }}>
+            {icon}
+          </Box>
+          <Typography id={id} component="h2" variant="h6" fontWeight="fontWeightBold">
+            {title}
+          </Typography>
+        </Stack>
+        {meta && <Chip size="small" variant="outlined" label={meta} />}
+      </Stack>
       {children}
+    </Box>
+  );
+}
+
+function ContractCard({ label, value }: { label: string; value: string }) {
+  return (
+    <Box
+      sx={{
+        p: 1.4,
+        borderRadius: foundationTokens.radius.surface + 'px',
+        bgcolor: 'var(--dwp-product-soft)',
+        minWidth: 0,
+      }}
+    >
+      <Typography component="dt" variant="caption" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography
+        component="dd"
+        variant="body2"
+        fontWeight="fontWeightBold"
+        sx={{
+          m: 0,
+          mt: 0.5,
+          overflowWrap: 'anywhere',
+          lineHeight: 'typography.body2.lineHeight',
+        }}
+      >
+        {value}
+      </Typography>
     </Box>
   );
 }
 
 function DetailTerm({ label, value }: { label: string; value: string }) {
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: '96px minmax(0, 1fr)', gap: 1.5 }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: '110px minmax(0, 1fr)', gap: 1.5 }}>
       <Typography component="dt" variant="caption" color="text.secondary">
         {label}
       </Typography>
-      <Typography component="dd" variant="body2" fontWeight={650} sx={{ m: 0 }}>
+      <Typography component="dd" variant="body2" fontWeight="fontWeightBold" sx={{ m: 0 }}>
         {value}
       </Typography>
     </Box>

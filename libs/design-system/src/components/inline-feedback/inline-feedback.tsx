@@ -9,6 +9,8 @@ export type InlineFeedbackProps = {
   severity?: 'info' | 'success' | 'warning' | 'error';
   title?: string;
   children: ReactNode;
+  action?: ReactNode;
+  icon?: ReactNode;
   sx?: SxProps<Theme>;
 } & ({ onClose: () => void; closeLabel: string } | { onClose?: never; closeLabel?: never });
 
@@ -17,6 +19,8 @@ export function InlineFeedback({
   severity = 'info',
   title,
   children,
+  action,
+  icon,
   sx,
   onClose,
   closeLabel,
@@ -31,6 +35,8 @@ export function InlineFeedback({
       aria-atomic="true"
       closeText={closeLabel}
       onClose={onClose}
+      action={action}
+      icon={icon}
       iconMapping={{
         info: <Info size={20} aria-hidden="true" />,
         success: <CircleCheck size={20} aria-hidden="true" />,

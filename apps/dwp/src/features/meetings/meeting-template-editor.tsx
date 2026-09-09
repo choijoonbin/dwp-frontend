@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
@@ -25,11 +25,23 @@ type Props = {
   initial: VideoMeetingTemplateInput;
   editing: boolean;
   busy: boolean;
+  description?: string;
+  feedback?: ReactNode;
+  submitDisabled?: boolean;
   onClose: () => void;
   onSubmit: (input: VideoMeetingTemplateInput) => void;
 };
 
-export function MeetingTemplateEditor({ initial, editing, busy, onClose, onSubmit }: Props) {
+export function MeetingTemplateEditor({
+  initial,
+  editing,
+  busy,
+  description,
+  feedback,
+  submitDisabled,
+  onClose,
+  onSubmit,
+}: Props) {
   const { t } = useTranslation('meetings');
   const [form, setForm] = useState(initial);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -57,18 +69,19 @@ export function MeetingTemplateEditor({ initial, editing, busy, onClose, onSubmi
       <FormDialog
         open
         title={t(editing ? 'templates.edit' : 'templates.create')}
-        description={t('templates.editorDescription')}
+        description={description ?? t('templates.editorDescription')}
         cancelLabel={t('actions.cancel')}
         submitLabel={t('templates.save')}
         busy={busy}
-        submitDisabled={Boolean(error)}
+        submitDisabled={Boolean(error) || submitDisabled}
         maxWidth="md"
         onClose={() => (dirty ? setDiscardOpen(true) : onClose())}
         onSubmit={() => {
-          if (!error && !busy) onSubmit(normalizeMeetingTemplateInput(form));
+          if (!error && !busy && !submitDisabled) onSubmit(normalizeMeetingTemplateInput(form));
         }}
       >
         <Stack gap={2}>
+          {feedback}
           <FormField
             autoFocus
             required

@@ -15,6 +15,7 @@ import {
   issueVideoMeetingToken,
   leaveVideoMeeting,
   normalizeVideoMeetingCode,
+  requestVideoMeetingJoin,
   resolveVideoMeetingCode,
   scheduleVideoMeeting,
   searchVideoMeetingPeople,
@@ -166,6 +167,9 @@ describe('video meeting API boundary', () => {
             participantPeak: 6,
             recordingAvailable: false,
             transcriptAvailable: false,
+            publicationState: 'PUBLISHED',
+            retentionState: 'ACTIVE',
+            retentionUntil: '2026-10-07T01:45:00Z',
           },
         ],
         total: 1,
@@ -182,6 +186,9 @@ describe('video meeting API boundary', () => {
       canHost: false,
       recordingAvailable: false,
       transcriptAvailable: false,
+      publicationState: 'PUBLISHED',
+      retentionState: 'ACTIVE',
+      retentionUntil: '2026-10-07T01:45:00Z',
     });
   });
 
@@ -211,7 +218,24 @@ describe('video meeting API boundary', () => {
       organizerName: '',
       myRole: null,
       canHost: false,
+      publicationState: 'NONE',
+      retentionState: 'UNCONFIGURED',
+      retentionUntil: null,
     });
+  });
+
+  it('binds publication and retention filters to server pagination', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ items: [], page: 0, pageSize: 10, total: 0 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await getVideoMeetingHistory(0, 10, {
+      publication: 'PUBLISHED',
+      retention: 'EXPIRING_SOON',
+    });
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/meetings/v1/history?page=0&pageSize=10&publication=PUBLISHED&retention=EXPIRING_SOON'
+    );
   });
 
   it('uses server favoriteOnly pagination without changing the legacy history route', async () => {
@@ -408,16 +432,78 @@ describe('video meeting API boundary', () => {
     await expect(resolveVideoMeetingCode(' abcd-efgh lkmn ')).resolves.toMatchObject({
       requiresApproval: true,
     });
-    await expect(getVideoMeetingJoinRequest('meeting/a', 'participant-1')).resolves.toMatchObject({
+    const joinRequest = await getVideoMeetingJoinRequest('meeting/a', 'participant-1');
+    expect(joinRequest).toEqual({
       requestId: 'participant-1',
       meetingId: 'meeting/a',
       state: 'WAITING',
-      expiresAt: '2026-08-27T01:08:00.000Z',
+      displayName: 'Kim Minseo',
+      requestedAt: '2026-08-27T00:58:00.000Z',
     });
+    expect(joinRequest).not.toHaveProperty('decidedAt');
+    expect(joinRequest).not.toHaveProperty('expiresAt');
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/meetings/v1/join-codes/ABCDEFGHLKMN');
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
       '/api/meetings/v1/meetings/meeting%2Fa/join-requests/participant-1'
+    );
+  });
+
+  it('keeps join submission URL and body stable without inventing decision timestamps', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          requestId: 'participant-2',
+          state: 'APPROVED',
+          displayName: 'Lee Ara',
+          email: 'ara.lee@sk.com',
+          organizationName: 'Product',
+          external: false,
+          requestedAt: '2026-08-27T00:59:00.000Z',
+          version: 3,
+        })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const joinRequest = await requestVideoMeetingJoin('meeting/a', {
+      displayName: 'Lee Ara',
+      idempotencyKey: 'join-request-01',
+    });
+
+    expect(joinRequest).toEqual({
+      requestId: 'participant-2',
+      meetingId: 'meeting/a',
+      state: 'APPROVED',
+      displayName: 'Lee Ara',
+      requestedAt: '2026-08-27T00:59:00.000Z',
+    });
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/meetings/v1/meetings/meeting%2Fa/join-requests'
+    );
+    const request = requestAt(fetchMock, 1);
+    expect(JSON.parse(String(request.body))).toEqual({ displayName: 'Lee Ara' });
+    expectIdempotencyHeader(request, 'join-request-01');
+  });
+
+  it('fails closed when the server returns an unsupported join request state', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        requestId: 'participant-1',
+        state: 'EXPIRED',
+        displayName: 'Kim Minseo',
+        email: 'minseo.kim@sk.com',
+        organizationName: 'Network Operations',
+        external: false,
+        requestedAt: '2026-08-27T00:58:00.000Z',
+        version: 2,
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getVideoMeetingJoinRequest('meeting/a', 'participant-1')).rejects.toThrow(
+      'unsupported join request state'
     );
   });
 

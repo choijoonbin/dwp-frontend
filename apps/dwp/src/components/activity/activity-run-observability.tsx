@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
+  ChevronDown,
   CircleAlert,
   CircleDashed,
   Clock3,
@@ -11,6 +12,9 @@ import {
 import { InlineFeedback, ProgressMeter, SectionHeader } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -25,9 +29,11 @@ import type {
 export function ActivityRunObservability({
   run,
   locale,
+  density = 'default',
 }: {
   run: DwaionUserRun;
   locale: 'ko' | 'en';
+  density?: 'default' | 'compact';
 }) {
   const { t } = useTranslation('work');
   const hasExecutionEvidence =
@@ -37,22 +43,40 @@ export function ActivityRunObservability({
     run.stages !== undefined ||
     run.progressPercent !== undefined;
   return (
-    <Stack gap={2.5} data-run-provenance={run.dataProvenance}>
+    <Stack gap={density === 'compact' ? 1.25 : 2.5} data-run-provenance={run.dataProvenance}>
       {run.dataProvenance === 'SAMPLE' && (
         <InlineFeedback severity="warning" title={t('dwaionActivity.observability.sample.title')}>
           {t('dwaionActivity.observability.sample.description')}
         </InlineFeedback>
       )}
-      {hasExecutionEvidence && <RunMeasurement run={run} locale={locale} />}
-      {run.sourceHealth !== undefined && (
-        <RunSourceHealth sources={run.sourceHealth} locale={locale} />
+      {hasExecutionEvidence && (
+        <RunMeasurement run={run} locale={locale} compact={density === 'compact'} />
       )}
-      {run.auditEvidence !== undefined && <RunAuditLinkage run={run} />}
+      {density === 'compact' ? (
+        (run.sourceHealth !== undefined || run.auditEvidence !== undefined) && (
+          <RunAdditionalEvidence run={run} locale={locale} />
+        )
+      ) : (
+        <>
+          {run.sourceHealth !== undefined && (
+            <RunSourceHealth sources={run.sourceHealth} locale={locale} compact={false} />
+          )}
+          {run.auditEvidence !== undefined && <RunAuditLinkage run={run} compact={false} />}
+        </>
+      )}
     </Stack>
   );
 }
 
-function RunMeasurement({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'en' }) {
+function RunMeasurement({
+  run,
+  locale,
+  compact,
+}: {
+  run: DwaionUserRun;
+  locale: 'ko' | 'en';
+  compact: boolean;
+}) {
   const { t } = useTranslation('work');
   const stages = [...(run.stages ?? [])].sort((left, right) => left.sequence - right.sequence);
   const measuredStages = stages.filter(
@@ -61,6 +85,8 @@ function RunMeasurement({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'e
   const measuredTotal = measuredStages.reduce((total, stage) => total + stage.durationMs, 0);
   const evidenceUnavailable = run.measurementStatus === 'NOT_AVAILABLE';
   const evidencePartial = run.measurementStatus === 'PARTIAL';
+  const visibleStages = compact ? stages.slice(0, 3) : stages;
+  const additionalStages = compact ? stages.slice(3) : [];
   return (
     <Box component="section" aria-labelledby="dwaion-run-stages-title">
       <SectionHeader
@@ -70,7 +96,7 @@ function RunMeasurement({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'e
         headingComponent="h3"
         density="compact"
       />
-      <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+      <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: compact ? 0.5 : 1 }}>
         {run.measurementStatus && (
           <Chip
             size="small"
@@ -123,7 +149,7 @@ function RunMeasurement({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'e
           valueLabel={t('dwaionActivity.observability.progressValue', {
             count: run.progressPercent,
           })}
-          sx={{ mt: 1.5 }}
+          sx={{ mt: compact ? 0.75 : 1.5 }}
         />
       )}
 
@@ -141,8 +167,12 @@ function RunMeasurement({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'e
         </Typography>
       ) : (
         <>
-          {measuredTotal > 0 && (
-            <StageLatencyDistribution stages={measuredStages} total={measuredTotal} />
+          {!compact && measuredTotal > 0 && (
+            <StageLatencyDistribution
+              stages={measuredStages}
+              total={measuredTotal}
+              compact={compact}
+            />
           )}
           {evidencePartial && (
             <Typography role="status" variant="caption" color="text.secondary" component="p">
@@ -152,31 +182,107 @@ function RunMeasurement({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'e
           <Box
             component="ol"
             aria-label={t('dwaionActivity.observability.stages.listLabel')}
-            sx={{ listStyle: 'none', p: 0, m: 0, mt: 1.5, display: 'grid', gap: 0.75 }}
+            sx={{
+              listStyle: 'none',
+              p: 0,
+              m: 0,
+              mt: compact ? 0.75 : 1.5,
+              display: 'grid',
+              gap: compact ? 0.45 : 0.75,
+            }}
           >
-            {stages.map((stage) => (
-              <StageRow key={`${stage.sequence}:${stage.key}`} stage={stage} locale={locale} />
+            {visibleStages.map((stage) => (
+              <StageRow
+                key={`${stage.sequence}:${stage.key}`}
+                stage={stage}
+                locale={locale}
+                compact={compact}
+              />
             ))}
           </Box>
+          {additionalStages.length > 0 && (
+            <Accordion
+              disableGutters
+              elevation={0}
+              sx={{ mt: 0.25, bgcolor: 'transparent', '&:before': { display: 'none' } }}
+            >
+              <AccordionSummary
+                expandIcon={<ChevronDown size={16} aria-hidden="true" />}
+                sx={{ px: 0, minHeight: 40 }}
+              >
+                <Typography variant="caption" fontWeight="fontWeightBold">
+                  {t('dwaionActivity.observability.stages.more', {
+                    count: additionalStages.length,
+                  })}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 0, pt: 0 }}>
+                <Box
+                  component="ol"
+                  start={visibleStages.length + 1}
+                  sx={{ listStyle: 'none', p: 0, m: 0, display: 'grid', gap: 0.45 }}
+                >
+                  {additionalStages.map((stage) => (
+                    <StageRow
+                      key={`${stage.sequence}:${stage.key}`}
+                      stage={stage}
+                      locale={locale}
+                      compact
+                    />
+                  ))}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          )}
         </>
       )}
     </Box>
   );
 }
 
+function RunAdditionalEvidence({ run, locale }: { run: DwaionUserRun; locale: 'ko' | 'en' }) {
+  const { t } = useTranslation('work');
+  return (
+    <Accordion
+      disableGutters
+      elevation={0}
+      sx={{ bgcolor: 'transparent', '&:before': { display: 'none' } }}
+    >
+      <AccordionSummary
+        expandIcon={<ChevronDown size={16} aria-hidden="true" />}
+        sx={{ px: 0, minHeight: 40 }}
+      >
+        <Typography variant="body2" fontWeight="subtitle2.fontWeight">
+          {t('dwaionActivity.observability.additionalEvidence')}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails sx={{ px: 0, pt: 0 }}>
+        <Stack gap={1.25}>
+          {run.sourceHealth !== undefined && (
+            <RunSourceHealth sources={run.sourceHealth} locale={locale} compact />
+          )}
+          {run.auditEvidence !== undefined && <RunAuditLinkage run={run} compact />}
+        </Stack>
+      </AccordionDetails>
+    </Accordion>
+  );
+}
+
 function StageLatencyDistribution({
   stages,
   total,
+  compact,
 }: {
   stages: Array<DwaionRunStage & { durationMs: number }>;
   total: number;
+  compact: boolean;
 }) {
   const { t } = useTranslation('work');
   return (
     <Box
       role="img"
       aria-label={t('dwaionActivity.observability.stages.latencyLabel', { count: total })}
-      sx={{ mt: 1.5, mb: 1 }}
+      sx={{ mt: compact ? 0.75 : 1.5, mb: compact ? 0.5 : 1 }}
     >
       <Stack direction="row" justifyContent="space-between" gap={1}>
         <Typography variant="caption" color="text.secondary">
@@ -188,7 +294,7 @@ function StageLatencyDistribution({
       </Stack>
       <Box
         aria-hidden="true"
-        sx={{ mt: 0.75, height: 8, display: 'flex', gap: '2px', overflow: 'hidden' }}
+        sx={{ mt: 0.5, height: compact ? 6 : 8, display: 'flex', gap: '2px', overflow: 'hidden' }}
       >
         {stages.map((stage, index) => (
           <Box
@@ -205,7 +311,15 @@ function StageLatencyDistribution({
   );
 }
 
-function StageRow({ stage, locale }: { stage: DwaionRunStage; locale: 'ko' | 'en' }) {
+function StageRow({
+  stage,
+  locale,
+  compact = false,
+}: {
+  stage: DwaionRunStage;
+  locale: 'ko' | 'en';
+  compact?: boolean;
+}) {
   const { t } = useTranslation('work');
   const Icon =
     stage.state === 'COMPLETED'
@@ -222,8 +336,8 @@ function StageRow({ stage, locale }: { stage: DwaionRunStage; locale: 'ko' | 'en
         display: 'grid',
         gridTemplateColumns: 'auto minmax(0, 1fr) auto',
         alignItems: 'center',
-        gap: 1,
-        p: 1,
+        gap: compact ? 0.65 : 1,
+        p: compact ? 0.6 : 1,
         bgcolor: 'action.hover',
         borderRadius: (theme) => `${theme.shape.borderRadius}px`,
       }}
@@ -254,9 +368,11 @@ function StageRow({ stage, locale }: { stage: DwaionRunStage; locale: 'ko' | 'en
 function RunSourceHealth({
   sources,
   locale,
+  compact,
 }: {
   sources: DwaionRunSourceHealth[];
   locale: 'ko' | 'en';
+  compact: boolean;
 }) {
   const { t } = useTranslation('work');
   return (
@@ -273,12 +389,12 @@ function RunSourceHealth({
           {t('dwaionActivity.observability.sources.empty')}
         </Typography>
       ) : (
-        <Stack gap={0.75} sx={{ mt: 1 }}>
+        <Stack gap={compact ? 0.45 : 0.75} sx={{ mt: compact ? 0.5 : 1 }}>
           {sources.map((source) => (
             <Box
               key={source.sourceType}
               sx={{
-                p: 1.25,
+                p: compact ? 0.75 : 1.25,
                 bgcolor: 'action.hover',
                 borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               }}
@@ -314,7 +430,12 @@ function RunSourceHealth({
                       : t('dwaionActivity.details.latencyValue', { count: source.latencyMs }),
                 })}
               </Typography>
-              <Typography variant="caption" color="text.secondary" component="p">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                component="p"
+                sx={{ display: compact ? 'none' : 'block' }}
+              >
                 {source.lastSuccessAt
                   ? t('dwaionActivity.observability.sources.lastSuccess', {
                       at: displayTime(source.lastSuccessAt, locale),
@@ -329,7 +450,7 @@ function RunSourceHealth({
   );
 }
 
-function RunAuditLinkage({ run }: { run: DwaionUserRun }) {
+function RunAuditLinkage({ run, compact }: { run: DwaionUserRun; compact: boolean }) {
   const { t } = useTranslation('work');
   const evidence = run.auditEvidence!;
   const Icon = evidence.status === 'LINKED' ? ShieldCheck : Clock3;
@@ -345,12 +466,21 @@ function RunAuditLinkage({ run }: { run: DwaionUserRun }) {
       <InlineFeedback
         severity={evidence.status === 'LINKED' ? 'info' : 'warning'}
         title={t(`dwaionActivity.observability.audit.states.${evidence.status}.title`)}
-        sx={{ mt: 1 }}
+        sx={{ mt: compact ? 0.5 : 1, ...(compact ? { py: 0.5 } : {}) }}
       >
         {t(`dwaionActivity.observability.audit.states.${evidence.status}.description`)}
       </InlineFeedback>
       {(evidence.auditId || evidence.auditRecordId) && (
-        <Box component="dl" sx={{ m: 0, mt: 1, display: 'grid', gap: 0.75 }}>
+        <Box
+          component="dl"
+          sx={{
+            m: 0,
+            mt: compact ? 0.5 : 1,
+            display: 'grid',
+            gridTemplateColumns: compact ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+            gap: compact ? 0.5 : 0.75,
+          }}
+        >
           {evidence.auditId && (
             <EvidenceIdentifier
               label={t('dwaionActivity.observability.audit.auditId')}

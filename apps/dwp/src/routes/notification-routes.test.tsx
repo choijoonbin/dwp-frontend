@@ -28,6 +28,8 @@ describe('notification route contract', () => {
 
   it('preserves first-level detail links as compatibility redirects', () => {
     expect(matchedLeaf('/notifications/notification-42')?.path).toBe(':notificationId');
+    expect(matchedLeaf('/notifications/inbox')?.path).toBe('inbox');
+    expect(matchedLeaf('/notifications/inbox/notification-42')?.path).toBe('inbox/:notificationId');
   });
 
   it('exposes tenant policy governance as a dedicated administration route', () => {

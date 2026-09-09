@@ -269,7 +269,7 @@ test.describe('compact product shell header contract', () => {
     expect(runtimeErrors).toEqual([]);
   });
 
-  test('keeps tenant product actions separated across compact and 200 percent layouts', async ({
+  test('keeps product-specific header actions separated across compact and 200 percent layouts', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -285,9 +285,24 @@ test.describe('compact product shell header contract', () => {
     });
 
     const products = [
-      { path: '/dwaion/new', headerTestId: 'dwaion-header', launcher: 'hidden' },
-      { path: '/workplace/home', headerTestId: 'rooms-header', launcher: 'visible' },
-      { path: '/apps', headerTestId: 'catalog-header', launcher: 'visible' },
+      {
+        path: '/dwaion/new',
+        headerTestId: 'dwaion-header',
+        headerKind: 'dwaion',
+        launcher: 'hidden',
+      },
+      {
+        path: '/workplace/home',
+        headerTestId: 'rooms-header',
+        headerKind: 'standard',
+        launcher: 'visible',
+      },
+      {
+        path: '/apps',
+        headerTestId: 'catalog-header',
+        headerKind: 'standard',
+        launcher: 'visible',
+      },
     ] as const;
     const scenarios = [
       { width: 320, height: 720, textScale: 100 },
@@ -306,8 +321,9 @@ test.describe('compact product shell header contract', () => {
           await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
         }
         await expect(page.getByTestId(product.headerTestId)).toBeVisible();
-        if (scenario.width < 360) {
+        if (product.headerKind === 'dwaion') {
           await expect(page.getByRole('button', { name: 'Search DWP' })).toHaveCount(0);
+          await expect(page.getByRole('button', { name: 'Open DWAI·ON navigation' })).toBeVisible();
         } else {
           await expect(page.getByRole('button', { name: 'Search DWP' })).toBeVisible();
         }

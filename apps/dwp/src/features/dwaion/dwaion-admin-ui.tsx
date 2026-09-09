@@ -18,25 +18,60 @@ export function DwaionAdminPageHeader({
   return (
     <Stack
       component="header"
-      direction={{ xs: 'column', sm: 'row' }}
-      alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+      direction={{ xs: 'column', lg: 'row' }}
+      alignItems={{ xs: 'stretch', lg: 'flex-end' }}
       justifyContent="space-between"
-      gap={2}
+      gap={{ xs: 1.5, sm: 2 }}
     >
-      <Box>
+      <Box sx={{ minWidth: 0, flex: 1 }}>
         {eyebrow && (
-          <Typography variant="overline" color="primary.main">
+          <Typography
+            variant="overline"
+            color="primary.main"
+            sx={{
+              display: 'block',
+              fontSize: 'overline.fontSize',
+              lineHeight: 'button.lineHeight',
+              fontWeight: 'fontWeightBold',
+              letterSpacing: 'h3.letterSpacing',
+            }}
+          >
             {eyebrow}
           </Typography>
         )}
-        <Typography component="h1" variant="h4" sx={{ mt: eyebrow ? 0.25 : 0 }}>
+        <Typography
+          component="h1"
+          sx={{
+            mt: eyebrow ? 0.5 : 0,
+            fontSize: { xs: 'h3.fontSize', md: 'h2.fontSize' },
+            lineHeight: 'button.lineHeight',
+            fontWeight: 'fontWeightBold',
+            letterSpacing: 'h3.letterSpacing',
+            overflowWrap: 'anywhere',
+          }}
+        >
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.6, maxWidth: 820 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mt: 0.75, maxWidth: 880, lineHeight: 'h5.lineHeight', overflowWrap: 'anywhere' }}
+        >
           {description}
         </Typography>
       </Box>
-      {actions}
+      {actions && (
+        <Box
+          sx={{
+            flexShrink: 0,
+            maxWidth: { lg: '62%' },
+            '& > .MuiStack-root': { flexWrap: 'wrap', justifyContent: { sm: 'flex-end' } },
+            '& button': { minHeight: 40 },
+          }}
+        >
+          {actions}
+        </Box>
+      )}
     </Stack>
   );
 }

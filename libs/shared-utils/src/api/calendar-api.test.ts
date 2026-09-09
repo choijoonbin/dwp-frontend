@@ -1,14 +1,17 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { resetCsrfToken } from '../axios-instance';
+import { axiosInstance, resetCsrfToken } from '../axios-instance';
 import {
   cancelCalendarEvent,
+  createCalendarEvent,
   createCompanyCalendar,
   deleteCalendarShare,
   getCalendarAvailability,
+  getCalendarEvents,
   getCalendarHome,
   getCalendarPolicy,
   getCalendarShares,
+  getCalendars,
   getCompanyCalendarEvents,
   getCompanyCalendars,
   putCalendarShare,
@@ -20,6 +23,7 @@ import {
   updateCalendarSubscription,
   updateCalendarEvent,
   updateCompanyCalendar,
+  type CreateCalendarEventInput,
   type UpdateCalendarEventInput,
 } from './calendar-api';
 
@@ -34,7 +38,69 @@ function jsonResponse(data: unknown): Response {
 describe('calendar API boundary', () => {
   afterEach(() => {
     resetCsrfToken();
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  it('passes optional list cancellation without changing the existing request shape', async () => {
+    const signal = new AbortController().signal;
+    const get = vi.spyOn(axiosInstance, 'get').mockResolvedValue({ data: { data: [] } });
+
+    await expect(getCalendars(signal)).resolves.toEqual([]);
+    await expect(getCalendars()).resolves.toEqual([]);
+
+    expect(get).toHaveBeenNthCalledWith(1, '/api/platform/v1/calendar/calendars', { signal });
+    expect(get).toHaveBeenNthCalledWith(2, '/api/platform/v1/calendar/calendars');
+  });
+
+  it('passes event-read cancellation without changing the existing request shape', async () => {
+    const signal = new AbortController().signal;
+    const get = vi.spyOn(axiosInstance, 'get').mockResolvedValue({ data: { data: [] } });
+    const path =
+      '/api/platform/v1/calendar/events?from=2026-09-08T00%3A00%3A00Z&to=2026-09-09T00%3A00%3A00Z';
+
+    await expect(
+      getCalendarEvents('2026-09-08T00:00:00Z', '2026-09-09T00:00:00Z', signal)
+    ).resolves.toEqual([]);
+    await expect(
+      getCalendarEvents('2026-09-08T00:00:00Z', '2026-09-09T00:00:00Z')
+    ).resolves.toEqual([]);
+
+    expect(get).toHaveBeenNthCalledWith(1, path, { signal });
+    expect(get).toHaveBeenNthCalledWith(2, path);
+  });
+
+  it('passes an optional cancellation signal through event creation', async () => {
+    const signal = new AbortController().signal;
+    const createdEvent = { eventId: 'event-1', version: 1 };
+    const post = vi
+      .spyOn(axiosInstance, 'post')
+      .mockResolvedValue({ data: { data: createdEvent } });
+    const input: CreateCalendarEventInput = {
+      title: '운영 주간 회의',
+      description: null,
+      type: 'MEETING',
+      startsAt: '2026-09-08T00:00:00Z',
+      endsAt: '2026-09-08T01:00:00Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      location: null,
+      conferenceUrl: null,
+      visibility: 'DEFAULT',
+      recurrence: 'NONE',
+      recurrenceInterval: 1,
+      recurrenceUntil: null,
+      responseRequired: true,
+      attendees: [],
+      resourceId: null,
+      calendarId: null,
+      importance: 'NORMAL',
+      idempotencyKey: 'calendar-event-intent-1',
+    };
+
+    await expect(createCalendarEvent(input, signal)).resolves.toEqual(createdEvent);
+
+    expect(post).toHaveBeenCalledWith('/api/platform/v1/calendar/events', input, { signal });
   });
 
   it('loads the today workspace with an explicit IANA time zone', async () => {

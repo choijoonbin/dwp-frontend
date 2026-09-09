@@ -1,0 +1,587 @@
+[
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-citation-dialog.tsx",
+    "lines": 78,
+    "sha256": "da9660a14c8b62498e4aca8d76bba9a1bdddb2f908b28665ad5c90b4fdf6683e"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-global-host-policy.ts",
+    "lines": 10,
+    "sha256": "bb730ec42f63863eae9ce4e25dd50068f303a19656aa9f2b6d1ca8009890cde7"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-global-host.tsx",
+    "lines": 72,
+    "sha256": "c721e804a9293b4e7a38f73b57dfbcc544c57fe1ae41db2f4c98ef40b713f5d1"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-launcher.tsx",
+    "lines": 321,
+    "sha256": "0bf597bd7ba8a6567b36fc3bc855e111ab84a75114e3874d7c1055fca9101ade"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-page-context.ts",
+    "lines": 59,
+    "sha256": "e504c1325abc84df63ced79cd48df5b286e22e1eea591112bc5d63f7ce437e7c"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-panel-composer.tsx",
+    "lines": 108,
+    "sha256": "7c6a4115985bb54f6018a295bdee3d7f518334993548d6583e7588f7e8243252"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-panel-header.tsx",
+    "lines": 92,
+    "sha256": "ff8e5f4eee815e1ad07bf4fe0b4b5c97721f8b26fb56b55c1f59b73ec14be14f"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-panel-result.tsx",
+    "lines": 335,
+    "sha256": "f6d7bc6be881ac1f777b2c7651108a8a1793ba884b640231be1fac1f1e8ac993"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-panel.tsx",
+    "lines": 345,
+    "sha256": "d08d2841fe53f27a437679b1b44a9bbe2a5d92bd854a7a376153264038c0ca90"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-support-tools.tsx",
+    "lines": 227,
+    "sha256": "31739efdb95690085e2934b32f63dde8cdfb1a4cc369f1e8481ad8fbe0db8f71"
+  },
+  {
+    "path": "apps/dwp/src/components/dwaion-assistant/dwaion-voice-controls.tsx",
+    "lines": 448,
+    "sha256": "1456f5a904b1e54304c7ecf5ba74af750bcceb9cff80270155ea3ad3b1778f28"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-conversation-rail.tsx",
+    "lines": 135,
+    "sha256": "9900d49570e1302279cd4be5283bcd3e94a4d6b0f160575e40b49550370dd875"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-copy.ts",
+    "lines": 200,
+    "sha256": "0b5f06b4758b8391c4fdea18b55917deeb0f84747756eb22581d7db7b9a26df0"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-create-dialog.tsx",
+    "lines": 91,
+    "sha256": "1e451485bbb08ab607f79d185342ce0762f6c73a430ffcde81c08be08795f301"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-editor.tsx",
+    "lines": 292,
+    "sha256": "1d0306baf9b4b8e06367f7d3f724a0ea2d9d97b6557de561009dea1eb48a975d"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-evidence-rail.tsx",
+    "lines": 86,
+    "sha256": "12f4150be1d6ce44034918bc13ad7281dd24363de915d08413180799de55905f"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-export-dialog.tsx",
+    "lines": 56,
+    "sha256": "4daee99d1bc1eee016a2ab92c86ad60cf0725b53bb9ba8acdbe4e7c24f425916"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-model.ts",
+    "lines": 225,
+    "sha256": "4f2275dff9317716b2819e596f13473c5c4d68061c4350413a3649596ebf8273"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-studio.tsx",
+    "lines": 391,
+    "sha256": "5ff2cb23e1e9b63636892430adb6000bb10db640358286603038594f34a21d1a"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-version-dialog.tsx",
+    "lines": 178,
+    "sha256": "27fcf6d26586c6aacdce5c522b8c03ba9baf56a6338b255f93f108a7f5068163"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/artifact-studio/use-dwaion-artifact-autosave.ts",
+    "lines": 126,
+    "sha256": "766b67bf52153e0c965098d8c0b35a1623b0480c77e1f4ae3cc33c15fafbea59"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-action-draft.ts",
+    "lines": 33,
+    "sha256": "f106022791b2a3b7206cd9df461bd23120df1de42f01ec0823e53d5bccb48599"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-action-shelf.tsx",
+    "lines": 342,
+    "sha256": "187e027fdc075f967ed4cf88d611a2e4aa8d6f51db3d9e411d1a5e0588743a3b"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-actions.tsx",
+    "lines": 271,
+    "sha256": "8b253cf9248b9a518632cb21cc80de704f399760827c5ae2c88e0feef06939f2"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-activity-model.ts",
+    "lines": 85,
+    "sha256": "be93c3bbe527084fbdd9634e63fd442c5ba887efd41246abfaa7695aad376ce2"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-activity-selection.tsx",
+    "lines": 330,
+    "sha256": "8753303709fcaf8cb4aaa081bff9a041bf8ede8080cba463769b70883e210728"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-activity-summary.tsx",
+    "lines": 215,
+    "sha256": "d25f7f6822ca6f0df12e691d8a603954b655ab6d0a21ea3552d16c4f34e4e692"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-activity-view.tsx",
+    "lines": 404,
+    "sha256": "e03194f8efaacfd2ab26d0c60c0c0e62be6ceac1fb85d45fb69df0f037e6c4bb"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-activity.tsx",
+    "lines": 225,
+    "sha256": "ac291f914f6062a7b5df20741509112b80f4a3701bd05c90e28293776de2bc27"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-actions.tsx",
+    "lines": 277,
+    "sha256": "8f12fbbcad38d2b1f713e9f33e2a887ff4770afb7fa2db8df86eb1cb35ece413"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-agent-history.tsx",
+    "lines": 31,
+    "sha256": "a5e4742935952943f337d4d35e3dca08f355e6009e220674d286b85843ba538c"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-agents.tsx",
+    "lines": 437,
+    "sha256": "9aa72adfb6da338a593a9238d15954db342e474853b591235dafc8f0da0c784f"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-audit.tsx",
+    "lines": 263,
+    "sha256": "84769ac2ad800a1fe7d1627116268f64e14d062d202a7f1e96669485afeef784"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-evaluation.tsx",
+    "lines": 385,
+    "sha256": "caf49a6608fa55ab2ff80b056164710f612723eeef7b9d8145e25413ce471527"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-gates.tsx",
+    "lines": 362,
+    "sha256": "c89d8bbbe893a54cb47b07eb5d81bc0a7722102de44b3706117e6ce5391dfcae"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-metrics.ts",
+    "lines": 20,
+    "sha256": "0ca7df6b1089c10e1e835c734813a593728fa01df0fd216b8b60fd5877429dad"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-overview.tsx",
+    "lines": 365,
+    "sha256": "7a52aedbe755e05174ba9a183e0ddaabe78d13932a68c4ee0a59b87b3c26232a"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-registry.tsx",
+    "lines": 361,
+    "sha256": "313edb8e1a01dce367fdbb72f653c6463213d5d160adfd4ef4644c5c87a86cf6"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-safety.tsx",
+    "lines": 317,
+    "sha256": "3cae5681ff732d6e356cbfeaabdd20378ea07e31b6622729c78d04d3a4e10be4"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-sources.tsx",
+    "lines": 310,
+    "sha256": "1887352d1d8eb941e75b24eb0c5de4248e33336b1cbdeaafae753d6db5681efc"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin-ui.tsx",
+    "lines": 42,
+    "sha256": "4cecd93227cd11e56ad9fd9a24ea76e518586fe22473f8ff6a97263f4b7adca1"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-admin.tsx",
+    "lines": 164,
+    "sha256": "15320e51dd038fcff3e46ddcd460cbfc6280c3217d129dab698fbcda08d24995"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-agents.tsx",
+    "lines": 302,
+    "sha256": "872d76f65ad0ec90e597f909669d1e158633293d578f7090053fbe4cc7391d8c"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-archive-insights.tsx",
+    "lines": 93,
+    "sha256": "cb224035416fd92fbdcfc5489905906e2ce4018f65056f5ad6757002baf7e97f"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-archive-list.tsx",
+    "lines": 158,
+    "sha256": "a21f613816641124d3fe67a3ab35a1f38abaaa261b59445e4d41bff14b793d3e"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-archive-model.ts",
+    "lines": 47,
+    "sha256": "0a7dfaf100922ef39231c007db511be6bd32e68034d1eacad55cc784482020ba"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-archive-rename.tsx",
+    "lines": 116,
+    "sha256": "b9b9e3ffa70e436b1a9da527d4446cce1ade8f92c083152b08a255b38b826b5c"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-archive-view.ts",
+    "lines": 60,
+    "sha256": "354126075e38d6f39ba27227b4e97185c72e5933891cc6f955378c3b54e141b4"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-artifact-answer-action.tsx",
+    "lines": 84,
+    "sha256": "3fcdd3c952a9c72605e4bcd71916dfb0ac73137177a9f0efc4b97ddf6117932a"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-artifacts.tsx",
+    "lines": 469,
+    "sha256": "00caca029f82c85fc30779c72a8a968f5798948c6a71215423895ad8e1fe4ef3"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-catalog-copy.ts",
+    "lines": 222,
+    "sha256": "b2d75aa9e3c7284bf85faa3e8f1142292e334c9a2fad9c6bbaa3e321090bd81e"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-catalog-inspector.tsx",
+    "lines": 123,
+    "sha256": "60490b5546c9d2c709ccf5bb94fc8d01a0300b45bf32166f962713f75782cd61"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-composer-validation.ts",
+    "lines": 10,
+    "sha256": "7920ba1322196ccb912eddb4787bc22dbdeff650408c946ded8ad052045c65cd"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-contract.ts",
+    "lines": 14,
+    "sha256": "e914143e9dda3c25d81fded5359351c36f22a53700caa5045bcf123fa3e8816a"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-conversation-copy.ts",
+    "lines": 45,
+    "sha256": "be68585118acbd59c4a224658efa7587049a92248f551ac0c7e3e2b2421ea9a0"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-conversation-route.tsx",
+    "lines": 101,
+    "sha256": "cca720d0bb323d247c746b621c12d4e375c0aacb9c571feb51f603ec8d148abe"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-conversation-transcript.tsx",
+    "lines": 115,
+    "sha256": "1a8bc1a71d15f55d389fd7a9114ce6b61c7c7cab22988d99c32ed37544c40db2"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-conversations.tsx",
+    "lines": 338,
+    "sha256": "04a974e8a4fbd14d95bca34dc798799ea829ba1e5b1d0114135b30d93faa7818"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-evaluation-dialogs.tsx",
+    "lines": 170,
+    "sha256": "9b7f11bc97fcb18b3d0bd9ce90433b23c8e3d3d2bdbb2fa9c3f06212286eabd4"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-evaluation-history.tsx",
+    "lines": 255,
+    "sha256": "f31eda89f3f01a7d86b4c1d486a4c0ea6a93c2a33b170d921cc3eab09bcf9269"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-evaluation-results.ts",
+    "lines": 14,
+    "sha256": "ea7c5158bf1f3417f171b125fea4abeb0349b50a99428b12c80cafcac3d55016"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-evaluation-set-list.tsx",
+    "lines": 154,
+    "sha256": "826b65e1c060952db31835990cf7bc3be1e76e8e5b7aa96aec07a16b228e4672"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-gate-dialogs.tsx",
+    "lines": 344,
+    "sha256": "79c305f10b0dfdf6b2f21574c153670494b327fa2adc86dcd0db7ee66b7ca067"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-gate-review.tsx",
+    "lines": 235,
+    "sha256": "d891873764a1cd908f3032b510264ec90a9d1eca7d254a5905175b5fbabc39fd"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-gate-ui.tsx",
+    "lines": 38,
+    "sha256": "1c004a280e5396aa2d8b091c30b25856a13d295cb09703140dcbcdcdd3d7e7d3"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home-content.tsx",
+    "lines": 309,
+    "sha256": "42dc1b270e94e3cd061eae2c2699ba71b12d59391ecf3fe518598bfd117aa8aa"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home-model.ts",
+    "lines": 42,
+    "sha256": "68d702984b2b215a4c68410ba9a8703f76c72ed65483d8cc65d9f3f0ef34f553"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home-proposals.tsx",
+    "lines": 196,
+    "sha256": "361fffdd429bd125e09157dea43d9e42af2c33caf5d76299c053303dcf976578"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home-question.tsx",
+    "lines": 105,
+    "sha256": "627963f7bf09d030bc1a7149fb706729476c1fd77e3d09382892c3bbe58e6d94"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home-signals.tsx",
+    "lines": 217,
+    "sha256": "6723e602d2ba5d6fb6d568b3a240ddfd467562018b5acbe1cc313b046c7d9fad"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home-surfaces.tsx",
+    "lines": 102,
+    "sha256": "9c769b9dfa31e379747dee1f3711eebffe364befbb7fc3d59f09b556941290af"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-home.tsx",
+    "lines": 244,
+    "sha256": "f9eeeccac55002668db6e2f4edb11cd2ca2f4cc1540af9af748e2bc16d209fa9"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-navigation.ts",
+    "lines": 161,
+    "sha256": "764536101fad7fca98ee488eeb96f2b560aaefc87d18b20d46d80b6184190753"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-personal-controls.tsx",
+    "lines": 401,
+    "sha256": "ae6a7a3c539a1e91d5bb16ff945697bd0042870b2fdc7792e414985e67c3ff99"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-product-manifest.ts",
+    "lines": 144,
+    "sha256": "9cfcef8381411d8754151369a4f21dc11d363d3958b2b5c08f5ad116a78f139c"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-proposal-controls.tsx",
+    "lines": 158,
+    "sha256": "a849dfe8c2e739bd1f2038313c21bdb5000167d93bcdc2ad6b2173a1f3fbe863"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-proposal-detail.tsx",
+    "lines": 371,
+    "sha256": "6c04bc3735129ee4d4ab374e2f93c53cc407f7031e85573b98d80e527bb7c576"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-proposal-evidence.tsx",
+    "lines": 101,
+    "sha256": "9ba0d864f31d196f7b0debce1e40fb368a98e1afeda0bcf9c53ee8050e8faeca"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-proposal-list.tsx",
+    "lines": 195,
+    "sha256": "3b1e2c8c0d2ec903c583e5d17f5c25af0cfa9a98a979a80c172768bdfe076e75"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-proposal-model.ts",
+    "lines": 71,
+    "sha256": "a3ff9ae09ee80d103c6ac27cc86bd745209557a04540823c085440bd2e1aa4c1"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-proposals.tsx",
+    "lines": 367,
+    "sha256": "95426befa5638d0573c04c800ba6744b9bcf89c16639ae1d5d6266689ea5e679"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-routines.tsx",
+    "lines": 348,
+    "sha256": "1b0dbb9ad6cd05f006f65f72720cbdb51ef1ff51215dac77e4e078cb14cf7025"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-studio-header.tsx",
+    "lines": 68,
+    "sha256": "80d4d79dd221c2f3b9025512ff4ef9e26fb9a0d5e9604c4cd4c4203cb3ba971e"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-studio-rail.tsx",
+    "lines": 172,
+    "sha256": "aaf6b98ffdd72fa94057f96f00a18efb4c38895911c1fcc5d63cdd774fdedf22"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-workspace-answer.tsx",
+    "lines": 491,
+    "sha256": "4531f5dffed12acb7c0d21c9ab1358568cca4ec1eb1bbe37955526ebdbcca53c"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-workspace-composer.tsx",
+    "lines": 253,
+    "sha256": "d02579114f71cf2bc158b8065e017ce4b73ebe10d75d5ff812a94afb90d3bd31"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-workspace-context.tsx",
+    "lines": 300,
+    "sha256": "ab9448bc7d9cc0542a38135ed1060463088328be9942e937e0cab0345c3a2d74"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-workspace-model.ts",
+    "lines": 48,
+    "sha256": "9091e106cfd616bf070807c3cd2e95fe6b5109a2152c06ed76a61f8f4781167d"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-workspace-start.tsx",
+    "lines": 349,
+    "sha256": "8a146007d9943940d07d3547b926d93ebffd09ac1748567d04f316d62e5b2700"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/dwaion-workspace.tsx",
+    "lines": 489,
+    "sha256": "30e97278ac4347aa898fb9ff1cdcd08f5f30906ca46fbfa14780e3100e3fc450"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/personal-controls/dwaion-data-clear-dialog.tsx",
+    "lines": 166,
+    "sha256": "f81b0020de5d7505476f1e0e36822ade445fd82f37efbd72d47218e008e71494"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/personal-controls/dwaion-memory-controls.tsx",
+    "lines": 271,
+    "sha256": "c3aca00ede224027ab7cf709045f1a9a88f009db6a2503a81bd515055def2da4"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/personal-controls/dwaion-personal-ai-controls.tsx",
+    "lines": 424,
+    "sha256": "9f48e69fa95644962cf492e2549bd60d90a80b5faea26231a1267c88fa488c3b"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/personal-controls/dwaion-personal-controls-copy.ts",
+    "lines": 224,
+    "sha256": "bbbf85c2fd0488f66549f8108bb7dacb107adcfff0d065a45ff430379a3d6e35"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/personal-controls/dwaion-personal-controls-model.ts",
+    "lines": 109,
+    "sha256": "3ee04b8c2dbd9e86ceba8dc4b74937d284787f5ed08698bc09e0fabdaeeb207c"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/personal-controls/dwaion-source-controls.tsx",
+    "lines": 123,
+    "sha256": "eadfec1770c96ac6814acd8c46e74b3738ea9fe9f956de39a005e440b6179ced"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/routines/dwaion-routine-copy.ts",
+    "lines": 203,
+    "sha256": "1859fff4ac312451208b15ce50d969644a2b9656dbc4a5e008209fe2a1bf52d0"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/routines/dwaion-routine-editor-dialog.tsx",
+    "lines": 286,
+    "sha256": "bf72cf0cbdc4b158428cf9d0584dab92c200a6fe5584a81505c56aeacccec5fd"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/routines/dwaion-routine-inspector.tsx",
+    "lines": 246,
+    "sha256": "03ba494138f712ee3ed365c528be17e53a065a220ef1631da4bb27765d0b2473"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/routines/dwaion-routine-list.tsx",
+    "lines": 122,
+    "sha256": "d96b3d2e5b4218522ac95536f580785399c9447b63cba9a1c3e57697109b862e"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/routines/dwaion-routine-model.ts",
+    "lines": 152,
+    "sha256": "365c1ca631916d4779fcc69ee563a007cb344d173ed9a6671f9d73f72cfa4126"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/routines/dwaion-routines-page.tsx",
+    "lines": 313,
+    "sha256": "705fc66cd8ee013feb8b6c16971f04b04e068e5840223619485cf73b40bae84f"
+  },
+  {
+    "path": "apps/dwp/src/features/dwaion/use-dwaion-proposal-selection.ts",
+    "lines": 68,
+    "sha256": "ef0a97b6e4ddd20df6292330cfc776a9041c401a86949974b97258752013ca8f"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-admin-api.ts",
+    "lines": 434,
+    "sha256": "c9e2f59c2aafec173d8903c1ca4ee9d34428a0d9914dbb1358902b81f6c586be"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-admin-gate-api.ts",
+    "lines": 196,
+    "sha256": "bc14b8e32bcd5ac6f77af12fefdd5c9263f375a2dd6ec7a55914d185338b2d77"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-artifact-api.ts",
+    "lines": 354,
+    "sha256": "4fcc55d8a687bec54fed4902edf727ae87abeea66abeef4b6d958822f955047a"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-conversation-api.ts",
+    "lines": 260,
+    "sha256": "daa396846306d796155b5748b57d7c3cf4f84e16e7c1486eba39bbd768fdc2ff"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-governed-api.ts",
+    "lines": 41,
+    "sha256": "1e601cbc2979ac292d81c3684606067b7646aaf7bf4d964e30737497502b9456"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-personal-ai-api.ts",
+    "lines": 306,
+    "sha256": "f64e2181140a61f804247793bb1266da16cd11d3310ef8f902d7ce590f1889b6"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-plan-api.ts",
+    "lines": 123,
+    "sha256": "28235d047f4b15514cffbb251747115d74ff3f58947490a16e312caa7d7e453d"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-proposal-api.ts",
+    "lines": 230,
+    "sha256": "44849e3bc35b31fcb56b06722efc5e20b0acdf99de566a91f4ed6eb9d3ea2d15"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-question-launch-api.ts",
+    "lines": 67,
+    "sha256": "3fae502f918f22b9cb9a1cebec661d4ffac0370aac02e117131ccc0920971fc4"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-routine-api.ts",
+    "lines": 172,
+    "sha256": "7c45e87f0a93a802e56c0210c26376ae66f5ec088f5d129ba2063bd33cc46855"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-run-api.ts",
+    "lines": 313,
+    "sha256": "3526d1e53053834bc18cb52ae170e6ba5fbc6fdb8610cbf1070dc1908715a955"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-runtime-api.ts",
+    "lines": 313,
+    "sha256": "fb8f5dec686a1c8a4eb99b36fdcf93435bec270632cc0cabbbbde8240bbf9098"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-selected-work-api.ts",
+    "lines": 158,
+    "sha256": "40dd0a90cd55eca94c35dcf4fb6d7da2e59eea38d9821c997ce0b249418892d0"
+  },
+  {
+    "path": "libs/shared-utils/src/api/agent-voice-api.ts",
+    "lines": 98,
+    "sha256": "52a131a7c7a3b98fafe443e3b9f1d0df7540520dcc1b0c62208ed6cb90ec38d8"
+  }
+]

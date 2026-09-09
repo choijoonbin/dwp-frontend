@@ -30,17 +30,23 @@ import {
   type MeetingHomeResultsSection,
 } from './meeting-home-results-model';
 import { meetingHomeCard, meetingHomeInset } from './meeting-home-presentation';
+import type { MeetingHomeManualOutcome } from './meeting-home-manual-outcomes-model';
+import type { MeetingHomeQueueState } from './meeting-home-queue-state';
 
 export function MeetingHomeResults({
   recent,
   section,
   timeZone = resolveSystemTimeZone('UTC'),
   embedded = false,
+  manualOutcomes = [],
+  onStateChange,
 }: {
   recent: VideoMeetingSummary[];
   section: MeetingHomeResultsSection;
   timeZone?: string;
   embedded?: boolean;
+  manualOutcomes?: readonly MeetingHomeManualOutcome[];
+  onStateChange?: (state: MeetingHomeQueueState) => void;
 }) {
   const { t, i18n } = useTranslation('meetings');
   const auth = useAuth();
@@ -106,6 +112,13 @@ export function MeetingHomeResults({
         );
   const partialError = query.isError || (query.data?.failedMeetingIds.length ?? 0) > 0;
   const loading = meetingIds.length > 0 && (query.isLoading || query.isFetching);
+  useEffect(() => {
+    if (!onStateChange) return;
+    onStateChange({
+      status: loading ? 'loading' : partialError && entries.length === 0 ? 'error' : 'ready',
+      count: entries.length,
+    });
+  }, [entries.length, loading, onStateChange, partialError]);
   const titleId = `meeting-home-results-${section}-title`;
   const formatDate = (value: string) =>
     formatSharedDate(
@@ -119,6 +132,10 @@ export function MeetingHomeResults({
       },
       resolveSupportedLocale(i18n.resolvedLanguage)
     );
+  const recentFallback = section === 'recent' ? candidates[0] : undefined;
+  const manualOutcome = recentFallback
+    ? manualOutcomes.find((outcome) => outcome.meetingId === recentFallback.meetingId)
+    : undefined;
 
   return (
     <Box
@@ -325,6 +342,85 @@ export function MeetingHomeResults({
               ))}
             </Stack>
           )}
+          {!entries.length && !loading && recentFallback && (
+            <Box
+              component="article"
+              data-testid="meeting-home-recent-factual"
+              sx={(theme) => ({ ...meetingHomeCard(theme), p: { xs: 1.5, md: 2 }, minWidth: 0 })}
+            >
+              <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
+                <Typography
+                  component="h3"
+                  variant="subtitle2"
+                  sx={{ flex: 1, minWidth: 180, overflowWrap: 'anywhere' }}
+                >
+                  {recentFallback.title}
+                </Typography>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={manualOutcome?.decision ? 'success' : 'default'}
+                  label={
+                    manualOutcome?.decision
+                      ? t('home.manual.resultBadge')
+                      : t('home.manual.endedBadge')
+                  }
+                />
+                {recentFallback.endedAt && (
+                  <Typography variant="caption" color="text.secondary">
+                    {t('home.manual.endedAt', { date: formatDate(recentFallback.endedAt) })}
+                  </Typography>
+                )}
+              </Stack>
+              {manualOutcome?.decision ? (
+                <Typography
+                  component="blockquote"
+                  variant="body2"
+                  sx={(theme) => ({
+                    ...meetingHomeInset(theme),
+                    m: 0,
+                    mt: 1,
+                    p: { xs: 1, md: 1.5 },
+                    borderLeft: 3,
+                    borderLeftColor: 'success.main',
+                    overflowWrap: 'anywhere',
+                  })}
+                >
+                  {manualOutcome.decision}
+                </Typography>
+              ) : (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  {t('home.manual.noPublishedRecap')}
+                </Typography>
+              )}
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                gap={1}
+                sx={{ mt: 0.75 }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  {manualOutcome?.decision
+                    ? t('home.manual.notAiResult')
+                    : t('home.manual.providerUnavailable')}
+                </Typography>
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                  onClick={() =>
+                    navigate(
+                      `/meetings/history?meeting=${encodeURIComponent(recentFallback.meetingId)}`
+                    )
+                  }
+                  sx={{ minHeight: 44, flexShrink: 0 }}
+                >
+                  {t('home.manual.openMeeting')}
+                </ActionButton>
+              </Stack>
+            </Box>
+          )}
           {partialError && (
             <ErrorState
               size="compact"
@@ -336,12 +432,9 @@ export function MeetingHomeResults({
             />
           )}
           {!entries.length &&
+            !recentFallback &&
             !partialError &&
-            (embedded ? (
-              <Typography variant="caption" color="text.secondary">
-                {t(`home.results.${section}.emptyTitle`)}
-              </Typography>
-            ) : (
+            (embedded ? null : (
               <GuidedEmptyState
                 kind="empty"
                 size="compact"

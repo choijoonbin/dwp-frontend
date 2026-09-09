@@ -1,0 +1,102 @@
+{
+  "report": "/private/tmp/dwaion-final-20260908/integrated-chromium-final-v3.json",
+  "reportReady": true,
+  "counting": "One tests[] entry per case; expected=passed, unexpected=failed; flaky and skipped are separate. Retry attempts are not added to case totals.",
+  "expectedTotal": 291,
+  "overall": {
+    "passed": 291,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unknown": 0,
+    "total": 291,
+    "attempts": 291,
+    "extraAttempts": 0
+  },
+  "administrator": {
+    "passed": 93,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unknown": 0,
+    "total": 93,
+    "attempts": 93,
+    "extraAttempts": 0
+  },
+  "administratorSpecs": {
+    "dwaion-stitch-coverage.spec.ts": {
+      "passed": 89,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "total": 89,
+      "attempts": 89,
+      "extraAttempts": 0
+    },
+    "dwaion-admin-conflicts.spec.ts": {
+      "passed": 4,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "total": 4,
+      "attempts": 4,
+      "extraAttempts": 0
+    }
+  },
+  "projects": {
+    "chromium": 291
+  },
+  "reportedStats": {
+    "startTime": "2026-09-08T11:49:10.978Z",
+    "duration": 790736.323,
+    "expected": 291,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "globalErrors": [],
+  "allPassed": true,
+  "notPassed": [],
+  "validationIssues": [],
+  "runReceipt": {
+    "name": "integrated-chromium-final-v3",
+    "cwd": "/tmp/dwaion-final-checkout-20260908",
+    "command": [
+      "corepack",
+      "yarn",
+      "playwright",
+      "test",
+      "e2e/dwaion-activity-list-detail.spec.ts",
+      "e2e/dwaion-admin-conflicts.spec.ts",
+      "e2e/dwaion-agentic-work-os.spec.ts",
+      "e2e/dwaion-bound-action-review.spec.ts",
+      "e2e/dwaion-catalogs.spec.ts",
+      "e2e/dwaion-conversation-controls.spec.ts",
+      "e2e/dwaion-conversation-design.spec.ts",
+      "e2e/dwaion-conversation-route.spec.ts",
+      "e2e/dwaion-home-design.spec.ts",
+      "e2e/dwaion-launcher-header-contract.spec.ts",
+      "e2e/dwaion-launcher.spec.ts",
+      "e2e/dwaion-personal-access-revalidation.spec.ts",
+      "e2e/dwaion-personal-intelligence-visual.spec.ts",
+      "e2e/dwaion-personal-intelligence.spec.ts",
+      "e2e/dwaion-proposal-review.spec.ts",
+      "e2e/dwaion-proposal-selection.spec.ts",
+      "e2e/dwaion-selected-conversation.spec.ts",
+      "e2e/dwaion-stitch-coverage.spec.ts",
+      "e2e/menu-route-contract.spec.ts",
+      "--grep",
+      "dwaion|DWAI",
+      "--project=chromium",
+      "--workers=1",
+      "--reporter=line,json"
+    ],
+    "startedAt": "2026-09-08T11:49:08.851302+00:00",
+    "source": "isolated validation checkout with DWAI product and test hashes matched to shared merge",
+    "completedAt": "2026-09-08T12:02:21.986111+00:00",
+    "durationSeconds": 793.13,
+    "exitCode": 0
+  }
+}

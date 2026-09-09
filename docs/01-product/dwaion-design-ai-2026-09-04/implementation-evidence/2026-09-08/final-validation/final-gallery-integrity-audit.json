@@ -1,0 +1,20 @@
+{
+  "auditedAt": "2026-09-08T12:18:03.743768+00:00",
+  "gallery": "/Users/a10697/Work/DWP/dwp-frontend/docs/01-product/dwaion-design-ai-2026-09-04/implementation-evidence/2026-09-08/final-gallery",
+  "screenIds": 21,
+  "reports": [
+    291,
+    21,
+    5
+  ],
+  "uniqueCases": 317,
+  "acceptedCases": 317,
+  "captures": 218,
+  "missingPrimary": 0,
+  "missingContext": 0,
+  "rejectedMappedPng": 0,
+  "unassignedNonDwaionActivityCaptures": 64,
+  "allCaptureSourceAndGalleryHashesMatch": true,
+  "issues": [],
+  "passed": true
+}

@@ -7,6 +7,7 @@ import {
   AdminLegacyRedirect,
   AdminRouteGuard,
   AdminSectionRedirect,
+  ProductApplicationRedirect,
   SpacesAdminLegacyIndexRedirect,
   TenantAdminLegacyRedirect,
   TenantAdminRouteGuard,
@@ -124,22 +125,12 @@ describe('administration identity-plane route boundary', () => {
     const result = SpacesAdminLegacyIndexRedirect();
 
     expect(isValidElement(result)).toBe(true);
-    if (
-      !isValidElement<{
-        to: { pathname: string; search: string; hash: string };
-        replace: boolean;
-      }>(result)
-    ) {
+    if (!isValidElement<{ target: string }>(result)) {
       throw new Error('Expected a Spaces management redirect element.');
     }
-    expect(result.type).toBe(Navigate);
+    expect(result.type).toBe(ProductApplicationRedirect);
     expect(result.props).toMatchObject({
-      to: {
-        pathname: '/spaces/admin/templates',
-        search: '?state=draft',
-        hash: '#catalog',
-      },
-      replace: true,
+      target: '/spaces/admin/templates?state=draft#catalog',
     });
     expect(administrationRoute('admin/spaces').handle).toMatchObject({
       productSurfaceId: 'spaces.management',

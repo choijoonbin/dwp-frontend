@@ -11,5 +11,11 @@ export function meetingFollowUpsNavigation(params: URLSearchParams) {
       : 'ASSIGNED_TO_ME';
   const references = params.getAll('assignment');
   const assignment = references.length === 1 && uuid.test(references[0]) ? references[0] : null;
-  return { scope, assignment: scope === 'CANDIDATES' ? null : assignment };
+  const candidates = params.getAll('candidateId');
+  const candidate = candidates.length === 1 && uuid.test(candidates[0]) ? candidates[0] : null;
+  return {
+    scope,
+    assignment: scope === 'CANDIDATES' ? null : assignment,
+    candidate: scope === 'CANDIDATES' ? candidate : null,
+  };
 }

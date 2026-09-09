@@ -1,14 +1,22 @@
 import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
+
+const LEGACY_AUTHORITY = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' } as const;
 
 export {
   addDwaionOperationalGateEvidence,
+  bootstrapDwaionOperationalGates,
   configureDwaionOperationalGate,
   decideDwaionOperationalGate,
   getDwaionOperationalGate,
   getDwaionOperationalGatePortfolio,
   toDwaionOperationalGateProblem,
   validateDwaionOperationalGate,
+  type BootstrapDwaionOperationalGatesRequest,
   type DwaionGateActorRole,
   type DwaionGateApprovalEligibilityReason,
   type DwaionGateCategory,
@@ -58,6 +66,14 @@ export type UpdateDwaionRetentionPolicyRequest = {
   retentionDays?: number;
   legalHold?: boolean;
   expectedVersion: number;
+  changeReason: string;
+};
+
+export type BootstrapDwaionRetentionPolicyRequest = {
+  idempotencyKey: string;
+  expectedExistingCount: number;
+  retentionDays: number;
+  legalHold: boolean;
   changeReason: string;
 };
 
@@ -115,6 +131,12 @@ export type UpdateDwaionActionPolicyRequest = Pick<
   'enabled' | 'confirmationRequired' | 'executionPolicy'
 > & {
   expectedVersion: number;
+  changeReason: string;
+};
+
+export type BootstrapDwaionGovernancePoliciesRequest = {
+  idempotencyKey: string;
+  expectedExistingCount: number;
   changeReason: string;
 };
 
@@ -233,13 +255,29 @@ export async function getDwaionRetentionPolicy(): Promise<DwaionRetentionPolicy>
   return response.data.data;
 }
 
+export async function bootstrapDwaionRetentionPolicy(
+  request: BootstrapDwaionRetentionPolicyRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionRetentionPolicy> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionRetentionPolicy>,
+    BootstrapDwaionRetentionPolicyRequest
+  >(
+    '/api/agent/v1/admin/retention/bootstrap',
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
 export async function updateDwaionRetentionPolicy(
-  request: UpdateDwaionRetentionPolicyRequest
+  request: UpdateDwaionRetentionPolicyRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionRetentionPolicy> {
   const response = await axiosInstance.patch<
     ApiResponse<DwaionRetentionPolicy>,
     UpdateDwaionRetentionPolicyRequest
-  >('/api/agent/v1/admin/retention', request);
+  >('/api/agent/v1/admin/retention', request, productSurfaceGovernedMutationConfig(authority));
   return response.data.data;
 }
 
@@ -252,12 +290,32 @@ export async function getDwaionDataSourcePolicies(): Promise<DwaionDataSourcePol
 
 export async function updateDwaionDataSourcePolicy(
   sourceKey: DwaionSourceKey,
-  request: UpdateDwaionDataSourcePolicyRequest
+  request: UpdateDwaionDataSourcePolicyRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionDataSourcePolicy> {
   const response = await axiosInstance.patch<
     ApiResponse<DwaionDataSourcePolicy>,
     UpdateDwaionDataSourcePolicyRequest
-  >(`/api/agent/v1/admin/sources/${encodeURIComponent(sourceKey)}`, request);
+  >(
+    `/api/agent/v1/admin/sources/${encodeURIComponent(sourceKey)}`,
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
+export async function bootstrapDwaionDataSourcePolicies(
+  request: BootstrapDwaionGovernancePoliciesRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionDataSourcePolicy[]> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionDataSourcePolicy[]>,
+    BootstrapDwaionGovernancePoliciesRequest
+  >(
+    '/api/agent/v1/admin/sources/bootstrap',
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
@@ -270,12 +328,32 @@ export async function getDwaionActionPolicies(): Promise<DwaionActionPolicy[]> {
 
 export async function updateDwaionActionPolicy(
   actionKey: string,
-  request: UpdateDwaionActionPolicyRequest
+  request: UpdateDwaionActionPolicyRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionActionPolicy> {
   const response = await axiosInstance.patch<
     ApiResponse<DwaionActionPolicy>,
     UpdateDwaionActionPolicyRequest
-  >(`/api/agent/v1/admin/actions/${encodeURIComponent(actionKey)}`, request);
+  >(
+    `/api/agent/v1/admin/actions/${encodeURIComponent(actionKey)}`,
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
+export async function bootstrapDwaionActionPolicies(
+  request: BootstrapDwaionGovernancePoliciesRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionActionPolicy[]> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionActionPolicy[]>,
+    BootstrapDwaionGovernancePoliciesRequest
+  >(
+    '/api/agent/v1/admin/actions/bootstrap',
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
@@ -286,13 +364,29 @@ export async function getDwaionSafetyPolicy(): Promise<DwaionSafetyPolicy> {
   return response.data.data;
 }
 
+export async function bootstrapDwaionSafetyPolicy(
+  request: BootstrapDwaionGovernancePoliciesRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionSafetyPolicy> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionSafetyPolicy>,
+    BootstrapDwaionGovernancePoliciesRequest
+  >(
+    '/api/agent/v1/admin/safety/bootstrap',
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
 export async function updateDwaionSafetyPolicy(
-  request: UpdateDwaionSafetyPolicyRequest
+  request: UpdateDwaionSafetyPolicyRequest,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionSafetyPolicy> {
   const response = await axiosInstance.patch<
     ApiResponse<DwaionSafetyPolicy>,
     UpdateDwaionSafetyPolicyRequest
-  >('/api/agent/v1/admin/safety', request);
+  >('/api/agent/v1/admin/safety', request, productSurfaceGovernedMutationConfig(authority));
   return response.data.data;
 }
 
@@ -312,14 +406,14 @@ export async function getDwaionEvaluationSet(
   return response.data.data;
 }
 
-export async function createDwaionEvaluationSet(request: {
-  name: string;
-  description?: string;
-  locale: string;
-}): Promise<DwaionEvaluationSetDetail> {
+export async function createDwaionEvaluationSet(
+  request: { name: string; description?: string; locale: string },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionEvaluationSetDetail> {
   const response = await axiosInstance.post<ApiResponse<DwaionEvaluationSetDetail>, typeof request>(
     '/api/agent/v1/admin/evaluations',
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -331,11 +425,13 @@ export async function addDwaionEvaluationCase(
     prompt: string;
     expectedTerms: string[];
     sourceScopes: DwaionSourceKey[];
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionEvaluationSetDetail> {
   const response = await axiosInstance.post<ApiResponse<DwaionEvaluationSetDetail>, typeof request>(
     `/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/cases`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -346,20 +442,32 @@ export async function transitionDwaionEvaluationSet(
     lifecycleState: Exclude<DwaionEvaluationLifecycle, 'DRAFT'>;
     expectedVersion: number;
     changeReason: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionEvaluationSetDetail> {
   const response = await axiosInstance.patch<
     ApiResponse<DwaionEvaluationSetDetail>,
     typeof request
-  >(`/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/lifecycle`, request);
+  >(
+    `/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/lifecycle`,
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
-export async function runDwaionEvaluation(evaluationSetId: string): Promise<DwaionEvaluationRun> {
+export async function runDwaionEvaluation(
+  evaluationSetId: string,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionEvaluationRun> {
   const response = await axiosInstance.post<
     ApiResponse<DwaionEvaluationRun>,
     Record<string, never>
-  >(`/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/runs`, {});
+  >(
+    `/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/runs`,
+    {},
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
@@ -415,7 +523,7 @@ export async function listDwaionGovernanceAudit(options?: {
 export async function exportDwaionGovernanceAudit(options?: {
   category?: string;
   query?: string;
-}): Promise<Blob> {
+}): Promise<{ blob: Blob; limit: number | null; truncated: boolean | null }> {
   const search = new URLSearchParams();
   if (options?.category) search.set('category', options.category);
   if (options?.query?.trim()) search.set('query', options.query.trim());
@@ -423,5 +531,12 @@ export async function exportDwaionGovernanceAudit(options?: {
   const response = await axiosInstance.get<Blob>(`/api/agent/v1/admin/audit/export${suffix}`, {
     responseType: 'blob',
   });
-  return response.data;
+  const limitHeader = response.headers?.get('X-DWP-Export-Limit');
+  const limit = limitHeader ? Number(limitHeader) : NaN;
+  const truncated = response.headers?.get('X-DWP-Export-Truncated');
+  return {
+    blob: response.data,
+    limit: Number.isInteger(limit) && limit > 0 ? limit : null,
+    truncated: truncated === 'true' ? true : truncated === 'false' ? false : null,
+  };
 }

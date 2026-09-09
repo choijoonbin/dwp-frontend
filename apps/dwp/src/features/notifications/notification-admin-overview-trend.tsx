@@ -47,7 +47,7 @@ export function NotificationAdminOverviewTrend({
           <Stack key={key} direction="row" gap={0.65} alignItems="center">
             <Box
               aria-hidden="true"
-              sx={{ width: 9, height: 9, borderRadius: 'shape.borderRadius', bgcolor: color }}
+              sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: color }}
             />
             <Typography variant="caption" color="text.secondary">
               {t(`admin.overview.columns.${key}`)}

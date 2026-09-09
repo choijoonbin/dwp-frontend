@@ -1,14 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Inbox, ShieldCheck } from 'lucide-react';
 import {
   ActionButton,
   GuidedEmptyState,
+  foundationTokens,
+  InlineFeedback,
   LiveStatus,
   LoadingState,
   LocalErrorState,
-  OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
 } from '@dwp-frontend/design-system';
@@ -29,9 +31,19 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
+import { useDwaionProposalSelection } from './use-dwaion-proposal-selection';
 import { DwaionProposalDetail } from './dwaion-proposal-detail';
+import {
+  DwaionProposalFilterBar,
+  DwaionProposalMetrics,
+  DwaionProposalPreview,
+} from './dwaion-proposal-inbox-panels';
 import { DwaionProposalList } from './dwaion-proposal-list';
 import { DwaionProposalControls } from './dwaion-proposal-controls';
+import {
+  DwaionProposalContextStrip,
+  DwaionProposalMobileToolbar,
+} from './dwaion-proposal-mobile-toolbar';
 
 import type {
   DwaionProposal,
@@ -39,6 +51,7 @@ import type {
   DwaionProposalDecision,
   DwaionProposalInboxView,
 } from '@dwp-frontend/shared-utils';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const PAGE_SIZE = 50;
 const ANALYSIS_PREFERENCE_QUERY_KEY = ['dwaion', 'proposal-analysis-preference'] as const;
@@ -47,12 +60,29 @@ export function DwaionProposals() {
   const { t, i18n } = useTranslation('work');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const governDecision = useDwaionGovernedMutation('route.dwaion.work.proposal-decision.action');
+  const governAnalysis = useDwaionGovernedMutation('route.dwaion.work.proposal-analyze.action');
+  const governPreference = useDwaionGovernedMutation(
+    'route.dwaion.work.proposal-preferences-update.action'
+  );
+  const governClear = useDwaionGovernedMutation('route.dwaion.work.proposal-clear.action');
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
-  const [view, setView] = useState<DwaionProposalInboxView>('ACTIVE');
-  const [selected, setSelected] = useState<DwaionProposal | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedView = searchParams.get('view');
+  const view: DwaionProposalInboxView =
+    requestedView === 'ACTIVE' || requestedView === 'SNOOZED' || requestedView === 'HANDLED'
+      ? requestedView
+      : 'ALL';
+  const selection = useDwaionProposalSelection(searchParams, setSearchParams);
+  const selected = selection.proposal;
+  const returnFocusId = useRef<string | null>(null);
   const [analysisReceipt, setAnalysisReceipt] = useState<DwaionProposalAnalysisReceipt | null>(
     null
   );
+  const [query, setQuery] = useState('');
+  const [source, setSource] = useState('ALL');
+  const [priority, setPriority] = useState('ALL');
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const analysisPreference = useQuery({
     queryKey: ANALYSIS_PREFERENCE_QUERY_KEY,
     queryFn: getDwaionProposalAnalysisPreference,
@@ -72,12 +102,43 @@ export function DwaionProposals() {
     () => inbox.data?.pages.flatMap((page) => page.items) ?? [],
     [inbox.data?.pages]
   );
+  const sourceOptions = useMemo(
+    () =>
+      [
+        ...new Set(
+          proposals.flatMap(
+            (proposal) => proposal.content.evidence?.map((item) => item.sourceType) ?? []
+          )
+        ),
+      ].sort(),
+    [proposals]
+  );
+  const visibleProposals = useMemo(() => {
+    const term = query.trim().toLocaleLowerCase();
+    return proposals.filter((proposal) => {
+      const searchable = [
+        proposal.content.title,
+        proposal.content.summary,
+        proposal.content.rationale,
+        ...(proposal.content.evidence?.map((item) => item.label) ?? []),
+      ]
+        .join(' ')
+        .toLocaleLowerCase();
+      return (
+        (!term || searchable.includes(term)) &&
+        (source === 'ALL' ||
+          proposal.content.evidence?.some((item) => item.sourceType === source)) &&
+        (priority === 'ALL' || proposal.priority === priority)
+      );
+    });
+  }, [priority, proposals, query, source]);
   const summary = inbox.data?.pages[0]?.summary ?? {
     active: 0,
     highPriority: 0,
     snoozed: 0,
     handled: 0,
   };
+  const previewProposal = selection.unavailable ? null : (selected ?? visibleProposals[0] ?? null);
   const decision = useMutation({
     mutationFn: ({
       proposal,
@@ -87,19 +148,25 @@ export function DwaionProposals() {
       proposal: DwaionProposal;
       value: DwaionProposalDecision;
       snoozeUntil?: string;
-    }) => decideDwaionProposal(proposal.proposalId, value, proposal.revision, snoozeUntil),
+    }) =>
+      governDecision((authority) =>
+        decideDwaionProposal(proposal.proposalId, value, proposal.revision, snoozeUntil, authority)
+      ),
     onSuccess: async (receipt, variables) => {
-      setSelected(receipt.proposal);
+      selection.receive(receipt.proposal);
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
       toast.success(t(`dwaionProposals.feedback.${variables.value}`));
     },
     onError: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] }),
+        selection.refresh(),
+      ]);
       toast.error(t('dwaionProposals.feedback.error'));
     },
   });
   const analysis = useMutation({
-    mutationFn: analyzeDwaionProposals,
+    mutationFn: () => governAnalysis((authority) => analyzeDwaionProposals(authority)),
     onSuccess: async (receipt) => {
       setAnalysisReceipt(receipt);
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
@@ -113,7 +180,13 @@ export function DwaionProposals() {
   const preferenceMutation = useMutation({
     mutationFn: (enabled: boolean) => {
       if (!analysisPreference.data) throw new Error('Proposal analysis preference is unavailable.');
-      return updateDwaionProposalAnalysisPreference(analysisPreference.data.revision, enabled);
+      return governPreference((authority) =>
+        updateDwaionProposalAnalysisPreference(
+          analysisPreference.data!.revision,
+          enabled,
+          authority
+        )
+      );
     },
     onSuccess: (preference) => {
       queryClient.setQueryData(ANALYSIS_PREFERENCE_QUERY_KEY, preference);
@@ -131,9 +204,10 @@ export function DwaionProposals() {
     },
   });
   const clearInbox = useMutation({
-    mutationFn: clearDwaionProposalInbox,
+    mutationFn: () => governClear((authority) => clearDwaionProposalInbox(authority)),
     onSuccess: async (receipt) => {
-      setSelected(null);
+      await selection.clearCached();
+      selection.close();
       setAnalysisReceipt(null);
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
       toast.success(t('dwaionProposals.feedback.cleared', { count: receipt.hiddenCount }));
@@ -162,11 +236,45 @@ export function DwaionProposals() {
           )}
           refreshLabel={t('dwaionProposals.refresh')}
           refreshing={inbox.isFetching}
-          onRefresh={() => void inbox.refetch()}
+          onRefresh={() => {
+            void inbox.refetch();
+            void selection.refresh();
+          }}
         />
       }
     />
   );
+
+  const closeDetail = () => {
+    returnFocusId.current = selected?.proposalId ?? null;
+    selection.close();
+  };
+
+  useEffect(() => {
+    if (selected || !returnFocusId.current) return;
+    document
+      .querySelector<HTMLElement>(`[data-dwaion-proposal-id="${returnFocusId.current}"]`)
+      ?.focus();
+    returnFocusId.current = null;
+  }, [selected]);
+
+  if (selected)
+    return (
+      <PageCanvas topInset="compact">
+        <DwaionProposalDetail
+          proposal={selected}
+          open
+          busy={decision.isPending}
+          locale={locale}
+          onClose={closeDetail}
+          onAccept={(proposal) => decision.mutate({ proposal, value: 'ACCEPT' })}
+          onSnooze={(proposal, snoozeUntil) =>
+            decision.mutate({ proposal, value: 'SNOOZE', snoozeUntil })
+          }
+          onDismiss={(proposal) => decision.mutate({ proposal, value: 'DISMISS' })}
+        />
+      </PageCanvas>
+    );
 
   if (inbox.isLoading)
     return (
@@ -193,64 +301,62 @@ export function DwaionProposals() {
 
   return (
     <PageCanvas>
-      {header}
-      <DwaionProposalControls
-        preference={analysisPreference.data}
-        preferenceLoading={analysisPreference.isLoading}
-        preferenceError={analysisPreference.isError}
-        analysisReceipt={analysisReceipt}
-        analyzing={analysis.isPending}
-        updatingPreference={preferenceMutation.isPending}
-        clearing={clearInbox.isPending}
-        onAnalyze={() => analysis.mutate()}
-        onPreferenceChange={(enabled) => preferenceMutation.mutate(enabled)}
-        onClear={async () => {
-          await clearInbox.mutateAsync();
+      <DwaionProposalContextStrip />
+      <Box
+        sx={{
+          display: { xs: 'block', md: 'grid' },
+          gridTemplateColumns: { md: 'minmax(340px, 0.9fr) minmax(520px, 1.35fr)' },
+          alignItems: 'end',
+          gap: { md: 3 },
         }}
-      />
-      <Box sx={{ mt: 3 }}>
-        <OperationalKpiStrip
-          ariaLabel={t('dwaionProposals.summaryLabel')}
-          items={[
-            {
-              key: 'active',
-              value: summary.active,
-              label: t('dwaionProposals.metrics.active'),
-              detail: t('dwaionProposals.metrics.activeDetail'),
-              tone: 'info',
-            },
-            {
-              key: 'high',
-              value: summary.highPriority,
-              label: t('dwaionProposals.metrics.highPriority'),
-              detail: t('dwaionProposals.metrics.highPriorityDetail'),
-              tone: summary.highPriority ? 'warning' : 'neutral',
-            },
-            {
-              key: 'snoozed',
-              value: summary.snoozed,
-              label: t('dwaionProposals.metrics.snoozed'),
-              detail: t('dwaionProposals.metrics.snoozedDetail'),
-            },
-            {
-              key: 'handled',
-              value: summary.handled,
-              label: t('dwaionProposals.metrics.handled'),
-              detail: t('dwaionProposals.metrics.handledDetail'),
-              tone: 'success',
-            },
-          ]}
+      >
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>{header}</Box>
+        <DwaionProposalMobileToolbar
+          reviewCount={summary.active}
+          filtersOpen={mobileFiltersOpen}
+          onToggleFilters={() => setMobileFiltersOpen((current) => !current)}
+        />
+        <DwaionProposalControls
+          preference={analysisPreference.data}
+          preferenceLoading={analysisPreference.isLoading}
+          preferenceError={analysisPreference.isError}
+          analysisReceipt={analysisReceipt}
+          analyzing={analysis.isPending}
+          updatingPreference={preferenceMutation.isPending}
+          clearing={clearInbox.isPending}
+          sourceTypeCount={sourceOptions.length}
+          onAnalyze={() => analysis.mutate()}
+          onPreferenceChange={(enabled) => preferenceMutation.mutate(enabled)}
+          onClear={async () => {
+            await clearInbox.mutateAsync();
+          }}
         />
       </Box>
+      {selection.pending && <LoadingState label={t('dwaionProposals.loading')} />}
+      {selection.unavailable && (
+        <InlineFeedback
+          severity="warning"
+          sx={{ mt: 2 }}
+          onClose={selection.close}
+          closeLabel={t('dwaionProposals.detail.close')}
+        >
+          {t('dwaionProposals.selectionUnavailable')}
+        </InlineFeedback>
+      )}
+      <DwaionProposalMetrics summary={summary} />
 
-      <Box component="section" aria-labelledby="dwaion-proposal-list" sx={{ mt: 3.5 }}>
+      <Box
+        component="section"
+        aria-labelledby="dwaion-proposal-list"
+        sx={{ mt: { xs: 1.5, md: 2.5 } }}
+      >
         <Stack
-          direction={{ xs: 'column', sm: 'row' }}
+          direction={{ xs: 'column', md: 'row' }}
           justifyContent="space-between"
-          alignItems={{ sm: 'center' }}
+          alignItems={{ md: 'center' }}
           gap={1.5}
         >
-          <Box>
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <Stack direction="row" spacing={0.75} alignItems="center">
               <Inbox size={18} color="var(--dwp-product-accent)" aria-hidden="true" />
               <Typography id="dwaion-proposal-list" component="h2" variant="h6">
@@ -267,46 +373,149 @@ export function DwaionProposals() {
             value={view}
             onChange={(_, value: DwaionProposalInboxView | null) => {
               if (value) {
-                setView(value);
-                setSelected(null);
+                setQuery('');
+                setSource('ALL');
+                setPriority('ALL');
+                setSearchParams((previous) => {
+                  const next = new URLSearchParams(previous);
+                  next.delete('proposal');
+                  if (value === 'ALL') next.delete('view');
+                  else next.set('view', value);
+                  return next;
+                });
               }
             }}
             aria-label={t('dwaionProposals.filterLabel')}
             sx={{
-              '& .MuiToggleButton-root': { color: 'text.primary' },
+              width: { xs: '100%', md: 'auto' },
+              overflowX: { xs: 'auto', md: 'visible' },
+              justifyContent: { xs: 'flex-start', md: 'center' },
+              gap: { xs: 0.75, md: 0 },
+              '& .MuiToggleButtonGroup-grouped': {
+                flex: { xs: '1 0 auto', md: 'initial' },
+                px: { xs: 1.3, md: 1.5 },
+                border: { xs: '0 !important', md: undefined },
+                borderRadius: {
+                  xs: foundationTokens.radius.surface * 125 + 'px !important',
+                  md: undefined,
+                },
+                bgcolor: { xs: 'var(--dwp-product-soft)', md: 'transparent' },
+              },
+              '& .MuiToggleButton-root': { color: 'text.primary', minHeight: 44 },
               '& .MuiToggleButton-root.Mui-selected': {
-                color: 'text.primary',
+                color: { xs: 'primary.contrastText', md: 'text.primary' },
+                bgcolor: { xs: 'primary.main', md: 'action.selected' },
+                '&:hover': { bgcolor: { xs: 'primary.dark', md: 'action.selected' } },
               },
             }}
           >
-            {(['ACTIVE', 'SNOOZED', 'HANDLED'] as const).map((value) => (
+            {(['ALL', 'ACTIVE', 'SNOOZED', 'HANDLED'] as const).map((value) => (
               <ToggleButton key={value} value={value}>
                 {t(`dwaionProposals.views.${value}`)}
+                <Typography
+                  component="span"
+                  variant="caption"
+                  aria-hidden="true"
+                  sx={{ ml: 0.65, fontWeight: 'fontWeightBold' }}
+                >
+                  {value === 'ALL'
+                    ? summary.active + summary.snoozed + summary.handled
+                    : value === 'ACTIVE'
+                      ? summary.active
+                      : value === 'SNOOZED'
+                        ? summary.snoozed
+                        : summary.handled}
+                </Typography>
               </ToggleButton>
             ))}
           </ToggleButtonGroup>
         </Stack>
 
+        <DwaionProposalFilterBar
+          query={query}
+          source={source}
+          priority={priority}
+          sources={sourceOptions}
+          onQueryChange={setQuery}
+          onSourceChange={setSource}
+          onPriorityChange={setPriority}
+          mobileOpen={mobileFiltersOpen}
+        />
+
+        <InlineFeedback severity="info" sx={{ display: { xs: 'none', md: 'flex' }, mt: 1.25 }}>
+          {t('dwaionProposals.inbox.individualReview')}
+        </InlineFeedback>
+
+        <InlineFeedback severity="info" sx={{ display: { xs: 'flex', md: 'none' }, mt: 1.25 }}>
+          {t('dwaionProposals.actions.reviewBoundary')}
+        </InlineFeedback>
+
         {proposals.length ? (
-          <Box sx={{ mt: 2 }}>
-            <DwaionProposalList
-              proposals={proposals}
-              selectedId={selected?.proposalId}
-              locale={locale}
-              onSelect={setSelected}
-            />
-            {inbox.hasNextPage && (
-              <Stack alignItems="center" sx={{ mt: 2 }}>
-                <ActionButton
-                  intent="quiet"
-                  loading={inbox.isFetchingNextPage}
-                  loadingLabel={t('dwaionProposals.loadingMore')}
-                  onClick={() => void inbox.fetchNextPage()}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr)',
+                lg: 'minmax(0, 1.45fr) minmax(350px, 0.95fr)',
+              },
+              alignItems: 'start',
+              gap: 2,
+              mt: 2,
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                gap={1}
+                sx={{ display: { xs: 'none', md: 'flex' }, mb: 1 }}
+              >
+                <Typography variant="subtitle2" color="text.secondary" fontWeight="fontWeightBold">
+                  {t('dwaionProposals.inbox.triageCount', { count: visibleProposals.length })}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: { xs: 'none', md: 'block' } }}
                 >
-                  {t('dwaionProposals.loadMore')}
-                </ActionButton>
+                  {t('dwaionProposals.inbox.selectionHint')}
+                </Typography>
               </Stack>
-            )}
+              {visibleProposals.length ? (
+                <DwaionProposalList
+                  proposals={visibleProposals}
+                  selectedId={previewProposal?.proposalId}
+                  locale={locale}
+                  onSelect={selection.select}
+                />
+              ) : (
+                <GuidedEmptyState
+                  kind="no-results"
+                  title={t('dwaionProposals.inbox.noMatches')}
+                  description={t('dwaionProposals.inbox.noMatchesDescription')}
+                />
+              )}
+              {inbox.hasNextPage && (
+                <Stack alignItems="center" sx={{ mt: 2 }}>
+                  <ActionButton
+                    intent="quiet"
+                    loading={inbox.isFetchingNextPage}
+                    loadingLabel={t('dwaionProposals.loadingMore')}
+                    onClick={() => void inbox.fetchNextPage()}
+                  >
+                    {t('dwaionProposals.loadMore')}
+                  </ActionButton>
+                </Stack>
+              )}
+            </Box>
+            <Box sx={{ display: { xs: 'none', lg: 'block' }, minWidth: 0 }}>
+              <DwaionProposalPreview
+                proposal={previewProposal}
+                locale={locale}
+                onOpen={selection.select}
+              />
+            </Box>
           </Box>
         ) : (
           <Box sx={{ mt: 2 }}>
@@ -317,20 +526,32 @@ export function DwaionProposals() {
             />
           </Box>
         )}
-      </Box>
 
-      <DwaionProposalDetail
-        proposal={selected}
-        open={Boolean(selected)}
-        busy={decision.isPending}
-        locale={locale}
-        onClose={() => setSelected(null)}
-        onAccept={(proposal) => decision.mutate({ proposal, value: 'ACCEPT' })}
-        onSnooze={(proposal, snoozeUntil) =>
-          decision.mutate({ proposal, value: 'SNOOZE', snoozeUntil })
-        }
-        onDismiss={(proposal) => decision.mutate({ proposal, value: 'DISMISS' })}
-      />
+        <Stack
+          direction="row"
+          alignItems="flex-start"
+          gap={1}
+          sx={{
+            display: { xs: 'flex', md: 'none' },
+            mt: 2,
+            p: 1.4,
+            borderRadius:
+              foundationTokens.radius.surface + foundationTokens.radius.compact / 2 + 'px',
+            bgcolor: 'var(--dwp-product-soft)',
+            color: 'text.secondary',
+          }}
+        >
+          <ShieldCheck size={18} color="var(--dwp-product-secondary)" aria-hidden="true" />
+          <Box>
+            <Typography variant="body2" fontWeight="fontWeightBold" color="success.dark">
+              {t('dwaionProposals.policyBoundary')}
+            </Typography>
+            <Typography variant="caption">
+              {t('dwaionProposals.mobile.sourceStatus', { count: sourceOptions.length })}
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
     </PageCanvas>
   );
 }

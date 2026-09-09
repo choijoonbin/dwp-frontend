@@ -93,11 +93,11 @@ const EXPECTED_COUNTS = {
     routes: 160,
   },
   6: {
-    capabilities: 73,
+    capabilities: 119,
     accessPolicies: 22,
     entitlementExpressions: 16,
-    predicatePolicies: 33,
-    routes: 161,
+    predicatePolicies: 34,
+    routes: 250,
   },
 };
 const EXPECTED_ROLLOUT_PRODUCTS = [

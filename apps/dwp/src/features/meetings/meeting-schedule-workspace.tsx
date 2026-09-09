@@ -44,6 +44,7 @@ import {
   MeetingScheduleCoverage,
 } from './meeting-schedule-mobile-steps';
 import { MeetingScheduleSections } from './meeting-schedule-fields';
+import { MeetingScheduleAvailability } from './meeting-schedule-availability';
 import { MeetingScheduleSourcePicker } from './meeting-schedule-source-picker';
 import { meetingInsetSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 import {
@@ -856,14 +857,7 @@ function MeetingScheduleWorkspaceContent({
                       onReviewed={setPreviewReviewed}
                     />
                   )}
-                  <Box sx={(theme) => ({ ...meetingInsetSurface(theme), p: 1.5 })}>
-                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                      {t('scheduleWorkspace.design.availability')}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {t('scheduleWorkspace.availabilityUnavailable')}
-                    </Typography>
-                  </Box>
+                  <MeetingScheduleAvailability draft={draft} disabled={busy} />
                   <Stack
                     direction="row"
                     gap={1}

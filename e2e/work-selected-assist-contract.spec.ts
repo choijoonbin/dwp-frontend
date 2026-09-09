@@ -25,16 +25,28 @@ async function openAssist(page: Page, route = serviceRoute) {
 }
 
 async function respond(route: Route, approval = false) {
+  const request = route.request().postDataJSON() as {
+    requestId?: unknown;
+    agentKey?: unknown;
+    pageContext?: { selectedWork?: unknown };
+  };
   await route.fulfill({
     contentType: 'text/event-stream',
     body: `event: result\ndata: ${JSON.stringify({
       data: {
         ...ASK_RUNTIME_FIXTURE,
+        requestId: request.requestId,
         answer,
         conversationId,
+        selectedWork: request.pageContext?.selectedWork ?? null,
         agentRegistry: {
           ...ASK_RUNTIME_FIXTURE.agentRegistry,
-          entryKey: approval ? 'DWP_APPROVAL_EXPERT' : 'DWP_ASSISTANT',
+          entryKey:
+            typeof request.agentKey === 'string'
+              ? request.agentKey
+              : approval
+                ? 'DWP_APPROVAL_EXPERT'
+                : 'DWP_ASSISTANT',
         },
       },
     })}\n\n`,
@@ -42,11 +54,17 @@ async function respond(route: Route, approval = false) {
 }
 
 async function respondAbstained(route: Route, statusCode: string) {
+  const request = route.request().postDataJSON() as {
+    requestId?: unknown;
+    agentKey?: unknown;
+    pageContext?: { selectedWork?: unknown };
+  };
   await route.fulfill({
     contentType: 'text/event-stream',
     body: `event: result\ndata: ${JSON.stringify({
       data: {
         ...ASK_RUNTIME_FIXTURE,
+        requestId: request.requestId,
         state: 'ABSTAINED',
         statusCode,
         answer: null,
@@ -56,6 +74,11 @@ async function respondAbstained(route: Route, statusCode: string) {
         conversationId: null,
         userMessageId: null,
         assistantMessageId: null,
+        selectedWork: request.pageContext?.selectedWork ?? null,
+        agentRegistry: {
+          ...ASK_RUNTIME_FIXTURE.agentRegistry,
+          entryKey: typeof request.agentKey === 'string' ? request.agentKey : 'DWP_ASSISTANT',
+        },
       },
     })}\n\n`,
   });
@@ -116,6 +139,60 @@ for (const approval of [false, true]) {
     expect(runtime.forbiddenWorkspaceMutations).toEqual([]);
   });
 }
+
+test('a response bound to another selected-work version is rejected without exposing its answer', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The fail-closed response contract runs once.');
+  await mockWorkHubFoundation(page, { locale: 'ko' });
+  await page.route('**/api/agent/v1/ask/stream', async (route) => {
+    const request = route.request().postDataJSON() as {
+      requestId: string;
+      agentKey: string;
+      pageContext: {
+        selectedWork: {
+          sourceSystem: string;
+          sourceReference: string;
+          expectedVersion: number;
+          obligationKey?: string;
+        };
+      };
+    };
+    await route.fulfill({
+      contentType: 'text/event-stream',
+      body: `event: result\ndata: ${JSON.stringify({
+        data: {
+          ...ASK_RUNTIME_FIXTURE,
+          requestId: request.requestId,
+          answer,
+          conversationId,
+          selectedWork: {
+            ...request.pageContext.selectedWork,
+            expectedVersion: request.pageContext.selectedWork.expectedVersion + 1,
+          },
+          agentRegistry: {
+            ...ASK_RUNTIME_FIXTURE.agentRegistry,
+            entryKey: request.agentKey,
+          },
+        },
+      })}\n\n`,
+    });
+  });
+
+  const panel = await openAssist(page);
+  await panel.getByRole('button', { name: '선택 업무 질문하기', exact: true }).click();
+
+  await expect(panel).toContainText(
+    '업무가 변경되었거나 전달을 완료하지 못했습니다. 최신 내용을 다시 확인하세요.'
+  );
+  await expect(page.getByText(answer, { exact: true })).toHaveCount(0);
+  await expect(
+    panel.getByRole('button', {
+      name: 'DWAI·ON 전체 화면에서 이어서 대화하기',
+      exact: true,
+    })
+  ).toBeDisabled();
+});
 
 for (const { resourceKey, route, title, approval } of [
   { resourceKey: 'APP.ASK', route: serviceRoute, title: fixture.serviceTitle, approval: false },

@@ -37,6 +37,7 @@ import type {
   DwaionRoutineDraft,
   DwaionRoutineDryRunReceipt,
 } from './routines/dwaion-routine-model';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const ROUTINES_KEY = ['dwaion', 'personal-routines'] as const;
 const CONTROLS_KEY = ['dwaion', 'personal-ai-controls'] as const;
@@ -50,6 +51,12 @@ export function DwaionRoutines() {
   const { isLoaded, hasPermission } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const governCreate = useDwaionGovernedMutation('route.dwaion.work.routine-create.action');
+  const governUpdate = useDwaionGovernedMutation('route.dwaion.work.routine-update.action');
+  const governConsent = useDwaionGovernedMutation('route.dwaion.work.routine-consent.action');
+  const governLifecycle = useDwaionGovernedMutation('route.dwaion.work.routine-lifecycle.action');
+  const governDryRun = useDwaionGovernedMutation('route.dwaion.work.routine-dry-run.action');
+  const governArchive = useDwaionGovernedMutation('route.dwaion.work.routine-archive.action');
   const identity = `${user?.tenantId ?? ''}:${user?.userId ?? ''}`;
   const canView = isAuthenticated && isLoaded && hasPermission('APP.DWAION_ROUTINES', 'VIEW');
   const canManage = canView && hasPermission('APP.DWAION_ROUTINES', 'MANAGE');
@@ -97,20 +104,28 @@ export function DwaionRoutines() {
         ? routinesQuery.data?.find((routine) => routine.routineId === input.routineId)
         : undefined;
       let routine = existing
-        ? await updateDwaionRoutine(
-            existing.routineId,
-            existing.revision,
-            toDefinition(input.draft, locale)
+        ? await governUpdate((authority) =>
+            updateDwaionRoutine(
+              existing.routineId,
+              existing.revision,
+              toDefinition(input.draft, locale),
+              authority
+            )
           )
-        : await createDwaionRoutine(toDefinition(input.draft, locale));
+        : await governCreate((authority) =>
+            createDwaionRoutine(toDefinition(input.draft, locale), authority)
+          );
 
       for (const key of CONSENT_KEYS) {
         if (routineConsentValue(routine, key) !== 'ENABLED') {
-          routine = await changeDwaionRoutineConsent(
-            routine.routineId,
-            routine.revision,
-            key,
-            'ENABLED'
+          routine = await governConsent((authority) =>
+            changeDwaionRoutineConsent(
+              routine.routineId,
+              routine.revision,
+              key,
+              'ENABLED',
+              authority
+            )
           );
         }
       }
@@ -131,7 +146,15 @@ export function DwaionRoutines() {
       routineId: string;
       expectedRevision: number;
       action: DwaionRoutineLifecycleAction;
-    }) => changeDwaionRoutineLifecycle(input.routineId, input.expectedRevision, input.action),
+    }) =>
+      governLifecycle((authority) =>
+        changeDwaionRoutineLifecycle(
+          input.routineId,
+          input.expectedRevision,
+          input.action,
+          authority
+        )
+      ),
     onSuccess: async () => {
       setDryRunReceipt(null);
       setCommandError(undefined);
@@ -142,7 +165,9 @@ export function DwaionRoutines() {
   });
   const dryRunMutation = useMutation({
     mutationFn: (input: { routineId: string; expectedRevision: number }) =>
-      dryRunDwaionRoutine(input.routineId, input.expectedRevision),
+      governDryRun((authority) =>
+        dryRunDwaionRoutine(input.routineId, input.expectedRevision, authority)
+      ),
     onSuccess: (receipt) => {
       setDryRunReceipt(toDryRunReceipt(receipt));
       setCommandError(undefined);
@@ -152,7 +177,9 @@ export function DwaionRoutines() {
   });
   const archiveMutation = useMutation({
     mutationFn: (input: { routineId: string; expectedRevision: number }) =>
-      archiveDwaionRoutine(input.routineId, input.expectedRevision),
+      governArchive((authority) =>
+        archiveDwaionRoutine(input.routineId, input.expectedRevision, authority)
+      ),
     onSuccess: async () => {
       setDryRunReceipt(null);
       setCommandError(undefined);
@@ -308,7 +335,9 @@ function toRoutine(routine: DwaionPersonalRoutine): DwaionRoutine {
       { key: 'PROPOSAL_DELIVERY', state: routine.consents.proposalDelivery },
     ],
     schedulingAvailable: routine.schedulingAvailable,
-    dryRunAvailable: routine.capabilities?.dryRunAvailable ?? true,
+    backgroundExecutionAvailable: routine.capabilities?.backgroundExecutionAvailable ?? false,
+    notificationDeliveryAvailable: routine.capabilities?.notificationDeliveryAvailable ?? false,
+    dryRunAvailable: routine.capabilities?.dryRunAvailable ?? false,
     proposalDeliveryAvailable: routine.capabilities?.proposalDeliveryAvailable ?? false,
   };
 }

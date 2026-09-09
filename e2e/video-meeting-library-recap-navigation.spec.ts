@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
 import {
   mockMeetingVisualPublishedRecap,
   mockMeetingVisualSession,
@@ -17,10 +18,15 @@ test.beforeEach(async ({ page, isMobile }) => {
   await mockMeetingVisualPublishedRecap(page, true);
 });
 
-test('library restores audience navigation and separates unprovided server filters from media', async ({
+test('library keeps gated audience navigation and applies authoritative server evidence filters', async ({
   page,
   isMobile,
 }) => {
+  const historyReads: string[] = [];
+  page.on('request', (request) => {
+    if (request.method() === 'GET' && request.url().includes('/api/meetings/v1/history?'))
+      historyReads.push(request.url());
+  });
   await page.goto('/meetings/history');
   await expect(page.getByTestId('meeting-library-list')).toBeVisible();
   const navigation = page.getByRole('tablist', { name: 'Meeting library navigation' });
@@ -40,13 +46,25 @@ test('library restores audience navigation and separates unprovided server filte
   await expect(navigation.getByRole('tab', { name: 'Favorites', exact: true })).toBeEnabled();
   if (isMobile)
     await page.getByRole('button', { name: 'Meeting library filters', exact: true }).click();
-  await expect(page.getByRole('combobox', { name: 'Publication status' })).toBeDisabled();
-  await expect(page.getByRole('combobox', { name: 'Retention status' })).toBeDisabled();
+  const publication = page.getByRole('combobox', { name: 'Publication status' });
+  const retention = page.getByRole('combobox', { name: 'Retention status' });
+  await expect(publication).toBeEnabled();
+  await expect(retention).toBeEnabled();
+  await publication.click();
+  await page.getByRole('option', { name: 'Published', exact: true }).click();
+  await retention.click();
+  await page.getByRole('option', { name: 'Expires within 30 days', exact: true }).click();
+  await expect
+    .poll(() => historyReads.some((url) => url.includes('publication=PUBLISHED')))
+    .toBe(true);
+  await expect
+    .poll(() => historyReads.some((url) => url.includes('retention=EXPIRING_SOON')))
+    .toBe(true);
   await expectNoHorizontalOverflow(page, 'U07 original navigation and secondary facets');
   await expectNoBlockingA11y(page, 'U07 original navigation and secondary facets');
 });
 
-test('each published action opens its exact candidate and keeps Work creation authority locked', async ({
+test('each published action opens its exact candidate and hands creation to the authority-ready workspace', async ({
   page,
 }) => {
   const writes: string[] = [];
@@ -69,17 +87,17 @@ test('each published action opens its exact candidate and keeps Work creation au
   await expect(review).toBeVisible();
   await expect(review).toContainText('최종 출시 체크리스트와 담당자 인계 내용을 팀에 공유합니다.');
   await expect(review).not.toContainText('Verify regional capacity before external expansion.');
-  await expect(review.getByRole('button', { name: 'Create work from candidate' })).toBeDisabled();
-  await expect(review).toContainText(
-    'current Meeting entitlement, scope, identity plane, and action authority'
-  );
+  const continueCreation = review.getByRole('button', {
+    name: 'Continue creation in follow-up work',
+  });
+  await expect(continueCreation).toBeEnabled();
   expect(exactReads).toHaveLength(1);
   expect(writes).toEqual([]);
   await expectNoBlockingA11y(page, 'U08 exact candidate review and locked authority');
-  await page.reload();
-  await expect(review).toBeVisible();
-  await review.getByRole('button', { name: 'Close review', exact: true }).click();
-  await expect(page).not.toHaveURL(/candidateId=/);
+  await continueCreation.click();
+  await expect(page).toHaveURL(
+    new RegExp(`/meetings/follow-ups\\?scope=CANDIDATES&candidateId=${secondCandidate}$`)
+  );
   expect(writes).toEqual([]);
 });
 
@@ -95,13 +113,74 @@ test('unknown candidate links never select another action or dispatch a mutation
     'This candidate is not available in the current source. Another candidate is not substituted.'
   );
   await expect(review).not.toContainText('Verify regional capacity');
-  await expect(review.getByRole('button', { name: 'Create work from candidate' })).toBeDisabled();
+  await expect(
+    review.getByRole('button', { name: 'Continue creation in follow-up work' })
+  ).toBeDisabled();
   await expectNoBlockingA11y(page, 'U08 unavailable exact candidate');
+});
+
+test('published recap export posts the exact observed version and downloads the audited file', async ({
+  page,
+}, testInfo) => {
+  const exportRequests: Array<{ body: unknown; correlationId: string | null }> = [];
+  const exportedBody = '# Published meeting recap\n';
+  await page.route(
+    `**/api/meetings/v1/meetings/${MEETING_VISUAL_ID}/intelligence/reports/${reportId}/exports`,
+    async (route) => {
+      exportRequests.push({
+        body: route.request().postDataJSON(),
+        correlationId: route.request().headers()['x-correlation-id'] ?? null,
+      });
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/markdown;charset=UTF-8',
+        body: exportedBody,
+        headers: {
+          'Cache-Control': 'no-store',
+          'X-DWP-Report-Version': '2',
+          'X-DWP-Content-SHA256': createHash('sha256').update(exportedBody).digest('hex'),
+        },
+      });
+    }
+  );
+  await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
+  const distribution = page.getByTestId('meeting-recap-distribution');
+  await expect(distribution).toBeVisible();
+  await expect.poll(() => page.evaluate(() => Boolean(globalThis.crypto?.subtle))).toBe(true);
+
+  const download = page.waitForEvent('download');
+  await distribution.getByRole('button', { name: 'Download Markdown', exact: true }).click();
+  await expect(
+    distribution.getByText(
+      'The report was downloaded after current access and the published version were verified and audit evidence was recorded.'
+    )
+  ).toBeVisible();
+  expect((await download).suggestedFilename()).toBe(`dwp-meeting-recap-${reportId}-v2.md`);
+  expect(exportRequests).toEqual([
+    {
+      body: { expectedReportVersion: 2, format: 'MARKDOWN' },
+      correlationId: expect.stringMatching(/^[0-9a-f-]{36}$/u),
+    },
+  ]);
+  await expectNoHorizontalOverflow(page, 'U08 published recap distribution');
+  await expectNoBlockingA11y(page, 'U08 published recap distribution');
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    window.scrollTo(0, 0);
+  });
+  await page.screenshot({
+    path: testInfo.outputPath(
+      `u08-published-recap-distribution-${page.viewportSize()?.width ?? 'unknown'}.png`
+    ),
+    fullPage: true,
+    animations: 'disabled',
+    caret: 'hide',
+  });
 });
 
 test('mobile keeps actions and compact evidence before expandable detailed analysis', async ({
   page,
-}) => {
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
   const action = page.getByRole('button', { name: 'Review candidate', exact: true }).first();
@@ -122,4 +201,14 @@ test('mobile keeps actions and compact evidence before expandable detailed analy
   await expect(page.getByText('Staged launch readiness', { exact: true })).toBeVisible();
   await expectNoHorizontalOverflow(page, 'U08 mobile priority');
   await expectNoBlockingA11y(page, 'U08 mobile priority');
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    window.scrollTo(0, 0);
+  });
+  await page.screenshot({
+    path: testInfo.outputPath('u08-mobile-expanded-analysis-390.png'),
+    fullPage: true,
+    animations: 'disabled',
+    caret: 'hide',
+  });
 });

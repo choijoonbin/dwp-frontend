@@ -136,7 +136,7 @@ export function useGovernedRouteAccessDecision(
   const evaluationEnabled = Boolean(request && auth.isAuthenticated && snapshot);
   const query = useQuery({
     queryKey: evaluationQueryKey,
-    queryFn: () => authority.evaluateGoverned(request!),
+    queryFn: ({ signal }) => authority.evaluateGoverned(request!, { signal }),
     enabled: evaluationEnabled,
     retry: false,
     staleTime: Number.POSITIVE_INFINITY,

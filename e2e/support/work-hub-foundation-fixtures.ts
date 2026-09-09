@@ -3,8 +3,10 @@ import { fulfillSuccess, mockShellSession } from './shell-session';
 
 import type { Page } from '@playwright/test';
 import type {
+  PersonalWorkSource,
   PersonalWorkTask,
   PersonalWorkTaskInput,
+  WorkSourceReference,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 
 /** Fictional fixtures: these assertions exercise the integrated UI, not a live tenant. */
@@ -23,7 +25,19 @@ export const WORK_HUB_FIXTURE = {
 };
 
 const base = '/api/platform/v1/workspace/work-hub/personal-tasks';
+const assignmentBase = '/api/platform/v1/workspace/work-hub/assignments';
 const stamp = '2026-09-04T00:00:00Z';
+
+function referenceOnly(reference: WorkSourceReference): PersonalWorkSource {
+  return {
+    availability: 'REFERENCE_ONLY',
+    reference,
+    title: null,
+    sourceRoute: null,
+    status: null,
+    dueAt: null,
+  };
+}
 
 export function personalTaskRoute(taskId = WORK_HUB_FIXTURE.personalId) {
   return `/work/queue?work=PERSONAL_TASK%3A${taskId}%3A`;
@@ -235,6 +249,7 @@ export async function mockWorkHubFoundation(
   const serviceResponseEvents: Array<Record<string, unknown>> = [];
   let serviceValues: Record<string, unknown> = { network: '', purpose: '' };
   const planSaves: Array<{
+    idempotencyKey: string | undefined;
     version: number;
     items: Array<{ sourceSystem: string; sourceReference: string; obligationKey?: string | null }>;
   }> = [];
@@ -268,6 +283,7 @@ export async function mockWorkHubFoundation(
   const mutations: WorkHubCapturedMutation[] = [];
   const batchMutations: Array<{ body: unknown }> = [];
   const creations: WorkHubCapturedCreation[] = [];
+  const calendarCommands: Array<Record<string, unknown>> = [];
   const failedSourceReads: string[] = [];
   const forbiddenWorkspaceMutations: string[] = [];
   const receipts = new Map<string, PersonalWorkTask>();
@@ -294,6 +310,12 @@ export async function mockWorkHubFoundation(
     capabilities: { canStart: true, canComplete: true, canWait: true },
   };
 
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().includes('/calendar/events')) {
+      calendarCommands.push(request.postDataJSON());
+    }
+  });
+
   await page.route('**/api/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
@@ -317,12 +339,24 @@ export async function mockWorkHubFoundation(
         path === '/api/approvals/v1/tasks' ||
         path === '/api/approvals/v1/requests' ||
         path === '/api/platform/v1/services/requests' ||
+        path === assignmentBase ||
         path === base)
     ) {
       failedSourceReads.push(`${path}${url.search}`);
       return route.fulfill({
         status: 503,
         json: { status: 'ERROR', message: 'Work source temporarily unavailable' },
+      });
+    }
+    if (path === assignmentBase && request.method() === 'GET') {
+      const pageNumber = Number(url.searchParams.get('page') ?? 0);
+      const size = Number(url.searchParams.get('size') ?? 100);
+      return fulfillSuccess(route, {
+        items: [],
+        page: pageNumber,
+        size,
+        totalElements: 0,
+        hasMore: false,
       });
     }
     if (path === '/api/platform/v1/workspace/work-items') {
@@ -639,7 +673,10 @@ export async function mockWorkHubFoundation(
       };
       if (request.method() === 'PUT') {
         const body = request.postDataJSON();
-        planSaves.push(body);
+        planSaves.push({
+          ...body,
+          idempotencyKey: request.headers()['idempotency-key'],
+        });
         if (body.version !== plan.version) return route.fulfill({ status: 409 });
         plan = {
           date,
@@ -666,6 +703,16 @@ export async function mockWorkHubFoundation(
         const body = request.postDataJSON() as PersonalWorkTaskInput;
         const idempotencyKey = request.headers()['idempotency-key'];
         creations.push({ body, idempotencyKey });
+        const gate = nextMutationGate;
+        nextMutationGate = undefined;
+        if (gate) await gate;
+        const replay = idempotencyKey ? receipts.get(idempotencyKey) : undefined;
+        if (replay) return fulfillSuccess(route, replay);
+        const requestedSources = Array.isArray(body.sourceReferences)
+          ? body.sourceReferences.map(referenceOnly)
+          : body.sourceReference
+            ? [referenceOnly(body.sourceReference)]
+            : [];
         const created: PersonalWorkTask = {
           taskId: 'b3333333-3333-4333-8333-333333333333',
           title: body.title,
@@ -673,8 +720,8 @@ export async function mockWorkHubFoundation(
           status: 'OPEN',
           priority: body.priority,
           dueAt: body.dueAt ?? null,
-          source: null,
-          sources: [],
+          source: requestedSources[0] ?? null,
+          sources: requestedSources,
           checklist: body.checklist ?? [],
           version: 0,
           createdAt: stamp,
@@ -682,6 +729,7 @@ export async function mockWorkHubFoundation(
           completedAt: null,
         };
         tasks = [created, ...tasks];
+        if (idempotencyKey) receipts.set(idempotencyKey, created);
         return fulfillSuccess(route, created);
       }
     }
@@ -699,14 +747,20 @@ export async function mockWorkHubFoundation(
         });
       }
       if (request.method() === 'GET') return fulfillSuccess(route, task);
-      const body = request.postDataJSON() as WorkHubCapturedMutation['body'];
+      const body = request.postDataJSON() as WorkHubCapturedMutation['body'] &
+        PersonalWorkTaskInput;
       const idempotencyKey = request.headers()['idempotency-key'];
       mutations.push({ path, body, idempotencyKey });
       const gate = nextMutationGate;
       nextMutationGate = undefined;
       if (gate) await gate;
       const receipt = idempotencyKey ? receipts.get(idempotencyKey) : undefined;
-      if (receipt) return fulfillSuccess(route, receipt);
+      if (receipt) {
+        // A lost command response can remain invisible through an eventually consistent read.
+        // The exact idempotent replay publishes the already-committed receipt to that read model.
+        tasks = tasks.map((item) => (item.taskId === taskId ? receipt : item));
+        return fulfillSuccess(route, receipt);
+      }
       if (!idempotencyKey || body.version !== task.version) {
         return route.fulfill({
           status: 409,
@@ -729,20 +783,44 @@ export async function mockWorkHubFoundation(
             : command === 'reopen'
               ? 'OPEN'
               : (body.status ?? task.status);
+      const currentSources = task.sources ?? (task.source ? [task.source] : []);
+      const nextSources =
+        request.method() !== 'PUT'
+          ? currentSources
+          : Array.isArray(body.sourceReferences)
+            ? body.sourceReferences.map(referenceOnly)
+            : body.sourceReference
+              ? [referenceOnly(body.sourceReference)]
+              : body.clearSourceReference
+                ? []
+                : currentSources;
+      const taskPatch =
+        request.method() === 'PUT'
+          ? {
+              title: body.title,
+              priority: body.priority,
+              ...(body.description === undefined ? {} : { description: body.description }),
+              ...(body.dueAt === undefined ? {} : { dueAt: body.dueAt }),
+              ...(body.checklist == null ? {} : { checklist: body.checklist }),
+            }
+          : {};
+      const updatedAt = new Date().toISOString();
       const updated: PersonalWorkTask = {
         ...task,
-        ...(request.method() === 'PUT' ? request.postDataJSON() : {}),
+        ...taskPatch,
+        source: nextSources[0] ?? null,
+        sources: nextSources,
         status,
         version: task.version + 1,
-        updatedAt: new Date().toISOString(),
-        completedAt: status === 'COMPLETED' ? new Date().toISOString() : null,
+        updatedAt,
+        completedAt: status === 'COMPLETED' ? updatedAt : null,
       };
-      tasks = tasks.map((item) => (item.taskId === taskId ? updated : item));
       receipts.set(idempotencyKey, updated);
       if (options.loseFirstMutationResponse && !responseLost) {
         responseLost = true;
         return route.abort('failed');
       }
+      tasks = tasks.map((item) => (item.taskId === taskId ? updated : item));
       return fulfillSuccess(route, updated);
     }
     return route.fallback();
@@ -754,6 +832,7 @@ export async function mockWorkHubFoundation(
     planSaves,
     batchMutations,
     creations,
+    calendarCommands,
     failedSourceReads,
     forbiddenWorkspaceMutations,
     get personalReads() {

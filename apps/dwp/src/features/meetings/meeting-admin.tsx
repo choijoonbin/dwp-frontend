@@ -1,5 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
+import { MeetingAdminTemplates } from './meeting-admin-templates';
+import { MeetingAdminSectionNavigation } from './meeting-admin-section-navigation';
 import { ShieldCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -102,10 +105,19 @@ function policyPatch(
 export { MeetingAdminOperations } from './meeting-admin-operations';
 
 export function MeetingAdminPolicies() {
+  const [params] = useSearchParams();
   const { user, isAuthenticated } = useAuth();
   const identityScope = meetingAdminIdentityScope(isAuthenticated, user);
   const activeIdentityScope = useRef(identityScope);
   activeIdentityScope.current = identityScope;
+  if (params.get('section') === 'templates')
+    return (
+      <MeetingAdminTemplates
+        key={identityScope}
+        identityScope={identityScope}
+        isCurrentScope={() => activeIdentityScope.current === identityScope}
+      />
+    );
   return (
     <MeetingAdminPoliciesWorkspace
       key={identityScope}
@@ -192,6 +204,10 @@ function MeetingAdminPoliciesWorkspace({
 
   return (
     <PageCanvas mode="workspace" topInset="compact">
+      <MeetingAdminSectionNavigation
+        dirty={changedFields.length > 0}
+        disabled={mutation.isPending}
+      />
       <AdminPageHeading
         eyebrow={t('admin.eyebrow')}
         title={t('admin.policy.title')}

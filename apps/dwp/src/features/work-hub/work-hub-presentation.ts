@@ -44,6 +44,8 @@ export function workHubStatusLabelKey(item: WorkHubItem): string {
   );
 }
 
-export function workHubDisplayId(item: WorkHubItem): string {
-  return item.displayId ?? item.reference.sourceReference.slice(0, 8);
+/** Only source-issued business identifiers are suitable for general user-facing labels. */
+export function workHubDisplayId(item: WorkHubItem): string | null {
+  const displayId = item.displayId?.trim();
+  return displayId ? displayId : null;
 }

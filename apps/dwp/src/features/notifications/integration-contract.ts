@@ -8,6 +8,7 @@ export const notificationQueryKeys = {
   inbox: (scope: Record<string, unknown>) => ['notifications', 'inbox', scope] as const,
   detail: (notificationId: string | null) => ['notifications', 'detail', notificationId] as const,
   preferences: () => ['notifications', 'preferences'] as const,
+  deliveryEndpoints: () => ['notifications', 'delivery-endpoints'] as const,
   effectiveSettings: () => ['notifications', 'effective-settings'] as const,
   adminOverview: () => ['notifications', 'admin', 'overview'] as const,
   adminTypes: (scope: Record<string, unknown>) =>

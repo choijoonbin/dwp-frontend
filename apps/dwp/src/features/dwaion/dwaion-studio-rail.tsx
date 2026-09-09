@@ -1,12 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import { Activity, Check, LockKeyhole, ShieldCheck } from 'lucide-react';
-import { ErrorState, LoadingState } from '@dwp-frontend/design-system';
+import { Activity, ArrowRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
+import {
+  ActionButton,
+  ErrorState,
+  foundationTokens,
+  LoadingState,
+} from '@dwp-frontend/design-system';
+import { useNavigate } from 'react-router-dom';
 import type { AskCitationSourceType, WorkspaceWorkSummary } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import type { Theme } from '@mui/material/styles';
 
 export function DwaionStudioRail({
   selected,
@@ -28,12 +36,87 @@ export function DwaionStudioRail({
   onRetry: () => void;
 }) {
   const { t } = useTranslation('work');
+  const navigate = useNavigate();
+  const compact = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+
+  if (compact) {
+    return (
+      <Box
+        component="aside"
+        aria-label={t('askPage.contextRail.label')}
+        data-testid="dwaion-studio-rail"
+        sx={{
+          minWidth: 0,
+          alignSelf: 'start',
+          p: 2,
+          borderRadius: foundationTokens.radius.surface + 'px',
+          bgcolor: 'action.hover',
+        }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Typography
+            component="h2"
+            variant="subtitle2"
+            sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}
+          >
+            <ShieldCheck size={17} />
+            {t('askPage.contextRail.scopeTitle')}
+          </Typography>
+          <Typography variant="caption" color="primary.main">
+            {t('dwaionStudio.selected', { count: selected.length })}
+          </Typography>
+        </Stack>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+          {selected.map((source) => t(`askPage.sourceTypes.${source}`)).join(' · ')}
+        </Typography>
+        {error && !expert && (
+          <ErrorState
+            size="compact"
+            title={t('askPage.contextUnavailable')}
+            retryLabel={t('dwaionStudio.retry')}
+            onRetry={onRetry}
+          />
+        )}
+        <Stack direction="row" alignItems="flex-start" gap={1} sx={{ mt: 1.5 }}>
+          <LockKeyhole size={16} style={{ flexShrink: 0, marginTop: 2 }} />
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ lineHeight: 'caption.lineHeight' }}
+          >
+            {t('dwaionStudio.trust.privacy')}
+          </Typography>
+        </Stack>
+        {!expert && (
+          <ActionButton
+            intent="secondary"
+            startIcon={<Sparkles size={16} aria-hidden="true" />}
+            endIcon={<ArrowRight size={16} aria-hidden="true" />}
+            onClick={() => navigate('/dwaion/new?agent=DWP_APPROVAL_EXPERT')}
+            fullWidth
+            sx={{ mt: 1.5, justifyContent: 'space-between' }}
+          >
+            {t('dwaionStudio.approvalExpertAction')}
+          </ActionButton>
+        )}
+      </Box>
+    );
+  }
+
   return (
     <Box
       component="aside"
       aria-label={t('askPage.contextRail.label')}
       data-testid="dwaion-studio-rail"
-      sx={{ minWidth: 0, alignSelf: 'start' }}
+      sx={{
+        minWidth: 0,
+        alignSelf: 'start',
+        p: 2,
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.surface + 'px',
+        bgcolor: 'background.paper',
+      }}
     >
       <Box component="section" sx={{ pb: 2.5 }}>
         <Stack direction="row" alignItems="center" gap={1} justifyContent="space-between">
@@ -59,8 +142,8 @@ export function DwaionStudioRail({
               sx={{
                 m: 0,
                 p: 0.5,
-                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-                bgcolor: selected.includes(source) ? 'action.selected' : 'transparent',
+                borderRadius: foundationTokens.radius.control + 'px',
+                bgcolor: selected.includes(source) ? 'var(--dwp-product-soft)' : 'transparent',
                 alignItems: 'flex-start',
               }}
               control={
@@ -167,6 +250,38 @@ export function DwaionStudioRail({
           ))}
         </Stack>
       </Box>
+      {!expert && (
+        <Box
+          component="section"
+          sx={{
+            mt: 2.5,
+            p: 1.5,
+            borderRadius: foundationTokens.radius.surface + 'px',
+            bgcolor: 'action.selected',
+          }}
+        >
+          <Typography
+            component="h2"
+            variant="subtitle2"
+            sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}
+          >
+            <Sparkles size={16} />
+            {t('dwaionStudio.approvalExpertTitle')}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
+            {t('dwaionStudio.approvalExpertDescription')}
+          </Typography>
+          <ActionButton
+            intent="secondary"
+            endIcon={<ArrowRight size={16} aria-hidden="true" />}
+            onClick={() => navigate('/dwaion/new?agent=DWP_APPROVAL_EXPERT')}
+            fullWidth
+            sx={{ mt: 1.25, justifyContent: 'space-between' }}
+          >
+            {t('dwaionStudio.approvalExpertAction')}
+          </ActionButton>
+        </Box>
+      )}
     </Box>
   );
 }

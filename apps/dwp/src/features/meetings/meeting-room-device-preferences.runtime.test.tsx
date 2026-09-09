@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { DisconnectReason } from 'livekit-client';
 import type * as Shared from '@dwp-frontend/shared-utils';
 import type * as MeetingApi from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import type * as PreferencesApi from '@dwp-frontend/shared-utils/api/video-meeting-preferences-api';
@@ -18,6 +19,8 @@ const runtime = vi.hoisted(() => ({
   meeting: vi.fn(),
   preferences: vi.fn(),
   token: vi.fn(),
+  start: vi.fn(),
+  end: vi.fn(),
   confirm: vi.fn(),
   leave: vi.fn(),
   prejoinProps: null as MeetingPreJoinProps | null,
@@ -35,8 +38,8 @@ vi.mock('@dwp-frontend/shared-utils/api/video-meeting-api', async (original) => 
   confirmVideoMeetingConnected: runtime.confirm,
   leaveVideoMeeting: runtime.leave,
   requestVideoMeetingJoin: vi.fn(),
-  startVideoMeeting: vi.fn(),
-  endVideoMeeting: vi.fn(),
+  startVideoMeeting: runtime.start,
+  endVideoMeeting: runtime.end,
 }));
 vi.mock('@dwp-frontend/shared-utils/api/video-meeting-preferences-api', async (original) => ({
   ...(await original<typeof PreferencesApi>()),
@@ -174,6 +177,10 @@ describe('meeting room saved device handoff', () => {
     runtime.prejoinProps = null;
     runtime.liveProps = null;
     runtime.meeting.mockResolvedValue(meeting);
+    runtime.start.mockResolvedValue(meeting);
+    runtime.confirm.mockResolvedValue(undefined);
+    runtime.leave.mockResolvedValue(undefined);
+    runtime.end.mockResolvedValue({ ...meeting, lifecycleState: 'ENDED' });
     runtime.preferences.mockResolvedValue({
       displayName: 'Meeting Mina',
       microphoneOff: false,
@@ -208,6 +215,7 @@ describe('meeting room saved device handoff', () => {
       cameraId: 'camera-current',
       speakerId: 'speaker-current',
       noiseSuppression: false,
+      backgroundMode: 'office',
     };
     localStorage.setItem(meetingDevicePreferenceKey(scope), JSON.stringify(saved));
     Object.defineProperty(navigator, 'mediaDevices', {
@@ -240,6 +248,7 @@ describe('meeting room saved device handoff', () => {
       videoDeviceId: 'camera-current',
       speakerDeviceId: 'speaker-current',
       noiseSuppression: false,
+      backgroundMode: 'office',
     });
     expect(JSON.parse(localStorage.getItem(meetingDevicePreferenceKey(scope))!)).toMatchObject({
       microphoneId: 'default',
@@ -254,6 +263,7 @@ describe('meeting room saved device handoff', () => {
     expect(runtime.liveProps).toMatchObject({
       speakerDeviceId: 'speaker-current',
       noiseSuppression: false,
+      backgroundMode: 'office',
     });
 
     await act(async () => {
@@ -355,5 +365,123 @@ describe('meeting room saved device handoff', () => {
     expect(JSON.parse(localStorage.getItem(meetingDevicePreferenceKey(nextScope))!)).toMatchObject({
       speakerId: 'speaker-next',
     });
+  });
+
+  it('does not mount an old credential when the account changes during token issuance', async () => {
+    const credential = await runtime.token();
+    let resolveToken!: (value: unknown) => void;
+    runtime.token.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveToken = resolve;
+        })
+    );
+    await render();
+    await click('room.deviceCheck');
+    await click('submit-prejoin');
+    runtime.auth = {
+      isAuthenticated: true,
+      user: { userId: 43, tenantId: 1, identityPlane: 'TENANT', displayName: 'Next User' },
+    };
+    await act(async () => {
+      client.setQueryData(['meetings', meetingId, 'detail', scope], { ...meeting, version: 4 });
+    });
+    await rerender();
+    await act(async () => resolveToken(credential));
+    await settle();
+    expect(mount.textContent).not.toContain('live-room');
+    expect(runtime.liveProps).toBeNull();
+    expect(runtime.confirm).not.toHaveBeenCalled();
+    expect(runtime.leave).not.toHaveBeenCalled();
+  });
+
+  it('does not issue a token after leaving while the host start request is pending', async () => {
+    let resolveStart!: (value: unknown) => void;
+    runtime.meeting.mockResolvedValue({ ...meeting, lifecycleState: 'SCHEDULED' });
+    runtime.start.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveStart = resolve;
+        })
+    );
+    await render();
+    await click('room.deviceCheck');
+    await click('submit-prejoin');
+    expect(runtime.start).toHaveBeenCalledOnce();
+    await act(async () => root.render(createElement('div', null, 'another-screen')));
+    await act(async () => resolveStart(meeting));
+    await settle();
+    expect(runtime.token).not.toHaveBeenCalled();
+    expect(runtime.liveProps).toBeNull();
+    expect(mount.textContent).toBe('another-screen');
+  });
+
+  it('ignores a departed account SDK event after the next account has joined', async () => {
+    await render();
+    await click('room.deviceCheck');
+    await click('submit-prejoin');
+    const oldLeave = runtime.liveProps?.onLeave as () => void;
+    runtime.auth = {
+      isAuthenticated: true,
+      user: { userId: 43, tenantId: 1, identityPlane: 'TENANT', displayName: 'Next User' },
+    };
+    await act(async () => {
+      client.setQueryData(['meetings', meetingId, 'detail', scope], { ...meeting, version: 4 });
+    });
+    await rerender();
+    await click('room.deviceCheck');
+    await click('submit-prejoin');
+    expect(mount.textContent).toContain('live-room');
+    await act(async () => oldLeave());
+    await settle();
+    expect(mount.textContent).toContain('live-room');
+    expect(runtime.leave).not.toHaveBeenCalled();
+  });
+
+  it('cancels an end command waiting on attendance when the account changes', async () => {
+    let resolveConfirmation!: () => void;
+    runtime.confirm.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveConfirmation = resolve;
+        })
+    );
+    await render();
+    await click('room.deviceCheck');
+    await click('submit-prejoin');
+    await act(async () => {
+      (runtime.liveProps?.onConnected as () => void)();
+      (runtime.liveProps?.onEndForEveryone as () => void)();
+    });
+    runtime.auth = {
+      isAuthenticated: true,
+      user: { userId: 43, tenantId: 1, identityPlane: 'TENANT', displayName: 'Next User' },
+    };
+    await act(async () => {
+      client.setQueryData(['meetings', meetingId, 'detail', scope], { ...meeting, version: 4 });
+    });
+    await rerender();
+    await act(async () => resolveConfirmation());
+    await settle();
+    expect(runtime.end).not.toHaveBeenCalled();
+    expect(runtime.leave).not.toHaveBeenCalled();
+    expect(mount.textContent).not.toContain('room.endedTitle');
+  });
+
+  it('explains a host disconnect without offering rejoin or sending a denied leave command', async () => {
+    await render();
+    await click('room.deviceCheck');
+    await click('submit-prejoin');
+    await act(async () =>
+      (runtime.liveProps?.onLeave as (reason: DisconnectReason) => void)(
+        DisconnectReason.PARTICIPANT_REMOVED
+      )
+    );
+    await settle();
+    expect(mount.textContent).toContain('room.moderation.removedTitle');
+    expect(
+      [...mount.querySelectorAll('button')].some((button) => button.textContent === 'room.rejoin')
+    ).toBe(false);
+    expect(runtime.leave).not.toHaveBeenCalled();
   });
 });

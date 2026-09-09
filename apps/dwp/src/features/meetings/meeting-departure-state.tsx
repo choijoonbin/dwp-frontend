@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-export type MeetingDepartureKind = 'LEFT' | 'DISCONNECTED';
+export type MeetingDepartureKind = 'LEFT' | 'DISCONNECTED' | 'REMOVED';
 
 export function MeetingDepartureState({
   kind,
@@ -26,6 +26,7 @@ export function MeetingDepartureState({
 }) {
   const { t } = useTranslation('meetings');
   const disconnected = kind === 'DISCONNECTED';
+  const removed = kind === 'REMOVED';
 
   return (
     <Box
@@ -47,21 +48,35 @@ export function MeetingDepartureState({
           {disconnected ? <WifiOff size={25} /> : <LogOut size={25} />}
         </Box>
         <Typography component="h1" variant="h4" fontWeight={800}>
-          {t(disconnected ? 'room.disconnectedTitle' : 'room.leftTitle')}
+          {t(
+            removed
+              ? 'room.moderation.removedTitle'
+              : disconnected
+                ? 'room.disconnectedTitle'
+                : 'room.leftTitle'
+          )}
         </Typography>
         <Typography color="text.secondary">
-          {t(disconnected ? 'room.disconnectedDescription' : 'room.leftDescription')}
+          {t(
+            removed
+              ? 'room.moderation.removedDescription'
+              : disconnected
+                ? 'room.disconnectedDescription'
+                : 'room.leftDescription'
+          )}
         </Typography>
         {error && <Alert severity="warning">{error}</Alert>}
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} justifyContent="center">
-          <ActionButton
-            intent="primary"
-            loading={busy}
-            loadingLabel={t('room.reconnecting')}
-            onClick={onRejoin}
-          >
-            {t('room.rejoin')}
-          </ActionButton>
+          {!removed && (
+            <ActionButton
+              intent="primary"
+              loading={busy}
+              loadingLabel={t('room.reconnecting')}
+              onClick={onRejoin}
+            >
+              {t('room.rejoin')}
+            </ActionButton>
+          )}
           <ActionButton intent="secondary" onClick={onHome}>
             {t('room.returnHome')}
           </ActionButton>

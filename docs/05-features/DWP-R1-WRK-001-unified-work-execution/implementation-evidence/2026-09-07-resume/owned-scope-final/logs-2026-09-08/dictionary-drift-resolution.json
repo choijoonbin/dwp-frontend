@@ -1,0 +1,16 @@
+{
+  "from": "source-before-green.json",
+  "to": "source-after-dictionary.json",
+  "changedFiles": [
+    "libs/shared-i18n/src/locales/en/display.json",
+    "libs/shared-i18n/src/locales/ko/display.json"
+  ],
+  "reason": "DWAI owner added WORK_ITEM/MAIL/CALENDAR sourceTypes labels before the final shared-i18n suite; no additional source edits authorized until gate completion",
+  "revalidation": [
+    "final repository shared-i18n tests",
+    "display dictionary checker",
+    "nonincremental TypeScript",
+    "full repository build",
+    "Work browser suite"
+  ]
+}

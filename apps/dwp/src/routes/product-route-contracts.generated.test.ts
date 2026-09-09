@@ -42,7 +42,7 @@ describe('generated product route authorization contracts', () => {
     expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION).toEqual(
       expect.objectContaining({
         version: 6,
-        checksum: 'e966b7340da431481bb9f577724224645be45ac50e169c75da1a521f2cde925a',
+        checksum: '9f5392cc75344a4bb2262cfc3283c5bfb831745c9efe336a318e2999c304912f',
       })
     );
     expect(PRODUCT_SURFACE_ROLLOUT_PRODUCTS).toEqual([
@@ -72,9 +72,9 @@ describe('generated product route authorization contracts', () => {
       {}
     );
 
-    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(161);
-    expect(countByKind).toEqual({ ACTION: 68, DATA: 27, PAGE: 66 });
-    expect(nonPages).toHaveLength(95);
+    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(163);
+    expect(countByKind).toEqual({ ACTION: 70, DATA: 27, PAGE: 66 });
+    expect(nonPages).toHaveLength(97);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
     expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(157);

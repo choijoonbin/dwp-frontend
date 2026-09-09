@@ -1,14 +1,28 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle2, Play, Plus, ShieldCheck } from 'lucide-react';
+import {
+  Archive,
+  CheckCircle2,
+  Database,
+  FileDown,
+  FlaskConical,
+  ListChecks,
+  Play,
+  Plus,
+} from 'lucide-react';
 import {
   ActionButton,
-  EnterpriseDataGrid,
+  ErrorState,
   FormField,
+  foundationTokens,
   GuidedEmptyState,
+  InlineFeedback,
+  LoadingState,
   PageCanvas,
+  SignalMetric,
 } from '@dwp-frontend/design-system';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   addDwaionEvaluationCase,
   createDwaionEvaluationSet,
@@ -19,11 +33,9 @@ import {
   listDwaionEvaluationSets,
   runDwaionEvaluation,
   transitionDwaionEvaluationSet,
-  type DwaionEvaluationSetSummary,
   usePermissions,
 } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -41,35 +53,46 @@ import {
   type EvaluationSetDraft,
 } from './dwaion-evaluation-dialogs';
 import { DwaionEvaluationHistory } from './dwaion-evaluation-history';
-
-import type { GridColDef } from '@mui/x-data-grid';
+import { DwaionEvaluationSetList } from './dwaion-evaluation-set-list';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 export function DwaionAdminEvaluation() {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const queryClient = useQueryClient();
+  const governCreate = useDwaionGovernedMutation(
+    'route.dwaion.management.evaluation-create.action'
+  );
+  const governCaseCreate = useDwaionGovernedMutation(
+    'route.dwaion.management.evaluation-case-create.action'
+  );
+  const governLifecycle = useDwaionGovernedMutation(
+    'route.dwaion.management.evaluation-lifecycle.action'
+  );
+  const governRun = useDwaionGovernedMutation('route.dwaion.management.evaluation-run.action');
   const { hasPermission } = usePermissions();
-  const canCreate =
-    hasPermission('ADMIN.DWAION_EVALUATION', 'CREATE') ||
-    hasPermission('ADMIN.DWAION_EVALUATION', 'MANAGE');
-  const canUpdate =
-    hasPermission('ADMIN.DWAION_EVALUATION', 'UPDATE') ||
-    hasPermission('ADMIN.DWAION_EVALUATION', 'MANAGE');
+  const canCreate = hasPermission('ADMIN.DWAION_EVALUATION', 'CREATE');
+  const canUpdate = hasPermission('ADMIN.DWAION_EVALUATION', 'UPDATE');
   const canManage = hasPermission('ADMIN.DWAION_EVALUATION', 'MANAGE');
-  const canExecute = hasPermission('ADMIN.DWAION_EVALUATION', 'EXECUTE') || canManage;
-  const canExport = hasPermission('ADMIN.DWAION_EVALUATION', 'EXPORT') || canManage;
+  const canExecute = hasPermission('ADMIN.DWAION_EVALUATION', 'EXECUTE');
+  const canExport = hasPermission('ADMIN.DWAION_EVALUATION', 'EXPORT');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [setDraft, setSetDraft] = useState<EvaluationSetDraft | null>(null);
   const [caseDraft, setCaseDraft] = useState<EvaluationCaseDraft | null>(null);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [reason, setReason] = useState('');
+
   const sets = useQuery({
     queryKey: ['dwaion', 'admin', 'evaluations'],
     queryFn: listDwaionEvaluationSets,
     staleTime: 15_000,
   });
+  const setRows = useMemo(() => sets.data ?? [], [sets.data]);
+
   useEffect(() => {
-    if (!selectedId && sets.data?.length) setSelectedId(sets.data[0].evaluationSetId);
-  }, [selectedId, sets.data]);
+    if (!selectedId && setRows.length) setSelectedId(setRows[0].evaluationSetId);
+  }, [selectedId, setRows]);
+
   const detail = useQuery({
     queryKey: ['dwaion', 'admin', 'evaluation', selectedId],
     queryFn: () => getDwaionEvaluationSet(selectedId!),
@@ -82,44 +105,43 @@ export function DwaionAdminEvaluation() {
     enabled: Boolean(selectedId),
     staleTime: 10_000,
   });
+
   useEffect(() => {
     setSelectedRunId(null);
+    setReason('');
   }, [selectedId]);
   useEffect(() => {
-    if (!selectedRunId && runs.data?.length) {
-      setSelectedRunId(runs.data[0].evaluationRunId);
-    }
+    if (!selectedRunId && runs.data?.length) setSelectedRunId(runs.data[0].evaluationRunId);
   }, [runs.data, selectedRunId]);
+
   const selectedRun = useQuery({
     queryKey: ['dwaion', 'admin', 'evaluation-run', selectedId, selectedRunId],
     queryFn: () => getDwaionEvaluationRun(selectedId!, selectedRunId!),
     enabled: Boolean(selectedId && selectedRunId),
     staleTime: 30_000,
   });
-  const baselineRunId = useMemo(() => {
-    const index = runs.data?.findIndex((item) => item.evaluationRunId === selectedRunId) ?? -1;
-    return index >= 0 ? (runs.data?.[index + 1]?.evaluationRunId ?? null) : null;
-  }, [runs.data, selectedRunId]);
-  const baselineRun = useQuery({
-    queryKey: ['dwaion', 'admin', 'evaluation-run', selectedId, baselineRunId],
-    queryFn: () => getDwaionEvaluationRun(selectedId!, baselineRunId!),
-    enabled: Boolean(selectedId && baselineRunId),
-    staleTime: 30_000,
-  });
+
   const refresh = async (id?: string) => {
     await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluations'] });
-    if (id)
-      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation', id] });
-    if (id)
-      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation-runs', id] });
+    if (!id) return;
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation', id] }),
+      queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation-runs', id] }),
+    ]);
   };
+
   const createMutation = useMutation({
     mutationFn: (draft: EvaluationSetDraft) =>
-      createDwaionEvaluationSet({
-        name: draft.name.trim(),
-        description: draft.description.trim() || undefined,
-        locale: draft.locale,
-      }),
+      governCreate((authority) =>
+        createDwaionEvaluationSet(
+          {
+            name: draft.name.trim(),
+            description: draft.description.trim() || undefined,
+            locale: draft.locale,
+          },
+          authority
+        )
+      ),
     onSuccess: async (created) => {
       setSetDraft(null);
       setSelectedId(created.summary.evaluationSetId);
@@ -128,15 +150,21 @@ export function DwaionAdminEvaluation() {
   });
   const caseMutation = useMutation({
     mutationFn: (draft: EvaluationCaseDraft) =>
-      addDwaionEvaluationCase(selectedId!, {
-        name: draft.name.trim(),
-        prompt: draft.prompt.trim(),
-        expectedTerms: draft.expectedTerms
-          .split(',')
-          .map((term) => term.trim())
-          .filter(Boolean),
-        sourceScopes: draft.sourceScopes,
-      }),
+      governCaseCreate((authority) =>
+        addDwaionEvaluationCase(
+          selectedId!,
+          {
+            name: draft.name.trim(),
+            prompt: draft.prompt.trim(),
+            expectedTerms: draft.expectedTerms
+              .split(',')
+              .map((term) => term.trim())
+              .filter(Boolean),
+            sourceScopes: draft.sourceScopes,
+          },
+          authority
+        )
+      ),
     onSuccess: async () => {
       setCaseDraft(null);
       await refresh(selectedId!);
@@ -144,18 +172,24 @@ export function DwaionAdminEvaluation() {
   });
   const lifecycleMutation = useMutation({
     mutationFn: (state: 'ACTIVE' | 'RETIRED') =>
-      transitionDwaionEvaluationSet(selectedId!, {
-        lifecycleState: state,
-        expectedVersion: detail.data!.summary.version,
-        changeReason: reason.trim(),
-      }),
+      governLifecycle((authority) =>
+        transitionDwaionEvaluationSet(
+          selectedId!,
+          {
+            lifecycleState: state,
+            expectedVersion: detail.data!.summary.version,
+            changeReason: reason.trim(),
+          },
+          authority
+        )
+      ),
     onSuccess: async () => {
       setReason('');
       await refresh(selectedId!);
     },
   });
   const runMutation = useMutation({
-    mutationFn: () => runDwaionEvaluation(selectedId!),
+    mutationFn: () => governRun((authority) => runDwaionEvaluation(selectedId!, authority)),
     onSuccess: async (result) => {
       setSelectedRunId(result.evaluationRunId);
       queryClient.setQueryData(
@@ -180,255 +214,419 @@ export function DwaionAdminEvaluation() {
     },
   });
 
-  const columns = useMemo<GridColDef<DwaionEvaluationSetSummary>[]>(
-    () => [
-      {
-        field: 'name',
-        headerName: t('dwaionAdmin.evaluation.columns.name'),
-        minWidth: 220,
-        flex: 1,
-      },
-      {
-        field: 'lifecycleState',
-        headerName: t('dwaionAdmin.evaluation.columns.state'),
-        width: 112,
-        renderCell: ({ row }) => (
-          <Chip
-            size="small"
-            variant="outlined"
-            color={
-              row.lifecycleState === 'ACTIVE'
-                ? 'success'
-                : row.lifecycleState === 'DRAFT'
-                  ? 'warning'
-                  : 'default'
-            }
-            label={row.lifecycleState}
-          />
-        ),
-      },
-      { field: 'caseCount', headerName: t('dwaionAdmin.evaluation.columns.cases'), width: 86 },
-      {
-        field: 'latestPassRate',
-        headerName: t('dwaionAdmin.evaluation.columns.passRate'),
-        width: 112,
-        valueGetter: (_, row) => (row.latestPassRate == null ? '—' : `${row.latestPassRate}%`),
-      },
-      {
-        field: 'latestRunState',
-        headerName: t('dwaionAdmin.evaluation.columns.lastRun'),
-        minWidth: 170,
-        flex: 0.8,
-        valueGetter: (_, row) => row.latestRunState ?? '—',
-      },
-    ],
-    [t]
+  const summary = useMemo(
+    () => ({
+      active: setRows.filter((row) => row.lifecycleState === 'ACTIVE').length,
+      cases: setRows.reduce((total, row) => total + row.caseCount, 0),
+      completed: setRows.filter((row) => row.latestRunState === 'COMPLETED').length,
+    }),
+    [setRows]
   );
-  const hasError =
-    sets.isError ||
-    detail.isError ||
+  const selectedSummary = detail.data?.summary;
+  const mutationFailed =
     createMutation.isError ||
     caseMutation.isError ||
     lifecycleMutation.isError ||
     runMutation.isError ||
-    runs.isError ||
-    selectedRun.isError ||
-    baselineRun.isError ||
     exportMutation.isError;
 
   return (
-    <PageCanvas>
+    <PageCanvas topInset="compact">
       <DwaionAdminPageHeader
         eyebrow={t('dwaionAdmin.shared.governance')}
         title={t('dwaionAdmin.evaluation.title')}
         description={t('dwaionAdmin.evaluation.description')}
         actions={
-          canCreate ? (
-            <ActionButton
-              intent="primary"
-              startIcon={<Plus size={16} />}
-              onClick={() => setSetDraft({ ...EMPTY_EVALUATION_SET })}
-            >
-              {t('dwaionAdmin.evaluation.create')}
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="stretch">
+            <ActionButton intent="secondary" startIcon={<FileDown size={16} />} disabled>
+              {t('dwaionAdmin.evaluation.importUnavailable')}
             </ActionButton>
-          ) : undefined
+            {canCreate && (
+              <ActionButton
+                intent="secondary"
+                startIcon={<Plus size={16} />}
+                onClick={() => setSetDraft({ ...EMPTY_EVALUATION_SET })}
+              >
+                {t('dwaionAdmin.evaluation.create')}
+              </ActionButton>
+            )}
+            {canExecute && selectedSummary?.lifecycleState === 'ACTIVE' && (
+              <ActionButton
+                intent="primary"
+                startIcon={<Play size={16} />}
+                loading={runMutation.isPending}
+                disabled={runs.data?.some((item) => item.runState === 'RUNNING')}
+                onClick={() => runMutation.mutate()}
+              >
+                {t('dwaionAdmin.evaluation.run')}
+              </ActionButton>
+            )}
+          </Stack>
         }
       />
-      {hasError && (
-        <Alert severity="error" sx={{ mt: 2 }}>
+
+      {mutationFailed && (
+        <InlineFeedback severity="error" sx={{ mt: 2 }}>
           {t('dwaionAdmin.evaluation.error')}
-        </Alert>
+        </InlineFeedback>
       )}
-      <Alert severity="info" icon={<ShieldCheck size={19} />} sx={{ mt: 2 }}>
-        {t('dwaionAdmin.evaluation.dataBoundary')}
-      </Alert>
-      <Box
-        sx={{
-          mt: 3,
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: 'minmax(0, 1fr)',
-            xl: 'minmax(440px, .85fr) minmax(520px, 1.15fr)',
-          },
-          gap: 3,
-          alignItems: 'start',
-        }}
-      >
-        <Box sx={{ minWidth: 0, borderBlock: 1, borderColor: 'divider' }}>
-          <EnterpriseDataGrid
-            ariaLabel={t('dwaionAdmin.evaluation.tableLabel')}
-            rows={sets.data ?? []}
-            columns={columns}
-            getRowId={(row) => row.evaluationSetId}
-            loading={sets.isLoading}
-            hideFooter
-            onRowClick={({ row }) => {
-              setSelectedId(row.evaluationSetId);
-            }}
-            sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
+      <InlineFeedback severity="info" sx={{ mt: 2 }}>
+        {t('dwaionAdmin.evaluation.dataBoundary')} {t('dwaionAdmin.evaluation.ruleBoundary')}
+      </InlineFeedback>
+
+      {sets.isError ? (
+        <Box sx={{ mt: 3 }}>
+          <ErrorState
+            size="page"
+            title={t('dwaionAdmin.evaluation.error')}
+            description={t('dwaionAdmin.evaluation.unavailableDescription')}
+            retryLabel={t('dwaionAdmin.shared.retry')}
+            retrying={sets.isFetching}
+            onRetry={() => void sets.refetch()}
           />
         </Box>
-        <Box
-          component="section"
-          aria-label={t('dwaionAdmin.evaluation.detailLabel')}
-          sx={{ minWidth: 0 }}
-        >
-          {!selectedId ? (
-            <GuidedEmptyState
-              kind="empty"
-              title={t('dwaionAdmin.evaluation.emptyTitle')}
-              description={t('dwaionAdmin.evaluation.emptyDescription')}
+      ) : (
+        <>
+          <Box
+            component="section"
+            aria-label={t('dwaionAdmin.evaluation.summaryLabel')}
+            sx={{
+              mt: 2,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, minmax(0, 1fr))' },
+              gap: 1.5,
+            }}
+          >
+            <SignalMetric
+              label={t('dwaionAdmin.evaluation.summary.loaded')}
+              value={String(setRows.length)}
+              detail={t('dwaionAdmin.evaluation.summary.loadedDetail')}
+              icon={<Database size={18} />}
             />
-          ) : detail.isLoading ? (
-            <Skeleton variant="rounded" height={420} />
-          ) : detail.data ? (
-            <Stack spacing={2.5}>
+            <SignalMetric
+              label={t('dwaionAdmin.evaluation.summary.active')}
+              value={String(summary.active)}
+              detail={t('dwaionAdmin.evaluation.summary.activeDetail')}
+              icon={<CheckCircle2 size={18} />}
+              tone="success"
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.evaluation.summary.cases')}
+              value={String(summary.cases)}
+              detail={t('dwaionAdmin.evaluation.summary.casesDetail')}
+              icon={<ListChecks size={18} />}
+              tone="info"
+            />
+            <SignalMetric
+              label={t('dwaionAdmin.evaluation.summary.completed')}
+              value={String(summary.completed)}
+              detail={t('dwaionAdmin.evaluation.summary.completedDetail')}
+              icon={<FlaskConical size={18} />}
+              tone="warning"
+            />
+          </Box>
+
+          <InlineFeedback severity="warning" sx={{ mt: 2 }}>
+            {t('dwaionAdmin.evaluation.unsupportedNotice')}
+          </InlineFeedback>
+
+          <Box
+            component="section"
+            sx={{
+              mt: 2,
+              p: { xs: 1.5, md: 2 },
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.radius.surface + 'px',
+              minWidth: 0,
+            }}
+          >
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              gap={1}
+            >
               <Box>
-                <Stack
-                  direction={{ xs: 'column', sm: 'row' }}
-                  justifyContent="space-between"
-                  gap={2}
-                >
-                  <Box>
-                    <Typography component="h2" variant="h6" fontWeight={850}>
-                      {detail.data.summary.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                      {detail.data.summary.description || t('dwaionAdmin.evaluation.noDescription')}
-                    </Typography>
-                  </Box>
-                  <Stack direction="row" spacing={0.75} alignItems="flex-start">
-                    {canUpdate && detail.data.summary.lifecycleState !== 'RETIRED' && (
-                      <ActionButton
-                        intent="secondary"
-                        size="small"
-                        startIcon={<Plus size={15} />}
-                        onClick={() => setCaseDraft({ ...EMPTY_EVALUATION_CASE })}
-                      >
-                        {t('dwaionAdmin.evaluation.addCase')}
-                      </ActionButton>
-                    )}
-                    {canExecute && detail.data.summary.lifecycleState === 'ACTIVE' && (
-                      <ActionButton
-                        intent="primary"
-                        size="small"
-                        startIcon={<Play size={15} />}
-                        loading={runMutation.isPending}
-                        disabled={runs.data?.some((item) => item.runState === 'RUNNING')}
-                        onClick={() => runMutation.mutate()}
-                      >
-                        {t('dwaionAdmin.evaluation.run')}
-                      </ActionButton>
-                    )}
-                  </Stack>
-                </Stack>
+                <Typography component="h2" variant="h6">
+                  {t('dwaionAdmin.evaluation.registryTitle')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('dwaionAdmin.evaluation.registryScope', { count: setRows.length })}
+                </Typography>
               </Box>
-              {detail.data.summary.lifecycleState === 'DRAFT' && canManage && (
-                <Box sx={{ borderBlock: 1, borderColor: 'divider', py: 1.5 }}>
-                  <FormField
-                    label={t('dwaionAdmin.shared.reason')}
-                    value={reason}
-                    multiline
-                    minRows={2}
-                    onChange={(event) => setReason(event.target.value)}
+              <Chip size="small" variant="outlined" label={t('dwaionAdmin.evaluation.contract')} />
+            </Stack>
+
+            {sets.isLoading ? (
+              <LoadingState
+                size="page"
+                variant="skeleton"
+                label={t('dwaionAdmin.evaluation.loading')}
+              />
+            ) : (
+              <Box
+                sx={{
+                  mt: 2,
+                  display: 'grid',
+                  gridTemplateColumns: {
+                    xs: 'minmax(0, 1fr)',
+                    lg: 'minmax(0, 1.15fr) minmax(0, 1fr)',
+                  },
+                  gap: 1.5,
+                  alignItems: 'start',
+                  minWidth: 0,
+                }}
+              >
+                <Box sx={{ minWidth: 0, borderBlock: 1, borderColor: 'divider' }}>
+                  <DwaionEvaluationSetList
+                    rows={setRows}
+                    selectedId={selectedId}
+                    loading={false}
+                    failed={false}
+                    onSelect={setSelectedId}
                   />
-                  <ActionButton
-                    intent="secondary"
-                    startIcon={<CheckCircle2 size={16} />}
-                    disabled={!detail.data.cases.length || reason.trim().length < 10}
-                    loading={lifecycleMutation.isPending}
-                    onClick={() => lifecycleMutation.mutate('ACTIVE')}
-                    sx={{ mt: 1.25 }}
-                  >
-                    {t('dwaionAdmin.evaluation.activate')}
-                  </ActionButton>
                 </Box>
-              )}
-              <Box sx={{ borderBlock: 1, borderColor: 'divider' }}>
-                {detail.data.cases.length ? (
-                  detail.data.cases.map((item, index) => (
-                    <Box key={item.evaluationCaseId}>
-                      {index > 0 && <Divider />}
-                      <Box sx={{ py: 1.5 }}>
-                        <Stack direction="row" justifyContent="space-between" gap={2}>
-                          <Box>
-                            <Typography variant="body2" fontWeight={800}>
-                              {item.name}
+                <Box
+                  component="section"
+                  aria-label={t('dwaionAdmin.evaluation.detailLabel')}
+                  sx={{
+                    minWidth: 0,
+                    maxHeight: { lg: 'calc(100vh - 7rem)' },
+                    overflowY: { lg: 'auto' },
+                    p: 1.75,
+                    border: 1,
+                    borderColor: 'divider',
+                    borderTop: 3,
+                    borderTopColor: 'primary.main',
+                    borderRadius: foundationTokens.radius.surface + 'px',
+                    bgcolor: 'background.paper',
+                  }}
+                >
+                  {!selectedId ? (
+                    <GuidedEmptyState
+                      kind="empty"
+                      title={t('dwaionAdmin.evaluation.emptyTitle')}
+                      description={t('dwaionAdmin.evaluation.emptyDescription')}
+                    />
+                  ) : detail.isLoading ? (
+                    <Skeleton variant="rounded" height={420} />
+                  ) : detail.isError || !detail.data ? (
+                    <InlineFeedback severity="error">
+                      {t('dwaionAdmin.evaluation.detailUnavailable')}
+                    </InlineFeedback>
+                  ) : (
+                    <Stack spacing={2}>
+                      <Box>
+                        <Stack
+                          direction={{ xs: 'column', sm: 'row' }}
+                          justifyContent="space-between"
+                          gap={1.5}
+                        >
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography component="h3" variant="h6">
+                              {detail.data.summary.name}
                             </Typography>
                             <Typography
-                              variant="caption"
+                              variant="body2"
                               color="text.secondary"
-                              component="p"
-                              sx={{ mt: 0.3 }}
+                              sx={{ mt: 0.35, overflowWrap: 'anywhere' }}
                             >
-                              {item.prompt}
+                              {detail.data.summary.description ||
+                                t('dwaionAdmin.evaluation.noDescription')}
                             </Typography>
                           </Box>
-                          <Chip
-                            size="small"
-                            variant="outlined"
-                            label={t('dwaionAdmin.evaluation.termCount', {
-                              count: item.expectedTerms.length,
-                            })}
-                          />
+                          {canUpdate && detail.data.summary.lifecycleState !== 'RETIRED' && (
+                            <ActionButton
+                              intent="secondary"
+                              size="small"
+                              startIcon={<Plus size={15} />}
+                              onClick={() => setCaseDraft({ ...EMPTY_EVALUATION_CASE })}
+                            >
+                              {t('dwaionAdmin.evaluation.addCase')}
+                            </ActionButton>
+                          )}
                         </Stack>
                         <Stack
                           direction="row"
-                          spacing={0.5}
+                          gap={0.75}
                           useFlexGap
                           flexWrap="wrap"
-                          sx={{ mt: 0.8 }}
+                          sx={{ mt: 1.25 }}
                         >
-                          {item.sourceScopes.map((scope) => (
-                            <Chip key={scope} size="small" label={scope} />
-                          ))}
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={detail.data.summary.lifecycleState}
+                          />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={t('dwaionAdmin.evaluation.metadata.locale', {
+                              value: detail.data.summary.locale,
+                            })}
+                          />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={t('dwaionAdmin.evaluation.metadata.version', {
+                              value: detail.data.summary.version,
+                            })}
+                          />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={formatDate(
+                              detail.data.summary.updatedAt,
+                              { dateStyle: 'medium', timeStyle: 'short' },
+                              locale
+                            )}
+                          />
                         </Stack>
                       </Box>
-                    </Box>
-                  ))
-                ) : (
-                  <GuidedEmptyState
-                    kind="empty"
-                    title={t('dwaionAdmin.evaluation.noCasesTitle')}
-                    description={t('dwaionAdmin.evaluation.noCasesDescription')}
-                  />
-                )}
+
+                      <Box component="section" aria-labelledby="evaluation-case-title">
+                        <Typography id="evaluation-case-title" component="h4" variant="subtitle1">
+                          {t('dwaionAdmin.evaluation.casesTitle')}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('dwaionAdmin.evaluation.casesDescription')}
+                        </Typography>
+                        <Box sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}>
+                          {detail.data.cases.length ? (
+                            detail.data.cases.map((item, index) => (
+                              <Box key={item.evaluationCaseId}>
+                                {index > 0 && <Divider />}
+                                <Box sx={{ py: 1.25 }}>
+                                  <Stack direction="row" justifyContent="space-between" gap={2}>
+                                    <Box sx={{ minWidth: 0 }}>
+                                      <Typography variant="body2" fontWeight={800}>
+                                        {item.name}
+                                      </Typography>
+                                      <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                        component="p"
+                                        sx={{ mt: 0.3, overflowWrap: 'anywhere' }}
+                                      >
+                                        {item.prompt}
+                                      </Typography>
+                                    </Box>
+                                    <Chip
+                                      size="small"
+                                      variant="outlined"
+                                      label={t('dwaionAdmin.evaluation.termCount', {
+                                        count: item.expectedTerms.length,
+                                      })}
+                                    />
+                                  </Stack>
+                                  <Stack
+                                    direction="row"
+                                    gap={0.5}
+                                    useFlexGap
+                                    flexWrap="wrap"
+                                    sx={{ mt: 0.8 }}
+                                  >
+                                    {item.sourceScopes.map((scope) => (
+                                      <Chip key={scope} size="small" label={scope} />
+                                    ))}
+                                  </Stack>
+                                </Box>
+                              </Box>
+                            ))
+                          ) : (
+                            <GuidedEmptyState
+                              kind="empty"
+                              title={t('dwaionAdmin.evaluation.noCasesTitle')}
+                              description={t('dwaionAdmin.evaluation.noCasesDescription')}
+                              size="compact"
+                            />
+                          )}
+                        </Box>
+                      </Box>
+
+                      <DwaionEvaluationHistory
+                        runs={runs.data ?? []}
+                        selectedRunId={selectedRunId}
+                        run={selectedRun.isError ? undefined : selectedRun.data}
+                        loading={runs.isLoading}
+                        canExport={canExport}
+                        exporting={exportMutation.isPending}
+                        onSelect={setSelectedRunId}
+                        onExport={() => exportMutation.mutate()}
+                      />
+                      {canManage &&
+                        ['DRAFT', 'ACTIVE'].includes(detail.data.summary.lifecycleState) && (
+                          <Box
+                            component="section"
+                            aria-label={t('dwaionAdmin.evaluation.lifecycleTitle')}
+                            sx={{
+                              p: 1.5,
+                              border: 1,
+                              borderColor: 'divider',
+                              borderRadius: foundationTokens.radius.control + 'px',
+                            }}
+                          >
+                            <Typography component="h4" variant="subtitle2">
+                              {t('dwaionAdmin.evaluation.lifecycleTitle')}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {t('dwaionAdmin.evaluation.lifecycleDescription')}
+                            </Typography>
+                            <FormField
+                              label={t('dwaionAdmin.shared.reason')}
+                              value={reason}
+                              multiline
+                              minRows={2}
+                              onChange={(event) => setReason(event.target.value)}
+                              sx={{ mt: 1 }}
+                            />
+                            <ActionButton
+                              intent={
+                                detail.data.summary.lifecycleState === 'DRAFT'
+                                  ? 'secondary'
+                                  : 'danger'
+                              }
+                              size="small"
+                              startIcon={
+                                detail.data.summary.lifecycleState === 'DRAFT' ? (
+                                  <CheckCircle2 size={16} />
+                                ) : (
+                                  <Archive size={16} />
+                                )
+                              }
+                              disabled={
+                                reason.trim().length < 10 ||
+                                (detail.data.summary.lifecycleState === 'DRAFT' &&
+                                  !detail.data.cases.length)
+                              }
+                              loading={lifecycleMutation.isPending}
+                              onClick={() =>
+                                lifecycleMutation.mutate(
+                                  detail.data.summary.lifecycleState === 'DRAFT'
+                                    ? 'ACTIVE'
+                                    : 'RETIRED'
+                                )
+                              }
+                              sx={{ mt: 1 }}
+                            >
+                              {t(
+                                detail.data.summary.lifecycleState === 'DRAFT'
+                                  ? 'dwaionAdmin.evaluation.activate'
+                                  : 'dwaionAdmin.evaluation.retire'
+                              )}
+                            </ActionButton>
+                          </Box>
+                        )}
+                    </Stack>
+                  )}
+                </Box>
               </Box>
-              <DwaionEvaluationHistory
-                runs={runs.data ?? []}
-                selectedRunId={selectedRunId}
-                run={selectedRun.data}
-                baseline={baselineRun.data}
-                loading={runs.isLoading}
-                canExport={canExport}
-                exporting={exportMutation.isPending}
-                onSelect={setSelectedRunId}
-                onExport={() => exportMutation.mutate()}
-              />
-            </Stack>
-          ) : null}
-        </Box>
-      </Box>
+            )}
+          </Box>
+        </>
+      )}
 
       <EvaluationSetDialog
         draft={setDraft}

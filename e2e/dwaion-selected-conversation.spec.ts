@@ -11,7 +11,24 @@ const selectedWork = {
   obligationKey: 'review',
 };
 
-async function fixture(page: Page, agentKey = expert, status = 200) {
+type StreamRequest = {
+  requestId: string;
+  conversationId?: string;
+  agentKey?: string;
+  pageContext?: { selectedWork?: typeof selectedWork };
+};
+
+type ResponseMutation = (
+  response: Record<string, unknown>,
+  request: StreamRequest
+) => Record<string, unknown>;
+
+async function fixture(
+  page: Page,
+  agentKey = expert,
+  status = 200,
+  mutateResponse?: ResponseMutation
+) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,
@@ -36,6 +53,13 @@ async function fixture(page: Page, agentKey = expert, status = 200) {
                   title: 'Selected approval review',
                   locale: 'en',
                   messageCount: 2,
+                  agentKey,
+                  sourceSystems: [],
+                  evidenceCount: 0,
+                  summaryExcerpt: 'Only the selected source metadata was verified.',
+                  lastAnswerStatus: null,
+                  retentionUntil: '2026-12-06T01:00:00Z',
+                  legalHold: false,
                   createdAt: '2026-09-07T01:00:00Z',
                   updatedAt: '2026-09-07T01:00:00Z',
                   lastMessageAt: '2026-09-07T01:00:00Z',
@@ -56,17 +80,19 @@ async function fixture(page: Page, agentKey = expert, status = 200) {
     });
   });
   await page.route('**/api/agent/v1/ask/stream', (route) => {
-    const request = route.request().postDataJSON();
+    const request = route.request().postDataJSON() as StreamRequest;
     sends.push(request);
+    const baseResponse = {
+      ...ASK_RUNTIME_FIXTURE,
+      requestId: request.requestId,
+      conversationId: id,
+      agentRegistry: { ...ASK_RUNTIME_FIXTURE.agentRegistry, entryKey: agentKey },
+      selectedWork: request.pageContext?.selectedWork ?? null,
+    };
     return route.fulfill({
       contentType: 'text/event-stream',
       body: `event: result\ndata: ${JSON.stringify({
-        data: {
-          ...ASK_RUNTIME_FIXTURE,
-          requestId: request.requestId,
-          conversationId: id,
-          agentRegistry: { ...ASK_RUNTIME_FIXTURE.agentRegistry, entryKey: agentKey },
-        },
+        data: mutateResponse ? mutateResponse(baseResponse, request) : baseResponse,
       })}\n\n`,
     });
   });
@@ -93,8 +119,79 @@ test('approval deep link loads and continues the same verified conversation and 
     sourceScopes: ['APPROVAL_TASK'],
     pageContext: { selectedWork, surface: 'selected-work-assist' },
   });
+  await expect(
+    page.getByTestId('dwaion-workspace-answer').getByText(ASK_RUNTIME_FIXTURE.answer)
+  ).toBeVisible();
   expect(page.url()).not.toContain('evidence');
 });
+
+const responseMismatches: Array<[string, ResponseMutation]> = [
+  ['request', (response) => ({ ...response, requestId: 'forged-request' })],
+  [
+    'agent',
+    (response) => ({
+      ...response,
+      agentRegistry: { ...ASK_RUNTIME_FIXTURE.agentRegistry, entryKey: 'DWP_ASSISTANT' },
+    }),
+  ],
+  [
+    'source system',
+    (response) => ({
+      ...response,
+      selectedWork: { ...selectedWork, sourceSystem: 'APPROVAL_REQUEST' },
+    }),
+  ],
+  [
+    'source reference',
+    (response) => ({
+      ...response,
+      selectedWork: {
+        ...selectedWork,
+        sourceReference: '30000000-0000-4000-8000-000000000003',
+      },
+    }),
+  ],
+  [
+    'source version',
+    (response) => ({
+      ...response,
+      selectedWork: { ...selectedWork, expectedVersion: 4 },
+    }),
+  ],
+  [
+    'source obligation',
+    (response) => ({
+      ...response,
+      selectedWork: { ...selectedWork, obligationKey: 'approve' },
+    }),
+  ],
+  [
+    'conversation session',
+    (response) => ({
+      ...response,
+      conversationId: '30000000-0000-4000-8000-000000000003',
+    }),
+  ],
+];
+
+for (const [mismatch, mutateResponse] of responseMismatches) {
+  test(`selected-work follow-up rejects a mismatched ${mismatch} response`, async ({ page }) => {
+    const state = await fixture(page, expert, 200, mutateResponse);
+    await page.goto(`/dwaion/conversations/${id}?agent=${expert}`);
+    await expect(page.getByText('Only the selected source metadata was verified.')).toBeVisible();
+    await page
+      .getByRole('textbox', { name: 'Ask a work question' })
+      .fill('Which evidence is missing?');
+    await page.getByRole('button', { name: 'Send question', exact: true }).click();
+
+    await expect.poll(() => state.sends.length).toBe(1);
+    await expect(page.getByTestId('dwaion-workspace-result').getByRole('alert')).toContainText(
+      'DWAI·ON could not evaluate this request'
+    );
+    await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toHaveCount(0);
+    await expect(page).toHaveURL(`/dwaion/conversations/${id}?agent=${expert}`);
+  });
+}
 
 test('ordinary assistant keeps its canonical conversation route and follow-up', async ({
   page,

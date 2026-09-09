@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionButton } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
@@ -10,6 +11,7 @@ export function WorkHubSelectionToolbar({
   selectedCount,
   eligibleCount,
   pending,
+  disabled: commandDisabled = false,
   onToggleSelection,
   onBatch,
 }: {
@@ -18,11 +20,28 @@ export function WorkHubSelectionToolbar({
   selectedCount: number;
   eligibleCount: number;
   pending: boolean;
+  disabled?: boolean;
   onToggleSelection: () => void;
   onBatch: (target: WorkHubBatchTarget) => void;
 }) {
   const { t } = useTranslation('work');
-  const disabled = pending || eligibleCount !== selectedCount || eligibleCount > 50;
+  useEffect(() => {
+    if (!selecting || pending) return;
+    const cancelSelection = (event: KeyboardEvent) => {
+      if (
+        event.key !== 'Escape' ||
+        event.defaultPrevented ||
+        (event.target instanceof Element && event.target.closest('[role="dialog"]'))
+      )
+        return;
+      event.preventDefault();
+      onToggleSelection();
+    };
+    window.addEventListener('keydown', cancelSelection);
+    return () => window.removeEventListener('keydown', cancelSelection);
+  }, [onToggleSelection, pending, selecting]);
+  const disabled =
+    commandDisabled || pending || eligibleCount !== selectedCount || eligibleCount > 50;
   return (
     <Stack
       direction="row"
@@ -35,6 +54,7 @@ export function WorkHubSelectionToolbar({
       <ActionButton
         size="small"
         intent={selecting ? 'secondary' : 'quiet'}
+        disabled={pending || (commandDisabled && !selecting)}
         onClick={onToggleSelection}
         sx={{ '@media (max-width:899.95px)': { minHeight: 44 } }}
       >

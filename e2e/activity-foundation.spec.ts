@@ -33,7 +33,6 @@ const coverage = {
   sourceScope: 'WORKSPACE',
 };
 const sampleRunId = 'b1000000-0000-4000-8000-000000000001';
-const sampleAuditRecordId = 'b1000000-0000-5000-8000-000000000002';
 
 async function mockActivity(
   page: Page,
@@ -356,7 +355,7 @@ test('explicit old-event links load detail even when the first feed page is empt
   await expect(page.getByText('Polled every 60 seconds').first()).toBeVisible();
 });
 
-test('common Activity renders measured Agent evidence and excludes a labelled sample from totals', async ({
+test('common Activity excludes labelled Agent samples from both timeline and current totals', async ({
   page,
 }) => {
   await mockActivity(page);
@@ -387,12 +386,12 @@ test('common Activity renders measured Agent evidence and excludes a labelled sa
       });
     }
     if (path.endsWith(`/${sampleRunId}`)) {
-      return route.fulfill({ json: { data: sampleAgentEvent() } });
+      return route.fulfill({ status: 404, json: { errorCode: 'RESOURCE_NOT_FOUND' } });
     }
     return route.fulfill({
       json: {
         data: {
-          events: [sampleAgentEvent()],
+          events: [],
           generatedAt: new Date().toISOString(),
           snapshotAt: new Date().toISOString(),
           coverage: {
@@ -408,42 +407,11 @@ test('common Activity renders measured Agent evidence and excludes a labelled sa
       },
     });
   });
-  await page.route(`**/api/agent/v1/runs/${sampleRunId}`, (route) =>
-    route.fulfill({ json: { data: sampleAgentRun() } })
-  );
-  await page.route(
-    `**/api/platform/v1/workspace/activity/audit/evidence/${sampleAuditRecordId}`,
-    (route) =>
-      route.fulfill({
-        json: {
-          data: {
-            eventId: sampleRunId,
-            auditRecordId: sampleAuditRecordId,
-            linkStatus: 'LINKED',
-            auditAccess: 'AVAILABLE',
-            recordHash: 'b'.repeat(64),
-            hashAlgorithm: 'SHA-256',
-            integrityStatus: 'VERIFIED',
-            integrityScope: 'DAILY_CHECKPOINT_REPORTED',
-            verifiedAt: '2026-09-07T09:05:00Z',
-            observedAt: '2026-09-07T09:06:00Z',
-          },
-        },
-      })
-  );
-
   await page.goto(`/activity/timeline?event=${encodeURIComponent(`dwaion:${sampleRunId}`)}`);
   const detail = page.getByRole('complementary', { name: 'Signal detail' });
-  await expect(detail.getByText('Development verification data').first()).toBeVisible();
-  await expect(
-    detail.getByRole('heading', { name: 'Run stages and processing time' })
-  ).toBeVisible();
-  await expect(
-    detail.getByRole('progressbar', { name: 'Server-reported progress' })
-  ).toHaveAttribute('aria-valuenow', '50');
-  await expect(detail.getByText('WORK_ITEM', { exact: true })).toBeVisible();
-  await expect(detail.getByRole('heading', { name: 'Audit integrity evidence' })).toBeVisible();
-  await expect(detail.getByText('Matches the reported daily checkpoint')).toBeVisible();
+  await expect(detail.getByText('This event cannot be displayed', { exact: true })).toBeVisible();
+  await expect(detail.getByText('Development verification data')).toHaveCount(0);
+  await expect(page.getByText('No activity matches these filters', { exact: true })).toBeVisible();
 
   if (await page.locator('.MuiDrawer-paper').isVisible()) {
     await page.getByRole('button', { name: 'Close signal detail' }).click();
@@ -553,91 +521,6 @@ test('dark high-contrast and enlarged-text inspection remains usable', async ({
     )
   ).toEqual([]);
 });
-
-function sampleAgentEvent() {
-  return {
-    id: sampleRunId,
-    occurredAt: '2026-09-07T09:00:01Z',
-    sourceObservedAt: '2026-09-07T09:00:02Z',
-    actor: 'AGENT',
-    actorName: 'DWAI·ON',
-    state: 'RUNNING',
-    title: 'Development contract run',
-    summary: 'Local-only activity contract verification.',
-    objectType: 'AGENT_RUN',
-    objectId: sampleRunId,
-    objectLabel: 'Agent execution',
-    source: 'DWAI_ON',
-    sourceAccess: 'AVAILABLE',
-    sourceRoute: `/dwaion/activity?run=${sampleRunId}`,
-    eventKind: 'EXECUTION_SNAPSHOT',
-    executionId: sampleRunId,
-    executionVersion: 2,
-    attempt: 1,
-    progress: 50,
-    dataProvenance: 'SAMPLE',
-    auditStatus: 'VERIFIED',
-    auditRecordId: sampleAuditRecordId,
-    auditId: 'b1000000-0000-4000-8000-000000000003',
-  };
-}
-
-function sampleAgentRun() {
-  return {
-    runId: sampleRunId,
-    agentKey: 'DWP_ASSISTANT',
-    agentRevision: 4,
-    runState: 'RUNNING',
-    answerState: null,
-    riskTier: 'L1',
-    policyOutcome: 'ALLOW',
-    statusCode: null,
-    sourceCount: 1,
-    latencyMs: 70,
-    conversationId: null,
-    createdAt: '2026-09-07T09:00:00Z',
-    completedAt: null,
-    dataProvenance: 'SAMPLE',
-    activityTitle: 'Development contract run',
-    attempt: 1,
-    lease: { status: 'ACTIVE', expiresAt: '2026-09-07T09:02:00Z' },
-    currentStage: 'RETRIEVING',
-    progressPercent: 50,
-    measurementStatus: 'PARTIAL',
-    stages: [
-      {
-        key: 'AUTHORIZING',
-        state: 'COMPLETED',
-        sequence: 10,
-        startedAt: '2026-09-07T09:00:00Z',
-        completedAt: '2026-09-07T09:00:00.020Z',
-        durationMs: 20,
-      },
-      {
-        key: 'RETRIEVING',
-        state: 'ACTIVE',
-        sequence: 20,
-        startedAt: '2026-09-07T09:00:00.020Z',
-        completedAt: null,
-        durationMs: 50,
-      },
-    ],
-    auditEvidence: {
-      auditId: 'b1000000-0000-4000-8000-000000000003',
-      auditRecordId: sampleAuditRecordId,
-      status: 'LINKED',
-    },
-    sourceHealth: [
-      {
-        sourceType: 'WORK_ITEM',
-        status: 'SUCCESS',
-        latencyMs: 50,
-        lastAttemptAt: '2026-09-07T09:00:00.020Z',
-        lastSuccessAt: '2026-09-07T09:00:00.020Z',
-      },
-    ],
-  };
-}
 
 async function expandCurrentSummary(page: Page) {
   const region = page.locator('[aria-label="Activity summary"]');

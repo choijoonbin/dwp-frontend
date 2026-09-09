@@ -12,6 +12,15 @@ import type { Page, TestInfo } from '@playwright/test';
 const sourceNotice = 'The source app owns the final state. Opening it does not complete the work.';
 const partialNotice =
   'Only verified work is shown. Review each source to understand what may be missing.';
+const contractedSourceNames = [
+  'DWP work',
+  'Assigned work',
+  'Personal tasks',
+  'Pending approvals',
+  'Completed approvals',
+  'Information requests',
+  'Service requests',
+] as const;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const inspector = (page: Page) => page.getByRole('article');
 const openWorkButton = (page: Page, title: string) =>
@@ -47,6 +56,17 @@ async function openSourceStatus(page: Page) {
   await page.getByRole('button', { name: 'Source connections', exact: true }).click();
 }
 
+async function expectEveryContractedSourceUnavailable(page: Page) {
+  const sourceStatus = page.getByRole('dialog', { name: 'Work source status' });
+  await expect(sourceStatus).toBeVisible();
+  for (const sourceName of contractedSourceNames) {
+    await expect(sourceStatus.getByText(sourceName, { exact: true })).toBeVisible();
+  }
+  await expect(sourceStatus.getByText('Unavailable', { exact: true })).toHaveCount(
+    contractedSourceNames.length
+  );
+}
+
 async function selectWork(page: Page, title: string) {
   await showWorkList(page);
   await openWorkButton(page, title).click();
@@ -66,6 +86,26 @@ async function expectNoHorizontalOverflow(page: Page) {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     )
   ).toBeLessThanOrEqual(1);
+}
+
+async function storedBatchReceipt(page: Page) {
+  return page.evaluate(() => {
+    const value = window.sessionStorage.getItem('dwp.work.batch-report.v3');
+    if (!value) return null;
+    const report = JSON.parse(value) as {
+      receipts?: Array<{ idempotencyKey?: string; reason?: string; state?: string }>;
+      schema?: number;
+    };
+    const receipt = report.receipts?.[0];
+    return receipt
+      ? {
+          idempotencyKey: receipt.idempotencyKey,
+          schema: report.schema,
+          state: receipt.state,
+          ...(receipt.reason ? { reason: receipt.reason } : {}),
+        }
+      : null;
+  });
 }
 
 async function capture(page: Page, testInfo: TestInfo, name: string, preserveFocus = false) {
@@ -189,7 +229,9 @@ test('an all-source outage cannot masquerade as an empty queue and retains recov
   const runtime = await mockWorkHubFoundation(page, { failAllSources: true });
   await openWorkPage(page, '/work/queue');
 
-  await expect.poll(() => runtime.failedSourceReads.length).toBeGreaterThanOrEqual(6);
+  await expect
+    .poll(() => runtime.failedSourceReads.length)
+    .toBeGreaterThanOrEqual(contractedSourceNames.length);
   await expect(page.getByText('Work could not be loaded', { exact: true })).toBeVisible();
   await expect(page.getByText('There is no verified work right now', { exact: true })).toHaveCount(
     0
@@ -201,8 +243,7 @@ test('an all-source outage cannot masquerade as an empty queue and retains recov
 
   await unavailable.getByRole('button', { name: 'Source status', exact: true }).click();
   const sourceStatus = page.getByRole('dialog', { name: 'Work source status' });
-  await expect(sourceStatus).toBeVisible();
-  await expect(sourceStatus.getByText('Unavailable', { exact: true })).toHaveCount(6);
+  await expectEveryContractedSourceUnavailable(page);
   await expect(
     sourceStatus.getByRole('button', { name: 'Refresh all sources', exact: true })
   ).toBeEnabled();
@@ -223,20 +264,45 @@ test('a background refresh outage keeps the verified scope visible as degraded',
   const returnedToList = !(await retry.isVisible());
   if (returnedToList) await showWorkList(page);
   await retry.click();
-  await expect.poll(() => runtime.failedSourceReads.length).toBeGreaterThanOrEqual(6);
+  await expect
+    .poll(() => runtime.failedSourceReads.length)
+    .toBeGreaterThanOrEqual(contractedSourceNames.length);
   await expect(
     page.getByRole('alert').getByText('Work sources unavailable', { exact: true })
   ).toBeVisible();
   await expect(page.getByText('Work could not be loaded', { exact: true })).toHaveCount(0);
   await openSourceStatus(page);
   const sourceStatus = page.getByRole('dialog', { name: 'Work source status' });
-  await expect(sourceStatus).toBeVisible();
-  await expect(sourceStatus.getByText('Unavailable', { exact: true })).toHaveCount(6);
+  await expectEveryContractedSourceUnavailable(page);
   await sourceStatus.getByRole('button', { name: 'Close', exact: true }).click();
   if (returnedToList) await selectWork(page, fixture.personalTitle);
   await expect(
     inspector(page).getByRole('heading', { name: fixture.personalTitle, exact: true })
   ).toBeVisible();
+  const mutationsBeforeBlockedCommands = {
+    creations: runtime.creations.length,
+    mutations: runtime.mutations.length,
+    planSaves: runtime.planSaves.length,
+    sourceMutations: runtime.sourceMutations.length,
+  };
+  const complete = inspector(page).getByRole('button', { name: 'Complete', exact: true }).first();
+  await expect(complete).toBeDisabled();
+  await expect(
+    inspector(page).getByRole('button', { name: 'Ask DWAI·ON', exact: true })
+  ).toBeDisabled();
+  await complete.click({ force: true });
+  await showWorkList(page);
+  await expect(page.getByRole('button', { name: 'Select work', exact: true })).toBeDisabled();
+  const retainedRow = page.locator('li').filter({ hasText: fixture.personalTitle });
+  const quickAction = retainedRow.getByRole('button', { name: 'Start', exact: true });
+  await expect(quickAction).toBeDisabled();
+  await quickAction.click({ force: true });
+  expect({
+    creations: runtime.creations.length,
+    mutations: runtime.mutations.length,
+    planSaves: runtime.planSaves.length,
+    sourceMutations: runtime.sourceMutations.length,
+  }).toEqual(mutationsBeforeBlockedCommands);
   await capture(page, testInfo, 'background-refresh-degraded');
 });
 
@@ -333,7 +399,7 @@ test('atomic batch review shows targets and item-level confirmed receipts', asyn
   await capture(page, testInfo, 'batch-confirmed-receipts');
 });
 
-test('batch receipts survive source-panel history and remain reachable from source status', async ({
+test('batch receipts survive all Work views, reload, and source-panel history', async ({
   page,
 }, testInfo) => {
   test.skip(
@@ -366,6 +432,35 @@ test('batch receipts survive source-panel history and remain reachable from sour
   const reopen = page.getByRole('button', { name: 'View latest batch results', exact: true });
   await expect(reopen).toBeVisible();
 
+  for (const view of [
+    'action-required',
+    'day-plan',
+    'in-progress',
+    'awaiting-response',
+    'completed',
+  ]) {
+    await page.getByTestId('work-sidebar').getByTestId(`work-navigation-item-${view}`).click();
+    await expect(page).toHaveURL((url) => url.pathname === `/work/${view}`);
+    await expect(reopen).toBeVisible();
+  }
+
+  await reopen.click();
+  await expect(page.getByRole('dialog', { name: 'Batch results' })).toContainText(
+    'The source confirmed the update and new version.'
+  );
+  await page
+    .getByRole('dialog', { name: 'Batch results' })
+    .getByRole('button', { name: 'Close', exact: true })
+    .filter({ hasText: 'Close' })
+    .click();
+
+  await page.reload();
+  await expect(page.getByRole('main').getByRole('heading').first()).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page).toHaveURL((url) => url.pathname === '/work/completed');
+  await expect(reopen).toBeVisible();
+
   const sourceNavigation = page.getByRole('button', {
     name: 'Source connections',
     exact: true,
@@ -387,6 +482,92 @@ test('batch receipts survive source-panel history and remain reachable from sour
   await expect(page.getByRole('dialog', { name: 'Batch results' })).toContainText(
     'The source confirmed the update and new version.'
   );
+});
+
+test('an in-flight personal batch keeps its command identity after a Work menu remount', async ({
+  page,
+}, testInfo) => {
+  const runtime = await mockWorkHubFoundation(page);
+  runtime.holdNextMutation();
+  await openWorkPage(page, '/work/queue');
+  await page.getByRole('button', { name: 'Select work', exact: true }).click();
+  await page
+    .getByRole('checkbox', {
+      name: `Select ${fixture.personalTitle} for batch processing`,
+      exact: true,
+    })
+    .check();
+  await page.getByRole('button', { name: 'Start selected', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'Start the selected work?' })
+    .getByRole('button', { name: 'Start selected', exact: true })
+    .click();
+
+  await expect.poll(() => runtime.mutations.length).toBe(1);
+  const originalKey = runtime.mutations[0]?.idempotencyKey;
+  expect(originalKey).toMatch(uuid);
+  await expect
+    .poll(() => storedBatchReceipt(page))
+    .toEqual({
+      idempotencyKey: originalKey,
+      schema: 3,
+      state: 'UNKNOWN',
+    });
+
+  // The busy confirmation dialog intentionally owns focus. Dispatching a click on the actual Work
+  // navigation control exercises React Router's path transition and the owner-boundary remount.
+  const mobileNavigation = page.getByTestId('work-mobile-bottom-navigation');
+  const actionRequiredNavigation =
+    testInfo.project.name === 'mobile'
+      ? mobileNavigation.getByRole('button', {
+          name: 'My actions',
+          exact: true,
+          includeHidden: true,
+        })
+      : page.getByTestId('work-navigation-item-action-required');
+  await actionRequiredNavigation.dispatchEvent('click');
+  await expect(page).toHaveURL((url) => url.pathname === '/work/action-required');
+  await expect(page.getByRole('main').getByRole('heading').first()).toBeVisible();
+  await expect
+    .poll(() => storedBatchReceipt(page))
+    .toEqual({
+      idempotencyKey: originalKey,
+      reason: 'CANCELLED',
+      schema: 3,
+      state: 'UNKNOWN',
+    });
+  runtime.releaseMutation();
+
+  const queueNavigation =
+    testInfo.project.name === 'mobile'
+      ? mobileNavigation.getByRole('button', { name: 'Inbox', exact: true, includeHidden: true })
+      : page.getByTestId('work-navigation-item-queue');
+  await queueNavigation.click();
+  await expect(page).toHaveURL((url) => url.pathname === '/work/queue');
+  const reopen = page.getByRole('button', { name: 'View latest batch results', exact: true });
+  await expect(reopen).toBeVisible();
+  await reopen.click();
+
+  const result = page.getByRole('dialog', { name: 'Batch results' });
+  await expect(result).toContainText(fixture.personalTitle);
+  await expect(result.getByText('Unconfirmed 1', { exact: true })).toBeVisible();
+  await expect(result).toContainText(
+    'The session changed or this page closed after this request was sent. Check the source status before creating a new request.'
+  );
+  await expect(
+    result.getByRole('button', { name: 'Recheck unconfirmed personal tasks', exact: true })
+  ).toHaveCount(0);
+  expect(runtime.mutations).toHaveLength(1);
+  expect(runtime.mutations[0]?.idempotencyKey).toBe(originalKey);
+  await expect
+    .poll(() => storedBatchReceipt(page))
+    .toEqual({
+      idempotencyKey: originalKey,
+      reason: 'CANCELLED',
+      schema: 3,
+      state: 'UNKNOWN',
+    });
+  await capture(page, testInfo, 'in-flight-personal-batch-route-receipt');
 });
 
 test('the route-backed personal task composer closes on browser back', async ({
@@ -411,6 +592,114 @@ test('the route-backed personal task composer closes on browser back', async ({
     (url) => url.searchParams.get('q') === 'policy' && !url.searchParams.has('compose')
   );
   await expect(page.getByRole('dialog', { name: 'Add a personal task' })).toHaveCount(0);
+});
+
+test('a create receipt survives Work menu movement without a duplicate POST', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The desktop route-remount contract runs once.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const runtime = await mockWorkHubFoundation(page);
+  await openWorkPage(page, '/work/queue');
+  await page
+    .getByTestId('work-sidebar')
+    .getByRole('button', { name: 'Add personal task', exact: true })
+    .click();
+  const dialog = page.getByRole('dialog', { name: 'Add a personal task' });
+  const title = 'Recover the route-moved creation receipt';
+  await dialog.getByRole('textbox', { name: 'Title', exact: true }).fill(title);
+  runtime.holdNextMutation();
+  await dialog.getByRole('button', { name: 'Add task', exact: true }).click();
+  await expect.poll(() => runtime.creations.length).toBe(1);
+  const originalKey = runtime.creations[0]?.idempotencyKey;
+  expect(originalKey).toMatch(uuid);
+  const storedIntent = await page.evaluate(() =>
+    window.sessionStorage.getItem('dwp.work.personal-create-intents.v2')
+  );
+  expect(storedIntent).toContain(originalKey);
+  expect(storedIntent).not.toContain(title);
+
+  await page.getByTestId('work-navigation-item-completed').dispatchEvent('click');
+  await expect(page).toHaveURL(/\/work\/completed/u);
+  await expect(dialog).toHaveCount(0);
+  runtime.releaseMutation();
+
+  await expect(page.getByText('The personal task was saved', { exact: true })).toBeVisible();
+  expect(runtime.creations).toHaveLength(1);
+  expect(runtime.creations[0]?.idempotencyKey).toBe(originalKey);
+  await expect
+    .poll(() =>
+      page.evaluate(() => window.sessionStorage.getItem('dwp.work.personal-create-intents.v2'))
+    )
+    .toBeNull();
+
+  await page.getByTestId('work-navigation-item-queue').click();
+  await expect(openWorkButton(page, title)).toBeVisible();
+  await capture(page, testInfo, 'route-moved-personal-create-receipt');
+});
+
+test('a create plus today-plan intent survives Work menu movement exactly once', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The desktop route-remount contract runs once.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const runtime = await mockWorkHubFoundation(page);
+  await openWorkPage(page, '/work/queue');
+  await page
+    .getByTestId('work-sidebar')
+    .getByRole('button', { name: 'Add personal task', exact: true })
+    .click();
+  const dialog = page.getByRole('dialog', { name: 'Add a personal task' });
+  const title = 'Carry the route-moved task into today';
+  const createKey = 'c4444444-4444-4444-8444-444444444444';
+  const planKey = 'c5555555-5555-4555-8555-555555555555';
+  await page.evaluate(
+    ({ create, plan }) => {
+      const expected = [create, plan];
+      const fallback = window.crypto.randomUUID.bind(window.crypto);
+      Object.defineProperty(window.crypto, 'randomUUID', {
+        configurable: true,
+        value: () => expected.shift() ?? fallback(),
+      });
+    },
+    { create: createKey, plan: planKey }
+  );
+  await dialog.getByRole('textbox', { name: 'Title', exact: true }).fill(title);
+  await dialog.getByRole('checkbox', { name: /Add to today's plan/u }).check();
+  await expect(dialog.getByRole('checkbox', { name: /Add to today's plan/u })).toBeChecked();
+
+  runtime.holdNextMutation();
+  await dialog.getByRole('button', { name: 'Add task', exact: true }).click();
+  await expect.poll(() => runtime.creations.length).toBe(1);
+  expect(runtime.creations[0]?.idempotencyKey).toBe(createKey);
+
+  await page.getByTestId('work-navigation-item-completed').dispatchEvent('click');
+  await expect(page).toHaveURL(/\/work\/completed/u);
+  await expect(dialog).toHaveCount(0);
+  runtime.releaseMutation();
+
+  await expect(page.getByText('The personal task was saved', { exact: true })).toBeVisible();
+  await expect.poll(() => runtime.planSaves.length).toBe(1);
+  expect(runtime.creations).toHaveLength(1);
+  expect(runtime.creations[0]?.idempotencyKey).toBe(createKey);
+  expect(runtime.planSaves[0]).toMatchObject({
+    version: 0,
+    items: [
+      {
+        sourceSystem: 'PERSONAL_TASK',
+        sourceReference: 'b3333333-3333-4333-8333-333333333333',
+      },
+    ],
+  });
+  expect(runtime.planSaves[0]?.idempotencyKey).toBe(planKey);
+
+  await page.getByTestId('work-navigation-item-day-plan').click();
+  await expect(page).toHaveURL(/\/work\/day-plan/u);
+  await expect(
+    page
+      .getByTestId('work-today-plan-page')
+      .getByRole('button', { name: `Remove ${title} from the plan`, exact: true })
+  ).toBeVisible();
 });
 
 test('batch selection is discarded when the work view changes', async ({ page }, testInfo) => {
@@ -440,7 +729,9 @@ test('retry after a lost response reuses the original command and receipt', asyn
   const runtime = await mockWorkHubFoundation(page, { loseFirstMutationResponse: true });
   await openWorkPage(page, personalTaskRoute());
   await inspector(page).getByRole('button', { name: 'In progress', exact: true }).click();
-  await expect(page.getByText('The result could not be confirmed', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'The result could not be confirmed' })
+  ).toBeVisible();
   await expect(page.getByText('The source confirmed the change', { exact: true })).toHaveCount(0);
   await inspector(page).getByRole('button', { name: 'In progress', exact: true }).click();
   await expectSelectedStatus(page, 'In progress');
@@ -571,7 +862,10 @@ test('320px personal task capture stays operable when the input viewport contrac
   await page.setViewportSize({ width: 320, height: 568 });
   const runtime = await mockWorkHubFoundation(page);
   await openWorkPage(page, '/work/queue');
-  await page.getByRole('button', { name: 'Add personal task', exact: true }).click();
+  await page
+    .locator('#dwp-main-content')
+    .getByRole('button', { name: 'Add personal task', exact: true })
+    .click();
 
   const dialog = page.getByRole('dialog', { name: 'Add a personal task' });
   const title = '모바일에서 고객 인수인계 메모 정리';

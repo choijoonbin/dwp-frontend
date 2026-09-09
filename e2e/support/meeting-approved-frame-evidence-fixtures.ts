@@ -403,8 +403,12 @@ export async function mockApprovedFollowUps(page: Page, rich = false) {
   });
 }
 
-export async function mockApprovedTemplatesAndPreferences(page: Page, rich = false) {
-  await mockMeetingVisualSession(page, { locale: 'ko', reducedMotion: true });
+export async function mockApprovedTemplatesAndPreferences(
+  page: Page,
+  rich = false,
+  session = true
+) {
+  if (session) await mockMeetingVisualSession(page, { locale: 'ko', reducedMotion: true });
   const template = {
     templateId,
     scope: 'PERSONAL',

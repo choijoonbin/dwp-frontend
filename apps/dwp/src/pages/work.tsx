@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom';
-import { CheckSquare2 } from 'lucide-react';
 import {
   ActionButton,
   GuidedEmptyState,
-  InlineFeedback,
   LoadingState,
   LocalErrorState,
   PageCanvas,
@@ -19,13 +17,16 @@ import { workspaceWorkFreshness } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AccessReviewWorkItem } from '../features/work/access-review-work-item';
 import { useWorkClock } from '../features/work/use-work-clock';
 import { useWorkHubActivityReturn } from '../features/work-hub/use-work-hub-activity-return';
+import { useWorkHubActions } from '../features/work-hub/use-work-hub-actions';
+import { WorkHubAssignmentDetail } from '../features/work-hub/work-hub-assignment-detail';
 import { useWorkHubBatch } from '../features/work-hub/use-work-hub-batch';
+import { useWorkHubCreatedTaskRecovery } from '../features/work-hub/use-work-hub-created-task-recovery';
+import { useWorkHubPlanSave } from '../features/work-hub/use-work-hub-plan-save';
 import { useWorkHubRuntime } from '../features/work-hub/use-work-hub-runtime';
 import { WorkHubSelectionToolbar } from '../features/work-hub/work-hub-selection-toolbar';
 import { WorkHubPageHeader } from '../features/work-hub/work-hub-page-header';
@@ -33,16 +34,20 @@ import { useWorkHubTaskSave } from '../features/work-hub/use-work-hub-task-save'
 import { useWorkHubReturnHandoff } from '../features/work-hub/use-work-hub-return-handoff';
 import { WorkHubAssistPanel } from '../features/work-hub/work-hub-assist-dialog';
 import { selectedWorkConversationRoute } from '@dwp-frontend/shared-utils/api/agent-selected-work-api';
-import type { WorkHubActionResult } from '../features/work-hub/work-hub-actions';
-import { WorkHubBatchDialog } from '../features/work-hub/work-hub-batch-dialog';
-import {
-  workHubReferenceKey,
-  type WorkHubActionKind,
-  type WorkHubItem,
-} from '../features/work-hub/work-hub-contracts';
+import { WorkHubRecoveryDialogs } from '../features/work-hub/work-hub-recovery-dialogs';
+import type { WorkHubItem } from '../features/work-hub/work-hub-contracts';
 import { WorkHubDetailPanel } from '../features/work-hub/work-hub-detail-panel';
 import { WorkHubFilterControls } from '../features/work-hub/work-hub-filter-controls';
 import { WorkHubList } from '../features/work-hub/work-hub-list';
+import { WorkHubNoSelection } from '../features/work-hub/work-hub-no-selection';
+import {
+  canExecuteWorkHubAction,
+  canUnlinkWorkSchedule,
+  canUseWorkHubGenericAdjunct,
+  isWorkHubItemCommandReady,
+  isWorkHubSourceCommandReady,
+  workHubCommandScope,
+} from '../features/work-hub/work-hub-command-authority';
 import {
   dayPlanHasReference,
   resolveDayPlanReferences,
@@ -50,28 +55,27 @@ import {
   selectWorkHubItems,
 } from '../features/work-hub/work-hub-model';
 import {
-  WorkHubPartialNotice,
+  WorkHubPageNotices,
   workHubPartialCopy,
 } from '../features/work-hub/work-hub-partial-notice';
 import { WorkHubPersonalDetail } from '../features/work-hub/work-hub-personal-detail';
 import {
   canUseWorkAssist,
-  isPersonalWorkAction,
   selectedWorkFromRequest,
+  shouldShowWorkAssignmentRoleFilter,
   submitWorkHubAssist,
   uniqueWorkSourceSystems,
+  verifiedWorkHubSnapshotFromRefetch,
   workHubCalendarRoute,
   type WorkHubOperationFeedback,
 } from '../features/work-hub/work-hub-page-helpers';
-import { WorkHubScheduleDialog } from '../features/work-hub/work-hub-schedule-dialog';
-import {
-  WorkHubScheduleLinks,
-  workHubScheduleLinksQueryKey,
-} from '../features/work-hub/work-hub-schedule-links';
+import { WorkHubScheduleLinks } from '../features/work-hub/work-hub-schedule-links';
 import { workScheduleLookupRange } from '../features/work-hub/work-hub-scheduling';
 import { WorkHubSourceOwnedDetail } from '../features/work-hub/work-hub-source-owned-detail';
-import { WorkHubSourceStatusDialog } from '../features/work-hub/work-hub-source-status-dialog';
-import { WorkTaskDialog } from '../features/work-hub/work-task-dialog';
+import {
+  WorkHubScheduleExecutionDialog,
+  WorkHubTaskEditorDialog,
+} from '../features/work-hub/work-hub-page-dialogs';
 import { WorkTodayPlanPanel } from '../features/work-hub/work-today-plan-panel';
 import {
   WORK_HUB_VIEWS,
@@ -90,14 +94,16 @@ export default function WorkPage() {
   const narrowViewport = useMediaQuery('(max-width:899.95px)');
   const navigate = useNavigate();
   const location = useLocation();
-  const { setWorkNavigationState, availableWidth } =
+  const { setWorkNavigationState, availableWidth, scheduleCoordinator, taskSaveCoordinator } =
     useOutletContext<WorkLayoutContext | undefined>() ?? {};
   const mobile = availableWidth === undefined ? narrowViewport : availableWidth < 900;
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const runtime = useWorkHubRuntime();
-  const { query, controller } = runtime;
+  const { query, controller, owner } = runtime;
   const snapshot = query.data?.snapshot;
+  const workCommandsReady = Boolean(snapshot && snapshot.completeness !== 'UNAVAILABLE');
+  const canCreate = runtime.canUpdatePersonal && isWorkHubSourceCommandReady(snapshot, 'personal');
   const filters = workHubFiltersForPath(location.pathname, searchParams);
   const view = workHubViewFromPath(location.pathname);
   const requestedSort = searchParams.get('sort');
@@ -105,8 +111,13 @@ export default function WorkPage() {
     ? requestedSort!
     : 'urgency';
   const density = searchParams.get('density') === 'comfortable' ? 'comfortable' : 'compact';
+  const selectionRequest = {
+    work: searchParams.get('work'),
+    personalTaskId: searchParams.get('personalTaskId'),
+    item: searchParams.get('item'),
+  };
   const requested =
-    searchParams.get('work') ?? searchParams.get('personalTaskId') ?? searchParams.get('item');
+    selectionRequest.work ?? selectionRequest.personalTaskId ?? selectionRequest.item;
   const composeTaskRequested = searchParams.get('compose') === 'task';
   const sourcePanelRequested = searchParams.get('panel') === 'sources';
   const today = resolveZonedDateKey(now, timeZone) ?? new Date(now).toISOString().slice(0, 10);
@@ -120,14 +131,23 @@ export default function WorkPage() {
   const [planDraft, setPlanDraft] = useState<ReturnType<typeof controller.state>['planDraft']>([]);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
-  const [scheduleItem, setScheduleItem] = useState<WorkHubItem | null>(null);
+  const [scheduleSelection, setScheduleSelection] = useState<{
+    owner: string;
+    item: WorkHubItem;
+  } | null>(null);
+  const scheduleItem =
+    scheduleSelection?.owner === owner
+      ? (snapshot?.items.find(
+          (candidate) =>
+            workHubCommandScope(candidate) === workHubCommandScope(scheduleSelection.item)
+        ) ?? null)
+      : null;
   const [assistItem, setAssistItem] = useState<WorkHubItem | null>(null);
   const lastMobileSelection = useRef<string | null>(null);
   const queueScroll = useRef<HTMLDivElement | null>(null);
   const queueScrollTop = useRef(0);
-  const selectionContext = `${location.pathname}|${filters.query}|${filters.sourceSystem ?? ''}|${filters.urgency ?? ''}`;
+  const selectionContext = `${location.pathname}|${filters.query}|${filters.sourceSystem ?? ''}|${filters.urgency ?? ''}|${filters.assignmentRole ?? ''}`;
   const previousSelectionContext = useRef(selectionContext);
-  const actionKeys = useRef(new Map<string, string>());
   const planLoadOwner = useRef<typeof controller | null>(null);
   const restoreQueueFocus = useRef(false);
   useEffect(() => {
@@ -222,7 +242,7 @@ export default function WorkPage() {
           snapshot
             ? selectWorkHubItems(
                 snapshot,
-                { scope, query: '', sourceSystem: null, urgency: null },
+                { scope, query: '', sourceSystem: null, urgency: null, assignmentRole: null },
                 now,
                 todayPlanReferences
               ).length
@@ -254,7 +274,7 @@ export default function WorkPage() {
     setSourceDialogOpen(sourcePanelRequested);
   }, [sourcePanelRequested]);
   const explicitSelection = snapshot
-    ? selectedWorkFromRequest(snapshot.items, requested)
+    ? selectedWorkFromRequest(snapshot.items, selectionRequest)
     : undefined;
   const detailSelection = snapshot
     ? selectWorkHubDetail(
@@ -277,6 +297,10 @@ export default function WorkPage() {
     if (assistItem && !assistActive) setAssistItem(null);
   }, [assistItem, assistActive]);
   const sourceSystems = uniqueWorkSourceSystems(snapshot?.items ?? []);
+  const showAssignmentRoleFilter = shouldShowWorkAssignmentRoleFilter(
+    snapshot,
+    runtime.enabledSources
+  );
   const partialCopy = snapshot ? workHubPartialCopy(snapshot) : null;
   const scheduleRange = useMemo(() => workScheduleLookupRange(today), [today]);
   const openCalendar = () =>
@@ -286,6 +310,7 @@ export default function WorkPage() {
     ready: Boolean(snapshot),
     refetch: query.refetch,
   });
+  const refreshWorkSnapshot = () => query.refetch().then(verifiedWorkHubSnapshotFromRefetch);
 
   const setFilters = (values: Record<string, string | null>) => {
     setCheckedKeys(new Set());
@@ -313,9 +338,9 @@ export default function WorkPage() {
       { replace: true }
     );
   };
-  const openItem = (item: WorkHubItem) => {
+  const openItem = (item: WorkHubItem, focusToken?: string) => {
     setAssistItem(null);
-    lastMobileSelection.current = item.key;
+    lastMobileSelection.current = focusToken ?? null;
     queueScrollTop.current = queueScroll.current?.scrollTop ?? window.scrollY;
     controller.select(item.reference);
     setSearchParams(
@@ -335,74 +360,14 @@ export default function WorkPage() {
     );
   };
 
-  const actionMutation = useMutation({
-    mutationFn: async ({ item, kind }: { item: WorkHubItem; kind: WorkHubActionKind }) => {
-      if (!snapshot) throw new Error('snapshot unavailable');
-      controller.adopt(snapshot);
-      controller.select(item.reference);
-      if (isPersonalWorkAction(kind)) {
-        const identity = `${item.key}:${item.version}:${kind}`;
-        const idempotencyKey = actionKeys.current.get(identity) ?? crypto.randomUUID();
-        actionKeys.current.set(identity, idempotencyKey);
-        return controller.execute({
-          kind: kind as
-            | 'PERSONAL_START'
-            | 'PERSONAL_WAIT'
-            | 'PERSONAL_COMPLETE'
-            | 'PERSONAL_REOPEN'
-            | 'PERSONAL_ARCHIVE',
-          idempotencyKey,
-        });
-      }
-      if (kind === 'WORKSPACE_START' || kind === 'WORKSPACE_COMPLETE' || kind === 'OPEN_SOURCE') {
-        return controller.execute({ kind });
-      }
-      throw new Error('unsupported direct action');
-    },
-    onSuccess: async (result: WorkHubActionResult, variables) => {
-      if (result.state === 'HANDED_OFF') {
-        if (!openSource(variables.item, result.route, 'SOURCE')) {
-          setFeedback({
-            severity: 'error',
-            title: t('work:workHub.results.UNAVAILABLE.title'),
-            detail: t('work:workHub.results.UNAVAILABLE.detail'),
-          });
-        }
-        return;
-      }
-      if (result.state === 'CONFIRMED') {
-        actionKeys.current.delete(
-          `${variables.item.key}:${variables.item.version}:${variables.kind}`
-        );
-        setFeedback({
-          severity: 'success',
-          title: t('work:workHub.results.confirmedTitle'),
-          detail: t('work:workHub.results.confirmedDetail'),
-        });
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] }),
-          queryClient.invalidateQueries({ queryKey: ['workspace', 'activity'] }),
-        ]);
-        return;
-      }
-      if (result.state === 'CONFLICT' || result.state === 'FORBIDDEN') {
-        actionKeys.current.delete(
-          `${variables.item.key}:${variables.item.version}:${variables.kind}`
-        );
-        await query.refetch();
-      }
-      setFeedback({
-        severity: result.state === 'CONFLICT' ? 'warning' : 'error',
-        title: t(`work:workHub.results.${result.state}.title`),
-        detail: t(`work:workHub.results.${result.state}.detail`),
-      });
-    },
-    onError: () =>
-      setFeedback({
-        severity: 'error',
-        title: t('work:workHub.results.UNAVAILABLE.title'),
-        detail: t('work:workHub.results.UNAVAILABLE.detail'),
-      }),
+  const action = useWorkHubActions({
+    owner,
+    snapshot,
+    controller,
+    onFeedback: setFeedback,
+    onHandoff: (item, route) => openSource(item, route, 'SOURCE'),
+    refresh: refreshWorkSnapshot,
+    mutationCoordinator: taskSaveCoordinator,
   });
 
   const batch = useWorkHubBatch({
@@ -410,7 +375,16 @@ export default function WorkPage() {
     checkedKeys,
     clearSelection: () => setCheckedKeys(new Set()),
     onFeedback: setFeedback,
-    refresh: async () => query.refetch(),
+    refresh: refreshWorkSnapshot,
+  });
+
+  const savePlan = useWorkHubPlanSave({
+    owner,
+    snapshot,
+    controller,
+    enabled: canCreate,
+    preflight: refreshWorkSnapshot,
+    mutationCoordinator: taskSaveCoordinator,
   });
 
   const saveTask = useWorkHubTaskSave({
@@ -418,6 +392,9 @@ export default function WorkPage() {
     snapshot,
     editingTask,
     today,
+    taskSaveCoordinator,
+    enabled: canCreate,
+    preflight: refreshWorkSnapshot,
     onTaskClosed: () => {
       setTaskDialogOpen(false);
       setEditingTask(null);
@@ -426,13 +403,32 @@ export default function WorkPage() {
     onPlanDraftChange: setPlanDraft,
     onPlanError: setPlanError,
     onFeedback: setFeedback,
-    onCreated: (reference) => {
-      lastMobileSelection.current = workHubReferenceKey(reference);
+    onCreated: () => {
+      lastMobileSelection.current = null;
     },
   });
-
+  useWorkHubCreatedTaskRecovery({
+    coordinator: taskSaveCoordinator,
+    owner,
+    controller,
+    snapshot,
+    preflight: refreshWorkSnapshot,
+    onCreated: () => {
+      lastMobileSelection.current = null;
+    },
+    onPlanDraftChange: setPlanDraft,
+    onPlanError: setPlanError,
+    onFeedback: setFeedback,
+  });
   const togglePlanItem = async (item: WorkHubItem) => {
-    if (planSaving || planLoading) return;
+    if (
+      planSaving ||
+      planLoading ||
+      !canCreate ||
+      !canUseWorkHubGenericAdjunct(item, 'DAY_PLAN') ||
+      !isWorkHubItemCommandReady(snapshot, item)
+    )
+      return;
     const exists = dayPlanHasReference(loadedPlan, planDraft, item.reference);
     const next = exists
       ? controller.removePlanItem(item.reference)
@@ -440,7 +436,7 @@ export default function WorkPage() {
     setPlanDraft(next);
     setPlanSaving(true);
     try {
-      const result = await controller.savePlan(today, next, crypto.randomUUID());
+      const result = await savePlan(today, next, crypto.randomUUID(), [item]);
       if (result.state !== 'SAVED') {
         setPlanDraft([...result.draft]);
         setPlanError(
@@ -452,7 +448,8 @@ export default function WorkPage() {
         setPlanDraft(controller.state().planDraft);
         setPlanError(null);
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       setPlanError(t('work:workHub.todayPlan.saveFailed'));
       navigate('/work/day-plan');
     } finally {
@@ -469,8 +466,17 @@ export default function WorkPage() {
       snapshot?.completeness === 'UNAVAILABLE',
     now,
   });
-  const canCreate = runtime.canUpdatePersonal;
-  const canSchedule = canCreate && runtime.canUseCalendar;
+  const canSchedule =
+    runtime.canUpdatePersonal && runtime.canCreateCalendarEvent && workCommandsReady;
+  const openSchedule = (item: WorkHubItem) => {
+    if (
+      owner &&
+      canSchedule &&
+      canUseWorkHubGenericAdjunct(item, 'CALENDAR') &&
+      isWorkHubItemCommandReady(snapshot, item)
+    )
+      setScheduleSelection({ owner, item });
+  };
   const closePlan = () => {
     navigate('/work/queue');
     requestAnimationFrame(() =>
@@ -478,8 +484,8 @@ export default function WorkPage() {
     );
   };
   useEffect(() => {
-    if (!canSchedule) setScheduleItem(null);
-  }, [canSchedule]);
+    if (!canSchedule || (scheduleSelection && !scheduleItem)) setScheduleSelection(null);
+  }, [canSchedule, scheduleItem, scheduleSelection]);
   const header = showMobileDetail ? null : (
     <WorkHubPageHeader
       view={view}
@@ -532,49 +538,21 @@ export default function WorkPage() {
   return (
     <PageCanvas topInset="compact">
       {header}
-      {query.isError && (
-        <InlineFeedback severity="warning" title={t('work:workPage.loadErrorTitle')} sx={{ mt: 2 }}>
-          {t('work:workPage.loadErrorDescription')}
-        </InlineFeedback>
-      )}
-      {snapshot.completeness === 'UNAVAILABLE' && snapshot.items.length > 0 && (
-        <InlineFeedback
-          severity="warning"
-          title={t('work:workPage.freshness.degraded')}
-          sx={{ mt: 2 }}
-        >
-          {t('work:workPage.loadErrorDescription')}
-        </InlineFeedback>
-      )}
-      {snapshot.completeness === 'PARTIAL' && snapshot.items.length > 0 && (
-        <WorkHubPartialNotice snapshot={snapshot} onInspect={() => setSourceDialogOpen(true)} />
-      )}
-      {batch.receipts.length > 0 && !batch.target && (
-        <ActionButton
-          intent="quiet"
-          size="small"
-          onClick={batch.reopen}
-          sx={{ minHeight: { xs: 44, md: 32 } }}
-        >
-          {t('work:workHub.batch.reopenReport')}
-        </ActionButton>
-      )}
-      {feedback && (
-        <InlineFeedback
-          severity={feedback.severity}
-          title={feedback.title}
-          onClose={() => setFeedback(null)}
-          closeLabel={t('common:actions.close')}
-          sx={{ mt: 2 }}
-        >
-          {feedback.detail}
-        </InlineFeedback>
-      )}
+      <WorkHubPageNotices
+        queryError={query.isError}
+        snapshot={snapshot}
+        showBatchReportAction={batch.receipts.length > 0 && !batch.target}
+        onInspectSources={() => setSourceDialogOpen(true)}
+        onReopenBatchReport={batch.reopen}
+        feedback={feedback}
+        onDismissFeedback={() => setFeedback(null)}
+      />
 
       <Box sx={{ mt: 1, display: showMobileDetail || planOpen || assistActive ? 'none' : 'block' }}>
         <WorkHubFilterControls
           filters={filters}
           sourceSystems={sourceSystems}
+          showAssignmentRoleFilter={showAssignmentRoleFilter}
           resultCount={visibleItems.length}
           onChange={setFilters}
           counts={scopeCounts}
@@ -620,7 +598,15 @@ export default function WorkPage() {
           title={t('work:workHub.noResults.title')}
           description={t('work:workHub.noResults.description')}
           actionLabel={t('work:workHub.filters.reset')}
-          onAction={() => setFilters({ q: null, scope: null, source: null, urgency: null })}
+          onAction={() =>
+            setFilters({
+              q: null,
+              scope: null,
+              source: null,
+              urgency: null,
+              assignmentRole: null,
+            })
+          }
           secondaryActionLabel={canCreate ? t('work:workHub.actions.createTask') : undefined}
           onSecondaryAction={canCreate ? () => setTaskDialogOpen(true) : undefined}
           size="page"
@@ -662,6 +648,7 @@ export default function WorkPage() {
               selectedCount={checkedKeys.size}
               eligibleCount={batch.items.length}
               pending={batch.pending}
+              disabled={!workCommandsReady}
               onBatch={batch.open}
               onToggleSelection={() => {
                 setCheckedKeys(new Set());
@@ -678,7 +665,11 @@ export default function WorkPage() {
               selectedKey={selectedItem?.key ?? null}
               checkedKeys={checkedKeys}
               now={now}
-              canCheck={(item) => !['COMPLETED', 'CANCELLED', 'ARCHIVED'].includes(item.lifecycle)}
+              canCheck={(item) =>
+                canUseWorkHubGenericAdjunct(item, 'BATCH') &&
+                isWorkHubItemCommandReady(snapshot, item) &&
+                !['COMPLETED', 'CANCELLED', 'ARCHIVED'].includes(item.lifecycle)
+              }
               onCheck={(item, checked) =>
                 setCheckedKeys((current) => {
                   const next = new Set(current);
@@ -688,11 +679,11 @@ export default function WorkPage() {
                 })
               }
               onOpen={openItem}
-              onSchedule={canSchedule ? setScheduleItem : undefined}
+              onSchedule={canSchedule ? openSchedule : undefined}
               inTodayPlan={(item) => dayPlanHasReference(loadedPlan, planDraft, item.reference)}
               onTogglePlan={canCreate ? (item) => void togglePlanItem(item) : undefined}
-              onAction={(item, kind) => actionMutation.mutate({ item, kind })}
-              busy={actionMutation.isPending || planSaving || planLoading}
+              onAction={action.run}
+              busy={!workCommandsReady || action.pending || planSaving || planLoading}
               density={density}
               selectionMode={searchParams.get('select') === '1'}
             />
@@ -721,9 +712,10 @@ export default function WorkPage() {
                   plan={loadedPlan}
                   intentVersion={`${loadedPlan?.date ?? today}:${loadedPlan?.version ?? 'loading'}`}
                   date={today}
+                  now={now}
                   loading={planLoading}
                   pending={false}
-                  onSchedule={canSchedule ? setScheduleItem : undefined}
+                  onSchedule={canSchedule ? openSchedule : undefined}
                   disabled={!canCreate || snapshot.completeness === 'UNAVAILABLE'}
                   error={planError}
                   onDraftChange={(next) => {
@@ -737,7 +729,7 @@ export default function WorkPage() {
                     });
                   }}
                   onSave={async (draft, context) => {
-                    const result = await controller.savePlan(today, draft, context.idempotencyKey);
+                    const result = await savePlan(today, draft, context.idempotencyKey);
                     if (result.state !== 'SAVED') {
                       setPlanDraft([...result.draft]);
                       setPlanError(
@@ -776,17 +768,29 @@ export default function WorkPage() {
               <WorkHubDetailPanel
                 item={selectedItem}
                 now={now}
+                verifiedAt={
+                  snapshot.sources.find((source) => source.sourceId === selectedItem.sourceId)
+                    ?.receivedAt ?? snapshot.receivedAt
+                }
                 mobile={mobile}
-                busyAction={actionMutation.isPending ? actionMutation.variables?.kind : null}
-                commandsDisabled={snapshot.completeness === 'UNAVAILABLE'}
+                busyAction={action.pendingKind}
+                commandsDisabled={!isWorkHubItemCommandReady(snapshot, selectedItem)}
                 inTodayPlan={dayPlanHasReference(loadedPlan, planDraft, selectedItem.reference)}
-                canManagePlan={canCreate}
-                canSchedule={canSchedule}
+                canManagePlan={
+                  canCreate &&
+                  canUseWorkHubGenericAdjunct(selectedItem, 'DAY_PLAN') &&
+                  isWorkHubItemCommandReady(snapshot, selectedItem)
+                }
+                canSchedule={
+                  canSchedule &&
+                  canUseWorkHubGenericAdjunct(selectedItem, 'CALENDAR') &&
+                  isWorkHubItemCommandReady(snapshot, selectedItem)
+                }
                 canAskAi={canUseWorkAssist(selectedItem, runtime.canUseAssist)}
                 onBack={backToQueue}
-                onAction={(kind) => actionMutation.mutate({ item: selectedItem, kind })}
+                onAction={(kind) => action.run(selectedItem, kind)}
                 onTogglePlan={() => togglePlanItem(selectedItem)}
-                onSchedule={() => setScheduleItem(selectedItem)}
+                onSchedule={() => openSchedule(selectedItem)}
                 onAskAi={() => {
                   setAssistItem(selectedItem);
                   if (mobile)
@@ -796,32 +800,30 @@ export default function WorkPage() {
                         ?.scrollIntoView({ block: 'start' })
                     );
                 }}
-                onOpenActivity={openActivity}
+                onOpenActivity={
+                  canUseWorkHubGenericAdjunct(selectedItem, 'ACTIVITY') ? openActivity : undefined
+                }
                 specializedContent={
                   <Stack gap={3}>
                     {selectedItem.reference.sourceSystem === 'IDENTITY_GOVERNANCE' ? (
-                      <AccessReviewWorkItem workItemRef={selectedItem.reference.sourceReference} />
+                      <AccessReviewWorkItem
+                        workItemRef={selectedItem.reference.sourceReference}
+                        commandsEnabled={isWorkHubItemCommandReady(snapshot, selectedItem)}
+                        commandScope={workHubCommandScope(selectedItem)}
+                        preflight={() =>
+                          refreshWorkSnapshot().then((fresh) =>
+                            canExecuteWorkHubAction(fresh, selectedItem, 'ACCESS_REVIEW_DECIDE')
+                          )
+                        }
+                      />
                     ) : selectedItem.reference.sourceSystem === 'PERSONAL_TASK' ? (
                       <WorkHubPersonalDetail
                         item={selectedItem}
-                        canEdit={canCreate}
-                        statusActionPending={actionMutation.isPending}
-                        onStatusAction={(status) => {
-                          const kind =
-                            status === 'IN_PROGRESS'
-                              ? 'PERSONAL_START'
-                              : status === 'WAITING'
-                                ? 'PERSONAL_WAIT'
-                                : status === 'COMPLETED'
-                                  ? 'PERSONAL_COMPLETE'
-                                  : ['COMPLETED', 'ARCHIVED'].includes(selectedItem.lifecycle)
-                                    ? 'PERSONAL_REOPEN'
-                                    : null;
-                          if (!kind) return false;
-                          actionMutation.mutate({ item: selectedItem, kind });
-                          return true;
-                        }}
+                        ownerFingerprint={owner}
+                        canEdit={canCreate && isWorkHubItemCommandReady(snapshot, selectedItem)}
+                        mutationCoordinator={taskSaveCoordinator}
                         snapshot={snapshot}
+                        preflight={refreshWorkSnapshot}
                         onDeleted={() => {
                           backToQueue();
                           void controller
@@ -835,33 +837,43 @@ export default function WorkPage() {
                           setTaskDialogOpen(true);
                         }}
                       />
-                    ) : (
-                      <WorkHubSourceOwnedDetail item={selectedItem} />
-                    )}
-                    {runtime.canUseCalendar && (
-                      <WorkHubScheduleLinks
+                    ) : selectedItem.reference.sourceSystem === 'WORK_ASSIGNMENT' ? (
+                      <WorkHubAssignmentDetail
+                        key={selectedItem.key}
                         item={selectedItem}
-                        from={scheduleRange.from}
-                        to={scheduleRange.to}
-                        canUnlink={canCreate && snapshot.completeness !== 'UNAVAILABLE'}
-                        loadSchedules={controller.loadSchedules}
-                        unlinkSchedule={controller.unlinkSchedule}
-                        onOpenCalendar={openCalendar}
+                        commandsEnabled={
+                          runtime.canUpdatePersonal &&
+                          isWorkHubItemCommandReady(snapshot, selectedItem)
+                        }
+                        onAccessDenied={() => {
+                          backToQueue();
+                          void query.refetch();
+                        }}
+                        onChanged={() => void query.refetch()}
+                        onOpenSource={(route) => openSource(selectedItem, route, 'SOURCE')}
                       />
+                    ) : (
+                      <WorkHubSourceOwnedDetail item={selectedItem} onSourceInvalid={backToQueue} />
                     )}
+                    {runtime.canUseCalendar &&
+                      canUseWorkHubGenericAdjunct(selectedItem, 'CALENDAR') && (
+                        <WorkHubScheduleLinks
+                          item={selectedItem}
+                          ownerFingerprint={owner}
+                          from={scheduleRange.from}
+                          to={scheduleRange.to}
+                          canUnlink={canCreate && canUnlinkWorkSchedule(snapshot, selectedItem)}
+                          preflight={refreshWorkSnapshot}
+                          loadSchedules={controller.loadSchedules}
+                          unlinkSchedule={controller.unlinkSchedule}
+                          onOpenCalendar={openCalendar}
+                        />
+                      )}
                   </Stack>
                 }
               />
             ) : (
-              <Stack alignItems="center" justifyContent="center" sx={{ minHeight: 480, p: 3 }}>
-                <CheckSquare2 size={30} aria-hidden="true" />
-                <Typography component="h2" variant="subtitle1" sx={{ mt: 1.5 }}>
-                  {t('work:workHub.detail.selectTitle')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  {t('work:workHub.detail.selectDescription')}
-                </Typography>
-              </Stack>
+              <WorkHubNoSelection />
             )}
           </Box>
           {assistActive && selectedItem && !planOpen && (
@@ -908,52 +920,25 @@ export default function WorkPage() {
         </Paper>
       )}
 
-      <WorkHubSourceStatusDialog
-        open={sourceDialogOpen}
-        sources={snapshot.sources}
-        onClose={() => {
+      <WorkHubRecoveryDialogs
+        sourceOpen={sourceDialogOpen}
+        snapshot={snapshot}
+        onCloseSources={() => {
           setSourceDialogOpen(false);
           setSearchParams(mergeFilterSearchParams(searchParams, { panel: null }), {
             replace: true,
           });
         }}
-        onRetry={() => void query.refetch()}
-        retrying={query.isFetching}
-        batchResultCount={batch.receipts.length}
-        onOpenBatchResults={() => {
-          setSourceDialogOpen(false);
-          setSearchParams(mergeFilterSearchParams(searchParams, { panel: null }), {
-            replace: true,
-          });
-          batch.reopen();
-        }}
+        refresh={refreshWorkSnapshot}
+        refreshSource={runtime.refreshSource}
+        retrying={query.isFetching || runtime.sourceRefreshing !== null}
+        batch={batch}
+        onOpenItem={openItem}
       />
-      <WorkTaskDialog
+      <WorkHubTaskEditorDialog
         open={taskDialogOpen}
-        mode={editingTask ? 'edit' : 'create'}
-        initialValue={
-          editingTask
-            ? {
-                title: editingTask.title,
-                checklist: editingTask.checklist ?? [],
-                sources: editingTask.sources ?? (editingTask.source ? [editingTask.source] : []),
-                description: editingTask.description,
-                priority: editingTask.priority,
-                dueAt: editingTask.dueAt,
-                sourceReference:
-                  editingTask.source?.availability !== 'UNAVAILABLE'
-                    ? editingTask.source?.reference
-                    : null,
-                version: editingTask.version,
-              }
-            : undefined
-        }
-        sourceLabel={
-          editingTask?.source?.availability === 'AVAILABLE' ? editingTask.source.title : null
-        }
-        sourceOptions={snapshot.items
-          .filter((item) => item.reference.sourceSystem !== 'PERSONAL_TASK')
-          .map((item) => ({ reference: item.reference, label: item.title }))}
+        task={editingTask}
+        items={snapshot.items}
         disabled={!canCreate}
         onClose={() => {
           setTaskDialogOpen(false);
@@ -964,35 +949,17 @@ export default function WorkPage() {
         }}
         onSubmit={saveTask}
       />
-      <WorkHubScheduleDialog
-        open={Boolean(scheduleItem)}
+      <WorkHubScheduleExecutionDialog
         item={scheduleItem}
-        onClose={() => setScheduleItem(null)}
+        snapshot={snapshot}
+        ownerFingerprint={owner}
+        canSchedule={canSchedule}
+        coordinator={scheduleCoordinator}
+        controller={controller}
+        refresh={() => query.refetch()}
+        onClose={() => setScheduleSelection(null)}
         onOpenCalendar={openCalendar}
-        prepare={(calendar, input) => {
-          if (!scheduleItem || !snapshot) throw new Error('selection unavailable');
-          controller.adopt(snapshot);
-          controller.select(scheduleItem.reference);
-          return controller.prepareSchedule(calendar, input);
-        }}
-        execute={async (command, confirmedEvent) => {
-          const result = await controller.executeSchedule(command, confirmedEvent);
-          if (result.state === 'SCHEDULED' || result.state === 'LINK_REMOVED') {
-            await queryClient.invalidateQueries({ queryKey: workHubScheduleLinksQueryKey });
-          }
-          return result;
-        }}
-      />
-      <WorkHubBatchDialog
-        target={batch.target}
-        selectedCount={batch.reviewItems.length}
-        items={batch.reviewItems}
-        outcome={batch.outcome}
-        busy={batch.pending}
-        onClose={batch.close}
-        onConfirm={batch.confirm}
-        receipts={batch.receipts}
-        onRetryUnconfirmed={batch.retryUnconfirmed}
+        onInvalidateLinks={(queryKey) => queryClient.invalidateQueries({ queryKey })}
       />
     </PageCanvas>
   );

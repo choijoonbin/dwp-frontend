@@ -11,6 +11,7 @@ import {
 import { MEETING_VISUAL_ID, MEETING_VISUAL_SUMMARY } from './support/video-meeting-visual-fixtures';
 import { mockPreparationDesignMetadata } from './support/meeting-preparation-design-fixtures';
 import { scheduleResponse } from './support/meeting-schedule-fixtures';
+import { withMeetingDocumentCapture } from './support/meeting-document-capture';
 
 test.beforeEach(async ({ page }, testInfo) => {
   await page.setViewportSize({
@@ -380,18 +381,20 @@ for (const mode of ['light', 'dark', 'forced-colors', 'text-200'] as const) {
       await page.evaluate(() => window.scrollTo(0, 0));
       const invitation = main.getByText(PERSONAL_ROOM_ALIAS, { exact: false });
       await expect(invitation).toHaveCount(1);
-      await expect(page).toHaveScreenshot(
-        `meeting-u11-personal-room-${mobile ? 'mobile' : 'desktop'}.png`,
-        {
-          animations: 'disabled',
-          caret: 'hide',
-          fullPage: true,
-          maxDiffPixelRatio: 0.002,
-          // The authorized invitation is checked in functional journeys above. Its deployment
-          // origin/port is environment-specific and must not make this visual regression flaky.
-          mask: [invitation],
-          maskColor: '#EDF2FA',
-        }
+      await withMeetingDocumentCapture(page, () =>
+        expect(page).toHaveScreenshot(
+          `meeting-u11-personal-room-${mobile ? 'mobile' : 'desktop'}.png`,
+          {
+            animations: 'disabled',
+            caret: 'hide',
+            fullPage: true,
+            maxDiffPixelRatio: 0.002,
+            // The authorized invitation is checked in functional journeys above. Its deployment
+            // origin/port is environment-specific and must not make this visual regression flaky.
+            mask: [invitation],
+            maskColor: '#EDF2FA',
+          }
+        )
       );
     } else {
       await page.screenshot({

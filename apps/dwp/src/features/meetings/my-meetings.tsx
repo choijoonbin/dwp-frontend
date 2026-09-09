@@ -42,6 +42,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { MeetingPageHeading } from './meeting-components';
+import { meetingListContextPath } from './meeting-context-routing';
 import { meetingInsetSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 import {
   filterMeetingPage,
@@ -79,8 +80,8 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
   const { timeZone } = useDateTimePolicy();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
+  const page = Math.floor(Math.max(0, Math.min(10000, Number(params.get('page')) || 0)));
+  const search = params.get('q') ?? '';
   const [compact, setCompact] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -140,8 +141,17 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
     : null;
   const canonicalPage = pagination?.page;
   useEffect(() => {
-    if (canonicalPage !== undefined && canonicalPage !== page) setPage(canonicalPage);
-  }, [canonicalPage, page]);
+    if (canonicalPage === undefined || canonicalPage === page) return;
+    setParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        if (canonicalPage) next.set('page', String(canonicalPage));
+        else next.delete('page');
+        return next;
+      },
+      { replace: true }
+    );
+  }, [canonicalPage, page, setParams]);
   const timeCounts = {
     UPCOMING: items.filter((meeting) => meetingTimeBucket(meeting) === 'UPCOMING').length,
     LIVE: items.filter((meeting) => meetingTimeBucket(meeting) === 'LIVE').length,
@@ -198,7 +208,7 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
             <ActionButton
               intent="primary"
               startIcon={<Plus size={17} aria-hidden="true" />}
-              onClick={() => navigate('/meetings/mine?view=schedule')}
+              onClick={() => navigate(meetingListContextPath('schedule', params.toString()))}
             >
               {t('home.schedule.action')}
             </ActionButton>
@@ -222,7 +232,9 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
                 <ActionButton
                   intent="secondary"
                   startIcon={<DoorOpen size={17} aria-hidden="true" />}
-                  onClick={() => navigate('/meetings/mine?view=personal-room')}
+                  onClick={() =>
+                    navigate(meetingListContextPath('personal-room', params.toString()))
+                  }
                   sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
                 >
                   {t('personalRoom.title')}
@@ -230,7 +242,7 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
                 <ActionButton
                   intent="primary"
                   startIcon={<Plus size={17} aria-hidden="true" />}
-                  onClick={() => navigate('/meetings/mine?view=schedule')}
+                  onClick={() => navigate(meetingListContextPath('schedule', params.toString()))}
                 >
                   {t('home.schedule.action')}
                 </ActionButton>
@@ -376,7 +388,7 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
               size="small"
               label={t('mine.filters.search')}
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => updateFilter('q', event.target.value.slice(0, 160))}
               slotProps={{
                 input: {
                   startAdornment: (
@@ -637,7 +649,7 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
                 <ActionIconButton
                   label={t('mine.previous')}
                   disabled={!pagination.hasPrevious}
-                  onClick={() => setPage(Math.max(0, pagination.page - 1))}
+                  onClick={() => updateFilter('page', String(Math.max(0, pagination.page - 1)))}
                 >
                   <ChevronLeft size={17} />
                 </ActionIconButton>
@@ -651,7 +663,7 @@ function MyMeetingsContent({ scope, authenticated }: { scope: string; authentica
                 <ActionIconButton
                   label={t('mine.next')}
                   disabled={!pagination.hasNext}
-                  onClick={() => setPage(pagination.page + 1)}
+                  onClick={() => updateFilter('page', String(pagination.page + 1))}
                 >
                   <ChevronRight size={17} />
                 </ActionIconButton>

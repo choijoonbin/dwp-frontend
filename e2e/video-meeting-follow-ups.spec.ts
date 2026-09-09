@@ -6,6 +6,12 @@ import { withMeetingDocumentCapture } from './support/meeting-document-capture';
 
 const id = '99000000-0000-4000-8000-000000000901';
 const reportId = '99000000-0000-4000-8000-000000000902';
+const candidateSource = {
+  sourceSystem: 'MEETING_FOLLOWUP' as const,
+  meetingId: id,
+  reportId,
+  candidateId: '99000000-0000-4000-8000-000000000903',
+};
 const path = '/meetings/follow-ups';
 const base = '/api/platform/v1/workspace/work-hub/assignments';
 
@@ -74,12 +80,7 @@ const task: WorkAssignmentTask = {
   version: 3,
   source: {
     availability: 'AVAILABLE',
-    reference: {
-      sourceSystem: 'MEETING_FOLLOWUP',
-      meetingId: id,
-      reportId,
-      candidateId: '99000000-0000-4000-8000-000000000903',
-    },
+    reference: candidateSource,
     sourceVersion: 7,
     sourceRoute: 'https://untrusted.example/ignored',
   },
@@ -449,6 +450,14 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     expect(state.commands).toHaveLength(1);
     expect(state.receiptCalls).toEqual([state.commands[0].key]);
   });
+  test('opens the inspected assignment through the canonical Work-owned identity', async ({
+    page,
+  }) => {
+    await setup(page);
+    await detail(page);
+    await page.getByRole('button', { name: 'Open in Work app', exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`/work/queue\\?work=WORK_ASSIGNMENT%3A${id}%3A$`, 'u'));
+  });
   test('requires current-version review after conflict and a selected reason for destructive commands', async ({
     page,
   }) => {
@@ -493,8 +502,9 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     await expect(page.getByText(task.title, { exact: true })).toHaveCount(0);
     await expect(page.getByText('Command application confirmed')).toHaveCount(0);
   });
-  test('separates scopes and keeps candidate promotion closed without current authority', async ({
+  test('separates scopes and creates a source-bound Work assignment through current authority', async ({
     page,
+    isMobile,
   }) => {
     const state = await setup(page, { candidates: true });
     await detail(page);
@@ -504,8 +514,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     const reads = state.listCalls.length;
     await page.getByRole('tab', { name: 'AI candidates', exact: true }).click();
     await expect(page.getByText('Confirmed AI follow-up candidates')).toBeVisible();
-    await expect(page.getByText('Work creation is not available yet')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Create work from candidate' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Create work from candidate' })).toBeEnabled();
     await page.getByRole('button', { name: 'Review candidate', exact: true }).click();
     await expect(
       page.getByRole('heading', { name: 'Candidate review', exact: true })
@@ -514,11 +523,38 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
       page.getByText('Meeting decision and action evidence', { exact: true })
     ).toBeVisible();
     await expect(page.getByText('Expected impact', { exact: true })).toBeVisible();
-    expect(state.createCommands).toHaveLength(0);
+    const createCandidate = isMobile
+      ? page.getByTestId('meeting-follow-up-candidate-create-mobile')
+      : page.getByRole('button', { name: 'Create work from candidate', exact: true });
+    await expect(createCandidate).toBeVisible();
+    expect((await createCandidate.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+    if (isMobile) {
+      await createCandidate.focus();
+      await page.keyboard.press('Enter');
+      const cancel = page.getByRole('button', { name: 'Cancel', exact: true });
+      await expect(cancel).toBeFocused();
+      await cancel.click();
+      const reviewCandidate = page.getByRole('button', { name: 'Review candidate', exact: true });
+      await expect(reviewCandidate).toBeFocused();
+      await reviewCandidate.click();
+      await page.getByTestId('meeting-follow-up-candidate-create-mobile').click();
+    } else {
+      await createCandidate.click();
+    }
+    await expect(
+      page.getByRole('heading', { name: 'Create this Work assignment?', exact: true })
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Create assignment', exact: true }).click();
+    await expect(page.getByText('Work assignment created', { exact: true })).toBeVisible();
+    expect(state.createCommands).toHaveLength(1);
+    expect(state.createCommands[0]).toEqual({
+      body: { source: candidateSource, expectedSourceVersion: 7 },
+      key: expect.stringMatching(/^[0-9a-f-]{36}$/u),
+    });
     expect(state.listCalls).toHaveLength(reads);
     expect(state.commands).toHaveLength(0);
   });
-  test('keeps authority-blocked candidate review legible at approved desktop and mobile widths', async ({
+  test('keeps authority-ready candidate review legible at approved desktop and mobile widths', async ({
     page,
   }, testInfo) => {
     const widths = testInfo.project.name === 'mobile' ? [390, 320] : [1280];
@@ -529,8 +565,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     const state = await setup(page, { candidates: true });
     await page.getByRole('tab', { name: 'AI candidates', exact: true }).click();
     await expect(page.getByText('Confirmed AI follow-up candidates')).toBeVisible();
-    await expect(page.getByText('Work creation is not available yet')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Create work from candidate' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Create work from candidate' })).toBeEnabled();
 
     for (const width of widths) {
       await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
@@ -552,7 +587,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
         window.scrollTo(0, 0);
         if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
       });
-      await expectFollowUpImage(page, `meeting-u09-candidates-authority-blocked-${width}.png`);
+      await expectFollowUpImage(page, `meeting-u09-candidates-authority-ready-${width}.png`);
       await page.getByRole('button', { name: 'Review candidate', exact: true }).click();
       await expect(
         page.getByRole('heading', { name: 'Candidate review', exact: true })
@@ -568,18 +603,24 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
         review.getByRole('button', { name: 'View linked report', exact: true })
       ).toBeEnabled();
       await expect(page.getByText('Expected impact', { exact: true })).toBeVisible();
+      if (testInfo.project.name === 'mobile') {
+        const createCandidate = page.getByTestId('meeting-follow-up-candidate-create-mobile');
+        await expect(createCandidate).toBeVisible();
+        expect((await createCandidate.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+      }
       const reviewIssues = await new AxeBuilder({ page })
-        .include('[data-testid="meeting-follow-up-candidate-review"]')
+        .include(
+          testInfo.project.name === 'mobile'
+            ? '[role="dialog"]'
+            : '[data-testid="meeting-follow-up-candidate-review"]'
+        )
         .analyze();
       expect(
         reviewIssues.violations.filter(
           ({ impact }) => impact === 'critical' || impact === 'serious'
         )
       ).toEqual([]);
-      await expectFollowUpImage(
-        page,
-        `meeting-u09-candidate-review-authority-blocked-${width}.png`
-      );
+      await expectFollowUpImage(page, `meeting-u09-candidate-review-authority-ready-${width}.png`);
       await page.getByRole('button', { name: 'Close review', exact: true }).click();
       await expect(page.getByTestId('meeting-follow-up-candidate-review')).toHaveCount(0);
     }
@@ -602,7 +643,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     expect(state.commands).toHaveLength(0);
     expect(state.createCommands).toHaveLength(0);
   });
-  test('preserves the approved Korean candidate hierarchy without implying creation authority', async ({
+  test('preserves the approved Korean candidate hierarchy with an explicit creation action', async ({
     page,
   }, testInfo) => {
     const width = testInfo.project.name === 'mobile' ? 390 : 1280;
@@ -610,8 +651,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     const state = await setup(page, { candidates: true, locale: 'ko' });
     await page.getByRole('tab', { name: 'AI 업무 후보', exact: true }).click();
     await expect(page.getByText('확정된 AI 후속 작업 후보')).toBeVisible();
-    await expect(page.getByText('아직 업무를 생성할 수 없습니다')).toBeVisible();
-    await expect(page.getByRole('button', { name: '후보를 업무로 만들기' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: '후보를 업무로 만들기' })).toBeEnabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(
       false
     );
@@ -621,7 +661,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     expect(
       issues.violations.filter(({ impact }) => impact === 'critical' || impact === 'serious')
     ).toEqual([]);
-    await expectFollowUpImage(page, `meeting-u09-candidates-authority-blocked-ko-${width}.png`);
+    await expectFollowUpImage(page, `meeting-u09-candidates-authority-ready-ko-${width}.png`);
     expect(state.createCommands).toHaveLength(0);
   });
   test('keeps 320px dark mode readable with keyboard focus, no overflow, and no serious accessibility violations', async ({
@@ -631,9 +671,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     await setup(page, { dark: true, readonly: true });
     await detail(page);
     await expect(page.getByText('No work action is currently available.')).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Open in Work app', exact: true })
-    ).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Open in Work app', exact: true })).toBeEnabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(
       false
     );

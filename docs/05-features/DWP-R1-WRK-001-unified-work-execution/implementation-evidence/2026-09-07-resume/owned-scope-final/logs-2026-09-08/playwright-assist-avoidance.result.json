@@ -1,0 +1,23 @@
+{
+  "name": "playwright-assist-avoidance",
+  "command": [
+    "corepack",
+    "yarn",
+    "playwright",
+    "test",
+    "e2e/work-stitch-design-sync.spec.ts",
+    "--grep",
+    "desktop-1440|desktop-1280",
+    "--project=chromium",
+    "--project=mobile",
+    "--workers=1",
+    "--max-failures=1",
+    "--retries=0",
+    "--reporter=line,json"
+  ],
+  "startedAt": "2026-09-08T10:32:35.851509+00:00",
+  "completedAt": "2026-09-08T10:33:11.474786+00:00",
+  "durationSeconds": 35.62,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/playwright-assist-avoidance.log"
+}

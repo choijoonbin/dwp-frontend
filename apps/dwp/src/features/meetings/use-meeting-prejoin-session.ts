@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LocalUserChoices } from '@livekit/components-react';
 import type { MeetingPreJoinPreferenceDefaults } from './meeting-preferences-model';
+import type { MeetingBackgroundMode } from './meeting-background-types';
 import { useMeetingDevicePreview } from './use-meeting-device-preview';
 
 /** One local capture owner shared by the stage, diagnostics and admission recap. */
 export function useMeetingPrejoinSession(
   defaults: MeetingPreJoinPreferenceDefaults,
-  onBackgroundBlurChange?: (enabled: boolean) => void
+  onBackgroundModeChange?: (mode: MeetingBackgroundMode) => void
 ) {
   const preview = useMeetingDevicePreview();
   const [username, setUsername] = useState(defaults.username);
   const [audioDeviceId, setAudioDeviceId] = useState(defaults.audioDeviceId);
   const [videoDeviceId, setVideoDeviceId] = useState(defaults.videoDeviceId);
-  const [backgroundBlur, setBackgroundBlur] = useState(defaults.backgroundBlur === true);
+  const [backgroundMode, setBackgroundMode] = useState(defaults.backgroundMode);
   const initial = useRef(defaults);
   const latestPreview = useRef(preview);
   latestPreview.current = preview;
@@ -21,7 +22,7 @@ export function useMeetingPrejoinSession(
     cameraId: videoDeviceId,
     speakerId: defaults.speakerDeviceId,
     noiseSuppression: defaults.noiseSuppression,
-    backgroundBlur,
+    backgroundMode,
   };
   useEffect(() => {
     const current = latestPreview.current;
@@ -31,7 +32,7 @@ export function useMeetingPrejoinSession(
       cameraId: saved.videoDeviceId,
       speakerId: saved.speakerDeviceId,
       noiseSuppression: saved.noiseSuppression,
-      backgroundBlur: saved.backgroundBlur === true,
+      backgroundMode: saved.backgroundMode,
     };
     void current.refresh();
     if (saved.audioEnabled) void current.start('audio', selection);
@@ -56,12 +57,12 @@ export function useMeetingPrejoinSession(
     if (preview.states[kind] !== 'idle') preview.stop(kind);
     else void preview.start(kind, preferences);
   };
-  const selectBackgroundBlur = (enabled: boolean) => {
-    setBackgroundBlur(enabled);
-    onBackgroundBlurChange?.(enabled);
+  const selectBackgroundMode = (mode: MeetingBackgroundMode) => {
+    setBackgroundMode(mode);
+    onBackgroundModeChange?.(mode);
     // Changing an off-camera preference never requests camera permission implicitly.
     if (preview.states.video !== 'idle')
-      void preview.start('video', { ...preferences, backgroundBlur: enabled });
+      void preview.start('video', { ...preferences, backgroundMode: mode });
   };
   const choices: LocalUserChoices = {
     username: username.trim(),
@@ -82,8 +83,8 @@ export function useMeetingPrejoinSession(
     setUsername,
     select,
     toggle,
-    backgroundBlur,
-    selectBackgroundBlur,
+    backgroundMode,
+    selectBackgroundMode,
     stop,
     noiseSuppression: defaults.noiseSuppression,
     requesting: preview.states.audio === 'requesting' || preview.states.video === 'requesting',

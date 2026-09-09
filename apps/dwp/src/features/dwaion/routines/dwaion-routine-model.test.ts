@@ -36,6 +36,8 @@ const routine: DwaionRoutine = {
   },
   consents: completeConsents,
   schedulingAvailable: false,
+  backgroundExecutionAvailable: false,
+  notificationDeliveryAvailable: false,
   dryRunAvailable: true,
   proposalDeliveryAvailable: false,
 };
@@ -72,6 +74,13 @@ describe('DWAI personal routine governance model', () => {
     expect(routineCommandState({ ...routine, consents: completeConsents.slice(0, 2) }, 4)).toEqual({
       allowed: false,
       reason: 'CONSENT_REQUIRED',
+    });
+  });
+
+  it('blocks preview when the runtime capability is unavailable', () => {
+    expect(routineCommandState({ ...routine, dryRunAvailable: false }, 4)).toEqual({
+      allowed: false,
+      reason: 'DRY_RUN_UNAVAILABLE',
     });
   });
 

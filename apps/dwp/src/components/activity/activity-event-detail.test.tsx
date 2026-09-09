@@ -12,14 +12,21 @@ import type { WorkspaceActivityEvent } from '@dwp-frontend/shared-utils';
 import type * as ReactRouterModule from 'react-router-dom';
 
 const navigate = vi.hoisted(() => vi.fn());
+const locale = vi.hoisted(() => ({ current: 'en' as 'en' | 'ko' }));
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal<typeof ReactRouterModule>()),
   useNavigate: () => navigate,
 }));
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key,
+  useTranslation: (namespace: string) => ({
+    t: (key: string, options?: { defaultValue?: string }) => {
+      if (namespace === 'display' && key === 'objectTypes.AGENT_RUN') {
+        return locale.current === 'ko' ? '에이전트 실행' : 'Agent run';
+      }
+      return options?.defaultValue ?? key;
+    },
+    i18n: { language: locale.current, resolvedLanguage: locale.current },
   }),
 }));
 
@@ -100,10 +107,36 @@ async function renderHarness(variant: 'inline' | 'drawer') {
 describe('ActivityEventDetail inspector contract', () => {
   beforeEach(() => {
     navigate.mockClear();
+    locale.current = 'en';
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
+  });
+
+  it.each([
+    { language: 'en' as const, expected: 'Agent run' },
+    { language: 'ko' as const, expected: '에이전트 실행' },
+  ])('localizes the AGENT_RUN object type in $language', async ({ language, expected }) => {
+    locale.current = language;
+    await act(async () => {
+      root.render(
+        <MemoryRouter>
+          <ActivityEventDetail
+            eventId={event.id}
+            query={queryFor(event)}
+            showSourceAction={false}
+            variant="inline"
+            onClose={() => undefined}
+          />
+        </MemoryRouter>
+      );
+    });
+
+    const detail = document.querySelector<HTMLElement>('[aria-label="activityPage.detailTitle"]');
+    expect(detail).not.toBeNull();
+    expect(detail!.textContent).toContain(expected);
+    expect(detail!.textContent).not.toContain('AGENT_RUN');
   });
 
   afterEach(async () => {
@@ -267,6 +300,50 @@ describe('ActivityEventDetail inspector contract', () => {
     expect(refetch).toHaveBeenCalledTimes(1);
     expect(navigate).not.toHaveBeenCalled();
     expect(document.body.textContent).toContain('activityFoundation.sourceUnavailable');
+  });
+
+  it('restores the exact PERSONAL_TASK source action after a browser-history return', async () => {
+    const sourceRoute = '/work/queue?work=PERSONAL_TASK%3Ab1111111-1111-4111-8111-111111111111%3A';
+    const sourceEvent: WorkspaceActivityEvent = {
+      ...event,
+      id: '90000000-0000-4000-8000-000000000001',
+      source: 'PERSONAL_TASK',
+      sourceAccess: 'AVAILABLE',
+      sourceRoute,
+    };
+    history.replaceState(
+      { idx: 3 },
+      '',
+      `/activity/timeline?event=${encodeURIComponent(sourceEvent.id)}`
+    );
+    await act(async () =>
+      root.render(
+        <MemoryRouter>
+          <ActivityEventDetail eventId={sourceEvent.id} query={queryFor(sourceEvent)} />
+        </MemoryRouter>
+      )
+    );
+    const sourceAction = Array.from(document.querySelectorAll('button')).find((button) =>
+      button.textContent?.includes('activityPage.openSource')
+    );
+    expect(sourceAction).toBeDefined();
+    await act(async () => sourceAction!.click());
+    expect(navigate).toHaveBeenCalledWith(sourceRoute);
+
+    await act(async () => root.unmount());
+    root = createRoot(container);
+    await act(async () => {
+      root.render(
+        <MemoryRouter>
+          <ActivityEventDetail eventId={sourceEvent.id} query={queryFor(sourceEvent)} />
+        </MemoryRouter>
+      );
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+    const returnedSourceAction = Array.from(document.querySelectorAll('button')).find((button) =>
+      button.textContent?.includes('activityPage.openSource')
+    );
+    await vi.waitFor(() => expect(document.activeElement).toBe(returnedSourceAction));
   });
 
   it('does not navigate from an old source check after another event is selected', async () => {

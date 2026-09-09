@@ -1,0 +1,783 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T10:43:25.466128+00:00",
+  "status": "PASSED_CONTROLLED_E2E_CAPTURE_SET",
+  "scope": "Work UI captured at recorded 2026-09-08 source snapshot 4cdc185b3d2e0040720a45a21691878a2c48ef6a6f5fa9e1bf1f359fea8f68f2, compared with 18 archived Stitch references",
+  "summary": {
+    "referenceFrames": 18,
+    "implementationCaptures": 18,
+    "desktopCaptures": 11,
+    "mobileCaptures": 7,
+    "browserProject": "chromium",
+    "fixtureBacked": true,
+    "pixelPerfectVerified": false,
+    "liveTenantVerified": false
+  },
+  "sourceRun": {
+    "path": "../logs-2026-09-08",
+    "lastRunPath": "../logs-2026-09-08/playwright-last-run.json",
+    "lastRunSha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "playwrightStatus": "passed",
+    "failedTests": [],
+    "failureArtifactsFound": 0,
+    "reportPath": "../logs-2026-09-08/playwright-v5.json",
+    "reportSha256": "1fb2dff1bfc423192616e20e1764b80dcf1af0670cc96fc0cea96688fd289e06",
+    "stats": {
+      "startTime": "2026-09-08T10:33:54.768Z",
+      "duration": 531048.84,
+      "expected": 230,
+      "skipped": 16,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "specFiles": [
+      "work-access-review-responsive",
+      "work-activity-return-focus",
+      "work-command-center",
+      "work-direct-action-owner-transition",
+      "work-hub-foundation",
+      "work-mobile-accessibility-audit",
+      "work-personal-design-actions",
+      "work-route-access",
+      "work-selected-assist-contract",
+      "work-source-decisions",
+      "work-source-design-evidence",
+      "work-stitch-design-sync",
+      "work-task-edit-conflict"
+    ],
+    "reportBundlePath": "../logs-2026-09-08/playwright-v5.json",
+    "lastRunBundlePath": "../logs-2026-09-08/playwright-last-run.json",
+    "registeredTests": 246,
+    "workers": 1,
+    "reuseExistingServer": false,
+    "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5",
+    "originalEphemeralLastRunPath": "/private/tmp/dwp-work-final-green-20260908-v5/.last-run.json",
+    "originalEphemeralOutputDirectories": [
+      "/tmp/dwp-work-final-green-20260908-v5",
+      "/tmp/dwp-work-final-green-20260908-v5"
+    ]
+  },
+  "designReference": {
+    "manifestPath": "../../../../design-reference/manifest.json",
+    "manifestSha256": "a655ec178d0bc03d773a0a21dfc8d717c174ac2d264048171f205bb3eac81cf2",
+    "projectId": "13391261371843159731",
+    "projectUrl": "https://stitch.withgoogle.com/projects/13391261371843159731",
+    "observedAt": "2026-09-04T18:41:47+09:00",
+    "globalDiscrepancies": [
+      "All desktop frame titles say 1440px while every observed desktop ReactFlow wrapper is 1280px wide.",
+      "No actual dark, forced-high-contrast, 200-percent, or 320px frame exists.",
+      "No strict 1440×900 or 1280×800 frame exists.",
+      "06 through 11 have no dedicated mobile frame.",
+      "The generated navigation, fixture copy, status claims, versions and success badges are reference-only until validated against product contracts."
+    ],
+    "originalRepositoryRelativeManifestPath": "docs/05-features/DWP-R1-WRK-001-unified-work-execution/design-reference/manifest.json"
+  },
+  "evidencePolicy": [
+    "The implementation images are actual React UI captures from a wholly-passed Playwright run using controlled fictional fixtures.",
+    "The gallery supports structural and behavioral review; it is not a zero-difference or pixel-perfect certificate.",
+    "The gallery does not prove live tenant data, production deployment, provider authorization, calendar writes, source decisions, or live AI responses.",
+    "Approval and service details in Work are rich read-only contexts; their mutations remain in the owner applications.",
+    "Selected-work AI evidence covers answer reading, citations, copying, and conversation continuation, without direct Work-form draft application.",
+    "Flow contribution is rendered in shared Home and is not an independent Work dashboard.",
+    "Full-page mobile captures can show fixed navigation across the middle of the long image; viewport interaction assertions are separate. The M1 confirmation uses the viewport capture from the same successful run.",
+    "The Home contribution capture includes explicitly displayed partial data delays; it proves Work contribution rendering and fallback visibility, not all-source Home availability.",
+    "Access Review action groups participate in the shared auxiliary-layer avoidance contract; both browser projects verify launcher/action spacing in the actual viewport.",
+    "Work AI action controls participate in auxiliary-layer avoidance and are checked against launcher geometry in actual viewports."
+  ],
+  "frames": [
+    {
+      "key": "01-D",
+      "title": "DWP 통합업무함 (01. Unified Queue 1440px - WRK-Q01)",
+      "screenId": "WRK-Q01-1440-LIGHT-NORMAL",
+      "variant": "desktop",
+      "summary": "6개 업무 보기, 검색·필터·정렬과 목록–상세 구조",
+      "evidenceScope": "데스크톱 1440px 구조 및 탐색",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/01-unified-queue/desktop/screen.png",
+        "sha256": "730a09e2fecba49e877e5a83e680faf474a7303f9f4831a4604eeba4322ca3a2",
+        "pixels": [1600, 1280],
+        "source": "stitch-zip",
+        "nodeId": "f2666a9b9262439cad5f2eb122cd7dff",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=f2666a9b9262439cad5f2eb122cd7dff",
+        "documentedDiscrepancies": ["Title says 1440px; ReactFlow wrapper is 1280px."]
+      },
+      "implementation": {
+        "path": "screens/01-D.png",
+        "sha256": "d617e6a06a9ac40719043733593f5a7f26165026bfd3774b25e3a22296e46e7b",
+        "pixels": [1440, 1648],
+        "sourcePath": "screens/01-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "01-unified-queue-full.png",
+          "parentPattern": "^work-stitch-design-sync-de-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue-full.png"
+      }
+    },
+    {
+      "key": "01-M",
+      "title": "DWP 통합업무함 (01. Unified Queue 모바일 390px - WRK-Q01)",
+      "screenId": "WRK-Q01-390-LIGHT-NORMAL",
+      "variant": "mobile",
+      "summary": "하단 탐색·더보기와 모바일 통합업무함",
+      "evidenceScope": "모바일 390px 구조 및 탐색",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/01-unified-queue/mobile/screen.png",
+        "sha256": "e0be9dba0b91a67b12c7658c722fd34bd0c302ec7fea53ff72479739843f8f25",
+        "pixels": [482, 1600],
+        "source": "stitch-zip",
+        "nodeId": "063df120026a45ae936b6613f706d64b",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=063df120026a45ae936b6613f706d64b",
+        "documentedDiscrepancies": ["ZIP PNG is resampled and is not a raw 390px viewport capture."]
+      },
+      "implementation": {
+        "path": "screens/01-M.png",
+        "sha256": "555cb6c454cb50af33ed2e45b5efe8a7ea1d03f66cd6c39ca6d97456c92a6e17",
+        "pixels": [390, 1167],
+        "sourcePath": "screens/01-M.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "01-unified-queue-full.png",
+          "parentPattern": "^work-stitch-design-sync-mo-.*-chromium$",
+          "requiredPixelWidth": 390
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue-full.png"
+      }
+    },
+    {
+      "key": "02-D",
+      "title": "DWP 통합업무함 (02. 결재 업무 상세 1440px - WRK-D01)",
+      "screenId": "WRK-D01-1440-LIGHT",
+      "variant": "desktop",
+      "summary": "전자결재 근거를 읽기 전용으로 확인하고 Approvals로 이동",
+      "evidenceScope": "결재 원천 상세 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/02-detail-approval/desktop/screen.png",
+        "sha256": "831769203dc176a0579384cba1e2eedbb46bebc2bf8f6a462adc4a8473d0731b",
+        "pixels": [1396, 1600],
+        "source": "stitch-zip",
+        "nodeId": "e80ba5ed05ff4965bad14dadf5474890",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=e80ba5ed05ff4965bad14dadf5474890",
+        "documentedDiscrepancies": [
+          "Title says 1440px; ReactFlow wrapper is 1280px.",
+          "ZIP PNG is resampled."
+        ]
+      },
+      "implementation": {
+        "path": "screens/02-D.png",
+        "sha256": "0a2e7e431d666c353bf0a068b99f5ba2ab19b200d5fbe295a875f4744d07a542",
+        "pixels": [1440, 1574],
+        "sourcePath": "screens/02-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "02-1440-ko-full.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png"
+      }
+    },
+    {
+      "key": "02-M",
+      "title": "DWP 통합업무함 (02. 결재 업무 상세 모바일 390px - WRK-D01)",
+      "screenId": "WRK-D01-390-LIGHT",
+      "variant": "mobile",
+      "summary": "모바일 전자결재 근거와 소유 앱 handoff",
+      "evidenceScope": "결재 원천 상세 390px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/02-detail-approval/mobile/screen.png",
+        "sha256": "c8b16875b072d9318ab840fbd8a154553e750000ecc157e190acb312ff03dee2",
+        "pixels": [454, 1600],
+        "source": "stitch-zip",
+        "nodeId": "22191fe61bef415dbe21969b6cefd185",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=22191fe61bef415dbe21969b6cefd185",
+        "documentedDiscrepancies": ["ZIP PNG is resampled and is not a raw 390px viewport capture."]
+      },
+      "implementation": {
+        "path": "screens/02-M.png",
+        "sha256": "85b092f1341cb0cbe5ef973cb70d8492ecd618cf6e00f5367f54a64f08f6b2cf",
+        "pixels": [390, 1848],
+        "sourcePath": "screens/02-M.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "02-390-ko-full.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 390
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png"
+      }
+    },
+    {
+      "key": "03-D",
+      "title": "DWP 통합업무함 (03. 접근권한 검토 상세 1440px - WRK-D02) - Restored",
+      "screenId": "WRK-D02-1440-DESKTOP",
+      "variant": "desktop",
+      "summary": "접근권한 근거·결정·사유·확인 흐름",
+      "evidenceScope": "접근권한 검토 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/03-detail-access-review/desktop/screen.png",
+        "sha256": "7745bd8db144a7fcd74321550a6591666a632ad654b95b9aa692604d3af7aa40",
+        "pixels": [1234, 1600],
+        "source": "stitch-zip",
+        "nodeId": "56760cf188524664980aecc5768f0dac",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=56760cf188524664980aecc5768f0dac",
+        "documentedDiscrepancies": [
+          "Title says 1440px; ReactFlow wrapper is 1280px.",
+          "ZIP PNG is resampled."
+        ]
+      },
+      "implementation": {
+        "path": "screens/03-D.png",
+        "sha256": "1df4a5c4a8c3bcbb1022eaf7f6cda963d7347cc5a454478ae2eae43da0d26f93",
+        "pixels": [1440, 1517],
+        "sourcePath": "screens/03-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "03-1440-ko-full.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png"
+      }
+    },
+    {
+      "key": "03-M",
+      "title": "DWP 통합업무함 (03. 접근권한 검토 상세 모바일 390px - WRK-D02)",
+      "screenId": "WRK-D02-390-LIGHT",
+      "variant": "mobile",
+      "summary": "모바일 접근권한 검토 흐름",
+      "evidenceScope": "접근권한 검토 390px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/03-detail-access-review/mobile/screen.png",
+        "sha256": "6a062b57393338f15d15cc961c8afa7f4ea9cfa08042f02de1732bedbedcdd4f",
+        "pixels": [390, 1210],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "508b6f597f7340929ef9975e798d22e1",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=508b6f597f7340929ef9975e798d22e1",
+        "documentedDiscrepancies": ["Rendered document grew 15.5px beyond the observed wrapper."]
+      },
+      "implementation": {
+        "path": "screens/03-M.png",
+        "sha256": "d3d5315ab7d9f9ccbd4b86e9dcbfb736496aebae2fd27e4f9278f221da359b3b",
+        "pixels": [390, 1347],
+        "sourcePath": "screens/03-M.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "03-390-ko-full.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 390
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png"
+      }
+    },
+    {
+      "key": "04-D",
+      "title": "DWP 통합업무함 (04. 서비스 요청 상세 1440px - WRK-D03)",
+      "screenId": "WRK-D03-1440-LIGHT",
+      "variant": "desktop",
+      "summary": "서비스 요청 근거를 읽기 전용으로 확인하고 Services로 이동",
+      "evidenceScope": "서비스 원천 상세 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/04-detail-service/desktop/screen.png",
+        "sha256": "e56135ae11597707c47069b32ace786923a3630f586d58916324e0f508bcf042",
+        "pixels": [1440, 1234],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "cdc190616dcc475e95704abffd161cfb",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=cdc190616dcc475e95704abffd161cfb",
+        "documentedDiscrepancies": [
+          "Title says 1440px while wrapper is 1280px.",
+          "Code overflows a 1280px viewport to 1440px."
+        ]
+      },
+      "implementation": {
+        "path": "screens/04-D.png",
+        "sha256": "278034f70a02f3a81bfc3657c2a609943586974e4198bdbadc5f56d0a232f803",
+        "pixels": [1440, 1579],
+        "sourcePath": "screens/04-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "04-1440-ko-full.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png"
+      }
+    },
+    {
+      "key": "04-M",
+      "title": "DWP 통합업무함 (04. 서비스 요청 상세 모바일 390px - WRK-D03)",
+      "screenId": "WRK-D03-390-LIGHT",
+      "variant": "mobile",
+      "summary": "모바일 서비스 요청 근거와 소유 앱 handoff",
+      "evidenceScope": "서비스 원천 상세 390px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/04-detail-service/mobile/screen.png",
+        "sha256": "690d9b03c07d96695ba1b41b84d7110fdf0b9bda7670e03ae15648f52a89bce1",
+        "pixels": [390, 1015],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "b1f433ceee9b4d1a9fb19a6d28851553",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=b1f433ceee9b4d1a9fb19a6d28851553",
+        "documentedDiscrepancies": ["Rendered document grew beyond the observed wrapper."]
+      },
+      "implementation": {
+        "path": "screens/04-M.png",
+        "sha256": "c1681cba1162b54fcb8cc0571e0cabb0477172ddeb682191e50fb1d134ec005c",
+        "pixels": [390, 1812],
+        "sourcePath": "screens/04-M.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "04-390-ko-full.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 390
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png"
+      }
+    },
+    {
+      "key": "05-D",
+      "title": "DWP 통합업무함 (05. 개인 할 일 상세 1440px - WRK-D04)",
+      "screenId": "WRK-D04-1440-LIGHT",
+      "variant": "desktop",
+      "summary": "개인 할 일 상태·내용·체크리스트·원천·이력",
+      "evidenceScope": "개인 할 일 상세 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/05-detail-native-task/desktop/screen.png",
+        "sha256": "f18b7ce4313235e313aa0e5dea5b75137353e4122bfed055f1d74138dee9ac9d",
+        "pixels": [1480, 1084],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "147c9f3bef474835b2607cb1eeaa955e",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=147c9f3bef474835b2607cb1eeaa955e",
+        "documentedDiscrepancies": [
+          "Title says 1440px while wrapper is 1280px.",
+          "Code overflows a 1280px viewport to 1480px."
+        ]
+      },
+      "implementation": {
+        "path": "screens/05-D.png",
+        "sha256": "119978feaebe5a881ad586ff38ca964a7115f9f0bf65f28a9f3428984e7b862a",
+        "pixels": [1440, 1460],
+        "sourcePath": "screens/05-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "05-personal-detail-1440.png",
+          "parentPattern": "^work-personal-design-actio-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png",
+        "originalRunRelativePath": "work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png"
+      }
+    },
+    {
+      "key": "05-M",
+      "title": "DWP 통합업무함 (05. 개인 할 일 상세 모바일 390px - WRK-D04)",
+      "screenId": "WRK-D04-390-LIGHT",
+      "variant": "mobile",
+      "summary": "모바일 개인 할 일 상세와 체크리스트",
+      "evidenceScope": "개인 할 일 상세 390px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/05-detail-native-task/mobile/screen.png",
+        "sha256": "9020f8218168cdfa97caf699224db7a5c4316706c9f33f899c7bc5bc26472369",
+        "pixels": [390, 844],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "d77b26f438c342e9bceacbcf9f675adf",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=d77b26f438c342e9bceacbcf9f675adf",
+        "documentedDiscrepancies": [
+          "Chrome capture uses the required 390×844 minimum viewport; wrapper content was shorter."
+        ]
+      },
+      "implementation": {
+        "path": "screens/05-M.png",
+        "sha256": "33fa466d6258d5c3616f2383f2107e71bb7d7f0a0f05e92c3dece7ca2c3b127e",
+        "pixels": [390, 1665],
+        "sourcePath": "screens/05-M.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "05-personal-detail-390.png",
+          "parentPattern": "^work-personal-design-actio-.*-chromium$",
+          "requiredPixelWidth": 390
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png",
+        "originalRunRelativePath": "work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png"
+      }
+    },
+    {
+      "key": "06-D",
+      "title": "DWP 통합업무함 (06. 개인 할 일 생성·캡처·편집 1440px - WRK-F01)",
+      "screenId": "WRK-F01-1440-LIGHT",
+      "variant": "desktop",
+      "summary": "개인 할 일 편집 대화상자와 원천 연결",
+      "evidenceScope": "개인 할 일 편집 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/06-task-create-capture-edit/desktop/screen.png",
+        "sha256": "5f53d2c841d86a1f546bf300a355f2a944155c753e01e85110267d029676d99f",
+        "pixels": [1280, 1024],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "db0b89c861f14e3b916c9e084ed46fde",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=db0b89c861f14e3b916c9e084ed46fde",
+        "documentedDiscrepancies": ["Title says 1440px; wrapper and capture are 1280px."]
+      },
+      "implementation": {
+        "path": "screens/06-D.png",
+        "sha256": "f8447ec6405c7c9b6a55406ccbc09eee3ebca776cfa2fe85ad06914b2832895f",
+        "pixels": [1440, 1000],
+        "sourcePath": "screens/06-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "06-personal-edit-1440.png",
+          "parentPattern": "^work-personal-design-actio-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png",
+        "originalRunRelativePath": "work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png"
+      }
+    },
+    {
+      "key": "07-D",
+      "title": "DWP 통합업무함 (07. 오늘 계획 1440px - WRK-P01)",
+      "screenId": "WRK-P01",
+      "variant": "desktop",
+      "summary": "오늘 계획 선택·순서·후보 관리",
+      "evidenceScope": "오늘 계획 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/07-today-plan/desktop/screen.png",
+        "sha256": "04e116eb3b74ca08ab27b2aefb1430e8e5cdbceb5d9f8b26ae35d2c7b42d2157",
+        "pixels": [1280, 1024],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "1b1133dcf79043298a823eae2274e073",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=1b1133dcf79043298a823eae2274e073",
+        "documentedDiscrepancies": ["Title says 1440px; wrapper and capture are 1280px."]
+      },
+      "implementation": {
+        "path": "screens/07-D.png",
+        "sha256": "dfa17ecf2ac4b79a176028f62fc4983db577086056f85225f38002921ab0ad9d",
+        "pixels": [1440, 1008],
+        "sourcePath": "screens/07-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "07-today-plan-full.png",
+          "parentPattern": "^work-stitch-design-sync-de-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png"
+      }
+    },
+    {
+      "key": "08-D",
+      "title": "DWP 통합업무함 (08. 수행 시간 잡기·Calendar 연결 1440px - WRK-C01)",
+      "screenId": "WRK-C01",
+      "variant": "desktop",
+      "summary": "수행 시간 검토와 Calendar event/link 연결",
+      "evidenceScope": "Calendar 연결 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/08-calendar-handoff/desktop/screen.png",
+        "sha256": "69ecdb1ce0fa521461e7a6ba3f9bb6d36f4962ae61f453631d40bce768b53718",
+        "pixels": [1280, 1024],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "d6d32fb8b9c74cb38981680eaefdb1d0",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=d6d32fb8b9c74cb38981680eaefdb1d0",
+        "documentedDiscrepancies": ["Title says 1440px; wrapper and capture are 1280px."]
+      },
+      "implementation": {
+        "path": "screens/08-D.png",
+        "sha256": "7a3ed95827796c504f523f015fb6156b8dd87dc2a10861c58647c70c7af52a66",
+        "pixels": [1440, 1460],
+        "sourcePath": "screens/08-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "08-calendar-handoff-full.png",
+          "parentPattern": "^work-stitch-design-sync-de-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png"
+      }
+    },
+    {
+      "key": "09-D",
+      "title": "DWP 통합업무함 (09. 원천 확인·처리 복구·일괄 결과 1440px - WRK-R01)",
+      "screenId": "WRK-R01",
+      "variant": "desktop",
+      "summary": "원천 상태·범위·재조회와 복구 진입",
+      "evidenceScope": "원천 상태 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/09-source-status-batch-results/desktop/screen.png",
+        "sha256": "5acf27f8e527542c3dac78faf485110cd48f99ede3c34f2a9fb94f61f60296c1",
+        "pixels": [1280, 1024],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "166e08cc9fb24866a88b1684346b53ba",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=166e08cc9fb24866a88b1684346b53ba",
+        "documentedDiscrepancies": ["Title says 1440px; wrapper and capture are 1280px."]
+      },
+      "implementation": {
+        "path": "screens/09-D.png",
+        "sha256": "703ef7388c6b3c9deb5c50c24ac3e3ca05cee7fd3c8670c7ef7e792655073881",
+        "pixels": [1440, 1648],
+        "sourcePath": "screens/09-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "09-source-status-full.png",
+          "parentPattern": "^work-stitch-design-sync-de-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status-full.png"
+      }
+    },
+    {
+      "key": "10-D",
+      "title": "DWP 통합업무함 (10. Flow 홈의 업무 요약 1440px - WRK-H01)",
+      "screenId": "WRK-H01-1440-LIGHT",
+      "variant": "desktop",
+      "summary": "공유 Home의 개인 업무·오늘 계획 contribution",
+      "evidenceScope": "Flow/Home contribution 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/10-flow-work-contribution/desktop/screen.png",
+        "sha256": "69ef3d254c2ce690a58e3ad5477a54dd47300f8ae36e8a02cb55426bb086d8e2",
+        "pixels": [1280, 1030],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "dd34ee457b1e44cbb339c1a005886ef3",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=dd34ee457b1e44cbb339c1a005886ef3",
+        "documentedDiscrepancies": ["Title says 1440px; wrapper and capture are 1280px."]
+      },
+      "implementation": {
+        "path": "screens/10-D.png",
+        "sha256": "790265822cfdf4dd857c45ce0fae9c015d1f9d706adaa8908c98ab1bbcef0a72",
+        "pixels": [1440, 1415],
+        "sourcePath": "screens/10-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "10-flow-work-contribution-full.png",
+          "parentPattern": "^work-stitch-design-sync-10-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png"
+      }
+    },
+    {
+      "key": "11-D",
+      "title": "DWP 통합업무함 (11. 선택 업무의 DWAI·ON 지원 1440px - WRK-A01)",
+      "screenId": "WRK-A01",
+      "variant": "desktop",
+      "summary": "선택 업무 AI 답변·출처·복사·대화 이어가기",
+      "evidenceScope": "선택 업무 AI 1440px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/11-selected-work-ai-assist/desktop/screen.png",
+        "sha256": "e33652354803909ed5d8e8a1e627e6674f5f0b803c2fcd646c49fef68edbd6a2",
+        "pixels": [1280, 1024],
+        "source": "chrome-render-from-stitch-code",
+        "nodeId": "941feb59256e4dc79f0586cd40f80618",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=941feb59256e4dc79f0586cd40f80618",
+        "documentedDiscrepancies": [
+          "Title says 1440px; wrapper and capture are 1280px.",
+          "The screen does not expose an explicit WRK-A01 marker in its rendered copy."
+        ]
+      },
+      "implementation": {
+        "path": "screens/11-D.png",
+        "sha256": "66a5e39249d15281324dae045b938b6bee6822121263a769550a863a14278b27",
+        "pixels": [1440, 1505],
+        "sourcePath": "screens/11-D.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "11-selected-work-ai-assist-full.png",
+          "parentPattern": "^work-stitch-design-sync-de-.*-chromium$",
+          "requiredPixelWidth": 1440
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+        "originalRunRelativePath": "work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png"
+      }
+    },
+    {
+      "key": "12-M1",
+      "title": "DWP 통합업무함 (12. 모바일 원천 검토 여정 M1 390px - WRK-M01)",
+      "screenId": "WRK-M01-M1",
+      "variant": "M1-390",
+      "summary": "390px 접근권한 결정 사유와 제출 미리보기",
+      "evidenceScope": "M1 모바일 결정 여정 390px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/12-mobile-accessibility-journeys/m1-390/screen.png",
+        "sha256": "6fb09375a359a3837d43fa5e68d0bab37999e7694ff56820bfc3e6cf62b8b2b5",
+        "pixels": [390, 1565],
+        "source": "stitch-zip",
+        "nodeId": "fcf4bcb954aa425e81cd611b24f410fb",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=fcf4bcb954aa425e81cd611b24f410fb",
+        "documentedDiscrepancies": [
+          "Longer than the required 390×844 mobile viewport and presented as one long composite."
+        ]
+      },
+      "implementation": {
+        "path": "screens/12-M1.png",
+        "sha256": "15c99da8d1463bf2957c4d4d818e23662984e9c7d0b1306b59294a7682a6171a",
+        "pixels": [390, 844],
+        "sourcePath": "screens/12-M1.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "M1-390-ko-decision-preview.png",
+          "parentPattern": "^work-source-design-evidenc-.*-chromium$",
+          "requiredPixelWidth": 390
+        },
+        "captureMode": "viewport",
+        "selectionReason": "A viewport capture preserves the fixed confirmation dialog and backdrop; the full-page capture combines it with offscreen content.",
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png",
+        "originalRunRelativePath": "work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png"
+      }
+    },
+    {
+      "key": "12-M2",
+      "title": "DWP 통합업무함 (12. 모바일 개인 할 일·계획 M2 320px - WRK-M01)",
+      "screenId": "WRK-M01-M2",
+      "variant": "M2-title-320-actual-390",
+      "summary": "320px 입력 높이 축소에서 개인 할 일 기록과 제출 접근",
+      "evidenceScope": "M2 모바일 입력 여정 320px",
+      "comparison": {
+        "scope": "STRUCTURAL_AND_BEHAVIORAL_REVIEW",
+        "pixelPerfectVerified": false,
+        "liveTenantVerified": false
+      },
+      "designReference": {
+        "path": "../../../../design-reference/12-mobile-accessibility-journeys/m2-title-320-actual-390/screen.png",
+        "sha256": "b9d289c1b89d20d19fb7b33b090554a1bddc0f0b2ecef0c8f537af8516178b8d",
+        "pixels": [390, 884],
+        "source": "stitch-zip",
+        "nodeId": "6953f797f9ef4baeb2967a1aef0a777d",
+        "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=6953f797f9ef4baeb2967a1aef0a777d",
+        "documentedDiscrepancies": [
+          "Title and rendered copy say 320px; wrapper, HTML and PNG are 390px.",
+          "No actual 320×568 or open virtual-keyboard capture exists."
+        ]
+      },
+      "implementation": {
+        "path": "screens/12-M2.png",
+        "sha256": "9de407d189b1ad5422ef366f4a85f07c04054e07991fda35550880fb6c749fec",
+        "pixels": [320, 440],
+        "sourcePath": "screens/12-M2.png",
+        "browserProject": "chromium",
+        "fixtureBacked": true,
+        "selector": {
+          "basename": "personal-capture-320-keyboard-reflow.png",
+          "parentPattern": "^work-personal-design-actio-.*-chromium$",
+          "requiredPixelWidth": 320
+        },
+        "originalEphemeralPath": "/private/tmp/dwp-work-final-green-20260908-v5/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png",
+        "originalRunRelativePath": "work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png"
+      }
+    }
+  ],
+  "visualReview": "../logs-2026-09-08/visual-review.json",
+  "evidencePathPolicy": "Canonical artifact paths are relative to this manifest. originalEphemeralPath, originalEphemeralLastRunPath, originalEphemeralOutputDirectories and originalRunRelativePath record historical capture provenance only; temporary files are not required to review this archive. Raw report configuration paths are preserved byte-for-byte.",
+  "snapshotValidationStatus": "PASS_AT_RECORDED_WORKTREE_SNAPSHOT",
+  "sourceSnapshotSha256": "4cdc185b3d2e0040720a45a21691878a2c48ef6a6f5fa9e1bf1f359fea8f68f2"
+}

@@ -91,6 +91,25 @@ function LegacyNotificationDetailRedirect() {
   );
 }
 
+function LegacyNotificationInboxRedirect() {
+  const location = useLocation();
+  return <Navigate to={preserveProductRouteLocation('/notifications/center', location)} replace />;
+}
+
+function LegacyNotificationInboxDetailRedirect() {
+  const { notificationId } = useParams();
+  const location = useLocation();
+  return (
+    <Navigate
+      to={preserveProductRouteLocation(
+        `/notifications/center/${encodeURIComponent(notificationId ?? '')}`,
+        location
+      )}
+      replace
+    />
+  );
+}
+
 function NotificationRouteError() {
   const { t } = useTranslation('notifications');
   const error = useRouteError();
@@ -155,6 +174,8 @@ export const notificationRoutes: RouteObject[] = [
           route.surfaceId === 'notifications.work' ? <NotificationRouteError /> : undefined,
         legacyUnknown: <Navigate to="/notifications/home" replace />,
       }),
+      { path: 'inbox', element: <LegacyNotificationInboxRedirect /> },
+      { path: 'inbox/:notificationId', element: <LegacyNotificationInboxDetailRedirect /> },
       { path: ':notificationId', element: <LegacyNotificationDetailRedirect /> },
     ],
   },

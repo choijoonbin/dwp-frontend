@@ -1,0 +1,1500 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DWP Work 18화면 구현 대조 · 2026-09-08</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f3f6fb;
+        --surface: #fff;
+        --text: #172033;
+        --muted: #657086;
+        --line: #dce3ef;
+        --blue: #255ee8;
+        --blue-soft: #eaf0ff;
+        --ok: #087f5b;
+        --shadow: 0 18px 60px rgba(35, 49, 77, 0.1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, Pretendard, 'Noto Sans KR', system-ui, sans-serif;
+        line-height: 1.55;
+      }
+      a {
+        color: inherit;
+      }
+      .masthead {
+        background: linear-gradient(135deg, #10224f, #244fbe 58%, #4c74dc);
+        color: #fff;
+        padding: 56px max(24px, calc((100vw - 1480px) / 2));
+      }
+      .eyebrow {
+        margin: 0 0 10px;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.78;
+      }
+      h1 {
+        max-width: 920px;
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 4.7rem);
+        line-height: 1.04;
+        letter-spacing: -0.045em;
+      }
+      .lead {
+        max-width: 900px;
+        margin: 24px 0 0;
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        opacity: 0.9;
+      }
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+      }
+      .badge {
+        padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.11);
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+      main {
+        width: min(1480px, calc(100% - 32px));
+        margin: 28px auto 72px;
+      }
+      .notice {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: start;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+      .notice h2 {
+        margin: 0 0 10px;
+        font-size: 1.2rem;
+      }
+      .notice ul {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--muted);
+      }
+      .run {
+        max-width: 440px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: var(--blue-soft);
+        color: #173d9f;
+        overflow-wrap: anywhere;
+      }
+      .run strong {
+        display: block;
+        color: var(--ok);
+        margin-bottom: 4px;
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        display: flex;
+        gap: 8px;
+        overflow: auto;
+        margin: 24px 0;
+        padding: 12px;
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        backdrop-filter: blur(16px);
+      }
+      nav a {
+        flex: none;
+        padding: 7px 11px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 750;
+        color: var(--muted);
+      }
+      nav a:hover,
+      nav a:focus-visible {
+        background: var(--blue-soft);
+        color: var(--blue);
+        outline: 2px solid transparent;
+      }
+      .frames {
+        display: grid;
+        gap: 24px;
+      }
+      .frame {
+        scroll-margin-top: 88px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+      .frame__header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: start;
+      }
+      .frame__header > div {
+        display: flex;
+        gap: 12px;
+        align-items: start;
+        min-width: 0;
+      }
+      .frame h2 {
+        margin: 1px 0 0;
+        font-size: clamp(1.05rem, 2vw, 1.35rem);
+        line-height: 1.3;
+      }
+      .key {
+        flex: none;
+        display: inline-flex;
+        min-width: 60px;
+        justify-content: center;
+        padding: 5px 9px;
+        border-radius: 9px;
+        background: var(--blue);
+        color: white;
+        font-size: 0.84rem;
+        font-weight: 800;
+      }
+      .preview {
+        flex: none;
+        color: var(--blue);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .summary {
+        margin: 16px 0 2px;
+        font-size: 1.05rem;
+      }
+      .scope {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      figure {
+        min-width: 0;
+        margin: 0;
+      }
+      figcaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+      figcaption strong {
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+      .image-shell {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        min-height: 240px;
+        max-height: 720px;
+        padding: 10px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background:
+          linear-gradient(45deg, #edf1f7 25%, transparent 25%),
+          linear-gradient(-45deg, #edf1f7 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #edf1f7 75%),
+          linear-gradient(-45deg, transparent 75%, #edf1f7 75%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          0 10px,
+          10px -10px,
+          -10px 0;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        background: white;
+      }
+      details {
+        margin-top: 14px;
+        color: var(--muted);
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 700;
+      }
+      details ul {
+        margin: 8px 0 0;
+      }
+      code {
+        display: block;
+        margin-top: 8px;
+        padding: 10px 12px;
+        overflow-wrap: anywhere;
+        white-space: normal;
+        border-radius: 10px;
+        background: var(--bg);
+        color: var(--muted);
+      }
+      footer {
+        color: var(--muted);
+        text-align: center;
+        padding: 0 20px 44px;
+      }
+      @media (max-width: 900px) {
+        .notice,
+        .pair {
+          grid-template-columns: 1fr;
+        }
+        .frame__header {
+          display: block;
+        }
+        .preview {
+          display: inline-block;
+          margin-top: 12px;
+        }
+        .image-shell {
+          max-height: 560px;
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b1120;
+          --surface: #121a2b;
+          --text: #eef3ff;
+          --muted: #aeb9cf;
+          --line: #2a3854;
+          --blue: #85a9ff;
+          --blue-soft: #1c315f;
+          --ok: #72dfba;
+          --shadow: 0 18px 60px rgba(0, 0, 0, 0.25);
+        }
+        .run {
+          color: #cbd9ff;
+        }
+        .image-shell {
+          background: #0d1424;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="eyebrow">DWP · Work implementation evidence</p>
+      <h1>통합업무함 18화면 구현 대조</h1>
+      <p class="lead">
+        보관된 Stitch 참조와 2026-09-08 기록 스냅샷의 React 구현을 같은 키로 나란히 검토합니다. 이
+        자료는 통제된 fixture 기반의 구조·동작 증거이며 픽셀 동일성이나 운영 테넌트 연동을 인증하지
+        않습니다.
+      </p>
+      <div class="badges">
+        <span class="badge">18 / 18 캡처</span><span class="badge">Chromium</span
+        ><span class="badge">Playwright PASS</span><span class="badge">가상 데이터</span>
+      </div>
+    </header>
+    <main>
+      <section class="notice" aria-labelledby="evidence-policy">
+        <div>
+          <h2 id="evidence-policy">증거 해석 범위</h2>
+          <ul>
+            <li>
+              The implementation images are actual React UI captures from a wholly-passed Playwright
+              run using controlled fictional fixtures.
+            </li>
+            <li>
+              The gallery supports structural and behavioral review; it is not a zero-difference or
+              pixel-perfect certificate.
+            </li>
+            <li>
+              The gallery does not prove live tenant data, production deployment, provider
+              authorization, calendar writes, source decisions, or live AI responses.
+            </li>
+            <li>
+              Approval and service details in Work are rich read-only contexts; their mutations
+              remain in the owner applications.
+            </li>
+            <li>
+              Selected-work AI evidence covers answer reading, citations, copying, and conversation
+              continuation, without direct Work-form draft application.
+            </li>
+            <li>
+              Flow contribution is rendered in shared Home and is not an independent Work dashboard.
+            </li>
+            <li>
+              Full-page mobile captures can show fixed navigation across the middle of the long
+              image; viewport interaction assertions are separate. The M1 confirmation uses the
+              viewport capture from the same successful run.
+            </li>
+            <li>
+              The Home contribution capture includes explicitly displayed partial data delays; it
+              proves Work contribution rendering and fallback visibility, not all-source Home
+              availability.
+            </li>
+            <li>
+              Access Review action groups participate in the shared auxiliary-layer avoidance
+              contract; both browser projects verify launcher/action spacing in the actual viewport.
+            </li>
+            <li>
+              Work AI action controls participate in auxiliary-layer avoidance and are checked
+              against launcher geometry in actual viewports.
+            </li>
+          </ul>
+        </div>
+        <div class="run">
+          <strong>2026-09-08 기록 스냅샷</strong>
+          <a href="../logs-2026-09-08/source-after-final-docs.json">소스 해시 4cdc185b…</a> ·
+          <a href="../logs-2026-09-08/playwright-v5.json">전체 Playwright 보고서</a> ·
+          <a href="../logs-2026-09-08/playwright-last-run.json">최종 실행 상태</a><br /><small
+            >생성 시각 2026-09-08T10:43:25.466128+00:00</small
+          >
+        </div>
+      </section>
+      <nav aria-label="18개 화면 바로가기">
+        <a href="#01-D">01-D</a><a href="#01-M">01-M</a><a href="#02-D">02-D</a
+        ><a href="#02-M">02-M</a><a href="#03-D">03-D</a><a href="#03-M">03-M</a
+        ><a href="#04-D">04-D</a><a href="#04-M">04-M</a><a href="#05-D">05-D</a
+        ><a href="#05-M">05-M</a><a href="#06-D">06-D</a><a href="#07-D">07-D</a
+        ><a href="#08-D">08-D</a><a href="#09-D">09-D</a><a href="#10-D">10-D</a
+        ><a href="#11-D">11-D</a><a href="#12-M1">12-M1</a><a href="#12-M2">12-M2</a>
+      </nav>
+      <section class="frames" aria-label="화면별 비교">
+        <article class="frame" id="01-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">01-D</span>
+              <h2>DWP 통합업무함 (01. Unified Queue 1440px - WRK-Q01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=f2666a9b9262439cad5f2eb122cd7dff"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">6개 업무 보기, 검색·필터·정렬과 목록–상세 구조</p>
+          <p class="scope">검토 범위: 데스크톱 1440px 구조 및 탐색</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>1600×1280px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/01-unified-queue/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/01-unified-queue/desktop/screen.png"
+                  alt="01-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1648px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/01-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/01-D.png"
+                  alt="01-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; ReactFlow wrapper is 1280px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="01-M">
+          <header class="frame__header">
+            <div>
+              <span class="key">01-M</span>
+              <h2>DWP 통합업무함 (01. Unified Queue 모바일 390px - WRK-Q01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=063df120026a45ae936b6613f706d64b"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">하단 탐색·더보기와 모바일 통합업무함</p>
+          <p class="scope">검토 범위: 모바일 390px 구조 및 탐색</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>482×1600px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/01-unified-queue/mobile/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/01-unified-queue/mobile/screen.png"
+                  alt="01-M 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>390×1167px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/01-M.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/01-M.png"
+                  alt="01-M 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>ZIP PNG is resampled and is not a raw 390px viewport capture.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="02-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">02-D</span>
+              <h2>DWP 통합업무함 (02. 결재 업무 상세 1440px - WRK-D01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=e80ba5ed05ff4965bad14dadf5474890"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">전자결재 근거를 읽기 전용으로 확인하고 Approvals로 이동</p>
+          <p class="scope">검토 범위: 결재 원천 상세 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>1396×1600px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/02-detail-approval/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/02-detail-approval/desktop/screen.png"
+                  alt="02-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1574px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/02-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/02-D.png"
+                  alt="02-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; ReactFlow wrapper is 1280px.</li>
+              <li>ZIP PNG is resampled.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="02-M">
+          <header class="frame__header">
+            <div>
+              <span class="key">02-M</span>
+              <h2>DWP 통합업무함 (02. 결재 업무 상세 모바일 390px - WRK-D01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=22191fe61bef415dbe21969b6cefd185"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">모바일 전자결재 근거와 소유 앱 handoff</p>
+          <p class="scope">검토 범위: 결재 원천 상세 390px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>454×1600px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/02-detail-approval/mobile/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/02-detail-approval/mobile/screen.png"
+                  alt="02-M 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>390×1848px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/02-M.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/02-M.png"
+                  alt="02-M 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>ZIP PNG is resampled and is not a raw 390px viewport capture.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="03-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">03-D</span>
+              <h2>DWP 통합업무함 (03. 접근권한 검토 상세 1440px - WRK-D02) - Restored</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=56760cf188524664980aecc5768f0dac"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">접근권한 근거·결정·사유·확인 흐름</p>
+          <p class="scope">검토 범위: 접근권한 검토 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>1234×1600px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/03-detail-access-review/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/03-detail-access-review/desktop/screen.png"
+                  alt="03-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1517px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/03-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/03-D.png"
+                  alt="03-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; ReactFlow wrapper is 1280px.</li>
+              <li>ZIP PNG is resampled.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="03-M">
+          <header class="frame__header">
+            <div>
+              <span class="key">03-M</span>
+              <h2>DWP 통합업무함 (03. 접근권한 검토 상세 모바일 390px - WRK-D02)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=508b6f597f7340929ef9975e798d22e1"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">모바일 접근권한 검토 흐름</p>
+          <p class="scope">검토 범위: 접근권한 검토 390px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>390×1210px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/03-detail-access-review/mobile/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/03-detail-access-review/mobile/screen.png"
+                  alt="03-M 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>390×1347px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/03-M.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/03-M.png"
+                  alt="03-M 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Rendered document grew 15.5px beyond the observed wrapper.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="04-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">04-D</span>
+              <h2>DWP 통합업무함 (04. 서비스 요청 상세 1440px - WRK-D03)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=cdc190616dcc475e95704abffd161cfb"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">서비스 요청 근거를 읽기 전용으로 확인하고 Services로 이동</p>
+          <p class="scope">검토 범위: 서비스 원천 상세 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1440×1234px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/04-detail-service/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/04-detail-service/desktop/screen.png"
+                  alt="04-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1579px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/04-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/04-D.png"
+                  alt="04-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px while wrapper is 1280px.</li>
+              <li>Code overflows a 1280px viewport to 1440px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="04-M">
+          <header class="frame__header">
+            <div>
+              <span class="key">04-M</span>
+              <h2>DWP 통합업무함 (04. 서비스 요청 상세 모바일 390px - WRK-D03)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=b1f433ceee9b4d1a9fb19a6d28851553"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">모바일 서비스 요청 근거와 소유 앱 handoff</p>
+          <p class="scope">검토 범위: 서비스 원천 상세 390px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>390×1015px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/04-detail-service/mobile/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/04-detail-service/mobile/screen.png"
+                  alt="04-M 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>390×1812px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/04-M.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/04-M.png"
+                  alt="04-M 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Rendered document grew beyond the observed wrapper.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="05-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">05-D</span>
+              <h2>DWP 통합업무함 (05. 개인 할 일 상세 1440px - WRK-D04)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=147c9f3bef474835b2607cb1eeaa955e"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">개인 할 일 상태·내용·체크리스트·원천·이력</p>
+          <p class="scope">검토 범위: 개인 할 일 상세 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1480×1084px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/05-detail-native-task/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/05-detail-native-task/desktop/screen.png"
+                  alt="05-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1460px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/05-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/05-D.png"
+                  alt="05-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px while wrapper is 1280px.</li>
+              <li>Code overflows a 1280px viewport to 1480px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="05-M">
+          <header class="frame__header">
+            <div>
+              <span class="key">05-M</span>
+              <h2>DWP 통합업무함 (05. 개인 할 일 상세 모바일 390px - WRK-D04)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=d77b26f438c342e9bceacbcf9f675adf"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">모바일 개인 할 일 상세와 체크리스트</p>
+          <p class="scope">검토 범위: 개인 할 일 상세 390px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>390×844px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/05-detail-native-task/mobile/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/05-detail-native-task/mobile/screen.png"
+                  alt="05-M 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>390×1665px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/05-M.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/05-M.png"
+                  alt="05-M 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>
+                Chrome capture uses the required 390×844 minimum viewport; wrapper content was
+                shorter.
+              </li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="06-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">06-D</span>
+              <h2>DWP 통합업무함 (06. 개인 할 일 생성·캡처·편집 1440px - WRK-F01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=db0b89c861f14e3b916c9e084ed46fde"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">개인 할 일 편집 대화상자와 원천 연결</p>
+          <p class="scope">검토 범위: 개인 할 일 편집 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1280×1024px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/06-task-create-capture-edit/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/06-task-create-capture-edit/desktop/screen.png"
+                  alt="06-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1000px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/06-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/06-D.png"
+                  alt="06-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; wrapper and capture are 1280px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="07-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">07-D</span>
+              <h2>DWP 통합업무함 (07. 오늘 계획 1440px - WRK-P01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=1b1133dcf79043298a823eae2274e073"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">오늘 계획 선택·순서·후보 관리</p>
+          <p class="scope">검토 범위: 오늘 계획 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1280×1024px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/07-today-plan/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/07-today-plan/desktop/screen.png"
+                  alt="07-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1008px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/07-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/07-D.png"
+                  alt="07-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; wrapper and capture are 1280px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="08-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">08-D</span>
+              <h2>DWP 통합업무함 (08. 수행 시간 잡기·Calendar 연결 1440px - WRK-C01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=d6d32fb8b9c74cb38981680eaefdb1d0"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">수행 시간 검토와 Calendar event/link 연결</p>
+          <p class="scope">검토 범위: Calendar 연결 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1280×1024px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/08-calendar-handoff/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/08-calendar-handoff/desktop/screen.png"
+                  alt="08-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1460px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/08-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/08-D.png"
+                  alt="08-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; wrapper and capture are 1280px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="09-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">09-D</span>
+              <h2>DWP 통합업무함 (09. 원천 확인·처리 복구·일괄 결과 1440px - WRK-R01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=166e08cc9fb24866a88b1684346b53ba"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">원천 상태·범위·재조회와 복구 진입</p>
+          <p class="scope">검토 범위: 원천 상태 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1280×1024px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/09-source-status-batch-results/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/09-source-status-batch-results/desktop/screen.png"
+                  alt="09-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1648px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/09-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/09-D.png"
+                  alt="09-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; wrapper and capture are 1280px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="10-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">10-D</span>
+              <h2>DWP 통합업무함 (10. Flow 홈의 업무 요약 1440px - WRK-H01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=dd34ee457b1e44cbb339c1a005886ef3"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">공유 Home의 개인 업무·오늘 계획 contribution</p>
+          <p class="scope">검토 범위: Flow/Home contribution 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1280×1030px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/10-flow-work-contribution/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/10-flow-work-contribution/desktop/screen.png"
+                  alt="10-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1415px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/10-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/10-D.png"
+                  alt="10-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; wrapper and capture are 1280px.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="11-D">
+          <header class="frame__header">
+            <div>
+              <span class="key">11-D</span>
+              <h2>DWP 통합업무함 (11. 선택 업무의 DWAI·ON 지원 1440px - WRK-A01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=941feb59256e4dc79f0586cd40f80618"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">선택 업무 AI 답변·출처·복사·대화 이어가기</p>
+          <p class="scope">검토 범위: 선택 업무 AI 1440px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong
+                ><span>1280×1024px · chrome-render-from-stitch-code</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/11-selected-work-ai-assist/desktop/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/11-selected-work-ai-assist/desktop/screen.png"
+                  alt="11-D 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>1440×1505px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/11-D.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/11-D.png"
+                  alt="11-D 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title says 1440px; wrapper and capture are 1280px.</li>
+              <li>The screen does not expose an explicit WRK-A01 marker in its rendered copy.</li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="12-M1">
+          <header class="frame__header">
+            <div>
+              <span class="key">12-M1</span>
+              <h2>DWP 통합업무함 (12. 모바일 원천 검토 여정 M1 390px - WRK-M01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=fcf4bcb954aa425e81cd611b24f410fb"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">390px 접근권한 결정 사유와 제출 미리보기</p>
+          <p class="scope">검토 범위: M1 모바일 결정 여정 390px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>390×1565px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/12-mobile-accessibility-journeys/m1-390/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/12-mobile-accessibility-journeys/m1-390/screen.png"
+                  alt="12-M1 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>390×844px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/12-M1.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/12-M1.png"
+                  alt="12-M1 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>
+                Longer than the required 390×844 mobile viewport and presented as one long
+                composite.
+              </li>
+            </ul>
+          </details>
+        </article>
+        <article class="frame" id="12-M2">
+          <header class="frame__header">
+            <div>
+              <span class="key">12-M2</span>
+              <h2>DWP 통합업무함 (12. 모바일 개인 할 일·계획 M2 320px - WRK-M01)</h2>
+            </div>
+            <a
+              class="preview"
+              href="https://stitch.withgoogle.com/preview/13391261371843159731?node-id=6953f797f9ef4baeb2967a1aef0a777d"
+              target="_blank"
+              rel="noreferrer"
+              >Stitch 노드 열기 ↗</a
+            >
+          </header>
+          <p class="summary">320px 입력 높이 축소에서 개인 할 일 기록과 제출 접근</p>
+          <p class="scope">검토 범위: M2 모바일 입력 여정 320px</p>
+          <div class="pair">
+            <figure>
+              <figcaption>
+                <strong>디자인 참조</strong><span>390×884px · stitch-zip</span>
+              </figcaption>
+              <a
+                class="image-shell"
+                href="../../../../design-reference/12-mobile-accessibility-journeys/m2-title-320-actual-390/screen.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  loading="lazy"
+                  src="../../../../design-reference/12-mobile-accessibility-journeys/m2-title-320-actual-390/screen.png"
+                  alt="12-M2 디자인 참조 화면"
+                />
+              </a>
+            </figure>
+            <figure>
+              <figcaption>
+                <strong>기록 스냅샷 구현</strong><span>320×440px · Chromium fixture</span>
+              </figcaption>
+              <a class="image-shell" href="screens/12-M2.png" target="_blank" rel="noreferrer">
+                <img
+                  loading="lazy"
+                  src="screens/12-M2.png"
+                  alt="12-M2 2026-09-08 기록 Work 구현 화면"
+                />
+              </a>
+            </figure>
+          </div>
+          <details>
+            <summary>원래 실행 내 캡처 위치 (참고)</summary>
+            <code
+              >work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png</code
+            >
+          </details>
+          <details>
+            <summary>원본 매니페스트의 치수·출처 주의점</summary>
+            <ul>
+              <li>Title and rendered copy say 320px; wrapper, HTML and PNG are 390px.</li>
+              <li>No actual 320×568 or open virtual-keyboard capture exists.</li>
+            </ul>
+          </details>
+        </article>
+      </section>
+    </main>
+    <footer>
+      manifest.json에 원본·구현 SHA-256, 실제 PNG 치수와 Playwright 출처 경로를 기록했습니다.
+    </footer>
+  </body>
+</html>

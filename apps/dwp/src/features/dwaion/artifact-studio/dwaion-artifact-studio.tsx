@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { FilePlus2, PanelLeftOpen, PanelRightOpen, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { FilePlus2, PanelLeftOpen, PanelRightOpen, RefreshCw, Users } from 'lucide-react';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -25,6 +26,7 @@ import {
 } from './dwaion-artifact-export-dialog';
 import { DwaionArtifactEvidenceRail } from './dwaion-artifact-evidence-rail';
 import { DwaionArtifactVersionDialog } from './dwaion-artifact-version-dialog';
+import { artifactExportCapability } from './dwaion-artifact-model';
 
 import type { DwaionArtifactCopy } from './dwaion-artifact-copy';
 import type {
@@ -40,6 +42,8 @@ import type {
 
 export function DwaionArtifactStudio({
   state,
+  selectionAccessDenied = false,
+  selectionMissing = false,
   artifacts,
   document,
   evidence,
@@ -68,6 +72,8 @@ export function DwaionArtifactStudio({
   formatTimestamp,
 }: {
   state: DwaionArtifactViewState;
+  selectionAccessDenied?: boolean;
+  selectionMissing?: boolean;
   artifacts: readonly DwaionArtifactSummary[];
   document: DwaionArtifactDocument | null;
   evidence: readonly DwaionArtifactEvidence[];
@@ -113,43 +119,144 @@ export function DwaionArtifactStudio({
   const [versionsOpen, setVersionsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [, refreshExpiry] = useState(Date.now);
+  const expiresAt = preflight?.expiresAt;
+  useEffect(() => {
+    let timer: number | undefined;
+    const refresh = () => {
+      refreshExpiry(Date.now());
+      const delay = Date.parse(expiresAt ?? '') - Date.now();
+      if (delay > 0) timer = window.setTimeout(refresh, Math.min(delay + 1, 2_147_483_647));
+    };
+    refresh();
+    return () => window.clearTimeout(timer);
+  }, [expiresAt]);
+  const exportAllowed = Boolean(
+    document &&
+    artifactExportCapability({
+      artifact: document,
+      preflight,
+      permitted: canExport,
+    }).allowed
+  );
 
   const rail = (
-    <DwaionArtifactConversationRail
-      artifacts={artifacts}
-      selectedId={document?.artifactId}
-      canCreate={canCreate}
-      onCreate={() => setCreateOpen(true)}
-      onSelect={(artifact) => {
-        onSelect(artifact.artifactId);
-        setArtifactRailOpen(false);
-      }}
+    <Stack gap={2}>
+      <Box
+        sx={{
+          p: 1.5,
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Stack direction="row" gap={0.75} alignItems="center">
+          <Users size={17} aria-hidden="true" />
+          <Typography variant="subtitle2">{copy.collaborationTitle}</Typography>
+        </Stack>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
+          {document?.capabilities.collaborativeEditingAvailable
+            ? copy.collaborationAvailable
+            : copy.collaborationUnavailable}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          p: 1.5,
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+          bgcolor: 'background.paper',
+        }}
+      >
+        <DwaionArtifactConversationRail
+          artifacts={artifacts}
+          selectedId={document?.artifactId}
+          canCreate={canCreate}
+          onCreate={() => setCreateOpen(true)}
+          onSelect={(artifact) => {
+            onSelect(artifact.artifactId);
+            setArtifactRailOpen(false);
+          }}
+          copy={copy}
+          formatTimestamp={formatTimestamp}
+        />
+      </Box>
+    </Stack>
+  );
+  const evidenceRail = (
+    <DwaionArtifactEvidenceRail
+      evidence={evidence}
+      preflight={preflight}
+      capabilities={document?.capabilities ?? null}
       copy={copy}
       formatTimestamp={formatTimestamp}
     />
   );
-  const evidenceRail = <DwaionArtifactEvidenceRail evidence={evidence} copy={copy} />;
 
   return (
     <PageCanvas mode="workspace" topInset="compact">
-      <Stack gap={2.5}>
+      <Stack gap={2}>
         <Stack
           component="header"
           direction={{ xs: 'column', sm: 'row' }}
           alignItems={{ sm: 'flex-start' }}
           justifyContent="space-between"
           gap={2}
+          sx={{
+            p: { xs: 1.75, md: 2 },
+            border: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+          }}
         >
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="overline" color="primary.main">
               {copy.eyebrow}
             </Typography>
-            <Typography component="h1" variant="h4">
+            <Typography component="h1" variant="h5">
               {copy.title}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: 760 }}>
               {copy.description}
             </Typography>
+            {document ? (
+              <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 1 }}>
+                <Chip
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  label={`${copy.versionPrefix}${document.currentVersionNumber || 0}`}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={`${copy.contractLabel} · ${copy.autosave[document.autosaveState]}`}
+                />
+                <Chip
+                  size="small"
+                  color={preflight?.outcome === 'PASS' ? 'success' : 'default'}
+                  variant="outlined"
+                  label={
+                    preflight
+                      ? `${copy.dlpGate} · ${copy.preflightStates[preflight.outcome]}`
+                      : copy.dlpNotRun
+                  }
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={`${copy.sources} · ${evidence.length}`}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={`${copy.versions} · ${versions.length}`}
+                />
+              </Stack>
+            ) : null}
           </Box>
           <Stack direction="row" flexWrap="wrap" gap={0.75}>
             {compact ? (
@@ -234,24 +341,35 @@ export function DwaionArtifactStudio({
               display: 'grid',
               gridTemplateColumns: {
                 xs: 'minmax(0, 1fr)',
-                lg: '260px minmax(0, 1fr) 300px',
+                lg: '250px minmax(0, 1fr) 300px',
               },
               minWidth: 0,
-              borderBlock: 1,
-              borderColor: 'divider',
+              gap: 1.5,
+              alignItems: 'start',
             }}
           >
-            {!compact ? <Box sx={{ p: 2, minWidth: 0 }}>{rail}</Box> : null}
+            {!compact ? <Box sx={{ minWidth: 0, position: 'sticky', top: 16 }}>{rail}</Box> : null}
             <Box
               sx={{
-                p: { xs: 0, sm: 2 },
-                py: { xs: 2, sm: 2 },
+                p: { xs: 1.5, sm: 1.75 },
                 minWidth: 0,
-                borderInline: { xs: 0, lg: 1 },
+                border: 1,
                 borderColor: 'divider',
+                borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+                bgcolor: 'background.paper',
               }}
             >
-              {document ? (
+              {selectionAccessDenied ? (
+                <GuidedEmptyState
+                  kind="permission"
+                  title={selectionMissing ? copy.selectionUnavailableTitle : copy.permissionTitle}
+                  description={
+                    selectionMissing
+                      ? copy.selectionUnavailableDescription
+                      : copy.permissionDescription
+                  }
+                />
+              ) : document ? (
                 <DwaionArtifactEditor
                   artifact={document}
                   preflight={preflight}
@@ -279,7 +397,9 @@ export function DwaionArtifactStudio({
                 />
               )}
             </Box>
-            {!compact ? <Box sx={{ p: 2, minWidth: 0 }}>{evidenceRail}</Box> : null}
+            {!compact ? (
+              <Box sx={{ minWidth: 0, position: 'sticky', top: 16 }}>{evidenceRail}</Box>
+            ) : null}
           </Box>
         )}
       </Stack>
@@ -331,11 +451,19 @@ export function DwaionArtifactStudio({
             formatTimestamp={formatTimestamp}
           />
           <DwaionArtifactExportDialog
-            open={exportOpen}
+            open={exportOpen && exportAllowed}
             busy={exportBusy}
             onClose={() => setExportOpen(false)}
             onRequest={async (format) => {
-              if (!preflight) return;
+              if (
+                !preflight ||
+                !artifactExportCapability({
+                  artifact: document,
+                  preflight,
+                  permitted: canExport,
+                }).allowed
+              )
+                return;
               await onExport(document, preflight, format);
               setExportOpen(false);
             }}

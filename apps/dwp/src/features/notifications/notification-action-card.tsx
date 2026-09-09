@@ -30,7 +30,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import { resolveMessagingReplyTarget } from './notification-inbox-model';
+import {
+  displayNotificationActorLabel,
+  resolveMessagingReplyTarget,
+} from './notification-inbox-model';
 import { useNotificationTargetNavigation } from './use-notification-target-navigation';
 
 import type {
@@ -82,6 +85,11 @@ export function NotificationActionCard({
   onOpenTarget,
   onQuickReply,
   selectable = true,
+  showPrimaryActions = true,
+  density = 'standard',
+  surfaceTone = 'default',
+  replyInitiallyOpen = false,
+  hideUnknownReason = false,
 }: {
   item: NotificationItem;
   now: number;
@@ -102,9 +110,14 @@ export function NotificationActionCard({
     idempotencyKey: string
   ) => Promise<void>;
   selectable?: boolean;
+  showPrimaryActions?: boolean;
+  density?: 'standard' | 'compact';
+  surfaceTone?: 'default' | 'conversation';
+  replyInitiallyOpen?: boolean;
+  hideUnknownReason?: boolean;
 }) {
   const { t } = useTranslation('notifications');
-  const [replying, setReplying] = useState(false);
+  const [replying, setReplying] = useState(replyInitiallyOpen);
   const [replyBody, setReplyBody] = useState('');
   const [replyBusy, setReplyBusy] = useState(false);
   const [replyError, setReplyError] = useState(false);
@@ -116,6 +129,9 @@ export function NotificationActionCard({
   const Icon = SOURCE_ICON[normalizedSource] ?? Bell;
   const primary = item.actions.find((action) => action.primary) ?? item.actions[0];
   const unread = !item.readAt;
+  const compact = density === 'compact';
+  const actorLabel = displayNotificationActorLabel(item.actorLabel);
+  const showReason = !concealContext && (!hideUnknownReason || item.reason.kind !== 'UNKNOWN');
   const timestamp = relativeTimestamp(item.lastActivityAt, now);
   const absoluteTimestamp = formatDate(item.lastActivityAt, {
     dateStyle: 'medium',
@@ -152,23 +168,30 @@ export function NotificationActionCard({
         borderLeft: 3,
         borderColor: active ? 'primary.main' : 'divider',
         borderLeftColor:
-          item.priority === 'URGENT'
-            ? 'error.main'
-            : item.actionable
-              ? 'primary.main'
-              : active
+          surfaceTone === 'conversation'
+            ? (item.source.accent ?? theme.palette.success.main)
+            : item.priority === 'URGENT'
+              ? 'error.main'
+              : item.actionable
                 ? 'primary.main'
-                : 'divider',
+                : active
+                  ? 'primary.main'
+                  : 'divider',
         borderRadius: 'shape.borderRadius',
         bgcolor: 'background.paper',
-        boxShadow: active ? theme.shadows[1] : 'none',
+        boxShadow: active ? 1 : 0,
         transition: theme.transitions.create(['border-color', 'box-shadow', 'opacity'], {
           duration: theme.transitions.duration.shorter,
         }),
         '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
       })}
     >
-      <Stack direction="row" alignItems="flex-start" gap={1.1} sx={{ p: { xs: 1.25, md: 1.5 } }}>
+      <Stack
+        direction="row"
+        alignItems="flex-start"
+        gap={compact ? 0.75 : 1.1}
+        sx={{ p: compact ? { xs: 0.9, md: 1 } : { xs: 1.25, md: 1.5 } }}
+      >
         {selectable && (
           <Checkbox
             size="small"
@@ -181,8 +204,8 @@ export function NotificationActionCard({
         <Box
           aria-hidden="true"
           sx={(theme) => ({
-            width: 36,
-            height: 36,
+            width: compact ? 30 : 36,
+            height: compact ? 30 : 36,
             display: 'grid',
             placeItems: 'center',
             borderRadius: 'shape.borderRadius',
@@ -191,17 +214,22 @@ export function NotificationActionCard({
             bgcolor: alpha(item.source.accent ?? theme.palette.primary.main, 0.1),
           })}
         >
-          <Icon size={18} strokeWidth={1.9} />
+          <Icon size={compact ? 15 : 18} strokeWidth={1.9} />
         </Box>
         <Box minWidth={0} sx={{ flex: 1 }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={0.7}>
+          <Stack
+            direction={compact ? 'row' : { xs: 'column', sm: 'row' }}
+            justifyContent="space-between"
+            alignItems="flex-start"
+            gap={0.7}
+          >
             <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap" minWidth={0}>
               <Typography variant="caption" fontWeight="fontWeightBold">
                 {t(`sources.${normalizedSource}`, { defaultValue: item.source.appName })}
               </Typography>
-              {item.actorLabel && !concealContext && (
+              {actorLabel && !concealContext && (
                 <Typography variant="caption" color="text.secondary">
-                  {item.actorLabel}
+                  {actorLabel}
                 </Typography>
               )}
               <Chip
@@ -209,14 +237,14 @@ export function NotificationActionCard({
                 variant="outlined"
                 color={priorityTone(item.priority)}
                 label={t(`priority.${item.priority}`)}
-                sx={{ height: 20 }}
+                sx={{ height: compact ? 18 : 20 }}
               />
               {item.actionable && (
                 <Chip
                   size="small"
                   label={t('workbench.card.actionRequired')}
                   sx={{
-                    height: 20,
+                    height: compact ? 18 : 20,
                     bgcolor: 'var(--dwp-product-selection)',
                     color: 'var(--dwp-product-accent)',
                   }}
@@ -243,7 +271,7 @@ export function NotificationActionCard({
             onFocus={onFocus}
             onClick={onOpenDetails}
             sx={{
-              mt: 0.65,
+              mt: compact ? 0.4 : 0.65,
               display: 'block',
               width: 1,
               textAlign: 'left',
@@ -257,7 +285,7 @@ export function NotificationActionCard({
           >
             <Typography
               component="h3"
-              variant="subtitle1"
+              variant={compact ? 'subtitle2' : 'subtitle1'}
               fontWeight={unread ? 'fontWeightBold' : 'fontWeightMedium'}
               sx={{ overflowWrap: 'anywhere' }}
             >
@@ -266,16 +294,31 @@ export function NotificationActionCard({
           </ButtonBase>
           {item.preview && (
             <Typography
-              variant="body2"
+              variant={compact ? 'caption' : 'body2'}
               color="text.secondary"
-              sx={{ mt: 0.35, whiteSpace: 'pre-wrap' }}
+              sx={{
+                mt: compact ? 0.2 : 0.35,
+                whiteSpace: 'pre-wrap',
+                ...(compact && {
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 1,
+                  overflow: 'hidden',
+                }),
+              }}
             >
               {item.preview}
             </Typography>
           )}
 
-          <Stack direction="row" gap={0.8} alignItems="center" flexWrap="wrap" sx={{ mt: 0.9 }}>
-            {!concealContext && (
+          <Stack
+            direction="row"
+            gap={0.8}
+            alignItems="center"
+            flexWrap="wrap"
+            sx={{ mt: compact ? 0.55 : 0.9 }}
+          >
+            {showReason && (
               <Typography variant="caption" color="text.secondary">
                 {t(`reason.${item.reason.kind}`, { defaultValue: item.reason.label })}
               </Typography>
@@ -304,14 +347,19 @@ export function NotificationActionCard({
           </Stack>
 
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction={compact ? 'row' : { xs: 'column', sm: 'row' }}
             justifyContent="space-between"
-            alignItems={{ xs: 'stretch', sm: 'center' }}
-            gap={1}
-            sx={{ mt: 1.15, pt: 1, borderTop: 1, borderColor: 'divider' }}
+            alignItems={compact ? 'center' : { xs: 'stretch', sm: 'center' }}
+            gap={compact ? 0.5 : 1}
+            sx={{
+              mt: compact ? 0.55 : 1.15,
+              pt: compact ? 0.55 : 1,
+              borderTop: 1,
+              borderColor: 'divider',
+            }}
           >
             <Stack direction="row" gap={0.65} flexWrap="wrap">
-              {replyTarget && !concealContext && (
+              {showPrimaryActions && replyTarget && !concealContext && (
                 <ActionButton
                   intent="primary"
                   size="small"
@@ -321,7 +369,7 @@ export function NotificationActionCard({
                   {t('workbench.card.reply')}
                 </ActionButton>
               )}
-              {primary?.enabled && primary.href && (
+              {showPrimaryActions && primary?.enabled && primary.href && (
                 <ActionButton
                   intent={replyTarget ? 'secondary' : 'primary'}
                   size="small"
@@ -430,21 +478,21 @@ export function NotificationActionCard({
             </Box>
           </Stack>
 
-          <Collapse in={replying} unmountOnExit>
+          <Collapse in={showPrimaryActions && replying} unmountOnExit>
             <Stack
-              direction={{ xs: 'column', sm: 'row' }}
+              direction="row"
               gap={0.75}
-              alignItems="flex-end"
+              alignItems="center"
               sx={{
-                mt: 1.1,
-                p: 1,
+                mt: compact ? 0.75 : 1.1,
+                p: compact ? 0.75 : 1,
                 bgcolor: 'action.hover',
                 borderRadius: 'shape.borderRadius',
               }}
             >
               <FormField
-                multiline
-                minRows={2}
+                multiline={!compact}
+                minRows={compact ? undefined : 2}
                 fullWidth
                 value={replyBody}
                 onChange={(event) => {

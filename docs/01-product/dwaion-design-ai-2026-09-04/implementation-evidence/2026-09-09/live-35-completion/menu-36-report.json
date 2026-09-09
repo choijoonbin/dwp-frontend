@@ -1,0 +1,1678 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/dwp-frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 9
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/menu-dwaion-final-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 9
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/a10697/Work/DWP/output/dwaion-design-2026-09-08/current-final-playwright-v2/menu-dwaion-final-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 9
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/dwp-frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 9,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://127.0.0.1:4317",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "menu-route-contract.spec.ts",
+      "file": "menu-route-contract.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "dwaion.home keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/home"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4405,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.856Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/home"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-d46c6e41e584be750c41",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.new keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/new"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 7026,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.596Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/new"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-eca59661bea77794250b",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.conversations keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/conversations"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 3201,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.707Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/conversations"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-4aa8ab7214267782f9ac",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.activity keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/activity"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 4806,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.424Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/activity"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-496aa905f2fbda415607",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.proposals keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/proposals"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 3407,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.588Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/proposals"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-3f71b4f7edc69d7fd3d1",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.agents keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/agents"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 5,
+                  "status": "passed",
+                  "duration": 2313,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.458Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/agents"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-a333c2941a9891323063",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.actions keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/actions"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 6,
+                  "status": "passed",
+                  "duration": 3267,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.756Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/actions"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-9a87674e62cd17f091bb",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.routines keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/routines"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 7,
+                  "status": "passed",
+                  "duration": 7428,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.661Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/routines"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-6c127a2c95927f0760ec",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.personal-controls keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/personal-controls"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 8,
+                  "status": "passed",
+                  "duration": 5342,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:42.805Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/personal-controls"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-f4e0b018ffec113e154a",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.artifacts keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/artifacts"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 5,
+                  "status": "passed",
+                  "duration": 3254,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:45.277Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/artifacts"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-46fcee7d35ebbc593328",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-overview keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/overview"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 4470,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:46.519Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/overview"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-082bbd719678e978766c",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-agents keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/agents"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 3065,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:47.037Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/agents"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-6c501ed051a98cc6c334",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-sources keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/sources"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 6,
+                  "status": "passed",
+                  "duration": 3062,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:47.345Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/sources"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-0d4b1efb5e4bb42b5e23",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-actions keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/actions"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 4148,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:47.769Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/actions"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-eb2d129e9155e939a654",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-safety keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/safety"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3621,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:48.078Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/safety"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-8b23974a5f0b6b060064",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-evaluation keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/evaluation"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 5,
+                  "status": "passed",
+                  "duration": 3365,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:48.537Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/evaluation"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-ba21eb703f2d4d42a5cf",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-gates keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/gates"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 8,
+                  "status": "passed",
+                  "duration": 3175,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:48.830Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/gates"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-0bb143def782271f4e0e",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-audit keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/audit"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 2394,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:50.110Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/audit"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-0661cecb26bb5f27e06f",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.home keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/home"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 2762,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:51.544Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/home"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-b323d12e9af0c4f298c4",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.new keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/new"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 6,
+                  "status": "passed",
+                  "duration": 2719,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:51.584Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/new"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-90ad2f65cdce7f35f3f6",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.conversations keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/conversations"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 2505,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:52.045Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/conversations"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-f71a64159a011cbe3553",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.activity keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/activity"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 7,
+                  "status": "passed",
+                  "duration": 3162,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:52.750Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/activity"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-973fb8d9f25400c6f1d9",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.proposals keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/proposals"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3227,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:52.772Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/proposals"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-f5c7d61a293c1eea346a",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.agents keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/agents"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 14,
+                  "parallelIndex": 5,
+                  "status": "passed",
+                  "duration": 3494,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:52.990Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/agents"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-fc1aad3afc220e298cbb",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.actions keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/actions"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 15,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 3358,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:53.132Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/actions"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-ac7a9eaaeda07b366c28",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.routines keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/routines"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 16,
+                  "parallelIndex": 8,
+                  "status": "passed",
+                  "duration": 3242,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:53.199Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/routines"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-bb42aaca3bd0c9a0d118",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.personal-controls keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/personal-controls"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 17,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 3845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:54.211Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/personal-controls"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-327e324ee982b98effd9",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.artifacts keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/artifacts"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 6,
+                  "status": "passed",
+                  "duration": 3560,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:54.539Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/artifacts"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-8ec23a8e39384538880c",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-overview keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/overview"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 3727,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:54.581Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/overview"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-80ba3e55b570c172add6",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-agents keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/agents"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 3549,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:54.757Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/agents"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-57d9b1450c676edc1161",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-sources keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/sources"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 7,
+                  "status": "passed",
+                  "duration": 3409,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:56.149Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/sources"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-377219726891ccc7e392",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-actions keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/actions"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3367,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:56.223Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/actions"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-0dce3304eaa705ceaddd",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-safety keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/safety"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 14,
+                  "parallelIndex": 5,
+                  "status": "passed",
+                  "duration": 2903,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:56.851Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/safety"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-d140b8d412796ce6ea21",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-evaluation keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/evaluation"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 16,
+                  "parallelIndex": 8,
+                  "status": "passed",
+                  "duration": 2834,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:56.872Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/evaluation"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-1b6f58d3ba9d0b7466f9",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-gates keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/gates"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 15,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 2787,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:56.929Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/gates"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-f56fa29166c328fd3023",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        },
+        {
+          "title": "dwaion.admin-audit keeps its structural and runtime contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "menu-contract",
+                  "description": "dwaion:/dwaion/admin/audit"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 6,
+                  "status": "passed",
+                  "duration": 2223,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T15:05:58.107Z",
+                  "annotations": [
+                    {
+                      "type": "menu-contract",
+                      "description": "dwaion:/dwaion/admin/audit"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "02a38ea5ede53e6977d1-208f1f236638cf03eff2",
+          "file": "menu-route-contract.spec.ts",
+          "line": 9,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-08T15:05:41.534Z",
+    "duration": 18828.005,
+    "expected": 36,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

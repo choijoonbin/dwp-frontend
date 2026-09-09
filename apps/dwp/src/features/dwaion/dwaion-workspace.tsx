@@ -17,9 +17,12 @@ import {
   type AskProgressStage,
   type WorkspaceWorkItem,
 } from '@dwp-frontend/shared-utils';
+import { askSelectedWorkStream } from '@dwp-frontend/shared-utils/api/agent-selected-work-api';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import type { Theme } from '@mui/material/styles';
 
 import {
   DWAION_APPROVAL_EXPERT_AGENT_KEY,
@@ -27,11 +30,13 @@ import {
   hasDwaionQuestionLaunchState,
   parseDwaionQuestionLaunchState,
   resolveDwaionAgentKey,
+  type DwaionAgentKey,
 } from './dwaion-contract';
 import { DwaionWorkspaceAnswer } from './dwaion-workspace-answer';
 import { DwaionWorkspaceComposer } from './dwaion-workspace-composer';
 import { DwaionWorkspaceContext } from './dwaion-workspace-context';
 import {
+  isGroundedFallbackStatus,
   verifiedConversationId,
   visibleWorkItems,
   type DwaionWorkspaceState,
@@ -42,8 +47,14 @@ import { DwaionCitationDialog } from '../../components/dwaion-assistant/dwaion-c
 import { DwaionStudioHeader } from './dwaion-studio-header';
 import { DwaionStudioRail } from './dwaion-studio-rail';
 import { DwaionConversationTranscript } from './dwaion-conversation-transcript';
+import { DwaionConversationRoute } from './dwaion-conversation-route';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
-export function DwaionWorkspace() {
+function DwaionWorkspaceContent({
+  onConversationVerified,
+}: {
+  onConversationVerified: (id: string, agent: DwaionAgentKey) => void;
+}) {
   const { t, i18n } = useTranslation('work');
   const auth = useAuth();
   const location = useLocation();
@@ -77,10 +88,15 @@ export function DwaionWorkspace() {
   const consumedLaunchId = useRef<string | null>(null);
   const internalConversationNavigation = useRef<string | null>(null);
   const activeAgentKey = useRef(agentKey);
+  const wideResultLayout = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+  const runAskMutation = useDwaionGovernedMutation('route.dwaion.work.ask-stream.action');
+  const consumeLaunchMutation = useDwaionGovernedMutation(
+    'route.dwaion.work.question-launch-consume.action'
+  );
   const firstName = auth.user?.displayName?.trim().split(/\s+/)[0];
   const workQueue = useQuery({
     queryKey: ['workspace', 'work-queue'],
-    queryFn: getWorkspaceWorkQueue,
+    queryFn: ({ signal }) => getWorkspaceWorkQueue(signal),
     enabled: !approvalExpert,
     staleTime: 30_000,
     retry: 1,
@@ -131,51 +147,61 @@ export function DwaionWorkspace() {
       setState('loading');
 
       try {
-        const result = await askDwpStream(
-          {
-            requestId: globalThis.crypto.randomUUID(),
-            query: normalized,
-            locale: i18n.resolvedLanguage || i18n.language || 'en',
-            agentKey,
-            conversationId: verifiedConversationId(
-              conversationId,
-              conversation.data?.summary.conversationId
-            ),
-            sourceScopes: activeScopes,
-            pageContext: selectedWork
-              ? {
-                  route: '/work/queue',
-                  appKey: 'APP.WORK',
-                  surface: 'selected-work-assist',
-                  entityType: selectedWork.sourceSystem,
-                  entityRef: selectedWork.sourceReference,
-                  selectedWork,
-                }
-              : approvalExpert
-                ? {
-                    route: '/approvals/home',
-                    appKey: 'APP.APPROVALS',
-                    surface: 'approval-expert',
-                  }
-                : {
-                    route: conversationId
-                      ? `/dwaion/conversations/${encodeURIComponent(conversationId)}`
-                      : '/dwaion/new',
-                    appKey: 'APP.ASK',
-                    surface: 'workspace',
-                  },
+        const currentConversationId = verifiedConversationId(
+          conversationId,
+          conversation.data?.summary.conversationId
+        );
+        if (selectedWork && !currentConversationId) {
+          throw new Error('Selected work conversation could not be verified.');
+        }
+        const options = {
+          signal: controller.signal,
+          onProgress: (stage: AskProgressStage) => {
+            if (!controller.signal.aborted && requestSequence.current === sequence)
+              setProgressStage(stage);
           },
-          {
-            signal: controller.signal,
-            onProgress: (stage) => {
-              if (!controller.signal.aborted && requestSequence.current === sequence)
-                setProgressStage(stage);
-            },
-          }
+        };
+        const result = await runAskMutation((authority) =>
+          selectedWork
+            ? askSelectedWorkStream(
+                {
+                  selection: selectedWork,
+                  question: normalized,
+                  locale: i18n.resolvedLanguage || i18n.language || 'en',
+                  route: '/work/queue',
+                  conversationId: currentConversationId,
+                },
+                { ...options, authority }
+              )
+            : askDwpStream(
+                {
+                  requestId: globalThis.crypto.randomUUID(),
+                  query: normalized,
+                  locale: i18n.resolvedLanguage || i18n.language || 'en',
+                  agentKey,
+                  conversationId: currentConversationId,
+                  sourceScopes: activeScopes,
+                  pageContext: approvalExpert
+                    ? {
+                        route: '/approvals/home',
+                        appKey: 'APP.APPROVALS',
+                        surface: 'approval-expert',
+                      }
+                    : {
+                        route: conversationId
+                          ? `/dwaion/conversations/${encodeURIComponent(conversationId)}`
+                          : '/dwaion/new',
+                        appKey: 'APP.ASK',
+                        surface: 'workspace',
+                      },
+                },
+                { ...options, authority }
+              )
         );
         if (controller.signal.aborted || requestSequence.current !== sequence) return;
         setResponse(result);
         if (result.conversationId) {
+          onConversationVerified(result.conversationId, agentKey);
           internalConversationNavigation.current = result.conversationId;
           setConversationId(result.conversationId);
           navigate(dwaionWorkspaceRoute(undefined, result.conversationId, agentKey), {
@@ -206,6 +232,8 @@ export function DwaionWorkspace() {
       queryClient,
       activeScopes,
       selectedWork,
+      onConversationVerified,
+      runAskMutation,
     ]
   );
 
@@ -226,10 +254,17 @@ export function DwaionWorkspace() {
       setLaunchFailure(true);
       return;
     }
-    void consumeQuestionLaunch(launchId)
+    void consumeLaunchMutation((authority) => consumeQuestionLaunch(launchId, authority))
       .then((question) => prepareAnswer(question))
       .catch(() => setLaunchFailure(true));
-  }, [location.pathname, location.search, location.state, navigate, prepareAnswer]);
+  }, [
+    consumeLaunchMutation,
+    location.pathname,
+    location.search,
+    location.state,
+    navigate,
+    prepareAnswer,
+  ]);
 
   useEffect(() => {
     if (!searchParams.has('q')) return;
@@ -337,8 +372,21 @@ export function DwaionWorkspace() {
 
   return (
     <PageCanvas topInset="compact">
-      <Box data-testid="dwaion-studio" sx={{ maxWidth: 1480, mx: 'auto' }}>
-        <DwaionStudioHeader expert={approvalExpert} onNew={reset} />
+      <Box data-testid="dwaion-studio" sx={{ minWidth: 0 }}>
+        <DwaionStudioHeader
+          expert={approvalExpert}
+          onNew={reset}
+          detail={
+            submittedQuery || conversationId
+              ? {
+                  conversationId,
+                  state: response?.state,
+                  confidence: response?.confidence,
+                  groundedFallback: isGroundedFallbackStatus(response?.statusCode),
+                }
+              : undefined
+          }
+        />
 
         {launchFailure && (
           <Alert severity="warning" variant="outlined" sx={{ mt: 2 }}>
@@ -350,7 +398,10 @@ export function DwaionWorkspace() {
           sx={{
             mt: 2.5,
             display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 280px' },
+            gridTemplateColumns: {
+              xs: 'minmax(0, 1fr)',
+              lg: 'minmax(0, 1fr) minmax(320px, 360px)',
+            },
             gap: { xs: 2.5, lg: 3 },
             alignItems: 'start',
           }}
@@ -408,12 +459,19 @@ export function DwaionWorkspace() {
                 {submittedQuery && (
                   <DwaionWorkspaceAnswer
                     question={submittedQuery}
+                    authorName={auth.user?.displayName?.trim()}
                     state={state}
                     response={response}
                     progressStage={progressStage}
                     onCancel={cancelRequest}
                     onRetry={() => void prepareAnswer(submittedQuery)}
                     onReset={reset}
+                  />
+                )}
+                {response && !wideResultLayout && (
+                  <DwaionWorkspaceContext
+                    response={response}
+                    onOpenCitation={setSelectedCitation}
                   />
                 )}
                 <DwaionActionShelf query={submittedQuery} response={response} />
@@ -435,7 +493,9 @@ export function DwaionWorkspace() {
           </Box>
 
           {response ? (
-            <DwaionWorkspaceContext response={response} onOpenCitation={setSelectedCitation} />
+            wideResultLayout ? (
+              <DwaionWorkspaceContext response={response} onOpenCitation={setSelectedCitation} />
+            ) : null
           ) : (
             <DwaionStudioRail
               selected={activeScopes}
@@ -459,5 +519,15 @@ export function DwaionWorkspace() {
         />
       </Box>
     </PageCanvas>
+  );
+}
+
+export function DwaionWorkspace() {
+  return (
+    <DwaionConversationRoute>
+      {(onConversationVerified) => (
+        <DwaionWorkspaceContent onConversationVerified={onConversationVerified} />
+      )}
+    </DwaionConversationRoute>
   );
 }

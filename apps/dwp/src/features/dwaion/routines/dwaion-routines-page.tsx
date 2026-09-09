@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
-import { Plus, RefreshCw } from 'lucide-react';
+import { BellOff, Globe2, Plus, RefreshCw, ShieldCheck, TimerOff } from 'lucide-react';
 
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -75,6 +77,7 @@ export function DwaionRoutinesPage({
     [routines, selectedId]
   );
   const [compactInspectorOpen, setCompactInspectorOpen] = useState(false);
+  const [filter, setFilter] = useState<'ALL' | 'READY' | 'ATTENTION' | 'PAUSED'>('ALL');
   const [statusTarget, setStatusTarget] = useState<DwaionRoutine | null>(null);
   const [archiveTarget, setArchiveTarget] = useState<DwaionRoutine | null>(null);
   const metrics = useMemo(
@@ -90,16 +93,43 @@ export function DwaionRoutinesPage({
     }),
     [routines]
   );
+  const filteredRoutines = useMemo(
+    () =>
+      routines.filter((routine) => {
+        if (filter === 'ALL') return true;
+        if (filter === 'PAUSED') return routine.status === 'PAUSED';
+        if (filter === 'READY') {
+          return routine.status === 'DRAFT' && routineConsentComplete(routine.consents);
+        }
+        return routine.status === 'DRAFT' && !routineConsentComplete(routine.consents);
+      }),
+    [filter, routines]
+  );
+  const filterCounts = {
+    ALL: metrics.total,
+    READY: metrics.ready,
+    ATTENTION: metrics.attention,
+    PAUSED: metrics.paused,
+  } as const;
+  const timeZones = [...new Set(routines.map((routine) => routine.schedule.timeZone))];
+  const timeZoneLabel = timeZones.length === 1 ? timeZones[0] : timeZones.join(' · ');
 
   return (
-    <PageCanvas mode="workspace">
-      <Stack gap={3}>
+    <PageCanvas mode="workspace" topInset="compact">
+      <Stack gap={{ xs: 1.75, md: 2 }}>
         <Stack
           component="header"
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="space-between"
           alignItems={{ sm: 'flex-start' }}
           gap={2}
+          sx={{
+            p: { xs: 2, md: 2.25 },
+            border: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+          }}
         >
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="overline" color="primary.main">
@@ -175,11 +205,13 @@ export function DwaionRoutinesPage({
               },
               {
                 key: 'paused',
-                value: metrics.paused,
-                label: copy.metrics.paused,
-                detail: copy.metrics.pausedDetail,
+                value: '—',
+                label: copy.engineUnavailable,
+                detail: copy.notificationUnavailable,
+                tone: 'info',
               },
             ]}
+            sx={{ bgcolor: 'background.paper', borderInline: 1, borderColor: 'divider' }}
           />
         ) : null}
 
@@ -202,53 +234,137 @@ export function DwaionRoutinesPage({
             onAction={canCreate ? onCreate : undefined}
           />
         ) : (
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) 480px' },
-              minWidth: 0,
-              borderTop: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <DwaionRoutineList
-              routines={routines}
-              selectedId={selectedId}
-              onSelect={(routine) => {
-                onSelect(routine);
-                if (compact) setCompactInspectorOpen(true);
+          <Stack gap={2}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ md: 'center' }}
+              gap={1.25}
+              sx={{
+                p: 1,
+                border: 1,
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
               }}
-              copy={copy}
-            />
-            {!compact ? (
-              selected ? (
-                <Box sx={{ borderLeft: 1, borderColor: 'divider', minWidth: 0 }}>
-                  <DwaionRoutineInspector
-                    routine={selected}
-                    open
-                    variant="inline"
-                    dryRunReceipt={dryRunReceipt}
-                    busy={busy}
-                    canManage={canManage}
-                    onClose={onCloseSelection}
-                    onDryRun={(routine) => onDryRun(routine.routineId, routine.revision)}
-                    onEdit={onEdit}
-                    onToggleStatus={setStatusTarget}
-                    onArchive={setArchiveTarget}
-                    copy={copy}
-                    formatTimestamp={formatTimestamp}
+            >
+              <Box
+                role="group"
+                aria-label={copy.filtersLabel}
+                sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}
+              >
+                {(Object.keys(filterCounts) as Array<keyof typeof filterCounts>).map((key) => (
+                  <ButtonBase
+                    key={key}
+                    aria-pressed={filter === key}
+                    onClick={() => setFilter(key)}
+                    sx={{
+                      minHeight: 36,
+                      px: 1.25,
+                      borderRadius: (theme) => Number(theme.shape.borderRadius) * 1.5 + 'px',
+                      border: 1,
+                      borderColor: filter === key ? 'primary.main' : 'transparent',
+                      bgcolor: filter === key ? 'var(--dwp-product-soft)' : 'transparent',
+                      color: filter === key ? 'primary.main' : 'text.secondary',
+                      fontWeight: 'fontWeightBold',
+                      fontSize: 'body2.fontSize',
+                    }}
+                  >
+                    {copy.filters[key]} {filterCounts[key]}
+                  </ButtonBase>
+                ))}
+              </Box>
+              <Stack direction="row" gap={0.75} flexWrap="wrap">
+                {timeZoneLabel ? (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    icon={<Globe2 size={14} />}
+                    label={`${copy.timeZone} · ${timeZoneLabel}`}
                   />
-                </Box>
-              ) : (
-                <GuidedEmptyState
-                  kind="empty"
-                  title={copy.title}
-                  description={copy.emptyDescription}
-                  announce={false}
+                ) : null}
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  icon={<TimerOff size={14} />}
+                  label={copy.engineUnavailable}
                 />
-              )
-            ) : null}
-          </Box>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  icon={<BellOff size={14} />}
+                  label={copy.notificationUnavailable}
+                />
+              </Stack>
+            </Stack>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) 480px' },
+                minWidth: 0,
+                gap: 2,
+                alignItems: 'start',
+              }}
+            >
+              <DwaionRoutineList
+                routines={filteredRoutines}
+                selectedId={selectedId}
+                onSelect={(routine) => {
+                  onSelect(routine);
+                  if (compact) setCompactInspectorOpen(true);
+                }}
+                copy={copy}
+              />
+              {!compact ? (
+                selected ? (
+                  <Box
+                    sx={{
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+                      bgcolor: 'background.paper',
+                      minWidth: 0,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <DwaionRoutineInspector
+                      routine={selected}
+                      open
+                      variant="inline"
+                      dryRunReceipt={dryRunReceipt}
+                      busy={busy}
+                      canManage={canManage}
+                      onClose={onCloseSelection}
+                      onDryRun={(routine) => onDryRun(routine.routineId, routine.revision)}
+                      onEdit={onEdit}
+                      onToggleStatus={setStatusTarget}
+                      onArchive={setArchiveTarget}
+                      copy={copy}
+                      formatTimestamp={formatTimestamp}
+                    />
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      p: 3,
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
+                    }}
+                  >
+                    <Stack direction="row" gap={1} alignItems="center">
+                      <ShieldCheck size={19} />
+                      <Typography variant="subtitle2">{copy.statusReview}</Typography>
+                    </Stack>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {copy.emptyDescription}
+                    </Typography>
+                  </Box>
+                )
+              ) : null}
+            </Box>
+          </Stack>
         )}
       </Stack>
 

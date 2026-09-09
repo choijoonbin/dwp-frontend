@@ -31,6 +31,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationDetailReply } from './notification-detail-reply';
+import { displayNotificationActorLabel } from './notification-inbox-model';
 import { defaultSnoozeTime } from './notification-model';
 import { useNotificationTargetNavigation } from './use-notification-target-navigation';
 
@@ -44,12 +46,18 @@ export function NotificationDetailPane({
   onBack,
   onTriage,
   onOpenTarget,
+  onQuickReply,
   busy,
 }: {
   item: NotificationItem;
   onBack?: () => void;
   onTriage: (action: NotificationTriageAction, snoozedUntil?: string) => void;
   onOpenTarget?: (href: string) => void;
+  onQuickReply: (
+    target: { conversationId: string; replyToMessageId?: string },
+    body: string,
+    idempotencyKey: string
+  ) => Promise<void>;
   busy: boolean;
 }) {
   const { t } = useTranslation('notifications');
@@ -67,13 +75,24 @@ export function NotificationDetailPane({
   );
   const detail = detailQuery.data;
   const primary = (detail?.item ?? item).actions.find((action) => action.primary);
+  const actorLabel = displayNotificationActorLabel(detail?.item.actorLabel ?? item.actorLabel);
 
   useEffect(() => {
     setSensitiveRevealed(false);
   }, [item.notificationId]);
 
   return (
-    <Box component="aside" aria-label={t('detail.regionLabel')} sx={{ minWidth: 0 }}>
+    <Box
+      component="aside"
+      aria-label={t('detail.regionLabel')}
+      sx={{
+        minWidth: 0,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
       <Stack
         direction="row"
         alignItems="center"
@@ -148,171 +167,268 @@ export function NotificationDetailPane({
         ))}
       </Menu>
 
-      {detailQuery.isLoading ? (
-        <LoadingState label={t('states.loadingDetail')} variant="skeleton" skeletonRows={5} />
-      ) : detailQuery.isError || !detail ? (
-        <ErrorState
-          title={t('states.detailErrorTitle')}
-          description={t('states.detailErrorDescription')}
-          retryLabel={t('actions.retry')}
-          onRetry={() => void detailQuery.refetch()}
-          retrying={detailQuery.isFetching}
-        />
-      ) : (
-        <Box sx={{ p: { xs: 2, md: 2.5 } }}>
-          <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
-                defaultValue: detail.item.source.appName,
-              })}
-            />
-            <Chip
-              size="small"
-              variant="outlined"
-              color={
-                detail.item.priority === 'URGENT'
-                  ? 'error'
-                  : detail.item.priority === 'HIGH'
-                    ? 'warning'
-                    : 'default'
-              }
-              label={t(`priority.${detail.item.priority}`)}
-            />
-            {detail.item.sensitive && (
-              <Chip size="small" variant="outlined" label={t('detail.protected')} />
-            )}
-          </Stack>
-          {detail.item.sensitive && !sensitiveRevealed ? (
-            <Box
-              role="status"
-              sx={{ mt: 2, p: 1.5, border: 1, borderColor: 'info.main', bgcolor: 'action.hover' }}
-            >
-              <Stack gap={1.25} alignItems="flex-start">
-                <Typography variant="body2" fontWeight="fontWeightBold">
-                  {t('arrival.protectedContent')}
-                </Typography>
-                <ActionButton
-                  intent="secondary"
-                  size="small"
-                  onClick={() => setSensitiveRevealed(true)}
-                >
-                  {t('home.open')}
-                </ActionButton>
-              </Stack>
-            </Box>
-          ) : (
-            <>
-              <Typography component="h3" variant="h5" sx={{ mt: 2, overflowWrap: 'anywhere' }}>
-                {detail.item.title}
-              </Typography>
-              {detail.item.preview && (
-                <Typography color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
-                  {detail.item.preview}
-                </Typography>
-              )}
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mt: 1.5 }}
-              >
-                {formatDate(detail.absoluteOccurredAt, {
-                  dateStyle: 'long',
-                  timeStyle: 'short',
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        {detailQuery.isLoading ? (
+          <LoadingState label={t('states.loadingDetail')} variant="skeleton" skeletonRows={5} />
+        ) : detailQuery.isError || !detail ? (
+          <ErrorState
+            title={t('states.detailErrorTitle')}
+            description={t('states.detailErrorDescription')}
+            retryLabel={t('actions.retry')}
+            onRetry={() => void detailQuery.refetch()}
+            retrying={detailQuery.isFetching}
+          />
+        ) : (
+          <Box sx={{ p: { xs: 2, md: 2.5 } }}>
+            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+              <Chip
+                size="small"
+                variant="outlined"
+                label={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
+                  defaultValue: detail.item.source.appName,
                 })}
-              </Typography>
-
-              {detail.targetState !== 'AVAILABLE' && (
-                <Box
-                  role="alert"
-                  sx={{
-                    mt: 2,
-                    p: 1.5,
-                    border: 1,
-                    borderColor: 'warning.main',
-                    bgcolor: 'action.hover',
-                  }}
-                >
-                  <Typography variant="body2">
-                    {detail.targetStateReason
-                      ? t(`detail.targetReason.${detail.targetStateReason}`, {
-                          defaultValue: t(`detail.targetState.${detail.targetState}`),
-                        })
-                      : t(`detail.targetState.${detail.targetState}`)}
-                  </Typography>
-                </Box>
+              />
+              <Chip
+                size="small"
+                variant="outlined"
+                color={
+                  detail.item.priority === 'URGENT'
+                    ? 'error'
+                    : detail.item.priority === 'HIGH'
+                      ? 'warning'
+                      : 'default'
+                }
+                label={t(`priority.${detail.item.priority}`)}
+              />
+              {detail.item.sensitive && (
+                <Chip size="small" variant="outlined" label={t('detail.protected')} />
               )}
-
+            </Stack>
+            {detail.item.sensitive && !sensitiveRevealed ? (
               <Box
-                component="section"
-                sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
+                role="status"
+                sx={{ mt: 2, p: 1.5, border: 1, borderColor: 'info.main', bgcolor: 'action.hover' }}
               >
-                <Typography component="h4" variant="subtitle2">
-                  {t('detail.whyTitle')}
+                <Stack gap={1.25} alignItems="flex-start">
+                  <Typography variant="body2" fontWeight="fontWeightBold">
+                    {t('arrival.protectedContent')}
+                  </Typography>
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    onClick={() => setSensitiveRevealed(true)}
+                  >
+                    {t('home.open')}
+                  </ActionButton>
+                </Stack>
+              </Box>
+            ) : (
+              <>
+                <Typography component="h3" variant="h5" sx={{ mt: 2, overflowWrap: 'anywhere' }}>
+                  {detail.item.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  {t(`reasonExplanation.${detail.item.reason.kind}`, {
-                    defaultValue: detail.reasonExplanation,
+                {detail.item.preview && (
+                  <Typography color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
+                    {detail.item.preview}
+                  </Typography>
+                )}
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', mt: 1.5 }}
+                >
+                  {formatDate(detail.absoluteOccurredAt, {
+                    dateStyle: 'long',
+                    timeStyle: 'short',
                   })}
                 </Typography>
-              </Box>
 
-              {detail.timeline.length > 0 && (
+                <Box
+                  component="dl"
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' },
+                    columnGap: 2,
+                    rowGap: 1.1,
+                    py: 1.5,
+                    m: 0,
+                    mt: 2,
+                    borderTop: 1,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <DetailContextItem
+                    label={t('detail.context.source')}
+                    value={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
+                      defaultValue: detail.item.source.appName,
+                    })}
+                  />
+                  <DetailContextItem
+                    label={t('detail.context.reason')}
+                    value={t(`reason.${detail.item.reason.kind}`, {
+                      defaultValue: detail.item.reason.label,
+                    })}
+                  />
+                  {actorLabel && (
+                    <DetailContextItem label={t('detail.context.actor')} value={actorLabel} />
+                  )}
+                  {detail.item.dueAt && (
+                    <DetailContextItem
+                      label={t('detail.context.due')}
+                      value={formatDate(detail.item.dueAt, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                      tone={detail.item.priority === 'URGENT' ? 'error.main' : undefined}
+                    />
+                  )}
+                </Box>
+
+                {detail.targetState !== 'AVAILABLE' && (
+                  <Box
+                    role="alert"
+                    sx={{
+                      mt: 2,
+                      p: 1.5,
+                      border: 1,
+                      borderColor: 'warning.main',
+                      bgcolor: 'action.hover',
+                    }}
+                  >
+                    <Typography variant="body2">
+                      {detail.targetStateReason
+                        ? t(`detail.targetReason.${detail.targetStateReason}`, {
+                            defaultValue: t(`detail.targetState.${detail.targetState}`),
+                          })
+                        : t(`detail.targetState.${detail.targetState}`)}
+                    </Typography>
+                  </Box>
+                )}
+
+                <NotificationDetailReply
+                  item={detail.item}
+                  busy={busy}
+                  onQuickReply={onQuickReply}
+                />
+
                 <Box
                   component="section"
                   sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
                 >
                   <Typography component="h4" variant="subtitle2">
-                    {t('detail.timelineTitle')}
+                    {t('detail.whyTitle')}
                   </Typography>
-                  <Stack component="ol" gap={0} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
-                    {detail.timeline.map((entry) => (
-                      <Box
-                        component="li"
-                        key={entry.entryId}
-                        sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
-                      >
-                        <Stack direction="row" justifyContent="space-between" gap={1}>
-                          <Typography variant="body2" fontWeight="fontWeightBold">
-                            {entry.title === 'Notification received'
-                              ? t('detail.notificationReceived')
-                              : entry.title}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
-                            {formatDate(entry.occurredAt, {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </Typography>
-                        </Stack>
-                        {entry.detail && (
-                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                            {entry.detail}
-                          </Typography>
-                        )}
-                      </Box>
-                    ))}
-                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {t(`reasonExplanation.${detail.item.reason.kind}`, {
+                      defaultValue: detail.reasonExplanation,
+                    })}
+                  </Typography>
                 </Box>
-              )}
 
-              {primary?.href && detail.targetState === 'AVAILABLE' && (
-                <ActionButton
-                  intent="primary"
-                  sx={{ mt: 3 }}
-                  loading={targetNavigation.openingId === item.notificationId}
-                  onClick={() => void targetNavigation.openTarget(item.notificationId)}
-                >
-                  {primary.label}
-                </ActionButton>
-              )}
-            </>
-          )}
-        </Box>
-      )}
+                {detail.timeline.length > 0 && (
+                  <Box
+                    component="section"
+                    sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
+                  >
+                    <Typography component="h4" variant="subtitle2">
+                      {t('detail.timelineTitle')}
+                    </Typography>
+                    <Stack component="ol" gap={0} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
+                      {detail.timeline.map((entry) => (
+                        <Box
+                          component="li"
+                          key={entry.entryId}
+                          sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
+                        >
+                          <Stack direction="row" justifyContent="space-between" gap={1}>
+                            <Typography variant="body2" fontWeight="fontWeightBold">
+                              {entry.title === 'Notification received'
+                                ? t('detail.notificationReceived')
+                                : entry.title}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              whiteSpace="nowrap"
+                            >
+                              {formatDate(entry.occurredAt, {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </Typography>
+                          </Stack>
+                          {entry.detail && (
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                              {entry.detail}
+                            </Typography>
+                          )}
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
+              </>
+            )}
+          </Box>
+        )}
+      </Box>
+      {detail &&
+        (!detail.item.sensitive || sensitiveRevealed) &&
+        primary?.href &&
+        detail.targetState === 'AVAILABLE' && (
+          <Box
+            component="footer"
+            data-testid="notification-detail-primary-action"
+            sx={{
+              flexShrink: 0,
+              px: { xs: 2, md: 2.5 },
+              pt: 1.25,
+              pb: { xs: 'max(10px, env(safe-area-inset-bottom))', md: 2 },
+              borderTop: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+            }}
+          >
+            <ActionButton
+              intent="primary"
+              fullWidth
+              loading={targetNavigation.openingId === item.notificationId}
+              onClick={() => void targetNavigation.openTarget(item.notificationId)}
+            >
+              {primary.label}
+            </ActionButton>
+          </Box>
+        )}
+    </Box>
+  );
+}
+
+function DetailContextItem({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: string;
+}) {
+  return (
+    <Box sx={{ minWidth: 0 }}>
+      <Typography component="dt" variant="caption" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography
+        component="dd"
+        variant="body2"
+        fontWeight="fontWeightMedium"
+        color={tone}
+        sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
+      >
+        {value}
+      </Typography>
     </Box>
   );
 }

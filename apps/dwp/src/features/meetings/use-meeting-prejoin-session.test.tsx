@@ -37,6 +37,7 @@ const defaults: MeetingPreJoinPreferenceDefaults = {
   videoDeviceId: 'saved-camera',
   speakerDeviceId: 'saved-speaker',
   noiseSuppression: false,
+  backgroundMode: 'original',
 };
 let root: Root;
 let mount: HTMLDivElement;
@@ -68,7 +69,7 @@ describe('prejoin local device session handoff', () => {
       cameraId: 'saved-camera',
       speakerId: 'saved-speaker',
       noiseSuppression: false,
-      backgroundBlur: false,
+      backgroundMode: 'original',
     });
     expect(runtime.start).toHaveBeenCalledWith(
       'video',
@@ -112,26 +113,26 @@ describe('prejoin local device session handoff', () => {
     expect(runtime.stop).toHaveBeenCalledWith('video');
     expect(runtime.stopSpeaker).toHaveBeenCalled();
   });
-  it('persists blur independently of camera permission, then applies it to the next actual start', async () => {
+  it('persists office independently of camera permission, then applies it to the next actual start', async () => {
     runtime.start.mockClear();
-    await act(async () => session.selectBackgroundBlur(true));
-    expect(runtime.backgroundChange).toHaveBeenCalledWith(true);
+    await act(async () => session.selectBackgroundMode('office'));
+    expect(runtime.backgroundChange).toHaveBeenCalledWith('office');
     expect(runtime.start).not.toHaveBeenCalled();
-    expect(session.backgroundBlur).toBe(true);
+    expect(session.backgroundMode).toBe('office');
     await act(async () => session.toggle('video'));
     expect(runtime.start).toHaveBeenLastCalledWith(
       'video',
-      expect.objectContaining({ backgroundBlur: true })
+      expect.objectContaining({ backgroundMode: 'office' })
     );
   });
   it('restarts an active camera through the preview owner when the selected privacy effect changes', async () => {
     runtime.states.video = 'active';
     await render();
-    await act(async () => session.selectBackgroundBlur(true));
+    await act(async () => session.selectBackgroundMode('blur'));
     expect(runtime.start).toHaveBeenLastCalledWith(
       'video',
-      expect.objectContaining({ backgroundBlur: true })
+      expect.objectContaining({ backgroundMode: 'blur' })
     );
-    expect(runtime.backgroundChange).toHaveBeenCalledWith(true);
+    expect(runtime.backgroundChange).toHaveBeenCalledWith('blur');
   });
 });

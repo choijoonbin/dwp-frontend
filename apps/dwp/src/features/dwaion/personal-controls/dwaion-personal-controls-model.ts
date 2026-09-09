@@ -6,9 +6,16 @@ export type DwaionMemoryPreference = {
   state: 'UNSET' | 'DISABLED' | 'ENABLED';
   enabled: boolean;
   effective: boolean;
+  runtimeState: 'UNSET' | 'DISABLED' | 'ENABLED';
+  runtimeEnabled: boolean;
   revision: number;
   storageAvailable: boolean;
   runtimeApplicationAvailable: boolean;
+  automaticMemoryInference: boolean | null;
+  sensitiveMemoryAllowed: boolean | null;
+  backgroundCredentialStorage: boolean | null;
+  teamMemoryAvailable: boolean | null;
+  externalActionWithoutApproval: boolean | null;
 };
 
 export type DwaionSourcePreference = {
@@ -58,7 +65,9 @@ export type DwaionClearEvidence =
       scopes: readonly Exclude<DwaionClearScope, 'PROPOSALS'>[];
       deletionPerformed: boolean;
       deletionExecutionAvailable: boolean;
+      deletionCompletionClaimAvailable: boolean;
       blockedScopes: readonly Exclude<DwaionClearScope, 'PROPOSALS'>[];
+      completedAt?: string | null;
     };
 
 export type DwaionRetentionBoundary = {
@@ -104,4 +113,33 @@ export function clearEvidenceMatches(
   const evidenced = new Set<DwaionClearScope>();
   evidence.forEach((item) => item.scopes.forEach((scope) => evidenced.add(scope)));
   return requestedScopes.length > 0 && requestedScopes.every((scope) => evidenced.has(scope));
+}
+
+export function deletionCompletionVerified(evidence: DwaionClearEvidence): boolean {
+  return (
+    evidence.kind === 'DELETION_REQUEST' &&
+    evidence.state === 'COMPLETED' &&
+    evidence.deletionPerformed === true &&
+    evidence.deletionCompletionClaimAvailable === true &&
+    evidence.scopes.length > 0 &&
+    evidence.blockedScopes.length === 0 &&
+    Boolean(evidence.completedAt && Number.isFinite(Date.parse(evidence.completedAt)))
+  );
+}
+
+export function governanceBoundaryState(value: unknown): 'ALLOWED' | 'BLOCKED' | 'UNKNOWN' {
+  return value === true ? 'ALLOWED' : value === false ? 'BLOCKED' : 'UNKNOWN';
+}
+
+export function deletionStatusPollInterval({
+  receiptState,
+  latestState,
+  errorStatus,
+}: {
+  receiptState?: string;
+  latestState?: string;
+  errorStatus?: number;
+}): number | false {
+  if (errorStatus && [401, 403, 404].includes(errorStatus)) return false;
+  return ['REQUESTED', 'RUNNING'].includes(latestState ?? receiptState ?? '') ? 1_000 : false;
 }

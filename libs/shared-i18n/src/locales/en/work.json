@@ -152,6 +152,12 @@
     "member": "Team member",
     "description": "Get evidence-backed answers from the work and information you can access, with a review before any action.",
     "permissionBoundary": "Current permissions and source policies apply",
+    "environment": {
+      "label": "DWAI·ON connection and access status",
+      "connected": "Authorized work signals connected",
+      "refreshing": "Checking work signals",
+      "partial": "Some work signals need attention"
+    },
     "launchUnavailable": "The secure question handoff could not be prepared. Your question is still here; try again.",
     "askTitle": "AI connected to your work",
     "askDescription": "Answers grounded in the work, mail, and calendar you can access.",
@@ -177,10 +183,19 @@
       "overdue": "Overdue",
       "review": "Review work"
     },
+    "proposals": {
+      "title": "AI proposals to review first",
+      "description": "These proposals use authorized work signals. Nothing is executed before your review.",
+      "open": "Open proposal inbox",
+      "review": "Review proposal",
+      "expires": "Valid until {{at}}",
+      "noSource": "No evidence source"
+    },
     "recent": {
       "title": "Recent conversations",
       "description": "Continue from context you reviewed earlier.",
       "open": "View all",
+      "messageEvidence": "{{messages}} messages · {{evidence}} sources",
       "emptyTitle": "There are no conversations yet",
       "emptyDescription": "Start your first question to create a secure conversation history.",
       "start": "Start conversation"
@@ -225,6 +240,28 @@
       "completed": "Completed"
     }
   },
+  "dwaionMobileNavigation": {
+    "label": "DWAI·ON quick navigation",
+    "home": "Home",
+    "new": "New",
+    "conversations": "Conversations",
+    "activity": "Activity",
+    "proposals": "Proposals",
+    "more": "More"
+  },
+  "dwaionMobileHeader": {
+    "company": "DWP",
+    "product": "DWAI·ON",
+    "back": "Back to DWAI·ON home",
+    "filter": "Move to run state filters",
+    "refresh": "Refresh run activity",
+    "search": "Move to conversation search",
+    "share": "Share conversation link",
+    "newQuestion": "New question",
+    "answerTitle": "Answer and evidence workspace",
+    "conversationsTitle": "Dwai·On My conversations",
+    "proposalDetailTitle": "Proposal Detail"
+  },
   "dwaionStudio": {
     "selected": "{{count}} selected",
     "scopeNote": "These are requested search sources, not a connection status. Access is checked again for every request.",
@@ -236,6 +273,9 @@
       "approval": "Changes require an explicit review and the source application's authorization.",
       "privacy": "Search is limited to information available to your current account."
     },
+    "approvalExpertTitle": "Need an approval specialist review?",
+    "approvalExpertDescription": "Review approval status, routes, and deadline risk in a read-only expert workspace.",
+    "approvalExpertAction": "Switch to Approval Expert",
     "conversationUnavailable": "This conversation could not be verified. Retry before continuing; saved content has not been displayed."
   },
   "dwaionArchive": {
@@ -245,14 +285,16 @@
     "sort": {
       "recent": "Most recent",
       "oldest": "Oldest first",
-      "messages": "Most messages"
+      "messages": "Most messages",
+      "evidence": "Most evidence"
     },
     "periodLabel": "Conversation period",
     "period": {
-      "all": "Loaded conversations",
-      "day": "Past 24 hours",
+      "all": "All",
+      "day": "Today",
       "week": "Past 7 days",
-      "month": "Past 30 days"
+      "month": "Past 30 days",
+      "hold": "Legal hold"
     },
     "results": "{{count}} of {{total}} loaded conversations",
     "window": "Up to 30 recent conversations. Search, filters and statistics apply to this loaded set.",
@@ -281,7 +323,7 @@
     "description": "Continue DWAI·ON conversations created within your permission scope.",
     "new": "New conversation",
     "searchLabel": "Search conversations",
-    "searchPlaceholder": "Search by conversation title",
+    "searchPlaceholder": "Search title, summary or connected source",
     "loadError": "Conversation history could not be loaded. Try again shortly.",
     "meta": "{{count}} messages · {{date}}",
     "delete": "Delete",
@@ -296,6 +338,7 @@
     "deleting": "Deleting"
   },
   "dwaionActivity": {
+    "mobileHeaderTitle": "Execution History",
     "compactSummary": "{{total}} recent runs · {{attention}} need attention",
     "mobileDescription": "Review run states and policy outcomes, then return to the conversation.",
     "mobileWindowNotice": "Counts and filters use up to {{count}} recently retrieved runs.",
@@ -336,7 +379,19 @@
     "listDescription": "Review each run's state, policy outcome, risk level, source count, and processing time in the latest response.",
     "listLabel": "Recently retrieved AI runs",
     "filteredWindow": "{{visible}} of {{total}} retrieved runs · state filter applied in this browser",
+    "columns": {
+      "task": "Task / run ID",
+      "agent": "Owning agent",
+      "state": "Run state",
+      "time": "Duration / time"
+    },
     "filterLabel": "AI run state filter",
+    "periodLabel": "AI run reporting period",
+    "periods": {
+      "DAY": "24 hours",
+      "WEEK": "7 days",
+      "MONTH": "Last 30 days"
+    },
     "accessTitle": "Run activity is not available",
     "accessDescription": "Previous run details have been hidden because access could not be verified. Refresh or contact your administrator.",
     "filters": {
@@ -366,6 +421,8 @@
       "DENY": "Blocked by policy"
     },
     "runMeta": "Risk {{risk}} · {{sources}} sources · {{latency}} ms",
+    "revisionLabel": "revision {{revision}}",
+    "rowTimeMeta": "{{at}} · {{latency}} ms",
     "selectRun": "Open details for {{agent}} · {{state}}",
     "openConversation": "Open conversation",
     "emptyTitle": "There is no AI run activity to show",
@@ -376,6 +433,10 @@
     "start": "Start a new conversation",
     "details": {
       "title": "Selected run details",
+      "inspectorLabel": "Execution trace inspector",
+      "copyRunId": "Copy run ID",
+      "copiedRunId": "Run ID copied.",
+      "inspectorMeta": "{{agent}} · r{{revision}} · {{latency}} ms",
       "deepLink": "Run {{id}}…",
       "outsideWindow": "This run is outside the current recent-response window. The exact run ID is queried through common activity detail and no other row is substituted.",
       "runLoading": "Loading the exact run record.",
@@ -385,6 +446,7 @@
       "emptyDescription": "Select a run to see fields from the current response and common activity detail verified for your access.",
       "receiptTitle": "Recent run response",
       "additionalMetadata": "Additional run metadata",
+      "eventEvidence": "Event record details",
       "receiptDescription": "The run API supplied this record within your current access. Nothing beyond the separately reported measurement and audit states is inferred.",
       "permissionLoading": "Checking detail access.",
       "permissionTitle": "Common activity detail is not available",
@@ -394,6 +456,24 @@
       "notRecorded": "Not recorded",
       "sourceCountValue": "{{count}}",
       "latencyValue": "{{count}} ms",
+      "boundary": {
+        "completed": {
+          "title": "The server recorded this AI run as completed",
+          "description": "This is the agent run result. When a conversation is linked, verify the actual work result in that conversation."
+        },
+        "running": {
+          "title": "The server reports this run in progress",
+          "description": "The current stage is {{stage}} and reported progress is {{progress}}. Completion is not inferred early."
+        },
+        "denied": {
+          "title": "The policy engine blocked this run",
+          "description": "The policy outcome is recorded as denied. No successful run or external work completion is shown."
+        },
+        "failed": {
+          "title": "The server recorded this run as failed",
+          "description": "Only the failed state and recorded stages are shown. Unrecorded causes and completion results are not inferred."
+        }
+      },
       "fields": {
         "activityTitle": "Run title",
         "runId": "Run ID",
@@ -413,6 +493,7 @@
       "sample": {
         "title": "Development verification data",
         "description": "This local-only sample verifies the contract. It is not counted as a production connection or success.",
+        "listLabel": "Development contract verification runs",
         "summaryExcluded": "{{count}} runs are excluded from the operational metrics above and identified with badges in the list."
       },
       "measurement": {
@@ -426,6 +507,7 @@
       "leaseExpires": "Lease expires {{at}}",
       "progress": "Server-reported progress",
       "progressValue": "{{count}}%",
+      "additionalEvidence": "Source and audit linkage details",
       "lease": {
         "ACTIVE": "Lease active",
         "EXPIRED": "Lease expired",
@@ -452,6 +534,7 @@
         "unavailableDescription": "The server did not provide stage measurements for this run. No stages are invented.",
         "empty": "No run stages were recorded.",
         "partial": "Only some stages were measured. Missing time must not be treated as 0 ms.",
+        "more": "{{count}} additional run stages",
         "listLabel": "Server-recorded run stages",
         "latencyTitle": "Stage processing-time distribution",
         "latencyLabel": "Measured stage processing time totals {{count}} ms"
@@ -490,10 +573,17 @@
     }
   },
   "dwaionProposals": {
+    "selectionUnavailable": "The requested proposal is unavailable in your current scope. It may have expired, been cleared, or become inaccessible.",
     "eyebrow": "Proactive work support",
     "title": "AI proposals",
-    "description": "Review next steps DWAI·ON proposes from work signals, then choose to accept, snooze, or dismiss each one.",
-    "policyBoundary": "Proposals stay within current permissions and source policies",
+    "description": "Review evidence-backed work proposals and decide each next step.",
+    "context": {
+      "live": "Live API data",
+      "scope": "Current account scope",
+      "readOnly": "Read-only review",
+      "connected": "LIVE API"
+    },
+    "policyBoundary": "Within current permissions and source policies",
     "status": {
       "live": "Proposal ledger connected",
       "degraded": "Proposal ledger needs attention"
@@ -505,9 +595,16 @@
     "errorTitle": "AI proposals could not be loaded",
     "errorDescription": "Unverified proposals were not displayed. Check the connection and try again.",
     "controls": {
-      "title": "Workspace analysis",
-      "description": "Analyze current governed work signals only when you request it. Nothing is executed automatically.",
+      "title": "Analysis engine",
+      "description": "Runs only when requested and never executes work automatically.",
+      "statusReady": "Ready · analysis allowed",
+      "statusOff": "Standing by · analysis off",
+      "statusUnavailable": "Connection needs attention",
+      "sourceTypes_one": "{{count}} source type in loaded proposals",
+      "sourceTypes_other": "{{count}} source types in loaded proposals",
       "preference": "Allow analysis for my account",
+      "permissionOn": "Analysis allowed",
+      "permissionOff": "Analysis off",
       "preferenceHelp": "This setting controls whether Analyze now can read permitted work signals.",
       "preferenceError": "Analysis permission could not be verified. Analysis is unavailable until it reconnects.",
       "analyze": "Analyze now",
@@ -541,6 +638,7 @@
     "listDescription": "Review the reason and evidence, then decide the next step yourself.",
     "filterLabel": "AI proposal state filter",
     "views": {
+      "ALL": "All",
       "ACTIVE": "To review",
       "SNOOZED": "Snoozed",
       "HANDLED": "Handled"
@@ -566,7 +664,35 @@
       "EXPIRED": "Expired"
     },
     "evidenceCount": "{{count}} sources",
+    "inbox": {
+      "items": "items",
+      "filters": "AI proposal search and filters",
+      "individualReview": "Bulk acceptance is unavailable. Review evidence and decide each consequential proposal individually.",
+      "searchLabel": "Search proposals",
+      "searchPlaceholder": "Search title, summary, or evidence",
+      "sourceFilter": "Source",
+      "allSources": "All sources",
+      "priorityFilter": "Priority",
+      "allPriorities": "All priorities",
+      "triageCount": "{{count}} triage candidates",
+      "selectionHint": "Selecting a proposal opens its decision review.",
+      "noMatches": "No proposals match these filters",
+      "noMatchesDescription": "Change the search term or filters and try again."
+    },
+    "preview": {
+      "title": "Selected proposal preview",
+      "empty": "Select a proposal to review its reason and supporting evidence here.",
+      "evidence": "Evidence and original sources",
+      "nextStep": "Recommended next step",
+      "reviewAction": "Hand off to the owning app's execution review after acceptance",
+      "reviewOnly": "Review the proposal and record accept, snooze, or dismiss",
+      "open": "Review proposal details"
+    },
     "empty": {
+      "ALL": {
+        "title": "There are no proposals",
+        "description": "New work signals will appear here with their supporting evidence."
+      },
       "ACTIVE": {
         "title": "There are no proposals to review",
         "description": "New work signals will appear here with their supporting evidence."
@@ -580,15 +706,59 @@
         "description": "Decision records for accepted or dismissed proposals will appear here."
       }
     },
+    "mobile": {
+      "reviewCount_one": "{{count}} to review",
+      "reviewCount_other": "{{count}} to review",
+      "filters": "Show proposal filters",
+      "confidenceUnavailable": "Confidence not provided",
+      "generatedAt": "Generated {{at}}",
+      "sourceStatus_one": "{{count}} source type is represented in the loaded proposals.",
+      "sourceStatus_other": "{{count}} source types are represented in the loaded proposals."
+    },
     "detail": {
       "agentProposal": "DWAI·ON proposal",
+      "routeTitle": "Proposal review",
+      "decisionTrigger": "DWAI·ON decision trigger",
       "close": "Close proposal details",
       "why": "Why this was proposed",
+      "analysisRecommendation": "AI analysis recommendation",
+      "evidenceTitle": "Evidence and original sources",
+      "additionalEvidenceUnavailable": "No additional evidence was provided by the API.",
+      "impactTitle": "Recommended action and system impact",
+      "effectTitle": "Recommended action effect",
+      "effectSafe": "This continues only to read-only preparation and draft review; nothing is sent or applied immediately.",
+      "savingsTitle": "Estimated time saved",
+      "savingsUnavailable": "Not provided by the API",
+      "savingsDescription": "Review the evidence and work impact without an estimated time value.",
+      "privacyNotice": "Your review record is managed securely, and accepting alone does not permanently change source-app data.",
+      "technicalContracts": "Execution connection details",
+      "readOnly": "Read-only preparation",
+      "actionContract": "Action contract",
+      "agentContract": "Proposal agent",
+      "revision": "Revision",
+      "noActionContract": "No execution action",
+      "decisionTitle": "Decision panel",
+      "reviewOnly": "Structured review",
+      "decisionDescription": "Choose how this proposal should move forward. Every choice is recorded against the current revision.",
+      "decisionRecorded": "Decision recorded · {{state}}",
+      "acceptTitle": "Accept proposal",
+      "recommended": "Recommended path",
+      "snoozeDescription": "Choose an available reminder time in {{zone}} before this proposal expires.",
+      "dismissDescription": "End this proposal while retaining its accountable decision record.",
+      "decisionAudit": "Decision applies to revision {{revision}} and remains available until {{at}}.",
+      "safeguard": "Accepting records the decision and moves work to review. It does not commit a change in the owning app.",
       "evidence": "Decision evidence",
       "noEvidence": "There is no evidence available to display.",
       "timing": "Validity window",
       "proposedAt": "Proposed",
-      "expiresAt": "Expires"
+      "expiresAt": "Expires",
+      "priority": "Priority: {{priority}}",
+      "sourceRecordedAt": "Source time: {{at}}",
+      "sourceTimeUnavailable": "Source time was not provided.",
+      "sourceLinkUnavailable": "An original-source link was not provided.",
+      "timeZone": "Time zone: {{zone}}",
+      "timeZoneLabel": "Time zone",
+      "validityEnded": "The validity window has ended. This proposal can no longer be accepted, snoozed, or dismissed."
     },
     "actions": {
       "accept": "Accept for review",
@@ -601,7 +771,8 @@
     "snooze": {
       "TWO_HOURS": "In 2 hours",
       "TOMORROW": "Tomorrow at 9 AM",
-      "NEXT_WEEK": "Next Monday"
+      "NEXT_WEEK": "Next Monday",
+      "window": "Times use {{zone}}. Choose a time before the proposal expires."
     },
     "dismiss": {
       "title": "Dismiss this proposal?",
@@ -663,6 +834,7 @@
       "version": "Policy version {{version}}"
     },
     "overview": {
+      "eyebrow": "Operations governance · A01",
       "title": "DWAI·ON operations overview",
       "description": "Review recent execution quality, policy decisions, and adoption signals as tenant aggregates without conversation content.",
       "loadError": "DWAI·ON operations metrics could not be loaded.",
@@ -674,8 +846,15 @@
       "failed": "{{count}} failed",
       "activeUsers": "Active users",
       "permissionScoped": "Anonymous aggregate",
+      "activeUserDetail": "{{conversations}} active conversations within retention",
       "conversations": "Active conversations",
-      "contentHidden": "Content hidden",
+      "contentHidden": "Conversations within retention, regardless of creation period",
+      "aggregateScope": "Tenant aggregate",
+      "scopeControls": "Operations reporting scope",
+      "freshness": "Latest server snapshot",
+      "policyExceptions": "Policy denials",
+      "policyExceptionDetail": "{{handedOff}} review handoffs · {{failed}} execution failures",
+      "attentionNotice": "This reporting window contains {{failed}} execution failures and {{configuration}} configuration-required results. Review them separately from policy stops before diagnosing an outage.",
       "scopeNotice": "Operations metrics provide only tenant-level minimum aggregates. Questions, answers, conversation titles, and personal identifiers are never queried or decrypted.",
       "policy": {
         "title": "Policy decisions",
@@ -695,29 +874,95 @@
         "title": "Runtime efficiency",
         "description": "Aggregate performance for the recent period",
         "latency": "Average response time",
-        "tokens": "Total tokens"
+        "tokens": "Total tokens",
+        "latencyValue": "{{value}} ms average",
+        "tokenValue": "{{value}} tokens"
       },
       "feedback": {
         "title": "User feedback",
         "description": "Ratings aggregated without message content",
         "positiveRate": "Positive rate",
         "positive": "Helpful",
-        "negative": "Needs improvement"
-      }
+        "negative": "Needs improvement",
+        "sample": "{{positive}} helpful · {{negative}} needs improvement"
+      },
+      "operations": {
+        "title": "Operational signals and outcomes",
+        "description": "Compare execution, policy, answer, and cost signals from the same server snapshot.",
+        "execution": "Run processing",
+        "completion": "{{value}} complete",
+        "allowed": "{{count}} allowed",
+        "handedOff": "{{count}} review handoffs",
+        "denied": "{{count}} denied",
+        "grounded": "{{count}} grounded",
+        "abstained": "{{count}} abstained",
+        "configuration": "{{count}} configuration required"
+      },
+      "management": {
+        "title": "Management shortcuts",
+        "description": "Only management screens covered by the current VIEW permissions are shown."
+      },
+      "retention": {
+        "title": "Retention policy state",
+        "description": "The current tenant policy included in the operations response.",
+        "days": "Retention period",
+        "dayValue": "{{count}} days",
+        "legalHold": "Legal hold",
+        "legalHoldOn": "Applied",
+        "legalHoldOff": "Not applied"
+      },
+      "coverage": {
+        "title": "Observability limits",
+        "description": "The operations API does not provide these values, so this screen does not infer their status or success rate.",
+        "runtime": "Per-agent runtime connectivity",
+        "connectors": "Per-connector latency and sync",
+        "alerts": "Operational anomaly feed",
+        "audit": "Recent administrator audit events",
+        "unavailable": "Not provided by this API"
+      },
+      "periodLabel": "Reporting period",
+      "generatedAt": "Snapshot generated {{at}}",
+      "loading": "Loading the scoped snapshot",
+      "refresh": "Refresh overview",
+      "completedSample": "{{completed}} / {{total}} runs completed · {{failed}} failed",
+      "investigate": "Investigate in a management screen"
     },
     "agents": {
+      "eyebrow": "Governance registry · A02",
       "title": "Agent and publishing management",
-      "description": "Manage specialized agent definitions and revisions, and publish only validated versions.",
+      "description": "Manage specialized agent definitions and revisions with explicit publication review.",
       "saved": "The agent definition was saved.",
       "activated": "The selected revision was published.",
       "retired": "The agent was retired.",
       "error": "The agent registry request could not be completed.",
       "create": "New agent",
+      "deploymentHistoryUnavailable": "Deployment history unavailable",
+      "schemaExportUnavailable": "Schema export unavailable",
       "edit": "Edit",
       "newRevision": "New revision",
       "activate": "Publish",
       "retire": "Retire",
       "lifecycleNotice": "Draft authoring and publication permissions are separated. Only published versions appear in the user catalog, and every state transition is audited.",
+      "unsupportedNotice": "The current registry API provides definition metadata and the DRAFT, ACTIVE, and RETIRED lifecycle only. Runtime connectivity, source and action bindings, a separate review stage, and deployment history are not provided.",
+      "summaryLabel": "Loaded agent status summary",
+      "summary": {
+        "active": "Published",
+        "draft": "Drafts",
+        "retired": "Retired",
+        "elevatedRisk": "Elevated risk"
+      },
+      "registryTitle": "Agent registry master",
+      "registryScope": "{{loaded}} loaded · {{total}} total on server",
+      "lifecycleContract": "DRAFT · ACTIVE · RETIRED",
+      "contract": {
+        "title": "Registry contract boundary",
+        "description": "The current lifecycle is {{state}}. This registry response cannot verify the operational information below.",
+        "runtime": "Runtime and model connectivity",
+        "bindings": "Attached sources and allowed actions",
+        "review": "Assigned reviewer and rejection reason",
+        "deployment": "Deployment environment and history",
+        "notProvided": "Not provided"
+      },
       "tableLabel": "DWAI·ON agent registry",
       "columns": {
         "name": "Agent",
@@ -752,15 +997,40 @@
       }
     },
     "sources": {
+      "eyebrow": "DATA GOVERNANCE · A03",
       "title": "Data sources and connectors",
       "description": "Manage allowed source systems and source-permission synchronization as tenant policy.",
       "saved": "The data source policy was saved.",
+      "initialized": "The default source policy set was initialized in a blocked state.",
       "error": "The data source policy request could not be completed.",
       "unavailableDescription": "Unverified source configuration and connection state are not displayed. Try loading the data again.",
       "secretBoundary": "Connector credentials are never stored in this screen or policy store. Only a secret-store reference ID may be linked.",
+      "healthCheckUnavailable": "Connection test unavailable",
+      "exportUnavailable": "Policy export unavailable",
+      "newConnectorUnavailable": "New connector unavailable",
+      "unsupportedNotice": "This policy API reports configuration state and policy update time. It does not report a live connection probe, last successful sync, latency, or credential health.",
+      "summaryLabel": "Data source policy summary",
+      "summary": {
+        "registered": "Registered policies",
+        "registeredDetail": "Fixed source definitions returned by the server",
+        "enabled": "Enabled policies",
+        "enabledDetail": "Sources permitted by tenant policy",
+        "configured": "Configured state",
+        "configuredDetail": "Server-reported configuration state, not a live probe",
+        "sourcePermission": "Source permissions",
+        "sourcePermissionDetail": "Policies enforcing the source user's permissions"
+      },
+      "registryTitle": "Data source policy master",
+      "registryScope": "{{count}} policies returned by the server",
+      "contract": "Policy · configuration state",
       "tableLabel": "DWAI·ON data source policies",
       "edit": "Edit policy",
       "dialogTitle": "Edit data source policy",
+      "initialize": "Initialize default policies",
+      "initializeTitle": "Initialize data source policies",
+      "initializeDescription": "Create the server-defined source policy set for this tenant.",
+      "initializeBoundary": "Initialization creates every policy in a blocked state. Review and enable each source separately after configuration.",
+      "notLinked": "No reference linked",
       "columns": {
         "source": "Data source",
         "provider": "Provider",
@@ -786,22 +1056,70 @@
         "APPROVAL_OPERATION": "Approval operations"
       },
       "connectionStates": {
-        "CONNECTED": "Connection verified",
+        "CONNECTED": "Configured connection",
         "DEGRADED": "Partially degraded",
         "NOT_CONFIGURED": "Not configured",
         "BLOCKED": "Blocked"
+      },
+      "accessModes": {
+        "SOURCE_PERMISSIONS": "Source permissions",
+        "TENANT_ALLOWLIST": "Tenant allowlist",
+        "BLOCKED": "Blocked"
+      },
+      "classifications": {
+        "INTERNAL": "Internal",
+        "CONFIDENTIAL": "Confidential",
+        "RESTRICTED": "Restricted"
+      },
+      "evidence": {
+        "title": "Connection, permission, and freshness evidence",
+        "description": "Only values present in the selected source policy response are treated as verified.",
+        "configurationState": "Configuration state",
+        "permissionEnforcement": "Permission enforcement",
+        "policyFreshness": "Policy updated at",
+        "lastSync": "Last successful source sync",
+        "latency": "Connection and sync latency",
+        "credentialHealth": "Credential validation",
+        "unavailable": "Not provided by this policy API"
       }
     },
     "actions": {
+      "eyebrow": "ACTION GOVERNANCE · A04",
       "title": "Actions and execution access",
       "description": "Manage mutations DWAI·ON may prepare and the confirmation policy applied before execution.",
       "saved": "The action policy was saved.",
+      "initialized": "The default action policy set was initialized in a blocked state.",
       "error": "The action policy request could not be completed.",
+      "unavailableDescription": "Unverified action policy and risk information are not displayed. Try loading the data again.",
       "executionBoundary": "The source application makes the final authorization decision. DWAI·ON only provides a reviewable draft and a handoff to that application.",
+      "exportUnavailable": "Schema export unavailable",
+      "historyUnavailable": "Policy history unavailable",
+      "newActionUnavailable": "New action unavailable",
+      "unsupportedNotice": "The action policy API does not provide a runtime preflight result, reviewer chain, execution pipeline, or owning-app availability. These values are not inferred.",
+      "summaryLabel": "Action policy summary",
+      "summary": {
+        "registered": "Registered actions",
+        "registeredDetail": "Server-defined workplace actions",
+        "lowRisk": "L0/L1 actions",
+        "lowRiskDetail": "Actions classified as lower risk by the server",
+        "elevatedRisk": "L2/L3 actions",
+        "elevatedRiskDetail": "Actions requiring elevated policy attention",
+        "blocked": "Blocked actions",
+        "blockedDetail": "Disabled or blocked by tenant policy"
+      },
+      "registryTitle": "Action policy master",
+      "registryScope": "{{count}} actions returned by the server",
+      "contract": "Risk · handoff · confirmation",
       "tableLabel": "DWAI·ON action policies",
       "edit": "Edit policy",
       "dialogTitle": "Edit action policy",
       "confirmationLocked": "Final user confirmation is a locked safety boundary and cannot be disabled.",
+      "initialize": "Initialize default policies",
+      "initializeTitle": "Initialize action policies",
+      "initializeDescription": "Create policies for the server-defined workplace actions.",
+      "initializeBoundary": "Initialization creates every action policy disabled and blocked. Enable actions individually after reviewing risk and source-app permission requirements.",
+      "required": "Required",
+      "notRequired": "Not required",
       "columns": {
         "action": "Action",
         "key": "Key",
@@ -814,6 +1132,23 @@
         "enabled": "Enable action",
         "policy": "Execution policy",
         "confirmation": "Final user confirmation"
+      },
+      "executionPolicies": {
+        "USER_HANDOFF": "User handoff",
+        "APPROVAL_HANDOFF": "Approval handoff",
+        "BLOCKED": "Blocked"
+      },
+      "evidence": {
+        "title": "Risk, approval, and preflight evidence",
+        "description": "The registry verifies policy metadata only. Final authorization remains with the source application.",
+        "risk": "Risk tier",
+        "permission": "Required source-app permission",
+        "handoff": "Configured handoff",
+        "confirmation": "Final user confirmation",
+        "preflight": "Runtime permission preflight",
+        "approvalChain": "Assigned reviewer and approval chain",
+        "runtimeAvailability": "Owning-app runtime availability",
+        "unavailable": "Not provided by this policy API"
       }
     },
     "safety": {
@@ -844,14 +1179,90 @@
         "description": "Public web search outside verified enterprise sources is blocked by default."
       },
       "maxSources": "Maximum data sources per request",
-      "maxTools": "Maximum tool calls per request"
+      "maxTools": "Maximum tool calls per request",
+      "eyebrow": "DATA GOVERNANCE · A05",
+      "historyUnavailable": "Policy history unavailable",
+      "schemaUnavailable": "Schema export unavailable",
+      "simulationUnavailable": "Dry run unavailable",
+      "contractNotice": "This API reports policy configuration and revision only. It does not report runtime enforcement, detection latency, simulation results, or guardrail health.",
+      "unavailableDescription": "A failed safety-policy request is not shown as a configured or healthy policy. Try loading it again.",
+      "notInitialized": "Safety policy is not initialized",
+      "notInitializedDescription": "The server returned no tenant safety policy. A manager can initialize the server fail-closed defaults.",
+      "initialize": "Initialize safety policy",
+      "initializeTitle": "Initialize safety policy",
+      "initializeDescription": "Create the tenant policy once from the server-owned fail-closed defaults.",
+      "initializeBoundary": "Initialization creates the server defaults. This screen does not claim that runtime enforcement or health has been verified.",
+      "initialized": "The safety policy was initialized from server defaults.",
+      "summaryLabel": "Safety policy contract summary",
+      "summary": {
+        "baseline": "Restrictive baseline",
+        "baselineDetail": "Prompt, citation, and public-web fields returned by the API",
+        "routes": "Configured outcomes",
+        "routesDetail": "Privileged-data and mutation routing",
+        "budgets": "Source · tool limits",
+        "budgetsDetail": "Maximum scopes and calls per request",
+        "revision": "Policy revision"
+      },
+      "baselineTitle": "Server-controlled baseline",
+      "baselineDescription": "Read-only policy fields returned by the safety endpoint.",
+      "controlMapTitle": "Policy decision boundaries",
+      "controlMapDescription": "Cross-check the five policy values returned by the server in one view.",
+      "controlMapBadge": "Live API values",
+      "parametersTitle": "Configurable policy parameters",
+      "parametersDescription": "UPDATE permission changes the two outcomes and request budgets with a reason.",
+      "serverControlled": "Server controlled",
+      "editable": "Editable",
+      "readOnly": "Read only",
+      "notRequired": "Not required",
+      "evidenceTitle": "Configuration and runtime evidence",
+      "evidenceDescription": "Only revision and update time are evidence in this response.",
+      "configurationOnly": "Configuration only",
+      "policyVersion": "Policy version",
+      "updatedAt": "Policy updated at",
+      "notProvided": "Not provided by this policy API",
+      "unsupported": {
+        "runtimeEnforcement": "Runtime enforcement result",
+        "detectionLatency": "Prompt-detection latency",
+        "dryRun": "Dry-run verdict",
+        "health": "Guardrail health telemetry"
+      },
+      "outcomes": {
+        "ALLOW": "Allow",
+        "HANDOFF": "Handoff",
+        "DENY": "Deny"
+      }
     },
     "evaluation": {
+      "ruleBoundary": "Results check source grounding and expected terms only; they do not measure AI accuracy.",
+      "ruleSample": "Limited rule checks: {{passed}} / {{total}} cases passed.",
+      "comparisonUnavailable": "Quality comparison unavailable: dataset, model, policy and evaluation-rule version equivalence is not provided by this API.",
+      "ruleObserved": "{{matched}} / {{total}} expected terms · {{grounded}}",
+      "groundedYes": "source grounding present",
+      "groundedNo": "source grounding absent",
       "title": "Response quality and evaluation",
-      "description": "Validate quality and configuration before and after agent changes with encrypted repeatable evaluation sets.",
+      "description": "Review source grounding, expected terms and configuration for each evaluation run.",
+      "loading": "Loading evaluation sets and recorded runs.",
+      "unavailableDescription": "Evaluation sets and recorded runs could not be verified. Reload them before starting another run.",
+      "detailUnavailable": "The selected evaluation set could not be loaded.",
       "create": "Create evaluation set",
+      "importUnavailable": "CSV import unavailable",
+      "unsupportedNotice": "This API does not provide benchmark accuracy, citation precision, first-token latency, or evidence that separate runs used equivalent datasets, models, policies, and rules.",
+      "summaryLabel": "Loaded evaluation contract summary",
+      "summary": {
+        "loaded": "Loaded sets",
+        "loadedDetail": "Sets returned by this API request",
+        "active": "Active sets",
+        "activeDetail": "Eligible for a new evaluation run",
+        "cases": "Registered cases",
+        "casesDetail": "Cases across the loaded set summaries",
+        "completed": "Latest run completed",
+        "completedDetail": "Loaded sets whose latest recorded run completed"
+      },
+      "registryTitle": "Evaluation sets and recorded runs",
+      "registryScope": "{{count}} sets returned by the evaluation API",
+      "contract": "Rule-check contract",
       "error": "Evaluation data could not be processed.",
-      "dataBoundary": "Evaluation prompts and expectations are encrypted at rest, and only active sets are used for operational comparison.",
+      "dataBoundary": "Evaluation prompts and expectations are encrypted at rest. Run an active set to inspect its rule-check results.",
       "tableLabel": "DWAI·ON evaluation sets",
       "detailLabel": "Selected evaluation set details",
       "emptyTitle": "There are no evaluation sets",
@@ -860,6 +1271,15 @@
       "addCase": "Add evaluation case",
       "run": "Run evaluation",
       "activate": "Activate set",
+      "retire": "Retire set",
+      "lifecycleTitle": "Evaluation-set lifecycle",
+      "lifecycleDescription": "Lifecycle changes require a reason and the current set version. Retiring a set prevents new runs; it does not delete recorded results.",
+      "casesTitle": "Evaluation cases",
+      "casesDescription": "Prompts, expected terms, and allowed source scopes registered for this set.",
+      "metadata": {
+        "locale": "Locale {{value}}",
+        "version": "Version {{value}}"
+      },
       "termCount": "{{count}} expected terms",
       "noCasesTitle": "There are no evaluation cases",
       "noCasesDescription": "Add a real work question and the minimum expected terms.",
@@ -875,10 +1295,10 @@
       },
       "history": {
         "title": "Evaluation run history",
-        "description": "Compare runs from the same evaluation set to detect quality regressions.",
+        "description": "Inspect each run’s rule checks, source grounding and observed results.",
         "export": "Export results",
         "emptyTitle": "There is no run history yet",
-        "emptyDescription": "Run an active evaluation set to build comparable quality evidence here.",
+        "emptyDescription": "Run an active evaluation set to record its rule-check results here.",
         "noModel": "Model not configured",
         "delta": "{{value}} pp from the previous run",
         "regressions": "{{improved}} improved · {{regressed}} regressed",
@@ -927,6 +1347,27 @@
       "separationNotice": "A person who configured or validated an item cannot approve the same item.",
       "evidenceChangeNotice": "Changing evidence while approval is pending invalidates the prior validation and requires revalidation.",
       "secretBoundary": "Do not enter passwords, API keys, tokens, or certificates. Store only Secret Store, CMDB, and test-result references.",
+      "historyUnavailable": "Gate history unavailable",
+      "exportUnavailable": "Portfolio export unavailable",
+      "bulkAuthorizeUnavailable": "Bulk authorization unavailable",
+      "contractNotice": "Readiness is calculated only from the returned gate portfolio. This API does not provide live health probes, immutable-storage or signature verification, continuous diagnostics, or bulk deployment authorization.",
+      "summaryLabel": "Operational gate contract summary",
+      "summary": {
+        "registered": "Registered gates",
+        "registeredDetail": "{{count}} are required for this environment",
+        "approvedDetail": "{{count}} are ready for independent approval",
+        "attentionDetail": "{{blocked}} blocked · {{expired}} expired",
+        "readinessDetail": "Required gates approved; not a live availability score"
+      },
+      "registryTitle": "Operational gate registry",
+      "registryScope": "{{count}} gates returned for {{environment}}",
+      "contract": "Environment-scoped API",
+      "inspectorEvidence": "Selected gate policy, evidence, and approval eligibility",
+      "unsupportedEvidence": "Live probes, evidence signatures, WORM verification, and automatic diagnostics are not provided by this gate API.",
+      "initialize": "Initialize gate portfolio",
+      "initializeTitle": "Initialize operational gates",
+      "initializeDescription": "Create the server-defined gate set for this empty environment.",
+      "initializeBoundary": "Initialization creates every gate in a blocked or unconfigured state. It does not approve the environment or authorize deployment.",
       "environments": {
         "DEVELOPMENT": "Development",
         "STAGING": "Staging",
@@ -1213,7 +1654,7 @@
       "searchPlaceholder": "Event, target, actor, or reason",
       "categoryLabel": "Audit category",
       "search": "Search",
-      "tableLabel": "Immutable DWAI·ON audit history",
+      "tableLabel": "DWAI·ON governance audit history",
       "appendOnly": "Audit history is append-only and cannot be edited or deleted.",
       "columns": {
         "time": "Occurred at",
@@ -1223,6 +1664,34 @@
         "actor": "Actor",
         "reason": "Reason",
         "correlation": "Correlation ID"
+      },
+      "eyebrow": "ASSURANCE · A08",
+      "manageRetention": "Manage retention",
+      "contractNotice": "Audit responses contain event metadata only. This API does not prove WORM storage, signatures, before/after policy diffs, network identity, or destruction completion.",
+      "summaryLabel": "Audit and retention contract summary",
+      "summary": {
+        "records": "Matching audit records",
+        "recordsDetail": "Server total for the current filters",
+        "categories": "Categories on this page",
+        "categoriesDetail": "Derived from the current server page only",
+        "retention": "Retention days",
+        "retentionDetail": "Current tenant policy value",
+        "legalHold": "Legal hold flag",
+        "legalHoldDetail": "Current tenant policy value"
+      },
+      "registryTitle": "Governance audit explorer",
+      "registryScope": "Search and inspect the server-paged audit metadata available to your account.",
+      "serverPaged": "Server paged",
+      "noViewAccess": "Audit metadata is hidden because AUDIT VIEW permission is unavailable.",
+      "listNotice": "The endpoint exposes list and export operations. The response itself contains no tamper-resistance or immutability proof.",
+      "evidenceTitle": "Additional event evidence",
+      "evidenceDescription": "These values are not part of the audit event response and are not inferred.",
+      "notProvided": "Not provided by this audit API",
+      "unsupported": {
+        "diff": "Before/after policy diff",
+        "signature": "Signature or WORM verification",
+        "network": "IP address and session identity",
+        "retentionDisposition": "Retention or destruction disposition"
       }
     },
     "retention": {
@@ -1232,19 +1701,39 @@
       "saveError": "The policy could not be saved. Reload the latest version and try again.",
       "saved": "The retention policy was saved with audit evidence.",
       "policyTitle": "Tenant retention policy",
-      "policyDescription": "Conversation content remains encrypted and is retained only for the configured period.",
+      "policyDescription": "Configure the tenant retention-day and legal-hold fields returned by the operations API.",
       "daysLabel": "Retention period (days)",
       "daysHelp": "Choose a value from 30 through 3,650 days.",
       "daysError": "Retention must be between 30 and 3,650 days.",
       "legalHoldLabel": "Enable legal hold",
-      "legalHoldHelp": "Stops expiry cleanup and user deletion. MANAGE permission is required.",
+      "legalHoldHelp": "Changes the server legal-hold flag. MANAGE permission is required; runtime cleanup impact is not reported here.",
       "reasonLabel": "Change reason",
       "reasonHelp": "Enter a business reason an auditor can understand.",
       "reasonError": "Enter at least 10 characters for the change reason.",
       "version": "Current policy version {{version}}",
       "save": "Save policy",
       "saving": "Saving",
-      "auditNotice": "Every change is recorded as immutable evidence with previous values, new values, actor, and correlation ID."
+      "auditNotice": "Every change is recorded as immutable evidence with previous values, new values, actor, and correlation ID.",
+      "loading": "Loading the retention policy.",
+      "noViewAccess": "Retention policy is hidden because RETENTION VIEW permission is unavailable.",
+      "unavailableDescription": "A failed request is not shown as an active retention schedule. Try loading it again.",
+      "notInitialized": "Retention policy is not initialized",
+      "notInitializedDescription": "The server returned no configured tenant retention policy. A manager can initialize a 90-day policy with legal hold disabled.",
+      "initialize": "Initialize retention policy",
+      "initializeTitle": "Initialize retention policy",
+      "initializeDescription": "Create the tenant policy once with the server-supported baseline.",
+      "initializeBoundary": "Initialization requests 90 retention days with legal hold disabled. It does not prove storage encryption, deletion scheduling, or destruction completion.",
+      "updatedAt": "Updated {{date}}",
+      "evidenceTitle": "Retention contract evidence",
+      "evidenceDescription": "The API returns the current values, version, and update time only.",
+      "legalHoldState": "Legal hold",
+      "notProvided": "Not provided by this retention API",
+      "unsupported": {
+        "destructionSchedule": "Next destruction schedule",
+        "storageProof": "Encryption or storage-medium proof",
+        "holdScope": "Legal-hold scope and case reference",
+        "policyDiff": "Previous values and audit diff"
+      }
     }
   },
   "labels": {
@@ -1344,6 +1833,11 @@
     }
   },
   "workHub": {
+    "keyboardShortcuts": {
+      "createHelp": "New task: Alt+Shift+N. ⌘/Ctrl+N also works when allowed by your browser.",
+      "personalRegion": "Personal task keyboard shortcut region",
+      "personalHelp": "While focus is in this region, press C to complete or E to edit. Shortcuts pause while typing."
+    },
     "header": {
       "eyebrow": "Unified work execution",
       "title": "Unified work queue",
@@ -1384,11 +1878,13 @@
       "APPROVAL_TASK": "Approval",
       "APPROVAL_REQUEST": "Approval request",
       "SERVICE_REQUEST": "Service request",
+      "WORK_ASSIGNMENT": "Assigned work",
       "LEGACY_PROJECTION": "Connected work",
       "OTHER": "Work source"
     },
     "sourceIds": {
       "workspace": "DWP work",
+      "work-assignments": "Assigned work",
       "personal": "Personal tasks",
       "approval-inbox": "Pending approvals",
       "approval-completed": "Completed approvals",
@@ -1480,9 +1976,176 @@
       "whyAssigned": "Why this is your work",
       "summary": "Work details",
       "personalOwnerNotice": "Manage personal task details and lifecycle directly here.",
+      "assignmentOwnerNotice": "Work is the system of record for assignment and execution state. Use the linked source to review the assignment evidence.",
       "sourceOwnerNotice": "The source app owns the final state. Opening it does not complete the work.",
       "selectTitle": "Select work to review",
       "selectDescription": "Choose an item to review its context and available next actions."
+    },
+    "assignment": {
+      "loading": "Verifying the latest assignment, state, and permissions",
+      "unavailableTitle": "This assigned work cannot be verified",
+      "unavailableDescription": "It may have been reassigned, your access may have changed, or the service may be unavailable. Refresh the work list.",
+      "confirmedWork": "Confirmed assigned work",
+      "confirmedWorkDescription": "These are the current Work-owned task terms and assignment state. Acceptance and execution state are shown separately.",
+      "description": "Work description",
+      "noDescription": "No work description was provided.",
+      "requester": "Requester",
+      "assignee": "Assignee",
+      "requesterAndAssignee": "Requester and assignee",
+      "me": "Me",
+      "otherMember": "Another member",
+      "assignmentState": "Assignment state",
+      "workState": "Execution state",
+      "listAssignmentState": "Assignment: {{state}}",
+      "listSourceReviewNotice": "Source evidence is verified when you open details.",
+      "assignmentStates": {
+        "PENDING": "Awaiting acceptance",
+        "ACCEPTED": "Accepted",
+        "DECLINED": "Declined"
+      },
+      "workStates": {
+        "OPEN": "Not started",
+        "IN_PROGRESS": "In progress",
+        "WAITING": "Waiting for an external response",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "actionsTitle": "Available next actions",
+      "actionsDescription": "Only commands allowed by the latest detail response, role, state, and permissions are shown.",
+      "actions": {
+        "accept": "Accept assignment",
+        "decline": "Decline assignment",
+        "start": "Start work",
+        "wait": "Wait for a response",
+        "complete": "Complete work",
+        "cancel": "Cancel work"
+      },
+      "noActions": "No Work command is available in the current state.",
+      "reassignUnavailable": "Reassignment is authorized, but this view does not yet have a safe member and policy selection contract.",
+      "commandsUnavailableTitle": "New Work commands are unavailable",
+      "commandsUnavailableDescription": "Work update permission or a current list receipt has not been verified. You can still review the detail and history.",
+      "confirmTitle": "Review before: {{action}}",
+      "confirmDescription": "Review the current assignment and execution states. The server will verify the version and role again.",
+      "confirmAction": "Run reviewed command",
+      "reason": "Policy reason",
+      "chooseReason": "Choose a reason",
+      "reasonRequired": "Choose one of the defined policy reasons.",
+      "reasons": {
+        "CAPACITY_LIMIT": "Current capacity limit",
+        "OUTSIDE_RESPONSIBILITY": "Outside my responsibility",
+        "NO_LONGER_REQUIRED": "No longer required",
+        "DUPLICATE_WORK": "Duplicate work"
+      },
+      "sourceTitle": "Assignment source",
+      "sourceDescription": "Source access is rechecked whenever detail opens. Opening the source does not change the Work execution state.",
+      "sourceStates": {
+        "AVAILABLE": "Current source access and an internal route were verified.",
+        "UNAVAILABLE": "Source detail cannot be shown now. You can still act on the Work-owned assignment.",
+        "NOT_REQUESTED": "Source detail has not been inspected."
+      },
+      "openSource": "Review in Meetings",
+      "sourceOpenFailed": "The verified internal Meeting route could not be opened. Refresh the source state.",
+      "result": {
+        "confirmedTitle": "Assigned work change confirmed",
+        "confirmedDetail": "The receipt applied at {{time}} matches the current work state.",
+        "confirmedAndChanged": "The command applied at {{time}}, and the current state includes a later change.",
+        "conflictTitle": "The work changed after review",
+        "conflictDetail": "The latest state was loaded. No command is sent again until you review it.",
+        "reviewCurrent": "Review current state",
+        "uncertainTitle": "The command result is not confirmed yet",
+        "uncertainDetail": "Check the existing request receipt before creating a new command. Resending is available only after current write authority and state are verified.",
+        "checkResult": "Check existing request",
+        "retrySame": "Retry the same request"
+      },
+      "filters": {
+        "label": "Assignment role",
+        "ALL": "All roles",
+        "ASSIGNEE": "Assigned to me",
+        "REQUESTER": "Requested by me"
+      },
+      "history": {
+        "title": "Assigned work history",
+        "description": "Work-owned assignment and execution state changes appear in order.",
+        "loading": "Loading assigned work history",
+        "empty": "No assigned work history is available.",
+        "unavailableTitle": "Assigned work history is unavailable",
+        "unavailableDescription": "Check the connection and retry. Unverified history is not displayed.",
+        "changedAheadDescription": "History is ahead of the current detail. The latest work is being refreshed.",
+        "changedBehindDescription": "History has not caught up with the current detail yet. Retry the history before relying on it.",
+        "retry": "Retry history",
+        "reviewCurrent": "Review latest work",
+        "actor": "Actor: {{actor}}",
+        "assignee": "Assignee then: {{assignee}}",
+        "reason": "Reason: {{reason}}",
+        "policyReason": "Organization policy reason",
+        "actions": {
+          "CREATE": "Assigned work created",
+          "ACCEPT": "Assignment accepted",
+          "DECLINE": "Assignment declined",
+          "START": "Work started",
+          "WAIT": "Waiting for a response",
+          "COMPLETE": "Work completed",
+          "CANCEL": "Work cancelled",
+          "REASSIGN": "Assignee changed"
+        }
+      }
+    },
+    "sourceOwned": {
+      "request": {
+        "requestedInformation": "Approval information request",
+        "description": "This is the latest information request verified with the source. Review it and provide your response in Approvals.",
+        "noInformation": "The source did not provide the requested information. Open the original request in Approvals to review it.",
+        "fields": "My submitted approval details",
+        "emptyFields": "The source did not provide displayable form values. Review the original request in Approvals."
+      },
+      "history": {
+        "title": "Source work history",
+        "description": "Verified source events appear in chronological order. Open the source for the complete approval route and additional evidence.",
+        "empty": "The source has no displayable work history.",
+        "actor": "Actor",
+        "step": "Approval step",
+        "stepNumber": "Step {{count}}",
+        "result": "Result or status then",
+        "delegated": "Delegated action",
+        "actors": {
+          "USER": "User",
+          "AGENT": "Agent",
+          "SYSTEM": "System",
+          "SERVICE": "Service",
+          "UNKNOWN": "Not provided by source"
+        },
+        "events": {
+          "created": "Work created",
+          "draftCreated": "Draft created",
+          "draftUpdated": "Draft updated",
+          "submitted": "Request submitted",
+          "withdrawn": "Request withdrawn",
+          "claimed": "Approval task claimed",
+          "approved": "Approval granted",
+          "rejected": "Approval rejected",
+          "informationRequested": "More information requested",
+          "informationResponded": "Information response submitted",
+          "stepStarted": "Approval step started",
+          "cancelled": "Request cancelled",
+          "statusChanged": "Request status changed"
+        },
+        "outcomes": {
+          "SUCCESS": "Succeeded",
+          "FAILURE": "Failed",
+          "DENIED": "Denied",
+          "PENDING": "Pending"
+        },
+        "statuses": {
+          "DRAFT": "Draft",
+          "SUBMITTED": "Submitted",
+          "TRIAGED": "Triaged",
+          "IN_PROGRESS": "In progress",
+          "AWAITING_REQUESTER": "Awaiting requester",
+          "RESOLVED": "Resolved",
+          "CLOSED": "Closed",
+          "CANCELLED": "Cancelled"
+        }
+      }
     },
     "sourceDetail": {
       "myRole": "Current responsibility",
@@ -1497,6 +2160,9 @@
         "workflowEmpty": "No workflow stage evidence was provided. View the complete workflow in the source.",
         "step": "Step {{count}}",
         "currentStep": "Current approval stage",
+        "contextDescription": "Review the requester and workflow context supplied by the list source, then verify it in Approvals before deciding.",
+        "riskScore": "Source risk score",
+        "riskScoreValue": "{{score}} / 100",
         "completedStep": "Recorded stage",
         "evidence": "Request evidence and details",
         "selfApprovalBlocked": "Self-approval restricted",
@@ -1518,9 +2184,11 @@
         "description": "Keep your required input separate from the overall service request resolution.",
         "handoffNotice": "Opening or returning from the source does not by itself mark input or resolution complete.",
         "request": "Service request information",
+        "contextDescription": "Review the service and current assignment supplied by the list source.",
         "number": "Ticket number",
         "name": "Requested service",
         "assignedGroup": "Assigned department",
+        "assignedTo": "Current assignee",
         "due": "Service due date",
         "requestedInformation": "Information requested",
         "noInformationNote": "No information request note was provided. Review the history and original request.",
@@ -1666,7 +2334,10 @@
       "selectMode": "Select work",
       "cancelSelection": "Cancel selection",
       "cancelledBeforeSend": "The session changed or this page closed before this item was sent. Select it again to start a new review.",
-      "cancelledUnknown": "The session changed or this page closed after this request was sent. Check the source status before creating a new request."
+      "cancelledUnknown": "The session changed or this page closed after this request was sent. Check the source status before creating a new request.",
+      "reviewItem": "Review current work",
+      "reviewItemLabel": "Review current work: {{title}}",
+      "reviewUnavailable": "Current work could not be verified. Check the source status and access, then try again."
     },
     "taskForm": {
       "create": {
@@ -1753,10 +2424,32 @@
       "savedTitle": "Today's plan was saved",
       "savedDetail": "The order is stored independently from work state.",
       "selectedMetric": "Selected for today",
-      "dueMetric": "Tasks with a due date",
+      "dueMetric": "Planned work due today",
       "progressMetric": "Work in progress",
       "candidateMetric": "Available candidates",
       "candidateFilter": "Candidate scope",
+      "candidateDateContext": "Plan date {{date}} · {{timeZone}}",
+      "dueFilter": "Candidate deadline",
+      "dueFilters": {
+        "all": "All deadlines",
+        "today": "Due today",
+        "overdue": "Overdue",
+        "scheduled": "Due on a later date",
+        "none": "No due date"
+      },
+      "statusFilter": "Candidate status",
+      "statusFilters": {
+        "all": "All states",
+        "actionable": "My action",
+        "OPEN": "Not started",
+        "IN_PROGRESS": "In progress",
+        "WAITING": "Waiting"
+      },
+      "candidateResultCount": "{{count}} matching candidates",
+      "openCandidatePicker": "Find work to add to the plan",
+      "candidatePickerDescription": "Find work by deadline and state, then select it. Adding work returns you to today's plan.",
+      "cancelCandidatePicker": "Cancel and return to the plan",
+      "addSelectedCandidates": "Add selected work ({{count}})",
       "candidateScopes": {
         "all": "All",
         "due": "With deadline",
@@ -1787,7 +2480,10 @@
       },
       "readyCount": "{{count}} sources ready",
       "attentionCount": "{{count}} sources need attention",
-      "itemCount": "{{count}} verified work items"
+      "itemCount": "{{count}} verified work items",
+      "retrySource": "Refresh this source",
+      "retrySourceLabel": "Refresh {{source}}",
+      "openSource": "Open source app"
     },
     "schedule": {
       "title": "Schedule work time",
@@ -1807,11 +2503,16 @@
       "calendarUnavailable": "Calendars could not be loaded. You can create the event in Calendar.",
       "noEditableCalendar": "There is no editable personal Calendar.",
       "failed": "The scheduling result could not be verified.",
+      "invalidReceiptNeedsReview": "The server response did not match the reviewed event or work link. Refresh linked schedules or check Calendar, then discard this request before starting another.",
+      "previousIntentNeedsReview": "A previous event creation result for this work is still unverified. Check Calendar before trying again.",
+      "discardPreviousIntent": "Discard after checking",
+      "discardPreviousIntentFailed": "The previous request could not be discarded. Try again.",
       "results": {
         "scheduled": "Both the Calendar event and work link were confirmed.",
         "linkPending": "The event was created but the work link failed. Retry only the link without creating another event.",
         "unconfirmed": "No response confirmed whether the event was created. Check the same request.",
         "rejected": "Calendar rejected the request. Review access and the time range.",
+        "workChanged": "This work changed or could not be refreshed. Review the current work before scheduling it.",
         "linkRemoved": "The work link was removed without changing the Calendar event."
       },
       "selectedWork": "Work to schedule",
@@ -2315,6 +3016,7 @@
       "scopeTitle": "Current search scope",
       "scopeDescription": "Selected automatically by permission",
       "evidenceTitle": "Verification panel",
+      "evidenceSectionTitle": "Verified evidence and sources",
       "evidenceDescription": "Processing status and disclosed evidence",
       "enabled": "Available",
       "sources": {
@@ -2353,6 +3055,7 @@
       "software": "Where do I request software access?"
     },
     "recentContext": "Recent work context",
+    "recentContextCount": "{{count}} live items",
     "contextLoading": "Loading recent work available to you.",
     "contextUnavailable": "Recent work could not be loaded. Check the connection and try again.",
     "contextEmpty": "There is no recent work to connect.",
@@ -2364,6 +3067,14 @@
     "questionLaunchUnavailable": "The secure question handoff expired or could not be recovered. Enter the question again to continue.",
     "retry": "Try again",
     "responseStatus": "DWAI·ON request status",
+    "resultBrief": {
+      "you": "You",
+      "evidence": "Evidence collection",
+      "model": "Response route",
+      "processing": "Processing time",
+      "latency": "{{count}}ms",
+      "audit": "Audit record"
+    },
     "status": {
       "permission": {
         "label": "Session boundary applied",
@@ -2446,6 +3157,7 @@
     "actionsShelf": {
       "title": "Continue with your work",
       "description": "DWAI·ON never performs the change directly. It securely hands off to the owning app for review.",
+      "count": "{{count}} connected",
       "previewError": "The work handoff plan could not be verified.",
       "handoffComplete": "Review context was handed off to the owning app.",
       "confirmTitle": "Open the {{action}} review screen?",
@@ -2494,6 +3206,10 @@
       "copy": "Copy response",
       "copied": "Response copied.",
       "copyFailed": "Response could not be copied.",
+      "saveAsArtifact": "Save as artifact",
+      "artifactFallbackTitle": "DWAI·ON response",
+      "artifactCreated": "Artifact created from the conversation with source references.",
+      "artifactCreateFailed": "Artifact could not be created. Try again shortly.",
       "retry": "Run again"
     },
     "independentRun": "Conversation context continues, while permissions and evidence are revalidated for every question.",
@@ -2523,10 +3239,26 @@
     "evidence": {
       "label": "Runtime evidence",
       "agent": "Agent contract",
+      "policyContract": "Policy and execution boundary",
+      "mutationAllowed": "Source mutation allowed",
+      "mutationBlocked": "Source mutation blocked",
+      "sourceId": "Evidence ID",
+      "sourceTimeUnavailable": "The source time was not provided by the API.",
+      "sourceLinkUnavailable": "An original-source link was not provided by the API.",
       "usage": "Model usage",
       "tokens": "{{count}} tokens",
       "latency": "Model latency",
       "milliseconds": "{{count}} ms",
+      "personalization": "Answer personalization",
+      "personalizationStates": {
+        "NOT_EVALUATED": "Not evaluated for this answer",
+        "NOT_PERMITTED": "Not inspected with the current permission",
+        "DISABLED": "Answer application is off",
+        "EMPTY": "No active preferences to apply",
+        "APPLIED": "{{count}} active preferences applied",
+        "BYPASSED": "Bypassed for a safe default answer",
+        "UNAVAILABLE": "Personalization runtime unavailable"
+      },
       "audit": "Audit ID",
       "notApplicable": "Not invoked",
       "privacy": "Question, answer, and source titles are excluded from plaintext execution and audit logs."
@@ -2597,6 +3329,14 @@
       "WAITING": "Waiting",
       "COMPLETED": "Completed"
     },
+    "resultState": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "WAITING": "Waiting",
+      "COMPLETED": "Completed",
+      "ARCHIVED": "Archived",
+      "DELETED": "Deleted"
+    },
     "legacyNotice": "A legacy record bound to its source. Previous arbitrary audit IDs are not represented as verified evidence.",
     "sourceUnavailable": "No source can be opened at this time. Check current access again.",
     "sourceActionNotice": "Source access is rechecked before opening. Approve, retry, and cancel in the app that owns the work.",
@@ -2651,6 +3391,7 @@
         "objectLabel": "Object",
         "objectType": "Object type",
         "objectId": "Object ID",
+        "sourceReference": "Source reference",
         "source": "Source",
         "tool": "Tool",
         "sourceAccess": "Source access",
@@ -2659,6 +3400,9 @@
         "executionVersion": "Ledger version",
         "recordId": "Activity record ID",
         "sourceEventId": "Source event ID",
+        "resourceVersion": "Resource version",
+        "idempotencyKey": "Idempotency key",
+        "resultState": "Command result",
         "correlationId": "Correlation ID",
         "dataProvenance": "Data provenance",
         "recordState": "Change record state",

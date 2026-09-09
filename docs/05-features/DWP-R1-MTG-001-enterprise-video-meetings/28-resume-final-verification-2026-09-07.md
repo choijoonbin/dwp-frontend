@@ -4,7 +4,9 @@
 
 중단 이후 공유 트리, 실제 Stitch 프로젝트, 로컬 서비스 및 테스트를 다시 확인했다. 이 문서는 이전 성공 로그를 재사용한 보고서가 아니다. 아래의 검증 가능한 보정 범위와 남은 제품/운영 조건을 구분한다. **30개 화면의 사용자 승인 또는 디자인·기능·운영 100% 완료 판정이 아니다.** 최종 공유 build 결과는 아래에 별도 기록한다.
 
-원본/현재 화면 비교: [30면 비교 갤러리](/Users/a10697/Work/DWP/output/meeting-design-review-30-2026-09-07/index.html). 각 화면에 원본 코드/이미지 SHA, 구현 캡처 SHA와 시각, 사용한 ZIP 버전이 있다. 상태는 `REVIEW_EVIDENCE_NOT_DESIGN_APPROVAL`이다. 갤러리의 풍부한 예시 데이터는 권한 경계를 통과하는 테스트 fixture이며 실제 사용자의 운영 데이터를 복제한 것이 아니다.
+2026-09-08 최종 재개 범위의 판정은 **`VERIFIED_SCOPE_NOT_PRODUCT_RELEASE`**다. 내부 Meeting 화면·권한·데이터·회귀는 아래와 같이 닫았지만, 실제 고객 녹화·전사·AI 분석·보존 삭제를 승인할 외부 공급자와 운영 증거는 아직 없다.
+
+원본/현재 화면 비교: [30면 비교 갤러리](/Users/a10697/Work/DWP/output/meeting-design-review-30-2026-09-07/index.html). 각 화면에 원본 코드/이미지 SHA, 구현 캡처 SHA와 시각, 캡처 유형, CSS viewport/DPR, 사용한 ZIP 버전이 있다. 이는 2026-09-07 별도 검토 실행의 불변 증적이며 현재 저장소 canonical regression golden과 같은 파일이라는 뜻이 아니다(30면 중 U06-D만 byte-identical). U06 D/M은 `IMMERSIVE_VIEWPORT`, 나머지는 `FULL_DOCUMENT`; 모바일 390px은 CSS viewport이며 구현 PNG는 DPR3 1170px raster다. 상태는 `REVIEW_EVIDENCE_NOT_DESIGN_APPROVAL`이다. 갤러리의 풍부한 예시 데이터는 권한 경계를 통과하는 테스트 fixture이며 실제 사용자의 운영 데이터를 복제한 것이 아니다.
 
 ## 원본 재확인
 
@@ -23,6 +25,10 @@
 5. **캡처 도구의 고정 dock/문서 높이 문제**: 실제 viewport 검증과 전체 문서 캡처를 분리했다. 폰트 완료와 최대 4회 높이 수렴을 확인하고 원래 viewport를 finally에서 복구한다. 동작/CSS를 숨기지 않는다. 갱신한 구현 회귀 PNG는 각각 직접 검토했고 Stitch 원본과 별개다.
 6. **보존 관리 UI 미연결**: U15 관리자 화면에 실제 기록 UUID 기반 조회, 기록 부모 삭제 보류/해제와 만료 대상 삭제 승인/철회를 연결했다. MANAGE 권한, 명시적 확인, 버전 CAS, 동일 idempotency 키 재시도, 권한 회수 시 철회를 검증했다. 녹화/전사/보고서 전체에 대한 법적 보존 명령으로 오인되지 않도록 범위를 표시한다.
 7. **최종 표시 사전 Gate**: `meeting-prejoin.tsx`의 `'status.' + meeting.lifecycleState`를 검사기가 enum 비교로 오인해 `states.STATUS`를 요구했다. 기존 Meeting 표시 방식과 동일한 template literal로 정합했다. 번역/실제 표시/권한 동작은 불변이며 무의미한 공통 사전 키 추가나 검사 완화는 없다.
+8. **저장한 배경 설정의 실제 입장 미적용**: 원본·흐림·오피스 3개 모드를 장치 설정과 prejoin에서 같은 계약으로 사용하고, 실제 LiveKit track publish 전에 로컬 processor를 적용한다. 오피스는 same-origin SVG와 SHA-256 무결성 검사를 사용한다. 원격 URL·임의 업로드는 차단하고 처리 실패 시 원본 영상 publish도 fail-closed한다.
+9. **U07 기록함 게시·보존 projection 부재**: 사용자별 가시성, 게시 상태, V38 보존 상태를 PostgreSQL 정본 query에 결속했다. 검색·게시·보존 filter를 count/page 전에 서버에서 적용하고 organizer/admitted/ACL/만료·회수·cross-tenant·pagination 회귀를 추가했다. 화면의 비활성 설명을 실제 select와 상태 badge로 교체했다.
+10. **관리자 운영 CSV가 UI 전용**: `GET /v1/admin/operations/export`를 개인정보 없는 1행 aggregate CSV로 구현했다. `ADMIN.MEETINGS:VIEW`, support identity 거부, no-store/nosniff, 같은 transaction의 `DATA_EXPORT` audit outbox와 payload SHA, audit 실패 전체 rollback을 검증했다.
+11. **점검 계정의 빈 화면**: `joonbin@sk.com` 전용 로컬 operator seed를 추가·적용했다. 실제 파일·URL·token·전사·AI 결과를 만들지 않고 30개 회의, 16개 미래 일정, 12개 템플릿, 개인실, 사전자료 메타데이터, 개인 준비, 합성 collaboration/facilitation 이력을 넣었다. 보호 backup 후 적용했고 재실행 신규 행 0으로 멱등성을 확인했다.
 
 디자인/퍼블리싱·브라우저, recap/후속 업무, backend/보존 경계를 독립 담당자가 검토했다. U01–U05/U08/U09 14면, U06/U07/U10/U11/U12 10면, U13–U15 6면의 원본·구현을 직접 열어 확인했다. 픽셀 기준선 통과만으로 콘텐츠·권한 정확성을 판단하지 않았다.
 
@@ -30,26 +36,29 @@
 
 중복되는 실행이 있으므로 다음 수치를 단순 합산해 전체 고유 테스트 수로 발표하지 않는다.
 
-| 검증                                                       | 결과                                                                                                 |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Meeting feature/video API unit                             | 93개 파일, 1,192 PASS                                                                                |
-| 전체 clean non-incremental typecheck                       | 0 오류 PASS; 마지막 prejoin 표기 정합 이후 재실행                                                    |
-| Meeting scoped ESLint                                      | 0 오류/경고 PASS                                                                                     |
-| source-size / maintenance                                  | 1,818 production 파일 PASS; maintenance는 마지막 공통 readiness 정합 후 재실행 대상                  |
-| design-system / i18n / display / architecture / 계약 check | PASS                                                                                                 |
-| 30면 최신 캡처 포함 9 spec 통합                            | 120 scheduled = 99 PASS / 21 의도된 project skip / 0 FAIL / 0 flaky                                  |
-| 기존 브라우저 8 spec R17                                   | 166 scheduled = 145 PASS / 21 의도된 project skip / 0 FAIL / 0 flaky; no-update                      |
-| 승인 크기 구현 회귀                                        | 공통 모바일 접근성 보정 반영 후 24/24 PASS; no-update, 원본 대체 아님                                |
-| 원본/출처/메타데이터                                       | 68/68 PASS                                                                                           |
-| U08 rail 최종 반복                                         | 12/12 PASS, skip/failure/flaky/retry 0                                                               |
-| U09 독립 회귀                                              | 20/20 E2E, 관련 70 unit PASS                                                                         |
-| U13–U15 독립 admin PNG                                     | 7 PASS / 3 기존 중복 project skip / 0 FAIL                                                           |
-| backend Meeting fresh check                                | 95 suites / 576 tests, failures 0, errors 0, 외부 LiveKit smoke 1 skip                               |
-| 신규 V38 보존 경계                                         | PostgreSQL 26 + 실제 SecurityFilter/controller PG 5 + wiring 2 = 33 PASS, skip 0                     |
-| Agent Meeting target                                       | 75 PASS / PG 환경 미설정 1 skip                                                                      |
-| Meeting 독립 production build                              | PASS; initial gzip 264.8KiB/280, 5 requests/5, largest async gzip 133.6KiB/260                       |
-| 마지막 prejoin 동일 동작 표기 정합 영향                    | 기존 unit 5개 파일 43/43 PASS; 동일 영향 22 E2E fresh R19 = 18 PASS / 4 명시 skip / 0 FAIL / 0 flaky |
-| 전체 공유 production build                                 | 최종 재실행 기록 대기; 아래 차단 이력 참조                                                           |
+| 검증                                                       | 결과                                                                                                                                                                   |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Meeting feature/video API unit                             | 95개 파일, 1,205 PASS                                                                                                                                                  |
+| 전체 clean non-incremental typecheck                       | 0 오류 PASS; Node 24.19, incremental cache 미사용                                                                                                                      |
+| Meeting scoped ESLint                                      | 0 오류/경고 PASS                                                                                                                                                       |
+| source-size / maintenance                                  | 1,847 production + 270 test/tool PASS; exact legacy 예외 14건                                                                                                          |
+| design-system / i18n / display / architecture / 계약 check | PASS                                                                                                                                                                   |
+| 30면 최신 캡처 포함 9 spec 통합                            | 120 scheduled = 99 PASS / 21 의도된 project skip / 0 FAIL / 0 flaky                                                                                                    |
+| 기존 브라우저 8 spec R17                                   | 166 scheduled = 145 PASS / 21 의도된 project skip / 0 FAIL / 0 flaky; no-update                                                                                        |
+| 승인 크기 구현 회귀                                        | 격리 fresh Vite, Chromium+mobile 24/24 PASS; 0 skip/fail/flaky, 최종 no-update                                                                                         |
+| 원본/출처/메타데이터                                       | 64 PASS / 의도된 project 중복 4 skip / 0 FAIL                                                                                                                          |
+| U08 rail 최종 반복                                         | 12/12 PASS, skip/failure/flaky/retry 0                                                                                                                                 |
+| U09 독립 회귀                                              | 20/20 E2E, 관련 70 unit PASS                                                                                                                                           |
+| U13–U15 독립 admin PNG                                     | 7 PASS / 3 기존 중복 project skip / 0 FAIL                                                                                                                             |
+| backend Meeting fresh check                                | 98 suites / 584 tests, failures 0, errors 0, 외부 LiveKit smoke 1 skip                                                                                                 |
+| 신규 V38 보존 경계                                         | PostgreSQL 26 + 실제 SecurityFilter/controller PG 5 + wiring 2 = 33 PASS, skip 0                                                                                       |
+| Agent Meeting target                                       | 90 PASS / integration DB 환경 미설정 2 skip; public 79 paths, `/internal/` 0                                                                                           |
+| personal-room 전체 unit의 단발성 실패 조사                 | 중앙 단독 18/18 + 20회 반복 360/360 PASS; 재현되지 않아 timeout/제품 로직 무편집                                                                                       |
+| Meeting 독립 production build                              | PASS; initial gzip 265.4KiB/280, 5 requests/5, largest async gzip 134.3KiB/260                                                                                         |
+| 마지막 prejoin 동일 동작 표기 정합 영향                    | 기존 unit 5개 파일 43/43 PASS; 동일 영향 22 E2E fresh R19 = 18 PASS / 4 명시 skip / 0 FAIL / 0 flaky                                                                   |
+| Meeting 정본 OpenAPI                                       | 새 PID runtime 91 paths, readiness/API docs 200, service snapshot exact PASS; Gateway 810 paths에 Meeting 91 paths 합성, `/internal/` 0, frontend generated check PASS |
+| 로컬 `joonbin@sk.com` 점검                                 | 로그인·홈 실데이터 표시 PASS; 오늘 예정 5건, console error/warning 0                                                                                                   |
+| 전체 공유 production build                                 | Node 24.19 정본 `yarn build` PASS; 시작/종료 source fingerprint 동일, 전체 bundle budget PASS                                                                          |
 
 접근성 검사는 의미 있는 조작·키보드·focus·실제 fixed dock 위 콘텐츠 clearance와 axe를 함께 사용한다. 테스트별 해당 조건에서 ko/en, light/dark, forced-colors, 1440/1280/390/320px 및 200% 글자를 검증했다. 모든 30면×모든 조건의 완전한 조합을 실행했다는 뜻은 아니다.
 
@@ -66,13 +75,18 @@
 - Work 소유자가 해당 Chrome service worker 전역을 국소 선언해 ESLint PASS로 복구했다. 다음 full build는 중앙 backend OpenAPI 갱신과 frontend snapshot 사이의 불일치에서 중단되어, 공통 소유자의 최종 sync/check를 요청했다. Meeting 작업은 생성물을 덮어쓰지 않았다.
 - 이후 Work 증거와 Activity 문서 포맷은 각 소유 범위에서 정합되어 전체 Prettier 검사가 PASS했다. 이 결과도 최종 공유 스냅샷에서 다시 확인한다.
 - 첫 최종 재실행은 공통 `check-product-surface-production-readiness.test.mjs` 1,206줄이 maintenance 기준 1,199줄을 초과해 중단됐다. 동시에 Work 소유 파일 3개가 변경되어 실행 전후 source manifest도 달라졌다. 이를 Meeting 성공으로 오인하지 않고 공통 소유자 정합과 Work 동결 뒤 재실행한다.
+- 공통 readiness 정합 후 현재 maintenance/source-size/architecture/PEP Gate는 통과했다. 단 Product Surface release readiness 자체는 승인 증적 0/12, 미완료 release evidence 37건으로 설계대로 `BLOCKED`이며 이를 제품 출시 가능으로 해석하지 않는다.
+- U07의 실제 게시·보존 filter/status badge, U05/U12의 검증된 Office 배경이 구현 캡처에 반영되면서 기존 기준과 달라진 8개 PNG만 원본과 직접 대조해 갱신했다. 그 직후 source traceability와 Chromium+mobile 24면 전체를 no-update로 재실행해 통과했다.
+- 마지막 전체 build 첫 시도는 동시 편집 중이던 Work receipt 테스트의 인자 계약 15건으로 중단됐다. 해당 소유자가 compile-safe 지점을 복구한 뒤 clean typecheck를 다시 통과했다. 이후 공유 편집을 일시 정지하고 시작/종료 source fingerprint `0df151b34f4254d8c31273aa764ea96080f6091e404a9c262757357b18f2cdb2` 동일을 확인한 정본 전체 build를 실행해 통과했다.
 - 최종 결과는 이 표/구획을 갱신하며, 중간 실패를 PASS로 바꾸어 해석하지 않는다.
 
 ## 실제 앱·데이터·운영 확인
 
-중단된 로컬 Docker와 Auth/Gateway/핵심 서비스를 각 소유자가 정본 경로로 재기동했다. volumes 삭제/임의 데이터 초기화는 없다. Meeting 8009를 포함한 core 서비스와 8080 Gateway가 ready이며 중앙이 9개 서비스, **809 public Gateway paths**를 정본 export/sync/check했다. 공통 생성물은 Meeting 작업에서 직접 덮어쓰지 않았다.
+중단된 로컬 Docker와 Auth/Gateway/핵심 서비스를 각 소유자가 정본 경로로 재기동했다. volumes 삭제/임의 데이터 초기화는 없다. Meeting은 2026-09-08 최신 코드로 PID 91917에 재기동했고 `/actuator/health/readiness`와 `/v3/api-docs`가 200이다. Meeting service snapshot은 runtime 91 paths와 exact 일치한다. canonical exporter로 Gateway 810 paths에 Meeting 91 paths를 합성했고 frontend Gateway/Agent 생성 계약 check를 통과했다. 공개 Gateway의 `/internal/` 경로는 0개다.
 
-공식 로컬 점검 계정 `hyunwoo.park@sk.com`으로 실제 앱에 로그인해 `/meetings/home`의 회의, 참여자/수락 수, 일정, 준비 상태, 빈 결과/후속 업무 상태를 확인했다. 로그인 토큰/쿠키를 읽거나 보고서에 저장하지 않았다. 이 재개 구간에는 실제 사용자 데이터 변경/삭제가 없다. 앞선 `joonbin@sk.com` 기록함 즐겨찾기 설정→새로고침→해제 원상복구 점검은 문서 20의 **이전 시점** 증거이며 새 점검으로 재사용하지 않는다.
+공식 로컬 점검 계정 `joonbin@sk.com`으로 실제 앱에 로그인해 `/meetings/home`의 회의, 참여자/수락 수, 일정, 준비 상태, 자료, 템플릿과 개인실을 확인했다. 오늘 예정 5건과 `[화면점검]` 표식 데이터가 실제 API를 통해 표시됐고 브라우저 console error/warning은 0이었다. 로그인 token/cookie는 읽거나 보고서에 저장하지 않았다.
+
+현재 로컬 seed는 회의 30, 미래 예정 16, disabled content plan 30, 사전자료 참조 6, 개인 준비 6/체크 안건 12, 합성 채팅 4, 종료 발언권 2/이력 4, 질문 2/추천 4, 투표 2/선택지 6/표 8, lifecycle event 40이다. recording session/intelligence run/report/media operation/notice acknowledgement/outbox는 모두 0이다. 즉, 풍부한 UI 점검 데이터와 실제 미디어·AI 성공 증거를 명확히 분리한다.
 
 V38 worker는 기본 disabled다. 기록 보존 설계는 승인/보류 CAS, DB lease/fence, child artifact 삭제 증거, audit publication, 한 transaction의 tombstone/감사/정확 범위 삭제를 요구한다. 실제 고객 기록 purge를 한 번도 수행하지 않았다. Agent 8010과 실제 managed processing은 별도 운영 NO-GO로 유지한다.
 
@@ -83,10 +97,10 @@ V38 worker는 기본 disabled다. 기록 보존 설계는 승인/보류 CAS, DB 
 | 전체 셸/시각  | Stitch 예시의 독립 header/sidebar와 솔루션 공통 셸은 다르다. 공통 좌우 여백/토큰은 보존했다. 실제 데이터의 길이/상태와 추가 보안 설명 때문에 모든 픽셀·높이가 원본과 같지는 않다.                     |
 | U03 예약      | 실제 Calendar 가용성/충돌 및 초대 전달 증거 결속. 초대 대상을 등록하는 기능과 외부 전달 성공은 별개다.                                                                                                |
 | U04 준비      | 스마트 브리핑, 사전 대화/원본 자료 broker 및 Meeting tenant/ACL/revision 결속. 임의 모델 호출이나 외부 파일 접근을 추가하지 않는다.                                                                   |
-| U07 기록함    | shared/review/publication/expiry 서버 projection, CSV/export, 서명/permission sharing 계약. 비활성 설명은 해당 기능 개발 완료가 아니다.                                                               |
+| U07 기록함    | 게시·보존 projection/filter와 관리자 aggregate CSV는 완료했다. 사용자 공유·서명 URL·permission delegation 계약은 별도다.                                                                              |
 | U08 결과      | 공유·내보내기·감사 이력의 권한/소유 서비스 연결, 실제 녹화/전사/AI 처리.                                                                                                                              |
 | U09 후속 업무 | Work 직접 이동/재배정/export 및 owner command 권한 계약. 후보 승인은 승인으로 표시하고 최종 Work 생성 성공을 위조하지 않는다.                                                                         |
-| U10–U12       | 실제 템플릿 사용/추천 지표, 일부 개인실 자동화, office/custom-image 배경 등 미지원 기능. 명시적 장치 사용 전 정상 진단/사진을 꾸며 넣지 않는다.                                                       |
+| U10–U12       | 검증된 로컬 Office 배경과 실제 입장 적용은 완료했다. 실제 템플릿 추천 지표, 일부 개인실 자동화, governed custom-image 업로드는 별도다.                                                                |
 | 운영 종단     | 실제 SFU/TURN/Egress, trusted transcript broker, KMS, STT/LLM, 정상 audit delivery, 승인된 일회용 canary와 보존/삭제 증거. 관리자가 worker를 활성화하거나 고객 기록을 삭제하려면 별도 운영 승인 필요. |
 
 이 범위는 새 credential, 타 제품 owner-service 계약/협업, 공통 셸 승인, 실제 보존 정책과 disposable canary가 필요한 인계 조건이다. 기능이 없는데 디자인의 성공 배지를 복제하거나 준비 상태를 GREEN으로 조작하지 않는다.
@@ -105,6 +119,8 @@ node scripts/check-maintenance-source-size.mjs
 corepack yarn nx run dwp-meetings:build
 corepack yarn build
 ./gradlew :dwp-meeting-server:check --rerun-tasks --console=plain
+corepack yarn playwright test e2e/video-meeting-approved-frame-regression.spec.ts
+corepack yarn playwright test --config=e2e/meeting-source-traceability.config.ts
 ```
 
 Gradle은 backend 루트에서, 나머지는 frontend 루트에서 실행한다. E2E exact specs/environment는 영구 요약 JSON과 각 담당 문서에 기록했다. canonical Yarn webServer의 각 isolated port를 사용하고 타 제품 테스트 서버를 재사용하지 않았다. Agent/내부 source-traceability의 PG/browser 미사용 범위도 별도로 표시한다.

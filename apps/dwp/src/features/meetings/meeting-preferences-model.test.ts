@@ -16,7 +16,7 @@ import {
 } from './meeting-preferences-model';
 
 describe('meeting account and device preferences', () => {
-  it('keeps blur local and scoped, defaulting legacy or malformed opt-ins to off', () => {
+  it('keeps background mode local and scoped, migrates legacy blur, and rejects malformed modes', () => {
     const saved = new Map<string, string>();
     const storage = {
       getItem: (key: string) => saved.get(key) ?? null,
@@ -24,24 +24,34 @@ describe('meeting account and device preferences', () => {
     };
     writeMeetingDevicePreferences(storage, 'tenant-a:user-1', {
       ...DEFAULT_MEETING_DEVICE_PREFERENCES,
-      backgroundBlur: true,
+      backgroundMode: 'office',
     });
-    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-1').backgroundBlur).toBe(true);
-    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-2').backgroundBlur).toBe(false);
+    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-1').backgroundMode).toBe('office');
+    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-2').backgroundMode).toBe(
+      'original'
+    );
     expect(
       readMeetingDevicePreferences({ getItem: () => '{"backgroundBlur":"true"}' }, 'legacy')
-        .backgroundBlur
-    ).toBe(false);
+        .backgroundMode
+    ).toBe('original');
+    expect(
+      readMeetingDevicePreferences({ getItem: () => '{"backgroundBlur":true}' }, 'legacy')
+        .backgroundMode
+    ).toBe('blur');
+    expect(
+      readMeetingDevicePreferences({ getItem: () => '{"backgroundMode":"remote"}' }, 'invalid')
+        .backgroundMode
+    ).toBe('original');
     expect(
       meetingDevicePreferencesEqual(DEFAULT_MEETING_DEVICE_PREFERENCES, {
         ...DEFAULT_MEETING_DEVICE_PREFERENCES,
-        backgroundBlur: undefined,
+        backgroundMode: undefined,
       })
     ).toBe(true);
     expect(
       meetingDevicePreferencesEqual(DEFAULT_MEETING_DEVICE_PREFERENCES, {
         ...DEFAULT_MEETING_DEVICE_PREFERENCES,
-        backgroundBlur: true,
+        backgroundMode: 'blur',
       })
     ).toBe(false);
   });
@@ -96,7 +106,7 @@ describe('meeting account and device preferences', () => {
       videoDeviceId: 'camera-local',
       speakerDeviceId: 'speaker-local',
       noiseSuppression: false,
-      backgroundBlur: false,
+      backgroundMode: 'original',
     });
     expect(
       meetingPreferenceScope({

@@ -1,0 +1,85 @@
+{
+  "report": "/private/tmp/dwaion-final-20260908/integrated-mobile-final-v1.json",
+  "reportReady": true,
+  "counting": "One tests[] entry per case; expected=passed, unexpected=failed; flaky and skipped are separate. Retry attempts are not added to case totals.",
+  "expectedTotal": 21,
+  "overall": {
+    "passed": 21,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unknown": 0,
+    "total": 21,
+    "attempts": 21,
+    "extraAttempts": 0
+  },
+  "administrator": {
+    "passed": 0,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unknown": 0,
+    "total": 0,
+    "attempts": 0,
+    "extraAttempts": 0
+  },
+  "administratorSpecs": {
+    "dwaion-stitch-coverage.spec.ts": {
+      "passed": 0,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "total": 0,
+      "attempts": 0,
+      "extraAttempts": 0
+    },
+    "dwaion-admin-conflicts.spec.ts": {
+      "passed": 0,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "total": 0,
+      "attempts": 0,
+      "extraAttempts": 0
+    }
+  },
+  "projects": {
+    "mobile": 21
+  },
+  "reportedStats": {
+    "startTime": "2026-09-08T12:02:59.096Z",
+    "duration": 43298.836,
+    "expected": 21,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "globalErrors": [],
+  "allPassed": true,
+  "notPassed": [],
+  "validationIssues": [],
+  "runReceipt": {
+    "name": "integrated-mobile-final-v1",
+    "cwd": "/tmp/dwaion-final-checkout-20260908",
+    "command": [
+      "corepack",
+      "yarn",
+      "playwright",
+      "test",
+      "e2e/dwaion-personal-intelligence-visual.spec.ts",
+      "e2e/menu-route-contract.spec.ts",
+      "--grep",
+      "dwaion|DWAI",
+      "--project=mobile",
+      "--workers=1",
+      "--reporter=line,json"
+    ],
+    "startedAt": "2026-09-08T12:02:57.740130+00:00",
+    "source": "isolated validation checkout with DWAI product and test hashes matched to shared merge",
+    "completedAt": "2026-09-08T12:03:42.477757+00:00",
+    "durationSeconds": 44.74,
+    "exitCode": 0
+  }
+}

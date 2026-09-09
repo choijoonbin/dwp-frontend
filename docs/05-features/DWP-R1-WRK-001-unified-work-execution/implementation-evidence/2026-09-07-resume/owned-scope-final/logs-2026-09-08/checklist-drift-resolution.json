@@ -1,0 +1,60 @@
+{
+  "reason": "Full E2E exposed real checklist draft loss when a fresh aggregate version changed the detail query key. Fixed same-owner/task read-only retention during pending/transient failures, access/identity denial disposal and denied-then-transient cached-data protection. Independent audit fixed Calendar metadata-only input resets and viewport inspection fixed Work Access Review launcher overlap through the existing shared avoidance contract.",
+  "beforeSha256": "f161865510124f4a9a83f97cd1f3ddf3e9d07653320ba8729b33207ae2192798",
+  "afterSha256": "70fa3afdd8992d8140448bee05c64dcc4cea78422ee5eb425976a299d0c3f3bc",
+  "files": [
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-personal-detail.runtime.test.tsx",
+      "before": null,
+      "after": "63723466623f010c59a8f05130a5aabb153a3baacbec5f1fd34e824cea749921"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-personal-detail.tsx",
+      "before": "29c650aa214b71158d68b61c1768ab04cb3fca9c8eee5ebb04b28701d0966f04",
+      "after": "cd6972f36db84633f4f1c7decfc9500e2e2fab6776f2fb6d1ff0cf87c1929f16"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-schedule-dialog.test.tsx",
+      "before": "3bb0780b04bb1eaebc49868c5fe2332ce57188d86ad8ff07c3bfe10081990d07",
+      "after": "f13496b01882871f6216b5a96f93f5da643b338ac6f376b1d26d73191c30851d"
+    },
+    {
+      "path": "apps/dwp/src/features/work-hub/work-hub-schedule-dialog.tsx",
+      "before": "e0db32574809152e51c3ceecb2f7e466bd5490f5e8927af4d58997589c3d85e4",
+      "after": "8bdb28c76f76999b0a3ea18a4ac0d68a715df9e04040f68ad548b4a47012b566"
+    },
+    {
+      "path": "apps/dwp/src/features/work/access-review-work-item.mounted.test.tsx",
+      "before": "e6205c584760eb68423b2a66b52a2efd6d2cc2cc38c23fb8d8ea0392833efe21",
+      "after": "d555fda75af448e5782f8ca3fea7a00dc3ff78fdc5a47de692acdb6729856ba5"
+    },
+    {
+      "path": "apps/dwp/src/features/work/access-review-work-item.tsx",
+      "before": "ca730a80cef42bd165c953484286471d3131f84a194f1179fce1f3a215576c18",
+      "after": "b83f019745c9b42545f1eb60f13fe29d510dbbe7bdc509d68175073491e2b845"
+    },
+    {
+      "path": "e2e/work-source-design-evidence.spec.ts",
+      "before": "44193757594b508e7d4a117799303e80af556b87075de8a646925815fe0723f1",
+      "after": "ae830b5330e68566cbc5415ec8c26fa87576a62eb64b67988868a6c2521c17a8"
+    }
+  ],
+  "resolution": "Focused browser7PASS1intentionalskip before final one-line denied-cache guard; final guard regression13PASS. All focused Work/full repository tests, nonincremental TypeScript, full build, Workspace build and all13 browser specs repeated on the final hash.",
+  "supersededBrowser": {
+    "run": "/tmp/dwp-work-final-green-20260908-v3",
+    "passed": 228,
+    "skipped": 16,
+    "failed": 2,
+    "galleryUsed": false
+  },
+  "supersededUnit": {
+    "name": "work-unit-complete",
+    "failed": 1,
+    "passed": 702,
+    "reason": "New denied-then-transient regression reproduced before final detail.isSuccess guard. This run is not the final Work unit gate.",
+    "replacement": "work-unit-owned-final:57files703PASS on70fa3afdd8992d8140448bee05c64dcc4cea78422ee5eb425976a299d0c3f3bc",
+    "sourceBaselineSha256": "a4287b4497c75f166476fa92bb57bff8c85a98d38bb16217b3b0dc1db1172d7c",
+    "newRegressionAddedAfterBaseline": true,
+    "finalEvidenceEligible": false
+  }
+}

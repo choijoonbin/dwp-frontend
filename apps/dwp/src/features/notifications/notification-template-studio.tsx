@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import {
   Braces,
   CheckCircle2,
+  ChevronRight,
   FilePenLine,
   Languages,
   LockKeyhole,
   RotateCcw,
   ShieldCheck,
   Sparkles,
+  XCircle,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -17,7 +19,8 @@ import {
   getNotificationTemplateWorkspace,
   previewNotificationTemplate,
   publishNotificationTemplate,
-  retireNotificationTemplateDraft,
+  rejectNotificationTemplateDraft,
+  withdrawNotificationTemplateDraft,
   type NotificationTemplateContent,
   type NotificationTemplatePreview,
   type NotificationTemplateRevision,
@@ -30,6 +33,7 @@ import {
   ErrorState,
   FormDialog,
   FormField,
+  InlineFeedback,
   LoadingState,
 } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -43,6 +47,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationDraftDecisionDialog } from './notification-draft-decision-dialog';
+import { NotificationTemplateComparison } from './notification-governance-comparison';
+import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
+import { NotificationChannelTemplatePreview } from './notification-template-preview';
 
 type EditorState = NotificationTemplateContent & {
   changeReason: string;
@@ -72,6 +80,41 @@ function nextVersion(variant: NotificationTemplateVariant) {
   return variant.version;
 }
 
+function effectivePreviewSamples(variables: string[], locale: string): Record<string, string> {
+  let korean = false;
+  try {
+    korean = new Intl.Locale(locale).language === 'ko';
+  } catch {
+    korean = false;
+  }
+  const values: Record<string, string> = {};
+  for (const variable of variables) {
+    const normalized = variable.toLowerCase();
+    values[variable] = normalized.includes('name')
+      ? korean
+        ? '김민서'
+        : 'Minseo Kim'
+      : normalized.includes('title')
+        ? korean
+          ? '클라우드 운영 예산'
+          : 'Cloud operations budget'
+        : normalized.includes('message')
+          ? korean
+            ? '검토 의견을 남겼습니다.'
+            : 'Left a review comment.'
+          : normalized.includes('due')
+            ? korean
+              ? '오늘 오후 5시'
+              : 'Today at 5:00 PM'
+            : normalized.endsWith('id')
+              ? 'sample-001'
+              : korean
+                ? `예시 ${variable}`
+                : `Sample ${variable}`;
+  }
+  return values;
+}
+
 function TemplateVariantRow({
   variant,
   selected,
@@ -85,7 +128,7 @@ function TemplateVariantRow({
   return (
     <ButtonBase
       onClick={onSelect}
-      aria-current={selected ? 'page' : undefined}
+      aria-pressed={selected}
       sx={{
         width: 1,
         minHeight: 84,
@@ -129,68 +172,15 @@ function TemplateVariantRow({
           )}
         </Stack>
       </Box>
-      <Typography variant="caption" color="text.secondary">
-        {variant.publishedOverride ? `r${variant.publishedOverride.revision}` : 'P'}
-      </Typography>
-    </ButtonBase>
-  );
-}
-
-function TemplatePreviewCard({
-  variant,
-  content,
-  label,
-}: {
-  variant: NotificationTemplateVariant;
-  content: NotificationTemplateContent;
-  label: string;
-}) {
-  const { t } = useTranslation('notifications');
-  return (
-    <Box component="section" aria-label={label} sx={{ borderBlock: 1, borderColor: 'divider' }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ py: 1 }}>
-        <Typography variant="overline" color="text.secondary">
-          {label}
-        </Typography>
-        <Chip size="small" variant="outlined" label={variant.channel} />
-      </Stack>
-      <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr)', gap: 1.5 }}>
-        <Box
-          sx={{
-            width: 38,
-            height: 38,
-            display: 'grid',
-            placeItems: 'center',
-            borderRadius: 1,
-            bgcolor: 'primary.50',
-            color: 'primary.main',
-          }}
-        >
-          <Languages size={19} />
-        </Box>
-        <Box minWidth={0}>
+      <Stack direction="row" gap={0.75} alignItems="center">
+        {variant.publishedOverride && (
           <Typography variant="caption" color="text.secondary">
-            {variant.appName}
+            {`r${variant.publishedOverride.revision}`}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mt: 0.25, overflowWrap: 'anywhere' }}>
-            {content.title || t('admin.templates.emptyContent')}
-          </Typography>
-          {content.preview && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {content.preview}
-            </Typography>
-          )}
-          <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
-            {content.body || t('admin.templates.emptyContent')}
-          </Typography>
-          {content.actionLabel && (
-            <ActionButton intent="quiet" size="small" sx={{ mt: 1, px: 0 }}>
-              {content.actionLabel}
-            </ActionButton>
-          )}
-        </Box>
-      </Box>
-    </Box>
+        )}
+        <ChevronRight size={18} aria-hidden />
+      </Stack>
+    </ButtonBase>
   );
 }
 
@@ -205,9 +195,36 @@ function TemplateDetail({
 }) {
   const { t } = useTranslation('notifications');
   const revision = effectiveRevision(variant);
+  const content = effectiveContent(variant);
+  const effectivePreview = useQuery({
+    queryKey: [
+      ...notificationQueryKeys.adminTemplates(),
+      'effective-preview',
+      variantKey(variant),
+      revision?.checksum ?? variant.version,
+    ],
+    queryFn: ({ signal }) =>
+      previewNotificationTemplate(
+        {
+          typeVersionId: variant.typeVersionId,
+          channel: variant.channel,
+          locale: variant.locale,
+          ...content,
+          sampleData: effectivePreviewSamples(variant.allowedVariables, variant.locale),
+        },
+        signal
+      ),
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
   return (
     <Box component="section" sx={{ minWidth: 0, p: { xs: 2, md: 2.5 } }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1.5}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+        gap={1.5}
+      >
         <Box minWidth={0}>
           <Stack direction="row" gap={0.75} flexWrap="wrap">
             <Chip size="small" variant="outlined" label={variant.appName} />
@@ -250,11 +267,25 @@ function TemplateDetail({
         )}
       </Stack>
 
-      <TemplatePreviewCard
-        variant={variant}
-        content={effectiveContent(variant)}
-        label={t('admin.templates.effectivePreview')}
-      />
+      {effectivePreview.isLoading ? (
+        <LoadingState label={t('admin.templates.previewing')} variant="skeleton" skeletonRows={3} />
+      ) : effectivePreview.isError || !effectivePreview.data ? (
+        <InlineFeedback severity="warning" title={t('admin.templates.effectivePreviewFailed')}>
+          <ActionButton
+            intent="secondary"
+            size="small"
+            onClick={() => void effectivePreview.refetch()}
+          >
+            {t('actions.retry')}
+          </ActionButton>
+        </InlineFeedback>
+      ) : (
+        <NotificationChannelTemplatePreview
+          variant={variant}
+          content={effectivePreview.data.rendered}
+          label={t('admin.templates.effectivePreview')}
+        />
+      )}
 
       <Box
         component="dl"
@@ -282,7 +313,12 @@ function TemplateDetail({
             <Typography component="dt" variant="caption" color="text.secondary">
               {term}
             </Typography>
-            <Typography component="dd" variant="body2" fontWeight={700} sx={{ m: 0, mt: 0.35 }}>
+            <Typography
+              component="dd"
+              variant="body2"
+              fontWeight="fontWeightBold"
+              sx={{ m: 0, mt: 0.35 }}
+            >
               {value}
             </Typography>
           </Box>
@@ -323,7 +359,7 @@ function TemplateDetail({
                     label={`r${item.revision}`}
                   />
                   <Box minWidth={0}>
-                    <Typography variant="body2" fontWeight={700} noWrap>
+                    <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
                       {t(`admin.templates.state.${item.state}`)}
                       {current ? ` · ${t('admin.templates.current')}` : ''}
                     </Typography>
@@ -354,6 +390,7 @@ export function NotificationTemplateStudio() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editor, setEditor] = useState<EditorState>({
     ...EMPTY_CONTENT,
@@ -363,6 +400,10 @@ export function NotificationTemplateStudio() {
   const [renderedPreview, setRenderedPreview] = useState<NotificationTemplatePreview | null>(null);
   const [approvalDraft, setApprovalDraft] = useState<NotificationTemplateRevision | null>(null);
   const [decisionReason, setDecisionReason] = useState('');
+  const [withdrawDraft, setWithdrawDraft] = useState<NotificationTemplateRevision | null>(null);
+  const [withdrawReason, setWithdrawReason] = useState('');
+  const [rejectDraft, setRejectDraft] = useState<NotificationTemplateRevision | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const canManage = hasPermission('ADMIN.NOTIFICATION_TEMPLATE', 'MANAGE');
   const canApprove = hasPermission('ADMIN.NOTIFICATION_TEMPLATE', 'APPROVE');
@@ -455,21 +496,38 @@ export function NotificationTemplateStudio() {
     },
     onError: () => toast.error(t('admin.templates.feedback.publishFailed')),
   });
-  const retireMutation = useMutation({
-    mutationFn: (draft: NotificationTemplateRevision) =>
-      retireNotificationTemplateDraft(
+  const withdrawMutation = useMutation({
+    mutationFn: ({ draft, reason }: { draft: NotificationTemplateRevision; reason: string }) =>
+      withdrawNotificationTemplateDraft(
         draft.revisionId,
         {
           expectedVersion: draft.version,
-          reason: t('admin.templates.retireReason'),
+          reason,
         },
         createNotificationIdempotencyKey('notification-template-retire')
       ),
     onSuccess: async () => {
+      setWithdrawDraft(null);
+      setWithdrawReason('');
       await refresh();
-      toast.success(t('admin.templates.feedback.retired'));
+      toast.success(t('admin.templates.feedback.withdrawn'));
     },
-    onError: () => toast.error(t('admin.templates.feedback.retireFailed')),
+    onError: () => toast.error(t('admin.templates.feedback.withdrawFailed')),
+  });
+  const rejectMutation = useMutation({
+    mutationFn: ({ draft, reason }: { draft: NotificationTemplateRevision; reason: string }) =>
+      rejectNotificationTemplateDraft(
+        draft.revisionId,
+        { expectedVersion: draft.version, reason },
+        createNotificationIdempotencyKey('notification-template-reject')
+      ),
+    onSuccess: async () => {
+      setRejectDraft(null);
+      setRejectReason('');
+      await refresh();
+      toast.success(t('admin.templates.feedback.rejected'));
+    },
+    onError: () => toast.error(t('admin.templates.feedback.rejectFailed')),
   });
 
   const openEditor = (content?: NotificationTemplateContent) => {
@@ -511,7 +569,7 @@ export function NotificationTemplateStudio() {
   }
 
   return (
-    <Stack gap={2.5}>
+    <Stack gap={2.5} data-testid="notification-template-studio">
       <Alert severity="info" icon={<ShieldCheck size={18} />}>
         {t('admin.templates.governanceNotice')}
       </Alert>
@@ -536,6 +594,7 @@ export function NotificationTemplateStudio() {
               return (
                 <Box
                   key={draft.revisionId}
+                  data-testid={`notification-template-review-${draft.revisionId}`}
                   sx={{
                     minHeight: 76,
                     px: 1.5,
@@ -574,15 +633,33 @@ export function NotificationTemplateStudio() {
                       {formatDate(draft.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}
                     </Typography>
                   </Box>
-                  <Stack direction="row" gap={1}>
-                    {canManage && (
+                  <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+                    {canManage && selfAuthored && (
                       <ActionButton
                         intent="secondary"
                         startIcon={<RotateCcw size={16} />}
-                        onClick={() => retireMutation.mutate(draft)}
-                        disabled={retireMutation.isPending}
+                        onClick={() => {
+                          setWithdrawDraft(draft);
+                          setWithdrawReason('');
+                        }}
+                        disabled={withdrawMutation.isPending}
+                        sx={{ width: { xs: '100%', sm: 'auto' } }}
                       >
-                        {t('admin.templates.retireDraft')}
+                        {t('admin.templates.withdrawDraft')}
+                      </ActionButton>
+                    )}
+                    {canApprove && !selfAuthored && (
+                      <ActionButton
+                        intent="secondary"
+                        startIcon={<XCircle size={16} />}
+                        onClick={() => {
+                          setRejectDraft(draft);
+                          setRejectReason('');
+                        }}
+                        disabled={rejectMutation.isPending}
+                        sx={{ width: { xs: '100%', sm: 'auto' } }}
+                      >
+                        {t('admin.templates.rejectDraft')}
                       </ActionButton>
                     )}
                     {canApprove && (
@@ -591,6 +668,7 @@ export function NotificationTemplateStudio() {
                         startIcon={<CheckCircle2 size={16} />}
                         disabled={selfAuthored}
                         onClick={() => setApprovalDraft(draft)}
+                        sx={{ width: { xs: '100%', sm: 'auto' } }}
                       >
                         {selfAuthored
                           ? t('admin.templates.independentApprovalRequired')
@@ -605,33 +683,36 @@ export function NotificationTemplateStudio() {
         </Box>
       )}
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: 'minmax(300px, .85fr) minmax(0, 2.15fr)' },
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          overflow: 'hidden',
-          bgcolor: 'background.paper',
-        }}
-      >
-        <Box
-          sx={{ borderRight: { lg: 1 }, borderColor: 'divider', maxHeight: 760, overflowY: 'auto' }}
-        >
-          {variants.map((variant) => (
-            <TemplateVariantRow
-              key={variantKey(variant)}
-              variant={variant}
-              selected={variantKey(variant) === variantKey(selected ?? variant)}
-              onSelect={() => setSelectedKey(variantKey(variant))}
-            />
-          ))}
-        </Box>
-        {selected && (
-          <TemplateDetail variant={selected} canManage={canManage} onEdit={openEditor} />
-        )}
-      </Box>
+      <NotificationResponsiveCatalog
+        testId="notification-template-catalog"
+        detailOpen={mobileDetailOpen}
+        onBack={() => setMobileDetailOpen(false)}
+        backLabel={t('admin.backToCatalog')}
+        listLabel={t('admin.templates.catalogLabel')}
+        detailLabel={t('admin.templates.detailLabel')}
+        desktopColumns="minmax(300px, .85fr) minmax(0, 2.15fr)"
+        listMaxHeight={760}
+        list={
+          <>
+            {variants.map((variant) => (
+              <TemplateVariantRow
+                key={variantKey(variant)}
+                variant={variant}
+                selected={variantKey(variant) === variantKey(selected ?? variant)}
+                onSelect={() => {
+                  setSelectedKey(variantKey(variant));
+                  setMobileDetailOpen(true);
+                }}
+              />
+            ))}
+          </>
+        }
+        detail={
+          selected && (
+            <TemplateDetail variant={selected} canManage={canManage} onEdit={openEditor} />
+          )
+        }
+      />
 
       <FormDialog
         open={editorOpen}
@@ -643,6 +724,7 @@ export function NotificationTemplateStudio() {
         busy={draftMutation.isPending}
         submitDisabled={
           !renderedPreview ||
+          renderedPreview.warnings.length > 0 ||
           editor.title.trim().length === 0 ||
           editor.body.trim().length === 0 ||
           editor.changeReason.trim().length < 10
@@ -746,11 +828,27 @@ export function NotificationTemplateStudio() {
                     : t('admin.templates.validateAndPreview')}
                 </ActionButton>
                 {renderedPreview ? (
-                  <TemplatePreviewCard
-                    variant={selected}
-                    content={renderedPreview.rendered}
-                    label={t('admin.templates.renderedPreview')}
-                  />
+                  <Stack gap={1.25}>
+                    {renderedPreview.warnings.length > 0 && (
+                      <InlineFeedback
+                        severity="warning"
+                        title={t('admin.templates.validationWarningsTitle')}
+                      >
+                        <Box component="ul" sx={{ m: 0, mt: 0.75, pl: 2.5 }}>
+                          {renderedPreview.warnings.map((warning) => (
+                            <Typography component="li" variant="body2" key={warning}>
+                              {warning}
+                            </Typography>
+                          ))}
+                        </Box>
+                      </InlineFeedback>
+                    )}
+                    <NotificationChannelTemplatePreview
+                      variant={selected}
+                      content={renderedPreview.rendered}
+                      label={t('admin.templates.renderedPreview')}
+                    />
+                  </Stack>
                 ) : (
                   <Box
                     sx={{
@@ -781,6 +879,60 @@ export function NotificationTemplateStudio() {
         )}
       </FormDialog>
 
+      <NotificationDraftDecisionDialog
+        open={Boolean(withdrawDraft)}
+        title={t('admin.templates.withdrawTitle')}
+        description={t('admin.templates.withdrawDescription')}
+        target={t('admin.templates.withdrawTarget', {
+          type: withdrawDraft?.typeKey ?? '',
+          revision: withdrawDraft?.revision ?? '',
+        })}
+        reasonLabel={t('admin.templates.fields.withdrawReason')}
+        reasonHelp={t('admin.templates.withdrawReasonHelp')}
+        reason={withdrawReason}
+        confirmLabel={t('admin.templates.withdrawConfirm')}
+        submittingLabel={t('admin.templates.withdrawing')}
+        cancelLabel={t('actions.cancel')}
+        busy={withdrawMutation.isPending}
+        onReasonChange={setWithdrawReason}
+        onClose={() => {
+          setWithdrawDraft(null);
+          setWithdrawReason('');
+        }}
+        onSubmit={() => {
+          if (withdrawDraft) {
+            withdrawMutation.mutate({ draft: withdrawDraft, reason: withdrawReason.trim() });
+          }
+        }}
+      />
+
+      <NotificationDraftDecisionDialog
+        open={Boolean(rejectDraft)}
+        title={t('admin.templates.rejectTitle')}
+        description={t('admin.templates.rejectDescription')}
+        target={t('admin.templates.rejectTarget', {
+          type: rejectDraft?.typeKey ?? '',
+          revision: rejectDraft?.revision ?? '',
+        })}
+        reasonLabel={t('admin.templates.fields.rejectReason')}
+        reasonHelp={t('admin.templates.rejectReasonHelp')}
+        reason={rejectReason}
+        confirmLabel={t('admin.templates.rejectConfirm')}
+        submittingLabel={t('admin.templates.rejecting')}
+        cancelLabel={t('actions.cancel')}
+        busy={rejectMutation.isPending}
+        onReasonChange={setRejectReason}
+        onClose={() => {
+          setRejectDraft(null);
+          setRejectReason('');
+        }}
+        onSubmit={() => {
+          if (rejectDraft) {
+            rejectMutation.mutate({ draft: rejectDraft, reason: rejectReason.trim() });
+          }
+        }}
+      />
+
       <FormDialog
         open={Boolean(approvalDraft)}
         title={t('admin.templates.approvalTitle')}
@@ -803,10 +955,10 @@ export function NotificationTemplateStudio() {
             <Alert severity="warning" icon={<ShieldCheck size={18} />}>
               {t('admin.templates.makerCheckerApproval')}
             </Alert>
-            <TemplatePreviewCard
-              variant={approvalVariant}
-              content={approvalDraft.content}
-              label={t('admin.templates.proposedPreview')}
+            <NotificationTemplateComparison
+              current={effectiveContent(approvalVariant)}
+              proposed={approvalDraft.content}
+              checksum={approvalDraft.checksum}
             />
             <Typography variant="body2" color="text.secondary">
               {approvalDraft.changeReason}

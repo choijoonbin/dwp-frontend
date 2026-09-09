@@ -32,15 +32,19 @@ export function NotificationHomeHeader({
       component="header"
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'auto minmax(220px, 1fr) auto' },
+        gridTemplateColumns: { xs: 'minmax(0, 1fr) auto', md: 'auto minmax(220px, 1fr) auto' },
+        gridTemplateAreas: {
+          xs: '"title state" "search search"',
+          md: '"title search state"',
+        },
         alignItems: 'center',
-        gap: { xs: 1.5, md: 3 },
-        pb: 2,
+        gap: { xs: 1, md: 3 },
+        pb: { xs: 1.5, md: 2 },
         borderBottom: 1,
         borderColor: 'divider',
       }}
     >
-      <Stack direction="row" spacing={1.25} alignItems="center">
+      <Stack direction="row" spacing={1.25} alignItems="center" sx={{ gridArea: 'title' }}>
         <GlyphSurface size={38} variant="soft">
           <BellRing size={19} />
         </GlyphSurface>
@@ -54,6 +58,7 @@ export function NotificationHomeHeader({
               dateTime={generatedAt}
               variant="caption"
               color="text.secondary"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
             >
               {t('workbench.syncedAt', {
                 time: formatDate(generatedAt, { hour: '2-digit', minute: '2-digit' }),
@@ -69,7 +74,7 @@ export function NotificationHomeHeader({
           event.preventDefault();
           onSearch();
         }}
-        sx={{ order: { xs: 2, md: 0 }, minWidth: 0 }}
+        sx={{ gridArea: 'search', minWidth: 0 }}
       >
         <FormField
           fullWidth
@@ -101,7 +106,7 @@ export function NotificationHomeHeader({
         direction="row"
         gap={0.5}
         alignItems="center"
-        sx={{ justifyContent: { xs: 'flex-start', md: 'flex-end' } }}
+        sx={{ gridArea: 'state', justifyContent: 'flex-end' }}
       >
         <Chip
           size="small"

@@ -1,3 +1,7 @@
+import { isAppReadEntitled } from '@dwp-frontend/shared-utils';
+
+import type { PermissionDTO } from '@dwp-frontend/shared-utils';
+
 const RETURN_TARGET_MAX_LENGTH = 2_048;
 const INTERNAL_ORIGIN = 'https://approvals.internal';
 
@@ -33,4 +37,11 @@ export function approvalWorkReturnTarget(value: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+export function authorizedApprovalWorkReturnTarget(
+  value: unknown,
+  permissions: readonly PermissionDTO[]
+): string | null {
+  return isAppReadEntitled('APP.WORK', permissions) ? approvalWorkReturnTarget(value) : null;
 }

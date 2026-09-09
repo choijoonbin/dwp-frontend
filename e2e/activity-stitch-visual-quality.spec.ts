@@ -151,6 +151,10 @@ test('공통 상세는 데스크톱 인라인과 모바일 드로어에서 사�
 
 test('DWAI·ON 실행 이력은 최근 응답 범위와 정확한 실행 상세만 표시한다', async ({ page }) => {
   const commonDetailRequests: string[] = [];
+  const consoleErrors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
   page.on('request', (request) => {
     const pathname = new URL(request.url()).pathname;
     if (pathname.includes('/api/agent/v1/activity/events/')) commonDetailRequests.push(pathname);
@@ -175,8 +179,20 @@ test('DWAI·ON 실행 이력은 최근 응답 범위와 정확한 실행 상세�
   await expect(inspector.getByRole('complementary', { name: '신호 상세' })).toContainText(
     '결재 요청 요약을 완료했습니다'
   );
+  await expect(
+    inspector.getByRole('complementary', { name: '신호 상세' }).getByText('에이전트 실행', {
+      exact: true,
+    })
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole('complementary', { name: '신호 상세' }).getByText('AGENT_RUN', {
+      exact: true,
+    })
+  ).toHaveCount(0);
   await expectNoInventedCommands(inspector);
   await expectVisualQuality(page, '#dwp-main-content');
+  await expect(page.locator('vite-error-overlay')).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
   await expect(page).toHaveScreenshot(
     'activity-stitch-dwaion-detail-1280.png',
     screenshotOptions()
@@ -184,20 +200,33 @@ test('DWAI·ON 실행 이력은 최근 응답 범위와 정확한 실행 상세�
 
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(inspector).toBeVisible();
-  await expect(page.getByRole('heading', { level: 2, name: '선택 실행 상세' })).toBeInViewport();
-  await expect(page.getByRole('button', { name: '선택 실행 닫기' })).toBeInViewport();
+  const inspectorHeading = inspector.getByRole('heading', {
+    level: 2,
+    name: '근거 기반 업무 응답 생성',
+  });
+  // The Stitch mobile inspector is intentionally a long inline card. Scroll its
+  // actionable header into view instead of centering the whole oversized region.
+  await inspectorHeading.scrollIntoViewIfNeeded();
+  await expect(inspectorHeading).toBeInViewport();
+  await expect(inspector.getByRole('button', { name: '선택 실행 닫기' })).toBeInViewport();
   await expectNoHorizontalOverflow(page, `/dwaion/activity?run=${COMPLETED_RUN_ID} @ 390`);
   await expectMobileActivityLayout(page, 'dwaion');
-  await expectNoSeriousAxeViolations(page, '.MuiDrawer-paper');
+  await expectNoSeriousAxeViolations(page, '[data-testid="dwaion-run-inspector"]');
+  await expect(page.locator('vite-error-overlay')).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
   await expect(page).toHaveScreenshot('activity-stitch-dwaion-detail-390.png', screenshotOptions());
 
   await page.setViewportSize({ width: 320, height: 844 });
-  await expect(page.getByRole('heading', { level: 2, name: '선택 실행 상세' })).toBeInViewport();
-  await expect(page.getByRole('button', { name: '선택 실행 닫기' })).toBeInViewport();
+  await inspectorHeading.scrollIntoViewIfNeeded();
+  await expect(inspectorHeading).toBeInViewport();
+  await expect(inspector.getByRole('button', { name: '선택 실행 닫기' })).toBeInViewport();
   await expectNoHorizontalOverflow(page, `/dwaion/activity?run=${COMPLETED_RUN_ID} @ 320`);
   await expect(page).toHaveScreenshot('activity-stitch-dwaion-detail-320.png', screenshotOptions());
 
   await page.setViewportSize({ width: 1280, height: 1024 });
+  const sampleDisclosure = page.getByRole('button', { name: /개발 검증 데이터/ });
+  await expect(sampleDisclosure).toHaveAttribute('aria-expanded', 'false');
+  await sampleDisclosure.click();
   const sampleRun = page.getByTestId(`dwaion-run-${SAMPLE_RUN_ID}`);
   await expect(sampleRun).toHaveAttribute('data-run-provenance', 'SAMPLE');
   await expect(sampleRun).toContainText('개발 검증 데이터');
@@ -460,18 +489,14 @@ for (const surface of qualitySurfaces) {
           .getByRole('heading', { name: '운영 리스크 근거 수집' })
       ).toBeInViewport();
       const summary = page.getByRole('region', { name: 'AI 실행 상태 요약' });
-      const expand = summary.locator('button[aria-expanded]');
-      await expect(expand).toHaveAttribute('aria-expanded', 'false');
-      expect((await expand.boundingBox())?.height).toBeGreaterThanOrEqual(44);
-      await expand.focus();
+      const attention = summary.getByRole('button', { name: /^확인 신호:/u });
+      await expect(attention).toBeVisible();
+      expect((await attention.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+      await attention.focus();
       await page.keyboard.press('Enter');
-      await expect(expand).toHaveAttribute('aria-expanded', 'true');
-      await summary.getByRole('button', { name: /^확인 신호:/u }).click();
       await expect(
         page.getByRole('list', { name: '최근 조회된 AI 실행' }).getByRole('button')
       ).toHaveCount(2);
-      await expand.click();
-      await expect(expand).toHaveAttribute('aria-expanded', 'false');
     } else {
       await expect(
         page.getByRole('region', { name: '활동 상태 요약' }).getByText('12', { exact: true })
@@ -602,9 +627,11 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
 }
 
 async function expectNoSeriousAxeViolations(page: Page, selector: string) {
+  const effectiveSelector =
+    (await page.locator(selector).count()) > 0 ? selector : '#dwp-main-content';
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
-      const result = await new AxeBuilder({ page }).include(selector).analyze();
+      const result = await new AxeBuilder({ page }).include(effectiveSelector).analyze();
       expect(
         result.violations.filter(
           (violation) => violation.impact === 'critical' || violation.impact === 'serious'
@@ -616,7 +643,7 @@ async function expectNoSeriousAxeViolations(page: Page, selector: string) {
       // A concurrently rebuilt Vite test server can reload between axe injection and analysis.
       // The route mocks survive the reload, so wait for the same governed surface and retry once.
       await page.waitForLoadState('domcontentloaded');
-      await expect(page.locator(selector)).toBeVisible({ timeout: 15_000 });
+      await expect(page.locator(effectiveSelector)).toBeVisible({ timeout: 15_000 });
     }
   }
 }

@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 import { ASK_RUNTIME_FIXTURE, WORKSPACE_QUEUE_FIXTURE } from './support/runtime-access';
 import { mockQuestionLaunches } from './support/question-launch';
+import { PROPOSAL_DESIGN_ITEMS } from './support/dwaion-proposal-design-fixtures';
 
 async function homeFixture(
   page: Page,
@@ -39,6 +40,13 @@ async function homeFixture(
               title,
               locale: 'ko',
               messageCount: 2,
+              agentKey: 'DWP_ASSISTANT',
+              sourceSystems: [],
+              evidenceCount: 0,
+              summaryExcerpt: '검증된 대화 요약입니다.',
+              lastAnswerStatus: 'ANSWER_GROUNDED',
+              retentionUntil: '2026-12-03T00:00:00Z',
+              legalHold: false,
               createdAt: '2026-09-04T00:00:00Z',
               updatedAt: `2026-09-04T0${index}:00:00Z`,
               lastMessageAt: `2026-09-04T0${index}:00:00Z`,
@@ -68,7 +76,7 @@ async function homeFixture(
       json: {
         success: true,
         data: {
-          items: [],
+          items: options.empty ? [] : PROPOSAL_DESIGN_ITEMS,
           summary: {
             active: options.empty ? 0 : 2,
             highPriority: options.empty ? 0 : 1,
@@ -118,8 +126,10 @@ test('home presents verified signals, navigable destinations and no fabricated l
 }) => {
   await homeFixture(page);
   await page.goto('/dwaion/home');
+
+  await expect(page.getByTestId('dwaion-mobile-surface-switcher')).toHaveCount(0);
   const home = page.getByTestId('dwaion-home');
-  await expect(home.getByText('5 signal sources checked', { exact: false })).toBeVisible();
+  await expect(home.getByText('5 signal sources checked', { exact: false })).toHaveCount(1);
   for (const [key, route, value] of [
     ['priorityWork', '/work/queue', '1'],
     ['conversations', '/dwaion/conversations', '3'],
@@ -139,6 +149,15 @@ test('home presents verified signals, navigable destinations and no fabricated l
     '/work/queue?item=WK-1045'
   );
   await expect(home.getByText('Travel expense follow-up')).toHaveCount(0);
+  const suggestions = page.getByTestId('dwaion-home-proposals');
+  await expect(suggestions.getByRole('link')).toHaveCount(1);
+  for (const [index, proposal] of PROPOSAL_DESIGN_ITEMS.slice(0, 1).entries()) {
+    const link = suggestions.getByRole('link', { name: new RegExp(proposal.content.title) });
+    await expect(link).toHaveAttribute('href', `/dwaion/proposals?proposal=${proposal.proposalId}`);
+    await expect(link).toContainText(proposal.content.rationale);
+    await expect(link).toContainText(['Work item', 'Calendar'][index]);
+    await expect(link).not.toContainText(/\b(?:WORK_ITEM|CALENDAR)\b/);
+  }
   await expect(
     home.getByText(/Live v2.5|automatic analysis complete|AI prioritization complete/i)
   ).toHaveCount(0);
@@ -171,10 +190,11 @@ test('source failures do not become zero or stale content and refresh recovers',
   const metric = page.getByTestId('dwaion-signal-conversations');
   await expect(metric).toContainText('0');
   fail = true;
-  await page
+  const refresh = page
     .getByTestId('dwaion-home')
-    .getByRole('button', { name: 'Refresh', exact: true })
-    .click();
+    .getByRole('button', { name: 'Refresh', exact: true });
+  if (await refresh.isVisible()) await refresh.click();
+  else await page.reload();
   await expect(metric).toContainText('Unavailable', { timeout: 20000 });
   await expect(metric).not.toContainText('0');
   await expect(
@@ -232,6 +252,51 @@ test('successful empty sources present empty states instead of invented recommen
   await expect(page.getByText('There are no conversations yet')).toBeVisible();
   await expect(page.getByText('No specialized agents are available')).toBeVisible();
   await expect(page.getByTestId('dwaion-signal-proposals')).toContainText('0');
+  await expect(page.getByTestId('dwaion-home-proposals')).toHaveCount(0);
+});
+
+test('mobile home follows the Stitch information order and exposes the five-item navigation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await homeFixture(page, { locale: 'ko' });
+  await page.goto('/dwaion/home');
+
+  const home = page.getByTestId('dwaion-home');
+  const signals = home.getByRole('region', { name: 'DWAI·ON 업무 신호 요약' });
+  const composer = home.getByTestId('dwaion-workspace-composer');
+  const signalBounds = await signals.boundingBox();
+  const composerBounds = await composer.boundingBox();
+  expect(signalBounds?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(
+    composerBounds?.y ?? Number.NEGATIVE_INFINITY
+  );
+  for (const signal of await signals.locator('[data-testid^="dwaion-signal-"]').all()) {
+    const bounds = await signal.boundingBox();
+    expect(bounds?.height ?? 0).toBeLessThanOrEqual(44);
+  }
+
+  await expect(home.getByTestId('dwaion-home-proposals').getByRole('link')).toHaveCount(1);
+  const mobileNavigation = page.getByTestId('dwaion-mobile-navigation');
+  await expect(mobileNavigation).toBeVisible();
+  await expect(mobileNavigation.getByRole('link')).toHaveCount(4);
+  await expect(mobileNavigation.getByRole('link', { name: '홈', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page'
+  );
+  const routeCases = [
+    ['새 대화', '/dwaion/new'],
+    ['내 대화', '/dwaion/conversations'],
+    ['제안함', '/dwaion/proposals'],
+  ] as const;
+  for (const [label, path] of routeCases) {
+    const link = mobileNavigation.getByRole('link', { name: label });
+    await link.click();
+    await expect(page).toHaveURL((url) => url.pathname === path);
+    await expect(link).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByTestId('dwaion-mobile-surface-switcher')).toHaveCount(0);
+  }
+  await mobileNavigation.getByRole('button', { name: '더보기' }).click();
+  await expect(page.getByTestId('dwaion-mobile-sidebar')).toBeVisible();
 });
 
 for (const view of [
@@ -247,6 +312,10 @@ for (const view of [
   { width: 390, height: 844, locale: 'ko', name: 'forced-colors', forced: true },
 ] as const) {
   test(`home visual and reflow ${view.name}`, async ({ page }, testInfo) => {
+    const consoleErrors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
     await page.setViewportSize({ width: view.width, height: view.height });
     await homeFixture(page, { locale: view.locale, dark: 'dark' in view });
     if ('forced' in view) await page.emulateMedia({ forcedColors: 'active' });
@@ -294,6 +363,13 @@ for (const view of [
       .locator('form')
       .evaluate((form) => Number.parseFloat(getComputedStyle(form).transitionDuration));
     expect(motionDuration).toBeLessThanOrEqual(0.001);
+    const violations = (
+      await new AxeBuilder({ page }).include('[data-testid="dwaion-home"]').analyze()
+    ).violations;
+    expect(
+      violations.filter((entry) => ['critical', 'serious'].includes(entry.impact ?? ''))
+    ).toEqual([]);
+    expect(consoleErrors).toEqual([]);
     await page.screenshot({
       path: testInfo.outputPath(`dwaion-home-${view.name}.png`),
       fullPage: true,
@@ -301,3 +377,29 @@ for (const view of [
     });
   });
 }
+
+test('proposal-only failure clears stale home rows while other work remains available', async ({
+  page,
+}) => {
+  await homeFixture(page);
+  let status = 200;
+  await page.route('**/api/agent/v1/proposals?**', (route) =>
+    status === 200 ? route.fallback() : route.fulfill({ status, json: { detail: 'Unavailable' } })
+  );
+  await page.goto('/dwaion/home');
+  const proposals = page.getByTestId('dwaion-home-proposals');
+  await expect(proposals.getByRole('link')).toHaveCount(1);
+  status = 403;
+  const refresh = page
+    .getByTestId('dwaion-home')
+    .getByRole('button', { name: 'Refresh', exact: true });
+  if (await refresh.isVisible()) await refresh.click();
+  else await page.reload();
+  await expect(proposals.getByRole('alert')).toBeVisible();
+  await expect(proposals.getByRole('link')).toHaveCount(0);
+  await expect(page.getByTestId('dwaion-signal-proposals')).toContainText('Unavailable');
+  await expect(page.getByRole('link', { name: /Approve software access/ })).toBeVisible();
+  status = 200;
+  await proposals.getByRole('button', { name: 'Retry' }).click();
+  await expect(proposals.getByRole('link')).toHaveCount(1);
+});

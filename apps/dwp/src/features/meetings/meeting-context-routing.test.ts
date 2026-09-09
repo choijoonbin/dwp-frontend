@@ -4,6 +4,8 @@ import {
   meetingContextRequest,
   meetingPersonalRoomRequest,
   meetingDraftFromCurrentTemplate,
+  meetingListPath,
+  meetingListContextPath,
   meetingPreparationPath,
   meetingTemplateSchedulePath,
 } from './meeting-context-routing';
@@ -56,6 +58,32 @@ describe('Meeting context screen routing', () => {
       view: 'preparation',
       meetingId: id,
     });
+  });
+  it('preserves list search, pagination and selection across preparation and scheduling', () => {
+    const filters = new URLSearchParams({
+      q: 'Q3 의사결정',
+      page: '2',
+      time: 'ALL',
+      role: 'HOST',
+      date: '2026-09-04',
+      series: 'RECURRING',
+      meeting: id,
+    });
+    const preparation = meetingPreparationPath(id, filters.toString());
+    const preparationSearch = preparation.slice(preparation.indexOf('?'));
+    expect(meetingListPath(preparationSearch)).toBe('/meetings/mine?' + filters);
+    const schedule = meetingListContextPath('schedule', preparationSearch);
+    const scheduledSearch = schedule.slice(schedule.indexOf('?'));
+    expect(meetingContextRequest(scheduledSearch)).toEqual({ view: 'schedule', template: null });
+    expect(meetingListPath(scheduledSearch)).toBe('/meetings/mine?' + filters);
+  });
+  it('drops contextual source references instead of forwarding them into another workflow', () => {
+    expect(meetingListPath(`?view=schedule&templateId=${id}&templateVersion=2`)).toBe(
+      '/meetings/mine'
+    );
+    expect(
+      meetingListContextPath('personal-room', `?view=preparation&meetingId=${id}&page=1`)
+    ).toBe('/meetings/mine?page=1&view=personal-room');
   });
   it('puts only source identity and version into history', () => {
     const draft = meetingDraftFromCurrentTemplate(template, { templateId: id, version: 2 })!;

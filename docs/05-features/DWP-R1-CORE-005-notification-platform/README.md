@@ -1,15 +1,17 @@
 # DWP-R1-CORE-005 Notification Platform
 
 - Owner: Shared Experience Platform
-- 상태: `foundation-pilot-implemented`; 결정·환경 의존 Production Gate 진행 중
+- 상태: `internal-product-complete`; 외부 Provider Production Gate 진행 중
 - Roadmap: R1 Core Foundation
 - 사용자 제품명: `알림 센터`
 - 내부 도메인명: `notification`
-- 기준일: 2026-09-04
+- 기준일: 2026-09-09
 
 ## 산출물
 
 - [최신 수신 분류·메뉴·홈 구현 기준](09-recipient-views-and-action-home.md)
+- [관리자 계약·정책·템플릿 스튜디오 구현 기준](10-admin-governance-studios.md)
+- [Design 01-14 구현 완료 매트릭스](11-design-01-14-implementation-matrix.md)
 
 - [기획 정의](01-기획 정의.md)
 - [화면 설계서](02-화면 설계서.md)
@@ -25,8 +27,10 @@
 
 ## 현재 판정
 
-2026-09-04 메뉴/홈의 현행 조회 조건과 미구현 확장 범위는 위 최신 기준 문서를 따른다.
-과거 설계 문서의 virtual list, SLA 정렬, SavedView 등은 구현 완료 증거가 아니라 제안으로 구분한다.
+2026-09-09 기준 사용자 메뉴·홈은 09 문서, 관리자 계약·정책·템플릿 화면과 4-eyes
+변경 절차는 10 문서를 따른다.
+과거 설계 문서의 virtual list와 SLA 정렬은 구현 완료 증거가 아니라 제안으로 구분한다.
+SavedView는 공통 Governed Saved View API에 연결돼 개인 범위로 구현됐다.
 
 Direct Recipient 기반 In-app Foundation Pilot은 구현되어 실제 로컬 서비스와 데이터로 동작한다.
 Header Badge·Glance, 사용자 알림 센터, 개인 설정, Tenant 운영 개요·계약·전달 운영 화면은 각각의
@@ -135,8 +139,8 @@ SSE·Version Sync + QoS Channel Adapter`다. PostgreSQL은 읽음·저장·완�
 
 ### 결정·환경 의존 잔여 작업
 
-- 권한 회수 후 App·Type의 전달 차단과 기존 항목 표시 방식을 Auth의 권위 있는 Entitlement 내부 계약에
-  연결한다.
+- 권한 회수 후 App·Type의 신규 투영 차단은 Auth의 exact Entitlement 내부 계약에 연결됐으며,
+  tenant/user binding과 401/403/404/timeout/5xx fail-closed 회귀로 고정했다.
 - Tenant 휴일 캘린더 원본과 개인 Timezone·회사 휴일의 합성 우선순위를 확정한 뒤 Quiet Hours에 통합한다.
 - Preview·사유·독립 승인·제한 Batch·Reconciliation·감사를 갖춘 Governed Replay 운영 절차를 확정한다.
 - Provider Support Session의 본문 가시성, TTL, 사유, 승인과 Redaction 정책을 확정한다.

@@ -1,0 +1,150 @@
+{
+  "generatedAt": "2026-09-08T12:29:25.727420+00:00",
+  "policy": "Exact byte copies of final validation receipts and logs; source and target SHA-256 verified. Browser reports and PNGs are in ../final-gallery.",
+  "files": [
+    {
+      "file": "dwaion-product-inventory-final-receipt.json",
+      "source": "/tmp/dwaion-final-20260908/dwaion-product-inventory-final-receipt.json",
+      "bytes": 630,
+      "sha256": "6e72fe3baa2256f6e92b76d671ce3bd4bfe4bf46388d7b203b2f0745ed454dfd"
+    },
+    {
+      "file": "dwaion-product-inventory-final.json",
+      "source": "/tmp/dwaion-final-20260908/dwaion-product-inventory-final.json",
+      "bytes": 20979,
+      "sha256": "813fd4b5c4717b1ccda23ee95480b03fbeef93304aa064ce25b414ec4c5720ec"
+    },
+    {
+      "file": "final-delivery-audit.json",
+      "source": "/tmp/dwaion-final-20260908/final-delivery-audit.json",
+      "bytes": 258,
+      "sha256": "05be921a3d86e552b784f043a41d011e57402cd50cb62db3ec36cb6f7d4b0476"
+    },
+    {
+      "file": "final-gallery-generator-audit.json",
+      "source": "/tmp/dwaion-final-20260908/final-gallery-generator-audit.json",
+      "bytes": 150,
+      "sha256": "524162e15e87287cdc9b73df33beb5831796325cb52b8616fdcb84c77eb3cd31"
+    },
+    {
+      "file": "final-gallery-integrity-audit.json",
+      "source": "/tmp/dwaion-final-20260908/final-gallery-integrity-audit.json",
+      "bytes": 526,
+      "sha256": "edee63be1d20fb346ed7c28c8460780293d0635eb17ab8433d1520a92bad9e48"
+    },
+    {
+      "file": "final-owned-diff-check.log",
+      "source": "/tmp/dwaion-final-20260908/final-owned-diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "final-owned-diff-check.result.json",
+      "source": "/tmp/dwaion-final-20260908/final-owned-diff-check.result.json",
+      "bytes": 397,
+      "sha256": "8429dd41cc6ee9162b8db8e0b5bad679bebd451d659ac1d4efb109fd5f27250a"
+    },
+    {
+      "file": "final-owned-format-check.log",
+      "source": "/tmp/dwaion-final-20260908/final-owned-format-check.log",
+      "bytes": 66,
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+    },
+    {
+      "file": "final-owned-format-check.result.json",
+      "source": "/tmp/dwaion-final-20260908/final-owned-format-check.result.json",
+      "bytes": 11370,
+      "sha256": "15f031199be42433c4041ad5bea0326b10fed9966b097adc47ed478e2d9d2ae2"
+    },
+    {
+      "file": "playwright-case-audit-mobile-v1.json",
+      "source": "/tmp/dwaion-final-20260908/playwright-case-audit-mobile-v1.json",
+      "bytes": 2044,
+      "sha256": "54abd4a9a417daa92b5274e80873dc53cacc94b56c44edc6053ac2c8c4764ea5"
+    },
+    {
+      "file": "playwright-case-audit-quality-v2.json",
+      "source": "/tmp/dwaion-final-20260908/playwright-case-audit-quality-v2.json",
+      "bytes": 1993,
+      "sha256": "28456202359f208ee9566ec5d599c7714ae8e2a1a4af352f484a0c94037449aa"
+    },
+    {
+      "file": "playwright-case-audit-v3.json",
+      "source": "/tmp/dwaion-final-20260908/playwright-case-audit-v3.json",
+      "bytes": 2855,
+      "sha256": "fbeb5b733b0e1314d0cdbf7b5b57714db8f5d981725d8cac7da6d4d285f26c12"
+    },
+    {
+      "file": "private-build-final-v3.log",
+      "source": "/tmp/dwaion-final-20260908/private-build-final-v3.log",
+      "bytes": 58214,
+      "sha256": "46c1a205b1724391ee81b1e1ae08b61841bc4d12dc36875a2b84974a2343afa4"
+    },
+    {
+      "file": "private-build-final-v3.result.json",
+      "source": "/tmp/dwaion-final-20260908/private-build-final-v3.result.json",
+      "bytes": 20273,
+      "sha256": "c0b4978d02104f067f01a35658a413b785d80580ef0a12d664a10c648bd9903b"
+    },
+    {
+      "file": "private-build-prerequisite-receipt.json",
+      "source": "/tmp/dwaion-final-20260908/private-build-prerequisite-receipt.json",
+      "bytes": 513,
+      "sha256": "ebad54772d88a91499c1171a9d95d4d09d29a43e8af9bb67dc67f52f2ceac3f6"
+    },
+    {
+      "file": "private-type-final-v1.log",
+      "source": "/tmp/dwaion-final-20260908/private-type-final-v1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "private-type-final-v1.result.json",
+      "source": "/tmp/dwaion-final-20260908/private-type-final-v1.result.json",
+      "bytes": 20320,
+      "sha256": "25e7bb8e98f1634d3692d35793628f06cba7b7a93cdd7333d8349447db593f6c"
+    },
+    {
+      "file": "private-vite-cache-cleanup-receipt.json",
+      "source": "/tmp/dwaion-final-20260908/private-vite-cache-cleanup-receipt.json",
+      "bytes": 336,
+      "sha256": "14793f4f89c56dc047b65759e652a42e98f0042a3cec557859a7a243df47e309"
+    },
+    {
+      "file": "shared-type-final.log",
+      "source": "/tmp/dwaion-final-20260908/shared-type-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "shared-type-final.result.json",
+      "source": "/tmp/dwaion-final-20260908/shared-type-final.result.json",
+      "bytes": 20599,
+      "sha256": "5505cf0feb71f73c45308c62db7799a6968101a48cd8858a6d8d4c8fc6fbb38a"
+    },
+    {
+      "file": "shared-unit-final.log",
+      "source": "/tmp/dwaion-final-20260908/shared-unit-final.log",
+      "bytes": 240,
+      "sha256": "c2c6b76953db0de68978075353f18b885c6b9934359d26b283bdf269526f42b5"
+    },
+    {
+      "file": "shared-unit-final.result.json",
+      "source": "/tmp/dwaion-final-20260908/shared-unit-final.result.json",
+      "bytes": 20572,
+      "sha256": "a420d779d23bc1db1dab8ba5c5d1e26523b8223ad69cbee1fcc2a8762a47eeff"
+    },
+    {
+      "file": "shared-workspace-final.log",
+      "source": "/tmp/dwaion-final-20260908/shared-workspace-final.log",
+      "bytes": 19782,
+      "sha256": "1239f3d9ade0cd8717a709bf2a98536b7a35236720a443756a41e1a17048adda"
+    },
+    {
+      "file": "shared-workspace-final.result.json",
+      "source": "/tmp/dwaion-final-20260908/shared-workspace-final.result.json",
+      "bytes": 20612,
+      "sha256": "f8e995f2f557861db5f029a8d7186ecea2367fe643b71b59573cdcb6ca3f6cd2"
+    }
+  ]
+}

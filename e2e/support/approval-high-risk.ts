@@ -1,6 +1,7 @@
 import type { Page, Request, Route } from '@playwright/test';
 
 export type ApprovalHighRiskNetworkObservation = Readonly<{
+  callbackRequests: Array<Readonly<{ url: string }>>;
   issuerRequests: Array<
     Readonly<{ body: Record<string, unknown>; headers: Record<string, string> }>
   >;
@@ -60,6 +61,7 @@ export async function mockApprovalHighRiskNetwork(
   }> = [];
   const commandRequests: Array<{ body: unknown; headers: Record<string, string>; url: string }> =
     [];
+  const callbackRequests: Array<{ url: string }> = [];
   const baseUrl = (process.env.E2E_BASE_URL || 'http://localhost:4200').replace(/\/$/u, '');
 
   await page.route('**/api/auth/product-surface-step-up-challenges', (route) => {
@@ -143,16 +145,18 @@ export async function mockApprovalHighRiskNetwork(
   );
 
   const context = page.context();
-  await context.route('**/api/auth/oidc/callback?*', (route) =>
-    success(
+  await context.route('**/api/auth/oidc/callback?*', (route) => {
+    callbackRequests.push({ url: route.request().url() });
+    return success(
       route,
       { userId: '1', tenantId: '1' },
       {
+        'Access-Control-Expose-Headers': 'X-DWP-Step-Up-Flow-ID, X-DWP-Step-Up-Return-To',
         'X-DWP-Step-Up-Flow-ID': FLOW_REF,
         'X-DWP-Step-Up-Return-To': '/approvals/admin/overview',
       }
-    )
-  );
+    );
+  });
   await context.route('**/api/auth/me', (route) =>
     success(route, {
       userId: 1,
@@ -223,5 +227,5 @@ export async function mockApprovalHighRiskNetwork(
     })
   );
 
-  return { issuerRequests, commandRequests };
+  return { callbackRequests, issuerRequests, commandRequests };
 }

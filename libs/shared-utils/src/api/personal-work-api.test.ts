@@ -3,7 +3,9 @@ import {
   createPersonalWorkTask,
   deletePersonalWorkTask,
   getPersonalDayPlan,
+  getPersonalWorkTask,
   getPersonalWorkTasks,
+  getPersonalWorkTimeline,
   replacePersonalDayPlan,
   transitionPersonalWorkTask,
   updatePersonalWorkTask,
@@ -25,6 +27,54 @@ describe('personal Work API contracts', () => {
       headers: { 'Idempotency-Key': key },
       signal: controller.signal,
     });
+  });
+  it('passes cancellation through detail reads and checklist/delete writes', async () => {
+    const controller = new AbortController();
+    const input = { title: 'Work', priority: 'NORMAL' as const, version: 4, checklist: [] };
+    await getPersonalWorkTask('task-1', controller.signal);
+    await getPersonalWorkTimeline('task-1', 0, 100, controller.signal);
+    await updatePersonalWorkTask('task-1', input, key, controller.signal);
+    await deletePersonalWorkTask('task-1', { version: 4 }, key, controller.signal);
+    expect(http.get).toHaveBeenNthCalledWith(
+      1,
+      '/api/platform/v1/workspace/work-hub/personal-tasks/task-1',
+      { signal: controller.signal }
+    );
+    expect(http.get).toHaveBeenNthCalledWith(
+      2,
+      '/api/platform/v1/workspace/work-hub/personal-tasks/task-1/timeline?page=0&size=100',
+      { signal: controller.signal }
+    );
+    expect(http.put).toHaveBeenCalledWith(
+      '/api/platform/v1/workspace/work-hub/personal-tasks/task-1',
+      input,
+      { headers: { 'Idempotency-Key': key }, signal: controller.signal }
+    );
+    expect(http.post).toHaveBeenCalledWith(
+      '/api/platform/v1/workspace/work-hub/personal-tasks/task-1/delete',
+      { version: 4 },
+      { headers: { 'Idempotency-Key': key }, signal: controller.signal }
+    );
+  });
+  it('passes cancellation through create and whole-plan replacement writes', async () => {
+    const controller = new AbortController();
+    const task = { title: 'Work', priority: 'NORMAL' as const };
+    const plan = {
+      version: 3,
+      items: [{ sourceSystem: 'DAY_PLAN_SELECTION', sourceReference: 'opaque-1' }],
+    };
+    await createPersonalWorkTask(task, key, controller.signal);
+    await replacePersonalDayPlan('2026-09-04', plan, key, controller.signal);
+    expect(http.post).toHaveBeenCalledWith(
+      '/api/platform/v1/workspace/work-hub/personal-tasks',
+      task,
+      { headers: { 'Idempotency-Key': key }, signal: controller.signal }
+    );
+    expect(http.put).toHaveBeenCalledWith(
+      '/api/platform/v1/workspace/work-hub/day-plans/2026-09-04',
+      plan,
+      { headers: { 'Idempotency-Key': key }, signal: controller.signal }
+    );
   });
   it('keeps a stable idempotency key and original version for command replay', async () => {
     await transitionPersonalWorkTask('id/1', 'complete', { version: 4 }, key);

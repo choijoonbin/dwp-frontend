@@ -63,6 +63,38 @@ describe('background output canvas', () => {
     );
     compositor.destroy();
   });
+  it('uses only the approved office plate behind the segmented foreground', () => {
+    const office = { source: { id: 'office' }, width: 1600, height: 900, close: vi.fn() };
+    const compositor = createMeetingBackgroundCompositor(
+      'office',
+      office as unknown as Parameters<typeof createMeetingBackgroundCompositor>[1]
+    );
+    const video = { videoWidth: 640, videoHeight: 360 } as HTMLVideoElement;
+    compositor.render(video, { width: 1, height: 1, foreground: new Uint8Array([1]) });
+    expect(canvases[1].context.drawImage).toHaveBeenCalledWith(
+      office.source,
+      0,
+      0,
+      1600,
+      900,
+      0,
+      0,
+      640,
+      360
+    );
+    expect(canvases[1].context.drawImage).not.toHaveBeenCalledWith(
+      video,
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.anything()
+    );
+    compositor.destroy();
+  });
+  it('fails closed when office mode has no approved plate', () => {
+    expect(() => createMeetingBackgroundCompositor('office')).toThrow('ASSET_UNAVAILABLE');
+    expect(canvases).toHaveLength(0);
+  });
   it.each([
     { width: 2, height: 1, foreground: new Uint8Array([1]) },
     { width: 1, height: 1, foreground: new Uint8Array([255]) },

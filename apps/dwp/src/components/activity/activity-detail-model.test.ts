@@ -42,6 +42,33 @@ describe('activity event detail presentation', () => {
     expect(model.executionFields).toEqual([]);
   });
 
+  it('presents the exact personal Work receipt binding without treating its version as execution state', () => {
+    const taskId = 'b1111111-1111-4111-8111-111111111111';
+    const commandId = 'c2222222-2222-4222-8222-222222222222';
+    const model = activityEventDetailModel({
+      ...baseEvent,
+      source: 'PERSONAL_TASK',
+      objectId: taskId,
+      sourceReference: taskId,
+      resourceVersion: 4,
+      idempotencyKey: commandId,
+      resultState: 'ARCHIVED',
+      sourceEventId: `personal-work-command:900018:${commandId}`,
+      eventKind: 'CHANGE',
+      dataProvenance: 'LIVE',
+    });
+
+    expect(model.resultState).toBe('ARCHIVED');
+    expect(model.sourceFields).toContainEqual({ key: 'sourceReference', value: taskId });
+    expect(model.traceFields).toEqual(
+      expect.arrayContaining([
+        { key: 'resourceVersion', value: '4' },
+        { key: 'idempotencyKey', value: commandId },
+      ])
+    );
+    expect(model.executionFields).toEqual([]);
+  });
+
   it('presents only source-backed execution snapshot fields and a restricted audit reference', () => {
     const model = activityEventDetailModel({
       ...baseEvent,

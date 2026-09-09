@@ -1,0 +1,33 @@
+{
+  "name": "playwright-final-complete",
+  "command": [
+    "corepack",
+    "yarn",
+    "playwright",
+    "test",
+    "e2e/work-access-review-responsive.spec.ts",
+    "e2e/work-activity-return-focus.spec.ts",
+    "e2e/work-command-center.spec.ts",
+    "e2e/work-direct-action-owner-transition.spec.ts",
+    "e2e/work-hub-foundation.spec.ts",
+    "e2e/work-mobile-accessibility-audit.spec.ts",
+    "e2e/work-personal-design-actions.spec.ts",
+    "e2e/work-route-access.spec.ts",
+    "e2e/work-selected-assist-contract.spec.ts",
+    "e2e/work-source-decisions.spec.ts",
+    "e2e/work-source-design-evidence.spec.ts",
+    "e2e/work-stitch-design-sync.spec.ts",
+    "e2e/work-task-edit-conflict.spec.ts",
+    "--project=chromium",
+    "--project=mobile",
+    "--workers=1",
+    "--max-failures=1",
+    "--retries=0",
+    "--reporter=line,json"
+  ],
+  "startedAt": "2026-09-08T10:18:21.665631+00:00",
+  "completedAt": "2026-09-08T10:27:02.146693+00:00",
+  "durationSeconds": 520.47,
+  "exitCode": 0,
+  "log": "/tmp/dwp-work-final-20260908-v2/playwright-final-complete.log"
+}

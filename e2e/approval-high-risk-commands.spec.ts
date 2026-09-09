@@ -230,6 +230,7 @@ for (const highRiskCase of cases) {
     const popup = await popupPromise;
     await expect.poll(() => popup.isClosed()).toBe(true);
     await expect(page.getByText(/본인 확인이 완료되었습니다/u)).toBeVisible();
+    expect(network.callbackRequests).toHaveLength(1);
     expect(network.issuerRequests).toHaveLength(2);
     expect(network.commandRequests).toHaveLength(0);
 

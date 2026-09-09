@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   askDwpStream,
   type AskCitation,
@@ -21,6 +22,7 @@ import { DwaionPanelComposer } from './dwaion-panel-composer';
 import { DwaionPanelHeader } from './dwaion-panel-header';
 import { DwaionPanelResult, type DwaionPanelRequestState } from './dwaion-panel-result';
 import { DwaionSupportTools, type DwaionSupportTool } from './dwaion-support-tools';
+import { useDwaionGovernedMutation } from '../use-dwaion-governed-mutation';
 
 type DwaionPanelProps = {
   firstName?: string;
@@ -36,6 +38,8 @@ type DwaionPanelProps = {
 };
 
 const defaultSuggestionKeys = ['priority', 'policy', 'access'] as const;
+const COMPACT_RADIUS = foundationTokens.radius.compact + 'px';
+const CONTROL_RADIUS = foundationTokens.radius.control + 'px';
 
 export function DwaionPanel({
   firstName,
@@ -50,6 +54,16 @@ export function DwaionPanel({
   fullScreen = false,
 }: DwaionPanelProps) {
   const { t, i18n } = useTranslation('home');
+  const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
+  const contextCopy = korean
+    ? {
+        current: '현재 화면',
+        boundary: '화면 경로와 앱 문맥만 사용 · 선택한 원문은 자동 조회하지 않음',
+      }
+    : {
+        current: 'Current page',
+        boundary: 'Uses route and app context only · selected content is not read automatically',
+      };
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
@@ -60,10 +74,12 @@ export function DwaionPanel({
   const [activeTool, setActiveTool] = useState<DwaionSupportTool | null>(null);
   const [selectedCitation, setSelectedCitation] = useState<AskCitation | null>(null);
   const [workspaceOpening, setWorkspaceOpening] = useState(false);
+  const [voiceReviewHost, setVoiceReviewHost] = useState<HTMLDivElement | null>(null);
   const requestController = useRef<AbortController | null>(null);
   const requestSequence = useRef(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const canAsk = Boolean(onOpenWorkspace);
+  const runAskMutation = useDwaionGovernedMutation('route.dwaion.work.ask-stream.action');
 
   useEffect(
     () => () => {
@@ -101,17 +117,19 @@ export function DwaionPanel({
       setRequestState('loading');
 
       try {
-        const result = await askDwpStream(
-          {
-            requestId: globalThis.crypto.randomUUID(),
-            query: normalized,
-            locale: i18n.resolvedLanguage || i18n.language || 'en',
-            agentKey: DWAION_AGENT_KEY,
-            conversationId: conversationId ?? undefined,
-            sourceScopes: ['WORK_ITEM', 'MAIL', 'CALENDAR'],
-            pageContext,
-          },
-          { signal: controller.signal, onProgress: setProgressStage }
+        const result = await runAskMutation((authority) =>
+          askDwpStream(
+            {
+              requestId: globalThis.crypto.randomUUID(),
+              query: normalized,
+              locale: i18n.resolvedLanguage || i18n.language || 'en',
+              agentKey: DWAION_AGENT_KEY,
+              conversationId: conversationId ?? undefined,
+              sourceScopes: ['WORK_ITEM', 'MAIL', 'CALENDAR'],
+              pageContext,
+            },
+            { signal: controller.signal, onProgress: setProgressStage, authority }
+          )
         );
         if (requestSequence.current !== sequence) return;
         setResponse(result);
@@ -124,7 +142,7 @@ export function DwaionPanel({
         if (requestController.current === controller) requestController.current = null;
       }
     },
-    [canAsk, conversationId, i18n.language, i18n.resolvedLanguage, pageContext]
+    [canAsk, conversationId, i18n.language, i18n.resolvedLanguage, pageContext, runAskMutation]
   );
 
   const clearQuestion = () => {
@@ -187,10 +205,11 @@ export function DwaionPanel({
       aria-label={t('dwaion.panelLabel')}
       data-testid="dwaion-panel"
       sx={{
-        height: fullScreen ? '100%' : 'auto',
-        maxHeight: fullScreen ? '100%' : 620,
+        height: fullScreen ? '100%' : 'min(780px, calc(100dvh - 48px))',
+        maxHeight: fullScreen ? '100%' : 'calc(100dvh - 48px)',
         display: 'flex',
         flexDirection: 'column',
+        bgcolor: 'background.paper',
       }}
     >
       <Box sx={{ height: 3, flex: '0 0 auto', bgcolor: 'primary.main' }} />
@@ -203,53 +222,137 @@ export function DwaionPanel({
         onClose={onClose}
       />
 
-      <Box
-        ref={contentRef}
-        data-testid="dwaion-conversation"
-        sx={{
-          flex: fullScreen ? '1 1 auto' : '0 1 auto',
-          minHeight: 0,
-          overflowY: 'auto',
-          overscrollBehavior: 'contain',
-          px: 2,
-          py: 1.75,
-          scrollbarGutter: 'stable',
-        }}
-      >
-        <Box
+      {pageContext && (
+        <Stack
+          data-testid="dwaion-page-context"
+          direction="column"
+          alignItems="flex-start"
+          justifyContent="space-between"
+          gap={0.5}
           sx={{
-            display: 'grid',
-            gridTemplateColumns: '32px minmax(0, 1fr)',
-            gap: 1,
-            alignItems: 'start',
+            px: 2,
+            py: 0.9,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: 'action.hover',
+            flex: '0 0 auto',
           }}
         >
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              display: 'grid',
-              placeItems: 'center',
-              borderRadius: 1,
-              bgcolor: 'primary.lighter',
-              color: 'primary.main',
-            }}
-          >
-            <Sparkles size={17} strokeWidth={1.9} aria-hidden="true" />
-          </Box>
-          <Box>
-            <Typography component="h2" variant="subtitle2" fontWeight={800}>
-              {firstName ? t('dwaion.greeting', { name: firstName }) : t('dwaion.greetingFallback')}
+          <Stack direction="row" alignItems="center" gap={0.75} minWidth={0}>
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                bgcolor: 'success.main',
+                flex: '0 0 auto',
+              }}
+            />
+            <Typography variant="caption" color="text.secondary">
+              {contextCopy.current}:
+            </Typography>
+            <Typography
+              component="code"
+              variant="caption"
+              sx={{
+                px: 0.7,
+                py: 0.2,
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: COMPACT_RADIUS,
+                overflowWrap: 'anywhere',
+              }}
+            >
+              {pageContext.route}
             </Typography>
             <Typography
               variant="caption"
               color="text.secondary"
-              sx={{ display: 'block', mt: 0.25 }}
+              sx={{
+                px: 0.7,
+                py: 0.2,
+                borderLeft: 1,
+                borderColor: 'divider',
+                whiteSpace: 'nowrap',
+              }}
             >
-              {t('dwaion.greetingDescription')}
+              {contextSurfaceLabel(pageContext.surface, korean)}
             </Typography>
+          </Stack>
+          <Typography variant="caption" color="text.secondary">
+            {contextCopy.boundary}
+          </Typography>
+        </Stack>
+      )}
+
+      {fullScreen && (
+        <Box
+          ref={setVoiceReviewHost}
+          data-testid="dwaion-mobile-voice-review-host"
+          sx={{
+            px: 1.75,
+            pt: 1.5,
+            bgcolor: 'background.default',
+            flex: '0 0 auto',
+            '&:empty': { display: 'none' },
+          }}
+        />
+      )}
+
+      <Box
+        ref={contentRef}
+        data-testid="dwaion-conversation"
+        sx={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          overflowY: 'auto',
+          overscrollBehavior: 'contain',
+          px: { xs: 2, sm: 2.25 },
+          py: 1.75,
+          scrollbarGutter: 'stable',
+          bgcolor: 'background.default',
+        }}
+      >
+        {requestState === 'idle' && !submittedQuery && (
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '32px minmax(0, 1fr)',
+              gap: 1,
+              alignItems: 'start',
+            }}
+          >
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: CONTROL_RADIUS,
+                bgcolor: 'primary.lighter',
+                color: 'primary.main',
+              }}
+            >
+              <Sparkles size={17} strokeWidth={1.9} aria-hidden="true" />
+            </Box>
+            <Box>
+              <Typography component="h2" variant="subtitle2" fontWeight="fontWeightBold">
+                {firstName
+                  ? t('dwaion.greeting', { name: firstName })
+                  : t('dwaion.greetingFallback')}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', mt: 0.25 }}
+              >
+                {t('dwaion.greetingDescription')}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        )}
 
         {canAsk && requestState === 'idle' && (
           <Box component="section" aria-labelledby="dwaion-suggestions-title" sx={{ mt: 2 }}>
@@ -258,7 +361,7 @@ export function DwaionPanel({
               component="h3"
               variant="caption"
               color="text.secondary"
-              fontWeight={700}
+              fontWeight="fontWeightBold"
             >
               {t('dwaion.suggestions.title')}
             </Typography>
@@ -279,7 +382,7 @@ export function DwaionPanel({
                       border: 1,
                       borderColor: 'divider',
                       color: 'text.primary',
-                      fontWeight: 600,
+                      fontWeight: 'fontWeightMedium',
                     }}
                   >
                     {suggestion}
@@ -303,7 +406,7 @@ export function DwaionPanel({
           />
         )}
 
-        <Box sx={{ mt: 2.2 }}>
+        <Box sx={{ mt: submittedQuery ? 1.5 : 2.2 }}>
           <DwaionSupportTools
             activeTool={activeTool}
             onSelect={selectTool}
@@ -329,6 +432,7 @@ export function DwaionPanel({
         onSubmit={submit}
         onSend={() => void runQuestion(query)}
         onCancel={cancelQuestion}
+        voiceReviewContainer={fullScreen ? voiceReviewHost : null}
       />
       <DwaionCitationDialog
         citation={selectedCitation}
@@ -342,4 +446,19 @@ export function DwaionPanel({
       />
     </Box>
   );
+}
+
+function contextSurfaceLabel(surface: string | undefined, korean: boolean): string {
+  const labels: Record<string, readonly [string, string]> = {
+    'work-calendar': ['업무 일정', 'Work calendar'],
+    schedule: ['일정', 'Schedule'],
+    inbox: ['메일함', 'Mail inbox'],
+    'decision-hub': ['결재 검토', 'Approval review'],
+    'service-center': ['서비스 센터', 'Service center'],
+    people: ['조직·구성원', 'People'],
+    'work-queue': ['업무 큐', 'Work queue'],
+    home: ['홈', 'Home'],
+  };
+  const label = surface ? labels[surface] : undefined;
+  return label ? label[korean ? 0 : 1] : (surface ?? (korean ? '현재 앱' : 'Current app'));
 }

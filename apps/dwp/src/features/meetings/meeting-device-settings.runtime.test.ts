@@ -124,6 +124,37 @@ describe('device settings browser-policy boundaries', () => {
     expect(enumerateDevices).not.toHaveBeenCalled();
   });
 
+  it('keeps office unavailable when a mobile browser lacks its image pipeline while original remains usable', async () => {
+    vi.spyOn(Background, 'isMeetingBackgroundSupported').mockImplementation(
+      (mode) => mode === 'blur'
+    );
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: {
+        getUserMedia: vi.fn(),
+        enumerateDevices: vi.fn(),
+        getSupportedConstraints: () => ({}),
+      },
+    });
+    await act(async () =>
+      root.render(
+        createElement(MeetingDeviceSettings, {
+          value: { ...DEFAULT_MEETING_DEVICE_PREFERENCES, backgroundMode: 'office' },
+          onChange: vi.fn(),
+        })
+      )
+    );
+    expect(
+      container.querySelector<HTMLButtonElement>('button[aria-label="stitch.devices.office"]')
+        ?.disabled
+    ).toBe(true);
+    expect(
+      container.querySelector<HTMLButtonElement>('button[aria-label="stitch.devices.none"]')
+        ?.disabled
+    ).toBe(false);
+    expect(container.textContent).toContain('preferences.video.backgroundUnsupported');
+  });
+
   it('never equates local media preview success with measured network quality', async () => {
     await act(async () =>
       root.render(
@@ -145,7 +176,7 @@ describe('device settings browser-policy boundaries', () => {
     expect(container.textContent).not.toContain('stitch.devices.localChecked');
   });
 
-  it('saves an explicit blur choice without turning on an idle camera and requires an explicit original choice', async () => {
+  it('saves blur and curated office without turning on an idle camera and keeps upload unavailable', async () => {
     vi.spyOn(Background, 'isMeetingBackgroundSupported').mockReturnValue(true);
     const getUserMedia = vi.fn();
     Object.defineProperty(navigator, 'mediaDevices', {
@@ -153,16 +184,16 @@ describe('device settings browser-policy boundaries', () => {
       value: { getUserMedia, enumerateDevices: vi.fn(), getSupportedConstraints: () => ({}) },
     });
     const onChange = vi.fn();
-    const render = (backgroundBlur: boolean) =>
+    const render = (backgroundMode: 'original' | 'blur' | 'office') =>
       act(async () =>
         root.render(
           createElement(MeetingDeviceSettings, {
-            value: { ...DEFAULT_MEETING_DEVICE_PREFERENCES, backgroundBlur },
+            value: { ...DEFAULT_MEETING_DEVICE_PREFERENCES, backgroundMode },
             onChange,
           })
         )
       );
-    await render(false);
+    await render('original');
     const blur = container.querySelector<HTMLButtonElement>(
       'button[aria-label="stitch.devices.blur"]'
     )!;
@@ -170,22 +201,33 @@ describe('device settings browser-policy boundaries', () => {
     await act(async () => blur.click());
     expect(onChange).toHaveBeenLastCalledWith({
       ...DEFAULT_MEETING_DEVICE_PREFERENCES,
-      backgroundBlur: true,
+      backgroundMode: 'blur',
     });
     expect(getUserMedia).not.toHaveBeenCalled();
-    await render(true);
+    await render('blur');
     expect(blur.getAttribute('aria-pressed')).toBe('true');
+    const office = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="stitch.devices.office"]'
+    )!;
+    expect(office.disabled).toBe(false);
+    await act(async () => office.click());
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      backgroundMode: 'office',
+    });
+    await render('office');
+    expect(office.getAttribute('aria-pressed')).toBe('true');
     const original = container.querySelector<HTMLButtonElement>(
       'button[aria-label="stitch.devices.none"]'
     )!;
     await act(async () => original.click());
     expect(onChange).toHaveBeenLastCalledWith({
       ...DEFAULT_MEETING_DEVICE_PREFERENCES,
-      backgroundBlur: false,
+      backgroundMode: 'original',
     });
     expect(getUserMedia).not.toHaveBeenCalled();
     expect(
-      container.querySelector<HTMLButtonElement>('button[aria-label="stitch.devices.office"]')!
+      container.querySelector<HTMLButtonElement>('button[aria-label="stitch.devices.image"]')!
         .disabled
     ).toBe(true);
   });

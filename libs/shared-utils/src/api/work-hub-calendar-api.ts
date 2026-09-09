@@ -22,7 +22,8 @@ function linkPath(linkId: string) {
 
 export async function getWorkCalendarLinks(
   page = 0,
-  size = 100
+  size = 100,
+  signal?: AbortSignal
 ): Promise<PersonalWorkPage<WorkCalendarLink>> {
   if (
     !Number.isInteger(page) ||
@@ -33,34 +34,38 @@ export async function getWorkCalendarLinks(
     size > 100
   )
     throw new Error('Invalid link page.');
-  return (
-    await axiosInstance.get<ApiResponse<PersonalWorkPage<WorkCalendarLink>>>(
-      `${base}?page=${page}&size=${size}`
-    )
-  ).data.data;
+  const path = `${base}?page=${page}&size=${size}`;
+  const response = signal
+    ? await axiosInstance.get<ApiResponse<PersonalWorkPage<WorkCalendarLink>>>(path, { signal })
+    : await axiosInstance.get<ApiResponse<PersonalWorkPage<WorkCalendarLink>>>(path);
+  return response.data.data;
 }
 
 /** PUT uses the stable link ID as command identity, including after an uncertain response. */
 export async function putWorkCalendarLink(
   linkId: string,
-  input: { work: WorkSourceReference; eventId: string }
+  input: { work: WorkSourceReference; eventId: string },
+  signal?: AbortSignal
 ): Promise<WorkCalendarLink> {
   if (!uuid.test(input.eventId)) throw new Error('A Calendar event reference is required.');
-  return (
-    await axiosInstance.put<ApiResponse<WorkCalendarLink>, typeof input>(linkPath(linkId), input)
-  ).data.data;
+  const path = linkPath(linkId);
+  const response = signal
+    ? await axiosInstance.put<ApiResponse<WorkCalendarLink>, typeof input>(path, input, { signal })
+    : await axiosInstance.put<ApiResponse<WorkCalendarLink>, typeof input>(path, input);
+  return response.data.data;
 }
 
 /** Only removes the personal relationship; the Calendar event is unchanged. */
 export async function removeWorkCalendarLink(
   linkId: string,
-  version: number
+  version: number,
+  signal?: AbortSignal
 ): Promise<WorkCalendarLink> {
   if (!Number.isSafeInteger(version) || version < 0)
     throw new Error('A non-negative link version is required.');
-  return (
-    await axiosInstance.delete<ApiResponse<WorkCalendarLink>>(
-      `${linkPath(linkId)}?version=${version}`
-    )
-  ).data.data;
+  const path = `${linkPath(linkId)}?version=${version}`;
+  const response = signal
+    ? await axiosInstance.delete<ApiResponse<WorkCalendarLink>>(path, { signal })
+    : await axiosInstance.delete<ApiResponse<WorkCalendarLink>>(path);
+  return response.data.data;
 }

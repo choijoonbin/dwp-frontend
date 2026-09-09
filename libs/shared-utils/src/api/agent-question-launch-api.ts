@@ -4,6 +4,10 @@ import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
+import {
+  productSurfaceGovernedMutationConfig,
+  type ProductSurfaceGovernedMutationAuthority,
+} from './product-surface-governed-mutation';
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -12,7 +16,13 @@ export type QuestionLaunchReceipt = AgentSchemas['QuestionLaunchReceipt'];
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const QUESTION_LAUNCH_MAX_TTL_MS = 65_000;
 
-export async function createQuestionLaunch(question: string): Promise<QuestionLaunchReceipt> {
+export async function createQuestionLaunch(
+  question: string,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
+): Promise<QuestionLaunchReceipt> {
   const normalized = question.trim();
   if (normalized.length < 2 || normalized.length > 4_000) {
     throw new TypeError('Question launch content must contain between 2 and 4,000 characters.');
@@ -20,14 +30,24 @@ export async function createQuestionLaunch(question: string): Promise<QuestionLa
   const response = await axiosInstance.post<
     ApiResponse<unknown>,
     AgentSchemas['CreateQuestionLaunchRequest']
-  >('/api/agent/v1/question-launches', { question: normalized });
+  >(
+    '/api/agent/v1/question-launches',
+    { question: normalized },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   if (!isQuestionLaunchReceipt(response.data.data)) {
     throw new HttpError('Question launch response is invalid.', 502, response.data);
   }
   return response.data.data;
 }
 
-export async function consumeQuestionLaunch(launchId: string): Promise<string> {
+export async function consumeQuestionLaunch(
+  launchId: string,
+  authority: ProductSurfaceGovernedMutationAuthority = {
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  }
+): Promise<string> {
   const normalized = launchId.trim();
   if (!UUID_PATTERN.test(normalized)) {
     throw new TypeError('Question launch identifier is invalid.');
@@ -35,7 +55,11 @@ export async function consumeQuestionLaunch(launchId: string): Promise<string> {
   const response = await axiosInstance.post<
     ApiResponse<unknown>,
     AgentSchemas['ConsumeQuestionLaunchRequest']
-  >('/api/agent/v1/question-launches/consume', { launchId: normalized });
+  >(
+    '/api/agent/v1/question-launches/consume',
+    { launchId: normalized },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   if (!isQuestionLaunchPayload(response.data.data)) {
     throw new HttpError('Question launch payload is invalid.', 502, response.data);
   }

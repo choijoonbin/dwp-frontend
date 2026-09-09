@@ -1,0 +1,41 @@
+{
+  "dictionaryLastWriteMs": 1788860488170.1277,
+  "sharedI18nSuites": [
+    {
+      "name": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/lib/display-dictionary.test.ts",
+      "startTime": 1788860637352,
+      "endTime": 1788860637353.1526,
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/lib/formatters.test.ts",
+      "startTime": 1788860636578,
+      "endTime": 1788860636600.1675,
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/lib/locales.test.ts",
+      "startTime": 1788860637638,
+      "endTime": 1788860637640.6262,
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/lib/role-display.test.ts",
+      "startTime": 1788860636071,
+      "endTime": 1788860636075.097,
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/locales/home-ui-dictionary.test.ts",
+      "startTime": 1788860636880,
+      "endTime": 1788860636882.5554,
+      "status": "passed",
+      "tests": 3
+    }
+  ],
+  "allExecutedAfterFinalDictionaryWrite": true
+}

@@ -8,16 +8,24 @@ import {
 } from '@dwp-frontend/shared-utils/api/personal-work-api';
 import type {
   PersonalDayPlan,
+  PersonalWorkStatus,
+  PersonalWorkTask,
   PersonalWorkTaskInput,
   WorkSourceReference,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import {
   executeWorkHubAction,
+  type WorkHubActionGuard,
   type WorkHubActionResult,
   type WorkHubCommand,
 } from './work-hub-actions';
 import { loadWorkHub } from './work-hub-loader';
+import {
+  canExecuteWorkHubAction,
+  isWorkAssignmentReference,
+  personalTaskInputUsesUnsupportedSource,
+} from './work-hub-command-authority';
 import {
   workHubItemRoute,
   workHubReferenceKey,
@@ -36,6 +44,12 @@ import {
   workHubSummary,
 } from './work-hub-model';
 import { hydrateWorkSource } from './work-hub-source-hydration';
+import {
+  isPersonalDayPlanReceipt,
+  isPersonalDayPlanSaveReceipt,
+  isPersonalTaskCreateReceipt,
+  isPersonalTaskEditReceipt,
+} from './work-hub-personal-save-receipt';
 import {
   executeWorkSchedule,
   loadWorkSchedules,
@@ -64,6 +78,11 @@ export type WorkHubPlanSaveResult =
     }
   | { state: 'UNAVAILABLE'; draft: WorkSourceReference[] };
 
+type PersonalTaskSaveGuard = WorkHubActionGuard & {
+  expectedStatus?: PersonalWorkStatus;
+  reviewedTask?: PersonalWorkTask;
+};
+
 function planDraftFingerprint(items: readonly WorkSourceReference[]): string {
   return JSON.stringify(items.map(workHubReferenceKey));
 }
@@ -72,7 +91,10 @@ function planDraftFingerprint(items: readonly WorkSourceReference[]): string {
 export function createWorkHubController(
   enabledSources: readonly WorkHubSourceId[],
   clients = workHubControllerClients,
-  authority = { canUpdatePersonal: false }
+  authority: { canUpdatePersonal: boolean; actorId?: number | null } = {
+    canUpdatePersonal: false,
+    actorId: null,
+  }
 ) {
   let snapshot: WorkHubSnapshot | null = null;
   let selectedKey: string | null = null;
@@ -82,11 +104,14 @@ export function createWorkHubController(
   let revision = 0;
   let planRevision = 0;
   let rejectedPlanDraft: { date: string; fingerprint: string } | null = null;
+  const canContinue = (guard: WorkHubActionGuard) =>
+    !guard.signal?.aborted && (guard.canContinue?.() ?? true);
   async function refresh() {
     const requestRevision = ++revision;
     const next = await clients.loadWorkHub({
       enabledSources,
       canUpdatePersonal: authority.canUpdatePersonal,
+      actorId: authority.actorId ?? null,
     });
     if (requestRevision === revision) snapshot = next;
     return next;
@@ -124,19 +149,39 @@ export function createWorkHubController(
     },
     async savePersonalTask(
       input: PersonalWorkTaskInput & { version: number },
-      idempotencyKey: string
+      idempotencyKey: string,
+      guard: PersonalTaskSaveGuard = {}
     ) {
       const item = snapshot?.items.find((candidate) => candidate.key === selectedKey);
-      if (!item || item.reference.sourceSystem !== 'PERSONAL_TASK' || pending)
+      if (
+        !item ||
+        item.reference.sourceSystem !== 'PERSONAL_TASK' ||
+        pending ||
+        !canContinue(guard) ||
+        personalTaskInputUsesUnsupportedSource(input)
+      )
         throw new Error('Select editable personal work first');
       pending = true;
       try {
         const saved = await clients.updatePersonalWorkTask(
           item.reference.sourceReference,
           input,
-          idempotencyKey
+          idempotencyKey,
+          guard.signal
         );
-        await refresh();
+        if (
+          !canContinue(guard) ||
+          !guard.reviewedTask ||
+          !isPersonalTaskEditReceipt(
+            saved,
+            item.reference.sourceReference,
+            input,
+            guard.expectedStatus ?? item.lifecycle,
+            guard.reviewedTask
+          )
+        ) {
+          throw new Error('Unverified personal task update receipt');
+        }
         return saved;
       } finally {
         pending = false;
@@ -165,42 +210,52 @@ export function createWorkHubController(
     select: (reference: WorkSourceReference | null) => {
       selectedKey = reference ? workHubReferenceKey(reference) : null;
     },
-    async execute(command: WorkHubCommand): Promise<WorkHubActionResult> {
+    async execute(
+      command: WorkHubCommand,
+      guard: WorkHubActionGuard = {}
+    ): Promise<WorkHubActionResult> {
       const item = snapshot?.items.find((candidate) => candidate.key === selectedKey);
-      if (!item || pending) return { state: 'UNAVAILABLE', retryable: false };
+      const canContinue = () => !guard.signal?.aborted && (guard.canContinue?.() ?? true);
+      if (
+        !item ||
+        !canExecuteWorkHubAction(snapshot, item, command.kind) ||
+        pending ||
+        !canContinue()
+      )
+        return { state: 'UNAVAILABLE', retryable: false };
       pending = true;
       try {
-        const result = await clients.executeWorkHubAction(item, command);
-        if (
-          result.state === 'CONFIRMED' ||
-          result.state === 'CONFLICT' ||
-          result.state === 'FORBIDDEN'
-        )
-          await refresh();
-        return result;
+        return await clients.executeWorkHubAction(item, command, undefined, guard);
       } finally {
         pending = false;
       }
     },
-    async capture(input: PersonalWorkTaskInput, idempotencyKey: string) {
-      if (pending) throw new Error('A work command is already pending');
+    async capture(
+      input: PersonalWorkTaskInput,
+      idempotencyKey: string,
+      guard: WorkHubActionGuard = {}
+    ) {
+      if (pending || !canContinue(guard) || personalTaskInputUsesUnsupportedSource(input))
+        throw new Error('A work command is already pending or its source is unsupported');
       pending = true;
       try {
-        const task = await clients.createPersonalWorkTask(input, idempotencyKey);
+        const task = await clients.createPersonalWorkTask(input, idempotencyKey, guard.signal);
+        if (!canContinue(guard) || !isPersonalTaskCreateReceipt(task, input)) {
+          throw new Error('Unverified personal task creation receipt');
+        }
         selectedKey = workHubReferenceKey({
           sourceSystem: 'PERSONAL_TASK',
           sourceReference: task.taskId,
         });
-        await refresh();
         return task;
       } finally {
         pending = false;
       }
     },
-    async loadPlan(date: string) {
+    async loadPlan(date: string, guard: WorkHubActionGuard = {}) {
       const requestRevision = ++planRevision;
-      const loaded = await clients.getPersonalDayPlan(date);
-      if (requestRevision === planRevision) {
+      const loaded = await clients.getPersonalDayPlan(date, guard.signal);
+      if (requestRevision === planRevision && canContinue(guard)) {
         plan = loaded;
         planDraft = dayPlanSelection(loaded);
         rejectedPlanDraft = null;
@@ -208,6 +263,7 @@ export function createWorkHubController(
       return loaded;
     },
     addToPlan(reference: WorkSourceReference) {
+      if (isWorkAssignmentReference(reference)) return [...planDraft];
       const existing = plan?.items.find(
         (item) =>
           item.source.availability !== 'UNAVAILABLE' &&
@@ -227,9 +283,16 @@ export function createWorkHubController(
     async savePlan(
       date: string,
       items: WorkSourceReference[],
-      idempotencyKey: string
+      idempotencyKey: string,
+      guard: WorkHubActionGuard = {}
     ): Promise<WorkHubPlanSaveResult> {
-      if (!plan || plan.date !== date || pending)
+      if (
+        !plan ||
+        plan.date !== date ||
+        pending ||
+        !canContinue(guard) ||
+        items.some(isWorkAssignmentReference)
+      )
         return { state: 'UNAVAILABLE', draft: plan ? [...planDraft] : [...items] };
       const submittedFingerprint = planDraftFingerprint(items);
       if (
@@ -251,19 +314,30 @@ export function createWorkHubController(
         const saved = await clients.replacePersonalDayPlan(
           date,
           { version: base.version, items },
-          idempotencyKey
+          idempotencyKey,
+          guard.signal
         );
-        if (requestRevision === planRevision) {
-          plan = saved;
-          planDraft = dayPlanSelection(saved);
-          rejectedPlanDraft = null;
+        if (
+          !canContinue(guard) ||
+          requestRevision !== planRevision ||
+          !isPersonalDayPlanSaveReceipt(saved, date, base.version, items, base)
+        ) {
+          return { state: 'UNAVAILABLE', draft: [...items] };
         }
+        plan = saved;
+        planDraft = dayPlanSelection(saved);
+        rejectedPlanDraft = null;
         return { state: 'SAVED', plan: saved };
       } catch (error) {
+        if (!canContinue(guard)) return { state: 'UNAVAILABLE', draft: [...items] };
         if (error instanceof HttpError && error.status === 409) {
           try {
-            const latest = await clients.getPersonalDayPlan(date);
-            if (requestRevision !== planRevision)
+            const latest = await clients.getPersonalDayPlan(date, guard.signal);
+            if (
+              !canContinue(guard) ||
+              requestRevision !== planRevision ||
+              !isPersonalDayPlanReceipt(latest, date, base.version)
+            )
               return { state: 'UNAVAILABLE', draft: [...planDraft] };
             const latestDraft = dayPlanSelection(latest);
             plan = latest;

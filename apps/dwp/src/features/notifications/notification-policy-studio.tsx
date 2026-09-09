@@ -7,8 +7,10 @@ import {
   Clock3,
   LockKeyhole,
   PencilLine,
+  RotateCcw,
   ShieldCheck,
   TriangleAlert,
+  XCircle,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -17,6 +19,8 @@ import {
   getNotificationTenantPolicies,
   previewNotificationTenantPolicy,
   publishNotificationTenantPolicy,
+  rejectNotificationTenantPolicyDraft,
+  withdrawNotificationTenantPolicyDraft,
   type NotificationChannel,
   type NotificationPolicyChannelRule,
   type TenantNotificationPolicy,
@@ -50,6 +54,14 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationDraftDecisionDialog } from './notification-draft-decision-dialog';
+import { NotificationPolicyComparison } from './notification-governance-comparison';
+import {
+  DEFAULT_NOTIFICATION_POLICY_SIMULATION,
+  NotificationPolicySimulationControls,
+  NotificationPolicySimulationResult,
+} from './notification-policy-simulation';
+import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
 
 const POLICY_CHANNELS: readonly NotificationChannel[] = [
   'IN_APP',
@@ -90,7 +102,7 @@ function PolicyListItem({
   return (
     <ButtonBase
       onClick={onSelect}
-      aria-current={selected ? 'true' : undefined}
+      aria-pressed={selected}
       sx={{
         width: 1,
         px: 1.75,
@@ -139,7 +151,12 @@ function PolicyListItem({
 function PolicyChannels({ channels }: { channels: NotificationPolicyChannelRule[] }) {
   const { t } = useTranslation('notifications');
   return (
-    <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+    <Box
+      role="region"
+      aria-label={t('admin.policies.channelsTable')}
+      tabIndex={0}
+      sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
+    >
       <Table size="small" aria-label={t('admin.policies.channelsTable')} sx={{ minWidth: 650 }}>
         <TableHead>
           <TableRow>
@@ -193,7 +210,12 @@ function PolicyDetail({
   const { t } = useTranslation('notifications');
   return (
     <Box component="section" sx={{ p: { xs: 2, md: 2.5 }, minWidth: 0 }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1.5}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+        gap={1.5}
+      >
         <Box minWidth={0}>
           <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
             <Chip size="small" variant="outlined" label={policy.scopeType} />
@@ -277,15 +299,22 @@ export function NotificationPolicyStudio() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [preview, setPreview] = useState<TenantNotificationPolicyPreview | null>(null);
   const [approvalDraft, setApprovalDraft] = useState<TenantNotificationPolicy | null>(null);
   const [approvalReason, setApprovalReason] = useState('');
+  const [draftDecision, setDraftDecision] = useState<{
+    draft: TenantNotificationPolicy;
+    kind: 'withdraw' | 'reject';
+  } | null>(null);
+  const [draftDecisionReason, setDraftDecisionReason] = useState('');
   const [mandatory, setMandatory] = useState(false);
   const [quietHoursBypass, setQuietHoursBypass] = useState(false);
   const [digestMode, setDigestMode] = useState<'IMMEDIATE' | 'DAILY' | 'WEEKLY'>('IMMEDIATE');
   const [channels, setChannels] = useState<NotificationPolicyChannelRule[]>(DEFAULT_CHANNELS);
   const [changeReason, setChangeReason] = useState('');
+  const [simulation, setSimulation] = useState(DEFAULT_NOTIFICATION_POLICY_SIMULATION);
 
   const canManage = hasPermission('ADMIN.NOTIFICATION_POLICY', 'MANAGE');
   const canApprove = hasPermission('ADMIN.NOTIFICATION_POLICY', 'APPROVE');
@@ -307,6 +336,12 @@ export function NotificationPolicyStudio() {
       (draft) => draft.scopeType === selected.scopeType && draft.scopeKey === selected.scopeKey
     )
   );
+  const approvalCurrent = approvalDraft
+    ? (effective.find(
+        (policy) =>
+          policy.scopeType === approvalDraft.scopeType && policy.scopeKey === approvalDraft.scopeKey
+      ) ?? null)
+    : null;
 
   useEffect(() => {
     if (!selectedId && effective.length) setSelectedId(effective[0].policyId);
@@ -315,7 +350,10 @@ export function NotificationPolicyStudio() {
   const previewMutation = useMutation({
     mutationFn: (input: TenantNotificationPolicyChangeInput) =>
       previewNotificationTenantPolicy(input),
-    onSuccess: (result) => setPreview(result),
+    onSuccess: (result) => {
+      setPreview(result);
+      setEditorOpen(false);
+    },
     onError: () => toast.error(t('admin.policies.feedback.previewFailed')),
   });
   const draftMutation = useMutation({
@@ -348,6 +386,42 @@ export function NotificationPolicyStudio() {
     },
     onError: () => toast.error(t('admin.policies.feedback.publishFailed')),
   });
+  const draftDecisionMutation = useMutation({
+    mutationFn: ({
+      draft,
+      kind,
+      reason,
+    }: {
+      draft: TenantNotificationPolicy;
+      kind: 'withdraw' | 'reject';
+      reason: string;
+    }) =>
+      kind === 'withdraw'
+        ? withdrawNotificationTenantPolicyDraft(
+            draft.policyId,
+            { expectedVersion: draft.version, reason },
+            createNotificationIdempotencyKey('notification-policy-withdraw')
+          )
+        : rejectNotificationTenantPolicyDraft(
+            draft.policyId,
+            { expectedVersion: draft.version, reason },
+            createNotificationIdempotencyKey('notification-policy-reject')
+          ),
+    onSuccess: async (_result, variables) => {
+      setDraftDecision(null);
+      setDraftDecisionReason('');
+      await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.adminPolicies() });
+      toast.success(
+        t(`admin.policies.feedback.${variables.kind === 'withdraw' ? 'withdrawn' : 'rejected'}`)
+      );
+    },
+    onError: (_error, variables) =>
+      toast.error(
+        t(
+          `admin.policies.feedback.${variables.kind === 'withdraw' ? 'withdrawFailed' : 'rejectFailed'}`
+        )
+      ),
+  });
 
   const openEditor = () => {
     if (!selected) return;
@@ -359,7 +433,7 @@ export function NotificationPolicyStudio() {
     setEditorOpen(true);
   };
 
-  const input = (): TenantNotificationPolicyChangeInput | null => {
+  const input = (includeSimulation = false): TenantNotificationPolicyChangeInput | null => {
     if (!selected) return null;
     return {
       scopeType: selected.scopeType,
@@ -370,6 +444,7 @@ export function NotificationPolicyStudio() {
       channels,
       changeReason: changeReason.trim(),
       expectedVersion: selected.source === 'PROVIDER_POLICY' ? '0' : selected.version,
+      simulation: includeSimulation ? simulation : undefined,
     };
   };
 
@@ -410,7 +485,7 @@ export function NotificationPolicyStudio() {
   }
 
   return (
-    <Stack gap={2.5}>
+    <Stack gap={2.5} data-testid="notification-policy-studio">
       <Alert severity="info" icon={<ShieldCheck size={18} />}>
         {t('admin.policies.governanceNotice')}
       </Alert>
@@ -434,6 +509,7 @@ export function NotificationPolicyStudio() {
               return (
                 <Box
                   key={draft.policyId}
+                  data-testid={`notification-policy-review-${draft.policyId}`}
                   sx={{
                     minHeight: 70,
                     px: 1.5,
@@ -477,18 +553,44 @@ export function NotificationPolicyStudio() {
                       })}
                     </Typography>
                   </Box>
-                  {canApprove && (
-                    <ActionButton
-                      intent="primary"
-                      startIcon={<CheckCircle2 size={17} />}
-                      disabled={selfAuthored}
-                      onClick={() => setApprovalDraft(draft)}
-                    >
-                      {selfAuthored
-                        ? t('admin.policies.independentApprovalRequired')
-                        : t('admin.policies.reviewAndPublish')}
-                    </ActionButton>
-                  )}
+                  <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+                    {canManage && selfAuthored && (
+                      <ActionButton
+                        intent="secondary"
+                        startIcon={<RotateCcw size={17} />}
+                        onClick={() => {
+                          setDraftDecision({ draft, kind: 'withdraw' });
+                          setDraftDecisionReason('');
+                        }}
+                      >
+                        {t('admin.policies.withdrawDraft')}
+                      </ActionButton>
+                    )}
+                    {canApprove && !selfAuthored && (
+                      <ActionButton
+                        intent="secondary"
+                        startIcon={<XCircle size={17} />}
+                        onClick={() => {
+                          setDraftDecision({ draft, kind: 'reject' });
+                          setDraftDecisionReason('');
+                        }}
+                      >
+                        {t('admin.policies.rejectDraft')}
+                      </ActionButton>
+                    )}
+                    {canApprove && (
+                      <ActionButton
+                        intent="primary"
+                        startIcon={<CheckCircle2 size={17} />}
+                        disabled={selfAuthored}
+                        onClick={() => setApprovalDraft(draft)}
+                      >
+                        {selfAuthored
+                          ? t('admin.policies.independentApprovalRequired')
+                          : t('admin.policies.reviewAndPublish')}
+                      </ActionButton>
+                    )}
+                  </Stack>
                 </Box>
               );
             })}
@@ -496,38 +598,41 @@ export function NotificationPolicyStudio() {
         </Box>
       )}
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: 'minmax(280px, .8fr) minmax(0, 2.2fr)' },
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          overflow: 'hidden',
-          bgcolor: 'background.paper',
-        }}
-      >
-        <Box
-          sx={{ borderRight: { lg: 1 }, borderColor: 'divider', maxHeight: 720, overflowY: 'auto' }}
-        >
-          {effective.map((policy) => (
-            <PolicyListItem
-              key={policy.policyId}
-              policy={policy}
-              selected={policy.policyId === selected?.policyId}
-              onSelect={() => setSelectedId(policy.policyId)}
+      <NotificationResponsiveCatalog
+        testId="notification-policy-catalog"
+        detailOpen={mobileDetailOpen}
+        onBack={() => setMobileDetailOpen(false)}
+        backLabel={t('admin.backToCatalog')}
+        listLabel={t('admin.policies.catalogLabel')}
+        detailLabel={t('admin.policies.detailLabel')}
+        desktopColumns="minmax(280px, .8fr) minmax(0, 2.2fr)"
+        listMaxHeight={720}
+        list={
+          <>
+            {effective.map((policy) => (
+              <PolicyListItem
+                key={policy.policyId}
+                policy={policy}
+                selected={policy.policyId === selected?.policyId}
+                onSelect={() => {
+                  setSelectedId(policy.policyId);
+                  setMobileDetailOpen(true);
+                }}
+              />
+            ))}
+          </>
+        }
+        detail={
+          selected && (
+            <PolicyDetail
+              policy={selected}
+              canManage={canManage}
+              hasDraft={selectedHasDraft}
+              onEdit={openEditor}
             />
-          ))}
-        </Box>
-        {selected && (
-          <PolicyDetail
-            policy={selected}
-            canManage={canManage}
-            hasDraft={selectedHasDraft}
-            onEdit={openEditor}
-          />
-        )}
-      </Box>
+          )
+        }
+      />
 
       <FormDialog
         open={editorOpen}
@@ -540,7 +645,7 @@ export function NotificationPolicyStudio() {
         submitDisabled={changeReason.trim().length < 10}
         onClose={() => setEditorOpen(false)}
         onSubmit={() => {
-          const next = input();
+          const next = input(true);
           if (next) previewMutation.mutate(next);
         }}
         maxWidth="md"
@@ -549,6 +654,7 @@ export function NotificationPolicyStudio() {
           <Alert severity="warning" icon={<LockKeyhole size={18} />}>
             {t('admin.policies.editorGovernanceNotice')}
           </Alert>
+          <NotificationPolicySimulationControls value={simulation} onChange={setSimulation} />
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5}>
             <FormControlLabel
               control={
@@ -705,13 +811,16 @@ export function NotificationPolicyStudio() {
         open={Boolean(preview)}
         title={t('admin.policies.previewTitle')}
         description={t('admin.policies.previewDescription')}
-        cancelLabel={t('actions.cancel')}
+        cancelLabel={t('admin.policies.backToEdit')}
         submitLabel={t('admin.policies.createDraft')}
         submittingLabel={t('admin.policies.creatingDraft')}
         busy={draftMutation.isPending}
-        onClose={() => setPreview(null)}
+        onClose={() => {
+          setPreview(null);
+          setEditorOpen(true);
+        }}
         onSubmit={() => {
-          const next = input();
+          const next = input(false);
           if (next) draftMutation.mutate(next);
         }}
         maxWidth="md"
@@ -767,6 +876,10 @@ export function NotificationPolicyStudio() {
                 </Stack>
               </Alert>
             )}
+            <NotificationPolicyComparison
+              current={preview.currentPolicy}
+              proposed={preview.proposedPolicy}
+            />
             <Alert severity="info" icon={<ShieldCheck size={18} />}>
               <Typography variant="subtitle2">{t('admin.policies.runtimePreviewTitle')}</Typography>
               <Typography variant="body2" sx={{ mt: 0.35 }}>
@@ -792,11 +905,53 @@ export function NotificationPolicyStudio() {
                 ))}
               </Stack>
             </Alert>
-            <PolicyChannels channels={preview.proposedPolicy.channels} />
+            <NotificationPolicySimulationResult value={preview.simulation} />
             <Alert severity="info">{t('admin.policies.makerCheckerPreview')}</Alert>
           </Stack>
         )}
       </FormDialog>
+
+      <NotificationDraftDecisionDialog
+        open={Boolean(draftDecision)}
+        title={t(
+          draftDecision?.kind === 'reject'
+            ? 'admin.policies.rejectTitle'
+            : 'admin.policies.withdrawTitle'
+        )}
+        description={t(
+          draftDecision?.kind === 'reject'
+            ? 'admin.policies.rejectDescription'
+            : 'admin.policies.withdrawDescription'
+        )}
+        target={t('admin.policies.decisionTarget', {
+          scope: draftDecision?.draft.scopeLabel ?? '',
+          version: draftDecision?.draft.version ?? '',
+        })}
+        reasonLabel={t('admin.policies.fields.decisionReason')}
+        reasonHelp={t('admin.policies.decisionReasonHelp')}
+        reason={draftDecisionReason}
+        confirmLabel={t(
+          draftDecision?.kind === 'reject'
+            ? 'admin.policies.rejectConfirm'
+            : 'admin.policies.withdrawConfirm'
+        )}
+        submittingLabel={t('admin.policies.processingDecision')}
+        cancelLabel={t('actions.cancel')}
+        busy={draftDecisionMutation.isPending}
+        onReasonChange={setDraftDecisionReason}
+        onClose={() => {
+          setDraftDecision(null);
+          setDraftDecisionReason('');
+        }}
+        onSubmit={() => {
+          if (draftDecision) {
+            draftDecisionMutation.mutate({
+              ...draftDecision,
+              reason: draftDecisionReason.trim(),
+            });
+          }
+        }}
+      />
 
       <FormDialog
         open={Boolean(approvalDraft)}
@@ -821,7 +976,7 @@ export function NotificationPolicyStudio() {
               {t('admin.policies.makerCheckerApproval')}
             </Alert>
             <Typography variant="body2">{approvalDraft.changeReason}</Typography>
-            <PolicyChannels channels={approvalDraft.channels} />
+            <NotificationPolicyComparison current={approvalCurrent} proposed={approvalDraft} />
             <FormField
               label={t('admin.policies.fields.approvalReason')}
               value={approvalReason}

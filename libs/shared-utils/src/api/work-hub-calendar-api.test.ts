@@ -31,10 +31,11 @@ it('keeps stable link identity across PUT retries and scopes reads through the a
     work: { sourceSystem: 'PERSONAL_TASK', sourceReference: 'task' },
     eventId: '95fdccda-1ba0-4c7d-9829-189db4da0b4d',
   };
+  const signal = new AbortController().signal;
+  await putWorkCalendarLink(linkId, body, signal);
   await putWorkCalendarLink(linkId, body);
-  await putWorkCalendarLink(linkId, body);
-  await getWorkCalendarLinks(1, 50);
-  await removeWorkCalendarLink(linkId, 0);
+  await getWorkCalendarLinks(1, 50, signal);
+  await removeWorkCalendarLink(linkId, 0, signal);
   expect(fetchMock.mock.calls[1]?.[0]).toBe(
     `/api/platform/v1/workspace/work-hub/calendar-links/${linkId}`
   );
@@ -44,9 +45,11 @@ it('keeps stable link identity across PUT retries and scopes reads through the a
     credentials: 'include',
     body: JSON.stringify(body),
     headers: { 'X-XSRF-TOKEN': 'csrf-token' },
+    signal,
   });
   expect(fetchMock.mock.calls[2]?.[1]?.body).toBe(JSON.stringify(body));
   expect(fetchMock.mock.calls[3]?.[0]).toContain('?page=1&size=50');
+  expect(fetchMock.mock.calls[3]?.[1]).toMatchObject({ signal });
   expect(fetchMock.mock.calls[4]?.[0]).toContain(`${linkId}?version=0`);
-  expect(fetchMock.mock.calls[4]?.[1]).toMatchObject({ method: 'DELETE' });
+  expect(fetchMock.mock.calls[4]?.[1]).toMatchObject({ method: 'DELETE', signal });
 });

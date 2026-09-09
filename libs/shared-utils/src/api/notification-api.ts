@@ -40,6 +40,18 @@ export type NotificationCapabilities = {
   externalDeliveryState: 'ENABLED' | 'DISABLED';
   generatedAt: string;
 };
+export type NotificationDeliveryEndpoint = {
+  endpointId: string;
+  channel: Extract<NotificationChannel, 'WEB_PUSH' | 'MOBILE_PUSH'>;
+  displayName: string;
+  platform: 'WEB' | 'IOS' | 'ANDROID';
+  endpointHint: string;
+  state: 'ACTIVE' | 'REVOKED' | 'EXPIRED';
+  lastSeenAt: string;
+  createdAt: string;
+  revokedAt?: string | null;
+  version: NotificationEntityVersion;
+};
 export type NotificationTriageAction =
   'READ' | 'UNREAD' | 'SAVE' | 'UNSAVE' | 'COMPLETE' | 'RESTORE' | 'SNOOZE';
 export type NotificationReasonKind =
@@ -668,6 +680,34 @@ export function updateNotificationDeliveryProfile(
   return axiosInstance
     .put<ApiResponse<NotificationDeliveryProfile>, typeof body>(
       `${NOTIFICATION_API_BASE}/me/delivery-profile`,
+      body,
+      { headers: mutationHeaders(idempotencyKey) }
+    )
+    .then((response) => response.data.data);
+}
+
+export function getNotificationDeliveryEndpoints(
+  signal?: AbortSignal
+): Promise<NotificationDeliveryEndpoint[]> {
+  return axiosInstance
+    .get<ApiResponse<NotificationDeliveryEndpoint[]>>(
+      `${NOTIFICATION_API_BASE}/me/delivery-endpoints`,
+      { signal }
+    )
+    .then((response) => response.data.data);
+}
+
+export function revokeNotificationDeliveryEndpoint(
+  endpointId: string,
+  expectedVersion: NotificationEntityVersion,
+  idempotencyKey: string
+): Promise<NotificationDeliveryEndpoint> {
+  const body = {
+    expectedVersion: requireNotificationDecimalVersion(expectedVersion, 'expectedVersion'),
+  };
+  return axiosInstance
+    .post<ApiResponse<NotificationDeliveryEndpoint>, typeof body>(
+      `${NOTIFICATION_API_BASE}/me/delivery-endpoints/${encodeURIComponent(endpointId)}/revoke`,
       body,
       { headers: mutationHeaders(idempotencyKey) }
     )

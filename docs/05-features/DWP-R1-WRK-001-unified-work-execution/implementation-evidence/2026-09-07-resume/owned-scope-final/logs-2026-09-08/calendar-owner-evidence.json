@@ -1,0 +1,30 @@
+{
+  "suites": 20,
+  "tests": 130,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "evidenceRoot": "/Users/a10697/Work/DWP/output/calendar-work-lifecycle-2026-09-08/backend/junit",
+  "sha256": {
+    "TEST-com.dwp.services.platform.calendar.CalendarTeamAvailabilityControllerTest.xml": "9b931b8a6ff7d8b47b46c03f4f1bbffde12b6de62b33ff9d2677c7345d76a80d",
+    "TEST-com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest.xml": "8fdb49e0c96a7e8e94e53efab736353f71bbf01b3ca5b02931b2cfdb432f2af1",
+    "TEST-com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest.xml": "7e5f7d443bd1a9f5eac59adacba80dae7062d35b7e7b9e2a096b883af2aaab9f",
+    "TEST-com.dwp.services.platform.calendar.CalendarWorkLifecyclePostgresIntegrationTest.xml": "b30650a5e32098e381d8f19002b114a3e67f91b55489b3881d86d7f9c075a03d",
+    "TEST-com.dwp.services.platform.calendar.CalendarMutationFailClosedTest.xml": "376771dc3d36ced91ea19d17860f7ff2ff439297cb3d083433f2406ad8d417d5",
+    "TEST-com.dwp.services.platform.calendar.CalendarIdempotencyRepositoryTest.xml": "f7add32b1b3bafa4e4d81a1f61385e9dfaa081130bdc9edfb8382a469bde4d29",
+    "TEST-com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest.xml": "e0fa697cbf9d89171debfc216e1a88e63663a014fa73f687b55017f9a74ba8f0",
+    "TEST-com.dwp.services.platform.calendar.CalendarRoomsSecurityContextMockMvcTest.xml": "b48f18d6dc63f6c1ef4cf00372b849a92523e78e8f41a0e6a288da13ee7d3687",
+    "TEST-com.dwp.services.platform.calendar.CalendarServiceTest.xml": "bc3a3f2d246ead9784d36eeb75aaad65b8124e8810234614e704c3bb9317c0f2",
+    "TEST-com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest.xml": "96a02aa777d37d3a06804690cd74cfdec22b1c136e8dbe43ea75bb5de4f183fe",
+    "TEST-com.dwp.services.platform.calendar.CalendarSchedulingHorizonTest.xml": "4ef4186a0c034f1584c910b5ecd89e7a28008de8edde3bbae52eb6dc264d571f",
+    "TEST-com.dwp.services.platform.calendar.CalendarP0GovernancePostgresIntegrationTest.xml": "c3ba77d8a78a63f8e0e5ed975607adb07c1c543fc1f3ee097a014add142459eb",
+    "TEST-com.dwp.services.platform.calendar.CalendarIdempotencyMigrationTest.xml": "0c6d8bdeddd514ba892bbb32a6041d61f4c029ebeac4a7755860c623ea82023c",
+    "TEST-com.dwp.services.platform.calendar.CalendarTeamAvailabilityPostgresIntegrationTest.xml": "d1dc5cd6c779fa4afb0f04c3344b3db370fd2d1f5bb44b84bc80df7eab0b9ed4",
+    "TEST-com.dwp.services.platform.calendar.CalendarRecurringResourceHorizonTest.xml": "4e39face590fe83c985f05e39c62cd6487cacca282d7174da7026800036698cc",
+    "TEST-com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest.xml": "c449ccb390391552a84c1c7dc301110ed0e9699f81b5e4c439350cfa1af5a306",
+    "TEST-com.dwp.services.platform.calendar.CalendarRequestFingerprintTest.xml": "2f09bc431c37fe2e304674ed18f83ce7c2fbc03c16a843e0e9abc6269518fc88",
+    "TEST-com.dwp.services.platform.calendar.RoomServiceTest.xml": "d8943cfa4b377b817f7dcf24ab93414a38b9ccc7964d82775f5fc77ac99628f6",
+    "TEST-com.dwp.services.platform.calendar.CalendarMigrationPathPostgresIntegrationTest.xml": "cc479fbdb432c53abce8a04a2f763afbf06dfc3d6518c0def720a627c31ceaf1",
+    "TEST-com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest.xml": "67cbdf8b46ec62314c88e956c1abe8b00bea0753c2e36fbc7c51a4c7b9182620"
+  }
+}

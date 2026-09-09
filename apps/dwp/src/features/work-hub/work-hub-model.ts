@@ -15,11 +15,13 @@ export type WorkHubFilters = {
   query: string;
   sourceSystem: string | null;
   urgency: WorkHubUrgency | null;
+  assignmentRole: 'ASSIGNEE' | 'REQUESTER' | null;
 };
 
 export function parseWorkHubFilters(params: URLSearchParams): WorkHubFilters {
   const scope = params.get('scope');
   const urgency = params.get('urgency');
+  const assignmentRole = params.get('assignmentRole');
   return {
     scope: ['ALL', 'ACTIONABLE', 'IN_PROGRESS', 'WAITING', 'COMPLETED', 'TODAY'].includes(
       scope ?? ''
@@ -30,6 +32,9 @@ export function parseWorkHubFilters(params: URLSearchParams): WorkHubFilters {
     sourceSystem: params.get('source') || null,
     urgency: ['OVERDUE', 'DUE_SOON', 'SCHEDULED', 'NO_DUE_DATE'].includes(urgency ?? '')
       ? (urgency as WorkHubUrgency)
+      : null,
+    assignmentRole: ['ASSIGNEE', 'REQUESTER'].includes(assignmentRole ?? '')
+      ? (assignmentRole as WorkHubFilters['assignmentRole'])
       : null,
   };
 }
@@ -63,15 +68,23 @@ export function selectWorkHubItems(
       if (filters.scope === 'TODAY' && !todayKeys.has(item.key)) return false;
       if (filters.sourceSystem && item.reference.sourceSystem !== filters.sourceSystem)
         return false;
+      if (filters.assignmentRole) {
+        const assignment =
+          item.sourceContext?.kind === 'WORK_ASSIGNMENT' ? item.sourceContext : null;
+        if (
+          !assignment ||
+          (filters.assignmentRole === 'ASSIGNEE'
+            ? !assignment.assigneeIsMe
+            : !assignment.requesterIsMe)
+        )
+          return false;
+      }
       if (filters.urgency && workHubUrgency(item, now) !== filters.urgency) return false;
       return (
         !query ||
-        [
-          item.title,
-          item.summary,
-          item.reference.sourceSystem,
-          item.reference.sourceReference,
-        ].some((value) => value?.toLocaleLowerCase().includes(query))
+        [item.title, item.summary, item.displayId].some((value) =>
+          value?.toLocaleLowerCase().includes(query)
+        )
       );
     })
     .sort((left, right) => {

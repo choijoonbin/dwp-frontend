@@ -5,7 +5,10 @@ import {
   type MeetingDeviceFailure,
   type MeetingPreviewKind,
 } from './meeting-device-session';
-import type { MeetingDevicePreferences } from './meeting-preferences-model';
+import {
+  resolveMeetingBackgroundMode,
+  type MeetingDevicePreferences,
+} from './meeting-preferences-model';
 import {
   createMeetingBackgroundProcessor,
   meetingBackgroundSupported,
@@ -221,7 +224,12 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
     setError(null);
     setStates((current) => ({ ...current, [kind]: 'requesting' }));
     try {
-      if (kind === 'video' && preferences.backgroundBlur && !meetingBackgroundSupported()) {
+      const backgroundMode = resolveMeetingBackgroundMode(preferences);
+      if (
+        kind === 'video' &&
+        backgroundMode !== 'original' &&
+        !meetingBackgroundSupported(backgroundMode)
+      ) {
         session.current.stop('video');
         setBackgroundState('failed');
         throw new DOMException('Local background processing unsupported', 'NotSupportedError');
@@ -233,9 +241,10 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       );
       if (!alive.current || attempts.current[kind] !== attempt || !stream) return;
       let visibleStream = stream;
-      if (kind === 'video' && preferences.backgroundBlur) {
+      if (kind === 'video' && backgroundMode !== 'original') {
         setBackgroundState('loading');
         const processor = createMeetingBackgroundProcessor({
+          mode: backgroundMode,
           onStateChange: (event) => {
             if (!alive.current || attempts.current.video !== attempt || event.state !== 'failed')
               return;
@@ -268,7 +277,7 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       if (kind === 'video') {
         releaseVideo();
         session.current?.stop('video');
-        if (preferences.backgroundBlur) setBackgroundState('failed');
+        if (resolveMeetingBackgroundMode(preferences) !== 'original') setBackgroundState('failed');
       }
       setError(meetingDeviceFailure(failure));
       setStates((current) => ({ ...current, [kind]: 'idle' }));

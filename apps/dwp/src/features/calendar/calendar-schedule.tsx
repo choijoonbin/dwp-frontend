@@ -52,11 +52,11 @@ import {
   normalizeCalendarSelection,
 } from './calendar-source-model';
 import {
+  authorizedCalendarWorkReturnTarget,
   calendarScheduleCalendarIds,
   calendarScheduleDate,
   calendarScheduleDateValue,
   calendarInternalPath,
-  calendarScheduleReturnTarget,
   calendarScheduleSavedConfiguration,
   calendarScheduleSearchParams,
   calendarScheduleStateFromSavedView,
@@ -131,7 +131,7 @@ function updateInput(
 
 export function CalendarSchedule() {
   const { t, i18n } = useTranslation('calendar');
-  const { hasPermission } = usePermissions();
+  const { hasPermission, permissions } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const compact = useMediaQuery('(max-width:899.95px)', { noSsr: true });
@@ -160,7 +160,8 @@ export function CalendarSchedule() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [sharingCalendar, setSharingCalendar] = useState<CalendarSummary | null>(null);
   const requestedEventId = routeSearchParams.get('event');
-  const returnTarget = calendarScheduleReturnTarget(routeSearchParams.get('returnTo'));
+  const requestedReturnTarget = routeSearchParams.get('returnTo');
+  const returnTarget = authorizedCalendarWorkReturnTarget(requestedReturnTarget, permissions);
   const hasExplicitScheduleState =
     routeSearchParams.has('view') ||
     routeSearchParams.has('date') ||
@@ -187,7 +188,7 @@ export function CalendarSchedule() {
   });
   const calendarsQuery = useQuery({
     queryKey: ['calendar', 'calendars'],
-    queryFn: getCalendars,
+    queryFn: ({ signal }) => getCalendars(signal),
     staleTime: 60_000,
     retry: retryRecoverableCalendarRead,
   });
@@ -625,7 +626,11 @@ export function CalendarSchedule() {
         onOpenSources={() => setSourcePickerOpen(true)}
         onApplySavedView={applySavedView}
         onReturn={() => {
-          if (returnTarget) navigate(returnTarget);
+          const currentTarget = authorizedCalendarWorkReturnTarget(
+            requestedReturnTarget,
+            permissions
+          );
+          if (currentTarget) navigate(currentTarget);
         }}
       />
 

@@ -14,6 +14,7 @@ import {
 import { DwaionLauncher } from './dwaion-launcher';
 import { isDwaionGlobalHostAllowed } from './dwaion-global-host-policy';
 import { resolveDwaionSurfaceContext } from './dwaion-page-context';
+import { useDwaionGovernedMutation } from '../use-dwaion-governed-mutation';
 
 const hiddenRoutes = ['/sign-in', '/activate', '/403', '/dwaion', '/ask'];
 
@@ -24,6 +25,7 @@ export function DwaionGlobalHost() {
   const { permissions, isLoaded } = usePermissions();
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
+  const governLaunch = useDwaionGovernedMutation('route.dwaion.work.question-launch-create.action');
   const surface = useMemo(() => resolveDwaionSurfaceContext(pathname), [pathname]);
   const entitled = isDwaionGlobalHostAllowed(auth.user?.identityPlane, permissions);
   const canOpenServices = isAppReadEntitled('APP.EMPLOYEE_SERVICES', permissions);
@@ -54,7 +56,7 @@ export function DwaionGlobalHost() {
           return true;
         }
         try {
-          const receipt = await createQuestionLaunch(query);
+          const receipt = await governLaunch((authority) => createQuestionLaunch(query, authority));
           const state = createDwaionQuestionLaunchState(receipt.launchId);
           if (!state) throw new Error('Question launch receipt is invalid.');
           navigate(dwaionWorkspaceRoute(), { state });

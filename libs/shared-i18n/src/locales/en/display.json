@@ -89,10 +89,12 @@
     "CONFLICT": "Change conflict",
     "DENY": "Denied",
     "DENIED": "Denied",
+    "DEFERRED": "Deferred",
     "FAIL": "Failed",
     "FAILED": "Failed",
     "FORBIDDEN": "Forbidden",
     "HANDOFF": "Handed off",
+    "IMMEDIATE": "Delivered immediately",
     "NOT_FOUND": "Not found",
     "PARTIAL": "Partially completed",
     "PASS": "Passed",
@@ -100,6 +102,7 @@
     "REJECTED": "Rejected",
     "SUCCEEDED": "Succeeded",
     "SUCCESS": "Successful",
+    "SUPPRESSED": "Suppressed",
     "VALIDATED": "Validated",
     "WARN": "Passed with warnings"
   },
@@ -155,14 +158,19 @@
     "TENANT_LIFECYCLE": "Tenant lifecycle"
   },
   "auditActions": {
+    "ACCEPT": "Assignment accepted",
     "ARCHIVE": "Archived mail",
     "ARCHIVE_NOW": "Archived immediately",
     "APPLY": "Applied",
     "APPROVE": "Approved",
     "BLOCKED": "Export processing blocked",
+    "CANCEL": "Work cancelled",
     "CANCELLED": "Export request cancelled",
     "CLAIMED": "Export request claimed by worker",
     "COMPLETED": "Export artifact completed",
+    "COMPLETE": "Work completed",
+    "CREATE": "Assigned work created",
+    "DECLINE": "Assignment declined",
     "EXPIRED": "Export artifact expired",
     "FAILED": "Export processing failed",
     "PUBLISH": "Publish",
@@ -174,8 +182,10 @@
     "RETRY_SCHEDULED": "Export retry scheduled",
     "SNOOZE": "Notification snoozed",
     "SPAM": "Moved mail to spam",
+    "START": "Work started",
     "TRASH": "Moved mail to trash",
     "UNSAVE": "Notification removed from saved items",
+    "WAIT": "Work moved to waiting",
     "ACCESS_REVIEW_CAMPAIGN_ACTIVATED": "Access review campaign activated",
     "ACCESS_REVIEW_CAMPAIGN_COMPLETED": "Access review campaign completed",
     "ACCESS_REVIEW_CAMPAIGN_CREATED": "Access review campaign created",
@@ -250,6 +260,7 @@
     "PERSONAL_PREFERENCE_EXCEPTION_REQUESTED": "Managed preference exception requested",
     "ROLE_ASSIGNMENT_DENIED": "Role assignment denied",
     "REQUEST_CANCELLED": "Request cancelled",
+    "REQUEST_CREATED": "Request created",
     "REQUESTER_RESPONDED": "Service request information provided",
     "REQUEST_SUBMITTED": "Request submitted",
     "REQUEST_DRAFTED": "Approval draft created",
@@ -319,12 +330,15 @@
     "WORKSPACE_SEARCH_RESULT_SELECTED": "Workspace search result selected"
   },
   "sourceTypes": {
+    "CALENDAR": "Calendar",
     "CUSTOM": "Custom source",
+    "MAIL": "Mail",
     "ORACLE_HCM": "Oracle HCM",
     "SAP_HCM": "SAP HCM",
     "SCIM": "SCIM",
     "SYSTEM": "System",
-    "WORKDAY": "Workday"
+    "WORKDAY": "Workday",
+    "WORK_ITEM": "Work item"
   },
   "connectorTypes": {
     "CUSTOM_REST": "Custom REST API",
@@ -488,6 +502,7 @@
     "MEDIUM": "Medium"
   },
   "objectTypes": {
+    "AGENT_RUN": "Agent run",
     "COLUMN": "Column",
     "DATABASE": "Database",
     "MATERIALIZED_VIEW": "Materialized view",
@@ -496,6 +511,7 @@
     "SCHEMA": "Schema",
     "SYSTEM_TABLE": "System table",
     "TABLE": "Table",
-    "VIEW": "View"
+    "VIEW": "View",
+    "WORK_ITEM": "Work item"
   }
 }

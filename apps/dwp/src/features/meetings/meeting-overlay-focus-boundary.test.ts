@@ -17,6 +17,23 @@ function overlay() {
 }
 
 describe('meeting overlay focus boundary', () => {
+  it('leaves portaled confirmation key events to the dialog focus trap', () => {
+    const panel = overlay();
+    const dialogButton = document.createElement('button');
+    document.body.append(dialogButton);
+    dialogButton.focus();
+    const preventDefault = vi.fn();
+    expect(
+      containMeetingOverlayTab(
+        { key: 'Tab', shiftKey: false, target: dialogButton, preventDefault },
+        panel
+      )
+    ).toBe(false);
+    expect(document.activeElement).toBe(dialogButton);
+    expect(preventDefault).not.toHaveBeenCalled();
+    panel.remove();
+    dialogButton.remove();
+  });
   it('wraps to the selected roving tab and excludes disabled, hidden and inactive controls', () => {
     const rail = document.createElement('div');
     rail.dataset.meetingFocusOverlay = 'true';

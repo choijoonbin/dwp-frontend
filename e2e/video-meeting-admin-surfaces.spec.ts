@@ -37,6 +37,16 @@ async function mockOperations(page: Page) {
       }),
     })
   );
+  await page.route('**/api/meetings/v1/admin/operations/export?*', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'text/csv;charset=UTF-8',
+      headers: {
+        'Content-Disposition': 'attachment; filename="dwp-meeting-operations-20260908T020000Z.csv"',
+      },
+      body: 'schemaVersion,liveMeetings\r\n"meeting-admin-operations-v1","2"\r\n',
+    })
+  );
 }
 
 async function expectResponsiveAndAccessible(page: Page, label: string) {
@@ -174,6 +184,9 @@ test('U13 presents user impact, provider readiness, and a content-free exception
     await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
     await expectResponsiveAndAccessible(page, 'U13 mobile 320 at 200 percent text');
   }
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export operations report', exact: true }).click();
+  expect((await download).suggestedFilename()).toBe('dwp-meeting-operations.csv');
 });
 
 test('U14 keeps the versioned policy workflow, impact boundary, and unavailable controls legible on desktop and mobile', async ({

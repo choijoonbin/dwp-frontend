@@ -27,6 +27,9 @@ test('05 a concurrent checklist update requires explicit review before a new ver
     checklist: [{ itemId: 'first', title: 'Review source material', completed: false }],
   };
   const writes: Array<Record<string, unknown>> = [];
+  await page.route('**/api/platform/v1/workspace/work-hub/personal-tasks?*', (route) =>
+    fulfillSuccess(route, { items: [task], page: 0, size: 100, totalElements: 1, hasMore: false })
+  );
   await page.route(
     `**/api/platform/v1/workspace/work-hub/personal-tasks/${taskId}`,
     async (route) => {

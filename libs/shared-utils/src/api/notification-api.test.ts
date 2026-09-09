@@ -6,18 +6,24 @@ import {
   applyNotificationTriage,
   getNotificationInbox,
   getNotificationCapabilities,
+  getNotificationDeliveryEndpoints,
   getNotificationTypeContracts,
   createNotificationTemplateDraft,
   createNotificationSuppression,
   publishNotificationTemplate,
+  rejectNotificationTemplateDraft,
+  rejectNotificationTenantPolicyDraft,
   previewNotificationSuppression,
   getNotificationConnectionState,
   parseNotificationConnectionStateSignal,
   parseNotificationLiveSignal,
   publishNotificationConnectionState,
   resolveNotificationTarget,
+  revokeNotificationDeliveryEndpoint,
   updateNotificationDeliveryProfile,
   undoNotificationBulkAction,
+  withdrawNotificationTemplateDraft,
+  withdrawNotificationTenantPolicyDraft,
 } from './notification-api';
 
 function jsonResponse(data: unknown): Response {
@@ -208,6 +214,44 @@ describe('notification API boundary', () => {
     expect(JSON.parse(String(request.body))).toEqual(profile);
   });
 
+  it('lists and revokes a user-owned push endpoint without exposing provider secrets', async () => {
+    const endpoint = {
+      endpointId: '24000000-0000-0000-0000-000000000001',
+      channel: 'WEB_PUSH',
+      displayName: '업무용 Chrome',
+      platform: 'WEB',
+      endpointHint: 'Chrome 141 · Seoul',
+      state: 'ACTIVE',
+      lastSeenAt: '2026-09-09T00:00:00Z',
+      createdAt: '2026-09-01T00:00:00Z',
+      revokedAt: null,
+      version: '3',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse([endpoint]))
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ ...endpoint, state: 'REVOKED', version: '4' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getNotificationDeliveryEndpoints()).resolves.toEqual([endpoint]);
+    await expect(
+      revokeNotificationDeliveryEndpoint(endpoint.endpointId, endpoint.version, 'endpoint:test-1')
+    ).resolves.toMatchObject({ state: 'REVOKED', version: '4' });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/notifications/v1/me/delivery-endpoints');
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      `/api/notifications/v1/me/delivery-endpoints/${endpoint.endpointId}/revoke`
+    );
+    const request = fetchMock.mock.calls[2]?.[1] as RequestInit;
+    expect(request.method).toBe('POST');
+    expect(request.headers).toEqual(
+      expect.objectContaining({ 'Idempotency-Key': 'endpoint:test-1' })
+    );
+    expect(JSON.parse(String(request.body))).toEqual({ expectedVersion: '3' });
+    expect(JSON.stringify(endpoint)).not.toContain('push_token');
+  });
+
   it('keeps admin contract pagination opaque and URL encoded', async () => {
     const page = { items: [], hasMore: false };
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(page));
@@ -275,6 +319,43 @@ describe('notification API boundary', () => {
     expect((fetchMock.mock.calls[2]?.[1] as RequestInit).headers).toEqual(
       expect.objectContaining({ 'Idempotency-Key': 'template-publish:test-1' })
     );
+  });
+
+  it('uses explicit, idempotent withdraw and reject endpoints for policy and template drafts', async () => {
+    const policyId = '36f136e4-c333-4cd1-98fe-a2d1089ec33b';
+    const revisionId = '93af7315-2271-462e-a819-3d238a28830f';
+    const decision = {
+      expectedVersion: '7',
+      reason: 'The proposed delivery change no longer matches the approved operating plan.',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValue(jsonResponse({ state: 'RETIRED', version: '7' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await withdrawNotificationTenantPolicyDraft(policyId, decision, 'policy-withdraw:test-1');
+    await rejectNotificationTenantPolicyDraft(policyId, decision, 'policy-reject:test-1');
+    await withdrawNotificationTemplateDraft(revisionId, decision, 'template-withdraw:test-1');
+    await rejectNotificationTemplateDraft(revisionId, decision, 'template-reject:test-1');
+
+    expect(fetchMock.mock.calls.slice(1).map(([url]) => url)).toEqual([
+      `/api/notifications/v1/admin/policies/${policyId}/withdraw`,
+      `/api/notifications/v1/admin/policies/${policyId}/reject`,
+      `/api/notifications/v1/admin/templates/${revisionId}/withdraw`,
+      `/api/notifications/v1/admin/templates/${revisionId}/reject`,
+    ]);
+    expect(fetchMock.mock.calls.slice(1).map(([, init]) => (init as RequestInit).headers)).toEqual([
+      expect.objectContaining({ 'Idempotency-Key': 'policy-withdraw:test-1' }),
+      expect.objectContaining({ 'Idempotency-Key': 'policy-reject:test-1' }),
+      expect.objectContaining({ 'Idempotency-Key': 'template-withdraw:test-1' }),
+      expect.objectContaining({ 'Idempotency-Key': 'template-reject:test-1' }),
+    ]);
+    expect(
+      fetchMock.mock.calls
+        .slice(1)
+        .map(([, init]) => JSON.parse(String((init as RequestInit).body)))
+    ).toEqual([decision, decision, decision, decision]);
   });
 
   it('previews governed delivery suppression before the idempotent mutation', async () => {

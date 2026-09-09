@@ -7,8 +7,8 @@ import {
   expectNoHorizontalOverflow,
 } from './support/video-meeting-visual-accessibility';
 
-async function browserSupportsLocalBackground(page: Page) {
-  return page.evaluate(() => {
+async function browserSupportsLocalBackground(page: Page, mode: 'blur' | 'office') {
+  return page.evaluate((selectedMode) => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     if (
@@ -16,25 +16,36 @@ async function browserSupportsLocalBackground(page: Page) {
       typeof WebAssembly === 'undefined' ||
       typeof crypto.subtle?.digest !== 'function' ||
       typeof canvas.captureStream !== 'function' ||
-      !context ||
-      !('filter' in context)
+      !context
     )
       return false;
+    if (selectedMode === 'office')
+      return (
+        typeof Image !== 'undefined' &&
+        typeof Image.prototype.decode === 'function' &&
+        typeof Blob !== 'undefined' &&
+        typeof URL.createObjectURL === 'function' &&
+        typeof URL.revokeObjectURL === 'function'
+      );
+    if (!('filter' in context)) return false;
     context.filter = 'blur(16px)';
     return context.filter === 'blur(16px)';
-  });
+  }, mode);
 }
 
-test('U05 saves local blur without acquiring a camera and restores it on the next device check', async ({
+test('U05 saves the curated office background without camera access and restores it on the next device check', async ({
   page,
   browser,
 }, info) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.stack ?? error.message));
   await mockApprovedLiveRoom(page, true);
   await mockPreparationDesignMetadata(page);
   await page.addInitScript(() => {
     const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
       configurable: true,
+      writable: true,
       value: (constraints: MediaStreamConstraints) => {
         document.documentElement.dataset.cameraRequests = String(
           Number(document.documentElement.dataset.cameraRequests ?? 0) + 1
@@ -48,22 +59,30 @@ test('U05 saves local blur without acquiring a camera and restores it on the nex
     await page.getByRole('button', { name: '카메라와 마이크 점검', exact: true }).click();
   };
   await open();
-  const blur = page.getByRole('button', { name: '배경 흐림', exact: true });
-  const supported = await browserSupportsLocalBackground(page);
-  if (supported) await expect(blur).toBeEnabled();
-  else await expect(blur).toBeDisabled();
+  const office = page.getByRole('button', { name: '오피스 배경', exact: true });
+  const supported = await browserSupportsLocalBackground(page, 'office');
+  if (supported) await expect(office).toBeEnabled();
+  else await expect(office).toBeDisabled();
+  const target = await office.boundingBox();
+  expect(target?.height).toBeGreaterThanOrEqual(44);
   await info.attach('runtime-browser', {
     body: JSON.stringify({
       engine: browser.browserType().name(),
       connected: browser.isConnected(),
       project: info.project.name,
-      blurDisabled: await blur.isDisabled(),
+      officeDisabled: await office.isDisabled(),
     }),
     contentType: 'application/json',
   });
-  test.skip(!supported, 'The native browser does not support local background processing.');
-  await blur.click();
-  await expect(blur).toHaveAttribute('aria-pressed', 'true');
+  await expectNoHorizontalOverflow(page, 'U05 office background selector');
+  await expectNoBlockingA11y(page, 'U05 office background selector');
+  if (!supported) {
+    await expect(page.getByRole('button', { name: '실제 카메라 입력', exact: true })).toBeEnabled();
+    expect(pageErrors).toEqual([]);
+    return;
+  }
+  await office.click();
+  await expect(office).toHaveAttribute('aria-pressed', 'true');
   expect(
     await page.evaluate(() => Number(document.documentElement.dataset.cameraRequests ?? 0))
   ).toBe(0);
@@ -72,12 +91,12 @@ test('U05 saves local blur without acquiring a camera and restores it on the nex
       Object.keys(localStorage).some(
         (key) =>
           key.startsWith('dwp:meetings:devices:v1:') &&
-          JSON.parse(localStorage.getItem(key)!).backgroundBlur === true
+          JSON.parse(localStorage.getItem(key)!).backgroundMode === 'office'
       )
     )
   ).toBe(true);
   await open();
-  await expect(page.getByRole('button', { name: '배경 흐림', exact: true })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: '오피스 배경', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true'
   );
@@ -88,6 +107,7 @@ test('U05 saves local blur without acquiring a camera and restores it on the nex
   expect(
     await page.evaluate(() => Number(document.documentElement.dataset.cameraRequests ?? 0))
   ).toBe(0);
+  expect(pageErrors).toEqual([]);
 });
 
 test('U05 model failure turns off the native camera and never attaches the raw input to visible preview', async ({
@@ -99,6 +119,7 @@ test('U05 model failure turns off the native camera and never attaches the raw i
   await page.addInitScript(() => {
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
       configurable: true,
+      writable: true,
       value: async () => {
         const canvas = document.createElement('canvas');
         canvas.width = 640;
@@ -123,7 +144,7 @@ test('U05 model failure turns off the native camera and never attaches the raw i
   await page.goto('/meetings/room/' + MEETING_VISUAL_ID);
   await page.getByRole('button', { name: '카메라와 마이크 점검', exact: true }).click();
   const blur = page.getByRole('button', { name: '배경 흐림', exact: true });
-  const supported = await browserSupportsLocalBackground(page);
+  const supported = await browserSupportsLocalBackground(page, 'blur');
   if (supported) await expect(blur).toBeEnabled();
   else await expect(blur).toBeDisabled();
   await info.attach('runtime-browser', {

@@ -11,15 +11,22 @@ type SaveArtifact = (
 
 export function useDwaionArtifactAutosave({
   serverDocument,
+  enabled = true,
   save,
   onError,
 }: {
   serverDocument: DwaionArtifactDocument | null;
+  enabled?: boolean;
   save: SaveArtifact;
   onError: (error: unknown) => void;
 }) {
   const [draft, setDraft] = useState<DwaionArtifactDocument | null>(null);
   const activeSave = useRef(false);
+  const accessEpoch = useRef(0);
+  useEffect(() => {
+    accessEpoch.current += 1;
+    if (!enabled) setDraft(null);
+  }, [enabled]);
   let localDocument = serverDocument;
   if (
     draft &&
@@ -39,7 +46,7 @@ export function useDwaionArtifactAutosave({
           : serverDocument?.artifactId === artifactId
             ? serverDocument
             : null;
-      if (!current) return;
+      if (!enabled || !current) return;
       setDraft({
         ...current,
         title: content.title,
@@ -47,13 +54,14 @@ export function useDwaionArtifactAutosave({
         autosaveState: 'DIRTY',
       });
     },
-    [localDocument, serverDocument]
+    [enabled, localDocument, serverDocument]
   );
 
   useEffect(() => {
-    if (!draft || draft.autosaveState !== 'DIRTY') return;
+    if (!enabled || !draft || draft.autosaveState !== 'DIRTY') return;
     if (!draft.title.trim() || !draft.body.trim()) return;
     const snapshot = draft;
+    const epoch = accessEpoch.current;
     const timer = window.setTimeout(() => {
       if (activeSave.current) return;
       activeSave.current = true;
@@ -70,6 +78,10 @@ export function useDwaionArtifactAutosave({
       )
         .then((saved) => {
           activeSave.current = false;
+          if (epoch !== accessEpoch.current) {
+            setDraft((current) => (current?.autosaveState === 'DIRTY' ? { ...current } : current));
+            return;
+          }
           setDraft((current) => {
             if (!current || current.artifactId !== snapshot.artifactId) return current;
             if (current.title === snapshot.title && current.body === snapshot.body) {
@@ -86,6 +98,10 @@ export function useDwaionArtifactAutosave({
         })
         .catch((error) => {
           activeSave.current = false;
+          if (epoch !== accessEpoch.current) {
+            setDraft((current) => (current?.autosaveState === 'DIRTY' ? { ...current } : current));
+            return;
+          }
           setDraft((current) =>
             current?.artifactId === snapshot.artifactId
               ? {
@@ -104,7 +120,7 @@ export function useDwaionArtifactAutosave({
         });
     }, 650);
     return () => window.clearTimeout(timer);
-  }, [draft, onError, save]);
+  }, [draft, enabled, onError, save]);
 
   return { document: localDocument, update };
 }

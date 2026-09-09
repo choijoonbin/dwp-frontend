@@ -1,29 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowRight,
-  Bell,
-  BellRing,
-  CheckCircle2,
-  Clock3,
-  Layers3,
-  Mail,
-  MessageSquareText,
-  Settings2,
-  ShieldCheck,
-  UsersRound,
-} from 'lucide-react';
+import { ArrowRight, BellRing } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
   ActionIconButton,
   EmptyState,
-  GlyphSurface,
   LoadingState,
   LocalErrorState,
   PageCanvas,
-  ProgressMeter,
 } from '@dwp-frontend/design-system';
 import {
   applyNotificationTriage,
@@ -37,14 +23,16 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
 import { NotificationActionCard } from './notification-action-card';
 import { NotificationHomeHeader } from './notification-home-header';
+import { NotificationHomeInsights } from './notification-home-insights';
 import {
   groupNotificationStream,
   kpiView,
@@ -64,19 +52,25 @@ import {
 } from './notification-navigation';
 import { notificationQueryKeys } from './integration-contract';
 import { defaultSnoozeTime, optimisticTriageItem } from './notification-model';
-import { NotificationConnectionNotice, useNotificationClock } from './notification-ui';
+import {
+  NotificationConnectionNotice,
+  NotificationItemRow,
+  useNotificationClock,
+} from './notification-ui';
 import { useNotificationLiveUpdates, useOnlineStatus } from './use-notification-runtime';
 
 import type {
   AppNotificationCounter,
-  NotificationDeliveryProfile,
   NotificationInboxPage,
   NotificationItem,
   NotificationSummary,
   NotificationTriageAction,
 } from '@dwp-frontend/shared-utils';
-import type { NotificationKpiKey, NotificationInboxFilterScope } from './notification-inbox-model';
-import type { LucideIcon } from 'lucide-react';
+import type {
+  NotificationInboxFilterScope,
+  NotificationKpiKey,
+  NotificationStreamGroupKey,
+} from './notification-inbox-model';
 
 const HOME_ALL_SCOPE = { surface: 'home', view: 'ALL' } as const;
 const HOME_PRIORITY_SCOPE = { surface: 'home', view: 'PRIORITY' } as const;
@@ -84,23 +78,17 @@ const HOME_MENTIONS_SCOPE = { surface: 'home', view: 'MENTIONS' } as const;
 const HOME_INBOX_SCOPES = [HOME_ALL_SCOPE, HOME_PRIORITY_SCOPE, HOME_MENTIONS_SCOPE] as const;
 const HOME_APP_SUMMARY_SCOPE = { surface: 'home' } as const;
 const HOME_INBOX_LIMIT = 8;
-
-const SOURCE_ICON: Record<string, LucideIcon> = {
-  approvals: CheckCircle2,
-  hcm: UsersRound,
-  mail: Mail,
-  messaging: MessageSquareText,
-  security: ShieldCheck,
-  space: Layers3,
-  spaces: Layers3,
+const NOTIFICATION_HOME_MAX_WIDTH = 1600;
+const HOME_GROUP_PREVIEW_LIMIT: Record<NotificationStreamGroupKey, number> = {
+  ACTION_REQUIRED: 2,
+  CONVERSATIONS: 1,
+  UPDATES: 3,
 };
 
-function deliveryProfileMetrics(profile: NotificationDeliveryProfile) {
-  const channels = Object.values(profile.channels);
-  return {
-    enabledChannels: channels.filter(Boolean).length,
-    totalChannels: channels.length,
-  };
+function homeGroupCenterPath(groupKey: NotificationStreamGroupKey): string {
+  if (groupKey === 'ACTION_REQUIRED') return notificationCenterPath({ view: 'PRIORITY' });
+  if (groupKey === 'CONVERSATIONS') return notificationCenterPath({ view: 'MENTIONS' });
+  return notificationCenterPath({ view: 'ALL' });
 }
 
 function sortAppCounters(counters: AppNotificationCounter[]): AppNotificationCounter[] {
@@ -147,6 +135,8 @@ type HomeTriageCommand = {
 
 export function NotificationHome() {
   const { t } = useTranslation('notifications');
+  const theme = useTheme();
+  const desktopInsights = useMediaQuery(theme.breakpoints.up('lg'), { noSsr: true });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -351,7 +341,6 @@ export function NotificationHome() {
     () => sortAppCounters(appSummaryQuery.data?.apps ?? []),
     [appSummaryQuery.data?.apps]
   );
-  const appScale = Math.max(1, ...topApps.map((app) => app.totalUnread));
   const unavailableSources = useMemo(
     () =>
       Array.from(
@@ -394,6 +383,10 @@ export function NotificationHome() {
   const summary = summaryQuery.data;
   const profile = profileQuery.data;
   const displayedInbox = activeKpi ? selectionQuery.data : inbox;
+  const streamGroups = useMemo(
+    () => groupNotificationStream(displayedInbox?.items ?? []),
+    [displayedInbox?.items]
+  );
   const generatedAt = summary?.generatedAt ?? appSummaryQuery.data?.generatedAt;
 
   const header = (
@@ -411,9 +404,11 @@ export function NotificationHome() {
   if (coreLoading) {
     return (
       <PageCanvas mode="workspace" topInset="compact">
-        {header}
-        <Box sx={{ mt: 2.5 }}>
-          <LoadingState label={t('home.loading')} variant="skeleton" size="page" />
+        <Box sx={{ width: 1, maxWidth: NOTIFICATION_HOME_MAX_WIDTH, mx: 'auto' }}>
+          {header}
+          <Box sx={{ mt: 2.5 }}>
+            <LoadingState label={t('home.loading')} variant="skeleton" size="page" />
+          </Box>
         </Box>
       </PageCanvas>
     );
@@ -421,22 +416,23 @@ export function NotificationHome() {
   if (coreError || !summary || !inbox || !profile) {
     return (
       <PageCanvas mode="workspace" topInset="compact">
-        {header}
-        <Box sx={{ mt: 2.5 }}>
-          <LocalErrorState
-            title={t('home.errorTitle')}
-            description={t('home.errorDescription')}
-            retryLabel={t('actions.retry')}
-            onRetry={() => void handleRefresh()}
-            retrying={refreshing}
-            size="page"
-          />
+        <Box sx={{ width: 1, maxWidth: NOTIFICATION_HOME_MAX_WIDTH, mx: 'auto' }}>
+          {header}
+          <Box sx={{ mt: 2.5 }}>
+            <LocalErrorState
+              title={t('home.errorTitle')}
+              description={t('home.errorDescription')}
+              retryLabel={t('actions.retry')}
+              onRetry={() => void handleRefresh()}
+              retrying={refreshing}
+              size="page"
+            />
+          </Box>
         </Box>
       </PageCanvas>
     );
   }
 
-  const deliveryMetrics = deliveryProfileMetrics(profile);
   const digestLead = inbox.items.find((item) => item.actionable);
   const protectedDigestLead = digestLead
     ? {
@@ -444,269 +440,226 @@ export function NotificationHome() {
         title: notificationArrivalContent(digestLead, profile, t('arrival.protectedContent')).title,
       }
     : undefined;
-  return (
-    <PageCanvas mode="workspace" topInset="compact">
-      {header}
-      {(partial || connectionState === 'offline') && (
-        <Box sx={{ mt: 2.5 }}>
-          <NotificationConnectionNotice
-            state={connectionState}
-            partial={partial}
-            unavailableSources={unavailableSources}
+  const insights = (
+    <NotificationHomeInsights
+      apps={topApps}
+      appsLoading={appSummaryQuery.isLoading}
+      appsError={appSummaryQuery.isError}
+      appsRefreshing={appSummaryQuery.isFetching}
+      profile={profile}
+      onRetryApps={() => void appSummaryQuery.refetch()}
+      onOpenSettings={() => navigate(NOTIFICATION_SETTINGS_PATH)}
+    />
+  );
+  const leadingGroups = activeKpi
+    ? streamGroups
+    : streamGroups.filter((group) => group.key !== 'UPDATES');
+  const trailingGroups = activeKpi ? [] : streamGroups.filter((group) => group.key === 'UPDATES');
+  const renderHomeGroups = (groups: typeof streamGroups) =>
+    groups.map((group) => {
+      const previewLimit = activeKpi ? HOME_INBOX_LIMIT : HOME_GROUP_PREVIEW_LIMIT[group.key];
+      const visibleItems = group.items.slice(0, previewLimit);
+      const hiddenCount = Math.max(0, group.items.length - visibleItems.length);
+      return (
+        <Box
+          component="section"
+          aria-labelledby={`notification-home-group-${group.key}`}
+          key={group.key}
+          sx={{ '& + &': { mt: 1.2 } }}
+        >
+          <NotificationStreamGroupHeading
+            groupKey={group.key}
+            count={group.items.length}
+            headingId={`notification-home-group-${group.key}`}
+            headingComponent="h3"
           />
-        </Box>
-      )}
-
-      <NotificationKpiFilterBar
-        summary={summary}
-        view={activeKpi ? selectionScope.view : 'ALL'}
-        readState={activeKpi ? selectionScope.readState : 'ALL'}
-        onSelect={selectKpi}
-      />
-      <NotificationDigestBanner
-        summary={summary}
-        lead={protectedDigestLead}
-        onReview={() => setActiveKpi('ACTIONABLE')}
-      />
-
-      <Box
-        sx={{
-          mt: 2,
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: 'minmax(0, 1fr)',
-            lg: 'minmax(0, 1fr) 300px',
-          },
-          gap: { xs: 2.5, lg: 2.5 },
-          alignItems: 'start',
-        }}
-      >
-        <Box component="section" aria-labelledby="notification-home-priority">
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="space-between"
-            alignItems={{ xs: 'stretch', sm: 'flex-end' }}
-            gap={1.25}
-          >
-            <Box>
-              <Typography id="notification-home-priority" component="h2" variant="h6">
-                {activeKpi ? t(`workbench.kpis.${activeKpi}`) : t('home.priorityTitle')}
-              </Typography>
-            </Box>
+          <Stack component="ul" spacing={0.75} sx={{ p: 0, m: 0, listStyle: 'none' }}>
+            {visibleItems.map((item) => {
+              const content = notificationArrivalContent(
+                item,
+                profile,
+                t('arrival.protectedContent')
+              );
+              const displayItem = {
+                ...item,
+                title: content.title,
+                preview: content.preview,
+              };
+              const concealContext =
+                item.sensitive || profile.presentation.previewMode === 'HIDDEN';
+              const openDetails = () =>
+                navigate(`${NOTIFICATION_CENTER_PATH}/${encodeURIComponent(item.notificationId)}`);
+              if (group.key === 'UPDATES') {
+                return (
+                  <Box component="li" key={item.notificationId}>
+                    <Box component="article">
+                      <NotificationItemRow
+                        item={displayItem}
+                        compact
+                        concealContext={concealContext}
+                        now={notificationClock}
+                        onSelect={openDetails}
+                        trailing={
+                          <Box sx={{ display: 'grid', placeItems: 'center', px: 0.5 }}>
+                            <ActionIconButton
+                              label={t('actions.detail')}
+                              size="small"
+                              onClick={openDetails}
+                            >
+                              <ArrowRight size={16} />
+                            </ActionIconButton>
+                          </Box>
+                        }
+                      />
+                    </Box>
+                  </Box>
+                );
+              }
+              return (
+                <Box component="li" key={item.notificationId}>
+                  <NotificationActionCard
+                    item={displayItem}
+                    now={notificationClock}
+                    active={item.notificationId === activeId}
+                    checked={false}
+                    busy={
+                      !online ||
+                      (triageMutation.isPending &&
+                        triageMutation.variables?.item.notificationId === item.notificationId)
+                    }
+                    concealContext={concealContext}
+                    tabIndex={0}
+                    rowRef={() => undefined}
+                    onFocus={() => setActiveId(item.notificationId)}
+                    onToggleChecked={() => undefined}
+                    onOpenDetails={openDetails}
+                    onTriage={(action) => triageItem(item, action)}
+                    onOpenTarget={(href) => navigate(href)}
+                    onQuickReply={(target, body, idempotencyKey) =>
+                      quickReply(item, target, body, idempotencyKey)
+                    }
+                    selectable={false}
+                    density="compact"
+                    surfaceTone={group.key === 'CONVERSATIONS' ? 'conversation' : 'default'}
+                    replyInitiallyOpen={group.key === 'CONVERSATIONS'}
+                    hideUnknownReason
+                  />
+                </Box>
+              );
+            })}
+          </Stack>
+          {hiddenCount > 0 && (
             <ActionButton
               component={Link}
-              to={notificationCenterPath(activeKpi ? selectionScope : { view: 'ALL' })}
+              to={homeGroupCenterPath(group.key)}
               intent="quiet"
               size="small"
-              endIcon={<ArrowRight size={16} />}
-              sx={{ alignSelf: { xs: 'flex-start', sm: 'auto' }, whiteSpace: 'nowrap' }}
+              endIcon={<ArrowRight size={15} />}
+              sx={{ mt: 0.5 }}
             >
-              {t('home.openCenter')}
+              {t('workbench.groups.more', { count: hiddenCount })}
             </ActionButton>
-          </Stack>
-          <Box sx={{ mt: 1.25 }}>
-            {activeKpi && selectionQuery.isLoading ? (
-              <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={3} />
-            ) : activeKpi && selectionQuery.isError ? (
-              <LocalErrorState
-                title={t('states.loadErrorTitle')}
-                description={t('states.loadErrorDescription')}
-                retryLabel={t('actions.retry')}
-                onRetry={() => void selectionQuery.refetch()}
-              />
-            ) : displayedInbox?.items.length ? (
-              groupNotificationStream(displayedInbox.items).map((group) => (
-                <Box
-                  component="section"
-                  aria-labelledby={`notification-home-group-${group.key}`}
-                  key={group.key}
-                  sx={{ '& + &': { mt: 1.4 } }}
-                >
-                  <NotificationStreamGroupHeading
-                    groupKey={group.key}
-                    count={group.items.length}
-                    headingId={`notification-home-group-${group.key}`}
-                    headingComponent="h3"
-                  />
-                  <Stack component="ul" spacing={1} sx={{ p: 0, m: 0, listStyle: 'none' }}>
-                    {group.items.map((item) => {
-                      const content = notificationArrivalContent(
-                        item,
-                        profile,
-                        t('arrival.protectedContent')
-                      );
-                      const displayItem = {
-                        ...item,
-                        title: content.title,
-                        preview: content.preview,
-                      };
-                      const concealContext =
-                        item.sensitive || profile.presentation.previewMode === 'HIDDEN';
-                      return (
-                        <Box component="li" key={item.notificationId}>
-                          <NotificationActionCard
-                            item={displayItem}
-                            now={notificationClock}
-                            active={item.notificationId === activeId}
-                            checked={false}
-                            busy={
-                              !online ||
-                              (triageMutation.isPending &&
-                                triageMutation.variables?.item.notificationId ===
-                                  item.notificationId)
-                            }
-                            concealContext={concealContext}
-                            tabIndex={0}
-                            rowRef={() => undefined}
-                            onFocus={() => setActiveId(item.notificationId)}
-                            onToggleChecked={() => undefined}
-                            onOpenDetails={() =>
-                              navigate(
-                                `${NOTIFICATION_CENTER_PATH}/${encodeURIComponent(item.notificationId)}`
-                              )
-                            }
-                            onTriage={(action) => triageItem(item, action)}
-                            onOpenTarget={(href) => navigate(href)}
-                            onQuickReply={(target, body, idempotencyKey) =>
-                              quickReply(item, target, body, idempotencyKey)
-                            }
-                            selectable={false}
-                          />
-                        </Box>
-                      );
-                    })}
-                  </Stack>
-                </Box>
-              ))
-            ) : (
-              <EmptyState
-                title={t('home.emptyTitle')}
-                description={t('home.emptyDescription')}
-                icon={<BellRing size={24} />}
-                size="compact"
-              />
-            )}
-          </Box>
+          )}
         </Box>
+      );
+    });
+  return (
+    <PageCanvas mode="workspace" topInset="compact">
+      <Box sx={{ width: 1, maxWidth: NOTIFICATION_HOME_MAX_WIDTH, mx: 'auto' }}>
+        {header}
+        {(partial || connectionState === 'offline') && (
+          <Box sx={{ mt: 1.5 }}>
+            <NotificationConnectionNotice
+              state={connectionState}
+              partial={partial}
+              unavailableSources={unavailableSources}
+            />
+          </Box>
+        )}
 
-        <Stack component="aside" spacing={3.25} aria-label={t('home.summaryLabel')}>
-          <Box component="section" aria-labelledby="notification-home-apps">
-            <Typography id="notification-home-apps" component="h2" variant="h6">
-              {t('preferences.apps.title')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-              {t('home.appDistribution')}
-            </Typography>
-            <Box sx={{ mt: 1.75, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-              {appSummaryQuery.isLoading ? (
-                <LoadingState label={t('states.loadingAppSettings')} size="compact" />
-              ) : appSummaryQuery.isError ? (
+        <NotificationKpiFilterBar
+          summary={summary}
+          view={activeKpi ? selectionScope.view : 'ALL'}
+          readState={activeKpi ? selectionScope.readState : 'ALL'}
+          onSelect={selectKpi}
+        />
+        <NotificationDigestBanner
+          summary={summary}
+          lead={protectedDigestLead}
+          onReview={() => setActiveKpi('ACTIONABLE')}
+        />
+
+        <Box
+          sx={{
+            mt: 1.75,
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'minmax(0, 1fr)',
+              lg: 'minmax(0, 1fr) minmax(300px, 360px)',
+            },
+            gap: { xs: 2, lg: 2.25 },
+            alignItems: 'start',
+          }}
+        >
+          <Box
+            component="section"
+            aria-labelledby="notification-home-priority"
+            sx={{ minWidth: 0 }}
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+              <Box>
+                <Typography
+                  id="notification-home-priority"
+                  component="h2"
+                  variant="subtitle1"
+                  fontWeight="fontWeightBold"
+                >
+                  {activeKpi ? t(`workbench.kpis.${activeKpi}`) : t('home.priorityTitle')}
+                </Typography>
+              </Box>
+              <ActionButton
+                component={Link}
+                to={notificationCenterPath(activeKpi ? selectionScope : { view: 'ALL' })}
+                intent="quiet"
+                size="small"
+                endIcon={<ArrowRight size={16} />}
+                sx={{ whiteSpace: 'nowrap' }}
+              >
+                {t('home.openCenter')}
+              </ActionButton>
+            </Stack>
+            <Box sx={{ mt: 1.25 }}>
+              {activeKpi && selectionQuery.isLoading ? (
+                <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={3} />
+              ) : activeKpi && selectionQuery.isError ? (
                 <LocalErrorState
                   title={t('states.loadErrorTitle')}
                   description={t('states.loadErrorDescription')}
                   retryLabel={t('actions.retry')}
-                  onRetry={() => void appSummaryQuery.refetch()}
-                  retrying={appSummaryQuery.isFetching}
-                  size="compact"
+                  onRetry={() => void selectionQuery.refetch()}
                 />
-              ) : topApps.length ? (
-                topApps.map((app, index) => {
-                  const AppIcon = SOURCE_ICON[app.appKey] ?? Bell;
-                  const appName = t(`sources.${app.appKey}`, { defaultValue: app.appKey });
-                  return (
-                    <Box key={app.appKey} sx={{ py: 1.35 }}>
-                      {index > 0 && <Divider sx={{ mb: 1.35 }} />}
-                      <Stack direction="row" spacing={1.1} alignItems="flex-start">
-                        <GlyphSurface size={32} variant="soft">
-                          <AppIcon size={16} strokeWidth={1.8} />
-                        </GlyphSurface>
-                        <Box minWidth={0} flex={1}>
-                          <ProgressMeter
-                            label={appName}
-                            value={(app.totalUnread / appScale) * 100}
-                            valueLabel={`${t('home.metrics.unread')} ${app.totalUnread}`}
-                            size="compact"
-                          />
-                          <Stack direction="row" gap={1.25} sx={{ mt: 0.65 }}>
-                            <Typography variant="caption" color="text.secondary">
-                              {t('home.metrics.actionable')} {app.actionableUnread}
-                            </Typography>
-                            <Typography variant="caption" color="error.main">
-                              {t('priority.URGENT')} {app.urgentUnread}
-                            </Typography>
-                          </Stack>
-                        </Box>
-                      </Stack>
-                    </Box>
-                  );
-                })
+              ) : displayedInbox?.items.length ? (
+                <>
+                  {renderHomeGroups(leadingGroups)}
+                  {!desktopInsights && <Box sx={{ my: 2 }}>{insights}</Box>}
+                  {renderHomeGroups(trailingGroups)}
+                </>
               ) : (
-                <EmptyState
-                  title={t('preferences.apps.emptyTitle')}
-                  description={t('preferences.apps.emptyDescription')}
-                  icon={<Bell size={22} />}
-                  size="compact"
-                />
+                <>
+                  <EmptyState
+                    title={t('home.emptyTitle')}
+                    description={t('home.emptyDescription')}
+                    icon={<BellRing size={24} />}
+                    size="compact"
+                  />
+                  {!desktopInsights && <Box sx={{ mt: 2 }}>{insights}</Box>}
+                </>
               )}
             </Box>
           </Box>
 
-          <Box component="section" aria-labelledby="notification-home-delivery">
-            <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
-              <Box>
-                <Typography id="notification-home-delivery" component="h2" variant="h6">
-                  {t('settings.title')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                  {t('settings.description')}
-                </Typography>
-              </Box>
-              <ActionIconButton
-                label={t('actions.settings')}
-                size="small"
-                onClick={() => navigate(NOTIFICATION_SETTINGS_PATH)}
-              >
-                <Settings2 size={16} />
-              </ActionIconButton>
-            </Stack>
-            <Box sx={{ mt: 1.75, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-              {[
-                {
-                  icon: BellRing,
-                  label: t('preferences.global.title'),
-                  value: `${deliveryMetrics.enabledChannels} / ${deliveryMetrics.totalChannels}`,
-                },
-                {
-                  icon: Clock3,
-                  label: t('preferences.quiet.title'),
-                  value: profile.quietHours.enabled
-                    ? `${profile.quietHours.start}–${profile.quietHours.end}`
-                    : t('preferences.digest.modes.OFF'),
-                },
-                {
-                  icon: Mail,
-                  label: t('preferences.digest.title'),
-                  value: t(`preferences.digest.modes.${profile.digest.mode}`),
-                },
-              ].map((metric, index) => (
-                <Box key={metric.label}>
-                  {index > 0 && <Divider />}
-                  <Stack direction="row" alignItems="center" gap={1.1} sx={{ py: 1.25 }}>
-                    <Box aria-hidden="true" sx={{ color: 'primary.main', display: 'grid' }}>
-                      <metric.icon size={17} strokeWidth={1.8} />
-                    </Box>
-                    <Typography variant="body2" color="text.secondary" flex={1}>
-                      {metric.label}
-                    </Typography>
-                    <Typography variant="body2" fontWeight="fontWeightBold" textAlign="right">
-                      {metric.value}
-                    </Typography>
-                  </Stack>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        </Stack>
+          {desktopInsights && insights}
+        </Box>
       </Box>
     </PageCanvas>
   );
