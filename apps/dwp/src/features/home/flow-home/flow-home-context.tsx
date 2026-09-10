@@ -17,7 +17,6 @@ import { ActionButton } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -44,6 +43,7 @@ type FlowHomeContextProps = {
   editing: boolean;
   customizationEnabled: boolean;
   customizationBusy: boolean;
+  retrying: boolean;
   compact?: boolean;
   priorityCompact?: boolean;
   onEdit?: () => void;
@@ -67,7 +67,7 @@ function issueLabel(issue: FlowHomeHealthIssue, t: TFunction<'home'>): string {
 function healthMessage(health: FlowHomeHealth, t: TFunction<'home'>): string {
   if (health.state === 'UNAVAILABLE') return t('flow.context.health.overviewUnavailable');
   const [firstIssue] = health.issues;
-  if (!firstIssue) return t('flow.context.health.refreshing');
+  if (!firstIssue) return t('flow.context.health.availableApps');
   const domain = healthDomainLabel(firstIssue.domain, t);
   if (health.issues.length === 1) {
     if (firstIssue.state === 'DELAYED') {
@@ -101,6 +101,7 @@ export function FlowHomeContext({
   editing,
   customizationEnabled,
   customizationBusy,
+  retrying,
   compact = false,
   priorityCompact = false,
   onEdit,
@@ -276,7 +277,7 @@ export function FlowHomeContext({
           compact ? 'flex-start' : copyOnRight ? { md: 'flex-start' } : { md: 'flex-end' }
         }
         gap={0.75}
-        flexWrap="wrap"
+        flexWrap={compact ? 'wrap' : { xs: 'wrap', md: 'nowrap' }}
         sx={{
           minWidth: 0,
           gridColumn: compact ? '1' : { xs: '1', md: copyOnRight ? '1' : '3' },
@@ -289,6 +290,7 @@ export function FlowHomeContext({
             gridRow: 'auto',
             justifySelf: 'start',
             maxWidth: '100%',
+            flexWrap: 'wrap',
           },
         }}
       >
@@ -300,15 +302,9 @@ export function FlowHomeContext({
           role="status"
           aria-live="polite"
         >
-          {health.state === 'REFRESHING' ? (
-            <CircularProgress size={14} thickness={5} color="inherit" aria-hidden="true" />
-          ) : (
-            <Clock3 size={12} aria-hidden="true" style={{ flexShrink: 0 }} />
-          )}
+          <Clock3 size={12} aria-hidden="true" style={{ flexShrink: 0 }} />
           <Typography variant="caption">
-            {health.state === 'REFRESHING'
-              ? t('flow.context.health.refreshing')
-              : t('flow.context.updated', { time: updatedAt })}
+            {t('flow.context.updated', { time: updatedAt })}
           </Typography>
         </Stack>
         {!editing && hasEditHub && (
@@ -387,7 +383,7 @@ export function FlowHomeContext({
           data-flow-health-domains={health.issues.map((issue) => issue.domain).join(',')}
           role="status"
           aria-live="polite"
-          aria-busy={health.refreshing ? 'true' : undefined}
+          aria-busy={retrying ? 'true' : undefined}
           sx={{
             minWidth: 0,
             gridColumn: '1 / -1',
@@ -456,16 +452,10 @@ export function FlowHomeContext({
           <ActionButton
             intent="quiet"
             size="small"
-            startIcon={
-              health.refreshing ? (
-                <CircularProgress size={14} thickness={5} color="inherit" aria-hidden="true" />
-              ) : (
-                <RefreshCw size={14} aria-hidden="true" />
-              )
-            }
+            startIcon={<RefreshCw size={14} aria-hidden="true" />}
+            loading={retrying}
+            loadingLabel={t('flow.context.health.refreshing')}
             onClick={onRetry}
-            disabled={health.refreshing}
-            aria-busy={health.refreshing ? 'true' : undefined}
             aria-label={t('flow.context.health.retry')}
             title={t('flow.context.health.retry')}
             sx={{

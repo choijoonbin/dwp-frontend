@@ -96,6 +96,7 @@ type FlowHomeProps = {
   editing: boolean;
   customizationEnabled: boolean;
   customizationBusy: boolean;
+  retrying: boolean;
   presentation: HomePresentation;
   density: 'comfortable' | 'compact';
   previewDevice: 'desktop' | 'mobile';
@@ -181,6 +182,7 @@ export function FlowHome({
   editing,
   customizationEnabled,
   customizationBusy,
+  retrying,
   presentation,
   density,
   previewDevice,
@@ -240,10 +242,9 @@ export function FlowHome({
     now,
     overview,
     overviewFailed,
-    overviewFetching,
+    overviewLoading,
     supplementalPartial: supplementalPartial || contributionPartial,
     notificationPartial,
-    contributionFetching,
     providers: contributionModel.providers,
   });
   const healthUpdatedAt = health.lastUpdatedAt
@@ -495,6 +496,7 @@ export function FlowHome({
             editing={editing}
             customizationEnabled={customizationEnabled}
             customizationBusy={customizationBusy}
+            retrying={retrying}
             compact={compactPreview}
             priorityCompact={narrowViewport || compactPreview}
             onEdit={onStartEditing}

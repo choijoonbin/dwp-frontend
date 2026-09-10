@@ -95,6 +95,7 @@ import {
 import { useHomeEditorSafety } from '../features/home/runtime/use-home-editor-safety';
 import { useHomeEditorEntryFocus } from '../features/home/runtime/use-home-editor-entry-focus';
 import { useHomeCurrentInstant } from '../features/home/runtime/use-home-current-instant';
+import { useHomeDataRetry } from '../features/home/runtime/use-home-data-retry';
 import { useHomeDraftController } from '../features/home/runtime/use-home-draft-controller';
 import { useHomeRecommendationFeedback } from '../features/home/runtime/use-home-recommendation-feedback';
 import { resolveHomeTimeZone } from '../features/home/runtime/home-time-zone';
@@ -743,13 +744,14 @@ export default function HomePage() {
       isError: homeOverviewQuery.isError,
       isRefetchError: homeOverviewQuery.isRefetchError,
     });
-  const retryHomeData = () => {
-    void Promise.all([
-      homeOverviewQuery.refetch(),
-      ...(hasPermission('APP.NOTIFICATIONS', 'VIEW') ? [notificationSummaryQuery.refetch()] : []),
-      homeContributionRuntime.retry(),
-    ]);
-  };
+  const homeDataRetry = useHomeDataRetry(
+    [auth.user?.tenantId, auth.user?.userId],
+    [
+      () => homeOverviewQuery.refetch(),
+      ...(notificationSummaryAuthorized ? [() => notificationSummaryQuery.refetch()] : []),
+      homeContributionRuntime.retry,
+    ]
+  );
 
   const backgroundUrl = resolveHomeBackgroundUrl(homeExperience);
   const currentDate = formatDate(currentInstant, { dateStyle: 'full' });
@@ -848,6 +850,7 @@ export default function HomePage() {
           editing={editorActive}
           customizationEnabled={personalCustomizationEnabled}
           customizationBusy={customizationBusy}
+          retrying={homeDataRetry.retrying}
           presentation={activePresentation}
           density={activeDeviceOverlay?.density ?? 'comfortable'}
           previewDevice={previewDevice}
@@ -861,8 +864,8 @@ export default function HomePage() {
           onManageApp={(app) => {
             if (app.managementRoute) navigate(app.managementRoute);
           }}
-          onRetryOverview={retryHomeData}
-          onRetryContributions={retryHomeData}
+          onRetryOverview={homeDataRetry.retry}
+          onRetryContributions={homeDataRetry.retry}
           onRecommendationFeedback={recommendationFeedback.dismiss}
         />
       ) : (

@@ -49,9 +49,8 @@ function resolve(input: Partial<Parameters<typeof resolveFlowHomeHealth>[0]> = {
     now: NOW,
     overview: overview(),
     overviewFailed: false,
-    overviewFetching: false,
+    overviewLoading: false,
     supplementalPartial: false,
-    contributionFetching: false,
     providers: [],
     ...input,
   });
@@ -107,11 +106,18 @@ describe('Flow Home health presentation model', () => {
     expect(result.issues).toEqual([{ domain: 'overview', state: 'UNAVAILABLE' }]);
   });
 
-  it('reports refresh progress without turning a healthy home into an error', () => {
-    const result = resolve({ overviewFetching: true, contributionFetching: true });
+  it('does not model background transport activity as a data-health state', () => {
+    const result = resolve();
 
-    expect(result.state).toBe('REFRESHING');
-    expect(result.refreshing).toBe(true);
+    expect(result.state).toBe('HEALTHY');
+    expect(result).not.toHaveProperty('refreshing');
+  });
+
+  it('does not report missing overview data as unavailable while its initial load is pending', () => {
+    const result = resolve({ overview: undefined, overviewLoading: true });
+
+    expect(result.state).toBe('HEALTHY');
+    expect(result.issues).toEqual([]);
   });
 
   it('attributes a partial notification summary to notifications', () => {

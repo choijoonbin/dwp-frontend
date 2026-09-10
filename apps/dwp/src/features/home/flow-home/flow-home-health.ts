@@ -23,9 +23,9 @@ export type FlowHomeHealthIssue = Readonly<{
 }>;
 
 export type FlowHomeHealth = Readonly<{
-  state: 'HEALTHY' | 'REFRESHING' | 'DELAYED' | 'PARTIAL' | 'UNAVAILABLE';
+  // This is data quality only. Request activity is owned by the initiating interaction.
+  state: 'HEALTHY' | 'DELAYED' | 'PARTIAL' | 'UNAVAILABLE';
   issues: readonly FlowHomeHealthIssue[];
-  refreshing: boolean;
   lastUpdatedAt?: string;
 }>;
 
@@ -33,10 +33,9 @@ type ResolveFlowHomeHealthOptions = Readonly<{
   now: Date;
   overview?: HomeOverview;
   overviewFailed: boolean;
-  overviewFetching: boolean;
+  overviewLoading: boolean;
   supplementalPartial: boolean;
   notificationPartial?: boolean;
-  contributionFetching: boolean;
   providers: HomeContributionModel['providers'];
 }>;
 
@@ -97,10 +96,9 @@ export function resolveFlowHomeHealth({
   now,
   overview,
   overviewFailed,
-  overviewFetching,
+  overviewLoading,
   supplementalPartial,
   notificationPartial = false,
-  contributionFetching,
   providers,
 }: ResolveFlowHomeHealthOptions): FlowHomeHealth {
   const issuesByDomain = new Map<FlowHomeHealthDomain, FlowHomeHealthIssue>();
@@ -117,7 +115,7 @@ export function resolveFlowHomeHealth({
     }
   };
 
-  if (overviewFailed || (!overview && !overviewFetching)) {
+  if (overviewFailed || (!overview && !overviewLoading)) {
     putIssue({ domain: 'overview', state: 'UNAVAILABLE' });
   }
 
@@ -171,7 +169,6 @@ export function resolveFlowHomeHealth({
     const severityDifference = severity[right.state] - severity[left.state];
     return severityDifference || left.domain.localeCompare(right.domain);
   });
-  const refreshing = overviewFetching || contributionFetching;
   const lastUpdatedAt = newestTimestamp([
     overview?.generatedAt,
     ...overviewSections.map(([, section]) => section.generatedAt),
@@ -181,16 +178,11 @@ export function resolveFlowHomeHealth({
   ]);
 
   if (issues.some((issue) => issue.domain === 'overview' && issue.state === 'UNAVAILABLE')) {
-    return { state: 'UNAVAILABLE', issues, refreshing, lastUpdatedAt };
+    return { state: 'UNAVAILABLE', issues, lastUpdatedAt };
   }
   if (issues.some((issue) => issue.state === 'UNAVAILABLE' || issue.state === 'PARTIAL')) {
-    return { state: 'PARTIAL', issues, refreshing, lastUpdatedAt };
+    return { state: 'PARTIAL', issues, lastUpdatedAt };
   }
-  if (issues.length > 0) return { state: 'DELAYED', issues, refreshing, lastUpdatedAt };
-  return {
-    state: refreshing ? 'REFRESHING' : 'HEALTHY',
-    issues,
-    refreshing,
-    lastUpdatedAt,
-  };
+  if (issues.length > 0) return { state: 'DELAYED', issues, lastUpdatedAt };
+  return { state: 'HEALTHY', issues, lastUpdatedAt };
 }

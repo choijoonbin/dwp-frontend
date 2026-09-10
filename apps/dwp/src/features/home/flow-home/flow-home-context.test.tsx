@@ -25,6 +25,7 @@ const defaults = {
   editing: false,
   customizationEnabled: true,
   customizationBusy: false,
+  retrying: false,
   onEdit: vi.fn(),
   onRetry: vi.fn(),
 };
@@ -106,6 +107,16 @@ describe('FlowHomeContext', () => {
     expect(markup).toContain('disabled=""');
   });
 
+  it('keeps the last successful freshness copy in a stable desktop control row', () => {
+    const markup = renderToStaticMarkup(createElement(FlowHomeContext, defaults));
+
+    expect(markup).toContain('flow.context.updated:{&quot;time&quot;:&quot;09:30&quot;}');
+    expect(markup).not.toContain('flow.context.health.refreshing');
+    expect(markup).not.toContain('MuiCircularProgress-root');
+    expect(markup).toContain('flex-wrap:nowrap');
+    expect(markup).toContain('data-home-edit-trigger="true"');
+  });
+
   it('retains partial-source explanation and retry when compact or editing', () => {
     const markup = renderToStaticMarkup(
       createElement(FlowHomeContext, {
@@ -115,7 +126,6 @@ describe('FlowHomeContext', () => {
         editing: true,
         health: {
           state: 'PARTIAL',
-          refreshing: true,
           issues: [{ domain: 'calendar', state: 'UNAVAILABLE' }],
         },
       })
@@ -124,8 +134,25 @@ describe('FlowHomeContext', () => {
     expect(markup).toContain('data-flow-health-domains="calendar"');
     expect(markup).toContain('aria-label="flow.context.health.openDetails"');
     expect(markup).toContain('aria-label="flow.context.health.retry"');
-    expect(markup).toContain('aria-busy="true"');
     expect(markup).not.toContain('data-home-edit-trigger');
     expect(markup).toMatch(/grid-column:1\s*\/\s*-1/u);
+  });
+
+  it('announces progress only for an explicit degraded-state retry', () => {
+    const markup = renderToStaticMarkup(
+      createElement(FlowHomeContext, {
+        ...defaults,
+        retrying: true,
+        health: {
+          state: 'PARTIAL',
+          issues: [{ domain: 'calendar', state: 'UNAVAILABLE' }],
+        },
+      })
+    );
+
+    expect(markup).toContain('aria-busy="true"');
+    expect(markup).toContain('aria-label="flow.context.health.refreshing"');
+    expect(markup).toContain('MuiCircularProgress-root');
+    expect(markup).toContain('flow.context.updated:{&quot;time&quot;:&quot;09:30&quot;}');
   });
 });
