@@ -1,8 +1,5 @@
-import { axiosInstance } from '../axios-instance';
-import type { components } from '@dwp-frontend/api-contracts';
+import { sessionNeutralHttp } from '../axios-instance';
 import type { ProductScopeKind } from '../auth/product-surface-scope-kind';
-
-export type WebVitalMetric = components['schemas']['platform_WebVitalRequest'];
 
 export const PRODUCT_SURFACE_EVENT_ENDPOINT =
   '/api/platform/v1/observability/product-surface-events' as const;
@@ -165,19 +162,11 @@ function assertExactProductSurfaceEvent(event: ProductSurfaceTelemetryEvent): vo
   }
 }
 
-export async function reportWebVital(metric: WebVitalMetric): Promise<void> {
-  await axiosInstance.post<void, WebVitalMetric>(
-    '/api/platform/v1/observability/web-vitals',
-    metric,
-    { keepalive: true, timeoutMs: 2_000 }
-  );
-}
-
 export async function reportProductSurfaceEvent(
   event: ProductSurfaceTelemetryEvent
 ): Promise<void> {
   assertExactProductSurfaceEvent(event);
-  await axiosInstance.post<void, ProductSurfaceTelemetryEvent>(
+  await sessionNeutralHttp.post<void, ProductSurfaceTelemetryEvent>(
     PRODUCT_SURFACE_EVENT_ENDPOINT,
     event,
     {

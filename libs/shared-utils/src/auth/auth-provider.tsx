@@ -11,8 +11,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { usePermissionsStore } from './permissions-store';
 import {
-  getMe,
-  getPermissions,
+  probePermissions,
+  probeSession,
   rotateBrowserSession,
   updateMyPreferredLocale,
   login as loginApi,
@@ -77,14 +77,20 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
   const authenticatedScope = useRef<string | null>(null);
   const verificationInFlight = useRef<Promise<boolean> | null>(null);
 
-  const invalidateSession = useCallback(() => {
-    queryClient.clear();
-    authenticatedIdentity.current = null;
-    authenticatedScope.current = null;
-    setUser(null);
-    setIsLoading(false);
-    usePermissionsStore.getState().clearPermissions();
-  }, [queryClient]);
+  const clearSessionState = useCallback(
+    (forceQueryCacheClear = false) => {
+      const hadAuthenticatedSession =
+        authenticatedIdentity.current !== null || authenticatedScope.current !== null;
+      if (forceQueryCacheClear || hadAuthenticatedSession) queryClient.clear();
+      authenticatedIdentity.current = null;
+      authenticatedScope.current = null;
+      setUser(null);
+      setIsLoading(false);
+      usePermissionsStore.getState().clearPermissions();
+    },
+    [queryClient]
+  );
+  const invalidateSession = useCallback(() => clearSessionState(), [clearSessionState]);
 
   const verifySession = useCallback(
     (showLoading: boolean, requireFreshVerification = false) => {
@@ -92,18 +98,24 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
       if (pendingVerification && !requireFreshVerification) return pendingVerification;
       if (showLoading) setIsLoading(true);
       const verification = (async () => {
+        let sessionAuthorityObserved = false;
+        let identityTransitionObserved = false;
         try {
           // A login can complete while the unauthenticated bootstrap `/me`
           // request is still in flight. Wait for that request, then verify the
           // newly created session instead of reusing its stale result.
           if (pendingVerification) await pendingVerification;
-          const meResponse = await getMe();
+          const meResponse = await probeSession();
+          sessionAuthorityObserved = true;
           const identityPlane = resolveIdentityPlane(meResponse.data);
           const nextIdentity = `${identityPlane}:${meResponse.data.tenantId}:${meResponse.data.userId}`;
+          identityTransitionObserved =
+            authenticatedIdentity.current !== null &&
+            authenticatedIdentity.current !== nextIdentity;
           const sessionPreparation = prepareAuthenticatedSession
             ? prepareAuthenticatedSession(meResponse.data)
             : Promise.resolve();
-          const [permissionsResponse] = await Promise.all([getPermissions(), sessionPreparation]);
+          const [permissionsResponse] = await Promise.all([probePermissions(), sessionPreparation]);
           const nextPermissions = Array.isArray(permissionsResponse.data)
             ? permissionsResponse.data
             : [];
@@ -128,10 +140,11 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
           // may revoke it. Foreground verification remains fail-closed.
           if (
             showLoading ||
+            identityTransitionObserved ||
             error instanceof IdentityPlaneContractError ||
             (error instanceof HttpError && (error.status === 401 || error.status === 403))
           ) {
-            invalidateSession();
+            clearSessionState(sessionAuthorityObserved);
           }
           return false;
         }
@@ -142,7 +155,7 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
       });
       return verification;
     },
-    [invalidateSession, prepareAuthenticatedSession, queryClient]
+    [clearSessionState, prepareAuthenticatedSession, queryClient]
   );
 
   const refreshSession = useCallback(() => verifySession(true), [verifySession]);

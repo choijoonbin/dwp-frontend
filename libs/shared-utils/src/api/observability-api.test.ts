@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { axiosInstance, resetCsrfToken } from '../axios-instance';
+import { resetCsrfToken, sessionNeutralHttp } from '../axios-instance';
 import { PRODUCT_SCOPE_KINDS, type ProductScopeKind } from '../auth/product-surface-scope-kind';
 import {
   PRODUCT_SURFACE_EVENT_ENDPOINT,
@@ -36,7 +36,7 @@ describe('product surface observability API', () => {
   });
 
   it('posts only the typed client event to the dedicated endpoint', async () => {
-    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({ data: undefined });
+    const post = vi.spyOn(sessionNeutralHttp, 'post').mockResolvedValue({ data: undefined });
     const event = {
       schemaVersion: 1,
       eventName: 'surface.scope.switch.completed',
@@ -58,7 +58,7 @@ describe('product surface observability API', () => {
   });
 
   it('fails before transport when an untrusted caller adds a private dimension', async () => {
-    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({ data: undefined });
+    const post = vi.spyOn(sessionNeutralHttp, 'post').mockResolvedValue({ data: undefined });
     const event = {
       schemaVersion: 1,
       eventName: 'surface.exposed',

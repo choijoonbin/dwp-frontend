@@ -1,4 +1,4 @@
-import { axiosInstance } from '../axios-instance';
+import { axiosInstance, sessionNeutralHttp } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 import type {
@@ -8,7 +8,7 @@ import type {
 } from '../auth/auth-policy-types';
 
 export async function getLoginOptions(): Promise<ApiResponse<LoginOptionsResponse>> {
-  return (await axiosInstance.get<ApiResponse<LoginOptionsResponse>>('/api/auth/policy')).data;
+  return (await sessionNeutralHttp.get<ApiResponse<LoginOptionsResponse>>('/api/auth/policy')).data;
 }
 
 export async function getAuthPolicy(): Promise<ApiResponse<AuthPolicyResponse>> {
@@ -16,5 +16,6 @@ export async function getAuthPolicy(): Promise<ApiResponse<AuthPolicyResponse>> 
 }
 
 export async function getIdentityProviders(): Promise<ApiResponse<IdentityProviderResponse[]>> {
-  return (await axiosInstance.get<ApiResponse<IdentityProviderResponse[]>>('/api/auth/idp')).data;
+  return (await sessionNeutralHttp.get<ApiResponse<IdentityProviderResponse[]>>('/api/auth/idp'))
+    .data;
 }

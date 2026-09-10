@@ -384,19 +384,7 @@ test('local sign-in submits browser-autofilled credentials once across pending s
   await expect(signInForm).toHaveAttribute('autocomplete', 'on');
   await expect(emailInput).toHaveAttribute('autocomplete', 'username');
   await expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
-  await page.evaluate(() => {
-    const state = window as typeof window & {
-      __dwpShellBootObserved?: boolean;
-      __dwpShellBootObserver?: MutationObserver;
-    };
-    state.__dwpShellBootObserved = false;
-    state.__dwpShellBootObserver = new MutationObserver(() => {
-      if (document.querySelector('[data-testid="shell-boot-screen"]')) {
-        state.__dwpShellBootObserved = true;
-      }
-    });
-    state.__dwpShellBootObserver.observe(document.body, { childList: true, subtree: true });
-  });
+  await signInSession.observeInteractionBoundary();
 
   await page.evaluate(
     ({ email, password }) => {
@@ -409,7 +397,7 @@ test('local sign-in submits browser-autofilled credentials once across pending s
     { email: 'admin@dwp.local', password: 'access-policy-test' }
   );
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await signInSession.loginRequested;
+  await Promise.all([signInSession.loginRequested, signInSession.telemetryRejected]);
   signInSession.releaseBootstrapVerification();
   await signInSession.brandingRequested;
   await signInForm.waitFor({ state: 'visible' });
@@ -421,6 +409,8 @@ test('local sign-in submits browser-autofilled credentials once across pending s
 
   expect(signInSession.loginRequestCount()).toBe(1);
   expect(signInSession.meRequestCount()).toBe(2);
+  expect(signInSession.policyRequestCount()).toBe(1);
+  expect(signInSession.telemetryRequestCount()).toBeGreaterThanOrEqual(1);
   expect(signInSession.submittedCredentials()).toMatchObject({
     email: 'admin@dwp.local',
     password: 'access-policy-test',
@@ -430,20 +420,18 @@ test('local sign-in submits browser-autofilled credentials once across pending s
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   await expect(page.getByTestId('shell-boot-screen')).toHaveCount(0);
   await expect(page.getByTestId('home-header')).toHaveCount(0);
+  expect(await signInSession.formSnapshot()).toEqual({
+    sameForm: true,
+    sameEmail: true,
+    samePassword: true,
+    email: 'admin@dwp.local',
+    password: 'access-policy-test',
+  });
 
   signInSession.releaseBranding();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId('home-header')).toBeVisible();
-  expect(
-    await page.evaluate(() => {
-      const state = window as typeof window & {
-        __dwpShellBootObserved?: boolean;
-        __dwpShellBootObserver?: MutationObserver;
-      };
-      state.__dwpShellBootObserver?.disconnect();
-      return state.__dwpShellBootObserved;
-    })
-  ).toBe(false);
+  expect(await signInSession.shellBootObserved()).toBe(false);
 });
 
 test('tenant policy promotes SSO without exposing the configured provider key', async ({

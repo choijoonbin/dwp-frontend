@@ -19,8 +19,8 @@ const authApi = vi.hoisted(() => ({
 }));
 
 vi.mock('../api/auth-api', () => ({
-  getMe: authApi.getMe,
-  getPermissions: authApi.getPermissions,
+  probeSession: authApi.getMe,
+  probePermissions: authApi.getPermissions,
   login: authApi.login,
   logout: authApi.logout,
   rotateBrowserSession: authApi.rotateBrowserSession,
@@ -205,6 +205,36 @@ describe('authenticated client lifecycle', () => {
     expect(currentAuth?.isAuthenticated).toBe(true);
   });
 
+  it('preserves public login bootstrap data when the initial session probe is anonymous', async () => {
+    authApi.getMe.mockRejectedValueOnce(new HttpError('Authentication required.', 401));
+    queryClient.setQueryData(['auth', 'login-options', 'default'], {
+      localLoginAvailable: true,
+    });
+
+    await renderAuthProvider();
+    await vi.waitFor(() => expect(currentAuth?.isLoading).toBe(false));
+
+    expect(currentAuth?.isAuthenticated).toBe(false);
+    expect(queryClient.getQueryData(['auth', 'login-options', 'default'])).toEqual({
+      localLoginAvailable: true,
+    });
+  });
+
+  it('clears cached data when authenticated session preparation fails before commit', async () => {
+    queryClient.setQueryData(['workspace', 'private-bootstrap'], { value: 'cached' });
+    const prepareAuthenticatedSession = vi
+      .fn<(user: MeResponse) => Promise<void>>()
+      .mockRejectedValue(new Error('tenant preparation failed'));
+
+    await renderAuthProvider(prepareAuthenticatedSession);
+    await vi.waitFor(() => expect(currentAuth?.isLoading).toBe(false));
+
+    expect(prepareAuthenticatedSession).toHaveBeenCalledWith(member);
+    expect(queryClient.getQueryData(['workspace', 'private-bootstrap'])).toBeUndefined();
+    expect(currentAuth?.isAuthenticated).toBe(false);
+    expect(usePermissionsStore.getState().isLoaded).toBe(false);
+  });
+
   it('starts a fresh session verification when login completes during bootstrap verification', async () => {
     let rejectBootstrapVerification: (error: Error) => void = () => undefined;
     const bootstrapVerification = new Promise<never>((_, reject) => {
@@ -323,6 +353,25 @@ describe('authenticated client lifecycle', () => {
       value: 'cached',
     });
     expect(usePermissionsStore.getState().isLoaded).toBe(true);
+  });
+
+  it('invalidates the previous session when background verification observes a new identity', async () => {
+    await mountAuthProvider();
+    queryClient.setQueryData(['home-contributions', 'private'], { value: 'member-data' });
+    authApi.getMe.mockResolvedValueOnce({ data: provider });
+    authApi.getPermissions.mockRejectedValueOnce(new HttpError('Temporary upstream failure.', 503));
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      value: 'visible',
+    });
+
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(false));
+
+    expect(queryClient.getQueryData(['home-contributions', 'private'])).toBeUndefined();
+    expect(usePermissionsStore.getState().isLoaded).toBe(false);
   });
 
   it('invalidates the session and cache on a background 401 verification response', async () => {

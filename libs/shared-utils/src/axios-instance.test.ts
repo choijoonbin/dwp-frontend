@@ -5,6 +5,8 @@ import {
   classifyAuthorizationAccessFailure,
   getEventStream,
   resetCsrfToken,
+  sessionHttp,
+  sessionNeutralHttp,
   setAuthorizationAccessFailureHandler,
   setUnauthorizedHandler,
 } from './axios-instance';
@@ -48,6 +50,109 @@ describe('axiosInstance browser session contract', () => {
     await expect(axiosInstance.get('/api/restricted')).rejects.toMatchObject({ status: 403 });
 
     expect(unauthorized).not.toHaveBeenCalled();
+  });
+
+  it('returns a neutral 401 without notifying the session boundary', async () => {
+    const unauthorized = vi.fn();
+    const accessFailure = vi.fn();
+    setUnauthorizedHandler(unauthorized);
+    setAuthorizationAccessFailureHandler(accessFailure);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(401, { errorCode: 'AUTHENTICATION_REQUIRED' }))
+    );
+
+    await expect(sessionNeutralHttp.get('/api/public-or-lifecycle')).rejects.toMatchObject({
+      status: 401,
+    });
+
+    expect(unauthorized).not.toHaveBeenCalled();
+    expect(accessFailure).not.toHaveBeenCalled();
+  });
+
+  it('returns a neutral authority error without notifying the authorization boundary', async () => {
+    const accessFailure = vi.fn();
+    setAuthorizationAccessFailureHandler(accessFailure);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(409, { errorCode: 'DECISION_REVISION_CONFLICT' }))
+    );
+
+    await expect(sessionNeutralHttp.get('/api/best-effort')).rejects.toMatchObject({
+      status: 409,
+    });
+
+    expect(accessFailure).not.toHaveBeenCalled();
+  });
+
+  it('posts authenticated neutral telemetry without notifying session observers', async () => {
+    const unauthorized = vi.fn();
+    const accessFailure = vi.fn();
+    setUnauthorizedHandler(unauthorized);
+    setAuthorizationAccessFailureHandler(accessFailure);
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+        })
+      )
+      .mockResolvedValueOnce(jsonResponse(401, { errorCode: 'AUTHENTICATION_REQUIRED' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      sessionNeutralHttp.post(
+        '/api/platform/v1/observability/web-vitals',
+        { name: 'LCP' },
+        {
+          keepalive: true,
+        }
+      )
+    ).rejects.toMatchObject({ status: 401 });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/platform/v1/observability/web-vitals',
+      expect.objectContaining({
+        method: 'POST',
+        credentials: 'include',
+        keepalive: true,
+        headers: expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }),
+      })
+    );
+    expect(unauthorized).not.toHaveBeenCalled();
+    expect(accessFailure).not.toHaveBeenCalled();
+  });
+
+  it('notifies the session boundary for an authoritative 401', async () => {
+    const unauthorized = vi.fn();
+    setUnauthorizedHandler(unauthorized);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(401, { errorCode: 'AUTHENTICATION_REQUIRED' }))
+    );
+
+    await expect(sessionHttp.get('/api/session-required')).rejects.toMatchObject({ status: 401 });
+
+    expect(unauthorized).toHaveBeenCalledOnce();
+    expect(unauthorized).toHaveBeenCalledWith(401);
+  });
+
+  it('does not deliver a late authoritative 401 to a replacement session observer', async () => {
+    const response = deferred<Response>();
+    const previousUnauthorized = vi.fn();
+    const currentUnauthorized = vi.fn();
+    setUnauthorizedHandler(previousUnauthorized);
+    vi.stubGlobal('fetch', vi.fn().mockReturnValue(response.promise));
+
+    const pendingRequest = sessionHttp.get('/api/session-required');
+    setUnauthorizedHandler(currentUnauthorized);
+    response.resolve(jsonResponse(401, { errorCode: 'AUTHENTICATION_REQUIRED' }));
+
+    await expect(pendingRequest).rejects.toMatchObject({ status: 401 });
+    expect(previousUnauthorized).not.toHaveBeenCalled();
+    expect(currentUnauthorized).not.toHaveBeenCalled();
   });
 
   it.each([

@@ -4,6 +4,7 @@ import { getTenantId } from './tenant-util';
 import { resolveRequestLocale } from './locale-preference';
 
 type AxiosLikeResponse<T> = { data: T; headers?: Headers };
+export type SessionEffect = 'authoritative' | 'neutral';
 type RequestConfig = {
   headers?: Record<string, string>;
   responseType?: 'json' | 'blob';
@@ -23,6 +24,7 @@ export type EventStreamConfig = {
   timeoutMs?: number;
   headers?: Record<string, string>;
   contextScopeKey?: string;
+  sessionEffect?: SessionEffect;
   onOpen?: () => void;
   onMessage: (message: EventStreamMessage) => void;
 };
@@ -33,6 +35,9 @@ type CsrfTokenData = {
 };
 
 type UnauthorizedHandler = (status: number) => void;
+type UnauthorizedHandlerRegistration = Readonly<{
+  handler: UnauthorizedHandler;
+}>;
 export type AuthorizationAccessFailure = Readonly<{
   status: 403 | 409 | 503;
   reasonCode?: string;
@@ -46,13 +51,19 @@ type AuthorizationAccessFailureHandler = (
 type AuthorizationAccessFailureRegistration = Readonly<{
   handler: AuthorizationAccessFailureHandler;
 }>;
-let unauthorizedHandler: UnauthorizedHandler | null = null;
+let unauthorizedHandlerRegistration: UnauthorizedHandlerRegistration | null = null;
 let authorizationAccessFailureRegistration: AuthorizationAccessFailureRegistration | null = null;
 let csrfToken: CsrfTokenData | null = null;
 let csrfTokenPromise: Promise<CsrfTokenData> | null = null;
 
-export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
-  unauthorizedHandler = handler;
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): () => void {
+  const registration = handler ? { handler } : null;
+  unauthorizedHandlerRegistration = registration;
+  return () => {
+    if (unauthorizedHandlerRegistration === registration) {
+      unauthorizedHandlerRegistration = null;
+    }
+  };
 }
 
 export function setAuthorizationAccessFailureHandler(
@@ -146,6 +157,20 @@ function notifyAuthorizationAccessFailure(
     void Promise.resolve(registration.handler(contextualFailure)).catch(() => undefined);
   } catch {
     // Observing an access failure must never replace the original HTTP failure.
+  }
+}
+
+function notifyUnauthorized(
+  status: number,
+  registration: UnauthorizedHandlerRegistration | null
+): void {
+  if (status !== 401 || !registration || unauthorizedHandlerRegistration !== registration) {
+    return;
+  }
+  try {
+    registration.handler(status);
+  } catch {
+    // Observing a rejected session must never replace the original HTTP failure.
   }
 }
 
@@ -255,8 +280,14 @@ async function request<T>(
   url: string,
   body?: unknown,
   config: RequestConfig = {},
+  sessionEffect: SessionEffect = 'authoritative',
   allowCsrfRetry = true,
-  accessFailureRegistration = authorizationAccessFailureRegistration
+  unauthorizedRegistration = sessionEffect === 'authoritative'
+    ? unauthorizedHandlerRegistration
+    : null,
+  accessFailureRegistration = sessionEffect === 'authoritative'
+    ? authorizationAccessFailureRegistration
+    : null
 ): Promise<AxiosLikeResponse<T>> {
   const headers = buildHeaders(body, config.headers);
   const scopedUrl = withContextScope(url, config.contextScopeKey);
@@ -310,12 +341,19 @@ async function request<T>(
     if (csrfRejected) {
       resetCsrfToken();
       if (allowCsrfRetry) {
-        return request<T>(method, url, body, config, false, accessFailureRegistration);
+        return request<T>(
+          method,
+          url,
+          body,
+          config,
+          sessionEffect,
+          false,
+          unauthorizedRegistration,
+          accessFailureRegistration
+        );
       }
     }
-    if (response.status === 401) {
-      unauthorizedHandler?.(response.status);
-    }
+    notifyUnauthorized(response.status, unauthorizedRegistration);
     if (!csrfRejected) {
       notifyAuthorizationAccessFailure(
         response.status,
@@ -341,27 +379,44 @@ async function request<T>(
   return { data: payload as T, headers: response.headers };
 }
 
-export const axiosInstance = {
-  get: <T>(url: string, config?: RequestConfig) => request<T>('GET', url, undefined, config),
-  post: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
-    request<T>('POST', url, body, config),
-  put: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
-    request<T>('PUT', url, body, config),
-  patch: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
-    request<T>('PATCH', url, body, config),
-  delete: <T>(url: string, config?: RequestConfig) => request<T>('DELETE', url, undefined, config),
-};
+function createHttpClient(sessionEffect: SessionEffect) {
+  return {
+    get: <T>(url: string, config?: RequestConfig) =>
+      request<T>('GET', url, undefined, config, sessionEffect),
+    post: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+      request<T>('POST', url, body, config, sessionEffect),
+    put: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+      request<T>('PUT', url, body, config, sessionEffect),
+    patch: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+      request<T>('PATCH', url, body, config, sessionEffect),
+    delete: <T>(url: string, config?: RequestConfig) =>
+      request<T>('DELETE', url, undefined, config, sessionEffect),
+  };
+}
+
+export const sessionHttp = createHttpClient('authoritative');
+export const sessionNeutralHttp = createHttpClient('neutral');
+
+/** @deprecated Prefer the client whose session effect matches the endpoint contract. */
+export const axiosInstance = sessionHttp;
 
 export async function postEventStream<B>(
   url: string,
   body: B,
   config: EventStreamConfig
 ): Promise<void> {
-  return streamRequest('POST', url, body, config, true);
+  return streamRequest('POST', url, body, config, config.sessionEffect ?? 'authoritative', true);
 }
 
 export async function getEventStream(url: string, config: EventStreamConfig): Promise<void> {
-  return streamRequest('GET', url, undefined, config, false);
+  return streamRequest(
+    'GET',
+    url,
+    undefined,
+    config,
+    config.sessionEffect ?? 'authoritative',
+    false
+  );
 }
 
 async function streamRequest<B>(
@@ -369,8 +424,14 @@ async function streamRequest<B>(
   url: string,
   body: B | undefined,
   config: EventStreamConfig,
+  sessionEffect: SessionEffect,
   allowCsrfRetry: boolean,
-  accessFailureRegistration = authorizationAccessFailureRegistration
+  unauthorizedRegistration = sessionEffect === 'authoritative'
+    ? unauthorizedHandlerRegistration
+    : null,
+  accessFailureRegistration = sessionEffect === 'authoritative'
+    ? authorizationAccessFailureRegistration
+    : null
 ): Promise<void> {
   const headers = buildHeaders(body, { Accept: 'text/event-stream', ...config.headers });
   const scopedUrl = withContextScope(url, config.contextScopeKey);
@@ -398,9 +459,18 @@ async function streamRequest<B>(
       const payload = await parseBody(response);
       if (response.status === 403 && payload === undefined && allowCsrfRetry) {
         resetCsrfToken();
-        return streamRequest(method, url, body, config, false, accessFailureRegistration);
+        return streamRequest(
+          method,
+          url,
+          body,
+          config,
+          sessionEffect,
+          false,
+          unauthorizedRegistration,
+          accessFailureRegistration
+        );
       }
-      if (response.status === 401) unauthorizedHandler?.(response.status);
+      notifyUnauthorized(response.status, unauthorizedRegistration);
       if (!(response.status === 403 && payload === undefined && isMutation(method))) {
         notifyAuthorizationAccessFailure(
           response.status,

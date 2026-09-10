@@ -1,7 +1,7 @@
 import { API_URL } from '../env';
 import { HttpError } from '../http-error';
 import { getTenantId } from '../tenant-util';
-import { axiosInstance, resetCsrfToken } from '../axios-instance';
+import { axiosInstance, resetCsrfToken, sessionNeutralHttp } from '../axios-instance';
 import { safeReturnUrl } from '../auth/auth-redirect';
 import { isProductSurfaceStepUpFlowId } from '../auth/product-surface-step-up-popup';
 
@@ -451,7 +451,7 @@ export function getProductSurfaceStepUpContinuation(
 export async function login(
   payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }
 ): Promise<ApiResponse<LoginResponseData>> {
-  const response = await axiosInstance.post<ApiResponse<LoginResponseData>, LoginRequest>(
+  const response = await sessionNeutralHttp.post<ApiResponse<LoginResponseData>, LoginRequest>(
     '/api/auth/login',
     {
       email: payload.email,
@@ -466,6 +466,10 @@ export async function getMe(): Promise<ApiResponse<MeResponse>> {
   return (await axiosInstance.get<ApiResponse<MeResponse>>('/api/auth/me')).data;
 }
 
+export async function probeSession(): Promise<ApiResponse<MeResponse>> {
+  return (await sessionNeutralHttp.get<ApiResponse<MeResponse>>('/api/auth/me')).data;
+}
+
 export async function updateMyPreferredLocale(locale: string): Promise<ApiResponse<MeResponse>> {
   return (
     await axiosInstance.patch<ApiResponse<MeResponse>, { locale: string }>('/api/auth/me/locale', {
@@ -476,6 +480,10 @@ export async function updateMyPreferredLocale(locale: string): Promise<ApiRespon
 
 export async function getPermissions(): Promise<ApiResponse<PermissionDTO[]>> {
   return (await axiosInstance.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions')).data;
+}
+
+export async function probePermissions(): Promise<ApiResponse<PermissionDTO[]>> {
+  return (await sessionNeutralHttp.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions')).data;
 }
 
 export async function getProductSurfaceContexts(
@@ -565,24 +573,24 @@ export async function logoutOtherSessions(): Promise<void> {
 
 export async function logout(): Promise<void> {
   try {
-    await axiosInstance.post<ApiResponse<void>, undefined>('/api/auth/logout', undefined);
+    await sessionNeutralHttp.post<ApiResponse<void>, undefined>('/api/auth/logout', undefined);
   } finally {
     resetCsrfToken();
   }
 }
 
 export async function getAccountActivation(token: string): Promise<AccountActivation> {
-  const response = await axiosInstance.get<ApiResponse<AccountActivation>>(
+  const response = await sessionNeutralHttp.get<ApiResponse<AccountActivation>>(
     `/api/auth/activations/${encodeURIComponent(token)}`
   );
   return response.data.data;
 }
 
 export async function activateAccount(token: string, password: string): Promise<ActivatedAccount> {
-  const response = await axiosInstance.post<ApiResponse<ActivatedAccount>, { password: string }>(
-    `/api/auth/activations/${encodeURIComponent(token)}`,
-    { password }
-  );
+  const response = await sessionNeutralHttp.post<
+    ApiResponse<ActivatedAccount>,
+    { password: string }
+  >(`/api/auth/activations/${encodeURIComponent(token)}`, { password });
   return response.data.data;
 }
 
@@ -608,7 +616,7 @@ export async function getOidcCallback(params: OidcCallbackParams): Promise<OidcC
   const search = new URLSearchParams({ code: params.code, state: params.state });
   if (params.providerKey) search.set('providerKey', params.providerKey);
   if (params.tenantId) search.set('tenantId', params.tenantId);
-  const callback = await axiosInstance.get<ApiResponse<LoginResponseData>>(
+  const callback = await sessionNeutralHttp.get<ApiResponse<LoginResponseData>>(
     '/api/auth/oidc/callback?' + search.toString()
   );
   const flowId = callback.headers?.get(OIDC_STEP_UP_FLOW_ID_HEADER) ?? null;

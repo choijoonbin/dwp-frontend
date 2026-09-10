@@ -33,9 +33,9 @@ export default defineConfig({
   webServer: {
     // The Flow Home interaction suite exercises the VIEWS-backed editor.
     // Keep that product contract explicit and only reuse a server when the
-    // caller deliberately opts into owning its feature-flag configuration.
+    // caller deliberately opts into owning its feature-flag and RUM configuration.
     command:
-      'VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true corepack yarn dev --mode test --host 127.0.0.1',
+      'VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true VITE_WEB_VITALS_ENDPOINT=/api/platform/v1/observability/web-vitals corepack yarn dev --mode test --host 127.0.0.1',
     url: BASE_URL,
     reuseExistingServer: REUSE_EXISTING_SERVER,
     timeout: 120 * 1000,

@@ -33,6 +33,20 @@
 | CSRF 없음·불일치      | 403  | CSRF Token 재요청 후 1회 재시도 |
 | 잘못된 UUID           | 400  | 입력 오류                       |
 
+## Browser Session Authority Boundary
+
+- 보호된 업무 API는 `authoritative` client를 사용한다. 현재 인증 세대에서 시작된 요청의
+  `401`만 Session 거부 신호이며, 사용자·권한·비공개 Query Cache를 폐기한다.
+- 로그인, 로그인 정책, 초기 Session 탐색, OIDC Callback, 계정 활성화와 Logout은
+  `neutral` client를 사용한다. 이 API의 오류는 해당 인증 흐름이 직접 처리하며 전역 Session
+  거부 신호로 승격하지 않는다.
+- 초기 Session 탐색이 익명 `401`을 반환해도 이미 익명인 상태를 다시 무효화하거나 공개
+  로그인 정책 Cache와 Form을 제거하지 않는다.
+- 요청은 시작 시점의 Session observer를 캡처한다. Logout 또는 다른 Identity 인증 뒤 도착한
+  이전 observer의 늦은 `401`은 현재 Session에 전달하지 않는다.
+- Best-effort telemetry는 Session·권한 observer에서 격리한다. Web Vitals는 Gateway의 인증·CSRF
+  계약을 유지하는 session-neutral RUM 전송을 사용하며, 세션 제어 흐름에는 참여하지 않는다.
+
 ## Audit·Trace
 
 - Correlation ID와 Session Family ID를 사용하되 Token ID 원문은 Log에서 Mask한다.
