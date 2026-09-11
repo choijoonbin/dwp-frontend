@@ -128,7 +128,7 @@ try {
     room,
     participant,
   });
-  const authorization = `Bearer ${jwt({ sha256: createHash('sha256').update(body).digest('base64') })}`;
+  const authorization = jwt({ sha256: createHash('sha256').update(body).digest('base64') });
   for (let delivery = 0; delivery < 2; delivery += 1) {
     const response = await fetch(`${contract.bridgeUrl}/signed-webhook`, {
       method: 'POST',

@@ -1,0 +1,56 @@
+.dwp-meeting-screen-share-guidance {
+  display: flex;
+  width: min(680px, calc(100% - 32px));
+  flex: 0 0 auto;
+  align-self: center;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 16px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--dwp-meeting-stage-border);
+  border-radius: var(--dwp-meeting-shape-card);
+  color: var(--dwp-palette-common-white);
+  background: color-mix(in srgb, var(--dwp-meeting-stage-selection) 76%, transparent);
+}
+
+.dwp-meeting-screen-share-guidance > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--dwp-meeting-stage-accent);
+}
+
+.dwp-meeting-screen-share-guidance > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.dwp-meeting-screen-share-guidance strong {
+  font-size: var(--dwp-meeting-type-body);
+}
+
+.dwp-meeting-screen-share-guidance span span {
+  color: var(--dwp-meeting-stage-muted);
+  font-size: var(--dwp-meeting-type-caption);
+}
+
+@media (max-width: 599px) {
+  .dwp-meeting-screen-share-guidance {
+    width: calc(100% - 24px);
+    margin: 8px 12px 0;
+    padding: 8px 10px;
+  }
+}
+
+@media (forced-colors: active) {
+  .dwp-meeting-screen-share-guidance {
+    border: 1px solid CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+
+  .dwp-meeting-screen-share-guidance > svg,
+  .dwp-meeting-screen-share-guidance span span {
+    color: CanvasText;
+  }
+}

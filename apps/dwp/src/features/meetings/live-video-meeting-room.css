@@ -313,11 +313,20 @@
     color: var(--dwp-palette-text-secondary);
   }
 
+  .dwp-meeting-room-rail__tabs button:hover {
+    color: var(--dwp-palette-text-primary);
+    background: var(--dwp-palette-action-hover);
+  }
+
   .dwp-meeting-room-rail__tabs button[aria-selected='true'] {
     color: var(--dwp-palette-primary-main);
     background: var(--dwp-palette-background-paper);
     border-color: transparent;
     box-shadow: var(--dwp-meeting-surface-shadow);
+  }
+
+  .dwp-meeting-room-rail__tabs button:focus-visible {
+    outline-color: var(--dwp-palette-primary-main);
   }
 }
 
@@ -870,5 +879,23 @@
   .dwp-video-meeting-room__interactions button,
   .dwp-video-meeting-room__header * {
     color: CanvasText;
+  }
+
+  .dwp-meeting-room-rail__tabs button:hover {
+    border-color: Highlight;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .dwp-meeting-room-rail__tabs button[aria-selected='true'] {
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+    box-shadow: none;
+  }
+
+  .dwp-meeting-room-rail__tabs button:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }

@@ -2166,6 +2166,8 @@
       "screenShare": "Share screen",
       "screenShareStart": "Start screen sharing",
       "screenShareStop": "Stop screen sharing",
+      "screenShareSelfTitle": "You are sharing your screen",
+      "screenShareSelfDescription": "Participants can see the shared content. Your local preview is hidden to prevent repeated images. Switch to the window or tab you want to present.",
       "agenda": "Agenda",
       "agendaOpen": "Open agenda tracker",
       "agendaClose": "Close agenda tracker",

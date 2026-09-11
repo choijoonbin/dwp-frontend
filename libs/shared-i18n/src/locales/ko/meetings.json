@@ -2166,6 +2166,8 @@
       "screenShare": "화면 공유",
       "screenShareStart": "화면 공유 시작",
       "screenShareStop": "화면 공유 중지",
+      "screenShareSelfTitle": "화면을 공유하고 있습니다",
+      "screenShareSelfDescription": "참가자에게는 공유 화면이 정상적으로 보입니다. 반복 표시를 막기 위해 내 미리보기는 숨겼습니다. 발표할 창이나 탭으로 전환하세요.",
       "agenda": "의제",
       "agendaOpen": "의제 추적기 열기",
       "agendaClose": "의제 추적기 닫기",

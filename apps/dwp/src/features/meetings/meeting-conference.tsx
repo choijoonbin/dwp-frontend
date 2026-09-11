@@ -49,6 +49,11 @@ import { MeetingParticipantsPanel } from './meeting-participants-panel';
 import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
 import { MeetingRoomLiveSummary, MeetingStageWaiting } from './meeting-room-stage-context';
 import {
+  isLocalScreenShareTrack,
+  MEETING_SCREEN_SHARE_CAPTURE_OPTIONS,
+  MeetingLocalScreenShareNotice,
+} from './meeting-screen-share';
+import {
   canOpenMeetingRoomPanel,
   MeetingRoomContextPanel,
   MeetingRoomRailNavigation,
@@ -125,15 +130,26 @@ export function MeetingConference({
     ],
     { updateOnlyOn: [RoomEvent.ActiveSpeakersChanged], onlySubscribed: false }
   );
-  const focusTrack = usePinnedTracks(layoutContext)?.[0];
+  const pinnedTrack = usePinnedTracks(layoutContext)?.[0];
   const screenShareTracks = useMemo(
     () =>
       tracks
         .filter(isTrackReference)
-        .filter((track) => track.publication.source === Track.Source.ScreenShare),
+        .filter(
+          (track) =>
+            track.publication.source === Track.Source.ScreenShare && !isLocalScreenShareTrack(track)
+        ),
     [tracks]
   );
   const subscribedScreenShare = screenShareTracks.find((track) => track.publication.isSubscribed);
+  const localScreenShareActive = tracks.filter(isTrackReference).some(isLocalScreenShareTrack);
+  const stageTracks = tracks.filter(
+    (track) => !isTrackReference(track) || !isLocalScreenShareTrack(track)
+  );
+  const focusTrack =
+    pinnedTrack && isTrackReference(pinnedTrack) && isLocalScreenShareTrack(pinnedTrack)
+      ? undefined
+      : pinnedTrack;
 
   useEffect(() => {
     onOverlayPanelChange(overlayPanel && sidePanel !== null);
@@ -168,6 +184,12 @@ export function MeetingConference({
   }, [t]);
 
   useEffect(() => {
+    if (pinnedTrack && isTrackReference(pinnedTrack) && isLocalScreenShareTrack(pinnedTrack)) {
+      layoutContext.pin.dispatch?.({ msg: 'clear_pin' });
+    }
+  }, [layoutContext.pin, pinnedTrack]);
+
+  useEffect(() => {
     if (subscribedScreenShare && lastAutoFocusedScreenShare.current === null) {
       layoutContext.pin.dispatch?.({
         msg: 'set_pin',
@@ -186,10 +208,11 @@ export function MeetingConference({
     }
   }, [layoutContext.pin, screenShareTracks, subscribedScreenShare]);
 
-  const carouselTracks = tracks.filter((track) => !isSameTrack(track, focusTrack));
+  const carouselTracks = stageTracks.filter((track) => !isSameTrack(track, focusTrack));
   const waitingForMedia =
+    !localScreenShareActive &&
     !focusTrack &&
-    !tracks.some(
+    !stageTracks.some(
       (track) => isTrackReference(track) && track.publication.track && !track.publication.isMuted
     );
   const closeSidePanel = () => {
@@ -210,16 +233,17 @@ export function MeetingConference({
             aria-hidden={overlayPanel && sidePanel !== null ? true : undefined}
             inert={overlayPanel && sidePanel !== null ? true : undefined}
           >
+            {localScreenShareActive && <MeetingLocalScreenShareNotice />}
             {waitingForMedia ? (
               <div className="dwp-meeting-conference__layout dwp-meeting-conference__waiting-layout">
                 <MeetingStageWaiting />
-                <CarouselLayout tracks={tracks}>
+                <CarouselLayout tracks={stageTracks}>
                   <ParticipantTile />
                 </CarouselLayout>
               </div>
             ) : !focusTrack ? (
               <div className="lk-grid-layout-wrapper dwp-meeting-conference__layout">
-                <GridLayout tracks={tracks}>
+                <GridLayout tracks={stageTracks}>
                   <ParticipantTile />
                 </GridLayout>
               </div>
@@ -348,7 +372,7 @@ function MeetingControlBar({
   });
   const screenShare = useTrackToggle({
     source: Track.Source.ScreenShare,
-    captureOptions: { audio: true, selfBrowserSurface: 'include' },
+    captureOptions: MEETING_SCREEN_SHARE_CAPTURE_OPTIONS,
     onDeviceError,
   });
   const allowedPublishSources = permissions?.canPublishSources as readonly number[] | undefined;

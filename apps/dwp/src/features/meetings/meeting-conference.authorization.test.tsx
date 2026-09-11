@@ -3,12 +3,15 @@ import { act, createElement, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { Track } from 'livekit-client';
 import type * as RoomContext from './meeting-room-context-panel';
 
 const runtime = vi.hoisted(() => ({
   mobile: false,
   revoking: false,
-  tracks: [],
+  tracks: [] as unknown[],
+  renderedGridTracks: [] as unknown[],
+  trackToggleCalls: [] as Array<Record<string, unknown>>,
   layout: { pin: { dispatch: vi.fn() } },
   renderedPanels: [] as { panel: string; revoking: boolean }[],
   overlayChanged: vi.fn(),
@@ -24,14 +27,18 @@ vi.mock('@livekit/components-react', () => {
     CarouselLayout: childrenOnly,
     FocusLayout: () => null,
     FocusLayoutContainer: childrenOnly,
-    GridLayout: childrenOnly,
+    GridLayout: ({ children, tracks }: { children?: ReactNode; tracks: unknown[] }) => {
+      runtime.renderedGridTracks = tracks;
+      return children;
+    },
     LayoutContextProvider: childrenOnly,
     MediaDeviceMenu: () => null,
     ParticipantTile: () => null,
     RoomAudioRenderer: () => null,
     StartMediaButton: () => null,
     ConnectionStateToast: () => null,
-    isTrackReference: () => false,
+    isTrackReference: (track: unknown) =>
+      typeof track === 'object' && track !== null && 'publication' in track,
     useCreateLayoutContext: () => runtime.layout,
     useLocalParticipantPermissions: () => ({ canPublish: false }),
     usePersistentUserChoices: () => ({
@@ -42,7 +49,10 @@ vi.mock('@livekit/components-react', () => {
     }),
     usePinnedTracks: () => [],
     useTracks: () => runtime.tracks,
-    useTrackToggle: () => ({ enabled: false, buttonProps: { disabled: false } }),
+    useTrackToggle: (options: Record<string, unknown>) => {
+      runtime.trackToggleCalls.push(options);
+      return { enabled: false, buttonProps: { disabled: false } };
+    },
   };
 });
 vi.mock('./meeting-leave-control', () => ({ MeetingLeaveControl: () => null }));
@@ -153,7 +163,11 @@ describe('MeetingConference credential authorization fence', () => {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
     runtime.mobile = false;
     runtime.revoking = false;
+    runtime.tracks = [];
+    runtime.renderedGridTracks = [];
+    runtime.trackToggleCalls = [];
     runtime.renderedPanels.length = 0;
+    runtime.layout.pin.dispatch.mockReset();
     runtime.overlayChanged.mockReset();
     mount = document.createElement('div');
     document.body.append(mount);
@@ -208,5 +222,48 @@ describe('MeetingConference credential authorization fence', () => {
     expect(mount.querySelector('[data-testid="authorized-chat"]')).not.toBeNull();
     expect(mount.querySelector('[data-testid="authorized-floor"]')).toBeNull();
     expect(runtime.renderedPanels.some(({ panel }) => panel === 'floor')).toBe(false);
+  });
+
+  it('hides the active local screen-share preview while preserving remote screen shares', async () => {
+    const localShare = {
+      source: Track.Source.ScreenShare,
+      participant: { identity: 'local-user', isLocal: true },
+      publication: {
+        source: Track.Source.ScreenShare,
+        track: {},
+        trackSid: 'local-share',
+        isMuted: false,
+        isSubscribed: true,
+      },
+    };
+    const remoteShare = {
+      source: Track.Source.ScreenShare,
+      participant: { identity: 'remote-user', isLocal: false },
+      publication: {
+        source: Track.Source.ScreenShare,
+        track: {},
+        trackSid: 'remote-share',
+        isMuted: false,
+        isSubscribed: true,
+      },
+    };
+    runtime.tracks = [localShare, remoteShare];
+
+    await render(granted);
+
+    expect(mount.querySelector('[data-testid="local-screen-share-guidance"]')).not.toBeNull();
+    expect(runtime.renderedGridTracks).toEqual([remoteShare]);
+    expect(runtime.layout.pin.dispatch).toHaveBeenCalledWith({
+      msg: 'set_pin',
+      trackReference: remoteShare,
+    });
+    expect(
+      runtime.trackToggleCalls.find(({ source }) => source === Track.Source.ScreenShare)
+    ).toMatchObject({
+      captureOptions: {
+        selfBrowserSurface: 'exclude',
+        preferCurrentTab: false,
+      },
+    });
   });
 });

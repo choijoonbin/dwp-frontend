@@ -114,9 +114,22 @@ function openPoll(myOptionId: string | null = null) {
   };
 }
 
-async function mockLiveRoom(page: Page, unavailable = false, authorization?: { revoked: boolean }) {
+async function mockLiveRoom(
+  page: Page,
+  unavailable = false,
+  authorization?: { revoked: boolean },
+  appearance: {
+    colorScheme?: 'light' | 'dark';
+    forcedColors?: 'active' | 'none';
+  } = {}
+) {
   await keepMeetingTransportPending(page);
-  await mockMeetingVisualSession(page, { locale: 'en', reducedMotion: true });
+  await mockMeetingVisualSession(page, {
+    locale: 'en',
+    reducedMotion: true,
+    colorScheme: appearance.colorScheme,
+    forcedColors: appearance.forcedColors,
+  });
   await mockMeetingVisualPrejoin(page);
   await page.unroute(`**/api/meetings/v1/meetings/${MEETING_VISUAL_ID}`);
   await page.route(`**/api/meetings/v1/meetings/${MEETING_VISUAL_ID}`, (route) =>
@@ -365,6 +378,77 @@ test('narrow live-room header keeps identity and icon actions in separate access
     });
   }
 });
+
+for (const appearance of [
+  { label: 'light', colorScheme: 'light', forcedColors: 'none' },
+  { label: 'dark', colorScheme: 'dark', forcedColors: 'none' },
+  { label: 'forced colors', colorScheme: 'light', forcedColors: 'active' },
+] as const) {
+  test(`workspace rail tabs remain readable on hover in ${appearance.label} mode`, async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Desktop hover evidence belongs to Chromium.');
+    await page.setViewportSize({ width: 1_280, height: 900 });
+    await mockLiveRoom(page, false, undefined, appearance);
+    await enterRoom(page);
+
+    const rail = page.getByRole('tablist', { name: 'Meeting workspace panels' });
+    for (const tabName of ['Agenda', 'Chat', 'Floor', 'People', 'AI notes']) {
+      const railTab = rail.getByRole('tab', { name: tabName, exact: true });
+      await railTab.hover();
+
+      const expectedColor = await railTab.evaluate((tab) => {
+        const forcedColors = window.matchMedia('(forced-colors: active)').matches;
+        const selected = tab.getAttribute('aria-selected') === 'true';
+        const probe = document.createElement('span');
+        probe.style.color = forcedColors
+          ? selected
+            ? 'HighlightText'
+            : 'CanvasText'
+          : selected
+            ? 'var(--dwp-palette-primary-main)'
+            : 'var(--dwp-palette-text-primary)';
+        tab.append(probe);
+        const resolved = getComputedStyle(probe).color;
+        probe.remove();
+        return resolved;
+      });
+      await expect
+        .poll(
+          () =>
+            railTab.evaluate((tab) => ({
+              hovered: tab.matches(':hover'),
+              tab: getComputedStyle(tab).color,
+              icon: getComputedStyle(tab.querySelector('svg')!).color,
+              label: getComputedStyle(tab.querySelector('span')!).color,
+            })),
+          { message: `${tabName} hover keeps its icon and label readable` }
+        )
+        .toEqual({
+          hovered: true,
+          tab: expectedColor,
+          icon: expectedColor,
+          label: expectedColor,
+        });
+    }
+
+    await rail.getByRole('tab', { name: 'Chat', exact: true }).hover();
+    const accessibility = await new AxeBuilder({ page })
+      .include('.dwp-meeting-room-rail__tabs')
+      .analyze();
+    expect(
+      accessibility.violations.filter(
+        (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+      )
+    ).toEqual([]);
+    await page.screenshot({
+      path: testInfo.outputPath(
+        `meeting-room-rail-hover-${appearance.label.replace(' ', '-')}.png`
+      ),
+      fullPage: false,
+    });
+  });
+}
 
 test('live facilitation connects verified Q&A, voting and server-clock agenda tools on desktop and mobile', async ({
   page,
