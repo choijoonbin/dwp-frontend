@@ -85,6 +85,7 @@ const report: VideoMeetingIntelligenceReport = {
 
 describe('video meeting intelligence API boundary', () => {
   afterEach(() => {
+    vi.restoreAllMocks();
     resetCsrfToken();
     vi.unstubAllGlobals();
   });
@@ -302,6 +303,7 @@ describe('video meeting intelligence API boundary', () => {
   it('downloads an exact version-bound report only through the audited owner endpoint', async () => {
     const exportBlob = new Blob(['published recap'], { type: 'text/markdown' });
     const exportDigest = createHash('sha256').update('published recap').digest('hex');
+    const digestSpy = vi.spyOn(globalThis.crypto.subtle, 'digest');
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
@@ -350,6 +352,7 @@ describe('video meeting intelligence API boundary', () => {
       expectedReportVersion: 7,
       format: 'MARKDOWN',
     });
+    expect(digestSpy.mock.calls[0]?.[1]).toBeInstanceOf(Uint8Array);
   });
 
   it('rejects a response whose version evidence does not match the observed report', async () => {

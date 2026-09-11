@@ -411,10 +411,8 @@ export async function downloadVideoMeetingIntelligenceReport(
   ) {
     throw new Error('Meeting intelligence export evidence is invalid.');
   }
-  const digest = await globalThis.crypto.subtle.digest(
-    'SHA-256',
-    await response.data.arrayBuffer()
-  );
+  const contentBytes = new Uint8Array(await response.data.arrayBuffer());
+  const digest = await globalThis.crypto.subtle.digest('SHA-256', contentBytes);
   const actualDigest = [...new Uint8Array(digest)]
     .map((value) => value.toString(16).padStart(2, '0'))
     .join('');
