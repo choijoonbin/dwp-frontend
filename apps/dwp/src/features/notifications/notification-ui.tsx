@@ -156,32 +156,46 @@ export function NotificationSyncResetNotice({
 }
 
 export function NotificationPageHeading({
+  eyebrow,
   title,
   description,
+  icon,
   actions,
 }: {
+  eyebrow?: string;
   title: string;
   description: string;
+  icon?: ReactNode;
   actions?: ReactNode;
 }) {
   return (
     <Box
+      data-testid="notification-page-heading"
       sx={{
         display: 'flex',
         alignItems: { xs: 'flex-start', md: 'center' },
         justifyContent: 'space-between',
         flexDirection: { xs: 'column', md: 'row' },
-        gap: 2,
-        pb: 2,
+        gap: 1.5,
+        py: 1,
         borderBottom: 1,
         borderColor: 'divider',
       }}
     >
       <Stack direction="row" gap={1.25} alignItems="center">
-        <GlyphSurface size={38} variant="soft">
-          <BellRing size={19} strokeWidth={1.8} />
+        <GlyphSurface size={32} variant="soft">
+          {icon ?? <BellRing size={19} strokeWidth={1.8} />}
         </GlyphSurface>
         <Box minWidth={0}>
+          {eyebrow && (
+            <Typography
+              component="p"
+              variant="overline"
+              sx={{ color: 'var(--dwp-product-accent)', mb: 0.1 }}
+            >
+              {eyebrow}
+            </Typography>
+          )}
           <Typography component="h1" variant="h5">
             {title}
           </Typography>
@@ -273,7 +287,7 @@ export function NotificationItemRow({
               height: compact ? 32 : 36,
               display: 'grid',
               placeItems: 'center',
-              borderRadius: 1,
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               color: item.source.accent ?? theme.palette.primary.main,
               bgcolor: alpha(item.source.accent ?? theme.palette.primary.main, 0.1),
             })}
@@ -299,7 +313,7 @@ export function NotificationItemRow({
         </Box>
         <Box minWidth={0}>
           <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
-            <Typography variant="body2" fontWeight={unread ? 760 : 620} noWrap sx={{ minWidth: 0 }}>
+            <Typography variant="body2" fontWeight={unread ? 650 : 500} noWrap sx={{ minWidth: 0 }}>
               {item.title}
             </Typography>
             <Typography
@@ -376,7 +390,7 @@ export function NotificationPrimaryAction({
       sx={{
         minHeight: 36,
         px: 1.25,
-        borderRadius: 1,
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
         color: 'primary.main',
         fontWeight: 720,
         fontSize: 13,

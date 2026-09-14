@@ -1,0 +1,23 @@
+{
+  "provenance": "Actual ApprovalRetentionCommandProfileTest 28/28, 2026-09-14; configured ApprovalStepUpVerifier.payloadSha256 bytewriter. Original non-BMP expectation failures preserved separately.",
+  "vectors": [
+    {
+      "name": "escaped-quote-backslash-newline",
+      "reviewComment": "Review \"quoted\" path \\approval\nApproved",
+      "expectedCanonical1": "{\"expectedVersion\":9007199254740990,\"idempotencyKey\":\"original-key\",\"reviewComment\":\"Review \\\"quoted\\\" path \\\\approval\\nApproved\"}",
+      "requestBodySha256": "563485d0eb8b62a7ef719b2bd52d8ef692634e611bc7ea9ec5b8f6ad035d1034"
+    },
+    {
+      "name": "paired-non-bmp",
+      "reviewComment": "Review approved \ud83d\ude80",
+      "expectedCanonical1": "{\"expectedVersion\":9007199254740990,\"idempotencyKey\":\"original-key\",\"reviewComment\":\"Review approved \\uD83D\\uDE80\"}",
+      "requestBodySha256": "821a3dfc5df3ad8a25f11e73059940701923e2f2855a488e9235874ea7ca2f9f"
+    },
+    {
+      "name": "paired-and-escaped",
+      "reviewComment": "Review \ud83d\ude80 \"quoted\" \\approval\nApproved",
+      "expectedCanonical1": "{\"expectedVersion\":9007199254740990,\"idempotencyKey\":\"original-key\",\"reviewComment\":\"Review \\uD83D\\uDE80 \\\"quoted\\\" \\\\approval\\nApproved\"}",
+      "requestBodySha256": "03ab86e47b3dbd21047ed10fcc5d1dd5bc93e09688d93e27e2792877d7d037d2"
+    }
+  ]
+}

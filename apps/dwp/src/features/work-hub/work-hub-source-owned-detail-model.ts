@@ -1,7 +1,8 @@
-import type {
-  ApprovalTaskDetail,
-  ApprovalTimelineEvent,
-  ApprovalRequestDetail,
+import {
+  resolveApprovalContentAccess,
+  type ApprovalRequestDetail,
+  type ApprovalTaskDetail,
+  type ApprovalTimelineEvent,
 } from '@dwp-frontend/shared-utils/api/approval-api';
 import type {
   ServiceRequestDetail,
@@ -197,7 +198,7 @@ function scalar(value: unknown): WorkHubSourceDetailField['value'] {
 }
 
 function fieldsFromSchema(
-  fields: Array<{ key: string; labelKo?: string | null; labelEn?: string | null }>,
+  fields: ReadonlyArray<{ key: string; labelKo?: string | null; labelEn?: string | null }>,
   values: Record<string, unknown>
 ): WorkHubSourceDetailField[] {
   const seen = new Set<string>();
@@ -227,6 +228,7 @@ export function projectApprovalSourceDetail(
     (item.displayId !== undefined && detail.task.requestNumber !== item.displayId) ||
     detail.task.status !== item.sourceStatus ||
     detail.task.version !== item.version ||
+    !resolveApprovalContentAccess(detail).full ||
     (item.dataClassification !== null && detail.task.dataClassification !== item.dataClassification)
   ) {
     return null;

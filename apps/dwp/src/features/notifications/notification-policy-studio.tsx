@@ -46,11 +46,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
@@ -62,6 +57,7 @@ import {
   NotificationPolicySimulationResult,
 } from './notification-policy-simulation';
 import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
+import { NotificationPolicyChannels as PolicyChannels } from './notification-policy-channels';
 
 const POLICY_CHANNELS: readonly NotificationChannel[] = [
   'IN_APP',
@@ -106,7 +102,7 @@ function PolicyListItem({
       sx={{
         width: 1,
         px: 1.75,
-        py: 1.4,
+        py: 1.25,
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) auto',
         gap: 1,
@@ -118,10 +114,14 @@ function PolicyListItem({
       }}
     >
       <Box minWidth={0}>
-        <Typography variant="subtitle2" noWrap>
+        <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
           {policy.scopeLabel}
         </Typography>
-        <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', overflowWrap: 'anywhere' }}
+        >
           {policy.scopeType} · {policy.scopeKey}
         </Typography>
         <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.75 }}>
@@ -148,68 +148,22 @@ function PolicyListItem({
   );
 }
 
-function PolicyChannels({ channels }: { channels: NotificationPolicyChannelRule[] }) {
-  const { t } = useTranslation('notifications');
-  return (
-    <Box
-      role="region"
-      aria-label={t('admin.policies.channelsTable')}
-      tabIndex={0}
-      sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
-    >
-      <Table size="small" aria-label={t('admin.policies.channelsTable')} sx={{ minWidth: 650 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell>{t('admin.policies.columns.channel')}</TableCell>
-            <TableCell>{t('admin.policies.columns.delivery')}</TableCell>
-            <TableCell>{t('admin.policies.columns.defaultMode')}</TableCell>
-            <TableCell>{t('admin.policies.columns.userControl')}</TableCell>
-            <TableCell align="right">{t('admin.policies.columns.limit')}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {channels.map((channel) => (
-            <TableRow key={channel.channel}>
-              <TableCell>{t(`channels.${channel.channel}`)}</TableCell>
-              <TableCell>
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  color={channel.enabled ? 'success' : 'default'}
-                  label={t(`admin.policies.${channel.enabled ? 'enabled' : 'disabled'}`)}
-                />
-              </TableCell>
-              <TableCell>{t(`admin.policies.mode.${channel.defaultMode}`)}</TableCell>
-              <TableCell>
-                {t(
-                  `admin.policies.${channel.userOverridable ? 'userOverridable' : 'managedByTenant'}`
-                )}
-              </TableCell>
-              <TableCell align="right">
-                {channel.maxPerWindow == null ? '—' : formatNumber(channel.maxPerWindow)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Box>
-  );
-}
-
 function PolicyDetail({
   policy,
   canManage,
   hasDraft,
+  draft,
   onEdit,
 }: {
   policy: TenantNotificationPolicy;
   canManage: boolean;
   hasDraft: boolean;
+  draft?: TenantNotificationPolicy;
   onEdit: () => void;
 }) {
   const { t } = useTranslation('notifications');
   return (
-    <Box component="section" sx={{ p: { xs: 2, md: 2.5 }, minWidth: 0 }}>
+    <Box component="section" sx={{ p: { xs: 1.5, md: 2 }, minWidth: 0 }}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
@@ -226,10 +180,14 @@ function PolicyDetail({
               label={t(`admin.policies.source.${policy.source}`)}
             />
           </Stack>
-          <Typography component="h2" variant="h5" sx={{ mt: 1.25, overflowWrap: 'anywhere' }}>
+          <Typography component="h2" variant="h6" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
             {policy.scopeLabel}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 0.35, overflowWrap: 'anywhere' }}
+          >
             {policy.scopeKey}
           </Typography>
         </Box>
@@ -249,7 +207,7 @@ function PolicyDetail({
         component="dl"
         sx={{
           m: 0,
-          mt: 2.5,
+          mt: 1.5,
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
           borderTop: 1,
@@ -267,7 +225,17 @@ function PolicyDetail({
           ],
           [t('admin.policies.fields.digest'), t(`admin.policies.digest.${policy.digestMode}`)],
         ].map(([label, value]) => (
-          <Box key={label} sx={{ py: 1.25, pr: 2, borderBottom: 1, borderColor: 'divider' }}>
+          <Box
+            key={label}
+            sx={{
+              minWidth: 0,
+              py: 1,
+              pr: 1.5,
+              borderBottom: 1,
+              borderColor: 'divider',
+              overflowWrap: 'anywhere',
+            }}
+          >
             <Typography component="dt" variant="caption" color="text.secondary">
               {label}
             </Typography>
@@ -278,10 +246,40 @@ function PolicyDetail({
         ))}
       </Box>
 
-      <Typography component="h3" variant="subtitle1" sx={{ mt: 2.5, mb: 1 }}>
-        {t('admin.policies.channelsTitle')}
-      </Typography>
-      <PolicyChannels channels={policy.channels} />
+      {draft && (
+        <Box sx={{ mt: 2, borderLeft: 3, borderColor: 'warning.main', pl: 1.5 }}>
+          <Stack direction="row" gap={0.75} flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+            <Chip
+              size="small"
+              color="warning"
+              variant="outlined"
+              label={t('admin.policies.draft')}
+            />
+            <Typography variant="caption" color="text.secondary">
+              {t('admin.policies.versionLabel', { version: draft.version })}
+            </Typography>
+          </Stack>
+          <NotificationPolicyComparison current={policy} proposed={draft} />
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 1, overflowWrap: 'anywhere' }}
+          >
+            {draft.changeReason}
+          </Typography>
+          <Typography variant="caption" color="warning.main" sx={{ display: 'block', mt: 0.5 }}>
+            {t('admin.policies.independentApprovalRequired')}
+          </Typography>
+        </Box>
+      )}
+      {!draft && (
+        <>
+          <Typography component="h3" variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
+            {t('admin.policies.channelsTitle')}
+          </Typography>
+          <PolicyChannels channels={policy.channels} />
+        </>
+      )}
 
       {policy.source === 'PROVIDER_POLICY' && (
         <Alert severity="info" icon={<Building2 size={18} />} sx={{ mt: 2 }}>
@@ -485,7 +483,7 @@ export function NotificationPolicyStudio() {
   }
 
   return (
-    <Stack gap={2.5} data-testid="notification-policy-studio">
+    <Stack gap={1.5} data-testid="notification-policy-studio">
       <Alert severity="info" icon={<ShieldCheck size={18} />}>
         {t('admin.policies.governanceNotice')}
       </Alert>
@@ -494,7 +492,7 @@ export function NotificationPolicyStudio() {
         <Box component="section">
           <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
             <Box>
-              <Typography component="h2" variant="h6">
+              <Typography component="h2" variant="subtitle1">
                 {t('admin.policies.reviewQueueTitle')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -540,7 +538,11 @@ export function NotificationPolicyStudio() {
                         />
                       )}
                     </Stack>
-                    <Typography variant="body2" color="text.secondary" noWrap>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ overflowWrap: 'anywhere' }}
+                    >
                       {draft.changeReason}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -578,7 +580,7 @@ export function NotificationPolicyStudio() {
                         {t('admin.policies.rejectDraft')}
                       </ActionButton>
                     )}
-                    {canApprove && (
+                    {(canApprove || selfAuthored) && (
                       <ActionButton
                         intent="primary"
                         startIcon={<CheckCircle2 size={17} />}
@@ -605,7 +607,7 @@ export function NotificationPolicyStudio() {
         backLabel={t('admin.backToCatalog')}
         listLabel={t('admin.policies.catalogLabel')}
         detailLabel={t('admin.policies.detailLabel')}
-        desktopColumns="minmax(280px, .8fr) minmax(0, 2.2fr)"
+        desktopColumns="minmax(0, .85fr) minmax(0, 2.15fr)"
         listMaxHeight={720}
         list={
           <>
@@ -628,6 +630,10 @@ export function NotificationPolicyStudio() {
               policy={selected}
               canManage={canManage}
               hasDraft={selectedHasDraft}
+              draft={drafts.find(
+                (draft) =>
+                  draft.scopeType === selected.scopeType && draft.scopeKey === selected.scopeKey
+              )}
               onEdit={openEditor}
             />
           )

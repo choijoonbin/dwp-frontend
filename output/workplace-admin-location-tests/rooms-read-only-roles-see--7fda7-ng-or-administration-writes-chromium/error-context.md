@@ -1,0 +1,243 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+              - listitem [ref=e39]:
+                - link "Find and book a space" [ref=e40] [cursor=pointer]:
+                  - /url: /workplace/explore
+                  - img [ref=e42]
+                  - paragraph [ref=e47]: Find and book a space
+              - listitem [ref=e48]:
+                - link "Room schedule" [ref=e49] [cursor=pointer]:
+                  - /url: /workplace/rooms
+                  - img [ref=e51]
+                  - paragraph [ref=e56]: Room schedule
+              - listitem [ref=e57]:
+                - link "Personal space bookings" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/my-bookings
+                  - img [ref=e60]
+                  - paragraph [ref=e64]: Personal space bookings
+              - listitem [ref=e65]:
+                - link "Meeting booking management" [ref=e66] [cursor=pointer]:
+                  - /url: /workplace/my-meetings
+                  - img [ref=e68]
+                  - paragraph [ref=e74]: Meeting booking management
+        - link "Return to apps" [ref=e76] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e78]
+          - text: Return to apps
+    - banner [ref=e80]:
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - img [ref=e84]
+          - generic "Workplace" [ref=e89]
+        - navigation "App area switcher" [ref=e92]:
+          - 'link "App management: Workplace" [ref=e94] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e96]
+            - generic [ref=e99]: App management
+        - generic [ref=e100]:
+          - button "Search DWP" [ref=e102] [cursor=pointer]:
+            - img [ref=e103]
+          - generic [ref=e106]:
+            - button "Enter full screen" [ref=e107] [cursor=pointer]:
+              - img [ref=e108]
+            - generic "0 actionable notifications, 0 total unread" [ref=e114]:
+              - button "0 actionable notifications, 0 total unread" [ref=e115] [cursor=pointer]:
+                - generic [ref=e116]:
+                  - img [ref=e117]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e121] [cursor=pointer]':
+            - generic [ref=e122]: T
+            - img [ref=e123]
+    - main [ref=e125]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - text: Hybrid workplace
+            - heading "Find a space" [level=1] [ref=e129]
+            - paragraph [ref=e130]: Reserve desks, meeting rooms, lockers, and workspaces from floor maps across headquarters and shared offices.
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - img [ref=e134]
+              - generic [ref=e138]: Pangyo HQ · 12F
+            - generic [ref=e140]: 0 pass initial booking checks
+        - status [ref=e141]:
+          - img [ref=e143]
+          - generic [ref=e145]: Your current role can view availability but cannot create Workplace bookings.
+        - generic [ref=e147]:
+          - region "Space search criteria" [ref=e148]:
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e151]: Search spaces, neighborhoods, or amenities
+                - generic [ref=e152]:
+                  - img [ref=e154]
+                  - textbox "Search spaces, neighborhoods, or amenities" [ref=e157]
+                  - group:
+                    - generic: Search spaces, neighborhoods, or amenities
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - generic [ref=e160]: Date
+                  - group "Date" [ref=e161]:
+                    - generic [ref=e162]:
+                      - generic [ref=e163]:
+                        - spinbutton "Month" [ref=e164]: "08"
+                        - text: /
+                      - generic [ref=e165]:
+                        - spinbutton "Day" [ref=e166]: "19"
+                        - text: /
+                      - spinbutton "Year" [ref=e168]: "2026"
+                    - button "Choose date, selected date is Aug 19, 2026" [ref=e170] [cursor=pointer]:
+                      - img [ref=e171]
+                    - group:
+                      - generic: Date
+                    - textbox [ref=e173]: 08/19/2026
+                - generic [ref=e174]:
+                  - generic [ref=e175]: Start time
+                  - generic [ref=e176]:
+                    - combobox "Start time 09:30" [ref=e177] [cursor=pointer]: 09:30
+                    - textbox: 09:30
+                    - img
+                    - group:
+                      - generic: Start time
+                - generic [ref=e178]:
+                  - generic [ref=e179]: Duration
+                  - generic [ref=e180]:
+                    - combobox "Duration 60 min" [ref=e181] [cursor=pointer]: 60 min
+                    - textbox: "60"
+                    - img
+                    - group:
+                      - generic: Duration
+                - generic [ref=e182]:
+                  - generic [ref=e183]: Site
+                  - generic [ref=e184]:
+                    - combobox "Site Pangyo HQ" [ref=e185] [cursor=pointer]: Pangyo HQ
+                    - textbox: 10000000-0000-0000-0000-000000000001
+                    - img
+                    - group:
+                      - generic: Site
+                - generic [ref=e186]:
+                  - generic [ref=e187]: Floor
+                  - generic [ref=e188]:
+                    - combobox "Floor 12F" [ref=e189] [cursor=pointer]: 12F
+                    - textbox: 20000000-0000-0000-0000-000000000012
+                    - img
+                    - group:
+                      - generic: Floor
+              - status [ref=e190]: 2 of 2 results
+          - generic [ref=e191]:
+            - group "Space type" [ref=e193]:
+              - button "All spaces" [pressed] [ref=e194] [cursor=pointer]
+              - button "Meeting room" [ref=e195] [cursor=pointer]
+              - button "Desk" [ref=e196] [cursor=pointer]
+              - button "Locker" [ref=e197] [cursor=pointer]
+              - button "Parking" [ref=e198] [cursor=pointer]
+              - button "Focus pod" [ref=e199] [cursor=pointer]
+              - button "Phone booth" [ref=e200] [cursor=pointer]
+              - button "Shared equipment" [ref=e201] [cursor=pointer]
+            - generic [ref=e202]:
+              - generic [ref=e203]:
+                - generic [ref=e204]:
+                  - generic: Amenities
+                  - generic [ref=e205]:
+                    - combobox "Amenities" [ref=e206] [cursor=pointer]
+                    - textbox
+                    - img
+                    - group:
+                      - generic: Amenities
+                - generic [ref=e207]:
+                  - generic: Neighborhood
+                  - generic [ref=e208]:
+                    - combobox "Neighborhood" [ref=e209] [cursor=pointer]
+                    - textbox
+                    - img
+                    - group:
+                      - generic: Neighborhood
+                - generic [ref=e210] [cursor=pointer]:
+                  - generic [ref=e211]:
+                    - checkbox "Accessible spaces only" [ref=e212]
+                    - img [ref=e213]
+                  - generic [ref=e215]: Accessible spaces only
+              - generic [ref=e216]:
+                - generic [ref=e217]:
+                  - generic [ref=e218]: Sort
+                  - generic [ref=e219]:
+                    - combobox "Sort Initial booking checks first" [ref=e220] [cursor=pointer]: Initial booking checks first
+                    - textbox: availability
+                    - img
+                    - group:
+                      - generic: Sort
+                - group [ref=e221]:
+                  - generic "Map view is available only when an actual floor plan is registered." [ref=e222]:
+                    - button "Map view" [disabled]:
+                      - img
+                  - button "List view" [pressed] [ref=e223] [cursor=pointer]:
+                    - img [ref=e224]
+        - region "Pangyo HQ" [ref=e225]:
+          - generic [ref=e226]:
+            - generic [ref=e227]:
+              - img [ref=e228]
+              - generic [ref=e232]:
+                - heading "Pangyo HQ" [level=2] [ref=e233]
+                - text: 12F · 2 results
+            - generic "Space status legend" [ref=e234]:
+              - generic [ref=e237]: Open by reservation state
+              - generic [ref=e240]: Occupied
+              - generic [ref=e243]: My booking
+              - generic [ref=e246]: Assigned
+              - generic [ref=e249]: Drop-in
+              - generic [ref=e252]: Unavailable
+          - alert [ref=e253]:
+            - img [ref=e255]
+            - generic [ref=e259]:
+              - heading "A floor plan has not been registered for this floor" [level=6] [ref=e260]
+              - paragraph [ref=e261]: Use the list to review space details and availability.
+          - generic [ref=e262]:
+            - button "Focus desk 12 Desk · Focus zone · MONITOR · STANDING Open by reservation state Booking unavailable" [ref=e263] [cursor=pointer]:
+              - img [ref=e266]
+              - img [ref=e269]
+              - generic [ref=e271]:
+                - heading "Focus desk 12" [level=6] [ref=e272]
+                - generic [ref=e273]: Desk · Focus zone · MONITOR · STANDING
+              - generic [ref=e274]:
+                - generic [ref=e276]: Open by reservation state
+                - generic [ref=e278]: Booking unavailable
+            - button "Focus desk 13 Desk · Focus zone · MONITOR · STANDING Open by reservation state Booking unavailable" [ref=e279] [cursor=pointer]:
+              - img [ref=e282]
+              - img [ref=e285]
+              - generic [ref=e287]:
+                - heading "Focus desk 13" [level=6] [ref=e288]
+                - generic [ref=e289]: Desk · Focus zone · MONITOR · STANDING
+              - generic [ref=e290]:
+                - generic [ref=e292]: Open by reservation state
+                - generic [ref=e294]: Booking unavailable
+  - generic "Open DWAI·ON" [ref=e296]:
+    - button "Open DWAI·ON" [ref=e297] [cursor=pointer]
+```

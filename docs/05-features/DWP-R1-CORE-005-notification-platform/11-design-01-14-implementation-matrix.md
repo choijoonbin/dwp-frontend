@@ -1,6 +1,6 @@
 # 알림 Design 01-14 구현 매트릭스
 
-기준일: 2026-09-09. 사용자가 전달한 Stitch 결과물 01-14를 최종 디자인 기준으로 삼되,
+기준일: 2026-09-11. 사용자가 전달한 Stitch 결과물 01-14를 최종 디자인 기준으로 삼되,
 DWP 공통 셸, 실제 권한, Notification API와 원천 앱의 업무 소유권을 보존해 구현한 추적 문서다.
 화면에 보이는 성공 상태나 명령을 fixture만으로 만들어 운영 기능처럼 표시하지 않는다.
 
@@ -32,11 +32,35 @@ surface, PAGE/DATA/ACTION 권한 경계를 공유하지 않고 각자 fail-close
 - 화면 구조와 작업 우선순위는 도입하되 Calendar, Chronos, 가상 AI 점수 같은 참조 제품 데이터는
   DWP 데이터인 것처럼 복제하지 않았다.
 - 데스크톱은 비교가 필요한 Center·관리자 카탈로그를 분할 화면으로 제공하고, 모바일은 목록과
-  상세을 한 번에 하나씩 보여준다.
+  상세를 한 번에 하나씩 보여준다.
 - 선택 카드와 상세 패널이 동시에 보일 때 동일한 Primary Action을 중복 노출하지 않는다.
 - 모바일 운영 지표는 넓은 표의 가로 스크롤 대신 QoS lane·Provider 카드로 모든 열을 노출한다.
 - 임의 재전송은 중복·권한 상승·부작용을 만들 수 있어 버튼만 만들지 않았다. 현재는 재검사,
   감사 증적, 정책·계약·템플릿 정본 이동까지 제공한다.
+
+## 공통 화면 수용 기준
+
+- 사용자 홈·센터·설정과 관리자 개요·계약·정책·템플릿·전달·억제의 9개 경로는 모두
+  `NotificationPageFrame`을 사용한다. 페이지마다 별도 `1200/1600/1720px` 최대 폭을 겹쳐
+  적용하지 않으며 DWP `PageCanvas workspace`의 동일한 좌우 기준선을 따른다.
+- 홈은 검색·실시간 상태, KPI 필터, 업무 브리핑, 우선 조치 스트림과 앱별·수신 상태 레일의
+  위계를 유지한다. 카드의 강조는 긴급도와 업무 유형에만 사용하고 장식용 색상은 추가하지 않는다.
+- 센터는 데스크톱 master-detail과 모바일 목록/상세 전환을 유지하며 필터·일괄 처리·저장 보기와
+  상세 행동의 경계를 분리한다.
+- 설정은 별도의 좁은 내부 본문 폭을 만들지 않는다. 설정군 바로가기는 상단 가로 작업 탭으로
+  제공하고, 1199px 이하에서는 선택한 설정군만 노출해 모바일 전체 페이지가 불필요하게 길어지지
+  않도록 한다. 모바일 첫 화면은 4개 핵심 수신 상태를 먼저 보여주고 영속 저장소·실시간 동기화·기기
+  연결 진단은 명시적으로 펼쳐 본다. 모든 상태는 실제 API 결과만 표시한다.
+- 관리자 화면은 공통 헤딩과 기준선을 공유하되 운영 개요는 조치 대기열을 추이보다 먼저 배치하고,
+  계약/정책/템플릿은 비교·검토 워크벤치, 전달/억제는 조사·통제 워크벤치로 시각 언어와 의미 아이콘을
+  구분한다. 백엔드 운영 Finding은 안정적인 `findingId`를 현지화 키로 사용하고 미등록 항목은 원문으로
+  안전하게 폴백한다.
+- `notification-design-completion.spec.ts`는 1920px에서 9개 경로의 좌우 inset과 헤딩 정렬을
+  수치로 검증한다. 기존 Notification E2E는 320/390/1440px, 200% 유효 폭, 키보드와 접근성,
+  모바일 목록/상세 및 설정 탭 전환을 함께 검증한다.
+- 2026-09-11 독립 디자인 전문가 재감사에서는 P0가 없었다. 발견된 P1 3건(홈 보조 조회 실패
+  노출, 개인정보 설정 확정 전 컨텍스트 차단, 모바일 직접 상세 실패 시 복귀)과 P2 1건(데스크톱
+  스크롤 위치의 모바일 설정군 연속성)은 각각 실행 회귀와 함께 보정했다.
 
 ## 검증 경계
 
@@ -49,27 +73,26 @@ surface, PAGE/DATA/ACTION 권한 경계를 공유하지 않고 각자 fail-close
 - Email, Push, Teams, Slack Provider의 Production Credential·HA·부하·DR 증거는 외부 환경 Gate다.
   비활성 채널은 UI에서 성공으로 표시하지 않는다.
 
-### 2026-09-09 실행 결과
+### 2026-09-11 실행 결과
 
-| Gate                                    | 결과                                         |
-| --------------------------------------- | -------------------------------------------- |
-| Notification 단위·라우트 검사           | 13 files, 66 tests PASS                      |
-| 홈·센터·설정·관리 브라우저 E2E          | 적용 가능 46개 PASS, 프로젝트 조건 42개 skip |
-| TypeScript와 Notification scoped ESLint | PASS, 오류·경고 0                            |
-| Notification source-size·design-system  | PASS, 알림 소유 위반 0                       |
-| i18n·Display Dictionary                 | PASS                                         |
-| Production Vite compile                 | PASS, 5,219 modules                          |
-| Notification backend `check`            | 255 tests, 실패·오류 0, 환경 의존 6 skipped  |
+| Gate                                    | 결과                                              |
+| --------------------------------------- | ------------------------------------------------- |
+| Notification 단위 검사                  | 10 files, 45 tests PASS                           |
+| 홈·센터·설정·관리 브라우저 E2E          | 49/49 PASS                                        |
+| 공통 기준선·반응형 디자인 E2E           | 사용자·관리자 9개 경로, 1920/1440/390/320px PASS  |
+| TypeScript와 Notification scoped ESLint | PASS, 오류·경고 0                                 |
+| Notification source-size                | PASS, 신규 파일 1,000줄 이하                      |
+| Notification design-system·i18n         | 알림 소유 신규 위반 0                             |
+| Production Vite compile                 | PASS                                              |
+| 실제 계정 브라우저 점검                 | 설정·전달 운영 로드 및 Finding 한국어 현지화 PASS |
 
 브라우저 묶음은 320/390/1440px, 모바일 직접 상세 URL, 200% 유효 폭,
 light/dark/high-contrast, 키보드, 권한 회수, SSE cursor reset, partial/offline, long text와
 Messenger 답장 실패·재시도를 포함한다.
-고정 production preview에서 45개를 검증했고, 동적 모듈 실패 주입 1개는 Vite 개발 서버에서
-별도로 검증했다. 최신 공유 트리의 전체 release build는 알림 밖 Dwaion feature boundary,
-production reachability, source-size, design-system 회귀 109건과 공통 initial bundle budget
-때문에 아직 닫히지 않았다. initial 합계는 raw 1,982.6/1,074.2 KiB,
-gzip 564.7/317.4 KiB, 7/5 requests다. 알림 구현 완료와 전체 제품 출시 Gate를 혼동하지
-않는다.
+고정 production preview에서 48개를 검증했고, 정적 번들에서 수행할 수 없는 동적 모듈 실패 주입
+1개는 Vite 개발 서버에서 별도로 통과했다. 전체 공유 트리의 공통 design-system/i18n baseline은
+다른 제품의 동시 변경 소유자가 ratchet한다. 알림 신규 위반은 없으며 알림 구현 완료와 전체 제품
+출시 Gate를 혼동하지 않는다.
 
 ## 의사결정이 필요한 후속
 

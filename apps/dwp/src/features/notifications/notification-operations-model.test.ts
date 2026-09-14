@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  localizeNotificationOperationalFindings,
   notificationOperationalFindingRoute,
   selectNotificationOperationalFinding,
 } from './notification-operations-model';
@@ -43,5 +44,17 @@ describe('notification operations model', () => {
     expect(
       notificationOperationalFindingRoute(finding('delivery-1', 'DELIVERY', 'https://invalid.test'))
     ).toBeNull();
+  });
+
+  it('localizes stable platform findings and preserves unknown backend copy', () => {
+    const known = finding('external-delivery-disabled', 'DELIVERY');
+    const unknown = finding('provider-added-later', 'DELIVERY');
+    const localized = localizeNotificationOperationalFindings(
+      [known, unknown],
+      (key, { defaultValue }) => (key.endsWith('.title') ? '현지화 제목' : defaultValue)
+    );
+
+    expect(localized[0]).toMatchObject({ title: '현지화 제목', detail: 'detail' });
+    expect(localized[1]).toBe(unknown);
   });
 });

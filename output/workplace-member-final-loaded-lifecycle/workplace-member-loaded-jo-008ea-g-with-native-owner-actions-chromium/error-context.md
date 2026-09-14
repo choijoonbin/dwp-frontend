@@ -1,0 +1,81 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e13]: Workplace
+          - generic [ref=e14]:
+            - button [ref=e16] [cursor=pointer]:
+              - img [ref=e17]
+            - button [ref=e23] [cursor=pointer]:
+              - img [ref=e25]
+            - button [ref=e29] [cursor=pointer]:
+              - generic [ref=e30]: T
+              - img [ref=e31]
+            - button [ref=e35] [cursor=pointer]
+        - navigation [ref=e41]:
+          - link [ref=e43] [cursor=pointer]:
+            - /url: /workplace/admin/overview
+            - img [ref=e45]
+            - generic [ref=e48]: Manage
+      - main [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - text: My workplace
+              - heading [level=1] [ref=e53]: My space bookings
+              - paragraph [ref=e54]: Manage reservations, check-in, and release for desks, lockers, pods, and shared resources.
+            - link [ref=e56] [cursor=pointer]:
+              - /url: /workplace/explore
+              - text: Find a space
+          - generic [ref=e58]:
+            - tablist [ref=e61]:
+              - tab [selected] [ref=e62] [cursor=pointer]: Upcoming
+              - tab [ref=e63] [cursor=pointer]: Past
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - heading [level=2] [ref=e69]: Focus desk 12
+                  - generic [ref=e71]: Desk
+                  - generic [ref=e73]: Reserved
+                - generic [ref=e74]:
+                  - generic [ref=e75]:
+                    - img [ref=e76]
+                    - paragraph [ref=e79]: Aug 19, 2026, 9:30 AM - Aug 19, 2026, 10:30 AM
+                  - generic [ref=e80]:
+                    - img [ref=e81]
+                    - paragraph [ref=e84]: Pangyo HQ · 12F
+                - paragraph [ref=e85]: Loaded native owner journey
+                - button [ref=e86] [cursor=pointer]: View detail
+              - generic [ref=e87]:
+                - button [ref=e88] [cursor=pointer]:
+                  - img [ref=e90]
+                  - text: Check in
+                - button [ref=e93] [cursor=pointer]:
+                  - img [ref=e95]
+                  - text: Change reservation
+                - button [ref=e98] [cursor=pointer]:
+                  - img [ref=e100]
+                  - text: Cancel booking
+  - alertdialog "Cancel this space booking?" [ref=e106]:
+    - heading "Cancel this space booking?" [level=2] [ref=e107]
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - img [ref=e111]
+        - paragraph [ref=e113]: The selected space and time become available immediately.
+      - generic [ref=e115]:
+        - paragraph [ref=e116]: Focus desk 12
+        - paragraph [ref=e117]: Pangyo HQ · 12F
+        - paragraph [ref=e118]: Aug 19, 2026, 9:30 AM – Aug 19, 2026, 10:30 AM
+    - generic [ref=e119]:
+      - button "Keep" [active] [ref=e120] [cursor=pointer]: Keep
+      - button "Cancel booking" [ref=e121] [cursor=pointer]
+```

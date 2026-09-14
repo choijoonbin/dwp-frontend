@@ -44,6 +44,7 @@ export async function mockApprovalHighRiskNetwork(
     oidcAuthorizationPath = '/auth/oidc/callback?code=e2e-code&state=e2e-state',
     continuationExpiresAt = '2026-08-25T00:00:00Z',
     providerSelectionKeys,
+    decisionRevision = DECISION_REVISION,
   }: {
     commandPath: string;
     commandResult: unknown;
@@ -53,6 +54,7 @@ export async function mockApprovalHighRiskNetwork(
     oidcAuthorizationPath?: string;
     continuationExpiresAt?: string;
     providerSelectionKeys?: readonly string[];
+    decisionRevision?: string;
   }
 ): Promise<ApprovalHighRiskNetworkObservation> {
   const issuerRequests: Array<{
@@ -116,7 +118,7 @@ export async function mockApprovalHighRiskNetwork(
         ? 'e2e-signed-step-up-challenge'
         : `e2e-signed-step-up-challenge-${issuerRequests.length}`,
       challengeId: `e2e-challenge-jti-${issuerRequests.length}`,
-      decisionRevision: DECISION_REVISION,
+      decisionRevision,
       expiresAt:
         issuedExpiresAt[Math.min(issuerRequests.length - 1, issuedExpiresAt.length - 1)] ??
         '2026-08-25T00:00:00Z',
@@ -211,7 +213,7 @@ export async function mockApprovalHighRiskNetwork(
   await context.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
       contractVersion: 'product-surfaces/v2',
-      decisionRevision: DECISION_REVISION,
+      decisionRevision,
       sourceRevisions: {},
       activeAccessMode: 'NORMAL',
       generatedAt: '2026-08-24T00:00:00Z',

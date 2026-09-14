@@ -1,0 +1,74 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic "Workplace" [ref=e13]
+        - generic [ref=e14]:
+          - button "Search DWP" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+          - generic "0 actionable notifications, 0 total unread" [ref=e22]:
+            - button "0 actionable notifications, 0 total unread" [ref=e23] [cursor=pointer]:
+              - generic [ref=e24]:
+                - img [ref=e25]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e29] [cursor=pointer]':
+            - generic [ref=e30]: T
+            - img [ref=e31]
+          - generic "Open DWAI·ON" [ref=e34]:
+            - button "Open DWAI·ON" [ref=e35] [cursor=pointer]
+      - navigation "App area switcher" [ref=e41]:
+        - 'link "App management: Workplace" [ref=e43] [cursor=pointer]':
+          - /url: /workplace/admin/overview
+          - img [ref=e45]
+          - generic [ref=e48]: Manage
+    - main [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - text: My workplace
+            - heading "My space bookings" [level=1] [ref=e53]
+            - paragraph [ref=e54]: Manage reservations, check-in, and release for desks, lockers, pods, and shared resources.
+          - link "Find a space" [ref=e56] [cursor=pointer]:
+            - /url: /workplace/explore
+        - generic [ref=e58]:
+          - tablist [ref=e61]:
+            - tab "Upcoming" [selected] [ref=e62] [cursor=pointer]
+            - tab "Past" [ref=e63] [cursor=pointer]
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - heading "Focus desk 12" [level=2] [ref=e69]
+                - generic [ref=e71]: Desk
+                - generic [ref=e73]: Reserved
+              - generic [ref=e74]:
+                - generic [ref=e75]:
+                  - img [ref=e76]
+                  - paragraph [ref=e79]: Aug 19, 2026, 9:30 AM - Aug 19, 2026, 10:30 AM
+                - generic [ref=e80]:
+                  - img [ref=e81]
+                  - paragraph [ref=e84]: Pangyo HQ · 12F
+              - paragraph [ref=e85]: Loaded native owner journey
+              - button "View detail" [ref=e86] [cursor=pointer]
+            - generic [ref=e87]:
+              - button "Check in" [ref=e88] [cursor=pointer]:
+                - img [ref=e90]
+                - text: Check in
+              - button "Change reservation" [ref=e93] [cursor=pointer]:
+                - img [ref=e95]
+                - text: Change reservation
+              - button "Cancel booking" [ref=e98] [cursor=pointer]:
+                - img [ref=e100]
+                - text: Cancel booking
+  - alert:
+    - generic:
+      - img
+    - generic: The workspace was booked.
+```

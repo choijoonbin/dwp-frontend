@@ -198,8 +198,15 @@ export function workplaceAvailability(
   bookability: WorkplaceBookabilityContext
 ): WorkplaceHomeAvailability[] {
   if (!explore?.selectedFloor) return [];
-  const occupiedIds = new Set(explore.occupancy.map((item) => item.resourceId));
-  const context = { ...bookability, occupancy: explore.occupancy };
+  const occupiedIds = new Set([
+    ...explore.occupancy.map((item) => item.resourceId),
+    ...(explore.closures ?? []).map((item) => item.resourceId),
+  ]);
+  const context = {
+    ...bookability,
+    occupancy: explore.occupancy,
+    closures: explore.closures ?? [],
+  };
   return RESOURCE_ORDER.map((type) => {
     const resources = explore.resources.filter(
       (resource) => resource.type === type && visibleResource(resource)

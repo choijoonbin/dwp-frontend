@@ -35,13 +35,25 @@ export function RoomsPageHeading({
       alignItems={{ xs: 'flex-start', md: 'flex-end' }}
       justifyContent="space-between"
       gap={2}
-      sx={{ mb: 3 }}
+      sx={{ mb: 2.5 }}
     >
       <Box sx={{ minWidth: 0 }}>
         <Typography variant="overline" sx={{ color: 'var(--dwp-product-accent)' }}>
           {eyebrow}
         </Typography>
-        <Typography component="h1" variant="h4" fontWeight={800} sx={{ mt: 0.25 }}>
+        <Typography
+          component="h1"
+          variant="h4"
+          fontWeight={(theme) => theme.typography.fontWeightBold}
+          sx={{
+            mt: 0.25,
+            fontSize: (theme) => ({
+              xs: theme.typography.h5.fontSize,
+              md: theme.typography.h4.fontSize,
+            }),
+            letterSpacing: '-0.035em',
+          }}
+        >
           {title}
         </Typography>
         <Typography color="text.secondary" sx={{ mt: 0.75, maxWidth: 760 }}>

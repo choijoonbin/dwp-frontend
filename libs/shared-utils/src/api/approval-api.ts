@@ -1,8 +1,35 @@
 import { axiosInstance } from '../axios-instance';
+import { assertSupportedApprovalFormSchema } from './approval-management-contract';
+import { readApprovalInformationRound } from './approval-information-contract';
+import { approvalInformationWireBody } from './approval-information-wire-body';
+import type { ApprovalInformationWireBodyCapture } from './approval-information-wire-body';
+import type { ApprovalInformationRound } from './approval-information-contract';
+export type { ApprovalInformationRound } from './approval-information-contract';
+import { APPROVAL_DOCUMENT_ACTION_CONTRACTS } from './approval-document-action-contracts';
+import { APPROVAL_EXTENSION_ACTION_CONTRACTS } from './approval-extension-action-contracts';
+import { APPROVAL_RELEASE10_ACTION_CONTRACTS } from './approval-release10-action-contracts';
+import {
+  captureApprovalTypedWorkflowDefinition,
+  readApprovalTypedWorkflowDetail,
+} from './approval-workflow-typed-contract';
+import type {
+  ApprovalTypedWorkflowDefinition,
+  ApprovalTypedWorkflowDetail,
+} from './approval-workflow-typed-contract';
+import {
+  readApprovalQuorumTaskSnapshot,
+  readApprovalQuorumVotePrecondition,
+} from './approval-quorum-contract';
+import type {
+  ApprovalQuorumTaskSnapshot,
+  ApprovalQuorumVotePrecondition,
+} from './approval-quorum-contract';
 import {
   approvalHighRiskMutationExecutionConfig,
   approvalMutationExecutionConfig,
 } from './approval-governed-mutation';
+
+import type { ApprovalContentAccess } from './approval-content-access';
 
 import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApprovalMutationExecution } from './approval-governed-mutation';
@@ -20,21 +47,26 @@ import type {
   ApprovalWorkflow,
   ApprovalWorkflowDetail,
   ApprovalWorkflowStep,
+  ApprovalTypedFormSchema,
 } from './approval-management-contract';
 import type { ApiResponse } from '../types';
+import type { ApprovalRequest } from './approval-request-contract';
 
 export type * from './approval-management-contract';
+export type * from './approval-workflow-typed-contract';
+export { readApprovalTypedWorkflowDetail } from './approval-workflow-typed-contract';
+export {
+  isApprovalTypedFormSchema,
+  assertSupportedApprovalFormSchema,
+} from './approval-management-contract';
+export type * from './approval-request-contract';
 export * from './approval-management-api';
+export * from './approval-draft-api';
+export * from './approval-search-api';
+export { getApprovalTasks } from './approval-task-read-api';
+export type * from './approval-content-access';
+export { resolveApprovalContentAccess } from './approval-content-access';
 
-export type ApprovalRequestStatus =
-  | 'DRAFT'
-  | 'SUBMITTED'
-  | 'IN_REVIEW'
-  | 'NEEDS_INFO'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'WITHDRAWN'
-  | 'CANCELLED';
 export type ApprovalMetrics = {
   pending: number;
   dueToday: number;
@@ -61,39 +93,24 @@ export type ApprovalTimelineEvent = {
 
 export type ApprovalTaskDetail = {
   task: ApprovalTask;
+  contentAccess: ApprovalContentAccess;
   payload: Record<string, unknown>;
   formSchema?: ApprovalFormSchema;
   timeline: ApprovalTimelineEvent[];
   canClaim: boolean;
   canDecide: boolean;
   selfApprovalBlocked: boolean;
-};
-
-export type ApprovalRequest = {
-  requestId: string;
-  requestNumber: string;
-  title: string;
-  summary: string;
-  workflowNameKo: string;
-  workflowNameEn: string;
-  currentStepKey?: string | null;
-  currentStepName?: string | null;
-  currentStepSequence?: number | null;
-  totalSteps: number;
-  status: ApprovalRequestStatus;
-  priority: ApprovalPriority;
-  dataClassification: string;
-  latestInformationRequest?: string | null;
-  submittedAt?: string | null;
-  dueAt?: string | null;
-  completedAt?: string | null;
-  version: number;
+  quorum?: ApprovalQuorumTaskSnapshot | null;
 };
 
 export type ApprovalRequestDetail = {
+  informationGeneration?: number | null;
+  informationRound?: ApprovalInformationRound | null;
   request: ApprovalRequest;
   workflowId: string;
   formId: string;
+  formVersionId?: string | null;
+  formSchemaSha256?: string | null;
   payload: Record<string, unknown>;
   formSchema?: ApprovalFormSchema;
   timeline: ApprovalTimelineEvent[];
@@ -177,6 +194,9 @@ export type ApprovalGovernedMutationApiContract = Readonly<{
 }>;
 
 export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
+  ...APPROVAL_DOCUMENT_ACTION_CONTRACTS,
+  ...APPROVAL_EXTENSION_ACTION_CONTRACTS,
+  ...APPROVAL_RELEASE10_ACTION_CONTRACTS,
   {
     apiFunction: 'claimApprovalTask',
     routeContractKey: 'route.approvals.work.task-claim.action',
@@ -206,6 +226,24 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
     routeContractKey: 'route.approvals.work.request-submit.action',
     method: 'POST',
     path: `${base}/requests/{requestId}/submit`,
+  },
+  {
+    apiFunction: 'recoverApprovalDraft',
+    routeContractKey: 'route.approvals.work.request-draft-recover.action',
+    method: 'POST',
+    path: `${base}/requests/{requestId}/draft/recover`,
+  },
+  {
+    apiFunction: 'deleteApprovalDraft',
+    routeContractKey: 'route.approvals.work.request-draft-delete.action',
+    method: 'POST',
+    path: `${base}/requests/{requestId}/draft/delete`,
+  },
+  {
+    apiFunction: 'restoreApprovalDraft',
+    routeContractKey: 'route.approvals.work.request-draft-restore.action',
+    method: 'POST',
+    path: `${base}/requests/{requestId}/draft/restore`,
   },
   {
     apiFunction: 'respondToApprovalInformationRequest',
@@ -300,21 +338,18 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
 ] as const satisfies readonly ApprovalGovernedMutationApiContract[];
 
 export function getApprovalHome(): Promise<ApprovalHome>;
-export function getApprovalHome(contextScopeKey: string): Promise<ApprovalHome>;
-export async function getApprovalHome(contextScopeKey?: string): Promise<ApprovalHome> {
+export function getApprovalHome(
+  contextScopeKey: string,
+  signal?: AbortSignal
+): Promise<ApprovalHome>;
+export async function getApprovalHome(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalHome> {
   const response = await axiosInstance.get<ApiResponse<ApprovalHome>>(`${base}/home`, {
     contextScopeKey,
+    signal,
   });
-  return response.data.data;
-}
-export async function getApprovalTasks(
-  view = 'INBOX',
-  contextScopeKey?: string
-): Promise<ApprovalTask[]> {
-  const response = await axiosInstance.get<ApiResponse<ApprovalTask[]>>(
-    `${base}/tasks?view=${encodeURIComponent(view)}`,
-    { contextScopeKey }
-  );
   return response.data.data;
 }
 export async function getApprovalTask(
@@ -326,6 +361,13 @@ export async function getApprovalTask(
     `${base}/tasks/${taskId}`,
     { contextScopeKey, signal }
   );
+  if (response.data.data.formSchema)
+    assertSupportedApprovalFormSchema(response.data.data.formSchema);
+  if (response.data.data.quorum != null)
+    return {
+      ...response.data.data,
+      quorum: readApprovalQuorumTaskSnapshot(response.data.data.quorum),
+    };
   return response.data.data;
 }
 export async function claimApprovalTask(
@@ -341,6 +383,13 @@ export async function claimApprovalTask(
     { expectedVersion },
     approvalMutationExecutionConfig(execution)
   );
+  if (response.data.data.formSchema)
+    assertSupportedApprovalFormSchema(response.data.data.formSchema);
+  if (response.data.data.quorum != null)
+    return {
+      ...response.data.data,
+      quorum: readApprovalQuorumTaskSnapshot(response.data.data.quorum),
+    };
   return response.data.data;
 }
 export async function decideApprovalTask(
@@ -349,25 +398,44 @@ export async function decideApprovalTask(
     decision: 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
     comment?: string;
     expectedVersion: number;
+    quorum?: ApprovalQuorumVotePrecondition;
   },
   execution: ApprovalMutationExecution
 ): Promise<ApprovalTaskDetail> {
+  if (input.quorum != null) readApprovalQuorumVotePrecondition(input.quorum);
   const response = await axiosInstance.post<ApiResponse<ApprovalTaskDetail>, typeof input>(
     `${base}/tasks/${taskId}/decisions`,
     input,
     approvalMutationExecutionConfig(execution)
   );
+  if (response.data.data.formSchema)
+    assertSupportedApprovalFormSchema(response.data.data.formSchema);
+  if (response.data.data.quorum != null)
+    return {
+      ...response.data.data,
+      quorum: readApprovalQuorumTaskSnapshot(response.data.data.quorum),
+    };
   return response.data.data;
 }
-export async function getApprovalRequests(view = 'SUBMITTED'): Promise<ApprovalRequest[]> {
+export async function getApprovalRequests(
+  view = 'SUBMITTED',
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalRequest[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalRequest[]>>(
-    `${base}/requests?view=${encodeURIComponent(view)}`
+    `${base}/requests?view=${encodeURIComponent(view)}`,
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
-export async function getApprovalRequest(requestId: string): Promise<ApprovalRequest> {
+export async function getApprovalRequest(
+  requestId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalRequest> {
   const response = await axiosInstance.get<ApiResponse<ApprovalRequest>>(
-    `${base}/requests/${requestId}`
+    `${base}/requests/${requestId}`,
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
@@ -380,7 +448,22 @@ export async function getApprovalRequestDetail(
     `${base}/requests/${requestId}/detail`,
     { contextScopeKey, signal }
   );
-  return response.data.data;
+  const data = response.data.data;
+  const round = readApprovalInformationRound(data.informationRound);
+  if (
+    (data.informationGeneration != null &&
+      (!Number.isSafeInteger(data.informationGeneration) || data.informationGeneration < 1)) ||
+    (round &&
+      (data.informationGeneration !== round.sourceGeneration ||
+        data.request.status !== 'NEEDS_INFO' ||
+        (data.formSchemaSha256 != null &&
+          data.formSchemaSha256 !== round.pins.formSchemaSha256))) ||
+    (data.informationGeneration != null && data.request.status === 'NEEDS_INFO' && !round)
+  )
+    throw new Error('Invalid approval information source');
+  if (response.data.data.formSchema)
+    assertSupportedApprovalFormSchema(response.data.data.formSchema);
+  return round ? { ...data, informationRound: round } : data;
 }
 export async function createApprovalRequest(
   input: {
@@ -391,12 +474,13 @@ export async function createApprovalRequest(
     priority: ApprovalPriority;
     payload: Record<string, unknown>;
   },
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: { idempotencyKey: string }
 ): Promise<ApprovalRequest> {
   const response = await axiosInstance.post<ApiResponse<ApprovalRequest>, typeof input>(
     `${base}/requests`,
     input,
-    approvalMutationExecutionConfig(execution)
+    approvalRequestExecutionConfig(execution, options)
   );
   return response.data.data;
 }
@@ -411,19 +495,41 @@ export async function updateApprovalDraft(
     payload: Record<string, unknown>;
     expectedVersion: number;
   },
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: { idempotencyKey: string }
 ): Promise<ApprovalRequestDetail> {
   const response = await axiosInstance.put<ApiResponse<ApprovalRequestDetail>, typeof input>(
     `${base}/requests/${requestId}/draft`,
     input,
-    approvalMutationExecutionConfig(execution)
+    approvalRequestExecutionConfig(execution, options)
   );
+  if (response.data.data.formSchema)
+    assertSupportedApprovalFormSchema(response.data.data.formSchema);
   return response.data.data;
+}
+
+function approvalRequestExecutionConfig(
+  execution: ApprovalMutationExecution,
+  options?: { idempotencyKey: string; beforeDispatch?: () => void }
+) {
+  const config = approvalMutationExecutionConfig(execution);
+  if (!options) return config;
+  const key = options.idempotencyKey;
+  const governedKey = config.headers['Idempotency-Key'];
+  if (!/^[A-Za-z0-9._:-]{1,120}$/.test(key) || (governedKey && governedKey !== key)) {
+    throw new Error('Invalid approval request command identity');
+  }
+  return {
+    ...config,
+    headers: { ...config.headers, 'Idempotency-Key': key },
+    beforeDispatch: options.beforeDispatch,
+  };
 }
 export async function submitApprovalRequest(
   requestId: string,
   expectedVersion: number,
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: { idempotencyKey: string }
 ): Promise<ApprovalRequest> {
   const response = await axiosInstance.post<
     ApiResponse<ApprovalRequest>,
@@ -431,7 +537,7 @@ export async function submitApprovalRequest(
   >(
     `${base}/requests/${requestId}/submit`,
     { expectedVersion },
-    approvalMutationExecutionConfig(execution)
+    approvalRequestExecutionConfig(execution, options)
   );
   return response.data.data;
 }
@@ -440,15 +546,35 @@ export async function respondToApprovalInformationRequest(
   message: string,
   payload: Record<string, unknown>,
   expectedVersion: number,
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: {
+    idempotencyKey: string;
+    sourceGeneration?: number;
+    beforeDispatch?: () => void;
+    onOriginalWireBody?: ApprovalInformationWireBodyCapture;
+  }
 ): Promise<ApprovalRequest> {
-  const response = await axiosInstance.post<
-    ApiResponse<ApprovalRequest>,
-    { message: string; payload: Record<string, unknown>; expectedVersion: number }
-  >(
+  if (
+    options?.sourceGeneration !== undefined &&
+    (!Number.isSafeInteger(options.sourceGeneration) || options.sourceGeneration < 1)
+  )
+    throw new Error('Invalid approval information generation');
+  const input = Object.freeze({
+    message,
+    payload: structuredClone(payload),
+    expectedVersion,
+    ...(options?.sourceGeneration === undefined
+      ? {}
+      : { sourceGeneration: options.sourceGeneration }),
+  });
+  const config = approvalRequestExecutionConfig(execution, options);
+  const body = options?.onOriginalWireBody
+    ? approvalInformationWireBody(input, options.onOriginalWireBody)
+    : input;
+  const response = await axiosInstance.post<ApiResponse<ApprovalRequest>, typeof body>(
     `${base}/requests/${requestId}/information-response`,
-    { message, payload, expectedVersion },
-    approvalMutationExecutionConfig(execution)
+    body,
+    config
   );
   return response.data.data;
 }
@@ -467,45 +593,70 @@ export async function withdrawApprovalRequest(
   );
   return response.data.data;
 }
-export async function getPublishedApprovalWorkflows(): Promise<ApprovalWorkflow[]> {
+export async function getPublishedApprovalWorkflows(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalWorkflow[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalWorkflow[]>>(
-    `${base}/workflows/published`
+    `${base}/workflows/published`,
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
 export async function getPublishedApprovalWorkflowTemplate(
-  workflowId: string
+  workflowId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<ApprovalRequestTemplate> {
   const response = await axiosInstance.get<ApiResponse<ApprovalRequestTemplate>>(
-    `${base}/workflows/published/${workflowId}/template`
+    `${base}/workflows/published/${workflowId}/template`,
+    { contextScopeKey, signal }
   );
+  assertSupportedApprovalFormSchema(response.data.data.form.schema);
   return response.data.data;
 }
-export async function getPublishedApprovalForms(): Promise<ApprovalForm[]> {
-  const response = await axiosInstance.get<ApiResponse<ApprovalForm[]>>(`${base}/catalog/forms`);
+export async function getPublishedApprovalForms(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalForm[]> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalForm[]>>(`${base}/catalog/forms`, {
+    contextScopeKey,
+    signal,
+  });
   return response.data.data;
 }
 export async function getPublishedApprovalFormTemplate(
-  formId: string
+  formId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<ApprovalRequestTemplate> {
   const response = await axiosInstance.get<ApiResponse<ApprovalRequestTemplate>>(
-    `${base}/catalog/forms/${formId}/template`
+    `${base}/catalog/forms/${formId}/template`,
+    { contextScopeKey, signal }
   );
+  assertSupportedApprovalFormSchema(response.data.data.form.schema);
   return response.data.data;
 }
-export async function getApprovalDelegations(): Promise<ApprovalDelegation[]> {
+export async function getApprovalDelegations(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalDelegation[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalDelegation[]>>(
-    `${base}/delegations`
+    `${base}/delegations`,
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
 export async function searchApprovalDelegationCandidates(
   query: string,
-  limit = 10
+  limit = 10,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<ApprovalDelegationCandidate[]> {
   const search = new URLSearchParams({ query: query.trim(), limit: String(limit) });
   const response = await axiosInstance.get<ApiResponse<ApprovalDelegationCandidate[]>>(
-    `${base}/delegations/candidates?${search.toString()}`
+    `${base}/delegations/candidates?${search.toString()}`,
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
@@ -545,30 +696,83 @@ export type ApprovalWorkflowDraftInput = {
   slaMinutes: number;
   ownerGroupRef: string;
   steps: ApprovalWorkflowStep[];
+  typedDefinition?: never;
 };
-export async function createApprovalWorkflowDraft(
+export type ApprovalTypedWorkflowDraftInput = Omit<
+  ApprovalWorkflowDraftInput,
+  'steps' | 'typedDefinition'
+> & {
+  steps?: never;
+  typedDefinition: ApprovalTypedWorkflowDefinition;
+};
+function captureWorkflowInput<
+  T extends ApprovalWorkflowDraftInput | ApprovalTypedWorkflowDraftInput,
+>(input: T) {
+  if ((input.steps != null) === (input.typedDefinition != null))
+    throw new Error('Exactly one workflow definition is required');
+  if (input.typedDefinition != null) {
+    const typedDefinition = captureApprovalTypedWorkflowDefinition(input.typedDefinition);
+    if (typedDefinition.slaMinutes !== input.slaMinutes)
+      throw new Error('Workflow SLA differs from the definition');
+    return Object.freeze({ ...input, typedDefinition });
+  }
+  if (!Array.isArray(input.steps) || input.steps.length < 1 || input.steps.length > 20)
+    throw new Error('Invalid legacy workflow steps');
+  return input;
+}
+export function createApprovalWorkflowDraft(
+  input: ApprovalTypedWorkflowDraftInput & { workflowKey: string },
+  execution: ApprovalMutationExecution
+): Promise<ApprovalTypedWorkflowDetail>;
+export function createApprovalWorkflowDraft(
   input: ApprovalWorkflowDraftInput & { workflowKey: string },
   execution: ApprovalMutationExecution
-): Promise<ApprovalWorkflowDetail> {
-  const response = await axiosInstance.post<
-    ApiResponse<ApprovalWorkflowDetail>,
-    ApprovalWorkflowDraftInput & { workflowKey: string }
-  >(`${base}/admin/workflows`, input, approvalMutationExecutionConfig(execution));
+): Promise<ApprovalWorkflowDetail>;
+export async function createApprovalWorkflowDraft(
+  input: (ApprovalWorkflowDraftInput | ApprovalTypedWorkflowDraftInput) & { workflowKey: string },
+  execution: ApprovalMutationExecution
+): Promise<ApprovalWorkflowDetail | ApprovalTypedWorkflowDetail> {
+  const captured = captureWorkflowInput(input);
+  const response = await axiosInstance.post<ApiResponse<ApprovalWorkflowDetail>, typeof captured>(
+    `${base}/admin/workflows`,
+    captured,
+    approvalMutationExecutionConfig(execution)
+  );
+  if (captured.typedDefinition != null) {
+    const typed = readApprovalTypedWorkflowDetail(response.data.data);
+    if (!typed) throw new Error('Typed workflow response was downgraded');
+    return typed;
+  }
   return response.data.data;
 }
-export async function updateApprovalWorkflowDraft(
+export function updateApprovalWorkflowDraft(
+  workflowId: string,
+  input: ApprovalTypedWorkflowDraftInput & { expectedVersion: number },
+  execution: ApprovalMutationExecution
+): Promise<ApprovalTypedWorkflowDetail>;
+export function updateApprovalWorkflowDraft(
   workflowId: string,
   input: ApprovalWorkflowDraftInput & { expectedVersion: number },
   execution: ApprovalMutationExecution
-): Promise<ApprovalWorkflowDetail> {
-  const response = await axiosInstance.put<
-    ApiResponse<ApprovalWorkflowDetail>,
-    ApprovalWorkflowDraftInput & { expectedVersion: number }
-  >(
+): Promise<ApprovalWorkflowDetail>;
+export async function updateApprovalWorkflowDraft(
+  workflowId: string,
+  input: (ApprovalWorkflowDraftInput | ApprovalTypedWorkflowDraftInput) & {
+    expectedVersion: number;
+  },
+  execution: ApprovalMutationExecution
+): Promise<ApprovalWorkflowDetail | ApprovalTypedWorkflowDetail> {
+  const captured = captureWorkflowInput(input);
+  const response = await axiosInstance.put<ApiResponse<ApprovalWorkflowDetail>, typeof captured>(
     `${base}/admin/workflows/${workflowId}/draft`,
-    input,
+    captured,
     approvalMutationExecutionConfig(execution)
   );
+  if (captured.typedDefinition != null) {
+    const typed = readApprovalTypedWorkflowDetail(response.data.data);
+    if (!typed) throw new Error('Typed workflow response was downgraded');
+    return typed;
+  }
   return response.data.data;
 }
 export async function publishApprovalWorkflow(
@@ -628,33 +832,18 @@ export async function updateApprovalFormCategory(
 }
 export async function updateApprovalFormDraft(
   formId: string,
-  input: {
-    categoryId: string;
-    nameKo: string;
-    nameEn: string;
-    descriptionKo: string;
-    descriptionEn: string;
-    ownerGroupRef: string;
-    defaultWorkflowId: string;
-    fields: ApprovalFormField[];
-    expectedVersion: number;
-  },
+  input: ApprovalFormDraftInput & { expectedVersion: number },
   execution: ApprovalMutationExecution
 ): Promise<ApprovalFormDetail> {
-  const response = await axiosInstance.put<
-    ApiResponse<ApprovalFormDetail>,
-    {
-      categoryId: string;
-      nameKo: string;
-      nameEn: string;
-      descriptionKo: string;
-      descriptionEn: string;
-      ownerGroupRef: string;
-      defaultWorkflowId: string;
-      fields: ApprovalFormField[];
-      expectedVersion: number;
-    }
-  >(`${base}/admin/forms/${formId}/draft`, input, approvalMutationExecutionConfig(execution));
+  validateApprovalFormDraftInput(input);
+  if (!Number.isSafeInteger(input.expectedVersion) || input.expectedVersion < 0)
+    throw new Error('Invalid approval form version');
+  const response = await axiosInstance.put<ApiResponse<ApprovalFormDetail>, typeof input>(
+    `${base}/admin/forms/${formId}/draft`,
+    input,
+    approvalMutationExecutionConfig(execution)
+  );
+  assertSupportedApprovalFormSchema(response.data.data.schema);
   return response.data.data;
 }
 export type ApprovalFormDraftInput = {
@@ -665,16 +854,31 @@ export type ApprovalFormDraftInput = {
   descriptionEn: string;
   ownerGroupRef: string;
   defaultWorkflowId: string;
-  fields: ApprovalFormField[];
-};
+} & (
+  | { fields: ApprovalFormField[]; typedSchema?: never }
+  | { typedSchema: ApprovalTypedFormSchema; fields?: never }
+);
+
+function validateApprovalFormDraftInput(input: ApprovalFormDraftInput) {
+  if (input.typedSchema !== undefined) {
+    if (input.fields !== undefined) throw new Error('Ambiguous approval form definition');
+    assertSupportedApprovalFormSchema(input.typedSchema);
+    if (input.typedSchema.fields.length < 1 || input.typedSchema.fields.length > 50)
+      throw new Error('Invalid approval form field count');
+  } else if (!Array.isArray(input.fields) || input.fields.length < 1 || input.fields.length > 50) {
+    throw new Error('Invalid approval form field count');
+  }
+}
 export async function createApprovalFormDraft(
   input: ApprovalFormDraftInput & { formKey: string },
   execution: ApprovalMutationExecution
 ): Promise<ApprovalFormDetail> {
+  validateApprovalFormDraftInput(input);
   const response = await axiosInstance.post<
     ApiResponse<ApprovalFormDetail>,
     ApprovalFormDraftInput & { formKey: string }
   >(`${base}/admin/forms`, input, approvalMutationExecutionConfig(execution));
+  assertSupportedApprovalFormSchema(response.data.data.schema);
   return response.data.data;
 }
 export async function publishApprovalForm(
@@ -690,6 +894,7 @@ export async function publishApprovalForm(
     { expectedVersion },
     approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: false })
   );
+  assertSupportedApprovalFormSchema(response.data.data.schema);
   return response.data.data;
 }
 export async function updateApprovalPolicy(
@@ -702,8 +907,10 @@ export async function updateApprovalPolicy(
     changeReason: string;
     expectedVersion: number;
   },
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: { beforeDispatch?: () => void }
 ): Promise<ApprovalPolicy[]> {
+  const body = structuredClone(input);
   const response = await axiosInstance.put<
     ApiResponse<ApprovalPolicy[]>,
     {
@@ -714,28 +921,36 @@ export async function updateApprovalPolicy(
       changeReason: string;
       expectedVersion: number;
     }
-  >(`${base}/admin/policies/${policyId}`, input, approvalMutationExecutionConfig(execution));
+  >(`${base}/admin/policies/${policyId}`, body, {
+    ...approvalMutationExecutionConfig(execution),
+    beforeDispatch: options?.beforeDispatch,
+  });
   return response.data.data;
 }
 export async function publishApprovalPolicy(
   policyId: string,
   input: { expectedVersion: number; reviewComment: string },
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: { beforeDispatch?: () => void }
 ): Promise<ApprovalPolicy[]> {
+  if (execution.mode === 'SECURE' && execution.objectVersion !== input.expectedVersion) {
+    throw new Error('Approval policy version does not match governed authority.');
+  }
+  const body = structuredClone(input);
   const response = await axiosInstance.post<
     ApiResponse<ApprovalPolicy[]>,
     { expectedVersion: number; reviewComment: string }
-  >(
-    `${base}/admin/policies/${policyId}/publish`,
-    input,
-    approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: false })
-  );
+  >(`${base}/admin/policies/${policyId}/publish`, body, {
+    ...approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: false }),
+    beforeDispatch: options?.beforeDispatch,
+  });
   return response.data.data;
 }
 export async function retryApprovalIntegrationDelivery(
   outboxId: string,
   expectedVersion: number,
-  execution: ApprovalMutationExecution
+  execution: ApprovalMutationExecution,
+  options?: { beforeDispatch?: () => void }
 ): Promise<ApprovalOperations> {
   if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 0) {
     throw new Error('Approval delivery retry version is invalid.');
@@ -746,7 +961,12 @@ export async function retryApprovalIntegrationDelivery(
   const response = await axiosInstance.post<ApiResponse<ApprovalOperations>, undefined>(
     `${base}/admin/operations/events/${outboxId}/retry`,
     undefined,
-    approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: true })
+    {
+      ...approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: true }),
+      beforeDispatch: options?.beforeDispatch,
+      csrfReplay: 'NEVER',
+    }
   );
+  options?.beforeDispatch?.();
   return response.data.data;
 }

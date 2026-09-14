@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
   ChevronRight,
   ClipboardCheck,
+  LockKeyhole,
   RefreshCw,
   ScrollText,
   ShieldCheck,
@@ -18,6 +19,7 @@ import {
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { InlineFeedback as InlineNotice } from '@dwp-frontend/design-system/components/inline-feedback/inline-feedback';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -29,8 +31,10 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import {
+  localizeNotificationOperationalFindings,
   notificationOperationalFindingRoute,
   selectNotificationOperationalFinding,
 } from './notification-operations-model';
@@ -116,17 +120,26 @@ function FindingList({
               onClick={() => onSelect(finding)}
               sx={{
                 width: 1,
-                minHeight: 92,
+                minHeight: 80,
                 px: 1.5,
                 py: 1.25,
                 display: 'grid',
                 gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-                gap: 1.25,
+                gap: 1,
                 alignItems: 'start',
                 textAlign: 'left',
                 borderBottom: 1,
                 borderColor: 'divider',
                 bgcolor: selected ? 'action.selected' : 'transparent',
+                color: 'text.primary',
+                '& > svg:first-of-type': {
+                  color:
+                    finding.severity === 'CRITICAL'
+                      ? 'error.main'
+                      : finding.severity === 'WARNING'
+                        ? 'warning.main'
+                        : 'info.main',
+                },
                 '&:hover': { bgcolor: 'action.hover' },
               }}
             >
@@ -196,7 +209,16 @@ function FindingDetail({
     <Box
       component="aside"
       data-testid="notification-operation-investigation"
-      sx={{ p: { xs: 1.5, md: 2.25 } }}
+      sx={{
+        p: { xs: 1.5, md: 2 },
+        borderTop: 3,
+        borderColor:
+          finding.severity === 'CRITICAL'
+            ? 'error.main'
+            : finding.severity === 'WARNING'
+              ? 'warning.main'
+              : 'info.main',
+      }}
     >
       <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
         <Chip
@@ -210,24 +232,37 @@ function FindingDetail({
           label={t(`admin.operations.category.${finding.category}`)}
         />
       </Stack>
-      <Typography component="h3" variant="h5" sx={{ mt: 1.5, overflowWrap: 'anywhere' }}>
+      <Typography component="h3" variant="h6" sx={{ mt: 1.25, overflowWrap: 'anywhere' }}>
         {finding.title}
       </Typography>
-      <Typography color="text.secondary" sx={{ mt: 0.75, whiteSpace: 'pre-wrap' }}>
+      <Typography
+        variant="body2"
+        sx={{
+          mt: 1,
+          p: 1.25,
+          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
+          whiteSpace: 'pre-wrap',
+          overflowWrap: 'anywhere',
+        }}
+      >
         {finding.detail}
       </Typography>
 
       <Box
         component="dl"
         sx={{
-          mt: 2.25,
+          m: 0,
+          mt: 1.5,
           py: 0.5,
           borderBlock: 1,
           borderColor: 'divider',
           '& > div': {
             py: 1,
             display: 'grid',
-            gridTemplateColumns: 'minmax(112px, .42fr) minmax(0, 1fr)',
+            gridTemplateColumns: {
+              xs: 'minmax(76px, .4fr) minmax(0, 1fr)',
+              sm: 'minmax(100px, .42fr) minmax(0, 1fr)',
+            },
             gap: 1,
             borderBottom: 1,
             borderColor: 'divider',
@@ -279,7 +314,7 @@ function FindingDetail({
         </Box>
       </Box>
 
-      <Box sx={{ mt: 2 }}>
+      <Box sx={{ mt: 1.5 }}>
         <Typography component="h4" variant="subtitle2">
           {t('admin.operations.investigation.nextTitle')}
         </Typography>
@@ -290,7 +325,12 @@ function FindingDetail({
         </Typography>
       </Box>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ mt: 2 }}>
+      {finding.category === 'DELIVERY' && (
+        <InlineNotice severity="warning" icon={<LockKeyhole size={18} />} sx={{ mt: 1.5 }}>
+          {t('admin.operations.investigation.replayUnavailable')}
+        </InlineNotice>
+      )}
+      <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1.5 }}>
         <ActionButton intent="secondary" startIcon={<RefreshCw size={17} />} onClick={onRefresh}>
           {t('admin.operations.investigation.recheck')}
         </ActionButton>
@@ -319,23 +359,6 @@ function FindingDetail({
           </ActionButton>
         )}
       </Stack>
-
-      {finding.category === 'DELIVERY' && (
-        <Box
-          role="note"
-          sx={{
-            mt: 2,
-            p: 1.25,
-            borderLeft: 3,
-            borderColor: 'warning.main',
-            bgcolor: 'action.hover',
-          }}
-        >
-          <Typography variant="body2">
-            {t('admin.operations.investigation.replayUnavailable')}
-          </Typography>
-        </Box>
-      )}
     </Box>
   );
 }
@@ -343,9 +366,15 @@ function FindingDetail({
 function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
   const { t } = useTranslation('notifications');
   return (
-    <Stack gap={3}>
+    <Stack
+      gap={2}
+      sx={{
+        '& th': { bgcolor: 'action.hover', color: 'text.secondary', typography: 'caption' },
+        '& td': { py: 1, typography: 'body2' },
+      }}
+    >
       <Box component="section">
-        <Typography component="h2" variant="h6">
+        <Typography component="h2" variant="subtitle1">
           {t('admin.operations.lanesTitle')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
@@ -361,7 +390,8 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
                 p: 1.5,
                 border: 1,
                 borderColor: 'divider',
-                borderRadius: 'shape.borderRadius',
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                bgcolor: 'background.paper',
               }}
             >
               <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
@@ -397,12 +427,19 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
           ))}
         </Stack>
         <Box
+          tabIndex={0}
+          aria-label={t('admin.operations.lanesTable')}
           sx={{
             mt: 1.5,
             overflowX: 'auto',
             borderBlock: 1,
             borderColor: 'divider',
             display: { xs: 'none', md: 'block' },
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: -2,
+            },
           }}
         >
           <Table size="small" aria-label={t('admin.operations.lanesTable')} sx={{ minWidth: 720 }}>
@@ -448,7 +485,7 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
       </Box>
 
       <Box component="section">
-        <Typography component="h2" variant="h6">
+        <Typography component="h2" variant="subtitle1">
           {t('admin.operations.providersTitle')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
@@ -464,7 +501,8 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
                 p: 1.5,
                 border: 1,
                 borderColor: 'divider',
-                borderRadius: 'shape.borderRadius',
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                bgcolor: 'background.paper',
               }}
             >
               <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
@@ -487,19 +525,28 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
                 items={[
                   {
                     label: t('admin.operations.columns.successRate'),
-                    value: `${formatNumber(provider.successRatePercent, {
-                      maximumFractionDigits: 2,
-                    })}%`,
+                    value:
+                      provider.state === 'DISABLED'
+                        ? '-'
+                        : `${formatNumber(provider.successRatePercent, {
+                            maximumFractionDigits: 2,
+                          })}%`,
                   },
                   {
                     label: t('admin.operations.columns.latency'),
-                    value: t('admin.operations.milliseconds', {
-                      count: formatNumber(provider.p95LatencyMs),
-                    }),
+                    value:
+                      provider.state === 'DISABLED'
+                        ? '-'
+                        : t('admin.operations.milliseconds', {
+                            count: formatNumber(provider.p95LatencyMs),
+                          }),
                   },
                   {
                     label: t('admin.operations.columns.circuit'),
-                    value: t(`admin.circuitState.${provider.circuitState}`),
+                    value:
+                      provider.state === 'DISABLED'
+                        ? '-'
+                        : t(`admin.circuitState.${provider.circuitState}`),
                   },
                   {
                     label: t('admin.operations.columns.checked'),
@@ -516,12 +563,19 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
           ))}
         </Stack>
         <Box
+          tabIndex={0}
+          aria-label={t('admin.operations.providersTable')}
           sx={{
             mt: 1.5,
             overflowX: 'auto',
             borderBlock: 1,
             borderColor: 'divider',
             display: { xs: 'none', md: 'block' },
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: -2,
+            },
           }}
         >
           <Table
@@ -558,20 +612,28 @@ function OperationsTables({ data }: { data: NotificationDeliveryOperations }) {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    {formatNumber(provider.successRatePercent, { maximumFractionDigits: 2 })}%
+                    {provider.state === 'DISABLED'
+                      ? '-'
+                      : `${formatNumber(provider.successRatePercent, { maximumFractionDigits: 2 })}%`}
                   </TableCell>
                   <TableCell align="right">
-                    {t('admin.operations.milliseconds', {
-                      count: formatNumber(provider.p95LatencyMs),
-                    })}
+                    {provider.state === 'DISABLED'
+                      ? '-'
+                      : t('admin.operations.milliseconds', {
+                          count: formatNumber(provider.p95LatencyMs),
+                        })}
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={healthColor(provider.circuitState)}
-                      label={t(`admin.circuitState.${provider.circuitState}`)}
-                    />
+                    {provider.state === 'DISABLED' ? (
+                      '-'
+                    ) : (
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        color={healthColor(provider.circuitState)}
+                        label={t(`admin.circuitState.${provider.circuitState}`)}
+                      />
+                    )}
                   </TableCell>
                   <TableCell>
                     {formatDate(provider.lastCheckedAt, {
@@ -607,9 +669,13 @@ export function NotificationOperationsWorkbench({
   const { t } = useTranslation('notifications');
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedFindingId = searchParams.get('finding');
+  const severityRank = { CRITICAL: 0, WARNING: 1, INFO: 2 };
+  const findings = localizeNotificationOperationalFindings(data.findings, t).sort(
+    (left, right) => severityRank[left.severity] - severityRank[right.severity]
+  );
   const selected = useMemo(
-    () => selectNotificationOperationalFinding(data.findings, requestedFindingId),
-    [data.findings, requestedFindingId]
+    () => selectNotificationOperationalFinding(findings, requestedFindingId),
+    [findings, requestedFindingId]
   );
   const selectFinding = (finding: NotificationOperationalFinding) => {
     const next = new URLSearchParams(searchParams);
@@ -623,7 +689,7 @@ export function NotificationOperationsWorkbench({
   };
 
   return (
-    <Stack gap={3} data-testid="notification-operations-workbench">
+    <Stack gap={1.5} data-testid="notification-operations-workbench">
       <Stack direction="row" justifyContent="flex-end">
         <LiveStatus
           state={!online ? 'stale' : data.partial ? 'degraded' : refreshing ? 'syncing' : 'live'}
@@ -636,8 +702,19 @@ export function NotificationOperationsWorkbench({
           refreshing={refreshing}
         />
       </Stack>
+      {data.partial && (
+        <InlineNotice severity="warning">
+          {t('states.partial', { count: data.unavailableSources.length })}
+        </InlineNotice>
+      )}
       <OperationalKpiStrip
         ariaLabel={t('admin.operations.metricsLabel')}
+        sx={{
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          '& > div': { borderTopWidth: 0 },
+          '& > div:not(:first-of-type)': { borderLeftWidth: 1 },
+          '& > div > div': { px: { xs: 1, md: 2 }, py: 1.25 },
+        }}
         items={[
           {
             key: 'retry',
@@ -661,7 +738,7 @@ export function NotificationOperationsWorkbench({
       />
 
       <Box component="section">
-        <Typography component="h2" variant="h6">
+        <Typography component="h2" variant="subtitle1">
           {t('admin.operations.investigation.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35, mb: 1.5 }}>
@@ -672,13 +749,13 @@ export function NotificationOperationsWorkbench({
           listLabel={t('admin.operations.investigation.listLabel')}
           detailLabel={t('admin.operations.investigation.detailLabel')}
           backLabel={t('admin.operations.investigation.back')}
-          desktopColumns="minmax(320px, .8fr) minmax(0, 1.2fr)"
+          desktopColumns="minmax(0, .9fr) minmax(0, 1.1fr)"
           listMaxHeight={560}
           detailOpen={Boolean(requestedFindingId && selected)}
           onBack={closeFinding}
           list={
             <FindingList
-              findings={data.findings}
+              findings={findings}
               selectedId={selected?.findingId ?? null}
               onSelect={selectFinding}
             />

@@ -1,0 +1,139 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+              - listitem [ref=e39]:
+                - link "Find and book a space" [ref=e40] [cursor=pointer]:
+                  - /url: /workplace/explore
+                  - img [ref=e42]
+                  - paragraph [ref=e47]: Find and book a space
+              - listitem [ref=e48]:
+                - link "Room schedule" [ref=e49] [cursor=pointer]:
+                  - /url: /workplace/rooms
+                  - img [ref=e51]
+                  - paragraph [ref=e56]: Room schedule
+              - listitem [ref=e57]:
+                - link "Personal space bookings" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/my-bookings
+                  - img [ref=e60]
+                  - paragraph [ref=e64]: Personal space bookings
+              - listitem [ref=e65]:
+                - link "Meeting booking management" [ref=e66] [cursor=pointer]:
+                  - /url: /workplace/my-meetings
+                  - img [ref=e68]
+                  - paragraph [ref=e74]: Meeting booking management
+        - link "Return to apps" [ref=e76] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e78]
+          - text: Return to apps
+    - banner [ref=e80]:
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - img [ref=e84]
+          - generic "Workplace" [ref=e89]
+        - navigation "App area switcher" [ref=e92]:
+          - 'link "App management: Workplace" [ref=e94] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e96]
+            - generic [ref=e99]: App management
+        - generic [ref=e100]:
+          - button "Search DWP" [ref=e102] [cursor=pointer]:
+            - img [ref=e103]
+          - generic [ref=e106]:
+            - button "Enter full screen" [ref=e107] [cursor=pointer]:
+              - img [ref=e108]
+            - generic "0 actionable notifications, 0 total unread" [ref=e114]:
+              - button "0 actionable notifications, 0 total unread" [ref=e115] [cursor=pointer]:
+                - generic [ref=e116]:
+                  - img [ref=e117]
+                  - generic: "0"
+          - 'button "Account: Identity 1, Tenant administrator" [ref=e121] [cursor=pointer]':
+            - generic [ref=e122]: I
+            - img [ref=e123]
+    - main [ref=e125]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - text: My workplace
+            - heading "My space bookings" [level=1] [ref=e129]
+            - paragraph [ref=e130]: Manage reservations, check-in, and release for desks, lockers, pods, and shared resources.
+          - link "Find a space" [ref=e132] [cursor=pointer]:
+            - /url: /workplace/explore
+        - alert [ref=e133]:
+          - img [ref=e135]
+          - generic [ref=e137]: Manage meeting bookings in meeting spaces.
+          - link "My meetings" [ref=e139] [cursor=pointer]:
+            - /url: /workplace/my-meetings
+        - generic [ref=e140]:
+          - generic [ref=e141]:
+            - tablist [ref=e144]:
+              - tab "Upcoming" [selected] [ref=e145] [cursor=pointer]
+              - tab "Past" [ref=e146] [cursor=pointer]
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e151]:
+                  - heading "Identity A desk" [level=2] [ref=e152]
+                  - generic [ref=e154]: Desk
+                  - generic [ref=e156]: Reserved
+                - generic [ref=e157]:
+                  - generic [ref=e158]:
+                    - img [ref=e159]
+                    - paragraph [ref=e162]: Aug 19, 2026, 8:30 AM - Aug 19, 2026, 10:30 AM
+                  - generic [ref=e163]:
+                    - img [ref=e164]
+                    - paragraph [ref=e167]: Pangyo HQ · 12F
+                - paragraph [ref=e168]: Architecture review
+                - button "View detail" [ref=e169] [cursor=pointer]
+              - button "Release" [ref=e171] [cursor=pointer]:
+                - img [ref=e173]
+                - text: Release
+          - complementary "Identity A desk" [ref=e176]:
+            - generic [ref=e177]:
+              - generic [ref=e178]: Booking detail
+              - img [ref=e180]
+              - generic [ref=e182]:
+                - heading "Identity A desk" [level=2] [ref=e183]
+                - generic [ref=e184]:
+                  - generic [ref=e186]: Desk
+                  - generic [ref=e188]: Reserved
+              - generic [ref=e189]:
+                - generic [ref=e190]:
+                  - img [ref=e191]
+                  - paragraph [ref=e194]: Aug 19, 2026, 8:30 AM – Aug 19, 2026, 10:30 AM
+                - generic [ref=e195]:
+                  - img [ref=e196]
+                  - paragraph [ref=e199]: Pangyo HQ · 12F
+              - paragraph [ref=e200]: Architecture review
+              - generic [ref=e201]:
+                - img [ref=e202]
+                - generic [ref=e205]: Company policy and real-time conflict checks run again when you book.
+  - generic "Open DWAI·ON" [ref=e207]:
+    - button "Open DWAI·ON" [ref=e208] [cursor=pointer]
+```

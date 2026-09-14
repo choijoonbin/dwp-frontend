@@ -3,29 +3,28 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
   AlertTriangle,
-  Check,
+  ArrowLeft,
+  ArrowRight,
   Clock3,
-  Hand,
   MessageSquareText,
   ShieldCheck,
-  X,
 } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   ActionButton,
+  ActionIconButton,
   ErrorState,
-  FormDialog,
   FormField,
   LoadingState,
+  SelectField,
 } from '@dwp-frontend/design-system';
-import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import {
-  claimApprovalTask,
-  decideApprovalTask,
-  getApprovalTask,
-  getApprovalTasks,
-  useToast,
-} from '@dwp-frontend/shared-utils';
+  formatDate,
+  resolveSupportedLocale,
+  useDisplayDictionary,
+} from '@dwp-frontend/shared-i18n';
+import { getApprovalTask } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -39,56 +38,66 @@ import { alpha } from '@mui/material/styles';
 
 import { ApprovalPayloadData } from './approval-payload-data';
 import { ApprovalCommandCenter } from './approval-command-center';
+import { useApprovalCommandTaskSearch } from './use-approval-command-task-search';
+import { approvalTaskContentAccess } from './approval-command-center-model';
 import {
   approvalTimelineEventContext,
   approvalTimelineEventDetail,
 } from './approval-timeline-copy';
 import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
-import {
-  isProductSurfaceOperationCancelledError,
-  useApprovalGovernedMutation,
-} from './use-approval-governed-mutation';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 import type { ApprovalTask } from '@dwp-frontend/shared-utils';
 
-type Decision = 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
-
 export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED' }) {
-  return view === 'INBOX' ? <ApprovalCommandCenter /> : <ApprovalTaskArchive view={view} />;
+  return view === 'INBOX' ? <ApprovalCommandCenter /> : <ApprovalTaskArchive />;
 }
 
-function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
+function ApprovalTaskArchive() {
   const { t, i18n } = useTranslation('approvals');
   const display = useDisplayDictionary();
-  const toast = useToast();
-  const queryClient = useQueryClient();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedTaskId = searchParams.get('task') ?? undefined;
   const [selectedId, setSelectedId] = useState<string>();
-  const [decision, setDecision] = useState<Decision>();
-  const [comment, setComment] = useState('');
-  const queueCopy = view === 'COMPLETED' ? 'completed' : 'inbox';
+  const [search, setSearch] = useState(searchParams.get('query') ?? '');
+  const rawPage = Number(searchParams.get('page') ?? '0');
+  const page = Number.isInteger(rawPage) && rawPage >= 0 && rawPage <= 100_000 ? rawPage : 0;
+  const sort = searchParams.get('sort') === 'OLDEST' ? 'OLDEST' : 'NEWEST';
+  const rawStatus = searchParams.get('status');
+  const status = rawStatus === 'APPROVED' || rawStatus === 'REJECTED' ? rawStatus : '';
+  const queueCopy = 'completed';
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
   });
-  const tasks = useQuery({
-    queryKey: ['approvals', 'tasks', view, ...requestScope.cacheKey],
-    queryFn: () => getApprovalTasks(view, requestScope.contextScopeKey),
-    enabled: requestScope.ready,
-    staleTime: 20_000,
-    retry: 1,
-    meta: requestScope.queryMeta,
+  const tasks = useApprovalCommandTaskSearch({
+    view: 'COMPLETED',
+    queue: 'ALL',
+    search,
+    page,
+    sort,
+    status,
+    day: '',
+    scope: requestScope,
   });
+  const urlSearch = searchParams.get('query') ?? '';
+  useEffect(() => setSearch(urlSearch), [urlSearch]);
+  const changeFilter = (changes: Record<string, string>) => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('task');
+    for (const [key, value] of Object.entries(changes)) {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    }
+    setSelectedId(undefined);
+    setSearchParams(next, { replace: true });
+  };
   useEffect(() => {
     if (!tasks.isFetching && !tasks.isError) return;
-    setDecision(undefined);
-    setComment('');
     if (tasks.isError) setSelectedId(undefined);
   }, [tasks.isError, tasks.isFetching]);
   useEffect(() => {
-    if (tasks.isError) return;
+    if (tasks.isError || tasks.isFetching) return;
     if (!tasks.data?.length) {
       if (selectedId) setSelectedId(undefined);
       return;
@@ -96,83 +105,36 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
     if (selectedId && tasks.data.some((task) => task.taskId === selectedId)) return;
     const requested = tasks.data.find((task) => task.taskId === requestedTaskId);
     setSelectedId(requested?.taskId ?? tasks.data[0].taskId);
-  }, [requestedTaskId, selectedId, tasks.data, tasks.isError]);
+  }, [requestedTaskId, selectedId, tasks.data, tasks.isError, tasks.isFetching]);
   const detail = useQuery({
     queryKey: ['approvals', 'task', selectedId, ...requestScope.cacheKey],
-    queryFn: () => getApprovalTask(selectedId!, requestScope.contextScopeKey),
-    enabled: requestScope.ready && Boolean(selectedId) && !tasks.isError,
+    queryFn: ({ signal }) => getApprovalTask(selectedId!, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready && Boolean(selectedId) && !tasks.isError && !tasks.isFetching,
     staleTime: 0,
     retry: 1,
     meta: requestScope.queryMeta,
   });
-  useEffect(() => {
-    if (!decision || (!detail.isFetching && !detail.isError)) return;
-    setDecision(undefined);
-    setComment('');
-  }, [decision, detail.isError, detail.isFetching]);
-  const runDecision = useApprovalGovernedMutation('route.approvals.work.task-decision.action');
-  const runClaim = useApprovalGovernedMutation('route.approvals.work.task-claim.action');
-  const decide = useMutation({
-    mutationFn: (input: {
-      taskId: string;
-      decision: Decision;
-      comment?: string;
-      expectedVersion: number;
-    }) =>
-      runDecision((execution) =>
-        decideApprovalTask(
-          input.taskId,
-          {
-            decision: input.decision,
-            comment: input.comment,
-            expectedVersion: input.expectedVersion,
-          },
-          execution
-        )
-      ),
-    onSuccess: async (_result, input) => {
-      setDecision(undefined);
-      setComment('');
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'tasks'] }),
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'task', input.taskId] }),
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
-      ]);
-      setSelectedId((current) => (current === input.taskId ? undefined : current));
-      toast.success(t('inbox.decisionSaved'));
-    },
-    onError: (error) =>
-      !isProductSurfaceOperationCancelledError(error) && toast.error(t('inbox.decisionError')),
-  });
-  const claim = useMutation({
-    mutationFn: (input: { taskId: string; expectedVersion: number }) =>
-      runClaim((execution) => claimApprovalTask(input.taskId, input.expectedVersion, execution)),
-    onSuccess: async (claimed) => {
-      queryClient.setQueryData(['approvals', 'task', claimed.task.taskId], claimed);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'tasks'] }),
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
-      ]);
-      toast.success(t('inbox.claimed'));
-    },
-    onError: (error) =>
-      !isProductSurfaceOperationCancelledError(error) && toast.error(t('inbox.claimError')),
-  });
   const selected =
-    tasks.isFetching || tasks.isError || detail.isError || detail.isFetching
+    tasks.isFetching ||
+    tasks.isError ||
+    detail.isError ||
+    detail.isFetching ||
+    !requestScope.ready ||
+    detail.data?.task.taskId !== selectedId
       ? undefined
       : detail.data;
+  const selectedContentAccess = selected ? approvalTaskContentAccess(selected) : undefined;
 
   return (
     <Paper
       variant="outlined"
+      style={{ borderRadius: foundationTokens.radius.surface }}
       sx={{
         mt: 3,
         minHeight: 620,
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', lg: 'minmax(330px, 0.78fr) minmax(0, 1.6fr)' },
         overflow: 'hidden',
-        borderRadius: 1,
       }}
     >
       <Box sx={{ borderRight: { lg: 1 }, borderColor: 'divider', minWidth: 0 }}>
@@ -186,7 +148,73 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
                 {t(`${queueCopy}.queueMeta`)}
               </Typography>
             </Box>
-            <Chip size="small" label={tasks.isError ? '—' : (tasks.data?.length ?? 0)} />
+            <Chip
+              size="small"
+              label={tasks.isError || tasks.isFetching ? '—' : (tasks.pageInfo?.totalElements ?? 0)}
+            />
+          </Stack>
+          <Stack gap={1.5} sx={{ mt: 1.5 }}>
+            <FormField
+              label={t('requests.search.label')}
+              value={search}
+              inputProps={{ maxLength: 200 }}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                changeFilter({ query: event.target.value, page: '0' });
+              }}
+            />
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 1 }}>
+              <SelectField
+                label={t('requests.search.status')}
+                value={status}
+                options={[
+                  { value: '', label: t('requests.search.allStatus') },
+                  ...['APPROVED', 'REJECTED'].map((value) => ({
+                    value,
+                    label: t(`status.${value}`),
+                  })),
+                ]}
+                onValueChange={(value) => changeFilter({ status: value ?? '', page: '0' })}
+              />
+              <SelectField
+                label={t('requests.search.sort')}
+                value={sort}
+                options={['NEWEST', 'OLDEST'].map((value) => ({
+                  value,
+                  label: t(
+                    value === 'NEWEST' ? 'requests.search.newest' : 'requests.search.oldest'
+                  ),
+                }))}
+                onValueChange={(value) => {
+                  if (value === 'NEWEST' || value === 'OLDEST')
+                    changeFilter({ sort: value, page: '0' });
+                }}
+              />
+            </Box>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+              <Typography variant="caption">
+                {t('requests.drafts.page', {
+                  page: page + 1,
+                  total: Math.max(1, tasks.pageInfo?.totalPages ?? 1),
+                })}
+              </Typography>
+              <Stack direction="row" gap={1}>
+                <ActionIconButton
+                  label={t('common:actions.previous')}
+                  disabled={tasks.isFetching || page === 0}
+                  onClick={() => changeFilter({ page: String(page - 1) })}
+                >
+                  <ArrowLeft size={16} />
+                </ActionIconButton>
+                <ActionIconButton
+                  label={t('common:actions.next')}
+                  disabled={tasks.isFetching || tasks.isError || !tasks.pageInfo?.hasNext}
+                  onClick={() => changeFilter({ page: String(page + 1) })}
+                >
+                  <ArrowRight size={16} />
+                </ActionIconButton>
+              </Stack>
+            </Stack>
           </Stack>
         </Box>
         {tasks.isError && (
@@ -231,7 +259,7 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
           )}
         </Box>
       </Box>
-      <Box sx={{ minWidth: 0, bgcolor: '#FAFBFD' }}>
+      <Box sx={{ minWidth: 0, bgcolor: 'background.default' }}>
         {tasks.isFetching && (
           <Box sx={{ minHeight: 560, display: 'grid', placeItems: 'center', px: 3 }}>
             <LoadingState label={t('common:labels.loading')} size="page" embedded />
@@ -264,7 +292,9 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
             }}
           >
             <Box>
-              <MessageSquareText size={34} color="#728096" />
+              <Box sx={{ color: 'text.secondary' }}>
+                <MessageSquareText size={34} color="currentColor" />
+              </Box>
               <Typography component="p" variant="subtitle1" sx={{ mt: 1 }}>
                 {t(`${queueCopy}.select`)}
               </Typography>
@@ -274,7 +304,36 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
             </Box>
           </Box>
         )}
-        {selected && (
+        {selected && !selectedContentAccess?.full && (
+          <Box sx={{ minHeight: 560, display: 'grid', placeItems: 'center', px: 3 }}>
+            <Stack
+              role="alert"
+              alignItems="center"
+              gap={1.25}
+              sx={{ width: '100%', maxWidth: 520, textAlign: 'center' }}
+            >
+              <Box sx={{ color: 'warning.main' }}>
+                <AlertTriangle size={34} aria-hidden="true" />
+              </Box>
+              <Typography component="h2" variant="h6">
+                {t('home.commandCenter.contentAccess.title')}
+              </Typography>
+              <Typography color="text.secondary">
+                {t('home.commandCenter.contentAccess.description')}
+              </Typography>
+              <Stack direction="row" gap={0.75} flexWrap="wrap" justifyContent="center">
+                <Chip size="small" variant="outlined" label={selected.task.requestNumber} />
+                <StatusChip status={selectedContentAccess?.reason ?? 'UNKNOWN'} />
+              </Stack>
+              <Typography variant="caption" color="text.secondary">
+                {t(
+                  `home.commandCenter.contentAccess.reasons.${selectedContentAccess?.reason ?? 'UNKNOWN'}`
+                )}
+              </Typography>
+            </Stack>
+          </Box>
+        )}
+        {selected && selectedContentAccess?.full && (
           <Box>
             <Box
               sx={{
@@ -351,7 +410,7 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
                       [t('inbox.organization'), selected.task.requesterOrgName ?? '-'],
                       [
                         t('inbox.workflow'),
-                        i18n.resolvedLanguage?.startsWith('ko')
+                        resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko'
                           ? selected.task.workflowNameKo
                           : selected.task.workflowNameEn,
                       ],
@@ -427,96 +486,9 @@ function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
                 </Stack>
               </ApprovalSurface>
             </Box>
-            {view === 'INBOX' && (
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                justifyContent="flex-end"
-                gap={1}
-                sx={{
-                  position: 'sticky',
-                  bottom: 0,
-                  px: 3,
-                  py: 2,
-                  borderTop: 1,
-                  borderColor: 'divider',
-                  bgcolor: 'rgba(255,255,255,0.94)',
-                  backdropFilter: 'blur(14px)',
-                }}
-              >
-                {selected.canClaim && (
-                  <ActionButton
-                    intent="secondary"
-                    startIcon={<Hand size={17} />}
-                    loading={claim.isPending}
-                    onClick={() =>
-                      claim.mutate({
-                        taskId: selected.task.taskId,
-                        expectedVersion: selected.task.version,
-                      })
-                    }
-                  >
-                    {t('actions.claim')}
-                  </ActionButton>
-                )}
-                <ActionButton
-                  intent="secondary"
-                  startIcon={<MessageSquareText size={17} />}
-                  disabled={!selected.canDecide}
-                  onClick={() => setDecision('REQUEST_INFO')}
-                >
-                  {t('actions.requestInfo')}
-                </ActionButton>
-                <ActionButton
-                  intent="danger"
-                  startIcon={<X size={17} />}
-                  disabled={!selected.canDecide}
-                  onClick={() => setDecision('REJECT')}
-                >
-                  {t('actions.reject')}
-                </ActionButton>
-                <ActionButton
-                  intent="primary"
-                  startIcon={<Check size={17} />}
-                  disabled={!selected.canDecide}
-                  onClick={() => setDecision('APPROVE')}
-                >
-                  {t('actions.approve')}
-                </ActionButton>
-              </Stack>
-            )}
           </Box>
         )}
       </Box>
-      <FormDialog
-        open={Boolean(decision && selected)}
-        title={t(`inbox.dialog.${decision ?? 'APPROVE'}.title`)}
-        description={t(`inbox.dialog.${decision ?? 'APPROVE'}.description`)}
-        cancelLabel={t('actions.cancel')}
-        submitLabel={t(`inbox.dialog.${decision ?? 'APPROVE'}.confirm`)}
-        submitIntent={decision === 'REJECT' ? 'danger' : 'primary'}
-        busy={decide.isPending}
-        submitDisabled={!selected || (decision !== 'APPROVE' && comment.trim().length < 8)}
-        onClose={() => setDecision(undefined)}
-        onSubmit={() => {
-          if (!decision || !selected) return;
-          decide.mutate({
-            taskId: selected.task.taskId,
-            decision,
-            comment: comment.trim() || undefined,
-            expectedVersion: selected.task.version,
-          });
-        }}
-      >
-        <FormField
-          autoFocus
-          multiline
-          minRows={3}
-          label={t('inbox.comment')}
-          value={comment}
-          onChange={(event) => setComment(event.target.value)}
-          required={decision !== 'APPROVE'}
-        />
-      </FormDialog>
     </Paper>
   );
 }

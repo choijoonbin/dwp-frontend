@@ -10,9 +10,9 @@
     "e2e/product-surface-approvals-pilot.spec.ts": 1296,
     "e2e/rooms.spec.ts": 3842,
     "e2e/shell.spec.ts": 1992,
-    "e2e/support/shell-session.ts": 4259,
+    "e2e/support/shell-session.ts": 4168,
     "scripts/check-product-surface-production-readiness.mjs": 2159,
     "scripts/check-product-surface-production-readiness.test.mjs": 1198,
-    "scripts/sync-product-authorization-fixtures.mjs": 1354
+    "scripts/sync-product-authorization-fixtures.mjs": 1331
   }
 }

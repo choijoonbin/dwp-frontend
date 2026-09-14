@@ -1,22 +1,18 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle,
   Armchair,
   ArrowRight,
-  BriefcaseBusiness,
   CalendarClock,
   CalendarDays,
-  CarFront,
   CheckCircle2,
   Clock3,
   Focus,
-  LockKeyhole,
   LogIn,
   MapPin,
   MapPinned,
-  Monitor,
-  Package,
-  Phone,
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
@@ -36,24 +32,16 @@ import {
   WorkplaceHomeSectionShell as SectionShell,
 } from './workplace-home-section-frame';
 import { workplaceDecisionActionProps } from './workplace-decision-status';
+import { workplaceCheckInClock } from './workplace-check-in-clock';
+import { useWorkplaceDecisionClock } from './workplace-decision-clock';
+import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 
 import type {
   WorkplaceHomeAgendaItem,
   WorkplaceHomeAttention,
   WorkplaceHomeModel,
 } from './workplace-home-model';
-import type { WorkplaceResourceType } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
-
-const RESOURCE_ICONS: Record<WorkplaceResourceType, LucideIcon> = {
-  ROOM: UsersRound,
-  DESK: Monitor,
-  LOCKER: LockKeyhole,
-  PARKING: CarFront,
-  FOCUS_POD: BriefcaseBusiness,
-  PHONE_BOOTH: Phone,
-  EQUIPMENT: Package,
-};
 
 const AGENDA_ICONS: Record<WorkplaceHomeAgendaItem['kind'], LucideIcon> = {
   WORKSPACE: Armchair,
@@ -68,8 +56,8 @@ function nextActionCopy(model: WorkplaceHomeModel, t: ReturnType<typeof useTrans
   const action = model.nextAction;
   if (action.kind === 'CHECK_IN') {
     return {
-      eyebrow: t('workplace.home.nextAction.checkInEyebrow'),
-      title: t('workplace.home.nextAction.checkInTitle', { resource: action.booking.resourceName }),
+      eyebrow: t('workplace.home.nextAction.reservedSpace'),
+      title: action.booking.resourceName,
       description: t('workplace.home.nextAction.checkInDescription', {
         location: [action.booking.siteName, action.booking.floorName].filter(Boolean).join(' · '),
       }),
@@ -134,26 +122,48 @@ function nextActionCopy(model: WorkplaceHomeModel, t: ReturnType<typeof useTrans
 
 export function WorkplaceDayBrief({
   model,
+  timeZone,
+  nowInstant,
   availabilityState,
   checkInState,
   decisionComplete,
   canManage,
+  canViewAccess,
   checkInBusy,
   decisionActionId,
   onRefresh,
   onCheckIn,
 }: {
   model: WorkplaceHomeModel;
+  timeZone: string;
+  nowInstant: number;
   availabilityState: 'READY' | 'STALE' | 'UNAVAILABLE';
   checkInState: 'AVAILABLE' | 'READ_ONLY' | 'UNVERIFIED';
   decisionComplete: boolean;
   canManage: boolean;
+  canViewAccess: boolean;
   checkInBusy: boolean;
   decisionActionId: string | null;
   onRefresh: () => void;
   onCheckIn: () => void;
 }) {
   const { t, i18n } = useTranslation('rooms');
+  const deadline =
+    model.nextAction.kind === 'CHECK_IN' ? model.nextAction.booking.checkInClosesAt : null;
+  const clockKey =
+    model.nextAction.kind === 'CHECK_IN'
+      ? `${model.nextAction.booking.bookingId}:${model.nextAction.booking.version}:${deadline}`
+      : 'no-check-in';
+  const { nowInstant: clockNow, advance: advanceClock } = useWorkplaceDecisionClock(clockKey, [
+    new Date(nowInstant).toISOString(),
+  ]);
+  useEffect(() => {
+    if (!deadline || !Number.isFinite(Date.parse(deadline))) return;
+    advanceClock();
+    const timer = window.setInterval(advanceClock, 1000);
+    return () => window.clearInterval(timer);
+  }, [advanceClock, deadline]);
+  const countdown = workplaceCheckInClock(deadline, clockNow);
   const setupAction = ['NO_SITE', 'NO_FLOOR', 'NO_RESOURCE'].includes(model.nextAction.kind);
   const setupActionLabel =
     model.nextAction.kind === 'NO_FLOOR'
@@ -162,7 +172,7 @@ export function WorkplaceDayBrief({
         ? t('workplace.home.availability.configureResources')
         : t('workplace.home.availability.configureSite');
   const needsDecisionRefresh =
-    !decisionComplete ||
+    (model.nextAction.kind !== 'CHECK_IN' && !decisionComplete) ||
     (availabilityState !== 'READY' &&
       ['BOOK_SPACE', 'BROWSE_SPACE', 'NONE'].includes(model.nextAction.kind));
   const copy = needsDecisionRefresh
@@ -182,24 +192,66 @@ export function WorkplaceDayBrief({
       aria-labelledby="workplace-day-brief"
       data-testid="workplace-day-brief"
       sx={(theme) => ({
-        mt: 3,
-        borderTop: 1,
-        borderBottom: 1,
-        borderColor: 'divider',
-        bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.04),
-        overflow: 'hidden',
+        ...workplaceMemberCard(theme),
+        mt: foundationTokens.workplace.layout.gutter + 'px',
+        display: 'grid',
+        p: { xs: 2, md: foundationTokens.workplace.layout.gutter + 'px' },
+        gap: { xs: 2, md: foundationTokens.workplace.layout.gutter + 'px' },
+        gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 2fr)' },
+        alignItems: 'stretch',
       })}
     >
       <Box
         sx={{
-          px: { xs: 2.25, md: 3.25 },
-          pt: { xs: 2.75, md: 3.5 },
-          pb: { xs: 2.5, md: 3 },
           minWidth: 0,
-          maxWidth: 980,
+          display: { xs: 'none', md: 'flex' },
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
-        <Stack direction="row" spacing={0.75} alignItems="center" color="primary.main">
+        <Stack direction="row" gap={0.75} alignItems="center" color="primary.main">
+          <CalendarClock size={16} />
+          <Typography variant="overline">{t('workplace.home.eyebrow')}</Typography>
+        </Stack>
+        <Typography
+          component="h2"
+          sx={{ ...foundationTokens.workplace.typography.sectionTitle, mt: 0.5 }}
+        >
+          {t('workplace.home.welcomeTitle')}
+        </Typography>
+        <Typography
+          color="text.secondary"
+          sx={{ ...foundationTokens.workplace.typography.body, mt: 0.75 }}
+        >
+          {t('workplace.home.welcomeDescription')}
+        </Typography>
+        <Stack direction="row" gap={0.75} alignItems="flex-start" sx={{ mt: 1.5 }}>
+          <MapPin size={15} aria-hidden="true" />
+          <Typography variant="caption" color="text.secondary">
+            {[model.selectedSiteName, model.selectedFloorName].filter(Boolean).join(' · ') ||
+              t('workplace.home.availability.noScope')}{' '}
+            · {t('workplace.home.availability.nextHour')}
+          </Typography>
+        </Stack>
+      </Box>
+      <Box
+        data-testid="workplace-day-context"
+        sx={(theme) => ({
+          p: { xs: 0, md: 2 },
+          minWidth: 0,
+          bgcolor: {
+            xs: 'transparent',
+            md: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.14 : 0.055),
+          },
+          borderRadius: foundationTokens.radius.surface + 'px',
+        })}
+      >
+        <Stack
+          direction="row"
+          gap={0.75}
+          alignItems="center"
+          color={checkInAction ? 'error.main' : 'primary.main'}
+        >
           {checkInAction ? <LogIn size={16} /> : <CalendarClock size={16} />}
           <Typography variant="overline">{copy.eyebrow}</Typography>
         </Stack>
@@ -207,53 +259,106 @@ export function WorkplaceDayBrief({
           id="workplace-day-brief"
           component="h2"
           sx={{
-            mt: 0.75,
-            fontSize: { xs: '1.4375rem', md: '1.75rem' },
-            lineHeight: 1.22,
-            fontWeight: 760,
+            mt: 0.5,
+            ...foundationTokens.workplace.typography.sectionTitle,
           }}
         >
           {copy.title}
         </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.85, maxWidth: 760 }}>
-          {copy.description}
+        {checkInAction && countdown && (
+          <Stack
+            direction="row"
+            gap={1}
+            alignItems="baseline"
+            justifyContent="space-between"
+            sx={{ mt: 0.75 }}
+          >
+            <Typography color="text.secondary" sx={foundationTokens.workplace.typography.smallBody}>
+              {t(
+                countdown.elapsed
+                  ? 'workplace.home.nextAction.deadlineElapsed'
+                  : 'workplace.home.nextAction.remainingTime'
+              )}
+            </Typography>
+            <Typography
+              component="span"
+              data-testid="workplace-home-check-in-countdown"
+              color="error.main"
+              sx={{
+                ...foundationTokens.workplace.typography.metric,
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              {countdown.remaining}
+            </Typography>
+          </Stack>
+        )}
+        <Typography
+          color="text.secondary"
+          sx={{ ...foundationTokens.workplace.typography.body, mt: 0.65 }}
+        >
+          {model.nextAction.kind === 'CHECK_IN'
+            ? t('workplace.home.nextAction.usageTime', {
+                from: formatDate(
+                  model.nextAction.booking.startsAt,
+                  { timeStyle: 'short', hourCycle: 'h23', timeZone },
+                  locale
+                ),
+                to: formatDate(
+                  model.nextAction.booking.endsAt,
+                  { timeStyle: 'short', hourCycle: 'h23', timeZone },
+                  locale
+                ),
+              })
+            : copy.description}
         </Typography>
         {(copy.time || copy.location) && (
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={{ xs: 0.7, sm: 2 }}
-            sx={{ mt: 1.5 }}
-          >
+          <Stack direction="row" gap={1.5} useFlexGap flexWrap="wrap" sx={{ mt: 1.25 }}>
             {copy.time && (
-              <Stack direction="row" spacing={0.7} alignItems="center">
-                <Clock3 size={15} aria-hidden="true" />
-                <Typography variant="body2" fontWeight={650}>
-                  {formatDate(copy.time, { dateStyle: 'medium', timeStyle: 'short' }, locale)}
+              <Stack direction="row" gap={0.5} alignItems="center">
+                <Clock3 size={14} aria-hidden="true" />
+                <Typography variant="caption" fontWeight="fontWeightBold">
+                  {checkInAction
+                    ? t('workplace.member.bookings.checkInDeadline', {
+                        time: formatDate(
+                          copy.time,
+                          { timeStyle: 'short', hourCycle: 'h23', timeZone },
+                          locale
+                        ),
+                      })
+                    : formatDate(
+                        copy.time,
+                        { dateStyle: 'medium', timeStyle: 'short', hourCycle: 'h23', timeZone },
+                        locale
+                      )}
                 </Typography>
               </Stack>
             )}
             {copy.location && (
-              <Stack direction="row" spacing={0.7} alignItems="center">
-                <MapPin size={15} aria-hidden="true" />
-                <Typography variant="body2" fontWeight={650}>
-                  {copy.location}
-                </Typography>
-              </Stack>
+              <Typography variant="caption" color="text.secondary">
+                {copy.location}
+              </Typography>
             )}
           </Stack>
         )}
-        <Stack direction="row" gap={1} useFlexGap flexWrap="wrap" sx={{ mt: 2.25 }}>
-          {checkInAction && checkInState === 'AVAILABLE' ? (
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          gap={1}
+          useFlexGap
+          flexWrap="wrap"
+          sx={{ mt: 1.5, '& > .MuiButton-root': { width: { xs: '100%', md: 'auto' } } }}
+        >
+          {checkInAction && checkInState === 'AVAILABLE' && !countdown?.elapsed ? (
             <ActionButton
               intent="primary"
-              startIcon={<LogIn size={17} />}
+              startIcon={<LogIn size={16} />}
               loading={checkInBusy}
               onClick={onCheckIn}
               {...(decisionActionId ? workplaceDecisionActionProps(decisionActionId) : {})}
             >
               {t('workplace.home.nextAction.checkIn')}
             </ActionButton>
-          ) : checkInAction && checkInState === 'UNVERIFIED' ? (
+          ) : checkInAction && (checkInState === 'UNVERIFIED' || countdown?.elapsed) ? (
             <ActionButton intent="primary" onClick={onRefresh}>
               {t('workplace.home.nextAction.verify')}
             </ActionButton>
@@ -266,7 +371,18 @@ export function WorkplaceDayBrief({
               {t('workplace.home.nextAction.verify')}
             </ActionButton>
           ) : setupAction ? (
-            canManage ? (
+            model.nextAction.kind === 'NO_SITE' && canViewAccess ? (
+              <Box data-testid="workplace-home-access-help">
+                <ActionButton
+                  component={Link}
+                  to="/workplace/admin/governance?area=access"
+                  intent="primary"
+                  endIcon={<ArrowRight size={16} />}
+                >
+                  {t('workplace.admin.governance.tabs.access')}
+                </ActionButton>
+              </Box>
+            ) : canManage ? (
               <ActionButton
                 component={Link}
                 to="/workplace/admin/locations"
@@ -290,19 +406,21 @@ export function WorkplaceDayBrief({
               )}
             </ActionButton>
           )}
-          {model.nextAction.kind !== 'BOOK_SPACE' &&
-            model.nextAction.kind !== 'BROWSE_SPACE' &&
-            model.nextAction.kind !== 'NONE' &&
+          {!['BOOK_SPACE', 'BROWSE_SPACE', 'NONE'].includes(model.nextAction.kind) &&
+            !(checkInAction && checkInState === 'READ_ONLY' && !countdown?.elapsed) &&
             !setupAction && (
-              <ActionButton component={Link} to={model.discoveryPath} intent="secondary">
-                {t('workplace.home.findSpace')}
+              <ActionButton
+                component={Link}
+                to={
+                  model.nextAction.kind === 'CHECK_IN'
+                    ? model.nextAction.path
+                    : '/workplace/my-bookings'
+                }
+                intent="secondary"
+              >
+                {t('workplace.home.nextAction.viewBooking')}
               </ActionButton>
             )}
-          {checkInAction && checkInState === 'UNVERIFIED' && (
-            <ActionButton component={Link} to={model.nextAction.path} intent="secondary">
-              {t('workplace.home.nextAction.viewBooking')}
-            </ActionButton>
-          )}
         </Stack>
         {checkInAction && checkInState !== 'AVAILABLE' && (
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
@@ -314,143 +432,6 @@ export function WorkplaceDayBrief({
           </Typography>
         )}
       </Box>
-      <Box
-        component="div"
-        data-testid="workplace-day-context"
-        sx={(theme) => ({
-          m: 0,
-          px: { xs: 2.25, md: 3.25 },
-          py: 2,
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: 'repeat(2, minmax(0, 1fr))',
-            md: 'minmax(240px, 1.4fr) repeat(3, minmax(140px, 0.7fr))',
-          },
-          gap: { xs: 2, md: 3 },
-          bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.035),
-        })}
-      >
-        {availabilityState !== 'READY' ? (
-          <Stack
-            component="div"
-            direction="row"
-            spacing={1}
-            alignItems="flex-start"
-            sx={{ gridColumn: '1 / -1' }}
-          >
-            <AlertCircle size={17} aria-hidden="true" />
-            <Box component="div">
-              <Typography
-                component="span"
-                variant="caption"
-                color="text.secondary"
-                fontWeight={700}
-              >
-                {t('workplace.home.availability.scope')}
-              </Typography>
-              <Typography component="p" variant="body2" sx={{ m: 0, mt: 0.25 }}>
-                {t(
-                  availabilityState === 'STALE'
-                    ? 'workplace.home.availability.staleDescription'
-                    : 'workplace.home.availability.unavailableDescription'
-                )}
-              </Typography>
-            </Box>
-          </Stack>
-        ) : (
-          <>
-            <Stack
-              component="div"
-              direction="row"
-              spacing={1}
-              alignItems="flex-start"
-              sx={{ gridColumn: { xs: '1 / -1', md: 'auto' } }}
-            >
-              <MapPinned size={17} aria-hidden="true" />
-              <Box component="div" minWidth={0}>
-                <Typography
-                  component="span"
-                  variant="caption"
-                  color="text.secondary"
-                  fontWeight={700}
-                >
-                  {t('workplace.home.availability.locationMetric')}
-                </Typography>
-                <Typography component="p" variant="body2" fontWeight={800} sx={{ m: 0, mt: 0.2 }}>
-                  {[model.selectedSiteName, model.selectedFloorName].filter(Boolean).join(' · ') ||
-                    t('workplace.home.availability.noScope')}
-                </Typography>
-              </Box>
-            </Stack>
-            {(model.selectedSiteName || model.selectedFloorName) && (
-              <>
-                <Stack component="div" direction="row" spacing={1} alignItems="flex-start">
-                  <Clock3 size={17} aria-hidden="true" />
-                  <Box component="div">
-                    <Typography
-                      component="span"
-                      variant="caption"
-                      color="text.secondary"
-                      fontWeight={700}
-                    >
-                      {t('workplace.home.availability.windowMetric')}
-                    </Typography>
-                    <Typography
-                      component="p"
-                      variant="body2"
-                      fontWeight={800}
-                      sx={{ m: 0, mt: 0.2 }}
-                    >
-                      {t('workplace.home.availability.nextHour')}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Stack component="div" direction="row" spacing={1} alignItems="flex-start">
-                  <Armchair size={17} aria-hidden="true" />
-                  <Box component="div">
-                    <Typography
-                      component="span"
-                      variant="caption"
-                      color="text.secondary"
-                      fontWeight={700}
-                    >
-                      {t('workplace.home.availability.physicalOpenMetric')}
-                    </Typography>
-                    <Typography
-                      component="p"
-                      data-testid="workplace-physical-open-count"
-                      sx={{ m: 0, mt: 0.2, fontSize: '1.25rem', lineHeight: 1, fontWeight: 800 }}
-                    >
-                      {model.availableCount}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Stack component="div" direction="row" spacing={1} alignItems="flex-start">
-                  <CheckCircle2 size={17} aria-hidden="true" />
-                  <Box component="div">
-                    <Typography
-                      component="span"
-                      variant="caption"
-                      color="text.secondary"
-                      fontWeight={700}
-                    >
-                      {t('workplace.home.availability.initialChecksMetric')}
-                    </Typography>
-                    <Typography
-                      component="p"
-                      data-testid="workplace-initial-checks-count"
-                      color="primary.main"
-                      sx={{ m: 0, mt: 0.2, fontSize: '1.25rem', lineHeight: 1, fontWeight: 800 }}
-                    >
-                      {model.bookableCount}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </>
-            )}
-          </>
-        )}
-      </Box>
     </Box>
   );
 }
@@ -458,11 +439,14 @@ export function WorkplaceDayBrief({
 export function WorkplaceTodayFlow({
   agenda,
   complete,
+  timeZone,
 }: {
   agenda: readonly WorkplaceHomeAgendaItem[];
   complete: boolean;
+  timeZone?: string;
 }) {
   const { t, i18n } = useTranslation('rooms');
+  const [expanded, setExpanded] = useState(false);
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   return (
     <SectionShell labelledBy="workplace-today-flow">
@@ -472,12 +456,12 @@ export function WorkplaceTodayFlow({
         title={t('workplace.home.agenda.title')}
         description={t('workplace.home.agenda.description')}
         action={
-          <ActionButton component={Link} to="/workplace/my-bookings" intent="quiet" size="small">
-            {t('workplace.home.openBookings')}
-          </ActionButton>
+          <Typography sx={foundationTokens.workplace.typography.caption} color="text.secondary">
+            {t('workplace.home.agenda.count', { count: agenda.length })}
+          </Typography>
         }
       />
-      <Divider />
+      <Divider sx={{ display: { xs: 'none', md: 'block' } }} />
       {!complete && (
         <Typography
           color="warning.main"
@@ -488,14 +472,29 @@ export function WorkplaceTodayFlow({
         </Typography>
       )}
       {agenda.length ? (
-        <Box component="ol" sx={{ p: 0, m: 0, listStyle: 'none' }}>
-          {agenda.slice(0, 6).map((item, index) => {
+        <Box
+          component="ol"
+          sx={{
+            p: 0,
+            m: 0,
+            listStyle: 'none',
+            bgcolor: { xs: 'background.paper', md: 'transparent' },
+            borderRadius: foundationTokens.workplace.radius.card + 'px',
+            overflow: 'hidden',
+          }}
+        >
+          {agenda.slice(0, expanded ? agenda.length : 6).map((item) => {
             const Icon = AGENDA_ICONS[item.kind];
             return (
               <Box
                 component="li"
                 key={item.key}
-                sx={{ borderTop: index ? 1 : 0, borderColor: 'divider' }}
+                sx={(theme) => ({
+                  ...workplaceMemberSoftSurface(theme),
+                  bgcolor: { xs: 'transparent', md: workplaceMemberSoftSurface(theme).bgcolor },
+                  mx: { xs: 0, md: 1.5 },
+                  my: { xs: 0, md: 1 },
+                })}
               >
                 <ButtonBase
                   component={Link}
@@ -504,13 +503,13 @@ export function WorkplaceTodayFlow({
                     width: 1,
                     display: 'grid',
                     gridTemplateColumns: {
-                      xs: '50px 22px minmax(0, 1fr) 16px',
+                      xs: '50px minmax(0, 1fr) 16px',
                       sm: '70px 26px minmax(0, 1fr) auto',
                     },
                     gap: { xs: 0.75, sm: 1 },
                     alignItems: 'center',
                     px: { xs: 2, md: 2.5 },
-                    py: 1.5,
+                    py: 1.25,
                     color: 'text.primary',
                     textAlign: 'left',
                     '&:hover': { bgcolor: 'action.hover' },
@@ -521,15 +520,47 @@ export function WorkplaceTodayFlow({
                     },
                   }}
                 >
-                  <Typography variant="caption" fontWeight={800} color="primary.main">
-                    {formatDate(item.startsAt, { hour: '2-digit', minute: '2-digit' }, locale)}
-                  </Typography>
+                  <Box
+                    sx={{
+                      pr: 1,
+                      borderRight: 3,
+                      borderColor:
+                        item.kind === 'WORKSPACE'
+                          ? 'primary.main'
+                          : item.kind === 'FOCUS'
+                            ? 'primary.light'
+                            : 'secondary.main',
+                    }}
+                  >
+                    <Typography
+                      component="div"
+                      sx={foundationTokens.workplace.typography.caption}
+                      fontWeight="fontWeightBold"
+                    >
+                      {formatDate(
+                        item.startsAt,
+                        { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone },
+                        locale
+                      )}
+                    </Typography>
+                    <Typography
+                      component="div"
+                      sx={foundationTokens.workplace.typography.caption}
+                      color="text.secondary"
+                    >
+                      {formatDate(
+                        item.endsAt,
+                        { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone },
+                        locale
+                      )}
+                    </Typography>
+                  </Box>
                   <Box
                     aria-hidden="true"
                     sx={{
                       width: 22,
                       height: 22,
-                      display: 'grid',
+                      display: { xs: 'none', sm: 'grid' },
                       placeItems: 'center',
                       color: 'text.secondary',
                     }}
@@ -538,8 +569,22 @@ export function WorkplaceTodayFlow({
                   </Box>
                   <Box minWidth={0}>
                     <Typography
+                      component="span"
+                      sx={{
+                        ...foundationTokens.workplace.typography.caption,
+                        display: 'inline-block',
+                        bgcolor: 'var(--dwp-product-soft)',
+                        color: 'primary.main',
+                        px: 0.5,
+                        mr: 0.75,
+                      }}
+                    >
+                      {t(`workplace.home.agenda.kinds.${item.kind}`)}
+                    </Typography>
+                    <Typography
+                      component="span"
                       variant="body2"
-                      fontWeight={750}
+                      fontWeight="fontWeightBold"
                       data-testid="workplace-agenda-title"
                     >
                       {item.title}
@@ -556,7 +601,7 @@ export function WorkplaceTodayFlow({
         </Box>
       ) : (
         <Box sx={{ px: 2.5, py: 3.5 }}>
-          <Typography fontWeight={750}>
+          <Typography fontWeight="fontWeightBold">
             {t(
               complete
                 ? 'workplace.home.agenda.emptyTitle'
@@ -572,202 +617,23 @@ export function WorkplaceTodayFlow({
           </Typography>
         </Box>
       )}
+      {agenda.length > 6 ? (
+        <ActionButton
+          intent="quiet"
+          size="small"
+          fullWidth
+          onClick={() => setExpanded((value) => !value)}
+        >
+          {t(expanded ? 'workplace.home.attention.showLess' : 'workplace.home.attention.showAll', {
+            count: agenda.length,
+          })}
+        </ActionButton>
+      ) : null}
     </SectionShell>
   );
 }
 
-export function WorkplaceReadySpaces({
-  model,
-  state,
-  canManage,
-  refreshing,
-  onRefresh,
-}: {
-  model: WorkplaceHomeModel;
-  state: 'READY' | 'STALE' | 'UNAVAILABLE';
-  canManage: boolean;
-  refreshing: boolean;
-  onRefresh: () => void;
-}) {
-  const { t } = useTranslation('rooms');
-  const scopeKey =
-    model.scopeState === 'NO_FLOOR'
-      ? 'noFloor'
-      : model.scopeState === 'NO_RESOURCE'
-        ? 'noResource'
-        : 'noSite';
-  const hasScope = model.scopeState === 'READY';
-  return (
-    <SectionShell labelledBy="workplace-ready-spaces">
-      <SectionHeader
-        id="workplace-ready-spaces"
-        icon={MapPinned}
-        title={t('workplace.home.availability.title')}
-        description={t('workplace.home.availability.description')}
-        action={
-          state === 'READY' && hasScope ? (
-            <ActionButton component={Link} to={model.discoveryPath} intent="quiet" size="small">
-              {t('workplace.home.findSpace')}
-            </ActionButton>
-          ) : undefined
-        }
-      />
-      <Divider />
-      {state !== 'READY' ? (
-        <Box sx={{ px: 2.5, py: 3 }}>
-          <Typography fontWeight={750}>
-            {t(
-              state === 'STALE'
-                ? 'workplace.home.availability.staleTitle'
-                : 'workplace.home.availability.unavailableTitle'
-            )}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t(
-              state === 'STALE'
-                ? 'workplace.home.availability.staleDescription'
-                : 'workplace.home.availability.unavailableDescription'
-            )}
-          </Typography>
-          <ActionButton intent="secondary" loading={refreshing} onClick={onRefresh} sx={{ mt: 2 }}>
-            {t('workplace.home.nextAction.verify')}
-          </ActionButton>
-        </Box>
-      ) : !hasScope ? (
-        <Box sx={{ px: 2.5, py: 3 }}>
-          <Typography fontWeight={750}>
-            {t(`workplace.home.availability.${scopeKey}Title`)}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t(`workplace.home.availability.${scopeKey}Description`)}
-          </Typography>
-          {canManage && model.nextAction.kind !== model.scopeState && (
-            <ActionButton
-              component={Link}
-              to="/workplace/admin/locations"
-              intent="secondary"
-              sx={{ mt: 2 }}
-            >
-              {t(
-                model.scopeState === 'NO_FLOOR'
-                  ? 'workplace.home.availability.configureFloor'
-                  : model.scopeState === 'NO_RESOURCE'
-                    ? 'workplace.home.availability.configureResources'
-                    : 'workplace.home.availability.configureSite'
-              )}
-            </ActionButton>
-          )}
-        </Box>
-      ) : model.availability.length ? (
-        <Stack component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
-          {model.availability.map((item, index) => {
-            const Icon = RESOURCE_ICONS[item.type];
-            const percent = item.total ? Math.round((item.available / item.total) * 100) : 0;
-            return (
-              <Box
-                component="li"
-                key={item.type}
-                sx={{ borderTop: index ? 1 : 0, borderColor: 'divider' }}
-              >
-                <ButtonBase
-                  component={Link}
-                  to={model.discoveryPaths[item.type] ?? model.discoveryPath}
-                  aria-label={t('workplace.home.availability.openType', {
-                    type: t(`workplace.resourceTypes.${item.type}`),
-                    available: item.available,
-                    bookable: item.bookable,
-                  })}
-                  sx={{
-                    width: 1,
-                    display: 'grid',
-                    gridTemplateColumns: '36px minmax(0, 1fr) auto',
-                    gap: 1.25,
-                    alignItems: 'center',
-                    px: 2.25,
-                    py: 1.35,
-                    color: 'text.primary',
-                    textAlign: 'left',
-                    '&:hover': { bgcolor: 'action.hover' },
-                    '&:focus-visible': {
-                      outline: '2px solid',
-                      outlineColor: 'primary.main',
-                      outlineOffset: -2,
-                    },
-                  }}
-                >
-                  <Box
-                    aria-hidden="true"
-                    sx={(theme) => ({
-                      width: 36,
-                      height: 36,
-                      display: 'grid',
-                      placeItems: 'center',
-                      borderRadius: 1,
-                      color: 'success.dark',
-                      bgcolor: alpha(
-                        theme.palette.success.main,
-                        theme.palette.mode === 'dark' ? 0.2 : 0.1
-                      ),
-                    })}
-                  >
-                    <Icon size={17} />
-                  </Box>
-                  <Box minWidth={0}>
-                    <Stack direction="row" justifyContent="space-between" gap={1}>
-                      <Typography variant="body2" fontWeight={750}>
-                        {t(`workplace.resourceTypes.${item.type}`)}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                        {item.available}/{item.total}
-                      </Typography>
-                    </Stack>
-                    <Box
-                      sx={{
-                        mt: 0.75,
-                        height: 5,
-                        bgcolor: 'action.hover',
-                        overflow: 'hidden',
-                        borderRadius: 0.5,
-                      }}
-                    >
-                      <Box sx={{ width: `${percent}%`, height: 1, bgcolor: 'success.main' }} />
-                    </Box>
-                    {item.accessible > 0 && (
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ display: 'block', mt: 0.5 }}
-                      >
-                        {t('workplace.home.availability.accessible', { count: item.accessible })}
-                      </Typography>
-                    )}
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: 'block', mt: 0.35 }}
-                    >
-                      {t('workplace.home.availability.bookableCount', {
-                        count: item.bookable,
-                      })}
-                    </Typography>
-                  </Box>
-                  <ArrowRight size={15} aria-hidden="true" />
-                </ButtonBase>
-              </Box>
-            );
-          })}
-        </Stack>
-      ) : (
-        <Box sx={{ px: 2.5, py: 3 }}>
-          <Typography fontWeight={750}>{t('workplace.home.availability.emptyTitle')}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t('workplace.home.availability.emptyDescription')}
-          </Typography>
-        </Box>
-      )}
-    </SectionShell>
-  );
-}
+export { WorkplaceReadySpaces } from './workplace-home-ready-spaces';
 
 function attentionCopy(item: WorkplaceHomeAttention, t: ReturnType<typeof useTranslation>['t']) {
   if (item.kind === 'CALENDAR') return { title: item.title, description: item.description };
@@ -792,20 +658,39 @@ function attentionCopy(item: WorkplaceHomeAttention, t: ReturnType<typeof useTra
 export function WorkplaceAttentionSection({
   items,
   complete,
+  timeZone,
 }: {
   items: readonly WorkplaceHomeAttention[];
   complete: boolean;
+  timeZone?: string;
 }) {
-  const { t } = useTranslation('rooms');
+  const { t, i18n } = useTranslation('rooms');
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage);
+  const [expanded, setExpanded] = useState(false);
   return (
-    <SectionShell labelledBy="workplace-attention">
+    <SectionShell labelledBy="workplace-attention" mobileSurface="attention">
       <SectionHeader
         id="workplace-attention"
         icon={ShieldCheck}
         title={t('workplace.home.attention.title')}
         description={t('workplace.home.attention.description')}
+        mobileIcon
+        action={
+          <Typography
+            component="span"
+            sx={{
+              ...foundationTokens.workplace.typography.caption,
+              bgcolor: 'background.paper',
+              px: 1,
+              py: 0.25,
+              borderRadius: foundationTokens.workplace.radius.badge + 'px',
+            }}
+          >
+            {t('workplace.home.attention.count', { count: items.length })}
+          </Typography>
+        }
       />
-      <Divider />
+      <Divider sx={{ display: { xs: 'none', md: 'block' } }} />
       {!complete && (
         <Typography
           color="warning.main"
@@ -816,8 +701,8 @@ export function WorkplaceAttentionSection({
         </Typography>
       )}
       {items.length ? (
-        <Stack component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
-          {items.map((item, index) => {
+        <Stack component="ul" sx={{ p: 0, m: 0, listStyle: 'none', gap: { xs: 1, md: 0 } }}>
+          {items.slice(0, expanded ? items.length : 5).map((item, index) => {
             const copy = attentionCopy(item, t);
             const tone =
               item.severity === 'HIGH'
@@ -829,7 +714,12 @@ export function WorkplaceAttentionSection({
               <Box
                 component="li"
                 key={item.key}
-                sx={{ borderTop: index ? 1 : 0, borderColor: 'divider' }}
+                sx={{
+                  borderTop: { xs: 0, md: index ? 1 : 0 },
+                  borderColor: 'divider',
+                  bgcolor: { xs: 'background.paper', md: 'transparent' },
+                  borderRadius: { xs: foundationTokens.workplace.radius.card + 'px', md: 0 },
+                }}
               >
                 <ButtonBase
                   component={Link}
@@ -840,10 +730,13 @@ export function WorkplaceAttentionSection({
                   sx={{
                     width: 1,
                     display: 'grid',
-                    gridTemplateColumns: '22px minmax(0, 1fr) auto',
+                    gridTemplateColumns: {
+                      xs: 'auto minmax(0, 1fr) auto',
+                      md: '22px minmax(0, 1fr) auto',
+                    },
                     gap: 1,
                     alignItems: 'start',
-                    px: 2.25,
+                    px: { xs: 1.25, md: 2.25 },
                     py: 1.45,
                     color: 'text.primary',
                     textAlign: 'left',
@@ -855,18 +748,65 @@ export function WorkplaceAttentionSection({
                     },
                   }}
                 >
-                  <Box aria-hidden="true" sx={{ mt: '2px', color: tone, lineHeight: 0 }}>
+                  <Typography
+                    component="span"
+                    sx={{
+                      ...foundationTokens.workplace.typography.caption,
+                      display: { xs: 'inline-block', md: 'none' },
+                      bgcolor: 'var(--dwp-product-soft)',
+                      color: tone,
+                      px: 0.5,
+                      py: 0.25,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {t(`workplace.home.attention.kinds.${item.kind}`)}
+                  </Typography>
+                  <Box
+                    aria-hidden="true"
+                    sx={{
+                      display: { xs: 'none', md: 'block' },
+                      mt: '2px',
+                      color: tone,
+                      lineHeight: 0,
+                    }}
+                  >
                     <AlertCircle size={16} />
                   </Box>
                   <Box minWidth={0}>
-                    <Typography variant="body2" fontWeight={750}>
-                      {copy.title}
+                    <Typography variant="body2" fontWeight="fontWeightBold">
+                      {item.kind === 'CHECK_IN' || item.kind === 'RELEASE'
+                        ? item.booking.resourceName
+                        : item.kind === 'ROOM_NEEDED'
+                          ? item.event.title
+                          : copy.title}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {copy.description}
+                      {item.kind === 'CHECK_IN' && item.booking.checkInClosesAt
+                        ? t('workplace.home.attention.deadline', {
+                            time: formatDate(
+                              item.booking.checkInClosesAt,
+                              { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone },
+                              locale
+                            ),
+                          })
+                        : copy.description}
                     </Typography>
                   </Box>
-                  <ArrowRight size={15} aria-hidden="true" />
+                  <Typography
+                    component="span"
+                    sx={{
+                      ...foundationTokens.workplace.typography.caption,
+                      bgcolor: 'primary.main',
+                      color: 'primary.contrastText',
+                      px: 1,
+                      py: 1,
+                      borderRadius: foundationTokens.workplace.radius.control + 'px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {t(`workplace.home.attention.actions.${item.kind}`)}
+                  </Typography>
                 </ButtonBase>
               </Box>
             );
@@ -881,7 +821,7 @@ export function WorkplaceAttentionSection({
             aria-hidden="true"
           />
           <Box>
-            <Typography fontWeight={750}>
+            <Typography fontWeight="fontWeightBold">
               {t(
                 complete
                   ? 'workplace.home.attention.emptyTitle'
@@ -898,6 +838,18 @@ export function WorkplaceAttentionSection({
           </Box>
         </Stack>
       )}
+      {items.length > 5 ? (
+        <ActionButton
+          intent="quiet"
+          size="small"
+          fullWidth
+          onClick={() => setExpanded((value) => !value)}
+        >
+          {t(expanded ? 'workplace.home.attention.showLess' : 'workplace.home.attention.showAll', {
+            count: items.length,
+          })}
+        </ActionButton>
+      ) : null}
     </SectionShell>
   );
 }

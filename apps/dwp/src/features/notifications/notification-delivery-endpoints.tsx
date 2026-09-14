@@ -15,6 +15,12 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {
+  notificationPreferenceChipSx,
+  notificationPreferenceRadius,
+  notificationPreferenceSelectedBackground,
+} from './notification-preference-styles';
+
 import type { NotificationDeliveryEndpoint } from '@dwp-frontend/shared-utils/api/notification-api';
 
 function EndpointIcon({ platform }: { platform: NotificationDeliveryEndpoint['platform'] }) {
@@ -57,12 +63,14 @@ export function NotificationDeliveryEndpointInventory({
             {t('preferences.endpoints.description')}
           </Typography>
         </Box>
-        <Chip
-          size="small"
-          variant="outlined"
-          label={t('preferences.endpoints.activeCount', { count: activeCount })}
-          sx={{ ml: { sm: 'auto' } }}
-        />
+        {!loading && !failed && endpoints && (
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('preferences.endpoints.activeCount', { count: activeCount })}
+            sx={{ ...notificationPreferenceChipSx, ml: { sm: 'auto' } }}
+          />
+        )}
       </Stack>
 
       {loading ? (
@@ -102,9 +110,13 @@ export function NotificationDeliveryEndpointInventory({
               sx={{
                 py: 1.25,
                 display: 'grid',
-                gridTemplateColumns: { xs: '32px minmax(0, 1fr)', sm: '32px minmax(0, 1fr) auto' },
+                gridTemplateColumns: '32px minmax(0, 1fr)',
                 gap: 1,
                 alignItems: 'center',
+                minWidth: 0,
+                '@container notification-delivery-status (min-width: 600px)': {
+                  gridTemplateColumns: '32px minmax(0, 1fr) minmax(0, auto)',
+                },
               }}
             >
               <Box
@@ -114,16 +126,20 @@ export function NotificationDeliveryEndpointInventory({
                   height: 32,
                   display: 'grid',
                   placeItems: 'center',
-                  bgcolor: 'action.hover',
+                  bgcolor: notificationPreferenceSelectedBackground,
                   color: endpoint.state === 'ACTIVE' ? 'primary.main' : 'text.disabled',
-                  borderRadius: 'shape.borderRadius',
+                  borderRadius: notificationPreferenceRadius,
                 }}
               >
                 <EndpointIcon platform={endpoint.platform} />
               </Box>
               <Box minWidth={0}>
                 <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
-                  <Typography variant="body2" fontWeight="fontWeightBold">
+                  <Typography
+                    variant="body2"
+                    fontWeight="fontWeightBold"
+                    sx={{ overflowWrap: 'anywhere' }}
+                  >
                     {endpoint.displayName}
                   </Typography>
                   <Chip
@@ -131,9 +147,14 @@ export function NotificationDeliveryEndpointInventory({
                     variant="outlined"
                     color={endpoint.state === 'ACTIVE' ? 'success' : 'default'}
                     label={t(`preferences.endpoints.state.${endpoint.state}`)}
+                    sx={notificationPreferenceChipSx}
                   />
                 </Stack>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', overflowWrap: 'anywhere' }}
+                >
                   {t('preferences.endpoints.meta', {
                     channel: t(`channels.${endpoint.channel}`),
                     hint: endpoint.endpointHint,
@@ -152,7 +173,15 @@ export function NotificationDeliveryEndpointInventory({
                   loading={revokingId === endpoint.endpointId}
                   loadingLabel={t('preferences.endpoints.revoking')}
                   onClick={() => setPendingEndpoint(endpoint)}
-                  sx={{ gridColumn: { xs: '2', sm: '3' }, justifySelf: 'end' }}
+                  sx={{
+                    gridColumn: '2',
+                    justifySelf: 'end',
+                    maxWidth: '100%',
+                    whiteSpace: 'normal',
+                    '@container notification-delivery-status (min-width: 600px)': {
+                      gridColumn: '3',
+                    },
+                  }}
                 >
                   {t('preferences.endpoints.revoke')}
                 </ActionButton>

@@ -19,18 +19,42 @@
     },
     "items": {
       "rooms": {
-        "home": { "label": "Workplace home" },
-        "explore": { "label": "Find and book a space" },
-        "find-rooms": { "label": "Room schedule" },
-        "my-bookings": { "label": "Personal space bookings" },
-        "my-meetings": { "label": "Meeting booking management" },
-        "admin-overview": { "label": "Operations overview" },
-        "admin-operations": { "label": "Booking operations" },
-        "admin-governance": { "label": "Space governance" },
-        "admin-locations": { "label": "Sites and floor plans" },
-        "admin-policy": { "label": "Space booking policy" },
-        "admin-room-operations": { "label": "Meeting approvals" },
-        "admin-room-policy": { "label": "Meeting policy" }
+        "home": {
+          "label": "Workplace home"
+        },
+        "explore": {
+          "label": "Find and book a space"
+        },
+        "find-rooms": {
+          "label": "Room schedule"
+        },
+        "my-bookings": {
+          "label": "Personal space bookings"
+        },
+        "my-meetings": {
+          "label": "Meeting booking management"
+        },
+        "admin-overview": {
+          "label": "Operations overview"
+        },
+        "admin-operations": {
+          "label": "Booking operations"
+        },
+        "admin-governance": {
+          "label": "Space governance"
+        },
+        "admin-locations": {
+          "label": "Sites and floor plans"
+        },
+        "admin-policy": {
+          "label": "Space booking policy"
+        },
+        "admin-room-operations": {
+          "label": "Meeting approvals"
+        },
+        "admin-room-policy": {
+          "label": "Meeting policy"
+        }
       }
     }
   },
@@ -59,7 +83,9 @@
     "roomAdminPolicyReadOnly": "You can review the meeting policy, but policy management permission is required to change it.",
     "roomAdminOperationsReadOnly": "You can review booking requests, but management permission is required to approve or decline them."
   },
-  "units": { "people": " people" },
+  "units": {
+    "people": " people"
+  },
   "features": {
     "ACCESSIBLE": "Accessible",
     "DISPLAY": "Display",
@@ -208,7 +234,11 @@
       "state": "Operating state",
       "timeZone": "Time zone",
       "approvalRequired": "Require operator approval for bookings",
-      "states": { "AVAILABLE": "In service", "MAINTENANCE": "Maintenance", "RETIRED": "Retired" },
+      "states": {
+        "AVAILABLE": "In service",
+        "MAINTENANCE": "Maintenance",
+        "RETIRED": "Retired"
+      },
       "created": "The room was added.",
       "updated": "The room was updated.",
       "saveError": "The room could not be saved."
@@ -232,10 +262,354 @@
       "saveError": "The room booking policy could not be saved.",
       "unsavedTitle": "Discard unsaved meeting policy changes?",
       "unsavedDescription": "The meeting policy has changes that have not been saved. Leaving now will discard them.",
-      "discardChanges": "Discard changes"
+      "discardChanges": "Discard changes",
+      "reviewTitle": "Review room booking policy changes",
+      "reviewDescription": "Review the changed values before saving the Calendar-owned room booking policy.",
+      "current": "Current",
+      "proposed": "Proposed",
+      "ownerNotice": "Meeting bookings use the Calendar booking policy."
     }
   },
   "workplace": {
+    "experience": {
+      "unavailable": "Unavailable",
+      "loadError": "Could not load this information.",
+      "refreshing": "Refreshing",
+      "lastChecked": "Last checked {{at}}",
+      "allFloors": "All floors",
+      "from": "From",
+      "through": "Through",
+      "rangeError": "Choose an ordered date range of up to 93 days.",
+      "refresh": "Refresh",
+      "overview": "Operations",
+      "insights": "Insights",
+      "overviewDescription": "Review scoped bookings and resources, then act on the exceptions that need attention.",
+      "needsAttention": "Needs attention",
+      "noShow": "No-show bookings",
+      "utilization": "Booking utilization",
+      "priorityExceptions": "Priority exceptions",
+      "allOperations": "All booking operations",
+      "noExceptions": "No bookings need attention.",
+      "review": "Review",
+      "previous": "Previous",
+      "next": "Next",
+      "scopeSummary": "Scope summary",
+      "floorplanManagement": "Review and publish floorplan",
+      "floorUtilization": "Utilization by floor",
+      "utilizationDefinition": "Booked time divided by current reservable resource time in the selected period, using 24-hour days; this is separate from sensor occupancy.",
+      "resourceCount": "{{count}} reservable resources",
+      "photo": "Space photo",
+      "photoEmpty": "No space photo is registered.",
+      "photoFile": "Photo file · PNG/JPEG, up to 10 MiB",
+      "photoAlt": "Photo description",
+      "reason": "Reason for change",
+      "photoUpload": "Upload photo",
+      "photoRemove": "Delete photo",
+      "changeUnknown": "The save result is unknown. Check the current values and audit before submitting again.",
+      "recheck": "Reload current values",
+      "futureImpact": "Future booking impact",
+      "impactReadOnly": "Review bookings in the selected period. Reviewing does not change existing bookings.",
+      "roomsImpactNotice": "Review meeting bookings in meeting operations.",
+      "affectedCount": "{{count}} affected bookings",
+      "bookingReview": "Booking detail and action review",
+      "legalHold": "Legal hold",
+      "confirmImpact": "I have reviewed the current values, proposed values and known impact.",
+      "readOnly": "You do not have permission to change this setting.",
+      "conflict": "Another change updated the version. Reload the current values and review again.",
+      "permissionChanged": "Your access changed. Leave this screen and check your access again.",
+      "insightsTitle": "Booking and space utilization insights",
+      "insightsDescription": "Compare reservation-based utilization, no-shows, peak usage and the previous period.",
+      "exportCsv": "Export CSV",
+      "totalBookings": "Total bookings",
+      "noShowRate": "No-show rate",
+      "peakRate": "Peak hourly utilization",
+      "hourlyUtilization": "Hourly booking utilization",
+      "noData": "No data to display.",
+      "tableAlternative": "View hourly data table",
+      "date": "Date",
+      "hour": "Hour",
+      "bookedMinutes": "Booked minutes",
+      "selectedPeriod": "Selected period",
+      "selectPeriod": "Select a time slot to review utilization.",
+      "minutes": "{{count}} minutes",
+      "previousPeriod": "Previous equal period",
+      "utilizationChange": "Utilization change",
+      "plannedOccupancyNotice": "This analysis uses reservations. It does not represent employee arrival or sensor occupancy.",
+      "policyImpact": "Policy change impact",
+      "policyImpactDescription": "Compare the proposed policy with current bookings in the selected period.",
+      "previewPolicy": "Preview policy impact",
+      "reviewedBookings": "Reviewed bookings",
+      "policyImpactEmpty": "No bookings in the selected period are affected by this change.",
+      "memberHome": "Today's workspace",
+      "teamMenu": "Team work plans",
+      "settingsMenu": "Privacy and integrations",
+      "closure": "Scheduled space closure",
+      "request": "Facility request",
+      "requestDescription": "Request repair, cleaning or access assistance for this space.",
+      "facilityRequests": "Facility requests",
+      "closures": "Space closures",
+      "category": "Request category",
+      "description": "Description",
+      "requestSubmit": "Submit request",
+      "requestSaved": "Your facility request was submitted.",
+      "sameRequestRetry": "Retry the same request",
+      "closureCreate": "Schedule closure",
+      "closureCancel": "Cancel closure",
+      "closurePreservesBookings": "Existing bookings are preserved. Review affected reservations and handle each one explicitly.",
+      "startsAt": "Start date and time",
+      "endsAt": "End date and time",
+      "resource": "Space",
+      "status": "Status",
+      "changeStatus": "Change status",
+      "closureReason": "Closure reason",
+      "cancelClosureReason": "Cancellation reason",
+      "closureEmpty": "No closures in this period.",
+      "requestEmpty": "No facility requests in this scope.",
+      "selectResource": "Select a space to review its availability and bookings.",
+      "closureStates": {
+        "ACTIVE": "Active",
+        "CANCELLED": "Cancelled"
+      },
+      "requestCategories": {
+        "REPAIR": "Repair",
+        "CLEANING": "Cleaning",
+        "ACCESS": "Access assistance",
+        "OTHER": "Other"
+      },
+      "requestStates": {
+        "OPEN": "Open",
+        "IN_PROGRESS": "In progress",
+        "RESOLVED": "Resolved",
+        "CANCELLED": "Cancelled"
+      },
+      "currentValues": "Current values",
+      "proposedValues": "Proposed values",
+      "reviewChange": "Review change impact",
+      "knownImpact": "Known impact",
+      "currentActorAllowed": "Your current account can access this site.",
+      "currentActorDenied": "Your current account cannot access this site.",
+      "reviewedAt": "Reviewed: {{time}}",
+      "reviewRequired": "Enter the proposed values, then review their impact.",
+      "invalidChange": "The server rejected the proposed values. Reload and check your inputs.",
+      "reviewUnavailable": "The change impact is unavailable. Reload current values and review again.",
+      "originalReloaded": "Current values reloaded. Review and confirm the proposed values again.",
+      "changeSaved": "The change and reason were saved. You can check the record in the audit.",
+      "saveReviewedChange": "Save reviewed change",
+      "returnToItem": "Return to item",
+      "viewAudit": "View audit",
+      "inspectRule": "Inspect rule",
+      "selectedRule": "Selected access rule",
+      "changeAccessRule": "Review access rule change",
+      "version": "Version",
+      "sourceNotCurrent": "Checking whether the current information is up to date. Saving is unavailable until the check completes.",
+      "confirmSettingsChange": "I have reviewed the current settings, proposed values and affected scope.",
+      "currentPolicy": "Current: {{enabled}} · {{visibility}} · version {{version}}",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "sharingEnabled": "Allow work plan sharing in the organization",
+      "maximumVisibility": "Maximum sharing visibility",
+      "sharingPolicyImpact": "Individual consent and each plan’s visibility also apply. Disabling sharing removes shared plans from member views.",
+      "connectorMetadataDescription": "Store a configuration reference and view its verified status.",
+      "lastVerified": "Last verified: {{time}} · version {{version}}",
+      "neverVerified": "No verified record",
+      "currentConnector": "Current provider: {{provider}} · configuration reference: {{reference}}",
+      "connectorProvider": "Provider identifier",
+      "configurationReference": "Configuration reference",
+      "configurationReferenceHelp": "Enter an opaque reference to an approved configuration instead of credentials or a URL. Use letters, digits and . _ : / - only.",
+      "connectorEnabled": "Enable connector configuration",
+      "privacyTitle": "Privacy retention status",
+      "privacyDescription": "Counts from the existing booking retention policy and currently stored data.",
+      "bookingRetentionDays": "Booking retention days",
+      "legalHoldCount": "Bookings under legal hold",
+      "anonymizedBookingCount": "Bookings already anonymized",
+      "expiredEligibleBookingCount": "Expired bookings eligible for cleanup",
+      "observedAt": "Observed: {{time}}",
+      "sharingPolicyTitle": "Work plan sharing policy",
+      "sharingPolicyDescription": "Manage organization-wide sharing and its maximum visibility.",
+      "visibility": {
+        "PRIVATE": "Private",
+        "SITE": "Site",
+        "FLOOR": "Floor",
+        "RESOURCE": "Resource"
+      },
+      "connectorKinds": {
+        "CALENDAR": "Calendar connector",
+        "ACTUAL_PRESENCE": "Actual presence connector",
+        "SIGNAGE": "Signage connector",
+        "VISITOR": "Visitor connector",
+        "VEHICLE": "Vehicle connector"
+      },
+      "connectorStatuses": {
+        "NOT_CONFIGURED": "Not configured. No external status data is available.",
+        "DISABLED": "Configuration is disabled. External status has not been verified.",
+        "CONFIGURED_UNVERIFIED": "Connector configuration is saved. The connection and actual data have not been verified."
+      },
+      "policyEffects": {
+        "BELOW_PROPOSED_MINIMUM_DURATION": "Below the proposed minimum duration",
+        "EXCEEDS_PROPOSED_MAXIMUM_DURATION": "Exceeds the proposed maximum duration",
+        "OUTSIDE_PROPOSED_WORKING_HOURS": "Outside the proposed operating hours",
+        "CHECK_IN_REQUIREMENT_ADDED": "Check-in requirement added",
+        "CHECK_IN_REQUIREMENT_REMOVED": "Check-in requirement removed",
+        "PROPOSED_AUTO_RELEASE_DEADLINE_CHANGED": "Automatic release deadline changes"
+      },
+      "providerFormat": "Use letters, digits and . _ - only, up to 80 characters.",
+      "referenceFormat": "Use letters, digits and . _ : / - only, up to 160 characters.",
+      "photoUnavailable": "Photo unavailable",
+      "dailyPolicyImpact": "Daily policy impact",
+      "dailyPolicyImpactDescription": "Actual bookings reviewed and flagged by the proposed policy, across the whole selected period. Existing bookings are preserved.",
+      "dailyPolicyLegend": "Solid: reviewed bookings · Dashed: affected bookings. Each date button provides the same counts.",
+      "facilityRequestEligibleRetentionCount": "Facility requests eligible for retention cleanup",
+      "facilityClosureEligibleRetentionCount": "Space closures eligible for retention cleanup",
+      "facilityRequestsPurgedCount": "Facility requests deleted by retention",
+      "facilityClosuresPurgedCount": "Space closure records deleted by retention",
+      "facilityRetentionNotice": "The configured Workplace retention period also applies to terminal facility requests and past closure reasons. Legal holds and active work are preserved.",
+      "changeReviewRail": "Change review",
+      "editPolicyDraft": "Edit booking rules",
+      "globalPolicyScope": "Tenant default policy",
+      "policyChangeCount": "{{count}} changed fields",
+      "polish": {
+        "layoutPreview": "Selected floor layout",
+        "configuredLayoutNotice": "Registered resource positions. This does not show current occupancy or sensor presence.",
+        "viewFloor": "Open spaces and floor plans",
+        "latestExceptions": "Bookings to review first",
+        "trendTitle": "Daily booking utilization",
+        "trendDescription": "Compare actual booked time and utilization against the current resource roster in the selected period.",
+        "peakPeriod": "Busiest booked period",
+        "heatmapLow": "Low",
+        "heatmapHigh": "High",
+        "last7Days": "Last 7 days",
+        "last30Days": "Last 30 days",
+        "today": "Today",
+        "openRequests": "Service requests",
+        "resourceQueue": "Spaces to work on",
+        "scopedPeriod": "Reporting period",
+        "savedClosures": "Scheduled closure periods",
+        "countShown": "Showing {{count}} of {{total}} records",
+        "previewDataUnavailable": "Floor layout information is unavailable.",
+        "noShowCohort": "Based on {{count}} settled bookings that required check-in",
+        "heatmapDay": "Day to review",
+        "noHourData": "No verified hourly data is available for this day.",
+        "bookingTrend": "Booking count",
+        "mapResourceCount": "{{count}} registered resources",
+        "selectedFloor": "Selected floor",
+        "reviewAffected": "Review affected bookings",
+        "operationsWorkspace": "Bookings and facility operations",
+        "facilitiesDescription": "Select a space, review future booking impact and closure periods, then make an operating change.",
+        "allHours": "Show all 24 hours",
+        "currentRequests": "Open facility requests",
+        "requestCountDefinition": "Current OPEN/IN_PROGRESS queue, independent of reporting dates",
+        "sensorSource": "Facility sensor source",
+        "sensorUnavailable": "No verified external sensor connection. Booking utilization and actual presence are separate.",
+        "pendingApprovals": "Pending room approvals",
+        "approvalCountDefinition": "Calendar/Rooms-owned tenant queue",
+        "hourBookingsTitle": "Bookings overlapping this hour",
+        "hourBookingsCohort": "This list includes every booking status that overlaps the selected hour. Utilization uses the current reservable roster and counted booking states, clips released periods, and counts overlapping minutes once. The list total is not a count of contributing bookings or actual presence.",
+        "hourBookingsAuthority": "Viewing this list requires permission to read operations across all sites. Access to the scoped report alone does not grant access to this list.",
+        "hourBookingsSnapshot": "Report generated {{at}}. The booking list is read separately and may reflect later changes.",
+        "hourBookingsTotal": "All-status bookings in this time and location: {{count}}",
+        "hourBookingsRoomRows": "{{count}} Workplace room records on this page are omitted. Calendar room bookings remain in meeting operations.",
+        "hourBookingsNotContributing": "This status does not contribute booked minutes to utilization.",
+        "hourBookingsNoRows": "No non-room bookings on this page",
+        "hourBookingsPage": "Page {{page}} of {{count}}"
+      },
+      "policyImpactScopeNotice": "This booking analysis compares operating hours, booking duration, check-in and auto-release rules. Review advance booking, recurring, sharing and privacy settings in the change review before saving.",
+      "policyCategories": "Policy categories",
+      "roomApprovalWorkflow": "Meeting approval workflow",
+      "roomApprovalSettings": "Room approval rules",
+      "roomApprovalBoundary": "Meeting approvals use ADMIN.ROOMS authority and registered resource rules. Executive bypass and forecast metrics have no connected contract.",
+      "roomApprovalAccessNotice": "ADMIN.ROOMS view permission is required to read meeting approvals.",
+      "roomPolicyConfiguration": "Configure room booking policy",
+      "roomApprovalSaveNotice": "Approval settings save against the selected room version. The current resource save contract does not include a change-reason record.",
+      "accessRuleScope": "Access rule scope",
+      "siteAccessInherited": "Entire site (existing site rules)",
+      "floorAccessOverlayNotice": "Floor rules restrict the selected floor after existing site access is checked. They do not grant site access.",
+      "floorScopeProducerUnavailable": "Floor rules cannot be saved because the server has not verified the requested floor scope.",
+      "proposedActorAllowed": "Proposed access for the current user: allowed",
+      "proposedActorDenied": "Proposed access for the current user: denied",
+      "embeddedApprovalPage": "{{total}} bookings · {{from}}–{{to}} · page {{page}} of {{pages}}",
+      "approvalQueuePagination": "Approval queue pages",
+      "visibleFloorCount": "{{count}} accessible floors",
+      "floorScope": {
+        "authorizedFloors": "Authorized floors ({{count}})",
+        "allAuthorizedFloors": "All authorized floors",
+        "authorizedScope": "Counts include only your {{count}} authorized floors.",
+        "scopeUnverified": "The authorized floor scope could not be verified. Reload current sources.",
+        "globalReaderUnavailable": "Hourly booking lists require tenant-wide operations authority. This report remains restricted to your authorized floors.",
+        "chooseResourceFloor": "Choose a floor to view its spaces."
+      }
+    },
+    "member": {
+      "filters": {
+        "open": "Filters",
+        "apply": "Apply filters",
+        "view": "View mode"
+      },
+      "bookings": {
+        "detail": "Booking detail",
+        "openDetail": "View detail",
+        "ownerNotice": "Manage meeting bookings in meeting spaces.",
+        "openMeetings": "My meetings",
+        "checkInWindow": "Check-in window",
+        "checkInDeadline": "Check in by {{time}}",
+        "checkInRemaining": "{{count}} min until check-in closes",
+        "bookingId": "Booking number",
+        "currentReservation": "Current booking",
+        "requestedReservation": "Requested change",
+        "changeUnknown": "The change result is unknown. Reload your booking before choosing the next action.",
+        "recheck": "Reload latest booking",
+        "chooseAnother": "Keep filters and find another space"
+      },
+      "team": {
+        "eyebrow": "Team work plans",
+        "title": "Plan where to work together",
+        "description": "Review your work plans and the shared plans of consenting colleagues.",
+        "week": "Weekly work plans",
+        "sharing": "Share my work plans",
+        "sharingDescription": "Share planned locations within company policy and your consent.",
+        "optIn": "I consent to sharing my work plans.",
+        "visibility": "Sharing level",
+        "disabled": "Work plan sharing is disabled by company policy.",
+        "presenceNotice": "Arrival and live location are not verified. The information below is planned.",
+        "shared": "Shared work plans",
+        "empty": "No work plans are shared for this period.",
+        "ownEmpty": "You have no work plans yet.",
+        "planDate": "Work date",
+        "mode": "Work mode",
+        "save": "Save plan",
+        "remove": "Delete plan",
+        "revoke": "Revoke sharing",
+        "revokeTitle": "Revoke work plan sharing?",
+        "revokeDescription": "Your shared plans will become private.",
+        "saved": "Work plan saved.",
+        "preferenceSaved": "Sharing preference saved.",
+        "revoked": "Sharing revoked.",
+        "saveError": "The change result is unknown. Recheck your plans and preference.",
+        "planned": "Planned",
+        "anonymousPlan": "Shared plan",
+        "group": "Sharing group",
+        "groupLabel": "Sharing group {{number}}",
+        "noGroups": "You have no sharing groups. You can save private plans.",
+        "savePreference": "Save sharing preference",
+        "modes": {
+          "OFFICE": "Office",
+          "REMOTE": "Remote",
+          "OFF": "Off"
+        },
+        "visibilities": {
+          "PRIVATE": "Private",
+          "SITE": "Site",
+          "FLOOR": "Floor",
+          "RESOURCE": "Resource"
+        },
+        "revokeCompleteTitle": "Work plan sharing is revoked",
+        "revokeCompleteDescription": "The server confirmed that sharing consent is off. You can continue using your space bookings.",
+        "configureSharing": "Review sharing settings",
+        "colleague": "Colleague",
+        "noSharedPlan": "No shared plan",
+        "matrixCaption": "Shared colleague plans by day",
+        "findSameFloor": "Find spaces on the same floor"
+      }
+    },
     "staleWarning": "The latest data could not be refreshed. The last successful results remain visible.",
     "partialWarning": "Some workplace information is unavailable. Available sections remain usable.",
     "home": {
@@ -283,7 +657,7 @@
         "bookDescription": "{{count}} spaces pass the initial booking checks for the next 60 minutes on the selected floor. Final eligibility is verified when you book.",
         "browseEyebrow": "Open spaces to review",
         "browseTitle": "Browse the floor before choosing your next space",
-        "browseDescription": "{{count}} spaces are physically open. Your account or a booking policy still requires review before reservation.",
+        "browseDescription": "{{count}} spaces are open by reservation state. Your account or a booking policy still requires review before reservation.",
         "noSiteEyebrow": "Workplace setup needed",
         "noSiteTitle": "No workplace site is available to you",
         "noSiteDescription": "An administrator must configure a site and floor or grant this account access.",
@@ -296,10 +670,14 @@
         "clearEyebrow": "Your day is clear",
         "clearTitle": "There is no immediate workplace action",
         "clearDescription": "Find and reserve a space when you need one, or stay focused on the rest of your workday.",
-        "open": "Open event"
+        "open": "Open event",
+        "remainingTime": "Time remaining",
+        "deadlineElapsed": "Deadline passed",
+        "reservedSpace": "My reserved space",
+        "usageTime": "Usage time: {{from}}–{{to}}"
       },
       "agenda": {
-        "title": "Today's flow",
+        "title": "Today's schedule",
         "description": "Follow workspace, meeting, and focus time in chronological order.",
         "partial": "One or more schedule sources are unavailable. Only verified items are shown.",
         "emptyTitle": "No workplace events are scheduled today",
@@ -313,16 +691,17 @@
           "TASK": "Task",
           "OUT_OF_OFFICE": "Working elsewhere",
           "REMINDER": "Reminder"
-        }
+        },
+        "count": "{{count}} scheduled items"
       },
       "availability": {
-        "scope": "Next 60-minute physical availability",
+        "scope": "Next 60-minute reservation availability",
         "noScope": "No site selected",
         "noData": "Availability is not configured for this floor.",
         "floorPlanAlt": "Floor plan for {{scope}}",
-        "meterLabel": "{{available}} of {{total}} {{type}} spaces physically open; {{bookable}} pass current booking checks",
-        "title": "Spaces open for the next 60 minutes",
-        "description": "Physical availability is shown separately from booking eligibility. Policy and conflict checks run again when a space is selected.",
+        "meterLabel": "{{available}} of {{total}} {{type}} spaces open by reservation state; {{bookable}} pass current booking checks",
+        "title": "Spaces for the next 60 minutes",
+        "description": "Reservation availability is shown separately from booking eligibility. Policy and conflict checks run again when a space is selected.",
         "staleTitle": "Availability needs to be verified again",
         "staleDescription": "Last-known information is reference only. Space selection remains unavailable until a fresh check succeeds.",
         "unavailableTitle": "Availability could not be verified",
@@ -336,17 +715,24 @@
         "configureSite": "Configure sites",
         "configureFloor": "Configure floors",
         "configureResources": "Add spaces",
-        "openType": "{{available}} {{type}} spaces physically open and {{bookable}} pass initial booking checks, open Find a space",
-        "pulseCount": "{{open}} physically open · {{bookable}} initial checks passed",
+        "openType": "{{available}} {{type}} spaces open by reservation state and {{bookable}} pass initial booking checks, open Find a space",
+        "pulseCount": "{{open}} open by reservation state · {{bookable}} initial checks passed",
         "locationMetric": "Space context",
         "windowMetric": "Availability window",
         "nextHour": "Next 60 minutes",
-        "physicalOpenMetric": "Physically open",
+        "physicalOpenMetric": "Open by reservation state",
         "initialChecksMetric": "Initial checks passed",
         "bookableCount": "{{count}} pass initial booking checks",
         "accessible": "{{count}} accessible spaces pass initial booking checks",
-        "emptyTitle": "No space is physically open for the next 60 minutes",
-        "emptyDescription": "Choose another time or floor to find the next open space."
+        "emptyTitle": "No space is open by reservation state for the next 60 minutes",
+        "emptyDescription": "Choose another time or floor to find the next open space.",
+        "typeUnavailable": "Unavailable",
+        "typeNotConfigured": "No registered spaces",
+        "typeTotal": "Total {{count}}",
+        "typeOpen": "Unreserved {{count}}",
+        "typeBookable": "Initial checks {{count}}",
+        "typeEligibilityCompact": "{{bookable}} initial checks · {{accessible}} accessible",
+        "typeOpenCompact": "Unreserved"
       },
       "week": {
         "title": "Your workweek rhythm",
@@ -364,7 +750,7 @@
         "emptyDescription": "Meeting and focus patterns will appear here as your week takes shape."
       },
       "attention": {
-        "title": "Worth your attention",
+        "title": "Items needing attention",
         "description": "Check-ins and events that still need a place are surfaced first.",
         "partial": "More items may appear when every connection recovers.",
         "roomNeededTitle": "{{event}} still needs a room",
@@ -376,8 +762,38 @@
         "emptyTitle": "Your workplace plan is in good shape",
         "unavailableTitle": "Items needing attention are not fully verified",
         "emptyDescription": "There are no check-ins or unplaced events to review right now.",
-        "unavailableDescription": "Items that need attention will be checked again after connections recover."
-      }
+        "unavailableDescription": "Items that need attention will be checked again after connections recover.",
+        "count": "{{count}} items",
+        "deadline": "Check-in closes at {{time}}",
+        "kinds": {
+          "CHECK_IN": "Check-in",
+          "RELEASE": "Release",
+          "ROOM_NEEDED": "Space needed",
+          "CALENDAR": "Schedule"
+        },
+        "actions": {
+          "CHECK_IN": "Check-in",
+          "RELEASE": "Release",
+          "ROOM_NEEDED": "Open event",
+          "CALENDAR": "Review"
+        },
+        "showAll": "Show all {{count}} items",
+        "showLess": "Show fewer"
+      },
+      "welcomeTitle": "Get ready for your workday",
+      "welcomeDescription": "Review your bookings and check-in, then choose the space you need.",
+      "scopeTitle": "Location and booking time",
+      "sources": {
+        "workspace": "Space booking information",
+        "calendar": "Schedule information",
+        "externalPresence": "External presence information",
+        "workspaceDescription": "Spaces and your bookings are checked against owner booking data for the selected scope.",
+        "calendarDescription": "Only authorized meeting and focus schedules are shown.",
+        "externalDescription": "This view has no verified external presence information.",
+        "unverified": "Unverified"
+      },
+      "changeScope": "Change location and time",
+      "mobileTitle": "Today's workplace"
     },
     "resourceTypes": {
       "ROOM": "Meeting room",
@@ -389,7 +805,7 @@
       "EQUIPMENT": "Shared equipment"
     },
     "status": {
-      "AVAILABLE": "Physically open",
+      "AVAILABLE": "Open by reservation state",
       "OCCUPIED": "Occupied",
       "MINE": "My booking",
       "ASSIGNED": "Assigned",
@@ -402,8 +818,16 @@
       "SATELLITE": "Satellite office",
       "CLIENT_SITE": "Client site"
     },
-    "siteStates": { "ACTIVE": "Active", "MAINTENANCE": "Maintenance", "CLOSED": "Closed" },
-    "floorStates": { "DRAFT": "Draft", "ACTIVE": "Active", "CLOSED": "Closed" },
+    "siteStates": {
+      "ACTIVE": "Active",
+      "MAINTENANCE": "Maintenance",
+      "CLOSED": "Closed"
+    },
+    "floorStates": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "CLOSED": "Closed"
+    },
     "bookingModes": {
       "RESERVABLE": "Advance booking",
       "DROP_IN": "Drop-in",
@@ -497,7 +921,15 @@
       "roomPolicyUnavailable": "The meeting-room booking policy is unavailable. Room booking is disabled until it is restored.",
       "policyRangeUnavailable": "The selected time is outside the booking policy for this space. Adjust the date, time, or duration.",
       "bindingUnavailable": "This room is not yet linked to its calendar resource and cannot be booked.",
-      "bookingUnavailable": "This space cannot be booked for the selected time. Adjust the time or choose another space."
+      "bookingUnavailable": "This space cannot be booked for the selected time. Adjust the time or choose another space.",
+      "policyTitle": "Booking and check-in rules",
+      "checkInNotRequired": "Check-in is not required by current policy.",
+      "selectedWindowTimeline": "Reservations in selected window",
+      "anonymousReservation": "Reserved interval",
+      "unreservedInterval": "Unreserved interval",
+      "closureInterval": "Scheduled closure",
+      "timelineNotice": "Reservations and scheduled closures for the selected window; this does not indicate actual presence.",
+      "nativeDetailsUnavailable": "Reservation details and rules appear after current information is verified."
     },
     "booking": {
       "title": "Book a workspace",
@@ -770,7 +1202,12 @@
         "floorUpdated": "The floor was updated.",
         "resourceCreated": "The reservable resource was added.",
         "resourceUpdated": "The resource was updated.",
-        "saveError": "The Workplace information could not be saved."
+        "saveError": "The Workplace information could not be saved.",
+        "resourceDetail": "Space information",
+        "selectionHint": "Select a space to inspect its details.",
+        "photoManagement": "Manage space photo",
+        "catalogSummary": "Selected floor catalog",
+        "coordinates": "Floor-plan coordinates"
       },
       "governance": {
         "eyebrow": "Enterprise space control",
@@ -782,7 +1219,8 @@
           "access": "Access control",
           "policy": "Policy inheritance",
           "floorPlans": "Floor-plan releases",
-          "delegation": "Admin delegation"
+          "delegation": "Admin delegation",
+          "experience": "Privacy and integrations"
         },
         "common": {
           "readOnly": "Your current role can inspect governance configuration but cannot run change commands.",
@@ -836,9 +1274,19 @@
           "SERVICE": "Service",
           "RESTRICTED": "Restricted"
         },
-        "subjectTypes": { "USER": "Member", "GROUP_REF": "Verified group" },
-        "permissions": { "VIEW": "View", "BOOK": "Book", "MANAGE": "Manage" },
-        "effects": { "ALLOW": "Allow", "DENY": "Deny" },
+        "subjectTypes": {
+          "USER": "Member",
+          "GROUP_REF": "Verified group"
+        },
+        "permissions": {
+          "VIEW": "View",
+          "BOOK": "Book",
+          "MANAGE": "Manage"
+        },
+        "effects": {
+          "ALLOW": "Allow",
+          "DENY": "Deny"
+        },
         "scopeTypes": {
           "TENANT": "Company",
           "CAMPUS": "Campus",
@@ -1042,7 +1490,16 @@
           "emptyDescription": "Only central administrators currently operate all Workplace locations.",
           "noEffective": "No delegated scope applies",
           "noEffectiveDescription": "This session is using central authority or a separate authorization policy.",
-          "expiryNotice": "Delegations without expiry require periodic access review. An end time aligned to the assignment is recommended."
+          "expiryNotice": "Delegations without expiry require periodic access review. An end time aligned to the assignment is recommended.",
+          "floorRange": "Managed floor scope",
+          "allFloors": "All floors in the site",
+          "selectedFloors": "Selected floors",
+          "selectFloors": "Select the floors to manage",
+          "floorOptionsUnavailable": "Current floor information is unavailable. Recheck the site and floor information.",
+          "immutableRange": "To change the saved floor scope, revoke the existing delegation and create a new one.",
+          "reviewImpactScope": "Changes apply only to the selected delegation's site scope, actions, and validity period.",
+          "reviewApplicationAccess": "Administrative delegation does not grant access to the Workplace or meeting-room application.",
+          "reviewPropagation": "Changes are checked on subsequent management actions. External approval is not requested, and other open screens may take time to refresh."
         }
       },
       "policy": {
@@ -1080,7 +1537,8 @@
         "bookingRetentionDaysHint": "Names, member identifiers, and purposes on completed, cancelled, and no-show bookings are anonymized after this period. Legal holds are excluded.",
         "checkIn": "Check-in policy",
         "enabled": "Enabled",
-        "disabled": "Disabled"
+        "disabled": "Disabled",
+        "allowRecurring": "Allow recurring bookings"
       }
     }
   }

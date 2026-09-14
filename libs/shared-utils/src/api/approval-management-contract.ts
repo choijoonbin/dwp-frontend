@@ -142,15 +142,34 @@ export type ApprovalFormField = {
   options?: string[];
 };
 
-export type ApprovalFormSchema = {
+export type ApprovalLegacyFormSchema = {
+  schemaContract?: never;
   schemaVersion: number;
   fields: ApprovalFormField[];
 };
+
+export type ApprovalFormSchema = ApprovalLegacyFormSchema | ApprovalTypedFormSchema;
+
+export function isApprovalTypedFormSchema(
+  schema: ApprovalFormSchema
+): schema is ApprovalTypedFormSchema {
+  return schema.schemaContract === APPROVAL_TYPED_FORM_CONTRACT && schema.schemaVersion === 2;
+}
+
+export function assertSupportedApprovalFormSchema(schema: ApprovalFormSchema): void {
+  if (!schema || !Array.isArray(schema.fields)) throw new Error('Invalid approval form schema');
+  if (schema.schemaContract !== undefined) {
+    if (!isApprovalTypedFormSchema(schema)) throw new Error('Unsupported approval form schema');
+  } else if (schema.schemaVersion !== 1 && schema.schemaVersion !== 2) {
+    throw new Error('Unsupported approval form schema');
+  }
+}
 
 export type ApprovalFormDetail = {
   form: ApprovalForm;
   schema: ApprovalFormSchema;
   schemaHash: string;
+  formVersionId?: string | null;
   routes: ApprovalFormRoute[];
 };
 
@@ -214,6 +233,22 @@ export type ApprovalIntegrationDelivery = {
   lastError?: string | null;
   createdAt: string;
   lastRetriedAt?: string | null;
+  retryEligibility?: ApprovalIntegrationRetryEligibility;
+};
+
+export type ApprovalIntegrationRetryEligibilityReason =
+  | 'ELIGIBLE'
+  | 'STATUS_NOT_RETRYABLE'
+  | 'AUDITOR_ASSIGNMENT_NOT_READY'
+  | 'SCOPE_EVIDENCE_MISMATCH'
+  | 'RECOVERY_EVIDENCE_INCOMPLETE'
+  | 'SEPARATION_OF_DUTIES';
+
+export type ApprovalIntegrationRetryEligibility = {
+  eligible: boolean;
+  reason: ApprovalIntegrationRetryEligibilityReason;
+  expectedVersion: number;
+  evaluatedAt: string;
 };
 
 export type ApprovalOperations = {
@@ -229,8 +264,29 @@ export type ApprovalSignatureProvider = {
   displayName: string;
   providerType: string;
   lifecycleState: string;
-  capabilities: Record<string, unknown>;
+  capabilities: ApprovalSignatureCapabilities;
   credentialConfigured: boolean;
   lastHealthCheckedAt?: string | null;
   version: number;
 };
+
+export type ApprovalSignatureReadiness =
+  | 'READY'
+  | 'DISABLED'
+  | 'DEGRADED'
+  | 'CONFIGURATION_REQUIRED'
+  | 'NOT_VERIFIED'
+  | 'EXTERNAL_VERIFICATION_REQUIRED';
+
+export type ApprovalSignatureCapabilities = {
+  internalAttestation?: boolean;
+  auditEvidence?: boolean;
+  verifiedIdentity?: boolean;
+  remoteSigningSupported?: boolean;
+  readiness?: ApprovalSignatureReadiness;
+};
+import { APPROVAL_TYPED_FORM_CONTRACT } from './approval-form-typed-contract';
+
+import type { ApprovalTypedFormSchema } from './approval-form-typed-contract';
+
+export type * from './approval-form-typed-contract';

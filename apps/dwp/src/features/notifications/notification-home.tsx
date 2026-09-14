@@ -9,12 +9,13 @@ import {
   EmptyState,
   LoadingState,
   LocalErrorState,
-  PageCanvas,
 } from '@dwp-frontend/design-system';
 import {
   applyNotificationTriage,
   createNotificationIdempotencyKey,
+  getNotificationCapabilities,
   getNotificationDeliveryProfile,
+  getNotificationEffectiveSettings,
   getNotificationInbox,
   getNotificationSummary,
   getNotificationSummaryByApp,
@@ -33,6 +34,8 @@ import { scheduleNotificationCacheInvalidation } from './notification-cache-poli
 import { NotificationActionCard } from './notification-action-card';
 import { NotificationHomeHeader } from './notification-home-header';
 import { NotificationHomeInsights } from './notification-home-insights';
+import { resolveNotificationDeliveryStatus } from './notification-delivery-status-model';
+import { NotificationPageFrame } from './notification-page-frame';
 import {
   groupNotificationStream,
   kpiView,
@@ -78,7 +81,6 @@ const HOME_MENTIONS_SCOPE = { surface: 'home', view: 'MENTIONS' } as const;
 const HOME_INBOX_SCOPES = [HOME_ALL_SCOPE, HOME_PRIORITY_SCOPE, HOME_MENTIONS_SCOPE] as const;
 const HOME_APP_SUMMARY_SCOPE = { surface: 'home' } as const;
 const HOME_INBOX_LIMIT = 8;
-const NOTIFICATION_HOME_MAX_WIDTH = 1600;
 const HOME_GROUP_PREVIEW_LIMIT: Record<NotificationStreamGroupKey, number> = {
   ACTION_REQUIRED: 2,
   CONVERSATIONS: 1,
@@ -199,6 +201,18 @@ export function NotificationHome() {
     staleTime: 30_000,
     retry: 1,
   });
+  const capabilitiesQuery = useQuery({
+    queryKey: notificationQueryKeys.capabilities(),
+    queryFn: ({ signal }) => getNotificationCapabilities(signal),
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const effectiveSettingsQuery = useQuery({
+    queryKey: notificationQueryKeys.effectiveSettings(),
+    queryFn: ({ signal }) => getNotificationEffectiveSettings(signal),
+    staleTime: 30_000,
+    retry: 1,
+  });
   const appSummaryQuery = useQuery({
     queryKey: notificationQueryKeys.appSummary(HOME_APP_SUMMARY_SCOPE),
     queryFn: ({ signal }) => getNotificationSummaryByApp(signal),
@@ -272,6 +286,8 @@ export function NotificationHome() {
     await Promise.all([
       scheduleNotificationCacheInvalidation(queryClient),
       queryClient.invalidateQueries({ queryKey: notificationQueryKeys.preferences() }),
+      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.capabilities() }),
+      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() }),
     ]);
   }, [queryClient]);
 
@@ -349,6 +365,8 @@ export function NotificationHome() {
           ...(inboxQuery.data?.unavailableSources ?? []),
           ...(priorityInboxQuery.data?.unavailableSources ?? []),
           ...(mentionsInboxQuery.data?.unavailableSources ?? []),
+          ...(priorityInboxQuery.isError ? ['notification-priority'] : []),
+          ...(mentionsInboxQuery.isError ? ['notification-mentions'] : []),
           ...(appSummaryQuery.data?.unavailableSources ?? []),
           ...(activeKpi ? (selectionQuery.data?.unavailableSources ?? []) : []),
         ])
@@ -357,7 +375,9 @@ export function NotificationHome() {
       appSummaryQuery.data?.unavailableSources,
       inboxQuery.data?.unavailableSources,
       mentionsInboxQuery.data?.unavailableSources,
+      mentionsInboxQuery.isError,
       priorityInboxQuery.data?.unavailableSources,
+      priorityInboxQuery.isError,
       summaryQuery.data?.unavailableSources,
       activeKpi,
       selectionQuery.data?.unavailableSources,
@@ -368,6 +388,8 @@ export function NotificationHome() {
     Boolean(inboxQuery.data?.partial) ||
     Boolean(priorityInboxQuery.data?.partial) ||
     Boolean(mentionsInboxQuery.data?.partial) ||
+    priorityInboxQuery.isError ||
+    mentionsInboxQuery.isError ||
     Boolean(appSummaryQuery.data?.partial) ||
     Boolean(activeKpi && selectionQuery.data?.partial);
   const refreshing =
@@ -403,20 +425,20 @@ export function NotificationHome() {
 
   if (coreLoading) {
     return (
-      <PageCanvas mode="workspace" topInset="compact">
-        <Box sx={{ width: 1, maxWidth: NOTIFICATION_HOME_MAX_WIDTH, mx: 'auto' }}>
+      <NotificationPageFrame>
+        <Box>
           {header}
           <Box sx={{ mt: 2.5 }}>
             <LoadingState label={t('home.loading')} variant="skeleton" size="page" />
           </Box>
         </Box>
-      </PageCanvas>
+      </NotificationPageFrame>
     );
   }
   if (coreError || !summary || !inbox || !profile) {
     return (
-      <PageCanvas mode="workspace" topInset="compact">
-        <Box sx={{ width: 1, maxWidth: NOTIFICATION_HOME_MAX_WIDTH, mx: 'auto' }}>
+      <NotificationPageFrame>
+        <Box>
           {header}
           <Box sx={{ mt: 2.5 }}>
             <LocalErrorState
@@ -429,7 +451,7 @@ export function NotificationHome() {
             />
           </Box>
         </Box>
-      </PageCanvas>
+      </NotificationPageFrame>
     );
   }
 
@@ -447,6 +469,12 @@ export function NotificationHome() {
       appsError={appSummaryQuery.isError}
       appsRefreshing={appSummaryQuery.isFetching}
       profile={profile}
+      deliveryStatus={resolveNotificationDeliveryStatus({
+        profile,
+        capabilities: capabilitiesQuery.data,
+        effectiveSettings: effectiveSettingsQuery.data,
+        effectiveSettingsFailed: effectiveSettingsQuery.isError,
+      })}
       onRetryApps={() => void appSummaryQuery.refetch()}
       onOpenSettings={() => navigate(NOTIFICATION_SETTINGS_PATH)}
     />
@@ -465,15 +493,28 @@ export function NotificationHome() {
           component="section"
           aria-labelledby={`notification-home-group-${group.key}`}
           key={group.key}
-          sx={{ '& + &': { mt: 1.2 } }}
+          sx={{ '& + &': { mt: 2 } }}
         >
           <NotificationStreamGroupHeading
             groupKey={group.key}
             count={group.items.length}
             headingId={`notification-home-group-${group.key}`}
-            headingComponent="h3"
+            headingComponent="h2"
+            title={group.key === 'ACTION_REQUIRED' ? t('home.priorityTitle') : undefined}
+            actions={
+              <ActionButton
+                component={Link}
+                to={homeGroupCenterPath(group.key)}
+                intent="quiet"
+                size="small"
+                endIcon={<ArrowRight size={14} />}
+                sx={{ color: 'primary.main', flexShrink: 0 }}
+              >
+                {t('home.openCenter')}
+              </ActionButton>
+            }
           />
-          <Stack component="ul" spacing={0.75} sx={{ p: 0, m: 0, listStyle: 'none' }}>
+          <Stack component="ul" spacing={1} sx={{ p: 0, m: 0, listStyle: 'none' }}>
             {visibleItems.map((item) => {
               const content = notificationArrivalContent(
                 item,
@@ -564,8 +605,8 @@ export function NotificationHome() {
       );
     });
   return (
-    <PageCanvas mode="workspace" topInset="compact">
-      <Box sx={{ width: 1, maxWidth: NOTIFICATION_HOME_MAX_WIDTH, mx: 'auto' }}>
+    <NotificationPageFrame>
+      <Box>
         {header}
         {(partial || connectionState === 'offline') && (
           <Box sx={{ mt: 1.5 }}>
@@ -590,45 +631,44 @@ export function NotificationHome() {
         />
 
         <Box
+          data-testid="notification-home-workspace"
           sx={{
             mt: 1.75,
             display: 'grid',
             gridTemplateColumns: {
               xs: 'minmax(0, 1fr)',
-              lg: 'minmax(0, 1fr) minmax(300px, 360px)',
+              lg: 'minmax(0, 2fr) minmax(260px, 1fr)',
             },
-            gap: { xs: 2, lg: 2.25 },
+            gap: 2,
             alignItems: 'start',
           }}
         >
-          <Box
-            component="section"
-            aria-labelledby="notification-home-priority"
-            sx={{ minWidth: 0 }}
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
-              <Box>
-                <Typography
-                  id="notification-home-priority"
-                  component="h2"
-                  variant="subtitle1"
-                  fontWeight="fontWeightBold"
+          <Box sx={{ minWidth: 0 }}>
+            {activeKpi && (
+              <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+                <Box>
+                  <Typography
+                    id="notification-home-priority"
+                    component="h2"
+                    variant="subtitle1"
+                    fontWeight="fontWeightBold"
+                  >
+                    {t(`workbench.kpis.${activeKpi}`)}
+                  </Typography>
+                </Box>
+                <ActionButton
+                  component={Link}
+                  to={notificationCenterPath(activeKpi ? selectionScope : { view: 'ALL' })}
+                  intent="quiet"
+                  size="small"
+                  endIcon={<ArrowRight size={16} />}
+                  sx={{ whiteSpace: 'nowrap' }}
                 >
-                  {activeKpi ? t(`workbench.kpis.${activeKpi}`) : t('home.priorityTitle')}
-                </Typography>
-              </Box>
-              <ActionButton
-                component={Link}
-                to={notificationCenterPath(activeKpi ? selectionScope : { view: 'ALL' })}
-                intent="quiet"
-                size="small"
-                endIcon={<ArrowRight size={16} />}
-                sx={{ whiteSpace: 'nowrap' }}
-              >
-                {t('home.openCenter')}
-              </ActionButton>
-            </Stack>
-            <Box sx={{ mt: 1.25 }}>
+                  {t('home.openCenter')}
+                </ActionButton>
+              </Stack>
+            )}
+            <Box sx={{ mt: activeKpi ? 1.25 : 0 }}>
               {activeKpi && selectionQuery.isLoading ? (
                 <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={3} />
               ) : activeKpi && selectionQuery.isError ? (
@@ -661,6 +701,6 @@ export function NotificationHome() {
           {desktopInsights && insights}
         </Box>
       </Box>
-    </PageCanvas>
+    </NotificationPageFrame>
   );
 }

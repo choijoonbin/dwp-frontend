@@ -19,18 +19,42 @@
     },
     "items": {
       "rooms": {
-        "home": { "label": "근무 공간 홈" },
-        "explore": { "label": "공간 찾기 및 예약" },
-        "find-rooms": { "label": "회의실 시간표" },
-        "my-bookings": { "label": "개인 공간 예약" },
-        "my-meetings": { "label": "회의 예약 관리" },
-        "admin-overview": { "label": "운영 현황" },
-        "admin-operations": { "label": "예약 운영·감사" },
-        "admin-governance": { "label": "공간 거버넌스" },
-        "admin-locations": { "label": "사업장 및 배치도" },
-        "admin-policy": { "label": "공간 예약 정책" },
-        "admin-room-operations": { "label": "회의 승인 운영" },
-        "admin-room-policy": { "label": "회의 예약 정책" }
+        "home": {
+          "label": "근무 공간 홈"
+        },
+        "explore": {
+          "label": "공간 찾기 및 예약"
+        },
+        "find-rooms": {
+          "label": "회의실 시간표"
+        },
+        "my-bookings": {
+          "label": "개인 공간 예약"
+        },
+        "my-meetings": {
+          "label": "회의 예약 관리"
+        },
+        "admin-overview": {
+          "label": "운영 현황"
+        },
+        "admin-operations": {
+          "label": "예약 운영·감사"
+        },
+        "admin-governance": {
+          "label": "공간 거버넌스"
+        },
+        "admin-locations": {
+          "label": "사업장 및 배치도"
+        },
+        "admin-policy": {
+          "label": "공간 예약 정책"
+        },
+        "admin-room-operations": {
+          "label": "회의 승인 운영"
+        },
+        "admin-room-policy": {
+          "label": "회의 예약 정책"
+        }
       }
     }
   },
@@ -238,10 +262,354 @@
       "saveError": "회의실 예약 정책을 저장하지 못했습니다.",
       "unsavedTitle": "저장하지 않은 회의실 정책 변경을 버릴까요?",
       "unsavedDescription": "회의실 정책 변경이 아직 저장되지 않았습니다. 이동하면 변경 내용이 사라집니다.",
-      "discardChanges": "변경 버리기"
+      "discardChanges": "변경 버리기",
+      "reviewTitle": "회의실 예약 정책 변경 검토",
+      "reviewDescription": "Calendar에서 관리하는 회의실 예약 정책의 변경 값을 확인한 뒤 저장하세요.",
+      "current": "현재",
+      "proposed": "변경 후",
+      "ownerNotice": "회의 예약에는 Calendar 예약 정책이 적용됩니다."
     }
   },
   "workplace": {
+    "experience": {
+      "unavailable": "확인 불가",
+      "loadError": "정보를 불러오지 못했습니다.",
+      "refreshing": "최신 정보 확인 중",
+      "lastChecked": "최근 확인 {{at}}",
+      "allFloors": "전체 층",
+      "from": "시작일",
+      "through": "종료일",
+      "rangeError": "시작일과 종료일을 확인해 주세요. 최대 93일까지 조회할 수 있습니다.",
+      "refresh": "새로고침",
+      "overview": "운영 현황",
+      "insights": "예약 활용 분석",
+      "overviewDescription": "선택한 사업장의 예약·자원 현황을 확인하고 우선 처리할 예약을 검토합니다.",
+      "needsAttention": "확인 필요",
+      "noShow": "미체크인 예약",
+      "utilization": "예약 활용률",
+      "priorityExceptions": "우선 처리 예약",
+      "allOperations": "전체 예약 운영",
+      "noExceptions": "우선 확인할 예약이 없습니다.",
+      "review": "검토하기",
+      "previous": "이전",
+      "next": "다음",
+      "scopeSummary": "선택 범위 현황",
+      "floorplanManagement": "배치도 검토·게시",
+      "floorUtilization": "층별 예약 활용",
+      "utilizationDefinition": "예약 시간 ÷ 선택 기간의 현재 예약 가능 자원 시간입니다. 하루 24시간 기준이며 센서 점유율과는 구분합니다.",
+      "resourceCount": "예약 가능 자원 {{count}}개",
+      "photo": "공간 사진",
+      "photoEmpty": "등록된 공간 사진이 없습니다.",
+      "photoFile": "사진 파일 · PNG/JPEG, 최대 10 MiB",
+      "photoAlt": "사진 설명",
+      "reason": "변경 사유",
+      "photoUpload": "사진 등록",
+      "photoRemove": "사진 삭제",
+      "changeUnknown": "저장 결과를 확인할 수 없습니다. 재전송 전에 현재값과 감사를 확인하세요.",
+      "recheck": "현재값 다시 조회",
+      "futureImpact": "영향받는 미래 예약",
+      "impactReadOnly": "선택 기간의 예약을 확인합니다. 이 조회만으로 기존 예약을 변경하지 않습니다.",
+      "roomsImpactNotice": "회의 예약은 회의 운영에서 별도로 확인해 주세요.",
+      "affectedCount": "영향 대상 {{count}}건",
+      "bookingReview": "예약 상세 및 조치 검토",
+      "legalHold": "보존 보호 중",
+      "confirmImpact": "현재값·제안값과 확인된 영향을 검토했습니다.",
+      "readOnly": "이 설정을 변경할 권한이 없습니다.",
+      "conflict": "다른 변경으로 버전이 달라졌습니다. 현재값을 다시 조회하고 검토하세요.",
+      "permissionChanged": "접근 권한이 변경되었습니다. 이 화면을 나가 다시 접근 권한을 확인하세요.",
+      "insightsTitle": "예약과 공간 활용 인사이트",
+      "insightsDescription": "기간과 층을 선택해 예약 기반 활용률·미체크인·피크와 이전 기간을 비교합니다.",
+      "exportCsv": "CSV 내보내기",
+      "totalBookings": "총 예약",
+      "noShowRate": "미체크인 비율",
+      "peakRate": "시간대 최고 활용률",
+      "hourlyUtilization": "시간대별 예약 활용",
+      "noData": "표시할 데이터가 없습니다.",
+      "tableAlternative": "시간대별 데이터 표 보기",
+      "date": "날짜",
+      "hour": "시간",
+      "bookedMinutes": "예약된 분",
+      "selectedPeriod": "선택 시간대 상세",
+      "selectPeriod": "시간대를 선택하면 활용 상세가 표시됩니다.",
+      "minutes": "{{count}}분",
+      "previousPeriod": "이전 동일 기간 비교",
+      "utilizationChange": "예약 활용률 변화",
+      "plannedOccupancyNotice": "예약 기반 분석입니다. 직원의 실제 도착·센서 점유를 의미하지 않습니다.",
+      "policyImpact": "정책 변경 영향 검토",
+      "policyImpactDescription": "변경하려는 정책과 선택 기간의 현재 예약을 비교합니다.",
+      "previewPolicy": "정책 영향 확인",
+      "reviewedBookings": "검토한 예약",
+      "policyImpactEmpty": "선택 기간에 이 변경의 영향을 받는 예약이 없습니다.",
+      "memberHome": "오늘의 근무",
+      "teamMenu": "팀 근무 계획",
+      "settingsMenu": "개인정보·외부 연계",
+      "closure": "기간형 공간 폐쇄",
+      "request": "공간 시설 요청",
+      "requestDescription": "선택한 공간의 수리·청소·접근 문제를 요청합니다.",
+      "facilityRequests": "시설 요청",
+      "closures": "공간 폐쇄",
+      "category": "요청 유형",
+      "description": "요청 내용",
+      "requestSubmit": "시설 요청 제출",
+      "requestSaved": "시설 요청이 접수되었습니다.",
+      "sameRequestRetry": "동일 요청 결과 재확인",
+      "closureCreate": "폐쇄 기간 등록",
+      "closureCancel": "공간 폐쇄 해제",
+      "closurePreservesBookings": "기존 예약은 유지됩니다. 영향받는 예약을 확인하고 개별적으로 조치하세요.",
+      "startsAt": "시작 일시",
+      "endsAt": "종료 일시",
+      "resource": "공간",
+      "status": "상태",
+      "changeStatus": "상태 변경",
+      "closureReason": "폐쇄 사유",
+      "cancelClosureReason": "해제 사유",
+      "closureEmpty": "선택 기간에 공간 폐쇄가 없습니다.",
+      "requestEmpty": "이 범위에 시설 요청이 없습니다.",
+      "selectResource": "공간을 선택하여 가용 상태와 예약을 확인하세요.",
+      "closureStates": {
+        "ACTIVE": "적용 중",
+        "CANCELLED": "해제됨"
+      },
+      "requestCategories": {
+        "REPAIR": "수리",
+        "CLEANING": "청소",
+        "ACCESS": "출입 지원",
+        "OTHER": "기타"
+      },
+      "requestStates": {
+        "OPEN": "접수",
+        "IN_PROGRESS": "처리 중",
+        "RESOLVED": "해결",
+        "CANCELLED": "취소"
+      },
+      "currentValues": "현재값",
+      "proposedValues": "제안값",
+      "reviewChange": "변경 영향 검토",
+      "knownImpact": "확인된 영향",
+      "currentActorAllowed": "현재 계정은 이 사이트에 접근할 수 있습니다.",
+      "currentActorDenied": "현재 계정은 이 사이트에 접근할 수 없습니다.",
+      "reviewedAt": "검토 시각: {{time}}",
+      "reviewRequired": "제안값을 입력한 뒤 변경 영향을 검토하세요.",
+      "invalidChange": "제안값이 서버 검증을 통과하지 못했습니다. 다시 조회한 뒤 입력을 확인하세요.",
+      "reviewUnavailable": "현재 변경 영향을 확인할 수 없습니다. 현재값을 다시 조회한 뒤 검토하세요.",
+      "originalReloaded": "현재값을 다시 조회했습니다. 제안값을 재검토하고 다시 확인하세요.",
+      "changeSaved": "변경과 사유를 저장했습니다. 감사에서 저장 기록을 확인할 수 있습니다.",
+      "saveReviewedChange": "검토한 변경 저장",
+      "returnToItem": "항목으로 돌아가기",
+      "viewAudit": "감사 기록 보기",
+      "inspectRule": "규칙 확인",
+      "selectedRule": "선택한 접근 규칙",
+      "changeAccessRule": "접근 규칙 변경 검토",
+      "version": "버전",
+      "sourceNotCurrent": "현재 정보가 최신 상태인지 확인 중입니다. 확인 전에는 저장할 수 없습니다.",
+      "confirmSettingsChange": "현재 설정·제안값과 적용 범위를 확인했습니다.",
+      "currentPolicy": "현재: {{enabled}} · {{visibility}} · 버전 {{version}}",
+      "enabled": "사용",
+      "disabled": "중지",
+      "sharingEnabled": "조직의 근무 계획 공유 허용",
+      "maximumVisibility": "최대 공유 수준",
+      "sharingPolicyImpact": "개인의 공유 동의와 계획별 공유 수준을 함께 적용합니다. 공유를 끄면 구성원 조회에 공유 계획이 표시되지 않습니다.",
+      "connectorMetadataDescription": "설정 참조를 저장하고 확인된 상태를 조회합니다.",
+      "lastVerified": "마지막 검증: {{time}} · 버전 {{version}}",
+      "neverVerified": "검증된 기록 없음",
+      "currentConnector": "현재 제공자: {{provider}} · 설정 참조: {{reference}}",
+      "connectorProvider": "제공자 식별자",
+      "configurationReference": "설정 참조",
+      "configurationReferenceHelp": "자격 증명이나 URL 대신 승인된 설정의 불투명 참조를 입력하세요. 영문·숫자와 . _ : / -만 사용할 수 있습니다.",
+      "connectorEnabled": "외부 연계 설정 사용",
+      "privacyTitle": "개인정보 보존 현황",
+      "privacyDescription": "기존 예약 보존 정책과 현재 저장된 데이터의 집계입니다.",
+      "bookingRetentionDays": "예약 보존 일수",
+      "legalHoldCount": "법적 보존 대상 예약",
+      "anonymizedBookingCount": "이미 익명 처리된 예약",
+      "expiredEligibleBookingCount": "보존 기간이 지나 정리 가능한 예약",
+      "observedAt": "조회 시각: {{time}}",
+      "sharingPolicyTitle": "근무 계획 공유 정책",
+      "sharingPolicyDescription": "조직 전체 공유 허용 여부와 최대 공유 수준을 관리합니다.",
+      "visibility": {
+        "PRIVATE": "비공개",
+        "SITE": "사이트",
+        "FLOOR": "층",
+        "RESOURCE": "자원"
+      },
+      "connectorKinds": {
+        "CALENDAR": "캘린더 연계",
+        "ACTUAL_PRESENCE": "실제 현장 상태 연계",
+        "SIGNAGE": "사이니지 연계",
+        "VISITOR": "방문자 연계",
+        "VEHICLE": "차량 연계"
+      },
+      "connectorStatuses": {
+        "NOT_CONFIGURED": "설정되지 않았습니다. 외부 상태 데이터가 없습니다.",
+        "DISABLED": "설정이 중지되었습니다. 외부 상태가 검증되지 않았습니다.",
+        "CONFIGURED_UNVERIFIED": "연계 설정이 저장되었습니다. 연결과 실제 데이터는 아직 검증되지 않았습니다."
+      },
+      "policyEffects": {
+        "BELOW_PROPOSED_MINIMUM_DURATION": "변경 후 최소 예약 시간 미달",
+        "EXCEEDS_PROPOSED_MAXIMUM_DURATION": "변경 후 최대 예약 시간 초과",
+        "OUTSIDE_PROPOSED_WORKING_HOURS": "변경 후 운영 시간 범위 밖",
+        "CHECK_IN_REQUIREMENT_ADDED": "체크인 필수 조건 추가",
+        "CHECK_IN_REQUIREMENT_REMOVED": "체크인 필수 조건 해제",
+        "PROPOSED_AUTO_RELEASE_DEADLINE_CHANGED": "미체크인 자동 해제 기준 변경"
+      },
+      "providerFormat": "영문·숫자와 . _ -만 사용해 80자 이내로 입력하세요.",
+      "referenceFormat": "영문·숫자와 . _ : / -만 사용해 160자 이내로 입력하세요.",
+      "photoUnavailable": "사진 확인 불가",
+      "dailyPolicyImpact": "일별 정책 영향",
+      "dailyPolicyImpactDescription": "선택 기간 전체의 실제 검토 예약과 변경 정책에 영향받는 예약 수입니다. 기존 예약은 유지됩니다.",
+      "dailyPolicyLegend": "실선: 검토 예약 · 점선: 영향 예약. 날짜 버튼에서도 동일한 수치를 확인할 수 있습니다.",
+      "facilityRequestEligibleRetentionCount": "보관 기간이 지난 시설 요청",
+      "facilityClosureEligibleRetentionCount": "보관 기간이 지난 공간 폐쇄 기록",
+      "facilityRequestsPurgedCount": "보관 기간에 따라 삭제된 시설 요청",
+      "facilityClosuresPurgedCount": "보관 기간에 따라 삭제된 공간 폐쇄 기록",
+      "facilityRetentionNotice": "설정된 근무공간 보관 기간은 완료된 시설 요청과 과거 공간 폐쇄 사유에도 적용됩니다. 보존 대상과 진행 중인 업무는 유지됩니다.",
+      "changeReviewRail": "변경 검토",
+      "editPolicyDraft": "예약 규칙 편집",
+      "globalPolicyScope": "테넌트 기본 정책",
+      "policyChangeCount": "{{count}}개 변경",
+      "polish": {
+        "layoutPreview": "선택 층 배치도",
+        "configuredLayoutNotice": "등록된 자원 배치입니다. 현재 점유나 센서 상태를 나타내지 않습니다.",
+        "viewFloor": "공간·배치도 열기",
+        "latestExceptions": "우선 확인할 예약",
+        "trendTitle": "날짜별 예약 활용 추이",
+        "trendDescription": "선택 기간의 실제 예약 시간과 현재 자원 기준 활용률을 비교합니다.",
+        "peakPeriod": "가장 예약이 집중된 시간",
+        "heatmapLow": "낮음",
+        "heatmapHigh": "높음",
+        "last7Days": "최근 7일",
+        "last30Days": "최근 30일",
+        "today": "오늘",
+        "openRequests": "서비스 요청",
+        "resourceQueue": "작업할 공간",
+        "scopedPeriod": "조회 기간",
+        "savedClosures": "등록된 폐쇄 기간",
+        "countShown": "전체 {{total}}건 중 {{count}}건 표시",
+        "previewDataUnavailable": "배치도 정보를 확인할 수 없습니다.",
+        "noShowCohort": "체크인 대상·정리 완료 예약 {{count}}건 기준",
+        "heatmapDay": "확인할 날짜",
+        "noHourData": "이 날짜에 확인된 시간별 데이터가 없습니다.",
+        "bookingTrend": "예약 건수",
+        "mapResourceCount": "등록 자원 {{count}}개",
+        "selectedFloor": "선택 층",
+        "reviewAffected": "영향받는 예약 검토",
+        "operationsWorkspace": "예약과 시설 운영",
+        "facilitiesDescription": "대상을 선택하고 예약 영향과 폐쇄 기간을 확인한 뒤 운영 조치를 진행하세요.",
+        "allHours": "24시간 보기",
+        "currentRequests": "진행 중 시설 요청",
+        "requestCountDefinition": "조회 기간과 별개인 현재 접수·진행 중 요청",
+        "sensorSource": "현장 센서 정보",
+        "sensorUnavailable": "검증된 외부 센서 연결이 없습니다. 예약 활용률과 실제 재실은 별도입니다.",
+        "pendingApprovals": "회의실 승인 대기",
+        "approvalCountDefinition": "Calendar·Rooms 소유의 전체 테넌트 대기열",
+        "hourBookingsTitle": "선택 시간과 겹치는 예약",
+        "hourBookingsCohort": "선택 시간과 겹치는 모든 상태의 예약을 조회합니다. 이용률은 현재 예약 가능 자원과 집계 대상 상태를 기준으로, 반납 시점 이후를 제외하고 겹치는 분을 한 번만 계산합니다. 목록의 총수는 이용 분에 기여한 예약 수나 실제 재실 인원이 아닙니다.",
+        "hourBookingsAuthority": "이 목록은 전체 사업장의 운영 예약을 조회할 권한이 필요합니다. 선택 사업장 보고서 조회 권한만으로는 목록을 조회할 수 없습니다.",
+        "hourBookingsSnapshot": "보고서 생성 {{at}}. 예약 목록은 별도로 조회하므로 이후 변경을 반영할 수 있습니다.",
+        "hourBookingsTotal": "선택 시간·장소의 전체 상태 예약 {{count}}건",
+        "hourBookingsRoomRows": "이 페이지의 Workplace 회의실 기록 {{count}}건은 표시하지 않습니다. Calendar 회의실 예약은 회의 운영에서 조회합니다.",
+        "hourBookingsNotContributing": "이 상태의 예약은 이용률의 예약 분에 포함되지 않습니다.",
+        "hourBookingsNoRows": "이 페이지에 회의실 외 예약이 없습니다",
+        "hourBookingsPage": "{{page}} / {{count}} 페이지"
+      },
+      "policyImpactScopeNotice": "이 예약 영향 분석은 운영 시간, 예약 길이, 체크인 및 자동 해제 규칙을 비교합니다. 사전예약 기간, 반복예약, 공유 및 개인정보 설정은 저장 전 변경 검토에서 확인하세요.",
+      "policyCategories": "정책 카테고리",
+      "roomApprovalWorkflow": "회의 승인 워크플로",
+      "roomApprovalSettings": "자원별 회의 승인 규칙",
+      "roomApprovalBoundary": "회의 승인은 ADMIN.ROOMS 권한과 등록된 자원 규칙으로 운영합니다. 임원 자동 승인 및 예측 수치는 연결된 계약이 없어 표시하지 않습니다.",
+      "roomApprovalAccessNotice": "회의 승인 조회에는 ADMIN.ROOMS 조회 권한이 필요합니다.",
+      "roomPolicyConfiguration": "회의실 예약 정책 설정",
+      "roomApprovalSaveNotice": "승인 설정은 선택한 회의실의 현재 버전을 검증하여 저장합니다. 변경 사유 기록은 현재 자원 저장 계약에 포함되지 않습니다.",
+      "accessRuleScope": "접근 규칙 범위",
+      "siteAccessInherited": "사이트 전체 (기존 사이트 규칙)",
+      "floorAccessOverlayNotice": "층 규칙은 기존 사이트 접근을 먼저 확인한 후 해당 층을 제한합니다. 사이트 접근 권한을 추가하지 않습니다.",
+      "floorScopeProducerUnavailable": "층 범위를 확인하는 서버가 없어 층 규칙을 저장할 수 없습니다.",
+      "proposedActorAllowed": "변경 후 현재 사용자 접근: 허용",
+      "proposedActorDenied": "변경 후 현재 사용자 접근: 거부",
+      "embeddedApprovalPage": "{{total}}건 · {{from}}–{{to}}건 · {{page}}/{{pages}}페이지",
+      "approvalQueuePagination": "승인 대기 페이지",
+      "visibleFloorCount": "접근 가능한 층 {{count}}개",
+      "floorScope": {
+        "authorizedFloors": "권한이 있는 {{count}}개 층",
+        "allAuthorizedFloors": "권한이 있는 모든 층",
+        "authorizedScope": "집계에는 권한이 있는 {{count}}개 층만 포함됩니다.",
+        "scopeUnverified": "허용된 층 범위를 확인할 수 없습니다. 현재 데이터를 다시 조회하세요.",
+        "globalReaderUnavailable": "시간대 예약 목록은 전체 사업장 운영 조회 권한이 필요합니다. 이 보고서는 권한이 있는 층 범위로 제한됩니다.",
+        "chooseResourceFloor": "공간을 조회할 층을 선택하세요."
+      }
+    },
+    "member": {
+      "filters": {
+        "open": "필터",
+        "apply": "조건 적용",
+        "view": "보기 방식"
+      },
+      "bookings": {
+        "detail": "예약 상세",
+        "openDetail": "상세 보기",
+        "ownerNotice": "회의 예약은 회의 공간에서 관리합니다.",
+        "openMeetings": "내 회의 예약",
+        "checkInWindow": "체크인 가능 시간",
+        "checkInDeadline": "체크인 마감 {{time}}",
+        "checkInRemaining": "마감까지 {{count}}분",
+        "bookingId": "예약 번호",
+        "currentReservation": "현재 예약",
+        "requestedReservation": "변경 요청",
+        "changeUnknown": "변경 결과가 확인되지 않았습니다. 예약을 다시 조회한 후 다음 조치를 선택해 주세요.",
+        "recheck": "최신 예약 다시 조회",
+        "chooseAnother": "조건 유지하고 다른 공간 찾기"
+      },
+      "team": {
+        "eyebrow": "팀 근무 계획",
+        "title": "함께 일할 장소와 계획",
+        "description": "내 근무 계획과 동의한 구성원의 공유 계획을 확인합니다.",
+        "week": "주간 근무 계획",
+        "sharing": "내 근무 계획 공유",
+        "sharingDescription": "회사 정책과 내 동의 범위에 맞춰 계획만 공유합니다.",
+        "optIn": "근무 계획 공유에 동의합니다.",
+        "visibility": "공유 범위",
+        "disabled": "회사 정책에 따라 근무 계획 공유가 꺼져 있습니다.",
+        "presenceNotice": "현재 도착이나 실시간 위치는 확인되지 않았습니다. 아래 정보는 근무 계획입니다.",
+        "shared": "공유된 근무 계획",
+        "empty": "이 기간에 공유된 근무 계획이 없습니다.",
+        "ownEmpty": "아직 내 근무 계획이 없습니다.",
+        "planDate": "근무 날짜",
+        "mode": "근무 방식",
+        "save": "계획 저장",
+        "remove": "계획 삭제",
+        "revoke": "공유 철회",
+        "revokeTitle": "근무 계획 공유를 철회할까요?",
+        "revokeDescription": "내 공유 계획을 비공개로 변경합니다.",
+        "saved": "근무 계획을 저장했습니다.",
+        "preferenceSaved": "공유 설정을 저장했습니다.",
+        "revoked": "공유를 철회했습니다.",
+        "saveError": "변경 결과를 확인하지 못했습니다. 최신 계획과 설정을 다시 확인하세요.",
+        "planned": "계획",
+        "anonymousPlan": "공유된 계획",
+        "group": "공유 그룹",
+        "groupLabel": "공유 그룹 {{number}}",
+        "noGroups": "공유할 수 있는 그룹이 없습니다. 내 계획은 비공개로 저장할 수 있습니다.",
+        "savePreference": "공유 설정 저장",
+        "modes": {
+          "OFFICE": "사무실",
+          "REMOTE": "원격 근무",
+          "OFF": "휴무"
+        },
+        "visibilities": {
+          "PRIVATE": "비공개",
+          "SITE": "사업장",
+          "FLOOR": "층",
+          "RESOURCE": "자원"
+        },
+        "revokeCompleteTitle": "근무 계획 공유를 철회했습니다",
+        "revokeCompleteDescription": "서버에서 공유 동의 해제를 확인했습니다. 내 공간 예약은 계속 이용할 수 있습니다.",
+        "configureSharing": "공유 설정 다시 열기",
+        "colleague": "동료",
+        "noSharedPlan": "공유된 계획 없음",
+        "matrixCaption": "동료별 주간 공유 계획",
+        "findSameFloor": "같은 층 공간 찾기"
+      }
+    },
     "staleWarning": "최신 정보를 갱신하지 못했습니다. 마지막으로 정상 조회된 정보를 계속 표시합니다.",
     "partialWarning": "일부 근무 공간 정보를 불러오지 못했습니다. 사용할 수 있는 영역은 계속 표시합니다.",
     "home": {
@@ -289,7 +657,7 @@
         "bookDescription": "선택된 층에서 향후 60분 예약 1차 확인을 통과한 공간 {{count}}개를 확인했습니다. 최종 적격성은 예약 시 다시 확인합니다.",
         "browseEyebrow": "비어 있는 공간 조회",
         "browseTitle": "다음 공간을 정하기 전에 층 현황을 둘러보세요",
-        "browseDescription": "물리적으로 비어 있는 공간은 {{count}}개입니다. 계정 권한이나 예약 정책 확인 후 예약할 수 있습니다.",
+        "browseDescription": "예약 상태상 비어 있는 공간은 {{count}}개입니다. 계정 권한이나 예약 정책 확인 후 예약할 수 있습니다.",
         "noSiteEyebrow": "사업장 확인 필요",
         "noSiteTitle": "이용 가능한 근무 사업장이 없습니다",
         "noSiteDescription": "관리자가 사업장과 층을 구성하거나 이 계정에 접근 권한을 부여해야 합니다.",
@@ -302,10 +670,14 @@
         "clearEyebrow": "오늘 흐름 정리됨",
         "clearTitle": "지금 바로 처리할 공간 일정은 없습니다",
         "clearDescription": "필요할 때 공간을 찾아 예약하거나 오늘의 다른 업무에 집중할 수 있습니다.",
-        "open": "일정 열기"
+        "open": "일정 열기",
+        "remainingTime": "남은 시간",
+        "deadlineElapsed": "마감 시간 경과",
+        "reservedSpace": "내 예약 공간",
+        "usageTime": "이용 시간: {{from}}–{{to}}"
       },
       "agenda": {
-        "title": "오늘의 흐름",
+        "title": "오늘의 일정 흐름",
         "description": "좌석, 회의와 집중 일정을 시간순으로 이어봅니다.",
         "partial": "일부 일정 소스가 연결되지 않아 확인된 항목만 표시합니다.",
         "emptyTitle": "오늘 등록된 공간 일정이 없습니다",
@@ -319,16 +691,17 @@
           "TASK": "할 일",
           "OUT_OF_OFFICE": "외부 근무",
           "REMINDER": "알림"
-        }
+        },
+        "count": "총 {{count}}개 일정"
       },
       "availability": {
-        "scope": "향후 60분 물리적 공석 범위",
+        "scope": "향후 60분 예약 기준 공석 범위",
         "noScope": "선택된 사업장 없음",
         "noData": "현재 층의 가용 공간 정보가 없습니다.",
         "floorPlanAlt": "{{scope}} 층 배치도",
-        "meterLabel": "{{type}} {{total}}개 중 {{available}}개가 물리적으로 비어 있고 {{bookable}}개가 현재 예약 사전 확인을 통과함",
-        "title": "향후 60분 비어 있는 공간",
-        "description": "물리적 공석과 예약 적격성을 분리해 표시합니다. 공간 선택 시 정책과 충돌을 서버에서 다시 확인합니다.",
+        "meterLabel": "{{type}} {{total}}개 중 {{available}}개가 예약 상태상 비어 있고 {{bookable}}개가 현재 예약 사전 확인을 통과함",
+        "title": "향후 60분 공간 현황",
+        "description": "예약 기준 공석과 예약 적격성을 분리해 표시합니다. 공간 선택 시 정책과 충돌을 서버에서 다시 확인합니다.",
         "staleTitle": "가용 공간을 다시 확인해야 합니다",
         "staleDescription": "마지막 확인 정보는 참고만 할 수 있으며 최신 검증 전에는 공간 선택을 제공하지 않습니다.",
         "unavailableTitle": "가용 공간을 확인하지 못했습니다",
@@ -342,17 +715,24 @@
         "configureSite": "사업장 구성",
         "configureFloor": "층 구성",
         "configureResources": "공간 추가",
-        "openType": "{{type}} {{available}}개가 물리적으로 비어 있고 {{bookable}}개가 예약 1차 확인을 통과함, 공간 찾기 열기",
-        "pulseCount": "물리적 공석 {{open}} · 1차 확인 통과 {{bookable}}",
+        "openType": "{{type}} {{available}}개가 예약 상태상 비어 있고 {{bookable}}개가 예약 1차 확인을 통과함, 공간 찾기 열기",
+        "pulseCount": "예약 기준 공석 {{open}} · 1차 확인 통과 {{bookable}}",
         "locationMetric": "공간 기준",
         "windowMetric": "확인 범위",
         "nextHour": "향후 60분",
-        "physicalOpenMetric": "물리적 공석",
+        "physicalOpenMetric": "예약 기준 공석",
         "initialChecksMetric": "예약 1차 확인 통과",
         "bookableCount": "예약 1차 확인 통과 {{count}}개",
         "accessible": "접근성 지원 및 예약 1차 확인 통과 {{count}}개",
-        "emptyTitle": "향후 60분 동안 물리적으로 비어 있는 공간이 없습니다",
-        "emptyDescription": "다른 시간이나 층을 선택해 다음 공석을 확인하세요."
+        "emptyTitle": "향후 60분 동안 예약 상태상 비어 있는 공간이 없습니다",
+        "emptyDescription": "다른 시간이나 층을 선택해 다음 공석을 확인하세요.",
+        "typeUnavailable": "조회 불가",
+        "typeNotConfigured": "등록된 공간 없음",
+        "typeTotal": "전체 {{count}}",
+        "typeOpen": "예약 기준 공석 {{count}}",
+        "typeBookable": "예약 검증 {{count}}",
+        "typeEligibilityCompact": "사전검증 {{bookable}} · 접근지원 {{accessible}}",
+        "typeOpenCompact": "공석"
       },
       "week": {
         "title": "이번 주 근무 리듬",
@@ -370,7 +750,7 @@
         "emptyDescription": "회의나 집중 시간이 생기면 요일별 업무 리듬을 이곳에서 비교할 수 있습니다."
       },
       "attention": {
-        "title": "확인하면 좋은 항목",
+        "title": "확인 필요 항목",
         "description": "체크인과 공간이 필요한 일정만 우선 정리합니다.",
         "partial": "일부 연결이 복구되면 추가 항목이 표시될 수 있습니다.",
         "roomNeededTitle": "{{event}} 회의 공간이 필요합니다",
@@ -382,8 +762,38 @@
         "emptyTitle": "공간 준비가 잘 정리되어 있습니다",
         "unavailableTitle": "확인할 항목을 모두 검증하지 못했습니다",
         "emptyDescription": "현재 추가로 확인할 체크인이나 공간 일정이 없습니다.",
-        "unavailableDescription": "연결이 복구되면 확인 필요 항목을 다시 점검합니다."
-      }
+        "unavailableDescription": "연결이 복구되면 확인 필요 항목을 다시 점검합니다.",
+        "count": "{{count}}건",
+        "deadline": "{{time}} 체크인 마감",
+        "kinds": {
+          "CHECK_IN": "체크인",
+          "RELEASE": "반납",
+          "ROOM_NEEDED": "공간 필요",
+          "CALENDAR": "일정"
+        },
+        "actions": {
+          "CHECK_IN": "체크인 확인",
+          "RELEASE": "반납 확인",
+          "ROOM_NEEDED": "일정 열기",
+          "CALENDAR": "확인"
+        },
+        "showAll": "{{count}}개 항목 모두 보기",
+        "showLess": "간략히 보기"
+      },
+      "welcomeTitle": "오늘의 근무를 준비하세요",
+      "welcomeDescription": "예약과 체크인을 확인하고, 필요한 공간을 선택하세요.",
+      "scopeTitle": "현재 위치와 예약 시간",
+      "sources": {
+        "workspace": "공간 예약 정보",
+        "calendar": "일정 정보",
+        "externalPresence": "외부 재실 정보",
+        "workspaceDescription": "선택한 범위의 공간과 내 예약을 실제 예약 정보로 확인합니다.",
+        "calendarDescription": "접근 가능한 회의·집중 일정만 표시합니다.",
+        "externalDescription": "이 화면에서 검증된 외부 재실 정보가 없습니다.",
+        "unverified": "검증되지 않음"
+      },
+      "changeScope": "위치·시간 변경",
+      "mobileTitle": "오늘의 근무 흐름"
     },
     "resourceTypes": {
       "ROOM": "회의실",
@@ -408,8 +818,16 @@
       "SATELLITE": "거점 오피스",
       "CLIENT_SITE": "고객사 근무지"
     },
-    "siteStates": { "ACTIVE": "운영 중", "MAINTENANCE": "점검 중", "CLOSED": "운영 종료" },
-    "floorStates": { "DRAFT": "준비 중", "ACTIVE": "운영 중", "CLOSED": "운영 종료" },
+    "siteStates": {
+      "ACTIVE": "운영 중",
+      "MAINTENANCE": "점검 중",
+      "CLOSED": "운영 종료"
+    },
+    "floorStates": {
+      "DRAFT": "준비 중",
+      "ACTIVE": "운영 중",
+      "CLOSED": "운영 종료"
+    },
     "bookingModes": {
       "RESERVABLE": "사전 예약",
       "DROP_IN": "현장 사용",
@@ -503,7 +921,15 @@
       "roomPolicyUnavailable": "회의실 예약 정책을 사용할 수 없습니다. 정책이 복구될 때까지 회의실 예약이 중지됩니다.",
       "policyRangeUnavailable": "선택한 시간이 이 공간의 예약 정책 범위를 벗어났습니다. 날짜, 시간 또는 이용 시간을 조정하세요.",
       "bindingUnavailable": "회의실과 캘린더 자원 연결이 완료되지 않아 예약할 수 없습니다.",
-      "bookingUnavailable": "선택한 시간에는 이 공간을 예약할 수 없습니다. 시간을 조정하거나 다른 공간을 선택해 주세요."
+      "bookingUnavailable": "선택한 시간에는 이 공간을 예약할 수 없습니다. 시간을 조정하거나 다른 공간을 선택해 주세요.",
+      "policyTitle": "이용·체크인 규칙",
+      "checkInNotRequired": "현재 정책은 체크인을 요구하지 않습니다.",
+      "selectedWindowTimeline": "선택 시간대 예약 현황",
+      "anonymousReservation": "예약된 구간",
+      "unreservedInterval": "예약 없는 구간",
+      "closureInterval": "시설 폐쇄 구간",
+      "timelineNotice": "선택 시간대의 예약·시설 폐쇄 정보이며 실제 재실을 나타내지 않습니다.",
+      "nativeDetailsUnavailable": "최신 정보 확인 후 예약 현황과 이용 규칙을 표시합니다."
     },
     "booking": {
       "title": "업무 공간 예약",
@@ -776,7 +1202,12 @@
         "floorUpdated": "층 정보를 변경했습니다.",
         "resourceCreated": "예약 자원을 등록했습니다.",
         "resourceUpdated": "예약 자원 정보를 변경했습니다.",
-        "saveError": "근무 공간 정보를 저장하지 못했습니다."
+        "saveError": "근무 공간 정보를 저장하지 못했습니다.",
+        "resourceDetail": "공간 정보",
+        "selectionHint": "공간을 선택해 정보를 확인하세요.",
+        "photoManagement": "공간 사진 관리",
+        "catalogSummary": "선택 층 공간 구성",
+        "coordinates": "도면 좌표"
       },
       "governance": {
         "eyebrow": "엔터프라이즈 공간 통제",
@@ -788,7 +1219,8 @@
           "access": "접근 통제",
           "policy": "정책 상속",
           "floorPlans": "배치도 출시",
-          "delegation": "관리 위임"
+          "delegation": "관리 위임",
+          "experience": "개인정보·외부 연계"
         },
         "common": {
           "readOnly": "현재 역할은 거버넌스 구성을 조회할 수 있지만 변경 명령은 실행할 수 없습니다.",
@@ -1058,7 +1490,16 @@
           "emptyDescription": "중앙 관리자만 전체 근무공간을 운영합니다.",
           "noEffective": "현재 위임 범위가 없습니다",
           "noEffectiveDescription": "현재 역할은 중앙 권한 또는 별도 권한 정책으로 접근 중입니다.",
-          "expiryNotice": "만료일 없는 위임은 정기 접근 검토 대상입니다. 업무 기간에 맞는 종료 시각을 권장합니다."
+          "expiryNotice": "만료일 없는 위임은 정기 접근 검토 대상입니다. 업무 기간에 맞는 종료 시각을 권장합니다.",
+          "floorRange": "관리 층 범위",
+          "allFloors": "사업장 전체 층",
+          "selectedFloors": "선택한 층",
+          "selectFloors": "관리할 층을 선택하세요",
+          "floorOptionsUnavailable": "현재 확인된 층 정보가 없습니다. 사업장과 층 정보를 다시 확인해 주세요.",
+          "immutableRange": "저장된 관리 층 범위를 변경하려면 기존 위임을 철회한 뒤 새 위임을 생성해 주세요.",
+          "reviewImpactScope": "선택한 위임의 사업장 범위·권한·유효기간에만 변경이 적용됩니다.",
+          "reviewApplicationAccess": "관리 위임은 근무공간이나 회의실 앱을 이용할 권한을 부여하지 않습니다.",
+          "reviewPropagation": "변경한 위임은 이후 관리 작업에서 확인됩니다. 외부 승인은 자동 요청되지 않으며, 다른 열린 화면은 갱신까지 시간이 걸릴 수 있습니다."
         }
       },
       "policy": {
@@ -1096,7 +1537,8 @@
         "bookingRetentionDaysHint": "완료·취소·노쇼 예약의 이름, 구성원 식별자와 목적은 이 기간 후 자동 익명화됩니다. 법적 보존 건은 제외됩니다.",
         "checkIn": "체크인 정책",
         "enabled": "사용",
-        "disabled": "사용 안 함"
+        "disabled": "사용 안 함",
+        "allowRecurring": "반복 예약 허용"
       }
     }
   }

@@ -1,11 +1,20 @@
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, MessageSquareReply, Undo2, X } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { ActionButton, ActionIconButton, LoadingState } from '@dwp-frontend/design-system';
-import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  ActionButton,
+  ActionIconButton,
+  InlineFeedback,
+  LoadingState,
+} from '@dwp-frontend/design-system';
+import {
+  formatDate,
+  resolveSupportedLocale,
+  useDisplayDictionary,
+} from '@dwp-frontend/shared-i18n';
 import { getApprovalRequestDetail } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -13,13 +22,18 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ApprovalPayloadData } from './approval-payload-data';
+import { ApprovalRequestDocumentTools } from './approval-request-document-tools';
+import { ApprovalSignaturePanel } from './approval-signature-panel';
+import { ApprovalAttachmentPanel } from './approval-attachment-panel';
+import type { ApprovalAttachmentClient } from './use-approval-attachment-client';
 import {
   approvalTimelineEventContext,
   approvalTimelineEventDetail,
 } from './approval-timeline-copy';
 import { ApprovalSurface, StatusChip } from './approval-ui';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
-import type { ApprovalRequest } from '@dwp-frontend/shared-utils';
+import type { ApprovalRequest, ApprovalRequestDetail } from '@dwp-frontend/shared-utils';
 
 type ApprovalRequestDetailDrawerProps = {
   requestId?: string;
@@ -28,6 +42,7 @@ type ApprovalRequestDetailDrawerProps = {
   onReturnToWork?: () => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
+  attachments: ApprovalAttachmentClient;
 };
 
 export function ApprovalRequestDetailDrawer({
@@ -37,23 +52,54 @@ export function ApprovalRequestDetailDrawer({
   onReturnToWork,
   onRespond,
   onWithdraw,
+  attachments,
 }: ApprovalRequestDetailDrawerProps) {
   const { t, i18n } = useTranslation('approvals');
+  const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
   const display = useDisplayDictionary();
-  const detail = useQuery({
-    queryKey: ['approvals', 'requests', 'detail-view', requestId],
-    queryFn: () => getApprovalRequestDetail(requestId!),
-    enabled: Boolean(requestId),
-    staleTime: 0,
-    retry: 1,
+  const queryClient = useQueryClient();
+  const [documentBlocked, setDocumentBlocked] = useState(false);
+  const documentBlockedRef = useRef(false);
+  const liveCloseGuard = useRef<() => boolean>(() => false);
+  const signatureBlockedRef = useRef(false);
+  const signatureCloseGuard = useRef<() => boolean>(() => false);
+  const [deniedGeneration, setDeniedGeneration] = useState<string>();
+  const close = () => {
+    if (
+      !documentBlockedRef.current &&
+      !liveCloseGuard.current() &&
+      !signatureBlockedRef.current &&
+      !signatureCloseGuard.current()
+    )
+      onClose();
+  };
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'approvals',
+    surfaceKey: 'approvals.work',
   });
-  const visibleDetail = detail.isError || detail.isFetching ? undefined : detail.data;
+  const detailKey = ['approvals', ...requestScope.cacheKey, 'requests', 'detail-view', requestId];
+  const detail = useQuery({
+    queryKey: detailKey,
+    queryFn: ({ signal }) =>
+      getApprovalRequestDetail(requestId!, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready && Boolean(requestId),
+    meta: requestScope.queryMeta,
+    staleTime: 0,
+    retry: false,
+  });
+  const generation = JSON.stringify([requestScope.cacheKey, requestId]);
+  const generationRef = useRef(generation);
+  generationRef.current = generation;
+  const visibleDetail =
+    !requestScope.ready || detail.isError || detail.isFetching || deniedGeneration === generation
+      ? undefined
+      : detail.data;
 
   return (
     <Drawer
       anchor="right"
       open={Boolean(requestId)}
-      onClose={onClose}
+      onClose={close}
       PaperProps={{
         role: 'dialog',
         'aria-modal': 'true',
@@ -61,7 +107,7 @@ export function ApprovalRequestDetailDrawer({
         sx: { width: { xs: '100%', sm: 620 }, maxWidth: '100vw' },
       }}
     >
-      <Box sx={{ minHeight: '100%', bgcolor: '#FAFBFD' }}>
+      <Box sx={{ minHeight: '100%', bgcolor: 'background.default' }}>
         <Stack
           direction="row"
           alignItems="flex-start"
@@ -89,6 +135,7 @@ export function ApprovalRequestDetailDrawer({
                     intent="quiet"
                     size="small"
                     startIcon={<ArrowLeft size={15} />}
+                    disabled={documentBlocked}
                     onClick={onReturnToWork}
                   >
                     {t('common:productSurface.actions.returnToWork')}
@@ -99,6 +146,7 @@ export function ApprovalRequestDetailDrawer({
                     intent="primary"
                     size="small"
                     startIcon={<MessageSquareReply size={15} />}
+                    disabled={documentBlocked}
                     onClick={() => onRespond(visibleDetail.request)}
                   >
                     {t('actions.respondInfo')}
@@ -110,6 +158,7 @@ export function ApprovalRequestDetailDrawer({
                       intent="secondary"
                       size="small"
                       startIcon={<Undo2 size={15} />}
+                      disabled={documentBlocked}
                       onClick={() => onWithdraw(visibleDetail.request)}
                     >
                       {t('actions.withdraw')}
@@ -121,16 +170,17 @@ export function ApprovalRequestDetailDrawer({
           <ActionIconButton
             label={t('actions.close')}
             tooltip={t('actions.close')}
-            onClick={onClose}
+            disabled={documentBlocked}
+            onClick={close}
           >
             <X size={19} />
           </ActionIconButton>
         </Stack>
-        {Boolean(requestId) && detail.isFetching && (
+        {Boolean(requestId) && (!requestScope.ready || detail.isFetching) && (
           <LoadingState label={t('common:labels.loading')} size="page" embedded />
         )}
         {detail.isError && (
-          <Alert
+          <InlineFeedback
             severity="error"
             sx={{ m: 2 }}
             action={
@@ -146,7 +196,7 @@ export function ApprovalRequestDetailDrawer({
             }
           >
             {t('requests.detail.loadError')}
-          </Alert>
+          </InlineFeedback>
         )}
         {visibleDetail && (
           <Stack gap={2} sx={{ p: 2.5 }}>
@@ -165,7 +215,7 @@ export function ApprovalRequestDetailDrawer({
                     {t('requests.columns.workflow')}
                   </Typography>
                   <Typography variant="body2" fontWeight={720} sx={{ mt: 0.35 }}>
-                    {i18n.resolvedLanguage?.startsWith('ko')
+                    {korean
                       ? visibleDetail.request.workflowNameKo
                       : visibleDetail.request.workflowNameEn}
                   </Typography>
@@ -205,6 +255,74 @@ export function ApprovalRequestDetailDrawer({
               </Stack>
             </ApprovalSurface>
           </Stack>
+        )}
+        {requestId && (
+          <Box sx={{ px: 2.5, pb: 2.5 }}>
+            <ApprovalAttachmentPanel client={attachments} />
+            <ApprovalRequestDocumentTools
+              key={JSON.stringify([requestScope.cacheKey, requestId])}
+              requestId={requestId}
+              detail={visibleDetail}
+              ownerError={detail.error}
+              isOwnerCurrent={() => {
+                const state = queryClient.getQueryState<ApprovalRequestDetail>(detailKey);
+                return Boolean(
+                  requestScope.ready &&
+                  generationRef.current === generation &&
+                  state?.status === 'success' &&
+                  state.fetchStatus === 'idle' &&
+                  !state.error &&
+                  state.data?.request.requestId === requestId &&
+                  state.data.request.version === detail.data?.request.version
+                );
+              }}
+              onRefreshDetail={async () => {
+                const result = await detail.refetch();
+                return result.isSuccess && generationRef.current === generation
+                  ? result.data
+                  : undefined;
+              }}
+              onAccessDenied={() => {
+                if (generationRef.current === generation) setDeniedGeneration(generation);
+              }}
+              onAccessRestored={() => {
+                if (generationRef.current === generation) setDeniedGeneration(undefined);
+              }}
+              onBlockedChange={(blocked, isBlocked) => {
+                documentBlockedRef.current = blocked;
+                liveCloseGuard.current = isBlocked;
+                setDocumentBlocked(blocked || signatureBlockedRef.current);
+              }}
+            />
+            {detail.data?.request.status === 'APPROVED' && (
+              <ApprovalSignaturePanel
+                key={JSON.stringify([requestScope.cacheKey, requestId, 'signature'])}
+                requestId={requestId}
+                requestVersion={visibleDetail?.request.version}
+                ownerError={detail.error}
+                approved={visibleDetail?.request.status === 'APPROVED'}
+                isOwnerCurrent={() => {
+                  const state = queryClient.getQueryState<ApprovalRequestDetail>(detailKey);
+                  return Boolean(
+                    requestScope.ready &&
+                    generationRef.current === generation &&
+                    deniedGeneration !== generation &&
+                    state?.status === 'success' &&
+                    state.fetchStatus === 'idle' &&
+                    !state.error &&
+                    state.data?.request.requestId === requestId &&
+                    state.data.request.status === 'APPROVED' &&
+                    state.data.request.version === detail.data?.request.version
+                  );
+                }}
+                onBlockedChange={(blocked, isBlocked) => {
+                  signatureBlockedRef.current = blocked;
+                  signatureCloseGuard.current = isBlocked;
+                  setDocumentBlocked(blocked || documentBlockedRef.current);
+                }}
+              />
+            )}
+          </Box>
         )}
       </Box>
     </Drawer>

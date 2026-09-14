@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Braces,
   CheckCircle2,
   ChevronRight,
   FilePenLine,
@@ -37,6 +36,7 @@ import {
   LoadingState,
 } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -51,6 +51,7 @@ import { NotificationDraftDecisionDialog } from './notification-draft-decision-d
 import { NotificationTemplateComparison } from './notification-governance-comparison';
 import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
 import { NotificationChannelTemplatePreview } from './notification-template-preview';
+import { NotificationTemplateDetailWorkspace } from './notification-template-detail-workspace';
 
 type EditorState = NotificationTemplateContent & {
   changeReason: string;
@@ -92,8 +93,8 @@ function effectivePreviewSamples(variables: string[], locale: string): Record<st
     const normalized = variable.toLowerCase();
     values[variable] = normalized.includes('name')
       ? korean
-        ? '김민서'
-        : 'Minseo Kim'
+        ? '합성 사용자'
+        : 'Synthetic user'
       : normalized.includes('title')
         ? korean
           ? '클라우드 운영 예산'
@@ -131,9 +132,9 @@ function TemplateVariantRow({
       aria-pressed={selected}
       sx={{
         width: 1,
-        minHeight: 84,
+        minHeight: 76,
         px: 1.75,
-        py: 1.35,
+        py: 1.25,
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) auto',
         gap: 1,
@@ -145,10 +146,14 @@ function TemplateVariantRow({
       }}
     >
       <Box minWidth={0}>
-        <Typography variant="subtitle2" noWrap>
+        <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
           {variant.displayName}
         </Typography>
-        <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', overflowWrap: 'anywhere' }}
+        >
           {variant.appName} · {variant.channel} · {variant.locale}
         </Typography>
         <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.75 }}>
@@ -218,7 +223,7 @@ function TemplateDetail({
     retry: 1,
   });
   return (
-    <Box component="section" sx={{ minWidth: 0, p: { xs: 2, md: 2.5 } }}>
+    <Box component="section" sx={{ minWidth: 0, p: { xs: 1.5, md: 2 } }}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
@@ -231,7 +236,15 @@ function TemplateDetail({
             <Chip size="small" variant="outlined" label={variant.channel} />
             <Chip size="small" variant="outlined" label={variant.locale} />
           </Stack>
-          <Typography component="h2" variant="h5" sx={{ mt: 1.25, overflowWrap: 'anywhere' }}>
+          <Typography component="h2" variant="h6" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
+            {variant.displayName}
+          </Typography>
+          <Typography
+            component="code"
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: 'block', mt: 0.25, overflowWrap: 'anywhere' }}
+          >
             {variant.typeKey}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
@@ -239,6 +252,16 @@ function TemplateDetail({
               ? t('admin.templates.effectiveTenantRevision', { revision: revision.revision })
               : t('admin.templates.effectiveProviderRevision')}
           </Typography>
+          {variant.draft && (
+            <ActionButton
+              component="a"
+              intent="quiet"
+              size="small"
+              href={`#notification-template-review-${variant.draft.revisionId}`}
+            >
+              {t('admin.templates.draft')} {`· r${variant.draft.revision}`}
+            </ActionButton>
+          )}
         </Box>
         {canManage && (
           <ActionButton
@@ -254,131 +277,38 @@ function TemplateDetail({
         )}
       </Stack>
 
-      <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ my: 2 }}>
-        <Braces size={18} aria-hidden />
-        {variant.allowedVariables.length > 0 ? (
-          variant.allowedVariables.map((variable) => (
-            <Chip key={variable} size="small" variant="outlined" label={`{{${variable}}}`} />
-          ))
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {t('admin.templates.noVariables')}
-          </Typography>
-        )}
-      </Stack>
-
-      {effectivePreview.isLoading ? (
-        <LoadingState label={t('admin.templates.previewing')} variant="skeleton" skeletonRows={3} />
-      ) : effectivePreview.isError || !effectivePreview.data ? (
-        <InlineFeedback severity="warning" title={t('admin.templates.effectivePreviewFailed')}>
-          <ActionButton
-            intent="secondary"
-            size="small"
-            onClick={() => void effectivePreview.refetch()}
-          >
-            {t('actions.retry')}
-          </ActionButton>
-        </InlineFeedback>
-      ) : (
-        <NotificationChannelTemplatePreview
-          variant={variant}
-          content={effectivePreview.data.rendered}
-          label={t('admin.templates.effectivePreview')}
-        />
-      )}
-
-      <Box
-        component="dl"
-        sx={{
-          m: 0,
-          mt: 2,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
-        }}
+      <NotificationTemplateDetailWorkspace
+        variant={variant}
+        content={content}
+        canManage={canManage}
+        onEdit={onEdit}
       >
-        {[
-          [
-            t('admin.templates.fields.source'),
-            t(revision ? 'admin.templates.tenantOverride' : 'admin.templates.providerDefault'),
-          ],
-          [t('admin.templates.fields.revision'), revision ? `r${revision.revision}` : 'Provider'],
-          [
-            t('admin.templates.fields.approvedAt'),
-            revision?.approvedAt
-              ? formatDate(revision.approvedAt, { dateStyle: 'medium', timeStyle: 'short' })
-              : '—',
-          ],
-        ].map(([term, value]) => (
-          <Box key={term} sx={{ py: 1.25, pr: 2, borderBottom: 1, borderColor: 'divider' }}>
-            <Typography component="dt" variant="caption" color="text.secondary">
-              {term}
-            </Typography>
-            <Typography
-              component="dd"
-              variant="body2"
-              fontWeight="fontWeightBold"
-              sx={{ m: 0, mt: 0.35 }}
-            >
-              {value}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-
-      {variant.history.length > 0 && (
-        <Box component="section" sx={{ mt: 2.5 }}>
-          <Typography component="h3" variant="subtitle1">
-            {t('admin.templates.historyTitle')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-            {t('admin.templates.historyDescription')}
-          </Typography>
-          <Box sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}>
-            {variant.history.slice(0, 8).map((item) => {
-              const current = revision?.revisionId === item.revisionId;
-              const restorable = item.state === 'PUBLISHED' && !current && !variant.draft;
-              return (
-                <Box
-                  key={item.revisionId}
-                  sx={{
-                    minHeight: 58,
-                    py: 1,
-                    display: 'grid',
-                    gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-                    gap: 1,
-                    alignItems: 'center',
-                    borderBottom: 1,
-                    borderColor: 'divider',
-                    '&:last-of-type': { borderBottom: 0 },
-                  }}
-                >
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    color={current ? 'success' : item.state === 'DRAFT' ? 'warning' : 'default'}
-                    label={`r${item.revision}`}
-                  />
-                  <Box minWidth={0}>
-                    <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
-                      {t(`admin.templates.state.${item.state}`)}
-                      {current ? ` · ${t('admin.templates.current')}` : ''}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" noWrap>
-                      {item.changeReason} ·{' '}
-                      {formatDate(item.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}
-                    </Typography>
-                  </Box>
-                  {canManage && restorable && (
-                    <ActionButton intent="quiet" size="small" onClick={() => onEdit(item.content)}>
-                      {t('admin.templates.proposeRestore')}
-                    </ActionButton>
-                  )}
-                </Box>
-              );
-            })}
-          </Box>
+        <Box sx={{ minWidth: 0 }}>
+          {effectivePreview.isLoading ? (
+            <LoadingState
+              label={t('admin.templates.previewing')}
+              variant="skeleton"
+              skeletonRows={3}
+            />
+          ) : effectivePreview.isError || !effectivePreview.data ? (
+            <InlineFeedback severity="warning" title={t('admin.templates.effectivePreviewFailed')}>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                onClick={() => void effectivePreview.refetch()}
+              >
+                {t('actions.retry')}
+              </ActionButton>
+            </InlineFeedback>
+          ) : (
+            <NotificationChannelTemplatePreview
+              variant={variant}
+              content={effectivePreview.data.rendered}
+              label={t('admin.templates.effectivePreview')}
+            />
+          )}
         </Box>
-      )}
+      </NotificationTemplateDetailWorkspace>
     </Box>
   );
 }
@@ -569,7 +499,7 @@ export function NotificationTemplateStudio() {
   }
 
   return (
-    <Stack gap={2.5} data-testid="notification-template-studio">
+    <Stack gap={1.5} data-testid="notification-template-studio">
       <Alert severity="info" icon={<ShieldCheck size={18} />}>
         {t('admin.templates.governanceNotice')}
       </Alert>
@@ -587,13 +517,23 @@ export function NotificationTemplateStudio() {
             </Box>
             <Chip size="small" variant="outlined" label={drafts.length} />
           </Stack>
-          <Box sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}>
+          <Box
+            sx={{
+              mt: 1.25,
+              borderBlock: 1,
+              borderColor: 'divider',
+              maxHeight: 184,
+              overflowY: 'auto',
+            }}
+          >
             {drafts.map((variant) => {
               const draft = variant.draft;
               const selfAuthored = draft.createdBy === auth.user?.userId;
               return (
                 <Box
                   key={draft.revisionId}
+                  id={`notification-template-review-${draft.revisionId}`}
+                  tabIndex={-1}
                   data-testid={`notification-template-review-${draft.revisionId}`}
                   sx={{
                     minHeight: 76,
@@ -625,7 +565,11 @@ export function NotificationTemplateStudio() {
                         />
                       )}
                     </Stack>
-                    <Typography variant="body2" color="text.secondary" noWrap>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ overflowWrap: 'anywhere' }}
+                    >
                       {draft.changeReason}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -662,7 +606,7 @@ export function NotificationTemplateStudio() {
                         {t('admin.templates.rejectDraft')}
                       </ActionButton>
                     )}
-                    {canApprove && (
+                    {(canApprove || selfAuthored) && (
                       <ActionButton
                         intent="primary"
                         startIcon={<CheckCircle2 size={16} />}
@@ -690,7 +634,7 @@ export function NotificationTemplateStudio() {
         backLabel={t('admin.backToCatalog')}
         listLabel={t('admin.templates.catalogLabel')}
         detailLabel={t('admin.templates.detailLabel')}
-        desktopColumns="minmax(300px, .85fr) minmax(0, 2.15fr)"
+        desktopColumns="minmax(0, .7fr) minmax(0, 2.3fr)"
         listMaxHeight={760}
         list={
           <>
@@ -741,11 +685,11 @@ export function NotificationTemplateStudio() {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(320px, .8fr)' },
-                gap: 2.5,
+                gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, .9fr)' },
+                gap: 2,
               }}
             >
-              <Stack gap={1.5}>
+              <Stack gap={1.5} sx={{ minWidth: 0 }}>
                 <FormField
                   label={t('admin.templates.fields.title')}
                   value={editor.title}
@@ -774,6 +718,9 @@ export function NotificationTemplateStudio() {
                   }}
                   multiline
                   minRows={5}
+                  sx={{
+                    '& textarea': { typography: 'body2', fontFamily: foundationTokens.font.mono },
+                  }}
                   required
                 />
                 <FormField
@@ -812,7 +759,10 @@ export function NotificationTemplateStudio() {
                   supportingText={t('admin.templates.changeReasonHelp')}
                 />
               </Stack>
-              <Stack gap={1.5}>
+              <Stack
+                gap={1.5}
+                sx={{ minWidth: 0, alignSelf: 'start', position: { md: 'sticky' }, top: 0 }}
+              >
                 <ActionButton
                   intent="secondary"
                   startIcon={<Sparkles size={17} />}

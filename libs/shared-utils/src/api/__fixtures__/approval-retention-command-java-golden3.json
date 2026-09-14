@@ -1,0 +1,17 @@
+{
+  "provenance": "Actual native receipt checkpoint 97/97, 2026-09-14; configured ApprovalStepUpVerifier.payloadSha256 bytewriter; source /tmp/approval-retention-command-java-golden3.json SHA-256 dd98668df783f4ef431d39aa34a07d3c6a9eb6fb2306e04518459857b7d2983c",
+  "vectors": [
+    {
+      "name": "literal-backslash-u-not-a-scalar",
+      "reviewComment": "Review literal \\uD83D\\uDE80 and \\u000b",
+      "expectedCanonical1": "{\"expectedVersion\":9007199254740990,\"idempotencyKey\":\"original-key\",\"reviewComment\":\"Review literal \\\\uD83D\\\\uDE80 and \\\\u000b\"}",
+      "requestBodySha256": "40058ea1a0e368e1e5845155c305811d6e62bc3dee3f172e455f90634ddfce3a"
+    },
+    {
+      "name": "actual-c0-0b-0e-1a",
+      "reviewComment": "Review controls \u000b \u000e \u001a approved",
+      "expectedCanonical1": "{\"expectedVersion\":9007199254740990,\"idempotencyKey\":\"original-key\",\"reviewComment\":\"Review controls \\u000B \\u000E \\u001A approved\"}",
+      "requestBodySha256": "a793b09047ae05bcebbb66e5ff8cce8cb6ecf0a1e153528671cac031ea598c22"
+    }
+  ]
+}

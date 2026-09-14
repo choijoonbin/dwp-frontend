@@ -112,6 +112,7 @@
     "@tanstack/react-query": "5.101.4",
     "@xyflow/react": "12.11.2",
     "dayjs": "1.11.23",
+    "decimal.js": "10.6.0",
     "i18next": "^26.3.6",
     "i18next-resources-to-backend": "^1.2.3",
     "livekit-client": "2.22.0",

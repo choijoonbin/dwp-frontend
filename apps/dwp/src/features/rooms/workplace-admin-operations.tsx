@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import { foundationTokens } from '@dwp-frontend/design-system';
+import { OperationsPagination, ResultSkeleton } from './workplace-operations-ui';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Ban, CalendarRange, History, RefreshCw, Search, ShieldCheck } from 'lucide-react';
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Temporal } from 'temporal-polyfill';
 import {
   forceCancelWorkplaceBooking,
   getWorkplaceAdminBookings,
+  getWorkplaceAdminSites,
+  getWorkplaceAdminFloors,
   getWorkplaceAuditEvents,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -29,7 +34,6 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Table from '@mui/material/Table';
@@ -37,7 +41,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
@@ -50,13 +53,14 @@ import {
   useWorkplaceLegalHoldControl,
   WorkplaceLegalHoldDialog,
 } from './workplace-legal-hold-control';
-import { WorkplaceOperationJsonDetails } from './workplace-operation-json-details';
+import { AuditResults } from './workplace-admin-audit-results';
+import { WorkplaceExperienceBookingInspector } from './workplace-experience-booking-inspector';
+import { useWorkplaceExperienceAuthority } from './workplace-experience-authority';
+import { WorkplaceExperienceQueryError } from './workplace-experience-ui';
 
 import type {
   WorkplaceAdminBooking,
   WorkplaceAdminBookingPage,
-  WorkplaceAuditEvent,
-  WorkplaceAuditEventPage,
   WorkplaceBookingStatus,
 } from '@dwp-frontend/shared-utils';
 import type { DateRangeValue } from '@dwp-frontend/design-system';
@@ -66,7 +70,6 @@ type RangeIssue = 'required' | 'order' | 'tooLong' | 'invalid' | null;
 type BookingFilters = { status: 'ALL' | WorkplaceBookingStatus; userId: string };
 type AuditFilters = { action: string; aggregateType: string; actorUserId: string };
 
-const PAGE_SIZES = [10, 25, 50];
 const BOOKING_STATUSES: readonly WorkplaceBookingStatus[] = [
   'RESERVED',
   'CHECKED_IN',
@@ -129,11 +132,46 @@ export function WorkplaceAdminOperations() {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down('md'));
   const capabilities = useRoomsCapabilities();
+  const authority = useWorkplaceExperienceAuthority();
+  const [reviewTarget, setReviewTarget] = useState<WorkplaceAdminBooking | null>(null);
+  useEffect(() => setReviewTarget(null), [authority]);
   const toast = useToast();
   const queryClient = useQueryClient();
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
-  const timeZone = resolveSystemTimeZone('UTC');
-  const [tab, setTab] = useState<OperationsTab>('bookings');
+  const systemTimeZone = resolveSystemTimeZone('UTC');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sitesQuery = useQuery({
+    queryKey: ['workplace', 'admin', 'operations', 'sites', authority],
+    queryFn: getWorkplaceAdminSites,
+    enabled: capabilities.isLoaded && capabilities.canViewWorkplaceAdmin,
+    staleTime: 15_000,
+    retry: false,
+  });
+  const sites = sitesQuery.isError ? [] : (sitesQuery.data ?? []);
+  const selectedSite = sites.find((site) => site.siteId === searchParams.get('site'));
+  const floorsQuery = useQuery({
+    queryKey: ['workplace', 'admin', 'operations', 'floors', authority, selectedSite?.siteId],
+    queryFn: () => getWorkplaceAdminFloors(selectedSite!.siteId),
+    enabled: Boolean(selectedSite) && capabilities.isLoaded && capabilities.canViewWorkplaceAdmin,
+    staleTime: 15_000,
+    retry: false,
+  });
+  const floors = floorsQuery.isError ? [] : (floorsQuery.data ?? []);
+  const selectedFloor = floors.find((floor) => floor.floorId === searchParams.get('floor'));
+  const timeZone = selectedSite?.timeZone ?? systemTimeZone;
+  const scopeReady =
+    !sitesQuery.isError &&
+    (!searchParams.get('site') || Boolean(selectedSite)) &&
+    (!searchParams.get('floor') || Boolean(selectedFloor && !floorsQuery.isError));
+  const changeScope = (key: 'site' | 'floor', value: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    if (key === 'site') next.delete('floor');
+    setSearchParams(next, { replace: true });
+    setBookingPage(0);
+  };
+  const tab: OperationsTab = searchParams.get('view') === 'audit' ? 'audit' : 'bookings';
   const [draftRange, setDraftRange] = useState<DateRangeValue>(() =>
     initialOperationsRange(timeZone)
   );
@@ -165,6 +203,9 @@ export function WorkplaceAdminOperations() {
       'admin',
       'operations',
       'bookings',
+      authority,
+      selectedSite?.siteId,
+      selectedFloor?.floorId,
       range,
       bookingFilters,
       bookingPage,
@@ -173,6 +214,8 @@ export function WorkplaceAdminOperations() {
     queryFn: () => {
       if (!range) throw new Error('Invalid Workplace operations range');
       return getWorkplaceAdminBookings(range.from, range.to, {
+        siteId: selectedSite?.siteId,
+        floorId: selectedFloor?.floorId,
         status: bookingFilters.status === 'ALL' ? null : bookingFilters.status,
         userId: bookingUserId,
         page: bookingPage,
@@ -183,8 +226,14 @@ export function WorkplaceAdminOperations() {
       tab === 'bookings' &&
       capabilities.isLoaded &&
       capabilities.canViewWorkplaceAdmin &&
-      Boolean(range),
-    placeholderData: keepPreviousData,
+      Boolean(range) &&
+      scopeReady,
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[4] === authority &&
+      previousQuery.queryKey[5] === selectedSite?.siteId &&
+      previousQuery.queryKey[6] === selectedFloor?.floorId
+        ? previous
+        : undefined,
     staleTime: 15_000,
     retry: 1,
   });
@@ -194,6 +243,7 @@ export function WorkplaceAdminOperations() {
       'admin',
       'operations',
       'audit',
+      authority,
       range,
       auditFilters,
       auditPage,
@@ -214,10 +264,23 @@ export function WorkplaceAdminOperations() {
       capabilities.isLoaded &&
       capabilities.canViewWorkplaceAdmin &&
       Boolean(range),
-    placeholderData: keepPreviousData,
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[4] === authority ? previous : undefined,
     staleTime: 15_000,
     retry: 1,
   });
+  useEffect(() => setReviewTarget(null), [selectedSite?.siteId, selectedFloor?.floorId]);
+  const bookingsScopeMismatch = Boolean(
+    selectedSite &&
+    bookingsQuery.data?.content.some(
+      (booking) =>
+        booking.siteId !== selectedSite.siteId ||
+        (selectedFloor && booking.floorId !== selectedFloor.floorId)
+    )
+  );
+  useEffect(() => {
+    if (bookingsScopeMismatch) setReviewTarget(null);
+  }, [bookingsScopeMismatch]);
   const activeQuery = tab === 'bookings' ? bookingsQuery : auditQuery;
 
   const cancelMutation = useMutation({
@@ -282,7 +345,7 @@ export function WorkplaceAdminOperations() {
     }
   };
   const formatInstant = (value: string) =>
-    formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale);
+    formatDate(value, { dateStyle: 'medium', timeStyle: 'short', timeZone }, locale);
   const updatedAt = activeQuery.dataUpdatedAt
     ? formatInstant(new Date(activeQuery.dataUpdatedAt).toISOString())
     : null;
@@ -313,7 +376,11 @@ export function WorkplaceAdminOperations() {
 
       <Tabs
         value={tab}
-        onChange={(_event, value: OperationsTab) => setTab(value)}
+        onChange={(_event, value: OperationsTab) => {
+          const next = new URLSearchParams(searchParams);
+          next.set('view', value);
+          setSearchParams(next, { replace: true });
+        }}
         aria-label={t('workplace.admin.operations.tabs.label')}
         variant={mobile ? 'fullWidth' : 'standard'}
         sx={{ borderBottom: 1, borderColor: 'divider' }}
@@ -332,13 +399,63 @@ export function WorkplaceAdminOperations() {
         />
       </Tabs>
 
+      {tab === 'bookings' ? (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'repeat(2, minmax(0, 1fr))',
+              md: 'repeat(2, minmax(180px, 1fr))',
+            },
+            gap: 1.25,
+            pt: 1.5,
+          }}
+        >
+          <SelectField
+            size="small"
+            label={t('workplace.admin.governance.fields.site')}
+            value={selectedSite?.siteId ?? ''}
+            options={[
+              { value: '', label: t('workplace.explore.allSites') },
+              ...sites.map((site) => ({ value: site.siteId, label: site.name })),
+            ]}
+            onValueChange={(value) => changeScope('site', value)}
+          />
+          <SelectField
+            size="small"
+            label={t('workplace.admin.governance.fields.floor')}
+            value={selectedFloor?.floorId ?? ''}
+            disabled={!selectedSite || floorsQuery.isFetching || floorsQuery.isError}
+            options={[
+              { value: '', label: t('workplace.experience.allFloors') },
+              ...floors.map((floor) => ({ value: floor.floorId, label: floor.name })),
+            ]}
+            onValueChange={(value) => changeScope('floor', value)}
+          />
+        </Box>
+      ) : null}
+      {sitesQuery.isError || (selectedSite && floorsQuery.isError) ? (
+        <WorkplaceExperienceQueryError
+          retry={() => {
+            void sitesQuery.refetch();
+            if (selectedSite) void floorsQuery.refetch();
+          }}
+        />
+      ) : null}
       <Box
         component="form"
         onSubmit={(event) => {
           event.preventDefault();
           applyFilters();
         }}
-        sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}
+        sx={{
+          p: 1.5,
+          my: 1.5,
+          bgcolor: 'var(--dwp-product-soft)',
+          borderRadius: foundationTokens.radius.control + 'px',
+          border: 1,
+          borderColor: 'divider',
+        }}
       >
         <Box
           sx={{
@@ -346,7 +463,7 @@ export function WorkplaceAdminOperations() {
             gridTemplateColumns: {
               xs: '1fr',
               md: 'minmax(0, 1.3fr) minmax(0, 1fr)',
-              xl: 'minmax(360px, 1.4fr) repeat(2, minmax(180px, 0.7fr)) auto',
+              lg: 'minmax(250px, 1.4fr) repeat(2, minmax(120px, 0.7fr)) auto',
             },
             gap: 1.5,
             alignItems: 'start',
@@ -517,23 +634,28 @@ export function WorkplaceAdminOperations() {
       )}
 
       {tab === 'bookings' ? (
-        <BookingResults
-          data={bookingsQuery.data}
-          loading={bookingsQuery.isPending}
-          mobile={mobile}
-          canManage={capabilities.canManageWorkplaceAdmin}
-          actionsEnabled={!bookingsQuery.isFetching && !bookingsQuery.isError}
-          page={bookingPage}
-          size={bookingSize}
-          formatInstant={formatInstant}
-          onPage={setBookingPage}
-          onSize={(size) => {
-            setBookingSize(size);
-            setBookingPage(0);
-          }}
-          onCancel={setCancelTarget}
-          onLegalHold={legalHold.open}
-        />
+        !scopeReady || bookingsQuery.isError || bookingsScopeMismatch ? (
+          <WorkplaceExperienceQueryError retry={() => void bookingsQuery.refetch()} />
+        ) : (
+          <BookingResults
+            data={scopeReady && !bookingsQuery.isError ? bookingsQuery.data : undefined}
+            loading={bookingsQuery.isPending}
+            mobile={mobile}
+            canManage={capabilities.canManageWorkplaceAdmin}
+            actionsEnabled={!bookingsQuery.isFetching && !bookingsQuery.isError}
+            page={bookingPage}
+            size={bookingSize}
+            formatInstant={formatInstant}
+            onPage={setBookingPage}
+            onSize={(size) => {
+              setBookingSize(size);
+              setBookingPage(0);
+            }}
+            onReview={setReviewTarget}
+            onCancel={setCancelTarget}
+            onLegalHold={legalHold.open}
+          />
+        )
       ) : (
         <AuditResults
           data={auditQuery.data}
@@ -542,6 +664,25 @@ export function WorkplaceAdminOperations() {
           page={auditPage}
           size={auditSize}
           formatInstant={formatInstant}
+          slots={{
+            desktopAction: <Typography variant="body2" fontWeight={750} />,
+            mobileAction: (
+              <Typography fontWeight={750} sx={{ mt: 0.5, overflowWrap: 'anywhere' }} />
+            ),
+            desktopCorrelation: (
+              <TableCell
+                sx={{ maxWidth: 240, overflowWrap: 'anywhere', fontFamily: 'monospace' }}
+              />
+            ),
+            mobileCorrelation: (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+                sx={{ mt: 0.25, overflowWrap: 'anywhere', fontFamily: 'monospace' }}
+              />
+            ),
+          }}
           onPage={setAuditPage}
           onSize={(size) => {
             setAuditSize(size);
@@ -550,6 +691,14 @@ export function WorkplaceAdminOperations() {
         />
       )}
 
+      <WorkplaceExperienceBookingInspector
+        siteId={reviewTarget?.siteId ?? ''}
+        bookingId={
+          scopeReady && reviewTarget?.siteId && reviewTarget.floorId ? reviewTarget.bookingId : null
+        }
+        timeZone={sites.find((site) => site.siteId === reviewTarget?.siteId)?.timeZone ?? timeZone}
+        onClose={() => setReviewTarget(null)}
+      />
       <FormDialog
         open={Boolean(cancelTarget)}
         title={t('workplace.admin.operations.forceCancel.title')}
@@ -612,6 +761,7 @@ function BookingResults({
   formatInstant,
   onPage,
   onSize,
+  onReview,
   onCancel,
   onLegalHold,
 }: {
@@ -625,6 +775,7 @@ function BookingResults({
   formatInstant: (value: string) => string;
   onPage: (page: number) => void;
   onSize: (size: number) => void;
+  onReview: (booking: WorkplaceAdminBooking) => void;
   onCancel: (booking: WorkplaceAdminBooking) => void;
   onLegalHold: (booking: WorkplaceAdminBooking) => void;
 }) {
@@ -641,7 +792,14 @@ function BookingResults({
     );
   }
   return (
-    <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+    <Box
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control + 'px',
+        overflow: 'hidden',
+      }}
+    >
       {mobile ? (
         <Stack divider={<Box sx={{ borderTop: 1, borderColor: 'divider' }} />}>
           {data.content.map((booking) => (
@@ -681,6 +839,14 @@ function BookingResults({
                   {booking.purpose}
                 </Typography>
               )}
+              <ActionButton
+                intent="secondary"
+                disabled={!actionsEnabled || !booking.siteId || !booking.floorId}
+                onClick={() => onReview(booking)}
+                sx={{ mt: 1 }}
+              >
+                {t('workplace.experience.review')}
+              </ActionButton>
               {canManage && canForceCancelBooking(booking.status) && (
                 <ActionButton
                   intent="danger"
@@ -731,7 +897,14 @@ function BookingResults({
                 <TableRow key={booking.bookingId} hover>
                   <TableCell>
                     <Typography variant="body2" fontWeight={750}>
-                      {booking.resourceName}
+                      <ActionButton
+                        intent="quiet"
+                        disabled={!actionsEnabled || !booking.siteId || !booking.floorId}
+                        onClick={() => onReview(booking)}
+                        sx={{ px: 0, justifyContent: 'start', textAlign: 'left' }}
+                      >
+                        {booking.resourceName}
+                      </ActionButton>
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {booking.siteName} · {booking.floorName}
@@ -810,191 +983,5 @@ function BookingResults({
         onSize={onSize}
       />
     </Box>
-  );
-}
-
-function AuditResults({
-  data,
-  loading,
-  mobile,
-  page,
-  size,
-  formatInstant,
-  onPage,
-  onSize,
-}: {
-  data?: WorkplaceAuditEventPage;
-  loading: boolean;
-  mobile: boolean;
-  page: number;
-  size: number;
-  formatInstant: (value: string) => string;
-  onPage: (page: number) => void;
-  onSize: (size: number) => void;
-}) {
-  const { t } = useTranslation('rooms');
-  if (loading && !data) return <ResultSkeleton />;
-  if (!data?.content.length) {
-    return (
-      <EmptyState
-        size="standard"
-        icon={<ShieldCheck size={28} />}
-        title={t('workplace.admin.operations.audit.empty')}
-        description={t('workplace.admin.operations.audit.emptyDescription')}
-      />
-    );
-  }
-  return (
-    <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-      {mobile ? (
-        <Stack divider={<Box sx={{ borderTop: 1, borderColor: 'divider' }} />}>
-          {data.content.map((event) => (
-            <AuditMobileRow key={event.auditEventId} event={event} formatInstant={formatInstant} />
-          ))}
-        </Stack>
-      ) : (
-        <TableContainer>
-          <Table size="small" aria-label={t('workplace.admin.operations.audit.tableLabel')}>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('workplace.admin.operations.audit.occurredAt')}</TableCell>
-                <TableCell>{t('workplace.admin.operations.audit.action')}</TableCell>
-                <TableCell>{t('workplace.admin.operations.audit.aggregate')}</TableCell>
-                <TableCell>{t('workplace.admin.operations.audit.actor')}</TableCell>
-                <TableCell>{t('workplace.admin.operations.audit.correlation')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.content.map((event) => (
-                <TableRow key={event.auditEventId} hover>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                    {formatInstant(event.occurredAt)}
-                  </TableCell>
-                  <TableCell sx={{ overflowWrap: 'anywhere' }}>
-                    <Typography variant="body2" fontWeight={750}>
-                      {event.action}
-                    </Typography>
-                    <WorkplaceOperationJsonDetails
-                      snapshot={event.snapshot}
-                      label={t('workplace.admin.operations.audit.details')}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">{event.aggregateType}</Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ overflowWrap: 'anywhere' }}
-                    >
-                      {event.aggregateId ?? '-'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>#{event.actorUserId}</TableCell>
-                  <TableCell
-                    sx={{ maxWidth: 240, overflowWrap: 'anywhere', fontFamily: 'monospace' }}
-                  >
-                    {event.correlationId ?? '-'}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-      <OperationsPagination
-        count={data.totalElements}
-        page={page}
-        size={size}
-        onPage={onPage}
-        onSize={onSize}
-      />
-    </Box>
-  );
-}
-
-function AuditMobileRow({
-  event,
-  formatInstant,
-}: {
-  event: WorkplaceAuditEvent;
-  formatInstant: (value: string) => string;
-}) {
-  const { t } = useTranslation('rooms');
-  return (
-    <Box sx={{ p: 2, minWidth: 0 }}>
-      <Typography variant="caption" color="text.secondary">
-        {formatInstant(event.occurredAt)}
-      </Typography>
-      <Typography fontWeight={750} sx={{ mt: 0.5, overflowWrap: 'anywhere' }}>
-        {event.action}
-      </Typography>
-      <Typography variant="body2" sx={{ mt: 1 }}>
-        {event.aggregateType} · {event.aggregateId ?? '-'}
-      </Typography>
-      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-        {t('workplace.admin.operations.audit.actorValue', { actor: event.actorUserId })}
-      </Typography>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        display="block"
-        sx={{ mt: 0.25, overflowWrap: 'anywhere', fontFamily: 'monospace' }}
-      >
-        {t('workplace.admin.operations.audit.correlationValue', {
-          correlation: event.correlationId ?? '-',
-        })}
-      </Typography>
-      <WorkplaceOperationJsonDetails
-        snapshot={event.snapshot}
-        label={t('workplace.admin.operations.audit.details')}
-      />
-    </Box>
-  );
-}
-
-function ResultSkeleton() {
-  return (
-    <Stack gap={1} aria-hidden="true">
-      {Array.from({ length: 5 }, (_, index) => (
-        <Skeleton key={index} variant="rounded" height={64} />
-      ))}
-    </Stack>
-  );
-}
-
-function OperationsPagination({
-  count,
-  page,
-  size,
-  onPage,
-  onSize,
-}: {
-  count: number;
-  page: number;
-  size: number;
-  onPage: (page: number) => void;
-  onSize: (size: number) => void;
-}) {
-  const { t } = useTranslation('rooms');
-  return (
-    <TablePagination
-      component="div"
-      count={count}
-      page={page}
-      rowsPerPage={size}
-      rowsPerPageOptions={PAGE_SIZES}
-      labelRowsPerPage={t('workplace.admin.operations.pagination.rowsPerPage')}
-      labelDisplayedRows={({ from, to, count: total }) =>
-        t('workplace.admin.operations.pagination.displayed', { from, to, count: total })
-      }
-      onPageChange={(_event, nextPage) => onPage(nextPage)}
-      onRowsPerPageChange={(event) => onSize(Number(event.target.value))}
-      sx={{
-        overflow: 'hidden',
-        '.MuiTablePagination-toolbar': { flexWrap: 'wrap' },
-        '.MuiTablePagination-spacer': { display: { xs: 'none', sm: 'block' } },
-        '.MuiTablePagination-selectLabel': { ml: { xs: 0, sm: 2 } },
-      }}
-    />
   );
 }

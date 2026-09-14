@@ -1,0 +1,232 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 결재 업무
+          - paragraph [ref=e26]: SKAX
+        - navigation "전자결재 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 시작
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "전자결재 홈" [ref=e32] [cursor=pointer]:
+                  - /url: /approvals/home?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 전자결재 홈
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: 내 결재
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "결재함" [ref=e43] [cursor=pointer]:
+                  - /url: /approvals/inbox?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e45]
+                  - paragraph [ref=e50]: 결재함
+              - listitem [ref=e51]:
+                - link "내 처리 완료함" [ref=e52] [cursor=pointer]:
+                  - /url: /approvals/completed?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e54]
+                  - paragraph [ref=e58]: 내 처리 완료함
+              - listitem [ref=e59]:
+                - link "새 결재 작성" [ref=e60] [cursor=pointer]:
+                  - /url: /approvals/requests/new?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e62]
+                  - paragraph [ref=e67]: 새 결재 작성
+              - listitem [ref=e68]:
+                - link "임시 저장" [ref=e69] [cursor=pointer]:
+                  - /url: /approvals/requests/drafts?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e71]
+                  - paragraph [ref=e76]: 임시 저장
+              - listitem [ref=e77]:
+                - link "내가 올린 결재" [ref=e78] [cursor=pointer]:
+                  - /url: /approvals/requests/submitted?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e80]
+                  - paragraph [ref=e84]: 내가 올린 결재
+              - listitem [ref=e85]:
+                - link "보완할 결재" [ref=e86] [cursor=pointer]:
+                  - /url: /approvals/requests/needs-info?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e88]
+                  - paragraph [ref=e92]: 보완할 결재
+              - listitem [ref=e93]:
+                - link "완료 보관함" [ref=e94] [cursor=pointer]:
+                  - /url: /approvals/requests/archive?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e96]
+                  - paragraph [ref=e100]: 완료 보관함
+              - listitem [ref=e101]:
+                - link "결재 위임" [ref=e102] [cursor=pointer]:
+                  - /url: /approvals/delegations?scope=scope%3Aapprovals%3Aself
+                  - img [ref=e104]
+                  - paragraph [ref=e108]: 결재 위임
+        - link "앱 목록으로 돌아가기" [ref=e110] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e112]
+          - text: 앱 목록으로 돌아가기
+    - banner [ref=e114]:
+      - generic [ref=e115]:
+        - generic [ref=e116]:
+          - img [ref=e118]
+          - generic [ref=e122]:
+            - generic "전자결재" [ref=e123]
+            - generic "SKAX · 나의 결재" [ref=e124]
+        - navigation "앱 영역 전환" [ref=e127]:
+          - 'link "앱 관리: 전자결재" [ref=e129] [cursor=pointer]':
+            - /url: /approvals/admin/overview?scope=scope%3Aapprovals%3Atenant
+            - img [ref=e131]
+            - generic [ref=e134]: 앱 관리
+        - generic [ref=e136]:
+          - group "제품 접근 컨텍스트" [ref=e137]:
+            - img "2026. 8. 25. 오전 9:00에 접근 재확인" [ref=e139]:
+              - img [ref=e140]
+              - generic [ref=e143]: 접근 재확인
+          - status [ref=e144]
+        - generic [ref=e145]:
+          - button "DWP 검색" [ref=e147] [cursor=pointer]:
+            - img [ref=e148]
+          - button "전체 화면" [ref=e152] [cursor=pointer]:
+            - img [ref=e153]
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e159] [cursor=pointer]':
+            - generic [ref=e160]: T
+            - img [ref=e161]
+    - main [ref=e163]:
+      - generic [ref=e164]:
+        - generic [ref=e165]:
+          - generic [ref=e166]:
+            - img [ref=e168]
+            - generic [ref=e171]:
+              - text: 전자결재 / 내 요청
+              - heading "보완할 결재" [level=1] [ref=e172]
+              - paragraph [ref=e173]: 결재자가 요청한 추가 정보와 다음 행동을 확인합니다.
+          - generic [ref=e174]:
+            - img [ref=e175]
+            - generic [ref=e179]: 결정 증적 보존
+        - generic [ref=e181]:
+          - generic [ref=e182]:
+            - generic [ref=e183]:
+              - heading "보완할 결재" [level=2] [ref=e184]
+              - text: 응답 필요 1건
+            - generic [ref=e187]: "1"
+          - generic [ref=e188]:
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - generic: 결재 번호·제목·요약 검색
+                - generic [ref=e191]:
+                  - textbox "결재 번호·제목·요약 검색" [ref=e192]
+                  - group:
+                    - generic: 결재 번호·제목·요약 검색
+              - generic [ref=e193]:
+                - generic: 요청 상태
+                - generic [ref=e194]:
+                  - combobox "요청 상태" [ref=e195] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: 요청 상태
+              - generic [ref=e196]:
+                - generic: 우선순위
+                - generic [ref=e197]:
+                  - combobox "우선순위" [ref=e198] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: 우선순위
+              - generic [ref=e199]:
+                - generic [ref=e200]: 정렬
+                - generic [ref=e201]:
+                  - combobox "정렬 최신순" [ref=e202] [cursor=pointer]: 최신순
+                  - textbox: NEWEST
+                  - img
+                  - group:
+                    - generic: 정렬
+            - generic [ref=e203]:
+              - generic [ref=e204]: 26. 9. 14. 오후 1:54 기준
+              - generic [ref=e205]:
+                - generic "필터 초기화" [ref=e206]:
+                  - button "필터 초기화" [disabled]:
+                    - img
+                - generic [ref=e207]: 1/1 페이지
+                - generic "이전" [ref=e208]:
+                  - button "이전" [disabled]:
+                    - img
+                - generic "다음" [ref=e209]:
+                  - button "다음" [disabled]:
+                    - img
+          - generic [ref=e210]:
+            - list "결재" [ref=e212]:
+              - listitem [ref=e213]:
+                - button "APR-2026-0811-001 Customer data access exception 보완 필요 원래 요청 내용 비용 센터를 보완해 주세요. 높음 데이터 접근 예외 2026. 8. 11. 2/3 · Security review 33% 33%" [ref=e214] [cursor=pointer]:
+                  - generic [ref=e215]:
+                    - generic [ref=e216]:
+                      - generic [ref=e217]:
+                        - text: APR-2026-0811-001
+                        - paragraph [ref=e218]: Customer data access exception
+                      - generic [ref=e221]: 보완 필요
+                    - generic [ref=e222]: 원래 요청 내용
+                    - generic [ref=e223]:
+                      - img [ref=e224]
+                      - generic [ref=e228]: 비용 센터를 보완해 주세요.
+                    - generic [ref=e229]:
+                      - generic [ref=e232]: 높음
+                      - generic [ref=e234]: 데이터 접근 예외
+                      - generic [ref=e235]: 2026. 8. 11.
+                    - generic [ref=e236]:
+                      - generic [ref=e237]:
+                        - generic [ref=e238]: 2/3 · Security review
+                        - generic [ref=e239]: 33%
+                      - progressbar "2/3 · Security review" [ref=e240]
+                - generic [ref=e242]:
+                  - generic "결재 상세 열기" [ref=e243]:
+                    - button "결재 상세 열기" [ref=e244] [cursor=pointer]:
+                      - img [ref=e245]
+                  - button "보완 답변" [ref=e248] [cursor=pointer]:
+                    - img [ref=e250]
+                    - text: 보완 답변
+            - generic [ref=e256]:
+              - generic [ref=e257]:
+                - generic [ref=e258]:
+                  - heading "Customer data access exception" [level=2] [ref=e259]
+                  - text: APR-2026-0811-001
+                - generic [ref=e261]: 보완 필요
+              - separator [ref=e262]
+              - generic [ref=e263]:
+                - generic [ref=e264]:
+                  - generic [ref=e265]:
+                    - generic [ref=e267]: 높음
+                    - generic [ref=e268]: CONFIDENTIAL
+                  - paragraph [ref=e269]: 원래 요청 내용
+                - separator [ref=e270]
+                - generic [ref=e271]:
+                  - generic [ref=e272]:
+                    - text: 프로세스
+                    - paragraph [ref=e273]: 데이터 접근 예외
+                  - generic [ref=e274]:
+                    - text: 기한
+                    - paragraph [ref=e275]: 2026. 8. 11. 오후 5:00
+                  - generic [ref=e276]:
+                    - generic [ref=e277]:
+                      - generic [ref=e278]: 2/3 · Security review
+                      - generic [ref=e279]: 33%
+                    - progressbar "2/3 · Security review" [ref=e280]
+                - separator [ref=e282]
+                - generic [ref=e283]:
+                  - button "결재 상세 열기" [ref=e284] [cursor=pointer]:
+                    - img [ref=e286]
+                    - text: 결재 상세 열기
+                  - button "보완 답변" [ref=e289] [cursor=pointer]:
+                    - img [ref=e291]
+                    - text: 보완 답변
+```

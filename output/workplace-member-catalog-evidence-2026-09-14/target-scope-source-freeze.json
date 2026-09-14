@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-09-14T09:13:12.430937+00:00",
+  "identityScope": "12 owned target-aware production consumers; no shared API/global identity claim",
+  "sources": {
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-governance-target-scope.ts": "50615ac011b3e5df63b760d7cfc46837e1d345d8264e01b83160500832810279",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-catalog-command-scope.ts": "00de33696158d161a7a19fc997711985b3812e8dc3b0ba2c75c7aa5306a3faa6",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-dialogs.tsx": "b46281380c1117942103774f9e95d5d3ed94f6282362bb6c4bbae59238c1c548",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-locations.tsx": "6e4310337b0cc5d73e90e81b7c2bb5a7c95da200ff68610248c51729a8562f51",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-location-resource-inspector.tsx": "b14f66ba92e0ee7e7ffce33205a806cb1cc1048938848045ea33ee57a5151f21",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-layout-editor.tsx": "c09abe88f463e7f69c8ca0569f3ecc67948c1da2e3fd7b723f304493a01d9784",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-governance-access.tsx": "515c2492ac0bb3836db9d8f0a47219670a43661829f7580fb5df8dc4370ac646",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-governance-access-editor.tsx": "7311c59790861690dfb2ded44d13918732237a14abd262f3df22f04da4d71523",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-governance-scope-picker.tsx": "9d0ce9c372162b98a45514d7de7c3ddcd0ea56cadc046fa05685611e0041d273",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-governance-policy.tsx": "5b6f357482b488539546509f8009e6e2cef697e230326e02a370d3326c8bf4ff",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-governance-hierarchy.tsx": "fcaa6ef7694b5b2d3bf7d1941f56f5d134fb523156f38f83c151a2a04c831be0",
+    "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-governance-floor-plans.tsx": "3284f45014daaa90cbea0b4cc70bf66997c15a42a178cd42d9e6dd1d9c244a36"
+  },
+  "nativeBrowserZoomTestedInThisLane": false,
+  "text200Method": "document.documentElement.style.fontSize=200%; responsive viewport 320CSS; not native browser zoom",
+  "homeCheckpoint": "source-freeze-final-home.json is historical pre-floor-range API checkpoint",
+  "finalVerifiedAt": "2026-09-14T09:21:01.185849+00:00",
+  "verification": {
+    "mounted": "12/12 PASS3.47s: canonical producer, resource wrong parent/duplicate, delegated A-B-A late response, floor commands, RBAC/source/UNKNOWN",
+    "playwright": "7/7 PASS18.5s + affected count-caption1/1 PASS3.3s",
+    "typecheck": "PASS fullTS exit0 before caption-only layout change",
+    "eslint": "PASS owned12production/newfixture/tests; caption recheck included subsequent lint"
+  },
+  "scopeNotes": [
+    "Target capability is ANDed with existing action RBAC and current native source; limited SITEwide targets denied",
+    "Actual restricted totalFloorCount null remains blank; no synthetic0/1",
+    "FloorPlans UNKNOWN same-floor close/reopen remains blocked until explicit successful native read; no automatic resend"
+  ]
+}

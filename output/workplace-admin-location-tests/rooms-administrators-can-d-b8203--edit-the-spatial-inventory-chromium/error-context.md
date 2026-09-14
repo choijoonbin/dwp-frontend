@@ -1,0 +1,289 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace administration
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace administration
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e40]: Operations overview
+              - listitem [ref=e41]:
+                - link "Booking operations" [ref=e42] [cursor=pointer]:
+                  - /url: /workplace/admin/operations
+                  - img [ref=e44]
+                  - paragraph [ref=e48]: Booking operations
+              - listitem [ref=e49]:
+                - link "Space governance" [ref=e50] [cursor=pointer]:
+                  - /url: /workplace/admin/governance
+                  - img [ref=e52]
+                  - paragraph [ref=e58]: Space governance
+              - listitem [ref=e59]:
+                - link "Sites and floor plans" [ref=e60] [cursor=pointer]:
+                  - /url: /workplace/admin/locations
+                  - img [ref=e62]
+                  - paragraph [ref=e67]: Sites and floor plans
+              - listitem [ref=e68]:
+                - link "Space booking policy" [ref=e69] [cursor=pointer]:
+                  - /url: /workplace/admin/policies
+                  - img [ref=e71]
+                  - paragraph [ref=e75]: Space booking policy
+          - generic [ref=e76]:
+            - paragraph [ref=e77]: Meeting room administration
+            - list [ref=e78]:
+              - listitem [ref=e79]:
+                - link "Meeting approvals" [ref=e80] [cursor=pointer]:
+                  - /url: /workplace/admin/meeting-operations
+                  - img [ref=e82]
+                  - paragraph [ref=e88]: Meeting approvals
+              - listitem [ref=e89]:
+                - link "Meeting policy" [ref=e90] [cursor=pointer]:
+                  - /url: /workplace/admin/meeting-policy
+                  - img [ref=e92]
+                  - paragraph [ref=e96]: Meeting policy
+        - link "Return to work" [ref=e98] [cursor=pointer]:
+          - /url: /workplace/home
+          - img [ref=e100]
+          - text: Return to work
+    - banner [ref=e102]:
+      - generic [ref=e103]:
+        - generic [ref=e104]:
+          - img [ref=e106]
+          - generic "Workplace management" [ref=e110]
+        - navigation "App area switcher" [ref=e113]:
+          - generic [ref=e114]: Management mode
+          - 'link "Return to work: Workplace" [ref=e116] [cursor=pointer]':
+            - /url: /workplace/home
+            - img [ref=e118]
+            - generic [ref=e120]: Return to work
+        - generic [ref=e121]:
+          - button "Search DWP" [ref=e123] [cursor=pointer]:
+            - img [ref=e124]
+          - generic [ref=e127]:
+            - button "Enter full screen" [ref=e128] [cursor=pointer]:
+              - img [ref=e129]
+            - generic "0 actionable notifications, 0 total unread" [ref=e135]:
+              - button "0 actionable notifications, 0 total unread" [ref=e136] [cursor=pointer]:
+                - generic [ref=e137]:
+                  - img [ref=e138]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e142] [cursor=pointer]':
+            - generic [ref=e143]: T
+            - img [ref=e144]
+    - main [ref=e146]:
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - text: Spatial inventory and digital floor plans
+            - heading "Sites and floor plans" [level=1] [ref=e150]
+            - paragraph [ref=e151]: Register headquarters and flexible offices, then place desks, rooms, lockers, and other reservable resources by floor.
+          - generic [ref=e153]:
+            - button "Refresh" [ref=e154] [cursor=pointer]:
+              - img [ref=e156]
+              - text: Refresh
+            - button "Add site" [ref=e161] [cursor=pointer]:
+              - img [ref=e163]
+              - text: Add site
+        - generic [ref=e164]:
+          - complementary [ref=e165]:
+            - generic [ref=e166]:
+              - paragraph [ref=e167]: Sites
+              - generic [ref=e169]: "1"
+            - generic [ref=e170]:
+              - button "Pangyo HQ Active Headquarters · 1/20" [pressed] [ref=e171] [cursor=pointer]:
+                - img [ref=e173]
+                - generic [ref=e177]:
+                  - generic [ref=e178]:
+                    - paragraph [ref=e179]: Pangyo HQ
+                    - generic [ref=e181]: Active
+                  - generic [ref=e182]: Headquarters · 1/20
+              - generic "Edit":
+                - button "Edit" [ref=e183] [cursor=pointer]:
+                  - img [ref=e184]
+          - generic [ref=e187]:
+            - generic [ref=e188]:
+              - generic [ref=e189]:
+                - img [ref=e190]
+                - generic [ref=e194]:
+                  - generic [ref=e195]:
+                    - paragraph [ref=e196]: Pangyo HQ
+                    - generic [ref=e198]: Active
+                  - text: Bundang-gu, Seongnam
+              - generic [ref=e199]:
+                - button "Add floor" [ref=e200] [cursor=pointer]:
+                  - img [ref=e202]
+                  - text: Add floor
+                - button "Add space" [ref=e206] [cursor=pointer]:
+                  - img [ref=e208]
+                  - text: Add space
+            - generic [ref=e209]:
+              - tablist [ref=e213]:
+                - tab "12F (1) · Active" [selected] [ref=e214] [cursor=pointer]
+              - generic "Edit floor" [ref=e216]:
+                - button "Edit floor" [ref=e217] [cursor=pointer]:
+                  - img [ref=e218]
+            - generic [ref=e222]:
+              - alert [ref=e223]:
+                - img [ref=e225]
+                - generic [ref=e227]: Placement and background changes are allowed only through the auditable Draft, Review, and Publish workflow. This view shows the current catalog projection.
+                - button "Manage floor-plan release" [ref=e229] [cursor=pointer]:
+                  - img [ref=e231]
+                  - text: Manage floor-plan release
+              - group "View mode" [ref=e235]:
+                - button "List view" [ref=e236] [cursor=pointer]
+                - button "Map view" [pressed] [ref=e237] [cursor=pointer]
+              - generic [ref=e238]:
+                - generic [ref=e239]:
+                  - generic [ref=e242]: 2 resources
+                  - generic [ref=e243]:
+                    - generic "Zoom out" [ref=e244]:
+                      - button "Zoom out" [ref=e245] [cursor=pointer]:
+                        - img [ref=e246]
+                    - generic [ref=e247]: 100%
+                    - generic "Zoom in" [ref=e248]:
+                      - button "Zoom in" [ref=e249] [cursor=pointer]:
+                        - img [ref=e250]
+                    - generic "Fit to width" [ref=e251]:
+                      - button "Fit to width" [disabled]:
+                        - img
+                    - button "Save layout" [disabled]:
+                      - generic:
+                        - img
+                      - text: Save layout
+                - generic [ref=e252]:
+                  - generic [ref=e253]:
+                    - generic [ref=e254]:
+                      - button "Focus desk 12" [pressed] [ref=e255] [cursor=pointer]: D-1208
+                      - generic "Focus desk 12 Edit" [ref=e256]:
+                        - button "Focus desk 12 Edit" [ref=e257] [cursor=pointer]:
+                          - img [ref=e258]
+                    - generic [ref=e261]:
+                      - button "Focus desk 13" [ref=e262] [cursor=pointer]: D-1209
+                      - generic "Focus desk 13 Edit" [ref=e263]:
+                        - button "Focus desk 13 Edit" [ref=e264] [cursor=pointer]:
+                          - img [ref=e265]
+                  - status [ref=e268]
+                - generic [ref=e269]: Move resources by keyboard or pointer. Coordinates are stored as responsive proportions.
+          - complementary "Focus desk 12" [ref=e270]:
+            - generic [ref=e271]:
+              - generic [ref=e272]:
+                - generic [ref=e273]:
+                  - text: Booking detail
+                  - heading "Focus desk 12" [level=2] [ref=e274]
+                - generic [ref=e276]: workplace.resourceStates.AVAILABLE
+              - img [ref=e278]
+              - generic [ref=e280]:
+                - generic [ref=e282]: Desk
+                - generic [ref=e284]: Advance booking
+              - generic [ref=e285]:
+                - generic [ref=e286]:
+                  - img [ref=e287]
+                  - paragraph [ref=e290]: Pangyo HQ · 12F
+                - generic [ref=e291]:
+                  - img [ref=e292]
+                  - paragraph [ref=e296]: 1 people
+              - generic [ref=e297]:
+                - generic [ref=e299]: Monitor
+                - generic [ref=e301]: Standing desk
+              - button "Edit" [ref=e302] [cursor=pointer]:
+                - img [ref=e304]
+                - text: Edit
+              - region "Space photo" [ref=e307]:
+                - generic [ref=e309]:
+                  - heading "Space photo" [level=2] [ref=e310]
+                  - text: Focus desk 12
+                - generic [ref=e311]:
+                  - alert [ref=e312]:
+                    - img [ref=e314]
+                    - generic [ref=e316]: Could not load this information.
+                  - generic [ref=e317]: No space photo is registered.
+                  - generic [ref=e318]:
+                    - generic: Photo file · PNG/JPEG, up to 10 MiB
+                    - generic [ref=e319]:
+                      - button "Photo file · PNG/JPEG, up to 10 MiB" [disabled] [ref=e320]
+                      - group:
+                        - generic: Photo file · PNG/JPEG, up to 10 MiB
+                  - generic [ref=e321]:
+                    - generic: Photo description
+                    - generic [ref=e322]:
+                      - textbox "Photo description" [disabled] [ref=e323]
+                      - group:
+                        - generic: Photo description
+                  - generic [ref=e324]:
+                    - generic: Reason for change
+                    - generic [ref=e325]:
+                      - textbox "Reason for change" [disabled] [ref=e326]
+                      - group:
+                        - generic: Reason for change
+                  - generic [ref=e327]:
+                    - generic:
+                      - checkbox "I have reviewed the current values, proposed values and known impact." [disabled]
+                      - img
+                    - generic [ref=e328]: I have reviewed the current values, proposed values and known impact.
+                  - generic [ref=e329]:
+                    - button "Upload photo" [disabled]:
+                      - generic:
+                        - img
+                      - text: Upload photo
+              - region "Scheduled space closure" [ref=e330]:
+                - generic [ref=e332]:
+                  - heading "Scheduled space closure" [level=2] [ref=e333]
+                  - text: Focus desk 12 · Asia/Seoul
+                - generic [ref=e334]:
+                  - alert [ref=e335]:
+                    - img [ref=e337]
+                    - generic [ref=e339]: Existing bookings are preserved. Review affected reservations and handle each one explicitly.
+                  - generic [ref=e340]:
+                    - generic [ref=e341]:
+                      - generic [ref=e342]: Start date and time
+                      - generic [ref=e343]:
+                        - textbox "Start date and time" [ref=e344]: 2026-09-14T14:57
+                        - group:
+                          - generic: Start date and time
+                    - generic [ref=e345]:
+                      - generic [ref=e346]: End date and time
+                      - generic [ref=e347]:
+                        - textbox "End date and time" [ref=e348]: 2026-09-15T14:57
+                        - group:
+                          - generic: End date and time
+                  - alert [ref=e349]:
+                    - img [ref=e351]
+                    - generic [ref=e353]: Could not load this information.
+                    - button "Try again" [ref=e355] [cursor=pointer]
+                  - generic [ref=e356]:
+                    - generic: Closure reason
+                    - generic [ref=e357]:
+                      - textbox "Closure reason" [ref=e358]
+                      - group:
+                        - generic: Closure reason
+                  - generic [ref=e359]:
+                    - generic:
+                      - checkbox "I have reviewed the current values, proposed values and known impact." [disabled]
+                      - img
+                    - generic [ref=e360]: I have reviewed the current values, proposed values and known impact.
+                  - generic [ref=e361]:
+                    - button "Schedule closure" [disabled]
+  - generic "Open DWAI·ON" [ref=e363]:
+    - button "Open DWAI·ON" [ref=e364] [cursor=pointer]
+```

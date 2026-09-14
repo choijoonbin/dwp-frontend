@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   APPROVAL_QUEUE_FILTERS,
+  approvalBatchOutcome,
   approvalQueueCounts,
+  approvalScopeIdentity,
+  approvalTaskContentAccess,
   buildApprovalDecisionSignals,
   buildApprovalWorkflowEvidence,
   executeSequentialApprovalBatch,
@@ -42,6 +45,11 @@ function task(overrides: Partial<ApprovalTask> = {}): ApprovalTask {
 function detail(taskId: string, canDecide = true): ApprovalTaskDetail {
   return {
     task: task({ taskId, requestId: `request-${taskId}` }),
+    contentAccess: {
+      state: 'FULL',
+      reason: 'CURRENT_AUTHORITY_VERIFIED',
+      evaluatedAt: '2026-09-03T09:59:00Z',
+    },
     payload: {},
     timeline: [],
     canClaim: false,
@@ -51,6 +59,37 @@ function detail(taskId: string, canDecide = true): ApprovalTaskDetail {
 }
 
 describe('approval command center model', () => {
+  it('keeps delimiter-like authority components in distinct scope identities', () => {
+    expect(approvalScopeIdentity(['tenant|a', 'scope'])).not.toBe(
+      approvalScopeIdentity(['tenant', 'a|scope'])
+    );
+  });
+
+  it('fails closed when content access evidence is missing, stale, or internally inconsistent', () => {
+    const current = detail('task-content');
+    expect(approvalTaskContentAccess(current).full).toBe(true);
+    expect(
+      approvalTaskContentAccess({
+        ...current,
+        contentAccess: {
+          state: 'FULL',
+          reason: 'CURRENT_PERMISSION_REVOKED',
+          evaluatedAt: '2026-09-03T09:59:00Z',
+        },
+      })
+    ).toEqual({
+      full: false,
+      reason: 'UNKNOWN',
+      evaluatedAt: '2026-09-03T09:59:00Z',
+    });
+    expect(
+      approvalTaskContentAccess({
+        ...current,
+        contentAccess: undefined,
+      } as unknown as ApprovalTaskDetail)
+    ).toEqual({ full: false, reason: 'UNKNOWN', evaluatedAt: null });
+  });
+
   it('accepts only canonical queue filter values', () => {
     expect(APPROVAL_QUEUE_FILTERS).toEqual(['ALL', 'URGENT', 'DUE_TODAY', 'HIGH_RISK']);
     expect(parseApprovalQueueFilter('URGENT')).toBe('URGENT');
@@ -172,19 +211,44 @@ describe('approval command center model', () => {
       if (approval.task.taskId === 'task-3') throw new Error('authority changed');
     });
 
-    await expect(
-      executeSequentialApprovalBatch({
-        taskIds: ['task-1', 'task-2', 'task-3', 'task-4'],
-        loadTask,
-        approveTask,
-      })
-    ).resolves.toEqual({
+    const result = await executeSequentialApprovalBatch({
+      taskIds: ['task-1', 'task-2', 'task-3', 'task-4'],
+      loadTask,
+      approveTask,
+    });
+
+    expect(result).toEqual({
+      requestedTaskIds: ['task-1', 'task-2', 'task-3', 'task-4'],
       approvedTaskIds: ['task-1'],
       ineligibleTaskIds: ['task-2'],
       failedTaskId: 'task-3',
       remainingTaskIds: ['task-4'],
     });
+    expect(approvalBatchOutcome(result, 'task-1')).toBe('APPROVED');
+    expect(approvalBatchOutcome(result, 'task-2')).toBe('INELIGIBLE');
+    expect(approvalBatchOutcome(result, 'task-3')).toBe('FAILED');
+    expect(approvalBatchOutcome(result, 'task-4')).toBe('NOT_ATTEMPTED');
     expect(loadTask.mock.calls.map(([taskId]) => taskId)).toEqual(['task-1', 'task-2', 'task-3']);
     expect(approveTask).toHaveBeenCalledTimes(2);
+  });
+
+  it('caps the recorded batch result to the same twenty-item execution boundary', async () => {
+    const taskIds = Array.from({ length: 24 }, (_, index) => `task-${index + 1}`);
+    const loadTask = vi.fn(async (taskId: string) => detail(taskId));
+    const approveTask = vi.fn(async () => undefined);
+
+    await expect(
+      executeSequentialApprovalBatch({
+        taskIds,
+        loadTask,
+        approveTask,
+      })
+    ).resolves.toMatchObject({
+      requestedTaskIds: taskIds.slice(0, 20),
+      approvedTaskIds: taskIds.slice(0, 20),
+      remainingTaskIds: [],
+    });
+    expect(loadTask).toHaveBeenCalledTimes(20);
+    expect(approveTask).toHaveBeenCalledTimes(20);
   });
 });

@@ -26,6 +26,7 @@ export type DetailInspectorProps = {
   deepLinkLabel?: string;
   onDeepLink?: () => void;
   status?: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 export function DetailInspector({
@@ -46,9 +47,11 @@ export function DetailInspector({
   deepLinkLabel,
   onDeepLink,
   status,
+  footer,
 }: DetailInspectorProps) {
   const titleId = useId();
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  const fixedFooter = Boolean(footer) && variant === 'drawer';
 
   useEffect(() => {
     if (open) returnFocusRef.current = document.activeElement as HTMLElement | null;
@@ -67,6 +70,9 @@ export function DetailInspector({
         width: variant === 'drawer' ? { xs: '100vw', sm: width } : 1,
         minWidth: 0,
         bgcolor: 'background.paper',
+        ...(fixedFooter
+          ? { display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }
+          : {}),
       }}
     >
       <Stack
@@ -74,7 +80,7 @@ export function DetailInspector({
         alignItems="flex-start"
         justifyContent="space-between"
         gap={2}
-        sx={{ px: 2.5, py: 2, borderBottom: 1, borderColor: 'divider' }}
+        sx={{ px: 2.5, py: 2, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}
       >
         <Box sx={{ minWidth: 0 }}>
           <Typography id={titleId} component="h2" variant="h6">
@@ -118,7 +124,7 @@ export function DetailInspector({
           alignItems="center"
           justifyContent="space-between"
           gap={1}
-          sx={{ px: 2.5, py: 1, borderBottom: 1, borderColor: 'divider' }}
+          sx={{ px: 2.5, py: 1, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}
         >
           {status ?? <Box />}
           {deepLinkLabel && onDeepLink && (
@@ -133,7 +139,25 @@ export function DetailInspector({
           )}
         </Stack>
       )}
-      <Box sx={{ p: 2.5 }}>{children}</Box>
+      <Box sx={{ p: 2.5, ...(fixedFooter ? { flex: 1, minHeight: 0, overflow: 'auto' } : {}) }}>
+        {children}
+      </Box>
+      {footer ? (
+        <Box
+          data-testid="detail-inspector-footer"
+          sx={(theme) => ({
+            px: 2.5,
+            pt: 2,
+            pb: fixedFooter ? `max(${theme.spacing(2)}, env(safe-area-inset-bottom))` : 2,
+            flexShrink: 0,
+            bgcolor: 'background.paper',
+            borderTop: 1,
+            borderColor: 'divider',
+          })}
+        >
+          {footer}
+        </Box>
+      ) : null}
     </Box>
   );
 

@@ -11,11 +11,13 @@ function source(file: string): string {
 describe('Product Surface query cache discriminator contract', () => {
   it('separates Approval Form reference reads from Workflow Studio reads', () => {
     const formStudio = source('features/approvals/approval-form-studio.tsx');
-    const workflowStudio = source('features/approvals/approval-workflow-studio.tsx');
+    const formInspector = source('features/approvals/approval-form-inspector.tsx');
+    const workflowStudio = source('features/approvals/approval-workflow-studio-controller.ts');
 
     expect(formStudio).toContain("'workflows', 'view', 'reference'");
     expect(formStudio).toContain('getApprovalFormReferenceWorkflows(');
-    expect(formStudio).toContain('getApprovalFormReferenceWorkflow(');
+    expect(formInspector).toContain("'workflows', route?.workflowId, 'view', 'reference'");
+    expect(formInspector).toContain('getApprovalFormReferenceWorkflow(');
     expect(workflowStudio).toContain("'workflows', 'view', 'absent'");
     expect(workflowStudio).toContain('getApprovalStudioWorkflows(');
     expect(workflowStudio).toContain('getApprovalStudioWorkflow(');

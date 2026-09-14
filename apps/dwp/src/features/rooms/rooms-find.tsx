@@ -1,6 +1,7 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, Video } from 'lucide-react';
+import { CalendarClock, SlidersHorizontal, Video } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -15,7 +16,10 @@ import {
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import { getRoomAvailability, getRoomsPolicy, useAuth } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
+import Drawer from '@mui/material/Drawer';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -24,6 +28,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { RoomBookingDialog } from './room-booking-dialog';
 import {
   DEFAULT_ROOM_POLICY,
@@ -115,7 +120,7 @@ function RoomTimeline({
           gridTemplateColumns: `repeat(${slots.length}, minmax(28px, 1fr))`,
           border: 1,
           borderColor: 'divider',
-          borderRadius: 1,
+          borderRadius: foundationTokens.radius.control + 'px',
           overflow: 'hidden',
         }}
       >
@@ -223,6 +228,9 @@ function RoomTimeline({
 
 export function RoomsFind() {
   const { t } = useTranslation('rooms');
+  const theme = useTheme();
+  const compactFilters = useMediaQuery(theme.breakpoints.down('md'));
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const capabilities = useRoomsCapabilities();
   const auth = useAuth();
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
@@ -315,6 +323,7 @@ export function RoomsFind() {
   }, [duration, durationOptions, policy.defaultEventMinutes, updateParams]);
   const filtered = rooms.filter((room) => {
     const query = search.trim().toLocaleLowerCase();
+
     return (
       (!query ||
         [room.name, room.code, room.site, room.floor, ...room.features]
@@ -368,6 +377,99 @@ export function RoomsFind() {
     });
   };
 
+  const filterControls = (
+    <>
+      <FilterBar
+        ariaLabel={t('find.filterLabel')}
+        searchLabel={t('find.searchLabel')}
+        searchValue={search}
+        onSearchChange={(value) => updateParams({ q: value })}
+        resultLabel={t('find.resultCount', { count: filtered.length })}
+        activeFilters={
+          feature
+            ? [
+                {
+                  key: 'feature',
+                  label: t(`features.${feature}`, { defaultValue: feature }),
+                  onRemove: () => updateParams({ feature: null }),
+                },
+              ]
+            : []
+        }
+        resetLabel={t('actions.resetFilters')}
+        onReset={resetFilters}
+        filters={
+          <>
+            <DatePickerField
+              size="small"
+              label={t('find.dateLabel')}
+              value={date}
+              minDate={dateBounds.minDate}
+              maxDate={dateBounds.maxDate}
+              onValueChange={(value) => value && updateParams({ date: value })}
+              sx={{ minWidth: 156 }}
+            />
+            <SelectField
+              size="small"
+              label={t('find.siteLabel')}
+              value={site}
+              options={[
+                { value: 'ALL', label: t('find.allSites') },
+                ...sites.map((value) => ({ value, label: value })),
+              ]}
+              onValueChange={(value) => updateParams({ site: String(value) })}
+              sx={{ minWidth: 170 }}
+            />
+            <SelectField
+              size="small"
+              label={t('find.capacityLabel')}
+              value={capacity}
+              options={['0', '4', '8', '12'].map((value) => ({
+                value,
+                label: value === '0' ? t('find.any') : t('find.capacityOption', { count: value }),
+              }))}
+              onValueChange={(value) => updateParams({ capacity: String(value) })}
+              sx={{ minWidth: 150 }}
+            />
+            <SelectField
+              size="small"
+              label={t('find.durationLabel')}
+              value={String(duration)}
+              options={durationOptions.map((value) => ({
+                value: String(value),
+                label: t('find.minutes', { count: value }),
+              }))}
+              onValueChange={(value) => updateParams({ duration: String(value) })}
+              sx={{ minWidth: 140 }}
+            />
+          </>
+        }
+      />
+      {features.length > 0 && (
+        <Stack
+          direction="row"
+          gap={0.75}
+          alignItems="center"
+          useFlexGap
+          flexWrap="wrap"
+          sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Video size={16} aria-hidden="true" />
+          {features.map((value) => (
+            <Chip
+              key={value}
+              size="small"
+              clickable
+              color={feature === value ? 'primary' : 'default'}
+              variant={feature === value ? 'filled' : 'outlined'}
+              label={t(`features.${value}`, { defaultValue: value })}
+              onClick={() => updateParams({ feature: feature === value ? null : value })}
+            />
+          ))}
+        </Stack>
+      )}
+    </>
+  );
   return (
     <PageCanvas>
       <RoomsPageHeading
@@ -382,7 +484,7 @@ export function RoomsFind() {
       {policySourceState !== 'READY' &&
         policySourceState !== 'LOADING' &&
         policySourceState !== 'SKIPPED' && (
-          <Alert
+          <InlineFeedback
             severity={policySourceState === 'STALE' ? 'warning' : 'error'}
             action={
               <ActionButton intent="quiet" onClick={() => policyQuery.refetch()}>
@@ -392,112 +494,37 @@ export function RoomsFind() {
             sx={{ mb: 2 }}
           >
             {t(policySourceState === 'STALE' ? 'find.policyStale' : 'find.policyUnavailable')}
-          </Alert>
+          </InlineFeedback>
         )}
 
-      <Box
-        sx={{ bgcolor: 'background.paper', borderInline: 1, borderColor: 'divider', px: 2, mb: 2 }}
-      >
-        <FilterBar
-          ariaLabel={t('find.filterLabel')}
-          searchLabel={t('find.searchLabel')}
-          searchValue={search}
-          onSearchChange={(value) => updateParams({ q: value })}
-          resultLabel={t('find.resultCount', { count: filtered.length })}
-          activeFilters={
-            feature
-              ? [
-                  {
-                    key: 'feature',
-                    label: t(`features.${feature}`, { defaultValue: feature }),
-                    onRemove: () => updateParams({ feature: null }),
-                  },
-                ]
-              : []
-          }
-          resetLabel={t('actions.resetFilters')}
-          onReset={resetFilters}
-          filters={
-            <>
-              <DatePickerField
-                size="small"
-                label={t('find.dateLabel')}
-                value={date}
-                minDate={dateBounds.minDate}
-                maxDate={dateBounds.maxDate}
-                onValueChange={(value) => value && updateParams({ date: value })}
-                sx={{ minWidth: 156 }}
-              />
-              <SelectField
-                size="small"
-                label={t('find.siteLabel')}
-                value={site}
-                options={[
-                  { value: 'ALL', label: t('find.allSites') },
-                  ...sites.map((value) => ({ value, label: value })),
-                ]}
-                onValueChange={(value) => updateParams({ site: String(value) })}
-                sx={{ minWidth: 170 }}
-              />
-              <SelectField
-                size="small"
-                label={t('find.capacityLabel')}
-                value={capacity}
-                options={['0', '4', '8', '12'].map((value) => ({
-                  value,
-                  label: value === '0' ? t('find.any') : t('find.capacityOption', { count: value }),
-                }))}
-                onValueChange={(value) => updateParams({ capacity: String(value) })}
-                sx={{ minWidth: 150 }}
-              />
-              <SelectField
-                size="small"
-                label={t('find.durationLabel')}
-                value={String(duration)}
-                options={durationOptions.map((value) => ({
-                  value: String(value),
-                  label: t('find.minutes', { count: value }),
-                }))}
-                onValueChange={(value) => updateParams({ duration: String(value) })}
-                sx={{ minWidth: 140 }}
-              />
-            </>
-          }
-        />
-        {features.length > 0 && (
-          <Stack
-            direction="row"
-            gap={0.75}
-            alignItems="center"
-            useFlexGap
-            flexWrap="wrap"
-            sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
-          >
-            <Video size={16} aria-hidden="true" />
-            {features.map((value) => (
-              <Chip
-                key={value}
-                size="small"
-                clickable
-                color={feature === value ? 'primary' : 'default'}
-                variant={feature === value ? 'filled' : 'outlined'}
-                label={t(`features.${value}`, { defaultValue: value })}
-                onClick={() => updateParams({ feature: feature === value ? null : value })}
-              />
-            ))}
+      <Box sx={(theme) => ({ ...workplaceMemberCard(theme), px: 2, mb: 2.5 })}>
+        {compactFilters ? (
+          <Stack gap={1} sx={{ py: 1.5 }}>
+            <FilterBar
+              ariaLabel={t('find.filterLabel')}
+              searchLabel={t('find.searchLabel')}
+              searchValue={search}
+              onSearchChange={(value) => updateParams({ q: value })}
+            />
+            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+              <Typography variant="body2" color="text.secondary">
+                {date} · {t('find.minutes', { count: duration })}
+              </Typography>
+              <ActionButton
+                intent="secondary"
+                startIcon={<SlidersHorizontal size={17} />}
+                onClick={() => setFiltersOpen(true)}
+              >
+                {t('workplace.member.filters.open')}
+              </ActionButton>
+            </Stack>
           </Stack>
+        ) : (
+          filterControls
         )}
       </Box>
 
-      <Box
-        sx={{
-          bgcolor: 'background.paper',
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          overflow: 'hidden',
-        }}
-      >
+      <Box sx={workplaceMemberCard}>
         {availabilityQuery.isFetching && <LinearProgress aria-label={t('find.loading')} />}
         <Stack
           direction="row"
@@ -505,7 +532,7 @@ export function RoomsFind() {
           alignItems="center"
           sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
         >
-          <Typography component="h2" variant="subtitle1" fontWeight={800}>
+          <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
             {t('find.results')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -513,7 +540,7 @@ export function RoomsFind() {
           </Typography>
         </Stack>
         {availabilitySourceState === 'STALE' && (
-          <Alert
+          <InlineFeedback
             severity="warning"
             action={
               <ActionButton intent="quiet" onClick={() => availabilityQuery.refetch()}>
@@ -522,7 +549,7 @@ export function RoomsFind() {
             }
           >
             {t('workplace.staleWarning')}
-          </Alert>
+          </InlineFeedback>
         )}
         {availabilitySourceState === 'LOADING' ? (
           <Stack spacing={1} p={2}>
@@ -531,7 +558,7 @@ export function RoomsFind() {
             ))}
           </Stack>
         ) : availabilitySourceState === 'DENIED' || availabilitySourceState === 'UNAVAILABLE' ? (
-          <Alert
+          <InlineFeedback
             severity="error"
             action={
               <ActionButton intent="quiet" onClick={() => availabilityQuery.refetch()}>
@@ -540,7 +567,7 @@ export function RoomsFind() {
             }
           >
             {t('find.loadError')}
-          </Alert>
+          </InlineFeedback>
         ) : filtered.length === 0 ? (
           <EmptyState
             icon={<CalendarClock size={28} />}
@@ -550,17 +577,17 @@ export function RoomsFind() {
             onAction={resetFilters}
           />
         ) : (
-          filtered.map((room, index) => (
+          filtered.map((room) => (
             <Box
               key={room.resourceId}
-              sx={{
+              sx={(theme) => ({
+                ...workplaceMemberSoftSurface(theme),
                 display: 'grid',
                 gridTemplateColumns: { xs: '1fr', lg: '280px minmax(0, 1fr)' },
                 gap: 2,
                 p: 2,
-                borderTop: index ? 1 : 0,
-                borderColor: 'divider',
-              }}
+                m: { xs: 1.5, md: 2 },
+              })}
             >
               <Stack gap={1.25} justifyContent="space-between">
                 <Stack direction="row" justifyContent="space-between" gap={1}>
@@ -606,6 +633,37 @@ export function RoomsFind() {
         )}
       </Box>
 
+      <Drawer
+        anchor="bottom"
+        open={filtersOpen && compactFilters}
+        onClose={() => setFiltersOpen(false)}
+        slotProps={{
+          paper: {
+            sx: {
+              borderTopLeftRadius: foundationTokens.radius.surface * 2 + 'px',
+              borderTopRightRadius: foundationTokens.radius.surface * 2 + 'px',
+              maxHeight: '92dvh',
+              px: 2,
+              pb: 2,
+            },
+          },
+        }}
+      >
+        <Box role="dialog" aria-modal="true" aria-label={t('find.filterLabel')}>
+          <Typography component="h2" variant="h6" sx={{ pt: 2 }}>
+            {t('find.filterLabel')}
+          </Typography>
+          {filterControls}
+          <ActionButton
+            intent="primary"
+            fullWidth
+            onClick={() => setFiltersOpen(false)}
+            sx={{ minHeight: 44, mt: 2 }}
+          >
+            {t('workplace.member.filters.apply')}
+          </ActionButton>
+        </Box>
+      </Drawer>
       <RoomBookingDialog
         open={Boolean(selection)}
         room={selectedRoom ?? selection?.room ?? null}

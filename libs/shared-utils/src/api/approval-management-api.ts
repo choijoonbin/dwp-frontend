@@ -1,4 +1,5 @@
 import { axiosInstance } from '../axios-instance';
+import { assertSupportedApprovalFormSchema } from './approval-management-contract';
 
 import type {
   ApprovalAdminPulse,
@@ -131,6 +132,7 @@ export async function getApprovalForm(
     `${base}/forms/${formId}`,
     selectedScope(contextScopeKey, signal)
   );
+  assertSupportedApprovalFormSchema(response.data.data.schema);
   return response.data.data;
 }
 

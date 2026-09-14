@@ -2,6 +2,7 @@ import { ArrowRight, FileCheck2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { GlyphSurface } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -32,6 +33,7 @@ export function ApprovalPageHeader({ view, icon: Icon }: { view: string; icon: L
     <Box
       sx={{
         display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
         alignItems: { xs: 'flex-start', md: 'center' },
         justifyContent: 'space-between',
         gap: 2,
@@ -40,15 +42,19 @@ export function ApprovalPageHeader({ view, icon: Icon }: { view: string; icon: L
         borderColor: 'divider',
       }}
     >
-      <Stack direction="row" gap={1.5} alignItems="flex-start">
+      <Stack direction="row" gap={1.5} alignItems="flex-start" sx={{ width: 1, minWidth: 0 }}>
         <GlyphSurface size={42} variant="soft">
           <Icon size={21} strokeWidth={1.8} />
         </GlyphSurface>
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Typography variant="overline" color="primary.main">
             {t(`pages.${view}.eyebrow`)}
           </Typography>
-          <Typography component="h1" variant="h4">
+          <Typography
+            component="h1"
+            variant="h4"
+            sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+          >
             {t(`pages.${view}.title`)}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.35 }}>
@@ -61,7 +67,7 @@ export function ApprovalPageHeader({ view, icon: Icon }: { view: string; icon: L
         variant="outlined"
         icon={<FileCheck2 size={14} />}
         label={t('governance.evidence')}
-        sx={{ bgcolor: 'background.paper' }}
+        sx={{ flexShrink: 0, bgcolor: 'background.paper' }}
       />
     </Box>
   );
@@ -72,27 +78,53 @@ export function ApprovalSurface({
   meta,
   action,
   children,
+  appearance = 'standard',
 }: {
   title: string;
   meta?: string;
   action?: React.ReactNode;
   children: React.ReactNode;
+  appearance?: 'standard' | 'executive';
 }) {
   return (
     <Paper
       component="section"
       variant="outlined"
-      sx={{ minWidth: 0, overflow: 'hidden', borderRadius: 1 }}
+      style={{ borderRadius: foundationTokens.radius.surface }}
+      sx={(theme) => ({
+        minWidth: 0,
+        overflow: 'hidden',
+        ...(appearance === 'executive' && { containerType: 'inline-size' }),
+        borderColor:
+          appearance === 'executive'
+            ? alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.16 : 0.08)
+            : 'divider',
+        boxShadow: theme.shadows[appearance === 'executive' ? 0 : 1],
+        '@media (forced-colors: active)': { boxShadow: 'none' },
+      })}
     >
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         gap={1}
-        sx={{ px: 2, py: 1.6, borderBottom: 1, borderColor: 'divider' }}
+        sx={(theme) => ({
+          px: 2,
+          py: appearance === 'executive' ? 1.25 : 1.6,
+          borderBottom: 1,
+          borderColor:
+            appearance === 'executive'
+              ? alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.12 : 0.05)
+              : 'divider',
+          '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+        })}
       >
         <Box minWidth={0}>
-          <Typography component="h2" variant="subtitle1" fontWeight={760}>
+          <Typography
+            component="h2"
+            variant={appearance === 'executive' ? 'subtitle2' : 'subtitle1'}
+            fontWeight={760}
+          >
             {title}
           </Typography>
           {meta && (

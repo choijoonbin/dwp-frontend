@@ -224,6 +224,12 @@ export const APPROVAL_HOME_FIXTURE = {
     activeRequests: 24,
     overdueTasks: 1,
     failedIntegrations: 0,
+    assurance: [
+      { key: 'identity', state: 'ENFORCED', exceptions: 0 },
+      { key: 'segregation', state: 'ENFORCED', exceptions: 0 },
+      { key: 'evidence', state: 'ENFORCED', exceptions: 0 },
+      { key: 'delivery', state: 'ENFORCED', exceptions: 0 },
+    ],
   },
 } satisfies ApprovalHome;
 
@@ -233,10 +239,16 @@ export const APPROVAL_ADMIN_FIXTURE = {
   activeRequests: 24,
   overdueTasks: 1,
   failedIntegrations: 0,
+  assurance: APPROVAL_HOME_FIXTURE.adminPulse.assurance,
 } satisfies ApprovalAdminPulse;
 
 export const APPROVAL_TASK_DETAIL_FIXTURE = {
   task: APPROVAL_TASK_FIXTURE,
+  contentAccess: {
+    state: 'FULL',
+    reason: 'CURRENT_AUTHORITY_VERIFIED',
+    evaluatedAt: '2026-08-11T00:20:00Z',
+  },
   payload: {
     businessReason: 'Restore a customer-facing integration within the approved support window.',
     expiresOn: '2026-08-12',
@@ -280,6 +292,8 @@ export const APPROVAL_POLICIES_FIXTURE = [
     lifecycleState: 'ACTIVE',
     rule: { requesterCannotApprove: true },
     version: 2,
+    pendingReview: false,
+    pendingRule: {},
   },
 ] satisfies ApprovalPolicy[];
 
@@ -321,6 +335,12 @@ export const APPROVAL_OPERATIONS_FIXTURE = {
       createdAt: '2026-08-11T00:10:00Z',
       lastRetriedAt: null,
       version: 7,
+      retryEligibility: {
+        eligible: true,
+        reason: 'ELIGIBLE',
+        expectedVersion: 7,
+        evaluatedAt: '2026-08-11T00:20:00Z',
+      },
     },
   ],
 } satisfies ApprovalOperations;
@@ -332,7 +352,13 @@ export const APPROVAL_SIGNATURE_FIXTURES = [
     displayName: 'Enterprise e-signature',
     providerType: 'REST',
     lifecycleState: 'PILOT',
-    capabilities: { embeddedSigning: true, qualifiedCertificate: false },
+    capabilities: {
+      internalAttestation: false,
+      auditEvidence: false,
+      verifiedIdentity: false,
+      remoteSigningSupported: false,
+      readiness: 'EXTERNAL_VERIFICATION_REQUIRED',
+    },
     credentialConfigured: false,
     lastHealthCheckedAt: null,
     version: 1,

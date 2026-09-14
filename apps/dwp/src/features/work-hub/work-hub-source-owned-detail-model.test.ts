@@ -31,6 +31,12 @@ const approvalTask = {
   version: 2,
 } as const;
 
+const fullApprovalContentAccess = {
+  state: 'FULL',
+  reason: 'CURRENT_AUTHORITY_VERIFIED',
+  evaluatedAt: '2026-09-04T00:01:00Z',
+} as const;
+
 const serviceRequest = {
   requestId: 'service-1',
   requestNumber: 'SR-088',
@@ -54,6 +60,7 @@ describe('Work source-owned detail projection', () => {
     const item = approvalTaskToHub(approvalTask, 'approval-inbox');
     const detail: ApprovalTaskDetail = {
       task: approvalTask,
+      contentAccess: fullApprovalContentAccess,
       payload: {
         purpose: 'Customer support refresh',
         amount: 1850000,
@@ -104,6 +111,16 @@ describe('Work source-owned detail projection', () => {
         },
       ],
     });
+    expect(
+      projectApprovalSourceDetail(item, {
+        ...detail,
+        contentAccess: {
+          state: 'REDACTED',
+          reason: 'CURRENT_PERMISSION_REVOKED',
+          evaluatedAt: '2026-09-04T00:02:00Z',
+        },
+      })
+    ).toBeNull();
     expect(
       projectApprovalSourceDetail(item, {
         ...detail,
@@ -193,6 +210,7 @@ describe('Work source-owned detail projection', () => {
     const item = approvalTaskToHub(approvalTask, 'approval-inbox');
     const detail: ApprovalTaskDetail = {
       task: approvalTask,
+      contentAccess: fullApprovalContentAccess,
       payload: {},
       canClaim: false,
       canDecide: true,
@@ -264,6 +282,7 @@ describe('Work source-owned detail projection', () => {
     };
     const detail: ApprovalTaskDetail = {
       task: approvalTask,
+      contentAccess: fullApprovalContentAccess,
       payload: {},
       canClaim: false,
       canDecide: true,

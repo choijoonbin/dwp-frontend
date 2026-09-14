@@ -4,10 +4,13 @@ import {
   buildApprovalDelegationCreateInput,
   buildApprovalDelegationWorkflowReference,
   buildApprovalDelegationWorkflowOptions,
+  canRevokeApprovalDelegation,
+  isApprovalDelegationPeriodValid,
+  isApprovalDelegationSnapshotCurrent,
   isApprovalDelegationDirection,
 } from './approval-delegation-model';
 
-import type { ApprovalWorkflow } from '@dwp-frontend/shared-utils';
+import type { ApprovalDelegation, ApprovalWorkflow } from '@dwp-frontend/shared-utils';
 
 function workflow(workflowId: string, nameKo: string): ApprovalWorkflow {
   return {
@@ -34,6 +37,37 @@ describe('approval delegation workflow identity', () => {
     expect(isApprovalDelegationDirection('INCOMING')).toBe(true);
     expect(isApprovalDelegationDirection(undefined)).toBe(false);
     expect(isApprovalDelegationDirection('SIDEWAYS')).toBe(false);
+  });
+
+  it('requires a valid bounded period and exact latest authority snapshot', () => {
+    expect(
+      isApprovalDelegationPeriodValid('2026-08-25T00:00:00.000Z', '2026-08-31T00:00:00.000Z')
+    ).toBe(true);
+    expect(
+      isApprovalDelegationPeriodValid('2026-08-31T00:00:00.000Z', '2026-08-25T00:00:00.000Z')
+    ).toBe(false);
+    expect(isApprovalDelegationPeriodValid('invalid', '2026-08-31T00:00:00.000Z')).toBe(false);
+
+    const delegation: ApprovalDelegation = {
+      delegationId: 'delegation-1',
+      delegatorUserId: 1,
+      delegateUserId: 2,
+      delegateDisplayName: 'Delegate',
+      scopeType: 'ALL',
+      startsAt: '2026-08-25T00:00:00.000Z',
+      endsAt: '2026-08-31T00:00:00.000Z',
+      direction: 'OUTGOING' as const,
+      lifecycleState: 'ACTIVE',
+      reason: 'Bounded absence coverage',
+      version: 3,
+    };
+    expect(isApprovalDelegationSnapshotCurrent([delegation], delegation)).toBe(true);
+    expect(isApprovalDelegationSnapshotCurrent([{ ...delegation, version: 4 }], delegation)).toBe(
+      false
+    );
+    expect(canRevokeApprovalDelegation(delegation, true)).toBe(true);
+    expect(canRevokeApprovalDelegation({ ...delegation, direction: 'INCOMING' }, true)).toBe(false);
+    expect(canRevokeApprovalDelegation(delegation, false)).toBe(false);
   });
 
   it('keeps same-key A/B workflows distinct by immutable UUID and uses the key only in labels', () => {

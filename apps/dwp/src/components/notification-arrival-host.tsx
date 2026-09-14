@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BellRing, ChevronRight, MessagesSquare, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions';
-import { resolveProductTimeZone } from '@dwp-frontend/design-system';
+import { resolveProductTimeZone } from '@dwp-frontend/design-system/enterprise/date-time/date-time-policy';
 import {
   getNotificationDetail,
   getNotificationDeliveryProfile,

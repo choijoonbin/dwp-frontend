@@ -23,6 +23,7 @@ import { alpha } from '@mui/material/styles';
 import { kpiView, notificationKpiCount } from './notification-inbox-model';
 
 import type { NotificationConnectionState } from './use-notification-runtime';
+import type { ReactNode } from 'react';
 import type { NotificationKpiKey, NotificationStreamGroupKey } from './notification-inbox-model';
 import type {
   NotificationItem,
@@ -43,11 +44,19 @@ export function NotificationWorkbenchHeader({
   const connected = state === 'live';
   return (
     <Stack
+      data-testid="notification-workbench-header"
       direction="row"
       justifyContent="space-between"
       alignItems="center"
       gap={1}
-      sx={{ pb: 1.5, borderBottom: 1, borderColor: 'divider' }}
+      sx={{
+        p: { xs: 1.25, md: 1.5 },
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        bgcolor: 'background.paper',
+        boxShadow: 'var(--notification-panel-shadow)',
+      }}
     >
       <Stack direction="row" spacing={1.25} alignItems="center" minWidth={0}>
         <GlyphSurface size={38} variant="soft">
@@ -115,24 +124,20 @@ export function NotificationKpiFilterBar({
 }) {
   const { t } = useTranslation('notifications');
   const inboxTotal = summary.viewCounts.ALL;
-  const unreadShare = Math.min(
-    100,
-    Math.max(0, Math.round((summary.totalUnread / Math.max(1, inboxTotal)) * 100))
-  );
   return (
     <Box
       role="group"
       aria-label={t('home.summaryLabel')}
       sx={{
         mt: 1.5,
-        p: { xs: 0.5, sm: 0.75 },
+        p: { xs: 0.5, sm: 1.25 },
         display: 'flex',
         alignItems: 'center',
         flexWrap: { xs: 'nowrap', sm: 'wrap' },
         gap: { xs: 0.25, sm: 0.75 },
         border: 1,
         borderColor: 'divider',
-        borderRadius: 'shape.borderRadius',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
         bgcolor: 'background.paper',
       }}
     >
@@ -153,10 +158,9 @@ export function NotificationKpiFilterBar({
               flex: { xs: '1 1 0', sm: '0 0 auto' },
               justifyContent: 'flex-start',
               textAlign: 'left',
-              borderRadius: 'shape.borderRadius',
-              bgcolor: active ? 'primary.main' : 'transparent',
-              color: active ? 'primary.contrastText' : 'text.primary',
-              boxShadow: active ? 1 : 0,
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              bgcolor: active ? 'primary.main' : 'action.hover',
+              color: active ? 'primary.contrastText' : 'text.secondary',
               '&:hover': { bgcolor: active ? 'primary.dark' : 'action.hover' },
               '&:focus-visible': {
                 outline: '2px solid',
@@ -186,15 +190,17 @@ export function NotificationKpiFilterBar({
               </Typography>
               <Box
                 component="span"
-                sx={{
+                sx={(theme) => ({
                   minWidth: { xs: 18, sm: 20 },
                   height: { xs: 18, sm: 20 },
                   px: { xs: 0.35, sm: 0.55 },
                   display: 'inline-grid',
                   placeItems: 'center',
                   borderRadius: '50%',
-                  bgcolor: active ? 'primary.dark' : 'action.selected',
-                }}
+                  bgcolor: active
+                    ? alpha(theme.palette.primary.contrastText, 0.2)
+                    : 'action.selected',
+                })}
               >
                 <Typography
                   component="span"
@@ -240,36 +246,6 @@ export function NotificationKpiFilterBar({
               {inboxTotal}
             </Typography>
           </Stack>
-          <Box
-            role="progressbar"
-            aria-label={t('workbench.kpis.UNREAD_SHARE')}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={unreadShare}
-            title={t('workbench.kpis.UNREAD_SHARE_VALUE', { value: unreadShare })}
-            sx={{
-              width: { xs: 96, md: 72, xl: 96 },
-              minWidth: 24,
-              height: 6,
-              overflow: 'hidden',
-              borderRadius: 'shape.borderRadius',
-              bgcolor: 'action.selected',
-            }}
-          >
-            <Box
-              sx={{
-                width: `${unreadShare}%`,
-                height: 1,
-                borderRadius: 'inherit',
-                bgcolor: 'success.main',
-                transition: (theme) =>
-                  theme.transitions.create('width', {
-                    duration: theme.transitions.duration.shorter,
-                  }),
-                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
-              }}
-            />
-          </Box>
         </Stack>
       </Box>
     </Box>
@@ -298,19 +274,26 @@ export function NotificationDigestBanner({
         px: { xs: 1.25, md: 1.5 },
         py: 1.15,
         border: 1,
-        borderLeft: 3,
         borderColor: alpha(theme.palette.primary.main, 0.28),
-        borderLeftColor: 'primary.main',
-        borderRadius: 'shape.borderRadius',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
         bgcolor: alpha(theme.palette.primary.main, 0.055),
       })}
     >
       <Stack direction="row" alignItems="center" gap={{ xs: 0.75, sm: 1.25 }}>
         <Stack direction="row" spacing={1.2} alignItems="flex-start" minWidth={0} sx={{ flex: 1 }}>
-          <Box sx={{ display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
-            <GlyphSurface size={32} variant="soft">
-              <Sparkles size={16} color="var(--dwp-product-accent)" aria-hidden="true" />
-            </GlyphSurface>
+          <Box
+            sx={{
+              display: 'grid',
+              placeItems: 'center',
+              flexShrink: 0,
+              width: 32,
+              height: 32,
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            }}
+          >
+            <Sparkles size={16} aria-hidden="true" />
           </Box>
           <Box minWidth={0}>
             <Typography
@@ -369,11 +352,15 @@ export function NotificationStreamGroupHeading({
   count,
   headingId,
   headingComponent = 'h2',
+  title,
+  actions,
 }: {
   groupKey: NotificationStreamGroupKey;
   count: number;
   headingId?: string;
   headingComponent?: 'h2' | 'h3';
+  title?: string;
+  actions?: ReactNode;
 }) {
   const { t } = useTranslation('notifications');
   const Icon =
@@ -396,9 +383,9 @@ export function NotificationStreamGroupHeading({
       justifyContent="space-between"
       alignItems="center"
       gap={1}
-      sx={{ py: 1.15 }}
+      sx={{ pb: 1, pt: 0.5 }}
     >
-      <Stack direction="row" alignItems="center" gap={0.75}>
+      <Stack direction="row" alignItems="center" gap={0.75} minWidth={0} flexWrap="wrap">
         <Box aria-hidden="true" sx={{ color: tone, display: 'grid' }}>
           <Icon size={16} />
         </Box>
@@ -408,19 +395,20 @@ export function NotificationStreamGroupHeading({
           variant="subtitle2"
           fontWeight="fontWeightBold"
         >
-          {t(`workbench.groups.${groupKey}.title`)}
+          {title ?? t(`workbench.groups.${groupKey}.title`)}
         </Typography>
-        <Chip size="small" color={chipColor} variant="outlined" label={count} sx={{ height: 20 }} />
+        <Chip size="small" color={chipColor} label={count} sx={{ height: 20 }} />
       </Stack>
-      {groupKey === 'ACTION_REQUIRED' && (
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: { xs: 'none', md: 'block' } }}
-        >
-          {t('workbench.groups.ACTION_REQUIRED.description')}
-        </Typography>
-      )}
+      {actions ??
+        (groupKey === 'ACTION_REQUIRED' && (
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: { xs: 'none', md: 'block' } }}
+          >
+            {t('workbench.groups.ACTION_REQUIRED.description')}
+          </Typography>
+        ))}
     </Stack>
   );
 }

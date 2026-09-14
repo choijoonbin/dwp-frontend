@@ -91,6 +91,8 @@ export type WorkplaceGovernanceSiteAccessRule = {
   accessRuleId: string;
   siteId: string;
   subjectType: WorkplaceGovernanceAccessSubjectType;
+  /** Null retains the existing site rule; a floor narrows that site's access. */
+  floorId?: string | null;
   subjectUserId: number | null;
   subjectGroupRef: string | null;
   permission: WorkplaceGovernanceAccessPermission;
@@ -108,6 +110,14 @@ export type WorkplaceGovernanceSiteAccessRuleInput = Omit<
 
 export type WorkplaceGovernanceSiteAccessDecision = {
   siteId: string;
+  floorId?: string | null;
+  /** Supplied only by the authorized access editor's native site preview. */
+  availableFloors?: {
+    floorId: string;
+    siteId: string;
+    name: string;
+    state: 'DRAFT' | 'ACTIVE' | 'CLOSED';
+  }[];
   userId: number;
   requestedPermission: WorkplaceGovernanceAccessPermission;
   allowed: boolean;
@@ -232,6 +242,8 @@ export type WorkplaceGovernanceDelegatedAdminScope = {
   validUntil: string | null;
   state: WorkplaceGovernanceDelegationState;
   version: number;
+  /** Null/absent preserves legacy whole-site scope. A restriction is a nonempty canonical floor set. */
+  floorIds?: string[] | null;
 };
 
 export type WorkplaceGovernanceDelegatedAdminScopeInput = Omit<
@@ -245,6 +257,7 @@ export type WorkplaceGovernanceEffectiveDelegatedScope = {
   scopeId: string;
   permissions: WorkplaceGovernanceDelegatedPermission[];
   validUntil: string | null;
+  floorIds?: string[] | null;
 };
 
 function id(value: string) {

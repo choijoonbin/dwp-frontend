@@ -1,6 +1,6 @@
-import { ListChecks, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ListChecks, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { FormField } from '@dwp-frontend/design-system';
+import { ActionIconButton, FormField } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -8,6 +8,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -23,9 +24,18 @@ export function ApprovalCommandTaskList({
   emptyQueue,
   search,
   busy,
+  selectionMode,
   onSearchChange,
   onSelect,
   onToggleBatch,
+  totalElements,
+  page,
+  totalPages,
+  sort,
+  status,
+  onPageChange,
+  onSortChange,
+  onStatusChange,
 }: {
   tasks: readonly ApprovalTask[];
   selectedTaskId?: string;
@@ -33,9 +43,18 @@ export function ApprovalCommandTaskList({
   emptyQueue: boolean;
   search: string;
   busy: boolean;
+  selectionMode: boolean;
   onSearchChange: (value: string) => void;
   onSelect: (taskId: string) => void;
   onToggleBatch: (taskId: string) => void;
+  totalElements: number;
+  page: number;
+  totalPages: number;
+  sort: 'PRIORITY' | 'NEWEST' | 'OLDEST';
+  status: string;
+  onPageChange: (page: number) => void;
+  onSortChange: (sort: string) => void;
+  onStatusChange: (status: string) => void;
 }) {
   const { t } = useTranslation('approvals');
   return (
@@ -57,9 +76,42 @@ export function ApprovalCommandTaskList({
             },
           }}
         />
+        <Box
+          sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, mt: 1 }}
+        >
+          <FormField
+            select
+            size="small"
+            label={t('home.commandCenter.statusFilter')}
+            value={status}
+            onChange={(event) => onStatusChange(event.target.value)}
+            disabled={busy}
+          >
+            <MenuItem value="">{t('home.commandCenter.allStatuses')}</MenuItem>
+            {(['PENDING', 'CLAIMED', 'INFO_REQUESTED'] as const).map((value) => (
+              <MenuItem key={value} value={value}>
+                {t(`status.${value}`)}
+              </MenuItem>
+            ))}
+          </FormField>
+          <FormField
+            select
+            size="small"
+            label={t('home.commandCenter.sortLabel')}
+            value={sort}
+            onChange={(event) => onSortChange(event.target.value)}
+            disabled={busy}
+          >
+            {(['PRIORITY', 'NEWEST', 'OLDEST'] as const).map((value) => (
+              <MenuItem key={value} value={value}>
+                {t(`home.commandCenter.sort.${value}`)}
+              </MenuItem>
+            ))}
+          </FormField>
+        </Box>
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
           <Typography variant="caption" color="text.secondary" role="status" aria-live="polite">
-            {t('home.commandCenter.resultCount', { count: tasks.length })}
+            {t('home.commandCenter.resultCount', { count: totalElements })}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {t('home.commandCenter.batchLimit', { count: APPROVAL_BATCH_LIMIT })}
@@ -78,6 +130,7 @@ export function ApprovalCommandTaskList({
             selected={selectedTaskId === task.taskId}
             checked={selectedBatchIds.includes(task.taskId)}
             disabled={busy}
+            selectionMode={selectionMode}
             onSelect={() => onSelect(task.taskId)}
             onToggleBatch={() => onToggleBatch(task.taskId)}
           />
@@ -94,6 +147,32 @@ export function ApprovalCommandTaskList({
           </Box>
         )}
       </Box>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ px: 1.5, py: 1, borderTop: 1, borderColor: 'divider' }}
+      >
+        <ActionIconButton
+          size="small"
+          label={t('home.commandCenter.previousPage')}
+          disabled={busy || page === 0}
+          onClick={() => onPageChange(page - 1)}
+        >
+          <ChevronLeft size={18} />
+        </ActionIconButton>
+        <Typography variant="caption" role="status">
+          {t('home.commandCenter.page', { page: totalPages ? page + 1 : 0, total: totalPages })}
+        </Typography>
+        <ActionIconButton
+          size="small"
+          label={t('home.commandCenter.nextPage')}
+          disabled={busy || page + 1 >= totalPages}
+          onClick={() => onPageChange(page + 1)}
+        >
+          <ChevronRight size={18} />
+        </ActionIconButton>
+      </Stack>
     </Box>
   );
 }
@@ -103,6 +182,7 @@ function ApprovalCommandTaskRow({
   selected,
   checked,
   disabled,
+  selectionMode,
   onSelect,
   onToggleBatch,
 }: {
@@ -110,6 +190,7 @@ function ApprovalCommandTaskRow({
   selected: boolean;
   checked: boolean;
   disabled: boolean;
+  selectionMode: boolean;
   onSelect: () => void;
   onToggleBatch: () => void;
 }) {
@@ -120,7 +201,7 @@ function ApprovalCommandTaskRow({
       data-approval-task-id={task.taskId}
       sx={{
         display: 'grid',
-        gridTemplateColumns: '44px minmax(0, 1fr)',
+        gridTemplateColumns: selectionMode ? '44px minmax(0, 1fr)' : 'minmax(0, 1fr)',
         minHeight: 118,
         borderBottom: 1,
         borderColor: 'divider',
@@ -128,21 +209,24 @@ function ApprovalCommandTaskRow({
         '&:focus-within': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', pt: 1.25 }}>
-        <Checkbox
-          size="small"
-          checked={checked}
-          disabled={disabled}
-          onChange={onToggleBatch}
-          slotProps={{
-            input: {
-              'aria-label': t('home.commandCenter.selectForBatch', { title: task.title }),
-            },
-          }}
-        />
-      </Box>
+      {selectionMode && (
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', pt: 1.25 }}>
+          <Checkbox
+            size="small"
+            checked={checked}
+            disabled={disabled}
+            onChange={onToggleBatch}
+            slotProps={{
+              input: {
+                'aria-label': t('home.commandCenter.selectForBatch', { title: task.title }),
+              },
+            }}
+          />
+        </Box>
+      )}
       <ButtonBase
         aria-pressed={selected}
+        aria-current={selected ? 'true' : undefined}
         disabled={disabled}
         onClick={onSelect}
         sx={{

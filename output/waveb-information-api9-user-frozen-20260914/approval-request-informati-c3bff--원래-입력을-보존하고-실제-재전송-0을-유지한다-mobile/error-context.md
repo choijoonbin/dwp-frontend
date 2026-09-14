@@ -1,0 +1,175 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e17]:
+              - generic [ref=e18]: 전자결재
+              - generic [ref=e19]: SKAX · 나의 결재
+          - generic [ref=e20]:
+            - button [ref=e22] [cursor=pointer]:
+              - img [ref=e23]
+            - button [ref=e27] [cursor=pointer]:
+              - generic [ref=e28]: T
+              - img [ref=e29]
+        - navigation [ref=e34]:
+          - link [ref=e36] [cursor=pointer]:
+            - /url: /approvals/admin/overview?scope=scope%3Aapprovals%3Atenant
+            - img [ref=e38]
+            - generic [ref=e41]: 관리
+      - main [ref=e42]:
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - img [ref=e47]
+              - generic [ref=e50]:
+                - text: 전자결재 / 내 요청
+                - heading [level=1] [ref=e51]: 보완할 결재
+                - paragraph [ref=e52]: 결재자가 요청한 추가 정보와 다음 행동을 확인합니다.
+            - generic [ref=e53]:
+              - img [ref=e54]
+              - generic [ref=e58]: 결정 증적 보존
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - heading [level=2] [ref=e63]: 보완할 결재
+                - text: 응답 필요 1건
+              - generic [ref=e66]: "1"
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]:
+                  - generic: 결재 번호·제목·요약 검색
+                  - generic [ref=e70]:
+                    - textbox [ref=e71]
+                    - group:
+                      - generic: 결재 번호·제목·요약 검색
+                - generic [ref=e72]:
+                  - generic: 요청 상태
+                  - generic [ref=e73]:
+                    - combobox [ref=e74] [cursor=pointer]
+                    - textbox
+                    - img
+                    - group:
+                      - generic: 요청 상태
+                - generic [ref=e75]:
+                  - generic: 우선순위
+                  - generic [ref=e76]:
+                    - combobox [ref=e77] [cursor=pointer]
+                    - textbox
+                    - img
+                    - group:
+                      - generic: 우선순위
+                - generic [ref=e78]:
+                  - generic [ref=e79]: 정렬
+                  - generic [ref=e80]:
+                    - combobox [ref=e81] [cursor=pointer]: 최신순
+                    - textbox: NEWEST
+                    - img
+                    - group:
+                      - generic: 정렬
+              - generic [ref=e82]:
+                - generic [ref=e83]: 2026. 9. 14. 오후 1:52 기준
+                - generic [ref=e84]:
+                  - generic [ref=e85]:
+                    - button [disabled]:
+                      - img
+                  - generic [ref=e86]: 1/1 페이지
+                  - generic [ref=e87]:
+                    - button [disabled]:
+                      - img
+                  - generic [ref=e88]:
+                    - button [disabled]:
+                      - img
+            - list [ref=e91]:
+              - listitem [ref=e92]:
+                - button [ref=e93] [cursor=pointer]:
+                  - generic [ref=e94]:
+                    - generic [ref=e95]:
+                      - generic [ref=e96]:
+                        - text: APR-2026-0811-001
+                        - paragraph [ref=e97]: Customer data access exception
+                      - generic [ref=e100]: 보완 필요
+                    - generic [ref=e101]: 원래 요청 내용
+                    - generic [ref=e102]:
+                      - img [ref=e103]
+                      - generic [ref=e107]: 비용 센터를 보완해 주세요.
+                    - generic [ref=e108]:
+                      - generic [ref=e111]: 높음
+                      - generic [ref=e113]: 데이터 접근 예외
+                      - generic [ref=e114]: 2026. 8. 11.
+                    - generic [ref=e115]:
+                      - generic [ref=e116]:
+                        - generic [ref=e117]: 2/3 · Security review
+                        - generic [ref=e118]: 33%
+                      - progressbar [ref=e119]
+                - generic [ref=e121]:
+                  - button [ref=e123] [cursor=pointer]:
+                    - img [ref=e124]
+                  - button [ref=e127] [cursor=pointer]:
+                    - img [ref=e129]
+                    - text: 보완 답변
+  - dialog "보완 답변을 제출할까요?" [ref=e135]:
+    - generic [ref=e136]:
+      - heading "보완 답변을 제출할까요?" [level=2] [ref=e137]
+      - generic [ref=e138]:
+        - paragraph [ref=e139]: Customer data access exception 결재의 요청 내용을 확인하고 답변하면 동일한 결재 단계가 재개됩니다.
+        - generic [ref=e140]:
+          - generic [ref=e142]: 보완 라운드 1
+          - alert [ref=e143]:
+            - img [ref=e145]
+            - generic [ref=e149]: 비용 센터를 보완해 주세요.
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - text: 보완 답변
+                - generic [ref=e153]: "*"
+              - generic [ref=e154]:
+                - textbox "보완 답변" [ref=e155]: 원래 라운드의 비용 센터를 보완했습니다.
+                - group:
+                  - generic: 보완 답변 *
+              - paragraph [ref=e156]: 결재자가 바로 재검토할 수 있도록 변경 내용과 근거를 구체적으로 작성하세요.
+            - generic [ref=e157]:
+              - heading "결재 내용 보완" [level=3] [ref=e158]
+              - text: 요청받은 항목을 수정하면 이전 payload와 새 해시가 별도 증적 리비전으로 보존됩니다.
+            - generic [ref=e159]:
+              - generic [ref=e161]:
+                - generic [ref=e162]:
+                  - text: 요청 내용
+                  - generic [ref=e163]: "*"
+                - generic [ref=e164]:
+                  - textbox "요청 내용" [ref=e165]: 원래 요청 내용
+                  - group:
+                    - generic: 요청 내용 *
+              - generic [ref=e167]:
+                - generic [ref=e168]:
+                  - text: 비용 센터
+                  - generic [ref=e169]: "*"
+                - generic [ref=e170]:
+                  - textbox "비용 센터" [ref=e171]: verified-center
+                  - group:
+                    - generic: 비용 센터 *
+              - generic [ref=e174]:
+                - generic [ref=e175]:
+                  - text: 검토자
+                  - generic [ref=e176]: "*"
+                - generic [ref=e177]:
+                  - combobox "검토자" [ref=e178]: 김결
+                  - button "Open" [ref=e180] [cursor=pointer]:
+                    - img [ref=e181]
+                  - group:
+                    - generic: 검토자 *
+                - paragraph [ref=e183]: 저장된 사용자 참조 · 확인 필요
+      - generic [ref=e185]:
+        - button "취소" [ref=e186] [cursor=pointer]
+        - button "답변 제출" [disabled]
+```

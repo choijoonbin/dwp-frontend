@@ -1,0 +1,144 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace management" [ref=e17]
+        - generic [ref=e18]:
+          - button "Search DWP" [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+          - generic "0 actionable notifications, 0 total unread" [ref=e26]:
+            - button "0 actionable notifications, 0 total unread" [ref=e27] [cursor=pointer]:
+              - generic [ref=e28]:
+                - img [ref=e29]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e33] [cursor=pointer]':
+            - generic [ref=e34]: T
+            - img [ref=e35]
+          - generic "Open DWAI·ON" [ref=e38]:
+            - button "Open DWAI·ON" [ref=e39] [cursor=pointer]
+      - generic [ref=e43]:
+        - navigation "App area switcher" [ref=e45]:
+          - generic [ref=e47]: Manage
+          - 'link "Return to work: Workplace" [ref=e49] [cursor=pointer]':
+            - /url: /workplace/home
+            - img [ref=e51]
+            - generic [ref=e53]: Work
+        - generic "SKAX" [ref=e54]
+    - main [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e58]:
+          - text: Enterprise space control
+          - heading "Workplace governance" [level=1] [ref=e59]
+          - paragraph [ref=e60]: Operate the spatial hierarchy, access rules, inherited policies, floor-plan releases, and delegated administration from one control plane.
+        - generic [ref=e62]:
+          - img [ref=e64] [cursor=pointer]
+          - tablist "Workplace governance areas" [ref=e68]:
+            - tab "Spatial hierarchy" [ref=e69] [cursor=pointer]:
+              - img [ref=e70]
+              - text: Spatial hierarchy
+            - tab "Access control" [ref=e75] [cursor=pointer]:
+              - img [ref=e76]
+              - text: Access control
+            - tab "Policy inheritance" [ref=e79] [cursor=pointer]:
+              - img [ref=e80]
+              - text: Policy inheritance
+            - tab "Floor-plan releases" [selected] [ref=e84] [cursor=pointer]:
+              - img [ref=e85]
+              - text: Floor-plan releases
+            - tab "Admin delegation" [ref=e89] [cursor=pointer]:
+              - img [ref=e90]
+              - text: Admin delegation
+            - tab "Privacy and integrations" [ref=e94] [cursor=pointer]:
+              - img [ref=e95]
+              - text: Privacy and integrations
+          - img [ref=e100] [cursor=pointer]
+        - generic [ref=e102]:
+          - alert [ref=e103]:
+            - img [ref=e105]
+            - generic [ref=e107]: Floor plans move through Draft, Review, and Published states; publication revalidates every resource version and Zone/Section reference.
+          - generic [ref=e108]:
+            - generic [ref=e110]:
+              - heading "Floor-plan target" [level=2] [ref=e111]
+              - text: Select a building and floor to manage its independent release history.
+            - generic [ref=e112]:
+              - generic [ref=e113]:
+                - generic [ref=e114]: Building
+                - generic [ref=e115]:
+                  - combobox "Building Pangyo HQ" [ref=e116] [cursor=pointer]: Pangyo HQ
+                  - textbox: 10000000-0000-0000-0000-000000000001
+                  - img
+                  - group:
+                    - generic: Building
+              - generic [ref=e117]:
+                - generic [ref=e118]: Floor
+                - generic [ref=e119]:
+                  - combobox "Floor 12F" [ref=e120] [cursor=pointer]: 12F
+                  - textbox: 20000000-0000-0000-0000-000000000012
+                  - img
+                  - group:
+                    - generic: Floor
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - generic [ref=e123]:
+                - generic [ref=e124]:
+                  - heading "Revision history" [level=2] [ref=e125]
+                  - text: Draft, review, published, and archived states with complete placement snapshots
+                - button "Create draft" [ref=e127] [cursor=pointer]:
+                  - img [ref=e129]
+                  - text: Create draft
+              - generic [ref=e132]:
+                - generic [ref=e133]:
+                  - generic [ref=e134]:
+                    - img [ref=e136]
+                    - generic [ref=e140]:
+                      - generic [ref=e141]:
+                        - paragraph [ref=e142]: "Revision #2"
+                        - generic [ref=e144]: Draft
+                      - paragraph [ref=e145]: Resume persisted floor-plan draft
+                      - generic [ref=e146]: 1 placements · 1200 × 760 · No record
+                  - generic [ref=e147]:
+                    - button "Edit draft" [ref=e148] [cursor=pointer]:
+                      - img [ref=e150]
+                      - text: Edit draft
+                    - button "Request review" [ref=e153] [cursor=pointer]:
+                      - img [ref=e155]
+                      - text: Request review
+                - separator [ref=e158]
+                - generic [ref=e159]:
+                  - generic [ref=e160]:
+                    - img [ref=e162]
+                    - generic [ref=e166]:
+                      - generic [ref=e167]:
+                        - paragraph [ref=e168]: "Revision #1"
+                        - generic [ref=e170]: Published
+                      - paragraph [ref=e171]: Initial published layout
+                      - generic [ref=e172]: 1 placements · 1200 × 760 · Aug 18, 2026, 10:00 AM
+                  - button "Restore as draft" [ref=e174] [cursor=pointer]:
+                    - img [ref=e176]
+                    - text: Restore as draft
+            - generic [ref=e181]:
+              - generic [ref=e183]:
+                - heading "Current publication" [level=2] [ref=e184]
+                - text: The atomic floor plan projected into member exploration
+              - generic [ref=e185]:
+                - generic [ref=e186]:
+                  - paragraph [ref=e187]: Revision
+                  - paragraph [ref=e188]: "#1"
+                - generic [ref=e189]:
+                  - paragraph [ref=e190]: Canvas
+                  - paragraph [ref=e191]: 1200 × 760
+                - generic [ref=e192]:
+                  - paragraph [ref=e193]: Placements
+                  - paragraph [ref=e194]: "1"
+                - generic [ref=e195]: Aug 18, 2026, 10:00 AM
+```

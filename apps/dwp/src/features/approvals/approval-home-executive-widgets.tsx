@@ -23,7 +23,7 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
+import { alpha, darken, lighten } from '@mui/material/styles';
 
 import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
 import { approvalHomeRiskColor } from './approval-home-model';
@@ -38,13 +38,17 @@ type HomeAccess = Pick<
   'canViewTasks' | 'canViewRequests' | 'canStartRequests' | 'canManageDelegations'
 >;
 
-type MetricTone = 'primary' | 'warning' | 'teal' | 'success';
+type MetricTone = 'primary' | 'warning' | 'teal' | 'success' | 'violet';
 
 function metricColor(theme: Theme, tone: MetricTone) {
   const variant = theme.palette.mode === 'dark' ? 'light' : 'dark';
   if (tone === 'success') return theme.palette.success[variant];
   if (tone === 'warning') return theme.palette.warning[variant];
   if (tone === 'teal') return theme.palette.info[variant];
+  if (tone === 'violet') {
+    const color = foundationTokens.color.data.violet;
+    return theme.palette.mode === 'dark' ? lighten(color, 0.45) : darken(color, 0.1);
+  }
   return theme.palette.primary[variant];
 }
 
@@ -63,6 +67,7 @@ export function ApprovalExecutiveBriefing({
     key: string;
     label: string;
     value: string | number;
+    unit?: string;
     detail: string;
     icon: LucideIcon;
     tone: MetricTone;
@@ -94,15 +99,14 @@ export function ApprovalExecutiveBriefing({
       value: data.metrics.myRequestsInFlight,
       detail: t('home.commandCenter.metricInFlightDetail'),
       icon: Send,
-      tone: 'teal',
+      tone: 'violet',
       route: access.canViewRequests ? '/approvals/requests/submitted' : undefined,
     },
     {
       key: 'cycle-time',
       label: t('metrics.averageCycle'),
-      value: t('metrics.hours', {
-        value: formatNumber(data.metrics.averageCycleHours),
-      }),
+      value: formatNumber(data.metrics.averageCycleHours),
+      unit: t('metrics.hoursUnit'),
       detail: t('home.commandCenter.metricCycleDetail', {
         percent: formatNumber(data.metrics.slaCompliancePercent),
       }),
@@ -133,19 +137,12 @@ export function ApprovalExecutiveBriefing({
             theme.palette.mode === 'dark' ? 0.5 : 0.28
           ),
           borderLeftColor: 'primary.main',
-          bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.045),
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            inset: '0 0 auto auto',
-            width: 180,
-            height: 3,
-            bgcolor: 'success.main',
-          },
+          bgcolor: 'background.paper',
+          boxShadow: theme.shadows[0],
           '@media (forced-colors: active)': {
             borderColor: 'CanvasText',
             borderLeftColor: 'Highlight',
-            '&::after': { bgcolor: 'Highlight' },
+            boxShadow: 'none',
           },
         })}
       >
@@ -236,9 +233,9 @@ export function ApprovalExecutiveBriefing({
         sx={{
           display: 'grid',
           gridTemplateColumns: {
-            xs: 'minmax(0, 1fr)',
+            xs: 'repeat(2, minmax(0, 1fr))',
             sm: 'repeat(2, minmax(0, 1fr))',
-            xl: 'repeat(4, minmax(0, 1fr))',
+            lg: 'repeat(4, minmax(0, 1fr))',
           },
           gap: 1.25,
         }}
@@ -292,6 +289,7 @@ function LeadApprovalTask({ task }: { task: ApprovalTask }) {
 function ApprovalMetricCard({
   label,
   value,
+  unit,
   detail,
   icon: Icon,
   tone,
@@ -299,51 +297,56 @@ function ApprovalMetricCard({
 }: {
   label: string;
   value: string | number;
+  unit?: string;
   detail: string;
   icon: LucideIcon;
   tone: MetricTone;
   onSelect?: () => void;
 }) {
   const content = (
-    <Stack direction="row" alignItems="flex-start" gap={1.25} sx={{ width: 1, minWidth: 0 }}>
-      <Box
-        style={{ borderRadius: foundationTokens.radius.compact }}
-        sx={(theme) => ({
-          width: 34,
-          height: 34,
-          flex: '0 0 auto',
-          display: 'grid',
-          placeItems: 'center',
-          color: metricColor(theme, tone),
-          bgcolor: 'action.hover',
-          '@media (forced-colors: active)': {
-            color: 'CanvasText',
-            bgcolor: 'Canvas',
-            border: '1px solid CanvasText',
-          },
-        })}
-      >
-        <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-      </Box>
-      <Box sx={{ minWidth: 0 }}>
+    <Box sx={{ width: 1, minWidth: 0, overflowWrap: 'anywhere' }}>
+      <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={0.75}>
+        <Typography component="p" variant="caption" color="text.secondary" sx={{ minWidth: 0 }}>
+          {label}
+        </Typography>
+        <Box
+          sx={(theme) => ({
+            flex: '0 0 auto',
+            color: metricColor(theme, tone),
+            '@media (forced-colors: active)': { color: 'CanvasText' },
+          })}
+        >
+          <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+        </Box>
+      </Stack>
+      <Stack direction="row" alignItems="baseline" flexWrap="wrap" gap={0.5} sx={{ mt: 0.75 }}>
         <Typography
           component="p"
-          variant="h5"
+          variant="h4"
           sx={(theme) => ({
             color: metricColor(theme, tone),
             fontVariantNumeric: 'tabular-nums',
+            minWidth: 0,
+            overflowWrap: 'anywhere',
           })}
         >
           {value}
         </Typography>
-        <Typography component="p" variant="subtitle2" sx={{ mt: 0.15 }}>
-          {label}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {detail}
-        </Typography>
-      </Box>
-    </Stack>
+        {unit && (
+          <Typography
+            component="span"
+            variant="caption"
+            color="text.secondary"
+            sx={{ whiteSpace: 'nowrap' }}
+          >
+            {unit}
+          </Typography>
+        )}
+      </Stack>
+      <Typography component="p" variant="caption" color="text.secondary" sx={{ mt: 0.25 }}>
+        {detail}
+      </Typography>
+    </Box>
   );
   const sx = (theme: Theme) => {
     const color = metricColor(theme, tone);
@@ -357,7 +360,7 @@ function ApprovalMetricCard({
       border: 1,
       borderColor: 'divider',
       bgcolor: 'background.paper',
-      boxShadow: 1,
+      boxShadow: theme.shadows[0],
       '&::before': {
         content: '""',
         position: 'absolute',
@@ -417,6 +420,7 @@ export function ApprovalQuickActions({ access }: { access: HomeAccess }) {
 
   return (
     <ApprovalSurface
+      appearance="executive"
       title={t('home.widgets.quick-actions.label')}
       meta={t('home.widgets.quick-actions.description')}
     >
@@ -428,13 +432,10 @@ export function ApprovalQuickActions({ access }: { access: HomeAccess }) {
           sx={{
             display: 'grid',
             gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            containerType: 'inline-size',
-            '& > :nth-of-type(odd)': { borderRight: 1, borderColor: 'divider' },
-            '& > :nth-of-type(-n+2)': { borderBottom: 1, borderColor: 'divider' },
+            gap: 1,
+            p: 1.5,
             '@container (max-width: 20rem)': {
               gridTemplateColumns: 'minmax(0, 1fr)',
-              '& > *': { borderRight: '0 !important', borderBottom: '1px solid !important' },
-              '& > :last-child': { borderBottom: '0 !important' },
             },
           }}
         >
@@ -445,10 +446,16 @@ export function ApprovalQuickActions({ access }: { access: HomeAccess }) {
                 `home.quickActions.${key}.description`
               )}`}
               onClick={() => navigate(route)}
-              sx={{
+              style={{ borderRadius: foundationTokens.radius.control }}
+              sx={(theme) => ({
                 minWidth: 0,
-                minHeight: 104,
-                p: 1.5,
+                minHeight: 88,
+                p: 1.25,
+                border: 1,
+                borderColor: alpha(
+                  theme.palette.text.primary,
+                  theme.palette.mode === 'dark' ? 0.16 : 0.08
+                ),
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'flex-start',
@@ -456,7 +463,8 @@ export function ApprovalQuickActions({ access }: { access: HomeAccess }) {
                 textAlign: 'left',
                 '&:hover': { bgcolor: 'action.hover' },
                 '&.Mui-focusVisible, &:focus-visible': { outlineOffset: -3 },
-              }}
+                '@media (forced-colors: active)': { borderColor: 'ButtonText' },
+              })}
             >
               <Box sx={{ color: 'primary.main', mt: 0.15, flex: '0 0 auto' }}>
                 <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
@@ -496,6 +504,7 @@ export function ApprovalRecentActivity({
   const visible = requests.slice(0, rowLimit);
   return (
     <ApprovalSurface
+      appearance="executive"
       title={t('home.widgets.recent-activity.label')}
       meta={t('home.widgets.recent-activity.description')}
     >

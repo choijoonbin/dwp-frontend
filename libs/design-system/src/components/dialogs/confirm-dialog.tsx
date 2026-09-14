@@ -28,6 +28,7 @@ export type ConfirmDialogProps = {
   focusCancelAfterOpen?: boolean;
   minimumActionHeight?: number;
   keepTitleWords?: boolean;
+  mobilePresentation?: 'dialog' | 'sheet';
 };
 
 export function ConfirmDialog({
@@ -45,6 +46,7 @@ export function ConfirmDialog({
   focusCancelAfterOpen = false,
   minimumActionHeight,
   keepTitleWords = false,
+  mobilePresentation = 'dialog',
 }: ConfirmDialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
@@ -59,8 +61,28 @@ export function ConfirmDialog({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       onClose={busy ? undefined : onClose}
+      sx={
+        mobilePresentation === 'sheet'
+          ? { '& .MuiDialog-container': { alignItems: { xs: 'flex-end', sm: 'center' } } }
+          : undefined
+      }
       slotProps={{
-        paper: { role: destructive ? 'alertdialog' : 'dialog' },
+        paper: {
+          role: destructive ? 'alertdialog' : 'dialog',
+          sx:
+            mobilePresentation === 'sheet'
+              ? (theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    margin: 0,
+                    width: '100%',
+                    maxWidth: '100%',
+                    maxHeight: 'calc(100% - 24px)',
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                  },
+                })
+              : undefined,
+        },
         transition: {
           onEntered: () => {
             if (focusCancelAfterOpen) cancelRef.current?.focus();

@@ -1,0 +1,274 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 결재 업무
+          - paragraph [ref=e26]: SKAX
+        - navigation "전자결재 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 시작
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "전자결재 홈" [ref=e32] [cursor=pointer]:
+                  - /url: /approvals/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 전자결재 홈
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: 내 결재
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "결재함" [ref=e43] [cursor=pointer]:
+                  - /url: /approvals/inbox
+                  - img [ref=e45]
+                  - paragraph [ref=e50]: 결재함
+              - listitem [ref=e51]:
+                - link "내 처리 완료함" [ref=e52] [cursor=pointer]:
+                  - /url: /approvals/completed
+                  - img [ref=e54]
+                  - paragraph [ref=e58]: 내 처리 완료함
+              - listitem [ref=e59]:
+                - link "새 결재 작성" [ref=e60] [cursor=pointer]:
+                  - /url: /approvals/requests/new
+                  - img [ref=e62]
+                  - paragraph [ref=e67]: 새 결재 작성
+              - listitem [ref=e68]:
+                - link "임시 저장" [ref=e69] [cursor=pointer]:
+                  - /url: /approvals/requests/drafts
+                  - img [ref=e71]
+                  - paragraph [ref=e76]: 임시 저장
+              - listitem [ref=e77]:
+                - link "내가 올린 결재" [ref=e78] [cursor=pointer]:
+                  - /url: /approvals/requests/submitted
+                  - img [ref=e80]
+                  - paragraph [ref=e84]: 내가 올린 결재
+              - listitem [ref=e85]:
+                - link "보완할 결재" [ref=e86] [cursor=pointer]:
+                  - /url: /approvals/requests/needs-info
+                  - img [ref=e88]
+                  - paragraph [ref=e92]: 보완할 결재
+              - listitem [ref=e93]:
+                - link "완료 보관함" [ref=e94] [cursor=pointer]:
+                  - /url: /approvals/requests/archive
+                  - img [ref=e96]
+                  - paragraph [ref=e100]: 완료 보관함
+              - listitem [ref=e101]:
+                - link "결재 위임" [ref=e102] [cursor=pointer]:
+                  - /url: /approvals/delegations
+                  - img [ref=e104]
+                  - paragraph [ref=e108]: 결재 위임
+        - link "앱 목록으로 돌아가기" [ref=e110] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e112]
+          - text: 앱 목록으로 돌아가기
+    - banner [ref=e114]:
+      - generic [ref=e115]:
+        - generic [ref=e116]:
+          - img [ref=e118]
+          - generic "전자결재" [ref=e123]
+        - generic [ref=e124]:
+          - button "DWP 검색" [ref=e126] [cursor=pointer]:
+            - img [ref=e127]
+          - button "전체 화면" [ref=e131] [cursor=pointer]:
+            - img [ref=e132]
+          - 'button "계정: 이서연, Tenant administrator" [ref=e138] [cursor=pointer]':
+            - generic [ref=e139]: 이
+            - img [ref=e140]
+    - main [ref=e142]:
+      - generic [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - text: 전자결재 홈
+            - heading "안녕하세요, 이서연님" [level=1] [ref=e146]
+            - paragraph [ref=e147]: 지금 필요한 결정과 결재 흐름의 건강 상태를 한눈에 확인합니다.
+          - generic [ref=e148]:
+            - button "새 결재 작성" [ref=e149] [cursor=pointer]:
+              - img [ref=e151]
+              - text: 새 결재 작성
+            - button "결재 홈 편집" [ref=e154] [cursor=pointer]:
+              - img [ref=e156]
+              - text: 결재 홈 편집
+        - generic [ref=e164]:
+          - region "우선순위가 높은 결재부터 책임 있게 처리하세요" [ref=e167]:
+            - generic [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - img [ref=e172]
+                  - generic [ref=e179]: 오늘의 결재 워크플로 브리핑
+                  - generic [ref=e180]: 8월 14일 오전 11:30
+                - heading "우선순위가 높은 결재부터 책임 있게 처리하세요" [level=2] [ref=e181]
+                - paragraph [ref=e182]: 검토 대기 1건 · 오늘 마감 0건 · 기한 초과 1건
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - generic [ref=e186]: 높음
+                    - generic [ref=e187]: APR-20260814-002
+                    - generic [ref=e188]: 위험 69
+                  - paragraph [ref=e189]: 신규 협력사 보안 예외
+                  - text: 협력사 온보딩 전에 보안 통제를 검토합니다.
+              - generic [ref=e190]:
+                - button "우선 결재 검토" [ref=e191] [cursor=pointer]:
+                  - text: 우선 결재 검토
+                  - img [ref=e193]
+                - button "결재함" [ref=e195] [cursor=pointer]:
+                  - img [ref=e197]
+                  - text: 결재함
+            - region "전자결재 판단 지표" [ref=e201]:
+              - button "검토 대기 1 기한 초과 1건" [ref=e202] [cursor=pointer]:
+                - generic [ref=e203]:
+                  - generic [ref=e204]:
+                    - paragraph [ref=e205]: 검토 대기
+                    - img [ref=e207]
+                  - paragraph [ref=e212]: "1"
+                  - paragraph [ref=e213]: 기한 초과 1건
+              - button "오늘 기한 0 오늘 안에 처리할 항목" [ref=e214] [cursor=pointer]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]:
+                    - paragraph [ref=e217]: 오늘 기한
+                    - img [ref=e219]
+                  - paragraph [ref=e224]: "0"
+                  - paragraph [ref=e225]: 오늘 안에 처리할 항목
+              - button "진행 중인 내 기안 2 내가 상신해 진행 중인 결재" [ref=e226] [cursor=pointer]:
+                - generic [ref=e227]:
+                  - generic [ref=e228]:
+                    - paragraph [ref=e229]: 진행 중인 내 기안
+                    - img [ref=e231]
+                  - paragraph [ref=e235]: "2"
+                  - paragraph [ref=e236]: 내가 상신해 진행 중인 결재
+              - generic [ref=e238]:
+                - generic [ref=e239]:
+                  - paragraph [ref=e240]: 평균 결재 시간
+                  - img [ref=e242]
+                - generic [ref=e245]:
+                  - paragraph [ref=e246]: "5.4"
+                  - generic [ref=e247]: 시간
+                - paragraph [ref=e248]: SLA 준수율 96%
+          - generic [ref=e249]:
+            - generic [ref=e250]:
+              - generic [ref=e253]:
+                - generic [ref=e254]:
+                  - generic [ref=e255]:
+                    - heading "우선 심의 큐" [level=2] [ref=e256]
+                    - text: 우선 검토 1건
+                  - button "전체 보기" [ref=e257] [cursor=pointer]:
+                    - text: 전체 보기
+                    - img [ref=e259]
+                - button "신규 협력사 보안 예외 결재 상세 열기" [ref=e261] [cursor=pointer]:
+                  - generic [ref=e262]:
+                    - generic [ref=e263]:
+                      - generic [ref=e265]: 높음
+                      - generic [ref=e266]: APR-20260814-002
+                    - generic [ref=e267]: 위험 69
+                  - paragraph [ref=e268]: 신규 협력사 보안 예외
+                  - generic [ref=e269]: 박지호 · 보안 검토
+                  - generic [ref=e270]:
+                    - generic [ref=e271]: 처리 기한 8월 14일 오후 04:00
+                    - generic [ref=e272]:
+                      - generic [ref=e273]: 검토 열기
+                      - img [ref=e274]
+              - generic [ref=e279]:
+                - generic [ref=e280]:
+                  - generic [ref=e281]:
+                    - heading "내 기안 진행 추적" [level=2] [ref=e282]
+                    - text: 최근 기안의 현재 처리 상태
+                  - button "전체 보기" [ref=e283] [cursor=pointer]
+                - button "APR-20260813-003 GPU 증설 투자 검토 검토 중 2/3 · 구매 조건 검토 33% 33%" [ref=e284] [cursor=pointer]:
+                  - generic [ref=e285]:
+                    - generic [ref=e286]:
+                      - text: APR-20260813-003
+                      - paragraph [ref=e287]: GPU 증설 투자 검토
+                    - generic [ref=e289]: 검토 중
+                  - generic [ref=e290]:
+                    - generic [ref=e291]:
+                      - generic [ref=e292]: 2/3 · 구매 조건 검토
+                      - generic [ref=e293]: 33%
+                    - progressbar "2/3 · 구매 조건 검토" [ref=e294]
+              - generic [ref=e298]:
+                - generic [ref=e300]:
+                  - heading "결재 흐름 현황" [level=2] [ref=e301]
+                  - text: 단계별 처리량과 위험 신호
+                - generic [ref=e302]:
+                  - generic [ref=e303]:
+                    - generic [ref=e304]:
+                      - generic [ref=e305]: 검토 중
+                      - generic [ref=e306]: 7 · 위험 2
+                    - progressbar "검토 중" [ref=e307]
+                  - generic [ref=e309]:
+                    - generic [ref=e310]:
+                      - generic [ref=e311]: 보완 필요
+                      - generic [ref=e312]: 1 · 위험 1
+                    - progressbar "보완 필요" [ref=e313]
+                  - generic [ref=e315]:
+                    - generic [ref=e316]:
+                      - generic [ref=e317]: 승인
+                      - generic [ref=e318]: 12 · 위험 0
+                    - progressbar "승인" [ref=e319]
+            - generic [ref=e321]:
+              - generic [ref=e324]:
+                - generic [ref=e326]:
+                  - heading "신속 실행" [level=2] [ref=e327]
+                  - text: 자주 쓰는 결재 업무
+                - generic [ref=e328]:
+                  - 'button "새 결재 기안: 승인된 양식으로 새 요청 시작" [ref=e329] [cursor=pointer]':
+                    - img [ref=e331]
+                    - generic [ref=e334]:
+                      - paragraph [ref=e335]: 새 결재 기안
+                      - generic [ref=e336]: 승인된 양식으로 새 요청 시작
+                    - img [ref=e337]
+                  - 'button "결재함 열기: 검토할 결재와 정책 신호 확인" [ref=e340] [cursor=pointer]':
+                    - img [ref=e342]
+                    - generic [ref=e346]:
+                      - paragraph [ref=e347]: 결재함 열기
+                      - generic [ref=e348]: 검토할 결재와 정책 신호 확인
+                    - img [ref=e349]
+                  - 'button "임시 저장: 작성 중인 기안 이어서 완료" [ref=e352] [cursor=pointer]':
+                    - img [ref=e354]
+                    - generic [ref=e358]:
+                      - paragraph [ref=e359]: 임시 저장
+                      - generic [ref=e360]: 작성 중인 기안 이어서 완료
+                    - img [ref=e361]
+                  - 'button "대결 설정: 위임 기간과 결재 권한 관리" [ref=e364] [cursor=pointer]':
+                    - img [ref=e366]
+                    - generic [ref=e369]:
+                      - paragraph [ref=e370]: 대결 설정
+                      - generic [ref=e371]: 위임 기간과 결재 권한 관리
+                    - img [ref=e372]
+              - generic [ref=e377]:
+                - generic [ref=e379]:
+                  - heading "의사결정 내비게이터" [level=2] [ref=e380]
+                  - text: 지금 확인할 정책·SLA 신호
+                - button "기한을 넘긴 결정이 있습니다 리스크가 높은 항목부터 검토해 업무 지연을 줄이세요. 관련 항목 확인" [ref=e382] [cursor=pointer]:
+                  - img [ref=e384]
+                  - generic [ref=e386]:
+                    - paragraph [ref=e387]: 기한을 넘긴 결정이 있습니다
+                    - generic [ref=e388]: 리스크가 높은 항목부터 검토해 업무 지연을 줄이세요.
+                    - generic [ref=e389]:
+                      - generic [ref=e390]: 관련 항목 확인
+                      - img [ref=e391]
+              - generic [ref=e395]:
+                - generic [ref=e397]:
+                  - heading "최근 결재 활동" [level=2] [ref=e398]
+                  - text: 정본 응답에 반영된 최근 상태
+                - list [ref=e399]:
+                  - listitem [ref=e400]:
+                    - button "GPU 증설 투자 검토 검토 중 APR-20260813-003 · 상신 8월 13일 오후 02:00" [ref=e401] [cursor=pointer]:
+                      - generic [ref=e404]:
+                        - generic [ref=e405]:
+                          - paragraph [ref=e406]: GPU 증설 투자 검토
+                          - generic [ref=e408]: 검토 중
+                        - generic [ref=e409]: APR-20260813-003 · 상신 8월 13일 오후 02:00
+```

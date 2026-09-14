@@ -1,0 +1,398 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Workplace
+            - paragraph [ref=e26]: SKAX
+          - navigation [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: Workplace
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link [ref=e32] [cursor=pointer]:
+                    - /url: /workplace/home
+                    - img [ref=e34]
+                    - paragraph [ref=e38]: Workplace home
+                  - navigation [ref=e40]:
+                    - generic [ref=e41]:
+                      - link [ref=e42] [cursor=pointer]:
+                        - /url: /workplace/home?view=home
+                        - img [ref=e44]
+                        - text: Today's workspace
+                      - link [ref=e47] [cursor=pointer]:
+                        - /url: /workplace/home?view=team
+                        - img [ref=e49]
+                        - text: Team work plans
+                      - link [ref=e53] [cursor=pointer]:
+                        - /url: /workplace/home?view=requests
+                        - img [ref=e55]
+                        - text: Facility requests
+                - listitem [ref=e57]:
+                  - link [ref=e58] [cursor=pointer]:
+                    - /url: /workplace/explore
+                    - img [ref=e60]
+                    - paragraph [ref=e65]: Find and book a space
+                - listitem [ref=e66]:
+                  - link [ref=e67] [cursor=pointer]:
+                    - /url: /workplace/rooms
+                    - img [ref=e69]
+                    - paragraph [ref=e74]: Room schedule
+                - listitem [ref=e75]:
+                  - link [ref=e76] [cursor=pointer]:
+                    - /url: /workplace/my-bookings
+                    - img [ref=e78]
+                    - paragraph [ref=e82]: Personal space bookings
+                - listitem [ref=e83]:
+                  - link [ref=e84] [cursor=pointer]:
+                    - /url: /workplace/my-meetings
+                    - img [ref=e86]
+                    - paragraph [ref=e92]: Meeting booking management
+          - link [ref=e94] [cursor=pointer]:
+            - /url: /apps
+            - img [ref=e96]
+            - text: Return to apps
+      - banner [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - img [ref=e102]
+            - generic [ref=e107]: Workplace
+          - navigation [ref=e110]:
+            - link [ref=e112] [cursor=pointer]:
+              - /url: /workplace/admin/overview
+              - img [ref=e114]
+              - generic [ref=e117]: App management
+          - generic [ref=e118]:
+            - button [ref=e120] [cursor=pointer]:
+              - img [ref=e121]
+            - generic [ref=e124]:
+              - button [ref=e125] [cursor=pointer]:
+                - img [ref=e126]
+              - button [ref=e133] [cursor=pointer]:
+                - img [ref=e135]
+            - button [ref=e139] [cursor=pointer]:
+              - generic [ref=e140]: T
+              - img [ref=e141]
+      - main [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - text: Hybrid workplace
+              - heading [level=1] [ref=e147]: Find a space
+              - paragraph [ref=e148]: Reserve desks, meeting rooms, lockers, and workspaces from floor maps across headquarters and shared offices.
+            - generic [ref=e150]:
+              - generic [ref=e151]:
+                - img [ref=e152]
+                - generic [ref=e156]: Pangyo HQ · 12F
+              - generic [ref=e158]: 2 pass initial booking checks
+          - generic [ref=e160]:
+            - region [ref=e161]:
+              - generic [ref=e162]:
+                - generic [ref=e163]:
+                  - generic [ref=e164]: Search spaces, neighborhoods, or amenities
+                  - generic [ref=e165]:
+                    - img [ref=e167]
+                    - textbox [ref=e170]
+                    - group:
+                      - generic: Search spaces, neighborhoods, or amenities
+                - generic [ref=e171]:
+                  - generic [ref=e172]:
+                    - generic [ref=e173]: Date
+                    - group [ref=e174]:
+                      - generic [ref=e175]:
+                        - generic [ref=e176]:
+                          - spinbutton [ref=e177]: "08"
+                          - text: /
+                        - generic [ref=e178]:
+                          - spinbutton [ref=e179]: "19"
+                          - text: /
+                        - spinbutton [ref=e181]: "2026"
+                      - button [ref=e183] [cursor=pointer]:
+                        - img [ref=e184]
+                      - group:
+                        - generic: Date
+                      - textbox [ref=e186]: 08/19/2026
+                  - generic [ref=e187]:
+                    - generic [ref=e188]: Start time
+                    - generic [ref=e189]:
+                      - combobox [ref=e190] [cursor=pointer]: 09:30
+                      - textbox: 09:30
+                      - img
+                      - group:
+                        - generic: Start time
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: Duration
+                    - generic [ref=e193]:
+                      - combobox [ref=e194] [cursor=pointer]: 60 min
+                      - textbox: "60"
+                      - img
+                      - group:
+                        - generic: Duration
+                  - generic [ref=e195]:
+                    - generic [ref=e196]: Site
+                    - generic [ref=e197]:
+                      - combobox [ref=e198] [cursor=pointer]: Pangyo HQ
+                      - textbox: 10000000-0000-0000-0000-000000000001
+                      - img
+                      - group:
+                        - generic: Site
+                  - generic [ref=e199]:
+                    - generic [ref=e200]: Floor
+                    - generic [ref=e201]:
+                      - combobox [ref=e202] [cursor=pointer]: 12F
+                      - textbox: 20000000-0000-0000-0000-000000000012
+                      - img
+                      - group:
+                        - generic: Floor
+                - status [ref=e203]: 2 of 2 results
+            - generic [ref=e204]:
+              - group [ref=e206]:
+                - button [pressed] [ref=e207] [cursor=pointer]: All spaces
+                - button [ref=e208] [cursor=pointer]: Meeting room
+                - button [ref=e209] [cursor=pointer]: Desk
+                - button [ref=e210] [cursor=pointer]: Locker
+                - button [ref=e211] [cursor=pointer]: Parking
+                - button [ref=e212] [cursor=pointer]: Focus pod
+                - button [ref=e213] [cursor=pointer]: Phone booth
+                - button [ref=e214] [cursor=pointer]: Shared equipment
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - generic [ref=e217]:
+                    - generic: Amenities
+                    - generic [ref=e218]:
+                      - combobox [ref=e219] [cursor=pointer]
+                      - textbox
+                      - img
+                      - group:
+                        - generic: Amenities
+                  - generic [ref=e220]:
+                    - generic: Neighborhood
+                    - generic [ref=e221]:
+                      - combobox [ref=e222] [cursor=pointer]
+                      - textbox
+                      - img
+                      - group:
+                        - generic: Neighborhood
+                  - generic [ref=e223] [cursor=pointer]:
+                    - generic [ref=e224]:
+                      - checkbox [ref=e225]
+                      - img [ref=e226]
+                    - generic [ref=e228]: Accessible spaces only
+                - generic [ref=e229]:
+                  - generic [ref=e230]:
+                    - generic [ref=e231]: Sort
+                    - generic [ref=e232]:
+                      - combobox [ref=e233] [cursor=pointer]: Initial booking checks first
+                      - textbox: availability
+                      - img
+                      - group:
+                        - generic: Sort
+                  - group [ref=e234]:
+                    - generic [ref=e235]:
+                      - button [disabled]:
+                        - img
+                    - button [pressed] [ref=e236] [cursor=pointer]:
+                      - img [ref=e237]
+          - generic [ref=e238]:
+            - region [ref=e239]:
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - img [ref=e242]
+                  - generic [ref=e246]:
+                    - heading [level=2] [ref=e247]: Pangyo HQ
+                    - text: 12F · 2 results
+                - generic [ref=e248]:
+                  - generic [ref=e251]: Open by reservation state
+                  - generic [ref=e254]: Occupied
+                  - generic [ref=e257]: My booking
+                  - generic [ref=e260]: Assigned
+                  - generic [ref=e263]: Drop-in
+                  - generic [ref=e266]: Unavailable
+              - status [ref=e267]:
+                - img [ref=e269]
+                - generic [ref=e273]:
+                  - heading [level=6] [ref=e274]: A floor plan has not been registered for this floor
+                  - paragraph [ref=e275]: Use the list to review space details and availability.
+              - generic [ref=e276]:
+                - article [ref=e277]:
+                  - img [ref=e280]
+                  - button [ref=e281] [cursor=pointer]:
+                    - img [ref=e283]
+                    - generic [ref=e285]:
+                      - heading [level=6] [ref=e286]: Focus desk 12
+                      - generic [ref=e287]: Desk · Focus zone · MONITOR · STANDING
+                    - generic [ref=e288]:
+                      - generic [ref=e290]: Open by reservation state
+                      - generic [ref=e292]: Initial booking checks passed
+                - article [ref=e293]:
+                  - img [ref=e296]
+                  - button [ref=e297] [cursor=pointer]:
+                    - img [ref=e299]
+                    - generic [ref=e301]:
+                      - heading [level=6] [ref=e302]: Focus desk 13
+                      - generic [ref=e303]: Desk · Focus zone · MONITOR · STANDING
+                    - generic [ref=e304]:
+                      - generic [ref=e306]: Open by reservation state
+                      - generic [ref=e308]: Initial booking checks passed
+            - complementary [ref=e309]:
+              - generic [ref=e310]:
+                - generic [ref=e311]:
+                  - heading [level=2] [ref=e312]: Focus desk 12
+                  - paragraph [ref=e313]: Pangyo HQ · 12F · Focus zone
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - button [disabled]:
+                      - img
+                  - button [ref=e317] [cursor=pointer]:
+                    - img [ref=e318]
+                  - button [ref=e321] [cursor=pointer]:
+                    - img [ref=e322]
+              - generic [ref=e326]:
+                - generic [ref=e328]: Open by reservation state
+                - generic [ref=e330]: Initial booking checks passed
+              - generic [ref=e332]:
+                - img [ref=e334]
+                - generic [ref=e335]:
+                  - generic [ref=e337]: Desk
+                  - generic [ref=e339]: D-1208
+                  - generic [ref=e341]: Advance booking
+                - generic [ref=e342]:
+                  - generic [ref=e343]:
+                    - img [ref=e345]
+                    - generic [ref=e348]:
+                      - text: Location
+                      - paragraph [ref=e349]: Pangyo HQ · 12F
+                  - generic [ref=e350]:
+                    - img [ref=e352]
+                    - generic [ref=e356]:
+                      - text: Capacity
+                      - paragraph [ref=e357]: 1 people
+                  - generic [ref=e358]:
+                    - img [ref=e360]
+                    - generic [ref=e363]:
+                      - text: Start time
+                      - paragraph [ref=e364]: Aug 19, 2026, 9:30 AM – 10:30 AM
+                  - generic [ref=e365]:
+                    - img [ref=e367]
+                    - generic [ref=e373]:
+                      - text: Accessibility
+                      - paragraph [ref=e374]: Accessible space
+                - generic [ref=e375]:
+                  - text: Amenities
+                  - generic [ref=e376]:
+                    - generic [ref=e378]: Monitor
+                    - generic [ref=e380]: Standing desk
+                - separator [ref=e381]
+                - button [ref=e382] [cursor=pointer]: Book this space
+                - button [ref=e383] [cursor=pointer]: Facility request
+                - generic [ref=e384]: Company policy and real-time conflict checks run again when you book.
+    - button [ref=e387] [cursor=pointer]
+  - dialog "Book a workspace" [ref=e392]:
+    - generic [ref=e393]:
+      - heading "Book a workspace" [level=2] [ref=e394]
+      - generic [ref=e395]:
+        - paragraph [ref=e396]: Confirm the selected space and booking period.
+        - generic [ref=e397]:
+          - alert [ref=e398]:
+            - img [ref=e400]
+            - generic [ref=e402]: The change result is unknown. Reload your booking before choosing the next action.
+          - alert [ref=e403]:
+            - img [ref=e405]
+            - generic [ref=e407]: "Request failed: 503"
+          - generic [ref=e409]:
+            - generic [ref=e410]:
+              - paragraph [ref=e411]: Focus desk 12
+              - generic [ref=e412]:
+                - img [ref=e413]
+                - generic [ref=e416]: Pangyo HQ · 12F · Focus zone
+            - generic [ref=e418]: Desk
+          - generic [ref=e419]:
+            - generic [ref=e420]:
+              - generic [ref=e421]:
+                - text: Start
+                - generic [ref=e422]: "*"
+              - group "Start" [ref=e423]:
+                - generic [ref=e424]:
+                  - generic [ref=e425]:
+                    - spinbutton "Month" [disabled] [ref=e426]: "08"
+                    - text: /
+                  - generic [ref=e427]:
+                    - spinbutton "Day" [disabled] [ref=e428]: "19"
+                    - text: /
+                  - spinbutton "Year" [disabled] [ref=e430]: "2026"
+                  - generic [ref=e431]:
+                    - spinbutton "Hours" [disabled] [ref=e432]: "09"
+                    - text: ":"
+                  - spinbutton "Minutes" [disabled] [ref=e434]: "30"
+                  - spinbutton "Meridiem" [disabled] [ref=e436]: AM
+                - generic [ref=e437]:
+                  - button "Choose date, selected date is Aug 19, 2026" [disabled]:
+                    - img
+                - group:
+                  - generic: Start *
+                - textbox [disabled] [ref=e438]: 08/19/2026 09:30 AM
+              - paragraph [ref=e439]: Asia/Seoul
+            - generic [ref=e440]:
+              - generic [ref=e441]:
+                - text: End
+                - generic [ref=e442]: "*"
+              - group "End" [ref=e443]:
+                - generic [ref=e444]:
+                  - generic [ref=e445]:
+                    - spinbutton "Month" [disabled] [ref=e446]: "08"
+                    - text: /
+                  - generic [ref=e447]:
+                    - spinbutton "Day" [disabled] [ref=e448]: "19"
+                    - text: /
+                  - spinbutton "Year" [disabled] [ref=e450]: "2026"
+                  - generic [ref=e451]:
+                    - spinbutton "Hours" [disabled] [ref=e452]: "10"
+                    - text: ":"
+                  - spinbutton "Minutes" [disabled] [ref=e454]: "30"
+                  - spinbutton "Meridiem" [disabled] [ref=e456]: AM
+                - generic [ref=e457]:
+                  - button "Choose date, selected date is Aug 19, 2026" [disabled]:
+                    - img
+                - group:
+                  - generic: End *
+                - textbox [disabled] [ref=e458]: 08/19/2026 10:30 AM
+          - status [ref=e459]:
+            - img [ref=e461]
+            - generic [ref=e465]:
+              - paragraph [ref=e466]: 30-480 min · 07:00-20:00 · up to 30 days ahead
+              - generic [ref=e467]:
+                - img [ref=e468]
+                - generic [ref=e471]: Check-in opens 60 minutes before arrival; no-shows are released 30 minutes after start.
+          - generic [ref=e472]:
+            - generic [ref=e473]: Purpose
+            - generic [ref=e474]:
+              - textbox "Purpose" [disabled] [ref=e475]: Retry-safe booking
+              - group:
+                - generic: Purpose
+          - generic [ref=e476]:
+            - generic [ref=e477]:
+              - generic:
+                - switch "Let colleagues see my name and presence" [checked] [disabled]
+            - generic [ref=e480]:
+              - img [ref=e481]
+              - paragraph [ref=e484]: Let colleagues see my name and presence
+      - generic [ref=e486]:
+        - button "Cancel" [ref=e487] [cursor=pointer]
+        - button "Retry the same request" [ref=e488] [cursor=pointer]: Retry the same request
+```

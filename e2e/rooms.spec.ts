@@ -1,6 +1,7 @@
+import { fulfillWorkplaceResourcePhotoFixture } from './support/workplace-resource-photo-fixture';
+import { isolateWorkplaceDevelopmentUpdates } from './support/workplace-runtime-isolation';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-
 import {
   FULL_PRODUCT_PERMISSIONS,
   fulfillSuccess,
@@ -12,10 +13,8 @@ import {
   CALENDAR_RESOURCES_FIXTURE,
   ROOM_BOOKING_EVENT_FIXTURE,
 } from './support/product-area-fixtures';
-
 import type { CalendarHome } from '@dwp-frontend/shared-utils';
 import type { Page } from '@playwright/test';
-
 const policy = {
   bookingWindowDays: 30,
   bookingRetentionDays: 365,
@@ -33,7 +32,6 @@ const policy = {
   showColleagueNames: true,
   version: 2,
 };
-
 const campus = {
   campusId: '50000000-0000-0000-0000-000000000001',
   code: 'PANGYO',
@@ -43,7 +41,6 @@ const campus = {
   buildingCount: 1,
   version: 1,
 };
-
 const site = {
   siteId: '10000000-0000-0000-0000-000000000001',
   campusId: campus.campusId,
@@ -60,7 +57,6 @@ const site = {
   state: 'ACTIVE',
   version: 1,
 };
-
 const floor = {
   floorId: '20000000-0000-0000-0000-000000000012',
   siteId: site.siteId,
@@ -76,7 +72,6 @@ const floor = {
   resourceCount: 1,
   version: 1,
 };
-
 const zone = {
   zoneId: '60000000-0000-0000-0000-000000000001',
   floorId: floor.floorId,
@@ -90,7 +85,6 @@ const zone = {
   resourceCount: 1,
   version: 1,
 };
-
 const resource = {
   resourceId: '30000000-0000-0000-0000-000000000012',
   floorId: floor.floorId,
@@ -119,7 +113,6 @@ const resource = {
   assignedDisplayName: null,
   version: 1,
 };
-
 const unplacedResource = {
   ...resource,
   resourceId: '30000000-0000-0000-0000-000000000013',
@@ -131,7 +124,6 @@ const unplacedResource = {
   positionY: 0,
   version: 2,
 };
-
 const publishedRevision = {
   revisionId: '70000000-0000-0000-0000-000000000001',
   floorId: floor.floorId,
@@ -155,7 +147,6 @@ const publishedRevision = {
   publishedBy: 900018,
   version: 1,
 };
-
 const draftRevision = {
   ...publishedRevision,
   revisionId: '70000000-0000-0000-0000-000000000002',
@@ -170,7 +161,6 @@ const draftRevision = {
   publishedBy: null,
   version: 0,
 };
-
 const placement = {
   placementId: '80000000-0000-0000-0000-000000000001',
   resourceId: resource.resourceId,
@@ -185,7 +175,6 @@ const placement = {
   metadata: {},
   version: 0,
 };
-
 const READ_ONLY_WORKPLACE_PERMISSIONS = FULL_PRODUCT_PERMISSIONS.filter((permission) => {
   if (
     !['APP.WORKPLACE', 'APP.ROOMS', 'ADMIN.WORKPLACE', 'ADMIN.ROOMS'].includes(
@@ -196,7 +185,6 @@ const READ_ONLY_WORKPLACE_PERMISSIONS = FULL_PRODUCT_PERMISSIONS.filter((permiss
   }
   return permission.permissionCode === 'VIEW';
 });
-
 function booking(overrides: Record<string, unknown> = {}) {
   return {
     bookingId: '40000000-0000-0000-0000-000000000001',
@@ -221,7 +209,6 @@ function booking(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
 }
-
 function roomAvailabilityForRequest(
   requestUrl: string,
   {
@@ -268,7 +255,6 @@ function roomAvailabilityForRequest(
     generatedAt,
   };
 }
-
 const workplaceCalendarHome = {
   date: '2026-08-19',
   timeZone: 'Asia/Seoul',
@@ -323,7 +309,6 @@ const workplaceCalendarHome = {
   attention: [],
   generatedAt: '2026-08-19T00:00:00Z',
 } satisfies CalendarHome;
-
 const workplaceExploreFixture = {
   sites: [site],
   floors: [floor],
@@ -333,8 +318,11 @@ const workplaceExploreFixture = {
   policy,
   generatedAt: '2026-08-19T00:00:00Z',
 };
-
 async function mockWorkplace(page: Page) {
+  await page.route(
+    '**/api/platform/v1/workplace/experience/collaboration/resources/*/photo**',
+    fulfillWorkplaceResourcePhotoFixture
+  );
   let draftPlacements = [{ ...placement }];
   let draftVersion = draftRevision.version;
   let draftBackgroundAssetPath: string | null = null;
@@ -363,11 +351,9 @@ async function mockWorkplace(page: Page) {
     }
     return route.fallback();
   });
-
   await page.route('**/api/platform/v1/calendar/home**', (route) =>
     fulfillSuccess(route, workplaceCalendarHome)
   );
-
   await page.route('**/api/platform/v1/admin/workplace/**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -502,7 +488,6 @@ async function mockWorkplace(page: Page) {
     return route.fallback();
   });
 }
-
 async function clickWorkplaceNavigationLink(page: Page, name: string) {
   const link = page.getByRole('link', { name });
   if (!(await link.isVisible())) {
@@ -511,7 +496,6 @@ async function clickWorkplaceNavigationLink(page: Page, name: string) {
   }
   await link.click();
 }
-
 async function expectWorkplaceHomeAvailability(
   page: Page,
   physicalOpen: number,
@@ -522,28 +506,24 @@ async function expectWorkplaceHomeAvailability(
     String(initialChecks)
   );
 }
-
 test.use({ timezoneId: 'UTC' });
-
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:00Z'));
   await mockShellSession(page, ['TENANT_ADMIN'], {
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
+  await isolateWorkplaceDevelopmentUpdates(page);
   await mockWorkplace(page);
 });
-
 test('workplace home prioritizes the next action and reflows with accessible visual context', async ({
   page,
 }, testInfo) => {
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/workplace');
-
-  await expect(
-    page.getByRole('heading', { name: 'Set up the flow of your workday' })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Pangyo HQ · 12F', level: 1 })).toBeVisible();
+  await expect(page.getByText('Preparing your workplace overview', { exact: true })).toHaveCount(0);
   await expect(page.getByTestId('workplace-day-brief')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Check in now' })).toBeVisible();
   await expect(page.getByRole('heading', { name: "Today's flow" })).toBeVisible();
@@ -561,8 +541,8 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     })
   );
   expect(
-    Math.max(...desktopWeekLayout.map(({ y }) => y)) -
-      Math.min(...desktopWeekLayout.map(({ y }) => y))
+    Math.max(...desktopWeekLayout.map(({ x }) => x)) -
+      Math.min(...desktopWeekLayout.map(({ x }) => x))
   ).toBeLessThan(2);
   expect(
     Math.max(...desktopWeekLayout.map(({ width }) => width)) -
@@ -570,7 +550,6 @@ test('workplace home prioritizes the next action and reflows with accessible vis
   ).toBeLessThan(2);
   await expect(page.getByText('Workplace launch alignment still needs a room')).toHaveCount(0);
   await expect(page.getByText('Active sites', { exact: true })).toHaveCount(0);
-
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
     accessibility.violations.filter(
@@ -581,21 +560,25 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     path: testInfo.outputPath('workplace-home-1440.png'),
     fullPage: true,
   });
-
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.reload();
+  await expect(page.getByTestId('workplace-day-brief')).toBeVisible();
+  await expect(page.getByText('Preparing your workplace overview', { exact: true })).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath('workplace-home-1280-loaded.png'),
+    fullPage: true,
+  });
   const mediumDesktop = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
     documentWidth: document.documentElement.scrollWidth,
     dayRows: [...document.querySelectorAll('[data-testid="workplace-week-day"]')].map(
-      (element) => element.getBoundingClientRect().y
+      (element) => element.getBoundingClientRect().x
     ),
   }));
   expect(mediumDesktop.documentWidth, '1280px home width').toBeLessThanOrEqual(
     mediumDesktop.viewport
   );
   expect(Math.max(...mediumDesktop.dayRows) - Math.min(...mediumDesktop.dayRows)).toBeLessThan(2);
-
   for (const viewport of [
     { width: 320, height: 720 },
     { width: 390, height: 844 },
@@ -604,6 +587,9 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     await page.setViewportSize(viewport);
     await page.reload();
     await expect(page.getByTestId('workplace-day-brief')).toBeVisible();
+    await expect(page.getByText('Preparing your workplace overview', { exact: true })).toHaveCount(
+      0
+    );
     const compactWeekLayout = await page.getByTestId('workplace-week-day').evaluateAll((elements) =>
       elements.map((element) => {
         const bounds = element.getBoundingClientRect();
@@ -634,7 +620,6 @@ test('workplace home prioritizes the next action and reflows with accessible vis
       fullPage: true,
     });
   }
-
   await page.setViewportSize({ width: 390, height: 844 });
   const baseDayBriefFontSize = await page
     .locator('#workplace-day-brief')
@@ -674,7 +659,6 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     fullPage: true,
   });
 });
-
 test('workplace home distinguishes an unconfigured or inaccessible site from an empty day', async ({
   page,
 }) => {
@@ -691,12 +675,10 @@ test('workplace home distinguishes an unconfigured or inaccessible site from an 
   );
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
   await page.goto('/workplace');
-
   await expect(page.getByText('No workplace site is available to you')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Configure sites' })).toHaveCount(1);
   await expect(page.getByText('No site selected')).toBeVisible();
 });
-
 test('workplace home distinguishes missing floors from an empty resource catalog', async ({
   page,
 }) => {
@@ -713,11 +695,9 @@ test('workplace home distinguishes missing floors from an empty resource catalog
     })
   );
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
-
   await page.goto('/workplace');
   await expect(page.getByText('No active floor is available at this site').first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Configure floors' })).toHaveCount(1);
-
   scope = 'NO_RESOURCE';
   await page.reload();
   await expect(
@@ -725,7 +705,6 @@ test('workplace home distinguishes missing floors from an empty resource catalog
   ).toBeVisible();
   await expect(page.getByRole('link', { name: 'Add spaces' })).toHaveCount(1);
 });
-
 test('workplace home includes earlier local-week reservations in its query scope', async ({
   page,
 }) => {
@@ -733,15 +712,12 @@ test('workplace home includes earlier local-week reservations in its query scope
     const url = new URL(request.url());
     return url.pathname === '/api/platform/v1/workplace/bookings' && request.method() === 'GET';
   });
-
   await page.goto('/workplace');
   const request = await bookingRequest;
   const url = new URL(request.url());
-
   expect(url.searchParams.get('from')).toBe('2026-08-16T15:00:00Z');
   expect(url.searchParams.get('to')).toBe('2026-08-23T15:00:00Z');
 });
-
 test('workplace home executes check-in through the authoritative Workplace command', async ({
   page,
 }) => {
@@ -780,24 +756,23 @@ test('workplace home executes check-in through the authoritative Workplace comma
     }
     return route.fallback();
   });
-
   await page.goto('/workplace');
-  await page.getByRole('button', { name: 'Check in now' }).click();
+  await page.getByRole('button', { name: 'Check in now' }).evaluate((button) => {
+    (button as HTMLButtonElement).click();
+    (button as HTMLButtonElement).click();
+  });
   await expect.poll(() => checkInWrites).toBe(1);
-
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
   await page.clock.fastForward(30_050);
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   await expect(page.getByTestId('workplace-decision-status')).toHaveText('');
   await expect(page.getByText(/no action was sent/u)).toHaveCount(0);
   expect(checkInWrites).toBe(1);
-
   expect(checkInPayload).toEqual({ version: 0 });
   releaseCheckIn?.();
   await expect(page.getByText('You checked in to the space.')).toBeVisible();
   expect(checkInWrites).toBe(1);
 });
-
 test('workplace home does not query Calendar without Calendar view permission', async ({
   page,
 }) => {
@@ -811,12 +786,10 @@ test('workplace home does not query Calendar without Calendar view permission', 
     }
   });
   await page.route('**/api/auth/permissions', (route) => fulfillSuccess(route, permissions));
-
   await page.goto('/workplace');
   await expect(page.getByRole('heading', { name: "Today's flow" })).toBeVisible();
   expect(calendarHomeCalls).toBe(0);
 });
-
 test('workplace home waits for every required source before announcing a live or empty state', async ({
   page,
 }) => {
@@ -828,17 +801,14 @@ test('workplace home waits for every required source before announcing a live or
     await calendarGate;
     return fulfillSuccess(route, workplaceCalendarHome);
   });
-
   await page.goto('/workplace');
   await expect(page.getByText('Preparing your workplace overview').first()).toBeVisible();
   await expect(page.getByText('No workplace events are scheduled today')).toHaveCount(0);
   await expect(page.getByText('Workplace information')).toHaveCount(0);
-
   releaseCalendar?.();
   await expect(page.getByRole('heading', { name: "Today's flow" })).toBeVisible();
   await expect(page.getByText('Workplace information')).toBeVisible();
 });
-
 test('workplace home does not confirm a next action or an empty week from partial sources', async ({
   page,
 }) => {
@@ -851,9 +821,7 @@ test('workplace home does not confirm a next action or an empty week from partia
       body: JSON.stringify({ message: 'Calendar projection unavailable' }),
     })
   );
-
   await page.goto('/workplace');
-
   await expect(page.getByRole('button', { name: 'Verify current data' }).first()).toBeVisible();
   await expect(
     page.getByText('Some reservation sources are unavailable. Only verified activity is shown.')
@@ -869,7 +837,6 @@ test('workplace home does not confirm a next action or an empty week from partia
   await expect(page.getByText('Your workplace plan is in good shape')).toHaveCount(0);
   await expect(page.getByText('Items needing attention are not fully verified')).toBeVisible();
 });
-
 test('workplace home discards cached availability after an authoritative access denial', async ({
   page,
 }) => {
@@ -883,18 +850,15 @@ test('workplace home discards cached availability after an authoritative access 
         })
       : fulfillSuccess(route, workplaceExploreFixture)
   );
-
   await page.goto('/workplace');
   await expectWorkplaceHomeAvailability(page, 2, 2);
   denied = true;
   await page.getByRole('button', { name: 'Try again' }).first().click();
-
   await expect(page.getByText('Availability could not be verified').first()).toBeVisible();
   await expect(page.getByTestId('workplace-physical-open-count')).toHaveCount(0);
   await expect(page.getByTestId('workplace-initial-checks-count')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Desk spaces physically open/u })).toHaveCount(0);
 });
-
 test('workplace home disables stale check-in commands until booking data is verified again', async ({
   page,
 }) => {
@@ -917,17 +881,14 @@ test('workplace home disables stale check-in commands until booking data is veri
       body: JSON.stringify({ status: 'ERROR', message: 'Temporary failure' }),
     });
   });
-
   await page.goto('/workplace');
   const checkIn = page.getByRole('button', { name: 'Check in now' });
   await expect(checkIn).toBeVisible();
   await checkIn.focus();
   await expect(checkIn).toBeFocused();
-
   await page.clock.fastForward(60_010);
   await expect.poll(() => bookingCalls).toBeGreaterThanOrEqual(2);
   await expect(checkIn).toBeVisible();
-
   const unavailable = page.waitForResponse(
     (response) =>
       response.status() === 503 &&
@@ -935,7 +896,6 @@ test('workplace home disables stale check-in commands until booking data is veri
   );
   releaseRefresh?.();
   await unavailable;
-
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   const decisionStatus = page.getByTestId('workplace-decision-status');
   await expect(decisionStatus).toHaveText(
@@ -943,19 +903,16 @@ test('workplace home disables stale check-in commands until booking data is veri
   );
   await expect(decisionStatus).toBeFocused();
   expect(checkInWrites).toBe(0);
-
   const verifyData = page.getByRole('button', { name: 'Verify current data' }).first();
   await verifyData.focus();
   await expect(verifyData).toBeFocused();
   await page.clock.fastForward(300);
   await expect(verifyData).toBeFocused();
-
   await page.clock.setFixedTime(new Date('2026-08-18T23:59:00Z'));
   await page.clock.fastForward(60_000);
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   expect(checkInWrites).toBe(0);
 });
-
 test('workplace home replaces an unverified check-in notice after authoritative recovery', async ({
   page,
 }) => {
@@ -1002,7 +959,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
     }
     return fulfillSuccess(route, [recoverableBooking]);
   });
-
   await page.goto('/workplace');
   const actionId = `check-in:${recoverableBooking.bookingId}`;
   const checkIn = page
@@ -1010,7 +966,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
     .and(page.locator(`[data-workplace-decision-action="${actionId}"]`));
   await expect(checkIn).toBeVisible();
   await checkIn.focus();
-
   source = 'UNAVAILABLE';
   const firstFailure = page.waitForResponse(
     (response) =>
@@ -1025,7 +980,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
     'The current reservation state could not be verified. Check-in is closed and no action was sent.'
   );
   await expect(decisionStatus).toBeFocused();
-
   source = 'RECOVERING';
   await page
     .getByRole('alert')
@@ -1039,7 +993,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
   await stableFocus.focus();
   await expect(stableFocus).toBeFocused();
   releaseRecovery?.();
-
   await expect(checkIn).toBeVisible();
   await expect(decisionStatus).toHaveText(
     'The current reservation state is verified again. Check-in is available.'
@@ -1047,7 +1000,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
   await expect(stableFocus).toBeFocused();
   await expect(decisionStatus).not.toBeFocused();
   expect(checkInWrites).toBe(0);
-
   source = 'UNAVAILABLE';
   const secondFailure = page.waitForResponse(
     (response) =>
@@ -1057,7 +1009,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
   await page.clock.fastForward(60_010);
   await secondFailure;
   await page.clock.fastForward(1_100);
-
   await expect(checkIn).toHaveCount(0);
   await expect(decisionStatus).toHaveText(
     'The current reservation state could not be verified. Check-in is closed and no action was sent.'
@@ -1065,7 +1016,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
   await expect(stableFocus).toBeFocused();
   await expect(decisionStatus).not.toBeFocused();
   expect(checkInWrites).toBe(0);
-
   source = 'READY';
   await page
     .getByRole('alert')
@@ -1077,18 +1027,15 @@ test('workplace home replaces an unverified check-in notice after authoritative 
     'The current reservation state is verified again. Check-in is available.'
   );
   await expect(decisionStatus).not.toBeFocused();
-
   await checkIn.click();
   await expect(page.getByText('You checked in to the space.')).toBeVisible();
   await expect(decisionStatus).toHaveText('');
   expect(checkInWrites).toBe(1);
 });
-
 test('workplace home uses an accurate read-only booking action', async ({ page }) => {
   await page.route('**/api/auth/permissions', (route) =>
     fulfillSuccess(route, READ_ONLY_WORKPLACE_PERMISSIONS)
   );
-
   await page.goto('/workplace');
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'View booking' })).toBeVisible();
@@ -1096,7 +1043,6 @@ test('workplace home uses an accurate read-only booking action', async ({ page }
     page.getByText('This account can view the booking but does not have permission to check in.')
   ).toBeVisible();
 });
-
 test('workplace home separates open spaces from booking eligibility for read-only members', async ({
   page,
 }) => {
@@ -1113,9 +1059,7 @@ test('workplace home separates open spaces from booking eligibility for read-onl
       attention: [],
     })
   );
-
   await page.goto('/workplace');
-
   await expect(
     page.getByRole('heading', { name: 'Browse the floor before choosing your next space' })
   ).toBeVisible();
@@ -1123,7 +1067,6 @@ test('workplace home separates open spaces from booking eligibility for read-onl
   await expectWorkplaceHomeAvailability(page, 2, 0);
   await expect(page.getByRole('link', { name: 'Find a space' }).first()).toBeVisible();
 });
-
 test('workplace home preserves its verified 60-minute scope when opening discovery', async ({
   page,
 }) => {
@@ -1144,7 +1087,6 @@ test('workplace home preserves its verified 60-minute scope when opening discove
       attention: [],
     })
   );
-
   await page.goto('/workplace');
   const link = page.getByTestId('workplace-day-brief').getByRole('link', { name: 'Find a space' });
   await expect(link).toHaveAttribute(
@@ -1158,7 +1100,6 @@ test('workplace home preserves its verified 60-minute scope when opening discove
   await link.click();
   const request = await exploreRequest;
   const url = new URL(request.url());
-
   expect(ranges[0]).toEqual({
     from: '2026-08-19T00:01:00Z',
     to: '2026-08-19T01:01:00Z',
@@ -1170,7 +1111,6 @@ test('workplace home preserves its verified 60-minute scope when opening discove
   await expect(page).toHaveURL(/duration=60/u);
   await expect(page).toHaveURL(/type=DESK/u);
 });
-
 test('workplace home keeps eligibility attached to the verified range during a delayed rollover', async ({
   page,
 }) => {
@@ -1223,20 +1163,17 @@ test('workplace home keeps eligibility attached to the verified range during a d
       attention: [],
     })
   );
-
   await page.goto('/workplace');
   const discovery = page
     .getByTestId('workplace-day-brief')
     .getByRole('link', { name: 'Find a space' });
   await expect(discovery).toHaveAttribute('href', /time=09%3A01/u);
-
   await page.clock.setFixedTime(new Date('2026-08-19T00:01:00.100Z'));
   await page.clock.fastForward(21_600);
   await expect.poll(() => exploreCalls).toBeGreaterThanOrEqual(2);
   expect(refreshedFrom).toBe('2026-08-19T00:02:00Z');
   await expect(discovery).not.toHaveAttribute('href', /time=/u);
   await expectWorkplaceHomeAvailability(page, 2, 0);
-
   const refreshed = page.waitForResponse(
     (response) =>
       response.ok() && new URL(response.url()).pathname === '/api/platform/v1/workplace/explore'
@@ -1555,7 +1492,7 @@ test('members discover and book a workspace using tenant policy and site time zo
   await expect(page.getByLabel('Start time')).toContainText('09:30');
   await page
     .getByRole('button', {
-      name: /^Focus desk 12.*Physically open.*Initial booking checks passed$/u,
+      name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await expect(page).toHaveURL(/resource=30000000-0000-0000-0000-000000000012/u);
@@ -1567,8 +1504,9 @@ test('members discover and book a workspace using tenant policy and site time zo
   await dialog.getByLabel('Purpose').fill('Workplace E2E review');
   await dialog.getByRole('button', { name: 'Book', exact: true }).click();
   await expect(dialog).toBeHidden();
-  await expect(page.locator('main')).toBeVisible();
-
+  await expect(page).toHaveURL(
+    new RegExp(`/workplace/my-bookings\\?booking=${booking().bookingId}`, 'u')
+  );
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
     accessibility.violations.filter(
@@ -1607,13 +1545,15 @@ test('discovery routes create permission to the resource booking owner', async (
   await expect(page.getByText('1 pass initial booking checks')).toBeVisible();
   await page
     .getByRole('button', {
-      name: /^Rooms-owned space.*Physically open.*Initial booking checks passed$/u,
+      name: /^Rooms-owned space.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeEnabled();
   await page.getByRole('button', { name: 'Close' }).click();
   await page
-    .getByRole('button', { name: /^Focus desk 12.*Physically open.*Booking unavailable$/u })
+    .getByRole('button', {
+      name: /^Focus desk 12.*Open by reservation state.*Booking unavailable$/u,
+    })
     .click();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeDisabled();
   await expect(
@@ -1630,7 +1570,9 @@ test('discovery applies the Workplace owner policy before enabling a booking act
 
   await expect(page.getByText('0 pass initial booking checks')).toBeVisible();
   await page
-    .getByRole('button', { name: /^Focus desk 12.*Physically open.*Booking unavailable$/u })
+    .getByRole('button', {
+      name: /^Focus desk 12.*Open by reservation state.*Booking unavailable$/u,
+    })
     .click();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeDisabled();
   await expect(
@@ -1669,7 +1611,7 @@ for (const failure of [
     );
     await page
       .getByRole('button', {
-        name: /^Focus desk 12.*Physically open.*Initial booking checks passed$/u,
+        name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
       })
       .click();
     await expect(page.getByRole('button', { name: 'Book this space' })).toBeEnabled();
@@ -1719,7 +1661,9 @@ test('discovery keeps booking closed until a cross-time-zone query is freshly ve
     `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A30`
   );
   await page
-    .getByRole('button', { name: /^Focus desk 12.*Physically open.*Booking unavailable$/u })
+    .getByRole('button', {
+      name: /^Focus desk 12.*Open by reservation state.*Booking unavailable$/u,
+    })
     .click();
 
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeDisabled();
@@ -1780,7 +1724,9 @@ test('discovery uses one eligibility contract for count, order, and booking acti
   await page.getByRole('button', { name: 'Close' }).click();
 
   await page
-    .getByRole('button', { name: /^Unmapped room.*Physically open.*Booking unavailable$/u })
+    .getByRole('button', {
+      name: /^Unmapped room.*Open by reservation state.*Booking unavailable$/u,
+    })
     .click();
   await expect(
     page.getByText('This room is not yet linked to its calendar resource and cannot be booked.')
@@ -1822,7 +1768,7 @@ test('cached room policy refresh failures close Explore booking until recovery',
   await expect(page.getByText('1 pass initial booking checks')).toBeVisible();
   await page
     .getByRole('button', {
-      name: /^Mapped room.*Physically open.*Initial booking checks passed$/u,
+      name: /^Mapped room.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeEnabled();
@@ -1838,7 +1784,7 @@ test('cached room policy refresh failures close Explore booking until recovery',
   ).toBeVisible();
   await expect(page.getByText('0 pass initial booking checks')).toBeVisible();
   await page
-    .getByRole('button', { name: /^Mapped room.*Physically open.*Booking unavailable$/u })
+    .getByRole('button', { name: /^Mapped room.*Open by reservation state.*Booking unavailable$/u })
     .click();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeDisabled();
   await expect(
@@ -1887,7 +1833,7 @@ test('an open workspace booking dialog becomes read-only on the first stale read
   await page.goto('/workplace/explore');
   await page
     .getByRole('button', {
-      name: /^Focus desk 12.*Physically open.*Initial booking checks passed$/u,
+      name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await page.getByRole('button', { name: 'Book this space' }).click();
@@ -1998,7 +1944,7 @@ test('an open room booking dialog fails closed across stale recovery and authori
   await page.goto('/workplace/explore');
   await page
     .getByRole('button', {
-      name: /^Authority room.*Physically open.*Initial booking checks passed$/u,
+      name: /^Authority room.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await page.getByRole('button', { name: 'Book this space' }).click();
@@ -2081,7 +2027,11 @@ test('my bookings discards retained rows after an authoritative access rejection
   });
 
   await page.goto('/workplace/my-bookings');
-  await expect(page.getByText('Focus desk 12', { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Focus desk 12', exact: true })
+  ).toBeVisible();
 
   denied = true;
   const deniedResponse = page.waitForResponse(
@@ -2093,7 +2043,11 @@ test('my bookings discards retained rows after an authoritative access rejection
   await deniedResponse;
 
   await expect(page.getByText('Your space bookings could not be loaded.')).toBeVisible();
-  await expect(page.getByText('Focus desk 12', { exact: true })).toHaveCount(0);
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Focus desk 12', exact: true })
+  ).toHaveCount(0);
   await expect(page.getByText('No upcoming space bookings')).toHaveCount(0);
 });
 
@@ -2385,9 +2339,9 @@ test('Korean discovery reflows at 200 percent text and preserves keyboard access
   await mockWorkplace(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/workplace/explore');
-
   await expect(page.getByRole('heading', { name: '공간 찾기', level: 1 })).toBeVisible();
-  const search = page.getByLabel('공간, 구역 또는 설비 검색');
+  await page.getByRole('button', { name: '필터', exact: true }).click();
+  const search = page.getByRole('dialog').getByLabel('공간, 구역 또는 설비 검색');
   await search.focus();
   await page.keyboard.press('Tab');
   const dateGroup = page.getByRole('group', { name: '날짜' });
@@ -2477,47 +2431,58 @@ test('registered floor plans keep map selection and keyboard focus synchronized'
   const mapOptions = floorPlan.getByRole('option');
   await expect(mapOptions).toHaveCount(2);
   await expect(floorPlan.locator('[tabindex="0"]')).toHaveCount(1);
-
   await mapOptions.first().focus();
   await mapOptions.first().press('ArrowRight');
   await expect(mapOptions.nth(1)).toBeFocused();
   await mapOptions.nth(1).click();
   await expect(page).toHaveURL(new RegExp(`resource=${unplacedResource.resourceId}`, 'u'));
-
+  await expect(
+    page.getByRole('complementary').filter({ hasText: unplacedResource.name })
+  ).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath('workplace-map-1440.png'),
     fullPage: true,
   });
 });
 
-test('booking retries preserve the idempotency key for the same user intent', async ({ page }) => {
+test('booking retries preserve the idempotency key for the same user intent', async ({
+  page,
+}, testInfo) => {
   const keys: string[] = [];
   let attempts = 0;
-  await page.route('**/api/platform/v1/workplace/bookings', async (route) => {
+  let persisted: ReturnType<typeof booking> | null = null;
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
     const request = route.request();
-    if (request.method() !== 'POST') return route.fallback();
+    if (request.method() !== 'POST')
+      return request.method() === 'GET'
+        ? fulfillSuccess(route, persisted ? [persisted] : [])
+        : route.fallback();
     keys.push(request.headers()['idempotency-key'] ?? '');
     attempts += 1;
     if (attempts === 1) {
       return route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
     }
-    return fulfillSuccess(route, booking(request.postDataJSON()));
+    persisted = booking(request.postDataJSON());
+    return fulfillSuccess(route, persisted);
   });
 
   await page.goto('/workplace/explore');
   await page
     .getByRole('button', {
-      name: /^Focus desk 12.*Physically open.*Initial booking checks passed$/u,
+      name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await page.getByRole('button', { name: 'Book this space' }).click();
   const dialog = page.getByRole('dialog', { name: 'Book a workspace' });
   await dialog.getByLabel('Purpose').fill('Retry-safe booking');
-  const submit = dialog.getByRole('button', { name: 'Book', exact: true });
+  const submit = dialog.getByRole('button', { name: /^(Book|Retry the same request)$/u });
   await submit.click();
   await expect.poll(() => keys.length).toBe(1);
   await expect(dialog).toBeVisible();
+  await expect(page).toHaveURL(/\/workplace\/explore/);
   await expect(submit).toBeEnabled();
+  await expect(submit).toHaveText('Retry the same request');
+  await expect(dialog.getByLabel('Purpose')).toBeDisabled();
   await submit.click();
   await expect.poll(() => keys.length).toBe(2);
 
@@ -2525,6 +2490,16 @@ test('booking retries preserve the idempotency key for the same user intent', as
   expect(keys).toHaveLength(2);
   expect(keys[0]).toBeTruthy();
   expect(keys[1]).toBe(keys[0]);
+  await expect(page).toHaveURL(
+    new RegExp(`/workplace/my-bookings\\?booking=${booking().bookingId}`)
+  );
+  await expect(
+    page.getByTestId(`workplace-booking-${booking().bookingId}`).getByText('Retry-safe booking')
+  ).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath('native-booking-owner-detail-1280.png'),
+    fullPage: true,
+  });
 });
 
 test('changed search criteria keep previous results read-only until availability is verified', async ({
@@ -2533,7 +2508,7 @@ test('changed search criteria keep previous results read-only until availability
   await page.goto('/workplace/explore');
   await page
     .getByRole('button', {
-      name: /^Focus desk 12.*Physically open.*Initial booking checks passed$/u,
+      name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
     })
     .click();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeEnabled();
@@ -2544,7 +2519,7 @@ test('changed search criteria keep previous results read-only until availability
   );
   await page.getByLabel('Duration').click();
   await page.getByRole('option', { name: '90 min' }).click();
-  await page.getByRole('button', { name: /^Focus desk 12.*Physically open/u }).click();
+  await page.getByRole('button', { name: /^Focus desk 12.*Open by reservation state/u }).click();
 
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeDisabled();
   await expect(
@@ -2558,7 +2533,11 @@ test('authoritative access rejection discards previously visible Workplace data'
   page,
 }) => {
   await page.goto('/workplace/explore');
-  await expect(page.getByText('Focus desk 12', { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Focus desk 12', exact: true })
+  ).toBeVisible();
 
   await page.route('**/api/platform/v1/workplace/explore**', (route) =>
     route.fulfill({ status: 403, contentType: 'application/json', body: '{}' })
@@ -2567,7 +2546,11 @@ test('authoritative access rejection discards previously visible Workplace data'
   await page.getByRole('option', { name: '90 min' }).click();
 
   await expect(page.getByText('Workplace availability could not be loaded.')).toBeVisible();
-  await expect(page.getByText('Focus desk 12', { exact: true })).toHaveCount(0);
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Focus desk 12', exact: true })
+  ).toHaveCount(0);
 });
 
 test('background refresh failures keep the last successful Workplace data visible', async ({
@@ -2630,7 +2613,11 @@ test('members receive server-authoritative booking actions', async ({ page }) =>
 
   await page.goto('/workplace/my-bookings');
   await expect(page.getByRole('heading', { name: 'My space bookings', level: 1 })).toBeVisible();
-  await expect(page.getByText('Focus desk 12', { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Focus desk 12', exact: true })
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Check in' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Cancel booking' })).toBeVisible();
   await page.getByRole('button', { name: 'Release' }).click();
@@ -3087,7 +3074,11 @@ test('identity changes clear prior decision state and block cross-account bookin
   });
 
   await page.goto('/workplace/my-bookings');
-  await expect(page.getByText('Identity A desk')).toBeVisible();
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Identity A desk', exact: true })
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Release' }).click();
   const staleVersionDialog = page.getByRole('dialog', { name: 'Release this space?' });
   await expect(staleVersionDialog).toBeVisible();
@@ -3116,7 +3107,11 @@ test('identity changes clear prior decision state and block cross-account bookin
   await page.clock.setFixedTime(new Date('2026-08-18T00:00:00Z'));
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect.poll(() => meCalls).toBeGreaterThanOrEqual(2);
-  await expect(page.getByText('Identity B desk')).toBeVisible();
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Identity B desk', exact: true })
+  ).toBeVisible();
   await expect(priorDecisionStatus).toHaveText('');
 
   await page.getByRole('button', { name: 'Release' }).click();
@@ -3125,8 +3120,16 @@ test('identity changes clear prior decision state and block cross-account bookin
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect.poll(() => meCalls).toBeGreaterThanOrEqual(3);
   await expect(page.getByRole('dialog', { name: 'Release this space?' })).toHaveCount(0);
-  await expect(page.getByText('Identity B desk')).toHaveCount(0);
-  await expect(page.getByText('Identity C desk')).toBeVisible();
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Identity B desk', exact: true })
+  ).toHaveCount(0);
+  await expect(
+    page
+      .getByTestId(/^workplace-booking-400/u)
+      .getByRole('heading', { name: 'Identity C desk', exact: true })
+  ).toBeVisible();
   expect(actionWrites).toBe(0);
 });
 
@@ -3195,9 +3198,10 @@ test('relocation is bound to the current identity and booking snapshot', async (
     activeUserId = userId;
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
     await expect.poll(() => meCalls).toBeGreaterThanOrEqual(expectedCalls);
-    await expect(page.getByText(`Relocate identity ${userId} desk`)).toBeVisible();
+    const name = `Relocate identity ${userId} desk`;
+    const cards = page.getByTestId(/^workplace-booking-400/u);
+    await expect(cards.getByRole('heading', { name })).toBeVisible();
   };
-
   await page.goto('/workplace/my-bookings');
   await page.getByRole('button', { name: 'Change reservation' }).click();
   const relocateDialog = page.getByRole('dialog', { name: 'Change space or time' });
@@ -3593,7 +3597,9 @@ test('read-only roles see accessible reasons and cannot invoke booking or admini
     'cannot create Workplace bookings'
   );
   await page
-    .getByRole('button', { name: /^Focus desk 12.*Physically open.*Booking unavailable$/u })
+    .getByRole('button', {
+      name: /^Focus desk 12.*Open by reservation state.*Booking unavailable$/u,
+    })
     .click();
   await expect(page.getByRole('dialog', { name: 'Book a workspace' })).toHaveCount(0);
   await expect(page.getByText('cannot create Workplace bookings').last()).toBeVisible();
@@ -3629,7 +3635,9 @@ test('administrators can distinguish lifecycle state and edit the spatial invent
   await expect(
     page.getByRole('heading', { name: 'Sites and floor plans', level: 1 })
   ).toBeVisible();
-  await expect(page.getByText('Pangyo HQ', { exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByTestId('workplace-location-site-tree').getByText('Pangyo HQ', { exact: true })
+  ).toBeVisible();
   await expect(page.getByText('Active', { exact: true }).first()).toBeVisible();
   await expect(page.getByTestId('workplace-layout-editor')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add space' })).toBeEnabled();
@@ -3743,7 +3751,6 @@ test('workplace governance remains complete on mobile and resumes persisted floo
     documentWidth: document.documentElement.scrollWidth,
   }));
   expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewport);
-
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
     accessibility.violations.filter(
@@ -3751,7 +3758,6 @@ test('workplace governance remains complete on mobile and resumes persisted floo
     )
   ).toEqual([]);
 });
-
 test('administrators are warned before discarding unsaved Workplace policy changes', async ({
   page,
 }) => {
@@ -3760,7 +3766,6 @@ test('administrators are warned before discarding unsaved Workplace policy chang
     name: 'Show member names on reserved spaces',
   });
   await visibility.uncheck();
-
   await clickWorkplaceNavigationLink(page, 'Operations overview');
   const dialog = page.getByRole('alertdialog', {
     name: 'Discard unsaved Workplace policy changes?',
@@ -3770,27 +3775,23 @@ test('administrators are warned before discarding unsaved Workplace policy chang
   await expect(
     page.getByRole('heading', { name: 'Workplace operating policy', level: 1 })
   ).toBeVisible();
-
   await clickWorkplaceNavigationLink(page, 'Operations overview');
   await dialog.getByRole('button', { name: 'Discard changes' }).click();
   await expect(
     page.getByRole('heading', { name: 'Workplace operations overview', level: 1 })
   ).toBeVisible();
 });
-
 test('mobile discovery defaults to the complete list without page overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/workplace/explore');
   await expect(page.getByRole('heading', { name: 'Find a space', level: 1 })).toBeVisible();
   await expect(page.getByRole('button', { name: /Focus desk 12/u })).toBeVisible();
-
   const dimensions = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
     documentWidth: document.documentElement.scrollWidth,
   }));
   expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewport);
 });
-
 test('workplace discovery reflows without page overflow across compact viewports', async ({
   page,
 }, testInfo) => {
@@ -3815,7 +3816,6 @@ test('workplace discovery reflows without page overflow across compact viewports
     }
   }
 });
-
 test('every member Workplace surface reflows at mobile and tablet widths', async ({ page }) => {
   for (const viewport of [
     { width: 320, height: 720 },

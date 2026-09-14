@@ -1,27 +1,39 @@
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DatePickerField, FormField } from '@dwp-frontend/design-system';
+import { FormField, InlineFeedback } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { ApprovalRequestDynamicFields } from './approval-request-dynamic-fields';
+import { ApprovalRequestTypedFields } from './approval-request-typed-fields';
+
 import type { ApprovalFormField } from '@dwp-frontend/shared-utils';
+import type { useApprovalRequestFormEvaluation } from './use-approval-request-form-evaluation';
+import type {
+  ApprovalRequestUserContext,
+  ApprovalRequestUserSourceState,
+} from './approval-request-user-picker';
 
 type ApprovalInformationResponseFieldsProps = {
   responseMessage: string;
-  responsePayload: Record<string, string>;
+  responsePayload: Record<string, unknown>;
   responseFields: ApprovalFormField[];
   detailReady: boolean;
+  evaluation: ReturnType<typeof useApprovalRequestFormEvaluation>;
+  disabled?: boolean;
+  verifyOnlyUserValues?: boolean;
   korean: boolean;
   detailStatus?: ReactNode;
   onResponseMessageChange: (value: string) => void;
-  onResponsePayloadChange: (key: string, value: string) => void;
+  onResponsePayloadChange: (key: string, value: unknown) => void;
+  userBinding?: ApprovalRequestUserContext;
+  onUserSourceReadyChange?: (
+    path: string,
+    value: unknown,
+    state: ApprovalRequestUserSourceState
+  ) => void;
 };
 
 export function ApprovalInformationResponseFields({
@@ -29,10 +41,15 @@ export function ApprovalInformationResponseFields({
   responsePayload,
   responseFields,
   detailReady,
+  evaluation,
+  disabled,
+  verifyOnlyUserValues,
   korean,
   detailStatus,
   onResponseMessageChange,
   onResponsePayloadChange,
+  userBinding,
+  onUserSourceReadyChange,
 }: ApprovalInformationResponseFieldsProps) {
   const { t } = useTranslation('approvals');
 
@@ -46,6 +63,7 @@ export function ApprovalInformationResponseFields({
         label={t('requests.responseLabel')}
         supportingText={t('requests.responseHelp')}
         value={responseMessage}
+        disabled={disabled}
         onChange={(event) => onResponseMessageChange(event.target.value)}
         inputProps={{ maxLength: 2000 }}
       />
@@ -58,74 +76,41 @@ export function ApprovalInformationResponseFields({
         </Typography>
       </Box>
       {detailStatus}
-      {detailReady && (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-            gap: 1.25,
-          }}
-        >
-          {responseFields.map((field) => {
-            const label = korean
-              ? (field.labelKo ?? t(`requestFields.${field.key}`, { defaultValue: field.key }))
-              : (field.labelEn ?? t(`requestFields.${field.key}`, { defaultValue: field.key }));
-            const help = korean ? field.helpKo : field.helpEn;
-            const value = responsePayload[field.key] ?? '';
-            const setValue = (next: string) => onResponsePayloadChange(field.key, next);
-            if (field.type === 'SELECT') {
-              const labelId = `approval-amendment-${field.key}-label`;
-              return (
-                <FormControl key={field.key} fullWidth required={field.required}>
-                  <InputLabel id={labelId}>{label}</InputLabel>
-                  <Select
-                    id={`approval-amendment-${field.key}`}
-                    labelId={labelId}
-                    label={label}
-                    value={value}
-                    onChange={(event) => setValue(event.target.value)}
-                  >
-                    {(field.options ?? []).map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>{help || t('requests.template.fieldHelp.SELECT')}</FormHelperText>
-                </FormControl>
-              );
-            }
-            if (field.type === 'DATE') {
-              return (
-                <DatePickerField
-                  key={field.key}
-                  required={field.required}
-                  label={label}
-                  value={value || null}
-                  onValueChange={(next) => setValue(next ?? '')}
-                  supportingText={help}
-                />
-              );
-            }
-            return (
-              <FormField
-                key={field.key}
-                required={field.required}
-                multiline={field.type === 'TEXTAREA'}
-                minRows={field.type === 'TEXTAREA' ? 3 : undefined}
-                type={field.type === 'NUMBER' ? 'number' : 'text'}
-                label={label}
-                value={value}
-                onChange={(event) => setValue(event.target.value)}
-                supportingText={
-                  help ||
-                  (field.type === 'USER' ? t('requests.template.fieldHelp.USER') : undefined)
-                }
-              />
-            );
-          })}
-        </Box>
+      {evaluation.problemKey && (
+        <InlineFeedback severity="warning">{t(evaluation.problemKey)}</InlineFeedback>
       )}
+      {detailReady &&
+        (evaluation.compiled ? (
+          <ApprovalRequestTypedFields
+            compiled={evaluation.compiled}
+            evaluation={evaluation.draftEvaluation}
+            values={responsePayload}
+            korean={korean}
+            disabled={disabled}
+            verifyOnlyUserValues={verifyOnlyUserValues}
+            onChange={onResponsePayloadChange}
+            includeSummary
+            userBinding={userBinding}
+            onUserSourceReadyChange={onUserSourceReadyChange}
+          />
+        ) : (
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+              gap: 1.25,
+            }}
+          >
+            <ApprovalRequestDynamicFields
+              fields={responseFields}
+              values={evaluation.legacyValues}
+              korean={korean}
+              idPrefix="approval-amendment"
+              disabled={disabled}
+              onChange={onResponsePayloadChange}
+            />
+          </Box>
+        ))}
     </Stack>
   );
 }

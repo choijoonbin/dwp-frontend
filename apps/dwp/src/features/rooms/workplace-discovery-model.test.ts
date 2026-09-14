@@ -97,6 +97,13 @@ const bookability = {
 } as const;
 
 describe('workplace discovery model', () => {
+  it('blocks authorized period closures while preserving the resource global state', () => {
+    const desk = resource('closed-desk', 'Desk');
+    const context = { ...bookability, closures: [{ resourceId: desk.resourceId }] };
+    expect(desk.state).toBe('AVAILABLE');
+    expect(workplaceBookingBlockCode(desk, context)).toBe('UNAVAILABLE');
+    expect(workplaceBookingBlockCode(resource('open-desk', 'Open'), context)).toBeNull();
+  });
   it('normalizes untrusted URL values', () => {
     expect(workplaceDiscoveryType('ROOM')).toBe('ROOM');
     expect(workplaceDiscoveryType('UNKNOWN')).toBe('ALL');

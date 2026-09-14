@@ -42,6 +42,60 @@ describe('axiosInstance browser session contract', () => {
     vi.unstubAllGlobals();
   });
 
+  it('rejects a changed source before requesting CSRF without a transport failure', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const failure = new Error('source-changed');
+    await expect(
+      axiosInstance.put(
+        '/api/mutation',
+        {},
+        {
+          beforeDispatch: () => {
+            throw failure;
+          },
+        }
+      )
+    ).rejects.toBe(failure);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rechecks the source after asynchronous CSRF and sends no mutation when it changed', async () => {
+    const csrf = deferred<Response>();
+    const fetchMock = vi.fn().mockReturnValue(csrf.promise);
+    vi.stubGlobal('fetch', fetchMock);
+    let current = true;
+    const failure = new Error('source-changed-during-csrf');
+    const pending = axiosInstance.put(
+      '/api/mutation',
+      {},
+      {
+        beforeDispatch: () => {
+          if (!current) throw failure;
+        },
+      }
+    );
+    current = false;
+    csrf.resolve(jsonResponse(200, { data: { token: 'csrf', headerName: 'X-CSRF' } }));
+    await expect(pending).rejects.toBe(failure);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain('/api/auth/csrf');
+  });
+
+  it('keeps a valid source guard synchronous and dispatches normally', async () => {
+    const guard = vi.fn();
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(200, { data: { token: 'csrf', headerName: 'X-CSRF' } }))
+      .mockResolvedValueOnce(jsonResponse(200, { data: { version: 5 } }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(
+      axiosInstance.put('/api/mutation', {}, { beforeDispatch: guard })
+    ).resolves.toMatchObject({ data: { data: { version: 5 } } });
+    expect(guard).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it('keeps the authenticated session when an authorized route returns forbidden', async () => {
     const unauthorized = vi.fn();
     setUnauthorizedHandler(unauthorized);

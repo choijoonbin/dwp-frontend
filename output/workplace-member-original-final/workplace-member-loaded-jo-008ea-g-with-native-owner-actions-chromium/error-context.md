@@ -1,0 +1,183 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e13]: Workplace
+          - generic [ref=e14]:
+            - button [ref=e16] [cursor=pointer]:
+              - img [ref=e17]
+            - button [ref=e23] [cursor=pointer]:
+              - img [ref=e25]
+            - button [ref=e29] [cursor=pointer]:
+              - generic [ref=e30]: T
+              - img [ref=e31]
+            - button [ref=e35] [cursor=pointer]
+        - navigation [ref=e41]:
+          - link [ref=e43] [cursor=pointer]:
+            - /url: /workplace/admin/overview
+            - img [ref=e45]
+            - generic [ref=e48]: Manage
+      - main [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - text: My workplace
+              - heading [level=1] [ref=e53]: My space bookings
+              - paragraph [ref=e54]: Manage reservations, check-in, and release for desks, lockers, pods, and shared resources.
+            - link [ref=e56] [cursor=pointer]:
+              - /url: /workplace/explore
+              - text: Find a space
+          - generic [ref=e58]:
+            - tablist [ref=e61]:
+              - tab [selected] [ref=e62] [cursor=pointer]: Upcoming
+              - tab [ref=e63] [cursor=pointer]: Past
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - heading [level=2] [ref=e69]: Focus desk 12
+                  - generic [ref=e71]: Desk
+                  - generic [ref=e73]: Reserved
+                - generic [ref=e74]:
+                  - generic [ref=e75]:
+                    - img [ref=e76]
+                    - paragraph [ref=e79]: Aug 19, 2026, 9:30 AM - Aug 19, 2026, 10:30 AM
+                  - generic [ref=e80]:
+                    - img [ref=e81]
+                    - paragraph [ref=e84]: Pangyo HQ · 12F
+                - paragraph [ref=e85]: Loaded native owner journey
+                - generic [ref=e87]:
+                  - generic [ref=e88]:
+                    - generic [ref=e89]:
+                      - img [ref=e90]
+                      - generic [ref=e93]: Check-in window
+                    - generic [ref=e94]: 60 min until check-in closes
+                  - paragraph [ref=e95]: Aug 19, 2026, 8:30 AM – Aug 19, 2026, 10:00 AM
+                  - progressbar [ref=e96]
+                - button [ref=e98] [cursor=pointer]: View detail
+              - generic [ref=e99]:
+                - button [ref=e100] [cursor=pointer]:
+                  - img [ref=e102]
+                  - text: Check in
+                - button [ref=e105] [cursor=pointer]:
+                  - img [ref=e107]
+                  - text: Change reservation
+                - button [ref=e110] [cursor=pointer]:
+                  - img [ref=e112]
+                  - text: Cancel booking
+  - dialog "Change space or time" [ref=e118]:
+    - generic [ref=e119]:
+      - heading "Change space or time" [level=2] [ref=e120]
+      - generic [ref=e121]:
+        - paragraph [ref=e122]: Move this reservation to a same-type space that passes the initial checks, or adjust its time. The server verifies final eligibility when you save.
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - generic [ref=e126]: Current booking
+              - heading "Focus desk 12" [level=6] [ref=e127]
+              - generic [ref=e128]:
+                - img [ref=e129]
+                - paragraph [ref=e132]: Pangyo HQ · 12F
+              - paragraph [ref=e133]: Aug 19, 9:30 AM – Aug 19, 10:30 AM
+            - generic [ref=e134]:
+              - generic [ref=e135]: Requested change
+              - heading "Focus desk 12" [level=6] [ref=e136]
+              - generic [ref=e137]:
+                - img [ref=e138]
+                - paragraph [ref=e141]: Pangyo HQ · 12F · Focus zone
+              - paragraph [ref=e142]: Aug 19, 9:30 AM – Aug 19, 10:30 AM
+          - button "Refresh target options" [ref=e144] [cursor=pointer]
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - generic [ref=e147]: Site
+              - generic [ref=e148]:
+                - combobox "Site Pangyo HQ" [ref=e149] [cursor=pointer]: Pangyo HQ
+                - textbox: 10000000-0000-0000-0000-000000000001
+                - img
+                - group:
+                  - generic: Site
+            - generic [ref=e150]:
+              - generic [ref=e151]: Floor
+              - generic [ref=e152]:
+                - combobox "Floor 12F" [ref=e153] [cursor=pointer]: 12F
+                - textbox: 20000000-0000-0000-0000-000000000012
+                - img
+                - group:
+                  - generic: Floor
+            - generic [ref=e154]:
+              - generic [ref=e155]: Space passing initial checks
+              - generic [ref=e156]:
+                - combobox "Space passing initial checks Focus desk 12 · Focus zone" [ref=e157] [cursor=pointer]: Focus desk 12 · Focus zone
+                - textbox: 30000000-0000-0000-0000-000000000012
+                - img
+                - group:
+                  - generic: Space passing initial checks
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - text: Start
+                - generic [ref=e161]: "*"
+              - group "Start" [ref=e162]:
+                - generic [ref=e163]:
+                  - generic [ref=e164]:
+                    - spinbutton "Month" [ref=e165]: "08"
+                    - text: /
+                  - generic [ref=e166]:
+                    - spinbutton "Day" [ref=e167]: "19"
+                    - text: /
+                  - spinbutton "Year" [ref=e169]: "2026"
+                  - generic [ref=e170]:
+                    - spinbutton "Hours" [ref=e171]: "09"
+                    - text: ":"
+                  - spinbutton "Minutes" [ref=e173]: "30"
+                  - spinbutton "Meridiem" [ref=e175]: AM
+                - button "Choose date, selected date is Aug 19, 2026" [ref=e177] [cursor=pointer]:
+                  - img [ref=e178]
+                - group:
+                  - generic: Start *
+                - textbox [ref=e180]: 08/19/2026 09:30 AM
+              - paragraph [ref=e181]: Asia/Seoul
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - text: End
+                - generic [ref=e184]: "*"
+              - group "End" [ref=e185]:
+                - generic [ref=e186]:
+                  - generic [ref=e187]:
+                    - spinbutton "Month" [ref=e188]: "08"
+                    - text: /
+                  - generic [ref=e189]:
+                    - spinbutton "Day" [ref=e190]: "19"
+                    - text: /
+                  - spinbutton "Year" [ref=e192]: "2026"
+                  - generic [ref=e193]:
+                    - spinbutton "Hours" [ref=e194]: "10"
+                    - text: ":"
+                  - spinbutton "Minutes" [ref=e196]: "30"
+                  - spinbutton "Meridiem" [ref=e198]: AM
+                - button "Choose date, selected date is Aug 19, 2026" [ref=e200] [cursor=pointer]:
+                  - img [ref=e201]
+                - group:
+                  - generic: End *
+                - textbox [ref=e203]: 08/19/2026 10:30 AM
+          - generic [ref=e204]:
+            - generic:
+              - text: Reason for change
+              - generic: "*"
+            - generic [ref=e205]:
+              - textbox "Reason for change" [ref=e206]
+              - group:
+                - generic: Reason for change *
+            - paragraph [ref=e207]: Change the space or reservation time before saving.
+      - generic [ref=e209]:
+        - button "Cancel" [ref=e210] [cursor=pointer]
+        - button "Save reservation change" [disabled]
+```

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Ban, CircleStop, Clock3, ShieldAlert, Siren } from 'lucide-react';
+import { Ban, CircleStop, Clock3, RotateCcw, ShieldAlert, Siren } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createNotificationIdempotencyKey,
@@ -27,6 +27,7 @@ import {
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -41,6 +42,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import { notificationQueryKeys } from './integration-contract';
 
@@ -225,7 +227,7 @@ export function NotificationSuppressionStudio() {
     editor.reason.trim().length < 10;
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1.5}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
@@ -260,6 +262,12 @@ export function NotificationSuppressionStudio() {
       </Alert>
       <OperationalKpiStrip
         ariaLabel={t('admin.suppressions.metricsLabel')}
+        sx={{
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          '& > div': { borderTopWidth: 0 },
+          '& > div:not(:first-of-type)': { borderLeftWidth: 1 },
+          '& > div > div': { px: { xs: 1, md: 2 }, py: 1.25 },
+        }}
         items={[
           {
             key: 'active',
@@ -294,8 +302,15 @@ export function NotificationSuppressionStudio() {
           <Stack
             component="ul"
             aria-label={t('admin.suppressions.tableLabel')}
-            gap={1}
-            sx={{ display: { xs: 'flex', md: 'none' }, p: 0, m: 0, listStyle: 'none' }}
+            gap={1.5}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+              alignItems: 'start',
+              p: 0,
+              m: 0,
+              listStyle: 'none',
+            }}
           >
             {items.map((item) => {
               const state = stateOf(item);
@@ -305,13 +320,28 @@ export function NotificationSuppressionStudio() {
                   key={item.suppressionId}
                   data-testid={`notification-suppression-mobile-${item.suppressionId}`}
                   sx={{
-                    p: 1.5,
+                    p: 2,
+                    minWidth: 0,
                     border: 1,
                     borderColor: 'divider',
-                    borderRadius: 'shape.borderRadius',
+                    borderTop: 3,
+                    borderTopColor:
+                      state === 'ACTIVE'
+                        ? 'warning.main'
+                        : state === 'SCHEDULED'
+                          ? 'info.main'
+                          : 'divider',
+                    borderRadius: foundationTokens.radius.control + 'px',
+                    bgcolor: 'background.paper',
                   }}
                 >
-                  <Stack direction="row" justifyContent="space-between" gap={1} alignItems="start">
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    gap={1}
+                    alignItems="start"
+                    flexWrap="wrap"
+                  >
                     <Box minWidth={0}>
                       <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
                         {item.scopeKey}
@@ -330,7 +360,32 @@ export function NotificationSuppressionStudio() {
                       label={t(`admin.suppressions.state.${state}`)}
                     />
                   </Stack>
-                  <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                  <Typography
+                    component="code"
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mt: 0.75, overflowWrap: 'anywhere' }}
+                  >
+                    {`${item.suppressionId} · v${item.version}`}
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    gap={0.75}
+                    flexWrap="wrap"
+                    sx={{
+                      mt: 1.25,
+                      p: 1,
+                      bgcolor: (theme) =>
+                        alpha(
+                          item.criticalBypass
+                            ? theme.palette.success.main
+                            : theme.palette.error.main,
+                          0.04
+                        ),
+                      borderLeft: 3,
+                      borderColor: item.criticalBypass ? 'success.main' : 'error.main',
+                    }}
+                  >
                     <Chip
                       size="small"
                       variant="outlined"
@@ -342,7 +397,7 @@ export function NotificationSuppressionStudio() {
                       }
                     />
                   </Stack>
-                  <Typography variant="body2" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
+                  <Typography variant="body2" sx={{ mt: 1.25, overflowWrap: 'anywhere' }}>
                     {item.reason}
                   </Typography>
                   <Typography
@@ -351,6 +406,7 @@ export function NotificationSuppressionStudio() {
                     display="block"
                     sx={{ mt: 1 }}
                   >
+                    {t('admin.suppressions.columns.window')}:{' '}
                     {formatDate(item.startsAt ?? item.createdAt, {
                       dateStyle: 'medium',
                       timeStyle: 'short',
@@ -361,6 +417,7 @@ export function NotificationSuppressionStudio() {
                     <ActionButton
                       intent="danger"
                       size="small"
+                      startIcon={<RotateCcw size={16} />}
                       onClick={() => setRevokeTarget(item)}
                       sx={{ mt: 1.25, width: 1 }}
                     >
@@ -372,100 +429,127 @@ export function NotificationSuppressionStudio() {
             })}
           </Stack>
           <Box
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              overflowX: 'auto',
-              borderTop: 1,
-              borderBottom: 1,
-              borderColor: 'divider',
-            }}
+            component="details"
+            sx={{ display: { xs: 'none', md: 'block' }, borderBlock: 1, borderColor: 'divider' }}
           >
-            <Table
-              size="small"
-              aria-label={t('admin.suppressions.tableLabel')}
-              sx={{ minWidth: 980 }}
+            <Box
+              component="summary"
+              sx={{
+                py: 1.25,
+                px: 1.5,
+                cursor: 'pointer',
+                typography: 'subtitle2',
+                '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' },
+              }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('admin.suppressions.columns.scope')}</TableCell>
-                  <TableCell>{t('admin.suppressions.columns.channel')}</TableCell>
-                  <TableCell>{t('admin.suppressions.columns.window')}</TableCell>
-                  <TableCell>{t('admin.suppressions.columns.critical')}</TableCell>
-                  <TableCell>{t('admin.suppressions.columns.reason')}</TableCell>
-                  <TableCell>{t('admin.suppressions.columns.state')}</TableCell>
-                  <TableCell align="right">{t('admin.suppressions.columns.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {items.map((item) => {
-                  const state = stateOf(item);
-                  return (
-                    <TableRow key={item.suppressionId}>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight={700}>
-                          {item.scopeKey}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {t(`admin.suppressions.scope.${item.scopeType}`)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        {item.channel === 'ALL'
-                          ? t('admin.suppressions.allChannels')
-                          : t(`channels.${item.channel}`)}
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="caption" display="block">
-                          {formatDate(item.startsAt ?? item.createdAt, {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDate(item.expiresAt, { dateStyle: 'medium', timeStyle: 'short' })}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          variant="outlined"
-                          color={item.criticalBypass ? 'success' : 'error'}
-                          label={
-                            item.criticalBypass
-                              ? t('admin.suppressions.criticalBypass')
-                              : t('admin.suppressions.criticalBlocked')
-                          }
-                        />
-                      </TableCell>
-                      <TableCell sx={{ maxWidth: 280 }}>
-                        <Typography variant="body2" noWrap title={item.reason}>
-                          {item.reason}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          variant="outlined"
-                          color={stateColor(state)}
-                          label={t(`admin.suppressions.state.${state}`)}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {canManage && ['ACTIVE', 'SCHEDULED'].includes(state) && (
-                          <ActionButton
-                            intent="danger"
+              {t('admin.suppressions.tableLabel')}
+            </Box>
+            <Box
+              tabIndex={0}
+              aria-label={t('admin.suppressions.tableLabel')}
+              sx={{
+                overflowX: 'auto',
+                borderTop: 1,
+                borderBottom: 1,
+                borderColor: 'divider',
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: -2,
+                },
+              }}
+            >
+              <Table
+                size="small"
+                aria-label={t('admin.suppressions.tableLabel')}
+                sx={{ minWidth: 980 }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t('admin.suppressions.columns.scope')}</TableCell>
+                    <TableCell>{t('admin.suppressions.columns.channel')}</TableCell>
+                    <TableCell>{t('admin.suppressions.columns.window')}</TableCell>
+                    <TableCell>{t('admin.suppressions.columns.critical')}</TableCell>
+                    <TableCell>{t('admin.suppressions.columns.reason')}</TableCell>
+                    <TableCell>{t('admin.suppressions.columns.state')}</TableCell>
+                    <TableCell align="right">{t('admin.suppressions.columns.actions')}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {items.map((item) => {
+                    const state = stateOf(item);
+                    return (
+                      <TableRow key={item.suppressionId}>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={700}>
+                            {item.scopeKey}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {t(`admin.suppressions.scope.${item.scopeType}`)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {item.channel === 'ALL'
+                            ? t('admin.suppressions.allChannels')
+                            : t(`channels.${item.channel}`)}
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="caption" display="block">
+                            {formatDate(item.startsAt ?? item.createdAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatDate(item.expiresAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
                             size="small"
-                            onClick={() => setRevokeTarget(item)}
-                          >
-                            {t('admin.suppressions.revoke')}
-                          </ActionButton>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                            variant="outlined"
+                            color={item.criticalBypass ? 'success' : 'error'}
+                            label={
+                              item.criticalBypass
+                                ? t('admin.suppressions.criticalBypass')
+                                : t('admin.suppressions.criticalBlocked')
+                            }
+                          />
+                        </TableCell>
+                        <TableCell sx={{ maxWidth: 280 }}>
+                          <Typography variant="body2" noWrap title={item.reason}>
+                            {item.reason}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            color={stateColor(state)}
+                            label={t(`admin.suppressions.state.${state}`)}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          {canManage && ['ACTIVE', 'SCHEDULED'].includes(state) && (
+                            <ActionButton
+                              intent="danger"
+                              size="small"
+                              startIcon={<RotateCcw size={16} />}
+                              onClick={() => setRevokeTarget(item)}
+                            >
+                              {t('admin.suppressions.revoke')}
+                            </ActionButton>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Box>
           </Box>
         </>
       )}

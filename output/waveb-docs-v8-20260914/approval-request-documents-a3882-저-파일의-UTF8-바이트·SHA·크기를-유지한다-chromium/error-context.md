@@ -1,0 +1,307 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: 결재 업무
+            - paragraph [ref=e26]: SKAX
+          - navigation [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: 시작
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link [ref=e32] [cursor=pointer]:
+                    - /url: /approvals/home
+                    - img [ref=e34]
+                    - paragraph [ref=e38]: 전자결재 홈
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: 내 결재
+              - list [ref=e41]:
+                - listitem [ref=e42]:
+                  - link [ref=e43] [cursor=pointer]:
+                    - /url: /approvals/inbox
+                    - img [ref=e45]
+                    - paragraph [ref=e50]: 결재함
+                - listitem [ref=e51]:
+                  - link [ref=e52] [cursor=pointer]:
+                    - /url: /approvals/completed
+                    - img [ref=e54]
+                    - paragraph [ref=e58]: 내 처리 완료함
+                - listitem [ref=e59]:
+                  - link [ref=e60] [cursor=pointer]:
+                    - /url: /approvals/requests/new
+                    - img [ref=e62]
+                    - paragraph [ref=e67]: 새 결재 작성
+                - listitem [ref=e68]:
+                  - link [ref=e69] [cursor=pointer]:
+                    - /url: /approvals/requests/drafts
+                    - img [ref=e71]
+                    - paragraph [ref=e76]: 임시 저장
+                - listitem [ref=e77]:
+                  - link [ref=e78] [cursor=pointer]:
+                    - /url: /approvals/requests/submitted
+                    - img [ref=e80]
+                    - paragraph [ref=e84]: 내가 올린 결재
+                - listitem [ref=e85]:
+                  - link [ref=e86] [cursor=pointer]:
+                    - /url: /approvals/requests/needs-info
+                    - img [ref=e88]
+                    - paragraph [ref=e92]: 보완할 결재
+                - listitem [ref=e93]:
+                  - link [ref=e94] [cursor=pointer]:
+                    - /url: /approvals/requests/archive
+                    - img [ref=e96]
+                    - paragraph [ref=e100]: 완료 보관함
+                - listitem [ref=e101]:
+                  - link [ref=e102] [cursor=pointer]:
+                    - /url: /approvals/delegations
+                    - img [ref=e104]
+                    - paragraph [ref=e108]: 결재 위임
+          - link [ref=e110] [cursor=pointer]:
+            - /url: /apps
+            - img [ref=e112]
+            - text: 앱 목록으로 돌아가기
+      - banner [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - img [ref=e118]
+            - generic [ref=e123]: 전자결재
+          - generic [ref=e124]:
+            - button [ref=e126] [cursor=pointer]:
+              - img [ref=e127]
+            - button [ref=e131] [cursor=pointer]:
+              - img [ref=e132]
+            - button [ref=e138] [cursor=pointer]:
+              - generic [ref=e139]: 원
+              - img [ref=e140]
+      - main [ref=e142]:
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - img [ref=e147]
+              - generic [ref=e150]:
+                - text: 전자결재 / 내 요청
+                - heading [level=1] [ref=e151]: 완료 보관함
+                - paragraph [ref=e152]: 완료·반려·회수된 결재 기록과 증적을 조회합니다.
+            - generic [ref=e153]:
+              - img [ref=e154]
+              - generic [ref=e158]: 결정 증적 보존
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - generic [ref=e162]:
+                - heading [level=2] [ref=e163]: 완료 보관함
+                - text: 완료 기록 2건
+              - generic [ref=e164]:
+                - generic [ref=e166]: "2"
+                - button [ref=e167] [cursor=pointer]:
+                  - img [ref=e169]
+                  - text: 보관 문서 일괄 JSON 내보내기
+            - generic [ref=e172]:
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - generic: 결재 번호·제목·요약 검색
+                  - generic [ref=e175]:
+                    - textbox [ref=e176]
+                    - group:
+                      - generic: 결재 번호·제목·요약 검색
+                - generic [ref=e177]:
+                  - generic: 요청 상태
+                  - generic [ref=e178]:
+                    - combobox [ref=e179] [cursor=pointer]
+                    - textbox
+                    - img
+                    - group:
+                      - generic: 요청 상태
+                - generic [ref=e180]:
+                  - generic: 우선순위
+                  - generic [ref=e181]:
+                    - combobox [ref=e182] [cursor=pointer]
+                    - textbox
+                    - img
+                    - group:
+                      - generic: 우선순위
+                - generic [ref=e183]:
+                  - generic [ref=e184]: 정렬
+                  - generic [ref=e185]:
+                    - combobox [ref=e186] [cursor=pointer]: 최신순
+                    - textbox: NEWEST
+                    - img
+                    - group:
+                      - generic: 정렬
+              - generic [ref=e187]:
+                - generic [ref=e188]: 26. 9. 14. 오후 12:43 기준
+                - generic [ref=e189]:
+                  - generic [ref=e190]:
+                    - button [disabled]:
+                      - img
+                  - generic [ref=e191]: 1/1 페이지
+                  - generic [ref=e192]:
+                    - button [disabled]:
+                      - img
+                  - generic [ref=e193]:
+                    - button [disabled]:
+                      - img
+            - generic [ref=e194]:
+              - list [ref=e196]:
+                - listitem [ref=e197]:
+                  - button [ref=e198] [cursor=pointer]:
+                    - generic [ref=e199]:
+                      - generic [ref=e200]:
+                        - generic [ref=e201]:
+                          - text: APR-DOC-001
+                          - paragraph [ref=e202]: Customer data access exception
+                        - generic [ref=e205]: 승인
+                      - generic [ref=e206]: Temporary access for a governed production investigation.
+                      - generic [ref=e207]:
+                        - generic [ref=e210]: 높음
+                        - generic [ref=e212]: 데이터 접근 예외
+                        - generic [ref=e213]: 2026. 8. 11.
+                      - generic [ref=e214]:
+                        - generic [ref=e215]:
+                          - generic [ref=e216]: 2/3 · Security review
+                          - generic [ref=e217]: 100%
+                        - progressbar [ref=e218]
+                  - button [ref=e222] [cursor=pointer]:
+                    - img [ref=e223]
+                - listitem [ref=e226]:
+                  - button [ref=e227] [cursor=pointer]:
+                    - generic [ref=e228]:
+                      - generic [ref=e229]:
+                        - generic [ref=e230]:
+                          - text: APR-DOC-002
+                          - paragraph [ref=e231]: Customer data access exception
+                        - generic [ref=e234]: 승인
+                      - generic [ref=e235]: Temporary access for a governed production investigation.
+                      - generic [ref=e236]:
+                        - generic [ref=e239]: 높음
+                        - generic [ref=e241]: 데이터 접근 예외
+                        - generic [ref=e242]: 2026. 8. 11.
+                      - generic [ref=e243]:
+                        - generic [ref=e244]:
+                          - generic [ref=e245]: 2/3 · Security review
+                          - generic [ref=e246]: 100%
+                        - progressbar [ref=e247]
+                  - button [ref=e251] [cursor=pointer]:
+                    - img [ref=e252]
+              - generic [ref=e257]:
+                - generic [ref=e258]:
+                  - generic [ref=e259]:
+                    - heading [level=2] [ref=e260]: Customer data access exception
+                    - text: APR-DOC-001
+                  - generic [ref=e262]: 승인
+                - separator [ref=e263]
+                - generic [ref=e264]:
+                  - generic [ref=e265]:
+                    - generic [ref=e266]:
+                      - generic [ref=e268]: 높음
+                      - generic [ref=e269]: CONFIDENTIAL
+                    - paragraph [ref=e270]: Temporary access for a governed production investigation.
+                  - separator [ref=e271]
+                  - generic [ref=e272]:
+                    - generic [ref=e273]:
+                      - text: 프로세스
+                      - paragraph [ref=e274]: 데이터 접근 예외
+                    - generic [ref=e275]:
+                      - text: 기한
+                      - paragraph [ref=e276]: 2026. 8. 11. 오후 5:00
+                    - generic [ref=e277]:
+                      - generic [ref=e278]:
+                        - generic [ref=e279]: 2/3 · Security review
+                        - generic [ref=e280]: 100%
+                      - progressbar [ref=e281]
+                  - separator [ref=e283]
+                  - button [ref=e285] [cursor=pointer]:
+                    - img [ref=e287]
+                    - text: 결재 상세 열기
+  - dialog "Customer data access exception" [active] [ref=e291]:
+    - generic [ref=e292]:
+      - generic [ref=e293]:
+        - generic [ref=e294]:
+          - text: 결재 추적
+          - heading "Customer data access exception" [level=2] [ref=e295]
+          - generic [ref=e297]:
+            - generic [ref=e299]: 승인
+            - generic [ref=e300]: APR-DOC-001
+        - generic "닫기" [ref=e301]:
+          - button "닫기" [ref=e302] [cursor=pointer]:
+            - img [ref=e303]
+      - generic [ref=e306]:
+        - generic [ref=e307]:
+          - heading "요청 맥락" [level=2] [ref=e310]
+          - generic [ref=e311]:
+            - generic [ref=e312]:
+              - text: 요청 내용
+              - paragraph [ref=e313]: Temporary access for a governed production investigation.
+            - separator [ref=e314]
+            - generic [ref=e315]:
+              - text: 프로세스
+              - paragraph [ref=e316]: 데이터 접근 예외
+        - generic [ref=e317]:
+          - heading "고정된 요청 데이터" [level=2] [ref=e320]
+          - generic [ref=e321]:
+            - generic [ref=e322]:
+              - term [ref=e323]: 업무 사유
+              - definition [ref=e324]: Restore a customer-facing integration within the approved support window.
+            - generic [ref=e325]:
+              - term [ref=e326]: 만료일
+              - definition [ref=e327]: 2026-08-12
+            - generic [ref=e328]:
+              - term [ref=e329]: 데이터 범위
+              - definition [ref=e330]: Tenant-scoped diagnostic events
+        - generic [ref=e331]:
+          - generic [ref=e333]:
+            - heading "처리 타임라인" [level=2] [ref=e334]
+            - text: 증적 1건
+          - generic [ref=e336]:
+            - paragraph [ref=e337]: 결재 상신
+            - generic [ref=e338]: 사용자 · 결재가 상신되었습니다. · 2026. 8. 11. 오전 8:30
+      - generic [ref=e340]:
+        - generic [ref=e341]:
+          - heading "문서 도구" [level=2] [ref=e343]
+          - generic "새로고침" [ref=e344]:
+            - button "새로고침" [ref=e345] [cursor=pointer]:
+              - img [ref=e346]
+        - generic [ref=e351]:
+          - generic [ref=e352]:
+            - button "문서 인쇄" [ref=e353] [cursor=pointer]:
+              - img [ref=e355]
+              - text: 문서 인쇄
+            - button "JSON 다운로드" [ref=e359] [cursor=pointer]:
+              - img [ref=e361]
+              - text: JSON 다운로드
+          - separator [ref=e364]
+          - heading "댓글" [level=3] [ref=e365]
+          - paragraph [ref=e366]: 등록된 댓글이 없습니다
+          - generic [ref=e367]:
+            - generic: 댓글 내용
+            - generic [ref=e368]:
+              - textbox "댓글 내용" [ref=e369]
+              - group:
+                - generic: 댓글 내용
+          - button "댓글 등록" [disabled]:
+            - generic:
+              - img
+            - text: 댓글 등록
+          - status [ref=e370]:
+            - img [ref=e372]
+            - generic [ref=e375]: 문서를 생성했습니다
+            - button "JSON 다운로드" [ref=e377] [cursor=pointer]:
+              - img [ref=e379]
+              - text: JSON 다운로드
+```

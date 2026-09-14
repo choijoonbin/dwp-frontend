@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accessibility, Building2, Layers3, MapPinned } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Temporal } from 'temporal-polyfill';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
@@ -13,9 +13,8 @@ import {
   mergeFilterSearchParams,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
@@ -25,7 +24,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { RoomBookingDialog } from './room-booking-dialog';
 import { useRoomsCapabilities } from './rooms-capabilities';
-import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
+import { RoomsPermissionNotice } from './rooms-ui';
 import { WorkplaceBookingDialog } from './workplace-booking-dialog';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import {
@@ -46,6 +45,7 @@ import {
   workplaceResourceAvailability,
 } from './workplace-floor-plan';
 import { WorkplaceResourceInspector } from './workplace-resource-inspector';
+import { workplaceMemberCard } from './workplace-member-surfaces';
 import {
   workplaceDateBounds,
   workplaceDefaultSelection,
@@ -93,8 +93,11 @@ function initialSiteTimeZone(value: string | null) {
   return resolveSystemTimeZone('UTC');
 }
 
-export function WorkplaceExplore() {
+export function WorkplaceExplore({
+  defaultView = 'list',
+}: { defaultView?: WorkplaceDiscoveryView } = {}) {
   const { t } = useTranslation('rooms');
+  const navigate = useNavigate();
   const auth = useAuth();
   const capabilities = useRoomsCapabilities();
   const toast = useToast();
@@ -114,7 +117,6 @@ export function WorkplaceExplore() {
   const explicitDateRef = useRef(searchParams.has('date'));
   const explicitTimeRef = useRef(searchParams.has('time'));
   const defaultedTimeZoneRef = useRef<string | null>(null);
-  const pendingDefaultTimeRef = useRef<string | null>(null);
   const searchParamsRef = useRef(searchParams);
   searchParamsRef.current = searchParams;
 
@@ -138,7 +140,12 @@ export function WorkplaceExplore() {
   const neighborhood = searchParams.get('neighborhood') ?? '';
   const accessibleOnly = searchParams.get('accessible') === 'true';
   const sort = workplaceDiscoverySort(searchParams.get('sort'));
-  const view: WorkplaceDiscoveryView = searchParams.get('view') === 'map' ? 'map' : 'list';
+  const view: WorkplaceDiscoveryView =
+    searchParams.get('view') === 'map'
+      ? 'map'
+      : searchParams.get('view') === 'list'
+        ? 'list'
+        : defaultView;
   const inspectedResourceId = searchParams.get('resource');
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
 
@@ -234,13 +241,6 @@ export function WorkplaceExplore() {
     const shouldSyncLocation =
       requestedFloorId !== selectedFloor.floorId || requestedSiteId !== selectedSite.siteId;
     const shouldDefaultTimeZone = defaultedTimeZoneRef.current !== selectedSite.timeZone;
-    if (
-      !shouldDefaultTimeZone &&
-      pendingDefaultTimeRef.current &&
-      time !== pendingDefaultTimeRef.current
-    ) {
-      return;
-    }
     if (!shouldSyncLocation && !shouldDefaultTimeZone) return;
 
     const selection = workplaceDefaultSelection(selectedSite.timeZone, policy, data.generatedAt);
@@ -249,7 +249,6 @@ export function WorkplaceExplore() {
     const nextTime = hasExplicitTime ? time : selection.time;
     if (shouldDefaultTimeZone) {
       defaultedTimeZoneRef.current = selectedSite.timeZone;
-      if (!hasExplicitTime) pendingDefaultTimeRef.current = nextTime;
       explicitDateRef.current = true;
       explicitTimeRef.current = true;
     }
@@ -313,24 +312,7 @@ export function WorkplaceExplore() {
     : { minDate: null, maxDate: null };
 
   useEffect(() => {
-    if (!policy) return;
-    if (pendingDefaultTimeRef.current) {
-      if (time !== pendingDefaultTimeRef.current) return;
-      pendingDefaultTimeRef.current = null;
-    }
-    const nextTime = selectableTimes.some((option) => option.value === time)
-      ? time
-      : selectableTimes[0]?.value;
-    const nextDuration = selectableDurations.includes(duration)
-      ? duration
-      : (selectableDurations[0] ?? policy.minimumBookingMinutes);
-    if ((nextTime && nextTime !== time) || nextDuration !== duration) {
-      updateParams({ time: nextTime ?? time, duration: nextDuration });
-    }
-  }, [duration, policy, selectableDurations, selectableTimes, time, updateParams]);
-
-  useEffect(() => {
-    if (selectedFloor && !mapAvailable && view === 'map') updateParams({ view: null });
+    if (selectedFloor && !mapAvailable && view === 'map') updateParams({ view: 'list' });
   }, [mapAvailable, selectedFloor, updateParams, view]);
 
   const features = useMemo(
@@ -363,6 +345,7 @@ export function WorkplaceExplore() {
       canCreateRoomBooking: capabilities.canCreateRoomBooking,
       canCreateWorkplaceBooking: capabilities.canCreateWorkplaceBooking,
       occupancy: data?.occupancy ?? [],
+      closures: data?.closures ?? [],
       rangeFrom: selectedRange?.from ?? null,
       rangeTo: selectedRange?.to ?? null,
       roomPolicy,
@@ -380,6 +363,7 @@ export function WorkplaceExplore() {
       capabilities.canCreateWorkplaceBooking,
       data?.generatedAt,
       data?.occupancy,
+      data?.closures,
       exploreSourceState,
       query.isPlaceholderData,
       roomPolicy,
@@ -424,7 +408,7 @@ export function WorkplaceExplore() {
     ? filtered.findIndex((resource) => resource.resourceId === inspected.resourceId)
     : -1;
   const inspectedStatus = inspected
-    ? workplaceResourceAvailability(inspected, data?.occupancy ?? [])
+    ? workplaceResourceAvailability(inspected, data?.occupancy ?? [], data?.closures)
     : null;
   const inspectedBlockCode = inspected ? workplaceBookingBlockCode(inspected, bookability) : null;
 
@@ -592,31 +576,6 @@ export function WorkplaceExplore() {
 
   return (
     <PageCanvas>
-      <RoomsPageHeading
-        eyebrow={t('workplace.explore.eyebrow')}
-        title={t('workplace.explore.title')}
-        description={t('workplace.explore.description')}
-        actions={
-          selectedSite && selectedFloor ? (
-            <Stack direction="row" gap={1} useFlexGap flexWrap="wrap">
-              <Chip
-                icon={<Building2 size={15} />}
-                label={t('workplace.explore.selectedScope', {
-                  site: selectedSite?.name ?? '',
-                  floor: selectedFloor?.name ?? '',
-                })}
-                variant="outlined"
-              />
-              <Chip
-                color="success"
-                label={t('workplace.explore.availableCount', { count: bookableCount })}
-                variant="outlined"
-              />
-            </Stack>
-          ) : undefined
-        }
-      />
-
       {capabilities.isLoaded &&
         !capabilities.canCreateWorkplaceBooking &&
         !capabilities.canCreateRoomBooking && (
@@ -625,7 +584,7 @@ export function WorkplaceExplore() {
       {(roomPolicySourceState === 'STALE' ||
         roomPolicySourceState === 'DENIED' ||
         roomPolicySourceState === 'UNAVAILABLE') && (
-        <Alert
+        <InlineFeedback
           severity={roomPolicySourceState === 'STALE' ? 'warning' : 'error'}
           action={
             <ActionButton intent="quiet" onClick={() => roomPolicyQuery.refetch()}>
@@ -639,18 +598,25 @@ export function WorkplaceExplore() {
               ? 'find.policyStale'
               : 'workplace.explore.roomPolicyUnavailable'
           )}
-        </Alert>
+        </InlineFeedback>
       )}
 
       <Box
         sx={{
-          border: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+          ...workplaceMemberCard(theme),
           px: { xs: 1.25, md: 2 },
         }}
       >
         <WorkplaceDiscoveryControls
+          scopeLabel={
+            selectedSite && selectedFloor
+              ? t('workplace.explore.selectedScope', {
+                  site: selectedSite.name,
+                  floor: selectedFloor.name,
+                })
+              : t('workplace.explore.title')
+          }
+          bookableCount={bookableCount}
           search={search}
           onSearchChange={(value) => updateParams({ q: value, resource: null })}
           date={date}
@@ -690,209 +656,260 @@ export function WorkplaceExplore() {
           totalCount={data?.resources.length ?? 0}
           view={view}
           mapAvailable={mapAvailable}
-          onViewChange={(value) => updateParams({ view: value === 'list' ? null : value })}
+          onViewChange={(value) => updateParams({ view: value === defaultView ? null : value })}
           onReset={resetFilters}
         />
       </Box>
 
       <Box
-        component="section"
-        aria-labelledby="workplace-discovery-results"
         sx={{
+          display: 'grid',
+          gridTemplateColumns:
+            wide && inspected ? 'minmax(0, 1.55fr) minmax(320px, .9fr)' : 'minmax(0, 1fr)',
+          gap: wide && inspected ? 2 : 0,
+          alignItems: 'start',
           mt: 2,
-          border: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-          p: { xs: 1.25, md: 2 },
+          '& > aside': workplaceMemberCard(theme),
         }}
       >
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          justifyContent="space-between"
-          gap={1.25}
-          sx={{ mb: 1.5 }}
+        <Box
+          component="section"
+          aria-labelledby="workplace-discovery-results"
+          sx={{
+            ...workplaceMemberCard(theme),
+            p: { xs: 1.25, md: 2 },
+          }}
         >
-          <Stack direction="row" gap={1} alignItems="center">
-            <Layers3 size={19} color="var(--dwp-product-accent)" />
-            <Box>
-              <Typography id="workplace-discovery-results" component="h2" variant="h6">
-                {selectedSite?.name ?? t('workplace.explore.resultsTitle')}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {selectedFloor
-                  ? t('workplace.explore.floorSummary', {
-                      floor: selectedFloor.name,
-                      count: filtered.length,
-                    })
-                  : t('workplace.explore.floorRequired')}
-              </Typography>
-            </Box>
-          </Stack>
-          {data && (
-            <WorkplaceMapLegend labels={statusLabels} ariaLabel={t('workplace.explore.legend')} />
-          )}
-        </Stack>
-
-        {query.isLoading && !data && <Skeleton variant="rectangular" height={460} />}
-        {(exploreSourceState === 'STALE' ||
-          exploreSourceState === 'DENIED' ||
-          exploreSourceState === 'UNAVAILABLE') && (
-          <Alert
-            severity={exploreSourceState === 'STALE' ? 'warning' : 'error'}
-            action={
-              <ActionButton intent="secondary" onClick={() => query.refetch()}>
-                {t('actions.retry')}
-              </ActionButton>
-            }
-            sx={{ mb: exploreSourceState === 'STALE' ? 2 : 0 }}
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            justifyContent="space-between"
+            gap={1.25}
+            useFlexGap
+            flexWrap="wrap"
+            sx={{ mb: 1.5 }}
           >
-            {t(
-              exploreSourceState === 'STALE'
-                ? 'workplace.staleWarning'
-                : 'workplace.explore.loadError'
-            )}
-          </Alert>
-        )}
-        {hasUsableData && !hasSites && (
-          <EmptyState
-            icon={<Building2 size={24} />}
-            title={t('workplace.explore.noSitesTitle')}
-            description={t('workplace.explore.noSitesDescription')}
-          />
-        )}
-        {hasUsableData && hasSites && !hasFloors && (
-          <EmptyState
-            icon={<Layers3 size={24} />}
-            title={t('workplace.explore.noFloorsTitle')}
-            description={t('workplace.explore.noFloorsDescription')}
-          />
-        )}
-        {hasUsableData && hasFloors && !mapAvailable && (
-          <Alert icon={<MapPinned size={19} />} severity="info" sx={{ mb: 2 }}>
-            <Typography variant="subtitle2">
-              {t('workplace.explore.floorPlanMissingTitle')}
-            </Typography>
-            <Typography variant="body2">
-              {t('workplace.explore.floorPlanMissingDescription')}
-            </Typography>
-          </Alert>
-        )}
-        {hasUsableData && hasFloors && filtered.length === 0 && (
-          <EmptyState
-            icon={<Accessibility size={22} />}
-            title={t('workplace.explore.emptyTitle')}
-            description={t('workplace.explore.emptyDescription')}
-          />
-        )}
-        {hasUsableData && hasFloors && filtered.length > 0 && view === 'list' && (
-          <WorkplaceResourceList
-            resources={filtered}
-            occupancy={data?.occupancy ?? []}
-            onSelect={inspectResource}
-            statusLabels={statusLabels}
-            bookingEligibility={bookingEligibility}
-            bookingEligibilityLabels={bookingEligibilityLabels}
-            typeLabels={typeLabels}
-            selectedResourceId={inspected?.resourceId}
-          />
-        )}
-        {hasUsableData && hasFloors && filtered.length > 0 && view === 'map' && mapAvailable && (
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: wide ? 'minmax(280px, 0.38fr) minmax(0, 0.62fr)' : '1fr',
-              gap: 2,
-              alignItems: 'start',
-            }}
-          >
-            {wide && (
-              <Box sx={{ maxHeight: 660, overflowY: 'auto', pr: 0.5 }}>
-                <WorkplaceResourceList
-                  resources={filtered}
-                  occupancy={data?.occupancy ?? []}
-                  onSelect={inspectResource}
-                  statusLabels={statusLabels}
-                  bookingEligibility={bookingEligibility}
-                  bookingEligibilityLabels={bookingEligibilityLabels}
-                  typeLabels={typeLabels}
-                  selectedResourceId={inspected?.resourceId}
-                  compact
-                />
+            <Stack
+              direction="row"
+              gap={1}
+              alignItems="center"
+              sx={{ flex: { xs: '0 0 auto', md: '1 1 160px' }, minWidth: 0 }}
+            >
+              <Layers3 size={19} color="var(--dwp-product-accent)" />
+              <Box>
+                <Typography id="workplace-discovery-results" component="h2" variant="h6">
+                  {selectedSite?.name ?? t('workplace.explore.resultsTitle')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {selectedFloor
+                    ? t('workplace.explore.floorSummary', {
+                        floor: selectedFloor.name,
+                        count: filtered.length,
+                      })
+                    : t('workplace.explore.floorRequired')}
+                </Typography>
               </Box>
+            </Stack>
+            {data && (
+              <WorkplaceMapLegend labels={statusLabels} ariaLabel={t('workplace.explore.legend')} />
             )}
-            <WorkplaceFloorPlan
+          </Stack>
+
+          {query.isLoading && !data && <Skeleton variant="rectangular" height={460} />}
+          {(exploreSourceState === 'STALE' ||
+            exploreSourceState === 'DENIED' ||
+            exploreSourceState === 'UNAVAILABLE') && (
+            <InlineFeedback
+              severity={exploreSourceState === 'STALE' ? 'warning' : 'error'}
+              action={
+                <ActionButton intent="secondary" onClick={() => query.refetch()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+              sx={{ mb: exploreSourceState === 'STALE' ? 2 : 0 }}
+            >
+              {t(
+                exploreSourceState === 'STALE'
+                  ? 'workplace.staleWarning'
+                  : 'workplace.explore.loadError'
+              )}
+            </InlineFeedback>
+          )}
+          {hasUsableData && !hasSites && (
+            <EmptyState
+              icon={<Building2 size={24} />}
+              title={t('workplace.explore.noSitesTitle')}
+              description={t('workplace.explore.noSitesDescription')}
+            />
+          )}
+          {hasUsableData && hasSites && !hasFloors && (
+            <EmptyState
+              icon={<Layers3 size={24} />}
+              title={t('workplace.explore.noFloorsTitle')}
+              description={t('workplace.explore.noFloorsDescription')}
+            />
+          )}
+          {hasUsableData && hasFloors && !mapAvailable && (
+            <InlineFeedback icon={<MapPinned size={19} />} severity="info" sx={{ mb: 2 }}>
+              <Typography variant="subtitle2">
+                {t('workplace.explore.floorPlanMissingTitle')}
+              </Typography>
+              <Typography variant="body2">
+                {t('workplace.explore.floorPlanMissingDescription')}
+              </Typography>
+            </InlineFeedback>
+          )}
+          {hasUsableData && hasFloors && filtered.length === 0 && (
+            <EmptyState
+              icon={<Accessibility size={22} />}
+              title={t('workplace.explore.emptyTitle')}
+              description={t('workplace.explore.emptyDescription')}
+            />
+          )}
+          {hasUsableData && hasFloors && filtered.length > 0 && view === 'list' && (
+            <WorkplaceResourceList
               resources={filtered}
               occupancy={data?.occupancy ?? []}
-              planWidth={selectedFloor?.planWidth ?? 1200}
-              planHeight={selectedFloor?.planHeight ?? 760}
-              backgroundAssetPath={selectedFloor?.backgroundAssetPath}
-              selectedResourceId={inspected?.resourceId}
+              closures={data?.closures ?? []}
               onSelect={inspectResource}
               statusLabels={statusLabels}
               bookingEligibility={bookingEligibility}
               bookingEligibilityLabels={bookingEligibilityLabels}
-              ariaLabel={t('workplace.explore.mapLabel', {
-                site: selectedSite?.name ?? '',
-                floor: selectedFloor?.name ?? '',
-              })}
-              zoomInLabel={t('workplace.explore.zoomIn')}
-              zoomOutLabel={t('workplace.explore.zoomOut')}
-              fitLabel={t('workplace.explore.fitMap')}
+              typeLabels={typeLabels}
+              selectedResourceId={inspectedResourceId ?? undefined}
             />
-          </Box>
-        )}
-        {query.isFetching && !query.isLoading && (
-          <Stack direction="row" gap={1} alignItems="center" role="status" sx={{ mt: 1.5 }}>
-            <CircularProgress size={14} aria-hidden="true" />
-            <Typography variant="caption" color="text.secondary">
-              {t('workplace.explore.refreshing')}
-            </Typography>
-          </Stack>
-        )}
-      </Box>
+          )}
+          {hasUsableData && hasFloors && filtered.length > 0 && view === 'map' && mapAvailable && (
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns:
+                  wide && !inspected ? 'minmax(280px, 0.38fr) minmax(0, 0.62fr)' : '1fr',
+                gap: 2,
+                alignItems: 'start',
+              }}
+            >
+              {wide && !inspected && (
+                <Box sx={{ maxHeight: 660, overflowY: 'auto', pr: 0.5 }}>
+                  <WorkplaceResourceList
+                    resources={filtered}
+                    occupancy={data?.occupancy ?? []}
+                    closures={data?.closures ?? []}
+                    onSelect={inspectResource}
+                    statusLabels={statusLabels}
+                    bookingEligibility={bookingEligibility}
+                    bookingEligibilityLabels={bookingEligibilityLabels}
+                    typeLabels={typeLabels}
+                    selectedResourceId={inspectedResourceId ?? undefined}
+                    compact
+                  />
+                </Box>
+              )}
+              <WorkplaceFloorPlan
+                resources={filtered}
+                occupancy={data?.occupancy ?? []}
+                closures={data?.closures ?? []}
+                planWidth={selectedFloor?.planWidth ?? 1200}
+                planHeight={selectedFloor?.planHeight ?? 760}
+                backgroundAssetPath={selectedFloor?.backgroundAssetPath}
+                selectedResourceId={inspected?.resourceId}
+                onSelect={inspectResource}
+                statusLabels={statusLabels}
+                bookingEligibility={bookingEligibility}
+                bookingEligibilityLabels={bookingEligibilityLabels}
+                ariaLabel={t('workplace.explore.mapLabel', {
+                  site: selectedSite?.name ?? '',
+                  floor: selectedFloor?.name ?? '',
+                })}
+                zoomInLabel={t('workplace.explore.zoomIn')}
+                zoomOutLabel={t('workplace.explore.zoomOut')}
+                fitLabel={t('workplace.explore.fitMap')}
+              />
+            </Box>
+          )}
+          {query.isFetching && !query.isLoading && (
+            <Stack direction="row" gap={1} alignItems="center" role="status" sx={{ mt: 1.5 }}>
+              <CircularProgress size={14} aria-hidden="true" />
+              <Typography variant="caption" color="text.secondary">
+                {t('workplace.explore.refreshing')}
+              </Typography>
+            </Stack>
+          )}
+        </Box>
 
-      <WorkplaceResourceInspector
-        resource={inspected}
-        status={inspectedStatus}
-        siteName={selectedSite?.name ?? ''}
-        floorName={selectedFloor?.name ?? ''}
-        typeLabels={typeLabels}
-        statusLabels={statusLabels}
-        bookingEligible={Boolean(inspected && !inspectedBlockedReason)}
-        bookingEligibilityLabel={
-          inspected && !inspectedBlockedReason
-            ? bookingEligibilityLabels.eligible
-            : bookingEligibilityLabels.blocked
-        }
-        canBook={Boolean(inspected && !inspectedBlockedReason)}
-        blockedReason={inspectedBlockedReason}
-        retrying={
-          inspectedBlockCode === 'ROOM_POLICY'
-            ? roomPolicyQuery.isFetching
-            : inspectedBlockCode === 'UNVERIFIED'
-              ? query.isFetching
-              : false
-        }
-        onRetry={
-          inspectedBlockCode === 'ROOM_POLICY'
-            ? () => void roomPolicyQuery.refetch()
-            : inspectedBlockCode === 'UNVERIFIED'
-              ? () => void query.refetch()
+        <WorkplaceResourceInspector
+          variant={wide ? 'inline' : 'drawer'}
+          selectedStart={selectedRange?.from}
+          selectedEnd={selectedRange?.to}
+          timeZone={selectedSite?.timeZone}
+          windowContext={
+            data && selectedSite && selectedFloor && selectedRange
+              ? {
+                  siteId: selectedSite.siteId,
+                  floorId: selectedFloor.floorId,
+                  startsAt: selectedRange.from,
+                  endsAt: selectedRange.to,
+                  policy: data.policy,
+                  occupancy: data.occupancy,
+                  closures: data.closures,
+                  sourceReady:
+                    exploreSourceState === 'READY' &&
+                    !query.isPlaceholderData &&
+                    !query.isFetching &&
+                    !query.isStale &&
+                    selectedFloor.siteId === selectedSite.siteId &&
+                    selectedFloor.floorId === floorId &&
+                    selectedSite.siteId === siteId &&
+                    selectedSite.timeZone === siteTimeZone &&
+                    new Set(data.sites.map((site) => site.siteId)).size === data.sites.length &&
+                    new Set(data.floors.map((floor) => floor.floorId)).size ===
+                      data.floors.length &&
+                    new Set(data.resources.map((resource) => resource.resourceId)).size ===
+                      data.resources.length,
+                }
               : undefined
-        }
-        onBook={() => inspected && beginBooking(inspected)}
-        onClose={() => updateParams({ resource: null })}
-        onPrevious={() => {
-          const previous = filtered[inspectedIndex - 1];
-          if (previous) inspectResource(previous);
-        }}
-        onNext={() => {
-          const next = filtered[inspectedIndex + 1];
-          if (next) inspectResource(next);
-        }}
-        previousDisabled={inspectedIndex <= 0}
-        nextDisabled={inspectedIndex < 0 || inspectedIndex >= filtered.length - 1}
-      />
+          }
+          resource={inspected}
+          status={inspectedStatus}
+          siteName={selectedSite?.name ?? ''}
+          floorName={selectedFloor?.name ?? ''}
+          typeLabels={typeLabels}
+          statusLabels={statusLabels}
+          bookingEligible={Boolean(inspected && !inspectedBlockedReason)}
+          bookingEligibilityLabel={
+            inspected && !inspectedBlockedReason
+              ? bookingEligibilityLabels.eligible
+              : bookingEligibilityLabels.blocked
+          }
+          canBook={Boolean(inspected && !inspectedBlockedReason)}
+          blockedReason={inspectedBlockedReason}
+          retrying={
+            inspectedBlockCode === 'ROOM_POLICY'
+              ? roomPolicyQuery.isFetching
+              : inspectedBlockCode === 'UNVERIFIED'
+                ? query.isFetching
+                : false
+          }
+          onRetry={
+            inspectedBlockCode === 'ROOM_POLICY'
+              ? () => void roomPolicyQuery.refetch()
+              : inspectedBlockCode === 'UNVERIFIED'
+                ? () => void query.refetch()
+                : undefined
+          }
+          onBook={() => inspected && beginBooking(inspected)}
+          onClose={() => updateParams({ resource: null })}
+          onPrevious={() => {
+            const previous = filtered[inspectedIndex - 1];
+            if (previous) inspectResource(previous);
+          }}
+          onNext={() => {
+            const next = filtered[inspectedIndex + 1];
+            if (next) inspectResource(next);
+          }}
+          previousDisabled={inspectedIndex <= 0}
+          nextDisabled={inspectedIndex < 0 || inspectedIndex >= filtered.length - 1}
+        />
+      </Box>
       <WorkplaceBookingDialog
         open={Boolean(bookingResource)}
         resource={bookingResource}
@@ -904,7 +921,14 @@ export function WorkplaceExplore() {
         serverNow={data?.generatedAt ?? new Date().toISOString()}
         policy={policy ?? null}
         sourceSnapshot={workplaceBookingSourceSnapshot}
+        onSaved={(booking) =>
+          navigate(`/workplace/my-bookings?booking=${encodeURIComponent(booking.bookingId)}`)
+        }
         onClose={() => setBookingResource(null)}
+        onChooseAnother={() => {
+          updateParams({ resource: null });
+          void query.refetch();
+        }}
       />
       <RoomBookingDialog
         open={Boolean(room)}

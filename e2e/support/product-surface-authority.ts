@@ -1,4 +1,5 @@
 import type { Page, Route } from '@playwright/test';
+import { createHash } from 'node:crypto';
 
 type SurfaceId = 'approvals.work' | 'approvals.admin';
 type HcmSurfaceId = 'hcm.personal' | 'hcm.team' | 'hcm.operations' | 'hcm.management';
@@ -15,6 +16,8 @@ export type ApprovalAuthorityOptions = {
   managementScopeDisplayName?: string;
   generatedAt?: string;
   revalidateAt?: string;
+  decisionRevisionFormat?: 'legacy' | 'sha256';
+  rolloutState?: '110' | '111';
 };
 
 export type HcmAuthorityOptions = {
@@ -62,11 +65,20 @@ const WORK_CAPABILITIES = [
   'approvals.work.task.read',
   'approvals.work.task.update',
   'approvals.work.task.approve',
+  'approvals.work.task.export',
   'approvals.work.request.read',
   'approvals.work.request.create',
   'approvals.work.request.update',
+  'approvals.work.request.export',
   'approvals.work.delegation.read',
   'approvals.work.delegation.manage',
+  'approvals.work.attachment-upload.read',
+  'approvals.work.attachment-upload.update',
+  'approvals.work.attachment-download.read',
+  'approvals.work.information-command-receipt.read',
+  'approvals.work.signature.read',
+  'approvals.work.signature.update',
+  'approvals.work.signature.sign',
 ] as const;
 
 const MANAGEMENT_CAPABILITIES = [
@@ -81,6 +93,8 @@ const MANAGEMENT_CAPABILITIES = [
   'approvals.policy.publish',
   'approvals.signature.read',
   'approvals.audit.operations.read',
+  'approvals.admin.workflow-planning-simulation.read',
+  'approvals.admin.workflow-planning-form.read',
 ] as const;
 
 export const APPROVAL_ACTION_CAPABILITY = {
@@ -95,15 +109,67 @@ export const APPROVAL_ACTION_CAPABILITY = {
   'route.approvals.admin.workflow-create.action': 'approvals.design.create',
   'route.approvals.admin.workflow-publish.action': 'approvals.design.publish',
   'route.approvals.admin.workflow-update.action': 'approvals.design.update',
+  'route.approvals.admin.document-policy-draft.action': 'approvals.policy.update',
+  'route.approvals.admin.document-policy-publish.action': 'approvals.policy.publish',
+  'route.approvals.admin.document-hold-proposal.action': 'approvals.policy.update',
+  'route.approvals.admin.document-hold-publish.action': 'approvals.policy.publish',
+  'route.approvals.work.request-comment.action': [
+    'approvals.work.request.read',
+    'approvals.work.request.update',
+  ],
+  'route.approvals.work.task-comment.action': [
+    'approvals.work.task.read',
+    'approvals.work.task.update',
+  ],
+  'route.approvals.work.request-document-export.action': [
+    'approvals.work.request.read',
+    'approvals.work.request.export',
+  ],
+  'route.approvals.work.task-document-export.action': [
+    'approvals.work.task.read',
+    'approvals.work.task.export',
+  ],
+  'route.approvals.work.archive-document-export.action': [
+    'approvals.work.request.read',
+    'approvals.work.request.export',
+  ],
   'route.approvals.work.delegation-create.action': 'approvals.work.delegation.manage',
   'route.approvals.work.delegation-revoke.action': 'approvals.work.delegation.manage',
   'route.approvals.work.request-create.action': 'approvals.work.request.create',
   'route.approvals.work.request-draft-update.action': 'approvals.work.request.update',
+  'route.approvals.work.request-draft-recover.action': 'approvals.work.request.update',
+  'route.approvals.work.request-draft-delete.action': 'approvals.work.request.update',
+  'route.approvals.work.request-draft-restore.action': 'approvals.work.request.update',
   'route.approvals.work.request-information-response.action': 'approvals.work.request.update',
   'route.approvals.work.request-submit.action': 'approvals.work.request.update',
   'route.approvals.work.request-withdraw.action': 'approvals.work.request.update',
   'route.approvals.work.task-claim.action': 'approvals.work.task.update',
   'route.approvals.work.task-decision.action': 'approvals.work.task.approve',
+  'route.approvals.admin.form-version-branch.action': 'approvals.design.update',
+  'route.approvals.admin.form-working-draft-update.action': 'approvals.design.update',
+  'route.approvals.admin.form-retire.action': 'approvals.design.update',
+  'route.approvals.admin.form-reinstate.action': 'approvals.design.update',
+  'route.approvals.admin.form-reviewed-publish.action': 'approvals.design.publish',
+  'route.approvals.admin.attachment-policy-initialize.action': 'approvals.policy.update',
+  'route.approvals.admin.attachment-policy-draft.action': 'approvals.policy.update',
+  'route.approvals.admin.attachment-policy-publish.action': 'approvals.policy.publish',
+  'route.approvals.work.request-attachment-reserve.action': 'approvals.work.request.update',
+  'route.approvals.work.request-attachment-selection.action': 'approvals.work.request.update',
+  'route.approvals.work.attachment-upload-content.action':
+    'approvals.work.attachment-upload.update',
+  'route.approvals.work.attachment-upload-reconcile.action':
+    'approvals.work.attachment-upload.update',
+  'route.approvals.work.attachment-upload-cancel.action': 'approvals.work.attachment-upload.update',
+  'route.approvals.work.request-attachment-download.action': 'approvals.work.request.export',
+  'route.approvals.work.task-attachment-download.action': 'approvals.work.task.export',
+  'route.approvals.admin.retention-policy-initialize.action': 'approvals.policy.update',
+  'route.approvals.admin.retention-policy-draft.action': 'approvals.policy.update',
+  'route.approvals.admin.retention-policy-publish.action': 'approvals.policy.publish',
+  'route.approvals.admin.retention-record-claim.action': 'approvals.operations.execute',
+  'route.approvals.work.signature-request-create.action': 'approvals.work.signature.update',
+  'route.approvals.work.signature-consent.action': 'approvals.work.signature.update',
+  'route.approvals.work.signature-sign.action': 'approvals.work.signature.sign',
+  'route.approvals.work.signature-cancel.action': 'approvals.work.signature.update',
 } as const;
 
 const APPROVAL_POLICY_ACTIONS = new Set(['route.approvals.work.home-preference-update.action']);
@@ -116,11 +182,19 @@ const APPROVAL_HIGH_RISK_ACTIONS = new Set([
   'route.approvals.admin.operations.retry.action',
   'route.approvals.admin.policy-publish.action',
   'route.approvals.admin.workflow-publish.action',
+  'route.approvals.admin.document-policy-publish.action',
+  'route.approvals.admin.document-hold-publish.action',
+  'route.approvals.admin.form-reviewed-publish.action',
+  'route.approvals.admin.attachment-policy-publish.action',
+  'route.approvals.admin.retention-policy-publish.action',
+  'route.approvals.admin.retention-record-claim.action',
+  'route.approvals.work.signature-sign.action',
 ]);
 const APPROVAL_HIGH_RISK_CAPABILITIES = new Set([
   'approvals.design.publish',
   'approvals.policy.publish',
   'approvals.operations.execute',
+  'approvals.work.signature.sign',
 ]);
 
 function capabilityGrant(
@@ -222,7 +296,11 @@ function routeAllowed(
   );
   const actionCapability =
     APPROVAL_ACTION_CAPABILITY[routeContractKey as keyof typeof APPROVAL_ACTION_CAPABILITY];
-  if (actionCapability) return capabilities.has(actionCapability);
+  if (actionCapability) {
+    return typeof actionCapability === 'string'
+      ? capabilities.has(actionCapability)
+      : actionCapability.every((capability) => capabilities.has(capability));
+  }
   if (APPROVAL_POLICY_ACTIONS.has(routeContractKey)) {
     return surfaceId === 'approvals.work' && options.work !== false;
   }
@@ -540,7 +618,11 @@ export async function mockApprovalProductSurfaceAuthority(
       ? workContext(currentOptions())
       : managementContext(currentOptions());
   const contexts = () => [...enabled].map(contextFor);
-  const decisionRevision = () => `e2e-approval-authority-${revision}`;
+  const decisionRevision = () =>
+    options.decisionRevisionFormat === 'sha256'
+      ? `psr-${createHash('sha256').update(`e2e-approval-authority-${revision}`).digest('hex')}`
+      : `e2e-approval-authority-${revision}`;
+  const rolloutState = options.rolloutState ?? (options.surfaceUi === false ? '000' : '111');
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
@@ -557,15 +639,15 @@ export async function mockApprovalProductSurfaceAuthority(
       rollouts: [
         {
           productKey: 'approvals',
-          state: options.surfaceUi === false ? '000' : '111',
+          state: rolloutState,
           flags: {
-            contextShadow: options.surfaceUi !== false,
-            capabilityEnforcement: options.surfaceUi !== false,
-            surfaceUi: options.surfaceUi !== false,
+            contextShadow: rolloutState !== '000',
+            capabilityEnforcement: rolloutState !== '000',
+            surfaceUi: rolloutState === '111',
           },
           cohort: 'e2e-pilot',
           opaqueRevision: `rollout-approvals-${revision}`,
-          authorityStatus: options.surfaceUi === false ? 'NOT_EVALUATED' : 'AVAILABLE',
+          authorityStatus: rolloutState === '000' ? 'NOT_EVALUATED' : 'AVAILABLE',
         },
         ...GOVERNED_PRODUCT_KEYS.filter((productKey) => productKey !== 'approvals').map(
           baselineRollout
@@ -629,11 +711,27 @@ export async function mockApprovalProductSurfaceAuthority(
         revalidateAt: options.revalidateAt ?? REVALIDATE_AT,
       });
     }
+    const actionRequirement =
+      APPROVAL_ACTION_CAPABILITY[routeContractKey as keyof typeof APPROVAL_ACTION_CAPABILITY];
+    const actionCapability =
+      typeof actionRequirement === 'string' ? actionRequirement : actionRequirement?.at(-1);
+    const evaluatedContext =
+      actionCapability || APPROVAL_POLICY_ACTIONS.has(routeContractKey)
+        ? {
+            ...context,
+            effectiveGrants: context.effectiveGrants.filter((grant) =>
+              actionCapability
+                ? 'capabilityContractKey' in grant &&
+                  grant.capabilityContractKey === actionCapability
+                : grant.grantKind === 'POLICY'
+            ),
+          }
+        : context;
     return success(route, {
       decision: 'ALLOWED',
       reasonCode: null,
       decisionRevision: decisionRevision(),
-      context,
+      context: evaluatedContext,
       routeGrantRef: `grant:${routeContractKey}`,
       scope,
       effectiveReadOnly: scope.readOnly,

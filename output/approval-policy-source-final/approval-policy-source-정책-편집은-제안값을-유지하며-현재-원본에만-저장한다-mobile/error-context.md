@@ -1,0 +1,245 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e16]:
+              - generic [ref=e17]: 전자결재 관리
+              - generic [ref=e18]: SKAX · 전자결재 운영 범위
+          - generic [ref=e19]:
+            - button [ref=e21] [cursor=pointer]:
+              - img [ref=e22]
+            - button [ref=e26] [cursor=pointer]:
+              - generic [ref=e27]: T
+              - img [ref=e28]
+        - generic [ref=e31]:
+          - navigation [ref=e33]:
+            - generic [ref=e35]: 관리
+            - link [ref=e37] [cursor=pointer]:
+              - /url: /approvals/home?scope=scope%3Aapprovals%3Aself
+              - img [ref=e39]
+              - generic [ref=e41]: 업무
+          - generic [ref=e42]:
+            - group [ref=e43]:
+              - button [ref=e44]: "SKAX · 범위: 전자결재 운영 범위"
+              - img [ref=e46]:
+                - img [ref=e47]
+            - status [ref=e50]
+      - main [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - img [ref=e56]
+              - generic [ref=e59]:
+                - text: 전자결재 / 거버넌스
+                - heading [level=1] [ref=e60]: 결재 정책
+                - paragraph [ref=e61]: 자기 결재 차단, 사유 필수, 증적 보존 및 SLA 정책을 통제합니다.
+            - generic [ref=e62]:
+              - img [ref=e63]
+              - generic [ref=e67]: 결정 증적 보존
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]:
+                - generic [ref=e72]:
+                  - generic [ref=e73]:
+                    - heading [level=2] [ref=e74]: 결재 정책
+                    - text: 결정·데이터·SLA 통제 규칙
+                  - generic [ref=e76]: "1"
+                - list [ref=e77]:
+                  - listitem [ref=e78]:
+                    - button [ref=e79] [cursor=pointer]:
+                      - img [ref=e80]
+                      - generic [ref=e83]:
+                        - generic [ref=e84]: 요청자와 승인자 분리
+                        - generic [ref=e85]: 직무 분리
+                      - generic [ref=e87]: 확인 필요
+              - generic [ref=e88]:
+                - generic [ref=e90]:
+                  - generic [ref=e91]:
+                    - generic [ref=e92]: 직무 분리
+                    - generic [ref=e93]:
+                      - heading [level=2] [ref=e94]: 요청자와 승인자 분리
+                      - generic [ref=e96]: 활성
+                    - generic [ref=e97]: SEGREGATION_OF_DUTIES
+                  - generic [ref=e98]:
+                    - button [ref=e99] [cursor=pointer]:
+                      - img [ref=e101]
+                      - text: 정책 구성
+                    - button [ref=e102] [cursor=pointer]:
+                      - img [ref=e104]
+                      - text: 검토 및 게시
+                - generic [ref=e107]:
+                  - generic [ref=e108]:
+                    - generic [ref=e109]: 집행 방식
+                    - generic [ref=e110]: 차단
+                  - generic [ref=e111]:
+                    - generic [ref=e112]: 위험 등급
+                    - generic [ref=e113]: 높음
+                  - generic [ref=e114]:
+                    - generic [ref=e115]: 정책 버전
+                    - generic [ref=e116]: v1
+                - generic [ref=e117]:
+                  - generic [ref=e119]:
+                    - heading [level=2] [ref=e120]: 정책 규칙
+                    - text: 서버에서 강제되는 구조화 통제값
+                  - generic [ref=e122]:
+                    - term [ref=e123]: requesterCannotApprove
+                    - definition [ref=e124]: "true"
+                - generic [ref=e125]:
+                  - generic [ref=e127]:
+                    - heading [level=2] [ref=e128]: 게시 대기 변경안
+                    - text: 현재 운영 정책에는 아직 반영되지 않았습니다.
+                  - generic [ref=e129]:
+                    - generic [ref=e130]:
+                      - generic [ref=e132]: BLOCK
+                      - generic [ref=e134]: CRITICAL
+                      - generic [ref=e136]: ACTIVE
+                    - generic [ref=e137]: Previously reviewed policy proposal
+                    - generic [ref=e138]: 변경 요청자 ID 31
+                  - table [ref=e139]:
+                    - row [ref=e140]:
+                      - cell [ref=e141]:
+                        - generic [ref=e142]: 집행 방식
+                      - cell [ref=e143]:
+                        - generic [ref=e144]: 현재 운영값
+                        - generic [ref=e145]: BLOCK
+                      - cell [ref=e146]:
+                        - generic [ref=e147]: 게시 제안값
+                        - generic [ref=e148]: BLOCK
+                    - row [ref=e149]:
+                      - cell [ref=e150]:
+                        - generic [ref=e151]: 위험 등급
+                        - generic [ref=e153]: 변경
+                      - cell [ref=e154]:
+                        - generic [ref=e155]: 현재 운영값
+                        - generic [ref=e156]: HIGH
+                      - cell [ref=e157]:
+                        - generic [ref=e158]: 게시 제안값
+                        - generic [ref=e159]: CRITICAL
+                    - row [ref=e160]:
+                      - cell [ref=e161]:
+                        - generic [ref=e162]: 운영 상태
+                      - cell [ref=e163]:
+                        - generic [ref=e164]: 현재 운영값
+                        - generic [ref=e165]: ACTIVE
+                      - cell [ref=e166]:
+                        - generic [ref=e167]: 게시 제안값
+                        - generic [ref=e168]: ACTIVE
+                    - row [ref=e169]:
+                      - cell [ref=e170]:
+                        - generic [ref=e171]: 규칙 값 · requesterCannotApprove
+                      - cell [ref=e172]:
+                        - generic [ref=e173]: 현재 운영값
+                        - generic [ref=e174]: "true"
+                      - cell [ref=e175]:
+                        - generic [ref=e176]: 게시 제안값
+                        - generic [ref=e177]: "true"
+                - generic [ref=e178]:
+                  - generic [ref=e179]:
+                    - generic [ref=e180]:
+                      - heading [level=2] [ref=e181]: 게시 이력
+                      - text: 작성자·독립 검토자와 당시 집행 규칙을 보존합니다.
+                    - img [ref=e182]
+                  - list [ref=e186]:
+                    - listitem [ref=e187]:
+                      - generic [ref=e189]: v1
+                      - generic [ref=e190]:
+                        - generic [ref=e191]: Published policy
+                        - generic [ref=e192]: Independent review complete
+                      - generic [ref=e193]:
+                        - generic [ref=e194]:
+                          - generic [ref=e196]: 활성
+                          - generic [ref=e198]: 차단
+                        - generic [ref=e199]: 2026. 9. 13. 오전 9:00
+                - alert [ref=e200]:
+                  - img [ref=e202]
+                  - generic [ref=e205]: 정책 변경안은 별도 게시자가 승인한 뒤 신규 결재와 다음 정책 평가부터 적용되며 모든 단계가 감사 증적으로 남습니다.
+            - generic [ref=e206]:
+              - alert [ref=e207]:
+                - img [ref=e209]
+                - heading [level=2] [ref=e211]: 문서 거버넌스를 사용할 수 없습니다. 접근 권한과 현재 계약 증거가 확인되기 전에는 변경할 수 없습니다.
+                - button [ref=e213] [cursor=pointer]: 문서 정책 다시 조회
+              - generic [ref=e214]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]:
+                    - heading [level=2] [ref=e217]: 문서 보존 요청
+                    - text: 기안 식별자
+                  - generic [ref=e218]:
+                    - button [disabled]:
+                      - img
+                - generic [ref=e219]:
+                  - generic [ref=e220]:
+                    - generic [ref=e221]:
+                      - generic: 기안 식별자
+                      - generic [ref=e222]:
+                        - textbox [ref=e223]
+                        - group:
+                          - generic: 기안 식별자
+                    - button [disabled]:
+                      - generic:
+                        - img
+                      - text: 문서 제한 조회
+                  - alert [ref=e224]:
+                    - img [ref=e226]
+                    - generic [ref=e229]: 반출 제한만으로 법적 보존, 불변 저장소 또는 삭제 작업의 검증이 완료되는 것은 아닙니다. 운영 증적이 필요합니다.
+  - dialog "정책 구성" [active] [ref=e232]:
+    - generic [ref=e233]:
+      - heading "정책 구성" [level=2] [ref=e234]
+      - generic [ref=e235]:
+        - paragraph [ref=e236]: 정책 변경안은 별도 게시자가 승인한 뒤 신규 결재와 다음 정책 평가부터 적용되며 모든 단계가 감사 증적으로 남습니다.
+        - generic [ref=e237]:
+          - alert [ref=e238]:
+            - img [ref=e240]
+            - generic [ref=e243]: BLOCK·CRITICAL 변경은 결재 가능 여부에 영향을 줄 수 있습니다. 변경안을 제출한 뒤 독립 게시자가 적용 범위와 업무 영향을 검토합니다.
+          - generic [ref=e244]:
+            - generic [ref=e245]:
+              - generic [ref=e246]: 집행 방식
+              - generic [ref=e247]:
+                - combobox "집행 방식 BLOCK" [ref=e248] [cursor=pointer]: BLOCK
+                - textbox: BLOCK
+                - img
+                - group:
+                  - generic: 집행 방식
+            - generic [ref=e249]:
+              - generic [ref=e250]: 위험 등급
+              - generic [ref=e251]:
+                - combobox "위험 등급 CRITICAL" [ref=e252] [cursor=pointer]: CRITICAL
+                - textbox: CRITICAL
+                - img
+                - group:
+                  - generic: 위험 등급
+            - generic [ref=e253]:
+              - generic [ref=e254]: 운영 상태
+              - generic [ref=e255]:
+                - combobox "운영 상태 ACTIVE" [ref=e256] [cursor=pointer]: ACTIVE
+                - textbox: ACTIVE
+                - img
+                - group:
+                  - generic: 운영 상태
+          - heading "정책 규칙" [level=3] [ref=e257]
+          - generic [ref=e260] [cursor=pointer]:
+            - switch "requesterCannotApprove" [checked] [ref=e263]
+            - generic [ref=e266]: requesterCannotApprove
+          - generic [ref=e267]:
+            - generic [ref=e268]:
+              - text: 변경 사유
+              - generic [ref=e269]: "*"
+            - generic [ref=e270]:
+              - textbox "변경 사유" [ref=e271]: Previously reviewed policy proposal
+              - group:
+                - generic: 변경 사유 *
+            - paragraph [ref=e272]: 영향 범위와 변경 목적을 10자 이상 기록하세요.
+      - generic [ref=e274]:
+        - button "취소" [ref=e275] [cursor=pointer]
+        - button "저장" [ref=e276] [cursor=pointer]
+```

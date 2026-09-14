@@ -1,38 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyRound, Pencil, Plus, ShieldCheck, UserRoundCog } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Pencil, Plus, ShieldCheck, UserRoundCog } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import {
-  getWorkplaceAdminSites,
   getWorkplaceGovernanceDelegatedScopes,
   getWorkplaceGovernanceEffectiveDelegatedScopes,
-  saveWorkplaceGovernanceDelegatedScope,
-  useToast,
+  getWorkplaceAdminFloors,
+  useAuth,
+  usePermissionsStore,
 } from '@dwp-frontend/shared-utils';
-import {
-  ActionButton,
-  ActionIconButton,
-  DateTimePickerField,
-  DwpDateTimeProvider,
-  FormDialog,
-  FormField,
-  SelectField,
-} from '@dwp-frontend/design-system';
+import { ActionButton, ActionIconButton, InlineFeedback } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {
-  isWorkplaceGovernancePeriodValid,
-  isWorkplaceGovernanceUuid,
-  parseWorkplaceGovernanceUserId,
-} from './workplace-admin-governance-model';
 import {
   GovernanceEmpty,
   GovernanceLoading,
@@ -40,53 +24,68 @@ import {
   GovernanceQueryError,
 } from './workplace-admin-governance-ui';
 
-import type {
-  WorkplaceGovernanceDelegatedAdminScope,
-  WorkplaceGovernanceDelegatedAdminScopeInput,
-  WorkplaceGovernanceDelegatedPermission,
-} from '@dwp-frontend/shared-utils';
+import { DelegationDialog } from './workplace-governance-delegation-editor';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
+import { workplaceDelegationFloorSet } from './workplace-delegation-floor-scope';
+import { isWorkplaceGovernanceUuid } from './workplace-admin-governance-model';
 
-const DELEGATED_PERMISSIONS = [
-  'CATALOG_VIEW',
-  'CATALOG_MANAGE',
-  'ACCESS_MANAGE',
-  'POLICY_MANAGE',
-  'FLOOR_PLAN_MANAGE',
-  'DELEGATION_VIEW',
-] as const satisfies readonly WorkplaceGovernanceDelegatedPermission[];
+import type { WorkplaceGovernanceDelegatedAdminScope } from '@dwp-frontend/shared-utils';
 
 export function WorkplaceAdminGovernanceDelegation({
   canManage,
   canViewAssignments,
+  compact = false,
 }: {
   canManage: boolean;
   canViewAssignments: boolean;
+  compact?: boolean;
 }) {
   const { t } = useTranslation('rooms');
+  const { user } = useAuth();
+  const permissions = usePermissionsStore((state) => state.permissions);
+  const authorityKey = JSON.stringify([user, permissions, canManage, canViewAssignments]);
   const [editor, setEditor] = useState<WorkplaceGovernanceDelegatedAdminScope | 'new' | null>(null);
   const scopesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'delegated-scopes'],
+    queryKey: ['workplace', 'governance', 'delegated-scopes', authorityKey],
     queryFn: getWorkplaceGovernanceDelegatedScopes,
     enabled: canViewAssignments,
     staleTime: 15_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
+    refetchInterval: 15_000,
   });
   const effectiveQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'delegated-scopes', 'effective'],
+    queryKey: ['workplace', 'governance', 'delegated-scopes', 'effective', authorityKey],
     queryFn: getWorkplaceGovernanceEffectiveDelegatedScopes,
+    enabled: !compact,
     staleTime: 10_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
+    refetchInterval: 15_000,
   });
+
+  useEffect(() => {
+    setEditor(null);
+  }, [authorityKey]);
+  const currentEditor =
+    scopesQuery.isError || !canViewAssignments
+      ? null
+      : editor === 'new'
+        ? editor
+        : editor
+          ? (scopesQuery.data?.find((scope) => scope.delegationId === editor.delegationId) ?? null)
+          : null;
+  const sourceReady = !scopesQuery.isError && !scopesQuery.isFetching && !scopesQuery.isStale;
 
   return (
     <Stack spacing={2}>
-      <Alert severity="info">{t('workplace.admin.governance.delegation.leastPrivilege')}</Alert>
+      <InlineFeedback severity="info">
+        {t('workplace.admin.governance.delegation.leastPrivilege')}
+      </InlineFeedback>
       <Box
         sx={{
           display: 'grid',
           gridTemplateColumns: {
             xs: '1fr',
-            xl: canViewAssignments ? 'minmax(0, 1.5fr) minmax(320px, 0.7fr)' : '1fr',
+            xl: canViewAssignments && !compact ? 'minmax(0, 1.5fr) minmax(320px, 0.7fr)' : '1fr',
           },
           gap: 2,
           alignItems: 'start',
@@ -139,7 +138,7 @@ export function WorkplaceAdminGovernanceDelegation({
                       </Box>
                       <Box sx={{ minWidth: 0 }}>
                         <Stack direction="row" gap={0.6} alignItems="center" flexWrap="wrap">
-                          <Typography fontWeight={750}>
+                          <Typography fontWeight="fontWeightBold">
                             {scope.delegateType === 'USER'
                               ? t('workplace.admin.governance.delegation.userDelegate', {
                                   id: scope.delegateUserId,
@@ -148,12 +147,23 @@ export function WorkplaceAdminGovernanceDelegation({
                                   id: scope.delegateGroupRef,
                                 })}
                           </Typography>
-                          <Chip size="small" variant="outlined" label={scope.state} />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={t(`workplace.admin.governance.states.${scope.state}`)}
+                          />
                         </Stack>
                         <Typography variant="caption" color="text.secondary" component="div">
                           {t(`workplace.admin.governance.delegatedScopeTypes.${scope.scopeType}`)} ·{' '}
                           {scope.siteId ?? scope.managedGroupRef}
                         </Typography>
+                        {scope.scopeType === 'SITE' ? (
+                          <DelegationFloorRange
+                            siteId={scope.siteId}
+                            floorIds={scope.floorIds}
+                            authorityKey={authorityKey}
+                          />
+                        ) : null}
                         <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.6 }}>
                           {scope.permissions.map((permission) => (
                             <Chip
@@ -188,290 +198,125 @@ export function WorkplaceAdminGovernanceDelegation({
           </GovernancePanel>
         ) : null}
 
-        <GovernancePanel
-          title={t('workplace.admin.governance.delegation.effective')}
-          description={t('workplace.admin.governance.delegation.effectiveDescription')}
-        >
-          {effectiveQuery.isLoading ? <GovernanceLoading rows={3} /> : null}
-          {effectiveQuery.isError ? (
-            <GovernanceQueryError retry={() => void effectiveQuery.refetch()} />
-          ) : null}
-          {effectiveQuery.data?.length ? (
-            <Stack divider={<Divider flexItem />}>
-              {effectiveQuery.data.map((scope) => (
-                <Box key={scope.delegationId} sx={{ px: 1.5, py: 1.25 }}>
-                  <Stack direction="row" gap={0.8} alignItems="center">
-                    <ShieldCheck size={16} color="var(--dwp-product-accent)" />
-                    <Typography variant="body2" fontWeight={750}>
-                      {t(`workplace.admin.governance.delegatedScopeTypes.${scope.scopeType}`)}
+        {!compact ? (
+          <GovernancePanel
+            title={t('workplace.admin.governance.delegation.effective')}
+            description={t('workplace.admin.governance.delegation.effectiveDescription')}
+          >
+            {effectiveQuery.isLoading ? <GovernanceLoading rows={3} /> : null}
+            {effectiveQuery.isError ? (
+              <GovernanceQueryError retry={() => void effectiveQuery.refetch()} />
+            ) : null}
+            {effectiveQuery.data?.length ? (
+              <Stack divider={<Divider flexItem />}>
+                {effectiveQuery.data.map((scope) => (
+                  <Box key={scope.delegationId} sx={{ px: 1.5, py: 1.25 }}>
+                    <Stack direction="row" gap={0.8} alignItems="center">
+                      <ShieldCheck size={16} color="var(--dwp-product-accent)" />
+                      <Typography variant="body2" fontWeight="fontWeightBold">
+                        {t(`workplace.admin.governance.delegatedScopeTypes.${scope.scopeType}`)}
+                      </Typography>
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary">
+                      {scope.scopeId}
                     </Typography>
-                  </Stack>
-                  <Typography variant="caption" color="text.secondary">
-                    {scope.scopeId}
-                  </Typography>
-                  <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.75 }}>
-                    {scope.permissions.map((permission) => (
-                      <Chip key={permission} size="small" variant="outlined" label={permission} />
-                    ))}
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
-          ) : !effectiveQuery.isLoading && !effectiveQuery.isError ? (
-            <GovernanceEmpty
-              title={t('workplace.admin.governance.delegation.noEffective')}
-              description={t('workplace.admin.governance.delegation.noEffectiveDescription')}
-            />
-          ) : null}
-        </GovernancePanel>
+                    {scope.scopeType === 'SITE' ? (
+                      <DelegationFloorRange
+                        siteId={scope.scopeId}
+                        floorIds={scope.floorIds}
+                        authorityKey={authorityKey}
+                      />
+                    ) : null}
+                    <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.75 }}>
+                      {scope.permissions.map((permission) => (
+                        <Chip
+                          key={permission}
+                          size="small"
+                          variant="outlined"
+                          label={t(`workplace.admin.governance.delegatedPermissions.${permission}`)}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
+            ) : !effectiveQuery.isLoading && !effectiveQuery.isError ? (
+              <GovernanceEmpty
+                title={t('workplace.admin.governance.delegation.noEffective')}
+                description={t('workplace.admin.governance.delegation.noEffectiveDescription')}
+              />
+            ) : null}
+          </GovernancePanel>
+        ) : null}
       </Box>
 
-      <DelegationDialog target={editor} canManage={canManage} onClose={() => setEditor(null)} />
+      {currentEditor ? (
+        <DelegationDialog
+          key={`${authorityKey}:${currentEditor === 'new' ? 'new' : currentEditor.delegationId}`}
+          target={currentEditor}
+          canManage={canManage}
+          sourceReady={sourceReady}
+          authorityKey={authorityKey}
+          recheck={async () => {
+            const result = await scopesQuery.refetch();
+            return result.isSuccess;
+          }}
+          onClose={() => setEditor(null)}
+        />
+      ) : null}
     </Stack>
   );
 }
 
-function DelegationDialog({
-  target,
-  canManage,
-  onClose,
+function DelegationFloorRange({
+  siteId,
+  floorIds,
+  authorityKey,
 }: {
-  target: WorkplaceGovernanceDelegatedAdminScope | 'new' | null;
-  canManage: boolean;
-  onClose: () => void;
+  siteId: string | null;
+  floorIds: string[] | null | undefined;
+  authorityKey: string;
 }) {
-  const { t, i18n } = useTranslation('rooms');
-  const toast = useToast();
-  const queryClient = useQueryClient();
-  const existing = target && target !== 'new' ? target : null;
-  const sitesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'sites'],
-    queryFn: getWorkplaceAdminSites,
+  const { t } = useTranslation('rooms');
+  const floorSet = workplaceDelegationFloorSet(floorIds);
+  const floorsQuery = useQuery({
+    queryKey: ['workplace', 'governance', 'delegation-floor-options', authorityKey, siteId],
+    queryFn: () => getWorkplaceAdminFloors(siteId!),
+    enabled:
+      typeof siteId === 'string' && isWorkplaceGovernanceUuid(siteId) && Array.isArray(floorSet),
     staleTime: 30_000,
+    refetchInterval: 15_000,
+    retry: retryRecoverableWorkplaceRead,
   });
-  const sites = useMemo(() => sitesQuery.data ?? [], [sitesQuery.data]);
-  const [form, setForm] = useState<WorkplaceGovernanceDelegatedAdminScopeInput>({
-    delegateType: 'USER',
-    delegateUserId: null,
-    delegateGroupRef: null,
-    scopeType: 'SITE',
-    siteId: null,
-    managedGroupRef: null,
-    permissions: ['CATALOG_VIEW'],
-    validFrom: null,
-    validUntil: null,
-    state: 'ACTIVE',
-    version: null,
-  });
-  const [delegate, setDelegate] = useState('');
-  const [scope, setScope] = useState('');
-  useEffect(() => {
-    if (!target) return;
-    setForm(
-      existing
-        ? {
-            delegateType: existing.delegateType,
-            delegateUserId: existing.delegateUserId,
-            delegateGroupRef: existing.delegateGroupRef,
-            scopeType: existing.scopeType,
-            siteId: existing.siteId,
-            managedGroupRef: existing.managedGroupRef,
-            permissions: existing.permissions,
-            validFrom: existing.validFrom,
-            validUntil: existing.validUntil,
-            state: existing.state,
-            version: existing.version,
-          }
-        : {
-            delegateType: 'USER',
-            delegateUserId: null,
-            delegateGroupRef: null,
-            scopeType: 'SITE',
-            siteId: sites[0]?.siteId ?? null,
-            managedGroupRef: null,
-            permissions: ['CATALOG_VIEW'],
-            validFrom: null,
-            validUntil: null,
-            state: 'ACTIVE',
-            version: null,
-          }
-    );
-    setDelegate(String(existing?.delegateUserId ?? existing?.delegateGroupRef ?? ''));
-    setScope(String(existing?.siteId ?? existing?.managedGroupRef ?? sites[0]?.siteId ?? ''));
-  }, [existing, sites, target]);
-  const delegateValid =
-    form.delegateType === 'USER'
-      ? parseWorkplaceGovernanceUserId(delegate) !== null
-      : isWorkplaceGovernanceUuid(delegate);
-  const scopeValid = Boolean(scope);
-  const periodValid = isWorkplaceGovernancePeriodValid(form.validFrom, form.validUntil);
-  const mutation = useMutation({
-    mutationFn: () => {
-      if (!canManage || !delegateValid || !scopeValid || !periodValid || !form.permissions.length) {
-        throw new Error('Invalid delegation');
-      }
-      return saveWorkplaceGovernanceDelegatedScope(existing?.delegationId ?? null, {
-        ...form,
-        delegateUserId:
-          form.delegateType === 'USER' ? parseWorkplaceGovernanceUserId(delegate) : null,
-        delegateGroupRef: form.delegateType === 'GROUP_REF' ? delegate.trim() : null,
-        scopeType: 'SITE',
-        siteId: scope,
-        managedGroupRef: null,
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['workplace', 'governance', 'delegated-scopes'],
-      });
-      toast.success(t('workplace.admin.governance.common.saved'));
-      onClose();
-    },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
-  });
-  const selectedSite = sites.find((site) => site.siteId === scope);
+  const source =
+    floorsQuery.isSuccess && !floorsQuery.isError && Array.isArray(floorsQuery.data)
+      ? floorsQuery.data
+      : [];
+  const floors = source.every(
+    (floor) =>
+      floor &&
+      typeof floor.floorId === 'string' &&
+      isWorkplaceGovernanceUuid(floor.floorId) &&
+      floor.siteId === siteId
+  )
+    ? source
+    : [];
+  const names = Array.isArray(floorSet)
+    ? floorSet.map((id) => floors.find((floor) => floor.floorId.toLowerCase() === id)?.name ?? id)
+    : [];
   return (
-    <FormDialog
-      open={Boolean(target)}
-      title={t(
-        existing
-          ? 'workplace.admin.governance.delegation.edit'
-          : 'workplace.admin.governance.delegation.add'
-      )}
-      cancelLabel={t('actions.cancel')}
-      submitLabel={t('actions.save')}
-      submittingLabel={t('actions.saving')}
-      busy={mutation.isPending}
-      submitDisabled={
-        !canManage || !delegateValid || !scopeValid || !periodValid || !form.permissions.length
-      }
-      onClose={onClose}
-      onSubmit={() => mutation.mutate()}
-      maxWidth="md"
+    <Typography
+      variant="caption"
+      color="text.secondary"
+      component="div"
+      sx={{ overflowWrap: 'anywhere' }}
     >
-      <Stack spacing={2}>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1.5fr' }, gap: 1.5 }}
-        >
-          <SelectField
-            label={t('workplace.admin.governance.fields.delegateType')}
-            value={form.delegateType}
-            options={(['USER', 'GROUP_REF'] as const).map((value) => ({
-              value,
-              label: t(`workplace.admin.governance.subjectTypes.${value}`),
-            }))}
-            onValueChange={(value) => {
-              setForm({
-                ...form,
-                delegateType: value as WorkplaceGovernanceDelegatedAdminScopeInput['delegateType'],
-              });
-              setDelegate('');
-            }}
-          />
-          <FormField
-            required
-            label={t(
-              form.delegateType === 'USER'
-                ? 'workplace.admin.governance.fields.userId'
-                : 'workplace.admin.governance.fields.groupRef'
-            )}
-            value={delegate}
-            errorMessage={
-              delegate && !delegateValid
-                ? t('workplace.admin.governance.fields.invalidSubject')
-                : undefined
-            }
-            onChange={(event) => setDelegate(event.target.value)}
-          />
-        </Box>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1.5fr' }, gap: 1.5 }}
-        >
-          <SelectField
-            label={t('workplace.admin.governance.fields.scopeType')}
-            value="SITE"
-            disabled
-            options={[
-              {
-                value: 'SITE',
-                label: t('workplace.admin.governance.delegatedScopeTypes.SITE'),
-              },
-            ]}
-            onValueChange={() => undefined}
-          />
-          <SelectField
-            label={t('workplace.admin.governance.fields.site')}
-            value={scope}
-            options={sites.map((site) => ({ value: site.siteId, label: site.name }))}
-            onValueChange={setScope}
-          />
-        </Box>
-        <Box sx={{ border: 1, borderColor: 'divider', p: 1.25 }}>
-          <Typography variant="body2" fontWeight={750} sx={{ mb: 0.75 }}>
-            {t('workplace.admin.governance.fields.permissions')}
-          </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
-            {DELEGATED_PERMISSIONS.map((permission) => (
-              <FormControlLabel
-                key={permission}
-                control={
-                  <Checkbox
-                    checked={form.permissions.includes(permission)}
-                    onChange={(event) =>
-                      setForm({
-                        ...form,
-                        permissions: event.target.checked
-                          ? [...form.permissions, permission]
-                          : form.permissions.filter((value) => value !== permission),
-                      })
-                    }
-                  />
-                }
-                label={t(`workplace.admin.governance.delegatedPermissions.${permission}`)}
-              />
-            ))}
-          </Box>
-        </Box>
-        <DwpDateTimeProvider
-          locale={i18n.resolvedLanguage}
-          timeZone={selectedSite?.timeZone ?? 'UTC'}
-        >
-          <Box
-            sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}
-          >
-            <DateTimePickerField
-              label={t('workplace.admin.governance.fields.validFrom')}
-              value={form.validFrom}
-              onValueChange={(value) => setForm({ ...form, validFrom: value })}
-            />
-            <DateTimePickerField
-              label={t('workplace.admin.governance.fields.validUntil')}
-              value={form.validUntil}
-              onValueChange={(value) => setForm({ ...form, validUntil: value })}
-              errorMessage={
-                !periodValid ? t('workplace.admin.governance.fields.invalidPeriod') : undefined
-              }
-            />
-          </Box>
-        </DwpDateTimeProvider>
-        <SelectField
-          label={t('workplace.admin.governance.fields.state')}
-          value={form.state}
-          options={(['ACTIVE', 'REVOKED'] as const).map((value) => ({
-            value,
-            label: t(`workplace.admin.governance.states.${value}`),
-          }))}
-          onValueChange={(value) =>
-            setForm({
-              ...form,
-              state: value as WorkplaceGovernanceDelegatedAdminScopeInput['state'],
-            })
-          }
-        />
-        <Alert severity="info" icon={<KeyRound size={20} />}>
-          {t('workplace.admin.governance.delegation.expiryNotice')}
-        </Alert>
-      </Stack>
-    </FormDialog>
+      {t('workplace.admin.governance.delegation.floorRange')}:{' '}
+      {floorSet === false
+        ? t('workplace.admin.governance.delegation.floorOptionsUnavailable')
+        : floorSet === null
+          ? t('workplace.admin.governance.delegation.allFloors')
+          : names.join(', ')}
+    </Typography>
   );
 }

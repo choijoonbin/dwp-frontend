@@ -1,0 +1,190 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e18]: Workplace
+          - generic [ref=e19]:
+            - button [ref=e21] [cursor=pointer]:
+              - img [ref=e22]
+            - button [ref=e28] [cursor=pointer]:
+              - img [ref=e30]
+            - button [ref=e34] [cursor=pointer]:
+              - generic [ref=e35]: T
+              - img [ref=e36]
+            - button [ref=e40] [cursor=pointer]
+      - main [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]:
+                - img [ref=e49]
+                - generic [ref=e52]:
+                  - heading [level=1] [ref=e53]: Pangyo HQ · 12F
+                  - text: 2026-08-19 · 09:17 · 45 min
+              - button [expanded] [ref=e54] [cursor=pointer]:
+                - img [ref=e56]
+                - text: Filters
+            - generic [ref=e58]:
+              - generic [ref=e59]:
+                - status [ref=e60]: 1 of 1 results · 1 pass initial booking checks
+                - button [ref=e61]:
+                  - generic [ref=e62]: Focus
+                  - img [ref=e63] [cursor=pointer]
+              - group [ref=e65]:
+                - button [pressed] [ref=e66] [cursor=pointer]:
+                  - img [ref=e67]
+                - button [disabled]:
+                  - img
+          - region [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]:
+                - img [ref=e72]
+                - generic [ref=e76]:
+                  - heading [level=2] [ref=e77]: Pangyo HQ
+                  - text: 12F · 1 results
+              - generic [ref=e78]:
+                - generic [ref=e81]: Open by reservation state
+                - generic [ref=e84]: Occupied
+                - generic [ref=e87]: My booking
+                - generic [ref=e90]: Assigned
+                - generic [ref=e93]: Drop-in
+                - generic [ref=e96]: Unavailable
+            - status [ref=e97]:
+              - img [ref=e99]
+              - generic [ref=e103]:
+                - heading [level=6] [ref=e104]: A floor plan has not been registered for this floor
+                - paragraph [ref=e105]: Use the list to review space details and availability.
+            - article [ref=e107]:
+              - generic [ref=e110]:
+                - img [ref=e111]
+                - generic [ref=e113]: No space photo is registered.
+              - button [ref=e114] [cursor=pointer]:
+                - img [ref=e116]
+                - generic [ref=e118]:
+                  - heading [level=6] [ref=e119]: Focus desk 12
+                  - generic [ref=e120]: Desk · Focus zone · MONITOR · STANDING
+                - generic [ref=e121]:
+                  - generic [ref=e123]: Open by reservation state
+                  - generic [ref=e125]: Initial booking checks passed
+  - dialog [active] [ref=e127]:
+    - dialog "Space search criteria" [ref=e128]:
+      - heading "Space search criteria" [level=2] [ref=e129]
+      - generic [ref=e130]:
+        - region "Space search criteria" [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e134]:
+              - generic [ref=e135]: Search spaces, neighborhoods, or amenities
+              - generic [ref=e136]:
+                - img [ref=e138]
+                - textbox "Search spaces, neighborhoods, or amenities" [ref=e141]: Focus
+                - group:
+                  - generic: Search spaces, neighborhoods, or amenities
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - generic [ref=e145]: Date
+                - group "Date" [ref=e146]:
+                  - generic [ref=e147]:
+                    - generic [ref=e148]:
+                      - spinbutton "Month" [ref=e149]: "08"
+                      - text: /
+                    - generic [ref=e150]:
+                      - spinbutton "Day" [ref=e151]: "19"
+                      - text: /
+                    - spinbutton "Year" [ref=e153]: "2026"
+                  - button "Choose date, selected date is Aug 19, 2026" [ref=e155] [cursor=pointer]:
+                    - img [ref=e156]
+                  - group:
+                    - generic: Date
+                  - textbox [ref=e158]: 08/19/2026
+              - generic [ref=e159]:
+                - generic [ref=e160]: Start time
+                - generic [ref=e161]:
+                  - combobox "Start time 09:17" [ref=e162] [cursor=pointer]: 09:17
+                  - textbox: 09:17
+                  - img
+                  - group:
+                    - generic: Start time
+              - generic [ref=e163]:
+                - generic [ref=e164]: Duration
+                - generic [ref=e165]:
+                  - combobox "Duration 45 min" [ref=e166] [cursor=pointer]: 45 min
+                  - textbox: "45"
+                  - img
+                  - group:
+                    - generic: Duration
+              - generic [ref=e167]:
+                - generic [ref=e168]: Site
+                - generic [ref=e169]:
+                  - combobox "Site Pangyo HQ" [ref=e170] [cursor=pointer]: Pangyo HQ
+                  - textbox: 10000000-0000-4000-8000-000000000001
+                  - img
+                  - group:
+                    - generic: Site
+              - generic [ref=e171]:
+                - generic [ref=e172]: Floor
+                - generic [ref=e173]:
+                  - combobox "Floor 12F" [ref=e174] [cursor=pointer]: 12F
+                  - textbox: 20000000-0000-4000-8000-000000000012
+                  - img
+                  - group:
+                    - generic: Floor
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - generic [ref=e177]: Space type
+            - generic [ref=e178]:
+              - combobox "Space type All spaces" [ref=e179] [cursor=pointer]: All spaces
+              - textbox: ALL
+              - img
+              - group:
+                - generic: Space type
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - generic [ref=e182]:
+                - generic: Amenities
+                - generic [ref=e183]:
+                  - combobox "Amenities" [ref=e184] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: Amenities
+              - generic [ref=e185]:
+                - generic: Neighborhood
+                - generic [ref=e186]:
+                  - combobox "Neighborhood" [ref=e187] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: Neighborhood
+              - generic [ref=e188] [cursor=pointer]:
+                - generic [ref=e189]:
+                  - checkbox "Accessible spaces only" [ref=e190]
+                  - img [ref=e191]
+                - generic [ref=e193]: Accessible spaces only
+            - generic [ref=e194]:
+              - generic [ref=e195]:
+                - generic [ref=e196]: Sort
+                - generic [ref=e197]:
+                  - combobox "Sort Initial booking checks first" [ref=e198] [cursor=pointer]: Initial booking checks first
+                  - textbox: availability
+                  - img
+                  - group:
+                    - generic: Sort
+              - group [ref=e199]:
+                - generic "Map view is available only when an actual floor plan is registered." [ref=e200]:
+                  - button "Map view" [disabled]:
+                    - img
+                - button "List view" [pressed] [ref=e201] [cursor=pointer]:
+                  - img [ref=e202]
+      - button "Apply filters" [ref=e203] [cursor=pointer]
+```

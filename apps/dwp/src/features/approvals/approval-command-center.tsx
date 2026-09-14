@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, CheckCheck, ListChecks } from 'lucide-react';
+import { ArrowLeft, CheckCheck, ListChecks, ListPlus, RefreshCw, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton, FormDialog, FormField, LoadingState } from '@dwp-frontend/design-system';
 import {
+  HttpError,
   claimApprovalTask,
   decideApprovalTask,
   getApprovalTask,
-  getApprovalTasks,
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import {
+  approvalQuorumVotePrecondition,
+  readApprovalQuorumTaskSnapshot,
+  sameApprovalQuorumTaskSnapshot,
+} from '@dwp-frontend/shared-utils/api/approval-quorum-contract';
+import type { ApprovalQuorumTaskSnapshot } from '@dwp-frontend/shared-utils/api/approval-quorum-contract';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -23,18 +30,26 @@ import { useTheme } from '@mui/material/styles';
 
 import {
   executeSequentialApprovalBatch,
-  filterApprovalTasks,
+  hasApprovalTaskContentAccess,
   parseApprovalQueueFilter,
+  approvalScopeIdentity,
   toggleApprovalBatchSelection,
 } from './approval-command-center-model';
 import { ApprovalCommandTaskList } from './approval-command-task-list';
+import { ApprovalBatchResultPanel } from './approval-batch-result-panel';
 import { ApprovalDecisionDetail, type ApprovalDecisionKind } from './approval-decision-detail';
+import {
+  ApprovalDecisionRecoveryNotice,
+  type ApprovalDecisionRecovery,
+} from './approval-decision-recovery-notice';
 import {
   isProductSurfaceOperationCancelledError,
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { useApprovalQueueClock } from './use-approval-queue-clock';
+import { useApprovalCommandTaskSearch } from './use-approval-command-task-search';
+import { useApprovalTaskDocuments } from './use-approval-task-documents';
 import { authorizedApprovalWorkReturnTarget } from './approval-return-target';
 
 import type { ApprovalBatchResult, ApprovalQueueFilter } from './approval-command-center-model';
@@ -45,6 +60,7 @@ type DecisionConfirmation = {
   taskId: string;
   expectedVersion: number;
   scopeIdentity: string;
+  quorum?: ApprovalQuorumTaskSnapshot | null;
 };
 
 export function ApprovalCommandCenter() {
@@ -55,6 +71,7 @@ export function ApprovalCommandCenter() {
   const mobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const pendingListNavigation = useRef<string | undefined>(undefined);
   const requestedTaskId = searchParams.get('task') ?? undefined;
   const { permissions } = usePermissions();
   const requestedReturnTarget = searchParams.get('returnTo');
@@ -67,7 +84,7 @@ export function ApprovalCommandCenter() {
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
   });
-  const scopeIdentity = requestScope.cacheKey.join('|');
+  const scopeIdentity = approvalScopeIdentity(requestScope.cacheKey);
   const scopeIdentityRef = useRef(scopeIdentity);
   scopeIdentityRef.current = scopeIdentity;
   const previousScopeIdentity = useRef(scopeIdentity);
@@ -75,35 +92,74 @@ export function ApprovalCommandCenter() {
   const detailPaneRef = useRef<HTMLDivElement>(null);
   const nowMs = useApprovalQueueClock();
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('query') ?? '');
   const [selectedTaskId, setSelectedTaskId] = useState<string>();
+  const selectedTaskIdRef = useRef(selectedTaskId);
+  selectedTaskIdRef.current = selectedTaskId;
   const [mobileQueueMode, setMobileQueueMode] = useState(false);
+  const [mobileSelectionMode, setMobileSelectionMode] = useState(false);
   const [selectedBatchIds, setSelectedBatchIds] = useState<string[]>([]);
   const [confirmation, setConfirmation] = useState<DecisionConfirmation>();
+  const [decisionRecovery, setDecisionRecovery] = useState<ApprovalDecisionRecovery>();
   const decision = confirmation?.decision;
   const [comment, setComment] = useState('');
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchResult, setBatchResult] = useState<ApprovalBatchResult>();
 
-  const tasks = useQuery({
-    queryKey: ['approvals', 'command-tasks', 'INBOX', ...requestScope.cacheKey],
-    queryFn: () => getApprovalTasks('INBOX', requestScope.contextScopeKey),
-    enabled: requestScope.ready,
-    staleTime: 20_000,
-    retry: 1,
-    meta: requestScope.queryMeta,
-  });
   const filter: ApprovalQueueFilter = parseApprovalQueueFilter(searchParams.get('queue'));
-  const visibleTasks = useMemo(
-    () =>
-      filterApprovalTasks({
-        tasks: tasks.data ?? [],
-        filter,
-        search,
-        nowMs,
-      }),
-    [filter, search, tasks.data, nowMs]
-  );
+  const requestedPage = Number(searchParams.get('page') ?? '0');
+  const page =
+    Number.isSafeInteger(requestedPage) && requestedPage >= 0 && requestedPage <= 100000
+      ? requestedPage
+      : 0;
+  const requestedSort = searchParams.get('sort');
+  const sort =
+    requestedSort === 'NEWEST' || requestedSort === 'OLDEST' ? requestedSort : 'PRIORITY';
+  const requestedStatus = searchParams.get('status');
+  const status =
+    requestedStatus === 'PENDING' ||
+    requestedStatus === 'CLAIMED' ||
+    requestedStatus === 'INFO_REQUESTED'
+      ? requestedStatus
+      : '';
+  const tasks = useApprovalCommandTaskSearch({
+    queue: filter,
+    search,
+    page,
+    sort,
+    status,
+    day: new Date(nowMs).toDateString(),
+    scope: requestScope,
+  });
+  const visibleTasks = useMemo(() => tasks.data ?? [], [tasks.data]);
+  const changeSearch = (value: string) => {
+    setSearch(value);
+    changeListParameters({ query: value, page: '0' });
+  };
+  const changeListParameters = (values: Record<string, string>) => {
+    const next = new URLSearchParams(searchParams);
+    for (const [key, value] of Object.entries(values)) {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    }
+    next.delete('task');
+    pendingListNavigation.current = next.toString();
+    setSelectedTaskId(undefined);
+    setSelectedBatchIds([]);
+    setConfirmation(undefined);
+    setSearchParams(next, { replace: true });
+  };
+  const previousQueue = useRef(filter);
+  const urlSearch = searchParams.get('query') ?? '';
+  useEffect(() => setSearch(urlSearch), [urlSearch]);
+  useEffect(() => {
+    if (previousQueue.current === filter) return;
+    previousQueue.current = filter;
+    const next = new URLSearchParams(searchParams);
+    next.delete('page');
+    setSelectedBatchIds([]);
+    setSearchParams(next, { replace: true });
+  }, [filter, searchParams, setSearchParams]);
 
   useEffect(() => {
     if (previousScopeIdentity.current === scopeIdentity) return;
@@ -111,13 +167,16 @@ export function ApprovalCommandCenter() {
     setSearch('');
     setSelectedTaskId(undefined);
     setMobileQueueMode(true);
+    setMobileSelectionMode(false);
     setSelectedBatchIds([]);
     setConfirmation(undefined);
+    setDecisionRecovery(undefined);
     setComment('');
     setBatchDialogOpen(false);
     setBatchResult(undefined);
     const next = new URLSearchParams(searchParams);
     next.delete('task');
+    for (const key of ['query', 'page', 'status', 'sort']) next.delete(key);
     setSearchParams(next, { replace: true });
   }, [scopeIdentity, searchParams, setSearchParams]);
 
@@ -127,27 +186,48 @@ export function ApprovalCommandCenter() {
   }, [requestedTaskId, mobile]);
 
   useEffect(() => {
-    if (tasks.isError || !tasks.data) return;
+    if (pendingListNavigation.current !== undefined) {
+      if (pendingListNavigation.current !== searchParams.toString()) return;
+      pendingListNavigation.current = undefined;
+    }
+    if (tasks.isError || tasks.isFetching || !tasks.data) return;
     if (mobile && mobileQueueMode) return;
-    if (selectedTaskId && visibleTasks.some((task) => task.taskId === selectedTaskId)) return;
+    if (selectedTaskId && visibleTasks.some((task) => task.taskId === selectedTaskId)) {
+      if (!mobile && !requestedTaskId) {
+        const next = new URLSearchParams(searchParams);
+        next.set('task', selectedTaskId);
+        setSearchParams(next, { replace: true });
+      }
+      return;
+    }
     const requested = requestedTaskId
       ? visibleTasks.find((task) => task.taskId === requestedTaskId)
       : undefined;
-    setSelectedTaskId(requested?.taskId ?? (mobile ? undefined : visibleTasks[0]?.taskId));
+    const nextTaskId = requested?.taskId ?? (mobile ? undefined : visibleTasks[0]?.taskId);
+    setSelectedTaskId(nextTaskId);
+    if (!mobile) {
+      const next = new URLSearchParams(searchParams);
+      if (nextTaskId) next.set('task', nextTaskId);
+      else next.delete('task');
+      setSearchParams(next, { replace: true });
+    }
   }, [
     mobile,
     mobileQueueMode,
     requestedTaskId,
+    searchParams,
     selectedTaskId,
+    setSearchParams,
     tasks.data,
     tasks.isError,
+    tasks.isFetching,
     visibleTasks,
   ]);
 
   const detail = useQuery({
     queryKey: ['approvals', 'command-task', selectedTaskId, ...requestScope.cacheKey],
-    queryFn: () => getApprovalTask(selectedTaskId!, requestScope.contextScopeKey),
-    enabled: requestScope.ready && Boolean(selectedTaskId) && !tasks.isError,
+    queryFn: ({ signal }) => getApprovalTask(selectedTaskId!, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready && Boolean(selectedTaskId) && !tasks.isError && !tasks.isFetching,
     staleTime: 0,
     retry: 1,
     meta: requestScope.queryMeta,
@@ -166,23 +246,25 @@ export function ApprovalCommandCenter() {
   const confirmationReady = Boolean(
     confirmation &&
     selected &&
+    hasApprovalTaskContentAccess(selected) &&
     selected.canDecide &&
     !selected.selfApprovalBlocked &&
     confirmation.taskId === selected.task.taskId &&
     confirmation.expectedVersion === selected.task.version &&
-    confirmation.scopeIdentity === scopeIdentity
+    confirmation.scopeIdentity === scopeIdentity &&
+    sameApprovalQuorumTaskSnapshot(confirmation.quorum, selected.quorum)
   );
 
   const assertCurrentAuthority = (
-    input: { taskId: string; expectedVersion: number; scopeIdentity: string },
-    kind: 'claim' | 'decide'
+    input: {
+      taskId: string;
+      expectedVersion: number;
+      scopeIdentity: string;
+      quorum?: ApprovalQuorumTaskSnapshot | null;
+    },
+    kind: 'claim' | 'decide' | 'read'
   ) => {
-    const queueState = queryClient.getQueryState([
-      'approvals',
-      'command-tasks',
-      'INBOX',
-      ...requestScope.cacheKey,
-    ]);
+    const queueState = queryClient.getQueryState(tasks.queryKey);
     const taskState = queryClient.getQueryState<ApprovalTaskDetail>([
       'approvals',
       'command-task',
@@ -193,6 +275,7 @@ export function ApprovalCommandCenter() {
     if (
       scopeIdentityRef.current !== input.scopeIdentity ||
       !requestScope.ready ||
+      !tasksReady ||
       queueState?.status !== 'success' ||
       queueState.fetchStatus !== 'idle' ||
       queueState.fetchFailureCount > 0 ||
@@ -201,9 +284,16 @@ export function ApprovalCommandCenter() {
       taskState.fetchFailureCount > 0 ||
       latest?.task.taskId !== input.taskId ||
       latest.task.version !== input.expectedVersion ||
+      !hasApprovalTaskContentAccess(latest) ||
       !Number.isSafeInteger(input.expectedVersion) ||
       input.expectedVersion < 0 ||
-      (kind === 'claim' ? !latest.canClaim : !latest.canDecide || latest.selfApprovalBlocked)
+      (kind === 'claim'
+        ? !latest.canClaim
+        : kind === 'decide'
+          ? !latest.canDecide ||
+            latest.selfApprovalBlocked ||
+            !sameApprovalQuorumTaskSnapshot(input.quorum, latest.quorum)
+          : selectedTaskIdRef.current !== input.taskId)
     ) {
       throw new Error('approval authority changed');
     }
@@ -211,6 +301,7 @@ export function ApprovalCommandCenter() {
 
   useEffect(() => {
     setConfirmation(undefined);
+    setDecisionRecovery(undefined);
     setComment('');
   }, [selectedTaskId]);
 
@@ -228,6 +319,7 @@ export function ApprovalCommandCenter() {
   const invalidateApprovalWork = async (taskId?: string) => {
     const invalidations = [
       queryClient.invalidateQueries({ queryKey: ['approvals', 'command-tasks'] }),
+      queryClient.invalidateQueries({ queryKey: ['approvals', 'command-queue-counts'] }),
       queryClient.invalidateQueries({ queryKey: ['approvals', 'tasks'] }),
       queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
     ];
@@ -241,14 +333,35 @@ export function ApprovalCommandCenter() {
   };
 
   const decide = useMutation({
-    mutationFn: (input: {
+    mutationFn: async (input: {
       taskId: string;
       decision: ApprovalDecisionKind;
       comment?: string;
       expectedVersion: number;
       scopeIdentity: string;
-    }) =>
-      runDecision((execution) => {
+      quorum?: ApprovalQuorumTaskSnapshot | null;
+    }) => {
+      const latest = await getApprovalTask(input.taskId, requestScope.contextScopeKey);
+      if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
+      queryClient.setQueryData(
+        ['approvals', 'command-task', input.taskId, ...requestScope.cacheKey],
+        latest
+      );
+      if (
+        latest.task.taskId !== input.taskId ||
+        latest.task.version !== input.expectedVersion ||
+        !sameApprovalQuorumTaskSnapshot(input.quorum, latest.quorum)
+      ) {
+        throw new HttpError('approval task version changed', 409);
+      }
+      if (
+        !hasApprovalTaskContentAccess(latest) ||
+        !latest.canDecide ||
+        latest.selfApprovalBlocked
+      ) {
+        throw new HttpError('approval decision authority changed', 403);
+      }
+      return runDecision((execution) => {
         assertCurrentAuthority(input, 'decide');
         return decideApprovalTask(
           input.taskId,
@@ -256,13 +369,16 @@ export function ApprovalCommandCenter() {
             decision: input.decision,
             comment: input.comment,
             expectedVersion: input.expectedVersion,
+            quorum: approvalQuorumVotePrecondition(input.quorum),
           },
           execution
         );
-      }),
+      });
+    },
     onSuccess: async (_result, input) => {
       if (scopeIdentityRef.current !== input.scopeIdentity) return;
       setConfirmation(undefined);
+      setDecisionRecovery(undefined);
       setComment('');
       setSelectedBatchIds((current) => current.filter((taskId) => taskId !== input.taskId));
       setSelectedTaskId(undefined);
@@ -278,18 +394,48 @@ export function ApprovalCommandCenter() {
         isProductSurfaceOperationCancelledError(error)
       )
         return;
+      setConfirmation(undefined);
+      setDecisionRecovery({
+        kind:
+          error instanceof HttpError && error.status === 409
+            ? 'CONFLICT'
+            : error instanceof HttpError && error.status === 403
+              ? 'DENIED'
+              : 'UNAVAILABLE',
+        command: 'DECISION',
+        decision: input.decision,
+        taskId: input.taskId,
+      });
       toast.error(t('inbox.decisionError'));
     },
   });
 
   const claim = useMutation({
-    mutationFn: (input: { taskId: string; expectedVersion: number; scopeIdentity: string }) =>
-      runClaim((execution) => {
+    mutationFn: async (input: {
+      taskId: string;
+      expectedVersion: number;
+      scopeIdentity: string;
+    }) => {
+      const latest = await getApprovalTask(input.taskId, requestScope.contextScopeKey);
+      if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
+      queryClient.setQueryData(
+        ['approvals', 'command-task', input.taskId, ...requestScope.cacheKey],
+        latest
+      );
+      if (latest.task.taskId !== input.taskId || latest.task.version !== input.expectedVersion) {
+        throw new HttpError('approval task version changed', 409);
+      }
+      if (!hasApprovalTaskContentAccess(latest) || !latest.canClaim) {
+        throw new HttpError('approval claim authority changed', 403);
+      }
+      return runClaim((execution) => {
         assertCurrentAuthority(input, 'claim');
         return claimApprovalTask(input.taskId, input.expectedVersion, execution);
-      }),
+      });
+    },
     onSuccess: async (claimed, input) => {
       if (scopeIdentityRef.current !== input.scopeIdentity) return;
+      setDecisionRecovery(undefined);
       queryClient.setQueryData(
         ['approvals', 'command-task', claimed.task.taskId, ...requestScope.cacheKey],
         claimed
@@ -303,6 +449,16 @@ export function ApprovalCommandCenter() {
         isProductSurfaceOperationCancelledError(error)
       )
         return;
+      setDecisionRecovery({
+        kind:
+          error instanceof HttpError && error.status === 409
+            ? 'CONFLICT'
+            : error instanceof HttpError && error.status === 403
+              ? 'DENIED'
+              : 'UNAVAILABLE',
+        command: 'CLAIM',
+        taskId: input.taskId,
+      });
       toast.error(t('inbox.claimError'));
     },
   });
@@ -329,13 +485,26 @@ export function ApprovalCommandCenter() {
         },
         approveTask: async (latest) => {
           if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
-          await runDecision((execution) =>
-            decideApprovalTask(
+          await runDecision((execution) => {
+            assertCurrentAuthority(
+              {
+                taskId: latest.task.taskId,
+                expectedVersion: latest.task.version,
+                scopeIdentity: input.scopeIdentity,
+                quorum: latest.quorum,
+              },
+              'decide'
+            );
+            return decideApprovalTask(
               latest.task.taskId,
-              { decision: 'APPROVE', expectedVersion: latest.task.version },
+              {
+                decision: 'APPROVE',
+                expectedVersion: latest.task.version,
+                quorum: approvalQuorumVotePrecondition(latest.quorum),
+              },
               execution
-            )
-          );
+            );
+          });
         },
       }),
     onSuccess: async (result, input) => {
@@ -369,6 +538,7 @@ export function ApprovalCommandCenter() {
 
   const selectTask = (taskId: string) => {
     restoreTaskIdRef.current = taskId;
+    setMobileSelectionMode(false);
     setMobileQueueMode(false);
     setSelectedTaskId(taskId);
     const next = new URLSearchParams(searchParams);
@@ -404,6 +574,81 @@ export function ApprovalCommandCenter() {
   const showQueue = !mobile || mobileQueueMode || !selectedTaskId;
   const showDetail = !mobile || (!mobileQueueMode && Boolean(selectedTaskId));
   const busy = decide.isPending || claim.isPending || batchApprove.isPending;
+  const selectionMode = !mobile || mobileSelectionMode;
+  const activeDecisionRecovery =
+    decisionRecovery?.taskId === selectedTaskId ? decisionRecovery : undefined;
+  const displayedSelection =
+    selected && activeDecisionRecovery
+      ? { ...selected, canClaim: false, canDecide: false }
+      : selected;
+  const cachedDocumentDetail =
+    detail.data?.task.taskId === selectedTaskId ? detail.data : undefined;
+  const assertDocumentCurrent = () => {
+    const queue = queryClient.getQueryState(tasks.queryKey);
+    const current = queryClient.getQueryState<ApprovalTaskDetail>([
+      'approvals',
+      'command-task',
+      selectedTaskId,
+      ...requestScope.cacheKey,
+    ]);
+    const latest = current?.data;
+    if (
+      !requestScope.ready ||
+      scopeIdentityRef.current !== scopeIdentity ||
+      selectedTaskIdRef.current !== selectedTaskId ||
+      !cachedDocumentDetail ||
+      !Number.isSafeInteger(cachedDocumentDetail.task.version) ||
+      cachedDocumentDetail.task.version < 0 ||
+      activeDecisionRecovery ||
+      queue?.status !== 'success' ||
+      queue.error ||
+      queue.fetchStatus !== 'idle' ||
+      queue.fetchFailureCount > 0 ||
+      current?.status !== 'success' ||
+      current.error ||
+      current.fetchStatus !== 'idle' ||
+      current.fetchFailureCount > 0 ||
+      !latest ||
+      latest.task.taskId !== selectedTaskId ||
+      latest.task.version !== cachedDocumentDetail.task.version ||
+      latest.task.requestId !== cachedDocumentDetail.task.requestId ||
+      !hasApprovalTaskContentAccess(latest)
+    )
+      throw new HttpError('approval document source unavailable', 409);
+  };
+  const taskDocuments = useApprovalTaskDocuments(cachedDocumentDetail, assertDocumentCurrent, {
+    taskId: selectedTaskId,
+    ready: Boolean(selected && !activeDecisionRecovery),
+    error:
+      [detail.failureReason, detail.error, tasks.failureReason, tasks.error].find(
+        (error) => error instanceof HttpError && [401, 403, 404].includes(error.status)
+      ) ??
+      detail.failureReason ??
+      detail.error ??
+      tasks.failureReason ??
+      tasks.error,
+    refreshOwner: async () => {
+      const expectedId = selectedTaskId;
+      const expectedScope = scopeIdentity;
+      const queue = await tasks.refetch();
+      if (selectedTaskIdRef.current !== expectedId || scopeIdentityRef.current !== expectedScope)
+        throw new HttpError('approval document identity changed', 409);
+      if (!queue.isSuccess || queue.error)
+        throw queue.error ?? new HttpError('approval queue refresh failed', 503);
+      const refreshed = await detail.refetch();
+      if (selectedTaskIdRef.current !== expectedId || scopeIdentityRef.current !== expectedScope)
+        throw new HttpError('approval document identity changed', 409);
+      if (!refreshed.isSuccess || refreshed.error || !refreshed.data)
+        throw refreshed.error ?? new HttpError('approval document refresh failed', 503);
+      return refreshed.data;
+    },
+  });
+  const checkedAt = tasks.pageInfo?.evaluatedAt
+    ? formatDate(tasks.pageInfo.evaluatedAt, {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : undefined;
 
   return (
     <Paper
@@ -424,12 +669,34 @@ export function ApprovalCommandCenter() {
             <ListChecks size={21} aria-hidden="true" />
           </Box>
           <Box>
-            <Typography id="approval-command-center-title" component="h2" variant="subtitle1">
+            <Typography
+              id="approval-command-center-title"
+              component="h2"
+              variant="subtitle1"
+              tabIndex={-1}
+              data-approval-command-center-heading
+            >
               {t('home.commandCenter.title')}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {t('home.commandCenter.description')}
             </Typography>
+            {tasks.data && (
+              <Typography
+                component="p"
+                variant="caption"
+                color="text.secondary"
+                role="status"
+                aria-live="polite"
+                sx={{ mt: 0.25 }}
+              >
+                {t('home.commandCenter.queueContext', {
+                  queue: t(`home.commandCenter.filters.${filter}`),
+                  count: tasks.pageInfo?.totalElements ?? visibleTasks.length,
+                  checkedAt: checkedAt ?? t('home.commandCenter.checkingFreshness'),
+                })}
+              </Typography>
+            )}
           </Box>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
@@ -443,37 +710,63 @@ export function ApprovalCommandCenter() {
               {t('common:productSurface.actions.returnToWork')}
             </ActionButton>
           )}
-          <Chip
-            size="small"
-            color={selectedBatchIds.length > 0 ? 'primary' : 'default'}
-            label={t('home.commandCenter.selectedCount', { count: selectedBatchIds.length })}
-          />
           <ActionButton
-            intent="primary"
+            intent="quiet"
             size="small"
-            startIcon={<CheckCheck size={16} />}
-            disabled={selectedBatchIds.length === 0 || busy || !tasksReady}
-            onClick={() => setBatchDialogOpen(true)}
+            startIcon={<RefreshCw size={16} />}
+            disabled={tasks.isFetching || busy}
+            onClick={() => void tasks.refetch()}
           >
-            {t('home.commandCenter.batchApprove')}
+            {t('actions.refresh')}
           </ActionButton>
+          {mobile && showQueue && (
+            <ActionButton
+              intent={mobileSelectionMode ? 'secondary' : 'quiet'}
+              size="small"
+              startIcon={mobileSelectionMode ? <X size={16} /> : <ListPlus size={16} />}
+              disabled={busy || !tasksReady}
+              aria-pressed={mobileSelectionMode}
+              onClick={() => {
+                setMobileSelectionMode((current) => {
+                  if (current) setSelectedBatchIds([]);
+                  return !current;
+                });
+              }}
+            >
+              {t(
+                mobileSelectionMode
+                  ? 'home.commandCenter.cancelSelection'
+                  : 'home.commandCenter.startSelection'
+              )}
+            </ActionButton>
+          )}
+          {selectionMode && (
+            <>
+              <Chip
+                size="small"
+                color={selectedBatchIds.length > 0 ? 'primary' : 'default'}
+                label={t('home.commandCenter.selectedCount', { count: selectedBatchIds.length })}
+              />
+              <ActionButton
+                intent="primary"
+                size="small"
+                startIcon={<CheckCheck size={16} />}
+                disabled={selectedBatchIds.length === 0 || busy || !tasksReady}
+                onClick={() => setBatchDialogOpen(true)}
+              >
+                {t('home.commandCenter.batchApprove')}
+              </ActionButton>
+            </>
+          )}
         </Stack>
       </Stack>
 
-      {batchResult && (
-        <Box
-          role="status"
-          aria-live="polite"
-          sx={{ px: 2, py: 1.25, bgcolor: 'action.hover', borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Typography variant="body2">
-            {t('home.commandCenter.batchResult', {
-              approved: batchResult.approvedTaskIds.length,
-              ineligible: batchResult.ineligibleTaskIds.length,
-              remaining: batchResult.remainingTaskIds.length + (batchResult.failedTaskId ? 1 : 0),
-            })}
-          </Typography>
-        </Box>
+      {batchResult && tasks.data && (
+        <ApprovalBatchResultPanel
+          result={batchResult}
+          tasks={tasks.data}
+          onDismiss={() => setBatchResult(undefined)}
+        />
       )}
 
       {tasks.isError ? (
@@ -521,7 +814,16 @@ export function ApprovalCommandCenter() {
               emptyQueue={tasks.data.length === 0}
               search={search}
               busy={busy || tasks.isFetching}
-              onSearchChange={setSearch}
+              selectionMode={selectionMode}
+              onSearchChange={changeSearch}
+              totalElements={tasks.pageInfo?.totalElements ?? 0}
+              page={page}
+              totalPages={tasks.pageInfo?.totalPages ?? 0}
+              sort={sort}
+              status={status}
+              onPageChange={(value) => changeListParameters({ page: String(value) })}
+              onSortChange={(value) => changeListParameters({ sort: value, page: '0' })}
+              onStatusChange={(value) => changeListParameters({ status: value, page: '0' })}
               onSelect={selectTask}
               onToggleBatch={toggleBatch}
             />
@@ -538,8 +840,34 @@ export function ApprovalCommandCenter() {
               bgcolor: 'background.paper',
             }}
           >
+            {activeDecisionRecovery && (
+              <ApprovalDecisionRecoveryNotice
+                recovery={activeDecisionRecovery}
+                busy={detail.isFetching}
+                onRecover={async () => {
+                  const refreshed = await detail.refetch();
+                  if (!refreshed.isSuccess || !refreshed.data) return;
+                  setDecisionRecovery(undefined);
+                  if (
+                    activeDecisionRecovery.command === 'DECISION' &&
+                    activeDecisionRecovery.kind === 'CONFLICT' &&
+                    activeDecisionRecovery.decision &&
+                    refreshed.data.canDecide &&
+                    !refreshed.data.selfApprovalBlocked
+                  ) {
+                    setConfirmation({
+                      decision: activeDecisionRecovery.decision,
+                      taskId: refreshed.data.task.taskId,
+                      expectedVersion: refreshed.data.task.version,
+                      quorum: readApprovalQuorumTaskSnapshot(refreshed.data.quorum),
+                      scopeIdentity,
+                    });
+                  }
+                }}
+              />
+            )}
             <ApprovalDecisionDetail
-              detail={selected}
+              detail={displayedSelection}
               loading={Boolean(selectedTaskId) && (detail.isFetching || tasks.isFetching)}
               error={
                 Boolean(selectedTaskId) &&
@@ -548,10 +876,28 @@ export function ApprovalCommandCenter() {
               mobile={mobile}
               decisionBusy={decide.isPending || batchApprove.isPending}
               claimBusy={claim.isPending}
+              verifiedAt={detail.dataUpdatedAt}
+              onRevalidateDocument={async () => {
+                if (!selected || activeDecisionRecovery)
+                  throw new Error('approval document unavailable');
+                const expected = {
+                  taskId: selected.task.taskId,
+                  expectedVersion: selected.task.version,
+                  quorum: readApprovalQuorumTaskSnapshot(selected.quorum),
+                  scopeIdentity,
+                };
+                assertCurrentAuthority(expected, 'read');
+                const refreshed = await detail.refetch();
+                if (!refreshed.isSuccess || !refreshed.data)
+                  throw new Error('approval document refresh failed');
+                assertCurrentAuthority(expected, 'read');
+                return refreshed.data;
+              }}
+              documents={taskDocuments}
               onBack={backToQueue}
               onRetry={() => void detail.refetch()}
               onClaim={() => {
-                if (!selected) return;
+                if (!selected || activeDecisionRecovery) return;
                 claim.mutate({
                   taskId: selected.task.taskId,
                   expectedVersion: selected.task.version,
@@ -559,11 +905,18 @@ export function ApprovalCommandCenter() {
                 });
               }}
               onDecision={(kind) => {
-                if (!selected || !selected.canDecide || selected.selfApprovalBlocked) return;
+                if (
+                  !selected ||
+                  activeDecisionRecovery ||
+                  !selected.canDecide ||
+                  selected.selfApprovalBlocked
+                )
+                  return;
                 setConfirmation({
                   decision: kind,
                   taskId: selected.task.taskId,
                   expectedVersion: selected.task.version,
+                  quorum: readApprovalQuorumTaskSnapshot(selected.quorum),
                   scopeIdentity,
                 });
               }}

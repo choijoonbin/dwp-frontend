@@ -1,0 +1,340 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: 결재 업무
+            - paragraph [ref=e26]: SKAX
+          - navigation [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: 시작
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link [ref=e32] [cursor=pointer]:
+                    - /url: /approvals/home
+                    - img [ref=e34]
+                    - paragraph [ref=e38]: 전자결재 홈
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: 내 결재
+              - list [ref=e41]:
+                - listitem [ref=e42]:
+                  - button [expanded] [ref=e43] [cursor=pointer]:
+                    - img [ref=e45]
+                    - paragraph [ref=e50]: 결재함
+                    - img [ref=e51]
+                  - navigation [ref=e54]:
+                    - generic [ref=e55]:
+                      - button [pressed] [ref=e56] [cursor=pointer]:
+                        - img [ref=e57]
+                        - paragraph [ref=e60]: 전체 대기
+                        - generic [ref=e61]: "1"
+                      - button [ref=e62] [cursor=pointer]:
+                        - img [ref=e63]
+                        - paragraph [ref=e68]: 긴급 결재
+                        - generic [ref=e69]: "0"
+                      - button [ref=e70] [cursor=pointer]:
+                        - img [ref=e71]
+                        - paragraph [ref=e75]: 오늘 마감
+                        - generic [ref=e76]: "0"
+                      - button [ref=e77] [cursor=pointer]:
+                        - img [ref=e78]
+                        - paragraph [ref=e80]: 고위험
+                        - generic [ref=e81]: "1"
+                - listitem [ref=e82]:
+                  - link [ref=e83] [cursor=pointer]:
+                    - /url: /approvals/completed
+                    - img [ref=e85]
+                    - paragraph [ref=e89]: 내 처리 완료함
+                - listitem [ref=e90]:
+                  - link [ref=e91] [cursor=pointer]:
+                    - /url: /approvals/requests/new
+                    - img [ref=e93]
+                    - paragraph [ref=e98]: 새 결재 작성
+                - listitem [ref=e99]:
+                  - link [ref=e100] [cursor=pointer]:
+                    - /url: /approvals/requests/drafts
+                    - img [ref=e102]
+                    - paragraph [ref=e107]: 임시 저장
+                - listitem [ref=e108]:
+                  - link [ref=e109] [cursor=pointer]:
+                    - /url: /approvals/requests/submitted
+                    - img [ref=e111]
+                    - paragraph [ref=e115]: 내가 올린 결재
+                - listitem [ref=e116]:
+                  - link [ref=e117] [cursor=pointer]:
+                    - /url: /approvals/requests/needs-info
+                    - img [ref=e119]
+                    - paragraph [ref=e123]: 보완할 결재
+                - listitem [ref=e124]:
+                  - link [ref=e125] [cursor=pointer]:
+                    - /url: /approvals/requests/archive
+                    - img [ref=e127]
+                    - paragraph [ref=e131]: 완료 보관함
+                - listitem [ref=e132]:
+                  - link [ref=e133] [cursor=pointer]:
+                    - /url: /approvals/delegations
+                    - img [ref=e135]
+                    - paragraph [ref=e139]: 결재 위임
+          - link [ref=e141] [cursor=pointer]:
+            - /url: /apps
+            - img [ref=e143]
+            - text: 앱 목록으로 돌아가기
+      - banner [ref=e145]:
+        - generic [ref=e146]:
+          - generic [ref=e147]:
+            - img [ref=e149]
+            - generic [ref=e154]: 전자결재
+          - generic [ref=e155]:
+            - button [ref=e157] [cursor=pointer]:
+              - img [ref=e158]
+            - button [ref=e162] [cursor=pointer]:
+              - img [ref=e163]
+            - button [ref=e169] [cursor=pointer]:
+              - generic [ref=e170]: T
+              - img [ref=e171]
+      - main [ref=e173]:
+        - generic [ref=e174]:
+          - generic [ref=e175]:
+            - generic [ref=e176]:
+              - img [ref=e178]
+              - generic [ref=e182]:
+                - text: 전자결재 / 내 결재
+                - heading [level=1] [ref=e183]: 결재함
+                - paragraph [ref=e184]: 업무 맥락과 증적을 한 화면에서 검토하고 책임 있는 결정을 내립니다.
+            - generic [ref=e185]:
+              - img [ref=e186]
+              - generic [ref=e190]: 결정 증적 보존
+          - region [ref=e192]:
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - img [ref=e196]
+                - generic [ref=e199]:
+                  - heading [level=2] [ref=e200]: 전자결재 업무 센터
+                  - text: 화면을 벗어나지 않고 검토, 증적 확인, 결정을 이어갑니다.
+                  - status [ref=e201]: 전체 대기 · 1건 · 오후 12:59 확인
+              - generic [ref=e202]:
+                - button [ref=e203] [cursor=pointer]:
+                  - img [ref=e205]
+                  - text: 새로고침
+                - generic [ref=e211]: 0건 선택
+                - button [disabled]:
+                  - generic:
+                    - img
+                  - text: 선택 항목 승인
+            - generic [ref=e212]:
+              - generic [ref=e214]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]:
+                    - generic [ref=e217]: 결재 검색
+                    - generic [ref=e218]:
+                      - img [ref=e220]
+                      - textbox [ref=e223]:
+                        - /placeholder: 문서번호, 제목, 요청자 또는 단계
+                      - group:
+                        - generic: 결재 검색
+                  - generic [ref=e224]:
+                    - generic [ref=e225]:
+                      - generic: 상태
+                      - generic [ref=e226]:
+                        - combobox [ref=e227] [cursor=pointer]
+                        - textbox
+                        - img
+                        - group:
+                          - generic: 상태
+                    - generic [ref=e228]:
+                      - generic [ref=e229]: 정렬
+                      - generic [ref=e230]:
+                        - combobox [ref=e231] [cursor=pointer]: 우선순위
+                        - textbox: PRIORITY
+                        - img
+                        - group:
+                          - generic: 정렬
+                  - generic [ref=e232]:
+                    - status [ref=e233]: 결재 1건
+                    - generic [ref=e234]: 한 번에 최대 20건
+                - list [ref=e235]:
+                  - listitem [ref=e236]:
+                    - generic [ref=e238] [cursor=pointer]:
+                      - checkbox [ref=e239]
+                      - img [ref=e240]
+                    - button [pressed] [ref=e242] [cursor=pointer]:
+                      - generic [ref=e243]:
+                        - generic [ref=e244]: APR-2026-0811-001
+                        - generic [ref=e245]:
+                          - generic [ref=e247]: 높음
+                          - generic [ref=e249]: 위험 72
+                      - paragraph [ref=e250]: 현재 결재 업무의 검토 문서
+                      - generic [ref=e251]: Minseo Kim · Digital Workplace
+                      - generic [ref=e252]:
+                        - generic [ref=e253]: 2단계 · Security review
+                        - generic [ref=e254]: 8월 11일 오후 05시
+                - generic [ref=e255]:
+                  - generic [ref=e256]:
+                    - button [disabled]:
+                      - img
+                  - status [ref=e257]: 1/1 페이지
+                  - generic [ref=e258]:
+                    - button [disabled]:
+                      - img
+              - region [ref=e259]:
+                - generic [ref=e260]:
+                  - generic [ref=e261]:
+                    - generic [ref=e262]:
+                      - generic [ref=e263]: APR-2026-0811-001
+                      - generic [ref=e264]:
+                        - button [ref=e266] [cursor=pointer]:
+                          - img [ref=e267]
+                        - button [ref=e271] [cursor=pointer]:
+                          - img [ref=e272]
+                    - region [ref=e276]:
+                      - generic [ref=e277]:
+                        - generic [ref=e278]:
+                          - button [disabled]:
+                            - img
+                        - generic [ref=e279]:
+                          - button [disabled]:
+                            - img
+                        - generic [ref=e280]:
+                          - button [disabled]:
+                            - img
+                      - alert [ref=e281]:
+                        - img [ref=e283]
+                        - generic [ref=e285]: 처리 결과를 확인할 수 없습니다. 현재 권한과 문서 정책을 다시 확인한 후 같은 요청으로만 재시도할 수 있습니다.
+                    - generic [ref=e286]:
+                      - generic [ref=e287]:
+                        - generic [ref=e288]:
+                          - generic [ref=e290]: 높음
+                          - generic [ref=e292]: 처리 중
+                          - generic [ref=e294]: 기밀
+                        - heading [level=2] [ref=e295]: 현재 결재 업무의 검토 문서
+                        - paragraph [ref=e296]: Temporary access for a governed production investigation.
+                        - list [ref=e297]:
+                          - listitem [ref=e298]:
+                            - img [ref=e300]
+                            - generic [ref=e303]:
+                              - generic [ref=e304]: 요청자
+                              - generic [ref=e305]: Minseo Kim
+                          - listitem [ref=e306]:
+                            - img [ref=e308]
+                            - generic [ref=e312]:
+                              - generic [ref=e313]: 소속
+                              - generic [ref=e314]: Digital Workplace
+                          - listitem [ref=e315]:
+                            - img [ref=e317]
+                            - generic [ref=e321]:
+                              - generic [ref=e322]: 결재 프로세스
+                              - generic [ref=e323]: 데이터 접근 예외
+                          - listitem [ref=e324]:
+                            - img [ref=e326]
+                            - generic [ref=e330]:
+                              - generic [ref=e331]: 처리 기한
+                              - generic [ref=e332]: 2026. 8. 11. 오후 5:00
+                          - listitem [ref=e333]:
+                            - img [ref=e335]
+                            - generic [ref=e340]:
+                              - generic [ref=e341]: 최신 확인
+                              - generic [ref=e342]: 오후 12:59:47
+                      - generic [ref=e343]:
+                        - text: 위험 점수
+                        - paragraph [ref=e344]: "72"
+                  - region [ref=e345]:
+                    - generic [ref=e346]:
+                      - img [ref=e347]
+                      - generic [ref=e349]:
+                        - heading [level=3] [ref=e350]: 정책 및 위험 브리프
+                        - text: 현재 결재 기록과 결정 권한에서 확인된 사실만 요약합니다.
+                    - generic [ref=e351]:
+                      - generic [ref=e352]:
+                        - img [ref=e353]
+                        - generic [ref=e356]:
+                          - paragraph [ref=e357]: 처리 기한을 넘겼습니다
+                          - text: 업무 영향을 확인하고 책임 있는 결과를 기록하세요.
+                      - generic [ref=e358]:
+                        - img [ref=e359]
+                        - generic [ref=e361]:
+                          - paragraph [ref=e362]: 위험 점수가 높습니다
+                          - text: 결정 전에 범위, 기간, 보완 통제를 확인하세요.
+                      - generic [ref=e363]:
+                        - img [ref=e364]
+                        - generic [ref=e366]:
+                          - paragraph [ref=e367]: 민감 데이터가 포함됩니다
+                          - text: 기록된 데이터 분류 기준에 따라 요청을 취급하세요.
+                  - generic [ref=e368]:
+                    - generic [ref=e369]:
+                      - generic [ref=e370]:
+                        - heading [level=3] [ref=e371]: 결재 진행 현황
+                        - text: 기록된 단계와 실제 현재 단계만 표시하며 미래 단계를 추정하지 않습니다.
+                      - generic [ref=e372]: APR-2026-0811-001
+                    - list [ref=e373]:
+                      - listitem [ref=e374]:
+                        - generic [ref=e375]:
+                          - img [ref=e376]
+                          - generic [ref=e379]: 2단계
+                        - paragraph [ref=e380]: Security review
+                  - generic [ref=e381]:
+                    - region [ref=e382]:
+                      - heading [level=3] [ref=e383]: 요청 데이터
+                      - generic [ref=e385]:
+                        - generic [ref=e386]:
+                          - term [ref=e387]: 업무 사유
+                          - definition [ref=e388]: Restore a customer-facing integration within the approved support window.
+                        - generic [ref=e389]:
+                          - term [ref=e390]: 만료일
+                          - definition [ref=e391]: 2026-08-12
+                        - generic [ref=e392]:
+                          - term [ref=e393]: 데이터 범위
+                          - definition [ref=e394]: Tenant-scoped diagnostic events
+                    - region [ref=e395]:
+                      - heading [level=3] [ref=e396]: 결정 타임라인
+                      - text: 변경 불가능한 업무 증적
+                      - generic [ref=e400]:
+                        - paragraph [ref=e401]: 결재 상신
+                        - generic [ref=e402]: 사용자 · 결재가 상신되었습니다.
+                        - generic [ref=e403]: 2026. 8. 11. 오전 8:30
+                  - generic [ref=e404]:
+                    - button [ref=e405] [cursor=pointer]:
+                      - img [ref=e407]
+                      - text: 보완 요청
+                    - button [ref=e409] [cursor=pointer]:
+                      - img [ref=e411]
+                      - text: 반려
+                    - button [ref=e414] [cursor=pointer]:
+                      - img [ref=e416]
+                      - text: 승인
+  - dialog "댓글" [ref=e420]:
+    - generic [ref=e421]:
+      - heading "댓글" [level=2] [ref=e422]
+      - generic [ref=e423]:
+        - alert [ref=e424]:
+          - img [ref=e426]
+          - generic [ref=e428]: 처리 결과를 확인할 수 없습니다. 현재 권한과 문서 정책을 다시 확인한 후 같은 요청으로만 재시도할 수 있습니다.
+        - generic [ref=e429]:
+          - generic [ref=e430]:
+            - text: 댓글 내용
+            - generic [ref=e431]: "*"
+          - generic [ref=e432]:
+            - textbox "댓글 내용" [disabled] [ref=e433]: 원래 결재 검토 의견
+            - group:
+              - generic: 댓글 내용 *
+      - generic [ref=e434]:
+        - button "원래 요청 재시도" [ref=e436] [cursor=pointer]
+        - generic [ref=e437]:
+          - button "취소" [ref=e438] [cursor=pointer]
+          - button "댓글 등록" [disabled]
+```

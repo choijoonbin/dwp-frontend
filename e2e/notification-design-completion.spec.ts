@@ -6,6 +6,10 @@ import {
   mockNotificationOperationsAndSuppressions,
 } from './support/notification-design-completion-fixtures';
 import {
+  NOTIFICATION_GOVERNANCE_PERMISSIONS,
+  mockNotificationAdminGovernance,
+} from './support/notification-admin-governance-fixtures';
+import {
   NOTIFICATION_PERMISSION,
   expectNoHorizontalOverflow,
   fulfillSuccess,
@@ -18,6 +22,116 @@ import { mockShellSession } from './support/shell-session';
 
 test.beforeEach(async ({ page: _page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Explicit desktop and mobile completion matrix.');
+});
+
+test('사용자와 관리자 전 메뉴는 동일한 workspace 기준선을 사용한다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'PRODUCT_ADMIN'], {
+    locale: 'ko',
+    displayName: '최준빈',
+    permissions: [...NOTIFICATION_GOVERNANCE_PERMISSIONS, ...NOTIFICATION_OPERATIONS_PERMISSIONS],
+  });
+  await mockNotificationCenter(page);
+  await mockNotificationPreferences(page);
+  await mockNotificationAdminGovernance(page);
+  await mockNotificationOperationsAndSuppressions(page);
+  await page.setViewportSize({ width: 1920, height: 1080 });
+
+  const routes = [
+    ['/notifications/home', 'notification-home-header'],
+    ['/notifications/center', 'notification-workbench-header'],
+    ['/notifications/settings', 'notification-page-heading'],
+    ['/notifications/admin/overview', 'notification-page-heading'],
+    ['/notifications/admin/contracts', 'notification-page-heading'],
+    ['/notifications/admin/policies', 'notification-page-heading'],
+    ['/notifications/admin/templates', 'notification-page-heading'],
+    ['/notifications/admin/operations', 'notification-page-heading'],
+    ['/notifications/admin/suppressions', 'notification-page-heading'],
+  ] as const;
+
+  for (const [path, headingTestId] of routes) {
+    await page.goto(path);
+    const main = page.locator('main#dwp-main-content');
+    const frame = page.getByTestId('notification-page-frame');
+    const heading = page.getByTestId(headingTestId);
+    await expect(frame).toBeVisible();
+    await expect(heading).toBeVisible();
+    const [mainBox, frameBox, headingBox] = await Promise.all([
+      main.boundingBox(),
+      frame.boundingBox(),
+      heading.boundingBox(),
+    ]);
+    expect(mainBox, `${path} main`).not.toBeNull();
+    expect(frameBox, `${path} frame`).not.toBeNull();
+    expect(headingBox, `${path} heading`).not.toBeNull();
+    const leftInset = frameBox!.x - mainBox!.x;
+    const rightInset = mainBox!.x + mainBox!.width - frameBox!.x - frameBox!.width;
+    expect(leftInset, `${path} left inset`).toBeCloseTo(32, 0);
+    expect(rightInset, `${path} right inset`).toBeCloseTo(32, 0);
+    expect(headingBox!.x, `${path} heading x`).toBeCloseTo(frameBox!.x, 0);
+    expect(headingBox!.width, `${path} heading width`).toBeCloseTo(frameBox!.width, 0);
+    await expectNoHorizontalOverflow(page);
+  }
+});
+
+test('알림 홈은 우선 및 멘션 보조 조회 실패를 정상 상태로 숨기지 않는다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '최준빈',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page, { inboxFailureViews: ['PRIORITY'] });
+  await page.goto('/notifications/home');
+
+  await expect(page.getByRole('heading', { name: '먼저 확인할 알림' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: '일부 소스 1곳' })).toContainText(
+    '일부 소스 1곳의 정보를 가져오지 못했습니다.'
+  );
+});
+
+test('개인정보 설정이 확정되기 전 센터와 모바일 상세는 컨텍스트를 닫는다', async ({ page }) => {
+  let releaseProfile!: () => void;
+  const profileResponseBarrier = new Promise<void>((resolve) => {
+    releaseProfile = resolve;
+  });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '최준빈',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page, {
+    profilePreviewMode: 'FULL',
+    profileResponseBarrier,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/notifications/center/notification-e2e-1?view=all');
+
+  const mobileDetail = page.getByRole('complementary', { name: '선택한 알림 상세' });
+  await expect(mobileDetail.getByRole('button', { name: '뒤로' })).toBeVisible();
+  await expect(mobileDetail.getByText('알림 상세를 불러오는 중')).toBeVisible();
+  await expect(page.getByText(notification.title, { exact: true })).toHaveCount(0);
+  await expect(page.getByText(notification.actorLabel, { exact: true })).toHaveCount(0);
+
+  releaseProfile();
+  await expect(mobileDetail.getByText(notification.title, { exact: true })).toBeVisible();
+  await expect(mobileDetail.getByText(notification.actorLabel, { exact: true })).toBeVisible();
+});
+
+test('모바일 직접 상세의 오류 상태는 알림 목록 복귀 수단을 유지한다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '최준빈',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/notifications/center/missing-notification?view=all');
+
+  const mobileDetail = page.getByRole('complementary', { name: '선택한 알림 상세' });
+  await expect(
+    mobileDetail.getByRole('heading', { name: '상세 정보를 불러오지 못했습니다' })
+  ).toBeVisible();
+  await mobileDetail.getByRole('button', { name: '뒤로' }).click();
+  await expect(page).toHaveURL(/\/notifications\/center\?view=all$/u);
 });
 
 test('운영 개요의 이상 항목은 전달 조사 워크벤치와 정본 URL로 이어진다', async ({
@@ -39,7 +153,7 @@ test('운영 개요의 이상 항목은 전달 조사 워크벤치와 정본 URL
     investigation.getByRole('heading', { name: '재시도 한도를 초과한 전달이 있습니다' })
   ).toBeVisible();
   await expect(investigation.getByText('dead-letter-queue', { exact: true })).toBeVisible();
-  await expect(investigation.getByText('Notification Operations', { exact: true })).toBeVisible();
+  await expect(investigation.getByText('알림 운영', { exact: true })).toBeVisible();
 
   const beforeRefresh = fixture.operationsRequests;
   await investigation.getByRole('button', { name: '상태 다시 확인' }).click();
@@ -119,13 +233,28 @@ test('개인 설정은 실제 런타임 계약과 채널 상태를 재검사한�
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/notifications/settings');
 
+  await page.getByRole('tab', { name: '내 수신 상태', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '내 수신 상태' })).toBeVisible();
+  const diagnosticsToggle = page.getByRole('button', { name: '연결 및 기기 진단 접기' });
+  await expect(diagnosticsToggle).toBeVisible();
   const diagnostics = page.getByTestId('notification-delivery-diagnostics');
-  await expect(diagnostics.getByText('PostgreSQL', { exact: true })).toBeVisible();
-  await expect(diagnostics.getByText('SSE + 영속 동기화', { exact: true })).toBeVisible();
-  await expect(diagnostics.getByText('앱 내 알림 사용 가능', { exact: true })).toBeVisible();
   const endpoint = page.getByTestId(
     'notification-delivery-endpoint-24000000-0000-0000-0000-000000000001'
   );
+  await expect(diagnostics).toBeVisible();
+  await expect(endpoint).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath('notification-delivery-summary-390.png'),
+    animations: 'disabled',
+    fullPage: true,
+  });
+  await diagnosticsToggle.click();
+  await expect(diagnostics).toBeHidden();
+  await expect(endpoint).toBeHidden();
+  await page.getByRole('button', { name: '연결 및 기기 진단 보기' }).click();
+  await expect(diagnostics.getByText('PostgreSQL', { exact: true })).toBeVisible();
+  await expect(diagnostics.getByText('SSE + 영속 동기화', { exact: true })).toBeVisible();
+  await expect(diagnostics.getByText('앱 내 알림 사용 가능', { exact: true })).toBeVisible();
   await expect(endpoint).toContainText('업무용 Chrome · MacBook Pro');
   await endpoint.getByRole('button', { name: '연결 해제' }).click();
   const revokeDialog = page.getByRole('dialog', { name: '기기 알림 연결 해제' });

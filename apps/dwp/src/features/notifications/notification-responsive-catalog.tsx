@@ -54,11 +54,29 @@ export function NotificationResponsiveCatalog({
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', lg: desktopColumns },
-        border: 1,
+        alignItems: 'start',
+        borderBlock: 1,
         borderColor: 'divider',
-        borderRadius: 'shape.borderRadius',
-        overflow: 'hidden',
         bgcolor: 'background.paper',
+        '& [aria-pressed]': {
+          position: 'relative',
+          '&[aria-pressed="true"]::before': {
+            content: '""',
+            position: 'absolute',
+            inset: '0 auto 0 0',
+            width: 3,
+            bgcolor: 'primary.main',
+          },
+          '&.Mui-focusVisible, &:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: -3,
+          },
+        },
+        '@media (forced-colors: active)': {
+          borderColor: 'CanvasText',
+          '& [aria-pressed="true"]::before': { bgcolor: 'Highlight' },
+        },
       }}
     >
       <Box
@@ -69,11 +87,23 @@ export function NotificationResponsiveCatalog({
           minWidth: 0,
           display: { xs: detailOpen ? 'none' : 'block', lg: 'block' },
           borderRight: { lg: 1 },
-          borderColor: 'divider',
+          borderColor: { xs: 'divider', lg: 'divider' },
           maxHeight: { lg: listMaxHeight },
           overflowY: { lg: 'auto' },
         }}
       >
+        <Box
+          sx={{
+            px: 1.5,
+            py: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: 'action.hover',
+            typography: 'subtitle2',
+          }}
+        >
+          {listLabel}
+        </Box>
         {list}
       </Box>
       <Box
@@ -84,7 +114,11 @@ export function NotificationResponsiveCatalog({
         sx={{
           minWidth: 0,
           display: { xs: detailOpen ? 'block' : 'none', lg: 'block' },
-          outline: 0,
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: -2,
+          },
         }}
       >
         <Box

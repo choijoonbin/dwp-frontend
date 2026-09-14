@@ -400,6 +400,8 @@
       "verifying": "수신 계약 확인 중",
       "recheck": "수신 상태 다시 확인",
       "rechecking": "수신 상태 확인 중",
+      "showDiagnostics": "연결 및 기기 진단 보기",
+      "hideDiagnostics": "연결 및 기기 진단 접기",
       "channelsLabel": "채널 가용성",
       "channelReady": "{{channel}} 사용 가능",
       "channelUnavailable": "{{channel}} 연결 대기",
@@ -488,6 +490,7 @@
       "SYSTEM_DEFAULT": "시스템 기본값"
     },
     "mandatory": "필수 알림",
+    "valueNotProvided": "설정 값 미제공",
     "types": {
       "APPROVAL_ACTION_REQUIRED": {
         "label": "결재 조치 필요",
@@ -683,6 +686,11 @@
         "failedDeliveries": "전달 실패"
       },
       "baseline": "기준 {{value}}",
+      "units": {
+        "contracts": "계약",
+        "notifications": "알림",
+        "jobs": "작업"
+      },
       "trendTitle": "발생과 사용자 영향",
       "trendDescription": "생성량과 함께 조치 필요, 실패, 음소거 추이를 비교합니다.",
       "trendChartLabel": "최근 알림 발생과 사용자 영향 차트",
@@ -1063,6 +1071,28 @@
       "seconds": "{{count}}초",
       "milliseconds": "{{count}}ms",
       "findingCount": "영향 {{count}}건",
+      "findingCopy": {
+        "external-delivery-disabled": {
+          "title": "외부 채널 전달이 비활성화되어 있습니다",
+          "detail": "현재 정본 전달 채널은 DWP 앱 내 직접 수신입니다. 이메일·웹·모바일 푸시와 협업 도구는 운영 검증 후 활성화할 수 있습니다.",
+          "owner": "알림 플랫폼"
+        },
+        "dead-letter-queue": {
+          "title": "재시도 한도를 초과한 전달이 있습니다",
+          "detail": "하나 이상의 전달 작업이 재시도 한도를 모두 소진했습니다.",
+          "owner": "알림 운영"
+        },
+        "contracts-without-active-template": {
+          "title": "활성 인앱 템플릿이 없는 계약이 있습니다",
+          "detail": "모든 활성 알림 유형에는 게시된 인앱 템플릿이 필요합니다.",
+          "owner": "알림 계약 담당"
+        },
+        "failed-delivery-jobs": {
+          "title": "전달 실패를 확인해야 합니다",
+          "detail": "외부 채널 활성화 전에 재시도 및 DLQ 상태를 점검하세요.",
+          "owner": "알림 운영"
+        }
+      },
       "category": {
         "CONTRACT": "계약",
         "POLICY": "정책",

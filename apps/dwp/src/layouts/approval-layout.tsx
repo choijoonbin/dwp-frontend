@@ -1,10 +1,17 @@
+import { lazy, Suspense } from 'react';
+
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
-import { ApprovalInboxQueueNavigation } from '../features/approvals/approval-inbox-queue-navigation';
 import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
 import { ProductAreaLayout } from './product-area-layout';
 
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import type { ProductAreaNavigationItemChildrenContext } from './product-area-layout';
+
+const ApprovalInboxQueueNavigation = lazy(() =>
+  import('../features/approvals/approval-inbox-queue-navigation').then((module) => ({
+    default: module.ApprovalInboxQueueNavigation,
+  }))
+);
 
 export function renderApprovalNavigationItemChildren({
   item,
@@ -12,7 +19,11 @@ export function renderApprovalNavigationItemChildren({
   onNavigate,
 }: ProductAreaNavigationItemChildrenContext) {
   if (item.view !== 'inbox' || !selected) return null;
-  return <ApprovalInboxQueueNavigation onNavigate={onNavigate} />;
+  return (
+    <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 156 }} />}>
+      <ApprovalInboxQueueNavigation onNavigate={onNavigate} />
+    </Suspense>
+  );
 }
 
 export function ApprovalLayout({ surface }: { surface?: ProductSurfaceLayoutRuntime }) {

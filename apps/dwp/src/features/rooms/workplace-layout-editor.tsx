@@ -1,3 +1,5 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
+import { useWorkplaceMemberScopeRevision } from './workplace-member-scope-revision';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GripVertical, Maximize2, Minus, Pencil, Plus, Save, Trash2 } from 'lucide-react';
@@ -12,7 +14,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBlocker } from 'react-router-dom';
-import { saveWorkplaceLayout, useToast } from '@dwp-frontend/shared-utils';
+import { saveWorkplaceLayout, useAuth, useToast } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ActionIconButton,
@@ -26,9 +28,14 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
+import { useWorkplaceGovernanceTargetScope } from './workplace-governance-target-scope';
 
 import type { DragEndEvent } from '@dnd-kit/core';
-import type { WorkplaceFloor, WorkplaceResource } from '@dwp-frontend/shared-utils';
+import type {
+  WorkplaceFloor,
+  WorkplaceResource,
+  WorkplaceGovernanceDelegatedPermission,
+} from '@dwp-frontend/shared-utils';
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -50,15 +57,14 @@ function DraggableResource({
   onSelect: (resourceId: string) => void;
 }) {
   const { t } = useTranslation('rooms');
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: resource.resourceId,
-    disabled: !editable,
-  });
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, isDragging } =
+    useDraggable({
+      id: resource.resourceId,
+      disabled: !editable,
+    });
   return (
     <Box
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       data-testid={`layout-resource-${resource.resourceId}`}
       onClick={() => onSelect(resource.resourceId)}
       sx={{
@@ -67,28 +73,75 @@ function DraggableResource({
         top: `${resource.positionY}%`,
         width: `${resource.widthPercent}%`,
         height: `${resource.heightPercent}%`,
-        minWidth: 42,
-        minHeight: 38,
+        minWidth: editable || showEditAction ? 90 : 44,
+        minHeight: 44,
         transform: CSS.Translate.toString(transform),
         zIndex: isDragging ? 5 : selected ? 2 : 1,
         border: selected ? 2 : 1,
         borderColor: selected ? 'primary.main' : 'text.disabled',
-        bgcolor: resource.mode === 'ASSIGNED' ? '#F2ECFF' : 'background.paper',
+        bgcolor: resource.mode === 'ASSIGNED' ? 'var(--dwp-product-soft)' : 'background.paper',
         color: 'text.primary',
         boxShadow: isDragging ? 6 : selected ? 2 : 0,
-        cursor: editable ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        cursor: 'default',
         display: 'grid',
-        gridTemplateColumns: '18px minmax(0, 1fr) 28px',
+        gridTemplateColumns: `${editable ? '18px ' : ''}minmax(0, 1fr)${showEditAction ? ' 28px' : ''}`,
         alignItems: 'center',
         gap: 0.3,
         p: 0.5,
-        touchAction: 'none',
+        borderRadius: foundationTokens.radius.compact + 'px',
       }}
     >
-      <GripVertical size={15} aria-hidden="true" />
-      <Typography variant="caption" noWrap fontWeight={700}>
-        {resource.code}
-      </Typography>
+      {editable ? (
+        <Box
+          component="button"
+          type="button"
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          aria-label={`${resource.name} ${t(editable ? 'workplace.admin.locations.keyboardHint' : 'workplace.admin.locations.selectionHint')}`}
+          sx={{
+            p: 0,
+            border: 0,
+            bgcolor: 'transparent',
+            color: 'text.secondary',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            touchAction: 'none',
+          }}
+        >
+          <GripVertical size={15} aria-hidden="true" />
+        </Box>
+      ) : null}
+      <Box
+        component="button"
+        type="button"
+        aria-label={resource.name}
+        aria-pressed={selected}
+        onClick={(event) => {
+          event.stopPropagation();
+          onSelect(resource.resourceId);
+        }}
+        sx={{
+          minWidth: 0,
+          height: '100%',
+          minHeight: 28,
+          width: '100%',
+          p: 0,
+          border: 0,
+          bgcolor: 'transparent',
+          color: 'inherit',
+          cursor: 'pointer',
+          textAlign: 'left',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: 2,
+          },
+        }}
+      >
+        <Typography variant="caption" noWrap fontWeight="fontWeightBold">
+          {resource.code}
+        </Typography>
+      </Box>
       {showEditAction && (
         <ActionIconButton
           size="small"
@@ -119,7 +172,12 @@ export function WorkplaceLayoutEditor({
   showResourceEditActions = true,
   allowPlacementManagement = false,
   blockNavigation = true,
-  editable = true,
+  editable: requestedEditable = true,
+  targetPermission = 'CATALOG_MANAGE',
+  commandSourceReady = true,
+  selectedResourceId,
+  onSelectResource,
+  view = 'map',
 }: {
   floor: WorkplaceFloor;
   resources: readonly WorkplaceResource[];
@@ -138,9 +196,43 @@ export function WorkplaceLayoutEditor({
   allowPlacementManagement?: boolean;
   blockNavigation?: boolean;
   editable?: boolean;
+  targetPermission?: WorkplaceGovernanceDelegatedPermission;
+  commandSourceReady?: boolean;
+  selectedResourceId?: string | null;
+  view?: 'list' | 'map';
+  onSelectResource?: (resource: WorkplaceResource) => void;
 }) {
   const { t } = useTranslation('rooms');
   const toast = useToast();
+  const auth = useAuth();
+  const governance = useWorkplaceGovernanceTargetScope();
+  const editable =
+    requestedEditable &&
+    governance.ready &&
+    (targetPermission === 'FLOOR_PLAN_MANAGE'
+      ? governance.floorPlans.canManage
+      : governance.hierarchy.canManage) &&
+    governance.allowsTarget(targetPermission, floor.siteId, floor.floorId);
+  const scopeKey = useWorkplaceMemberScopeRevision(
+    JSON.stringify([
+      auth.user?.tenantId,
+      auth.user?.userId,
+      floor.floorId,
+      targetPermission,
+      governance.authorityKey,
+      editable,
+    ])
+  );
+  const activeScopeRef = useRef(scopeKey);
+  activeScopeRef.current = scopeKey;
+  useEffect(() => {
+    activeScopeRef.current = scopeKey;
+    return () => {
+      if (activeScopeRef.current === scopeKey) activeScopeRef.current = '';
+    };
+  }, [scopeKey]);
+  const editableRef = useRef(editable && commandSourceReady);
+  editableRef.current = editable && commandSourceReady;
   const queryClient = useQueryClient();
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const currentFloorIdRef = useRef(floor.floorId);
@@ -202,8 +294,9 @@ export function WorkplaceLayoutEditor({
     return () => window.removeEventListener('beforeunload', preventUnload);
   }, [dirtyCount]);
   const saveMutation = useMutation({
-    mutationFn: () => {
-      if (!editable) throw new Error(t('permissions.adminUpdateRestricted'));
+    mutationFn: (requestedScope: string) => {
+      if (requestedScope !== activeScopeRef.current || !editableRef.current)
+        throw new Error(t('permissions.adminUpdateRestricted'));
       if (onSaveLayout) return onSaveLayout(items, dirty, [...removedIds]);
       return saveWorkplaceLayout(
         floor.floorId,
@@ -218,14 +311,20 @@ export function WorkplaceLayoutEditor({
         }))
       );
     },
-    onSuccess: async () => {
+    onSuccess: async (_, requestedScope) => {
+      if (requestedScope !== activeScopeRef.current) return;
       setDirtyIds(new Set());
       setRemovedIds(new Set());
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      if (requestedScope !== activeScopeRef.current) return;
       await onSaved?.();
+      if (requestedScope !== activeScopeRef.current) return;
       toast.success(saveSuccessMessage ?? t('workplace.admin.locations.layoutSaved'));
     },
-    onError: () => toast.error(saveErrorMessage ?? t('workplace.admin.locations.layoutSaveError')),
+    onError: (_, requestedScope) => {
+      if (requestedScope === activeScopeRef.current)
+        toast.error(saveErrorMessage ?? t('workplace.admin.locations.layoutSaveError'));
+    },
   });
   const onDragEnd = ({ active, delta }: DragEndEvent) => {
     if (!editable) return;
@@ -254,7 +353,15 @@ export function WorkplaceLayoutEditor({
     setDirtyIds((current) => new Set(current).add(resource.resourceId));
     setSelectedId(resource.resourceId);
   };
-  const selectedResource = items.find((resource) => resource.resourceId === selectedId) ?? null;
+  const visibleItems = editable ? items : resources;
+  const effectiveSelectedId = selectedResourceId === undefined ? selectedId : selectedResourceId;
+  const selectedResource =
+    visibleItems.find((resource) => resource.resourceId === effectiveSelectedId) ?? null;
+  const selectResource = (id: string) => {
+    setSelectedId(id);
+    const resource = visibleItems.find((item) => item.resourceId === id);
+    if (resource) onSelectResource?.(resource);
+  };
   const unplacedResources = useMemo(
     () =>
       availableResources.filter(
@@ -379,10 +486,10 @@ export function WorkplaceLayoutEditor({
           <ActionButton
             intent="primary"
             startIcon={<Save size={16} />}
-            disabled={dirtyCount === 0 || !editable}
+            disabled={dirtyCount === 0 || !editable || !commandSourceReady}
             loading={saveMutation.isPending}
             loadingLabel={t('actions.saving')}
-            onClick={() => saveMutation.mutate()}
+            onClick={() => saveMutation.mutate(scopeKey)}
           >
             {t('workplace.admin.locations.saveLayout')}
           </ActionButton>
@@ -448,11 +555,43 @@ export function WorkplaceLayoutEditor({
           </ActionButton>
         </Box>
       ) : null}
+      {view === 'list' ? (
+        <Stack component="ul" gap={1} sx={{ m: 0, p: 0, listStyle: 'none' }}>
+          {visibleItems.map((resource) => (
+            <Box component="li" key={resource.resourceId}>
+              <ActionButton
+                intent={resource.resourceId === effectiveSelectedId ? 'primary' : 'secondary'}
+                fullWidth
+                aria-pressed={resource.resourceId === effectiveSelectedId}
+                onClick={() => selectResource(resource.resourceId)}
+                sx={{ justifyContent: 'space-between', minHeight: 64, textAlign: 'left' }}
+              >
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="body2" fontWeight="fontWeightBold">
+                    {resource.name}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t(`workplace.resourceTypes.${resource.type}`)} · {resource.code}
+                  </Typography>
+                </Box>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={t(`admin.resources.states.${resource.state}`)}
+                  sx={{ color: 'inherit', borderColor: 'currentColor' }}
+                />
+              </ActionButton>
+            </Box>
+          ))}
+        </Stack>
+      ) : null}
       <Box
         sx={{
+          display: view === 'list' ? 'none' : undefined,
           overflow: 'auto',
           border: 1,
           borderColor: 'divider',
+          borderRadius: foundationTokens.radius.surface + 'px',
           bgcolor: 'background.default',
           p: 1,
         }}
@@ -468,7 +607,7 @@ export function WorkplaceLayoutEditor({
               aspectRatio: `${floor.planWidth} / ${floor.planHeight}`,
               minHeight: { xs: 240, sm: 440 },
               overflow: 'hidden',
-              bgcolor: theme.palette.mode === 'dark' ? '#171B21' : '#F8FAFC',
+              bgcolor: 'background.default',
               backgroundImage: floor.backgroundAssetPath
                 ? `linear-gradient(${alpha(theme.palette.background.paper, 0.1)}, ${alpha(theme.palette.background.paper, 0.1)}), url(${floor.backgroundAssetPath})`
                 : `linear-gradient(${alpha(theme.palette.divider, 0.35)} 1px, transparent 1px), linear-gradient(90deg, ${alpha(theme.palette.divider, 0.35)} 1px, transparent 1px)`,
@@ -477,22 +616,26 @@ export function WorkplaceLayoutEditor({
               backgroundPosition: 'center',
             })}
           >
-            {items.map((resource) => (
+            {visibleItems.map((resource) => (
               <DraggableResource
                 key={resource.resourceId}
                 resource={resource}
-                selected={resource.resourceId === selectedId}
+                selected={resource.resourceId === effectiveSelectedId}
                 editable={editable}
                 showEditAction={showResourceEditActions}
                 onEdit={onEdit}
-                onSelect={setSelectedId}
+                onSelect={selectResource}
               />
             ))}
           </Box>
         </DndContext>
       </Box>
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-        {t('workplace.admin.locations.keyboardHint')}
+        {t(
+          editable
+            ? 'workplace.admin.locations.keyboardHint'
+            : 'workplace.admin.locations.selectionHint'
+        )}
       </Typography>
       {blockNavigation ? <LayoutNavigationGuard dirty={dirtyCount > 0} /> : null}
     </Box>

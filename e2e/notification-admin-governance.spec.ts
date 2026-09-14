@@ -123,7 +123,7 @@ test('템플릿 스튜디오는 경고 초안 생성을 차단하고 독립 검�
 
   const effectivePreview = page.getByTestId('notification-template-channel-preview');
   await expect(effectivePreview).toHaveAttribute('data-channel', 'IN_APP');
-  await expect(effectivePreview).toContainText('김민서님이 결재를 요청했습니다');
+  await expect(effectivePreview).toContainText('합성 사용자님이 결재를 요청했습니다');
   await expect(effectivePreview).not.toContainText('{{actorName}}');
 
   const review = page.getByTestId('notification-template-review-template-review-draft');

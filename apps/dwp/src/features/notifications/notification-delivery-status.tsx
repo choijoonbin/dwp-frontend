@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BellRing,
   CalendarClock,
+  ChevronDown,
   CircleAlert,
   Database,
   MailCheck,
@@ -19,6 +21,12 @@ import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 
 import { resolveNotificationDeliveryStatus } from './notification-delivery-status-model';
 import { NotificationDeliveryEndpointInventory } from './notification-delivery-endpoints';
+import {
+  notificationPreferenceChipSx,
+  notificationPreferenceRadius,
+  notificationPreferenceSelectedBackground,
+  notificationPreferenceSoftBackground,
+} from './notification-preference-styles';
 
 import type { LucideIcon } from 'lucide-react';
 import type {
@@ -40,29 +48,44 @@ function StatusItem({
   detail: string;
 }) {
   return (
-    <Box sx={{ minWidth: 0, display: 'grid', gridTemplateColumns: '32px minmax(0, 1fr)', gap: 1 }}>
+    <Box
+      sx={{
+        minWidth: 0,
+        minHeight: 64,
+        p: { xs: 1, sm: 1.25 },
+        display: 'grid',
+        gridTemplateColumns: { xs: '28px minmax(0, 1fr)', sm: '32px minmax(0, 1fr)' },
+        gap: 1,
+        bgcolor: notificationPreferenceSoftBackground,
+        borderRadius: notificationPreferenceRadius,
+      }}
+    >
       <Box
         aria-hidden="true"
         sx={{
-          width: 32,
-          height: 32,
+          width: { xs: 28, sm: 32 },
+          height: { xs: 28, sm: 32 },
           display: 'grid',
           placeItems: 'center',
-          bgcolor: 'action.hover',
-          color: 'text.secondary',
-          borderRadius: 'shape.borderRadius',
+          bgcolor: notificationPreferenceSelectedBackground,
+          color: 'primary.main',
+          borderRadius: notificationPreferenceRadius,
         }}
       >
-        <Icon size={16} />
+        <Icon size={15} />
       </Box>
       <Box minWidth={0}>
         <Typography variant="caption" color="text.secondary">
           {label}
         </Typography>
-        <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
+        <Typography variant="body2" fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
           {value}
         </Typography>
-        <Typography variant="caption" color="text.secondary" noWrap>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', mt: 0.25, overflowWrap: 'anywhere' }}
+        >
           {detail}
         </Typography>
       </Box>
@@ -83,6 +106,7 @@ export function NotificationDeliveryStatusPanel({
   revokingEndpointId,
   onRetryEndpoints,
   onRevokeEndpoint,
+  defaultDiagnosticsOpen = false,
 }: {
   capabilities?: NotificationCapabilities;
   profile: NotificationDeliveryProfile;
@@ -96,8 +120,10 @@ export function NotificationDeliveryStatusPanel({
   revokingEndpointId?: string | null;
   onRetryEndpoints: () => void;
   onRevokeEndpoint: (endpoint: NotificationDeliveryEndpoint) => Promise<void>;
+  defaultDiagnosticsOpen?: boolean;
 }) {
   const { t } = useTranslation('notifications');
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(defaultDiagnosticsOpen);
   const status = resolveNotificationDeliveryStatus({
     capabilities,
     profile,
@@ -117,10 +143,17 @@ export function NotificationDeliveryStatusPanel({
     <Box
       component="section"
       aria-labelledby="notification-delivery-status-title"
-      sx={{ mt: 2.5, borderBlock: 1, borderColor: 'divider', py: 1.75 }}
+      sx={{
+        mt: 2,
+        p: { xs: 1.5, md: 2 },
+        bgcolor: 'background.paper',
+        borderRadius: notificationPreferenceRadius,
+        containerType: 'inline-size',
+        containerName: 'notification-delivery-status',
+      }}
     >
       <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" sx={{ mb: 1.5 }}>
-        <Typography id="notification-delivery-status-title" component="h2" variant="subtitle1">
+        <Typography id="notification-delivery-status-title" component="h2" variant="h6">
           {t('preferences.status.title')}
         </Typography>
         <Chip
@@ -128,6 +161,7 @@ export function NotificationDeliveryStatusPanel({
           color={stateColor}
           variant={status.state === 'CHECKING' ? 'outlined' : 'filled'}
           label={t(`preferences.status.state.${status.state}`)}
+          sx={notificationPreferenceChipSx}
         />
         <Typography variant="caption" color="text.secondary" sx={{ ml: { sm: 'auto' } }}>
           {status.generatedAt
@@ -159,12 +193,15 @@ export function NotificationDeliveryStatusPanel({
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, minmax(0, 1fr))',
-              lg: 'repeat(4, minmax(0, 1fr))',
+            gridTemplateColumns: 'minmax(0, 1fr)',
+            gap: 1,
+            bgcolor: 'background.paper',
+            '@container notification-delivery-status (min-width: 300px)': {
+              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
             },
-            gap: { xs: 1.5, lg: 2 },
+            '@container notification-delivery-status (min-width: 900px)': {
+              gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+            },
           }}
         >
           <StatusItem
@@ -206,75 +243,100 @@ export function NotificationDeliveryStatusPanel({
           />
         </Box>
       )}
-      {capabilities && (
-        <Box
-          data-testid="notification-delivery-diagnostics"
-          sx={{
-            mt: 1.75,
-            pt: 1.5,
-            borderTop: 1,
-            borderColor: 'divider',
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
-            gap: 1.5,
-          }}
-        >
-          <StatusItem
-            icon={Database}
-            label={t('preferences.status.runtime.storeLabel')}
-            value={t(
-              `preferences.status.runtime.${status.canonicalStore ?? 'UNKNOWN'}`,
-              status.canonicalStore ?? t('preferences.status.runtime.unknown')
-            )}
-            detail={t('preferences.status.runtime.storeDetail')}
-          />
-          <StatusItem
-            icon={Radio}
-            label={t('preferences.status.runtime.realtimeLabel')}
-            value={t(
-              `preferences.status.runtime.${status.realtimeTransport ?? 'UNKNOWN'}`,
-              status.realtimeTransport ?? t('preferences.status.runtime.unknown')
-            )}
-            detail={t('preferences.status.runtime.realtimeDetail')}
-          />
-          <Box sx={{ minWidth: 0, gridColumn: { md: '1 / -1' } }}>
-            <Typography variant="caption" color="text.secondary">
-              {t('preferences.status.channelsLabel')}
-            </Typography>
-            <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 0.75 }}>
-              {status.enabledChannels.map((channel) => (
-                <Chip
-                  key={channel}
-                  size="small"
-                  color="success"
-                  variant="outlined"
-                  label={t('preferences.status.channelReady', {
-                    channel: t(`channels.${channel}`),
-                  })}
-                />
-              ))}
-              {status.unavailableChannels.map((channel) => (
-                <Chip
-                  key={channel}
-                  size="small"
-                  variant="outlined"
-                  label={t('preferences.status.channelUnavailable', {
-                    channel: t(`channels.${channel}`),
-                  })}
-                />
-              ))}
-            </Stack>
+      <ActionButton
+        intent="quiet"
+        size="small"
+        endIcon={<ChevronDown size={16} />}
+        aria-expanded={diagnosticsOpen}
+        aria-controls="notification-delivery-technical-details"
+        onClick={() => setDiagnosticsOpen((open) => !open)}
+        sx={{ mt: 1 }}
+      >
+        {t(
+          diagnosticsOpen
+            ? 'preferences.status.hideDiagnostics'
+            : 'preferences.status.showDiagnostics'
+        )}
+      </ActionButton>
+      <Box
+        id="notification-delivery-technical-details"
+        sx={{ display: diagnosticsOpen ? 'block' : 'none' }}
+      >
+        {capabilities && (
+          <Box
+            data-testid="notification-delivery-diagnostics"
+            sx={{
+              mt: 1.75,
+              pt: 1.5,
+              borderTop: 1,
+              borderColor: 'divider',
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr)',
+              gap: 1.5,
+              '@container notification-delivery-status (min-width: 600px)': {
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+              },
+            }}
+          >
+            <StatusItem
+              icon={Database}
+              label={t('preferences.status.runtime.storeLabel')}
+              value={t(
+                `preferences.status.runtime.${status.canonicalStore ?? 'UNKNOWN'}`,
+                status.canonicalStore ?? t('preferences.status.runtime.unknown')
+              )}
+              detail={t('preferences.status.runtime.storeDetail')}
+            />
+            <StatusItem
+              icon={Radio}
+              label={t('preferences.status.runtime.realtimeLabel')}
+              value={t(
+                `preferences.status.runtime.${status.realtimeTransport ?? 'UNKNOWN'}`,
+                status.realtimeTransport ?? t('preferences.status.runtime.unknown')
+              )}
+              detail={t('preferences.status.runtime.realtimeDetail')}
+            />
+            <Box sx={{ minWidth: 0, gridColumn: '1 / -1' }}>
+              <Typography variant="caption" color="text.secondary">
+                {t('preferences.status.channelsLabel')}
+              </Typography>
+              <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 0.75 }}>
+                {status.enabledChannels.map((channel) => (
+                  <Chip
+                    key={channel}
+                    size="small"
+                    color="success"
+                    variant="outlined"
+                    sx={notificationPreferenceChipSx}
+                    label={t('preferences.status.channelReady', {
+                      channel: t(`channels.${channel}`),
+                    })}
+                  />
+                ))}
+                {status.unavailableChannels.map((channel) => (
+                  <Chip
+                    key={channel}
+                    size="small"
+                    variant="outlined"
+                    sx={notificationPreferenceChipSx}
+                    label={t('preferences.status.channelUnavailable', {
+                      channel: t(`channels.${channel}`),
+                    })}
+                  />
+                ))}
+              </Stack>
+            </Box>
           </Box>
-        </Box>
-      )}
-      <NotificationDeliveryEndpointInventory
-        endpoints={endpoints}
-        loading={endpointsLoading}
-        failed={endpointsFailed}
-        revokingId={revokingEndpointId}
-        onRetry={onRetryEndpoints}
-        onRevoke={onRevokeEndpoint}
-      />
+        )}
+        <NotificationDeliveryEndpointInventory
+          endpoints={endpoints}
+          loading={endpointsLoading}
+          failed={endpointsFailed}
+          revokingId={revokingEndpointId}
+          onRetry={onRetryEndpoints}
+          onRevoke={onRevokeEndpoint}
+        />
+      </Box>
     </Box>
   );
 }

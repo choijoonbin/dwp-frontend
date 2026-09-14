@@ -10,6 +10,7 @@ import {
   X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useRef } from 'react';
 import {
   ActionButton,
   ActionIconButton,
@@ -26,10 +27,16 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import {
+  approvalTaskContentAccess,
   buildApprovalDecisionSignals,
   buildApprovalWorkflowEvidence,
 } from './approval-command-center-model';
 import { ApprovalPayloadData } from './approval-payload-data';
+import { ApprovalDecisionMetadata } from './approval-decision-metadata';
+import { ApprovalDecisionUtilities } from './approval-decision-utilities';
+import { ApprovalTaskDocumentTools } from './approval-task-document-tools';
+import { ApprovalAttachmentPanel } from './approval-attachment-panel';
+import { useApprovalAttachmentClient } from './use-approval-attachment-client';
 import {
   approvalTimelineEventContext,
   approvalTimelineEventDetail,
@@ -38,6 +45,7 @@ import { PriorityChip, StatusChip } from './approval-ui';
 
 import type { ApprovalDecisionSignal } from './approval-command-center-model';
 import type { ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
+import type { ApprovalTaskDocumentsController } from './use-approval-task-documents';
 
 export type ApprovalDecisionKind = 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
 
@@ -48,10 +56,13 @@ export function ApprovalDecisionDetail({
   mobile,
   decisionBusy,
   claimBusy,
+  verifiedAt,
   onBack,
   onRetry,
   onClaim,
   onDecision,
+  onRevalidateDocument,
+  documents,
 }: {
   detail?: ApprovalTaskDetail;
   loading: boolean;
@@ -59,18 +70,34 @@ export function ApprovalDecisionDetail({
   mobile: boolean;
   decisionBusy: boolean;
   claimBusy: boolean;
+  verifiedAt?: number;
   onBack: () => void;
   onRetry: () => void;
   onClaim: () => void;
   onDecision: (decision: ApprovalDecisionKind) => void;
+  onRevalidateDocument: () => Promise<ApprovalTaskDetail>;
+  documents: ApprovalTaskDocumentsController;
 }) {
   const { t } = useTranslation('approvals');
   const display = useDisplayDictionary();
+  const attachmentOwner = useRef(detail?.task);
+  if (detail) attachmentOwner.current = detail.task;
+  const attachments = useApprovalAttachmentClient({
+    owner: { type: 'TASK', id: detail?.task.taskId ?? attachmentOwner.current?.taskId ?? '' },
+    version: detail?.task.version ?? attachmentOwner.current?.version,
+    ready:
+      !loading &&
+      !error &&
+      Boolean(detail && approvalTaskContentAccess(detail).full) &&
+      !documents.sourceDenied,
+  });
 
   if (loading) {
     return (
       <DetailStateShell mobile={mobile} onBack={onBack}>
         <LoadingState label={t('common:labels.loading')} size="page" embedded />
+        <ApprovalTaskDocumentTools controller={documents} />
+        <ApprovalAttachmentPanel client={attachments} />
       </DetailStateShell>
     );
   }
@@ -83,6 +110,8 @@ export function ApprovalDecisionDetail({
           onRetry={onRetry}
           size="standard"
         />
+        <ApprovalTaskDocumentTools controller={documents} />
+        <ApprovalAttachmentPanel client={attachments} />
       </DetailStateShell>
     );
   }
@@ -98,6 +127,53 @@ export function ApprovalDecisionDetail({
             {t('home.commandCenter.selectDescription')}
           </Typography>
         </Box>
+        <ApprovalTaskDocumentTools controller={documents} />
+        <ApprovalAttachmentPanel client={attachments} />
+      </DetailStateShell>
+    );
+  }
+
+  const contentAccess = documents.sourceDenied
+    ? { full: false, reason: 'CURRENT_AUTHORITY_UNAVAILABLE' as const, evaluatedAt: null }
+    : approvalTaskContentAccess(detail);
+  if (!contentAccess.full || documents.sourceDenied) {
+    return (
+      <DetailStateShell mobile={mobile} onBack={onBack}>
+        <Stack
+          role="alert"
+          alignItems="center"
+          gap={1.25}
+          sx={{ width: '100%', maxWidth: 520, textAlign: 'center' }}
+        >
+          <Box sx={{ color: 'warning.main' }}>
+            <ShieldAlert size={34} aria-hidden="true" />
+          </Box>
+          <Typography component="h2" variant="h6">
+            {t('home.commandCenter.contentAccess.title')}
+          </Typography>
+          <Typography color="text.secondary">
+            {t('home.commandCenter.contentAccess.description')}
+          </Typography>
+          <Stack direction="row" gap={0.75} flexWrap="wrap" justifyContent="center">
+            <Chip size="small" variant="outlined" label={detail.task.requestNumber} />
+            <StatusChip status={contentAccess.reason} />
+          </Stack>
+          <Typography variant="caption" color="text.secondary">
+            {t(`home.commandCenter.contentAccess.reasons.${contentAccess.reason}`)}
+          </Typography>
+          {contentAccess.evaluatedAt && (
+            <Typography variant="caption" color="text.secondary">
+              {t('home.commandCenter.contentAccess.evaluatedAt', {
+                value: formatDate(contentAccess.evaluatedAt, {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }),
+              })}
+            </Typography>
+          )}
+        </Stack>
+        <ApprovalTaskDocumentTools controller={documents} />
+        <ApprovalAttachmentPanel client={attachments} />
       </DetailStateShell>
     );
   }
@@ -124,6 +200,9 @@ export function ApprovalDecisionDetail({
             </Typography>
           </Stack>
         )}
+        <ApprovalDecisionUtilities detail={detail} revalidate={onRevalidateDocument} />
+        <ApprovalTaskDocumentTools controller={documents} />
+        <ApprovalAttachmentPanel client={attachments} />
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={2}>
           <Box sx={{ minWidth: 0 }}>
             <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mb: 1 }}>
@@ -143,6 +222,7 @@ export function ApprovalDecisionDetail({
             <Typography color="text.secondary" sx={{ mt: 0.5, overflowWrap: 'anywhere' }}>
               {detail.task.summary}
             </Typography>
+            <ApprovalDecisionMetadata detail={detail} verifiedAt={verifiedAt} />
           </Box>
           <Box sx={{ minWidth: 72, textAlign: 'right' }}>
             <Typography variant="caption" color="text.secondary">
@@ -292,7 +372,12 @@ export function ApprovalDecisionDetail({
             borderColor: 'divider',
           }}
         >
-          <Typography id="approval-audit-timeline-title" component="h3" variant="subtitle1">
+          <Typography
+            id="approval-audit-timeline-title"
+            component="h3"
+            variant="subtitle1"
+            tabIndex={-1}
+          >
             {t('inbox.timeline')}
           </Typography>
           <Typography variant="caption" color="text.secondary">

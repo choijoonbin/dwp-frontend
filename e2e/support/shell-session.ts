@@ -8,21 +8,6 @@ import {
 import { mockLegacyProductSurfaceAuthority } from './product-surface-authority';
 import { resolveHcmShellFixture } from './hcm-shell-session';
 import {
-  APPROVAL_ADMIN_FIXTURE,
-  APPROVAL_DELEGATIONS_FIXTURE,
-  APPROVAL_FORM_CATEGORY_FIXTURES,
-  APPROVAL_FORM_DETAIL_FIXTURE,
-  APPROVAL_FORM_FIXTURE,
-  APPROVAL_HOME_FIXTURE,
-  APPROVAL_OPERATIONS_FIXTURE,
-  APPROVAL_POLICIES_FIXTURE,
-  APPROVAL_REQUEST_DETAIL_FIXTURE,
-  APPROVAL_REQUEST_FIXTURE,
-  APPROVAL_SIGNATURE_FIXTURES,
-  APPROVAL_TASK_DETAIL_FIXTURE,
-  APPROVAL_TASK_FIXTURE,
-  APPROVAL_WORKFLOW_DETAIL_FIXTURE,
-  APPROVAL_WORKFLOW_FIXTURE,
   CALENDAR_ADMIN_FIXTURE,
   CALENDAR_AVAILABILITY_FIXTURE,
   CALENDAR_BOOKINGS_FIXTURE,
@@ -40,6 +25,7 @@ import {
   ROOM_BOOKING_EVENT_FIXTURE,
 } from './product-area-fixtures';
 import { resolveMenuRouteProductFixture } from './menu-route-product-fixtures';
+import { resolveApprovalShellFixture } from './approval-shell-fixtures';
 
 import type { Page, Route } from '@playwright/test';
 import type {
@@ -78,7 +64,7 @@ type ShellSessionOptions = {
 };
 
 type MockHomeSurface = {
-  schemaVersion: 2;
+  schemaVersion: 4;
   surfaceKey: 'workspace-home' | 'hcm-home' | 'approval-home';
   customized: boolean;
   layout: {
@@ -2083,85 +2069,8 @@ export async function mockShellSession(
     if (/^\/api\/platform\/v1\/admin\/rooms\/bookings\/[^/]+\/decision$/u.test(path)) {
       return fulfillSuccess(route, CALENDAR_BOOKINGS_FIXTURE[0]);
     }
-    if (path === '/api/approvals/v1/home') {
-      return fulfillSuccess(route, APPROVAL_HOME_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/tasks') {
-      return fulfillSuccess(route, [APPROVAL_TASK_FIXTURE]);
-    }
-    if (/^\/api\/approvals\/v1\/tasks\/[^/]+$/u.test(path)) {
-      return fulfillSuccess(route, APPROVAL_TASK_DETAIL_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/requests') {
-      return fulfillSuccess(route, [APPROVAL_REQUEST_FIXTURE]);
-    }
-    if (/^\/api\/approvals\/v1\/requests\/[^/]+\/detail$/u.test(path)) {
-      return fulfillSuccess(route, APPROVAL_REQUEST_DETAIL_FIXTURE);
-    }
-    if (/^\/api\/approvals\/v1\/requests\/[^/]+$/u.test(path)) {
-      return fulfillSuccess(route, APPROVAL_REQUEST_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/workflows/published') {
-      return fulfillSuccess(route, [APPROVAL_WORKFLOW_FIXTURE]);
-    }
-    if (/^\/api\/approvals\/v1\/workflows\/published\/[^/]+\/template$/u.test(path)) {
-      return fulfillSuccess(route, {
-        workflow: APPROVAL_WORKFLOW_FIXTURE,
-        routeDefinition: APPROVAL_WORKFLOW_DETAIL_FIXTURE.definition,
-        form: APPROVAL_FORM_DETAIL_FIXTURE,
-      });
-    }
-    if (path === '/api/approvals/v1/catalog/forms') {
-      return fulfillSuccess(route, [APPROVAL_FORM_FIXTURE]);
-    }
-    if (/^\/api\/approvals\/v1\/catalog\/forms\/[^/]+\/template$/u.test(path)) {
-      return fulfillSuccess(route, {
-        workflow: APPROVAL_WORKFLOW_FIXTURE,
-        routeDefinition: APPROVAL_WORKFLOW_DETAIL_FIXTURE.definition,
-        form: APPROVAL_FORM_DETAIL_FIXTURE,
-      });
-    }
-    if (path === '/api/approvals/v1/delegations') {
-      return fulfillSuccess(route, APPROVAL_DELEGATIONS_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/admin/overview') {
-      return fulfillSuccess(route, APPROVAL_ADMIN_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/admin/workflows') {
-      return fulfillSuccess(route, [APPROVAL_WORKFLOW_FIXTURE]);
-    }
-    if (/^\/api\/approvals\/v1\/admin\/workflows\/[^/]+$/u.test(path)) {
-      return fulfillSuccess(route, APPROVAL_WORKFLOW_DETAIL_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/admin/forms') {
-      return fulfillSuccess(route, [APPROVAL_FORM_FIXTURE]);
-    }
-    if (path === '/api/approvals/v1/admin/form-categories') {
-      return fulfillSuccess(route, APPROVAL_FORM_CATEGORY_FIXTURES);
-    }
-    if (/^\/api\/approvals\/v1\/admin\/forms\/[^/]+$/u.test(path)) {
-      return fulfillSuccess(route, APPROVAL_FORM_DETAIL_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/admin/policies') {
-      return fulfillSuccess(route, APPROVAL_POLICIES_FIXTURE);
-    }
-    if (/^\/api\/approvals\/v1\/admin\/policies\/[^/]+\/versions$/u.test(path)) {
-      return fulfillSuccess(route, []);
-    }
-    if (/^\/api\/approvals\/v1\/admin\/operations\/events\/[^/]+\/retry$/u.test(path)) {
-      return fulfillSuccess(route, {
-        ...APPROVAL_OPERATIONS_FIXTURE,
-        integrationDeliveries: APPROVAL_OPERATIONS_FIXTURE.integrationDeliveries.map(
-          (delivery) => ({ ...delivery, status: 'PENDING', manualRetryCount: 1 })
-        ),
-      });
-    }
-    if (path === '/api/approvals/v1/admin/operations') {
-      return fulfillSuccess(route, APPROVAL_OPERATIONS_FIXTURE);
-    }
-    if (path === '/api/approvals/v1/admin/signatures') {
-      return fulfillSuccess(route, APPROVAL_SIGNATURE_FIXTURES);
-    }
+    const approvalFixture = resolveApprovalShellFixture(new URL(request.url()));
+    if (approvalFixture !== undefined) return fulfillSuccess(route, approvalFixture);
     const hcmFixture = resolveHcmShellFixture(path);
     if (hcmFixture !== undefined) return fulfillSuccess(route, hcmFixture);
     const sessionDisplayName =

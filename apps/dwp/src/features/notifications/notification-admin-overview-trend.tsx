@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { type NotificationAdminTrendPoint } from '@dwp-frontend/shared-utils/api/notification-api';
 import { EmptyState } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -64,11 +65,11 @@ export function NotificationAdminOverviewTrend({
           role="img"
           aria-label={t('admin.overview.trendChartLabel')}
           sx={{
-            minWidth: Math.max(620, points.length * 82),
-            height: 190,
+            minWidth: Math.max(260, points.length * 44),
+            height: 176,
             display: 'grid',
-            gridTemplateColumns: `repeat(${points.length}, minmax(68px, 1fr))`,
-            gap: 1.25,
+            gridTemplateColumns: `repeat(${points.length}, minmax(36px, 1fr))`,
+            gap: 0.75,
             position: 'relative',
             borderBottom: 1,
             borderColor: 'divider',
@@ -111,7 +112,7 @@ export function NotificationAdminOverviewTrend({
                   gap={0.5}
                   alignItems="flex-end"
                   justifyContent="center"
-                  sx={{ height: 148, width: 1 }}
+                  sx={{ height: 136, width: 1 }}
                 >
                   {OVERVIEW_TREND_SERIES.map(({ key, color }) => {
                     const value = point[key];
@@ -125,7 +126,9 @@ export function NotificationAdminOverviewTrend({
                           maxWidth: '18%',
                           height: value === 0 ? 0 : `${Math.max(4, (value / maximum) * 100)}%`,
                           minHeight: value === 0 ? 0 : 3,
-                          borderRadius: 'shape.borderRadius',
+                          borderRadius: foundationTokens.radius.compact + 'px',
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
                           bgcolor: color,
                           transition: (theme) =>
                             theme.transitions.create('height', {

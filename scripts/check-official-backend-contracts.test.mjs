@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const checker = path.join(root, 'scripts/check-official-backend-contracts.mjs');
 const fixtureChecker = path.join(root, 'scripts/sync-product-authorization-fixtures.mjs');
+const authorizationChecker = path.join(root, 'scripts/sync-product-surface-authorization.mjs');
 const temporaryDirectories = [];
 
 afterEach(() => {
@@ -162,6 +163,52 @@ test('accepts a complete byte-identical official backend contract set', () => {
   assert.match(result.stdout, /all official backend release artifacts/);
 });
 
+test('both sync checkers accept immutable lineage across the v9 to v10 filename boundary', () => {
+  const contracts = createOfficialContracts();
+  const directory = path.join(contracts, 'product-authorization');
+  const index = JSON.parse(
+    fs.readFileSync(path.join(directory, 'product-surfaces-v1.index.json'), 'utf8')
+  );
+  assert.ok(index.latestVersion >= 10, 'this regression must include double-digit versions');
+  const authorization = spawnSync(process.execPath, [authorizationChecker, '--check', directory], {
+    cwd: root,
+    encoding: 'utf8',
+    env: cleanEnvironment(),
+  });
+  const fixtures = runFixtureCheck(
+    path.join(directory, 'pilot-fixtures.v1.generated.json'),
+    directory
+  );
+  for (const result of [authorization, fixtures]) {
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  }
+});
+
+test('both sync checkers reject an additional unsealed immutable bundle', () => {
+  const contracts = createOfficialContracts();
+  const directory = path.join(contracts, 'product-authorization');
+  const index = JSON.parse(
+    fs.readFileSync(path.join(directory, 'product-surfaces-v1.index.json'), 'utf8')
+  );
+  fs.copyFileSync(
+    path.join(directory, `product-surfaces-v1.bundle-v${index.latestVersion}.json`),
+    path.join(directory, `product-surfaces-v1.bundle-v${index.latestVersion + 1}.json`)
+  );
+  const authorization = spawnSync(process.execPath, [authorizationChecker, '--check', directory], {
+    cwd: root,
+    encoding: 'utf8',
+    env: cleanEnvironment(),
+  });
+  const fixtures = runFixtureCheck(
+    path.join(directory, 'pilot-fixtures.v1.generated.json'),
+    directory
+  );
+  for (const result of [authorization, fixtures]) {
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /must contain exactly immutable bundle/);
+  }
+});
+
 test('accepts all three explicit contract-specific environment inputs', () => {
   const contracts = createOfficialContracts();
   const environment = cleanEnvironment();
@@ -245,9 +292,15 @@ test('rejects fixture formatting drift even when canonical checksum metadata rem
 
 test('rejects authorization content with a stale canonical checksum', () => {
   const contracts = createOfficialContracts();
+  const index = JSON.parse(
+    fs.readFileSync(
+      path.join(contracts, 'product-authorization/product-surfaces-v1.index.json'),
+      'utf8'
+    )
+  );
   const bundlePath = path.join(
     contracts,
-    'product-authorization/product-surfaces-v1.bundle-v5.json'
+    `product-authorization/product-surfaces-v1.bundle-v${index.latestVersion}.json`
   );
   const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
   bundle.owner = `${bundle.owner}-drift`;
@@ -287,15 +340,27 @@ test('rejects a non-DRAFT bundle before external activation approval', () => {
   assert.match(result.stderr, /must remain DRAFT until external activation approval/);
 });
 
-test('rejects a stale future immutable bundle even when v1-v5 remain valid', () => {
+test('rejects a stale future immutable bundle while all installed versions remain valid', () => {
   const contracts = createOfficialContracts();
+  const index = JSON.parse(
+    fs.readFileSync(
+      path.join(contracts, 'product-authorization/product-surfaces-v1.index.json'),
+      'utf8'
+    )
+  );
   fs.copyFileSync(
-    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v5.json'),
-    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v6.json')
+    path.join(
+      contracts,
+      `product-authorization/product-surfaces-v1.bundle-v${index.latestVersion}.json`
+    ),
+    path.join(
+      contracts,
+      `product-authorization/product-surfaces-v1.bundle-v${index.latestVersion + 1}.json`
+    )
   );
   const result = run(['--backend-contracts', contracts]);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /exactly immutable bundle v1-v5/);
+  assert.match(result.stderr, new RegExp(`exactly immutable bundle v1-v${index.latestVersion}`));
 });
 
 test('fixture sync independently rejects a re-signed historical authorization bundle', () => {

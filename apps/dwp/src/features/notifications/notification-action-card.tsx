@@ -161,28 +161,39 @@ export function NotificationActionCard({
     <Box
       component="article"
       data-notification-card={item.notificationId}
+      data-notification-card-surface={selectable ? 'list' : 'home'}
       aria-label={`${item.title}, ${t(unread ? 'workbench.card.unread' : 'workbench.card.read')}`}
       sx={(theme) => ({
         position: 'relative',
         border: 1,
-        borderLeft: 3,
-        borderColor: active ? 'primary.main' : 'divider',
+        borderLeft: selectable ? 3 : 5,
+        borderColor: 'divider',
         borderLeftColor:
-          surfaceTone === 'conversation'
-            ? (item.source.accent ?? theme.palette.success.main)
-            : item.priority === 'URGENT'
-              ? 'error.main'
+          item.priority === 'URGENT'
+            ? 'error.main'
+            : surfaceTone === 'conversation'
+              ? theme.palette.success.main
               : item.actionable
                 ? 'primary.main'
                 : active
                   ? 'primary.main'
                   : 'divider',
-        borderRadius: 'shape.borderRadius',
-        bgcolor: 'background.paper',
-        boxShadow: active ? 1 : 0,
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        bgcolor: selectable && active ? 'action.selected' : 'background.paper',
+        boxShadow: 'none',
         transition: theme.transitions.create(['border-color', 'box-shadow', 'opacity'], {
           duration: theme.transitions.duration.shorter,
         }),
+        '&:hover': {
+          borderColor: alpha(theme.palette.primary.main, 0.34),
+          borderLeftColor:
+            item.priority === 'URGENT'
+              ? theme.palette.error.main
+              : surfaceTone === 'conversation'
+                ? theme.palette.success.main
+                : theme.palette.primary.main,
+          boxShadow: 'none',
+        },
         '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
       })}
     >
@@ -190,7 +201,7 @@ export function NotificationActionCard({
         direction="row"
         alignItems="flex-start"
         gap={compact ? 0.75 : 1.1}
-        sx={{ p: compact ? { xs: 0.9, md: 1 } : { xs: 1.25, md: 1.5 } }}
+        sx={{ p: selectable ? { xs: 1.25, md: 1.5 } : { xs: 1.5, md: 2 } }}
       >
         {selectable && (
           <Checkbox
@@ -206,10 +217,10 @@ export function NotificationActionCard({
           sx={(theme) => ({
             width: compact ? 30 : 36,
             height: compact ? 30 : 36,
-            display: 'grid',
             placeItems: 'center',
-            borderRadius: 'shape.borderRadius',
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
             flexShrink: 0,
+            display: !selectable && surfaceTone !== 'conversation' ? 'none' : 'grid',
             color: item.source.accent ?? 'var(--dwp-product-accent)',
             bgcolor: alpha(item.source.accent ?? theme.palette.primary.main, 0.1),
           })}
@@ -234,7 +245,6 @@ export function NotificationActionCard({
               )}
               <Chip
                 size="small"
-                variant="outlined"
                 color={priorityTone(item.priority)}
                 label={t(`priority.${item.priority}`)}
                 sx={{ height: compact ? 18 : 20 }}
@@ -275,7 +285,7 @@ export function NotificationActionCard({
               display: 'block',
               width: 1,
               textAlign: 'left',
-              borderRadius: 'shape.borderRadius',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               '&:focus-visible': {
                 outline: '2px solid',
                 outlineColor: 'primary.main',
@@ -285,7 +295,7 @@ export function NotificationActionCard({
           >
             <Typography
               component="h3"
-              variant={compact ? 'subtitle2' : 'subtitle1'}
+              variant={!selectable ? 'subtitle1' : 'subtitle2'}
               fontWeight={unread ? 'fontWeightBold' : 'fontWeightMedium'}
               sx={{ overflowWrap: 'anywhere' }}
             >
@@ -294,18 +304,26 @@ export function NotificationActionCard({
           </ButtonBase>
           {item.preview && (
             <Typography
-              variant={compact ? 'caption' : 'body2'}
+              variant="body2"
               color="text.secondary"
-              sx={{
+              sx={(theme) => ({
                 mt: compact ? 0.2 : 0.35,
                 whiteSpace: 'pre-wrap',
-                ...(compact && {
-                  display: '-webkit-box',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 1,
-                  overflow: 'hidden',
-                }),
-              }}
+                ...(!selectable &&
+                  surfaceTone === 'conversation' && {
+                    p: 1.25,
+                    mt: 1.25,
+                    bgcolor: alpha(theme.palette.primary.main, 0.025),
+                    borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                  }),
+                ...(compact &&
+                  surfaceTone !== 'conversation' && {
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: selectable ? 1 : 2,
+                    overflow: 'hidden',
+                  }),
+              })}
             >
               {item.preview}
             </Typography>
@@ -359,16 +377,19 @@ export function NotificationActionCard({
             }}
           >
             <Stack direction="row" gap={0.65} flexWrap="wrap">
-              {showPrimaryActions && replyTarget && !concealContext && (
-                <ActionButton
-                  intent="primary"
-                  size="small"
-                  startIcon={<Reply size={15} />}
-                  onClick={() => setReplying((current) => !current)}
-                >
-                  {t('workbench.card.reply')}
-                </ActionButton>
-              )}
+              {showPrimaryActions &&
+                replyTarget &&
+                !concealContext &&
+                !(replyInitiallyOpen && replying) && (
+                  <ActionButton
+                    intent="primary"
+                    size="small"
+                    startIcon={<Reply size={15} />}
+                    onClick={() => setReplying((current) => !current)}
+                  >
+                    {t('workbench.card.reply')}
+                  </ActionButton>
+                )}
               {showPrimaryActions && primary?.enabled && primary.href && (
                 <ActionButton
                   intent={replyTarget ? 'secondary' : 'primary'}
@@ -487,7 +508,7 @@ export function NotificationActionCard({
                 mt: compact ? 0.75 : 1.1,
                 p: compact ? 0.75 : 1,
                 bgcolor: 'action.hover',
-                borderRadius: 'shape.borderRadius',
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               }}
             >
               <FormField

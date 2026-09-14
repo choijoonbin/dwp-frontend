@@ -1,16 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArchiveRestore,
-  CheckCheck,
-  FilePlus2,
-  FileStack,
-  ImageUp,
-  Pencil,
-  Send,
-  Upload,
-  X,
-} from 'lucide-react';
+import { FilePlus2, ImageUp, Upload, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createWorkplaceGovernanceFloorPlanRevision,
@@ -27,6 +17,7 @@ import {
   updateWorkplaceGovernanceFloorPlanRevision,
   uploadWorkplaceGovernanceFloorPlanBackground,
   useToast,
+  HttpError,
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -34,17 +25,18 @@ import {
   FormDialog,
   FormField,
   SelectField,
+  InlineFeedback,
 } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { workplaceGovernanceRevisionActions } from './workplace-admin-governance-model';
+import { WorkplaceFloorPlanRevisionList } from './workplace-floor-plan-revision-list';
+import { useWorkplaceGovernanceTargetScope } from './workplace-governance-target-scope';
+import { useWorkplaceCatalogCommandScope } from './workplace-catalog-command-scope';
 import { WorkplaceLayoutEditor } from './workplace-layout-editor';
 import {
   GovernanceEmpty,
@@ -55,7 +47,6 @@ import {
 
 import type {
   WorkplaceGovernanceFloorPlanRevision,
-  WorkplaceGovernanceRevisionState,
   WorkplaceResource,
 } from '@dwp-frontend/shared-utils';
 
@@ -69,15 +60,8 @@ type DraftExitIntent =
       action: TransitionAction;
     };
 
-function revisionColor(state: WorkplaceGovernanceRevisionState) {
-  if (state === 'PUBLISHED') return 'success';
-  if (state === 'REVIEW') return 'warning';
-  if (state === 'DRAFT') return 'info';
-  return 'default';
-}
-
 export function WorkplaceAdminGovernanceFloorPlans({
-  canManage,
+  canManage: requestedCanManage,
   onDirtyChange,
 }: {
   canManage: boolean;
@@ -85,6 +69,8 @@ export function WorkplaceAdminGovernanceFloorPlans({
 }) {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
+  const governance = useWorkplaceGovernanceTargetScope();
+  const authorityKey = governance.authorityKey;
   const queryClient = useQueryClient();
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   const [siteId, setSiteId] = useState('');
@@ -103,27 +89,54 @@ export function WorkplaceAdminGovernanceFloorPlans({
     action: TransitionAction;
   } | null>(null);
   const [reason, setReason] = useState('');
+  const [unverifiedCommand, setUnverifiedCommand] = useState<{
+    authorityKey: string;
+    floorId: string;
+    unknown: boolean;
+  } | null>(null);
+  const unverifiedHere =
+    unverifiedCommand?.authorityKey === authorityKey && unverifiedCommand.floorId === floorId;
   const draftDirty = layoutDirty || Boolean(backgroundFile);
   const handleDraftDirty = useCallback((dirty: boolean) => setLayoutDirty(dirty), []);
   useEffect(() => onDirtyChange?.(draftDirty), [draftDirty, onDirtyChange]);
   const sitesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'sites'],
+    queryKey: ['workplace', 'admin', 'sites', authorityKey],
+    enabled: governance.ready,
     queryFn: getWorkplaceAdminSites,
     staleTime: 30_000,
     retry: 1,
   });
-  const sites = useMemo(() => sitesQuery.data ?? [], [sitesQuery.data]);
+  const sites = useMemo(
+    () => (governance.ready && !sitesQuery.isError ? (sitesQuery.data ?? []) : []),
+    [governance.ready, sitesQuery.data, sitesQuery.isError]
+  );
   useEffect(() => {
     if (sites.length && !sites.some((site) => site.siteId === siteId)) setSiteId(sites[0].siteId);
   }, [siteId, sites]);
   const floorsQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'floors', siteId],
+    queryKey: ['workplace', 'admin', 'floors', siteId, authorityKey],
     queryFn: () => getWorkplaceAdminFloors(siteId),
-    enabled: Boolean(siteId),
+    enabled: governance.ready && Boolean(siteId && sites.some((site) => site.siteId === siteId)),
     staleTime: 30_000,
     retry: 1,
   });
-  const floors = useMemo(() => floorsQuery.data ?? [], [floorsQuery.data]);
+  const floors = useMemo(
+    () =>
+      governance.ready && !floorsQuery.isError
+        ? (floorsQuery.data ?? []).filter(
+            (floor) =>
+              floor.siteId === siteId &&
+              governance.allowsTarget('CATALOG_VIEW', siteId, floor.floorId)
+          )
+        : [],
+    [governance, siteId, floorsQuery.data, floorsQuery.isError]
+  );
+  const selectedFloor = floors.find((floor) => floor.floorId === floorId) ?? null;
+  const canManage =
+    requestedCanManage &&
+    governance.ready &&
+    Boolean(selectedFloor) &&
+    governance.allowsTarget('FLOOR_PLAN_MANAGE', siteId, floorId);
   useEffect(() => {
     if (!floors.length) setFloorId('');
     else if (!floors.some((floor) => floor.floorId === floorId)) setFloorId(floors[0].floorId);
@@ -136,46 +149,98 @@ export function WorkplaceAdminGovernanceFloorPlans({
     if (backgroundInputRef.current) backgroundInputRef.current.value = '';
   }, [editingRevisionId]);
   const revisionsQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId],
+    queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId, authorityKey],
     queryFn: () => getWorkplaceGovernanceFloorPlanRevisions(floorId),
-    enabled: Boolean(floorId),
+    enabled: governance.ready && Boolean(selectedFloor),
     staleTime: 10_000,
     retry: 1,
   });
   const projectionQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'floor-plan-projection', floorId],
+    queryKey: ['workplace', 'governance', 'floor-plan-projection', floorId, authorityKey],
     queryFn: () => getWorkplaceGovernanceFloorPlanProjection(floorId),
-    enabled: Boolean(floorId),
+    enabled: governance.ready && Boolean(selectedFloor),
     staleTime: 15_000,
     retry: false,
   });
   const resourcesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'resources', floorId],
+    queryKey: ['workplace', 'admin', 'resources', floorId, authorityKey],
     queryFn: () => getWorkplaceAdminResources(floorId),
-    enabled: Boolean(floorId && editingRevisionId),
+    enabled: governance.ready && Boolean(selectedFloor && editingRevisionId),
     staleTime: 20_000,
     retry: 1,
   });
   const snapshotQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'floor-plan-snapshot', editingRevisionId],
+    queryKey: ['workplace', 'governance', 'floor-plan-snapshot', editingRevisionId, authorityKey],
     queryFn: () => getWorkplaceGovernanceFloorPlanRevisionSnapshot(editingRevisionId),
-    enabled: Boolean(editingRevisionId),
+    enabled: governance.ready && Boolean(selectedFloor && editingRevisionId),
     staleTime: 5_000,
     retry: 1,
   });
   const zonesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'zones', floorId],
+    queryKey: ['workplace', 'governance', 'zones', floorId, authorityKey],
     queryFn: () => getWorkplaceGovernanceZones(floorId),
-    enabled: Boolean(floorId && editingRevisionId),
+    enabled: governance.ready && Boolean(selectedFloor && editingRevisionId),
     staleTime: 20_000,
     retry: 1,
   });
-  const revisions = revisionsQuery.data ?? [];
+  const revisions =
+    governance.ready && !revisionsQuery.isError
+      ? (revisionsQuery.data ?? []).filter((revision) => revision.floorId === floorId)
+      : [];
   const hasPublishedRevision = revisions.some((revision) => revision.state === 'PUBLISHED');
   const restorable = revisions.filter(
     (revision) => revision.state === 'PUBLISHED' || revision.state === 'ARCHIVED'
   );
-  const snapshot = snapshotQuery.data;
+  const snapshot =
+    governance.ready && !snapshotQuery.isError && snapshotQuery.data?.revision.floorId === floorId
+      ? snapshotQuery.data
+      : undefined;
+  const sourceReady =
+    canManage &&
+    !unverifiedHere &&
+    !sitesQuery.isFetching &&
+    !sitesQuery.isError &&
+    !sitesQuery.isStale &&
+    !floorsQuery.isFetching &&
+    !floorsQuery.isError &&
+    !floorsQuery.isStale &&
+    !revisionsQuery.isFetching &&
+    !revisionsQuery.isError &&
+    !revisionsQuery.isStale;
+  const commandScope = useWorkplaceCatalogCommandScope(
+    JSON.stringify([
+      'floor-plan',
+      floorId,
+      createOpen,
+      editingRevisionId,
+      transition?.revision.revisionId,
+      transition?.action,
+    ]),
+    sourceReady,
+    false,
+    { siteId, floorId, permission: 'FLOOR_PLAN_MANAGE' }
+  );
+  const issue = (dispatch: (scope: string) => void) => {
+    if (!commandScope.allowed) return;
+    try {
+      commandScope.begin(commandScope.scopeKey);
+    } catch {
+      return;
+    }
+    dispatch(commandScope.scopeKey);
+  };
+  useEffect(() => {
+    setCreateOpen(false);
+    setEditingRevisionId('');
+    setTransition(null);
+    setPendingDraftExit(null);
+    setReason('');
+    setChangeSummary('');
+    setLayoutDirty(false);
+    setBackgroundFile(null);
+    setBackgroundSummary('');
+    setUnverifiedCommand(null);
+  }, [authorityKey, floorId]);
   const backgroundFileError = backgroundFile
     ? !['image/png', 'image/jpeg'].includes(backgroundFile.type)
       ? t('workplace.admin.governance.floorPlans.backgroundInvalidType')
@@ -185,82 +250,113 @@ export function WorkplaceAdminGovernanceFloorPlans({
     : null;
 
   const createMutation = useMutation({
-    mutationFn: () => {
-      if (!canManage || !floorId || !changeSummary.trim()) throw new Error('Invalid draft');
-      return createWorkplaceGovernanceFloorPlanRevision(floorId, {
-        basedOnRevisionId: basedOnRevisionId || null,
-        changeSummary: changeSummary.trim(),
+    mutationFn: (command: {
+      scope: string;
+      floorId: string;
+      basedOnRevisionId: string | null;
+      changeSummary: string;
+    }) => {
+      if (!commandScope.current(command.scope) || !command.changeSummary)
+        throw new Error('Invalid draft');
+      return createWorkplaceGovernanceFloorPlanRevision(command.floorId, {
+        basedOnRevisionId: command.basedOnRevisionId,
+        changeSummary: command.changeSummary,
       });
     },
-    onSuccess: async () => {
+    onSuccess: async (_, command) => {
+      if (!commandScope.current(command.scope)) return;
       setCreateOpen(false);
       setBasedOnRevisionId('');
       setChangeSummary('');
       await queryClient.invalidateQueries({
-        queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId],
+        queryKey: ['workplace', 'governance', 'floor-plan-revisions', command.floorId],
       });
-      toast.success(t('workplace.admin.governance.floorPlans.created'));
+      if (commandScope.current(command.scope))
+        toast.success(t('workplace.admin.governance.floorPlans.created'));
     },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
+    onError: (error, command) => {
+      if (commandScope.current(command.scope)) {
+        commandScope.reject(command.scope, error);
+        setUnverifiedCommand({
+          authorityKey,
+          floorId,
+          unknown: !(error instanceof HttpError) || error.status >= 500,
+        });
+        toast.error(t('workplace.admin.governance.common.saveError'));
+      }
+    },
+    onSettled: (_, __, command) => commandScope.finish(command.scope),
   });
   const transitionMutation = useMutation({
     mutationFn: (command: {
+      scope: string;
       revision: WorkplaceGovernanceFloorPlanRevision;
       action: TransitionAction;
+      reason: string;
     }) => {
-      if (!canManage || !reason.trim()) throw new Error('Invalid transition');
-      const { revision, action } = command;
-      if (action === 'REVIEW') {
+      if (
+        !commandScope.current(command.scope) ||
+        command.revision.floorId !== floorId ||
+        !command.reason
+      )
+        throw new Error('Invalid transition');
+      const { revision, action, reason } = command;
+      if (action === 'REVIEW')
         return submitWorkplaceGovernanceFloorPlanReview(
           revision.revisionId,
           revision.version,
-          reason.trim()
+          reason
         );
-      }
-      if (action === 'PUBLISH') {
-        return publishWorkplaceGovernanceFloorPlan(
-          revision.revisionId,
-          revision.version,
-          reason.trim()
-        );
-      }
+      if (action === 'PUBLISH')
+        return publishWorkplaceGovernanceFloorPlan(revision.revisionId, revision.version, reason);
       return restoreWorkplaceGovernanceFloorPlanRevision(
         revision.revisionId,
         revision.version,
-        reason.trim()
+        reason
       );
     },
-    onSuccess: async (_, variables) => {
+    onSuccess: async (_, command) => {
+      if (!commandScope.current(command.scope)) return;
       setTransition(null);
       setReason('');
       await queryClient.invalidateQueries({ queryKey: ['workplace', 'governance'] });
-      toast.success(
-        t(`workplace.admin.governance.floorPlans.transitionSuccess.${variables.action}`)
-      );
+      if (commandScope.current(command.scope))
+        toast.success(
+          t(`workplace.admin.governance.floorPlans.transitionSuccess.${command.action}`)
+        );
     },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
+    onError: (error, command) => {
+      if (commandScope.current(command.scope)) {
+        commandScope.reject(command.scope, error);
+        setUnverifiedCommand({
+          authorityKey,
+          floorId,
+          unknown: !(error instanceof HttpError) || error.status >= 500,
+        });
+        toast.error(t('workplace.admin.governance.common.saveError'));
+      }
+    },
+    onSettled: (_, __, command) => commandScope.finish(command.scope),
   });
   const backgroundMutation = useMutation({
-    mutationFn: () => {
-      if (
-        !canManage ||
-        !snapshot ||
-        snapshot.revision.state !== 'DRAFT' ||
-        !backgroundFile ||
-        backgroundFileError ||
-        !backgroundSummary.trim() ||
-        layoutDirty
-      ) {
+    mutationFn: (command: {
+      scope: string;
+      revisionId: string;
+      version: number;
+      file: File;
+      summary: string;
+    }) => {
+      if (!commandScope.current(command.scope))
         throw new Error('Invalid floor-plan background upload');
-      }
       return uploadWorkplaceGovernanceFloorPlanBackground(
-        snapshot.revision.revisionId,
-        snapshot.revision.version,
-        backgroundSummary.trim(),
-        backgroundFile
+        command.revisionId,
+        command.version,
+        command.summary,
+        command.file
       );
     },
-    onSuccess: async () => {
+    onSuccess: async (_, command) => {
+      if (!commandScope.current(command.scope)) return;
       setBackgroundFile(null);
       setBackgroundSummary('');
       if (backgroundInputRef.current) backgroundInputRef.current.value = '';
@@ -270,9 +366,21 @@ export function WorkplaceAdminGovernanceFloorPlans({
           queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId],
         }),
       ]);
-      toast.success(t('workplace.admin.governance.floorPlans.backgroundUploaded'));
+      if (commandScope.current(command.scope))
+        toast.success(t('workplace.admin.governance.floorPlans.backgroundUploaded'));
     },
-    onError: () => toast.error(t('workplace.admin.governance.floorPlans.backgroundUploadError')),
+    onError: (error, command) => {
+      if (commandScope.current(command.scope)) {
+        commandScope.reject(command.scope, error);
+        setUnverifiedCommand({
+          authorityKey,
+          floorId,
+          unknown: !(error instanceof HttpError) || error.status >= 500,
+        });
+        toast.error(t('workplace.admin.governance.floorPlans.backgroundUploadError'));
+      }
+    },
+    onSettled: (_, __, command) => commandScope.finish(command.scope),
   });
 
   if (sitesQuery.isLoading) return <GovernanceLoading rows={6} />;
@@ -283,7 +391,6 @@ export function WorkplaceAdminGovernanceFloorPlans({
       ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale)
       : t('workplace.admin.governance.common.notAvailable');
 
-  const selectedFloor = floors.find((floor) => floor.floorId === floorId) ?? null;
   const placementByResource = new Map(
     (snapshot?.placements ?? []).map((placement) => [placement.resourceId, placement])
   );
@@ -310,35 +417,53 @@ export function WorkplaceAdminGovernanceFloorPlans({
         }
       : null;
   const saveDraftLayout = async (resources: readonly WorkplaceResource[]) => {
-    if (!snapshot) throw new Error('Draft snapshot is unavailable');
-    await updateWorkplaceGovernanceFloorPlanRevision(snapshot.revision.revisionId, {
-      planWidth: snapshot.revision.planWidth,
-      planHeight: snapshot.revision.planHeight,
-      backgroundAssetPath: snapshot.revision.backgroundAssetPath,
-      backgroundAssetKey: snapshot.revision.backgroundAssetKey,
-      backgroundContentType: snapshot.revision.backgroundContentType,
-      backgroundSizeBytes: snapshot.revision.backgroundSizeBytes,
-      backgroundSha256: snapshot.revision.backgroundSha256,
-      changeSummary: snapshot.revision.changeSummary,
-      placements: resources.map((resource) => {
-        const placement = placementByResource.get(resource.resourceId);
-        const defaultZone = zonesQuery.data?.[0];
-        if (!placement && !defaultZone) throw new Error('A floor-plan zone is required');
-        return {
-          resourceId: resource.resourceId,
-          resourceVersion: placement?.resourceVersion ?? resource.version,
-          zoneId: placement?.zoneId ?? defaultZone!.zoneId,
-          sectionId: placement?.sectionId ?? null,
-          positionX: resource.positionX,
-          positionY: resource.positionY,
-          widthPercent: resource.widthPercent,
-          heightPercent: resource.heightPercent,
-          rotationDegrees: resource.rotationDegrees,
-          metadata: placement?.metadata ?? {},
-        };
-      }),
-      version: snapshot.revision.version,
-    });
+    if (
+      !snapshot ||
+      !commandScope.allowed ||
+      snapshotQuery.isFetching ||
+      snapshotQuery.isStale ||
+      resourcesQuery.isError ||
+      zonesQuery.isError
+    )
+      throw new Error('Draft snapshot is unavailable');
+    try {
+      await updateWorkplaceGovernanceFloorPlanRevision(snapshot.revision.revisionId, {
+        planWidth: snapshot.revision.planWidth,
+        planHeight: snapshot.revision.planHeight,
+        backgroundAssetPath: snapshot.revision.backgroundAssetPath,
+        backgroundAssetKey: snapshot.revision.backgroundAssetKey,
+        backgroundContentType: snapshot.revision.backgroundContentType,
+        backgroundSizeBytes: snapshot.revision.backgroundSizeBytes,
+        backgroundSha256: snapshot.revision.backgroundSha256,
+        changeSummary: snapshot.revision.changeSummary,
+        placements: resources.map((resource) => {
+          const placement = placementByResource.get(resource.resourceId);
+          const defaultZone = zonesQuery.data?.[0];
+          if (!placement && !defaultZone) throw new Error('A floor-plan zone is required');
+          return {
+            resourceId: resource.resourceId,
+            resourceVersion: placement?.resourceVersion ?? resource.version,
+            zoneId: placement?.zoneId ?? defaultZone!.zoneId,
+            sectionId: placement?.sectionId ?? null,
+            positionX: resource.positionX,
+            positionY: resource.positionY,
+            widthPercent: resource.widthPercent,
+            heightPercent: resource.heightPercent,
+            rotationDegrees: resource.rotationDegrees,
+            metadata: placement?.metadata ?? {},
+          };
+        }),
+        version: snapshot.revision.version,
+      });
+    } catch (error) {
+      if (commandScope.current(commandScope.scopeKey))
+        setUnverifiedCommand({
+          authorityKey,
+          floorId,
+          unknown: !(error instanceof HttpError) || error.status >= 500,
+        });
+      throw error;
+    }
   };
   const applyDraftExit = (intent: DraftExitIntent) => {
     setLayoutDirty(false);
@@ -360,12 +485,51 @@ export function WorkplaceAdminGovernanceFloorPlans({
     else applyDraftExit(intent);
   };
 
+  const recheckNative = async () => {
+    const expected = commandScope.scopeKey;
+    const results = await Promise.all([
+      sitesQuery.refetch(),
+      floorsQuery.refetch(),
+      revisionsQuery.refetch(),
+      ...(editingRevisionId
+        ? [snapshotQuery.refetch(), resourcesQuery.refetch(), zonesQuery.refetch()]
+        : []),
+    ]);
+    if (commandScope.current(expected) && results.every((result) => result.isSuccess)) {
+      commandScope.recover(expected);
+      setUnverifiedCommand(null);
+    }
+  };
+  const commandOutcome =
+    unverifiedHere || commandScope.failed ? (
+      <InlineFeedback
+        severity="warning"
+        action={
+          <ActionButton intent="secondary" onClick={() => void recheckNative()}>
+            {t('workplace.experience.recheck')}
+          </ActionButton>
+        }
+      >
+        {t(
+          unverifiedCommand?.unknown || commandScope.unknown
+            ? 'workplace.experience.changeUnknown'
+            : 'workplace.admin.governance.common.saveError'
+        )}
+      </InlineFeedback>
+    ) : null;
+
   return (
     <Stack spacing={2}>
       <Alert severity="info">{t('workplace.admin.governance.floorPlans.lifecycleNotice')}</Alert>
+      {commandOutcome}
       <GovernancePanel
         title={t('workplace.admin.governance.floorPlans.context')}
         description={t('workplace.admin.governance.floorPlans.contextDescription')}
+        actions={
+          <ActionButton intent="secondary" onClick={() => void recheckNative()}>
+            {t('workplace.experience.recheck')}
+          </ActionButton>
+        }
       >
         <Box
           sx={{
@@ -407,7 +571,7 @@ export function WorkplaceAdminGovernanceFloorPlans({
           title={t('workplace.admin.governance.floorPlans.revisions')}
           description={t('workplace.admin.governance.floorPlans.revisionsDescription')}
           actions={
-            canManage && floorId ? (
+            commandScope.allowed && floorId ? (
               <ActionButton
                 intent="primary"
                 startIcon={<FilePlus2 size={16} />}
@@ -423,92 +587,23 @@ export function WorkplaceAdminGovernanceFloorPlans({
           ) : revisionsQuery.isError ? (
             <GovernanceQueryError retry={() => void revisionsQuery.refetch()} />
           ) : revisions.length ? (
-            <Stack divider={<Divider flexItem />}>
-              {revisions.map((revision) => (
-                <Stack
-                  key={revision.revisionId}
-                  direction={{ xs: 'column', md: 'row' }}
-                  alignItems={{ xs: 'stretch', md: 'center' }}
-                  justifyContent="space-between"
-                  gap={1.25}
-                  sx={{ px: 1.5, py: 1.25 }}
-                >
-                  <Stack direction="row" gap={1.25} alignItems="flex-start" sx={{ minWidth: 0 }}>
-                    <Box
-                      sx={{
-                        width: 36,
-                        height: 36,
-                        flex: '0 0 auto',
-                        display: 'grid',
-                        placeItems: 'center',
-                        bgcolor: 'var(--dwp-product-soft)',
-                        color: 'var(--dwp-product-accent)',
-                      }}
-                    >
-                      <FileStack size={18} />
-                    </Box>
-                    <Box sx={{ minWidth: 0 }}>
-                      <Stack direction="row" gap={0.7} alignItems="center" flexWrap="wrap">
-                        <Typography fontWeight={800}>
-                          {t('workplace.admin.governance.floorPlans.revisionNumber', {
-                            number: revision.revisionNumber,
-                          })}
-                        </Typography>
-                        <Chip
-                          size="small"
-                          color={revisionColor(revision.state)}
-                          variant="outlined"
-                          label={t(`workplace.admin.governance.revisionStates.${revision.state}`)}
-                        />
-                      </Stack>
-                      <Typography variant="body2" noWrap>
-                        {revision.changeSummary}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('workplace.admin.governance.floorPlans.placementCount', {
-                          count: revision.placementCount,
-                        })}{' '}
-                        · {revision.planWidth} × {revision.planHeight} ·{' '}
-                        {formatInstant(revision.publishedAt ?? revision.submittedAt)}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  {canManage ? (
-                    <Stack direction="row" gap={0.75} flexWrap="wrap">
-                      {revision.state === 'DRAFT' ? (
-                        <ActionButton
-                          intent="secondary"
-                          startIcon={<Pencil size={15} />}
-                          onClick={() =>
-                            requestDraftExit({ type: 'EDIT', revisionId: revision.revisionId })
-                          }
-                        >
-                          {t('workplace.admin.governance.floorPlans.editDraft')}
-                        </ActionButton>
-                      ) : null}
-                      {workplaceGovernanceRevisionActions(revision).map((action) => (
-                        <ActionButton
-                          key={action}
-                          intent={action === 'PUBLISH' ? 'primary' : 'secondary'}
-                          startIcon={
-                            action === 'REVIEW' ? (
-                              <Send size={15} />
-                            ) : action === 'PUBLISH' ? (
-                              <CheckCheck size={15} />
-                            ) : (
-                              <ArchiveRestore size={15} />
-                            )
-                          }
-                          onClick={() => requestDraftExit({ type: 'TRANSITION', revision, action })}
-                        >
-                          {t(`workplace.admin.governance.floorPlans.actions.${action}`)}
-                        </ActionButton>
-                      ))}
-                    </Stack>
-                  ) : null}
-                </Stack>
-              ))}
-            </Stack>
+            <WorkplaceFloorPlanRevisionList
+              t={t}
+              revisions={revisions}
+              canAct={commandScope.allowed}
+              formatInstant={formatInstant}
+              renderRevisionNumber={(revision) => (
+                <Typography fontWeight={800}>
+                  {t('workplace.admin.governance.floorPlans.revisionNumber', {
+                    number: revision.revisionNumber,
+                  })}
+                </Typography>
+              )}
+              onEdit={(revisionId) => requestDraftExit({ type: 'EDIT', revisionId })}
+              onTransition={(revision, action) =>
+                requestDraftExit({ type: 'TRANSITION', revision, action })
+              }
+            />
           ) : (
             <GovernanceEmpty
               title={t('workplace.admin.governance.floorPlans.emptyRevisions')}
@@ -616,7 +711,7 @@ export function WorkplaceAdminGovernanceFloorPlans({
                     type="file"
                     accept="image/png,image/jpeg"
                     aria-label={t('workplace.admin.governance.floorPlans.backgroundInput')}
-                    disabled={!canManage || layoutDirty || backgroundMutation.isPending}
+                    disabled={!commandScope.allowed || layoutDirty || backgroundMutation.isPending}
                     onChange={(event) => {
                       const selected = event.target.files?.[0] ?? null;
                       setBackgroundFile(selected);
@@ -631,7 +726,9 @@ export function WorkplaceAdminGovernanceFloorPlans({
                     <ActionButton
                       intent="secondary"
                       startIcon={<ImageUp size={16} />}
-                      disabled={!canManage || layoutDirty || backgroundMutation.isPending}
+                      disabled={
+                        !commandScope.allowed || layoutDirty || backgroundMutation.isPending
+                      }
                       onClick={() => backgroundInputRef.current?.click()}
                     >
                       {t('workplace.admin.governance.floorPlans.chooseBackground')}
@@ -641,12 +738,34 @@ export function WorkplaceAdminGovernanceFloorPlans({
                         intent="primary"
                         startIcon={<Upload size={16} />}
                         disabled={
+                          !commandScope.allowed ||
+                          snapshotQuery.isFetching ||
+                          snapshotQuery.isStale ||
                           Boolean(backgroundFileError) ||
                           !backgroundSummary.trim() ||
                           layoutDirty ||
                           backgroundMutation.isPending
                         }
-                        onClick={() => backgroundMutation.mutate()}
+                        onClick={() => {
+                          if (
+                            snapshot &&
+                            !snapshotQuery.isFetching &&
+                            !snapshotQuery.isStale &&
+                            backgroundFile &&
+                            !backgroundFileError &&
+                            !layoutDirty &&
+                            backgroundSummary.trim()
+                          )
+                            issue((scope) =>
+                              backgroundMutation.mutate({
+                                scope,
+                                revisionId: snapshot.revision.revisionId,
+                                version: snapshot.revision.version,
+                                file: backgroundFile,
+                                summary: backgroundSummary.trim(),
+                              })
+                            );
+                        }}
                       >
                         {t('workplace.admin.governance.floorPlans.uploadBackground')}
                       </ActionButton>
@@ -687,7 +806,20 @@ export function WorkplaceAdminGovernanceFloorPlans({
                 floor={draftFloor}
                 resources={draftResources}
                 availableResources={zonesQuery.data?.length ? (resourcesQuery.data ?? []) : []}
-                editable={canManage && snapshot.revision.state === 'DRAFT'}
+                editable={
+                  canManage &&
+                  snapshot.revision.state === 'DRAFT' &&
+                  !resourcesQuery.isError &&
+                  !zonesQuery.isError
+                }
+                commandSourceReady={
+                  commandScope.allowed &&
+                  !snapshotQuery.isFetching &&
+                  !snapshotQuery.isStale &&
+                  !resourcesQuery.isFetching &&
+                  !zonesQuery.isFetching
+                }
+                targetPermission="FLOOR_PLAN_MANAGE"
                 showResourceEditActions={false}
                 allowPlacementManagement
                 blockNavigation={false}
@@ -697,7 +829,13 @@ export function WorkplaceAdminGovernanceFloorPlans({
                 onSaved={async () => {
                   await snapshotQuery.refetch();
                   await queryClient.invalidateQueries({
-                    queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId],
+                    queryKey: [
+                      'workplace',
+                      'governance',
+                      'floor-plan-revisions',
+                      floorId,
+                      authorityKey,
+                    ],
                   });
                 }}
                 saveSuccessMessage={t('workplace.admin.governance.floorPlans.draftSaved')}
@@ -716,10 +854,20 @@ export function WorkplaceAdminGovernanceFloorPlans({
         submitLabel={t('workplace.admin.governance.floorPlans.create')}
         submittingLabel={t('actions.saving')}
         busy={createMutation.isPending}
-        submitDisabled={!canManage || !changeSummary.trim()}
+        submitDisabled={!commandScope.allowed || !changeSummary.trim()}
         onClose={() => setCreateOpen(false)}
-        onSubmit={() => createMutation.mutate()}
+        onSubmit={() =>
+          issue((scope) =>
+            createMutation.mutate({
+              scope,
+              floorId,
+              basedOnRevisionId: basedOnRevisionId || null,
+              changeSummary: changeSummary.trim(),
+            })
+          )
+        }
       >
+        {commandOutcome}
         <Stack spacing={2}>
           <SelectField
             label={t('workplace.admin.governance.floorPlans.basedOn')}
@@ -764,12 +912,16 @@ export function WorkplaceAdminGovernanceFloorPlans({
         submittingLabel={t('actions.saving')}
         submitIntent={transition?.action === 'PUBLISH' ? 'primary' : 'secondary'}
         busy={transitionMutation.isPending}
-        submitDisabled={!canManage || !reason.trim()}
+        submitDisabled={!commandScope.allowed || !reason.trim()}
         onClose={() => setTransition(null)}
         onSubmit={() => {
-          if (transition) transitionMutation.mutate(transition);
+          if (transition)
+            issue((scope) =>
+              transitionMutation.mutate({ ...transition, scope, reason: reason.trim() })
+            );
         }}
       >
+        {commandOutcome}
         <Alert severity={transition?.action === 'PUBLISH' ? 'warning' : 'info'} sx={{ mb: 2 }}>
           {transition
             ? t(`workplace.admin.governance.floorPlans.transitionNotice.${transition.action}`)

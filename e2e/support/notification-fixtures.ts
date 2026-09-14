@@ -137,6 +137,7 @@ export async function mockNotificationCenter(
     triageFailureActions?: string[];
     summaryQueries?: string[];
     inboxQueries?: string[];
+    inboxFailureViews?: string[];
     inboxItems?: () => unknown[];
     inboxPage?: (requestUrl: string) => {
       items: unknown[];
@@ -147,6 +148,8 @@ export async function mockNotificationCenter(
     detailItem?: () => unknown;
     onTriageResult?: (item: unknown) => void;
     targetState?: 'AVAILABLE' | 'DELETED' | 'EXPIRED' | 'FORBIDDEN';
+    profilePreviewMode?: 'FULL' | 'HIDDEN';
+    profileResponseBarrier?: Promise<void>;
   } = {}
 ) {
   await page.route('**/api/notifications/v1/stream**', (route) =>
@@ -320,6 +323,18 @@ export async function mockNotificationCenter(
         ],
       });
     }
+    const requestedView = new URL(requestUrl).searchParams.get('view')?.toUpperCase();
+    if (
+      route.request().method() === 'GET' &&
+      requestedView &&
+      options.inboxFailureViews?.includes(requestedView)
+    ) {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', message: 'Temporarily unavailable' }),
+      });
+    }
     if (route.request().method() === 'GET') options.inboxQueries?.push(requestUrl);
     const pageData = options.inboxPage?.(requestUrl);
     return fulfillSuccess(route, {
@@ -333,12 +348,21 @@ export async function mockNotificationCenter(
       changeVersion: '1',
     });
   });
-  await mockNotificationProfile(page, 'HIDDEN');
+  await mockNotificationProfile(
+    page,
+    options.profilePreviewMode ?? 'HIDDEN',
+    options.profileResponseBarrier
+  );
 }
 
-export async function mockNotificationProfile(page: Page, previewMode: 'FULL' | 'HIDDEN' = 'FULL') {
-  await page.route('**/api/notifications/v1/me/delivery-profile', (route) =>
-    fulfillSuccess(route, {
+export async function mockNotificationProfile(
+  page: Page,
+  previewMode: 'FULL' | 'HIDDEN' = 'FULL',
+  responseBarrier?: Promise<void>
+) {
+  await page.route('**/api/notifications/v1/me/delivery-profile', async (route) => {
+    await responseBarrier;
+    return fulfillSuccess(route, {
       channels: { IN_APP: true },
       quietHours: {
         enabled: false,
@@ -352,8 +376,8 @@ export async function mockNotificationProfile(page: Page, previewMode: 'FULL' | 
       presentation: { bannerMode: 'SMART', previewMode },
       version: '1',
       updatedAt: '2026-08-19T07:00:00Z',
-    })
-  );
+    });
+  });
 }
 
 export async function mockNotificationPreferences(page: Page) {
@@ -469,10 +493,22 @@ export async function mockNotificationAdminOverview(page: Page) {
       unavailableSources: [],
       generatedAt: '2026-09-03T05:12:00Z',
       metrics: [
-        { key: 'active-contracts', label: 'Active contracts', value: 10, state: 'HEALTHY' },
-        { key: 'notifications-24h', label: 'Notifications', value: 7, state: 'HEALTHY' },
-        { key: 'queued-deliveries', label: 'Queued', value: 1, state: 'ATTENTION' },
-        { key: 'failed-deliveries', label: 'Failed', value: 0, state: 'HEALTHY' },
+        {
+          key: 'active-contracts',
+          label: 'Active contracts',
+          value: 10,
+          unit: 'contracts',
+          state: 'HEALTHY',
+        },
+        {
+          key: 'notifications-24h',
+          label: 'Notifications',
+          value: 7,
+          unit: 'notifications',
+          state: 'HEALTHY',
+        },
+        { key: 'queued-deliveries', label: 'Queued', value: 1, unit: 'jobs', state: 'ATTENTION' },
+        { key: 'failed-deliveries', label: 'Failed', value: 0, unit: 'jobs', state: 'HEALTHY' },
       ],
       trend: [
         { bucket: '2026-08-28T00:00:00Z', created: 2, actionable: 1, failed: 0, muted: 0 },

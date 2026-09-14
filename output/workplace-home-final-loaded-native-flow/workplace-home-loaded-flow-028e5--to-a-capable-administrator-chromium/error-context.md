@@ -1,0 +1,229 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/explore
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Personal space bookings" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/my-bookings
+                  - img [ref=e69]
+                  - paragraph [ref=e73]: Personal space bookings
+        - link "Return to apps" [ref=e75] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e77]
+          - text: Return to apps
+    - banner [ref=e79]:
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - img [ref=e83]
+          - generic "Workplace" [ref=e88]
+        - navigation "App area switcher" [ref=e91]:
+          - 'link "App management: Workplace" [ref=e93] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e95]
+            - generic [ref=e98]: App management
+        - generic [ref=e99]:
+          - button "Search DWP" [ref=e101] [cursor=pointer]:
+            - img [ref=e102]
+            - paragraph [ref=e105]: Search DWP
+            - generic [ref=e106]: ⌘K
+          - generic [ref=e107]:
+            - button "Enter full screen" [ref=e108] [cursor=pointer]:
+              - img [ref=e109]
+            - generic "0 actionable notifications, 0 total unread" [ref=e115]:
+              - button "0 actionable notifications, 0 total unread" [ref=e116] [cursor=pointer]:
+                - generic [ref=e117]:
+                  - img [ref=e118]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e122] [cursor=pointer]':
+            - generic [ref=e123]: T
+            - img [ref=e124]
+    - main [ref=e126]:
+      - navigation "Today's workspace" [ref=e127]:
+        - button "Today's workspace" [pressed] [ref=e128] [cursor=pointer]:
+          - img [ref=e130]
+          - text: Today's workspace
+        - button "Team work plans" [ref=e133] [cursor=pointer]:
+          - img [ref=e135]
+          - text: Team work plans
+        - button "Facility requests" [ref=e139] [cursor=pointer]:
+          - img [ref=e141]
+          - text: Facility requests
+      - generic [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - text: Today's workplace
+              - heading "Set up the flow of your workday" [level=1] [ref=e147]
+              - generic [ref=e148]:
+                - img [ref=e149]
+                - generic [ref=e152]: Monday, September 14, 2026
+            - generic [ref=e153]:
+              - status [ref=e154]:
+                - generic [ref=e156]:
+                  - generic [ref=e157]: Workplace information
+                  - generic [ref=e158]: Verified 09:00 AM
+                - generic "Try again" [ref=e159]:
+                  - button "Try again" [ref=e160] [cursor=pointer]:
+                    - img [ref=e161]
+              - link "View space bookings" [ref=e166] [cursor=pointer]:
+                - /url: /workplace/my-bookings
+              - link "Find a space" [ref=e167] [cursor=pointer]:
+                - /url: /workplace/explore?date=2026-09-14&time=15%3A26&duration=60
+          - region "Location and booking time" [ref=e168]:
+            - generic [ref=e169]:
+              - generic: Site
+              - generic [ref=e170]:
+                - combobox "Site" [ref=e171] [cursor=pointer]
+                - textbox
+                - img
+                - group:
+                  - generic: Site
+            - generic [ref=e172]:
+              - generic: Floor
+              - generic [ref=e173]:
+                - combobox "Floor" [disabled] [ref=e174]
+                - textbox [disabled]
+                - img
+                - group:
+                  - generic: Floor
+            - generic [ref=e175]:
+              - generic [ref=e176]: Start date and time
+              - group "Start date and time" [ref=e177]:
+                - generic [ref=e178]:
+                  - generic [ref=e179]:
+                    - spinbutton "Month" [ref=e180]: "09"
+                    - text: /
+                  - generic [ref=e181]:
+                    - spinbutton "Day" [ref=e182]: "14"
+                    - text: /
+                  - spinbutton "Year" [ref=e184]: "2026"
+                  - generic [ref=e185]:
+                    - spinbutton "Hours" [ref=e186]: "03"
+                    - text: ":"
+                  - spinbutton "Minutes" [ref=e188]: "26"
+                  - spinbutton "Meridiem" [ref=e190]: PM
+                - button "Choose date, selected date is Sep 14, 2026" [ref=e192] [cursor=pointer]:
+                  - img [ref=e193]
+                - group:
+                  - generic: Start date and time
+                - textbox [ref=e195]: 09/14/2026 03:26 PM
+        - status [ref=e196]:
+          - img [ref=e198]
+          - generic [ref=e200]: An administrator must configure a site and floor or grant this account access.
+          - link "Access control" [ref=e202] [cursor=pointer]:
+            - /url: /workplace/admin/governance?area=access
+        - region "No workplace site is available to you" [ref=e203]:
+          - generic [ref=e204]:
+            - generic [ref=e205]:
+              - img [ref=e206]
+              - generic [ref=e210]: Today's workplace
+            - heading "Get ready for your workday" [level=2] [ref=e211]
+            - paragraph [ref=e212]: Review your bookings and check-in, then choose the space you need.
+            - generic [ref=e213]:
+              - img [ref=e214]
+              - generic [ref=e217]: No site selected · Next 60 minutes
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - img [ref=e220]
+              - generic [ref=e224]: Workplace setup needed
+            - heading "No workplace site is available to you" [level=2] [ref=e225]
+            - paragraph [ref=e226]: An administrator must configure a site and floor or grant this account access.
+            - link "Configure sites" [ref=e228] [cursor=pointer]:
+              - /url: /workplace/admin/locations
+              - text: Configure sites
+              - img [ref=e230]
+        - region "Spaces open for the next 60 minutes" [ref=e233]:
+          - generic [ref=e235]:
+            - img [ref=e237]
+            - generic [ref=e241]:
+              - heading "Spaces open for the next 60 minutes" [level=2] [ref=e242]
+              - generic [ref=e243]: Reservation availability is shown separately from booking eligibility. Policy and conflict checks run again when a space is selected.
+          - separator [ref=e244]
+          - generic [ref=e245]:
+            - paragraph [ref=e246]: No workplace site is available to you
+            - paragraph [ref=e247]: Spaces will appear after the company configures a site or grants access.
+        - generic [ref=e248]:
+          - region "Today's flow" [ref=e249]:
+            - generic [ref=e250]:
+              - generic [ref=e251]:
+                - img [ref=e253]
+                - generic [ref=e255]:
+                  - heading "Today's flow" [level=2] [ref=e256]
+                  - generic [ref=e257]: Follow workspace, meeting, and focus time in chronological order.
+              - link "View space bookings" [ref=e258] [cursor=pointer]:
+                - /url: /workplace/my-bookings
+            - separator [ref=e259]
+            - generic [ref=e260]:
+              - paragraph [ref=e261]: No workplace events are scheduled today
+              - paragraph [ref=e262]: Choose a space ready now when you need somewhere to focus.
+          - generic [ref=e263]:
+            - region "Your workweek rhythm" [ref=e264]:
+              - generic [ref=e266]:
+                - img [ref=e268]
+                - generic [ref=e272]:
+                  - heading "Your workweek rhythm" [level=2] [ref=e273]
+                  - generic [ref=e274]: Read space reservations alongside meeting and focus time to keep the week balanced.
+              - generic [ref=e275]:
+                - paragraph [ref=e276]: No workplace activity is planned this week
+                - paragraph [ref=e277]: Meeting and focus patterns will appear here as your week takes shape.
+            - region "Worth your attention" [ref=e278]:
+              - generic [ref=e280]:
+                - img [ref=e282]
+                - generic [ref=e285]:
+                  - heading "Worth your attention" [level=2] [ref=e286]
+                  - generic [ref=e287]: Check-ins and events that still need a place are surfaced first.
+              - separator [ref=e288]
+              - generic [ref=e289]:
+                - img [ref=e290]
+                - generic [ref=e293]:
+                  - paragraph [ref=e294]: Your workplace plan is in good shape
+                  - paragraph [ref=e295]: There are no check-ins or unplaced events to review right now.
+  - generic "Open DWAI·ON" [ref=e297]:
+    - button "Open DWAI·ON" [ref=e298] [cursor=pointer]
+```

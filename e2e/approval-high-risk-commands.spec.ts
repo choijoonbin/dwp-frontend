@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 import {
   mockApprovalHighRiskNetwork,
@@ -12,8 +13,10 @@ import {
   APPROVAL_FORM_CATEGORY_FIXTURES,
   APPROVAL_FORM_DETAIL_FIXTURE,
   APPROVAL_FORM_FIXTURE,
+  APPROVAL_ADMIN_FIXTURE,
   APPROVAL_OPERATIONS_FIXTURE,
   APPROVAL_POLICIES_FIXTURE,
+  APPROVAL_SIGNATURE_FIXTURES,
   APPROVAL_WORKFLOW_DETAIL_FIXTURE,
   APPROVAL_WORKFLOW_FIXTURE,
 } from './support/product-area-fixtures';
@@ -111,6 +114,7 @@ const cases: readonly HighRiskCase[] = [
     expectedPayload: { expectedVersion: draftForm.version },
     commandResult: { ...draftFormDetail, form: { ...draftForm, lifecycleState: 'PUBLISHED' } },
     start: async (page) => {
+      await page.getByRole('button').filter({ hasText: draftForm.nameKo }).click();
       await page.getByRole('button', { name: '게시', exact: true }).click();
     },
     successText: '결재 양식을 게시했습니다.',
@@ -171,7 +175,7 @@ test('canonical Approval ACTION 21개가 exact surface에서 routine ALLOWED / H
     (route) => route.productId === 'approvals' && route.routeKind === 'ACTION'
   ).map((route) => route.routeContractKey);
   expect([...APPROVAL_ACTION_ROUTE_CONTRACT_KEYS].sort()).toEqual(canonical.sort());
-  expect(canonical).toHaveLength(21);
+  expect(canonical).toHaveLength(24);
 
   const results = await page.evaluate(async (routeContractKeys) => {
     const responses: Array<{ routeContractKey: string; decision: string }> = [];
@@ -202,6 +206,68 @@ test('canonical Approval ACTION 21개가 exact surface에서 routine ALLOWED / H
     const high = cases.some((candidate) => candidate.routeContractKey === result.routeContractKey);
     expect(result.decision, result.routeContractKey).toBe(high ? 'STEP_UP_REQUIRED' : 'ALLOWED');
   }
+});
+
+test('관리자 개요는 exact assurance 집합이 아니면 정상으로 승격하거나 미지 key를 렌더링하지 않는다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], { locale: 'ko', permissions: [] });
+  await mockApprovalProductSurfaceAuthority(page);
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/overview',
+    (route) =>
+      fulfillSuccess(route, {
+        ...APPROVAL_ADMIN_FIXTURE,
+        overdueTasks: 0,
+        failedIntegrations: 0,
+        assurance: [
+          { key: 'identity', state: 'ENFORCED', exceptions: 0 },
+          { key: 'identity', state: 'ENFORCED', exceptions: 0 },
+          { key: 'evidence', state: 'ENFORCED', exceptions: 0 },
+          { key: 'delivery', state: 'ENFORCED', exceptions: 0 },
+          { key: 'release', state: 'ENFORCED', exceptions: 0 },
+        ],
+      })
+  );
+
+  await page.goto('/approvals/admin/overview');
+
+  await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText('결재 런타임 기본 보증 · 확인 필요');
+  await expect(page.getByText('신뢰 경계', { exact: true })).toHaveCount(1);
+  await expect(page.getByText('admin.assurance.release.title')).toHaveCount(0);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
+test('전자서명 readiness는 capability 누락과 비공인 provider 필드를 노출하지 않고 닫힌다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], { locale: 'ko', permissions: [] });
+  await mockApprovalProductSurfaceAuthority(page);
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/signatures',
+    (route) =>
+      fulfillSuccess(route, [
+        {
+          ...APPROVAL_SIGNATURE_FIXTURES[0],
+          capabilities: {
+            credential: 'must-not-render',
+            privateKey: 'must-not-render',
+            auditEvidence: 'true',
+          },
+        },
+      ])
+  );
+
+  await page.goto('/approvals/admin/signatures');
+
+  await expect(page.getByRole('heading', { name: '전자서명 연계', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enterprise e-signature' })).toBeVisible();
+  await expect(page.getByText('확인 불가', { exact: true })).toHaveCount(2);
+  await expect(page.getByText('must-not-render')).toHaveCount(0);
+  await expect(page.getByText('credential', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('privateKey', { exact: true })).toHaveCount(0);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
 for (const highRiskCase of cases) {

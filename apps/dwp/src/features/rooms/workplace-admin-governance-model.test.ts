@@ -25,6 +25,19 @@ describe('Workplace governance model', () => {
     );
   });
 
+  it('accepts canonical native seeded UUIDs without imposing random-UUID bit patterns', () => {
+    expect(isWorkplaceGovernanceUuid('95de1903-9bd7-7ce6-31c1-ab6e7a2dd8b8')).toBe(true);
+    expect(isWorkplaceGovernanceUuid('95DE1903-9BD7-7CE6-31C1-AB6E7A2DD8B8')).toBe(true);
+    for (const invalid of [
+      '95de19039bd77ce631c1ab6e7a2dd8b8',
+      '95de1903-9bd7-7ce6-31c1-ab6e7a2dd8b',
+      '95de1903-9bd7-7ce6-31c1-ab6e7a2dd8bg',
+      '1-1-1-1-1',
+    ]) {
+      expect(isWorkplaceGovernanceUuid(invalid)).toBe(false);
+    }
+  });
+
   it('validates partial policy patches against server ranges', () => {
     expect(validateWorkplaceGovernancePolicyPatch({ bookingWindowDays: 90 })).toBe(true);
     expect(validateWorkplaceGovernancePolicyPatch({ bookingRetentionDays: 29 })).toBe(false);

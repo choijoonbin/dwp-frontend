@@ -1,3 +1,10 @@
+import {
+  jsonObject,
+  SelectableRow,
+  HierarchyResourcePanel,
+  HierarchyCampusFields,
+  HierarchySpatialFields,
+} from './workplace-governance-hierarchy-leaves';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, Layers3, MapPinned, Pencil, Plus, Settings2, Shapes } from 'lucide-react';
@@ -19,16 +26,12 @@ import {
 import {
   ActionButton,
   ActionIconButton,
-  EmptyState,
   FormDialog,
-  FormField,
   SelectField,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -39,8 +42,12 @@ import {
   GovernanceQueryError,
 } from './workplace-admin-governance-ui';
 
+import { useWorkplaceGovernanceTargetScope } from './workplace-governance-target-scope';
+import { useWorkplaceCatalogCommandScope } from './workplace-catalog-command-scope';
+
 import type {
   WorkplaceFloor,
+  WorkplaceResource,
   WorkplaceGovernanceCampus,
   WorkplaceGovernanceCampusInput,
   WorkplaceGovernanceSection,
@@ -56,88 +63,6 @@ type Editor<T> = T | 'new' | null;
 const ALL_CAMPUSES = '__ALL__';
 const UNASSIGNED_CAMPUS = '__UNASSIGNED__';
 
-function jsonObject(value: string) {
-  try {
-    const parsed: unknown = JSON.parse(value);
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-      ? (parsed as Record<string, unknown>)
-      : null;
-  } catch {
-    return null;
-  }
-}
-
-function SelectableRow({
-  selected,
-  icon,
-  title,
-  detail,
-  trailing,
-  onClick,
-}: {
-  selected: boolean;
-  icon: React.ReactNode;
-  title: string;
-  detail: string;
-  trailing?: React.ReactNode;
-  onClick?: () => void;
-}) {
-  const interactive = Boolean(onClick);
-  return (
-    <Box sx={{ position: 'relative', borderBottom: 1, borderColor: 'divider' }}>
-      <Box
-        component={interactive ? 'button' : 'div'}
-        type={interactive ? 'button' : undefined}
-        aria-pressed={interactive ? selected : undefined}
-        onClick={onClick}
-        sx={{
-          width: '100%',
-          minHeight: 68,
-          p: 1.25,
-          pr: trailing ? 6 : 1.25,
-          border: 0,
-          bgcolor: selected ? 'var(--dwp-product-selection)' : 'transparent',
-          color: 'text.primary',
-          cursor: interactive ? 'pointer' : 'default',
-          font: 'inherit',
-          textAlign: 'left',
-          display: 'grid',
-          gridTemplateColumns: '32px minmax(0, 1fr)',
-          gap: 1,
-          alignItems: 'center',
-        }}
-      >
-        <Box
-          aria-hidden="true"
-          sx={{
-            width: 32,
-            height: 32,
-            display: 'grid',
-            placeItems: 'center',
-            bgcolor: 'var(--dwp-product-soft)',
-            color: 'var(--dwp-product-accent)',
-          }}
-        >
-          {icon}
-        </Box>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="body2" fontWeight={750} noWrap>
-            {title}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap>
-            {detail}
-          </Typography>
-        </Box>
-      </Box>
-      {trailing ? (
-        <Box sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}>
-          {trailing}
-        </Box>
-      ) : null}
-    </Box>
-  );
-}
-
 export function WorkplaceAdminGovernanceHierarchy({
   canManage,
   canManageCampus,
@@ -148,6 +73,8 @@ export function WorkplaceAdminGovernanceHierarchy({
   const { t } = useTranslation('rooms');
   const navigate = useNavigate();
   const toast = useToast();
+  const governance = useWorkplaceGovernanceTargetScope();
+  const authorityKey = governance.authorityKey;
   const queryClient = useQueryClient();
   const [campusId, setCampusId] = useState(ALL_CAMPUSES);
   const [siteId, setSiteId] = useState<string | null>(null);
@@ -159,56 +86,143 @@ export function WorkplaceAdminGovernanceHierarchy({
   const [assigningSite, setAssigningSite] = useState<WorkplaceSite | null>(null);
 
   const campusesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'campuses'],
+    queryKey: ['workplace', 'governance', 'campuses', authorityKey],
+    enabled: governance.ready,
     queryFn: getWorkplaceGovernanceCampuses,
     staleTime: 30_000,
     retry: 1,
   });
   const sitesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'sites'],
+    queryKey: ['workplace', 'admin', 'sites', authorityKey],
+    enabled: governance.ready,
     queryFn: getWorkplaceAdminSites,
     staleTime: 30_000,
     retry: 1,
   });
   const floorsQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'floors', siteId],
+    queryKey: ['workplace', 'admin', 'floors', siteId, authorityKey],
     queryFn: () => getWorkplaceAdminFloors(siteId!),
-    enabled: Boolean(siteId),
+    enabled:
+      governance.ready &&
+      Boolean(siteId && sitesQuery.data?.some((site) => site.siteId === siteId)) &&
+      !sitesQuery.isError,
     staleTime: 30_000,
     retry: 1,
   });
   const zonesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'zones', floorId],
+    queryKey: ['workplace', 'governance', 'zones', floorId, authorityKey],
     queryFn: () => getWorkplaceGovernanceZones(floorId!),
-    enabled: Boolean(floorId),
+    enabled:
+      governance.ready &&
+      Boolean(
+        floorId &&
+        floorsQuery.data?.some(
+          (floor) =>
+            floor.floorId === floorId &&
+            floor.siteId === siteId &&
+            governance.allowsTarget('CATALOG_VIEW', siteId!, floorId)
+        )
+      ) &&
+      !floorsQuery.isError,
     staleTime: 20_000,
     retry: 1,
   });
   const sectionsQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'sections', zoneId],
+    queryKey: ['workplace', 'governance', 'sections', zoneId, authorityKey],
     queryFn: () => getWorkplaceGovernanceSections(zoneId!),
-    enabled: Boolean(zoneId),
+    enabled:
+      governance.ready &&
+      Boolean(
+        zoneId &&
+        zonesQuery.data?.some((zone) => zone.zoneId === zoneId && zone.floorId === floorId)
+      ) &&
+      !zonesQuery.isError,
     staleTime: 20_000,
     retry: 1,
   });
   const resourcesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'resources', floorId],
+    queryKey: ['workplace', 'admin', 'resources', floorId, authorityKey],
     queryFn: () => getWorkplaceAdminResources(floorId!),
-    enabled: Boolean(floorId),
+    enabled:
+      governance.ready &&
+      Boolean(
+        floorId &&
+        floorsQuery.data?.some(
+          (floor) =>
+            floor.floorId === floorId &&
+            floor.siteId === siteId &&
+            governance.allowsTarget('CATALOG_VIEW', siteId!, floorId)
+        )
+      ) &&
+      !floorsQuery.isError,
     staleTime: 20_000,
     retry: 1,
   });
 
-  const campuses = useMemo(() => campusesQuery.data ?? [], [campusesQuery.data]);
-  const sites = useMemo(() => sitesQuery.data ?? [], [sitesQuery.data]);
+  const campuses = useMemo(
+    () => (governance.ready && !campusesQuery.isError ? (campusesQuery.data ?? []) : []),
+    [governance.ready, campusesQuery.data, campusesQuery.isError]
+  );
+  const sites = useMemo(
+    () => (governance.ready && !sitesQuery.isError ? (sitesQuery.data ?? []) : []),
+    [governance.ready, sitesQuery.data, sitesQuery.isError]
+  );
   const campusSites = useMemo(() => {
     if (campusId === ALL_CAMPUSES) return sites;
     if (campusId === UNASSIGNED_CAMPUS) return sites.filter((site) => !site.campusId);
     return sites.filter((site) => site.campusId === campusId);
   }, [campusId, sites]);
-  const floors = useMemo(() => floorsQuery.data ?? [], [floorsQuery.data]);
-  const zones = useMemo(() => zonesQuery.data ?? [], [zonesQuery.data]);
-  const sections = useMemo(() => sectionsQuery.data ?? [], [sectionsQuery.data]);
+  const floors = useMemo(
+    () =>
+      governance.ready && !floorsQuery.isError
+        ? (floorsQuery.data ?? []).filter(
+            (floor) =>
+              floor.siteId === siteId &&
+              governance.allowsTarget('CATALOG_VIEW', floor.siteId, floor.floorId)
+          )
+        : [],
+    [governance, siteId, floorsQuery.data, floorsQuery.isError]
+  );
+  const zones = useMemo(
+    () =>
+      floors.some((floor) => floor.floorId === floorId) && !zonesQuery.isError
+        ? (zonesQuery.data ?? []).filter((zone) => zone.floorId === floorId)
+        : [],
+    [floorId, floors, zonesQuery.data, zonesQuery.isError]
+  );
+  const sections = useMemo(
+    () =>
+      zones.some((zone) => zone.zoneId === zoneId) && !sectionsQuery.isError
+        ? (sectionsQuery.data ?? []).filter(
+            (section) => section.zoneId === zoneId && section.floorId === floorId
+          )
+        : [],
+    [floorId, zoneId, zones, sectionsQuery.data, sectionsQuery.isError]
+  );
+  const floorReady =
+    governance.ready &&
+    !sitesQuery.isFetching &&
+    !sitesQuery.isError &&
+    !sitesQuery.isStale &&
+    !floorsQuery.isFetching &&
+    !floorsQuery.isError &&
+    !floorsQuery.isStale &&
+    floors.some((floor) => floor.floorId === floorId);
+  const canManageFloor =
+    canManage &&
+    floorReady &&
+    Boolean(siteId && floorId) &&
+    governance.allowsTarget('CATALOG_MANAGE', siteId!, floorId);
+  const spatialReady =
+    floorReady && !zonesQuery.isError && !zonesQuery.isFetching && !zonesQuery.isStale;
+  useEffect(() => {
+    setZoneEditor(null);
+    setSectionEditor(null);
+  }, [authorityKey, siteId, floorId, zoneId]);
+  useEffect(() => {
+    setCampusEditor(null);
+    setAssigningSite(null);
+  }, [authorityKey]);
 
   useEffect(() => {
     if (!campusSites.length) setSiteId(null);
@@ -225,18 +239,48 @@ export function WorkplaceAdminGovernanceHierarchy({
     else if (!zones.some((zone) => zone.zoneId === zoneId)) setZoneId(zones[0].zoneId);
   }, [zoneId, zones]);
 
+  const assignScope = useWorkplaceCatalogCommandScope(
+    JSON.stringify(['campus-assignment', assigningSite?.siteId, assigningSite?.version]),
+    canManageCampus &&
+      governance.ready &&
+      !sitesQuery.isFetching &&
+      !sitesQuery.isError &&
+      !sitesQuery.isStale &&
+      !campusesQuery.isFetching &&
+      !campusesQuery.isError &&
+      !campusesQuery.isStale,
+    false,
+    { siteId: assigningSite?.siteId ?? null }
+  );
   const assignMutation = useMutation({
-    mutationFn: ({ site, nextCampusId }: { site: WorkplaceSite; nextCampusId: string }) => {
-      if (!canManageCampus) throw new Error('Global campus permission required');
-      return assignWorkplaceGovernanceSiteCampus(site.siteId, nextCampusId, site.version);
+    mutationFn: (command: { scope: string; site: WorkplaceSite; nextCampusId: string }) => {
+      if (
+        !assignScope.current(command.scope) ||
+        !canManageCampus ||
+        !campuses.some((campus) => campus.campusId === command.nextCampusId)
+      )
+        throw new Error('Global campus permission required');
+      return assignWorkplaceGovernanceSiteCampus(
+        command.site.siteId,
+        command.nextCampusId,
+        command.site.version
+      );
     },
-    onSuccess: async () => {
+    onSuccess: async (_, command) => {
+      if (!assignScope.current(command.scope)) return;
       setAssigningSite(null);
       await queryClient.invalidateQueries({ queryKey: ['workplace', 'admin', 'sites'] });
       await queryClient.invalidateQueries({ queryKey: ['workplace', 'governance', 'campuses'] });
-      toast.success(t('workplace.admin.governance.hierarchy.assignmentSaved'));
+      if (assignScope.current(command.scope))
+        toast.success(t('workplace.admin.governance.hierarchy.assignmentSaved'));
     },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
+    onError: (error, command) => {
+      if (assignScope.current(command.scope)) {
+        assignScope.reject(command.scope, error);
+        toast.error(t('workplace.admin.governance.common.saveError'));
+      }
+    },
+    onSettled: (_, __, command) => assignScope.finish(command.scope),
   });
 
   if (campusesQuery.isLoading || sitesQuery.isLoading) return <GovernanceLoading rows={7} />;
@@ -282,6 +326,7 @@ export function WorkplaceAdminGovernanceHierarchy({
           }
         >
           <SelectableRow
+            renderTitle={renderHierarchyRowTitle}
             selected={campusId === ALL_CAMPUSES}
             icon={<Building2 size={17} />}
             title={t('workplace.admin.governance.hierarchy.allBuildings')}
@@ -296,6 +341,7 @@ export function WorkplaceAdminGovernanceHierarchy({
             }}
           />
           <SelectableRow
+            renderTitle={renderHierarchyRowTitle}
             selected={campusId === UNASSIGNED_CAMPUS}
             icon={<MapPinned size={17} />}
             title={t('workplace.admin.governance.hierarchy.unassignedBuildings')}
@@ -311,6 +357,7 @@ export function WorkplaceAdminGovernanceHierarchy({
           />
           {campuses.map((campus) => (
             <SelectableRow
+              renderTitle={renderHierarchyRowTitle}
               key={campus.campusId}
               selected={campus.campusId === campusId}
               icon={<MapPinned size={17} />}
@@ -359,6 +406,7 @@ export function WorkplaceAdminGovernanceHierarchy({
           {campusSites.length ? (
             campusSites.map((site) => (
               <SelectableRow
+                renderTitle={renderHierarchyRowTitle}
                 key={site.siteId}
                 selected={site.siteId === siteId}
                 icon={<Building2 size={17} />}
@@ -427,7 +475,7 @@ export function WorkplaceAdminGovernanceHierarchy({
             <GovernancePanel
               title={t('workplace.admin.governance.hierarchy.zones')}
               actions={
-                canManage && floorId ? (
+                canManageFloor && spatialReady && floorId ? (
                   <ActionIconButton
                     size="small"
                     label={t('workplace.admin.governance.hierarchy.addZone')}
@@ -445,6 +493,7 @@ export function WorkplaceAdminGovernanceHierarchy({
               ) : zones.length ? (
                 zones.map((zone) => (
                   <SelectableRow
+                    renderTitle={renderHierarchyRowTitle}
                     key={zone.zoneId}
                     selected={zone.zoneId === zoneId}
                     icon={<Shapes size={16} />}
@@ -452,7 +501,7 @@ export function WorkplaceAdminGovernanceHierarchy({
                     detail={`${zone.code} · ${t(`workplace.admin.governance.zoneTypes.${zone.type}`)}`}
                     onClick={() => setZoneId(zone.zoneId)}
                     trailing={
-                      canManage ? (
+                      canManageFloor && spatialReady ? (
                         <ActionIconButton
                           size="small"
                           label={t('actions.edit')}
@@ -475,7 +524,11 @@ export function WorkplaceAdminGovernanceHierarchy({
             <GovernancePanel
               title={t('workplace.admin.governance.hierarchy.sections')}
               actions={
-                canManage && zoneId ? (
+                canManageFloor &&
+                spatialReady &&
+                zoneId &&
+                !sectionsQuery.isFetching &&
+                !sectionsQuery.isError ? (
                   <ActionIconButton
                     size="small"
                     label={t('workplace.admin.governance.hierarchy.addSection')}
@@ -493,13 +546,14 @@ export function WorkplaceAdminGovernanceHierarchy({
               ) : sections.length ? (
                 sections.map((section) => (
                   <SelectableRow
+                    renderTitle={renderHierarchyRowTitle}
                     key={section.sectionId}
                     selected={false}
                     icon={<Layers3 size={16} />}
                     title={section.nameKo}
                     detail={`${section.code} · ${t('workplace.admin.governance.hierarchy.resourceCount', { count: section.resourceCount })}`}
                     trailing={
-                      canManage ? (
+                      canManageFloor && spatialReady ? (
                         <ActionIconButton
                           size="small"
                           label={t('actions.edit')}
@@ -520,52 +574,31 @@ export function WorkplaceAdminGovernanceHierarchy({
             </GovernancePanel>
           </Box>
 
-          <GovernancePanel
-            title={t('workplace.admin.governance.hierarchy.resources')}
-            description={t('workplace.admin.governance.hierarchy.resourceDescription')}
-          >
-            {resourcesQuery.isLoading ? (
-              <GovernanceLoading rows={2} />
-            ) : resourcesQuery.isError ? (
-              <GovernanceQueryError retry={() => void resourcesQuery.refetch()} />
-            ) : resourcesQuery.data?.length ? (
-              <Stack divider={<Divider flexItem />}>
-                {resourcesQuery.data.map((resource) => (
-                  <Stack
-                    key={resource.resourceId}
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    gap={1}
-                    sx={{ px: 1.5, py: 1.1 }}
-                  >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={700} noWrap>
-                        {resource.name}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {resource.code} · {resource.type}
-                      </Typography>
-                    </Box>
-                    <Chip size="small" variant="outlined" label={resource.state} />
-                  </Stack>
-                ))}
-              </Stack>
-            ) : (
-              <EmptyState
-                size="compact"
-                icon={<Building2 size={24} />}
-                title={t('workplace.admin.governance.hierarchy.emptyResources')}
-                description={t('workplace.admin.governance.hierarchy.emptyResourcesDescription')}
-              />
-            )}
-          </GovernancePanel>
+          <HierarchyResourcePanel
+            t={t}
+            loading={resourcesQuery.isLoading}
+            failed={resourcesQuery.isError}
+            hasResources={
+              !resourcesQuery.isError &&
+              resourcesQuery.data?.some(
+                (resource) => resource.siteId === siteId && resource.floorId === floorId
+              )
+            }
+            resources={
+              resourcesQuery.data?.filter(
+                (resource) => resource.siteId === siteId && resource.floorId === floorId
+              ) ?? []
+            }
+            retry={() => void resourcesQuery.refetch()}
+            renderName={renderHierarchyResourceName}
+          />
         </Stack>
       </Box>
 
       <CampusDialog
         target={campusEditor}
         canManage={canManageCampus}
+        sourceReady={!campusesQuery.isFetching && !campusesQuery.isError && !campusesQuery.isStale}
         onClose={() => setCampusEditor(null)}
       />
       <SpatialDialog
@@ -573,7 +606,14 @@ export function WorkplaceAdminGovernanceHierarchy({
         floorId={floorId}
         zoneId={zoneId}
         target={zoneEditor}
-        canManage={canManage}
+        siteId={siteId}
+        canManage={canManageFloor}
+        sourceReady={spatialReady}
+        onRecheck={async () =>
+          (
+            await Promise.all([sitesQuery.refetch(), floorsQuery.refetch(), zonesQuery.refetch()])
+          ).every((result) => result.isSuccess)
+        }
         onClose={() => setZoneEditor(null)}
       />
       <SpatialDialog
@@ -581,7 +621,24 @@ export function WorkplaceAdminGovernanceHierarchy({
         floorId={floorId}
         zoneId={zoneId}
         target={sectionEditor}
-        canManage={canManage}
+        siteId={siteId}
+        canManage={canManageFloor}
+        sourceReady={
+          spatialReady &&
+          !sectionsQuery.isFetching &&
+          !sectionsQuery.isError &&
+          !sectionsQuery.isStale
+        }
+        onRecheck={async () =>
+          (
+            await Promise.all([
+              sitesQuery.refetch(),
+              floorsQuery.refetch(),
+              zonesQuery.refetch(),
+              sectionsQuery.refetch(),
+            ])
+          ).every((result) => result.isSuccess)
+        }
         onClose={() => setSectionEditor(null)}
       />
       <AssignCampusDialog
@@ -594,7 +651,13 @@ export function WorkplaceAdminGovernanceHierarchy({
         busy={assignMutation.isPending}
         onClose={() => setAssigningSite(null)}
         onSubmit={(nextCampusId) => {
-          if (assigningSite) assignMutation.mutate({ site: assigningSite, nextCampusId });
+          if (!assigningSite || !assignScope.allowed) return;
+          try {
+            assignScope.begin(assignScope.scopeKey);
+          } catch {
+            return;
+          }
+          assignMutation.mutate({ scope: assignScope.scopeKey, site: assigningSite, nextCampusId });
         }}
       />
     </Stack>
@@ -604,10 +667,12 @@ export function WorkplaceAdminGovernanceHierarchy({
 function CampusDialog({
   target,
   canManage,
+  sourceReady,
   onClose,
 }: {
   target: Editor<WorkplaceGovernanceCampus>;
   canManage: boolean;
+  sourceReady: boolean;
   onClose: () => void;
 }) {
   const { t } = useTranslation('rooms');
@@ -635,18 +700,37 @@ function CampusDialog({
         : { code: '', nameKo: '', nameEn: '', state: 'ACTIVE', version: null }
     );
   }, [campus, target]);
+  const commandScope = useWorkplaceCatalogCommandScope(
+    JSON.stringify(['campus', campus, Boolean(target)]),
+    canManage && sourceReady,
+    !campus,
+    { siteId: null }
+  );
   const mutation = useMutation({
-    mutationFn: () => {
-      if (!canManage) throw new Error('Manage permission required');
-      return saveWorkplaceGovernanceCampus(campus?.campusId ?? null, form);
+    mutationFn: (command: {
+      scope: string;
+      campusId: string | null;
+      input: WorkplaceGovernanceCampusInput;
+    }) => {
+      if (!commandScope.current(command.scope)) throw new Error('Manage permission required');
+      return saveWorkplaceGovernanceCampus(command.campusId, command.input);
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['workplace', 'governance', 'campuses'] });
-      toast.success(t('workplace.admin.governance.common.saved'));
+    onSuccess: async (_, command) => {
+      if (!commandScope.current(command.scope)) return;
       onClose();
+      await queryClient.invalidateQueries({ queryKey: ['workplace', 'governance', 'campuses'] });
+      if (commandScope.current(command.scope))
+        toast.success(t('workplace.admin.governance.common.saved'));
     },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
+    onError: (error, command) => {
+      if (commandScope.current(command.scope)) {
+        commandScope.reject(command.scope, error);
+        toast.error(t('workplace.admin.governance.common.saveError'));
+      }
+    },
+    onSettled: (_, __, command) => commandScope.finish(command.scope),
   });
+
   const valid =
     /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code) && form.nameKo.trim() && form.nameEn.trim();
   return (
@@ -661,49 +745,41 @@ function CampusDialog({
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!canManage || !valid}
+      submitDisabled={!commandScope.allowed || !valid}
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={() => {
+        if (!valid || !commandScope.allowed) return;
+        try {
+          commandScope.begin(commandScope.scopeKey);
+        } catch {
+          return;
+        }
+        mutation.mutate({
+          scope: commandScope.scopeKey,
+          campusId: campus?.campusId ?? null,
+          input: { ...form },
+        });
+      }}
     >
-      <Stack spacing={2}>
-        <FormField
-          required
-          label={t('workplace.admin.governance.fields.code')}
-          value={form.code}
-          onChange={(event) => setForm({ ...form, code: event.target.value.toUpperCase() })}
-        />
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-          <FormField
-            required
-            label={t('workplace.admin.governance.fields.nameKo')}
-            value={form.nameKo}
-            onChange={(event) => setForm({ ...form, nameKo: event.target.value })}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.governance.fields.nameEn')}
-            value={form.nameEn}
-            onChange={(event) => setForm({ ...form, nameEn: event.target.value })}
-          />
-        </Box>
-        <SelectField
-          label={t('workplace.admin.governance.fields.state')}
-          value={form.state}
-          options={(['ACTIVE', 'MAINTENANCE', 'CLOSED'] as const).map((value) => ({
-            value,
-            label: t(`workplace.admin.governance.states.${value}`),
-          }))}
-          onValueChange={(value) =>
-            setForm({ ...form, state: value as WorkplaceGovernanceCampusInput['state'] })
-          }
-        />
-      </Stack>
+      <HierarchyCampusFields
+        t={t}
+        form={form}
+        onCodeChange={(event) => setForm({ ...form, code: event.target.value.toUpperCase() })}
+        onNameKoChange={(event) => setForm({ ...form, nameKo: event.target.value })}
+        onNameEnChange={(event) => setForm({ ...form, nameEn: event.target.value })}
+        onStateChange={(value) =>
+          setForm({ ...form, state: value as WorkplaceGovernanceCampusInput['state'] })
+        }
+      />
     </FormDialog>
   );
 }
 
 function SpatialDialog({
   kind,
+  siteId,
+  sourceReady,
+  onRecheck,
   floorId,
   zoneId,
   target,
@@ -711,6 +787,9 @@ function SpatialDialog({
   onClose,
 }: {
   kind: 'zone' | 'section';
+  siteId: string | null;
+  sourceReady: boolean;
+  onRecheck: () => Promise<boolean>;
   floorId: string | null;
   zoneId: string | null;
   target: Editor<WorkplaceGovernanceZone> | Editor<WorkplaceGovernanceSection>;
@@ -737,49 +816,44 @@ function SpatialDialog({
     setType(existing && 'type' in existing ? existing.type : 'GENERAL');
   }, [existing, target]);
   const parsedBoundary = jsonObject(boundary);
-  const mutation = useMutation<WorkplaceGovernanceZone | WorkplaceGovernanceSection, Error, void>({
-    mutationFn: () => {
-      if (!canManage || !parsedBoundary) throw new Error('Invalid spatial command');
-      if (kind === 'zone') {
-        if (!floorId) throw new Error('Floor required');
-        const input: WorkplaceGovernanceZoneInput = {
-          code,
-          nameKo,
-          nameEn,
-          type,
-          boundary: parsedBoundary,
-          state,
-          version: existing?.version ?? null,
-        };
-        return saveWorkplaceGovernanceZone(
-          floorId,
-          existing && 'zoneId' in existing ? existing.zoneId : null,
-          input
-        );
-      }
-      if (!zoneId) throw new Error('Zone required');
-      const input: WorkplaceGovernanceSectionInput = {
-        code,
-        nameKo,
-        nameEn,
-        boundary: parsedBoundary,
-        state,
-        version: existing?.version ?? null,
-      };
-      return saveWorkplaceGovernanceSection(
-        zoneId,
-        existing && 'sectionId' in existing ? existing.sectionId : null,
-        input
-      );
+  const commandScope = useWorkplaceCatalogCommandScope(
+    JSON.stringify([kind, floorId, zoneId, existing, Boolean(target)]),
+    canManage && sourceReady && Boolean(siteId && floorId),
+    !existing,
+    { siteId, floorId }
+  );
+  const mutation = useMutation({
+    mutationFn: async (command: {
+      scope: string;
+      parentId: string;
+      existingId: string | null;
+      input: WorkplaceGovernanceZoneInput | WorkplaceGovernanceSectionInput;
+    }): Promise<WorkplaceGovernanceZone | WorkplaceGovernanceSection> => {
+      if (!commandScope.current(command.scope)) throw new Error('Invalid spatial command');
+      return kind === 'zone'
+        ? saveWorkplaceGovernanceZone(
+            command.parentId,
+            command.existingId,
+            command.input as WorkplaceGovernanceZoneInput
+          )
+        : saveWorkplaceGovernanceSection(command.parentId, command.existingId, command.input);
     },
-    onSuccess: async () => {
+    onSuccess: async (_, command) => {
+      if (!commandScope.current(command.scope)) return;
+      onClose();
       await queryClient.invalidateQueries({
         queryKey: ['workplace', 'governance', kind === 'zone' ? 'zones' : 'sections'],
       });
-      toast.success(t('workplace.admin.governance.common.saved'));
-      onClose();
+      if (commandScope.current(command.scope))
+        toast.success(t('workplace.admin.governance.common.saved'));
     },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
+    onError: (error, command) => {
+      if (commandScope.current(command.scope)) {
+        commandScope.reject(command.scope, error);
+        toast.error(t('workplace.admin.governance.common.saveError'));
+      }
+    },
+    onSettled: (_, __, command) => commandScope.finish(command.scope),
   });
   const valid =
     /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(code) && nameKo.trim() && nameEn.trim() && parsedBoundary;
@@ -793,70 +867,67 @@ function SpatialDialog({
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!canManage || !valid}
+      submitDisabled={!commandScope.allowed || !valid}
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={() => {
+        const parentId = kind === 'zone' ? floorId : zoneId;
+        if (!parentId || !parsedBoundary || !valid || !commandScope.allowed) return;
+        const input = {
+          code,
+          nameKo,
+          nameEn,
+          boundary: parsedBoundary,
+          state,
+          version: existing?.version ?? null,
+          ...(kind === 'zone' ? { type } : {}),
+        };
+        try {
+          commandScope.begin(commandScope.scopeKey);
+        } catch {
+          return;
+        }
+        mutation.mutate({
+          scope: commandScope.scopeKey,
+          parentId,
+          existingId: existing
+            ? kind === 'zone' && 'zoneId' in existing
+              ? existing.zoneId
+              : 'sectionId' in existing
+                ? existing.sectionId
+                : null
+            : null,
+          input,
+        });
+      }}
       maxWidth="md"
     >
-      <Stack spacing={2}>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '0.8fr 1fr' }, gap: 1.5 }}
-        >
-          <FormField
-            required
-            label={t('workplace.admin.governance.fields.code')}
-            value={code}
-            onChange={(event) => setCode(event.target.value.toUpperCase())}
-          />
-          {kind === 'zone' ? (
-            <SelectField
-              label={t('workplace.admin.governance.fields.zoneType')}
-              value={type}
-              options={(
-                ['GENERAL', 'WORK_AREA', 'COLLABORATION', 'QUIET', 'SERVICE', 'RESTRICTED'] as const
-              ).map((value) => ({
-                value,
-                label: t(`workplace.admin.governance.zoneTypes.${value}`),
-              }))}
-              onValueChange={(value) => setType(value as WorkplaceGovernanceZoneType)}
-            />
-          ) : null}
-        </Box>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-          <FormField
-            required
-            label={t('workplace.admin.governance.fields.nameKo')}
-            value={nameKo}
-            onChange={(event) => setNameKo(event.target.value)}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.governance.fields.nameEn')}
-            value={nameEn}
-            onChange={(event) => setNameEn(event.target.value)}
-          />
-        </Box>
-        <SelectField
-          label={t('workplace.admin.governance.fields.state')}
-          value={state}
-          options={(['ACTIVE', 'MAINTENANCE', 'CLOSED'] as const).map((value) => ({
-            value,
-            label: t(`workplace.admin.governance.states.${value}`),
-          }))}
-          onValueChange={(value) => setState(value as WorkplaceGovernanceSpatialState)}
-        />
-        <FormField
-          required
-          multiline
-          minRows={4}
-          label={t('workplace.admin.governance.fields.boundary')}
-          value={boundary}
-          errorMessage={
-            !parsedBoundary ? t('workplace.admin.governance.fields.invalidJson') : undefined
+      {commandScope.failed ? (
+        <GovernanceQueryError
+          retry={() =>
+            void (async () => {
+              const expected = commandScope.scopeKey;
+              if (await onRecheck()) commandScope.recover(expected);
+            })()
           }
-          onChange={(event) => setBoundary(event.target.value)}
         />
-      </Stack>
+      ) : null}
+      <HierarchySpatialFields
+        t={t}
+        kind={kind}
+        code={code}
+        nameKo={nameKo}
+        nameEn={nameEn}
+        state={state}
+        type={type}
+        boundary={boundary}
+        parsedBoundary={parsedBoundary}
+        onCodeChange={(event) => setCode(event.target.value.toUpperCase())}
+        onTypeChange={(value) => setType(value as WorkplaceGovernanceZoneType)}
+        onNameKoChange={(event) => setNameKo(event.target.value)}
+        onNameEnChange={(event) => setNameEn(event.target.value)}
+        onStateChange={(value) => setState(value as WorkplaceGovernanceSpatialState)}
+        onBoundaryChange={(event) => setBoundary(event.target.value)}
+      />
     </FormDialog>
   );
 }
@@ -904,5 +975,20 @@ function AssignCampusDialog({
         onValueChange={setNextCampusId}
       />
     </FormDialog>
+  );
+}
+
+function renderHierarchyRowTitle(title: string) {
+  return (
+    <Typography variant="body2" fontWeight={750} noWrap>
+      {title}
+    </Typography>
+  );
+}
+function renderHierarchyResourceName(resource: WorkplaceResource) {
+  return (
+    <Typography variant="body2" fontWeight={700} noWrap>
+      {resource.name}
+    </Typography>
   );
 }

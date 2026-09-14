@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { Bell, Mail, MessageSquareText, MonitorSmartphone, Smartphone } from 'lucide-react';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
+import {
+  ArrowUpRight,
+  Bell,
+  Mail,
+  MessageSquareText,
+  MonitorSmartphone,
+  Smartphone,
+} from 'lucide-react';
 import type {
   NotificationTemplateContent,
   NotificationTemplateVariant,
@@ -33,8 +41,15 @@ export function NotificationChannelTemplatePreview({
   const conversation = variant.channel === 'TEAMS' || variant.channel === 'SLACK';
   return (
     <Box component="section" aria-label={label} sx={{ borderBlock: 1, borderColor: 'divider' }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ py: 1 }}>
-        <Typography variant="overline" color="text.secondary">
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        gap={1}
+        flexWrap="wrap"
+        sx={{ py: 1 }}
+      >
+        <Typography component="h3" variant="subtitle2" color="text.secondary">
           {label}
         </Typography>
         <Chip size="small" variant="outlined" label={t(`channels.${variant.channel}`)} />
@@ -44,33 +59,38 @@ export function NotificationChannelTemplatePreview({
         data-channel={variant.channel}
         sx={{
           my: 1,
-          p: compactPush ? 1.5 : 2,
+          p: 1.5,
           maxWidth: compactPush ? 440 : 'none',
           display: 'grid',
           gridTemplateColumns: 'auto minmax(0, 1fr)',
-          gap: 1.5,
+          gap: 1,
           border: 1,
           borderColor: 'divider',
-          borderRadius: 'shape.borderRadius',
+          borderRadius: foundationTokens.radius.control + 'px',
           bgcolor: conversation ? 'action.hover' : 'background.paper',
-          boxShadow: compactPush ? 1 : 0,
         }}
       >
         <Box
           sx={{
-            width: 38,
-            height: 38,
+            width: 28,
+            height: 28,
             display: 'grid',
             placeItems: 'center',
-            borderRadius: 'shape.borderRadius',
-            bgcolor: 'primary.50',
+            borderRadius: foundationTokens.radius.compact + 'px',
+            bgcolor: 'action.selected',
             color: 'primary.main',
           }}
         >
           <PreviewIcon size={19} />
         </Box>
         <Box minWidth={0}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            gap={1}
+            flexWrap="wrap"
+          >
             <Typography variant="caption" color="text.secondary">
               {variant.appName}
             </Typography>
@@ -78,15 +98,22 @@ export function NotificationChannelTemplatePreview({
               {variant.locale}
             </Typography>
           </Stack>
-          <Typography variant="subtitle1" sx={{ mt: 0.25, overflowWrap: 'anywhere' }}>
+          <Typography variant="subtitle2" sx={{ mt: 0.5, overflowWrap: 'anywhere' }}>
             {content.title || t('admin.templates.emptyContent')}
           </Typography>
           {content.preview && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.5, overflowWrap: 'anywhere' }}
+            >
               {content.preview}
             </Typography>
           )}
-          <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
+          <Typography
+            variant="body2"
+            sx={{ mt: 1, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+          >
             {content.body || t('admin.templates.emptyContent')}
           </Typography>
           {content.actionLabel && (
@@ -95,18 +122,25 @@ export function NotificationChannelTemplatePreview({
               sx={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                gap: 0.5,
                 minHeight: 32,
                 mt: 1,
-                px: 1.25,
-                border: 1,
+                color: 'primary.main',
+                borderTop: 1,
                 borderColor: 'divider',
-                borderRadius: 'shape.borderRadius',
-                bgcolor: 'action.hover',
+                width: 1,
+                pt: 0.75,
               }}
             >
-              <Typography component="span" variant="button">
+              <Typography
+                component="span"
+                variant="body2"
+                fontWeight="fontWeightBold"
+                sx={{ overflowWrap: 'anywhere' }}
+              >
                 {content.actionLabel}
               </Typography>
+              <ArrowUpRight size={15} aria-hidden style={{ flexShrink: 0 }} />
             </Box>
           )}
         </Box>

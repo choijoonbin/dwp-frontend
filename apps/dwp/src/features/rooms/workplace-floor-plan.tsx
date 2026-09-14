@@ -1,3 +1,4 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Armchair,
@@ -20,6 +21,8 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
+
+import { WorkplaceResourcePhoto } from './workplace-resource-photo';
 
 import type {
   WorkplaceOccupancy,
@@ -60,8 +63,10 @@ function availabilityColors(theme: Theme, status: WorkplaceResourceAvailability)
 
 export function workplaceResourceAvailability(
   resource: WorkplaceResource,
-  occupancy: readonly WorkplaceOccupancy[]
+  occupancy: readonly WorkplaceOccupancy[],
+  closures: readonly { resourceId: string }[] = []
 ): WorkplaceResourceAvailability {
+  if (closures.some((closure) => closure.resourceId === resource.resourceId)) return 'UNAVAILABLE';
   if (resource.state !== 'AVAILABLE' || resource.mode === 'UNAVAILABLE') return 'UNAVAILABLE';
   const active = occupancy.find((slot) => slot.resourceId === resource.resourceId);
   if (active?.currentUser) return 'MINE';
@@ -111,6 +116,7 @@ export function WorkplaceMapLegend({
 export function WorkplaceFloorPlan({
   resources,
   occupancy,
+  closures = [],
   planWidth,
   planHeight,
   backgroundAssetPath,
@@ -126,6 +132,7 @@ export function WorkplaceFloorPlan({
 }: {
   resources: readonly WorkplaceResource[];
   occupancy: readonly WorkplaceOccupancy[];
+  closures?: readonly { resourceId: string }[];
   planWidth: number;
   planHeight: number;
   backgroundAssetPath?: string | null;
@@ -223,7 +230,8 @@ export function WorkplaceFloorPlan({
           {resources.map((resource) => {
             const status = workplaceResourceAvailability(
               resource,
-              occupancyByResource.get(resource.resourceId) ?? []
+              occupancyByResource.get(resource.resourceId) ?? [],
+              closures
             );
             const colors = availabilityColors(theme, status);
             const Icon = RESOURCE_ICONS[resource.type] ?? Armchair;
@@ -333,6 +341,7 @@ export function WorkplaceFloorPlan({
 export function WorkplaceResourceList({
   resources,
   occupancy,
+  closures = [],
   onSelect,
   statusLabels,
   bookingEligibility,
@@ -343,6 +352,7 @@ export function WorkplaceResourceList({
 }: {
   resources: readonly WorkplaceResource[];
   occupancy: readonly WorkplaceOccupancy[];
+  closures?: readonly { resourceId: string }[];
   onSelect: (resource: WorkplaceResource) => void;
   statusLabels: Record<WorkplaceResourceAvailability, string>;
   bookingEligibility: (resource: WorkplaceResource) => boolean;
@@ -361,101 +371,128 @@ export function WorkplaceResourceList({
       }}
     >
       {resources.map((resource) => {
-        const status = workplaceResourceAvailability(resource, occupancy);
+        const status = workplaceResourceAvailability(resource, occupancy, closures);
         const colors = availabilityColors(theme, status);
         const Icon = RESOURCE_ICONS[resource.type];
         const selected = resource.resourceId === selectedResourceId;
         const bookingEligible = bookingEligibility(resource);
         return (
           <Box
-            component="button"
-            type="button"
+            component="article"
             key={resource.resourceId}
-            onClick={() => onSelect(resource)}
             sx={{
-              minHeight: 92,
-              p: 1.5,
-              textAlign: 'left',
+              minWidth: 0,
               border: 1,
               borderColor: selected ? 'primary.main' : 'divider',
+              borderRadius: foundationTokens.radius.surface + 'px',
               bgcolor: 'background.paper',
-              color: 'text.primary',
-              cursor: 'pointer',
-              display: 'grid',
-              gridTemplateColumns: { xs: '40px minmax(0, 1fr)', sm: '40px minmax(0, 1fr) auto' },
-              gridTemplateAreas: {
-                xs: '"icon body" "icon status"',
-                sm: '"icon body status"',
-              },
-              alignItems: 'center',
-              gap: 1.25,
-              font: 'inherit',
-              '&:hover': { borderColor: colors.border, bgcolor: colors.fill },
-              '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.light' },
+              overflow: 'hidden',
               boxShadow: selected ? 1 : 0,
             }}
           >
+            {!compact && (
+              <Box sx={{ p: 1.5, pb: 0 }}>
+                <WorkplaceResourcePhoto
+                  resourceId={resource.resourceId}
+                  alt={resource.name}
+                  height={140}
+                />
+              </Box>
+            )}
             <Box
+              component="button"
+              type="button"
+              onClick={() => onSelect(resource)}
               sx={{
-                width: 40,
-                height: 40,
+                width: '100%',
+                minWidth: 0,
+                minHeight: 92,
+                p: 1.5,
+                textAlign: 'left',
+                border: 0,
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                cursor: 'pointer',
                 display: 'grid',
-                placeItems: 'center',
-                border: 1,
-                borderColor: colors.border,
-                bgcolor: colors.fill,
-                color: colors.text,
-                gridArea: 'icon',
+                gridTemplateColumns: '40px minmax(0, 1fr)',
+                gridTemplateAreas: '"icon body" "icon status"',
+                alignItems: 'center',
+                gap: 1.25,
+                font: 'inherit',
+                '&:hover': { borderColor: colors.border, bgcolor: colors.fill },
+                '&:focus-visible': {
+                  outline: '3px solid',
+                  outlineColor: 'primary.light',
+                  outlineOffset: -3,
+                },
               }}
             >
-              <Icon size={19} />
-            </Box>
-            <Box sx={{ minWidth: 0, gridArea: 'body' }}>
-              <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
-                {resource.name}
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', overflowWrap: 'anywhere' }}
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  display: 'grid',
+                  placeItems: 'center',
+                  border: 1,
+                  borderColor: colors.border,
+                  bgcolor: colors.fill,
+                  color: colors.text,
+                  gridArea: 'icon',
+                }}
               >
-                {[
-                  typeLabels[resource.type],
-                  resource.neighborhood,
-                  resource.features.slice(0, 2).join(' · '),
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </Typography>
+                <Icon size={19} />
+              </Box>
+              <Box sx={{ minWidth: 0, gridArea: 'body' }}>
+                <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
+                  {resource.name}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', overflowWrap: 'anywhere' }}
+                >
+                  {[
+                    typeLabels[resource.type],
+                    resource.neighborhood,
+                    resource.features.slice(0, 2).join(' · '),
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </Typography>
+              </Box>
+              <Stack
+                direction="row"
+                gap={0.65}
+                useFlexGap
+                flexWrap="wrap"
+                sx={{
+                  gridArea: 'status',
+                  justifySelf: 'start',
+                  mt: 0.25,
+                }}
+              >
+                <Chip
+                  size="small"
+                  label={statusLabels[status]}
+                  sx={{
+                    borderRadius: foundationTokens.radius.control + 'px',
+                    bgcolor: colors.fill,
+                    color: colors.text,
+                  }}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={bookingEligible ? 'success' : 'default'}
+                  label={
+                    bookingEligible
+                      ? bookingEligibilityLabels.eligible
+                      : bookingEligibilityLabels.blocked
+                  }
+                  sx={{ borderRadius: foundationTokens.radius.control + 'px' }}
+                />
+              </Stack>
             </Box>
-            <Stack
-              direction="row"
-              gap={0.65}
-              useFlexGap
-              flexWrap="wrap"
-              sx={{
-                gridArea: 'status',
-                justifySelf: { xs: 'start', sm: 'end' },
-                mt: { xs: 0.25, sm: 0 },
-              }}
-            >
-              <Chip
-                size="small"
-                label={statusLabels[status]}
-                sx={{ borderRadius: 1, bgcolor: colors.fill, color: colors.text }}
-              />
-              <Chip
-                size="small"
-                variant="outlined"
-                color={bookingEligible ? 'success' : 'default'}
-                label={
-                  bookingEligible
-                    ? bookingEligibilityLabels.eligible
-                    : bookingEligibilityLabels.blocked
-                }
-                sx={{ borderRadius: 1 }}
-              />
-            </Stack>
           </Box>
         );
       })}

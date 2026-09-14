@@ -1,0 +1,195 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e18]: 전자결재
+          - generic [ref=e19]:
+            - button [ref=e21] [cursor=pointer]:
+              - img [ref=e22]
+            - button [ref=e26] [cursor=pointer]:
+              - generic [ref=e27]: T
+              - img [ref=e28]
+      - main [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - img [ref=e35]
+              - generic [ref=e39]:
+                - text: 전자결재 / 내 결재
+                - heading [level=1] [ref=e40]: 결재함
+                - paragraph [ref=e41]: 업무 맥락과 증적을 한 화면에서 검토하고 책임 있는 결정을 내립니다.
+            - generic [ref=e42]:
+              - img [ref=e43]
+              - generic [ref=e47]: 결정 증적 보존
+          - region [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]:
+                - img [ref=e53]
+                - generic [ref=e56]:
+                  - heading [level=2] [ref=e57]: 전자결재 업무 센터
+                  - text: 화면을 벗어나지 않고 검토, 증적 확인, 결정을 이어갑니다.
+                  - status [ref=e58]: 전체 대기 · 1건 · 오후 01:00 확인
+              - button [ref=e60] [cursor=pointer]:
+                - img [ref=e62]
+                - text: 새로고침
+            - region [ref=e68]:
+              - generic [ref=e69]:
+                - generic [ref=e70]:
+                  - generic [ref=e71]:
+                    - button [ref=e73] [cursor=pointer]:
+                      - img [ref=e74]
+                    - paragraph [ref=e76]: 결재 상세
+                  - generic [ref=e77]:
+                    - generic [ref=e78]: APR-2026-0811-001
+                    - generic [ref=e79]:
+                      - button [ref=e81] [cursor=pointer]:
+                        - img [ref=e82]
+                      - button [ref=e86] [cursor=pointer]:
+                        - img [ref=e87]
+                  - region [ref=e91]:
+                    - generic [ref=e92]:
+                      - generic [ref=e93]:
+                        - button [disabled]:
+                          - img
+                      - generic [ref=e94]:
+                        - button [disabled]:
+                          - img
+                      - generic [ref=e95]:
+                        - button [disabled]:
+                          - img
+                    - alert [ref=e96]:
+                      - img [ref=e98]
+                      - generic [ref=e100]: 처리 결과를 확인할 수 없습니다. 현재 권한과 문서 정책을 다시 확인한 후 같은 요청으로만 재시도할 수 있습니다.
+                  - generic [ref=e101]:
+                    - generic [ref=e102]:
+                      - generic [ref=e103]:
+                        - generic [ref=e105]: 높음
+                        - generic [ref=e107]: 처리 중
+                        - generic [ref=e109]: 기밀
+                      - heading [level=2] [ref=e110]: 현재 결재 업무의 검토 문서
+                      - paragraph [ref=e111]: Temporary access for a governed production investigation.
+                      - list [ref=e112]:
+                        - listitem [ref=e113]:
+                          - img [ref=e115]
+                          - generic [ref=e118]:
+                            - generic [ref=e119]: 요청자
+                            - generic [ref=e120]: Minseo Kim
+                        - listitem [ref=e121]:
+                          - img [ref=e123]
+                          - generic [ref=e127]:
+                            - generic [ref=e128]: 소속
+                            - generic [ref=e129]: Digital Workplace
+                        - listitem [ref=e130]:
+                          - img [ref=e132]
+                          - generic [ref=e136]:
+                            - generic [ref=e137]: 결재 프로세스
+                            - generic [ref=e138]: 데이터 접근 예외
+                        - listitem [ref=e139]:
+                          - img [ref=e141]
+                          - generic [ref=e145]:
+                            - generic [ref=e146]: 처리 기한
+                            - generic [ref=e147]: 2026. 8. 11. 오후 5:00
+                        - listitem [ref=e148]:
+                          - img [ref=e150]
+                          - generic [ref=e155]:
+                            - generic [ref=e156]: 최신 확인
+                            - generic [ref=e157]: 오후 01:00:31
+                    - generic [ref=e158]:
+                      - text: 위험 점수
+                      - paragraph [ref=e159]: "72"
+                - region [ref=e160]:
+                  - generic [ref=e161]:
+                    - img [ref=e162]
+                    - generic [ref=e164]:
+                      - heading [level=3] [ref=e165]: 정책 및 위험 브리프
+                      - text: 현재 결재 기록과 결정 권한에서 확인된 사실만 요약합니다.
+                  - generic [ref=e166]:
+                    - generic [ref=e167]:
+                      - img [ref=e168]
+                      - generic [ref=e171]:
+                        - paragraph [ref=e172]: 처리 기한을 넘겼습니다
+                        - text: 업무 영향을 확인하고 책임 있는 결과를 기록하세요.
+                    - generic [ref=e173]:
+                      - img [ref=e174]
+                      - generic [ref=e176]:
+                        - paragraph [ref=e177]: 위험 점수가 높습니다
+                        - text: 결정 전에 범위, 기간, 보완 통제를 확인하세요.
+                    - generic [ref=e178]:
+                      - img [ref=e179]
+                      - generic [ref=e181]:
+                        - paragraph [ref=e182]: 민감 데이터가 포함됩니다
+                        - text: 기록된 데이터 분류 기준에 따라 요청을 취급하세요.
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - generic [ref=e185]:
+                      - heading [level=3] [ref=e186]: 결재 진행 현황
+                      - text: 기록된 단계와 실제 현재 단계만 표시하며 미래 단계를 추정하지 않습니다.
+                    - generic [ref=e187]: APR-2026-0811-001
+                  - list [ref=e188]:
+                    - listitem [ref=e189]:
+                      - generic [ref=e190]:
+                        - img [ref=e191]
+                        - generic [ref=e194]: 2단계
+                      - paragraph [ref=e195]: Security review
+                - generic [ref=e196]:
+                  - region [ref=e197]:
+                    - heading [level=3] [ref=e198]: 요청 데이터
+                    - generic [ref=e200]:
+                      - generic [ref=e201]:
+                        - term [ref=e202]: 업무 사유
+                        - definition [ref=e203]: Restore a customer-facing integration within the approved support window.
+                      - generic [ref=e204]:
+                        - term [ref=e205]: 만료일
+                        - definition [ref=e206]: 2026-08-12
+                      - generic [ref=e207]:
+                        - term [ref=e208]: 데이터 범위
+                        - definition [ref=e209]: Tenant-scoped diagnostic events
+                  - region [ref=e210]:
+                    - heading [level=3] [ref=e211]: 결정 타임라인
+                    - text: 변경 불가능한 업무 증적
+                    - generic [ref=e215]:
+                      - paragraph [ref=e216]: 결재 상신
+                      - generic [ref=e217]: 사용자 · 결재가 상신되었습니다.
+                      - generic [ref=e218]: 2026. 8. 11. 오전 8:30
+                - generic [ref=e219]:
+                  - button [ref=e220] [cursor=pointer]:
+                    - img [ref=e222]
+                    - text: 보완 요청
+                  - button [ref=e224] [cursor=pointer]:
+                    - img [ref=e226]
+                    - text: 반려
+                  - button [ref=e229] [cursor=pointer]:
+                    - img [ref=e231]
+                    - text: 승인
+  - dialog "댓글" [ref=e235]:
+    - generic [ref=e236]:
+      - heading "댓글" [level=2] [ref=e237]
+      - generic [ref=e238]:
+        - alert [ref=e239]:
+          - img [ref=e241]
+          - generic [ref=e243]: 처리 결과를 확인할 수 없습니다. 현재 권한과 문서 정책을 다시 확인한 후 같은 요청으로만 재시도할 수 있습니다.
+        - generic [ref=e244]:
+          - generic [ref=e245]:
+            - text: 댓글 내용
+            - generic [ref=e246]: "*"
+          - generic [ref=e247]:
+            - textbox "댓글 내용" [disabled] [ref=e248]: 원래 결재 검토 의견
+            - group:
+              - generic: 댓글 내용 *
+      - generic [ref=e249]:
+        - button "원래 요청 재시도" [ref=e251] [cursor=pointer]
+        - generic [ref=e252]:
+          - button "취소" [ref=e253] [cursor=pointer]
+          - button "댓글 등록" [disabled]
+```

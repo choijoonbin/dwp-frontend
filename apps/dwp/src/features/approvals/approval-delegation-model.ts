@@ -67,3 +67,32 @@ export function buildApprovalDelegationWorkflowReference(
     workflowId,
   };
 }
+
+export function isApprovalDelegationPeriodValid(startsAt: string, endsAt: string): boolean {
+  const starts = Date.parse(startsAt);
+  const ends = Date.parse(endsAt);
+  return Number.isFinite(starts) && Number.isFinite(ends) && ends > starts;
+}
+
+export function isApprovalDelegationSnapshotCurrent(
+  current: readonly ApprovalDelegation[] | undefined,
+  snapshot: Pick<ApprovalDelegation, 'delegationId' | 'direction' | 'lifecycleState' | 'version'>
+): boolean {
+  const authoritative = current?.find(
+    (delegation) => delegation.delegationId === snapshot.delegationId
+  );
+  return (
+    authoritative?.version === snapshot.version &&
+    authoritative.direction === snapshot.direction &&
+    authoritative.lifecycleState === snapshot.lifecycleState
+  );
+}
+
+export function canRevokeApprovalDelegation(
+  delegation: Pick<ApprovalDelegation, 'direction' | 'lifecycleState'>,
+  sourceReady: boolean
+): boolean {
+  return (
+    sourceReady && delegation.direction === 'OUTGOING' && delegation.lifecycleState === 'ACTIVE'
+  );
+}

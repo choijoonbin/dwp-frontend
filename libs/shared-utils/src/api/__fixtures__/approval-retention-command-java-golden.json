@@ -1,0 +1,14 @@
+{
+  "algorithm": "APPROVAL_STEP_UP_TYPED_JSON_SHA256_V1",
+  "profileVersion": "RETENTION_COMMAND_RECEIPT_STEP_UP_TYPED_JSON_V1",
+  "operation": "PUBLISH_POLICY",
+  "originalTargetId": "00000000-0000-0000-0000-000000000042",
+  "body": {
+    "expectedVersion": 9007199254740990,
+    "idempotencyKey": "original-key",
+    "reviewComment": "독립 검토 승인 완료입니다"
+  },
+  "expectedCanonical1": "{\"expectedVersion\":9007199254740990,\"idempotencyKey\":\"original-key\",\"reviewComment\":\"독립 검토 승인 완료입니다\"}",
+  "requestBodySha256": "031fb12590fe3bbdf32099b9907dbe5962f1008d866a88ebc25611c5ab643631",
+  "provenance": "ApprovalRetentionCommandProfileTest.hashesExactlySortedUtf8TypedJsonIncludingUnicodeAndSafeIntegerBoundary; real configured ApprovalStepUpVerifier.payloadSha256 and UTF8 MessageDigest equality, 2026-09-14. Profile 21/21; separate full target had a purge FK failure."
+}

@@ -16,7 +16,6 @@ import {
   getNotificationDeliveryOperations,
   getNotificationTypeContracts,
   NOTIFICATION_API_CAPABILITIES,
-  type NotificationAdminMetric,
   type NotificationContractState,
   type NotificationOperationalFinding,
   type NotificationTypeContract,
@@ -28,7 +27,6 @@ import {
   FormField,
   LiveStatus,
   LoadingState,
-  OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import { usePermissions } from '@dwp-frontend/shared-utils';
@@ -48,21 +46,13 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { NotificationAdminOverviewTrend } from './notification-admin-overview-trend';
+import { NotificationAdminMetricGrid } from './notification-admin-metric-grid';
 import { notificationQueryKeys } from './integration-contract';
+import { localizeNotificationOperationalFindings } from './notification-operations-model';
 import { NotificationOperationsWorkbench } from './notification-operations-workbench';
 import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
 import { useOnlineStatus } from './use-notification-runtime';
-
 import type { ReactNode } from 'react';
-
-function metricTone(
-  metric: NotificationAdminMetric
-): 'neutral' | 'info' | 'success' | 'warning' | 'critical' {
-  if (metric.state === 'CRITICAL') return 'critical';
-  if (metric.state === 'ATTENTION') return 'warning';
-  if (metric.state === 'HEALTHY') return 'success';
-  return 'neutral';
-}
 
 function NotificationAdminCapabilityUnavailable() {
   const { t } = useTranslation('notifications');
@@ -84,6 +74,12 @@ function findingColor(
   return 'default';
 }
 
+function findingTone(severity: NotificationOperationalFinding['severity']) {
+  if (severity === 'CRITICAL') return 'error.main';
+  if (severity === 'WARNING') return 'warning.main';
+  return 'info.main';
+}
+
 function healthColor(value: string): 'success' | 'warning' | 'error' | 'default' {
   if (['HEALTHY', 'ACTIVE', 'CLOSED'].includes(value)) return 'success';
   if (['ATTENTION', 'DEGRADED', 'HALF_OPEN', 'IN_REVIEW'].includes(value)) return 'warning';
@@ -94,30 +90,35 @@ function healthColor(value: string): 'success' | 'warning' | 'error' | 'default'
 function AdminSection({
   title,
   description,
-  action,
   children,
 }: {
   title: string;
   description?: string;
-  action?: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <Box component="section" sx={{ minWidth: 0 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1.5}>
-        <Box minWidth={0}>
-          <Typography component="h2" variant="h6">
-            {title}
+    <Box
+      component="section"
+      sx={{
+        minWidth: 0,
+        overflow: 'hidden',
+        borderTop: 1,
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        '@media (forced-colors: active)': { borderColor: 'CanvasText', boxShadow: 'none' },
+      }}
+    >
+      <Box sx={{ px: { xs: 1.5, md: 2 }, py: 1.25, borderBottom: 1, borderColor: 'divider' }}>
+        <Typography component="h2" variant="subtitle1">
+          {title}
+        </Typography>
+        {description && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+            {description}
           </Typography>
-          {description && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-              {description}
-            </Typography>
-          )}
-        </Box>
-        {action}
-      </Stack>
-      <Box sx={{ mt: 1.5 }}>{children}</Box>
+        )}
+      </Box>
+      <Box sx={{ p: { xs: 1.5, md: 2 } }}>{children}</Box>
     </Box>
   );
 }
@@ -141,7 +142,7 @@ function FindingQueue({
     );
   }
   return (
-    <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ mx: { xs: -1.5, md: -2 }, my: { xs: -1.5, md: -2 } }}>
       {findings.map((finding) => (
         <ButtonBase
           key={finding.findingId}
@@ -151,9 +152,10 @@ function FindingQueue({
           href={finding.href && !onOpenFinding ? finding.href : undefined}
           sx={{
             width: 1,
-            minHeight: 70,
-            px: 1.5,
+            minHeight: 68,
+            px: { xs: 1.5, md: 2 },
             py: 1.25,
+            position: 'relative',
             display: 'grid',
             gridTemplateColumns: 'auto minmax(0, 1fr) auto',
             gap: 1.25,
@@ -162,10 +164,29 @@ function FindingQueue({
             borderBottom: 1,
             borderColor: 'divider',
             '&:last-of-type': { borderBottom: 0 },
+            '&::before': {
+              position: 'absolute',
+              inset: '0 auto 0 0',
+              width: 3,
+              bgcolor: findingTone(finding.severity),
+              content: '""',
+            },
             '&:hover': { bgcolor: 'action.hover' },
+            '&.Mui-focusVisible, &:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: -3,
+              zIndex: 1,
+            },
+            '@media (forced-colors: active)': {
+              borderColor: 'CanvasText',
+              '&::before': { bgcolor: 'CanvasText' },
+            },
           }}
         >
-          <AlertTriangle size={18} />
+          <Box aria-hidden sx={{ mt: 0.25, color: findingTone(finding.severity) }}>
+            <AlertTriangle size={18} />
+          </Box>
           <Box minWidth={0}>
             <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
               <Typography variant="subtitle2">{finding.title}</Typography>
@@ -177,15 +198,17 @@ function FindingQueue({
               />
               {finding.count > 1 && <Chip size="small" variant="outlined" label={finding.count} />}
             </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               {finding.detail}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
               {formatDate(finding.detectedAt, { dateStyle: 'medium', timeStyle: 'short' })}
               {finding.ownerLabel ? ` · ${finding.ownerLabel}` : ''}
             </Typography>
           </Box>
-          {(onOpenFinding || finding.href) && <ChevronRight size={18} />}
+          {(onOpenFinding || finding.href) && (
+            <ChevronRight size={18} aria-hidden style={{ marginTop: 3 }} />
+          )}
         </ButtonBase>
       ))}
     </Box>
@@ -237,6 +260,10 @@ export function NotificationAdminOverviewPage({
   }
 
   const data = query.data;
+  const severityRank = { CRITICAL: 0, WARNING: 1, INFO: 2 };
+  const findings = localizeNotificationOperationalFindings(data.findings, t).sort(
+    (left, right) => severityRank[left.severity] - severityRank[right.severity]
+  );
   const metricLabels: Record<string, string> = {
     'active-contracts': t('admin.overview.metrics.activeContracts'),
     'notifications-24h': t('admin.overview.metrics.notifications24Hours'),
@@ -244,7 +271,7 @@ export function NotificationAdminOverviewPage({
     'failed-deliveries': t('admin.overview.metrics.failedDeliveries'),
   };
   return (
-    <Stack gap={3}>
+    <Stack gap={1.5}>
       <Stack direction="row" justifyContent="flex-end">
         <LiveStatus
           state={
@@ -264,26 +291,34 @@ export function NotificationAdminOverviewPage({
           {t('states.partial', { count: data.unavailableSources.length })}
         </Alert>
       )}
-      <OperationalKpiStrip
+      <NotificationAdminMetricGrid
+        metrics={data.metrics}
+        labels={metricLabels}
         ariaLabel={t('admin.overview.metricsLabel')}
-        items={data.metrics.map((metric) => ({
-          key: metric.key,
-          label: metricLabels[metric.key] ?? metric.label,
-          value: formatNumber(metric.value),
-          trend:
-            metric.baseline == null
-              ? undefined
-              : t('admin.overview.baseline', { value: formatNumber(metric.baseline) }),
-          tone: metricTone(metric),
-        }))}
       />
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.1fr) minmax(360px, .9fr)' },
-          gap: 3,
+          gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.1fr) minmax(340px, .9fr)' },
+          gap: 1.5,
+          alignItems: 'start',
         }}
       >
+        <AdminSection
+          title={t('admin.findings.title')}
+          description={t('admin.findings.description')}
+        >
+          <FindingQueue
+            findings={findings}
+            onOpenFinding={
+              onOpenFinding ??
+              ((finding) =>
+                navigate(
+                  `/notifications/admin/operations?finding=${encodeURIComponent(finding.findingId)}`
+                ))
+            }
+          />
+        </AdminSection>
         <AdminSection
           title={t('admin.overview.trendTitle')}
           description={t('admin.overview.trendDescription')}
@@ -381,21 +416,6 @@ export function NotificationAdminOverviewPage({
             </Box>
           </Box>
         </AdminSection>
-        <AdminSection
-          title={t('admin.findings.title')}
-          description={t('admin.findings.description')}
-        >
-          <FindingQueue
-            findings={data.findings}
-            onOpenFinding={
-              onOpenFinding ??
-              ((finding) =>
-                navigate(
-                  `/notifications/admin/operations?finding=${encodeURIComponent(finding.findingId)}`
-                ))
-            }
-          />
-        </AdminSection>
       </Box>
     </Stack>
   );
@@ -463,7 +483,7 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
       component="aside"
       aria-label={t('admin.contracts.detailLabel')}
       data-testid="notification-contract-detail"
-      sx={{ p: 2.5 }}
+      sx={{ p: { xs: 1.5, md: 2 } }}
     >
       <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
         <Chip size="small" variant="outlined" label={contract.appName} />
@@ -480,22 +500,28 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
           label={t(`admin.contractHealth.${contract.contractHealth}`)}
         />
       </Stack>
-      <Typography component="h3" variant="h5" sx={{ mt: 1.75, overflowWrap: 'anywhere' }}>
+      <Typography component="h3" variant="h6" sx={{ mt: 1.25, overflowWrap: 'anywhere' }}>
         {contract.displayName}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
         {contract.description}
       </Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
+      <Typography
+        component="code"
+        variant="caption"
+        color="text.secondary"
+        sx={{ display: 'block', mt: 0.75, overflowWrap: 'anywhere' }}
+      >
         {contract.typeKey}
       </Typography>
       <Box
         component="dl"
         sx={{
           m: 0,
-          mt: 2.5,
+          mt: 1.5,
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'repeat(2, minmax(0, 1fr))' },
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+          columnGap: 2,
           borderTop: 1,
           borderColor: 'divider',
         }}
@@ -504,11 +530,8 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
           <Box
             key={label}
             sx={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(120px, .4fr) minmax(0, 1fr)',
-              gap: 1.5,
-              py: 1.25,
-              pr: { xl: 2 },
+              minWidth: 0,
+              py: 0.85,
               borderBottom: 1,
               borderColor: 'divider',
             }}
@@ -516,7 +539,11 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
             <Typography component="dt" variant="caption" color="text.secondary">
               {label}
             </Typography>
-            <Typography component="dd" variant="body2" sx={{ m: 0, overflowWrap: 'anywhere' }}>
+            <Typography
+              component="dd"
+              variant="body2"
+              sx={{ m: 0, mt: 0.25, fontWeight: 'subtitle2.fontWeight', overflowWrap: 'anywhere' }}
+            >
               {value}
             </Typography>
           </Box>
@@ -648,7 +675,7 @@ export function NotificationTypeCatalogPage() {
     contracts.find((contract) => contract.contractId === selectedId) ?? contracts[0] ?? null;
 
   return (
-    <Stack gap={2} data-testid="notification-contract-catalog">
+    <Stack gap={1.5} data-testid="notification-contract-catalog">
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25}>
         <FormField
           fullWidth={false}
@@ -734,10 +761,28 @@ export function NotificationTypeCatalogPage() {
           backLabel={t('admin.backToCatalog')}
           listLabel={t('admin.contracts.catalogLabel')}
           detailLabel={t('admin.contracts.detailLabel')}
-          desktopColumns="minmax(420px, .9fr) minmax(360px, 1.1fr)"
+          desktopColumns="minmax(0, 1.15fr) minmax(0, 1fr)"
           listMaxHeight={700}
           list={
             <>
+              <Box
+                sx={{
+                  display: { xs: 'none', lg: 'grid' },
+                  gridTemplateColumns: 'minmax(0, 1fr) 90px 90px',
+                  gap: 1,
+                  px: 1.75,
+                  py: 1,
+                  bgcolor: 'action.hover',
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                }}
+              >
+                {['sourceEvent', 'schemaVersion', 'priority'].map((field) => (
+                  <Typography key={field} variant="caption" color="text.secondary">
+                    {t(`admin.contracts.fields.${field}`)}
+                  </Typography>
+                ))}
+              </Box>
               {contracts.map((contract) => (
                 <ButtonBase
                   key={contract.contractId}
@@ -750,9 +795,12 @@ export function NotificationTypeCatalogPage() {
                   sx={{
                     width: 1,
                     px: 1.75,
-                    py: 1.4,
+                    py: 1.25,
                     display: 'grid',
-                    gridTemplateColumns: 'minmax(0, 1fr) auto',
+                    gridTemplateColumns: {
+                      xs: 'minmax(0, 1fr) auto',
+                      lg: 'minmax(0, 1fr) 90px 90px',
+                    },
                     gap: 1,
                     textAlign: 'left',
                     borderBottom: 1,
@@ -763,18 +811,17 @@ export function NotificationTypeCatalogPage() {
                   }}
                 >
                   <Box minWidth={0}>
-                    <Typography variant="subtitle2" noWrap>
+                    <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
                       {contract.displayName}
                     </Typography>
                     <Typography
                       variant="caption"
                       color="text.secondary"
-                      noWrap
-                      sx={{ display: 'block' }}
+                      sx={{ display: 'block', overflowWrap: 'anywhere' }}
                     >
                       {contract.appName} · {contract.typeKey}
                     </Typography>
-                    <Stack direction="row" gap={0.5} sx={{ mt: 0.75 }}>
+                    <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.75 }}>
                       <Chip
                         size="small"
                         variant="outlined"
@@ -789,7 +836,27 @@ export function NotificationTypeCatalogPage() {
                       />
                     </Stack>
                   </Box>
-                  <ChevronRight size={18} />
+                  <Typography
+                    component="code"
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: { xs: 'none', lg: 'block' }, overflowWrap: 'anywhere' }}
+                  >
+                    {`v${contract.minSchemaVersion ?? contract.schemaVersion}-v${contract.maxSchemaVersion ?? contract.schemaVersion}`}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: { xs: 'none', lg: 'block' },
+                      color: contract.priority === 'URGENT' ? 'error.main' : 'text.secondary',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
+                    {t(`priority.${contract.priority}`)}
+                  </Typography>
+                  <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
+                    <ChevronRight size={18} aria-hidden />
+                  </Box>
                 </ButtonBase>
               ))}
               {query.hasNextPage && (

@@ -400,6 +400,8 @@
       "verifying": "Checking delivery contract",
       "recheck": "Recheck delivery status",
       "rechecking": "Checking delivery status",
+      "showDiagnostics": "Show connection and device diagnostics",
+      "hideDiagnostics": "Hide connection and device diagnostics",
       "channelsLabel": "Channel availability",
       "channelReady": "{{channel}} available",
       "channelUnavailable": "{{channel}} awaiting connection",
@@ -488,6 +490,7 @@
       "SYSTEM_DEFAULT": "System default"
     },
     "mandatory": "Required",
+    "valueNotProvided": "Setting value not provided",
     "types": {
       "APPROVAL_ACTION_REQUIRED": {
         "label": "Approval action required",
@@ -683,6 +686,11 @@
         "failedDeliveries": "Failed deliveries"
       },
       "baseline": "Baseline {{value}}",
+      "units": {
+        "contracts": "contracts",
+        "notifications": "notifications",
+        "jobs": "jobs"
+      },
       "trendTitle": "Volume and user impact",
       "trendDescription": "Compare created, actionable, failed, and muted notifications.",
       "trendChartLabel": "Recent notification volume and user impact chart",
@@ -1063,6 +1071,28 @@
       "seconds": "{{count}} seconds",
       "milliseconds": "{{count}} ms",
       "findingCount": "{{count}} affected",
+      "findingCopy": {
+        "external-delivery-disabled": {
+          "title": "External channel delivery is disabled",
+          "detail": "Direct in-app delivery is currently the canonical channel. Email, web and mobile push, and collaboration channels can be enabled after operational verification.",
+          "owner": "Notification platform"
+        },
+        "dead-letter-queue": {
+          "title": "Deliveries exceeded their retry limit",
+          "detail": "One or more delivery jobs exhausted the retry budget.",
+          "owner": "Notification operations"
+        },
+        "contracts-without-active-template": {
+          "title": "Contracts are missing an active in-app template",
+          "detail": "Every active notification type requires a published in-app template.",
+          "owner": "Notification contract owners"
+        },
+        "failed-delivery-jobs": {
+          "title": "Delivery failures require attention",
+          "detail": "Review retry and dead-letter queues before enabling external channels.",
+          "owner": "Notification operations"
+        }
+      },
       "category": {
         "CONTRACT": "Contract",
         "POLICY": "Policy",

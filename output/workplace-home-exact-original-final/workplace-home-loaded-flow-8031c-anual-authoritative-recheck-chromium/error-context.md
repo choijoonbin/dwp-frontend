@@ -1,0 +1,190 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+      - navigation "App area switcher" [ref=e46]:
+        - 'link "App management: Workplace" [ref=e48] [cursor=pointer]':
+          - /url: /workplace/admin/overview
+          - img [ref=e50]
+          - generic [ref=e53]: Manage
+    - main [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - button "Change location and time" [ref=e60] [cursor=pointer]:
+              - img [ref=e62]
+              - text: No site selected
+              - img [ref=e66]
+            - status [ref=e68]:
+              - generic [ref=e70]:
+                - generic [ref=e71]: Workplace information
+                - generic [ref=e72]: Verified 09:20 AM
+              - generic "Try again" [ref=e73]:
+                - button "Try again" [ref=e74] [cursor=pointer]:
+                  - img [ref=e75]
+          - heading "Today’s workplace home" [level=1] [ref=e80]
+        - region "No workplace site is available to you" [ref=e81]:
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - img [ref=e84]
+              - generic [ref=e88]: Workplace setup needed
+            - heading "No workplace site is available to you" [level=2] [ref=e89]
+            - paragraph [ref=e90]: An administrator must configure a site and floor or grant this account access.
+            - link "Access control" [ref=e93] [cursor=pointer]:
+              - /url: /workplace/admin/governance?area=access
+              - text: Access control
+              - img [ref=e95]
+        - region "Spaces open for the next 60 minutes" [ref=e98]:
+          - heading "Spaces open for the next 60 minutes" [level=2] [ref=e101]
+          - list [ref=e102]:
+            - listitem [ref=e103]:
+              - generic [ref=e105]:
+                - img [ref=e107]
+                - paragraph [ref=e110]: Desk
+              - paragraph [ref=e111]: Unavailable
+              - link "Find a space" [disabled]:
+                - /url: /workplace/explore?date=2026-08-19&time=09%3A21&duration=60&type=DESK
+                - text: Find a space
+                - generic:
+                  - img
+            - listitem [ref=e112]:
+              - generic [ref=e114]:
+                - img [ref=e116]
+                - paragraph [ref=e120]: Focus pod
+              - paragraph [ref=e121]: Unavailable
+              - link "Find a space" [disabled]:
+                - /url: /workplace/explore?date=2026-08-19&time=09%3A21&duration=60&type=FOCUS_POD
+                - text: Find a space
+                - generic:
+                  - img
+            - listitem [ref=e122]:
+              - generic [ref=e124]:
+                - img [ref=e126]
+                - paragraph [ref=e128]: Phone booth
+              - paragraph [ref=e129]: Unavailable
+              - link "Find a space" [disabled]:
+                - /url: /workplace/explore?date=2026-08-19&time=09%3A21&duration=60&type=PHONE_BOOTH
+                - text: Find a space
+                - generic:
+                  - img
+            - listitem [ref=e130]:
+              - generic [ref=e132]:
+                - img [ref=e134]
+                - paragraph [ref=e138]: Meeting room
+              - paragraph [ref=e139]: Unavailable
+              - link "Find a space" [disabled]:
+                - /url: /workplace/explore?date=2026-08-19&time=09%3A21&duration=60&type=ROOM
+                - text: Find a space
+                - generic:
+                  - img
+        - generic [ref=e140]:
+          - region "Worth your attention" [ref=e142]:
+            - generic [ref=e144]:
+              - img [ref=e146]
+              - generic [ref=e149]:
+                - heading "Worth your attention" [level=2] [ref=e150]
+                - generic [ref=e151]: Check-ins and events that still need a place are surfaced first.
+            - separator [ref=e152]
+            - list [ref=e153]:
+              - listitem [ref=e154]:
+                - link "One invitation needs your response Resolve it before the organizer finalizes the room." [ref=e155] [cursor=pointer]:
+                  - /url: /calendar/schedule?event=calendar-event-operating-review
+                  - img [ref=e157]
+                  - generic [ref=e159]:
+                    - paragraph [ref=e160]: One invitation needs your response
+                    - text: Resolve it before the organizer finalizes the room.
+                  - img [ref=e161]
+          - region "Today's flow" [ref=e164]:
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - img [ref=e168]
+                - generic [ref=e170]:
+                  - heading "Today's flow" [level=2] [ref=e171]
+                  - generic [ref=e172]: Follow workspace, meeting, and focus time in chronological order.
+              - link "View space bookings" [ref=e173] [cursor=pointer]:
+                - /url: /workplace/my-bookings
+            - separator [ref=e174]
+            - generic [ref=e175]:
+              - paragraph [ref=e176]: No workplace events are scheduled today
+              - paragraph [ref=e177]: Choose a space ready now when you need somewhere to focus.
+          - region "Your workweek rhythm" [ref=e179]:
+            - generic [ref=e181]:
+              - img [ref=e183]
+              - generic [ref=e187]:
+                - heading "Your workweek rhythm" [level=2] [ref=e188]
+                - generic [ref=e189]: Read space reservations alongside meeting and focus time to keep the week balanced.
+            - list [ref=e190]:
+              - listitem "Mon, 8/17, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e191]:
+                - generic [ref=e192]: Mon, 8/17
+                - img "0 meeting minutes and 0 focus minutes" [ref=e193]
+                - paragraph [ref=e195]: 0 space reservations
+              - listitem "Tue, 8/18, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e196]:
+                - generic [ref=e197]: Tue, 8/18
+                - img "0 meeting minutes and 0 focus minutes" [ref=e198]
+                - paragraph [ref=e200]: 0 space reservations
+              - listitem "Wed, 8/19, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e201]:
+                - generic [ref=e202]:
+                  - text: Wed, 8/19
+                  - generic [ref=e203]: Today
+                - img "0 meeting minutes and 0 focus minutes" [ref=e204]
+                - paragraph [ref=e206]: 0 space reservations
+              - listitem "Thu, 8/20, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e207]:
+                - generic [ref=e208]: Thu, 8/20
+                - img "0 meeting minutes and 0 focus minutes" [ref=e209]
+                - paragraph [ref=e211]: 0 space reservations
+              - listitem "Fri, 8/21, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e212]:
+                - generic [ref=e213]: Fri, 8/21
+                - img "0 meeting minutes and 0 focus minutes" [ref=e214]
+                - paragraph [ref=e216]: 0 space reservations
+            - generic [ref=e217]:
+              - paragraph [ref=e218]: Meetings · 0 min
+              - paragraph [ref=e220]: Focus · 0 min
+        - generic [ref=e222]:
+          - generic [ref=e223]:
+            - generic [ref=e224]:
+              - generic [ref=e225]:
+                - img [ref=e226]
+                - paragraph [ref=e230]: Space booking information
+              - paragraph [ref=e231]: Workplace information
+            - paragraph [ref=e232]: Spaces and your bookings are checked against owner booking data for the selected scope.
+            - paragraph [ref=e233]: Verified 09:20 AM
+          - generic [ref=e234]:
+            - generic [ref=e235]:
+              - generic [ref=e236]:
+                - img [ref=e237]
+                - paragraph [ref=e239]: Schedule information
+              - paragraph [ref=e240]: Workplace information
+            - paragraph [ref=e241]: Only authorized meeting and focus schedules are shown.
+            - paragraph [ref=e242]: Verified 09:20 AM
+          - generic [ref=e243]:
+            - generic [ref=e244]:
+              - generic [ref=e245]:
+                - img [ref=e246]
+                - paragraph [ref=e249]: External presence information
+              - paragraph [ref=e250]: Unverified
+            - paragraph [ref=e251]: This view has no verified external presence information.
+```

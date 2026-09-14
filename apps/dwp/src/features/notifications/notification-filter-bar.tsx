@@ -62,14 +62,31 @@ export function NotificationFilterBar({
   const [filtersOpen, setFiltersOpen] = useState(false);
   const update = (patch: Partial<CenterFilters>) => onChange({ ...filters, ...patch });
   return (
-    <Box component="section" aria-label={t('workbench.filters.label')} sx={{ mt: 2 }}>
+    <Box
+      component="section"
+      aria-label={t('workbench.filters.label')}
+      sx={{
+        mt: 1.25,
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        bgcolor: 'background.paper',
+        boxShadow: 'var(--notification-panel-shadow)',
+        overflow: 'hidden',
+      }}
+    >
       <Select
         value={view}
         size="small"
         fullWidth
         onChange={(event) => onViewChange(event.target.value as NotificationView)}
         inputProps={{ 'aria-label': t('center.viewsLabel') }}
-        sx={{ display: { xs: 'flex', md: 'none' }, minHeight: 44 }}
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          minHeight: 44,
+          m: 1,
+          width: 'calc(100% - 16px)',
+        }}
       >
         {VIEWS.map(({ key }) => (
           <MenuItem key={key} value={key}>
@@ -86,7 +103,8 @@ export function NotificationFilterBar({
           flexWrap: 'wrap',
           borderBottom: 1,
           borderColor: 'divider',
-          gap: 0.5,
+          gap: 0.75,
+          p: 1,
         }}
       >
         {VIEWS.map(({ key, icon: Icon }) => (
@@ -97,13 +115,13 @@ export function NotificationFilterBar({
             aria-current={view === key ? 'page' : undefined}
             onClick={() => onViewChange(key)}
             sx={{
-              minHeight: 44,
+              minHeight: 36,
               flexShrink: 0,
               gap: 0.75,
-              borderRadius: 0,
-              borderBottom: 2,
-              borderColor: view === key ? 'primary.main' : 'transparent',
-              color: view === key ? 'primary.main' : 'text.secondary',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              bgcolor: view === key ? 'primary.main' : 'action.hover',
+              color: view === key ? 'primary.contrastText' : 'text.secondary',
+              '&:hover': { bgcolor: view === key ? 'primary.dark' : 'action.selected' },
             }}
           >
             {t(`views.${key}`)}
@@ -115,7 +133,7 @@ export function NotificationFilterBar({
                 sx={{
                   fontVariantNumeric: 'tabular-nums',
                   px: 0.75,
-                  borderRadius: 'shape.borderRadius',
+                  borderRadius: (theme) => `${theme.shape.borderRadius}px`,
                   bgcolor: view === key ? 'action.selected' : 'action.hover',
                 }}
               >
@@ -133,7 +151,7 @@ export function NotificationFilterBar({
             md: 'minmax(220px, 1fr) auto auto',
           },
           gap: 1,
-          py: 1.5,
+          p: 1.25,
         }}
       >
         <FormField

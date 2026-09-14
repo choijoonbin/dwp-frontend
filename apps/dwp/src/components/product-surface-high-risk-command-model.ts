@@ -1,10 +1,19 @@
 import type {
+  ApprovalFormReviewedPublishInput,
   ProductSurfaceSecureMutationAuthority,
   ProductSurfaceEvaluationData,
   ProductSurfaceStepUpChallengeData,
   ProductSurfaceStepUpChallengeRequest,
   ProductSurfaceStepUpContinuationData,
 } from '@dwp-frontend/shared-utils';
+import {
+  approvalFormWorkspaceId,
+  assertApprovalFormWorkspaceRevisionInput,
+  snapshotApprovalFormWorkspace,
+} from '@dwp-frontend/shared-utils/api/approval-form-workspace-contract';
+import { approvalAttachmentId } from '@dwp-frontend/shared-utils/api/approval-attachment-contract';
+import { snapshotApprovalAttachmentPolicyPublish } from '@dwp-frontend/shared-utils/api/approval-attachment-policy-contract';
+import type { ApprovalAttachmentPolicyPublishInput } from '@dwp-frontend/shared-utils/api/approval-attachment-policy-contract';
 import { PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG } from './product-surface-high-risk-command-catalog';
 import type { ProductSurfaceHighRiskOperation } from './product-surface-high-risk-command-catalog';
 
@@ -18,6 +27,12 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'WORKFLOW'
     | 'FORM'
     | 'POLICY'
+    | 'DOCUMENT_POLICY'
+    | 'ATTACHMENT_POLICY'
+    | 'DOCUMENT_HOLD'
+    | 'RETENTION_POLICY'
+    | 'RETENTION_RECORD'
+    | 'APPROVAL_SIGNATURE_REQUEST'
     | 'OUTBOX_EVENT'
     | 'ORG_SCENARIO'
     | 'EXPORT_DATASET'
@@ -29,6 +44,7 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
   payload: Readonly<Record<string, unknown>>;
   idempotencyKey?: string;
   rotateIdempotencyInCommandPayload?: boolean;
+  idempotencyPayloadPath?: 'ROOT';
 }>;
 
 export type ApprovalHighRiskAuthority = Readonly<{
@@ -124,6 +140,25 @@ function descriptor(
   };
 }
 
+export function approvalAttachmentPolicyPublishCommand(
+  policyId: string,
+  input: ApprovalAttachmentPolicyPublishInput
+): ApprovalHighRiskCommandDescriptor {
+  approvalAttachmentId(policyId);
+  const payload = snapshotApprovalAttachmentPolicyPublish(input);
+  return Object.freeze({
+    ...descriptor(
+      'ATTACHMENT_POLICY_PUBLISH',
+      'ATTACHMENT_POLICY',
+      policyId,
+      payload.expectedVersion,
+      targetPath('attachments/policies', policyId, 'publish'),
+      payload
+    ),
+    idempotencyKey: payload.idempotencyKey,
+  });
+}
+
 export function productSurfaceHighRiskCommand(input: ApprovalHighRiskCommandDescriptor) {
   if (!nonBlank(input.operation) || !nonBlank(input.targetType) || !nonBlank(input.targetId)) {
     throw new Error('HIGH command target is required.');
@@ -165,6 +200,43 @@ export function approvalFormPublishCommand(
     targetPath('forms', formId, 'publish'),
     { expectedVersion }
   );
+}
+
+export function approvalFormReviewedPublishCommand(
+  formId: string,
+  input: ApprovalFormReviewedPublishInput,
+  idempotencyKey: string
+): ApprovalHighRiskCommandDescriptor {
+  approvalFormWorkspaceId(formId);
+  assertApprovalFormWorkspaceRevisionInput(input);
+  approvalFormWorkspaceId(input.draftFormVersionId);
+  if (input.basePublishedVersionId !== null) approvalFormWorkspaceId(input.basePublishedVersionId);
+  if (
+    !safeVersion(input.expectedWorkspaceRevision) ||
+    !/^[a-f0-9]{64}$/u.test(input.schemaSha256) ||
+    !/^[a-f0-9]{64}$/u.test(input.reviewContentDigest) ||
+    !nonBlank(idempotencyKey)
+  )
+    throw new Error('Reviewed form publication binding is invalid.');
+  const payload = snapshotApprovalFormWorkspace({
+    expectedFormRevision: input.expectedFormRevision,
+    expectedWorkspaceRevision: input.expectedWorkspaceRevision,
+    draftFormVersionId: input.draftFormVersionId,
+    basePublishedVersionId: input.basePublishedVersionId,
+    schemaSha256: input.schemaSha256,
+    reviewContentDigest: input.reviewContentDigest,
+  });
+  return Object.freeze({
+    ...descriptor(
+      'FORM_REVIEWED_PUBLISH',
+      'FORM',
+      formId,
+      input.expectedFormRevision,
+      targetPath('forms', formId, 'publish-reviewed'),
+      payload
+    ),
+    idempotencyKey,
+  });
 }
 
 export function approvalPolicyPublishCommand(
@@ -254,19 +326,27 @@ export function restartApprovalHighRiskAttempt(
   if (idempotencyKey === attempt.idempotencyKey) {
     throw new Error('A restarted HIGH command must rotate its idempotency key.');
   }
-  const command = attempt.descriptor.rotateIdempotencyInCommandPayload
-    ? {
-        ...attempt.descriptor,
-        idempotencyKey,
-        payload: {
-          ...attempt.descriptor.payload,
-          command: {
-            ...((attempt.descriptor.payload.command as Readonly<Record<string, unknown>>) ?? {}),
+  const command =
+    attempt.descriptor.idempotencyPayloadPath === 'ROOT'
+      ? {
+          ...attempt.descriptor,
+          idempotencyKey,
+          payload: { ...attempt.descriptor.payload, idempotencyKey },
+        }
+      : attempt.descriptor.rotateIdempotencyInCommandPayload
+        ? {
+            ...attempt.descriptor,
             idempotencyKey,
-          },
-        },
-      }
-    : attempt.descriptor;
+            payload: {
+              ...attempt.descriptor.payload,
+              command: {
+                ...((attempt.descriptor.payload.command as Readonly<Record<string, unknown>>) ??
+                  {}),
+                idempotencyKey,
+              },
+            },
+          }
+        : attempt.descriptor;
   return createApprovalHighRiskAttempt(command, authority, idempotencyKey);
 }
 

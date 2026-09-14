@@ -22,7 +22,9 @@ export type WorkplaceSite = {
   type: WorkplaceSiteType;
   address: string | null;
   timeZone: string;
-  totalFloorCount: number;
+  totalFloorCount: number | null;
+  countsScope?: 'SITE' | 'FLOORS';
+  allowedFloorIds?: string[] | null;
   configuredFloorCount: number;
   resourceCount: number;
   state: WorkplaceSiteState;
@@ -103,6 +105,12 @@ export type WorkplacePolicy = {
 };
 
 export type WorkplaceExploreResponse = {
+  closures?: {
+    resourceId: string;
+    startsAt: string;
+    endsAt: string;
+    availability: 'UNAVAILABLE';
+  }[];
   sites: WorkplaceSite[];
   floors: WorkplaceFloor[];
   selectedFloor: WorkplaceFloor | null;
@@ -197,6 +205,9 @@ export type WorkplaceAssignedResource = {
 export type WorkplaceAdminBooking = {
   bookingId: string;
   resourceId: string;
+  /** Absent only while an older server is rolling out the native scope projection. */
+  siteId?: string;
+  floorId?: string;
   resourceName: string;
   resourceType: WorkplaceResourceType;
   siteName: string;
@@ -249,8 +260,15 @@ export type WorkplaceAuditEventPage = {
 
 export type WorkplaceSiteInput = Omit<
   WorkplaceSite,
-  'siteId' | 'name' | 'configuredFloorCount' | 'resourceCount' | 'version'
-> & { version: number | null };
+  | 'siteId'
+  | 'name'
+  | 'configuredFloorCount'
+  | 'resourceCount'
+  | 'version'
+  | 'countsScope'
+  | 'allowedFloorIds'
+  | 'totalFloorCount'
+> & { totalFloorCount: number; version: number | null };
 export type WorkplaceFloorInput = Omit<
   WorkplaceFloor,
   'floorId' | 'siteId' | 'siteName' | 'name' | 'resourceCount' | 'backgroundAssetPath' | 'version'
@@ -406,6 +424,8 @@ export async function getWorkplaceAdminBookings(
   from: string,
   to: string,
   filters: {
+    siteId?: string | null;
+    floorId?: string | null;
     status?: WorkplaceBookingStatus | null;
     resourceId?: string | null;
     userId?: number | null;

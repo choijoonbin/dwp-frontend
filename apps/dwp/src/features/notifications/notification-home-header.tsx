@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { BellRing, RefreshCw, Search } from 'lucide-react';
-import { ActionIconButton, FormField, GlyphSurface } from '@dwp-frontend/design-system';
+import { ActionIconButton, FormField } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import type { NotificationConnectionState } from './use-notification-runtime';
 
 export function NotificationHomeHeader({
@@ -30,6 +31,7 @@ export function NotificationHomeHeader({
   return (
     <Box
       component="header"
+      data-testid="notification-home-header"
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: 'minmax(0, 1fr) auto', md: 'auto minmax(220px, 1fr) auto' },
@@ -38,33 +40,23 @@ export function NotificationHomeHeader({
           md: '"title search state"',
         },
         alignItems: 'center',
-        gap: { xs: 1, md: 3 },
-        pb: { xs: 1.5, md: 2 },
-        borderBottom: 1,
+        gap: { xs: 1.25, md: 2 },
+        p: { xs: 1.25, md: 2 },
+        border: 1,
         borderColor: 'divider',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        bgcolor: 'background.paper',
+        boxShadow: 'var(--notification-panel-shadow)',
       }}
     >
       <Stack direction="row" spacing={1.25} alignItems="center" sx={{ gridArea: 'title' }}>
-        <GlyphSurface size={38} variant="soft">
-          <BellRing size={19} />
-        </GlyphSurface>
+        <Box sx={{ display: 'grid', color: 'primary.main' }}>
+          <BellRing size={23} strokeWidth={1.8} aria-hidden="true" />
+        </Box>
         <Box>
           <Typography component="h1" variant="h5">
             {t('home.title')}
           </Typography>
-          {generatedAt && (
-            <Typography
-              component="time"
-              dateTime={generatedAt}
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: { xs: 'none', sm: 'block' } }}
-            >
-              {t('workbench.syncedAt', {
-                time: formatDate(generatedAt, { hour: '2-digit', minute: '2-digit' }),
-              })}
-            </Typography>
-          )}
         </Box>
       </Stack>
       <Box
@@ -74,7 +66,7 @@ export function NotificationHomeHeader({
           event.preventDefault();
           onSearch();
         }}
-        sx={{ gridArea: 'search', minWidth: 0 }}
+        sx={{ gridArea: 'search', minWidth: 0, display: 'flex', gap: 0.75 }}
       >
         <FormField
           fullWidth
@@ -88,19 +80,18 @@ export function NotificationHomeHeader({
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search size={17} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <ActionIconButton label={t('home.searchAction')} type="submit" size="small">
-                    <Search size={17} />
-                  </ActionIconButton>
+                  <Search size={16} />
                 </InputAdornment>
               ),
             },
           }}
+          sx={(theme) => ({
+            '& .MuiOutlinedInput-root': { bgcolor: alpha(theme.palette.primary.main, 0.025) },
+          })}
         />
+        <ActionIconButton label={t('actions.search')} type="submit">
+          <Search size={17} />
+        </ActionIconButton>
       </Box>
       <Stack
         direction="row"
@@ -110,8 +101,24 @@ export function NotificationHomeHeader({
       >
         <Chip
           size="small"
-          variant="outlined"
-          label={state === 'live' ? t('home.live') : t(`states.${state}`)}
+          label={
+            <Stack direction="row" alignItems="center" gap={1}>
+              <Box component="span">{state === 'live' ? t('home.live') : t(`states.${state}`)}</Box>
+              {generatedAt && (
+                <Typography
+                  component="time"
+                  dateTime={generatedAt}
+                  variant="caption"
+                  sx={{ display: { xs: 'none', md: 'inline' } }}
+                >
+                  {t('workbench.syncedAt', {
+                    time: formatDate(generatedAt, { hour: '2-digit', minute: '2-digit' }),
+                  })}
+                </Typography>
+              )}
+            </Stack>
+          }
+          sx={{ height: 32, bgcolor: 'action.hover', '& .MuiChip-icon': { ml: 1.25 } }}
           icon={
             <Box
               component="span"

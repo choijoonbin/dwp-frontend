@@ -14,8 +14,6 @@ import {
   X,
 } from 'lucide-react';
 import {
-  createDwaionQuestionLaunchState,
-  createQuestionLaunch,
   getCatalogOverview,
   getOrganizationChart,
   getProviderDataGovernance,
@@ -50,7 +48,6 @@ import {
 import type { HomeAppDefinition } from '../../components/workspace-composer/app-launchpad-model';
 import type { GlobalSearchItem, GlobalSearchKind } from './global-search-model';
 import type { GlobalSearchAuditSource } from '@dwp-frontend/shared-utils';
-import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const resultIcon: Record<GlobalSearchKind, typeof Search> = {
   app: AppWindow,
@@ -63,7 +60,7 @@ const resultIcon: Record<GlobalSearchKind, typeof Search> = {
   ask: Sparkles,
 };
 
-type GlobalSearchDialogProps = {
+export type GlobalSearchDialogProps = {
   open: boolean;
   apps: readonly HomeAppDefinition[];
   includeWork: boolean;
@@ -72,6 +69,7 @@ type GlobalSearchDialogProps = {
   includeTenantAudit: boolean;
   includeTenantCatalog: boolean;
   includeProvider: boolean;
+  launchAsk?: (query: string) => Promise<unknown>;
   onClose: () => void;
 };
 
@@ -84,11 +82,9 @@ export function GlobalSearchDialog({
   includeTenantAudit,
   includeTenantCatalog,
   includeProvider,
+  launchAsk,
   onClose,
 }: GlobalSearchDialogProps) {
-  const governQuestionLaunch = useDwaionGovernedMutation(
-    'route.dwaion.work.question-launch-create.action'
-  );
   const { t } = useTranslation('shell');
   const display = useDisplayDictionary();
   const { t: tWork } = useTranslation('work');
@@ -309,9 +305,9 @@ export function GlobalSearchDialog({
   );
   const results = useMemo(() => {
     const matches = filterGlobalSearchItems(catalog, query, 11);
-    if (!query.trim() || !includeAsk) return matches;
+    if (!query.trim() || !includeAsk || !launchAsk) return matches;
     return [...matches, createAskSearchItem(query, t)].slice(0, 12);
-  }, [catalog, includeAsk, query, t]);
+  }, [catalog, includeAsk, launchAsk, query, t]);
 
   const activeSources = useMemo(() => {
     const sources: GlobalSearchAuditSource[] = ['APPS'];
@@ -394,11 +390,8 @@ export function GlobalSearchDialog({
     }
     setLaunchingAsk(true);
     try {
-      const receipt = await governQuestionLaunch((authority) =>
-        createQuestionLaunch(normalizedQuery, authority)
-      );
-      const state = createDwaionQuestionLaunchState(receipt.launchId);
-      if (!state) throw new Error('Question launch receipt is invalid.');
+      if (!launchAsk) throw new Error('Question launch is unavailable.');
+      const state = await launchAsk(normalizedQuery);
       close();
       navigate(item.route, { state });
     } catch {

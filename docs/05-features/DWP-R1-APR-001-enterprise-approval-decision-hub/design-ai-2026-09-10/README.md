@@ -1,14 +1,21 @@
 # 전자결재 Design AI 인계 패키지
 
-- 기준일: 2026-09-10
-- 상태: `DESIGN BRIEF READY / APPROVAL IMPLEMENTATION FROZEN`
-- 범위: 전자결재 사용자·관리자 전체 화면의 디자인 고도화와 후속 구현 인계
-- 비범위: 이번 단계의 React·API·DB·OpenAPI 구현, 운영 출시 승인
+- 기준일: 2026-09-11
+- 상태: `APR-01~16 IMPLEMENTED / LOCALLY VERIFIED`
+- 범위: 전자결재 사용자·관리자 전체 화면의 디자인 고도화, owner-service 보강과 검증 인계
+- 비범위: 디자인에 표시된 `CONTRACT_FIRST`·`EXTERNAL_GATE` 기능의 무근거 활성화, 운영 출시 승인
 
 이 패키지는 최신 DWP 코드, 실제 로컬 브라우저 화면, 기존 전자결재 문서와 공식 글로벌
-제품 자료를 교차 감사한 뒤 만든 디자인 의뢰서다. 기존 전자결재 구현을 폐기하거나 별도
-Next.js 앱을 만드는 요청이 아니다. Design AI가 반환한 화면을 다시 검토·승인한 뒤에만
-코드 구현을 재개한다.
+제품 자료를 교차 감사한 뒤 만든 디자인·구현 인계서다. 기존 전자결재 구현을 폐기하거나 별도
+Next.js 앱을 만들지 않고, 2026-09-11에 Design AI가 반환한 APR-01~16 화면과 Google Stitch
+원본을 DWP shell·권한·API 계약에 맞춰 구현했다. 최종 수용 범위와 검증 증거는
+[18 디자인 산출물 수용 원장](18-design-output-acceptance-ledger.md)에 고정한다.
+
+구현은 APR-01부터 APR-04 사용자 판단 흐름, APR-05부터 APR-10 요청 수명주기, APR-11부터
+APR-16 관리자 통제 순서로 완료됐다. 전자결재 독립 제품 빌드, 전체 frontend Gate,
+owner-service test, fresh migration 및
+desktop/mobile E2E를 통과했으며 실제 provider ceremony·legal hold·WORM 등 외부 전제 기능은
+활성 완료로 표시하지 않는다.
 
 참고 원본은 사용자가 제공한
 [Google Stitch 프로젝트](https://stitch.withgoogle.com/projects/13391261371843159731)의
@@ -83,6 +90,7 @@ Design AI에는 화면 프롬프트만 순서대로 전달하고, 제품·개발
 
 - [00 현행 감사·벤치마크·목표 IA](00-current-audit-benchmark-ia.md)
 - [17 디자인→코드 매핑과 검증 계획](17-design-to-code-mapping-and-verification.md)
+- [18 디자인 산출물 수용 원장](18-design-output-acceptance-ledger.md)
 
 ## Design AI가 반환해야 하는 공통 산출물
 

@@ -12,6 +12,8 @@ type RequestConfig = {
   signal?: AbortSignal;
   keepalive?: boolean;
   contextScopeKey?: string;
+  beforeDispatch?: () => void;
+  csrfReplay?: 'NEVER';
 };
 
 export type EventStreamMessage = {
@@ -291,10 +293,12 @@ async function request<T>(
 ): Promise<AxiosLikeResponse<T>> {
   const headers = buildHeaders(body, config.headers);
   const scopedUrl = withContextScope(url, config.contextScopeKey);
+  config.beforeDispatch?.();
   if (isMutation(method)) {
     const csrf = await loadCsrfToken(config.keepalive);
     headers[csrf.headerName] = csrf.token;
   }
+  config.beforeDispatch?.();
 
   const controller = config.timeoutMs || config.signal ? new AbortController() : undefined;
   const abortFromCaller = () => controller?.abort(config.signal?.reason);
@@ -340,7 +344,7 @@ async function request<T>(
     const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;
     if (csrfRejected) {
       resetCsrfToken();
-      if (allowCsrfRetry) {
+      if (allowCsrfRetry && config.csrfReplay !== 'NEVER') {
         return request<T>(
           method,
           url,
@@ -354,7 +358,7 @@ async function request<T>(
       }
     }
     notifyUnauthorized(response.status, unauthorizedRegistration);
-    if (!csrfRejected) {
+    if (!csrfRejected || config.csrfReplay === 'NEVER') {
       notifyAuthorizationAccessFailure(
         response.status,
         payload,

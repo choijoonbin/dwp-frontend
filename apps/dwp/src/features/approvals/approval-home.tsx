@@ -31,6 +31,7 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
+import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -52,12 +53,14 @@ import {
   ApprovalRecentActivity,
 } from './approval-home-executive-widgets';
 import { APPROVAL_HOME_WIDGET_REGISTRY } from './approval-home-widget-registry';
+import { ApprovalHomeExecutiveCanvas } from './approval-home-executive-canvas';
 import {
   approvalHomeRiskColor,
   approvalRequestProgress,
   approvalHomeRowLimit,
 } from './approval-home-model';
 import { approvalInsightFallback } from './approval-insight-copy';
+import { approvalScopeIdentity } from './approval-command-center-model';
 import { ApprovalSurface, PriorityChip, StatusChip } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
 import {
@@ -104,7 +107,11 @@ export function ApprovalHome() {
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
   });
+  const scopeIdentity = approvalScopeIdentity(requestScope.cacheKey);
+  const scopeIdentityRef = useRef(scopeIdentity);
+  scopeIdentityRef.current = scopeIdentity;
   const [editing, setEditing] = useState(false);
+  const [preferenceConflictVersion, setPreferenceConflictVersion] = useState<number | null>(null);
   const customizeButton = useRef<HTMLButtonElement>(null);
   const preferenceRetryButton = useRef<HTMLButtonElement>(null);
   const homeHeading = useRef<HTMLHeadingElement>(null);
@@ -128,6 +135,15 @@ export function ApprovalHome() {
   const [draftWidgets, setDraftWidgets] = useState<
     PersonalHomeWidgetPreference<ApprovalHomeWidgetKey>[]
   >(() => defaultWorkspaceWidgets(APPROVAL_HOME_WIDGET_REGISTRY));
+  useEffect(() => {
+    focusEditorTransition.current = false;
+    setEditing(false);
+    setGalleryOpen(false);
+    setBaseVersion(null);
+    setPreferenceConflictVersion(null);
+    setDraftPresentation('balanced');
+    setDraftWidgets(defaultWorkspaceWidgets(APPROVAL_HOME_WIDGET_REGISTRY));
+  }, [scopeIdentity]);
   const registry = useMemo(
     () =>
       visibleWorkspaceRegistry(APPROVAL_HOME_WIDGET_REGISTRY, {
@@ -138,9 +154,9 @@ export function ApprovalHome() {
   );
   const home = useQuery({
     queryKey: ['approvals', 'home', ...requestScope.cacheKey],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       requestScope.contextScopeKey
-        ? getApprovalHome(requestScope.contextScopeKey)
+        ? getApprovalHome(requestScope.contextScopeKey, signal)
         : getApprovalHome(),
     enabled: requestScope.ready,
     staleTime: 30_000,
@@ -149,7 +165,8 @@ export function ApprovalHome() {
   });
   const preference = useQuery({
     queryKey: ['home-preference', 'approval-home', ...requestScope.cacheKey],
-    queryFn: () => getApprovalHomePreference<ApprovalHomeWidgetKey>(requestScope.contextScopeKey),
+    queryFn: ({ signal }) =>
+      getApprovalHomePreference<ApprovalHomeWidgetKey>(requestScope.contextScopeKey, signal),
     enabled: requestScope.ready,
     staleTime: 5 * 60_000,
     retry: 1,
@@ -179,20 +196,26 @@ export function ApprovalHome() {
     setEditing(false);
     setGalleryOpen(false);
     setBaseVersion(null);
+    setPreferenceConflictVersion(null);
   };
   const runPreferenceUpdate = useApprovalGovernedMutation(
     'route.approvals.work.home-preference-update.action'
   );
   const mutation = useMutation({
-    mutationFn: (layout: HomePreferenceLayout<ApprovalHomeWidgetKey>) =>
-      runPreferenceUpdate((execution) =>
-        updateApprovalHomePreference(
-          layout,
-          baseVersion ?? preference.data?.version ?? 0,
-          execution
-        )
-      ),
-    onSuccess: (next) => {
+    mutationFn: (command: {
+      layout: HomePreferenceLayout<ApprovalHomeWidgetKey>;
+      expectedVersion: number;
+      scopeIdentity: string;
+    }) => {
+      if (scopeIdentityRef.current !== command.scopeIdentity || !requestScope.ready) {
+        throw new Error('Approval home scope changed.');
+      }
+      return runPreferenceUpdate((execution) =>
+        updateApprovalHomePreference(command.layout, command.expectedVersion, execution)
+      );
+    },
+    onSuccess: (next, command) => {
+      if (scopeIdentityRef.current !== command.scopeIdentity) return;
       queryClient.setQueryData(
         ['home-preference', 'approval-home', ...requestScope.cacheKey],
         next
@@ -200,11 +223,14 @@ export function ApprovalHome() {
       closeEditor();
       toast.success(t('home.saved'));
     },
-    onError: async (error) => {
+    onError: async (error, command) => {
+      if (scopeIdentityRef.current !== command.scopeIdentity) return;
       if (isProductSurfaceOperationCancelledError(error)) return;
       if (error instanceof HttpError && error.status === 409) {
         const refreshed = await preference.refetch();
-        setBaseVersion(refreshed.data?.version ?? null);
+        const latestVersion = refreshed.data?.version ?? null;
+        setBaseVersion(latestVersion);
+        setPreferenceConflictVersion(latestVersion);
       }
       toast.error(
         t(
@@ -248,6 +274,7 @@ export function ApprovalHome() {
     if (key === 'focus-queue')
       return (
         <ApprovalSurface
+          appearance="executive"
           title={t('home.widgets.focus-queue.label')}
           meta={t('home.widgets.focus-queue.meta', { count: data.focusQueue.length })}
           action={
@@ -360,6 +387,7 @@ export function ApprovalHome() {
       const max = Math.max(1, ...data.flow.map((stage) => stage.count));
       return (
         <ApprovalSurface
+          appearance="executive"
           title={t('home.widgets.flow.label')}
           meta={t('home.widgets.flow.description')}
         >
@@ -384,6 +412,7 @@ export function ApprovalHome() {
     if (key === 'my-requests')
       return (
         <ApprovalSurface
+          appearance="executive"
           title={t('home.widgets.my-requests.label')}
           meta={t('home.widgets.my-requests.description')}
           action={
@@ -487,6 +516,7 @@ export function ApprovalHome() {
       );
     return (
       <ApprovalSurface
+        appearance="executive"
         title={t('home.widgets.insights.label')}
         meta={t('home.widgets.insights.description')}
         action={
@@ -638,6 +668,7 @@ export function ApprovalHome() {
                 setDraftWidgets(persistedWidgets);
                 setDraftPresentation(persistedPresentation);
                 setBaseVersion(preference.data?.version ?? 0);
+                setPreferenceConflictVersion(null);
                 setEditing(true);
               }}
               disabled={preference.isLoading || preference.isError}
@@ -693,13 +724,64 @@ export function ApprovalHome() {
             onCancel={closeEditor}
             onDone={() =>
               mutation.mutate({
-                appLayout: null,
-                presentation: draftPresentation,
-                widgets: draftWidgets,
+                layout: {
+                  appLayout: null,
+                  presentation: draftPresentation,
+                  widgets: draftWidgets,
+                },
+                expectedVersion: baseVersion ?? preference.data?.version ?? 0,
+                scopeIdentity,
               })
             }
           />
         </Box>
+      )}
+      {editing && preferenceConflictVersion !== null && (
+        <Paper
+          component="section"
+          variant="outlined"
+          role="alert"
+          sx={{ mb: 2, p: 1.5, borderColor: 'warning.main', bgcolor: 'warning.lighter' }}
+        >
+          <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" gap={1.5}>
+            <Stack direction="row" alignItems="flex-start" gap={1}>
+              <Box sx={{ color: 'warning.main', mt: 0.15, flex: '0 0 auto' }}>
+                <ShieldAlert size={18} aria-hidden="true" />
+              </Box>
+              <Typography variant="body2">
+                {t('home.conflict.description', { version: preferenceConflictVersion })}
+              </Typography>
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.5}>
+              <ActionButton
+                intent="quiet"
+                size="small"
+                disabled={mutation.isPending}
+                onClick={closeEditor}
+              >
+                {t('home.conflict.useServerLayout')}
+              </ActionButton>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                loading={mutation.isPending}
+                onClick={() =>
+                  mutation.mutate({
+                    layout: {
+                      appLayout: null,
+                      presentation: draftPresentation,
+                      widgets: draftWidgets,
+                    },
+                    expectedVersion: baseVersion ?? preference.data?.version ?? 0,
+                    scopeIdentity,
+                  })
+                }
+              >
+                {t('home.conflict.reapplyChanges')}
+              </ActionButton>
+            </Stack>
+          </Stack>
+        </Paper>
       )}
       <Box
         data-workspace-presentation={activePresentation}
@@ -715,24 +797,23 @@ export function ApprovalHome() {
           '& .MuiButtonBase-root.Mui-focusVisible, & .MuiButtonBase-root:focus-visible': {
             outlineOffset: -3,
           },
-          ...(activePresentation === 'expressive' && {
-            '& [data-workspace-widget] [data-workspace-widget-content] > section': {
-              boxShadow: theme.shadows[1],
-            },
-          }),
         })}
       >
-        <WorkspaceWidgetCanvas
-          registry={registry}
-          widgets={activeWidgets}
-          editing={editing}
-          busy={mutation.isPending}
-          presentation={activePresentation}
-          scrollMode="document"
-          getLabel={(key) => t(`home.widgets.${key}.label`)}
-          onChange={setDraftWidgets}
-          renderWidget={renderWidget}
-        />
+        {!editing && preference.data?.customized !== true ? (
+          <ApprovalHomeExecutiveCanvas registry={registry} renderWidget={renderWidget} />
+        ) : (
+          <WorkspaceWidgetCanvas
+            registry={registry}
+            widgets={activeWidgets}
+            editing={editing}
+            busy={mutation.isPending}
+            presentation={activePresentation}
+            scrollMode="document"
+            getLabel={(key) => t(`home.widgets.${key}.label`)}
+            onChange={setDraftWidgets}
+            renderWidget={renderWidget}
+          />
+        )}
       </Box>
       <WorkspaceWidgetGallery
         open={galleryOpen}

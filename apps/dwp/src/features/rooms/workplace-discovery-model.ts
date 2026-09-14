@@ -25,6 +25,7 @@ export type WorkplaceBookabilityContext = {
   canCreateRoomBooking: boolean;
   canCreateWorkplaceBooking: boolean;
   occupancy: readonly WorkplaceOccupancy[];
+  closures?: readonly { resourceId: string }[];
   rangeFrom: string | null;
   rangeTo: string | null;
   roomPolicy: CalendarPolicy | null;
@@ -76,7 +77,7 @@ export function workplaceBookingBlockCode(
   if (!context.verified || !context.rangeFrom || !context.rangeTo || !context.timeZone) {
     return 'UNVERIFIED';
   }
-  const availability = workplaceResourceAvailability(resource, context.occupancy);
+  const availability = workplaceResourceAvailability(resource, context.occupancy, context.closures);
   if (['OCCUPIED', 'UNAVAILABLE', 'MINE'].includes(availability)) return 'UNAVAILABLE';
   const canCreateBooking =
     resource.type === 'ROOM' ? context.canCreateRoomBooking : context.canCreateWorkplaceBooking;
@@ -167,8 +168,10 @@ export function filterWorkplaceResources(
           Number(Boolean(workplaceBookingBlockCode(right, bookability)));
         if (eligibility) return eligibility;
       }
-      const leftRank = availabilityOrder[workplaceResourceAvailability(left, occupancy)];
-      const rightRank = availabilityOrder[workplaceResourceAvailability(right, occupancy)];
+      const leftRank =
+        availabilityOrder[workplaceResourceAvailability(left, occupancy, bookability?.closures)];
+      const rightRank =
+        availabilityOrder[workplaceResourceAvailability(right, occupancy, bookability?.closures)];
       return leftRank - rightRank || left.name.localeCompare(right.name);
     });
 }

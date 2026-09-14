@@ -1,192 +1,259 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, Plus, RotateCcw, UserRoundCheck } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
-  AutocompleteField,
   ConfirmDialog,
-  DateTimePickerField,
-  FormDialog,
-  FormField,
-  SelectField,
+  InlineFeedback,
+  LoadingState,
 } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   createApprovalDelegation,
   getApprovalDelegations,
-  getPublishedApprovalWorkflows,
+  HttpError,
   revokeApprovalDelegation,
-  searchApprovalDelegationCandidates,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
-import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-
-import { ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
+import { ApprovalDelegationEditor } from './approval-delegation-editor';
 import {
-  buildApprovalDelegationCreateInput,
-  buildApprovalDelegationWorkflowReference,
-  buildApprovalDelegationWorkflowOptions,
-  isApprovalDelegationDirection,
+  canRevokeApprovalDelegation,
+  isApprovalDelegationSnapshotCurrent,
 } from './approval-delegation-model';
+import { ApprovalDelegationWorkspace } from './approval-delegation-workspace';
+import { useApprovalManagementCommandScope } from './approval-management-command-scope';
+import { approvalRequestRecovery } from './approval-request-model';
+import { ApprovalSurface } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
-import type { ApprovalDelegation, ApprovalDelegationCandidate } from '@dwp-frontend/shared-utils';
+import type { ApprovalDelegation, ApprovalDelegationCreateInput } from '@dwp-frontend/shared-utils';
+import type { ApprovalManagementScopedCommand } from './approval-management-command-scope';
+
+type DelegationRecovery = Readonly<{
+  command: 'create' | 'revoke';
+  kind: ReturnType<typeof approvalRequestRecovery>;
+}>;
+
+type CreateDelegationCommand = ApprovalManagementScopedCommand<ApprovalDelegationCreateInput>;
+type RevokeDelegationCommand = ApprovalManagementScopedCommand<ApprovalDelegation>;
 
 export function ApprovalDelegations() {
-  const { t, i18n } = useTranslation('approvals');
+  const { t } = useTranslation('approvals');
   const { canManageDelegations: canManage } = useApprovalExperience();
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'approvals',
+    surfaceKey: 'approvals.work',
+  });
+  const commandScope = useApprovalManagementCommandScope(requestScope.cacheKey);
+  const identityKey = commandScope.binding.scopeIdentity;
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [candidateQuery, setCandidateQuery] = useState('');
-  const [selected, setSelected] = useState<ApprovalDelegationCandidate | null>(null);
-  const [scopeType, setScopeType] = useState<'ALL' | 'WORKFLOW'>('ALL');
-  const [workflowId, setWorkflowId] = useState('');
-  const [reason, setReason] = useState('');
-  const [startsAt, setStartsAt] = useState(() => new Date().toISOString());
-  const [endsAt, setEndsAt] = useState(() => new Date(Date.now() + 7 * 86400000).toISOString());
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [revoking, setRevoking] = useState<ApprovalDelegation | null>(null);
-  const deferredCandidateQuery = useDeferredValue(candidateQuery.trim());
+  const [recovery, setRecovery] = useState<DelegationRecovery | undefined>(undefined);
+  const delegationsKey = ['approvals', ...requestScope.cacheKey, 'delegations'] as const;
   const delegations = useQuery({
-    queryKey: ['approvals', 'delegations'],
-    queryFn: getApprovalDelegations,
+    queryKey: delegationsKey,
+    queryFn: ({ signal }) => getApprovalDelegations(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 20_000,
-    retry: 1,
+    retry: false,
   });
-  const candidates = useQuery({
-    queryKey: ['approvals', 'delegations', 'candidates', deferredCandidateQuery],
-    queryFn: () => searchApprovalDelegationCandidates(deferredCandidateQuery),
-    enabled: open && deferredCandidateQuery.length >= 2,
-    staleTime: 30_000,
-    retry: 1,
-  });
-  const workflows = useQuery({
-    queryKey: ['approvals', 'workflows', 'published'],
-    queryFn: getPublishedApprovalWorkflows,
-    enabled: open,
-    staleTime: 60_000,
-    retry: 1,
-  });
-  useEffect(() => {
-    if (delegations.isError) {
-      setOpen(false);
-      setCandidateQuery('');
-      setSelected(null);
-      setScopeType('ALL');
-      setWorkflowId('');
-      setReason('');
-    }
-    if (!delegations.isFetching && !delegations.isError) return;
-    setRevoking(null);
-  }, [delegations.isError, delegations.isFetching]);
-  const workflowOptions = useMemo(
-    () => buildApprovalDelegationWorkflowOptions(workflows.data ?? [], i18n.resolvedLanguage),
-    [i18n.resolvedLanguage, workflows.data]
+  const visibleDelegations = useMemo(
+    () =>
+      !requestScope.ready || delegations.isError || delegations.isFetching
+        ? []
+        : (delegations.data ?? []),
+    [requestScope.ready, delegations.data, delegations.isError, delegations.isFetching]
   );
+  const sourceReady =
+    requestScope.ready && !delegations.isError && !delegations.isFetching && !recovery;
+  const latestAuthority = useRef({ sourceReady, canManage, delegations: delegations.data });
+  latestAuthority.current = { sourceReady, canManage, delegations: delegations.data };
+  const activeCreate = useRef<CreateDelegationCommand | undefined>(undefined);
+  const activeRevoke = useRef<RevokeDelegationCommand | undefined>(undefined);
+
+  useEffect(() => {
+    setEditorOpen(false);
+    setRevoking(null);
+    setRecovery(undefined);
+    setSelectedId(undefined);
+    activeCreate.current = undefined;
+    activeRevoke.current = undefined;
+  }, [identityKey]);
+
+  useEffect(() => {
+    if (delegations.isError || delegations.isFetching) setRevoking(null);
+    if (
+      delegations.error instanceof HttpError &&
+      [401, 403, 404].includes(delegations.error.status)
+    ) {
+      setEditorOpen(false);
+      setSelectedId(undefined);
+    }
+  }, [delegations.isError, delegations.isFetching, delegations.error]);
+
+  useEffect(() => {
+    if (!selectedId && visibleDelegations[0]) setSelectedId(visibleDelegations[0].delegationId);
+    if (
+      selectedId &&
+      !visibleDelegations.some((delegation) => delegation.delegationId === selectedId)
+    ) {
+      setSelectedId(visibleDelegations[0]?.delegationId);
+    }
+  }, [selectedId, visibleDelegations]);
+
   const runCreate = useApprovalGovernedMutation('route.approvals.work.delegation-create.action');
   const runRevoke = useApprovalGovernedMutation('route.approvals.work.delegation-revoke.action');
 
-  const closeEditor = () => {
-    setOpen(false);
-    setCandidateQuery('');
-    setSelected(null);
-    setScopeType('ALL');
-    setWorkflowId('');
-    setReason('');
-  };
   const create = useMutation({
-    mutationFn: () => {
-      if (delegations.isFetching || delegations.isError || !delegations.data) {
-        throw new Error('Delegation authority is not loaded.');
+    mutationFn: async (command: CreateDelegationCommand) => {
+      if (!commandScope.isCurrent(command) || !sourceReady || !canManage) {
+        throw new HttpError('Delegation authority is not current.', 409);
       }
-      if (!selected) throw new Error('Delegation candidate is required.');
-      const input = buildApprovalDelegationCreateInput({
-        delegateUserId: selected.userId,
-        scopeType,
-        workflowId,
-        startsAt: new Date(startsAt).toISOString(),
-        endsAt: new Date(endsAt).toISOString(),
-        reason: reason.trim(),
+      await getApprovalDelegations(requestScope.contextScopeKey);
+      if (!commandScope.isCurrent(command)) {
+        throw new HttpError('Delegation identity changed.', 409);
+      }
+      const result = await runCreate((execution) => {
+        if (
+          !commandScope.isCurrent(command) ||
+          !latestAuthority.current.sourceReady ||
+          !latestAuthority.current.canManage
+        ) {
+          throw new HttpError('Delegation authority changed before dispatch.', 409);
+        }
+        return createApprovalDelegation(command.input, execution);
       });
-      if (!input) throw new Error('Delegation workflow identity is required.');
-      return runCreate((execution) => createApprovalDelegation(input, execution));
+      return { result, command };
     },
-    onSuccess: (next) => {
-      queryClient.setQueryData(['approvals', 'delegations'], next);
-      closeEditor();
+    onSuccess: ({ result, command }) => {
+      if (!commandScope.isCurrent(command)) return;
+      queryClient.setQueryData(delegationsKey, result);
+      setEditorOpen(false);
+      setRecovery(undefined);
       toast.success(t('delegations.created'));
     },
-    onError: (error) =>
-      !isProductSurfaceOperationCancelledError(error) && toast.error(t('delegations.createError')),
-  });
-  const revoke = useMutation({
-    mutationFn: (delegation: ApprovalDelegation) => {
-      const authoritative = delegations.data?.find(
-        (candidate) => candidate.delegationId === delegation.delegationId
-      );
-      if (
-        delegations.isFetching ||
-        delegations.isError ||
-        !authoritative ||
-        authoritative.version !== delegation.version ||
-        authoritative.direction !== 'OUTGOING'
-      ) {
-        throw new Error('Delegation authority is not current.');
-      }
-      return runRevoke((execution) =>
-        revokeApprovalDelegation(delegation.delegationId, delegation.version, execution)
-      );
+    onError: (error, command) => {
+      if (!commandScope.isCurrent(command)) return;
+      if (isProductSurfaceOperationCancelledError(error)) return;
+      const status = error instanceof HttpError ? error.status : undefined;
+      setRecovery({ command: 'create', kind: approvalRequestRecovery(status) });
+      toast.error(t('delegations.createError'));
     },
-    onSuccess: (next) => {
-      queryClient.setQueryData(['approvals', 'delegations'], next);
+    onSettled: (_, __, command) => {
+      if (activeCreate.current === command) activeCreate.current = undefined;
+    },
+  });
+
+  const revoke = useMutation({
+    mutationFn: async (command: RevokeDelegationCommand) => {
+      const delegation = command.input;
+      if (
+        !commandScope.isCurrent(command) ||
+        !sourceReady ||
+        !canManage ||
+        !canRevokeApprovalDelegation(delegation, true) ||
+        !isApprovalDelegationSnapshotCurrent(delegations.data, delegation)
+      ) {
+        throw new HttpError('Delegation authority is not current.', 409);
+      }
+      const latest = await getApprovalDelegations(requestScope.contextScopeKey);
+      if (
+        !commandScope.isCurrent(command) ||
+        !isApprovalDelegationSnapshotCurrent(latest, delegation)
+      ) {
+        throw new HttpError('Delegation changed before command execution.', 409);
+      }
+      const result = await runRevoke((execution) => {
+        if (
+          !commandScope.isCurrent(command) ||
+          !latestAuthority.current.sourceReady ||
+          !latestAuthority.current.canManage ||
+          !isApprovalDelegationSnapshotCurrent(latestAuthority.current.delegations, delegation)
+        ) {
+          throw new HttpError('Delegation authority changed before dispatch.', 409);
+        }
+        return revokeApprovalDelegation(delegation.delegationId, delegation.version, execution);
+      });
+      return { result, command };
+    },
+    onSuccess: ({ result, command }) => {
+      if (!commandScope.isCurrent(command)) return;
+      queryClient.setQueryData(delegationsKey, result);
       setRevoking(null);
+      setRecovery(undefined);
       toast.success(t('delegations.revoked'));
     },
-    onError: (error) =>
-      !isProductSurfaceOperationCancelledError(error) && toast.error(t('delegations.revokeError')),
+    onError: (error, command) => {
+      if (!commandScope.isCurrent(command)) return;
+      if (isProductSurfaceOperationCancelledError(error)) return;
+      const status = error instanceof HttpError ? error.status : undefined;
+      setRevoking(null);
+      setRecovery({ command: 'revoke', kind: approvalRequestRecovery(status) });
+      toast.error(t('delegations.revokeError'));
+    },
+    onSettled: (_, __, command) => {
+      if (activeRevoke.current === command) activeRevoke.current = undefined;
+    },
   });
-  const selectedWorkflowAvailable = workflowOptions.some((option) => option.value === workflowId);
-  const valid =
-    selected !== null &&
-    !delegations.isFetching &&
-    !delegations.isError &&
-    !candidates.isError &&
-    reason.trim().length >= 10 &&
-    new Date(endsAt) > new Date(startsAt) &&
-    (scopeType === 'ALL' ||
-      (!workflows.isFetching && !workflows.isError && selectedWorkflowAvailable));
+
+  const refreshAuthority = async () => {
+    const binding = commandScope.binding;
+    const result = await delegations.refetch();
+    if (commandScope.isCurrent(binding) && !result.isError) setRecovery(undefined);
+  };
+  const createPending =
+    create.isPending && Boolean(create.variables && commandScope.isCurrent(create.variables));
+  const revokePending =
+    revoke.isPending && Boolean(revoke.variables && commandScope.isCurrent(revoke.variables));
 
   return (
     <ApprovalSurface
-      title={t('delegations.title')}
-      meta={t('delegations.meta')}
+      title={t('pages.delegations.title')}
+      meta={t('pages.delegations.description')}
       action={
         canManage ? (
           <ActionButton
             intent="secondary"
             size="small"
             startIcon={<Plus size={16} />}
-            disabled={delegations.isFetching || delegations.isError}
-            onClick={() => setOpen(true)}
+            disabled={!sourceReady || createPending || revokePending}
+            onClick={() => setEditorOpen(true)}
           >
             {t('delegations.add')}
           </ActionButton>
         ) : undefined
       }
     >
+      {recovery && recovery.command === 'revoke' && (
+        <InlineFeedback
+          severity={recovery.kind === 'CONFLICT' ? 'warning' : 'error'}
+          action={
+            <ActionButton
+              type="button"
+              intent="quiet"
+              size="small"
+              disabled={delegations.isFetching}
+              onClick={() => void refreshAuthority()}
+            >
+              {t('actions.refresh')}
+            </ActionButton>
+          }
+        >
+          {t('delegations.revokeError')}
+        </InlineFeedback>
+      )}
       {delegations.isError ? (
-        <Alert
+        <InlineFeedback
           severity="error"
           action={
             <ActionButton
@@ -201,160 +268,51 @@ export function ApprovalDelegations() {
           }
         >
           {t('delegations.loadError')}
-        </Alert>
+        </InlineFeedback>
+      ) : delegations.isFetching ? (
+        <LoadingState label={t('common:labels.loading')} size="page" embedded />
       ) : (
-        <>
-          {(delegations.data ?? []).map((delegation) => (
-            <DelegationRow
-              key={delegation.delegationId}
-              delegation={delegation}
-              canRevoke={
-                canManage &&
-                !delegations.isFetching &&
-                !delegations.isError &&
-                delegation.direction === 'OUTGOING'
-              }
-              onRevoke={() => setRevoking(delegation)}
-            />
-          ))}
-          {!delegations.isLoading && delegations.data?.length === 0 && (
-            <Box sx={{ py: 8, textAlign: 'center' }}>
-              <CalendarClock size={34} color="#728096" />
-              <Typography component="p" variant="subtitle1" sx={{ mt: 1 }}>
-                {t('delegations.empty')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('delegations.emptyDescription')}
-              </Typography>
-            </Box>
-          )}
-        </>
+        <ApprovalDelegationWorkspace
+          key={JSON.stringify([
+            commandScope.binding.scopeIdentity,
+            commandScope.binding.scopeEpoch,
+          ])}
+          delegations={visibleDelegations}
+          selectedId={selectedId}
+          canManage={canManage}
+          sourceReady={sourceReady}
+          pending={createPending || revokePending}
+          onSelect={(delegation) => setSelectedId(delegation.delegationId)}
+          onRevoke={(delegation) => {
+            if (
+              sourceReady &&
+              !activeCreate.current &&
+              !activeRevoke.current &&
+              canRevokeApprovalDelegation(delegation, true)
+            )
+              setRevoking(delegation);
+          }}
+        />
       )}
-      <FormDialog
-        open={open}
-        title={t('delegations.dialog.title')}
-        description={t('delegations.dialog.description')}
-        cancelLabel={t('actions.cancel')}
-        submitLabel={t('actions.save')}
-        busy={create.isPending}
-        submitDisabled={!valid}
-        onClose={closeEditor}
-        onSubmit={() => {
-          if (!valid) return;
-          create.mutate();
+
+      <ApprovalDelegationEditor
+        open={editorOpen}
+        busy={createPending}
+        sourceReady={sourceReady || recovery?.command === 'create'}
+        requestScope={requestScope}
+        recoveryMessage={recovery?.command === 'create' ? t('delegations.createError') : undefined}
+        onClose={() => {
+          setEditorOpen(false);
+          setRecovery(undefined);
         }}
-      >
-        <Stack gap={2}>
-          {candidates.isError && deferredCandidateQuery.length >= 2 && (
-            <Alert
-              severity="error"
-              action={
-                <ActionButton
-                  type="button"
-                  intent="quiet"
-                  size="small"
-                  disabled={candidates.isFetching}
-                  onClick={() => void candidates.refetch()}
-                >
-                  {t('actions.retry')}
-                </ActionButton>
-              }
-            >
-              {t('delegations.candidateLoadError')}
-            </Alert>
-          )}
-          <AutocompleteField<ApprovalDelegationCandidate>
-            required
-            label={t('delegations.fields.delegate')}
-            supportingText={t('delegations.fields.delegateHelp')}
-            value={selected}
-            inputValue={candidateQuery}
-            options={candidates.isError ? [] : (candidates.data ?? [])}
-            loading={candidates.isFetching}
-            filterOptions={(options) => options}
-            isOptionEqualToValue={(option, value) => option.userId === value.userId}
-            getOptionLabel={(option) =>
-              `${option.displayName}${option.email ? ` · ${option.email}` : ''}`
-            }
-            noOptionsText={
-              deferredCandidateQuery.length < 2
-                ? t('delegations.searchHint')
-                : t('delegations.noCandidates')
-            }
-            onInputChange={(_event, value) => setCandidateQuery(value)}
-            onChange={(_event, value) => setSelected(value)}
-          />
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-              gap: 1.5,
-            }}
-          >
-            <SelectField
-              label={t('delegations.fields.scope')}
-              value={scopeType}
-              options={[
-                { value: 'ALL', label: t('delegations.scopes.all') },
-                { value: 'WORKFLOW', label: t('delegations.scopes.workflow') },
-              ]}
-              onValueChange={(value) => value && setScopeType(value as 'ALL' | 'WORKFLOW')}
-            />
-            {scopeType === 'WORKFLOW' ? (
-              <Stack gap={1}>
-                {workflows.isError && (
-                  <Alert
-                    severity="error"
-                    action={
-                      <ActionButton
-                        type="button"
-                        intent="quiet"
-                        size="small"
-                        disabled={workflows.isFetching}
-                        onClick={() => void workflows.refetch()}
-                      >
-                        {t('actions.retry')}
-                      </ActionButton>
-                    }
-                  >
-                    {t('delegations.workflowLoadError')}
-                  </Alert>
-                )}
-                <SelectField
-                  required
-                  label={t('delegations.fields.workflow')}
-                  value={workflowId}
-                  options={workflows.isError ? [] : workflowOptions}
-                  onValueChange={(value) => setWorkflowId(value ?? '')}
-                />
-              </Stack>
-            ) : (
-              <Box />
-            )}
-            <DateTimePickerField
-              required
-              label={t('delegations.fields.startsAt')}
-              value={startsAt || null}
-              onValueChange={(value) => setStartsAt(value ?? '')}
-            />
-            <DateTimePickerField
-              required
-              label={t('delegations.fields.endsAt')}
-              value={endsAt || null}
-              onValueChange={(value) => setEndsAt(value ?? '')}
-            />
-          </Box>
-          <FormField
-            required
-            multiline
-            minRows={3}
-            label={t('delegations.fields.reason')}
-            supportingText={t('delegations.fields.reasonHelp')}
-            value={reason}
-            onChange={(event) => setReason(event.target.value)}
-          />
-        </Stack>
-      </FormDialog>
+        onSubmit={(input) => {
+          if (!sourceReady || activeCreate.current || activeRevoke.current) return;
+          const command = commandScope.capture(structuredClone(input));
+          activeCreate.current = command;
+          create.mutate(command);
+        }}
+        onRecover={() => void refreshAuthority()}
+      />
       <ConfirmDialog
         open={Boolean(revoking)}
         title={t('delegations.revoke.title')}
@@ -364,112 +322,16 @@ export function ApprovalDelegations() {
         cancelLabel={t('actions.cancel')}
         confirmLabel={t('delegations.revoke.confirm')}
         intent="danger"
-        busy={revoke.isPending}
+        busy={revokePending}
         onClose={() => setRevoking(null)}
         onConfirm={() => {
-          if (revoking) revoke.mutate(revoking);
+          if (revoking && sourceReady && !activeCreate.current && !activeRevoke.current) {
+            const command = commandScope.capture(structuredClone(revoking));
+            activeRevoke.current = command;
+            revoke.mutate(command);
+          }
         }}
       />
     </ApprovalSurface>
-  );
-}
-
-function DelegationRow({
-  delegation,
-  canRevoke,
-  onRevoke,
-}: {
-  delegation: ApprovalDelegation;
-  canRevoke: boolean;
-  onRevoke: () => void;
-}) {
-  const { t } = useTranslation('approvals');
-  const direction = isApprovalDelegationDirection(delegation.direction)
-    ? delegation.direction
-    : null;
-  const incoming = direction === 'INCOMING';
-  const workflowReference = buildApprovalDelegationWorkflowReference(delegation);
-  return (
-    <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      alignItems={{ xs: 'stretch', sm: 'center' }}
-      justifyContent="space-between"
-      gap={1.5}
-      sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
-    >
-      <Stack direction="row" gap={1.25} minWidth={0}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            flex: '0 0 36px',
-            display: 'grid',
-            placeItems: 'center',
-            borderRadius: 1,
-            color: incoming ? approvalTone.primary : approvalTone.teal,
-            bgcolor: incoming ? 'rgba(40,86,199,0.1)' : 'rgba(8,126,114,0.1)',
-          }}
-        >
-          <UserRoundCheck size={18} />
-        </Box>
-        <Box minWidth={0}>
-          <Stack direction="row" gap={0.75} alignItems="center" useFlexGap flexWrap="wrap">
-            <Typography variant="body2" fontWeight={760}>
-              {incoming
-                ? t('delegations.receivedFrom', { userId: delegation.delegatorUserId })
-                : delegation.delegateDisplayName}
-            </Typography>
-            {direction ? (
-              <Chip
-                size="small"
-                variant="outlined"
-                label={t(`delegations.directions.${direction.toLowerCase()}`)}
-              />
-            ) : null}
-            <StatusChip status={delegation.lifecycleState} />
-          </Stack>
-          <Typography variant="caption" color="text.secondary">
-            {delegation.delegateEmail ? `${delegation.delegateEmail} · ` : ''}
-            {formatDate(delegation.startsAt)} - {formatDate(delegation.endsAt)}
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 0.35 }}>
-            {delegation.reason}
-          </Typography>
-          <Stack direction="row" gap={0.75} alignItems="center" useFlexGap flexWrap="wrap">
-            <Typography variant="caption" color="text.secondary">
-              {delegation.scopeType === 'ALL'
-                ? t('delegations.scopes.all')
-                : workflowReference.displayKey
-                  ? t('delegations.scopeWorkflow', { key: workflowReference.displayKey })
-                  : t('delegations.scopeWorkflowUnavailable')}
-            </Typography>
-            {delegation.scopeType === 'WORKFLOW' && workflowReference.workflowId ? (
-              <Chip
-                size="small"
-                variant="outlined"
-                label={`ID ${workflowReference.compactWorkflowId}`}
-                title={workflowReference.workflowId}
-                aria-label={t('delegations.workflowIdentity', {
-                  id: workflowReference.workflowId,
-                })}
-              />
-            ) : null}
-          </Stack>
-        </Box>
-      </Stack>
-      {canRevoke && delegation.lifecycleState === 'ACTIVE' ? (
-        <>
-          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'block' } }} />
-          <ActionButton
-            intent="danger"
-            size="small"
-            startIcon={<RotateCcw size={15} />}
-            onClick={onRevoke}
-          >
-            {t('delegations.revoke.confirm')}
-          </ActionButton>
-        </>
-      ) : null}
-    </Stack>
   );
 }

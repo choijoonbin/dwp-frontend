@@ -41,8 +41,8 @@ describe('generated product route authorization contracts', () => {
 
     expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION).toEqual(
       expect.objectContaining({
-        version: 6,
-        checksum: '9f5392cc75344a4bb2262cfc3283c5bfb831745c9efe336a318e2999c304912f',
+        version: 10,
+        checksum: '1f97638c95a192f0ec7f01053c3965f79b7a3ee4eb9781ea56e3cf8eccc6889b',
       })
     );
     expect(PRODUCT_SURFACE_ROLLOUT_PRODUCTS).toEqual([
@@ -59,7 +59,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(66);
+    expect(router).toHaveLength(79);
     expect(registry).toEqual(router);
   });
 
@@ -72,11 +72,11 @@ describe('generated product route authorization contracts', () => {
       {}
     );
 
-    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(163);
-    expect(countByKind).toEqual({ ACTION: 70, DATA: 27, PAGE: 66 });
-    expect(nonPages).toHaveLength(97);
+    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(318);
+    expect(countByKind).toEqual({ ACTION: 161, DATA: 78, PAGE: 79 });
+    expect(nonPages).toHaveLength(239);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(78);
     expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(157);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(157);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
@@ -101,24 +101,28 @@ describe('generated product route authorization contracts', () => {
       },
     ]);
     for (const view of ['routines', 'personal-controls', 'artifacts']) {
+      const expected = {
+        routeId: `dwaion.work.${view}`,
+        pattern: `/dwaion/${view}`,
+        productId: 'dwaion',
+        surfaceId: 'dwaion.work',
+        routeContractKey: `route.dwaion.work.${view}.page`,
+      };
+      expect(
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+          (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
+        )
+      ).toEqual([expected]);
       expect(
         DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
           (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
         )
-      ).toEqual([
-        {
-          routeId: `dwaion.work.${view}`,
-          pattern: `/dwaion/${view}`,
-          productId: 'dwaion',
-          surfaceId: 'dwaion.work',
-          routeContractKey: `route.dwaion.work.${view}.page`,
-        },
-      ]);
+      ).toEqual([]);
       expect(
-        PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.some(
+        PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS.filter(
           (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
         )
-      ).toBe(false);
+      ).toEqual([expect.objectContaining(expected)]);
     }
   });
 

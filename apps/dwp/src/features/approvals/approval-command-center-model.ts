@@ -1,6 +1,18 @@
-import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
+import { resolveApprovalContentAccess } from '@dwp-frontend/shared-utils/api/approval-content-access';
+
+import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils/api/approval-api';
 
 export const APPROVAL_BATCH_LIMIT = 20;
+
+export function approvalScopeIdentity(cacheKey: readonly string[]): string {
+  return JSON.stringify(cacheKey);
+}
+
+export const approvalTaskContentAccess = resolveApprovalContentAccess;
+
+export function hasApprovalTaskContentAccess(detail: ApprovalTaskDetail): boolean {
+  return approvalTaskContentAccess(detail).full;
+}
 
 export type ApprovalQueueFilter = 'ALL' | 'URGENT' | 'DUE_TODAY' | 'HIGH_RISK';
 
@@ -18,11 +30,24 @@ export function parseApprovalQueueFilter(value: string | null | undefined): Appr
 }
 
 export type ApprovalBatchResult = Readonly<{
+  requestedTaskIds: readonly string[];
   approvedTaskIds: readonly string[];
   ineligibleTaskIds: readonly string[];
   failedTaskId?: string;
   remainingTaskIds: readonly string[];
 }>;
+
+export type ApprovalBatchOutcome = 'APPROVED' | 'INELIGIBLE' | 'FAILED' | 'NOT_ATTEMPTED';
+
+export function approvalBatchOutcome(
+  result: ApprovalBatchResult,
+  taskId: string
+): ApprovalBatchOutcome {
+  if (result.approvedTaskIds.includes(taskId)) return 'APPROVED';
+  if (result.ineligibleTaskIds.includes(taskId)) return 'INELIGIBLE';
+  if (result.failedTaskId === taskId) return 'FAILED';
+  return 'NOT_ATTEMPTED';
+}
 
 export type ApprovalDecisionSignalKey =
   | 'SELF_APPROVAL_BLOCKED'
@@ -177,22 +202,24 @@ export async function executeSequentialApprovalBatch({
   loadTask: (taskId: string) => Promise<ApprovalTaskDetail>;
   approveTask: (detail: ApprovalTaskDetail) => Promise<void>;
 }): Promise<ApprovalBatchResult> {
+  const requestedTaskIds = taskIds.slice(0, APPROVAL_BATCH_LIMIT);
   const approvedTaskIds: string[] = [];
   const ineligibleTaskIds: string[] = [];
 
-  for (const [index, taskId] of taskIds.slice(0, APPROVAL_BATCH_LIMIT).entries()) {
+  for (const [index, taskId] of requestedTaskIds.entries()) {
     let detail: ApprovalTaskDetail;
     try {
       detail = await loadTask(taskId);
     } catch {
       return {
+        requestedTaskIds,
         approvedTaskIds,
         ineligibleTaskIds,
         failedTaskId: taskId,
-        remainingTaskIds: taskIds.slice(index + 1, APPROVAL_BATCH_LIMIT),
+        remainingTaskIds: requestedTaskIds.slice(index + 1),
       };
     }
-    if (!detail.canDecide || detail.selfApprovalBlocked) {
+    if (!hasApprovalTaskContentAccess(detail) || !detail.canDecide || detail.selfApprovalBlocked) {
       ineligibleTaskIds.push(taskId);
       continue;
     }
@@ -201,13 +228,14 @@ export async function executeSequentialApprovalBatch({
       approvedTaskIds.push(taskId);
     } catch {
       return {
+        requestedTaskIds,
         approvedTaskIds,
         ineligibleTaskIds,
         failedTaskId: taskId,
-        remainingTaskIds: taskIds.slice(index + 1, APPROVAL_BATCH_LIMIT),
+        remainingTaskIds: requestedTaskIds.slice(index + 1),
       };
     }
   }
 
-  return { approvedTaskIds, ineligibleTaskIds, remainingTaskIds: [] };
+  return { requestedTaskIds, approvedTaskIds, ineligibleTaskIds, remainingTaskIds: [] };
 }

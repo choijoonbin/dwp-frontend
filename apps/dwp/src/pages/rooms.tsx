@@ -38,8 +38,8 @@ const WorkplaceAdminGovernance = lazy(() =>
   }))
 );
 const WorkplaceAdminOperations = lazy(() =>
-  import('../features/rooms/workplace-admin-operations').then((module) => ({
-    default: module.WorkplaceAdminOperations,
+  import('../features/rooms/workplace-admin-facilities').then((module) => ({
+    default: module.WorkplaceAdminOperationsWorkspace,
   }))
 );
 const WorkplaceAdminOverview = lazy(() =>
@@ -63,8 +63,8 @@ const WorkplaceExplore = lazy(() =>
   }))
 );
 const WorkplaceHome = lazy(() =>
-  import('../features/rooms/workplace-home').then((module) => ({
-    default: module.WorkplaceHome,
+  import('../features/rooms/workplace-member-workspace').then((module) => ({
+    default: module.WorkplaceMemberWorkspace,
   }))
 );
 

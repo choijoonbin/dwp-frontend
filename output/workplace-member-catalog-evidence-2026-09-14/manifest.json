@@ -1,0 +1,2365 @@
+{
+  "scope": "Member Workplace experience, existing Calendar-owned Rooms experience, and admin09 location catalog UI implementation",
+  "evidence_basis": "Frontend Playwright journeys use mocked authorized native API responses. Production code calls the real owner APIs; screenshots do not prove live production data or backend PostgreSQL behavior.",
+  "sources": {
+    "member": [
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-model.ts",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-section-frame.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-sections.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-workload-bar.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-week-rhythm.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-member-surfaces.ts",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-member-scope-revision.ts",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-explore.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-discovery-controls.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-discovery-model.ts",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-floor-plan.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-resource-inspector.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-bookings.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-booking-detail-panel.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-booking-dialog.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-relocate-booking-dialog.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-release-windows.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-team-context.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-team-model.ts",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-scope.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-ready-spaces.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-home-source-summary.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-check-in-clock.ts",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-shared-plan-matrix.tsx"
+    ],
+    "calendar_owner": [
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/rooms-find.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/room-bookings.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/rooms-admin-policies.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/rooms-admin-operations.tsx"
+    ],
+    "location_catalog": [
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-locations.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-layout-editor.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-location-resource-inspector.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-dialogs.tsx",
+      "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-catalog-command-scope.ts"
+    ]
+  },
+  "contracts": [
+    "/Users/a10697/Work/DWP/dwp-backend/contracts/workplace-experience-collaboration.v1.json",
+    "/Users/a10697/Work/DWP/dwp-backend/contracts/workplace-experience-facilities.v1.json"
+  ],
+  "material_behaviors": [
+    "Native Workplace create success navigates with the server-confirmed actual bookingId to /workplace/my-bookings?booking=actualID. Unknown outcomes never automatically navigate or resubmit; manual identical intent reuses the native idempotency key.",
+    "Booking and relocation completion callbacks reject a changed actor, target, open/reopen generation, or unmounted scope. Catalog and team mutation scope also tracks generations.",
+    "Team plans disclose only persisted opt-in choices allowed by tenant policy and verified returned group refs; shared plans are planned location, and actual presence remains explicitly unverified.",
+    "Admin catalog uses actor-scoped site/floor/resource reads, hides retained data on403, and supports readonly keyboard selection, responsive map/list, and real selected-space inspector.",
+    "Floor-plan placement edits continue through the existing governed draft/review/publish/restore owner. Current catalog projection does not directly publish a new floor plan.",
+    "Authorized period closures affect queried Explore availability, resource bookability, relocation candidates, and home available counts without mutating global resource state.",
+    "Actual resource photo/media and facilities components are root-owned consumers; missing registered photos display an icon. Photo retry controls are siblings of the resource selection button.",
+    "Existing Calendar-owned policy, booking, approval, range, authority, and version contracts remain in use. Policy changes are reviewed before native versioned save."
+  ],
+  "verification": {
+    "vitest": "PASS: four model/catalog mounted files33tests plus native-booking mounted4tests. Native booking checks changed target, same-target reopen, confirmed payload before source refresh, and unknown exact-key manual retry.",
+    "eslint": "PASS owned final Home fixture and member owner journey test files; production lint validation was performed at the prior implementation checkpoints.",
+    "playwright": "PASS: home/action/accessibility and registered-map keyboard2; team consent/revoke and409 recovery2; admin09 responsive/403 and Korean dark/highcontrast/reducedmotion2; Calendarpolicyreview+operations403/nativeversion+Korean relocation denial3; remaining relocation identity/source2; native confirmed booking owner + discovery diagnostics2. Explore default-mobile and compact responsive2PASS10.4s after the photo sibling change.",
+    "responsive": "CSS viewport reflow: admin09/team1440,1280,390,320; home1440,1280,390,320,768; Calendarpolicy1440,1280,390,320. Text-resize details below describe the distinct CSS-font-size method. Admin09 Korean long names, dark high contrast, reducedmotion, and forcedcolors also tested.",
+    "design_system": "Root reports final Home raw typography replaced with identical semantic tokens. Whole-repository final gate/ratchet is Root-owned; no current global PASS is claimed by this lane.",
+    "source_size": "PASS production2290files/new<=1000; maintenance361files/13exactlegacyexceptions; e2e/rooms.spec.ts maintained3842lines.",
+    "global_typecheck": "PASS full frontend typecheck exit0 after final semantic-font and compact-week Home freeze, before subsequent Root floor-range feature changes.",
+    "global_internal_exports": "Unused WorkplaceMapPage removed; last whole-workspace check only reported unrelated approvalAttachmentPolicyPublishCommand unused export. Root owns final whole-workspace check.",
+    "visual_followup_for_root": "Root confirmed selected-closure impact uses the actual selected interval and narrow datetime fields now stack in a column; bounded source review confirms both.",
+    "text_resize_method": {
+      "method": "At the stated CSS viewport width, Playwright executes document.documentElement.style.fontSize = '200%'. This resizes root-font-relative text; it is not native browser zoom, CSS zoom, page scaling, or device-pixel-ratio scaling.",
+      "viewports_css_px": {
+        "home": 390,
+        "team": 320,
+        "admin09": 320,
+        "admin09_korean_dark_forcedcolors": 320,
+        "calendar_operations": 320,
+        "explore_korean_keyboard": 390
+      },
+      "assertions": "document.documentElement.scrollWidth <= clientWidth; serious/critical Axe checks where present; home additionally checks a computed root-font-relative day-brief text size increase.",
+      "native_browser_zoom_tested": false,
+      "limitation": "Fixed-pixel text may not scale with root font size. No proof of native browser200%zoom or universal doubling of all text is claimed.",
+      "root_lane_640_css_reflow": "Root admin/governance specs separately include640CSSpx viewport reflow (1280/2). That is viewport reflow and does not itself prove native browser200%zoom; not rerun by this member lane.",
+      "historical_checkpoint_note": "The root-font200% artifacts belong to earlier own responsive checkpoints, not the final five-case Home run. Root genuine native browser zoom2 and DIP measurements are separate root evidence and were not performed by this lane."
+    },
+    "root_surface_mounted_regression": {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-resource-photo-scopes.test.tsx",
+      "method": "ReactDOM createRoot + React act + actual form/media components + QueryClientProvider; deferred native API promises; no testing-library dependency.",
+      "result": "PASS: 3 tests (2.55s); narrow ESLint PASS.",
+      "cases": [
+        "Photo DELETE delayed success after permission A\u2192B\u2192A preserves the new A draft and does not invalidate its queries.",
+        "Photo UPLOAD delayed unknown failure after resource A\u2192B\u2192A preserves the new file, alt text, reason, and confirmation.",
+        "Facility request two same-tick native form submissions dispatch one actual API call; unknown result does not automatically retry; manual retry uses identical resource/category/description/idempotency key and displays the confirmed requestId."
+      ]
+    },
+    "bounded_root_surface_review": {
+      "basis": "Read-only source review of root-owned facilities/photo/report-policy surfaces; not a full security audit or live backend persistence proof.",
+      "confirmed_fixes": [
+        "Report floor selection remains available independently of report success, allowing an invalid or denied floor to be cleared.",
+        "Photo immutable commands carry issued resource/version/file/alt/reason and scope generation; delayed callbacks are tested above. Synchronous dispatch ref is present.",
+        "Closure impact uses the selected closure startsAt/endsAt; narrow date controls stack vertically.",
+        "Closure and facility create synchronous in-flight refs are set before mutate and released only for the matching command; unknown create retains the original native key."
+      ],
+      "read_only_policy_preview": "Uses the six actual proposed policy fields and an explicitly requested scope fingerprint; stale, failed, or unauthorized preview data is hidden. No material new issue found within this bounded read.",
+      "followups_sent_to_root": [
+        "RESOLVED/source-confirmed: facility request status commands now freeze site/target/version/reason and include context generation; pending/outcome disables the filter; scoped reset and generation-aware recheck are present.",
+        "RESOLVED/source-confirmed: closure async recheck now compares captured generation before and after awaited reads."
+      ],
+      "remaining_material_findings": "No remaining material finding identified within this bounded source review after the reported root fixes. This does not replace final global gates or backend integration proof."
+    },
+    "closure_impact_pagination": {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/workplace-facility-impact-pagination.spec.ts",
+      "result": "PASS: 2 Chromium E2E tests (7.1s); narrow ESLint PASS.",
+      "basis": "Authorized native API fixtures; actual frontend owner requests are intercepted. Backend PostgreSQL pagination/persistence proof remains the backend lane.",
+      "cases": [
+        "WP and Rooms owners each report21 affected bookings: first page20 rows, native Next page=1 size=20 shows the remaining row; Previous returns page=0 size=20 and20 rows.",
+        "Every reviewed page change clears acknowledgement and disables Schedule closure until the current page is acknowledged.",
+        "Selecting an actual persisted closure interval resets impact to page0 using that closure startsAt/endsAt and clears confirmation; switching from desk page1 to mapped Rooms resource resets to page0 and hides desk rows.",
+        "Two same-tick Schedule closure DOM click events dispatch one actual POST with the issued interval/resource version/reason/confirmed fields and one UUID native idempotency key."
+      ],
+      "cache_method": "Playwright clock fastForward31000ms expires the first-page query cache before Previous, proving a native page=0 HTTP read in addition to rendered page0. This is controlled query-age testing, not browser zoom.",
+      "capture": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-facility-impact-pagination-final/workplace-facility-impact--d5856-terval-and-resource-changes-chromium/closure-impact-pagination-room-1280.png",
+      "capture_dimensions": {
+        "width": 1280,
+        "height": 1918
+      },
+      "visual_review": "1280CSS viewport full-page capture inspected; header at top, selected room,20 affected rows, accessible Previous/Next, confirmation and disabled command are visible without horizontal overflow."
+    },
+    "latest_native_journeys": {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/workplace-member-loaded-journeys.spec.ts",
+      "result": "PASS5Chromium cases23.6s",
+      "artifact_directory": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs",
+      "cases": [
+        "ActualserverbookingId\u2192nativeMybookingsowneractions/listdetail, registeredmap/inlineinspector/mobilephoto404icon",
+        "Relocationoriginal-targetcomparison,409/UNKNOWN manualauthoritativerecheck, matchingimmutablecommand andonecallperintent",
+        "390/320cancellation/releasebottomsheetgeometry/keyboardfocus/busycloseguard/sametick1POST",
+        "Knowncreate409preservesactualsite/floor/type/feature/accessibility/starttime/duration/purpose/visibility beforemanualalternate resource",
+        "Explicit09:17/45minutestaysactualExplore00:17\u219201:02;15minstaysactualscopeandblocked byminimum30"
+      ],
+      "dialog_capture_method": "Poll visibleDialog/alertDialog ancestorcomputedopacity1, nontransparentPaper; screenshotviewport-onlywhenanyDialogvisible. EarlierFade/fullpagebackground-tailcapturesare superseded.",
+      "known409_representative": {
+        "directory": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-relocation-known409-final",
+        "result": "PASS targeted actual relocation conflict/UNKNOWN case12.0s, with stable toast-free known409320 capture and unknown320 capture.",
+        "method": "Wait transient backend error toast hidden, dialog ancestor opacity1/nontransparentPaper; viewport-only320\u00d71000."
+      }
+    },
+    "latest_team_matrix": {
+      "result": "NewtargetedcasePASS6.6swith44filebefore/afterSHAunchanged; prior3consent/revoke/conflict/returnedplan casesPASS",
+      "artifact_directory": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-matrix-source-freeze",
+      "cases": [
+        "OnlyreturnedpublicWORK_PLANandqueriedweek users/datescompose semanticcolleague\u00d7daytable",
+        "PRIVATE/unknownsource/out-of-weekrecordsnotrendered;absentcellsNo sharedplan",
+        "ActualreturnedSundayaddscolumn;weekdayandcolleague modesmappedexplicitly",
+        "1440/1280table and390/320existingcardsnooverflow/Axe0seriouscritical",
+        "Configurednative60sread returning403removesall publicrows/names"
+      ],
+      "subsequent_root_change": "Root now owns07consumer filesfor separatelyguarded native same-floorOFFICEplanExplore CTA; original matrixhash checkpointpre-CTA, finalrootSHA required."
+    },
+    "home_final_loaded_flows": {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/workplace-home-loaded-flow.spec.ts",
+      "result": "PASS5Chromium cases31.8s",
+      "artifact_directory": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact",
+      "source_proof": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-final-broader.json",
+      "sources": 118,
+      "changed_during_each_case": [],
+      "all_cases_same_snapshot": true,
+      "cases": [
+        "Progressive native roster rendering while Calendar pending; actual floor13 and selected00:30\u201301:30 query; normal and Calendar partial1440/1280/390/320 loaded captures.",
+        "NO_SITE keeps four unavailable type cards, folded scope, agenda/week/attention/source structure; existing access-control route only for authorized administrator; no POST/fake metrics.",
+        "Actual native checkInClosesAt countdown10:00\u219209:59,22px mobile h1/28px desktop, location badge, mobile hidden welcome intro, white full-width check-in/detail hero, desktop4columns/mobile2\u00d72; expiry and client-clock rollback dispatch no POST.",
+        "READ_ONLY exposes one actual booking detail action;503 removes check-in; explicit native recheck picks actualversion12; two same-tick clicks dispatch one actual POST.",
+        "Dark high contrast/reduced motion1280/390/320 remains readable; Axe serious/critical0 where asserted."
+      ],
+      "production_ownership": "Root owns Home scope/sections/clock/week and final shared feature work. No further Home production writes by this member lane.",
+      "all_cases_match_current_source": true,
+      "source_identity": {
+        "proofs": [
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-8031c-anual-authoritative-recheck-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/home-source-before-after.json",
+            "sha256": "bed76754b8fa42eda48f39bfceb569530f9d754ef47cc866609627e1a3e5ad96"
+          }
+        ],
+        "sourceCount": 118,
+        "changedDuringEachCase": [],
+        "allCasesSameSnapshot": true,
+        "currentSourceMismatches": [],
+        "method": "Existing Home Playwright beforeEach/afterEach harness hashes actual118 production sources automatically around every case; all5 source maps cross-checked against current disk after run."
+      },
+      "visual_review": "Directly inspected final normal1440/390 loaded PNG. Desktop actualscope/hero/4columns/agenda-left-week-attention-right; mobile22px h1/smallactualplace, hiddenintro, whiteactualdeadline09:30/countdown09:59/fullwidthactions, compact2x2, attention\u2192agenda\u2192week/actual-sourcefooter remain present; no production changes."
+    },
+    "latest_explore_source_composition": {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/workplace-explore-compact-source.spec.ts",
+      "productionFiles": {
+        "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-explore.tsx": "a8b8f0b0c5ae23af9ce956a4a78baf66cf92d81e5efa2ebf2b2d4861a69575d2",
+        "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-discovery-controls.tsx": "53b23412e052c1487b787c379d95c65c76aeb80838f817c71da19f383310dca5"
+      },
+      "result": "3/3PASS28.0s in final targeted source/booking-owner/inspector run; earlier remaining4booking cases PASS before xs results spacing-only correction. OwnedESLint0/DS3246/sourceSize2341PASS.",
+      "artifact_directory": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final",
+      "cases": [
+        "1440/1280/390/320 compact actual native scope h1 begins directly below shell; one h1; actual09:17/duration45 retained.",
+        "Search hidden in basic composition; desktop disclosure/mobile native sheet preserves URL query, active search, true0/1/all/bookable result counts.",
+        "Mobile results heading uses intrinsic height and adjacent availability legend, removing160px empty allocation.",
+        "NO_SITE leaves truthful fallback h1; native403 removes retained scope names/inspector; writes0.",
+        "Rootfont200% at320CSS +dark/high-contrast/reduced-motion +keyboard focus +Axe serious/critical0. Nativebrowserzoom not performed by this member lane."
+      ],
+      "visual_review": "Directly inspected final1440/390 and320rootfont200/HC/RM PNG; compact scope/search gap and mobile results allocation resolved. Fixed inspector footer/owner journey remain verified.",
+      "source_identity": {
+        "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/production-source-after.json",
+        "sha256": "dfeb53a36ecb73ec68c259e80c55ad9d305a41e262d02518a5ca58b50423c0c4",
+        "changed": [],
+        "method": "External SHA snapshot recorded during final targeted QA after production freeze, compared after run; not automatic per-case before/after capture."
+      },
+      "checkpoint_note": "Exact pre-final3reviewCopy source epoch; both Explore production hashes remain current. Final Home5 now proves all118 current-source identity."
+    },
+    "historical_home_loaded_flows_before_final118": {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/e2e/workplace-home-loaded-flow.spec.ts",
+      "result": "PASS5Chromium cases21.0s",
+      "artifact_directory": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha",
+      "source_proof": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-final-home.json",
+      "sources": 112,
+      "changed_during_each_case": [],
+      "all_cases_same_snapshot": true,
+      "cases": [
+        "Progressive native roster rendering while Calendar pending; actual floor13 and selected00:30\u201301:30 query; normal and Calendar partial1440/1280/390/320 loaded captures.",
+        "NO_SITE keeps four unavailable type cards, folded scope, agenda/week/attention/source structure; existing access-control route only for authorized administrator; no POST/fake metrics.",
+        "Actual native checkInClosesAt countdown10:00\u219209:59,22px mobile h1/28px desktop, location badge, mobile hidden welcome intro, white full-width check-in/detail hero, desktop4columns/mobile2\u00d72; expiry and client-clock rollback dispatch no POST.",
+        "READ_ONLY exposes one actual booking detail action;503 removes check-in; explicit native recheck picks actualversion12; two same-tick clicks dispatch one actual POST.",
+        "Dark high contrast/reduced motion1280/390/320 remains readable; Axe serious/critical0 where asserted."
+      ],
+      "production_ownership": "Root owns Home scope/sections/clock/week and final shared feature work. No further Home production writes by this member lane."
+    }
+  },
+  "runtime": {
+    "url": "http://127.0.0.1:4201",
+    "vite_session": 48356,
+    "status": "left_running"
+  },
+  "captures": [
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-cancel-review-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "1a2242564f5dee4690794110d2df055d8437a0d205b9c5341e23a4433b3f76b5",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "a9ff6ff01234d7b09e40534ecf3228d016230f950a50e0af0b8393cecbe4495b",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "0b977c9d9f2273aa84743cda038b5f30be981cebda60eae77f1266eb0129a8eb",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "3b93fe8630ac7384beba626926ad95c6680be145b26dbf9632c8d21ddd4a787e",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "a818dd88a63bea6b62b041d4c2b7f686cfb6b3d165517da87ac799c11ce93c48",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-list-inspector-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1368
+      },
+      "sha256": "ccfe02e9c8bf4c5f310c3d266d0f63dc21ea39c5d39f02b9cce95bad493d4f3f",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-list-inspector-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1226
+      },
+      "sha256": "72e26e8187f8021a4f6db803ae5acf809015aab791ab2fb9b166e34910dddd7d",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-map-inspector-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1368
+      },
+      "sha256": "2ced25881da877785488013e8d1483f40a8ec38ae5d46ed32d7e43987d22a772",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-map-inspector-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1226
+      },
+      "sha256": "4ad43a95d9a16b58bbee61dd8aee45e1a72e1ae9d5fac9e3fd70bb8eb5da9ae3",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-mobile-inspector-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "a637b62ca0272f6f8962564b44b3f4d2ce60e0f10bcfcc440ff7e517ab9382c8",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-mobile-inspector-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "22c329f7514f41779aa5116371a53caeaa4cfe2dae1b38e84f5ef523559bb4da",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-native-booking-dialog-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "e6d57f96ff5eab3a315117e33e94892e1892b63fb45f5d251c5a11ddf728d32e",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-relocation-review-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "a4e901c2885926d92cdf2aec930a6fcc78d1580f04a39b43886cc196b822622a",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-0e406-hooses-another-actual-space-chromium/workplace-native-conflict-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "ca50e98eb01f78e21f51d0f644e6d249a8d4c6f3f2a1110d18e7fd481d269c79",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-71d99-and-one-busy-native-command-chromium/workplace-cancel-sheet-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 844
+      },
+      "sha256": "81112206328950843bd7542b65bc9501b30a6c7c350af526729a1049cb7b385c",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-71d99-and-one-busy-native-command-chromium/workplace-cancel-sheet-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "7c63bf2c55fc320536602cf8c9924d7f63b061d8338a12515461ebb791dc2319",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-71d99-and-one-busy-native-command-chromium/workplace-release-sheet-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 844
+      },
+      "sha256": "be2f636cb943dc9246a9ea0244dbb5009c6b45ebd71c508ee32012f8c535cc31",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_owner_loaded",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-final-opaque-dialogs/workplace-member-loaded-jo-c7dc5-conflict-or-unknown-results-chromium/workplace-relocation-unknown-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "f7399a579ec7c9d64d0084e130322218f8cd1adbe5b5849bc1353d38eb58fb03",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "relocation_known409_unknown",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-relocation-known409-final/workplace-member-loaded-jo-c7dc5-conflict-or-unknown-results-chromium/workplace-relocation-known409-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "d8fd5749873033f60f845d93484a39e4cd63c9a44eb29afe04f48c31443ec4ae",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "relocation_known409_unknown",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-relocation-known409-final/workplace-member-loaded-jo-c7dc5-conflict-or-unknown-results-chromium/workplace-relocation-unknown-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "de29e649ca4f3569a2d4c7770f0941cd0079f3af7cfe48192acbaceaa27ca538",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "team_actual_matrix_pre_root_same_floor_cta",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-matrix-source-freeze/workplace-member-design-co-8adaa--after-authoritative-denial-chromium/workplace-team-matrix-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1114
+      },
+      "sha256": "9d2ed683ad8b2cd5c5a3d646f10b4af9718cea5d47f96a6d1975a315755faa8b",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "team_actual_matrix_pre_root_same_floor_cta",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-matrix-source-freeze/workplace-member-design-co-8adaa--after-authoritative-denial-chromium/workplace-team-matrix-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1114
+      },
+      "sha256": "1355d150cc57dcf19ef6b86dc9ca10efa3e5ddce4958bc1b416cd4affdff7d51",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "team_actual_matrix_pre_root_same_floor_cta",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-matrix-source-freeze/workplace-member-design-co-8adaa--after-authoritative-denial-chromium/workplace-team-matrix-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2247
+      },
+      "sha256": "81b218fecb8eae5f4bc775f866b1dc017827374b9fb6c735339bc07fba9e7e1a",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "team_actual_matrix_pre_root_same_floor_cta",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-matrix-source-freeze/workplace-member-design-co-8adaa--after-authoritative-denial-chromium/workplace-team-matrix-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2023
+      },
+      "sha256": "e3e325b5510d6ffd497c0ae4a01c6169952e0dbd700e1ffc415fdb8c201b575c",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_tree_type_desktop",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-original-axe-final/workplace-location-design--7652f-ing-coordinates-or-commands-chromium/locations-real-tree-type-filter-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "646b08c5051c3fc7b8872954a5d816f39247769f129c29f7f920bdcda717ccdf",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_tree_type_desktop",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-original-axe-final/workplace-location-design--7652f-ing-coordinates-or-commands-chromium/locations-real-tree-type-filter-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "46bb4dfafe9a117ca590448271434eda10625c31f7af7a6eb1ca5cf129161b56",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-1280.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1095
+      },
+      "sha256": "bdb10a0bceabf168cddf270445bf289861df5ad0cee4b81ab1132293a31655b7",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-1440.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1078
+      },
+      "sha256": "de174e02b8b180b725b926d13efa100600165f4e08237f333eebaa5bad5497f1",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-320-text-200.png",
+      "dimensions": {
+        "width": 320,
+        "height": 5412
+      },
+      "sha256": "b7d51e825e7d5ad4c4289a2c99424dd5f5526ae39efbe53feb69cd59d50e7747",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-320.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2019
+      },
+      "sha256": "d31c609e2e3dd8a578f16317bb799e244fe5c6f444202a5dc582f4bea5302391",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-390.png",
+      "dimensions": {
+        "width": 390,
+        "height": 5227
+      },
+      "sha256": "70ecbffc505f1602fb02593b9c1f9fa1f84891e1d35677727085f97bd774b38b",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--7652f-ing-coordinates-or-commands-chromium/locations-real-tree-type-filter-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "e7742305983a10185d14d95979e5d69435d10242e0f7575d1759ecc4d97209a4",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--7652f-ing-coordinates-or-commands-chromium/locations-real-tree-type-filter-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "97a678a42500849bf5cd37317e444a16a95f0d0c1673074ac4ffab43b1960ea5",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--d9ab9-contrast-and-reduced-motion-chromium/locations-ko-dark-forcedcolors-320-text-200.png",
+      "dimensions": {
+        "width": 320,
+        "height": 3631
+      },
+      "sha256": "ec5ac508925d3a026cfbc946529dfc22e0dc737112627876837cd2a0dc8cdaf0",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "catalog_responsive_denial_accessibility",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-catalog-final-filter-a11y/workplace-location-design--d9ab9-contrast-and-reduced-motion-chromium/locations-ko-dark-highcontrast-1280.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1143
+      },
+      "sha256": "7d2b8c539a6bc5d3ceb1b79e35b17c8821d9016517a0eb0aa7a4dd067dbb9e71",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--d9ab9-contrast-and-reduced-motion-chromium/locations-ko-dark-highcontrast-1280.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1085
+      },
+      "sha256": "d51237e120b368e71652d4c2cfc9669253eecd89cb9d5aa51df608cd4ceb7748",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--d9ab9-contrast-and-reduced-motion-chromium/locations-ko-dark-forcedcolors-320-text-200.png",
+      "dimensions": {
+        "width": 320,
+        "height": 3450
+      },
+      "sha256": "f08f61d305dd457029aeb425d82e6da9c7b0d68d06197ccc93e8e259ca455d3e",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--7652f-ing-coordinates-or-commands-chromium/locations-real-tree-type-filter-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "3003a71f8e51a74262b6bed8a0e71dd0be16996f35fc4bcf3e03e12cd161c1dd",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--7652f-ing-coordinates-or-commands-chromium/locations-real-tree-type-filter-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "2a653a0bce06563d7e648bd781217ffee1e68dce63e9d4e937ff2ee30cefb9d9",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-floor-range-targ-61c18-authoritative403-removes-it-chromium/policy-restricted-native-floor-unknown-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "b6620723a6d987e9ff1f0bfb1dbc90a7837f6cce1283f15de5791407ba102c2a",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-floor-range-targ-4d922-the-canonical-floor-command-chromium/catalog-restricted-native-floor-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1115
+      },
+      "sha256": "ddd718bbd3b71979514bbceb2c35c12f75df1fa0c5edb8df3313020c74a0f84a",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-320-text-200.png",
+      "dimensions": {
+        "width": 320,
+        "height": 3883
+      },
+      "sha256": "98fb737905b620cd7641fb30c0c2d2a961c20a073db4c648b8917f2bca61014e",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-320.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2031
+      },
+      "sha256": "769ffd8b4f7cbc185fb0845c2c7f6760dafc66b694f529c17008d0c90aaca07c",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-1280.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1115
+      },
+      "sha256": "5a09bd01575b6f201b955642b0ab85d538ff8444ba286ec5a0248c57d3a18242",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-390.png",
+      "dimensions": {
+        "width": 390,
+        "height": 3375
+      },
+      "sha256": "fd0a8d71b0f87f91940749b73c6589787787d26a7ed789da7f83c191ffc69b0f",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-targets-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-1440.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1095
+      },
+      "sha256": "cdba1105880aa9eb160e6b11b2e722eb0d6e3c29ee59a7a8b97900af6f0768f8",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "floor_target_scope_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-floor-range-count-label-final/workplace-floor-range-targ-4d922-the-canonical-floor-command-chromium/catalog-restricted-native-floor-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1115
+      },
+      "sha256": "e038efe424a0f0f5328b1a622bf08f202f7224f063a2b83f4cb548f0e6b63814",
+      "basis": "Authorized native API fixture frontend owner-command proof; not actual account or backend persistence proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_native_inspector_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-inspector-fidelity-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1818
+      },
+      "sha256": "6210f5cc1678e0076b3ce3f5d28eb529991fc8d04488d2c1ae9532dc0542f3c2",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_native_inspector_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-inspector-fidelity-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "8afefc0230abf3f29c80694702e215cbe224b4ebb4749d4dbcf8b6b228e82ac0",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_native_inspector_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-inspector-fidelity-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "f232207da9f8c491ea08a882752722d3cd7f3a397f9df2380f2774252ca3afa7",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "member_native_inspector_final",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-inspector-fidelity-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-320-root-font200-hc-rm-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "08452f6ae74e476b23b4c3fbe99376b706918b8ff4e0c7f3590fc146b36496b8",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-8031c-anual-authoritative-recheck-chromium/workplace-home-manual-authority-recovery-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1691
+      },
+      "sha256": "e162888b0392c460a76ad83bd30d649fe7083251bce1d1562df6987162311f34",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1853
+      },
+      "sha256": "aae85337ca09075695a80db06e58b1744d3c1e8030545c7bc81008f1c631d64c",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1620
+      },
+      "sha256": "d75ffeeb67d1c443a5792c8d4c3e1180085ce7b5b1b8f7a0dbdaf4286955f177",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1678
+      },
+      "sha256": "41f54dd67db9e0b35770f2428cd8723b10f962c27db88da2f35799f44f2ff04b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1691
+      },
+      "sha256": "25cd62761868a9e730e2298bc2855fba715577237f3c02e761edde1491f4ddab",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1658
+      },
+      "sha256": "f87b124ee6ff06475a48f0ac6119495f60f8dc389be8086dd88f158cc6b82c4b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1572
+      },
+      "sha256": "3d070cbd6f35ea3519824eea397014edf57f9b9aabaaa67a54a5d5f384d4ddfc",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-empty-authorized-sites-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1528
+      },
+      "sha256": "fc6f87265555fb515651d32dd438aa5ece8494887006c73ca2976e648f67cf0a",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1528
+      },
+      "sha256": "fc6f87265555fb515651d32dd438aa5ece8494887006c73ca2976e648f67cf0a",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1571
+      },
+      "sha256": "5a81702ec48d892b92693b3a3fa519ba3748f250e312cb2149ad2942931f3fdf",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1690
+      },
+      "sha256": "8bf4b4a7b13801ab55806fbf16c6d85bed5c854987de1347bf87a14368a42ec7",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1721
+      },
+      "sha256": "6d9c2ef4e901652827e1ccce5f7d7ce1840486443a30fd505e0894a71cf4d106",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1877
+      },
+      "sha256": "596bf807d5aa8a1206e501561f41473cd4b4449b1bb48d416b2a142631d8aaff",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-actual-scope-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1640
+      },
+      "sha256": "ffea0ee4115caf6e4667a665abadfe2efc8fc50ce208f344242e2184e62d6586",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1820
+      },
+      "sha256": "5ebfd98ac2a1666db9e38e9d87c8a31733ced7da677f183f13324e7ac56f1843",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1945
+      },
+      "sha256": "7614f72b6307d0409d65421109cc06dffa707740859e6781519c3ea8a964395b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1627
+      },
+      "sha256": "1aa9717327208f71b48d15060ede3eda3d0351333c37764e79bad4604eaba185",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1703
+      },
+      "sha256": "cb1df647a31427231ab43103b730e5288ecf71dfe06069705d796cdb86705738",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1669
+      },
+      "sha256": "3a719e623e152fbe31c5746008c7ca3be671cd8b9bcbdf5c2b7954e2ba0c6717",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1590
+      },
+      "sha256": "ad70cd75fb2d56deb1db6d3ee045be1346b67db0e33f129b7a29f69ea887a01b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1801
+      },
+      "sha256": "68f847310ada6a6dfd07790940dcf88c507e160a58fed6c08c057921318d32a7",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "home_final_header_border_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-root-header-border/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1642
+      },
+      "sha256": "ba58b405035d7f99c0459f0eac9e5befb67d483b3c3d08eb7f166154f964dd73",
+      "basis": "Authorized native API fixture loaded UI proof, not actual-account/backend persistence.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-explore-compact--38478-inside-condition-disclosure-chromium/explore-compact-native-scope-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "dc2c8695c380dcbfc122d1c673d121b2d231cf73e70e2e2ad9a12777fa13723a",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-explore-compact--38478-inside-condition-disclosure-chromium/explore-compact-native-scope-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "4e8936545cfbea3795b8a541e3cd0ef3963b95f29bfb34165e122de3b49479d1",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-explore-compact--38478-inside-condition-disclosure-chromium/explore-compact-native-scope-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "2da5883ecddd34c806b0c9fa495c96e3764da13d36af2cb208d234a340ba101a",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-explore-compact--38478-inside-condition-disclosure-chromium/explore-compact-native-scope-320-root-font200-hc-rm-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1667
+      },
+      "sha256": "07edd5f6f1de11544becae0c7a24e4822b8e2fd6dce4606b611b1e29a3127ef6",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-explore-compact--38478-inside-condition-disclosure-chromium/explore-compact-native-scope-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "822fba125c9a1492ac4522e9b82fe38ae43070faaf7654f3e9b9d27b85c9d612",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-explore-compact--38478-inside-condition-disclosure-chromium/explore-compact-no-site-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "4b4a11cb0117f188fb6e9637f8f8d0082a17090978eb2000cd2f2fb00f676b1c",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-cancel-review-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "7f6a326026799cd0ac67d8bc010fb623200f2880515bed8e413f2ac2d681cb1e",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "05a752a13ae26c0a08330e2bc7baf1abaaedc5103cfdff4d768eaf882790c11d",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "4eae03deba2870bfaf699c33c07b14c2bafd5a5e1646c564186367e214db2ebd",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "43a8f65012fa4cb478d49b07661ea1c02ce75eaee1465639ec5243919f065e20",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-confirmed-my-bookings-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "4f6b6b31d10ec0e2bcd4a84e65560893c0ec4c797a1199889f630b80e5a9c363",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-list-inspector-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1512
+      },
+      "sha256": "18477021b61e6781f430ecd2a5c13ee0a9db8e090f62acfba1919a65454a5054",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-list-inspector-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1372
+      },
+      "sha256": "e54606b2f6acf065e2425b1e3e9ad0da5cfae35d4e154982f3fda8e476fc4f0d",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-map-inspector-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1512
+      },
+      "sha256": "10daa159c3ab84ee30c128c4913e86898905f08058ec99b0ca362cec5b4b96d8",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-map-inspector-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1372
+      },
+      "sha256": "09fe424e516c9d1ecf90fc508cd4bcf046bc6bc774dd412accbe59ec6193045c",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-mobile-inspector-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "3c72e534d57461b183ad64a24425c9b74704001b023230d654b61953705fd5c8",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-mobile-inspector-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "866f86e9329cb5c52c5dd8daf6d8d386b9f42867818a3fa8a92885b3701fe971",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-native-booking-dialog-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "496dc36ea42853c5271ab31bc1cd4c4be4bc9c9d82e4837a14cd89a31d13c067",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-member-loaded-jo-008ea-g-with-native-owner-actions-chromium/workplace-relocation-review-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "a125b9306ef2c928e517d29512bb9b95ea28c54fec79409c0514269113b9c9bb",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1637
+      },
+      "sha256": "4318ba929e8e7a6af2ea11acb6d9064ac42cc1d5198a3977224a3301b1e8a596",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "8afefc0230abf3f29c80694702e215cbe224b4ebb4749d4dbcf8b6b228e82ac0",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-320-root-font200-hc-rm-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1000
+      },
+      "sha256": "08452f6ae74e476b23b4c3fbe99376b706918b8ff4e0c7f3590fc146b36496b8",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_explore_compact_native_fixture",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-compact-source-final/workplace-resource-window--52da6-ter-visible-while-scrolling-chromium/native-window-inspector-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "f232207da9f8c491ea08a882752722d3cd7f3a397f9df2380f2774252ca3afa7",
+      "basis": "Authorized native API fixture frontend proof; not real-account/backend persistence or nativebrowserzoom proof.",
+      "checkpoint_note": "Historical exact capture/source epoch; not claimed final118 reviewCopy identity. Unchanged consumer hashes and original artifact semantics retained."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-empty-authorized-sites-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1528
+      },
+      "sha256": "fc6f87265555fb515651d32dd438aa5ece8494887006c73ca2976e648f67cf0a",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1571
+      },
+      "sha256": "5a81702ec48d892b92693b3a3fa519ba3748f250e312cb2149ad2942931f3fdf",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1528
+      },
+      "sha256": "fc6f87265555fb515651d32dd438aa5ece8494887006c73ca2976e648f67cf0a",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1658
+      },
+      "sha256": "f87b124ee6ff06475a48f0ac6119495f60f8dc389be8086dd88f158cc6b82c4b",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1572
+      },
+      "sha256": "3d070cbd6f35ea3519824eea397014edf57f9b9aabaaa67a54a5d5f384d4ddfc",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1678
+      },
+      "sha256": "41f54dd67db9e0b35770f2428cd8723b10f962c27db88da2f35799f44f2ff04b",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1620
+      },
+      "sha256": "d75ffeeb67d1c443a5792c8d4c3e1180085ce7b5b1b8f7a0dbdaf4286955f177",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1853
+      },
+      "sha256": "aae85337ca09075695a80db06e58b1744d3c1e8030545c7bc81008f1c631d64c",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1691
+      },
+      "sha256": "25cd62761868a9e730e2298bc2855fba715577237f3c02e761edde1491f4ddab",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-8031c-anual-authoritative-recheck-chromium/workplace-home-manual-authority-recovery-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1691
+      },
+      "sha256": "8ada6031f7c033f8751b5daf6e407659b12f8fa8cbd93e0887013aaf6d305921",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1690
+      },
+      "sha256": "8bf4b4a7b13801ab55806fbf16c6d85bed5c854987de1347bf87a14368a42ec7",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1877
+      },
+      "sha256": "596bf807d5aa8a1206e501561f41473cd4b4449b1bb48d416b2a142631d8aaff",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1721
+      },
+      "sha256": "6d9c2ef4e901652827e1ccce5f7d7ce1840486443a30fd505e0894a71cf4d106",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-actual-scope-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1640
+      },
+      "sha256": "a27a43a3dc89759d4a36f2a76f0d7d3f874d0e0419c6a2c9ef951213af2a947d",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1669
+      },
+      "sha256": "3a719e623e152fbe31c5746008c7ca3be671cd8b9bcbdf5c2b7954e2ba0c6717",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1590
+      },
+      "sha256": "ad70cd75fb2d56deb1db6d3ee045be1346b67db0e33f129b7a29f69ea887a01b",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1820
+      },
+      "sha256": "5ebfd98ac2a1666db9e38e9d87c8a31733ced7da677f183f13324e7ac56f1843",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1642
+      },
+      "sha256": "ba58b405035d7f99c0459f0eac9e5befb67d483b3c3d08eb7f166154f964dd73",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1703
+      },
+      "sha256": "25d22d79ab93f5eec7e2bb360eedeaf6bd7e831abb52d89b30a790eeede0dfed",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1627
+      },
+      "sha256": "a34f48f8e0d373b6abc2d831d72ebd801989d1493525fc0720393d52e2fde126",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1945
+      },
+      "sha256": "ea3af93e95a9a68c0e61ecacf15d060422cc2e65262e8b671c40664299bcdb9a",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    },
+    {
+      "group": "latest_home_final_native_uuid_explore_review_copy",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1801
+      },
+      "sha256": "bbdc657cb615dac7ba26b617449d956f74b28c9172cafa936079fe17a5199a08",
+      "basis": "Authorized native API fixture loaded frontend proof, not real-account/nativebrowserzoom/PostgreSQL persistence proof.",
+      "checkpoint_note": "Final current118 epoch; all5 automatic sourceBeforeAfter/cross-case/current maps identical."
+    }
+  ],
+  "updated_at_utc": "2026-09-14T10:07:56.940768+00:00",
+  "status": "Production frozen; final current118-source Home5PASS31.8s with automatic per-case sourceBeforeAfter/cross-case/current identity proof. Earlier Home/Explore/capture epochs historical. Root real-account/backend/nativebrowserzoom/global gates separate; no100% claim.",
+  "checkpoints": {
+    "home_handoff": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/home-production-handoff-checkpoint.json",
+    "matrix_before": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-matrix-before.json",
+    "matrix_after": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-matrix-after.json",
+    "final_home": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-final-home.json",
+    "floor_target_scope_final": {
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/target-scope-source-freeze.json",
+      "sha256": "e14ec3f5cac620708c6d2f8d68881c859928dfc58bd93b80c87bbc0df0747a92",
+      "identity_scope": "12 owned target-aware production consumers; no shared API/global identity claim",
+      "verification": {
+        "mounted": "12/12 PASS3.47s: canonical producer, resource wrong parent/duplicate, delegated A-B-A late response, floor commands, RBAC/source/UNKNOWN",
+        "playwright": "7/7 PASS18.5s + affected count-caption1/1 PASS3.3s",
+        "typecheck": "PASS fullTS exit0 before caption-only layout change",
+        "eslint": "PASS owned12production/newfixture/tests; caption recheck included subsequent lint"
+      }
+    },
+    "final_broader_source_freeze": {
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-final-broader.json",
+      "sha256": "eb80dfececa9c0caf56dc8fb72dcb7a5ef5cfde09fdfef178096c682403684fd",
+      "sourceCount": 118,
+      "verification": {
+        "mounted": "22/22 PASS3.47s:10native window facts,7catalog dialogs,5canonical scope picker",
+        "memberPlaywright": "5 existing owner journeys PASS; final new inspector/privacy/footer/native4031PASS12.5s including320rootfont200+forcedcolors/RM+keyboard Close focus+Axe0",
+        "targetPlaywright": "7/7 PASS18.5s; one count-caption case PASS3.3s after wrapping-only correction",
+        "eslint": "PASS current two production files and new test,0warnings",
+        "designSystem": "PASS3246grandfathered uses; no baseline growth",
+        "sourceSize": "PASS2341production; allnew files<=1000lines",
+        "typecheck": "Root full integration/build gate owner; this bounded lane did not rerun wholeTS. Prior4GB OOM is historical; Root reports nativeUUID helper29files230tests PASS15.66s and ownedESLint0.",
+        "latestExploreTargetPlaywright": "3/3 PASS28.0s after final xs results allocation fix: compact native scope/search/URL/query/NO_SITE/403/accessibility; real owner list/map/confirmed booking; anonymous window/actual policy/fixed footer. Six existing journey/inspector cases PASS47.9s before final results spacing-only correction; four unrelated booking cases not redundantly rerun. Exact earlier pre-final-reviewCopy epoch; both Explore production files remain identical to current.",
+        "latestHomePlaywright": "5/5PASS31.8s final current118 epoch, every case before/after changed[], all5 maps same/current; normal/partial/NO_SITE four widths plus dark/HC/RM as existing cases assert."
+      },
+      "additionalDSCurrentSources": {
+        "/Users/a10697/Work/DWP/dwp-frontend/libs/design-system/src/enterprise/resource/detail-inspector.tsx": "74bad973b4340c892fe0e16df6127c66bfae65b6c76727a0f86295ced60eab79"
+      },
+      "additionalDSNote": "Current DS footer hash; not included in the Home118-file before/after harness. Root owns this DS producer.",
+      "currentIdentityMatchesCheckpoint": true,
+      "subsequentRootSourceChanges": [],
+      "homeProofResult": "5/5PASS31.8s on final nativeUUID + compactExplore + governance-reviewCopy epoch; every case118-source before/after maps identical, all5 cases same snapshot, actual current118 hashes identical after run.",
+      "currentHomeQAIdentity": {
+        "proofs": [
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-8031c-anual-authoritative-recheck-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/home-source-before-after.json",
+            "sha256": "deaf2a5a2b22006242f79c706ab123e351bb038d7a625ad67e4bae3f98a24b48"
+          },
+          {
+            "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-native-uuid-and-explore-compact/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/home-source-before-after.json",
+            "sha256": "bed76754b8fa42eda48f39bfceb569530f9d754ef47cc866609627e1a3e5ad96"
+          }
+        ],
+        "sourceCount": 118,
+        "changedDuringEachCase": [],
+        "allCasesSameSnapshot": true,
+        "currentSourceMismatches": [],
+        "method": "Existing Home Playwright beforeEach/afterEach harness hashes actual118 production sources automatically around every case; all5 source maps cross-checked against current disk after run."
+      },
+      "sourcesChangedSinceHistoricalHomeEpoch": [
+        {
+          "path": "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-governance-model.ts",
+          "historicalSha256": "97fee47368223d2ea4cf36173af6b97e63350e6ead47c5c22e1d70d5a114729c",
+          "currentSha256": "e2edf38219bd767893faeaec9aa4291a75c6fe7188bf248081a8db61c064eee9"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-discovery-controls.tsx",
+          "historicalSha256": "b324ec9282d0d3be46225c8036386f651e4ff2cb4e26f145e2e97a2bd03f00df",
+          "currentSha256": "53b23412e052c1487b787c379d95c65c76aeb80838f817c71da19f383310dca5"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-explore.tsx",
+          "historicalSha256": "bc74ceb362dcc901144c68c65794bec7b416c436feb4e629ec3805683a28c3ef",
+          "currentSha256": "a8b8f0b0c5ae23af9ce956a4a78baf66cf92d81e5efa2ebf2b2d4861a69575d2"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-governance-change-review.tsx",
+          "historicalSha256": "b763a15c49649b9917851989e0598e6d74eaaa079ae5cc8c98fce829361f5a4b",
+          "currentSha256": "19853af31384010e5942b400f7d80e2fa3dea6698c8db51fcfb239555a781d9b"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/locales/en/rooms.json",
+          "historicalSha256": "bbf185d4180838d617a4253c11ed5a5015fe6a7ee709fcaa465caef7e8483ed2",
+          "currentSha256": "4becb4414af58244edc5991a123223c81b8ae83aa660cd45592c7b532aa35e97"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/locales/ko/rooms.json",
+          "historicalSha256": "3d78c442038c4269a77e1546a20427cdfdff50e2a83472cd642f05cc2347147d",
+          "currentSha256": "74f23d2e1e6d383b3d0e78a93d569c6d385b124831462bf6b06361036b50b31f"
+        }
+      ]
+    },
+    "historical_pre_final_header_broader_epoch": {
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-broader-before-final-header.json",
+      "sha256": "d99ea056cda0f5142f9f02a4ccff8defce2b3891c8bd3822cad728004f34e13f",
+      "basis": "Prior coherent Home118-source fixture epoch before five Root layout/frame/week adjustments."
+    },
+    "historical_home_before_native_uuid_and_explore_compact": {
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-home-before-native-uuid-and-explore-compact.json",
+      "sha256": "4648c7e0c4350387bbf188b4ba14fa8ff2c1d490172678df56642ecf2dfd936f",
+      "sourceCount": 118,
+      "homeProofResult": "5/5 PASS17.9s; all5 identical118-source SHA maps before/after, current118 hashes identical after run",
+      "currentIdentityMatchesCheckpoint": false,
+      "changedCurrentPaths": [
+        "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-admin-governance-model.ts",
+        "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-discovery-controls.tsx",
+        "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-explore.tsx"
+      ]
+    },
+    "historical_explore_before_final_review_copy": {
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-catalog-evidence-2026-09-14/source-freeze-explore-before-final-review-copy.json",
+      "sha256": "9c7579dc092586de5cc8644dfdb5e2f683c09ef0437ea18812f1b4e0ee10523d",
+      "sourceCount": 118,
+      "currentIdentityMatchesCheckpoint": false,
+      "changedCurrentPaths": [
+        "/Users/a10697/Work/DWP/dwp-frontend/apps/dwp/src/features/rooms/workplace-governance-change-review.tsx",
+        "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/locales/en/rooms.json",
+        "/Users/a10697/Work/DWP/dwp-frontend/libs/shared-i18n/src/locales/ko/rooms.json"
+      ]
+    }
+  },
+  "historical_captures": [
+    {
+      "journey": "home_and_registered_map",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-map-quality-final/rooms-registered-floor-pla-71ab7-keyboard-focus-synchronized-chromium/workplace-map-1440.png",
+      "width": 1440,
+      "height": 1226,
+      "capture_name": "workplace-map-1440.png"
+    },
+    {
+      "journey": "home_and_registered_map",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-map-quality-final/rooms-workplace-home-prior-2bdfb-h-accessible-visual-context-chromium/workplace-home-1440.png",
+      "width": 1440,
+      "height": 1507,
+      "capture_name": "workplace-home-1440.png"
+    },
+    {
+      "journey": "home_and_registered_map",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-map-quality-final/rooms-workplace-home-prior-2bdfb-h-accessible-visual-context-chromium/workplace-home-320.png",
+      "width": 320,
+      "height": 2680,
+      "capture_name": "workplace-home-320.png"
+    },
+    {
+      "journey": "home_and_registered_map",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-map-quality-final/rooms-workplace-home-prior-2bdfb-h-accessible-visual-context-chromium/workplace-home-390-text-200.png",
+      "width": 390,
+      "height": 5036,
+      "capture_name": "workplace-home-390-text-200.png"
+    },
+    {
+      "journey": "home_and_registered_map",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-map-quality-final/rooms-workplace-home-prior-2bdfb-h-accessible-visual-context-chromium/workplace-home-390.png",
+      "width": 390,
+      "height": 2480,
+      "capture_name": "workplace-home-390.png"
+    },
+    {
+      "journey": "home_and_registered_map",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-map-quality-final/rooms-workplace-home-prior-2bdfb-h-accessible-visual-context-chromium/workplace-home-768.png",
+      "width": 768,
+      "height": 2076,
+      "capture_name": "workplace-home-768.png"
+    },
+    {
+      "journey": "explore_mobile_and_desktop",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-quality-final/rooms-workplace-discovery--95605-ow-across-compact-viewports-chromium/workplace-list-1280.png",
+      "width": 1280,
+      "height": 930,
+      "capture_name": "workplace-list-1280.png"
+    },
+    {
+      "journey": "explore_mobile_and_desktop",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-explore-quality-final/rooms-workplace-discovery--95605-ow-across-compact-viewports-chromium/workplace-list-320.png",
+      "width": 320,
+      "height": 1529,
+      "capture_name": "workplace-list-320.png"
+    },
+    {
+      "journey": "team_plans_and_consent",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-quality-final/workplace-member-design-co-ad740-can-revoke-their-disclosure-chromium/workplace-team-1280.png",
+      "width": 1280,
+      "height": 1240,
+      "capture_name": "workplace-team-1280.png"
+    },
+    {
+      "journey": "team_plans_and_consent",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-quality-final/workplace-member-design-co-ad740-can-revoke-their-disclosure-chromium/workplace-team-1440.png",
+      "width": 1440,
+      "height": 1240,
+      "capture_name": "workplace-team-1440.png"
+    },
+    {
+      "journey": "team_plans_and_consent",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-quality-final/workplace-member-design-co-ad740-can-revoke-their-disclosure-chromium/workplace-team-320-text-200.png",
+      "width": 320,
+      "height": 4156,
+      "capture_name": "workplace-team-320-text-200.png"
+    },
+    {
+      "journey": "team_plans_and_consent",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-quality-final/workplace-member-design-co-ad740-can-revoke-their-disclosure-chromium/workplace-team-320.png",
+      "width": 320,
+      "height": 2539,
+      "capture_name": "workplace-team-320.png"
+    },
+    {
+      "journey": "team_plans_and_consent",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-team-quality-final/workplace-member-design-co-ad740-can-revoke-their-disclosure-chromium/workplace-team-390.png",
+      "width": 390,
+      "height": 3737,
+      "capture_name": "workplace-team-390.png"
+    },
+    {
+      "journey": "calendar_policy_and_operations",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-room-quality-final/workplace-room-design-comp-95f1a--the-approval-owner-version-chromium/room-operations-320-text-200.png",
+      "width": 320,
+      "height": 4728,
+      "capture_name": "room-operations-320-text-200.png"
+    },
+    {
+      "journey": "calendar_policy_and_operations",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-room-quality-final/workplace-room-design-comp-9e461-changed-values-are-reviewed-chromium/room-policy-1280.png",
+      "width": 1280,
+      "height": 1000,
+      "capture_name": "room-policy-1280.png"
+    },
+    {
+      "journey": "calendar_policy_and_operations",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-room-quality-final/workplace-room-design-comp-9e461-changed-values-are-reviewed-chromium/room-policy-1440.png",
+      "width": 1440,
+      "height": 1000,
+      "capture_name": "room-policy-1440.png"
+    },
+    {
+      "journey": "calendar_policy_and_operations",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-room-quality-final/workplace-room-design-comp-9e461-changed-values-are-reviewed-chromium/room-policy-320.png",
+      "width": 320,
+      "height": 1187,
+      "capture_name": "room-policy-320.png"
+    },
+    {
+      "journey": "calendar_policy_and_operations",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-member-room-quality-final/workplace-room-design-comp-9e461-changed-values-are-reviewed-chromium/room-policy-390.png",
+      "width": 390,
+      "height": 1280,
+      "capture_name": "room-policy-390.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-1280.png",
+      "width": 1280,
+      "height": 1794,
+      "capture_name": "locations-1280.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-1440.png",
+      "width": 1440,
+      "height": 1773,
+      "capture_name": "locations-1440.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-320-text-200.png",
+      "width": 320,
+      "height": 7232,
+      "capture_name": "locations-320-text-200.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-320.png",
+      "width": 320,
+      "height": 3139,
+      "capture_name": "locations-320.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--21da2-s-denied-retained-resources-chromium/locations-390.png",
+      "width": 390,
+      "height": 7483,
+      "capture_name": "locations-390.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--d9ab9-contrast-and-reduced-motion-chromium/locations-ko-dark-forcedcolors-320-text-200.png",
+      "width": 320,
+      "height": 5317,
+      "capture_name": "locations-ko-dark-forcedcolors-320-text-200.png"
+    },
+    {
+      "journey": "admin_location_catalog",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-location-quality-final/workplace-location-design--d9ab9-contrast-and-reduced-motion-chromium/locations-ko-dark-highcontrast-1280.png",
+      "width": 1280,
+      "height": 1833,
+      "capture_name": "locations-ko-dark-highcontrast-1280.png"
+    },
+    {
+      "journey": "confirmed_native_booking_owner",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-booking-confirmed-owner-final/rooms-booking-retries-pres-6c7b3-ey-for-the-same-user-intent-chromium/native-booking-owner-detail-1280.png",
+      "width": 1280,
+      "height": 784,
+      "capture_name": "native-booking-owner-detail-1280.png"
+    },
+    {
+      "journey": "closure_impact_pagination",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-facility-impact-pagination-final/workplace-facility-impact--d5856-terval-and-resource-changes-chromium/closure-impact-pagination-room-1280.png",
+      "width": 1280,
+      "height": 1918,
+      "capture_name": "closure-impact-pagination-room-1280.png"
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-empty-authorized-sites-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1510
+      },
+      "sha256": "06ced85f27a05d87178e1337e5836f67955a8706ba72d02461bb0d1185562b04",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1571
+      },
+      "sha256": "a2249924b75e9e2a3c2b321e66123c05e3364339375b7b93b185b07654761aa8",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1510
+      },
+      "sha256": "06ced85f27a05d87178e1337e5836f67955a8706ba72d02461bb0d1185562b04",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2256
+      },
+      "sha256": "e826aa339f290c00b97aceb273d32fb15981f42e5d0d21db4a5647cc8bd1bd01",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2094
+      },
+      "sha256": "ad27a0790ae56eed5a93842cda64c06d645b73f958b57ba45c8ad29761c3ed25",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1678
+      },
+      "sha256": "90a57dff9945cfa048fe4b673c5a533cc738c7c63d011d630bf68b7919585274",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1602
+      },
+      "sha256": "9fb3d8dcfa42ddcea0da4a1dff9639fa115d4a764494702cb23d016f5e19976d",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2779
+      },
+      "sha256": "9281f05e3977f1a966c2914b01dea22c048cd769715814e0e6a270ed81d4c2cd",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2458
+      },
+      "sha256": "303cefae3faee6fa0f9c69a445dc04ae4d540a56c65179d019667c0810832b72",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-8031c-anual-authoritative-recheck-chromium/workplace-home-manual-authority-recovery-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2458
+      },
+      "sha256": "8c6dc343dde19729f42f7f2c3adfdd2c94f3aa700ca63a1bc18aa7332018f324",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1690
+      },
+      "sha256": "d908d91f1c0eafa713d7b85d66391a35ea9e8f3a69ec846a08088b46930ddb58",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2809
+      },
+      "sha256": "744fba7053180c12d72330481ab5b13d93229fea834e03f364fff6dcb2e6230f",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2494
+      },
+      "sha256": "609c5a05caf31b34bec3c30801cab76c6cc9b61b7023f3f0a35e266a10223457",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-actual-scope-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1622
+      },
+      "sha256": "12573b758ecdfbf3200cc35c6acf61b52f37b7a09ce49d765b38643d66b4b558",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1669
+      },
+      "sha256": "8ea1eb6b92b7d98a128f6f0d065ba87a3d29ac48ae60cca72b38faa8ec317b8b",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1572
+      },
+      "sha256": "5d50ac39cfd0c9ecf6aa374ec627d8a5c2874f98eb646cf4312d60aa262df82e",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2546
+      },
+      "sha256": "aba44ae320c3116b11c5dcf6792dafc7a6751eb387d2225228faea5333635de7",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2242
+      },
+      "sha256": "27a97694b4e6bbe30fee67fce5e05ee899f9c38a58164fe2bd0830a5f1ab6e11",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1703
+      },
+      "sha256": "dfe073a64731fbd0199faa6917d65ad4b71c53f4c90478b1521e71ecbce6daa6",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1609
+      },
+      "sha256": "ad4d157d85cda9925f46a2dc6b4c719bd1b3a600557cc462ff01ce99176c093d",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 2629
+      },
+      "sha256": "dfe2d8ec4224905fd7eee85f838240928b970eecf8ffbea37de97150ae047dfc",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_exact_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-final-visual-sha/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 2381
+      },
+      "sha256": "a4a78dc7ca23e7d3f06d264b732231d7ebc2b0e790b118f6c2404acf990d576c",
+      "basis": "Authorized native API fixture frontend proof; not actual account/backend persistence proof.",
+      "checkpoint_note": "Exact112-source five-case Home freeze."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-8031c-anual-authoritative-recheck-chromium/workplace-home-manual-authority-recovery-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1735
+      },
+      "sha256": "722ce517a65fa5ef72dd3675d6baa175fbd74111a573b0b4f01c2640be661d95",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1897
+      },
+      "sha256": "9d32927e169c7296a9c8cb4b1c40aeb38fd6009fb8effe6ef922336fe38b3fec",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1620
+      },
+      "sha256": "af1a38d979fa27b0818ceb7ef1a8707e9494b5f9d68561f9c434354984806c8f",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1678
+      },
+      "sha256": "19820c84ecb5a84b3c2630d2d239fcfe38319c1d8dd1ebaa60b2c3e113143dbb",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-57334-authorizing-expired-actions-chromium/workplace-home-normal-native-check-in-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1735
+      },
+      "sha256": "3183748fa578925f9bd41977da180ca540ee4ddd5e0ecd3b3d0e0406ac51ea1e",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1702
+      },
+      "sha256": "aa5117127fdb8354f2a6c2d667e954428bf89e90fff76c55e2dde0ebb5390b6d",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1616
+      },
+      "sha256": "e4213488c180d166ee4de0bc5b1e06deb478bcb3abed81d0bb498ea5a33742f0",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-empty-authorized-sites-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1528
+      },
+      "sha256": "ad548411070b2a5127a6ad5652016867448c6e4b1444291e94ebce7fb9395d8b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1528
+      },
+      "sha256": "ad548411070b2a5127a6ad5652016867448c6e4b1444291e94ebce7fb9395d8b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-028e5--to-a-capable-administrator-chromium/workplace-home-no-site-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1571
+      },
+      "sha256": "e7d3251144521613577508687d4d6f1b8970d937cd9955afb8450fb221e4f8bb",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1690
+      },
+      "sha256": "cf20bf9944916f58f601ab3633d6849c05d08a0c103e15476fa0a188ec62988c",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1765
+      },
+      "sha256": "847fd37efbb63407052304fb907dbc60a2cabb21b13f41dea1bd72c722974bb0",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-a4992-ontrast-with-reduced-motion-chromium/workplace-home-dark-hc-reduced-motion-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1921
+      },
+      "sha256": "63b168d8b2a397c658acb53e936abdeb441efb45662cfa87d6a9c93f24557c95",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-actual-scope-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1640
+      },
+      "sha256": "292cd20cc20971953f5d9453a25610c97c4124404978e28779d556308c353fde",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1864
+      },
+      "sha256": "7564be2832c4f3ba133e981fa4105641a94c39f4f192d37e828391190cdfe87d",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-320-loaded.png",
+      "dimensions": {
+        "width": 320,
+        "height": 1989
+      },
+      "sha256": "c1f920b1efeac9aa61210a06dd29608ec0ef9b492bcaee3662ccda99b8dba501",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1627
+      },
+      "sha256": "ba7fdb6aa563ccb7bb36a4163fada56fb92513313fd40de17805bf493a4f2329",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1703
+      },
+      "sha256": "cfdf8c1a52a1d53fa487a30dd297b116b4712228cccdd4e0e8616102588dc89f",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1280-loaded.png",
+      "dimensions": {
+        "width": 1280,
+        "height": 1669
+      },
+      "sha256": "a2b7a6fe762a51cf883f8e78270984c454023139d2c8413c62faeb3bd28a8c7a",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-1440-loaded.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1590
+      },
+      "sha256": "5abaec5c1b73ef46b291d4a5d840de748e6d0291a351020e89ea06f5c7d33c6b",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-partial-calendar-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1845
+      },
+      "sha256": "cda5e6d9935182daac337784a103afd90bd72ead75e3e542580b3f68381805c7",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    },
+    {
+      "group": "home_final_broader_freeze",
+      "path": "/Users/a10697/Work/DWP/dwp-frontend/output/workplace-home-broader-final-freeze/workplace-home-loaded-flow-c3dab-actual-floor-and-time-scope-chromium/workplace-home-original-density-390-loaded.png",
+      "dimensions": {
+        "width": 390,
+        "height": 1686
+      },
+      "sha256": "91c35972a534378f1a3c5b650a72c422397e465696a4437138267a4bcf2004d1",
+      "basis": "Authorized native API fixture loaded UI proof, not actual account/backend persistence.",
+      "checkpoint_note": "Final unchanged118-source Home epoch; native owner journey and DS fixed footer source hashes recorded in checkpoint."
+    }
+  ],
+  "remaining_design_differences": [
+    "Explore compact source scope and search disclosure restored; native catalog amenity/neighborhood/accessibility selectors and initial-check result labels describe actual contracts rather than unsupported noise/sensor values.",
+    "Selected-window anonymous timeline represents actual queried range only; no invented full-day reservations, presence, sensors or equipment details.",
+    "07 uses actual disclosed work plans and canonical same-floor CTA; original synthetic organizations/roles, hardware presence and cache-purge promises are not asserted."
+  ]
+}

@@ -1,4 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  workplaceDelegatedPermissionPermits,
+  workplaceDelegatedTargetAllowed,
+} from './workplace-delegated-target-permission';
+import { isWorkplaceGovernanceUuid } from './workplace-admin-governance-model';
 import {
   getWorkplaceGovernanceEffectiveDelegatedScopes,
   hasFullTenantAdminRole,
@@ -56,11 +62,32 @@ export function resolveWorkplaceGovernanceCapabilities({
   const globallyManaged = globalAdministrator && canManageWorkplaceAdmin;
   const has = (permission: WorkplaceGovernanceDelegatedPermission) =>
     delegatedPermissions.has(permission);
-  const canViewCatalog = globallyVisible || has('CATALOG_VIEW') || has('CATALOG_MANAGE');
+  const canViewCatalog =
+    globallyVisible ||
+    effectiveScopes.some((scope) =>
+      workplaceDelegatedPermissionPermits(scope.permissions, 'CATALOG_VIEW')
+    );
+  const allowsTarget = (
+    permission: WorkplaceGovernanceDelegatedPermission,
+    siteId: string,
+    floorId: string | null = null
+  ) => {
+    if (
+      !isWorkplaceGovernanceUuid(siteId) ||
+      (floorId !== null && !isWorkplaceGovernanceUuid(floorId))
+    )
+      return false;
+    // Target scope only; consumers retain the existing action capability checks.
+    return (
+      globallyVisible ||
+      workplaceDelegatedTargetAllowed(effectiveScopes, permission, siteId, floorId)
+    );
+  };
 
   return {
     globalAdministrator: globallyVisible,
     effectiveScopes,
+    allowsTarget,
     canViewAny:
       canViewCatalog ||
       has('ACCESS_MANAGE') ||
@@ -89,6 +116,7 @@ export function resolveWorkplaceGovernanceCapabilities({
       canManage: globallyManaged,
       canViewAssignments: globallyVisible,
     },
+    experience: { canView: globallyVisible, canManage: globallyManaged },
   };
 }
 
@@ -97,17 +125,52 @@ export function useWorkplaceGovernanceCapabilities() {
   const auth = useAuth();
   const globalAdministrator = hasFullTenantAdminRole(auth.user?.roles ?? []);
   const delegatedScopesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'delegated-scopes', 'effective'],
+    queryKey: [
+      'workplace',
+      'governance',
+      auth.user?.tenantId,
+      auth.user?.userId,
+      'delegated-scopes',
+      'effective',
+    ],
     queryFn: getWorkplaceGovernanceEffectiveDelegatedScopes,
     enabled: rooms.isLoaded && rooms.canViewWorkplaceAdmin && !globalAdministrator,
     staleTime: 10_000,
+    refetchInterval: 10_000,
     retry: 1,
   });
+  const [expiryRevision, updateExpiry] = useState(0);
+  const rawScopes = useMemo(
+    () => (Array.isArray(delegatedScopesQuery.data) ? delegatedScopesQuery.data : []),
+    [delegatedScopesQuery.data]
+  );
+  useEffect(() => {
+    const deadlines = rawScopes
+      .flatMap((scope) =>
+        typeof scope.validUntil === 'string' ? [Date.parse(scope.validUntil)] : []
+      )
+      .filter((deadline) => Number.isFinite(deadline) && deadline > Date.now());
+    if (!deadlines.length) return undefined;
+    const timer = window.setTimeout(
+      () => updateExpiry((value) => value + 1),
+      Math.min(2_147_483_647, Math.max(1, Math.min(...deadlines) - Date.now()))
+    );
+    return () => window.clearTimeout(timer);
+  }, [rawScopes, delegatedScopesQuery.dataUpdatedAt, expiryRevision]);
+  const effectiveScopes = delegatedScopesQuery.isError
+    ? []
+    : rawScopes.filter(
+        (scope) =>
+          scope.validUntil === null ||
+          (typeof scope.validUntil === 'string' &&
+            Number.isFinite(Date.parse(scope.validUntil)) &&
+            Date.parse(scope.validUntil) > Date.now())
+      );
   const capabilities = resolveWorkplaceGovernanceCapabilities({
     globalAdministrator,
     canViewWorkplaceAdmin: rooms.canViewWorkplaceAdmin,
     canManageWorkplaceAdmin: rooms.canManageWorkplaceAdmin,
-    effectiveScopes: delegatedScopesQuery.data ?? [],
+    effectiveScopes,
   });
 
   return {

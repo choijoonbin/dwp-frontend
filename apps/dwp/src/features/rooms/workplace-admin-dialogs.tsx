@@ -10,12 +10,14 @@ import {
 } from '@dwp-frontend/shared-utils';
 import { AutocompleteField, FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 
+import { useWorkplaceCatalogCommandScope } from './workplace-catalog-command-scope';
+import { workplaceHomeSourceData, workplaceHomeSourceState } from './workplace-home-source-state';
 import type {
   PersonSummary,
   WorkplaceBookingMode,
@@ -43,15 +45,26 @@ export function WorkplaceSiteDialog({
   open,
   site,
   onClose,
+  commandSourceReady = true,
 }: {
   open: boolean;
+  commandSourceReady?: boolean;
   site: WorkplaceSite | null;
   onClose: () => void;
 }) {
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState<WorkplaceSiteInput>({
+  const commandScope = useWorkplaceCatalogCommandScope(
+    `site:${site?.siteId ?? 'new'}:${site?.version ?? 0}:${open}`,
+    open &&
+      commandSourceReady &&
+      (!site || (site.totalFloorCount !== null && site.countsScope !== 'FLOORS')),
+    !site,
+    { siteId: site?.siteId ?? null }
+  );
+  type SiteForm = Omit<WorkplaceSiteInput, 'totalFloorCount'> & { totalFloorCount: number | null };
+  const [form, setForm] = useState<SiteForm>({
     code: '',
     nameKo: '',
     nameEn: '',
@@ -89,20 +102,39 @@ export function WorkplaceSiteDialog({
             version: 0,
           }
     );
-  }, [open, site]);
-  const patch = <K extends keyof WorkplaceSiteInput>(key: K, value: WorkplaceSiteInput[K]) =>
+  }, [open, site, commandScope.scopeKey]);
+  const patch = <K extends keyof SiteForm>(key: K, value: SiteForm[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const mutation = useMutation({
-    mutationFn: () =>
-      saveWorkplaceSite(site?.siteId ?? null, { ...form, version: site ? form.version : null }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+    mutationFn: (requestedScope: string) => {
+      if (
+        form.totalFloorCount === null ||
+        !Number.isSafeInteger(form.totalFloorCount) ||
+        form.totalFloorCount < 1 ||
+        site?.countsScope === 'FLOORS'
+      )
+        throw new Error('workplace-catalog-command-unverified');
+      commandScope.begin(requestedScope);
+      return saveWorkplaceSite(site?.siteId ?? null, {
+        ...form,
+        totalFloorCount: form.totalFloorCount,
+        version: site ? form.version : null,
+      });
+    },
+    onSuccess: async (_, requestedScope) => {
+      if (!commandScope.current(requestedScope)) return;
       toast.success(
         t(site ? 'workplace.admin.locations.siteUpdated' : 'workplace.admin.locations.siteCreated')
       );
       onClose();
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
     },
-    onError: (error) => toast.error(errorMessage(error, t('workplace.admin.locations.saveError'))),
+    onError: (error, requestedScope) => {
+      if (!commandScope.current(requestedScope)) return;
+      commandScope.reject(requestedScope, error);
+      toast.error(errorMessage(error, t('workplace.admin.locations.saveError')));
+    },
+    onSettled: (_, __, requestedScope) => commandScope.finish(requestedScope),
   });
   const timeZones = SUPPORTED_TIME_ZONES.includes(form.timeZone)
     ? SUPPORTED_TIME_ZONES
@@ -111,91 +143,123 @@ export function WorkplaceSiteDialog({
     /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code) &&
     form.nameKo.trim() &&
     form.nameEn.trim() &&
+    form.totalFloorCount !== null &&
+    Number.isSafeInteger(form.totalFloorCount) &&
+    form.totalFloorCount >= 1 &&
     SUPPORTED_TIME_ZONES.includes(form.timeZone);
   return (
     <FormDialog
       open={open}
+      mobileFullScreen
       title={t(site ? 'workplace.admin.locations.editSite' : 'workplace.admin.locations.addSite')}
       description={t('workplace.admin.locations.siteDescription')}
       cancelLabel={t('actions.cancel')}
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!valid}
+      submitDisabled={!valid || !commandScope.allowed}
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={() => mutation.mutate(commandScope.scopeKey)}
       maxWidth="md"
     >
-      <Stack spacing={2}>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '0.8fr 1fr' }, gap: 1.5 }}
-        >
+      {commandScope.failed ? (
+        <InlineFeedback severity="warning">
+          {t(
+            commandScope.unknown
+              ? 'workplace.experience.changeUnknown'
+              : 'workplace.admin.locations.saveError'
+          )}
+        </InlineFeedback>
+      ) : null}
+      <Box
+        component="fieldset"
+        disabled={!commandScope.allowed || mutation.isPending}
+        sx={{ m: 0, p: 0, border: 0, minWidth: 0 }}
+      >
+        <Stack spacing={2}>
+          <Box
+            sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '0.8fr 1fr' }, gap: 1.5 }}
+          >
+            <FormField
+              required
+              label={t('workplace.admin.locations.code')}
+              value={form.code}
+              onChange={(event) => patch('code', event.target.value.toUpperCase())}
+            />
+            <SelectField
+              required
+              label={t('workplace.admin.locations.siteType')}
+              value={form.type}
+              options={(
+                ['HEADQUARTERS', 'SHARED_OFFICE', 'SATELLITE', 'CLIENT_SITE'] as WorkplaceSiteType[]
+              ).map((value) => ({ value, label: t(`workplace.siteTypes.${value}`) }))}
+              onValueChange={(value) => patch('type', value as WorkplaceSiteType)}
+            />
+          </Box>
+          <Box
+            sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}
+          >
+            <FormField
+              required
+              label={t('workplace.admin.locations.nameKo')}
+              value={form.nameKo}
+              onChange={(event) => patch('nameKo', event.target.value)}
+            />
+            <FormField
+              required
+              label={t('workplace.admin.locations.nameEn')}
+              value={form.nameEn}
+              onChange={(event) => patch('nameEn', event.target.value)}
+            />
+          </Box>
           <FormField
-            required
-            label={t('workplace.admin.locations.code')}
-            value={form.code}
-            onChange={(event) => patch('code', event.target.value.toUpperCase())}
+            label={t('workplace.admin.locations.address')}
+            value={form.address ?? ''}
+            onChange={(event) => patch('address', event.target.value)}
           />
-          <SelectField
-            required
-            label={t('workplace.admin.locations.siteType')}
-            value={form.type}
-            options={(
-              ['HEADQUARTERS', 'SHARED_OFFICE', 'SATELLITE', 'CLIENT_SITE'] as WorkplaceSiteType[]
-            ).map((value) => ({ value, label: t(`workplace.siteTypes.${value}`) }))}
-            onValueChange={(value) => patch('type', value as WorkplaceSiteType)}
-          />
-        </Box>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-          <FormField
-            required
-            label={t('workplace.admin.locations.nameKo')}
-            value={form.nameKo}
-            onChange={(event) => patch('nameKo', event.target.value)}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.locations.nameEn')}
-            value={form.nameEn}
-            onChange={(event) => patch('nameEn', event.target.value)}
-          />
-        </Box>
-        <FormField
-          label={t('workplace.admin.locations.address')}
-          value={form.address ?? ''}
-          onChange={(event) => patch('address', event.target.value)}
-        />
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 1.5 }}
-        >
-          <AutocompleteField<string>
-            autoHighlight
-            label={t('workplace.admin.locations.timeZone')}
-            options={timeZones}
-            value={form.timeZone}
-            onChange={(_, value) => {
-              if (value) patch('timeZone', value);
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+              gap: 1.5,
             }}
-            supportingText={t('workplace.admin.locations.timeZoneHint')}
-          />
-          <FormField
-            type="number"
-            label={t('workplace.admin.locations.floorCount')}
-            value={form.totalFloorCount}
-            onChange={(event) => patch('totalFloorCount', Number(event.target.value))}
-            inputProps={{ min: 1, max: 300 }}
-          />
-          <SelectField
-            label={t('workplace.admin.locations.state')}
-            value={form.state}
-            options={(['ACTIVE', 'MAINTENANCE', 'CLOSED'] as WorkplaceSiteState[]).map((value) => ({
-              value,
-              label: t(`workplace.siteStates.${value}`),
-            }))}
-            onValueChange={(value) => patch('state', value as WorkplaceSiteState)}
-          />
-        </Box>
-      </Stack>
+          >
+            <AutocompleteField<string>
+              autoHighlight
+              label={t('workplace.admin.locations.timeZone')}
+              options={timeZones}
+              value={form.timeZone}
+              onChange={(_, value) => {
+                if (value) patch('timeZone', value);
+              }}
+              supportingText={t('workplace.admin.locations.timeZoneHint')}
+            />
+            <FormField
+              type="number"
+              label={t('workplace.admin.locations.floorCount')}
+              value={form.totalFloorCount ?? ''}
+              onChange={(event) =>
+                patch(
+                  'totalFloorCount',
+                  event.target.value === '' ? null : Number(event.target.value)
+                )
+              }
+              inputProps={{ min: 1, max: 300 }}
+            />
+            <SelectField
+              label={t('workplace.admin.locations.state')}
+              value={form.state}
+              options={(['ACTIVE', 'MAINTENANCE', 'CLOSED'] as WorkplaceSiteState[]).map(
+                (value) => ({
+                  value,
+                  label: t(`workplace.siteStates.${value}`),
+                })
+              )}
+              onValueChange={(value) => patch('state', value as WorkplaceSiteState)}
+            />
+          </Box>
+        </Stack>
+      </Box>
     </FormDialog>
   );
 }
@@ -205,8 +269,10 @@ export function WorkplaceFloorDialog({
   siteId,
   floor,
   onClose,
+  commandSourceReady = true,
 }: {
   open: boolean;
+  commandSourceReady?: boolean;
   siteId: string;
   floor: WorkplaceFloor | null;
   onClose: () => void;
@@ -214,6 +280,12 @@ export function WorkplaceFloorDialog({
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const commandScope = useWorkplaceCatalogCommandScope(
+    `floor:${siteId}:${floor?.floorId ?? 'new'}:${floor?.version ?? 0}:${open}`,
+    open && commandSourceReady,
+    !floor,
+    { siteId, floorId: floor?.floorId ?? null }
+  );
   const [form, setForm] = useState<WorkplaceFloorInput>({
     floorNumber: 1,
     nameKo: '1층',
@@ -246,17 +318,19 @@ export function WorkplaceFloorDialog({
             version: 0,
           }
     );
-  }, [floor, open]);
+  }, [floor, open, commandScope.scopeKey]);
   const patch = <K extends keyof WorkplaceFloorInput>(key: K, value: WorkplaceFloorInput[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const mutation = useMutation({
-    mutationFn: () =>
-      saveWorkplaceFloor(siteId, floor?.floorId ?? null, {
+    mutationFn: (requestedScope: string) => {
+      commandScope.begin(requestedScope);
+      return saveWorkplaceFloor(siteId, floor?.floorId ?? null, {
         ...form,
         version: floor ? form.version : null,
-      }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      });
+    },
+    onSuccess: async (_, requestedScope) => {
+      if (!commandScope.current(requestedScope)) return;
       toast.success(
         t(
           floor
@@ -265,12 +339,19 @@ export function WorkplaceFloorDialog({
         )
       );
       onClose();
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
     },
-    onError: (error) => toast.error(errorMessage(error, t('workplace.admin.locations.saveError'))),
+    onError: (error, requestedScope) => {
+      if (!commandScope.current(requestedScope)) return;
+      commandScope.reject(requestedScope, error);
+      toast.error(errorMessage(error, t('workplace.admin.locations.saveError')));
+    },
+    onSettled: (_, __, requestedScope) => commandScope.finish(requestedScope),
   });
   return (
     <FormDialog
       open={open}
+      mobileFullScreen
       title={t(
         floor ? 'workplace.admin.locations.editFloor' : 'workplace.admin.locations.addFloor'
       )}
@@ -279,80 +360,105 @@ export function WorkplaceFloorDialog({
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!form.nameKo.trim() || !form.nameEn.trim()}
+      submitDisabled={!form.nameKo.trim() || !form.nameEn.trim() || !commandScope.allowed}
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={() => mutation.mutate(commandScope.scopeKey)}
       maxWidth="md"
     >
-      <Stack spacing={2}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '0.65fr 1fr 1fr' },
-            gap: 1.5,
-          }}
-        >
-          <FormField
-            type="number"
-            label={t('workplace.admin.locations.floorNumber')}
-            value={form.floorNumber}
-            onChange={(event) => patch('floorNumber', Number(event.target.value))}
-            inputProps={{ min: -20, max: 300 }}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.locations.nameKo')}
-            value={form.nameKo}
-            onChange={(event) => patch('nameKo', event.target.value)}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.locations.nameEn')}
-            value={form.nameEn}
-            onChange={(event) => patch('nameEn', event.target.value)}
-          />
-        </Box>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 1.5 }}
-        >
-          <FormField
-            type="number"
-            label={t('workplace.admin.locations.planWidth')}
-            value={form.planWidth}
-            onChange={(event) => patch('planWidth', Number(event.target.value))}
-            inputProps={{ min: 400, max: 5000 }}
-          />
-          <FormField
-            type="number"
-            label={t('workplace.admin.locations.planHeight')}
-            value={form.planHeight}
-            onChange={(event) => patch('planHeight', Number(event.target.value))}
-            inputProps={{ min: 300, max: 5000 }}
-          />
-          <SelectField
-            label={t('workplace.admin.locations.state')}
-            value={form.state}
-            options={(['DRAFT', 'ACTIVE', 'CLOSED'] as const).map((value) => ({
-              value,
-              label: t(`workplace.floorStates.${value}`),
-            }))}
-            onValueChange={(value) => patch('state', value as WorkplaceFloorInput['state'])}
-          />
-        </Box>
-        <Alert severity="info">{t('workplace.admin.locations.releaseManagedUpload')}</Alert>
-      </Stack>
+      {commandScope.failed ? (
+        <InlineFeedback severity="warning">
+          {t(
+            commandScope.unknown
+              ? 'workplace.experience.changeUnknown'
+              : 'workplace.admin.locations.saveError'
+          )}
+        </InlineFeedback>
+      ) : null}
+      <Box
+        component="fieldset"
+        disabled={!commandScope.allowed || mutation.isPending}
+        sx={{ m: 0, p: 0, border: 0, minWidth: 0 }}
+      >
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '0.65fr 1fr 1fr' },
+              gap: 1.5,
+            }}
+          >
+            <FormField
+              type="number"
+              label={t('workplace.admin.locations.floorNumber')}
+              value={form.floorNumber}
+              onChange={(event) => patch('floorNumber', Number(event.target.value))}
+              inputProps={{ min: -20, max: 300 }}
+            />
+            <FormField
+              required
+              label={t('workplace.admin.locations.nameKo')}
+              value={form.nameKo}
+              onChange={(event) => patch('nameKo', event.target.value)}
+            />
+            <FormField
+              required
+              label={t('workplace.admin.locations.nameEn')}
+              value={form.nameEn}
+              onChange={(event) => patch('nameEn', event.target.value)}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+              gap: 1.5,
+            }}
+          >
+            <FormField
+              type="number"
+              label={t('workplace.admin.locations.planWidth')}
+              value={form.planWidth}
+              onChange={(event) => patch('planWidth', Number(event.target.value))}
+              inputProps={{ min: 400, max: 5000 }}
+            />
+            <FormField
+              type="number"
+              label={t('workplace.admin.locations.planHeight')}
+              value={form.planHeight}
+              onChange={(event) => patch('planHeight', Number(event.target.value))}
+              inputProps={{ min: 300, max: 5000 }}
+            />
+            <SelectField
+              label={t('workplace.admin.locations.state')}
+              value={form.state}
+              options={(['DRAFT', 'ACTIVE', 'CLOSED'] as const).map((value) => ({
+                value,
+                label: t(`workplace.floorStates.${value}`),
+              }))}
+              onValueChange={(value) => patch('state', value as WorkplaceFloorInput['state'])}
+            />
+          </Box>
+          <InlineFeedback severity="info">
+            {t('workplace.admin.locations.releaseManagedUpload')}
+          </InlineFeedback>
+        </Stack>
+      </Box>
     </FormDialog>
   );
 }
 
 export function WorkplaceResourceDialog({
   open,
+  siteId,
   floorId,
   resource,
   defaultPosition,
   onClose,
+  commandSourceReady = true,
 }: {
   open: boolean;
+  commandSourceReady?: boolean;
+  siteId?: string;
   floorId: string;
   resource: WorkplaceResource | null;
   defaultPosition: { x: number; y: number };
@@ -361,6 +467,15 @@ export function WorkplaceResourceDialog({
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const canonicalSiteId = siteId ?? resource?.siteId ?? null;
+  const commandScope = useWorkplaceCatalogCommandScope(
+    `resource:${floorId}:${resource?.resourceId ?? 'new'}:${resource?.version ?? 0}:${open}`,
+    open &&
+      commandSourceReady &&
+      (!resource || (resource.siteId === canonicalSiteId && resource.floorId === floorId)),
+    !resource,
+    { siteId: canonicalSiteId, floorId }
+  );
   const [form, setForm] = useState<WorkplaceResourceInput>({
     code: '',
     nameKo: '',
@@ -436,30 +551,36 @@ export function WorkplaceResourceDialog({
     setForm(next);
     setFeatures(next.features.join(', '));
     setPersonQuery('');
-  }, [defaultPosition.x, defaultPosition.y, open, resource]);
+  }, [defaultPosition.x, defaultPosition.y, open, resource, commandScope.scopeKey]);
   const patch = <K extends keyof WorkplaceResourceInput>(
     key: K,
     value: WorkplaceResourceInput[K]
   ) => setForm((current) => ({ ...current, [key]: value }));
   const peopleQuery = useQuery({
-    queryKey: ['workplace', 'directory-assignees', deferredPersonQuery],
+    queryKey: ['workplace', 'directory-assignees', commandScope.scopeKey, deferredPersonQuery],
     queryFn: () =>
       listPeople({
         query: deferredPersonQuery || undefined,
         size: 50,
         surface: 'directory',
       }),
-    enabled: open && form.mode === 'ASSIGNED',
+    enabled: open && commandScope.allowed && form.mode === 'ASSIGNED',
     staleTime: 5 * 60_000,
   });
-  const people = useMemo(() => peopleQuery.data?.items ?? [], [peopleQuery.data?.items]);
+  const peopleState = workplaceHomeSourceState({
+    ...peopleQuery,
+    required: open && commandScope.allowed && form.mode === 'ASSIGNED',
+  });
+  const peopleData = workplaceHomeSourceData(peopleState, peopleQuery.data);
+  const people = useMemo(() => peopleData?.items ?? [], [peopleData?.items]);
   const assignedPerson = useMemo(
     () => people.find((person) => person.personId === form.assignedPersonPublicId) ?? null,
     [form.assignedPersonPublicId, people]
   );
   const mutation = useMutation({
-    mutationFn: () =>
-      saveWorkplaceResource(floorId, resource?.resourceId ?? null, {
+    mutationFn: (requestedScope: string) => {
+      commandScope.begin(requestedScope);
+      return saveWorkplaceResource(floorId, resource?.resourceId ?? null, {
         ...form,
         features: features
           .split(',')
@@ -469,9 +590,10 @@ export function WorkplaceResourceDialog({
         assignedPersonPublicId: form.mode === 'ASSIGNED' ? form.assignedPersonPublicId : null,
         assignedDisplayName: form.mode === 'ASSIGNED' ? form.assignedDisplayName : null,
         version: resource ? form.version : null,
-      }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      });
+    },
+    onSuccess: async (_, requestedScope) => {
+      if (!commandScope.current(requestedScope)) return;
       toast.success(
         t(
           resource
@@ -480,8 +602,14 @@ export function WorkplaceResourceDialog({
         )
       );
       onClose();
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
     },
-    onError: (error) => toast.error(errorMessage(error, t('workplace.admin.locations.saveError'))),
+    onError: (error, requestedScope) => {
+      if (!commandScope.current(requestedScope)) return;
+      commandScope.reject(requestedScope, error);
+      toast.error(errorMessage(error, t('workplace.admin.locations.saveError')));
+    },
+    onSettled: (_, __, requestedScope) => commandScope.finish(requestedScope),
   });
   const assignedValid =
     form.mode !== 'ASSIGNED' || Boolean(form.assignedPersonPublicId || form.assignedUserId);
@@ -493,6 +621,7 @@ export function WorkplaceResourceDialog({
   return (
     <FormDialog
       open={open}
+      mobileFullScreen
       title={t(
         resource
           ? 'workplace.admin.locations.editResource'
@@ -503,157 +632,172 @@ export function WorkplaceResourceDialog({
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!valid}
+      submitDisabled={!valid || !commandScope.allowed}
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={() => mutation.mutate(commandScope.scopeKey)}
       maxWidth="md"
     >
-      <Stack spacing={2}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '0.8fr 1fr 1fr' },
-            gap: 1.5,
-          }}
-        >
-          <FormField
-            required
-            label={t('workplace.admin.locations.code')}
-            value={form.code}
-            onChange={(event) => patch('code', event.target.value.toUpperCase())}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.locations.nameKo')}
-            value={form.nameKo}
-            onChange={(event) => patch('nameKo', event.target.value)}
-          />
-          <FormField
-            required
-            label={t('workplace.admin.locations.nameEn')}
-            value={form.nameEn}
-            onChange={(event) => patch('nameEn', event.target.value)}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-            gap: 1.5,
-          }}
-        >
-          <SelectField
-            label={t('workplace.admin.locations.resourceType')}
-            value={form.type}
-            disabled={Boolean(resource?.calendarResourceId)}
-            options={(
-              [
-                'ROOM',
-                'DESK',
-                'LOCKER',
-                'PARKING',
-                'FOCUS_POD',
-                'PHONE_BOOTH',
-                'EQUIPMENT',
-              ] as WorkplaceResourceType[]
-            ).map((value) => ({ value, label: t(`workplace.resourceTypes.${value}`) }))}
-            onValueChange={(value) => patch('type', value as WorkplaceResourceType)}
-          />
-          <SelectField
-            label={t('workplace.admin.locations.bookingMode')}
-            value={form.mode}
-            options={(
-              ['RESERVABLE', 'DROP_IN', 'ASSIGNED', 'UNAVAILABLE'] as WorkplaceBookingMode[]
-            ).map((value) => ({ value, label: t(`workplace.bookingModes.${value}`) }))}
-            onValueChange={(value) => patch('mode', value as WorkplaceBookingMode)}
-          />
-          <SelectField
-            label={t('workplace.admin.locations.state')}
-            value={form.state}
-            options={(['AVAILABLE', 'MAINTENANCE', 'RETIRED'] as WorkplaceResourceState[]).map(
-              (value) => ({ value, label: t(`admin.resources.states.${value}`) })
-            )}
-            onValueChange={(value) => patch('state', value as WorkplaceResourceState)}
-          />
-        </Box>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 0.45fr' }, gap: 1.5 }}
-        >
-          <FormField
-            label={t('workplace.admin.locations.neighborhood')}
-            value={form.neighborhood ?? ''}
-            onChange={(event) => patch('neighborhood', event.target.value)}
-          />
-          <FormField
-            type="number"
-            label={t('workplace.admin.locations.capacity')}
-            value={form.capacity}
-            onChange={(event) => patch('capacity', Number(event.target.value))}
-            inputProps={{ min: 1, max: 10000 }}
-          />
-        </Box>
-        <FormField
-          label={t('workplace.admin.locations.features')}
-          value={features}
-          onChange={(event) => setFeatures(event.target.value)}
-          supportingText={t('workplace.admin.locations.featuresHint')}
-        />
-        {form.mode === 'ASSIGNED' && (
-          <Stack spacing={1.5}>
-            <AutocompleteField<PersonSummary>
-              label={t('workplace.admin.locations.assignee')}
-              options={people}
-              value={assignedPerson}
-              loading={peopleQuery.isLoading}
-              onInputChange={(_, value, reason) => {
-                if (reason === 'input') setPersonQuery(value);
-              }}
-              filterOptions={(options) => options}
-              getOptionLabel={(person) =>
-                `${person.displayName} · ${person.organizationName ?? ''}`
-              }
-              isOptionEqualToValue={(option, value) => option.personId === value.personId}
-              onChange={(_, person) =>
-                setForm((current) => ({
-                  ...current,
-                  assignedUserId: null,
-                  assignedPersonPublicId: person?.personId ?? null,
-                  assignedDisplayName: person?.displayName ?? null,
-                }))
-              }
+      {commandScope.failed ? (
+        <InlineFeedback severity="warning">
+          {t(
+            commandScope.unknown
+              ? 'workplace.experience.changeUnknown'
+              : 'workplace.admin.locations.saveError'
+          )}
+        </InlineFeedback>
+      ) : null}
+      <Box
+        component="fieldset"
+        disabled={!commandScope.allowed || mutation.isPending}
+        sx={{ m: 0, p: 0, border: 0, minWidth: 0 }}
+      >
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '0.8fr 1fr 1fr' },
+              gap: 1.5,
+            }}
+          >
+            <FormField
+              required
+              label={t('workplace.admin.locations.code')}
+              value={form.code}
+              onChange={(event) => patch('code', event.target.value.toUpperCase())}
             />
             <FormField
-              label={t('workplace.admin.locations.fixedSeatLabel')}
-              value={form.assignedDisplayName ?? ''}
-              inputProps={{ readOnly: true }}
-              supportingText={t('workplace.admin.locations.fixedSeatHint')}
+              required
+              label={t('workplace.admin.locations.nameKo')}
+              value={form.nameKo}
+              onChange={(event) => patch('nameKo', event.target.value)}
             />
-          </Stack>
-        )}
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={form.accessible}
-                onChange={(_, checked) => patch('accessible', checked)}
-              />
-            }
-            label={t('workplace.admin.locations.accessible')}
+            <FormField
+              required
+              label={t('workplace.admin.locations.nameEn')}
+              value={form.nameEn}
+              onChange={(event) => patch('nameEn', event.target.value)}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+              gap: 1.5,
+            }}
+          >
+            <SelectField
+              label={t('workplace.admin.locations.resourceType')}
+              value={form.type}
+              disabled={Boolean(resource?.calendarResourceId)}
+              options={(
+                [
+                  'ROOM',
+                  'DESK',
+                  'LOCKER',
+                  'PARKING',
+                  'FOCUS_POD',
+                  'PHONE_BOOTH',
+                  'EQUIPMENT',
+                ] as WorkplaceResourceType[]
+              ).map((value) => ({ value, label: t(`workplace.resourceTypes.${value}`) }))}
+              onValueChange={(value) => patch('type', value as WorkplaceResourceType)}
+            />
+            <SelectField
+              label={t('workplace.admin.locations.bookingMode')}
+              value={form.mode}
+              options={(
+                ['RESERVABLE', 'DROP_IN', 'ASSIGNED', 'UNAVAILABLE'] as WorkplaceBookingMode[]
+              ).map((value) => ({ value, label: t(`workplace.bookingModes.${value}`) }))}
+              onValueChange={(value) => patch('mode', value as WorkplaceBookingMode)}
+            />
+            <SelectField
+              label={t('workplace.admin.locations.state')}
+              value={form.state}
+              options={(['AVAILABLE', 'MAINTENANCE', 'RETIRED'] as WorkplaceResourceState[]).map(
+                (value) => ({ value, label: t(`admin.resources.states.${value}`) })
+              )}
+              onValueChange={(value) => patch('state', value as WorkplaceResourceState)}
+            />
+          </Box>
+          <Box
+            sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 0.45fr' }, gap: 1.5 }}
+          >
+            <FormField
+              label={t('workplace.admin.locations.neighborhood')}
+              value={form.neighborhood ?? ''}
+              onChange={(event) => patch('neighborhood', event.target.value)}
+            />
+            <FormField
+              type="number"
+              label={t('workplace.admin.locations.capacity')}
+              value={form.capacity}
+              onChange={(event) => patch('capacity', Number(event.target.value))}
+              inputProps={{ min: 1, max: 10000 }}
+            />
+          </Box>
+          <FormField
+            label={t('workplace.admin.locations.features')}
+            value={features}
+            onChange={(event) => setFeatures(event.target.value)}
+            supportingText={t('workplace.admin.locations.featuresHint')}
           />
-          {form.type === 'ROOM' && (
+          {form.mode === 'ASSIGNED' && (
+            <Stack spacing={1.5}>
+              <AutocompleteField<PersonSummary>
+                label={t('workplace.admin.locations.assignee')}
+                options={people}
+                value={assignedPerson}
+                loading={peopleQuery.isLoading}
+                onInputChange={(_, value, reason) => {
+                  if (reason === 'input') setPersonQuery(value);
+                }}
+                filterOptions={(options) => options}
+                getOptionLabel={(person) =>
+                  `${person.displayName} · ${person.organizationName ?? ''}`
+                }
+                isOptionEqualToValue={(option, value) => option.personId === value.personId}
+                onChange={(_, person) =>
+                  setForm((current) => ({
+                    ...current,
+                    assignedUserId: null,
+                    assignedPersonPublicId: person?.personId ?? null,
+                    assignedDisplayName: person?.displayName ?? null,
+                  }))
+                }
+              />
+              <FormField
+                label={t('workplace.admin.locations.fixedSeatLabel')}
+                value={form.assignedDisplayName ?? ''}
+                inputProps={{ readOnly: true }}
+                supportingText={t('workplace.admin.locations.fixedSeatHint')}
+              />
+            </Stack>
+          )}
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
             <FormControlLabel
               control={
                 <Switch
-                  checked={form.approvalRequired}
-                  onChange={(_, checked) => patch('approvalRequired', checked)}
+                  checked={form.accessible}
+                  onChange={(_, checked) => patch('accessible', checked)}
                 />
               }
-              label={t('workplace.admin.locations.approvalRequired')}
+              label={t('workplace.admin.locations.accessible')}
             />
-          )}
+            {form.type === 'ROOM' && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={form.approvalRequired}
+                    onChange={(_, checked) => patch('approvalRequired', checked)}
+                  />
+                }
+                label={t('workplace.admin.locations.approvalRequired')}
+              />
+            )}
+          </Stack>
+          <InlineFeedback severity="info">{t('workplace.admin.locations.dragHint')}</InlineFeedback>
         </Stack>
-        <Alert severity="info">{t('workplace.admin.locations.dragHint')}</Alert>
-      </Stack>
+      </Box>
     </FormDialog>
   );
 }

@@ -1,27 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GitBranch, Pencil, Plus, Scale } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  getWorkplaceAdminFloors,
-  getWorkplaceAdminResources,
-  getWorkplaceAdminSites,
-  getWorkplaceGovernanceCampuses,
   getWorkplaceGovernancePolicyOverrides,
-  getWorkplaceGovernanceZones,
   previewWorkplaceGovernancePolicy,
-  saveWorkplaceGovernancePolicyOverride,
-  useToast,
+  reviewWorkplacePolicyOverride,
+  applyWorkplacePolicyOverrideChange,
+  useAuth,
+  usePermissionsStore,
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ActionIconButton,
   FormDialog,
+  InlineFeedback,
   FormField,
   SelectField,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
@@ -41,6 +38,14 @@ import {
   GovernancePanel,
   GovernanceQueryError,
 } from './workplace-admin-governance-ui';
+
+import {
+  WorkplaceGovernanceChangeReview,
+  useGovernanceChangeReview,
+} from './workplace-governance-change-review';
+import { useWorkplaceGovernanceTargetScope } from './workplace-governance-target-scope';
+import { ScopePicker } from './workplace-governance-scope-picker';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 
 import type {
   WorkplaceGovernancePolicyOverride,
@@ -62,16 +67,52 @@ export function WorkplaceAdminGovernancePolicy({
   effectiveScopes: readonly WorkplaceGovernanceEffectiveDelegatedScope[];
 }) {
   const { t } = useTranslation('rooms');
+  const { user } = useAuth();
+  const governance = useWorkplaceGovernanceTargetScope();
+  const hasSiteWidePolicy =
+    globalAdministrator ||
+    effectiveScopes.some((scope) => governance.allowsTarget('POLICY_MANAGE', scope.scopeId));
+  const allowedTypes = useMemo(
+    () =>
+      globalAdministrator
+        ? SCOPE_TYPES
+        : hasSiteWidePolicy
+          ? SCOPE_TYPES.slice(2)
+          : SCOPE_TYPES.slice(3),
+    [globalAdministrator, hasSiteWidePolicy]
+  );
+  const [nativeTarget, setNativeTarget] = useState<{
+    target: { siteId: string; floorId: string | null } | null;
+    ready: boolean;
+    scopeType: WorkplaceGovernancePolicyScopeType | null;
+    scopeId: string | null;
+  }>({ target: null, ready: false, scopeType: null, scopeId: null });
+  const permissions = usePermissionsStore((value) => value.permissions);
+  const authorityKey = JSON.stringify([
+    user,
+    permissions,
+    globalAdministrator,
+    effectiveScopes,
+    canManage,
+    governance.authorityKey,
+  ]);
   const [scopeType, setScopeType] = useState<WorkplaceGovernancePolicyScopeType>(
-    globalAdministrator ? 'TENANT' : 'SITE'
+    globalAdministrator ? 'TENANT' : hasSiteWidePolicy ? 'SITE' : 'FLOOR'
   );
   const [scopeId, setScopeId] = useState<string | null>(null);
   const [editor, setEditor] = useState<WorkplaceGovernancePolicyOverride | 'new' | null>(null);
+  useEffect(() => {
+    if (!allowedTypes.includes(scopeType)) {
+      setScopeType(allowedTypes[0]);
+      setScopeId(null);
+    }
+  }, [allowedTypes, scopeType]);
   const overridesQuery = useQuery({
     queryKey: [
       'workplace',
       'governance',
       'policy-overrides',
+      authorityKey,
       globalAdministrator ? 'all' : scopeType,
       globalAdministrator ? null : scopeId,
     ],
@@ -80,21 +121,48 @@ export function WorkplaceAdminGovernancePolicy({
         globalAdministrator ? undefined : scopeType,
         globalAdministrator ? undefined : scopeId
       ),
-    enabled: globalAdministrator || !workplaceGovernanceScopeNeedsId(scopeType) || Boolean(scopeId),
+    enabled:
+      governance.ready &&
+      (globalAdministrator ||
+        (nativeTarget.ready && (!workplaceGovernanceScopeNeedsId(scopeType) || Boolean(scopeId)))),
     staleTime: 15_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
+    refetchInterval: 15_000,
   });
   const previewQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'policy-preview', scopeType, scopeId],
+    queryKey: ['workplace', 'governance', 'policy-preview', scopeType, scopeId, authorityKey],
     queryFn: () => previewWorkplaceGovernancePolicy(scopeType, scopeId),
-    enabled: !workplaceGovernanceScopeNeedsId(scopeType) || Boolean(scopeId),
+    enabled:
+      governance.ready &&
+      nativeTarget.ready &&
+      (!workplaceGovernanceScopeNeedsId(scopeType) || Boolean(scopeId)),
     staleTime: 10_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
+    refetchInterval: 15_000,
   });
+
+  useEffect(() => {
+    setEditor(null);
+  }, [authorityKey]);
+  const currentEditor = overridesQuery.isError
+    ? null
+    : editor === 'new'
+      ? editor
+      : editor
+        ? (overridesQuery.data?.find((item) => item.policyOverrideId === editor.policyOverrideId) ??
+          null)
+        : null;
+  const sourceReady =
+    governance.ready &&
+    !overridesQuery.isError &&
+    !overridesQuery.isFetching &&
+    !overridesQuery.isStale;
 
   return (
     <Stack spacing={2}>
-      <Alert severity="info">{t('workplace.admin.governance.policy.inheritanceNotice')}</Alert>
+      <InlineFeedback severity="info">
+        {t('workplace.admin.governance.policy.inheritanceNotice')}
+      </InlineFeedback>
       <Box
         sx={{
           display: 'grid',
@@ -107,7 +175,7 @@ export function WorkplaceAdminGovernancePolicy({
           title={t('workplace.admin.governance.policy.overrides')}
           description={t('workplace.admin.governance.policy.overridesDescription')}
           actions={
-            canManage ? (
+            canManage && governance.ready ? (
               <ActionButton
                 intent="primary"
                 startIcon={<Plus size={16} />}
@@ -135,7 +203,7 @@ export function WorkplaceAdminGovernancePolicy({
                 >
                   <Box sx={{ minWidth: 0 }}>
                     <Stack direction="row" gap={0.6} alignItems="center" flexWrap="wrap">
-                      <Typography fontWeight={750}>
+                      <Typography fontWeight="fontWeightBold">
                         {t(`workplace.admin.governance.scopeTypes.${override.scopeType}`)}
                       </Typography>
                       <Chip size="small" variant="outlined" label={override.state} />
@@ -147,7 +215,19 @@ export function WorkplaceAdminGovernancePolicy({
                       })}
                     </Typography>
                   </Box>
-                  {canManage ? (
+                  {canManage &&
+                  sourceReady &&
+                  (override.scopeType === 'SITE'
+                    ? Boolean(
+                        override.scopeId &&
+                        governance.allowsTarget('POLICY_MANAGE', override.scopeId)
+                      )
+                    : override.scopeType === 'TENANT' || override.scopeType === 'CAMPUS'
+                      ? globalAdministrator
+                      : globalAdministrator ||
+                        (nativeTarget.ready &&
+                          override.scopeType === scopeType &&
+                          override.scopeId === scopeId)) ? (
                     <ActionIconButton
                       size="small"
                       label={t('actions.edit')}
@@ -175,10 +255,18 @@ export function WorkplaceAdminGovernancePolicy({
             <ScopePicker
               scopeType={scopeType}
               scopeId={scopeId}
-              allowedScopeTypes={globalAdministrator ? SCOPE_TYPES : SCOPE_TYPES.slice(2)}
-              allowedSiteIds={effectiveScopes
-                .filter((scope) => scope.scopeType === 'SITE')
-                .map((scope) => scope.scopeId)}
+              allowedScopeTypes={allowedTypes}
+              targetPermission="POLICY_MANAGE"
+              onTargetChange={(target, ready) =>
+                setNativeTarget({ target, ready, scopeType, scopeId })
+              }
+              allowedSiteIds={
+                globalAdministrator
+                  ? undefined
+                  : effectiveScopes
+                      .filter((scope) => scope.scopeType === 'SITE')
+                      .map((scope) => scope.scopeId)
+              }
               onChange={(nextType, nextId) => {
                 setScopeType(nextType);
                 setScopeId(nextId);
@@ -189,7 +277,11 @@ export function WorkplaceAdminGovernancePolicy({
           {previewQuery.isError ? (
             <GovernanceQueryError retry={() => void previewQuery.refetch()} />
           ) : null}
-          {previewQuery.data ? (
+          {nativeTarget.ready &&
+          previewQuery.data &&
+          !previewQuery.isError &&
+          previewQuery.data.targetScopeType === scopeType &&
+          previewQuery.data.targetScopeId === (scopeType === 'TENANT' ? null : scopeId) ? (
             <Stack divider={<Divider flexItem />}>
               {Object.entries(previewQuery.data.effectivePolicy).map(([key, value]) => {
                 const source = previewQuery.data.fieldSources[key];
@@ -203,7 +295,7 @@ export function WorkplaceAdminGovernancePolicy({
                     sx={{ px: 1.5, py: 1.1 }}
                   >
                     <Box>
-                      <Typography variant="body2" fontWeight={700}>
+                      <Typography variant="body2" fontWeight="fontWeightBold">
                         {t(`workplace.admin.governance.policy.fields.${key}`)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -228,161 +320,17 @@ export function WorkplaceAdminGovernancePolicy({
         </GovernancePanel>
       </Box>
 
-      <PolicyOverrideDialog
-        target={editor}
-        canManage={canManage}
-        globalAdministrator={globalAdministrator}
-        effectiveScopes={effectiveScopes}
-        onClose={() => setEditor(null)}
-      />
-    </Stack>
-  );
-}
-
-function ScopePicker({
-  scopeType,
-  scopeId,
-  disabled = false,
-  allowedScopeTypes = SCOPE_TYPES,
-  allowedSiteIds,
-  onChange,
-}: {
-  scopeType: WorkplaceGovernancePolicyScopeType;
-  scopeId: string | null;
-  disabled?: boolean;
-  allowedScopeTypes?: readonly WorkplaceGovernancePolicyScopeType[];
-  allowedSiteIds?: readonly string[];
-  onChange: (scopeType: WorkplaceGovernancePolicyScopeType, scopeId: string | null) => void;
-}) {
-  const { t } = useTranslation('rooms');
-  const [siteId, setSiteId] = useState('');
-  const [floorId, setFloorId] = useState('');
-  const campusesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'campuses'],
-    queryFn: getWorkplaceGovernanceCampuses,
-    enabled: allowedScopeTypes.includes('CAMPUS'),
-    staleTime: 30_000,
-  });
-  const sitesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'sites'],
-    queryFn: getWorkplaceAdminSites,
-    staleTime: 30_000,
-  });
-  const sites = useMemo(
-    () =>
-      allowedSiteIds !== undefined
-        ? (sitesQuery.data ?? []).filter((site) => allowedSiteIds.includes(site.siteId))
-        : (sitesQuery.data ?? []),
-    [allowedSiteIds, sitesQuery.data]
-  );
-  useEffect(() => {
-    if (!siteId && sites.length) setSiteId(sites[0].siteId);
-  }, [siteId, sites]);
-  const floorsQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'floors', siteId],
-    queryFn: () => getWorkplaceAdminFloors(siteId),
-    enabled: Boolean(siteId),
-    staleTime: 30_000,
-  });
-  const floors = useMemo(() => floorsQuery.data ?? [], [floorsQuery.data]);
-  useEffect(() => {
-    if (floors.length && !floors.some((floor) => floor.floorId === floorId)) {
-      setFloorId(floors[0].floorId);
-    }
-  }, [floorId, floors]);
-  const zonesQuery = useQuery({
-    queryKey: ['workplace', 'governance', 'zones', floorId],
-    queryFn: () => getWorkplaceGovernanceZones(floorId),
-    enabled: Boolean(floorId),
-    staleTime: 20_000,
-  });
-  const resourcesQuery = useQuery({
-    queryKey: ['workplace', 'admin', 'resources', floorId],
-    queryFn: () => getWorkplaceAdminResources(floorId),
-    enabled: Boolean(floorId),
-    staleTime: 20_000,
-  });
-  const targetOptions = (() => {
-    if (scopeType === 'CAMPUS') {
-      return (campusesQuery.data ?? []).map((campus) => ({
-        value: campus.campusId,
-        label: `${campus.nameKo} (${campus.code})`,
-      }));
-    }
-    if (scopeType === 'SITE') {
-      return sites.map((site) => ({ value: site.siteId, label: site.name }));
-    }
-    if (scopeType === 'FLOOR') {
-      return floors.map((floor) => ({ value: floor.floorId, label: floor.name }));
-    }
-    if (scopeType === 'ZONE') {
-      return (zonesQuery.data ?? []).map((zone) => ({ value: zone.zoneId, label: zone.nameKo }));
-    }
-    if (scopeType === 'RESOURCE') {
-      return (resourcesQuery.data ?? []).map((resource) => ({
-        value: resource.resourceId,
-        label: resource.name,
-      }));
-    }
-    return [];
-  })();
-  useEffect(() => {
-    if (disabled) return;
-    if (scopeType === 'TENANT') {
-      if (scopeId !== null) onChange(scopeType, null);
-      return;
-    }
-    if (targetOptions.length && !targetOptions.some((option) => option.value === scopeId)) {
-      onChange(scopeType, targetOptions[0].value);
-    }
-  }, [disabled, onChange, scopeId, scopeType, targetOptions]);
-
-  return (
-    <Stack spacing={1.5}>
-      <SelectField
-        disabled={disabled}
-        label={t('workplace.admin.governance.fields.scopeType')}
-        value={scopeType}
-        options={allowedScopeTypes.map((value) => ({
-          value,
-          label: t(`workplace.admin.governance.scopeTypes.${value}`),
-        }))}
-        onValueChange={(value) =>
-          onChange(value as WorkplaceGovernancePolicyScopeType, value === 'TENANT' ? null : '')
-        }
-      />
-      {['FLOOR', 'ZONE', 'RESOURCE'].includes(scopeType) ? (
-        <SelectField
-          disabled={disabled}
-          label={t('workplace.admin.governance.fields.site')}
-          value={siteId}
-          options={sites.map((site) => ({ value: site.siteId, label: site.name }))}
-          onValueChange={(value) => {
-            setSiteId(value);
-            setFloorId('');
-            onChange(scopeType, '');
-          }}
-        />
-      ) : null}
-      {['ZONE', 'RESOURCE'].includes(scopeType) ? (
-        <SelectField
-          disabled={disabled}
-          label={t('workplace.admin.governance.fields.floor')}
-          value={floorId}
-          options={floors.map((floor) => ({ value: floor.floorId, label: floor.name }))}
-          onValueChange={(value) => {
-            setFloorId(value);
-            onChange(scopeType, '');
-          }}
-        />
-      ) : null}
-      {scopeType !== 'TENANT' ? (
-        <SelectField
-          disabled={disabled}
-          label={t('workplace.admin.governance.fields.scopeTarget')}
-          value={scopeId ?? ''}
-          options={targetOptions}
-          onValueChange={(value) => onChange(scopeType, value)}
+      {currentEditor ? (
+        <PolicyOverrideDialog
+          key={`${authorityKey}:${currentEditor === 'new' ? 'new' : currentEditor.policyOverrideId}`}
+          target={currentEditor}
+          sourceReady={sourceReady}
+          authorityKey={authorityKey}
+          recheck={async () => (await overridesQuery.refetch()).isSuccess}
+          canManage={canManage}
+          globalAdministrator={globalAdministrator}
+          effectiveScopes={effectiveScopes}
+          onClose={() => setEditor(null)}
         />
       ) : null}
     </Stack>
@@ -394,53 +342,159 @@ function PolicyOverrideDialog({
   canManage,
   globalAdministrator,
   effectiveScopes,
+  sourceReady,
+  authorityKey,
+  recheck,
   onClose,
 }: {
-  target: WorkplaceGovernancePolicyOverride | 'new' | null;
+  target: WorkplaceGovernancePolicyOverride | 'new';
   canManage: boolean;
   globalAdministrator: boolean;
   effectiveScopes: readonly WorkplaceGovernanceEffectiveDelegatedScope[];
+  sourceReady: boolean;
+  authorityKey: string;
+  recheck: () => Promise<boolean>;
   onClose: () => void;
 }) {
   const { t } = useTranslation('rooms');
-  const toast = useToast();
   const queryClient = useQueryClient();
-  const existing = target && target !== 'new' ? target : null;
+  const governance = useWorkplaceGovernanceTargetScope();
+  const hasSiteWidePolicy =
+    globalAdministrator ||
+    effectiveScopes.some((scope) => governance.allowsTarget('POLICY_MANAGE', scope.scopeId));
+  const allowedTypes = useMemo(
+    () =>
+      globalAdministrator
+        ? SCOPE_TYPES
+        : hasSiteWidePolicy
+          ? SCOPE_TYPES.slice(2)
+          : SCOPE_TYPES.slice(3),
+    [globalAdministrator, hasSiteWidePolicy]
+  );
+  const [nativeTarget, setNativeTarget] = useState<{
+    target: { siteId: string; floorId: string | null } | null;
+    ready: boolean;
+    scopeType: WorkplaceGovernancePolicyScopeType | null;
+    scopeId: string | null;
+  }>({ target: null, ready: false, scopeType: null, scopeId: null });
+  const existing = target !== 'new' ? target : null;
+  const initialExisting = useRef(existing).current;
+  const initialGlobal = useRef(globalAdministrator).current;
   const [scopeType, setScopeType] = useState<WorkplaceGovernancePolicyScopeType>(
-    globalAdministrator ? 'TENANT' : 'SITE'
+    globalAdministrator ? 'TENANT' : hasSiteWidePolicy ? 'SITE' : 'FLOOR'
   );
   const [scopeId, setScopeId] = useState<string | null>(null);
   const [patch, setPatch] = useState<WorkplaceGovernancePolicyPatch>({});
   const [state, setState] = useState<WorkplaceGovernancePolicyOverrideInput['state']>('ACTIVE');
   useEffect(() => {
-    if (!target) return;
-    setScopeType(existing?.scopeType ?? (globalAdministrator ? 'TENANT' : 'SITE'));
-    setScopeId(existing?.scopeId ?? null);
-    setPatch(existing?.policyPatch ?? {});
-    setState(existing?.state ?? 'ACTIVE');
-  }, [existing, globalAdministrator, target]);
-  const mutation = useMutation({
-    mutationFn: () => {
-      if (!canManage || !validateWorkplaceGovernancePolicyPatch(patch)) {
-        throw new Error('Invalid policy override');
-      }
-      return saveWorkplaceGovernancePolicyOverride(existing?.policyOverrideId ?? null, {
+    setScopeType(
+      initialExisting?.scopeType ??
+        (initialGlobal ? 'TENANT' : hasSiteWidePolicy ? 'SITE' : 'FLOOR')
+    );
+    setScopeId(initialExisting?.scopeId ?? null);
+    setPatch(initialExisting?.policyPatch ?? {});
+    setState(initialExisting?.state ?? 'ACTIVE');
+  }, [initialExisting, initialGlobal, hasSiteWidePolicy]);
+  const valid =
+    (!workplaceGovernanceScopeNeedsId(scopeType) || Boolean(scopeId)) &&
+    validateWorkplaceGovernancePolicyPatch(patch);
+  const proposed: WorkplaceGovernancePolicyOverrideInput = {
+    scopeType,
+    scopeId: scopeType === 'TENANT' ? null : scopeId,
+    policyPatch: patch,
+    state,
+    version: existing?.version ?? null,
+  };
+  const targetManageable =
+    canManage &&
+    governance.ready &&
+    nativeTarget.scopeType === scopeType &&
+    nativeTarget.scopeId === proposed.scopeId &&
+    (scopeType === 'TENANT' || scopeType === 'CAMPUS'
+      ? globalAdministrator
+      : Boolean(nativeTarget.target) &&
+        governance.allowsTarget(
+          'POLICY_MANAGE',
+          nativeTarget.target!.siteId,
+          nativeTarget.target!.floorId
+        ));
+  const reviewState = useGovernanceChangeReview({
+    contextKey: JSON.stringify([
+      authorityKey,
+      existing?.policyOverrideId ?? 'new',
+      scopeType,
+      scopeId,
+    ]),
+    proposed,
+    canManage: targetManageable,
+    sourceReady: sourceReady && nativeTarget.ready,
+    valid,
+    review: (input) =>
+      reviewWorkplacePolicyOverride(
+        existing?.policyOverrideId ?? null,
         scopeType,
-        scopeId: scopeType === 'TENANT' ? null : scopeId,
-        policyPatch: patch,
-        state,
-        version: existing?.version ?? null,
-      });
+        proposed.scopeId,
+        input
+      ),
+    apply: (input) => {
+      if (
+        !targetManageable ||
+        (nativeTarget.target &&
+          !governance.allowsTarget(
+            'POLICY_MANAGE',
+            nativeTarget.target.siteId,
+            nativeTarget.target.floorId
+          )) ||
+        input.proposed.scopeType !== scopeType ||
+        input.proposed.scopeId !== proposed.scopeId
+      )
+        return Promise.reject(new Error('The current policy target is not authorized.'));
+      return applyWorkplacePolicyOverrideChange(
+        existing?.policyOverrideId ?? null,
+        scopeType,
+        proposed.scopeId,
+        input
+      );
     },
-    onSuccess: async () => {
+    recheck,
+    onSaved: async () => {
       await queryClient.invalidateQueries({ queryKey: ['workplace', 'governance'] });
-      toast.success(t('workplace.admin.governance.common.saved'));
-      onClose();
     },
-    onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
   });
-  const validTarget = !workplaceGovernanceScopeNeedsId(scopeType) || Boolean(scopeId);
-  const valid = validTarget && validateWorkplaceGovernancePolicyPatch(patch);
+  const rows = [
+    {
+      label: t('workplace.admin.governance.fields.scopeType'),
+      current: existing ? t(`workplace.admin.governance.scopeTypes.${existing.scopeType}`) : '—',
+      proposed: t(`workplace.admin.governance.scopeTypes.${scopeType}`),
+    },
+    {
+      label: t('workplace.admin.governance.fields.scopeTarget'),
+      current: existing?.scopeId ?? t('workplace.admin.governance.policy.tenantRoot'),
+      proposed: proposed.scopeId ?? t('workplace.admin.governance.policy.tenantRoot'),
+    },
+    {
+      label: t('workplace.admin.governance.fields.state'),
+      current: existing ? t(`workplace.admin.governance.states.${existing.state}`) : '—',
+      proposed: t(`workplace.admin.governance.states.${state}`),
+    },
+    ...Array.from(
+      new Set([...Object.keys(existing?.policyPatch ?? {}), ...Object.keys(patch)])
+    ).map((key) => ({
+      label: t(`workplace.admin.governance.policy.fields.${key}`),
+      current: String(existing?.policyPatch[key as keyof WorkplaceGovernancePolicyPatch] ?? '—'),
+      proposed: String(
+        patch[key as keyof WorkplaceGovernancePolicyPatch] ??
+          t('workplace.admin.governance.policy.tenantDefault')
+      ),
+    })),
+    {
+      label: t('workplace.experience.version'),
+      current: String(existing?.version ?? '—'),
+      proposed: String(proposed.version ?? '—'),
+    },
+  ];
+  const disabled =
+    Boolean(reviewState.busy) || Boolean(reviewState.outcome) || reviewState.saved || !canManage;
   return (
     <FormDialog
       open={Boolean(target)}
@@ -452,50 +506,73 @@ function PolicyOverrideDialog({
       cancelLabel={t('actions.cancel')}
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
-      busy={mutation.isPending}
-      submitDisabled={!canManage || !valid}
+      busy={Boolean(reviewState.busy)}
+      showSubmit={false}
+      showCancel={false}
+      mobileFullScreen
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={reviewState.save}
       maxWidth="lg"
     >
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: '300px minmax(0, 1fr)' },
-          gap: 2,
-        }}
+      <WorkplaceGovernanceChangeReview
+        state={reviewState}
+        rows={rows}
+        onClose={onClose}
+        readOnly={!targetManageable}
       >
-        <Stack spacing={1.5}>
-          <ScopePicker
-            scopeType={scopeType}
-            scopeId={scopeId}
-            disabled={Boolean(existing)}
-            allowedScopeTypes={globalAdministrator ? SCOPE_TYPES : SCOPE_TYPES.slice(2)}
-            allowedSiteIds={effectiveScopes
-              .filter((scope) => scope.scopeType === 'SITE')
-              .map((scope) => scope.scopeId)}
-            onChange={(nextType, nextId) => {
-              setScopeType(nextType);
-              setScopeId(nextId);
-            }}
-          />
-          <SelectField
-            label={t('workplace.admin.governance.fields.state')}
-            value={state}
-            options={(['ACTIVE', 'INACTIVE'] as const).map((value) => ({
-              value,
-              label: t(`workplace.admin.governance.states.${value}`),
-            }))}
-            onValueChange={(value) =>
-              setState(value as WorkplaceGovernancePolicyOverrideInput['state'])
-            }
-          />
-          <Alert severity="info" icon={<GitBranch size={20} />}>
-            {t('workplace.admin.governance.policy.partialPatchNotice')}
-          </Alert>
-        </Stack>
-        <PolicyPatchEditor patch={patch} onChange={setPatch} />
-      </Box>
+        <Box
+          component="fieldset"
+          disabled={disabled}
+          sx={{
+            border: 0,
+            p: 0,
+            m: 0,
+            minWidth: 0,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '300px minmax(0, 1fr)' },
+            gap: 2,
+          }}
+        >
+          <Stack spacing={1.5}>
+            <ScopePicker
+              scopeType={scopeType}
+              scopeId={scopeId}
+              disabled={Boolean(existing)}
+              allowedScopeTypes={allowedTypes}
+              targetPermission="POLICY_MANAGE"
+              onTargetChange={(target, ready) =>
+                setNativeTarget({ target, ready, scopeType, scopeId })
+              }
+              allowedSiteIds={
+                globalAdministrator
+                  ? undefined
+                  : effectiveScopes
+                      .filter((scope) => scope.scopeType === 'SITE')
+                      .map((scope) => scope.scopeId)
+              }
+              onChange={(nextType, nextId) => {
+                setScopeType(nextType);
+                setScopeId(nextId);
+              }}
+            />
+            <SelectField
+              label={t('workplace.admin.governance.fields.state')}
+              value={state}
+              options={(['ACTIVE', 'INACTIVE'] as const).map((value) => ({
+                value,
+                label: t(`workplace.admin.governance.states.${value}`),
+              }))}
+              onValueChange={(value) =>
+                setState(value as WorkplaceGovernancePolicyOverrideInput['state'])
+              }
+            />
+            <InlineFeedback severity="info" icon={<GitBranch size={20} />}>
+              {t('workplace.admin.governance.policy.partialPatchNotice')}
+            </InlineFeedback>
+          </Stack>
+          <PolicyPatchEditor patch={patch} onChange={setPatch} />
+        </Box>
+      </WorkplaceGovernanceChangeReview>
     </FormDialog>
   );
 }
@@ -527,7 +604,7 @@ function PolicyPatchEditor({
   return (
     <Box sx={{ border: 1, borderColor: 'divider', minWidth: 0 }}>
       <Stack sx={{ px: 1.5, py: 1.25, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography fontWeight={800}>
+        <Typography fontWeight="fontWeightBold">
           {t('workplace.admin.governance.policy.fieldsTitle')}
         </Typography>
         <Typography variant="caption" color="text.secondary">
@@ -606,14 +683,14 @@ function PolicyPatchEditor({
         })}
       </Stack>
       {!Object.keys(patch).length ? (
-        <Alert severity="warning" icon={<Scale size={20} />}>
+        <InlineFeedback severity="warning" icon={<Scale size={20} />}>
           {t('workplace.admin.governance.policy.selectField')}
-        </Alert>
+        </InlineFeedback>
       ) : null}
       {Object.keys(patch).length && !validateWorkplaceGovernancePolicyPatch(patch) ? (
-        <Alert severity="error" icon={<Scale size={20} />}>
+        <InlineFeedback severity="error" icon={<Scale size={20} />}>
           {t('workplace.admin.governance.policy.validationError')}
-        </Alert>
+        </InlineFeedback>
       ) : null}
     </Box>
   );

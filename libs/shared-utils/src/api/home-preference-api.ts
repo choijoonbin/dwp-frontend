@@ -92,11 +92,12 @@ export async function resetHomePreference(version: number): Promise<HomePreferen
 
 export async function getHomeSurfacePreference<WidgetKey extends string>(
   surfaceKey: HomeSurfaceKey,
-  contextScopeKey?: string
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<HomePreference<WidgetKey>> {
   const response = await axiosInstance.get<ApiResponse<HomePreference<WidgetKey>>>(
     `/api/platform/v1/home-preferences/surfaces/${surfaceKey}`,
-    { contextScopeKey }
+    { contextScopeKey, signal }
   );
   return response.data.data;
 }
@@ -125,9 +126,10 @@ export async function resetHomeSurfacePreference<WidgetKey extends string>(
 }
 
 export function getApprovalHomePreference<WidgetKey extends string>(
-  contextScopeKey?: string
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<HomePreference<WidgetKey>> {
-  return getHomeSurfacePreference<WidgetKey>(APPROVAL_HOME_SURFACE_KEY, contextScopeKey);
+  return getHomeSurfacePreference<WidgetKey>(APPROVAL_HOME_SURFACE_KEY, contextScopeKey, signal);
 }
 
 export function updateApprovalHomePreference<WidgetKey extends string>(

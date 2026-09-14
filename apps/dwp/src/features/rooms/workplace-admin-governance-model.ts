@@ -5,7 +5,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export type WorkplaceGovernanceTab =
-  'hierarchy' | 'access' | 'policy' | 'floorPlans' | 'delegation';
+  'hierarchy' | 'access' | 'policy' | 'floorPlans' | 'delegation' | 'experience';
 
 export const WORKPLACE_GOVERNANCE_TABS = [
   'hierarchy',
@@ -13,6 +13,7 @@ export const WORKPLACE_GOVERNANCE_TABS = [
   'policy',
   'floorPlans',
   'delegation',
+  'experience',
 ] as const satisfies readonly WorkplaceGovernanceTab[];
 
 export function parseWorkplaceGovernanceTab(value: string | null): WorkplaceGovernanceTab {
@@ -46,9 +47,8 @@ export const WORKPLACE_GOVERNANCE_POLICY_FIELDS = [
 ] as const satisfies readonly WorkplaceGovernancePolicyField[];
 
 export function isWorkplaceGovernanceUuid(value: string) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(
-    value.trim()
-  );
+  // Native Java/PostgreSQL identifiers include seeded UUIDs with unrestricted version/variant bits.
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu.test(value.trim());
 }
 
 export function parseWorkplaceGovernanceUserId(value: string) {

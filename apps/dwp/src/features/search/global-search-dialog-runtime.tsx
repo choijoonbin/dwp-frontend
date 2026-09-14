@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -8,6 +8,15 @@ import {
 import { GlobalSearchDialog } from './global-search-dialog';
 
 import type { PermissionDTO } from '@dwp-frontend/shared-utils/api/auth-api';
+
+const dwaionRuntimeBundled = import.meta.env.VITE_PRODUCT_DWAION_RUNTIME !== 'disabled';
+const DwaionGlobalSearchDialog = dwaionRuntimeBundled
+  ? lazy(() =>
+      import('./global-search-dialog-dwaion-runtime').then((module) => ({
+        default: module.DwaionGlobalSearchDialog,
+      }))
+    )
+  : undefined;
 
 type GlobalSearchDialogRuntimeProps = {
   open: boolean;
@@ -39,14 +48,17 @@ export function GlobalSearchDialogRuntime({
         : [],
     [legacyRoleFallbackAllowed, permissions, roles, tHome, tenantSourcesEnabled]
   );
+  const includeAsk = apps.some((app) => app.id === 'dwp-ask');
+  const sharedProps = {
+    ...dialogProps,
+    apps,
+    includeWork: apps.some((app) => app.id === 'dwp-work'),
+    includePeople: apps.some((app) => app.id === 'ref-app-people'),
+  };
 
-  return (
-    <GlobalSearchDialog
-      {...dialogProps}
-      apps={apps}
-      includeWork={apps.some((app) => app.id === 'dwp-work')}
-      includeAsk={apps.some((app) => app.id === 'dwp-ask')}
-      includePeople={apps.some((app) => app.id === 'ref-app-people')}
-    />
-  );
+  if (DwaionGlobalSearchDialog && includeAsk) {
+    return <DwaionGlobalSearchDialog {...sharedProps} includeAsk />;
+  }
+
+  return <GlobalSearchDialog {...sharedProps} includeAsk={false} />;
 }

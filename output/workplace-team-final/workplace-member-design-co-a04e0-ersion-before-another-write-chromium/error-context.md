@@ -1,0 +1,221 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+              - listitem [ref=e39]:
+                - link "Find and book a space" [ref=e40] [cursor=pointer]:
+                  - /url: /workplace/explore
+                  - img [ref=e42]
+                  - paragraph [ref=e47]: Find and book a space
+              - listitem [ref=e48]:
+                - link "Room schedule" [ref=e49] [cursor=pointer]:
+                  - /url: /workplace/rooms
+                  - img [ref=e51]
+                  - paragraph [ref=e56]: Room schedule
+              - listitem [ref=e57]:
+                - link "Personal space bookings" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/my-bookings
+                  - img [ref=e60]
+                  - paragraph [ref=e64]: Personal space bookings
+              - listitem [ref=e65]:
+                - link "Meeting booking management" [ref=e66] [cursor=pointer]:
+                  - /url: /workplace/my-meetings
+                  - img [ref=e68]
+                  - paragraph [ref=e74]: Meeting booking management
+        - link "Return to apps" [ref=e76] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e78]
+          - text: Return to apps
+    - banner [ref=e80]:
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - img [ref=e84]
+          - generic "Workplace" [ref=e89]
+        - navigation "App area switcher" [ref=e92]:
+          - 'link "App management: Workplace" [ref=e94] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e96]
+            - generic [ref=e99]: App management
+        - generic [ref=e100]:
+          - button "Search DWP" [ref=e102] [cursor=pointer]:
+            - img [ref=e103]
+          - generic [ref=e106]:
+            - button "Enter full screen" [ref=e107] [cursor=pointer]:
+              - img [ref=e108]
+            - generic "0 actionable notifications, 0 total unread" [ref=e114]:
+              - button "0 actionable notifications, 0 total unread" [ref=e115] [cursor=pointer]:
+                - generic [ref=e116]:
+                  - img [ref=e117]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e121] [cursor=pointer]':
+            - generic [ref=e122]: T
+            - img [ref=e123]
+    - main [ref=e125]:
+      - navigation "Today's workspace" [ref=e126]:
+        - button "Today's workspace" [ref=e127] [cursor=pointer]:
+          - img [ref=e129]
+          - text: Today's workspace
+        - button "Team work plans" [pressed] [ref=e132] [cursor=pointer]:
+          - img [ref=e134]
+          - text: Team work plans
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - text: Team work plans
+          - heading "Plan where to work together" [level=1] [ref=e141]
+          - paragraph [ref=e142]: Review your work plans and the shared plans of consenting colleagues.
+        - alert [ref=e143]:
+          - img [ref=e145]
+          - generic [ref=e148]: Arrival and live location are not verified. The information below is planned.
+        - generic [ref=e149]:
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - generic [ref=e153]:
+                - img [ref=e155]
+                - generic [ref=e157]:
+                  - heading "Weekly work plans" [level=2] [ref=e158]
+                  - generic [ref=e159]: Mon, 8/17 – Sun, 8/23
+              - list [ref=e160]:
+                - listitem [ref=e161]:
+                  - button "Mon, 8/17 You have no work plans yet." [ref=e162] [cursor=pointer]:
+                    - paragraph [ref=e163]: Mon, 8/17
+                    - paragraph [ref=e165]: You have no work plans yet.
+                - listitem [ref=e166]:
+                  - button "Tue, 8/18 You have no work plans yet." [ref=e167] [cursor=pointer]:
+                    - paragraph [ref=e168]: Tue, 8/18
+                    - paragraph [ref=e170]: You have no work plans yet.
+                - listitem [ref=e171]:
+                  - button "Wed, 8/19 You have no work plans yet." [pressed] [ref=e172] [cursor=pointer]:
+                    - paragraph [ref=e173]: Wed, 8/19
+                    - paragraph [ref=e175]: You have no work plans yet.
+                - listitem [ref=e176]:
+                  - button "Thu, 8/20 You have no work plans yet." [ref=e177] [cursor=pointer]:
+                    - paragraph [ref=e178]: Thu, 8/20
+                    - paragraph [ref=e180]: You have no work plans yet.
+                - listitem [ref=e181]:
+                  - button "Fri, 8/21 You have no work plans yet." [ref=e182] [cursor=pointer]:
+                    - paragraph [ref=e183]: Fri, 8/21
+                    - paragraph [ref=e185]: You have no work plans yet.
+                - listitem [ref=e186]:
+                  - button "Sat, 8/22 You have no work plans yet." [ref=e187] [cursor=pointer]:
+                    - paragraph [ref=e188]: Sat, 8/22
+                    - paragraph [ref=e190]: You have no work plans yet.
+                - listitem [ref=e191]:
+                  - button "Sun, 8/23 You have no work plans yet." [ref=e192] [cursor=pointer]:
+                    - paragraph [ref=e193]: Sun, 8/23
+                    - paragraph [ref=e195]: You have no work plans yet.
+            - generic [ref=e196]:
+              - generic [ref=e198]:
+                - img [ref=e200]
+                - generic [ref=e204]:
+                  - heading "Shared work plans" [level=2] [ref=e205]
+                  - generic [ref=e206]: Planned
+              - generic [ref=e207]:
+                - img [ref=e209]
+                - heading "No work plans are shared for this period." [level=2] [ref=e213]
+                - paragraph [ref=e214]: Share planned locations within company policy and your consent.
+          - generic [ref=e215]:
+            - generic [ref=e217]:
+              - heading "Save plan" [level=2] [ref=e218]
+              - generic [ref=e219]:
+                - generic [ref=e220]: Work date
+                - group "Work date" [ref=e221]:
+                  - generic [ref=e222]:
+                    - generic [ref=e223]:
+                      - spinbutton "Month" [ref=e224]: "08"
+                      - text: /
+                    - generic [ref=e225]:
+                      - spinbutton "Day" [ref=e226]: "19"
+                      - text: /
+                    - spinbutton "Year" [ref=e228]: "2026"
+                  - button "Choose date, selected date is Aug 19, 2026" [ref=e230] [cursor=pointer]:
+                    - img [ref=e231]
+                  - group:
+                    - generic: Work date
+                  - textbox [ref=e233]: 08/19/2026
+              - generic [ref=e234]:
+                - generic [ref=e235]: Work mode
+                - generic [ref=e236]:
+                  - combobox "Work mode Office" [ref=e237] [cursor=pointer]: Office
+                  - textbox: OFFICE
+                  - img
+                  - group:
+                    - generic: Work mode
+              - generic [ref=e238]:
+                - generic: Site
+                - generic [ref=e239]:
+                  - combobox "Site" [ref=e240] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: Site
+              - generic [ref=e241]:
+                - generic: Floor
+                - generic [ref=e242]:
+                  - combobox "Floor" [ref=e243] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: Floor
+              - generic [ref=e244]:
+                - generic: Space passing initial checks
+                - generic [ref=e245]:
+                  - combobox "Space passing initial checks" [ref=e246] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: Space passing initial checks
+              - generic [ref=e247]:
+                - generic [ref=e248]: Sharing level
+                - generic [ref=e249]:
+                  - combobox "Sharing level Private" [ref=e250] [cursor=pointer]: Private
+                  - textbox: PRIVATE
+                  - img
+                  - group:
+                    - generic: Sharing level
+              - button "Save plan" [disabled]
+            - generic [ref=e252]:
+              - heading "Share my work plans" [level=2] [ref=e253]
+              - paragraph [ref=e254]: Share planned locations within company policy and your consent.
+              - generic [ref=e255] [cursor=pointer]:
+                - switch "I consent to sharing my work plans." [ref=e258]
+                - generic [ref=e261]: I consent to sharing my work plans.
+              - generic [ref=e262]:
+                - generic [ref=e263]: Sharing level
+                - generic [ref=e264]:
+                  - combobox "Sharing level Site" [disabled] [ref=e265]: Site
+                  - textbox [disabled]: SITE
+                  - img
+                  - group:
+                    - generic: Sharing level
+              - button "Save sharing preference" [ref=e266] [cursor=pointer]
+        - generic [ref=e267]: Verified 09:00 AM
+  - generic "Open DWAI·ON" [ref=e269]:
+    - button "Open DWAI·ON" [ref=e270] [cursor=pointer]
+```

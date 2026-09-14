@@ -1,0 +1,114 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "전자결재 메뉴 열기" [ref=e8]:
+          - button "전자결재 메뉴 열기" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "전자결재" [ref=e18]
+        - generic [ref=e19]:
+          - button "DWP 검색" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e26] [cursor=pointer]':
+            - generic [ref=e27]: T
+            - img [ref=e28]
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e35]
+            - generic [ref=e38]:
+              - text: 전자결재 / 내 요청
+              - heading "보완할 결재" [level=1] [ref=e39]
+              - paragraph [ref=e40]: 결재자가 요청한 추가 정보와 다음 행동을 확인합니다.
+          - generic [ref=e41]:
+            - img [ref=e42]
+            - generic [ref=e46]: 결정 증적 보존
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - heading "보완할 결재" [level=2] [ref=e51]
+              - text: 응답 필요 1건
+            - generic [ref=e54]: "1"
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic: 결재 번호·제목·요약 검색
+                - generic [ref=e58]:
+                  - textbox "결재 번호·제목·요약 검색" [ref=e59]
+                  - group:
+                    - generic: 결재 번호·제목·요약 검색
+              - generic [ref=e60]:
+                - generic: 요청 상태
+                - generic [ref=e61]:
+                  - combobox "요청 상태" [ref=e62] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: 요청 상태
+              - generic [ref=e63]:
+                - generic: 우선순위
+                - generic [ref=e64]:
+                  - combobox "우선순위" [ref=e65] [cursor=pointer]
+                  - textbox
+                  - img
+                  - group:
+                    - generic: 우선순위
+              - generic [ref=e66]:
+                - generic [ref=e67]: 정렬
+                - generic [ref=e68]:
+                  - combobox "정렬 최신순" [ref=e69] [cursor=pointer]: 최신순
+                  - textbox: NEWEST
+                  - img
+                  - group:
+                    - generic: 정렬
+            - generic [ref=e70]:
+              - generic [ref=e71]: 2026. 9. 14. 오후 1:16 기준
+              - generic [ref=e72]:
+                - generic "필터 초기화" [ref=e73]:
+                  - button "필터 초기화" [disabled]:
+                    - img
+                - generic [ref=e74]: 1/1 페이지
+                - generic "이전" [ref=e75]:
+                  - button "이전" [disabled]:
+                    - img
+                - generic "다음" [ref=e76]:
+                  - button "다음" [disabled]:
+                    - img
+          - list "결재" [ref=e79]:
+            - listitem [ref=e80]:
+              - button "APR-2026-0811-001 Customer data access exception 보완 필요 원래 요청 내용 비용 센터를 보완해 주세요. 높음 데이터 접근 예외 2026. 8. 11. 2/3 · Security review 33% 33%" [ref=e81] [cursor=pointer]:
+                - generic [ref=e82]:
+                  - generic [ref=e83]:
+                    - generic [ref=e84]:
+                      - text: APR-2026-0811-001
+                      - paragraph [ref=e85]: Customer data access exception
+                    - generic [ref=e88]: 보완 필요
+                  - generic [ref=e89]: 원래 요청 내용
+                  - generic [ref=e90]:
+                    - img [ref=e91]
+                    - generic [ref=e95]: 비용 센터를 보완해 주세요.
+                  - generic [ref=e96]:
+                    - generic [ref=e99]: 높음
+                    - generic [ref=e101]: 데이터 접근 예외
+                    - generic [ref=e102]: 2026. 8. 11.
+                  - generic [ref=e103]:
+                    - generic [ref=e104]:
+                      - generic [ref=e105]: 2/3 · Security review
+                      - generic [ref=e106]: 33%
+                    - progressbar "2/3 · Security review" [ref=e107]
+              - generic [ref=e109]:
+                - generic "결재 상세 열기" [ref=e110]:
+                  - button "결재 상세 열기" [ref=e111] [cursor=pointer]:
+                    - img [ref=e112]
+                - button "보완 답변" [ref=e115] [cursor=pointer]:
+                  - img [ref=e117]
+                  - text: 보완 답변
+```

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { getContrastRatio } from '@mui/material/styles';
 
 import { foundationTokens } from '../foundation';
 import { buildDwpTheme } from './build-theme';
@@ -13,6 +14,23 @@ const baseInput = {
 };
 
 describe('buildDwpTheme', () => {
+  it.each(['light', 'dark'] as const)('keeps tooltip text readable in %s mode', (mode) => {
+    const theme = buildDwpTheme({ ...baseInput, mode });
+    const tooltip = theme.components?.MuiTooltip?.styleOverrides?.tooltip as {
+      color: string;
+      backgroundColor: string;
+      '@media (forced-colors: active)'?: { color: string; backgroundColor: string };
+    };
+    const arrow = theme.components?.MuiTooltip?.styleOverrides?.arrow as { color: string };
+
+    expect(getContrastRatio(tooltip.color, tooltip.backgroundColor)).toBeGreaterThanOrEqual(4.5);
+    expect(arrow.color).toBe(tooltip.backgroundColor);
+    expect(tooltip['@media (forced-colors: active)']).toMatchObject({
+      color: 'CanvasText',
+      backgroundColor: 'Canvas',
+    });
+  });
+
   it('uses the DWP namespace and the approved product accent', () => {
     const theme = buildDwpTheme(baseInput);
 
@@ -20,6 +38,36 @@ describe('buildDwpTheme', () => {
     expect(theme.palette.primary.main).toBe(foundationTokens.color.product.primary);
     expect(theme.typography.fontFamily).toBe(foundationTokens.font.ui);
   });
+
+  it.each(['light', 'dark'] as const)(
+    'uses system button colors instead of tenant accent colors in forced-colors %s mode',
+    (mode) => {
+      const theme = buildDwpTheme({ ...baseInput, mode });
+      const root = theme.components?.MuiButton?.styleOverrides?.root as Record<string, unknown>;
+
+      expect(root['@media (forced-colors: active)']).toEqual({
+        '&.MuiButton-contained, &.MuiButton-outlined, &.MuiButton-text': {
+          color: 'ButtonText',
+          backgroundColor: 'ButtonFace',
+          border: '1px solid ButtonText',
+          boxShadow: 'none',
+          '&:hover': {
+            color: 'HighlightText',
+            backgroundColor: 'Highlight',
+            borderColor: 'Highlight',
+            boxShadow: 'none',
+          },
+          '&.Mui-disabled': {
+            color: 'GrayText',
+            backgroundColor: 'ButtonFace',
+            borderColor: 'GrayText',
+            boxShadow: 'none',
+          },
+        },
+        '&.Mui-focusVisible, &:focus-visible': { outlineColor: 'Highlight' },
+      });
+    }
+  );
 
   it('falls back to the product accent for an invalid tenant color', () => {
     const theme = buildDwpTheme({ ...baseInput, accentColor: 'not-a-color' });

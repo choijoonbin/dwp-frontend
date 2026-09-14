@@ -14,7 +14,7 @@ import {
 import { ActionButton, ConfirmDialog, EmptyState, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -24,6 +24,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
+import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { RoomBookingDialog } from './room-booking-dialog';
 import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { useRoomsCapabilities } from './rooms-capabilities';
@@ -60,7 +61,7 @@ export function RoomBookings() {
   const capabilities = useRoomsCapabilities();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedEventId = searchParams.get('event');
   const [filter, setFilter] = useState<BookingFilter>('upcoming');
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
@@ -142,6 +143,8 @@ export function RoomBookings() {
   useEffect(() => {
     if (policySourceState === 'DENIED') setEditing(null);
   }, [policySourceState]);
+  const selectedEvent =
+    roomEvents.find((event) => event.eventId === requestedEventId) ?? roomEvents[0] ?? null;
   const requestedEventVisible = roomEvents.some((event) => event.eventId === requestedEventId);
   useEffect(() => {
     if (!requestedEventId || !requestedEventVisible) return;
@@ -243,7 +246,7 @@ export function RoomBookings() {
       {policySourceState !== 'READY' &&
         policySourceState !== 'LOADING' &&
         policySourceState !== 'SKIPPED' && (
-          <Alert
+          <InlineFeedback
             severity={policySourceState === 'STALE' ? 'warning' : 'error'}
             action={
               <ActionButton intent="quiet" onClick={() => policyQuery.refetch()}>
@@ -253,206 +256,247 @@ export function RoomBookings() {
             sx={{ mb: 2 }}
           >
             {t(policySourceState === 'STALE' ? 'find.policyStale' : 'find.policyUnavailable')}
-          </Alert>
+          </InlineFeedback>
         )}
       <Box
         sx={{
-          bgcolor: 'background.paper',
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          overflow: 'hidden',
+          display: 'grid',
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1.55fr) minmax(0, .85fr)' },
+          gap: 2.5,
+          alignItems: 'start',
         }}
       >
-        <Tabs
-          value={filter}
-          onChange={(_, value: BookingFilter) => setFilter(value)}
-          sx={{ px: 1.5, borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Tab value="upcoming" label={t('my.upcoming')} />
-          <Tab value="past" label={t('my.past')} />
-        </Tabs>
-        {eventsSourceState === 'STALE' && (
-          <Alert
-            severity="warning"
-            action={
-              <ActionButton intent="quiet" onClick={() => eventsQuery.refetch()}>
-                {t('actions.retry')}
-              </ActionButton>
-            }
+        <Box sx={workplaceMemberCard}>
+          <Tabs
+            value={filter}
+            onChange={(_, value: BookingFilter) => setFilter(value)}
+            sx={{ px: 1.5, borderBottom: 1, borderColor: 'divider' }}
           >
-            {t('workplace.staleWarning')}
-          </Alert>
-        )}
-        {eventsSourceState === 'LOADING' ? (
-          <Stack spacing={1} p={2}>
-            {Array.from({ length: 4 }, (_, index) => (
-              <Skeleton key={index} variant="rounded" height={118} />
-            ))}
-          </Stack>
-        ) : eventsSourceState === 'DENIED' || eventsSourceState === 'UNAVAILABLE' ? (
-          <Alert
-            severity="error"
-            action={
-              <ActionButton intent="quiet" onClick={() => eventsQuery.refetch()}>
-                {t('actions.retry')}
-              </ActionButton>
-            }
-          >
-            {t('my.loadError')}
-          </Alert>
-        ) : roomEvents.length === 0 ? (
-          <EmptyState
-            icon={filter === 'upcoming' ? <CalendarCheck2 size={28} /> : <CalendarX2 size={28} />}
-            title={t(filter === 'upcoming' ? 'my.emptyUpcoming' : 'my.emptyPast')}
-            description={t('my.emptyDescription')}
-          />
-        ) : (
-          roomEvents.map((event, index) => {
-            const organizer = isOrganizer(event);
-            const baseActions = roomBookingActionPolicy(event, capabilities.canUpdateRoomBooking);
-            const actions = {
-              canRespond: eventsSourceState === 'READY' && baseActions.canRespond,
-              canEdit:
-                eventsSourceState === 'READY' &&
-                policySourceState === 'READY' &&
-                baseActions.canEdit,
-              canCancel: eventsSourceState === 'READY' && baseActions.canCancel,
-            };
-            const selected = event.eventId === requestedEventId;
-            return (
-              <Box
-                key={`${event.eventId}:${event.startsAt}`}
-                id={roomBookingTargetId(event.eventId)}
-                data-testid={roomBookingTargetId(event.eventId)}
-                tabIndex={-1}
-                aria-current={selected ? 'true' : undefined}
-                sx={(theme) => ({
-                  p: { xs: 1.5, md: 2 },
-                  borderTop: index ? 1 : 0,
-                  borderColor: 'divider',
-                  bgcolor: selected ? 'var(--dwp-product-soft)' : 'transparent',
-                  boxShadow: selected ? `inset 3px 0 ${theme.palette.primary.main}` : 'none',
-                  '&:focus-visible': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: -2,
-                  },
-                })}
-              >
-                <Stack
-                  direction={{ xs: 'column', lg: 'row' }}
-                  justifyContent="space-between"
-                  gap={2}
+            <Tab value="upcoming" label={t('my.upcoming')} />
+            <Tab value="past" label={t('my.past')} />
+          </Tabs>
+          {eventsSourceState === 'STALE' && (
+            <InlineFeedback
+              severity="warning"
+              action={
+                <ActionButton intent="quiet" onClick={() => eventsQuery.refetch()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              {t('workplace.staleWarning')}
+            </InlineFeedback>
+          )}
+          {eventsSourceState === 'LOADING' ? (
+            <Stack spacing={1} p={2}>
+              {Array.from({ length: 4 }, (_, index) => (
+                <Skeleton key={index} variant="rounded" height={118} />
+              ))}
+            </Stack>
+          ) : eventsSourceState === 'DENIED' || eventsSourceState === 'UNAVAILABLE' ? (
+            <InlineFeedback
+              severity="error"
+              action={
+                <ActionButton intent="quiet" onClick={() => eventsQuery.refetch()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              {t('my.loadError')}
+            </InlineFeedback>
+          ) : roomEvents.length === 0 ? (
+            <EmptyState
+              icon={filter === 'upcoming' ? <CalendarCheck2 size={28} /> : <CalendarX2 size={28} />}
+              title={t(filter === 'upcoming' ? 'my.emptyUpcoming' : 'my.emptyPast')}
+              description={t('my.emptyDescription')}
+            />
+          ) : (
+            roomEvents.map((event, index) => {
+              const organizer = isOrganizer(event);
+              const baseActions = roomBookingActionPolicy(event, capabilities.canUpdateRoomBooking);
+              const actions = {
+                canRespond: eventsSourceState === 'READY' && baseActions.canRespond,
+                canEdit:
+                  eventsSourceState === 'READY' &&
+                  policySourceState === 'READY' &&
+                  baseActions.canEdit,
+                canCancel: eventsSourceState === 'READY' && baseActions.canCancel,
+              };
+              const selected = event.eventId === requestedEventId;
+              return (
+                <Box
+                  key={`${event.eventId}:${event.startsAt}`}
+                  id={roomBookingTargetId(event.eventId)}
+                  data-testid={roomBookingTargetId(event.eventId)}
+                  tabIndex={-1}
+                  aria-current={selected ? 'true' : undefined}
+                  sx={(theme) => ({
+                    ...workplaceMemberSoftSurface(theme),
+                    m: { xs: 1.5, md: 2 },
+                    p: { xs: 1.5, md: 2 },
+                    border: 1,
+                    borderColor: selected ? 'primary.main' : 'transparent',
+                    boxShadow: selected ? `inset 3px 0 ${theme.palette.primary.main}` : 'none',
+                    '&:focus-visible': {
+                      outline: '2px solid',
+                      outlineColor: 'primary.main',
+                      outlineOffset: -2,
+                    },
+                  })}
                 >
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                      <Typography component="h2" variant="subtitle1" fontWeight={800}>
-                        {event.title}
-                      </Typography>
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        label={organizer ? t('my.organizer') : t('my.invited')}
-                      />
-                      {event.resource?.approvalRequired && (
+                  <Stack
+                    direction={{ xs: 'column', lg: 'row' }}
+                    justifyContent="space-between"
+                    gap={2}
+                  >
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+                        <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
+                          {event.title}
+                        </Typography>
                         <Chip
                           size="small"
-                          color="warning"
                           variant="outlined"
-                          label={t('my.approvalRequired')}
+                          label={organizer ? t('my.organizer') : t('my.invited')}
                         />
-                      )}
-                      {event.status === 'CANCELLED' && (
-                        <Chip
-                          size="small"
-                          color="error"
-                          variant="outlined"
-                          label={t('my.cancelledState')}
-                        />
-                      )}
-                    </Stack>
-                    <Stack
-                      direction={{ xs: 'column', sm: 'row' }}
-                      gap={{ xs: 0.75, sm: 2 }}
-                      sx={{ mt: 1 }}
-                      color="text.secondary"
-                    >
-                      <Stack direction="row" gap={0.6} alignItems="center">
-                        <Clock3 size={15} />
-                        <Typography variant="body2">
-                          {format(event.startsAt)} - {format(event.endsAt)}
-                        </Typography>
+                        {event.resource?.approvalRequired && (
+                          <Chip
+                            size="small"
+                            color="warning"
+                            variant="outlined"
+                            label={t('my.approvalRequired')}
+                          />
+                        )}
+                        {event.status === 'CANCELLED' && (
+                          <Chip
+                            size="small"
+                            color="error"
+                            variant="outlined"
+                            label={t('my.cancelledState')}
+                          />
+                        )}
                       </Stack>
-                      <Stack direction="row" gap={0.6} alignItems="center">
-                        <MapPin size={15} />
-                        <Typography variant="body2">{event.resource?.name}</Typography>
-                      </Stack>
-                      <Stack direction="row" gap={0.6} alignItems="center">
-                        <UsersRound size={15} />
-                        <Typography variant="body2">
-                          {t('my.attendeeCount', { count: event.attendees.length })}
-                        </Typography>
-                      </Stack>
-                    </Stack>
-                    {event.description && (
-                      <Typography
-                        variant="body2"
+                      <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        gap={{ xs: 0.75, sm: 2 }}
+                        sx={{ mt: 1 }}
                         color="text.secondary"
-                        sx={{ mt: 1.25, overflowWrap: 'anywhere' }}
                       >
-                        {event.description}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    {actions.canRespond && (
-                      <>
-                        <ActionButton
-                          intent="secondary"
-                          onClick={() =>
-                            responseMutation.mutate({ event, response: 'DECLINED', identityKey })
-                          }
+                        <Stack direction="row" gap={0.6} alignItems="center">
+                          <Clock3 size={15} />
+                          <Typography variant="body2">
+                            {format(event.startsAt)} - {format(event.endsAt)}
+                          </Typography>
+                        </Stack>
+                        <Stack direction="row" gap={0.6} alignItems="center">
+                          <MapPin size={15} />
+                          <Typography variant="body2">{event.resource?.name}</Typography>
+                        </Stack>
+                        <Stack direction="row" gap={0.6} alignItems="center">
+                          <UsersRound size={15} />
+                          <Typography variant="body2">
+                            {t('my.attendeeCount', { count: event.attendees.length })}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      {event.description && (
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mt: 1.25, overflowWrap: 'anywhere' }}
                         >
-                          {t('my.decline')}
-                        </ActionButton>
-                        <ActionButton
-                          intent="primary"
-                          onClick={() =>
-                            responseMutation.mutate({ event, response: 'ACCEPTED', identityKey })
-                          }
-                        >
-                          {t('my.accept')}
-                        </ActionButton>
-                      </>
-                    )}
-                    {(actions.canEdit || actions.canCancel) && (
-                      <>
-                        {actions.canEdit && (
+                          {event.description}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+                      <ActionButton
+                        intent="quiet"
+                        onClick={() => {
+                          const next = new URLSearchParams(searchParams);
+                          next.set('event', event.eventId);
+                          setSearchParams(next, { replace: true });
+                        }}
+                      >
+                        {t('workplace.member.bookings.openDetail')}
+                      </ActionButton>
+                      {actions.canRespond && (
+                        <>
                           <ActionButton
                             intent="secondary"
-                            startIcon={<Pencil size={16} />}
-                            onClick={() => setEditing(event)}
+                            onClick={() =>
+                              responseMutation.mutate({ event, response: 'DECLINED', identityKey })
+                            }
                           >
-                            {t('actions.edit')}
+                            {t('my.decline')}
                           </ActionButton>
-                        )}
-                        {actions.canCancel && (
-                          <ActionButton intent="danger" onClick={() => setCancelling(event)}>
-                            {t('actions.cancelBooking')}
+                          <ActionButton
+                            intent="primary"
+                            onClick={() =>
+                              responseMutation.mutate({ event, response: 'ACCEPTED', identityKey })
+                            }
+                          >
+                            {t('my.accept')}
                           </ActionButton>
-                        )}
-                      </>
-                    )}
+                        </>
+                      )}
+                      {(actions.canEdit || actions.canCancel) && (
+                        <>
+                          {actions.canEdit && (
+                            <ActionButton
+                              intent="secondary"
+                              startIcon={<Pencil size={16} />}
+                              onClick={() => setEditing(event)}
+                            >
+                              {t('actions.edit')}
+                            </ActionButton>
+                          )}
+                          {actions.canCancel && (
+                            <ActionButton intent="danger" onClick={() => setCancelling(event)}>
+                              {t('actions.cancelBooking')}
+                            </ActionButton>
+                          )}
+                        </>
+                      )}
+                    </Stack>
                   </Stack>
-                </Stack>
-                {index < roomEvents.length - 1 && <Divider sx={{ display: 'none' }} />}
-              </Box>
-            );
-          })
-        )}
-      </Box>
+                  {index < roomEvents.length - 1 && <Divider sx={{ display: 'none' }} />}
+                </Box>
+              );
+            })
+          )}
+        </Box>
 
+        {selectedEvent ? (
+          <Box
+            component="aside"
+            aria-label={t('workplace.member.bookings.detail')}
+            sx={(theme) => ({
+              ...workplaceMemberCard(theme),
+              p: 2.5,
+              display: { xs: 'none', lg: 'block' },
+            })}
+          >
+            <Stack gap={2}>
+              <Typography component="h2" variant="h6">
+                {t('workplace.member.bookings.detail')}
+              </Typography>
+              <Stack gap={1.5} sx={(theme) => ({ ...workplaceMemberSoftSurface(theme), p: 1.5 })}>
+                <Typography variant="body2">
+                  {format(selectedEvent.startsAt)} – {format(selectedEvent.endsAt)}
+                </Typography>
+                <Typography fontWeight="fontWeightBold">{selectedEvent.resource?.name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {t('my.attendeeCount', { count: selectedEvent.attendees.length })}
+                </Typography>
+              </Stack>
+              <Typography variant="caption" color="text.secondary">
+                {t('admin.policies.ownerNotice')}
+              </Typography>
+            </Stack>
+          </Box>
+        ) : null}
+      </Box>
       <RoomBookingDialog
         open={Boolean(
           editing && roomBookingActionPolicy(editing, capabilities.canUpdateRoomBooking).canEdit
@@ -478,6 +522,8 @@ export function RoomBookings() {
         confirmingLabel={t('actions.cancelling')}
         intent="danger"
         busy={cancelMutation.isPending}
+        focusCancelAfterOpen
+        minimumActionHeight={44}
         onClose={() => setCancelling(null)}
         onConfirm={() => {
           if (

@@ -1,3 +1,5 @@
+import { useWorkplaceMemberScopeRevision } from './workplace-member-scope-revision';
+import { foundationTokens } from '@dwp-frontend/design-system';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3, Eye, MapPin, ShieldCheck } from 'lucide-react';
@@ -5,16 +7,19 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createWorkplaceBooking,
   createWorkplaceIdempotencyKey,
+  HttpError,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
+  ActionButton,
   DateTimePickerField,
   DwpDateTimeProvider,
   FormDialog,
   FormField,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -32,6 +37,7 @@ import {
 
 import type {
   WorkplaceBooking,
+  WorkplaceBookingInput,
   WorkplacePolicy,
   WorkplaceResource,
 } from '@dwp-frontend/shared-utils';
@@ -39,6 +45,7 @@ import type {
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
+type BookingSubmission = { scopeKey: string; key: string; input: WorkplaceBookingInput };
 
 export function WorkplaceBookingDialog({
   open,
@@ -53,6 +60,7 @@ export function WorkplaceBookingDialog({
   sourceSnapshot,
   onClose,
   onSaved,
+  onChooseAnother,
 }: {
   open: boolean;
   resource: WorkplaceResource | null;
@@ -66,27 +74,72 @@ export function WorkplaceBookingDialog({
   sourceSnapshot?: WorkplaceBookingSourceSnapshot | null;
   onClose: () => void;
   onSaved?: (booking: WorkplaceBooking) => void;
+  onChooseAnother?: () => void;
 }) {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const auth = useAuth();
   const { canCreateWorkplaceBooking } = useRoomsCapabilities();
+  const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
+  const scopeKey = useWorkplaceMemberScopeRevision(
+    `${identityKey}:${resource?.resourceId ?? 'none'}:${initialStart}:${initialEnd}:${open}:${canCreateWorkplaceBooking}`
+  );
+  const activeScopeRef = useRef(scopeKey);
+  activeScopeRef.current = scopeKey;
+  const componentActiveRef = useRef(true);
+  useEffect(() => {
+    componentActiveRef.current = true;
+    return () => {
+      componentActiveRef.current = false;
+    };
+  }, []);
   const [startsAt, setStartsAt] = useState(initialStart);
   const [endsAt, setEndsAt] = useState(initialEnd);
   const [purpose, setPurpose] = useState('');
   const [visible, setVisible] = useState(true);
-  const commandRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const draftRef = useRef<{ context: string; purpose: string; visible: boolean } | null>(null);
+  const draftContext = `${identityKey}:${initialStart}:${initialEnd}`;
+  const commandRef = useRef<{
+    fingerprint: string;
+    key: string;
+    input: WorkplaceBookingInput;
+    context: string;
+    unknown: boolean;
+  } | null>(null);
+  const commandContext = `${identityKey}:${resource?.resourceId}:${initialStart}:${initialEnd}`;
+  const [unknownContext, setUnknownContext] = useState<string | null>(null);
+  const unknownOutcome = unknownContext === commandContext;
+  const inFlightRef = useRef<BookingSubmission | null>(null);
   const sourceSnapshotRef = useRef(sourceSnapshot);
   sourceSnapshotRef.current = sourceSnapshot;
 
   useEffect(() => {
     if (!open) return;
+    const uncertain = commandRef.current;
+    if (uncertain?.unknown && uncertain.context === commandContext) {
+      setStartsAt(uncertain.input.startsAt);
+      setEndsAt(uncertain.input.endsAt);
+      setPurpose(uncertain.input.purpose);
+      setVisible(uncertain.input.visibleToColleagues);
+      return;
+    }
     setStartsAt(initialStart);
     setEndsAt(initialEnd);
-    setPurpose('');
-    setVisible(true);
+    const preserved = draftRef.current?.context === draftContext ? draftRef.current : null;
+    setPurpose(preserved?.purpose ?? '');
+    setVisible(preserved?.visible ?? true);
     commandRef.current = null;
-  }, [initialEnd, initialStart, open, resource?.resourceId]);
+    setUnknownContext(null);
+  }, [
+    commandContext,
+    draftContext,
+    identityKey,
+    initialEnd,
+    initialStart,
+    open,
+    resource?.resourceId,
+  ]);
 
   const rangeError =
     !startsAt || !endsAt || !policy
@@ -103,14 +156,16 @@ export function WorkplaceBookingDialog({
     policyVersion: policy?.version,
   });
   const mutation = useMutation({
-    mutationFn: () => {
+    mutationFn: (submission: BookingSubmission) => {
+      if (!componentActiveRef.current || submission.scopeKey !== activeScopeRef.current)
+        throw new Error(t('permissions.workplaceBookingReadOnly'));
       if (!resource) throw new Error(t('workplace.booking.resourceRequired'));
       if (
         !workplaceBookingSourceVerified(sourceSnapshotRef.current, {
           resourceId: resource.resourceId,
           resourceVersion: resource.version,
-          rangeFrom: startsAt,
-          rangeTo: endsAt,
+          rangeFrom: submission.input.startsAt,
+          rangeTo: submission.input.endsAt,
           policyVersion: policy?.version,
         })
       ) {
@@ -119,34 +174,73 @@ export function WorkplaceBookingDialog({
       if (!canCreateWorkplaceBooking) {
         throw new Error(t('permissions.workplaceBookingReadOnly'));
       }
-      const input = {
-        resourceId: resource.resourceId,
-        startsAt,
-        endsAt,
-        purpose: purpose.trim(),
-        visibleToColleagues: visible,
-      };
-      const fingerprint = JSON.stringify(input);
-      const command =
-        commandRef.current?.fingerprint === fingerprint
-          ? commandRef.current
-          : {
-              fingerprint,
-              key: createWorkplaceIdempotencyKey('booking'),
-            };
-      commandRef.current = command;
-      return createWorkplaceBooking(input, command.key);
+      if (submission.input.resourceId !== resource.resourceId)
+        throw new Error(t('workplace.booking.resourceRequired'));
+      return createWorkplaceBooking(submission.input, submission.key);
     },
-    onSuccess: async (booking) => {
+    onSuccess: async (booking, submission) => {
+      if (!componentActiveRef.current || submission.scopeKey !== activeScopeRef.current) return;
       commandRef.current = null;
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      draftRef.current = null;
+      setUnknownContext(null);
       toast.success(t('workplace.booking.created'));
-      onSaved?.(booking);
       onClose();
+      onSaved?.(booking);
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+    },
+    onError: (error, submission) => {
+      if (!componentActiveRef.current || submission.scopeKey !== activeScopeRef.current) return;
+      if (error instanceof HttpError && [401, 403].includes(error.status)) {
+        commandRef.current = null;
+        draftRef.current = null;
+        setUnknownContext(null);
+        onClose();
+        void queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      } else if (!(error instanceof HttpError) || error.status >= 500) {
+        if (commandRef.current?.key === submission.key) commandRef.current.unknown = true;
+        setUnknownContext(commandContext);
+      }
+    },
+    onSettled: (_, __, submission) => {
+      if (inFlightRef.current === submission) inFlightRef.current = null;
     },
   });
+  const submit = () => {
+    if (
+      inFlightRef.current ||
+      !resource ||
+      rangeError ||
+      !canCreateWorkplaceBooking ||
+      !sourceVerified
+    )
+      return;
+    const input = {
+      resourceId: resource.resourceId,
+      startsAt,
+      endsAt,
+      purpose: purpose.trim(),
+      visibleToColleagues: visible,
+    };
+    const fingerprint = JSON.stringify(input);
+    if (unknownOutcome && commandRef.current?.fingerprint !== fingerprint) return;
+    const command =
+      commandRef.current?.fingerprint === fingerprint
+        ? commandRef.current
+        : {
+            fingerprint,
+            key: createWorkplaceIdempotencyKey('booking'),
+            input,
+            context: commandContext,
+            unknown: false,
+          };
+    commandRef.current = command;
+    const submission = { scopeKey, key: command.key, input: command.input };
+    inFlightRef.current = submission;
+    mutation.mutate(submission);
+  };
 
   const closeDialog = () => {
+    draftRef.current = null;
     mutation.reset();
     onClose();
   };
@@ -157,38 +251,68 @@ export function WorkplaceBookingDialog({
       title={t('workplace.booking.title')}
       description={t('workplace.booking.description')}
       cancelLabel={t('actions.cancel')}
-      submitLabel={t('actions.book')}
+      submitLabel={t(unknownOutcome ? 'workplace.experience.sameRequestRetry' : 'actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
       submitDisabled={
         !resource || Boolean(rangeError) || !canCreateWorkplaceBooking || !sourceVerified
       }
       onClose={closeDialog}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={submit}
       maxWidth="sm"
+      mobileFullScreen
     >
       <Stack spacing={2}>
+        {mutation.variables?.scopeKey === scopeKey &&
+        mutation.error instanceof HttpError &&
+        mutation.error.status === 409 &&
+        onChooseAnother ? (
+          <InlineFeedback
+            severity="warning"
+            action={
+              <ActionButton
+                intent="secondary"
+                onClick={() => {
+                  draftRef.current = { context: draftContext, purpose, visible };
+                  mutation.reset();
+                  onClose();
+                  onChooseAnother();
+                }}
+              >
+                {t('workplace.member.bookings.chooseAnother')}
+              </ActionButton>
+            }
+          >
+            {t('workplace.experience.conflict')}
+          </InlineFeedback>
+        ) : null}
+        {unknownOutcome ? (
+          <InlineFeedback severity="warning">
+            {t('workplace.member.bookings.changeUnknown')}
+          </InlineFeedback>
+        ) : null}
         {mutation.isError && (
-          <Alert severity="error">
+          <InlineFeedback severity="error">
             {errorMessage(mutation.error, t('workplace.booking.saveError'))}
-          </Alert>
+          </InlineFeedback>
         )}
         {!canCreateWorkplaceBooking && (
           <RoomsPermissionNotice>{t('permissions.workplaceBookingReadOnly')}</RoomsPermissionNotice>
         )}
         {!sourceVerified && (
-          <Alert severity="warning">
+          <InlineFeedback severity="warning">
             {t(
               sourceRangeChanged
                 ? 'workplace.explore.rangeChanged'
                 : 'workplace.explore.availabilityStale'
             )}
-          </Alert>
+          </InlineFeedback>
         )}
         {resource && (
           <Box
             sx={{
               p: 1.5,
+              borderRadius: foundationTokens.radius.surface + 'px',
               border: 1,
               borderColor: 'divider',
               bgcolor: 'var(--dwp-product-soft)',
@@ -196,7 +320,7 @@ export function WorkplaceBookingDialog({
           >
             <Stack direction="row" justifyContent="space-between" gap={1.5}>
               <Box sx={{ minWidth: 0 }}>
-                <Typography fontWeight={750}>{resource.name}</Typography>
+                <Typography fontWeight="fontWeightBold">{resource.name}</Typography>
                 <Stack direction="row" gap={0.6} alignItems="flex-start" sx={{ mt: 0.35 }}>
                   <MapPin size={14} />
                   <Typography
@@ -219,6 +343,7 @@ export function WorkplaceBookingDialog({
           >
             <DateTimePickerField
               required
+              disabled={mutation.isPending || unknownOutcome}
               label={t('workplace.booking.start')}
               value={startsAt}
               onValueChange={(value) => value && setStartsAt(value)}
@@ -226,6 +351,7 @@ export function WorkplaceBookingDialog({
             />
             <DateTimePickerField
               required
+              disabled={mutation.isPending || unknownOutcome}
               label={t('workplace.booking.end')}
               value={endsAt}
               onValueChange={(value) => value && setEndsAt(value)}
@@ -235,22 +361,7 @@ export function WorkplaceBookingDialog({
             />
           </Box>
         </DwpDateTimeProvider>
-        <FormField
-          label={t('workplace.booking.purpose')}
-          value={purpose}
-          onChange={(event) => setPurpose(event.target.value)}
-          inputProps={{ maxLength: 500 }}
-        />
-        <FormControlLabel
-          control={<Switch checked={visible} onChange={(_, checked) => setVisible(checked)} />}
-          label={
-            <Stack direction="row" gap={0.8} alignItems="center">
-              <Eye size={16} />
-              <Typography variant="body2">{t('workplace.booking.visible')}</Typography>
-            </Stack>
-          }
-        />
-        <Alert severity="info" icon={<ShieldCheck size={18} />}>
+        <InlineFeedback severity="info" icon={<ShieldCheck size={18} />}>
           <Stack gap={0.35}>
             <Typography variant="body2">
               {policy
@@ -275,7 +386,30 @@ export function WorkplaceBookingDialog({
               </Stack>
             )}
           </Stack>
-        </Alert>
+        </InlineFeedback>
+
+        <FormField
+          disabled={mutation.isPending || unknownOutcome}
+          label={t('workplace.booking.purpose')}
+          value={purpose}
+          onChange={(event) => setPurpose(event.target.value)}
+          inputProps={{ maxLength: 500 }}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              disabled={mutation.isPending || unknownOutcome}
+              checked={visible}
+              onChange={(_, checked) => setVisible(checked)}
+            />
+          }
+          label={
+            <Stack direction="row" gap={0.8} alignItems="center">
+              <Eye size={16} />
+              <Typography variant="body2">{t('workplace.booking.visible')}</Typography>
+            </Stack>
+          }
+        />
       </Stack>
     </FormDialog>
   );

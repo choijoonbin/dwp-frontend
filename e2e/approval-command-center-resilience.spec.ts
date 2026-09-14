@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
+import { approvalTaskSearchPage } from './support/approval-search-fixtures';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import {
   APPROVAL_HOME_FIXTURE,
@@ -36,6 +37,16 @@ async function prepare(page: Page, dark = false) {
     (url) => url.pathname === '/api/approvals/v1/tasks' && url.searchParams.get('view') === 'INBOX',
     (route) => success(route, APPROVAL_HOME_FIXTURE.focusQueue)
   );
+  await page.route('**/api/approvals/v1/tasks/search?*', async (route) =>
+    success(
+      route,
+      approvalTaskSearchPage(
+        new URL(route.request().url()),
+        APPROVAL_HOME_FIXTURE.focusQueue,
+        await page.evaluate(() => Date.now())
+      )
+    )
+  );
   await page.route(
     (url) => /^\/api\/approvals\/v1\/tasks\/approval-task-[12]$/u.test(url.pathname),
     (route) => {
@@ -59,6 +70,216 @@ async function openQueueSidebar(page: Page) {
   return sidebar;
 }
 
+for (const outcome of ['fresh', 'revoked', 'new-version'] as const) {
+  test(`문서 식별자 복사는 최신 상세 ${outcome} 권한과 버전에 결속된다`, async ({ page }) => {
+    await prepare(page);
+    await page.addInitScript(() => {
+      const writes: string[] = [];
+      Object.defineProperty(window, 'approvalCopiedIdentifiers', { value: writes });
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: {
+          writeText: async (value: string) => {
+            writes.push(value);
+          },
+        },
+      });
+    });
+    let changed = false;
+    let reads = 0;
+    await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) => {
+      reads += 1;
+      if (changed && outcome === 'revoked')
+        return route.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', errorCode: 'ACCESS_DENIED' }),
+        });
+      return success(route, {
+        ...APPROVAL_TASK_DETAIL_FIXTURE,
+        canDecide: true,
+        task: {
+          ...APPROVAL_HOME_FIXTURE.focusQueue[0],
+          version: changed && outcome === 'new-version' ? 1 : 0,
+        },
+      });
+    });
+    await page.goto('/approvals/inbox?task=approval-task-1');
+    const copy = page.getByRole('button', { name: '문서 식별자 복사', exact: true });
+    await expect(copy).toBeVisible();
+    const previousReads = reads;
+    changed = true;
+    await copy.click();
+    await expect.poll(() => reads).toBeGreaterThan(previousReads);
+    const copied = () =>
+      page.evaluate(
+        () =>
+          (window as unknown as { approvalCopiedIdentifiers: string[] }).approvalCopiedIdentifiers
+      );
+    if (outcome === 'fresh') {
+      await expect.poll(copied).toEqual([APPROVAL_HOME_FIXTURE.focusQueue[0].requestNumber]);
+      await page.getByRole('button', { name: '이력 보기', exact: true }).click();
+      await expect(page.locator('#approval-audit-timeline-title')).toBeFocused();
+    } else {
+      await expect(
+        page.getByText('문서를 다시 확인한 후 복사해 주세요.', { exact: true })
+      ).toBeVisible();
+      expect(await copied()).toEqual([]);
+    }
+  });
+}
+
+test('내 완료함은 서버 106건의 마지막 페이지·검색을 조회하고 결재 명령을 노출하지 않는다', async ({
+  page,
+}) => {
+  await prepare(page);
+  const tasks = Array.from({ length: 106 }, (_, index) => ({
+    ...APPROVAL_HOME_FIXTURE.focusQueue[0],
+    taskId: `completed-search-${index}`,
+    requestNumber: `APR-COMPLETED-${index + 1}`,
+    title: index === 105 ? '완료된 정산 최종 결정' : `완료 결정 ${index + 1}`,
+    status: 'APPROVED',
+    priority: 'NORMAL' as const,
+  }));
+  const searches: URL[] = [];
+  await page.route('**/api/approvals/v1/tasks/search?*', (route) => {
+    const url = new URL(route.request().url());
+    searches.push(url);
+    return success(route, approvalTaskSearchPage(url, tasks));
+  });
+  await page.route('**/api/approvals/v1/tasks/completed-search-*', (route) =>
+    success(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: tasks.find((candidate) => route.request().url().endsWith(candidate.taskId)),
+      canClaim: false,
+      canDecide: false,
+    })
+  );
+  await page.goto('/approvals/completed');
+  const next = page.getByRole('button', { name: '다음', exact: true });
+  await expect(next).toBeEnabled();
+  for (let pageNumber = 1; pageNumber <= 4; pageNumber += 1) {
+    await next.click();
+    await expect
+      .poll(() =>
+        searches
+          .filter((url) => url.searchParams.get('view') === 'COMPLETED')
+          .at(-1)
+          ?.searchParams.get('page')
+      )
+      .toBe(String(pageNumber));
+    await expect(page.getByText(`${pageNumber + 1}/5 페이지`, { exact: true })).toBeVisible();
+  }
+  await expect(next).toBeDisabled();
+  await page
+    .getByRole('textbox', { name: '결재 번호·제목·요약 검색', exact: true })
+    .fill('정산 최종');
+  await expect
+    .poll(() =>
+      searches
+        .filter((url) => url.searchParams.get('view') === 'COMPLETED')
+        .at(-1)
+        ?.searchParams.get('query')
+    )
+    .toBe('정산 최종');
+  await expect(page.getByRole('button').filter({ hasText: '완료된 정산 최종 결정' })).toHaveCount(
+    1
+  );
+  await expect(page.getByRole('button', { name: /^(승인|반려|검토 시작)$/u })).toHaveCount(0);
+});
+
+test('서버 전체 106건에서 마지막 페이지와 검색·상태 필터를 조회한다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await prepare(page);
+  const tasks = Array.from({ length: 106 }, (_, index) => ({
+    ...APPROVAL_HOME_FIXTURE.focusQueue[0],
+    taskId: `search-task-${String(index).padStart(3, '0')}`,
+    requestNumber: `APR-SEARCH-${index + 1}`,
+    title: index === 105 ? '정산 증빙 최종 검토' : `일반 요청 ${index + 1}`,
+    priority: 'NORMAL' as const,
+    status: index === 105 ? 'CLAIMED' : 'PENDING',
+    riskScore: 70,
+  }));
+  const searches: URL[] = [];
+  await page.route('**/api/approvals/v1/tasks/search?*', (route) => {
+    const url = new URL(route.request().url());
+    searches.push(url);
+    return success(route, approvalTaskSearchPage(url, tasks));
+  });
+  await page.route('**/api/approvals/v1/tasks/search-task-*', (route) => {
+    const task = tasks.find((candidate) => route.request().url().endsWith(candidate.taskId));
+    return success(route, { ...APPROVAL_TASK_DETAIL_FIXTURE, task, canDecide: true });
+  });
+  await page.goto('/approvals/inbox');
+  const list = page.getByLabel('검토 대기 결재 목록');
+  await expect(list.getByRole('listitem')).toHaveCount(25);
+  for (let pageNumber = 1; pageNumber <= 4; pageNumber += 1) {
+    await page.getByRole('button', { name: '다음 페이지', exact: true }).click();
+    await expect(page).toHaveURL((url) => url.searchParams.get('page') === String(pageNumber));
+    await expect.poll(() => searches.at(-1)?.searchParams.get('page')).toBe(String(pageNumber));
+    await expect(
+      page.getByRole('status').filter({ hasText: `${pageNumber + 1}/5 페이지` })
+    ).toBeVisible();
+  }
+  await expect(list.getByRole('listitem')).toHaveCount(6);
+  await expect(list.getByText('정산 증빙 최종 검토')).toBeVisible();
+  await expect(page.getByRole('button', { name: '다음 페이지', exact: true })).toBeDisabled();
+  await page.getByRole('textbox', { name: '결재 검색', exact: true }).fill('정산 증빙');
+  await expect(list.getByRole('listitem')).toHaveCount(1);
+  await expect.poll(() => searches.at(-1)?.searchParams.get('query')).toBe('정산 증빙');
+  await expect(page).toHaveURL((url) => url.searchParams.get('page') === '0');
+  await page.getByRole('combobox', { name: '상태', exact: true }).click();
+  await page.getByRole('option', { name: '처리 중', exact: true }).click();
+  await expect.poll(() => searches.at(-1)?.searchParams.get('status')).toBe('CLAIMED');
+  await expect(list.getByText('정산 증빙 최종 검토')).toBeVisible();
+});
+
+test('서버 목록 첫 실패는 열린 결재 확인을 닫고 최신 조회 성공 후에만 복구한다', async ({
+  page,
+}) => {
+  await prepare(page);
+  let failed = false;
+  let reads = 0;
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/search?*', (route) => {
+    reads += 1;
+    if (failed)
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', errorCode: 'AUTHORITY_RESOLUTION_UNAVAILABLE' }),
+      });
+    return success(
+      route,
+      approvalTaskSearchPage(new URL(route.request().url()), APPROVAL_HOME_FIXTURE.focusQueue)
+    );
+  });
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    return success(route, {});
+  });
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await page.getByRole('button', { name: '승인', exact: true }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  const before = reads;
+  failed = true;
+  await page.evaluate(() => {
+    dispatchEvent(new Event('offline'));
+    dispatchEvent(new Event('online'));
+  });
+  await expect.poll(() => reads).toBeGreaterThan(before);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toHaveCount(0);
+  expect(posts).toBe(0);
+  await expect(
+    page.getByRole('alert').filter({ hasText: '결재 목록을 불러오지 못했습니다' })
+  ).toBeVisible();
+  failed = false;
+  await page.getByRole('button', { name: '다시 시도', exact: true }).click();
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toBeEnabled();
+  expect(posts).toBe(0);
+});
+
 test('결재함 부모 항목은 필터와 우측 화면을 유지하며 하위 메뉴를 접고 펼친다', async ({
   page,
 }, info) => {
@@ -66,7 +287,7 @@ test('결재함 부모 항목은 필터와 우측 화면을 유지하며 하위 
   await page.goto('/approvals/home');
   let sidebar = await openQueueSidebar(page);
   await sidebar.getByRole('link', { name: '결재함', exact: true }).click();
-  await expect(page).toHaveURL(/\/approvals\/inbox$/u);
+  await expect(page).toHaveURL((url) => url.pathname === '/approvals/inbox');
   sidebar = await openQueueSidebar(page);
   const parent = sidebar.getByRole('button', { name: '결재함', exact: true });
   const filters = sidebar.getByRole('navigation', { name: '결재 큐 필터' });
@@ -74,6 +295,12 @@ test('결재함 부모 항목은 필터와 우측 화면을 유지하며 하위 
   await expect(filters.getByRole('button')).toHaveCount(4);
   await filters.getByRole('button', { name: /^긴급 결재/u }).click();
   await expect(page).toHaveURL(/queue=URGENT/u);
+  if ((page.viewportSize()?.width ?? 1280) < 1200) {
+    await expect(page.locator('[data-approval-command-center-heading]')).toBeFocused();
+  }
+  if ((page.viewportSize()?.width ?? 1280) >= 900) {
+    await expect(page).toHaveURL((url) => url.searchParams.get('task') === 'approval-task-1');
+  }
   await openQueueSidebar(page);
   const selectedUrl = page.url();
   await parent.click();
@@ -221,6 +448,228 @@ test('동일 화면 URL 선택과 모바일 상세 키보드 포커스는 일치
   await expect(detail).toBeFocused();
 });
 
+test('데스크톱 자동 선택과 큐 변경은 유효한 task URL을 보존하고 정규화한다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await prepare(page);
+  await page.goto('/approvals/inbox');
+  await expect(page).toHaveURL((url) => url.searchParams.get('task') === 'approval-task-1');
+
+  const filters = page.getByRole('navigation', { name: '결재 큐 필터' });
+  await filters.getByRole('button', { name: /^고위험/u }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.searchParams.get('queue') === 'HIGH_RISK' &&
+      url.searchParams.get('task') === 'approval-task-1'
+  );
+  await filters.getByRole('button', { name: /^전체 대기/u }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.searchParams.get('queue') === 'ALL' && url.searchParams.get('task') === 'approval-task-1'
+  );
+
+  await page.getByRole('button', { name: /신규 협력사 보안 예외/u }).click();
+  await expect(page).toHaveURL((url) => url.searchParams.get('task') === 'approval-task-2');
+  await filters.getByRole('button', { name: /^긴급 결재/u }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.searchParams.get('queue') === 'URGENT' &&
+      url.searchParams.get('task') === 'approval-task-1'
+  );
+});
+
+test('결정 직전 버전 충돌은 POST 없이 의견을 보존하고 최신본 재확인을 요구한다', async ({
+  page,
+}) => {
+  await prepare(page);
+  let changed = false;
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) =>
+    success(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      canDecide: true,
+      task: { ...APPROVAL_HOME_FIXTURE.focusQueue[0], version: changed ? 1 : 0 },
+    })
+  );
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    return success(route, {});
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await page.getByRole('button', { name: '반려', exact: true }).click();
+  await page.getByLabel('결정 사유').fill('현재 증적 기준으로는 승인할 수 없습니다.');
+  changed = true;
+  await page.getByRole('dialog').getByRole('button', { name: '반려 확정' }).click();
+
+  const conflict = page.getByRole('alert').filter({ hasText: '결재 내용이 변경되었습니다' });
+  await expect(conflict).toBeVisible();
+  expect(posts).toBe(0);
+  await conflict.getByRole('button', { name: '최신본 검토' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel('결정 사유')).toHaveValue(
+    '현재 증적 기준으로는 승인할 수 없습니다.'
+  );
+  await dialog.getByRole('button', { name: '반려 확정' }).click();
+  await expect.poll(() => posts).toBe(1);
+});
+
+test('결정 POST 503은 자동 재시도 없이 읽기 전용으로 전환하고 명시적 복구만 허용한다', async ({
+  page,
+}) => {
+  await prepare(page);
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', errorCode: 'UPSTREAM_UNAVAILABLE' }),
+    });
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await page.getByRole('button', { name: '승인', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '승인 확정' }).click();
+
+  const recovery = page.getByRole('alert').filter({ hasText: '결정 결과를 확인할 수 없습니다' });
+  await expect(recovery).toBeVisible();
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toBeDisabled();
+  expect(posts).toBe(1);
+  await recovery.getByRole('button', { name: '최신 권한 확인' }).click();
+  await expect(recovery).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toBeEnabled();
+  expect(posts).toBe(1);
+});
+
+test('결정 POST 시점의 403 권한 회수는 재전송 없이 최신 읽기 전용 상태로 수렴한다', async ({
+  page,
+}) => {
+  await prepare(page);
+  let revoked = false;
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) =>
+    success(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      canDecide: !revoked,
+      task: { ...APPROVAL_HOME_FIXTURE.focusQueue[0], version: revoked ? 1 : 0 },
+    })
+  );
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    revoked = true;
+    return route.fulfill({
+      status: 403,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', errorCode: 'APPROVAL_DECISION_FORBIDDEN' }),
+    });
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await page.getByRole('button', { name: '승인', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '승인 확정' }).click();
+
+  const denied = page.getByRole('alert').filter({ hasText: '결정 권한이 변경되었습니다' });
+  await expect(denied).toBeVisible();
+  expect(posts).toBe(1);
+  await denied.getByRole('button', { name: '최신 권한 확인' }).click();
+  await expect(denied).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toBeDisabled();
+  expect(posts).toBe(1);
+});
+
+test('담당 지정 직전 최신 상세 조회 실패는 claim POST 없이 읽기 전용으로 전환한다', async ({
+  page,
+}) => {
+  await prepare(page);
+  let failPreflight = false;
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) => {
+    if (failPreflight) {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', errorCode: 'AUTHORITY_RESOLUTION_UNAVAILABLE' }),
+      });
+    }
+    return success(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      canClaim: true,
+      canDecide: false,
+      task: { ...APPROVAL_HOME_FIXTURE.focusQueue[0], version: 1 },
+    });
+  });
+  await page.route('**/api/approvals/v1/tasks/*/claim', (route) => {
+    posts += 1;
+    return success(route, APPROVAL_TASK_DETAIL_FIXTURE);
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  const claim = page.getByRole('button', { name: '내 업무로 가져오기' });
+  await expect(claim).toBeEnabled();
+  failPreflight = true;
+  await claim.click();
+
+  const recovery = page
+    .getByRole('alert')
+    .filter({ hasText: '담당 지정 결과를 확인할 수 없습니다' });
+  await expect(recovery).toBeVisible();
+  await expect(claim).toHaveCount(0);
+  expect(posts).toBe(0);
+
+  failPreflight = false;
+  await recovery.getByRole('button', { name: '최신 권한 확인' }).click();
+  await expect(recovery).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '내 업무로 가져오기' })).toBeEnabled();
+  expect(posts).toBe(0);
+});
+
+test('완료 문서 권한이 회수되면 본문과 이력을 가리고 단건·배치 쓰기를 모두 닫는다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await prepare(page);
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) =>
+    success(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: {
+        ...APPROVAL_HOME_FIXTURE.focusQueue[0],
+        title: 'Restricted approval',
+        summary: '',
+        status: 'APPROVED',
+      },
+      contentAccess: {
+        state: 'REDACTED',
+        reason: 'CURRENT_PERMISSION_REVOKED',
+        evaluatedAt: '2026-09-11T00:00:00Z',
+      },
+      canClaim: false,
+      canDecide: true,
+    })
+  );
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    return success(route, APPROVAL_TASK_DETAIL_FIXTURE);
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await expect(
+    page.getByRole('alert').filter({ hasText: '현재 권한으로 결재 내용을 열 수 없습니다' })
+  ).toBeVisible();
+  await expect(page.getByText('결재 조회 권한이 회수되었습니다.')).toBeVisible();
+  await expect(page.getByText(/Restore a customer-facing integration/u)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toHaveCount(0);
+
+  await page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택').check();
+  await page.getByRole('button', { name: '선택 항목 승인' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+  await expect(
+    page.getByRole('status').filter({ hasText: '승인 0건 · 처리 불가 1건' })
+  ).toBeVisible();
+  expect(posts).toBe(0);
+});
+
 test('배치가 확인한 권한 회수는 우측 상세에도 즉시 반영된다', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 });
   await prepare(page);
@@ -250,19 +699,76 @@ test('배치가 확인한 권한 회수는 우측 상세에도 즉시 반영된�
   expect(posts).toBe(0);
 });
 
+test('모바일은 명시적 선택 모드에서만 배치 제어를 열고 항목별 결과를 알린다', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await prepare(page);
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    return success(route, {});
+  });
+
+  await page.goto('/approvals/inbox');
+  const selection = page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택');
+  await expect(selection).toHaveCount(0);
+  await page.getByRole('button', { name: '선택', exact: true }).click();
+  await expect(selection).toBeVisible();
+  await selection.check();
+  await page.getByRole('button', { name: '선택 항목 승인' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+
+  await expect(page.getByRole('status').filter({ hasText: '배치 처리 결과' })).toContainText(
+    '승인 완료'
+  );
+  expect(posts).toBe(1);
+  await page.getByRole('button', { name: '닫기', exact: true }).click();
+  await expect(page.getByRole('status').filter({ hasText: '배치 처리 결과' })).toHaveCount(0);
+  await page.getByRole('button', { name: '선택 취소', exact: true }).click();
+  await expect(selection).toHaveCount(0);
+});
+
+test('결재함은 현재 큐와 확인 시각을 표시하고 사용자가 최신 목록을 재조회할 수 있다', async ({
+  page,
+}) => {
+  await prepare(page);
+  let reads = 0;
+  await page.route(
+    (url) =>
+      url.pathname === '/api/approvals/v1/tasks/search' && url.searchParams.get('view') === 'INBOX',
+    (route) => {
+      reads += 1;
+      return success(
+        route,
+        approvalTaskSearchPage(new URL(route.request().url()), APPROVAL_HOME_FIXTURE.focusQueue)
+      );
+    }
+  );
+
+  await page.goto('/approvals/inbox?queue=HIGH_RISK');
+  await expect(page.getByRole('status').filter({ hasText: '고위험 · 2건' })).toBeVisible();
+  const before = reads;
+  await page.getByRole('button', { name: '새로고침', exact: true }).click();
+  await expect.poll(() => reads).toBeGreaterThan(before);
+});
+
 test('오늘 마감 큐와 사이드바 건수는 자정에 함께 갱신된다', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.clock.install({ time: new Date('2026-09-04T23:59:50+09:00') });
   await prepare(page);
   await page.route(
-    (url) => url.pathname === '/api/approvals/v1/tasks' && url.searchParams.get('view') === 'INBOX',
-    (route) =>
+    (url) =>
+      url.pathname === '/api/approvals/v1/tasks/search' && url.searchParams.get('view') === 'INBOX',
+    async (route) =>
       success(
         route,
-        APPROVAL_HOME_FIXTURE.focusQueue.map((task, index) => ({
-          ...task,
-          dueAt: index === 0 ? '2026-09-04T23:59:59+09:00' : '2026-09-05T12:00:00+09:00',
-        }))
+        approvalTaskSearchPage(
+          new URL(route.request().url()),
+          APPROVAL_HOME_FIXTURE.focusQueue.map((task, index) => ({
+            ...task,
+            dueAt: index === 0 ? '2026-09-04T23:59:59+09:00' : '2026-09-05T12:00:00+09:00',
+          })),
+          await page.evaluate(() => Date.now())
+        )
       )
   );
   await page.goto('/approvals/inbox?queue=DUE_TODAY');
@@ -277,6 +783,29 @@ test('오늘 마감 큐와 사이드바 건수는 자정에 함께 갱신된다'
       .getByRole('navigation', { name: '결재 큐 필터' })
       .getByRole('button', { name: /^오늘 마감/u })
   ).toContainText('1');
+});
+
+test('320px 200% 결재 상세와 확인 dialog는 가로 넘침 없이 마지막 작업까지 유지된다', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
+  await prepare(page);
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+
+  const detail = page.getByRole('region', { name: '결재 상세', exact: true });
+  await expect(detail.getByRole('heading', { name: '고객 분석 환경 접근 연장' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await detail.getByRole('button', { name: '반려', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: '반려 확정' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: testInfo.outputPath('approval-detail-320-forced-200.png') });
 });
 
 for (const view of [

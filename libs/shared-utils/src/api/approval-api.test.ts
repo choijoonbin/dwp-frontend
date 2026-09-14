@@ -3,15 +3,24 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import {
   claimApprovalTask,
+  createApprovalRequest,
   createApprovalDelegation,
   decideApprovalTask,
+  getApprovalDelegations,
   getApprovalHome,
+  getApprovalRequest,
   getApprovalTask,
   getApprovalRequestDetail,
+  getApprovalRequests,
   getApprovalTasks,
   getApprovalWorkflows,
+  getPublishedApprovalForms,
+  getPublishedApprovalFormTemplate,
+  getPublishedApprovalWorkflows,
+  getPublishedApprovalWorkflowTemplate,
   respondToApprovalInformationRequest,
   retryApprovalIntegrationDelivery,
+  searchApprovalDelegationCandidates,
   updateApprovalDraft,
 } from './approval-api';
 
@@ -29,6 +38,119 @@ describe('approval API boundary', () => {
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();
+  });
+
+  it('checks delivery source before and after CSRF and never sends a stale retry', async () => {
+    let valid = true;
+    const fetchMock = vi.fn().mockImplementation(async () => {
+      valid = false;
+      return jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(
+      retryApprovalIntegrationDelivery('outbox-1', 7, legacy, {
+        beforeDispatch: () => {
+          if (!valid) throw new Error('Source expired');
+        },
+      })
+    ).rejects.toThrow('Source expired');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/auth/csrf');
+  });
+
+  it('does not automatically replay a bodyless delivery command on an empty 403', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(new Response('', { status: 403 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(retryApprovalIntegrationDelivery('outbox-1', 7, legacy)).rejects.toMatchObject({
+      status: 403,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWith('/retry'))).toHaveLength(1);
+  });
+
+  it('discards a late delivery response after source revocation instead of reporting success', async () => {
+    let valid = true;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockImplementationOnce(async () => {
+        valid = false;
+        return jsonResponse({ generatedAt: '2026-09-14T10:00:00Z', integrationDeliveries: [] });
+      });
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(
+      retryApprovalIntegrationDelivery('outbox-1', 7, legacy, {
+        beforeDispatch: () => {
+          if (!valid) throw new Error('Source revoked');
+        },
+      })
+    ).rejects.toThrow('Source revoked');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['000', '100'] as const)(
+    'preserves draft command identity in rollout %s',
+    async (rolloutState) => {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+        .mockResolvedValue(jsonResponse({ requestId: 'request-1' }));
+      vi.stubGlobal('fetch', fetchMock);
+      const input = {
+        workflowId: 'workflow-1',
+        formId: 'form-1',
+        title: 'Draft',
+        summary: '',
+        priority: 'NORMAL' as const,
+        payload: {},
+      };
+      const execution = { mode: 'LEGACY_COMPATIBILITY' as const, rolloutState };
+      await createApprovalRequest(input, execution, { idempotencyKey: 'draft-command-1' });
+      await updateApprovalDraft('request-1', { ...input, expectedVersion: 1 }, execution, {
+        idempotencyKey: 'draft-command-2',
+      });
+      const commands = fetchMock.mock.calls.filter(([, init]) =>
+        ['POST', 'PUT'].includes(init.method)
+      );
+      expect(commands.map(([, init]) => init.headers['Idempotency-Key'])).toEqual([
+        'draft-command-1',
+        'draft-command-2',
+      ]);
+    }
+  );
+
+  it('rejects malformed or mismatched draft command keys before any network request', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const input = {
+      workflowId: 'workflow-1',
+      formId: 'form-1',
+      title: 'Draft',
+      summary: '',
+      priority: 'NORMAL' as const,
+      payload: {},
+    };
+    await expect(
+      createApprovalRequest(input, legacy, { idempotencyKey: 'bad key' })
+    ).rejects.toThrow();
+    await expect(
+      createApprovalRequest(
+        input,
+        {
+          mode: 'SECURE',
+          rolloutState: '110',
+          expectedDecisionRevision: 'rev-1',
+          contextKey: 'context-1',
+          contextScopeKey: 'scope-1',
+          idempotencyKey: 'governed-key',
+        },
+        { idempotencyKey: 'different-key' }
+      )
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('loads the decision hub from its product service route', async () => {
@@ -111,6 +233,48 @@ describe('approval API boundary', () => {
     controller.abort();
     await rejection;
     expect(requestSignal.aborted).toBe(true);
+  });
+
+  it('binds requester, catalog, and delegation reads to the active scope and abort signal', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockImplementation((url: string) =>
+        Promise.resolve(
+          jsonResponse(
+            url.includes('/template') ? { form: { schema: { schemaVersion: 1, fields: [] } } } : []
+          )
+        )
+      );
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+    const scope = 'scope-requester-a';
+
+    await getApprovalRequests('SUBMITTED', scope, controller.signal);
+    await getApprovalRequest('request-1', scope, controller.signal);
+    await getPublishedApprovalWorkflows(scope, controller.signal);
+    await getPublishedApprovalWorkflowTemplate('workflow-1', scope, controller.signal);
+    await getPublishedApprovalForms(scope, controller.signal);
+    await getPublishedApprovalFormTemplate('form-1', scope, controller.signal);
+    await getApprovalDelegations(scope, controller.signal);
+    await searchApprovalDelegationCandidates('kim', 12, scope, controller.signal);
+
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      '/api/approvals/v1/requests?view=SUBMITTED&contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/requests/request-1?contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/workflows/published?contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/workflows/published/workflow-1/template?contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/catalog/forms?contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/catalog/forms/form-1/template?contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/delegations?contextScopeKey=scope-requester-a',
+      '/api/approvals/v1/delegations/candidates?query=kim&limit=12&contextScopeKey=scope-requester-a',
+    ]);
+    const requestSignals = fetchMock.mock.calls.map(
+      ([, init]) => (init as RequestInit).signal as AbortSignal
+    );
+    requestSignals.forEach((signal) => {
+      expect(signal).toBeInstanceOf(AbortSignal);
+      expect(signal.aborted).toBe(false);
+    });
   });
 
   it('sends a versioned decision through the shared CSRF contract', async () => {

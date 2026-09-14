@@ -49,11 +49,11 @@ export function NotificationPolicySimulationControls({
     <Box
       component="section"
       data-testid="notification-policy-simulation-controls"
-      sx={{ border: 1, borderColor: 'divider', p: 1.5 }}
+      sx={{ borderBlock: 1, borderColor: 'divider', py: 1.5, minWidth: 0 }}
     >
       <Stack direction="row" gap={1} alignItems="flex-start">
         <UserRound size={18} />
-        <Box>
+        <Box minWidth={0}>
           <Typography variant="subtitle2">{t('admin.policies.simulation.title')}</Typography>
           <Typography variant="caption" color="text.secondary">
             {t('admin.policies.simulation.description')}
@@ -139,12 +139,12 @@ export function NotificationPolicySimulationResult({
   return (
     <Box
       data-testid="notification-policy-simulation-result"
-      sx={{ border: 1, borderColor: 'divider', p: 1.5 }}
+      sx={{ borderBlock: 1, borderColor: 'divider', py: 1.5, minWidth: 0 }}
     >
       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1}>
         <Stack direction="row" gap={1} alignItems="flex-start">
           <MoonStar size={18} />
-          <Box>
+          <Box minWidth={0}>
             <Typography variant="subtitle2">
               {t('admin.policies.simulation.resultTitle')}
             </Typography>
@@ -166,25 +166,46 @@ export function NotificationPolicySimulationResult({
           })}
         />
       </Stack>
-      <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1.25 }}>
+      <Stack sx={{ mt: 1.25, borderTop: 1, borderColor: 'divider' }}>
         {value.channels.map((channel) => (
-          <Chip
+          <Box
             key={channel.channel}
-            size="small"
-            variant="outlined"
-            color={
-              channel.outcome === 'IMMEDIATE'
-                ? 'success'
-                : channel.outcome === 'DEFERRED'
-                  ? 'warning'
-                  : 'default'
-            }
-            label={t('admin.policies.simulation.channelOutcome', {
-              channel: t(`channels.${channel.channel}`),
-              outcome: t(`admin.policies.simulation.outcomes.${channel.outcome}`),
-              reason: t(`admin.policies.simulation.reasons.${channel.reason}`),
-            })}
-          />
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr) auto',
+                sm: 'minmax(90px,.65fr) minmax(100px,.7fr) minmax(0,1.3fr)',
+              },
+              gap: 1,
+              py: 1,
+              borderBottom: 1,
+              borderColor: 'divider',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="body2" fontWeight="fontWeightBold">
+              {t(`channels.${channel.channel}`)}
+            </Typography>
+            <Chip
+              size="small"
+              variant="outlined"
+              color={
+                channel.outcome === 'IMMEDIATE'
+                  ? 'success'
+                  : channel.outcome === 'DEFERRED'
+                    ? 'warning'
+                    : 'default'
+              }
+              label={t(`admin.policies.simulation.outcomes.${channel.outcome}`)}
+            />
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ gridColumn: { xs: '1 / -1', sm: 'auto' }, overflowWrap: 'anywhere' }}
+            >
+              {t(`admin.policies.simulation.reasons.${channel.reason}`)}
+            </Typography>
+          </Box>
         ))}
       </Stack>
       {value.providerCostState === 'RATE_CARD_REQUIRED' && (

@@ -174,6 +174,7 @@ export function SearchControl({ compact = false }: { compact?: boolean }) {
           display: { xs: 'none', md: 'flex' },
           alignItems: 'center',
           gap: 1,
+          '& > svg': { flexShrink: 0 },
           color: 'text.secondary',
           bgcolor: 'action.hover',
           border: 1,
@@ -191,12 +192,23 @@ export function SearchControl({ compact = false }: { compact?: boolean }) {
         }}
       >
         <Search size={18} strokeWidth={1.8} aria-hidden="true" />
-        <Typography variant="body2" sx={{ flex: 1, display: compact ? 'none' : 'block' }}>
+        <Typography
+          variant="body2"
+          noWrap
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            lineHeight: (theme) => theme.typography.button.lineHeight,
+            display: compact ? 'none' : 'block',
+          }}
+        >
           {t('search.shortPlaceholder')}
         </Typography>
         <Box
           component="kbd"
           sx={{
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
             px: 0.6,
             py: 0.15,
             border: 1,

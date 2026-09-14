@@ -6,6 +6,11 @@ import path from 'node:path';
 import process from 'node:process';
 
 import prettier from 'prettier';
+import {
+  EXPECTED_REGISTRY_VERSIONS as VERSIONS,
+  EXPECTED_AUTHORIZATION_COUNTS as EXPECTED_COUNTS,
+  PRESERVED_AUTHORIZATION_CHECKSUMS as PRESERVED_CHECKSUMS,
+} from './product-authorization-fixture-versions.mjs';
 
 const root = process.cwd();
 const snapshotPath = path.join(root, 'architecture/product-surface-authorization.v1.json');
@@ -16,7 +21,6 @@ const generatedPath = path.join(
 );
 const INDEX_FILE = 'product-surfaces-v1.index.json';
 const LATEST_ALIAS_FILE = 'product-surfaces-v1.json';
-const VERSIONS = [1, 2, 3, 4, 5, 6];
 const LATEST_VERSION = VERSIONS.at(-1);
 const SNAPSHOT_FIELDS = [
   'bundles',
@@ -56,50 +60,6 @@ const SECTION_KEYS = {
   predicatePolicies: 'predicatePolicyKey',
   routes: 'routeContractKey',
 };
-const EXPECTED_COUNTS = {
-  1: {
-    capabilities: 10,
-    accessPolicies: 5,
-    entitlementExpressions: 2,
-    predicatePolicies: 6,
-    routes: 35,
-  },
-  2: {
-    capabilities: 34,
-    accessPolicies: 6,
-    entitlementExpressions: 3,
-    predicatePolicies: 13,
-    routes: 76,
-  },
-  3: {
-    capabilities: 62,
-    accessPolicies: 14,
-    entitlementExpressions: 8,
-    predicatePolicies: 25,
-    routes: 129,
-  },
-  4: {
-    capabilities: 71,
-    accessPolicies: 22,
-    entitlementExpressions: 16,
-    predicatePolicies: 33,
-    routes: 155,
-  },
-  5: {
-    capabilities: 72,
-    accessPolicies: 22,
-    entitlementExpressions: 16,
-    predicatePolicies: 33,
-    routes: 160,
-  },
-  6: {
-    capabilities: 119,
-    accessPolicies: 22,
-    entitlementExpressions: 16,
-    predicatePolicies: 34,
-    routes: 250,
-  },
-};
 const EXPECTED_ROLLOUT_PRODUCTS = [
   'approvals',
   'calendar',
@@ -114,13 +74,6 @@ const EXPECTED_ROLLOUT_PRODUCTS = [
   'spaces',
   'workplace',
 ];
-const PRESERVED_CHECKSUMS = Object.freeze({
-  1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
-  2: '5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c',
-  3: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
-  4: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
-  5: 'c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f',
-});
 const SHA_256 = /^[a-f0-9]{64}$/u;
 
 function fail(message) {
@@ -606,7 +559,7 @@ function readOfficialSnapshot(artifactDirectory) {
     }
     return value;
   };
-  const expectedBundles = VERSIONS.map((version) => `product-surfaces-v1.bundle-v${version}.json`);
+  const expectedBundles = VERSIONS.map((version) => `product-surfaces-v1.bundle-v${version}.json`).sort();
   const packagedBundles = fs
     .readdirSync(artifactDirectory)
     .filter((fileName) =>

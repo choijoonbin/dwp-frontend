@@ -5,6 +5,7 @@ import {
   createWorkplaceBooking,
   createWorkplaceReleaseWindow,
   getWorkplaceExplore,
+  getWorkplaceAdminBookings,
   relocateWorkplaceBooking,
   saveWorkplaceLayout,
   updateWorkplaceBookingLegalHold,
@@ -19,6 +20,34 @@ function jsonResponse(data: unknown): Response {
 }
 
 describe('Workplace API boundary', () => {
+  it('keeps canonical site and floor IDs through a scoped, paginated operations read', async () => {
+    const response = {
+      content: [{ bookingId: 'booking-1', siteId: 'site-1', floorId: 'floor-12' }],
+      page: 1,
+      size: 20,
+      totalElements: 21,
+      totalPages: 2,
+    };
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(response));
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await getWorkplaceAdminBookings('2026-09-14T00:00:00Z', '2026-09-15T00:00:00Z', {
+      siteId: 'site/1',
+      floorId: 'floor/12',
+      page: 1,
+      size: 20,
+    });
+    const url = new URL(fetchMock.mock.calls[0][0], 'http://localhost');
+    expect(url.pathname).toBe('/api/platform/v1/admin/workplace/bookings');
+    expect(Object.fromEntries(url.searchParams)).toEqual({
+      from: '2026-09-14T00:00:00Z',
+      to: '2026-09-15T00:00:00Z',
+      siteId: 'site/1',
+      floorId: 'floor/12',
+      page: '1',
+      size: '20',
+    });
+    expect(result).toEqual(response);
+  });
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();

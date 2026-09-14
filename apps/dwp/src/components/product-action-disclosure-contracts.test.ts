@@ -179,7 +179,7 @@ describe('Product action disclosure contracts', () => {
       expect(hcmSource).toContain('employeeServicesShortcut.disclosed');
     }
 
-    const approvals = source('features/approvals/approval-admin.tsx');
+    const approvals = source('features/approvals/approval-admin-overview.tsx');
     expect(approvals).toContain('PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows');
     expect(approvals).toContain('PRODUCT_PAGE_SHORTCUT_TARGETS.approvalOperations');
     expect(approvals).toContain('if (!shortcut.disclosed) return null;');

@@ -1,3 +1,4 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
 import { useTranslation } from 'react-i18next';
 import { CalendarClock, CalendarDays, MapPin } from 'lucide-react';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
@@ -9,6 +10,7 @@ import { alpha } from '@mui/material/styles';
 
 import { WorkplaceHomeSectionHeader as SectionHeader } from './workplace-home-section-frame';
 import { WorkplaceHomeWorkloadBar } from './workplace-home-workload-bar';
+import { workplaceMemberCard } from './workplace-member-surfaces';
 
 import type { WorkplaceHomeWeekDay } from './workplace-home-model';
 
@@ -21,10 +23,7 @@ export function WorkplaceWeekRhythm({
 }) {
   const { t, i18n } = useTranslation('rooms');
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
-  const scaleMinutes = Math.max(
-    60,
-    ...week.flatMap((day) => [day.meetingMinutes, day.focusMinutes])
-  );
+  const scaleMinutes = Math.max(60, ...week.map((day) => day.meetingMinutes + day.focusMinutes));
   const hasWeekActivity = week.some(
     (day) =>
       day.meetingMinutes > 0 ||
@@ -37,7 +36,13 @@ export function WorkplaceWeekRhythm({
     <Box
       component="section"
       aria-labelledby="workplace-week-rhythm"
-      sx={{ minWidth: 0, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
+      sx={(theme) => ({
+        ...workplaceMemberCard(theme),
+        display: 'flex',
+        flexDirection: 'column',
+        borderWidth: { xs: 0, md: 1 },
+        bgcolor: { xs: 'transparent', md: 'background.paper' },
+      })}
     >
       <SectionHeader
         id="workplace-week-rhythm"
@@ -51,6 +56,7 @@ export function WorkplaceWeekRhythm({
           variant="caption"
           sx={{
             display: 'block',
+            order: 1,
             px: 2,
             pt: 1.5,
             pb: hasWeekActivity ? 0 : 2.5,
@@ -59,18 +65,19 @@ export function WorkplaceWeekRhythm({
           {t('workplace.home.week.partial')}
         </Typography>
       )}
-      {hasWeekActivity ? (
+      {hasWeekActivity || complete ? (
         <Box
           component="ol"
           sx={{
             p: 0,
             m: 0,
             listStyle: 'none',
+            order: 1,
             display: 'grid',
-            gap: 1.25,
+            gap: 1.5,
             px: { xs: 2, md: 2.5 },
-            pb: 2.5,
-            gridTemplateColumns: { xs: '1fr', lg: 'repeat(5, minmax(0, 1fr))' },
+            pb: 1.5,
+            gridTemplateColumns: '1fr',
           }}
         >
           {week.map((day) => {
@@ -79,11 +86,17 @@ export function WorkplaceWeekRhythm({
               { weekday: 'short', month: 'numeric', day: 'numeric', timeZone: 'UTC' },
               locale
             );
-            const reservationLabel = day.reservationCount
-              ? t('workplace.home.week.reservations', { count: day.reservationCount })
-              : complete
-                ? t('workplace.home.week.noReservation')
-                : '';
+            const weekdayLabel = formatDate(
+              `${day.date}T00:00:00Z`,
+              { weekday: 'short', timeZone: 'UTC' },
+              locale
+            );
+            const reservationLabel =
+              day.reservationCount || complete
+                ? t('workplace.home.week.reservations', { count: day.reservationCount })
+                : complete
+                  ? t('workplace.home.week.noReservation')
+                  : '';
 
             return (
               <Box
@@ -104,21 +117,12 @@ export function WorkplaceWeekRhythm({
                   .join(', ')}
                 sx={(theme) => ({
                   minWidth: 0,
-                  minHeight: { xs: 0, sm: 124, lg: 212 },
-                  p: 1.5,
+                  p: 0.5,
                   display: 'grid',
-                  gridTemplateColumns: {
-                    xs: '1fr',
-                    sm: 'minmax(110px, 0.45fr) minmax(180px, 1fr) minmax(130px, 0.65fr)',
-                    lg: '1fr',
-                  },
-                  alignItems: { sm: 'center', lg: 'stretch' },
-                  gap: { xs: 1.25, sm: 2, lg: 1.25 },
-                  border: 1,
-                  borderTopWidth: day.current ? 3 : 1,
-                  borderColor: day.current ? alpha(theme.palette.primary.main, 0.55) : 'divider',
-                  borderTopColor: day.current ? 'primary.main' : 'divider',
-                  borderRadius: 1,
+                  gridTemplateColumns: '28px minmax(0, 1fr) 50px',
+                  alignItems: 'center',
+                  gap: 1,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   bgcolor: day.current
                     ? alpha(
                         theme.palette.primary.main,
@@ -131,22 +135,17 @@ export function WorkplaceWeekRhythm({
                 })}
               >
                 <Box minWidth={0}>
-                  <Typography variant="body2" fontWeight={day.current ? 850 : 750}>
-                    {dateLabel}
+                  <Typography
+                    variant="caption"
+                    fontWeight="fontWeightBold"
+                    sx={{ whiteSpace: 'nowrap' }}
+                  >
+                    {weekdayLabel}
                   </Typography>
-                  {day.current && (
-                    <Typography
-                      variant="caption"
-                      color="primary.main"
-                      fontWeight={800}
-                      sx={{ display: 'block', mt: 0.35 }}
-                    >
-                      {t('workplace.home.week.today')}
-                    </Typography>
-                  )}
                 </Box>
                 <WorkplaceHomeWorkloadBar
                   day={day}
+                  compact
                   scaleMinutes={scaleMinutes}
                   meetingLabel={t('workplace.home.week.meetings')}
                   focusLabel={t('workplace.home.week.focus')}
@@ -161,7 +160,36 @@ export function WorkplaceWeekRhythm({
                     focusMinutes: day.focusMinutes,
                   })}
                 />
-                <Stack spacing={0.55} sx={{ alignSelf: { lg: 'end' } }}>
+                <Typography
+                  sx={{
+                    ...foundationTokens.workplace.typography.caption,
+                    whiteSpace: 'nowrap',
+                    textAlign: 'right',
+                  }}
+                  color={day.current ? 'primary.main' : 'text.secondary'}
+                >
+                  {day.current
+                    ? t('workplace.home.week.today')
+                    : complete
+                      ? t('workplace.home.week.minutesShort', {
+                          count: day.meetingMinutes + day.focusMinutes,
+                        })
+                      : t('workplace.home.sources.unverified')}
+                </Typography>
+                <Stack
+                  spacing={0.55}
+                  sx={{
+                    gridColumn: '2',
+                    minWidth: 0,
+                    display: {
+                      xs: 'none',
+                      md:
+                        day.current && (day.reservationCount || day.locations.length)
+                          ? 'flex'
+                          : 'none',
+                    },
+                  }}
+                >
                   {reservationLabel && (
                     <Stack direction="row" spacing={0.65} alignItems="flex-start">
                       <CalendarDays size={14} aria-hidden="true" />
@@ -173,7 +201,7 @@ export function WorkplaceWeekRhythm({
                   {day.locations.length > 0 && (
                     <Stack direction="row" spacing={0.65} alignItems="flex-start">
                       <MapPin size={14} aria-hidden="true" />
-                      <Typography variant="caption" fontWeight={700}>
+                      <Typography variant="caption" fontWeight="fontWeightBold">
                         {day.locations.join(' · ')}
                       </Typography>
                     </Stack>
@@ -183,14 +211,65 @@ export function WorkplaceWeekRhythm({
             );
           })}
         </Box>
-      ) : complete ? (
-        <Box sx={{ px: { xs: 2, md: 2.5 }, pb: 2.5 }}>
-          <Typography fontWeight={750}>{t('workplace.home.week.emptyTitle')}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.45 }}>
-            {t('workplace.home.week.emptyDescription')}
-          </Typography>
+      ) : (
+        <Box
+          component="ol"
+          sx={{ order: 1, m: 0, px: 2, pb: 2, listStyle: 'none', display: 'grid', gap: 1 }}
+        >
+          {week.map((day) => (
+            <Box
+              component="li"
+              key={day.date}
+              sx={{ display: 'grid', gridTemplateColumns: '52px minmax(0, 1fr)', gap: 1 }}
+            >
+              <Typography variant="caption" fontWeight="fontWeightBold">
+                {formatDate(`${day.date}T00:00:00Z`, { weekday: 'short', timeZone: 'UTC' }, locale)}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('workplace.home.availability.typeUnavailable')}
+              </Typography>
+            </Box>
+          ))}
         </Box>
-      ) : null}
+      )}
+      <Stack
+        direction="row"
+        gap={2}
+        useFlexGap
+        flexWrap="wrap"
+        sx={{ order: { xs: 0, md: 2 }, px: { xs: 2, md: 3 }, pb: 2 }}
+      >
+        <Typography sx={foundationTokens.workplace.typography.caption} color="text.secondary">
+          <Box
+            component="span"
+            sx={{ display: 'inline-block', width: 8, height: 8, bgcolor: 'primary.main', mr: 0.75 }}
+          />
+          {t('workplace.home.week.meetings')} ·{' '}
+          {complete
+            ? t('workplace.home.week.minutesShort', {
+                count: week.reduce((total, day) => total + day.meetingMinutes, 0),
+              })
+            : t('workplace.home.sources.unverified')}
+        </Typography>
+        <Typography sx={foundationTokens.workplace.typography.caption} color="text.secondary">
+          <Box
+            component="span"
+            sx={{
+              display: 'inline-block',
+              width: 8,
+              height: 8,
+              bgcolor: 'primary.light',
+              mr: 0.75,
+            }}
+          />
+          {t('workplace.home.week.focus')} ·{' '}
+          {complete
+            ? t('workplace.home.week.minutesShort', {
+                count: week.reduce((total, day) => total + day.focusMinutes, 0),
+              })
+            : t('workplace.home.sources.unverified')}
+        </Typography>
+      </Stack>
     </Box>
   );
 }

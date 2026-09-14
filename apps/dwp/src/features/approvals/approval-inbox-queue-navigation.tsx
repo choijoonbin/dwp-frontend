@@ -1,22 +1,19 @@
 import { CalendarClock, ListChecks, ShieldAlert, Siren } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getApprovalTasks } from '@dwp-frontend/shared-utils/api/approval-api';
+import { useQueries } from '@tanstack/react-query';
+import { searchApprovalTasks } from '@dwp-frontend/shared-utils/api/approval-search-api';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {
-  APPROVAL_QUEUE_FILTERS,
-  approvalQueueCounts,
-  parseApprovalQueueFilter,
-} from './approval-command-center-model';
+import { APPROVAL_QUEUE_FILTERS, parseApprovalQueueFilter } from './approval-command-center-model';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { useApprovalQueueClock } from './use-approval-queue-clock';
+import { approvalTaskSearchFilters } from './use-approval-command-task-search';
 
 import type { ApprovalQueueFilter } from './approval-command-center-model';
 import type { LucideIcon } from 'lucide-react';
@@ -37,22 +34,34 @@ export function ApprovalInboxQueueNavigation({ onNavigate }: { onNavigate?: () =
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
   });
-  const tasks = useQuery({
-    queryKey: ['approvals', 'command-tasks', 'INBOX', ...requestScope.cacheKey],
-    queryFn: () => getApprovalTasks('INBOX', requestScope.contextScopeKey),
-    enabled: requestScope.ready && location.pathname === '/approvals/inbox',
-    staleTime: 20_000,
-    retry: 1,
-    meta: requestScope.queryMeta,
+  const countQueries = useQueries({
+    queries: APPROVAL_QUEUE_FILTERS.map((queue) => ({
+      queryKey: [
+        'approvals',
+        'command-queue-counts',
+        'INBOX',
+        ...requestScope.cacheKey,
+        queue,
+        new Date(nowMs).toDateString(),
+      ],
+      queryFn: ({ signal }: { signal: AbortSignal }) =>
+        searchApprovalTasks(
+          'INBOX',
+          { ...approvalTaskSearchFilters(queue, '', 0, 'PRIORITY', ''), size: 1 },
+          requestScope.contextScopeKey,
+          signal
+        ),
+      enabled: requestScope.ready && location.pathname === '/approvals/inbox',
+      staleTime: 20_000,
+      retry: 1,
+      refetchOnReconnect: 'always' as const,
+      meta: requestScope.queryMeta,
+    })),
   });
 
   if (location.pathname !== '/approvals/inbox') return null;
 
   const activeFilter = parseApprovalQueueFilter(searchParams.get('queue'));
-  const counts =
-    tasks.data && !tasks.isError && tasks.failureCount === 0
-      ? approvalQueueCounts(tasks.data, nowMs)
-      : undefined;
 
   return (
     <Box
@@ -61,10 +70,14 @@ export function ApprovalInboxQueueNavigation({ onNavigate }: { onNavigate?: () =
       sx={{ mt: 0.4, mb: 0.75, ml: 1.25, pl: 1.25, borderLeft: 1, borderColor: 'divider' }}
     >
       <Stack gap={0.25}>
-        {APPROVAL_QUEUE_FILTERS.map((filter) => {
+        {APPROVAL_QUEUE_FILTERS.map((filter, index) => {
           const Icon = FILTER_ICONS[filter];
           const selected = filter === activeFilter;
-          const count = counts?.[filter];
+          const countQuery = countQueries[index];
+          const count =
+            countQuery.isSuccess && !countQuery.isFetching && countQuery.failureCount === 0
+              ? countQuery.data.totalElements
+              : undefined;
           return (
             <ButtonBase
               key={filter}
@@ -72,11 +85,19 @@ export function ApprovalInboxQueueNavigation({ onNavigate }: { onNavigate?: () =
               aria-pressed={selected}
               onClick={() => {
                 const next = new URLSearchParams(searchParams);
-                if (filter === 'ALL') next.delete('queue');
-                else next.set('queue', filter);
-                next.delete('task');
+                next.set('queue', filter);
+                next.delete('page');
                 setSearchParams(next);
                 onNavigate?.();
+                if (onNavigate) {
+                  window.requestAnimationFrame(() => {
+                    window.requestAnimationFrame(() => {
+                      document
+                        .querySelector<HTMLElement>('[data-approval-command-center-heading]')
+                        ?.focus();
+                    });
+                  });
+                }
               }}
               sx={{
                 width: 1,

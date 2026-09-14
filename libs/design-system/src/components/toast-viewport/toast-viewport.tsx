@@ -3,6 +3,7 @@ import { useToastStore } from '@dwp-frontend/shared-utils/toast/toast-store';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
+import { getContrastRatio } from '@mui/material/styles';
 
 export function ToastViewport() {
   const toast = useToastStore();
@@ -20,11 +21,18 @@ export function ToastViewport() {
         variant="filled"
         severity={toast.severity}
         onClose={passiveSuccess ? undefined : toast.hide}
-        sx={{
-          bgcolor: `${toast.severity}.dark`,
-          color: 'common.white',
-          pointerEvents: passiveSuccess ? 'none' : 'auto',
-          '& .MuiAlert-icon, & .MuiAlert-action': { color: 'inherit' },
+        sx={(theme) => {
+          const background = theme.palette[toast.severity].dark;
+          const { black, white } = theme.palette.common;
+          return {
+            bgcolor: background,
+            color:
+              getContrastRatio(background, black) > getContrastRatio(background, white)
+                ? black
+                : white,
+            pointerEvents: passiveSuccess ? 'none' : 'auto',
+            '& .MuiAlert-icon, & .MuiAlert-action': { color: 'inherit' },
+          };
         }}
         action={
           toast.action ? (

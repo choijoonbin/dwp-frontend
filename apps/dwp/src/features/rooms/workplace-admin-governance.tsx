@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, FileStack, Network, Scale, ShieldCheck } from 'lucide-react';
-import { ActionButton, ConfirmDialog, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, ConfirmDialog, PageCanvas, SelectField } from '@dwp-frontend/design-system';
 import { useBlocker, useSearchParams } from 'react-router-dom';
 
 import Alert from '@mui/material/Alert';
@@ -16,6 +16,7 @@ import { WorkplaceAdminGovernanceDelegation } from './workplace-admin-governance
 import { WorkplaceAdminGovernanceFloorPlans } from './workplace-admin-governance-floor-plans';
 import { WorkplaceAdminGovernanceHierarchy } from './workplace-admin-governance-hierarchy';
 import { WorkplaceAdminGovernancePolicy } from './workplace-admin-governance-policy';
+import { WorkplaceGovernanceExperienceSettings } from './workplace-governance-experience-settings';
 
 import {
   parseWorkplaceGovernanceTab,
@@ -30,6 +31,7 @@ const TABS = [
   { value: 'policy', icon: Scale },
   { value: 'floorPlans', icon: FileStack },
   { value: 'delegation', icon: Building2 },
+  { value: 'experience', icon: ShieldCheck },
 ] as const;
 
 export function WorkplaceAdminGovernance() {
@@ -103,8 +105,31 @@ export function WorkplaceAdminGovernance() {
         </RoomsPermissionNotice>
       ) : null}
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2, overflowX: 'auto' }}>
+      <Box
+        sx={{
+          borderBottom: { xs: 0, lg: 1 },
+          borderColor: 'divider',
+          mb: 2,
+          overflowX: { xs: 'visible', lg: 'auto' },
+        }}
+      >
+        <Box sx={{ display: { xs: 'block', lg: 'none' }, pt: 1 }}>
+          <SelectField
+            label={t('workplace.admin.governance.tabs.label')}
+            value={tab}
+            options={TABS.filter(({ value }) => visibleTabs.includes(value)).map(({ value }) => ({
+              value,
+              label: t(`workplace.admin.governance.tabs.${value}`),
+            }))}
+            onValueChange={(value) => {
+              const next = parseWorkplaceGovernanceTab(value);
+              if (draftDirtyRef.current) setPendingTab(next);
+              else selectTab(next);
+            }}
+          />
+        </Box>
         <Tabs
+          sx={{ display: { xs: 'none', lg: 'flex' } }}
           value={tab}
           onChange={(_, value: WorkplaceGovernanceTab) => {
             if (draftDirtyRef.current) setPendingTab(value);
@@ -136,7 +161,18 @@ export function WorkplaceAdminGovernance() {
             />
           ) : null}
           {tab === 'access' ? (
-            <WorkplaceAdminGovernanceAccess canManage={capabilities.access.canManage} />
+            <WorkplaceAdminGovernanceAccess
+              canManage={capabilities.access.canManage}
+              delegationSummary={
+                capabilities.delegation.canViewAssignments ? (
+                  <WorkplaceAdminGovernanceDelegation
+                    canManage={capabilities.delegation.canManage}
+                    canViewAssignments
+                    compact
+                  />
+                ) : undefined
+              }
+            />
           ) : null}
           {tab === 'policy' ? (
             <WorkplaceAdminGovernancePolicy
@@ -155,6 +191,12 @@ export function WorkplaceAdminGovernance() {
             <WorkplaceAdminGovernanceDelegation
               canManage={capabilities.delegation.canManage}
               canViewAssignments={capabilities.delegation.canViewAssignments}
+            />
+          ) : null}
+          {tab === 'experience' ? (
+            <WorkplaceGovernanceExperienceSettings
+              canManage={capabilities.experience.canManage}
+              canView={capabilities.experience.canView}
             />
           ) : null}
         </>

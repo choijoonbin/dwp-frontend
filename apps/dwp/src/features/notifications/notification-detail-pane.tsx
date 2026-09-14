@@ -7,6 +7,7 @@ import {
   Check,
   CheckCheck,
   Clock3,
+  ExternalLink,
   MailOpen,
   RotateCcw,
 } from 'lucide-react';
@@ -15,12 +16,13 @@ import {
   getNotificationDetail,
   NOTIFICATION_API_CAPABILITIES,
 } from '@dwp-frontend/shared-utils/api/notification-api';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
 import {
-  ActionButton,
-  ActionIconButton,
   ErrorState,
   LoadingState,
-} from '@dwp-frontend/design-system';
+} from '@dwp-frontend/design-system/components/states/state-panels';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -32,7 +34,10 @@ import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
 import { NotificationDetailReply } from './notification-detail-reply';
-import { displayNotificationActorLabel } from './notification-inbox-model';
+import {
+  displayNotificationActorLabel,
+  resolveMessagingReplyTarget,
+} from './notification-inbox-model';
 import { defaultSnoozeTime } from './notification-model';
 import { useNotificationTargetNavigation } from './use-notification-target-navigation';
 
@@ -43,6 +48,7 @@ import type {
 
 export function NotificationDetailPane({
   item,
+  mode = 'desktop',
   onBack,
   onTriage,
   onOpenTarget,
@@ -50,6 +56,7 @@ export function NotificationDetailPane({
   busy,
 }: {
   item: NotificationItem;
+  mode?: 'desktop' | 'mobile';
   onBack?: () => void;
   onTriage: (action: NotificationTriageAction, snoozedUntil?: string) => void;
   onOpenTarget?: (href: string) => void;
@@ -63,6 +70,8 @@ export function NotificationDetailPane({
   const { t } = useTranslation('notifications');
   const [snoozeAnchor, setSnoozeAnchor] = useState<HTMLElement | null>(null);
   const [sensitiveRevealed, setSensitiveRevealed] = useState(false);
+  const [replyActionContainer, setReplyActionContainer] = useState<HTMLElement | null>(null);
+  const mobile = mode === 'mobile';
   const detailQuery = useQuery({
     queryKey: notificationQueryKeys.detail(item.notificationId),
     queryFn: ({ signal }) => getNotificationDetail(item.notificationId, signal),
@@ -76,6 +85,91 @@ export function NotificationDetailPane({
   const detail = detailQuery.data;
   const primary = (detail?.item ?? item).actions.find((action) => action.primary);
   const actorLabel = displayNotificationActorLabel(detail?.item.actorLabel ?? item.actorLabel);
+  const replyTarget = detail ? resolveMessagingReplyTarget(detail.item) : null;
+  const canReply = Boolean(
+    detail &&
+    !detailQuery.isError &&
+    detail.targetState === 'AVAILABLE' &&
+    !detail.item.sensitive &&
+    replyTarget
+  );
+  const showFooter = Boolean(
+    detail &&
+    !detailQuery.isError &&
+    (!detail.item.sensitive || sensitiveRevealed) &&
+    detail.targetState === 'AVAILABLE' &&
+    (primary?.href || canReply)
+  );
+  const triageButtonSx = {
+    width: mobile
+      ? foundationTokens.density.comfortable.controlHeight
+      : foundationTokens.density.compact.controlHeight,
+    height: mobile
+      ? foundationTokens.density.comfortable.controlHeight
+      : foundationTokens.density.compact.controlHeight,
+  };
+  const triageTools = (
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent={mobile ? 'space-around' : undefined}
+      gap={1}
+    >
+      <ActionIconButton
+        label={item.readAt ? t('actions.markUnread') : t('actions.markRead')}
+        onClick={() => onTriage(item.readAt ? 'UNREAD' : 'READ')}
+        disabled={busy}
+        size="small"
+        sx={triageButtonSx}
+      >
+        {item.readAt ? <MailOpen size={18} /> : <CheckCheck size={18} />}
+      </ActionIconButton>
+      {(!item.savedAt || NOTIFICATION_API_CAPABILITIES.unsave) && (
+        <ActionIconButton
+          label={item.savedAt ? t('actions.unsave') : t('actions.save')}
+          onClick={() => onTriage(item.savedAt ? 'UNSAVE' : 'SAVE')}
+          disabled={busy}
+          intent={item.savedAt ? 'primary' : 'default'}
+          size="small"
+          sx={triageButtonSx}
+        >
+          {item.savedAt ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+        </ActionIconButton>
+      )}
+      <ActionIconButton
+        label={t('actions.snooze')}
+        onClick={(event) => setSnoozeAnchor(event.currentTarget)}
+        disabled={busy}
+        size="small"
+        sx={triageButtonSx}
+      >
+        <Clock3 size={18} />
+      </ActionIconButton>
+      {(!item.completedAt || NOTIFICATION_API_CAPABILITIES.restore) && (
+        <ActionIconButton
+          label={item.completedAt ? t('actions.restore') : t('actions.complete')}
+          onClick={() => onTriage(item.completedAt ? 'RESTORE' : 'COMPLETE')}
+          disabled={busy}
+          size="small"
+          sx={{ ...triageButtonSx, color: item.completedAt ? 'success.main' : undefined }}
+        >
+          {item.completedAt ? <RotateCcw size={18} /> : <Check size={18} />}
+        </ActionIconButton>
+      )}
+    </Stack>
+  );
+  const personalTools = (
+    <Box
+      component="section"
+      aria-label={t('bulk.toolbarLabel')}
+      sx={{ mt: 2, py: 1, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
+    >
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+        {t('workbench.shortcuts.label')}
+      </Typography>
+      {triageTools}
+    </Box>
+  );
 
   useEffect(() => {
     setSensitiveRevealed(false);
@@ -98,56 +192,70 @@ export function NotificationDetailPane({
         alignItems="center"
         justifyContent="space-between"
         gap={1}
-        sx={{ minHeight: 52, px: 1.5, borderBottom: 1, borderColor: 'divider' }}
+        sx={{
+          minHeight: 52,
+          flexShrink: 0,
+          px: 1.5,
+          py: 0.5,
+          borderBottom: 1,
+          borderColor: 'divider',
+          flexWrap: 'wrap',
+        }}
       >
-        <Stack direction="row" alignItems="center" gap={0.5}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          gap={1}
+          flexWrap="wrap"
+          sx={{ minWidth: 0, flex: 1 }}
+        >
           {onBack && (
-            <ActionIconButton label={t('actions.back')} onClick={onBack} size="small">
+            <ActionIconButton
+              label={t('actions.back')}
+              onClick={onBack}
+              size="small"
+              sx={triageButtonSx}
+            >
               <ArrowLeft size={18} />
             </ActionIconButton>
           )}
-          <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-            {t('detail.title')}
+          <Typography
+            component="h2"
+            aria-label={t('detail.title')}
+            variant={mobile ? 'subtitle1' : 'caption'}
+            fontWeight="fontWeightBold"
+            style={mobile ? undefined : { borderRadius: foundationTokens.radius.compact }}
+            sx={{
+              minWidth: 0,
+              overflowWrap: 'anywhere',
+              color: mobile ? 'text.primary' : 'primary.main',
+              px: mobile ? 0 : 1,
+              py: mobile ? 0 : 0.5,
+              border: mobile ? 0 : 1,
+              borderColor: 'primary.main',
+            }}
+          >
+            {mobile
+              ? t('detail.title')
+              : t(`sources.${item.source.appKey.toLocaleLowerCase('en-US')}`, {
+                  defaultValue: item.source.appName,
+                })}
           </Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" gap={0.25}>
-          <ActionIconButton
-            label={item.readAt ? t('actions.markUnread') : t('actions.markRead')}
-            onClick={() => onTriage(item.readAt ? 'UNREAD' : 'READ')}
-            disabled={busy}
-            size="small"
-          >
-            {item.readAt ? <MailOpen size={18} /> : <CheckCheck size={18} />}
-          </ActionIconButton>
-          {(!item.savedAt || NOTIFICATION_API_CAPABILITIES.unsave) && (
-            <ActionIconButton
-              label={item.savedAt ? t('actions.unsave') : t('actions.save')}
-              onClick={() => onTriage(item.savedAt ? 'UNSAVE' : 'SAVE')}
-              disabled={busy}
+          {!mobile && (
+            <Chip
               size="small"
-            >
-              {item.savedAt ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-            </ActionIconButton>
-          )}
-          <ActionIconButton
-            label={t('actions.snooze')}
-            onClick={(event) => setSnoozeAnchor(event.currentTarget)}
-            disabled={busy}
-            size="small"
-          >
-            <Clock3 size={18} />
-          </ActionIconButton>
-          {(!item.completedAt || NOTIFICATION_API_CAPABILITIES.restore) && (
-            <ActionIconButton
-              label={item.completedAt ? t('actions.restore') : t('actions.complete')}
-              onClick={() => onTriage(item.completedAt ? 'RESTORE' : 'COMPLETE')}
-              disabled={busy}
-              size="small"
-            >
-              {item.completedAt ? <RotateCcw size={18} /> : <Check size={18} />}
-            </ActionIconButton>
+              label={t(`reason.${item.reason.kind}`, { defaultValue: item.reason.label })}
+              style={{ borderRadius: foundationTokens.radius.compact }}
+              sx={{
+                maxWidth: '100%',
+                height: 'auto',
+                minHeight: foundationTokens.density.compact.controlHeight,
+                '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'anywhere' },
+              }}
+            />
           )}
         </Stack>
+        {!mobile && triageTools}
       </Stack>
       <Menu
         anchorEl={snoozeAnchor}
@@ -157,6 +265,7 @@ export function NotificationDetailPane({
         {[4, 24, 72].map((hours) => (
           <MenuItem
             key={hours}
+            disabled={busy}
             onClick={() => {
               setSnoozeAnchor(null);
               onTriage('SNOOZE', defaultSnoozeTime(hours));
@@ -167,7 +276,10 @@ export function NotificationDetailPane({
         ))}
       </Menu>
 
-      <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+      <Box
+        data-testid="notification-detail-scroll"
+        sx={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}
+      >
         {detailQuery.isLoading ? (
           <LoadingState label={t('states.loadingDetail')} variant="skeleton" skeletonRows={5} />
         ) : detailQuery.isError || !detail ? (
@@ -179,18 +291,29 @@ export function NotificationDetailPane({
             retrying={detailQuery.isFetching}
           />
         ) : (
-          <Box sx={{ p: { xs: 2, md: 2.5 } }}>
+          <Box sx={{ p: 2 }}>
             <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+              {mobile && (
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  style={{ borderRadius: foundationTokens.radius.compact }}
+                  sx={{
+                    maxWidth: '100%',
+                    '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'anywhere' },
+                    height: 'auto',
+                    minHeight: foundationTokens.density.compact.controlHeight,
+                  }}
+                  label={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
+                    defaultValue: detail.item.source.appName,
+                  })}
+                />
+              )}
               <Chip
                 size="small"
                 variant="outlined"
-                label={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
-                  defaultValue: detail.item.source.appName,
-                })}
-              />
-              <Chip
-                size="small"
-                variant="outlined"
+                style={{ borderRadius: foundationTokens.radius.compact }}
                 color={
                   detail.item.priority === 'URGENT'
                     ? 'error'
@@ -201,61 +324,61 @@ export function NotificationDetailPane({
                 label={t(`priority.${detail.item.priority}`)}
               />
               {detail.item.sensitive && (
-                <Chip size="small" variant="outlined" label={t('detail.protected')} />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={t('detail.protected')}
+                  style={{ borderRadius: foundationTokens.radius.compact }}
+                />
               )}
             </Stack>
             {detail.item.sensitive && !sensitiveRevealed ? (
-              <Box
-                role="status"
-                sx={{ mt: 2, p: 1.5, border: 1, borderColor: 'info.main', bgcolor: 'action.hover' }}
-              >
-                <Stack gap={1.25} alignItems="flex-start">
-                  <Typography variant="body2" fontWeight="fontWeightBold">
-                    {t('arrival.protectedContent')}
-                  </Typography>
-                  <ActionButton
-                    intent="secondary"
-                    size="small"
-                    onClick={() => setSensitiveRevealed(true)}
-                  >
-                    {t('home.open')}
-                  </ActionButton>
-                </Stack>
-              </Box>
+              <>
+                <Box
+                  role="status"
+                  style={{ borderRadius: foundationTokens.radius.surface }}
+                  sx={{
+                    mt: 2,
+                    p: 1.5,
+                    border: 1,
+                    borderColor: 'info.main',
+                    bgcolor: 'action.hover',
+                  }}
+                >
+                  <Stack gap={1.5} alignItems="flex-start">
+                    <Typography variant="body2" fontWeight="fontWeightBold">
+                      {t('arrival.protectedContent')}
+                    </Typography>
+                    <ActionButton
+                      intent="secondary"
+                      size="small"
+                      onClick={() => setSensitiveRevealed(true)}
+                    >
+                      {t('home.open')}
+                    </ActionButton>
+                  </Stack>
+                </Box>
+                {mobile && personalTools}
+              </>
             ) : (
               <>
-                <Typography component="h3" variant="h5" sx={{ mt: 2, overflowWrap: 'anywhere' }}>
+                <Typography component="h3" variant="h6" sx={{ mt: 1.5, overflowWrap: 'anywhere' }}>
                   {detail.item.title}
                 </Typography>
-                {detail.item.preview && (
-                  <Typography color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
-                    {detail.item.preview}
-                  </Typography>
-                )}
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ display: 'block', mt: 1.5 }}
-                >
-                  {formatDate(detail.absoluteOccurredAt, {
-                    dateStyle: 'long',
-                    timeStyle: 'short',
-                  })}
-                </Typography>
-
                 <Box
                   component="dl"
+                  data-testid="notification-detail-context"
+                  style={{ borderRadius: foundationTokens.radius.surface }}
                   sx={{
                     display: 'grid',
-                    gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' },
-                    columnGap: 2,
-                    rowGap: 1.1,
-                    py: 1.5,
+                    gridTemplateColumns: 'minmax(0, 1fr)',
+                    gap: 1,
+                    p: 1.5,
                     m: 0,
-                    mt: 2,
-                    borderTop: 1,
-                    borderBottom: 1,
+                    mt: 1.5,
+                    border: 1,
                     borderColor: 'divider',
+                    bgcolor: 'action.hover',
                   }}
                 >
                   <DetailContextItem
@@ -273,6 +396,13 @@ export function NotificationDetailPane({
                   {actorLabel && (
                     <DetailContextItem label={t('detail.context.actor')} value={actorLabel} />
                   )}
+                  <DetailContextItem
+                    label={t('detail.notificationReceived')}
+                    value={formatDate(detail.absoluteOccurredAt, {
+                      dateStyle: 'long',
+                      timeStyle: 'short',
+                    })}
+                  />
                   {detail.item.dueAt && (
                     <DetailContextItem
                       label={t('detail.context.due')}
@@ -285,9 +415,37 @@ export function NotificationDetailPane({
                   )}
                 </Box>
 
+                {detail.item.preview && (
+                  <Box
+                    component="section"
+                    aria-label={t('preferences.presentation.preview')}
+                    sx={{ mt: 2 }}
+                  >
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: 'block', mb: 1 }}
+                    >
+                      {t('preferences.presentation.preview')}
+                    </Typography>
+                    <Box
+                      style={{ borderRadius: foundationTokens.radius.surface }}
+                      sx={{ p: 1.5, border: 1, borderColor: 'divider', bgcolor: 'action.hover' }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+                      >
+                        {detail.item.preview}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+
                 {detail.targetState !== 'AVAILABLE' && (
                   <Box
                     role="alert"
+                    style={{ borderRadius: foundationTokens.radius.surface }}
                     sx={{
                       mt: 2,
                       p: 1.5,
@@ -306,19 +464,29 @@ export function NotificationDetailPane({
                   </Box>
                 )}
 
-                <NotificationDetailReply
-                  item={detail.item}
-                  busy={busy}
-                  onQuickReply={onQuickReply}
-                />
+                {mobile && personalTools}
+
+                {canReply && (
+                  <NotificationDetailReply
+                    key={`${detail.item.notificationId}:${replyTarget?.conversationId}:${replyTarget?.replyToMessageId ?? ''}`}
+                    item={detail.item}
+                    busy={busy}
+                    onQuickReply={onQuickReply}
+                    mobile={mobile}
+                    actionContainer={replyActionContainer}
+                  />
+                )}
 
                 <Box
-                  component="section"
-                  sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
+                  component="details"
+                  sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}
                 >
-                  <Typography component="h4" variant="subtitle2">
+                  <Box
+                    component="summary"
+                    sx={{ cursor: 'pointer', typography: 'subtitle2', overflowWrap: 'anywhere' }}
+                  >
                     {t('detail.whyTitle')}
-                  </Typography>
+                  </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                     {t(`reasonExplanation.${detail.item.reason.kind}`, {
                       defaultValue: detail.reasonExplanation,
@@ -328,20 +496,33 @@ export function NotificationDetailPane({
 
                 {detail.timeline.length > 0 && (
                   <Box
-                    component="section"
-                    sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
+                    component="details"
+                    sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}
                   >
-                    <Typography component="h4" variant="subtitle2">
+                    <Box
+                      component="summary"
+                      sx={{ cursor: 'pointer', typography: 'subtitle2', overflowWrap: 'anywhere' }}
+                    >
                       {t('detail.timelineTitle')}
-                    </Typography>
+                    </Box>
                     <Stack component="ol" gap={0} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
                       {detail.timeline.map((entry) => (
                         <Box
                           component="li"
                           key={entry.entryId}
-                          sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
+                          sx={{
+                            py: 1.5,
+                            borderBottom: 1,
+                            borderColor: 'divider',
+                            overflowWrap: 'anywhere',
+                          }}
                         >
-                          <Stack direction="row" justifyContent="space-between" gap={1}>
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            gap={1}
+                            flexWrap="wrap"
+                          >
                             <Typography variant="body2" fontWeight="fontWeightBold">
                               {entry.title === 'Notification received'
                                 ? t('detail.notificationReceived')
@@ -361,7 +542,7 @@ export function NotificationDetailPane({
                             </Typography>
                           </Stack>
                           {entry.detail && (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                               {entry.detail}
                             </Typography>
                           )}
@@ -375,33 +556,51 @@ export function NotificationDetailPane({
           </Box>
         )}
       </Box>
-      {detail &&
-        (!detail.item.sensitive || sensitiveRevealed) &&
-        primary?.href &&
-        detail.targetState === 'AVAILABLE' && (
-          <Box
-            component="footer"
-            data-testid="notification-detail-primary-action"
-            sx={{
-              flexShrink: 0,
-              px: { xs: 2, md: 2.5 },
-              pt: 1.25,
-              pb: { xs: 'max(10px, env(safe-area-inset-bottom))', md: 2 },
-              borderTop: 1,
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-            }}
-          >
+      {showFooter && (
+        <Box
+          component="footer"
+          data-testid="notification-detail-primary-action"
+          sx={{
+            flexShrink: 0,
+            px: 2,
+            pt: 1.5,
+            pb: 'max(12px, env(safe-area-inset-bottom))',
+            borderTop: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            display: 'grid',
+            gridTemplateColumns:
+              mobile && canReply && primary?.href ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+            gap: 1,
+          }}
+        >
+          {primary?.href && (
             <ActionButton
-              intent="primary"
+              intent={mobile && canReply ? 'secondary' : 'primary'}
+              size="small"
               fullWidth
+              disabled={!primary.enabled || busy}
+              endIcon={<ExternalLink size={16} aria-hidden="true" />}
               loading={targetNavigation.openingId === item.notificationId}
               onClick={() => void targetNavigation.openTarget(item.notificationId)}
+              sx={{
+                minWidth: 0,
+                minHeight: foundationTokens.density.comfortable.controlHeight,
+                whiteSpace: 'normal',
+                overflowWrap: 'anywhere',
+              }}
             >
               {primary.label}
             </ActionButton>
-          </Box>
-        )}
+          )}
+          {mobile && canReply && (
+            <Box
+              ref={setReplyActionContainer}
+              sx={{ minWidth: 0, display: 'flex', alignItems: 'stretch' }}
+            />
+          )}
+        </Box>
+      )}
     </Box>
   );
 }
@@ -416,8 +615,21 @@ function DetailContextItem({
   tone?: string;
 }) {
   return (
-    <Box sx={{ minWidth: 0 }}>
-      <Typography component="dt" variant="caption" color="text.secondary">
+    <Box
+      sx={{
+        minWidth: 0,
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 3fr)',
+        gap: 1,
+        alignItems: 'baseline',
+      }}
+    >
+      <Typography
+        component="dt"
+        variant="caption"
+        color="text.secondary"
+        sx={{ overflowWrap: 'anywhere' }}
+      >
         {label}
       </Typography>
       <Typography
@@ -425,7 +637,7 @@ function DetailContextItem({
         variant="body2"
         fontWeight="fontWeightMedium"
         color={tone}
-        sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
+        sx={{ m: 0, overflowWrap: 'anywhere' }}
       >
         {value}
       </Typography>

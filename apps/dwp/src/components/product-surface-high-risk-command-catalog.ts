@@ -1,8 +1,15 @@
 export type ProductSurfaceHighRiskOperation =
   | 'WORKFLOW_PUBLISH'
   | 'FORM_PUBLISH'
+  | 'FORM_REVIEWED_PUBLISH'
   | 'POLICY_PUBLISH'
   | 'DELIVERY_RETRY'
+  | 'DOCUMENT_POLICY_PUBLISH'
+  | 'ATTACHMENT_POLICY_PUBLISH'
+  | 'DOCUMENT_HOLD_PUBLISH'
+  | 'RETENTION_POLICY_PUBLISH'
+  | 'RETENTION_RECORD_CLAIM'
+  | 'SIGNATURE_SIGN'
   | 'HCM_ORG_PUBLISH'
   | 'HCM_EXPORT_CREATE'
   | 'HCM_EXPORT_RETRY'
@@ -34,6 +41,12 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       routeContractKey: 'route.approvals.admin.form-publish.action',
     },
     {
+      operation: 'FORM_REVIEWED_PUBLISH',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.form-reviewed-publish.action',
+    },
+    {
       operation: 'POLICY_PUBLISH',
       productKey: 'approvals',
       surfaceKey: 'approvals.admin',
@@ -50,6 +63,42 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
       routeContractKey: 'route.hcm.management.org-publish.action',
+    },
+    {
+      operation: 'DOCUMENT_POLICY_PUBLISH',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.document-policy-publish.action',
+    },
+    {
+      operation: 'ATTACHMENT_POLICY_PUBLISH',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.attachment-policy-publish.action',
+    },
+    {
+      operation: 'DOCUMENT_HOLD_PUBLISH',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.document-hold-publish.action',
+    },
+    {
+      operation: 'RETENTION_POLICY_PUBLISH',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.retention-policy-publish.action',
+    },
+    {
+      operation: 'RETENTION_RECORD_CLAIM',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.retention-record-claim.action',
+    },
+    {
+      operation: 'SIGNATURE_SIGN',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.work',
+      routeContractKey: 'route.approvals.work.signature-sign.action',
     },
     {
       operation: 'HCM_EXPORT_CREATE',

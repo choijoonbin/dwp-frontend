@@ -1,0 +1,331 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/explore
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Personal space bookings" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/my-bookings
+                  - img [ref=e69]
+                  - paragraph [ref=e73]: Personal space bookings
+        - link "Return to apps" [ref=e75] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e77]
+          - text: Return to apps
+    - banner [ref=e79]:
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - img [ref=e83]
+          - generic "Workplace" [ref=e88]
+        - navigation "App area switcher" [ref=e91]:
+          - 'link "App management: Workplace" [ref=e93] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e95]
+            - generic [ref=e98]: App management
+        - generic [ref=e99]:
+          - button "Search DWP" [ref=e101] [cursor=pointer]:
+            - img [ref=e102]
+            - paragraph [ref=e105]: Search DWP
+            - generic [ref=e106]: ⌘K
+          - generic [ref=e107]:
+            - button "Enter full screen" [ref=e108] [cursor=pointer]:
+              - img [ref=e109]
+            - generic "0 actionable notifications, 0 total unread" [ref=e115]:
+              - button "0 actionable notifications, 0 total unread" [ref=e116] [cursor=pointer]:
+                - generic [ref=e117]:
+                  - img [ref=e118]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e122] [cursor=pointer]':
+            - generic [ref=e123]: T
+            - img [ref=e124]
+    - main [ref=e126]:
+      - generic [ref=e127]:
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]: Today's workplace
+            - heading "Pangyo HQ · 12F" [level=1] [ref=e132]
+            - generic [ref=e133]:
+              - img [ref=e134]
+              - generic [ref=e137]: Wednesday, August 19, 2026
+          - generic [ref=e138]:
+            - status [ref=e139]:
+              - generic [ref=e141]:
+                - generic [ref=e142]: Workplace information
+                - generic [ref=e143]: Verified 09:20 AM
+              - generic "Try again" [ref=e144]:
+                - button "Try again" [ref=e145] [cursor=pointer]:
+                  - img [ref=e146]
+            - button "Change location and time" [ref=e151] [cursor=pointer]:
+              - text: Change location and time
+              - img [ref=e153]
+            - link "Find a space" [ref=e155] [cursor=pointer]:
+              - /url: /workplace/explore?site=10000000-0000-0000-0000-000000000001&floor=20000000-0000-0000-0000-000000000012&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A21&duration=60
+        - region "Focus desk 12" [ref=e156]:
+          - generic [ref=e157]:
+            - generic [ref=e158]:
+              - img [ref=e159]
+              - generic [ref=e163]: Today's workplace
+            - heading "Get ready for your workday" [level=2] [ref=e164]
+            - paragraph [ref=e165]: Review your bookings and check-in, then choose the space you need.
+            - generic [ref=e166]:
+              - img [ref=e167]
+              - generic [ref=e170]: Pangyo HQ · 12F · Next 60 minutes
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - img [ref=e173]
+              - generic [ref=e176]: My reserved space
+            - heading "Focus desk 12" [level=2] [ref=e177]
+            - generic [ref=e178]:
+              - paragraph [ref=e179]: Time remaining
+              - generic [ref=e180]: 09:59
+            - paragraph [ref=e181]: "Usage time: 9:00 AM–6:00 PM"
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - img [ref=e184]
+                - generic [ref=e187]: Check in by 9:30 AM
+              - generic [ref=e188]: Pangyo HQ · 12F
+            - generic [ref=e189]:
+              - button "Check in now" [ref=e190] [cursor=pointer]:
+                - img [ref=e192]
+                - text: Check in now
+              - link "View booking" [ref=e195] [cursor=pointer]:
+                - /url: /workplace/my-bookings?booking=40000000-0000-0000-0000-000000000009
+        - region "Spaces open for the next 60 minutes" [ref=e197]:
+          - generic [ref=e198]:
+            - generic [ref=e199]:
+              - heading "Spaces open for the next 60 minutes" [level=2] [ref=e200]
+              - generic [ref=e201]: Reservation availability is shown separately from booking eligibility. Policy and conflict checks run again when a space is selected.
+            - generic [ref=e202]:
+              - generic [ref=e203]:
+                - generic [ref=e204]: Open by reservation state
+                - strong [ref=e205]: "3"
+              - generic [ref=e206]:
+                - generic [ref=e207]: Initial checks passed
+                - strong [ref=e208]: "2"
+          - list [ref=e209]:
+            - listitem [ref=e210]:
+              - generic [ref=e211]:
+                - generic [ref=e212]:
+                  - img [ref=e214]
+                  - paragraph [ref=e217]: Desk
+                - generic [ref=e218]: Total 1
+              - generic [ref=e219]:
+                - generic [ref=e220]: Unreserved 0
+                - paragraph [ref=e221]: Initial checks 0
+              - img "0 of 1 Desk spaces open by reservation state; 0 pass current booking checks" [ref=e222]
+              - generic [ref=e223]: Next 60 minutes
+              - link "0 Desk spaces open by reservation state and 0 pass initial booking checks, open Find a space" [ref=e224] [cursor=pointer]:
+                - /url: /workplace/explore?site=10000000-0000-0000-0000-000000000001&floor=20000000-0000-0000-0000-000000000012&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A21&duration=60&type=DESK
+                - text: Find a space
+                - img [ref=e226]
+            - listitem [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - img [ref=e232]
+                  - paragraph [ref=e236]: Focus pod
+                - generic [ref=e237]: Total 1
+              - generic [ref=e238]:
+                - generic [ref=e239]: Unreserved 1
+                - paragraph [ref=e240]: Initial checks 1
+              - img "1 of 1 Focus pod spaces open by reservation state; 1 pass current booking checks" [ref=e241]
+              - generic [ref=e243]: 1 accessible spaces pass initial booking checks
+              - link "1 Focus pod spaces open by reservation state and 1 pass initial booking checks, open Find a space" [ref=e244] [cursor=pointer]:
+                - /url: /workplace/explore?site=10000000-0000-0000-0000-000000000001&floor=20000000-0000-0000-0000-000000000012&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A21&duration=60&type=FOCUS_POD
+                - text: Find a space
+                - img [ref=e246]
+            - listitem [ref=e248]:
+              - generic [ref=e249]:
+                - generic [ref=e250]:
+                  - img [ref=e252]
+                  - paragraph [ref=e254]: Phone booth
+                - generic [ref=e255]: Total 1
+              - generic [ref=e256]:
+                - generic [ref=e257]: Unreserved 1
+                - paragraph [ref=e258]: Initial checks 1
+              - img "1 of 1 Phone booth spaces open by reservation state; 1 pass current booking checks" [ref=e259]
+              - generic [ref=e261]: 1 accessible spaces pass initial booking checks
+              - link "1 Phone booth spaces open by reservation state and 1 pass initial booking checks, open Find a space" [ref=e262] [cursor=pointer]:
+                - /url: /workplace/explore?site=10000000-0000-0000-0000-000000000001&floor=20000000-0000-0000-0000-000000000012&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A21&duration=60&type=PHONE_BOOTH
+                - text: Find a space
+                - img [ref=e264]
+            - listitem [ref=e266]:
+              - generic [ref=e267]:
+                - generic [ref=e268]:
+                  - img [ref=e270]
+                  - paragraph [ref=e274]: Meeting room
+                - generic [ref=e275]: Total 1
+              - generic [ref=e276]:
+                - generic [ref=e277]: Unreserved 1
+                - paragraph [ref=e278]: Initial checks 0
+              - img "1 of 1 Meeting room spaces open by reservation state; 0 pass current booking checks" [ref=e279]
+              - generic [ref=e280]: Next 60 minutes
+              - link "1 Meeting room spaces open by reservation state and 0 pass initial booking checks, open Find a space" [ref=e281] [cursor=pointer]:
+                - /url: /workplace/explore?site=10000000-0000-0000-0000-000000000001&floor=20000000-0000-0000-0000-000000000012&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A21&duration=60&type=ROOM
+                - text: Find a space
+                - img [ref=e283]
+        - generic [ref=e285]:
+          - region "Worth your attention" [ref=e287]:
+            - generic [ref=e289]:
+              - img [ref=e291]
+              - generic [ref=e294]:
+                - heading "Worth your attention" [level=2] [ref=e295]
+                - generic [ref=e296]: Check-ins and events that still need a place are surfaced first.
+            - separator [ref=e297]
+            - list [ref=e298]:
+              - listitem [ref=e299]:
+                - link "You can check in to Focus desk 12 Confirm the reservation before the check-in window closes." [ref=e300] [cursor=pointer]:
+                  - /url: /workplace/my-bookings?booking=40000000-0000-0000-0000-000000000009
+                  - img [ref=e302]
+                  - generic [ref=e304]:
+                    - paragraph [ref=e305]: You can check in to Focus desk 12
+                    - text: Confirm the reservation before the check-in window closes.
+                  - img [ref=e306]
+          - region "Today's flow" [ref=e309]:
+            - generic [ref=e310]:
+              - generic [ref=e311]:
+                - img [ref=e313]
+                - generic [ref=e315]:
+                  - heading "Today's flow" [level=2] [ref=e316]
+                  - generic [ref=e317]: Follow workspace, meeting, and focus time in chronological order.
+              - link "View space bookings" [ref=e318] [cursor=pointer]:
+                - /url: /workplace/my-bookings
+            - separator [ref=e319]
+            - list [ref=e320]:
+              - listitem [ref=e321]:
+                - link "09:00 AM Focus desk 12 Pangyo HQ · 12F" [ref=e322] [cursor=pointer]:
+                  - /url: /workplace/my-bookings?booking=40000000-0000-0000-0000-000000000009
+                  - generic [ref=e323]: 09:00 AM
+                  - img [ref=e325]
+                  - generic [ref=e328]:
+                    - paragraph [ref=e329]: Focus desk 12
+                    - generic [ref=e330]: Pangyo HQ · 12F
+                  - img [ref=e331]
+              - listitem [ref=e333]:
+                - link "10:00 AM Verified project review Seoul HQ · Focus 08" [ref=e334] [cursor=pointer]:
+                  - /url: /calendar/schedule?event=calendar-event-operating-review
+                  - generic [ref=e335]: 10:00 AM
+                  - img [ref=e337]
+                  - generic [ref=e341]:
+                    - paragraph [ref=e342]: Verified project review
+                    - generic [ref=e343]: Seoul HQ · Focus 08
+                  - img [ref=e344]
+              - listitem [ref=e346]:
+                - link "01:00 PM Verified writing focus Focus time" [ref=e347] [cursor=pointer]:
+                  - /url: /calendar/schedule?event=calendar-event-focus
+                  - generic [ref=e348]: 01:00 PM
+                  - img [ref=e350]
+                  - generic [ref=e356]:
+                    - paragraph [ref=e357]: Verified writing focus
+                    - generic [ref=e358]: Focus time
+                  - img [ref=e359]
+          - region "Your workweek rhythm" [ref=e362]:
+            - generic [ref=e364]:
+              - img [ref=e366]
+              - generic [ref=e370]:
+                - heading "Your workweek rhythm" [level=2] [ref=e371]
+                - generic [ref=e372]: Read space reservations alongside meeting and focus time to keep the week balanced.
+            - list [ref=e373]:
+              - listitem "Mon, 8/17, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e374]:
+                - generic [ref=e375]: Mon, 8/17
+                - img "0 meeting minutes and 0 focus minutes" [ref=e376]
+                - paragraph [ref=e378]: 0 space reservations
+              - listitem "Tue, 8/18, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e379]:
+                - generic [ref=e380]: Tue, 8/18
+                - img "0 meeting minutes and 0 focus minutes" [ref=e381]
+                - paragraph [ref=e383]: 0 space reservations
+              - listitem "Wed, 8/19, 60 meeting minutes and 120 focus minutes, 1 space reservations, Pangyo HQ" [ref=e384]:
+                - generic [ref=e385]:
+                  - text: Wed, 8/19
+                  - generic [ref=e386]: Today
+                - img "60 meeting minutes and 120 focus minutes" [ref=e387]
+                - paragraph [ref=e391]: 1 space reservations
+                - generic [ref=e392]:
+                  - generic [ref=e393]:
+                    - img [ref=e394]
+                    - generic [ref=e396]: 1 space reservations
+                  - generic [ref=e397]:
+                    - img [ref=e398]
+                    - generic [ref=e401]: Pangyo HQ
+              - listitem "Thu, 8/20, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e402]:
+                - generic [ref=e403]: Thu, 8/20
+                - img "0 meeting minutes and 0 focus minutes" [ref=e404]
+                - paragraph [ref=e406]: 0 space reservations
+              - listitem "Fri, 8/21, 0 meeting minutes and 0 focus minutes, 0 space reservations" [ref=e407]:
+                - generic [ref=e408]: Fri, 8/21
+                - img "0 meeting minutes and 0 focus minutes" [ref=e409]
+                - paragraph [ref=e411]: 0 space reservations
+            - generic [ref=e412]:
+              - paragraph [ref=e413]: Meetings · 60 min
+              - paragraph [ref=e415]: Focus · 120 min
+        - generic [ref=e417]:
+          - generic [ref=e418]:
+            - generic [ref=e419]:
+              - generic [ref=e420]:
+                - img [ref=e421]
+                - paragraph [ref=e425]: Space booking information
+              - paragraph [ref=e426]: Workplace information
+            - paragraph [ref=e427]: Spaces and your bookings are checked against owner booking data for the selected scope.
+            - paragraph [ref=e428]: Verified 09:20 AM
+          - generic [ref=e429]:
+            - generic [ref=e430]:
+              - generic [ref=e431]:
+                - img [ref=e432]
+                - paragraph [ref=e434]: Schedule information
+              - paragraph [ref=e435]: Workplace information
+            - paragraph [ref=e436]: Only authorized meeting and focus schedules are shown.
+            - paragraph [ref=e437]: Verified 09:20 AM
+          - generic [ref=e438]:
+            - generic [ref=e439]:
+              - generic [ref=e440]:
+                - img [ref=e441]
+                - paragraph [ref=e444]: External presence information
+              - paragraph [ref=e445]: Unverified
+            - paragraph [ref=e446]: This view has no verified external presence information.
+  - generic "Open DWAI·ON" [ref=e448]:
+    - button "Open DWAI·ON" [ref=e449] [cursor=pointer]
+```

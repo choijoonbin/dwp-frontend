@@ -9,31 +9,117 @@
     "openNavigation": "전자결재 메뉴 열기",
     "backToHome": "워크스페이스로 돌아가기"
   },
+  "signatureCeremony": {
+    "title": "결재 문서 서명",
+    "kind": "내부 본인 확인 서명",
+    "selfOnly": "현재 권한이 확인된 원래 기안자만 승인된 이 문서에 서명할 수 있습니다.",
+    "notExternal": "내부 확인 서명이며 공인·외부 제공자 전자서명이 아닙니다.",
+    "unavailable": "서명 권한 또는 원본 문서를 확인하지 못했습니다.",
+    "checking": "원본 문서와 서명 권한 확인 중",
+    "stale": "원본 문서 또는 현재 권한이 변경되었습니다. 새로고침 후 진행하세요.",
+    "originalDocument": "승인된 원본 문서",
+    "artifactSha": "문서 SHA-256",
+    "sourceDigest": "원본 다이제스트",
+    "rendererVersion": "문서 렌더러 버전",
+    "terms": "서명 확인 약관",
+    "termsVersion": "약관 버전",
+    "termsSha": "약관 SHA-256",
+    "expiresAt": "만료 시각",
+    "consentLabel": "원본 문서를 검토했으며 이 서명 확인 약관에 동의합니다.",
+    "create": "서명 확인 시작",
+    "consent": "동의 기록",
+    "sign": "본인 인증 후 서명",
+    "cancel": "서명 취소",
+    "audit": "서명 이력",
+    "reload": "원본 새로고침",
+    "receiptLookup": "원래 명령 결과 확인",
+    "commandKey": "원래 명령 키",
+    "commandBodySha": "원래 명령 본문 SHA-256",
+    "originalOperation": "원래 명령",
+    "unknown": "명령 결과를 확인하지 못했습니다. 원래 명령을 보존하고 결과를 확인하기 전에는 다시 전송하지 마세요.",
+    "retryOriginal": "원래 명령 재시도",
+    "confirmed": "내부 확인 서명이 기록되었습니다",
+    "sourceChanged": "현재 원본이 처음 서명 요청한 문서와 일치하지 않습니다.",
+    "metadataOnly": "명령 메타데이터만 표시하며 문서 본문과 서명 증거는 포함하지 않습니다.",
+    "proofId": "서명 증거 ID",
+    "keyId": "서명 키 ID",
+    "publicKey": "검증 공개 키",
+    "compactJws": "서명된 증거",
+    "attestedAt": "서명 시각",
+    "preservation": "서명 증거는 서비스 전체의 보존·삭제 완료를 의미하지 않습니다.",
+    "unverified": "서명 검증이 완료되지 않았습니다.",
+    "verifiedInternalKey": "고정된 내부 서명 키로 암호학적 검증 완료",
+    "states": {
+      "AWAITING_CONSENT": "동의 대기",
+      "CONSENTED": "동의 기록 완료",
+      "ATTESTED": "내부 서명 완료",
+      "CANCELLED": "취소됨"
+    },
+    "auditEmpty": "표시할 서명 이력이 없습니다.",
+    "auditTruncated": "일부 이력이며 추가 기록이 존재할 수 있습니다.",
+    "consentInvalid": "동의는 이 문서와 현재 약관에 정확히 일치해야 합니다.",
+    "requestId": "결재 요청 ID",
+    "openRequests": "내가 올린 결재 보기"
+  },
   "surfaces": {
     "work": "결재 업무",
     "management": "결재 관리"
   },
   "navigation": {
     "groups": {
-      "approvals": { "overview": "시작", "decisions": "내 결재", "administration": "결재 관리" }
+      "approvals": {
+        "overview": "시작",
+        "decisions": "내 결재",
+        "administration": "결재 관리"
+      }
     },
     "items": {
       "approvals": {
-        "home": { "label": "전자결재 홈" },
-        "inbox": { "label": "결재함" },
-        "completed": { "label": "내 처리 완료함" },
-        "new": { "label": "새 결재 작성" },
-        "drafts": { "label": "임시 저장" },
-        "submitted": { "label": "내가 올린 결재" },
-        "needs-info": { "label": "보완할 결재" },
-        "archive": { "label": "완료 보관함" },
-        "delegations": { "label": "결재 위임" },
-        "admin-overview": { "label": "운영 개요" },
-        "workflows": { "label": "프로세스 설계" },
-        "forms": { "label": "양식 카탈로그" },
-        "policies": { "label": "결재 정책" },
-        "operations": { "label": "SLA 및 전달 운영" },
-        "signatures": { "label": "전자서명 연계" }
+        "home": {
+          "label": "전자결재 홈"
+        },
+        "inbox": {
+          "label": "결재함"
+        },
+        "completed": {
+          "label": "내 처리 완료함"
+        },
+        "new": {
+          "label": "새 결재 작성"
+        },
+        "drafts": {
+          "label": "임시 저장"
+        },
+        "submitted": {
+          "label": "내가 올린 결재"
+        },
+        "needs-info": {
+          "label": "보완할 결재"
+        },
+        "archive": {
+          "label": "완료 보관함"
+        },
+        "delegations": {
+          "label": "결재 위임"
+        },
+        "admin-overview": {
+          "label": "운영 개요"
+        },
+        "workflows": {
+          "label": "프로세스 설계"
+        },
+        "forms": {
+          "label": "양식 카탈로그"
+        },
+        "policies": {
+          "label": "결재 정책"
+        },
+        "operations": {
+          "label": "SLA 및 전달 운영"
+        },
+        "signatures": {
+          "label": "전자서명 연계"
+        }
       }
     }
   },
@@ -109,7 +195,9 @@
       "description": "서명 제공자 기능과 자격 증명 준비 상태를 안전하게 관리합니다."
     }
   },
-  "governance": { "evidence": "결정 증적 보존" },
+  "governance": {
+    "evidence": "결정 증적 보존"
+  },
   "home": {
     "eyebrow": "전자결재 홈",
     "title": "전자결재",
@@ -120,6 +208,11 @@
     "saved": "전자결재 홈 구성을 저장했습니다.",
     "saveConflict": "다른 위치에서 구성이 변경되었습니다. 최신 상태를 불러왔습니다.",
     "saveError": "전자결재 홈 구성을 저장하지 못했습니다.",
+    "conflict": {
+      "description": "다른 위치에서 홈 구성이 변경되었습니다. 로컬 편집은 보존했으며 서버 최신 버전 {{version}}을 기준으로 다시 적용할 수 있습니다.",
+      "useServerLayout": "서버 구성 사용",
+      "reapplyChanges": "내 변경 다시 적용"
+    },
     "loadError": "전자결재 현황을 불러오지 못했습니다.",
     "preferenceLoadError": "개인화 설정을 확인하지 못해 기본 구성을 표시합니다. 최신 설정을 불러오기 전에는 홈 구성을 편집할 수 없습니다.",
     "unknownRequester": "요청자",
@@ -139,7 +232,9 @@
       "dueAt": "처리 기한 {{date}}",
       "open": "검토 열기"
     },
-    "flow": { "empty": "표시할 결재 흐름이 없습니다." },
+    "flow": {
+      "empty": "표시할 결재 흐름이 없습니다."
+    },
     "myRequests": {
       "empty": "최근 상신한 결재가 없습니다.",
       "awaitingStart": "결재선 시작 대기",
@@ -156,9 +251,18 @@
         "label": "새 결재 기안",
         "description": "승인된 양식으로 새 요청 시작"
       },
-      "inbox": { "label": "결재함 열기", "description": "검토할 결재와 정책 신호 확인" },
-      "drafts": { "label": "임시 저장", "description": "작성 중인 기안 이어서 완료" },
-      "delegations": { "label": "대결 설정", "description": "위임 기간과 결재 권한 관리" }
+      "inbox": {
+        "label": "결재함 열기",
+        "description": "검토할 결재와 정책 신호 확인"
+      },
+      "drafts": {
+        "label": "임시 저장",
+        "description": "작성 중인 기안 이어서 완료"
+      },
+      "delegations": {
+        "label": "대결 설정",
+        "description": "위임 기간과 결재 권한 관리"
+      }
     },
     "activity": {
       "empty": "최근 결재 활동이 없습니다.",
@@ -177,10 +281,22 @@
         "meta_one": "우선 검토 {{count}}건",
         "meta_other": "우선 검토 {{count}}건"
       },
-      "quick-actions": { "label": "신속 실행", "description": "자주 쓰는 결재 업무" },
-      "flow": { "label": "실시간 결재 흐름", "description": "단계별 처리량과 위험 신호" },
-      "my-requests": { "label": "내 기안 진행 추적", "description": "최근 기안의 현재 처리 상태" },
-      "insights": { "label": "의사결정 내비게이터", "description": "지금 확인할 정책·SLA 신호" },
+      "quick-actions": {
+        "label": "신속 실행",
+        "description": "자주 쓰는 결재 업무"
+      },
+      "flow": {
+        "label": "결재 흐름 현황",
+        "description": "단계별 처리량과 위험 신호"
+      },
+      "my-requests": {
+        "label": "내 기안 진행 추적",
+        "description": "최근 기안의 현재 처리 상태"
+      },
+      "insights": {
+        "label": "의사결정 내비게이터",
+        "description": "지금 확인할 정책·SLA 신호"
+      },
       "recent-activity": {
         "label": "최근 결재 활동",
         "description": "정본 응답에 반영된 최근 상태"
@@ -194,6 +310,8 @@
     "commandCenter": {
       "title": "전자결재 업무 센터",
       "description": "화면을 벗어나지 않고 검토, 증적 확인, 결정을 이어갑니다.",
+      "queueContext": "{{queue}} · {{count}}건 · {{checkedAt}} 확인",
+      "checkingFreshness": "최신 상태 확인 중",
       "metricsLabel": "전자결재 판단 지표",
       "metricPendingDetail": "나의 검토를 기다리는 항목",
       "metricPendingRiskDetail": "기한 초과 {{count}}건",
@@ -227,6 +345,8 @@
       "selectForBatch": "{{title}} 배치 승인 선택",
       "selectedCount_one": "{{count}}건 선택",
       "selectedCount_other": "{{count}}건 선택",
+      "startSelection": "선택",
+      "cancelSelection": "선택 취소",
       "batchLimit": "한 번에 최대 {{count}}건",
       "batchLimitReached": "배치 승인은 한 번에 최대 20건까지 가능합니다.",
       "batchApprove": "선택 항목 승인",
@@ -237,6 +357,13 @@
       "batchCompleted": "배치 승인을 완료했습니다.",
       "batchStopped": "배치 승인을 안전하게 중단했습니다. 남은 항목을 확인하세요.",
       "batchFailed": "배치 승인을 시작하지 못했습니다.",
+      "batchResultTitle": "배치 처리 결과",
+      "batchOutcomes": {
+        "APPROVED": "승인 완료",
+        "INELIGIBLE": "최신 권한 또는 상태로 처리 제외",
+        "FAILED": "처리 중단 · 최신 상태 확인 필요",
+        "NOT_ATTEMPTED": "앞선 실패로 실행하지 않음"
+      },
       "batchResult": "승인 {{approved}}건 · 처리 불가 {{ineligible}}건 · 남음 {{remaining}}건",
       "queueFailClosed": "현재 권한을 확인하기 전까지 캐시된 결재와 결정 작업을 표시하지 않습니다.",
       "detailTitle": "결재 상세",
@@ -245,9 +372,25 @@
       "selectDescription": "검증된 요청 내용, 정책 신호, 실제 결재 이력과 처리 버튼이 이곳에 표시됩니다.",
       "decisionBrief": "정책 및 위험 브리프",
       "decisionBriefDescription": "현재 결재 기록과 결정 권한에서 확인된 사실만 요약합니다.",
-      "workflowEvidence": "실시간 결재 진행",
+      "workflowEvidence": "결재 진행 현황",
       "workflowEvidenceDescription": "기록된 단계와 실제 현재 단계만 표시하며 미래 단계를 추정하지 않습니다.",
       "stepNumber": "{{sequence}}단계",
+      "contentAccess": {
+        "title": "현재 권한으로 결재 내용을 열 수 없습니다",
+        "description": "요청 본문, 결재 이력과 처리 명령을 숨겼습니다. 권한이 복구된 뒤 새로 확인하세요.",
+        "evaluatedAt": "권한 평가 {{value}}",
+        "reasons": {
+          "CURRENT_AUTHORITY_UNAVAILABLE": "현재 권한 근거를 확인할 수 없습니다.",
+          "CURRENT_IDENTITY_INACTIVE": "현재 사용자 신원이 비활성 상태입니다.",
+          "CURRENT_PERMISSION_REVOKED": "결재 조회 권한이 회수되었습니다.",
+          "TASK_NOT_AVAILABLE": "이 결재 작업은 더 이상 조회할 수 없습니다.",
+          "DELEGATION_AUTHORITY_REVOKED": "위임자의 원래 권한이 회수되었습니다.",
+          "CURRENT_ROLE_REVOKED": "이 결재에 필요한 현재 역할이 회수되었습니다.",
+          "CURRENT_AUTHORITY_VERIFIED": "현재 권한이 확인되었습니다.",
+          "LEGACY_CURRENT_AUTHORITY_VERIFIED": "현재 권한이 기존 호환 경로에서 확인되었습니다.",
+          "UNKNOWN": "검증 가능한 권한 증거가 없어 안전하게 내용을 숨겼습니다."
+        }
+      },
       "signals": {
         "SELF_APPROVAL_BLOCKED": {
           "title": "자기 결재가 차단되었습니다",
@@ -277,6 +420,17 @@
           "title": "추가 위험 신호가 없습니다",
           "description": "표준 증적 검토 절차를 계속 진행하세요."
         }
+      },
+      "statusFilter": "상태",
+      "allStatuses": "전체 상태",
+      "sortLabel": "정렬",
+      "previousPage": "이전 페이지",
+      "nextPage": "다음 페이지",
+      "page": "{{page}}/{{total}} 페이지",
+      "sort": {
+        "PRIORITY": "우선순위",
+        "NEWEST": "최신순",
+        "OLDEST": "오래된순"
       }
     }
   },
@@ -287,11 +441,14 @@
     "inFlight": "진행 중인 내 기안",
     "averageCycle": "평균 결재 시간",
     "hours": "{{value}}시간",
+    "hoursUnit": "시간",
     "sla": "SLA 준수율",
     "atRisk": "위험 {{count}}"
   },
   "actions": {
     "retry": "다시 시도",
+    "refresh": "새로고침",
+    "dismiss": "닫기",
     "reviewInbox": "우선 결재 검토",
     "newRequest": "새 결재 작성",
     "askExpert": "전자결재 전문가에게 묻기",
@@ -314,7 +471,12 @@
     "openDetails": "결재 상세 열기",
     "close": "닫기"
   },
-  "priority": { "LOW": "낮음", "NORMAL": "보통", "HIGH": "높음", "URGENT": "긴급" },
+  "priority": {
+    "LOW": "낮음",
+    "NORMAL": "보통",
+    "HIGH": "높음",
+    "URGENT": "긴급"
+  },
   "classification": {
     "PUBLIC": "공개",
     "INTERNAL": "사내",
@@ -349,6 +511,17 @@
     "HEALTHY": "정상",
     "DEGRADED": "성능 저하",
     "INFORMATIONAL": "정보",
+    "UNKNOWN": "확인 불가",
+    "READY": "준비 완료",
+    "NOT_VERIFIED": "검증되지 않음",
+    "EXTERNAL_VERIFICATION_REQUIRED": "외부 검증 필요",
+    "ELIGIBLE": "재시도 가능",
+    "STATUS_NOT_RETRYABLE": "재시도 불가 상태",
+    "AUDITOR_ASSIGNMENT_NOT_READY": "감사자 지정 필요",
+    "SCOPE_EVIDENCE_MISMATCH": "범위 증거 불일치",
+    "RECOVERY_EVIDENCE_INCOMPLETE": "복구 증거 미완료",
+    "SEPARATION_OF_DUTIES": "직무 분리 위반",
+    "CURRENT_PERMISSION_REVOKED": "현재 결재 조회 권한 회수",
     "DISABLED": "사용 중지",
     "RETIRED": "폐기",
     "CONFIGURATION_REQUIRED": "구성 필요"
@@ -360,7 +533,10 @@
     "vendor": "공급업체",
     "neededBy": "필요 일자",
     "costCenter": "코스트 센터",
-    "createdFrom": "기안 출처"
+    "createdFrom": "기안 출처",
+    "businessReason": "업무 사유",
+    "expiresOn": "만료일",
+    "dataScope": "데이터 범위"
   },
   "insights": {
     "overdue": {
@@ -385,6 +561,38 @@
     }
   },
   "inbox": {
+    "decisionRecovery": {
+      "CONFLICT": {
+        "title": "결재 내용이 변경되었습니다",
+        "description": "작성한 의견은 보존했습니다. 최신 내용과 권한을 다시 확인한 뒤 결정을 재확인하세요."
+      },
+      "DENIED": {
+        "title": "결정 권한이 변경되었습니다",
+        "description": "현재 권한을 다시 확인하기 전까지 이 결재는 읽기 전용입니다."
+      },
+      "UNAVAILABLE": {
+        "title": "결정 결과를 확인할 수 없습니다",
+        "description": "중복 처리를 피하기 위해 쓰기 작업을 중지했습니다. 최신 상태를 확인하세요."
+      },
+      "reviewLatest": "최신본 검토",
+      "retryAuthority": "최신 권한 확인"
+    },
+    "claimRecovery": {
+      "CONFLICT": {
+        "title": "담당 지정 대상이 변경되었습니다",
+        "description": "최신 결재 내용과 담당 가능 상태를 확인한 뒤 다시 선택하세요."
+      },
+      "DENIED": {
+        "title": "담당 지정 권한이 변경되었습니다",
+        "description": "현재 권한을 다시 확인하기 전까지 담당 지정 작업을 중지했습니다."
+      },
+      "UNAVAILABLE": {
+        "title": "담당 지정 결과를 확인할 수 없습니다",
+        "description": "중복 처리를 피하기 위해 쓰기 작업을 중지했습니다. 최신 상태를 확인하세요."
+      },
+      "reviewLatest": "최신본 검토",
+      "retryAuthority": "최신 권한 확인"
+    },
     "queue": "우선 결재 큐",
     "queueMeta": "기한과 위험도를 기준으로 정렬",
     "loadError": "결재 목록을 불러오지 못했습니다.",
@@ -405,6 +613,14 @@
     "currentStage": "현재 결재 단계",
     "stageProgress": "{{current}}단계 · {{name}}",
     "due": "처리 기한",
+    "metadata": {
+      "requester": "요청자",
+      "organization": "소속",
+      "workflow": "결재 프로세스",
+      "dueAt": "처리 기한",
+      "verifiedAt": "최신 확인",
+      "unknown": "확인할 수 없음"
+    },
     "comment": "결정 사유",
     "decisionSaved": "결정을 기록했습니다.",
     "decisionError": "결정을 기록하지 못했습니다.",
@@ -426,6 +642,12 @@
         "description": "요청자가 다음 행동을 명확히 알 수 있도록 보완 내용을 입력하세요.",
         "confirm": "보완 요청"
       }
+    },
+    "utilities": {
+      "copyIdentifier": "문서 식별자 복사",
+      "identifierCopied": "문서 식별자를 복사했습니다.",
+      "copyFailed": "문서를 다시 확인한 후 복사해 주세요.",
+      "history": "이력 보기"
     }
   },
   "completed": {
@@ -477,6 +699,46 @@
     "delegated": "대리 처리"
   },
   "requests": {
+    "attachments": {
+      "title": "첨부 증빙 및 보안 검사",
+      "choose": "파일 선택",
+      "upload": "서버에 전송",
+      "refresh": "상태 새로고침",
+      "reconcile": "저장 결과 확인",
+      "cancel": "전송 취소",
+      "select": "문서에 첨부",
+      "remove": "첨부 해제",
+      "download": "다운로드",
+      "reason": "다운로드 사유",
+      "reasonRequired": "다운로드 사유를 입력하세요.",
+      "unavailable": "현재 권한 또는 첨부 서비스를 확인할 수 없습니다.",
+      "saveFirst": "초안을 저장한 뒤 파일을 첨부할 수 있습니다.",
+      "sourceChanged": "문서 또는 첨부 정책이 변경되었습니다. 새로고침 후 확인하세요.",
+      "unknown": "전송 결과가 불명확합니다. 새 업로드를 시작하지 말고 원래 저장 결과를 확인하세요.",
+      "reserveUnknown": "파일 예약 결과가 불명확합니다. 원래 명령으로만 다시 확인할 수 있습니다.",
+      "error": "첨부 작업을 완료하지 못했습니다.",
+      "rejected": "파일 형식 또는 크기가 현재 정책에 맞지 않습니다.",
+      "selected": "문서 첨부됨",
+      "retryOriginal": "원래 명령 다시 확인",
+      "limits": "파일당 최대 {{bytes}}바이트 · 최대 {{count}}개",
+      "size": "{{bytes}}바이트",
+      "local": "선택한 파일",
+      "sealed": "확정된 첨부 증빙",
+      "scanning": "검사를 통과하기 전에는 문서에 첨부하거나 다운로드할 수 없습니다.",
+      "downloadTitle": "첨부 증빙 다운로드",
+      "close": "닫기",
+      "navigationBlocked": "첨부 전송 결과를 확인하거나 선택한 파일을 취소한 뒤 이동하세요.",
+      "states": {
+        "RESERVED": "전송 준비",
+        "UPLOADING": "전송 중",
+        "STORAGE_RECONCILING": "저장 결과 확인 필요",
+        "QUARANTINED": "보안 검사 대기",
+        "SCANNING": "보안 검사 중",
+        "AVAILABLE": "보안 검사 통과",
+        "REJECTED": "보안 검사 거절",
+        "CANCELLED": "전송 취소됨"
+      }
+    },
     "created": "결재를 상신했습니다.",
     "draftSaved": "결재 초안을 임시 저장했습니다.",
     "createError": "결재를 작성하지 못했습니다.",
@@ -492,6 +754,16 @@
     "amendmentTitle": "결재 내용 보완",
     "amendmentHelp": "요청받은 항목을 수정하면 이전 payload와 새 해시가 별도 증적 리비전으로 보존됩니다.",
     "amendmentLoading": "검토했던 결재 데이터를 불러오는 중입니다.",
+    "amendment": {
+      "generation": "보완 라운드 {{generation}}",
+      "sourceChanged": "보완 라운드 또는 결재 기준이 변경되었습니다. 입력은 보존되며 이전 요청은 전송할 수 없습니다.",
+      "retryOriginal": "원래 보완 요청 재시도",
+      "resumeUnknown": "미확인 보완 요청 다시 열기",
+      "receiptLookup": "원본 처리 결과 확인",
+      "receiptCompleted": "원본 요청의 처리 완료를 확인했습니다.",
+      "receiptUnavailable": "현재 권한으로 원본 처리 결과를 확인할 수 없습니다.",
+      "receiptReadError": "처리 결과를 확인하지 못했습니다. 원본 요청은 보존됩니다."
+    },
     "detail": {
       "eyebrow": "결재 추적",
       "title": "결재 상세",
@@ -546,10 +818,22 @@
       "concurrency": "동시 수정 충돌 방지"
     },
     "views": {
-      "drafts": { "title": "임시 저장", "meta": "초안 {{count}}건" },
-      "submitted": { "title": "내가 올린 결재", "meta": "진행 중 {{count}}건" },
-      "needs-info": { "title": "보완할 결재", "meta": "응답 필요 {{count}}건" },
-      "archive": { "title": "완료 보관함", "meta": "완료 기록 {{count}}건" }
+      "drafts": {
+        "title": "임시 저장",
+        "meta": "초안 {{count}}건"
+      },
+      "submitted": {
+        "title": "내가 올린 결재",
+        "meta": "진행 중 {{count}}건"
+      },
+      "needs-info": {
+        "title": "보완할 결재",
+        "meta": "응답 필요 {{count}}건"
+      },
+      "archive": {
+        "title": "완료 보관함",
+        "meta": "완료 기록 {{count}}건"
+      }
     },
     "columns": {
       "request": "결재",
@@ -573,10 +857,126 @@
         "description": "{{title}} 결재는 더 이상 진행되지 않습니다.",
         "confirm": "회수 확정"
       }
+    },
+    "autosave": {
+      "local": "아직 서버에 저장되지 않은 변경 사항",
+      "saving": "초안 저장 중...",
+      "saved": "초안 저장 완료 · 버전 {{version}}",
+      "unknown": "저장 결과를 확인할 수 없습니다. 입력을 보존했습니다.",
+      "reconcile": "저장 결과 확인",
+      "conflict": "다른 곳에서 초안이 변경되었습니다. 입력은 보존했으며 최신 내용을 확인한 뒤 직접 다시 적용할 수 있습니다.",
+      "reapply": "내 입력 다시 적용",
+      "close": "저장하고 닫기",
+      "untitled": "제목 없음",
+      "history": "수정 이력",
+      "delete": "초안 휴지통으로 이동",
+      "restore": "초안 복원",
+      "deleted": "휴지통"
+    },
+    "drafts": {
+      "search": "초안 제목·문서번호 검색",
+      "active": "작성 중",
+      "trash": "휴지통",
+      "sort": "정렬",
+      "newest": "최신순",
+      "oldest": "오래된순",
+      "reason": "변경 사유",
+      "deleteTitle": "초안을 휴지통으로 이동할까요?",
+      "deleteDescription": "초안은 영구 삭제되지 않으며 휴지통에서 복원할 수 있습니다.",
+      "restoreTitle": "초안을 복원할까요?",
+      "restoreDescription": "복원 후 최신 게시 양식과 결재 경로를 다시 확인하고 이어서 작성할 수 있습니다.",
+      "recoverTitle": "이 버전으로 초안을 복구할까요?",
+      "recoverDescription": "현재 초안의 새 버전으로 복구합니다. 기존 수정 이력은 보존됩니다.",
+      "recover": "이 버전으로 복구",
+      "revisionLabel": "리비전 {{revision}}",
+      "legacy": "이전 입력에 전체 초안 스냅샷이 없어 이 버전은 복구할 수 없습니다.",
+      "historyEmpty": "저장된 수정 이력이 없습니다.",
+      "fieldCompletion": "필수 항목 {{completed}}/{{total}}개 입력",
+      "page": "{{page}}/{{total}} 페이지",
+      "commandSaved": "초안 변경이 서버에 기록되었습니다.",
+      "commandError": "초안 변경을 완료하지 못했습니다. 최신 상태를 확인하세요.",
+      "commandUnknown": "변경 결과가 불명확합니다. 같은 요청의 결과를 확인하기 전에는 다시 변경할 수 없습니다.",
+      "noResults": "검색 조건에 맞는 초안이 없습니다."
+    },
+    "commands": {
+      "unknown": "처리 결과를 확인하지 못했습니다. 중복 처리를 방지하기 위해 다시 전송하지 않습니다. 새로고침으로 현재 문서 상태를 확인하세요."
+    },
+    "search": {
+      "label": "결재 번호·제목·요약 검색",
+      "status": "요청 상태",
+      "allStatus": "모든 상태",
+      "priority": "우선순위",
+      "allPriority": "모든 우선순위",
+      "sort": "정렬",
+      "newest": "최신순",
+      "oldest": "오래된순",
+      "noResults": "조건에 맞는 요청이 없습니다.",
+      "evaluated": "{{at}} 기준",
+      "reset": "필터 초기화"
+    },
+    "typed": {
+      "schemaLoading": "검증된 양식 구조를 확인하고 있습니다.",
+      "schemaInvalid": "이 양식의 구조를 확인할 수 없습니다. 최신 양식을 다시 불러오세요.",
+      "inputInvalid": "입력값을 확인하세요. 초안 저장과 상신은 검증 후 가능합니다.",
+      "fieldInvalid": "{{field}} 입력값을 확인하세요.",
+      "calculated": "자동 계산",
+      "addRow": "행 추가",
+      "removeRow": "{{index}}번째 행 삭제",
+      "row": "{{index}}번째 항목",
+      "userSearch": "이름을 두 글자 이상 입력하세요",
+      "userStored": "저장된 사용자 참조 · 확인 필요",
+      "userVerifyOriginal": "원래 사용자 참조 확인 필요",
+      "userRefresh": "사용자 참조 새로 확인",
+      "userUnavailable": "현재 사용자 조회 권한을 확인할 수 없습니다. 문서 입력은 보존되며 저장과 상신은 차단됩니다.",
+      "userTruncated": "일부 결과만 표시합니다. 이름을 더 구체적으로 검색하세요.",
+      "userNoResults": "조회 범위에 일치하는 사용자가 없습니다",
+      "userSourceUnavailable": "이 양식의 현재 사용자 조회 연결을 확인할 수 없습니다"
+    },
+    "documents": {
+      "generate": "문서 생성",
+      "title": "문서 도구",
+      "unknown": "처리 결과를 확인할 수 없습니다. 현재 권한과 문서 정책을 다시 확인한 후 같은 요청으로만 재시도할 수 있습니다.",
+      "retryOriginal": "원래 요청 재시도",
+      "comments": "댓글",
+      "commentText": "댓글 내용",
+      "addComment": "댓글 등록",
+      "emptyComments": "등록된 댓글이 없습니다",
+      "author": "사용자 {{id}}",
+      "print": "문서 인쇄",
+      "download": "JSON 다운로드",
+      "exportReason": "사용 목적",
+      "exportTitle": "문서 내보내기",
+      "exportDescription": "현재 문서 버전 및 게시된 정책",
+      "policyBlocked": "게시된 정책이나 현재 권한에서 허용되지 않습니다",
+      "sourceError": "문서 도구 확인에 실패했습니다. 새로고침 후 다시 확인하세요.",
+      "conflict": "문서 또는 정책이 변경되었습니다. 입력을 보존했으니 최신 내용을 확인하세요.",
+      "archiveExport": "보관 문서 일괄 JSON 내보내기",
+      "selectArchive": "내보낼 보관 문서 선택",
+      "selected": "{{count}}개 선택",
+      "archiveUnavailable": "선택 문서에 공통 정책이 없거나 내보내기가 허용되지 않습니다",
+      "generated": "문서를 생성했습니다",
+      "expired": "생성 문서가 만료되었거나 현재 접근 권한이 변경되었습니다.",
+      "preview": "인쇄 미리보기"
     }
   },
   "delegations": {
     "title": "활성 결재 위임",
+    "workspace": {
+      "all": "전체 위임",
+      "history": "위임 내역",
+      "active": "활성 위임",
+      "status": "위임 상태",
+      "allStatuses": "전체 상태",
+      "period": "위임 기간",
+      "details": "위임 상세",
+      "scopeTitle": "최소 권한 범위",
+      "scopeDetail": "모든 프로세스 또는 하나의 게시된 프로세스로 위임 범위를 지정합니다.",
+      "evidenceTitle": "대결 식별 정보",
+      "evidenceDetail": "위임 ID와 원 위임자·대행자, 프로세스 ID를 함께 확인하세요. 서명된 외부 증적 상태는 이 조회에 포함되지 않습니다.",
+      "revokeTitle": "철회와 최신 권한",
+      "revokeDetail": "받은 위임은 철회할 수 없습니다. 철회 전 최신 방향·상태·버전을 다시 확인합니다.",
+      "unknownDirection": "방향 확인 필요"
+    },
     "meta": "기간과 범위를 제한한 대행 권한",
     "add": "위임 추가",
     "empty": "활성 위임이 없습니다",
@@ -623,6 +1023,356 @@
     }
   },
   "admin": {
+    "overview": {
+      "lastReceived": "마지막 수신 {{time}}",
+      "historical": "과거 수신 데이터 · 현재 상태 미확인",
+      "sourceChecking": "현재 범위의 집계 정보를 다시 확인하고 있습니다.",
+      "sourceStale": "집계 정보를 다시 확인하지 못했습니다. 표시된 값은 마지막 수신 데이터입니다.",
+      "sourceExpired": "집계 정보의 확인 시간이 지났습니다. 최신 정보를 다시 확인하세요.",
+      "aggregateEnforced": "현재 집계에서 통제 예외 없음",
+      "roleReference": "역할 분리 참고 기준",
+      "quickAccess": "관리 바로가기"
+    },
+    "signatureDiagnostics": {
+      "labels": {
+        "title": "서명 제공자 진단",
+        "metrics": "제공자 준비 상태",
+        "configured": "설정된 제공자",
+        "production": "상용 환경 검증",
+        "gate": "외부 서명 게이트",
+        "lastProbe": "최근 실제 프로브",
+        "configuredDetail": "등록 {{registered}} · 게시 정책 필수 {{required}}",
+        "probeInterval": "프로브 주기 {{seconds}}초",
+        "policyUnknown": "게시 정책 확인 불가",
+        "unknown": "미기록",
+        "source": "진단 소스",
+        "sourceRevision": "소스 리비전",
+        "evaluatedAt": "평가 시각",
+        "ownerScope": "소유 리소스 세트",
+        "providers": "서명 제공자",
+        "checks": "검증 체크리스트",
+        "environment": "환경",
+        "adapterInstalled": "내부 어댑터 설치",
+        "configurationRegistered": "설정 등록",
+        "credentialRegistered": "자격증명 참조 등록",
+        "credentialVerified": "자격증명 검증",
+        "requiredByPolicy": "게시 정책 필수",
+        "yes": "예",
+        "no": "아니요",
+        "gateReasons": "게이트 사유",
+        "observedAt": "관측 시각",
+        "validUntil": "유효 기한",
+        "evidence": "증적",
+        "evidenceSha": "증적 SHA-256",
+        "kms": "서명 키 진단",
+        "backend": "키 백엔드",
+        "verificationKind": "검증 종류",
+        "algorithm": "알고리즘",
+        "keySha": "키 SHA-256",
+        "keySource": "키 소스",
+        "worm": "WORM 검사",
+        "objectLockMode": "객체 잠금 모드",
+        "retainUntil": "보존 기한",
+        "legalHold": "스토리지 법적 보존 관측",
+        "storageSha": "스토리지 위치 SHA-256",
+        "objectSha": "객체 버전 SHA-256",
+        "retentionFloor": "정책 최소 보존 기간 {{seconds}}초",
+        "phases": "서명 단계",
+        "settings": "등록 설정",
+        "configurationOwner": "설정 소유자",
+        "configurationRevision": "설정 리비전",
+        "endpointSha": "엔드포인트 원본 SHA-256",
+        "accountSha": "계정 바인딩 SHA-256",
+        "callbackAuthenticationMode": "콜백 인증 방식",
+        "policy": "외부 서명 정책",
+        "published": "게시 정책",
+        "workingDraft": "작업 초안",
+        "noPublished": "게시 정책 없음",
+        "noWorkingDraft": "작업 초안 없음",
+        "policyVersion": "정책 버전 {{version}}",
+        "revision": "리비전 {{revision}}",
+        "rulesSha": "규칙 SHA-256",
+        "maker": "최초 작성자",
+        "lastEditor": "최종 편집자",
+        "checker": "독립 검토자",
+        "signingEnabled": "외부 서명 사용",
+        "requiredProviderKinds": "필수 제공자",
+        "allowedClassifications": "허용 정보 등급",
+        "minimumRetentionDays": "최소 보존 기간(일)",
+        "probeMaxAgeSeconds": "최대 프로브 경과 시간(초)",
+        "trustBundleId": "등록 신뢰 번들",
+        "configurationBinding": "등록 설정 바인딩",
+        "requireVerifiedProviderAccount": "검증된 제공자 계정 필수",
+        "requireAuthenticatedWebhook": "인증된 웹훅 필수",
+        "requireTrustedCertificateChain": "신뢰할 수 있는 인증서 체인 필수",
+        "requireFreshRevocationEvidence": "최신 인증서 폐기 증적 필수",
+        "requireTrustedTimestamp": "신뢰할 수 있는 타임스탬프 필수",
+        "requireComplianceWormStorage": "컴플라이언스 모드 WORM 스토리지 필수",
+        "reviewDigest": "검토 내용 SHA-256",
+        "highApproval": "독립 본인 인증 승인 필수",
+        "history": "정책 버전 이력",
+        "createdAt": "생성 시각",
+        "publishedAt": "게시 시각",
+        "diagnosticHistory": "제공자 검증 이력",
+        "historyContinuation": "추가 기록 이력이 있습니다",
+        "nextHistory": "다음 기록 이력 조회",
+        "none": "없음"
+      },
+      "states": {
+        "PASS": "검증 관측",
+        "FAIL": "실패 관측",
+        "NOT_CONFIGURED": "미설정",
+        "NOT_OBSERVED": "미관측",
+        "NOT_APPLICABLE": "해당 없음",
+        "AVAILABLE": "확인됨",
+        "MISSING_INTERNAL": "내부 구현 미완료",
+        "UNRECORDED": "미기록",
+        "DISABLED": "비활성",
+        "CONFIGURATION_REQUIRED": "설정 필요",
+        "NOT_VERIFIED": "미검증",
+        "DEGRADED": "저하됨",
+        "VERIFIED_INTERNAL_KEY": "내부 키 검증",
+        "VERIFIED_SANDBOX": "샌드박스 검증",
+        "VERIFIED_PRODUCTION": "상용 환경 검증",
+        "NOT_EVALUATED": "미평가",
+        "BLOCKED": "차단됨",
+        "ELIGIBLE": "요건 충족",
+        "EXPIRED": "증적 만료",
+        "SOURCE_UNAVAILABLE": "현재 소스 확인 불가",
+        "CURRENT": "최신",
+        "CHECKING": "현재 소스 확인 중",
+        "STALE": "오래된 소스",
+        "DENIED": "접근 불가",
+        "UNAVAILABLE": "소스 확인 불가",
+        "LOADING": "불러오는 중",
+        "PENDING": "대기",
+        "RUNNING": "진행 중",
+        "COMPLETE": "완료",
+        "PARTIAL": "부분 결과",
+        "UNKNOWN_REMOTE_OUTCOME": "원격 결과 불명"
+      },
+      "kinds": {
+        "INTERNAL": "내부 본인 증적",
+        "DOCUSIGN": "DocuSign",
+        "ADOBE_SIGN": "Adobe Sign",
+        "CUSTOM": "등록된 사용자 지정 제공자"
+      },
+      "phases": {
+        "INTERNAL_DECISION": "내부 결재 결정",
+        "EXTERNAL_HANDOVER": "외부 서명 전달",
+        "VERIFIED_COMPLETION": "완료 검증"
+      },
+      "environments": {
+        "UNCONFIGURED": "미설정",
+        "INTERNAL": "내부",
+        "SANDBOX": "샌드박스",
+        "PRODUCTION": "상용"
+      },
+      "verificationKinds": {
+        "NONE": "없음",
+        "INTERNAL_KEY": "내부 키",
+        "CONFIGURED_KMS": "설정된 KMS",
+        "HARDWARE_TOKEN": "하드웨어 토큰"
+      }
+    },
+    "attachmentPolicy": {
+      "title": "첨부 파일 정책",
+      "initialize": "첨부 정책 최초 설정",
+      "initializeHelp": "선택한 관리 범위의 첨부 정책이 없습니다.",
+      "initializeAction": "정책 최초 설정",
+      "initializeUnknown": "최초 설정 결과를 확인하지 못했습니다. 원본 요청을 유지합니다.",
+      "initializeRetry": "원본 설정 요청 재확인",
+      "notConfigured": "미설정",
+      "initialized": "첨부 정책을 최초 설정했습니다. 검토한 정책을 게시하기 전까지 업로드와 다운로드는 비활성 상태입니다.",
+      "description": "업로드·다운로드 규칙과 제안본을 비교하고 독립 검토 후 게시합니다.",
+      "edit": "첨부 정책 제안 편집",
+      "review": "첨부 정책 독립 검토",
+      "inactive": "현재 권한 계약에서 첨부 정책 관리 경로를 사용할 수 없습니다.",
+      "sourceUnavailable": "현재 권한으로 첨부 정책을 확인하지 못했습니다.",
+      "sourceStale": "저장된 첨부 정책은 읽기 전용입니다. 새 조회를 완료하기 전에는 변경할 수 없습니다.",
+      "sourceChanged": "검토를 시작한 정책 원본이 변경되었습니다. 입력은 보존되며 새 원본 확인이 필요합니다.",
+      "commandUnknown": "명령 결과를 확인하지 못했습니다. 원본 입력과 명령 키를 유지해 다시 확인하세요.",
+      "saved": "첨부 정책 제안을 저장했습니다.",
+      "published": "첨부 정책을 게시했습니다.",
+      "providerReadiness": "업로드 구성 검증",
+      "downloadReadiness": "다운로드 구성 검증",
+      "readinessNotice": "구성 검증과 전자서명·WORM·보존 삭제 작업의 운영 증명은 별도로 확인합니다.",
+      "allowUpload": "업로드 허용",
+      "allowDownload": "다운로드 허용",
+      "maxFileBytes": "파일별 최대 크기 (바이트)",
+      "maxFiles": "요청별 최대 파일 수",
+      "maxRequestBytes": "요청별 최대 합계 (바이트)",
+      "maxConcurrentUploads": "최대 동시 업로드 수",
+      "grantTtlSeconds": "다운로드 권한 유효 시간 (초)",
+      "retentionDays": "보존 기간 (일)",
+      "allowedMediaTypes": "허용 파일 형식",
+      "invalidRules": "정수 범위·파일 합계·허용 형식을 확인하세요.",
+      "reason": {
+        "PENDING_POLICY_REQUIRED": "게시할 제안본이 없습니다.",
+        "MAKER_CANNOT_PUBLISH": "제안 작성자는 직접 게시할 수 없습니다.",
+        "UPLOAD_PROVIDER_UNAVAILABLE": "업로드 구성 검증이 필요합니다.",
+        "DOWNLOAD_PROVIDER_UNAVAILABLE": "다운로드 구성 검증이 필요합니다.",
+        "ALLOWED": "독립 검토 후 게시할 수 있습니다."
+      }
+    },
+    "formWorkspace": {
+      "saved": "작업 초안을 저장했습니다.",
+      "branched": "작업 초안을 만들었습니다.",
+      "availabilityUpdated": "카탈로그 사용 상태를 변경했습니다.",
+      "retryOriginalCommand": "원래 작업 다시 시도",
+      "title": "양식 버전 작업 공간",
+      "published": "발행본",
+      "workingDraft": "작업 초안",
+      "noWorkingDraft": "작업 초안 없음",
+      "history": "버전 이력",
+      "historyEmpty": "기록된 버전이 없습니다.",
+      "historyPartial": "추가 버전이 있을 수 있습니다.",
+      "compare": "버전 비교",
+      "branch": "작업 초안 만들기",
+      "branchConfirm": "이 버전으로 작업 초안을 만드시겠습니까?",
+      "editWorkingDraft": "작업 초안 편집",
+      "replaceWorkingDraft": "현재 작업 초안 교체",
+      "schemaHash": "스키마 해시",
+      "materialDigest": "검토 자료 다이제스트",
+      "noChanges": "기록된 차이가 없습니다.",
+      "diffPartial": "일부 차이를 확인하지 못했습니다.",
+      "before": "이전",
+      "after": "이후",
+      "path": "변경 항목",
+      "sourceUnavailable": "버전 정보를 확인하지 못했습니다.",
+      "sourceChanged": "원본 버전이 변경되었습니다. 입력은 보존됩니다. 새로고침 후 계속하세요.",
+      "commandUnknown": "처리 결과를 확인하지 못했습니다. 이 작업을 재시도하기 전에 새로고침하세요.",
+      "review": "발행 검토",
+      "reviewExpired": "발행 검토가 만료되었습니다.",
+      "independentCheckerRequired": "작성자와 마지막 편집자는 이 버전을 발행할 수 없습니다.",
+      "publishedContinues": "초안 편집 중에도 발행본은 계속 사용됩니다.",
+      "retire": "카탈로그에서 사용 중지",
+      "reinstate": "카탈로그 사용 재개",
+      "retired": "카탈로그 사용 중지",
+      "active": "카탈로그 사용 중",
+      "availabilityNotice": "카탈로그 사용 중지는 신규 상신을 차단합니다. 기존 버전에 결속된 요청은 계속 진행됩니다.",
+      "unrecordedMetadata": "과거 메타데이터 기록 없음",
+      "legacyCapture": "기존 양식 캡처",
+      "authoringSnapshot": "작성 시점 스냅샷",
+      "publishSnapshot": "발행 시점 스냅샷",
+      "notRecorded": "기록 없음",
+      "currentPublished": "현재 발행 버전",
+      "lastEditor": "마지막 편집자",
+      "reload": "작업 공간 새로고침",
+      "retiredPolicyBlocked": "현재 정책이 카탈로그 사용 재개를 허용하지 않습니다."
+    },
+    "typedWorkflow": {
+      "modeLabel": "결재 경로 방식",
+      "legacyMode": "순차 경로",
+      "graphMode": "단계 그래프",
+      "predecessors": "선행 단계",
+      "noPredecessors": "시작 단계",
+      "addSerial": "다음 단계 추가",
+      "addParallel": "병렬 단계 추가",
+      "longestPath": "최장 경로: {{count}}분",
+      "quorumValue": "필요 인원 또는 비율",
+      "quorumModes": {
+        "ANY": "한 명 승인",
+        "ALL": "전원 승인",
+        "COUNT": "지정 인원 승인",
+        "PERCENT": "지정 비율 승인"
+      },
+      "rejectVeto": "반려 시 이 단계는 중단됩니다.",
+      "sourceForm": "검증 양식",
+      "sourceUnavailable": "게시 양식 원본을 확인하지 못했습니다.",
+      "sourceChanged": "양식 버전 또는 스키마가 변경되었습니다. 최신 원본 확인 후 저장하세요.",
+      "reloadSource": "최신 양식 확인",
+      "condition": "실행 조건",
+      "addCondition": "조건 추가",
+      "removeCondition": "조건 삭제",
+      "conditionField": "양식 필드",
+      "conditionOperator": "비교 연산",
+      "conditionValue": "비교 값",
+      "addValue": "값 추가",
+      "removeValue": "값 삭제",
+      "conditionMatchAll": "모든 조건 일치",
+      "validationFailed": "결재 단계와 실행 조건을 확인하세요.",
+      "graphError": "단계 그래프 변경이 유효하지 않거나 제한을 초과했습니다.",
+      "operators": {
+        "EQ": "같음",
+        "IN": "다음 값 중 하나",
+        "GT": "초과",
+        "GTE": "이상",
+        "LT": "미만",
+        "LTE": "이하"
+      }
+    },
+    "document": {
+      "commandUnknown": "명령 결과를 확인하지 못했습니다. 입력은 보존되며 다시 전송하지 않습니다. 새로고침은 현재 정본만 조회합니다.",
+      "reloadPolicy": "문서 정책 다시 조회",
+      "refreshHold": "문서 제한 다시 조회",
+      "enabled": "허용",
+      "disabled": "차단",
+      "typeChangeTitle": "반출 필드 유형 변경",
+      "typeChangeDescription": "단일 값 유형으로 바꾸면 하위 필드 허용 목록이 제거됩니다. 확인한 경우에만 변경을 적용합니다.",
+      "typeChangeConfirm": "유형 변경",
+      "title": "문서 접근 정책",
+      "description": "현재 리소스 범위의 게시된 반출 통제와 보존 요청을 관리합니다.",
+      "scope": "리소스 범위",
+      "published": "게시 버전",
+      "pending": "제안 버전",
+      "noPending": "제안 버전 없음",
+      "edit": "변경 제안 편집",
+      "saved": "문서 정책 변경 제안을 저장했습니다.",
+      "publishedSuccess": "문서 정책을 게시했습니다.",
+      "sourceUnavailable": "문서 거버넌스를 사용할 수 없습니다. 접근 권한과 현재 계약 증거가 확인되기 전에는 변경할 수 없습니다.",
+      "makerBlocked": "제안자는 자신의 변경을 직접 게시할 수 없습니다.",
+      "reviewComment": "독립 검토 의견",
+      "reason": "변경 사유",
+      "fields": "반출 필드 허용 목록",
+      "noFields": "반출이 허용된 본문 필드가 없습니다.",
+      "addField": "허용 필드 추가",
+      "addChild": "하위 필드 추가",
+      "removeField": "허용 필드 제거",
+      "fieldKey": "본문 필드 키",
+      "fieldType": "본문 필드 유형",
+      "maxLength": "필드 최대 길이",
+      "maxRows": "객체 최대 행 수",
+      "allowComments": "댓글 허용",
+      "allowPrint": "인쇄 허용",
+      "allowJsonExport": "JSON 반출 허용",
+      "allowArchiveExport": "보관함 일괄 반출 허용",
+      "includeComments": "허용된 댓글 포함",
+      "includeEvidence": "허용된 증적 포함",
+      "classifications": "허용 보안 등급",
+      "maxBatchItems": "최대 일괄 문서 수",
+      "maxBytes": "최대 반출 바이트",
+      "snapshotTtlSeconds": "스냅샷 유효 시간(초)",
+      "evidenceRetentionDays": "증적 보존 기간(일)",
+      "versionChanged": "정본 버전이 변경되었습니다. 제안 입력은 보존되며 정본을 다시 확인한 후 새 제안을 명시적으로 시작해야 합니다.",
+      "holdTitle": "문서 보존 요청",
+      "requestId": "기안 식별자",
+      "lookup": "문서 제한 조회",
+      "holdRestricted": "반출 제한 적용",
+      "holdUnrestricted": "반출 제한 없음",
+      "preservationPending": "보존 집행 대기",
+      "preservationGate": "반출 제한만으로 법적 보존, 불변 저장소 또는 삭제 작업의 검증이 완료되는 것은 아닙니다. 운영 증적이 필요합니다.",
+      "place": "제한 제안",
+      "release": "해제 제안",
+      "proposed": "보존 변경 제안을 저장했습니다.",
+      "holdPublished": "보존 결정을 게시했습니다.",
+      "journal": "독립 결정 이력",
+      "noJournal": "게시된 보존 결정이 없습니다.",
+      "purgeState": "삭제 집행 상태",
+      "retainUntil": "보존 기준 시각",
+      "validate": "변경 제안 검증",
+      "invalid": "변경 제안이 현재 문서 정책 계약을 충족하지 않습니다.",
+      "formDisabled": "현재 권한과 버전 증거가 확인될 때까지 제안을 읽기 전용으로 유지합니다.",
+      "fieldTypes": {
+        "STRING": "문자열",
+        "NUMBER": "정수",
+        "DECIMAL_STRING": "십진 문자열",
+        "BOOLEAN": "참·거짓",
+        "STRING_LIST": "문자열 목록",
+        "OBJECT": "객체",
+        "OBJECT_LIST": "객체 목록"
+      }
+    },
     "publishedWorkflows": "게시 프로세스",
     "draftWorkflows": "게시 대기",
     "activeRequests": "진행 결재",
@@ -647,7 +1397,10 @@
         "title": "정책 게시 책임자",
         "detail": "설계 변경을 독립 검토하고 게시합니다."
       },
-      "operator": { "title": "결재 운영 담당자", "detail": "SLA, 위임과 전달 장애를 운영합니다." },
+      "operator": {
+        "title": "결재 운영 담당자",
+        "detail": "SLA, 위임과 전달 장애를 운영합니다."
+      },
       "auditor": {
         "title": "독립 감사자",
         "detail": "운영 권한 없이 결정 증적과 통제를 검토합니다."
@@ -677,12 +1430,94 @@
         "detail": "외부 연계는 트랜잭션 아웃박스로 분리합니다."
       }
     },
-    "workflows": { "title": "결재 프로세스", "meta": "버전이 고정된 단계와 정책" },
+    "workflows": {
+      "title": "결재 프로세스",
+      "meta": "버전이 고정된 단계와 정책",
+      "search": "프로세스명, 키, 소유 역할 검색",
+      "lifecycle": "프로세스 상태",
+      "all": "전체 프로세스"
+    },
     "workflowPublished": "프로세스를 게시했습니다.",
     "workflowPublishError": "프로세스를 게시하지 못했습니다.",
-    "forms": { "title": "결재 양식", "meta": "체크섬으로 검증되는 버전형 입력 스키마" },
-    "policies": { "title": "결재 정책", "meta": "결정·데이터·SLA 통제 규칙" },
+    "forms": {
+      "title": "결재 양식",
+      "meta": "체크섬으로 검증되는 버전형 입력 스키마"
+    },
+    "policies": {
+      "title": "결재 정책",
+      "meta": "결정·데이터·SLA 통제 규칙"
+    },
+    "impact": {
+      "title": "정책 변경 영향 분석",
+      "description": "저장된 변경안과 현재 정책을 비교하고 관련 결재에 미칠 영향을 확인합니다.",
+      "inspect": "영향 분석",
+      "refresh": "분석 새로고침",
+      "loading": "정책 변경 영향을 분석하고 있습니다",
+      "authorityUnavailable": "정책 또는 관리 권한이 변경되었습니다. 정책을 새로고침하고 현재 권한이 있는 관리 범위를 선택하세요.",
+      "loadError": "정책 영향을 확인하지 못했습니다",
+      "failedResultHidden": "이전 분석 결과는 숨겼습니다. 정책은 게시되지 않았습니다.",
+      "expired": "분석의 유효기간이 지났습니다. 결과를 사용하기 전에 새로고침하세요.",
+      "notObserved": "현재 정책 버전에 대한 영향 분석을 아직 요청하지 않았습니다.",
+      "observedAt": "분석 기준 시각: {{at}}",
+      "sourceDigest": "정책 스냅샷 SHA-256: {{digest}}",
+      "status": {
+        "NO_PROPOSAL": "저장된 변경안이 없습니다. 현재 정책의 관찰 결과이며 게시 승인이 아닙니다.",
+        "COMPLETE": "조회된 항목은 기준 시각에 모두 평가되었습니다. 영향 분석 자체가 정책 게시를 승인하지는 않습니다.",
+        "PARTIAL": "일부 항목을 평가하지 못했거나 조회 상한에 도달했습니다. 수치는 확인된 하한이며 전체 영향 건수가 아닙니다."
+      },
+      "families": {
+        "workflows": "결재 프로세스",
+        "requests": "상신된 결재",
+        "tasks": "결재 검토 작업"
+      },
+      "counts": {
+        "constraintChanged": "통제 조건 변경",
+        "pinConflict": "고정 버전 충돌",
+        "configurationOnly": "설정만 변경",
+        "unknown": "확인 불가"
+      },
+      "exactCount": "기준 시각에 확인한 항목",
+      "lowerBound": "확인한 항목 · 조회 또는 평가 미완료",
+      "sample": "표본 {{count}}건 보기",
+      "differences": "현재 정책과 저장된 변경안",
+      "current": "현재 적용 정책",
+      "proposed": "저장된 변경안",
+      "noValue": "값 없음",
+      "diffKinds": {
+        "ADD": "추가",
+        "REMOVE": "삭제",
+        "CHANGE": "변경"
+      },
+      "reasons": {
+        "NO_PROPOSAL": "저장된 변경안 없음",
+        "OWNER_SOD_CANNOT_BE_OVERRIDDEN": "기안자와 승인자 직무 분리는 재정의할 수 없음",
+        "FUTURE_REJECT_CONSTRAINT_CHANGED": "이후 결정의 반려 조건 변경",
+        "FUTURE_SLA_THRESHOLDS_CHANGED": "이후 결재의 SLA 임계치 변경",
+        "EXISTING_TIMERS_REMAIN_FROZEN": "기존 타이머의 고정 정책 유지",
+        "LEGACY_SLA_HAS_NO_RUNTIME_CONSUMER": "기존 SLA 설정의 실행 소비자 없음",
+        "AUDIT_RETENTION_CONFIGURATION_NOT_CONSUMED": "현재 실행 경로에서 감사 보존 설정을 소비하지 않음",
+        "TYPED_RUNTIME_REQUIRES_ACTIVE_POLICY": "타입 기반 실행에는 활성 정책이 필요함",
+        "FROZEN_PIN_ALREADY_DIFFERS_FROM_LIVE_PENDING_SAVE_VERSION": "고정 정책 버전과 현재 저장된 버전이 다름",
+        "PUBLICATION_CAS_INVALIDATES_QUORUM_PINS": "게시하면 병렬 결재의 고정 정책 버전이 무효화됨",
+        "PROPOSED_QUORUM_POLICY_UNAVAILABLE": "제안된 병렬 결재 정책을 평가할 수 없음",
+        "SEVERITY_METADATA_CHANGED": "위험 등급 정보 변경",
+        "NO_EFFECTIVE_CONSTRAINT_CHANGE": "실효 통제 조건 변경 없음",
+        "RUNTIME_SOURCE_OR_EVALUATION_BUDGET_UNAVAILABLE": "실행 소스 또는 평가 예산을 확인할 수 없음"
+      }
+    },
     "studio": {
+      "workspace": {
+        "totalPolicies": "전체 정책",
+        "pendingReviews": "검토 대기",
+        "blockingPolicies": "차단 정책",
+        "activePolicies": "운영 중 정책",
+        "slaPolicies": "SLA 정책",
+        "reviewAuthority": "검토 및 게시 권한",
+        "changeReason": "변경 사유",
+        "requestedAt": "요청 시각",
+        "versionProvenance": "이력 출처",
+        "unrecordedProvenance": "출처 미기록"
+      },
       "workflowCreated": "결재 프로세스 초안을 생성했습니다.",
       "workflowSaved": "결재 프로세스 초안을 저장했습니다.",
       "formCreated": "결재 양식 초안을 생성했습니다.",
@@ -732,14 +1567,17 @@
       "routeMeta": "검증 대상 단계 {{count}}개",
       "sodNotice": "설계자는 초안을 저장할 수 있지만 게시할 수 없습니다. 독립된 게시 책임자가 정의 해시와 변경 내용을 검토한 뒤 게시합니다.",
       "validation": {
-        "route": { "title": "경로 완결성", "detail": "모든 단계에 후보 역할과 SLA가 있습니다." },
+        "route": {
+          "title": "경로 완결성",
+          "detail": "모든 단계에 후보 역할과 SLA가 있습니다."
+        },
         "identity": {
           "title": "직무 분리",
-          "detail": "자기 결재 금지와 설계·게시 분리를 적용합니다."
+          "detail": "게시 요청 시 서버가 자기 결재 금지와 설계·게시 분리를 다시 검증합니다."
         },
         "concurrency": {
           "title": "버전 충돌 방지",
-          "detail": "행 버전과 정의 해시로 동시 변경을 차단합니다."
+          "detail": "저장·게시 요청 시 서버가 행 버전과 정의 해시를 다시 검증합니다."
         }
       },
       "editForm": "양식 초안 편집",
@@ -814,7 +1652,21 @@
       "policyVersionUnavailable": "버전 확인 실패",
       "makerCheckerNotice": "변경 요청자와 게시자는 동일할 수 없습니다. 운영 영향과 규칙 값을 독립적으로 검증하세요.",
       "policyChangeNotice": "정책 변경안은 별도 게시자가 승인한 뒤 신규 결재와 다음 정책 평가부터 적용되며 모든 단계가 감사 증적으로 남습니다.",
-      "policyReviewNotice": "BLOCK·CRITICAL 변경은 결재 가능 여부에 영향을 줄 수 있습니다. 변경안을 제출한 뒤 독립 게시자가 적용 범위와 업무 영향을 검토합니다."
+      "policySourceChanged": "정책 또는 현재 권한이 변경되었습니다. 입력은 보존되지만 이전 변경안은 저장하거나 게시할 수 없습니다.",
+      "policyReviewNotice": "BLOCK·CRITICAL 변경은 결재 가능 여부에 영향을 줄 수 있습니다. 변경안을 제출한 뒤 독립 게시자가 적용 범위와 업무 영향을 검토합니다.",
+      "duplicateStep": "단계 복제",
+      "preview": "양식 미리보기",
+      "previewDesktop": "데스크톱 미리보기",
+      "previewMobile": "모바일 미리보기",
+      "previewKorean": "한국어 미리보기",
+      "previewEnglish": "영어 미리보기",
+      "validationIssue": "{{field}} 확인 필요",
+      "validationSummary": "해결할 오류 {{count}}건",
+      "workflowNavigation": "프로세스 설계 작업 영역",
+      "processInspector": "프로세스·단계 상세",
+      "backToRoute": "결재선으로 돌아가기",
+      "readOnly": "읽기 전용 정의",
+      "draftEditing": "저장 전 초안"
     },
     "formCatalog": {
       "metrics": {
@@ -828,13 +1680,21 @@
         "meta": "테넌트별 계층형 양식 체계",
         "create": "카테고리 추가",
         "edit": "{{name}} 카테고리 편집",
-        "all": "전체 카탈로그"
+        "all": "전체 카탈로그",
+        "expand": "{{name}} 펼치기",
+        "collapse": "{{name}} 접기"
       },
       "forms": {
         "title": "양식 카탈로그",
         "meta": "검색 결과 {{count}}개",
-        "search": "이름, 키 또는 설명 검색",
-        "create": "양식 초안 만들기"
+        "search": "양식명, 키, 소유 역할, 설명 검색",
+        "create": "양식 초안 만들기",
+        "recordMeta": "{{key}} · 결재선 {{routes}}개 · 기안 {{usage}}건",
+        "updatedAt": "{{date}} 수정",
+        "lifecycle": "운영 상태",
+        "sort": "양식 정렬",
+        "sortUpdated": "최근 수정순",
+        "sortName": "이름순"
       },
       "inspector": {
         "fields": "입력 필드",
@@ -850,10 +1710,10 @@
         "previewError": "결재선 단계 정보를 불러오지 못했습니다."
       },
       "assurance": {
-        "ready": "게시 준비 완료",
-        "blocked": "게시 전 조치 필요",
-        "readyDetail": "게시된 기본 결재선, 버전 스키마와 독립 게시 통제가 준비되었습니다.",
-        "blockedDetail": "게시 상태인 기본 결재선을 연결하고 설계자와 다른 게시 책임자가 검토해야 합니다."
+        "ready": "필드 구성 확인 완료",
+        "blocked": "필드 구성 확인 필요",
+        "readyDetail": "현재 편집 화면에서 필드 키·레이블·유형·필수값 구성이 완전합니다.",
+        "blockedDetail": "비어 있거나 중복된 필드 키와 필수 레이블을 수정한 뒤 저장하세요. 게시 권한과 직무 분리는 서버가 게시 요청에서 검증합니다."
       },
       "editor": {
         "createTitle": "새 결재 양식",
@@ -874,9 +1734,98 @@
         "status": "운영 상태",
         "active": "사용 중",
         "inactive": "사용 중지"
+      },
+      "mobile": {
+        "navigation": "양식 작업 영역",
+        "inspector": "양식 상세",
+        "backToForms": "양식 목록으로 돌아가기"
       }
     },
     "policyRule": "적용 규칙",
+    "planning": {
+      "formVersionLabel": "{{name}} · v{{version}}",
+      "title": "결재 경로 미리보기",
+      "run": "저장된 프로세스 미리보기",
+      "form": "게시된 양식",
+      "sample": "검증용 입력",
+      "rolePoolPreview": "역할 후보군 미리보기",
+      "notEvaluated": "평가하지 않음",
+      "requesterNotExcluded": "기안자가 없는 미리보기이므로 기안자 제외 여부는 평가하지 않습니다.",
+      "noRuntimeEligibility": "역할 후보군 수는 참고 정보이며 실제 요청의 결재 참여 자격을 확정하지 않습니다.",
+      "activeMembers": "현재 역할 후보군 인원",
+      "indicativeThreshold": "참고 결재 정족수",
+      "skipped": "경로 조건에 따라 생략",
+      "emptyPool": "조건에 맞는 역할 후보군이 없습니다",
+      "insufficientPool": "역할 후보군 인원이 참고 정족수보다 적습니다",
+      "expiresAt": "미리보기 만료 시각",
+      "sourceChanged": "프로세스·양식·정책 또는 현재 권한이 변경되었습니다. 원본을 새로고침하세요.",
+      "unavailable": "현재 결재 경로 미리보기를 확인하지 못했습니다.",
+      "legacyUnavailable": "현재 권한 적용 단계에서는 결재 경로 미리보기를 사용할 수 없습니다.",
+      "saveFirst": "프로세스 변경 사항을 저장한 뒤 미리보기하세요.",
+      "readOnly": "미리보기만 제공하며 결재 요청이나 작업을 생성하지 않습니다.",
+      "invalidSample": "선택한 게시 양식에 맞게 검증용 입력을 수정하세요.",
+      "selectForm": "게시된 양식 선택"
+    },
+    "retention": {
+      "originalAttempt": "원래 입력과 명령 키를 보존했습니다. 원본을 새로고침한 뒤 같은 명령을 명시적으로 재시도하세요. 이 명령의 입력은 변경할 수 없습니다.",
+      "policyTitle": "결재 기록 보존 정책",
+      "recordTitle": "문서별 보존 및 파기",
+      "recordDescription": "현재 보존 기한·법적 보존·전달 사본 증적",
+      "runtimeBlocked": "소유 서비스 차단 장치, 삭제 작업자 및 소비 서비스의 서명된 사본 확인이 준비될 때까지 실제 실행은 차단됩니다.",
+      "notInstalled": "현재 권한 릴리스에는 결재 기록 보존 작업이 포함되지 않았습니다.",
+      "edit": "보존 정책 변경안 작성",
+      "initialize": "미설정 보존 정책 초기화",
+      "publishedRevision": "게시된 리비전",
+      "proposedRevision": "변경안 리비전",
+      "none": "확인되지 않음",
+      "policyDigest": "게시 정책 SHA-256",
+      "inventoryDigest": "인벤토리 SHA-256",
+      "allowPurge": "적격 기록의 파기 절차 진입 허용",
+      "independentReview": "변경안 작성자와 다른 권한 보유자가 새로운 본인 인증을 거쳐 검토해야 합니다.",
+      "makerBlocked": "변경안 작성자는 자신의 보존 정책을 승인할 수 없습니다.",
+      "reviewPublish": "보존 정책 검토 및 게시",
+      "reviewComment": "독립 검토 사유",
+      "saveDraft": "보존 변경안 저장",
+      "sourceChanged": "현재 보존 권한 또는 원본을 확인할 수 없습니다. 새로 확인한 뒤 진행해 주세요.",
+      "intentNotDeletion": "파기 요청 등록은 기록 삭제가 아닙니다. 법적 보존·적격성·소유 서비스 실행과 모든 전달 사본을 각각 검증해야 합니다.",
+      "saved": "정책 명령이 완료되어 현재 정책 증적을 다시 확인합니다.",
+      "accepted": "파기 요청이 등록되었습니다. 삭제 완료를 의미하지 않습니다.",
+      "commandUnknown": "처리 결과 또는 현재 권한이 불확실합니다. 입력을 보존하고 원본을 확인한 뒤 새로운 명령을 진행해 주세요.",
+      "requestId": "결재 요청 ID",
+      "inspect": "기록 확인",
+      "inventoryRows": "인벤토리 행",
+      "inventoryTables": "인벤토리 테이블",
+      "objects": "저장 객체",
+      "eligibleAfter": "가장 이른 적격 시점",
+      "registerIntent": "검증된 파기 요청 등록",
+      "acknowledgements": "검증된 소비 서비스 확인",
+      "fields": {
+        "recordRetentionDays": "완료 기록 보존 일수",
+        "deletedDraftRecoveryDays": "삭제 기안 복구 일수",
+        "receiptRetentionDays": "명령 처리 증적 보존 일수",
+        "holdEvidenceRetentionDays": "법적 보존 증적 보존 일수",
+        "auditEvidenceRetentionDays": "감사 증적 보존 일수",
+        "maxInventoryRows": "기록별 인벤토리 최대 행",
+        "maxObjectsPerRecord": "기록별 저장 객체 최대 개수"
+      },
+      "classifications": { "INTERNAL": "내부", "CONFIDENTIAL": "기밀", "RESTRICTED": "제한" },
+      "reasons": {
+        "RECORD_ALREADY_CLAIMED": "이미 보존 실행 요청이 있는 기록입니다.",
+        "POLICY_PURGE_DISABLED": "게시된 정책에서 파기를 허용하지 않습니다.",
+        "CLASSIFICATION_DENIED": "기록의 분류 등급이 이 정책의 허용 범위가 아닙니다.",
+        "ACTIVE_OR_PENDING_HOLD": "유효하거나 검토 대기 중인 법적 보존이 있어 파기가 차단됩니다.",
+        "RECORD_NOT_TERMINAL": "아직 파기 가능한 최종 상태에 도달하지 않은 기록입니다.",
+        "BLOCKED_SHARED_LINK": "공유 링크 사본이 남아 있어 파기가 차단됩니다.",
+        "RECORD_WORK_UNSETTLED": "업로드·보완 요청·타이머 등 진행 중인 기록 작업이 남아 있습니다.",
+        "INVENTORY_CAP_EXCEEDED": "정책의 인벤토리 또는 저장 객체 상한을 초과했습니다.",
+        "RETENTION_NOT_ELAPSED": "필요한 보존 기간이 아직 지나지 않았습니다.",
+        "ELIGIBLE_FOR_DURABLE_INTENT": "현재 기록은 검증된 영속 파기 요청을 등록할 수 있습니다."
+      },
+      "copyStates": {
+        "ALL_DECLARED_COPIES_CONFIRMED": "선언된 모든 소비 서비스 사본의 확인 증적이 검증되었습니다. 이것만으로 전체 삭제 완료를 의미하지 않습니다.",
+        "VERIFIED_FOREIGN_COPY_ACKS_PENDING": "전달된 소비 서비스 사본의 검증된 확인 증적을 기다리고 있습니다."
+      }
+    },
     "highRisk": {
       "title": "고위험 작업 본인 확인",
       "description": "정확한 작업 권한을 다시 평가한 후 회사에서 구성한 인증 공급자로 최신 본인 확인을 진행합니다.",
@@ -902,7 +1851,27 @@
         "legacy-command-failed": "작업이 실패했습니다. 새로고침 후 다시 시도하세요."
       }
     },
-    "breached": { "title": "기한 초과 결재", "meta": "즉시 운영 조치가 필요한 항목" },
+    "breached": {
+      "title": "기한 초과 결재",
+      "meta": "즉시 운영 조치가 필요한 항목"
+    },
+    "operationsQueue": {
+      "title": "운영 작업 큐",
+      "sla": "SLA 위반 업무",
+      "delivery": "연계 전달",
+      "resolved": "전달 완료",
+      "retryReady": "재시도 가능",
+      "eventVersion": "이벤트 버전",
+      "sourceStale": "현재 전달 적격성을 확인하지 못했습니다.",
+      "loadedOnly": "현재 조회한 전달 이벤트 기준",
+      "allStatuses": "전체 상태",
+      "sort": "정렬 기준",
+      "sorts": {
+        "OLDEST": "오래된 항목부터",
+        "NEWEST": "최신 항목부터",
+        "AVAILABLE": "다음 전달 가능 시각순"
+      }
+    },
     "integrations": {
       "title": "통합 이벤트 전달",
       "meta": "실패 원인, 재시도 횟수와 격리 상태를 추적합니다.",
@@ -920,12 +1889,36 @@
         "updated": "최근 처리",
         "error": "최근 오류",
         "action": "작업"
-      }
+      },
+      "availableAt": "다음 전달 가능 시각",
+      "evaluatedAt": "재전달 자격 평가 시각",
+      "requestId": "관련 기안"
     },
     "signatures": {
       "gate": "외부 전자서명은 D-18 인프라 게이트가 승인된 후 활성화됩니다. 자격 증명은 DB가 아닌 비밀 저장소에서 관리합니다.",
-      "configured": "자격 증명과 헬스체크가 준비되었습니다.",
-      "notConfigured": "자격 증명 구성이 필요합니다."
+      "sourceChecking": "제공자 준비 상태를 다시 확인하고 있습니다. 이전 준비 상태는 사용하지 않습니다.",
+      "sourceStale": "제공자 검증 정보를 다시 확인하지 못했습니다. 저장된 구성은 읽기 전용이며 준비 상태는 알 수 없습니다.",
+      "sourceUnavailable": "현재 권한으로 제공자 검증 정보를 확인하지 못했습니다.",
+      "configured": "자격 증명 설정됨 · 검증 상태는 별도 확인",
+      "notConfigured": "자격 증명 구성이 필요합니다.",
+      "capabilities": {
+        "internalAttestation": "내부 결정 증적",
+        "auditEvidence": "감사 증적",
+        "verifiedIdentity": "검증된 사용자 신원",
+        "remoteSigningSupported": "원격 서명 지원 가능 여부(운영 준비와 별도)"
+      },
+      "capabilitySupported": "지원",
+      "capabilityUnsupported": "미지원",
+      "metadataReadiness": "승인 증적 메타데이터 상태",
+      "declaredProtocolCapability": "선언된 원격 서명 프로토콜",
+      "protocolDeclared": "선언됨",
+      "protocolNotDeclared": "미선언",
+      "adapterVerification": "제공자 어댑터 검증",
+      "probeVerification": "상용 프로브 검증",
+      "nativeKeyVerification": "내부 서명 키 검증",
+      "verificationNotReported": "제공자 메타데이터에 검증 결과 미포함",
+      "credentialReferenceRegistered": "자격 증명 참조 등록됨",
+      "credentialReferenceMissing": "자격 증명 참조 미등록"
     },
     "columns": {
       "process": "프로세스",
@@ -938,6 +1931,90 @@
       "schema": "스키마",
       "fields": "필드",
       "updated": "수정일"
+    },
+    "typedForm": {
+      "create": "새 고급 양식",
+      "inspectField": "필드 속성",
+      "duplicateField": "필드 복제",
+      "userDraftPlaceholder": "게시 후 사용자 선택 가능",
+      "userDraftDescription": "초안 미리보기에서는 사용자를 검색할 수 없습니다. 양식을 게시한 후 권한이 확인된 사용자 선택을 테스트하세요.",
+      "publishedPreview": "게시된 양식 미리보기",
+      "publishedPreviewDescription": "예시 입력은 저장되지 않습니다. 사용자 후보는 이 게시 버전과 현재 접근 컨텍스트를 기준으로 확인합니다.",
+      "userSourceUnavailable": "게시 버전, 스키마 및 접근 컨텍스트가 확인되기 전에는 사용자를 검색할 수 없습니다.",
+      "typeChangeTitle": "필드 유형 변경",
+      "typeChangeDescription": "유형별 규칙과 반복 행 필드가 초기화됩니다. 이름과 호환 가능한 조건은 유지됩니다.",
+      "typeChangeConfirm": "유형 변경",
+      "title": "고급 양식 정의",
+      "validating": "정의를 검증하고 있습니다",
+      "invalid": "양식 정의가 유효하지 않습니다. 필드 규칙과 참조 관계를 확인하세요.",
+      "valid": "양식 정의 검증 완료",
+      "summaryLocked": "요청 내용 필드의 키·유형·표시 조건은 고정됩니다.",
+      "visibleWhen": "표시 조건",
+      "requiredWhen": "필수 조건",
+      "condition": "조건",
+      "operator": "연산자",
+      "reference": "참조 필드",
+      "value": "값",
+      "values": "값 목록(줄별 입력)",
+      "addCondition": "조건 추가",
+      "removeCondition": "조건 삭제",
+      "calculation": "계산식",
+      "leftOperand": "왼쪽 피연산자",
+      "rightOperand": "오른쪽 피연산자",
+      "group": "반복 그룹",
+      "rowField": "행 필드",
+      "minRows": "최소 행 수",
+      "maxRows": "최대 행 수",
+      "minLength": "최소 길이",
+      "maxLength": "최대 길이",
+      "minimum": "최솟값",
+      "maximum": "최댓값",
+      "scale": "소수 자릿수",
+      "addRow": "행 추가",
+      "removeRow": "행 삭제",
+      "row": "{{count}}행",
+      "back": "필드 목록으로",
+      "previewValidate": "미리보기 검증",
+      "previewValid": "미리보기 값이 상신 규칙을 충족합니다.",
+      "previewInvalid": "미리보기 값이 필드 규칙을 충족하지 않습니다.",
+      "hidden": "조건에 따라 숨김",
+      "noReference": "먼저 참조 가능한 필드를 추가하세요.",
+      "schemaMismatch": "저장된 스키마 해시를 검증할 수 없습니다.",
+      "fieldTypes": {
+        "TEXT": "단문",
+        "TEXTAREA": "장문",
+        "NUMBER": "숫자",
+        "DATE": "날짜",
+        "SELECT": "선택",
+        "USER": "사용자 참조",
+        "CALCULATED_NUMBER": "계산된 숫자",
+        "REPEATING_GROUP": "반복 그룹"
+      },
+      "conditionOperators": {
+        "PRESENT": "값 있음",
+        "EQ": "같음",
+        "NE": "다름",
+        "IN": "목록에 포함",
+        "GT": "초과",
+        "GTE": "이상",
+        "LT": "미만",
+        "LTE": "이하",
+        "AND": "모든 조건",
+        "OR": "조건 중 하나",
+        "NOT": "조건 부정"
+      },
+      "calculationOperators": {
+        "CONST": "상수",
+        "FIELD": "숫자 필드",
+        "SUM": "반복 행 합계",
+        "ADD": "더하기",
+        "SUBTRACT": "빼기",
+        "MULTIPLY": "곱하기",
+        "DIVIDE": "나누기",
+        "MIN": "최솟값",
+        "MAX": "최댓값",
+        "ROUND": "반올림"
+      }
     }
   }
 }

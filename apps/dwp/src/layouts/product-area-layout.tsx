@@ -1,27 +1,14 @@
 import {
-  lazy,
-  Suspense,
   useEffect,
   useId,
   useLayoutEffect,
   useRef,
   useState,
   type FocusEvent,
+  type ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Activity,
-  ArrowLeft,
-  ChevronDown,
-  ChevronRight,
-  History,
-  Home,
-  Inbox,
-  LifeBuoy,
-  Menu,
-  MessageSquarePlus,
-  Settings2,
-} from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Home, LifeBuoy, Settings2 } from 'lucide-react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
@@ -60,7 +47,6 @@ import {
   synchronizeProductSurfaceFocus,
 } from '../components/product-surface-focus-handoff';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
-import { resolveDwaionMobileHeaderProfile } from '../features/dwaion/dwaion-mobile-shell-profile';
 import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
 import { buildLegacyProductSurfacePresentation } from '../features/shell/legacy-product-surface-presentation';
 import { canContextAccessNavigation } from '../features/shell/product-surface-context';
@@ -83,12 +69,6 @@ import type {
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import { canAccessProductAreaNavigationItem } from './product-area-permissions';
 
-const DwaionMobileHeader = lazy(() =>
-  import('../features/dwaion/dwaion-mobile-header').then((module) => ({
-    default: module.DwaionMobileHeader,
-  }))
-);
-
 export type { ProductAreaNavigationGroup, ProductAreaNavigationItem };
 
 export type ProductAreaNavigationItemChildrenContext = Readonly<{
@@ -96,6 +76,25 @@ export type ProductAreaNavigationItemChildrenContext = Readonly<{
   selected: boolean;
   compact: boolean;
   onNavigate?: () => void;
+}>;
+
+export type ProductAreaMobileShellContext = Readonly<{
+  pathname: string;
+  search: string;
+  visibleNavigationPaths: readonly string[];
+  navigation: Readonly<{
+    controlsId: string;
+    expanded: boolean;
+    label: string;
+    testId: string;
+    onOpen: (trigger: HTMLButtonElement) => void;
+  }>;
+  onNavigate: (path: string) => void;
+}>;
+
+export type ProductAreaMobileShellPresentation = Readonly<{
+  header: ReactNode;
+  footer?: ReactNode;
 }>;
 
 export type ProductAreaLayoutProps = {
@@ -135,6 +134,11 @@ export type ProductAreaLayoutProps = {
   renderNavigationItemChildren?: (
     context: ProductAreaNavigationItemChildrenContext
   ) => React.ReactNode;
+  navigationChildrenPresentation?: 'disclosure' | 'inline';
+  mobileSurfaceNavigation?: 'header' | 'drawer';
+  resolveMobileShell?: (
+    context: ProductAreaMobileShellContext
+  ) => ProductAreaMobileShellPresentation;
 };
 
 function isSurfaceNavigationItem(
@@ -151,6 +155,9 @@ export function ProductAreaLayout({
   surface,
   canAccessLegacySurface,
   renderNavigationItemChildren,
+  navigationChildrenPresentation = 'disclosure',
+  mobileSurfaceNavigation = 'header',
+  resolveMobileShell,
 }: ProductAreaLayoutProps) {
   const { t } = useTranslation(translationNamespace);
   const { t: tCommon } = useTranslation('common');
@@ -319,32 +326,31 @@ export function ProductAreaLayout({
     (entry) => entry.entryKind === 'work-return'
   );
   const compactWorkSurfaceRail = useMediaQuery('(max-width:599.95px)', { noSsr: true });
-  const compactDwaionShell = useMediaQuery('(max-width:1199.95px)', { noSsr: true });
+  const compactSpecializedMobileShell = useMediaQuery('(max-width:1199.95px)', { noSsr: true });
+  const drawerSurfaceNavigation =
+    mobileSurfaceNavigation === 'drawer' && presentationPlane === 'work';
   const showMobileSurfaceContextRail = Boolean(
+    !drawerSurfaceNavigation &&
     currentSurfaceId &&
     presentationEntries &&
     (presentationPlane === 'management' ||
-      (areaKey !== 'dwaion' && compactWorkSurfaceRail && presentationEntries.length > 1))
+      (!resolveMobileShell && compactWorkSurfaceRail && presentationEntries.length > 1))
   );
-  const dwaionMobileHeaderProfile =
-    areaKey === 'dwaion' ? resolveDwaionMobileHeaderProfile(pathname, location.search) : undefined;
-  const dwaionMobileDestinationRegistry = {
-    home: { path: '/dwaion/home', view: 'home', icon: Home },
-    new: { path: '/dwaion/new', view: 'new', icon: MessageSquarePlus },
-    conversations: { path: '/dwaion/conversations', view: 'conversations', icon: History },
-    activity: { path: '/dwaion/activity', view: 'activity', icon: Activity },
-    proposals: { path: '/dwaion/proposals', view: 'proposals', icon: Inbox },
-  } as const;
-  const dwaionMobileDestinations =
-    dwaionMobileHeaderProfile?.destinations.map(
-      (destination) => dwaionMobileDestinationRegistry[destination]
-    ) ?? [];
-  const visibleDwaionMobileDestinations =
-    areaKey === 'dwaion'
-      ? dwaionMobileDestinations.filter(({ path }) =>
-          visibleNavigation.some((group) => group.items.some((item) => item.path === path))
-        )
-      : [];
+  const specializedMobileShell = resolveMobileShell?.({
+    pathname,
+    search: location.search,
+    visibleNavigationPaths: visibleNavigation.flatMap((group) =>
+      group.items.map((item) => item.path)
+    ),
+    navigation: {
+      controlsId: mobileNavigationId,
+      expanded: mobileNavigation.open,
+      label: t('shell.openNavigation'),
+      testId: `${areaKey}-mobile-navigation-trigger`,
+      onOpen: mobileNavigation.openFrom,
+    },
+    onNavigate: (path) => navigate(path),
+  });
 
   const navigationContent = (
     compactNavigation: boolean,
@@ -406,7 +412,11 @@ export function ProductAreaLayout({
                       onNavigate,
                     })
                   : null;
-                const expanded = Boolean(itemChildren) && collapsedNavigationPath !== item.path;
+                const disclosureChildren =
+                  Boolean(itemChildren) && navigationChildrenPresentation === 'disclosure';
+                const expanded =
+                  Boolean(itemChildren) &&
+                  (!disclosureChildren || collapsedNavigationPath !== item.path);
                 const childrenId = `${navigationDisclosureId}-${onDismiss ? 'mobile' : 'desktop'}-${item.view}`;
                 const DisclosureIcon = expanded ? ChevronDown : ChevronRight;
                 return (
@@ -414,10 +424,10 @@ export function ProductAreaLayout({
                     <Tooltip title={compactNavigation ? label : ''} placement="right">
                       <ListItemButton
                         data-testid={`${areaKey}-navigation-item-${item.view}`}
-                        component={itemChildren ? 'button' : NavLink}
-                        type={itemChildren ? 'button' : undefined}
+                        component={disclosureChildren ? 'button' : NavLink}
+                        type={disclosureChildren ? 'button' : undefined}
                         to={
-                          itemChildren
+                          disclosureChildren
                             ? undefined
                             : exactNavigationTarget
                               ? resolveProductCompatibilityNavigationLocation(
@@ -434,10 +444,10 @@ export function ProductAreaLayout({
                         selected={selected}
                         aria-label={compactNavigation ? label : undefined}
                         aria-current={selected ? 'page' : undefined}
-                        aria-expanded={itemChildren ? expanded : undefined}
-                        aria-controls={itemChildren ? childrenId : undefined}
+                        aria-expanded={disclosureChildren ? expanded : undefined}
+                        aria-controls={disclosureChildren ? childrenId : undefined}
                         onClick={
-                          itemChildren
+                          disclosureChildren
                             ? () => setCollapsedNavigationPath(expanded ? item.path : null)
                             : onNavigate
                         }
@@ -486,7 +496,7 @@ export function ProductAreaLayout({
                             }}
                           />
                         )}
-                        {itemChildren && (
+                        {disclosureChildren && (
                           <DisclosureIcon size={16} strokeWidth={1.8} aria-hidden="true" />
                         )}
                       </ListItemButton>
@@ -655,6 +665,7 @@ export function ProductAreaLayout({
             return {
               height: 1,
               minHeight: 0,
+              ...(drawerSurfaceNavigation ? { display: 'flex', flexDirection: 'column' } : {}),
               bgcolor: sidebar,
               '--dwp-product-accent': tones.accent,
               '--dwp-product-selection': dark
@@ -663,23 +674,33 @@ export function ProductAreaLayout({
             };
           }}
         >
-          {navigationContent(false, navigateMobileNavigation, dismissMobileNavigation)}
+          {drawerSurfaceNavigation && presentationEntries && currentSurfaceId ? (
+            <>
+              <Box
+                data-testid={`${areaKey}-mobile-drawer-surface-switcher`}
+                sx={{ px: 2, py: 1, flexShrink: 0, borderBottom: 1, borderColor: 'divider' }}
+              >
+                <ProductSurfaceHeaderControls
+                  variant="compact"
+                  currentSurfaceId={currentSurfaceId}
+                  entries={presentationEntries}
+                  label={tCommon('productSurface.labels.surfaceNavigation')}
+                  productLabel={productLabel}
+                  resolveLabel={(labelKey) => t(labelKey)}
+                  onNavigate={navigateMobileNavigation}
+                />
+              </Box>
+              <Box sx={{ flex: 1, minHeight: 0 }}>
+                {navigationContent(false, navigateMobileNavigation, dismissMobileNavigation)}
+              </Box>
+            </>
+          ) : (
+            navigationContent(false, navigateMobileNavigation, dismissMobileNavigation)
+          )}
         </Box>
       </ShellMobileNavigationDrawer>
-      {areaKey === 'dwaion' && compactDwaionShell && dwaionMobileHeaderProfile ? (
-        <Suspense fallback={null}>
-          <DwaionMobileHeader
-            profile={dwaionMobileHeaderProfile}
-            navigation={{
-              controlsId: mobileNavigationId,
-              expanded: mobileNavigation.open,
-              label: t('shell.openNavigation'),
-              testId: `${areaKey}-mobile-navigation-trigger`,
-              onOpen: mobileNavigation.openFrom,
-            }}
-            onBack={(path) => navigate(path)}
-          />
-        </Suspense>
+      {compactSpecializedMobileShell && specializedMobileShell?.header ? (
+        specializedMobileShell.header
       ) : (
         <ShellHeader
           testId={`${areaKey}-header`}
@@ -718,6 +739,7 @@ export function ProductAreaLayout({
           }
           mobilePrimaryNavigation={
             areaKey !== 'dwaion' &&
+            !drawerSurfaceNavigation &&
             !showMobileSurfaceContextRail &&
             presentationEntries &&
             currentSurfaceId ? (
@@ -821,10 +843,7 @@ export function ProductAreaLayout({
           ml: { xs: 0, lg: `${desktopOffset}px` },
           minWidth: 0,
           minHeight: '100dvh',
-          pb:
-            areaKey === 'dwaion' && dwaionMobileHeaderProfile?.showNavigation
-              ? { xs: 7, lg: 0 }
-              : 0,
+          pb: specializedMobileShell?.footer ? { xs: 7, lg: 0 } : 0,
           overflowX: 'clip',
           outline: 'none',
           bgcolor: 'var(--dwp-product-canvas)',
@@ -842,118 +861,7 @@ export function ProductAreaLayout({
           <Outlet key={contentInstanceKey} />
         )}
       </Box>
-      {areaKey === 'dwaion' && dwaionMobileHeaderProfile?.showNavigation && (
-        <Box
-          component="nav"
-          aria-label={t('dwaionMobileNavigation.label')}
-          data-testid="dwaion-mobile-navigation"
-          sx={{
-            position: 'fixed',
-            inset: 'auto 0 0 0',
-            zIndex: (theme) => theme.zIndex.appBar,
-            height: 58,
-            display: { xs: 'flex', lg: 'none' },
-            alignItems: 'stretch',
-            bgcolor: 'background.paper',
-            borderTop: 1,
-            borderColor: 'divider',
-            boxShadow: (theme) => `0 -4px 16px ${alpha(theme.palette.common.black, 0.05)}`,
-            '@supports (padding-bottom: env(safe-area-inset-bottom))': {
-              height: 'calc(58px + env(safe-area-inset-bottom))',
-              pb: 'env(safe-area-inset-bottom)',
-            },
-          }}
-        >
-          {visibleDwaionMobileDestinations.map(({ path, view, icon: Icon }) => {
-            const selected =
-              pathname === path ||
-              (path === '/dwaion/conversations' && pathname.startsWith('/dwaion/conversations/'));
-            const label = t(`dwaionMobileNavigation.${view}`);
-            return (
-              <Box
-                key={path}
-                component={NavLink}
-                to={path}
-                aria-current={selected ? 'page' : undefined}
-                sx={{
-                  flex: '1 1 0',
-                  minWidth: 0,
-                  minHeight: 44,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 0.2,
-                  color: selected ? 'var(--dwp-product-accent)' : 'text.secondary',
-                  textDecoration: 'none',
-                  '&:focus-visible': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: -2,
-                  },
-                }}
-              >
-                <Icon size={19} strokeWidth={selected ? 2.25 : 1.8} aria-hidden="true" />
-                <Typography
-                  component="span"
-                  sx={{
-                    fontSize: 'overline.fontSize',
-                    lineHeight: 'button.lineHeight',
-                    fontWeight: selected ? 'fontWeightBold' : 'subtitle1.fontWeight',
-                  }}
-                  noWrap
-                >
-                  {label}
-                </Typography>
-              </Box>
-            );
-          })}
-          {dwaionMobileHeaderProfile?.showMore && (
-            <Box
-              component="button"
-              type="button"
-              aria-controls={mobileNavigationId}
-              aria-expanded={mobileNavigation.open}
-              aria-label={t('dwaionMobileNavigation.more')}
-              onClick={(event) => mobileNavigation.openFrom(event.currentTarget)}
-              sx={{
-                flex: '1 1 0',
-                minWidth: 0,
-                minHeight: 44,
-                m: 0,
-                p: 0,
-                border: 0,
-                bgcolor: 'transparent',
-                color: 'text.secondary',
-                font: 'inherit',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 0.2,
-                cursor: 'pointer',
-                '&:focus-visible': {
-                  outline: '2px solid',
-                  outlineColor: 'primary.main',
-                  outlineOffset: -2,
-                },
-              }}
-            >
-              <Menu size={19} strokeWidth={1.8} aria-hidden="true" />
-              <Typography
-                component="span"
-                sx={{
-                  fontSize: 'overline.fontSize',
-                  lineHeight: 'button.lineHeight',
-                  fontWeight: 'subtitle1.fontWeight',
-                }}
-              >
-                {t('dwaionMobileNavigation.more')}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      )}
+      {specializedMobileShell?.footer}
     </Box>
   );
 }

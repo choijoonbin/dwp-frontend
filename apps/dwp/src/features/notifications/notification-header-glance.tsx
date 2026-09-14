@@ -267,7 +267,7 @@ export function NotificationHeaderGlance({
             width: compact ? 'calc(100vw - 24px)' : 420,
             maxWidth: 420,
             maxHeight: compact ? 'calc(100vh - 96px)' : 640,
-            borderRadius: 1,
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
             overflow: 'hidden',
           },
         },
@@ -402,7 +402,9 @@ export function NotificationHeaderGlance({
                 t('arrival.protectedContent')
               );
               const concealContext =
-                item.sensitive || profileQuery.data?.presentation.previewMode === 'HIDDEN';
+                item.sensitive ||
+                !profileQuery.data ||
+                profileQuery.data.presentation.previewMode === 'HIDDEN';
               return (
                 <Box component="li" key={item.notificationId} sx={{ listStyle: 'none' }}>
                   <NotificationItemRow

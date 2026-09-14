@@ -1,3 +1,4 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,13 +8,14 @@ import {
   LocalErrorState,
   LoadingState,
   PageCanvas,
-  ResourcePageHeader,
 } from '@dwp-frontend/design-system';
 import {
   formatDate,
   resolveSupportedLocale,
   resolveSystemTimeZone,
 } from '@dwp-frontend/shared-i18n';
+import { useSearchParams } from 'react-router-dom';
+import { Temporal } from 'temporal-polyfill';
 import {
   checkInWorkplaceBooking,
   getCalendarHome,
@@ -26,10 +28,10 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 
-import { useRoomsCapabilities } from './rooms-capabilities';
+import { useRoomsCapabilities, useWorkplaceGovernanceCapabilities } from './rooms-capabilities';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
 import { useWorkplaceDecisionClock } from './workplace-decision-clock';
@@ -48,6 +50,8 @@ import {
   WorkplaceTodayFlow,
 } from './workplace-home-sections';
 import { WorkplaceWeekRhythm } from './workplace-week-rhythm';
+import { WorkplaceHomeScope } from './workplace-home-scope';
+import { WorkplaceHomeSourceSummary } from './workplace-home-source-summary';
 
 import type { WorkplaceBooking, WorkplaceExploreResponse } from '@dwp-frontend/shared-utils';
 
@@ -73,9 +77,17 @@ export function WorkplaceHome() {
   const { t, i18n } = useTranslation('rooms');
   const auth = useAuth();
   const capabilities = useRoomsCapabilities();
+  const governance = useWorkplaceGovernanceCapabilities();
   const permissions = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedFloorId = searchParams.get('floor') ?? '';
+  const requestedStart = searchParams.get('from');
+  const [scopeCatalog, setScopeCatalog] = useState<{
+    identityKey: string;
+    catalog: WorkplaceExploreResponse;
+  } | null>(null);
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
   const activeIdentityRef = useRef(identityKey);
   const completeDecisionActionRef = useRef<(identityKey: string, actionId: string) => void>(
@@ -86,12 +98,26 @@ export function WorkplaceHome() {
   activeIdentityRef.current = identityKey;
   const browserTimeZone = useMemo(() => resolveSystemTimeZone('Asia/Seoul'), []);
   const exploreQuery = useQuery({
-    queryKey: ['workplace', 'home', identityKey, 'explore'],
+    queryKey: ['workplace', 'home', identityKey, 'explore', requestedFloorId, requestedStart],
     queryFn: async (): Promise<WorkplaceHomeExploreSnapshot> => {
       const range = workplaceHomeQueryRange(new Date(), browserTimeZone);
-      const explore = await getWorkplaceExplore(range.availabilityFrom, range.availabilityTo);
+      if (requestedStart) {
+        try {
+          const start = Temporal.Instant.from(requestedStart);
+          range.availabilityFrom = start.toString();
+          range.availabilityTo = start.add({ hours: 1 }).toString();
+        } catch {
+          /* A malformed URL uses the current native availability window. */
+        }
+      }
+      const explore = await getWorkplaceExplore(
+        range.availabilityFrom,
+        range.availabilityTo,
+        requestedFloorId || null
+      );
       return { explore, range };
     },
+    enabled: capabilities.isLoaded && capabilities.canViewWorkplace,
     staleTime: 30_000,
     refetchInterval: REFRESH_INTERVAL,
     retry: retryRecoverableWorkplaceRead,
@@ -153,6 +179,15 @@ export function WorkplaceHome() {
   });
   const exploreSnapshot = workplaceHomeSourceData(exploreState, exploreQuery.data);
   const explore = exploreSnapshot?.explore;
+  useEffect(() => {
+    if (exploreState === 'DENIED') setScopeCatalog(null);
+    else if (exploreState === 'READY' && explore)
+      setScopeCatalog({ identityKey, catalog: explore });
+  }, [explore, exploreState, identityKey]);
+  const catalog =
+    exploreState === 'DENIED'
+      ? undefined
+      : (explore ?? (scopeCatalog?.identityKey === identityKey ? scopeCatalog.catalog : undefined));
   const bookings = workplaceHomeSourceData(bookingsState, bookingsQuery.data);
   const roomBookings = workplaceHomeSourceData(roomBookingsState, roomBookingsQuery.data);
   const roomPolicyRequired =
@@ -298,6 +333,7 @@ export function WorkplaceHome() {
       }
     },
     onSettled: (_, __, variables) => {
+      checkInInFlightRef.current = false;
       setSubmittedCheckInAction((current) =>
         current?.identityKey === variables.identityKey &&
         current.actionId === `check-in:${variables.booking.bookingId}`
@@ -306,6 +342,7 @@ export function WorkplaceHome() {
       );
     },
   });
+  const checkInInFlightRef = useRef(false);
 
   const hasExploreData = explore !== undefined;
   const hasBookingsData = bookings !== undefined;
@@ -456,14 +493,33 @@ export function WorkplaceHome() {
   const statusDetail =
     statusState === 'live' && model.verifiedAt
       ? t('workplace.home.status.verifiedAt', {
-          time: formatDate(model.verifiedAt, { hour: '2-digit', minute: '2-digit' }, locale),
+          time: formatDate(
+            model.verifiedAt,
+            { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone },
+            locale
+          ),
         })
       : undefined;
   const header = (
-    <ResourcePageHeader
-      eyebrow={t('workplace.home.eyebrow')}
-      title={t('workplace.home.title')}
-      description={t('workplace.home.description')}
+    <WorkplaceHomeScope
+      catalog={catalog}
+      floorId={requestedFloorId || catalog?.selectedFloor?.floorId || ''}
+      startsAt={activeRange.availabilityFrom}
+      timeZone={timeZone}
+      discoveryPath={model.discoveryPath}
+      busy={exploreQuery.isFetching}
+      onFloorChange={(floorId) => {
+        const next = new URLSearchParams(searchParams);
+        next.set('floor', floorId);
+        next.delete('from');
+        setSearchParams(next, { replace: true });
+      }}
+      onStartChange={(value) => {
+        const next = new URLSearchParams(searchParams);
+        if (value) next.set('from', value);
+        else next.delete('from');
+        setSearchParams(next, { replace: true });
+      }}
       status={
         <LiveStatus
           state={statusState}
@@ -477,7 +533,7 @@ export function WorkplaceHome() {
     />
   );
 
-  if (initialLoading) {
+  if (initialLoading && !hasAnyData) {
     return (
       <PageCanvas>
         {header}
@@ -504,8 +560,13 @@ export function WorkplaceHome() {
   return (
     <PageCanvas>
       {header}
+      {initialLoading && (
+        <InlineFeedback severity="info" sx={{ mt: 2 }}>
+          {t('workplace.home.loading')}
+        </InlineFeedback>
+      )}
       {(hasStaleData || hasUnavailableData) && (
-        <Alert
+        <InlineFeedback
           severity="warning"
           action={
             <ActionButton intent="quiet" onClick={refreshHome}>
@@ -515,7 +576,7 @@ export function WorkplaceHome() {
           sx={{ mt: 2 }}
         >
           {t(hasUnavailableData ? 'workplace.partialWarning' : 'workplace.staleWarning')}
-        </Alert>
+        </InlineFeedback>
       )}
       <Box
         ref={decisionStatusRef}
@@ -531,7 +592,7 @@ export function WorkplaceHome() {
           py: 1.5,
           border: 1,
           borderColor: 'divider',
-          borderRadius: 1,
+          borderRadius: foundationTokens.radius.control + 'px',
           bgcolor: 'background.paper',
           color: 'text.secondary',
           '&:focus-visible': {
@@ -549,10 +610,13 @@ export function WorkplaceHome() {
       </Box>
       <WorkplaceDayBrief
         model={model}
+        timeZone={timeZone}
+        nowInstant={homeDecisionInstant}
         availabilityState={availabilityState}
         checkInState={checkInState}
         decisionComplete={nextActionComplete}
         canManage={capabilities.canManageWorkplaceAdmin}
+        canViewAccess={governance.isLoaded && governance.access.canView}
         checkInBusy={Boolean(submittedCheckInActionId)}
         decisionActionId={
           model.nextAction.kind === 'CHECK_IN' && checkInState === 'AVAILABLE'
@@ -561,35 +625,53 @@ export function WorkplaceHome() {
         }
         onRefresh={refreshHome}
         onCheckIn={() => {
-          if (model.nextAction.kind === 'CHECK_IN') {
+          if (model.nextAction.kind === 'CHECK_IN' && !checkInInFlightRef.current) {
+            checkInInFlightRef.current = true;
             checkInMutation.mutate({ identityKey, booking: model.nextAction.booking });
           }
         }}
       />
-      <Box
-        sx={{
-          mt: 3,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.55fr) minmax(320px, 0.75fr)' },
-          gap: 3,
-          alignItems: 'stretch',
-        }}
-      >
-        <WorkplaceTodayFlow agenda={model.agenda} complete={agendaComplete} />
+      <Box sx={{ mt: foundationTokens.workplace.layout.sectionGap + 'px' }}>
         <WorkplaceReadySpaces
           model={model}
           state={availabilityState}
-          canManage={capabilities.canManageWorkplaceAdmin}
           refreshing={exploreQuery.isFetching}
           onRefresh={() => void exploreQuery.refetch()}
         />
       </Box>
-      <Box sx={{ mt: 3 }}>
-        <WorkplaceWeekRhythm week={model.week} complete={agendaComplete} />
+      <Box
+        sx={{
+          mt: foundationTokens.workplace.layout.sectionGap + 'px',
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 7fr) minmax(0, 5fr)' },
+          gridTemplateAreas: {
+            xs: '"attention" "agenda" "week"',
+            lg: '"agenda week" "agenda attention"',
+          },
+          gap: foundationTokens.workplace.layout.gutter + 'px',
+          alignItems: 'start',
+        }}
+      >
+        <Box sx={{ gridArea: 'attention', minWidth: 0 }}>
+          <WorkplaceAttentionSection
+            items={model.attention}
+            complete={attentionComplete}
+            timeZone={timeZone}
+          />
+        </Box>
+        <Box sx={{ gridArea: 'agenda', minWidth: 0 }}>
+          <WorkplaceTodayFlow agenda={model.agenda} complete={agendaComplete} timeZone={timeZone} />
+        </Box>
+        <Box sx={{ gridArea: 'week', minWidth: 0 }}>
+          <WorkplaceWeekRhythm week={model.week} complete={agendaComplete} />
+        </Box>
       </Box>
-      <Box sx={{ mt: 3 }}>
-        <WorkplaceAttentionSection items={model.attention} complete={attentionComplete} />
-      </Box>
+      <WorkplaceHomeSourceSummary
+        workspaceState={exploreState === 'READY' ? bookingsState : exploreState}
+        calendarState={calendarState}
+        workspaceUpdatedAt={explore?.generatedAt}
+        calendarUpdatedAt={calendar?.generatedAt}
+      />
     </PageCanvas>
   );
 }

@@ -122,7 +122,7 @@ describe('all-product surface expansion', () => {
     expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(146);
   });
 
-  it('keeps the three active DWAI work extensions W3 and PAGE DRAFT', () => {
+  it('keeps the three active DWAI work extensions W3 with official PAGE authority', () => {
     const manifest = GOVERNED_PRODUCT_MANIFESTS.find((product) => product.id === 'dwaion');
     const workSurface = manifest?.surfaces.find((surface) => surface.id === 'dwaion.work');
     const expected = [
@@ -157,7 +157,7 @@ describe('all-product surface expansion', () => {
         migrationWave: 'W3',
       });
       expect(
-        DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
           (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
         )
       ).toEqual([
@@ -289,8 +289,8 @@ describe('all-product surface expansion', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(86);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
+    expect(menuContracts).toHaveLength(73);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(78);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(

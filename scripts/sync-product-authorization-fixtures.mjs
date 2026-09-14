@@ -5,6 +5,11 @@ import path from 'node:path';
 import process from 'node:process';
 
 import prettier from 'prettier';
+import {
+  EXPECTED_REGISTRY_VERSIONS,
+  PRESERVED_AUTHORIZATION_CHECKSUMS,
+  EXPECTED_AUTHORIZATION_COUNTS,
+} from './product-authorization-fixture-versions.mjs';
 
 const root = process.cwd();
 const snapshot = path.join(root, 'architecture/pilot-fixtures.v1.generated.json');
@@ -24,13 +29,6 @@ const EXPECTED_RESERVED_CONTRACTS = new Set([
   'hcm.reference.publish',
   'hcm.integration.rotate-secret',
 ]);
-const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4, 5, 6];
-const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
-  1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
-  2: '5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c',
-  3: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
-  4: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
-});
 const EXPECTED_STEP_UP_CHALLENGES = { approval: 4, people: 5 };
 const STEP_UP_CONTEXT_KEYS = Object.freeze({
   STEPUP_HIGH_WORKFLOW_PUBLISH_1: 'approval-management',
@@ -42,27 +40,6 @@ const STEP_UP_CONTEXT_KEYS = Object.freeze({
   STEPUP_CRITICAL_FRESH_1: 'hcm-management',
   STEPUP_CRITICAL_EXPORT_RETRY_1: 'hcm-management',
   STEPUP_CRITICAL_CONSUMED_1: 'hcm-management',
-});
-const authorizationCounts = (
-  capabilities,
-  accessPolicies,
-  entitlementExpressions,
-  predicates,
-  routes
-) => ({
-  capabilities,
-  accessPolicies,
-  entitlementExpressions,
-  predicatePolicies: predicates,
-  routes,
-});
-const EXPECTED_AUTHORIZATION_COUNTS = Object.freeze({
-  1: authorizationCounts(10, 5, 2, 6, 35),
-  2: authorizationCounts(34, 6, 3, 13, 76),
-  3: authorizationCounts(62, 14, 8, 25, 129),
-  4: authorizationCounts(71, 22, 16, 33, 155),
-  5: authorizationCounts(72, 22, 16, 33, 160),
-  6: authorizationCounts(119, 22, 16, 34, 250),
 });
 const STEP_UP_HEADER_FIELDS = ['alg', 'kid', 'typ'];
 const STEP_UP_CLAIM_FIELDS = [
@@ -291,7 +268,7 @@ function readAuthorizationRegistry(sourcePath) {
     ? (() => {
         const expectedBundles = EXPECTED_REGISTRY_VERSIONS.map(
           (version) => `product-surfaces-v1.bundle-v${version}.json`
-        );
+        ).sort();
         const packagedBundles = fs
           .readdirSync(sourcePath)
           .filter((fileName) =>

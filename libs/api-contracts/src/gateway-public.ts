@@ -1,5 +1,165 @@
 /** Generated from contracts/openapi/gateway-public.json. Do not edit manually. */
 export interface paths {
+    "/api/approvals/v1/admin/attachments/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_initialize_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/attachments/policies/{policyId}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_draft_3"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/attachments/policies/{policyId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publish_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/attachments/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_policy_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/document-tools/holds/{requestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_hold"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/document-tools/holds/{requestId}/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_propose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/document-tools/holds/{requestId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publishHold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/document-tools/policies/{policyId}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_draft_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/document-tools/policies/{policyId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publish_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/document-tools/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_policy_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/form-categories": {
         parameters: {
             query?: never;
@@ -64,6 +224,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/forms/{formId}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_diff"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/forms/{formId}/draft": {
         parameters: {
             query?: never;
@@ -90,6 +266,150 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["approval_publishForm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/publish-review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_review"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/publish-reviewed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publish_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/reinstate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reinstate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_retire"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/versions/{formVersionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_version"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/versions/{formVersionId}/branch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_branch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/versions/{formVersionId}/field-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_admin"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/working-draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_draft_1"];
+        put: operations["approval_update"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -176,6 +496,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/policies/{policyId}/impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Preview the exact current policy proposal impact in the verified management scope */
+        get: operations["approval_impact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/policies/{policyId}/publish": {
         parameters: {
             query?: never;
@@ -202,6 +539,118 @@ export interface paths {
         get: operations["approval_policyVersions"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/claims/{claimId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_claim_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_initialize"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/policies/{policyId}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_draft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/policies/{policyId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_policy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/records/{requestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_record"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/records/{requestId}/claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_claim_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -288,6 +737,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/workflows/{workflowId}/versions/{versionId}/simulation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_simulate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/attachment-downloads/{grantId}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_content"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/attachment-uploads/{uploadId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/attachment-uploads/{uploadId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_cancel_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/attachment-uploads/{uploadId}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_upload"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/attachment-uploads/{uploadId}/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reconcile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/catalog/forms": {
         parameters: {
             query?: never;
@@ -312,6 +857,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["approval_formTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/catalog/forms/{formId}/versions/{formVersionId}/field-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_work"];
         put?: never;
         post?: never;
         delete?: never;
@@ -368,6 +929,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/draft-commands/{idempotencyKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_reconcile_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/home": {
         parameters: {
             query?: never;
@@ -400,6 +977,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/requests/archive/document-exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_archive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_requests_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/requests/{requestId}": {
         parameters: {
             query?: never;
@@ -407,9 +1016,73 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_request"];
+        get: operations["approval_request_1"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/attachment-uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reserve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_request"];
+        put: operations["approval_select"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/attachments/{attachmentId}/downloads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_requestGrant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_requestComments"];
+        put?: never;
+        post: operations["approval_appendRequestComment"];
         delete?: never;
         options?: never;
         head?: never;
@@ -424,6 +1097,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["approval_requestDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/document-exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_exportRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/document-tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_requestTools"];
         put?: never;
         post?: never;
         delete?: never;
@@ -448,6 +1153,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/requests/{requestId}/draft/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_delete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/draft/recover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_recover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/draft/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/draft/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_revisions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/draft/revisions/{revision}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_revision"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/information-commands/{originalKey}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read a verified completed information-command receipt without executing the command */
+        post: operations["approval_receipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/requests/{requestId}/information-response": {
         parameters: {
             query?: never;
@@ -458,6 +1260,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["approval_respondToInformationRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/signature-context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_context"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/signature-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_create_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -496,6 +1330,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/signature-command-receipts/{idempotencyKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_read"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/signature-requests/{signatureRequestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/signature-requests/{signatureRequestId}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_audit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/signature-requests/{signatureRequestId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/signature-requests/{signatureRequestId}/consents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_consent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/signature-requests/{signatureRequestId}/sign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_sign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/tasks": {
         parameters: {
             query?: never;
@@ -504,6 +1434,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["approval_tasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/tasks/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_tasks_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -528,6 +1474,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/tasks/{taskId}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_task_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/tasks/{taskId}/attachments/{attachmentId}/downloads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_taskGrant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/tasks/{taskId}/claim": {
         parameters: {
             query?: never;
@@ -544,6 +1522,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/tasks/{taskId}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_taskComments"];
+        put?: never;
+        post: operations["approval_appendTaskComment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/tasks/{taskId}/decisions": {
         parameters: {
             query?: never;
@@ -554,6 +1548,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["approval_decide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/tasks/{taskId}/document-exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_exportTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/tasks/{taskId}/document-tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_taskTools"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5740,7 +6766,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_6"];
+        get: operations["platform_overview_8"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5756,7 +6782,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_requests_4"];
+        get: operations["platform_requests_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6124,7 +7150,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_5"];
+        get: operations["platform_overview_7"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6140,7 +7166,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_policy_1"];
+        get: operations["platform_policy_2"];
         put: operations["platform_updatePolicy_2"];
         post?: never;
         delete?: never;
@@ -6412,7 +7438,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_4"];
+        get: operations["platform_overview_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6428,7 +7454,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_policy"];
+        get: operations["platform_policy_1"];
         put: operations["platform_updatePolicy_1"];
         post?: never;
         delete?: never;
@@ -6476,7 +7502,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_3"];
+        get: operations["platform_overview_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6908,7 +7934,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_2"];
+        get: operations["platform_overview_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7148,7 +8174,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_1"];
+        get: operations["platform_overview_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7372,7 +8398,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_requests_3"];
+        get: operations["platform_requests_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7900,7 +8926,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_requests_2"];
+        get: operations["platform_requests_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8094,6 +9120,454 @@ export interface paths {
         };
         get?: never;
         put: operations["platform_updateWorkplaceLegalHold"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_report"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience-report/bookings/{bookingId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_booking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/booking-policy/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changeBookingPolicy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/booking-policy/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewBookingPolicy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/connectors/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_configureConnector"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/delegations/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changeDelegation_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/delegations/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewDelegation_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/delegations/{delegationId}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changeDelegation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/delegations/{delegationId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewDelegation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_overview_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_policy"];
+        put: operations["platform_savePolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changePolicyOverride"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewPolicyOverride_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/{overrideId}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changePolicyOverride_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/{overrideId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewPolicyOverride"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/resources/{resourceId}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_photo"];
+        put?: never;
+        post: operations["platform_uploadPhoto"];
+        delete: operations["platform_deletePhoto"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/resources/{resourceId}/photo/metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_photoMetadata_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changeRule_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewRule_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/{ruleId}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changeRule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/{ruleId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reviewRule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/closures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_closures"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/closures/{closureId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_closure"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/closures/{closureId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_cancelClosure"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_requests_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/requests/{requestId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_status"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/resources/{resourceId}/closures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createClosure"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/experience/facilities/resources/{resourceId}/room-booking-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_roomImpact"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -8597,6 +10071,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/workplace/policy-impact-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_policyImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/resources/{resourceId}/future-booking-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_futureImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/workplace/sites": {
         parameters: {
             query?: never;
@@ -8716,7 +10222,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_availability"];
+        get: operations["platform_availability_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9597,7 +11103,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview"];
+        get: operations["platform_overview_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10237,7 +11743,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_policy_2"];
+        get: operations["platform_policy_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10608,6 +12114,166 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_relocateWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/collaboration/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/collaboration/resources/{resourceId}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_photo_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/collaboration/resources/{resourceId}/photo/metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_photoMetadata"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/collaboration/sharing-preference": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_savePreference"];
+        post?: never;
+        delete: operations["platform_revokePreference"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/collaboration/work-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_savePlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/collaboration/work-plans/{planId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["platform_deletePlan"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/facilities/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_ownRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/facilities/requests/{requestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_ownRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/facilities/resources/{resourceId}/booking-availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_availability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/experience/facilities/resources/{resourceId}/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createRequest"];
         delete?: never;
         options?: never;
         head?: never;
@@ -13027,6 +14693,306 @@ export interface components {
             /** Format: int32 */
             publishedWorkflows?: number;
         };
+        approval_ApiResponseApprovalAttachmentAttachments: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalAttachmentAttachments"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalAttachmentGrant: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalAttachmentGrant"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalAttachmentPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalAttachmentPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalAttachmentUpload: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalAttachmentUpload"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalDocumentComment: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalDocumentComment"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalDocumentComments: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalDocumentComments"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalDocumentHold: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalDocumentHold"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalDocumentPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalDocumentPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalDocumentTools: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalDocumentTools"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormLifecycleDiff: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormLifecycleDiff"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormLifecycleHistory: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormLifecycleHistory"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormLifecycleReview: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormLifecycleReview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormLifecycleVersion: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormLifecycleVersion"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormLifecycleWorkspace: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormLifecycleWorkspace"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormUserCandidates: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormUserCandidates"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalGeneratedDocument: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalGeneratedDocument"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalInformationCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalInformationCommandReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalPolicyImpactResult: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalPolicyImpactResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalRetentionClaim: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalRetentionClaim"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalRetentionPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalRetentionPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalRetentionRecord: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalRetentionRecord"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureAudit: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureAudit"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureCeremony: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureCeremony"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureCommandReceiptMetadata: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureCommandReceiptMetadata"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureContext: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureContext"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalWorkflowPlanningResult: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalWorkflowPlanningResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseDraftReconciliation: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_DraftReconciliation"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseDraftRevisionDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_DraftRevisionDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseDraftState: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_DraftState"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseFormDetail: {
             correlationId?: string;
             data?: components["schemas"]["approval_FormDetail"];
@@ -13127,6 +15093,36 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponsePageDraftRevision: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_PageDraftRevision"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponsePageRequestSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_PageRequestSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponsePageTaskSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_PageTaskSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseRequestDetail: {
             correlationId?: string;
             data?: components["schemas"]["approval_RequestDetail"];
@@ -13177,6 +15173,172 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApprovalAttachmentAttachments: {
+            allowedMediaTypes?: string[];
+            download?: components["schemas"]["approval_ApprovalAttachmentTool"];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            manifest?: components["schemas"]["approval_ApprovalAttachmentManifest"];
+            /** Format: int64 */
+            maxFileBytes?: number;
+            /** Format: int32 */
+            maxFiles?: number;
+            /** Format: int64 */
+            maxRequestBytes?: number;
+            /** Format: uuid */
+            policyId?: string;
+            /** Format: int64 */
+            policyVersion?: number;
+            upload?: components["schemas"]["approval_ApprovalAttachmentTool"];
+        };
+        approval_ApprovalAttachmentCancel: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+        };
+        approval_ApprovalAttachmentDownload: {
+            /** Format: int32 */
+            expectedPayloadRevision?: number;
+            /** Format: int64 */
+            expectedPolicyVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            reason: string;
+        };
+        approval_ApprovalAttachmentGrant: {
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: uuid */
+            grantId?: string;
+            sha256?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+        };
+        approval_ApprovalAttachmentInitializePolicy: {
+            expectedAbsent: boolean;
+            idempotencyKey: string;
+        };
+        approval_ApprovalAttachmentItem: {
+            /** Format: uuid */
+            attachmentId?: string;
+            avState?: string;
+            fileName?: string;
+            mediaType?: string;
+            passiveContentState?: string;
+            sha256?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+        };
+        approval_ApprovalAttachmentManifest: {
+            items?: components["schemas"]["approval_ApprovalAttachmentItem"][];
+            manifestSha256?: string;
+            /** Format: int32 */
+            payloadRevision?: number;
+            payloadSha256?: string;
+            providerReadiness?: string;
+            sealed?: boolean;
+            /** Format: int64 */
+            selectionVersion?: number;
+        };
+        approval_ApprovalAttachmentPolicy: {
+            downloadReadiness?: string;
+            pending?: components["schemas"]["approval_ApprovalAttachmentRules"];
+            /** Format: int64 */
+            pendingMakerUserId?: number;
+            /** Format: int32 */
+            pendingRevision?: number;
+            pendingRulesSha256?: string;
+            /** Format: uuid */
+            policyId?: string;
+            providerReadiness?: string;
+            publishEligible?: boolean;
+            publishReason?: string;
+            published?: components["schemas"]["approval_ApprovalAttachmentRules"];
+            /** Format: int32 */
+            publishedRevision?: number;
+            publishedRulesSha256?: string;
+            resourceSetKey?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalAttachmentPublishPolicy: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            reviewComment: string;
+        };
+        approval_ApprovalAttachmentReserve: {
+            /** Format: int32 */
+            expectedPayloadRevision?: number;
+            /** Format: int64 */
+            expectedPolicyVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            fileName: string;
+            idempotencyKey: string;
+            mediaType: string;
+            sha256: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+        };
+        approval_ApprovalAttachmentRules: {
+            allowDownload?: boolean;
+            allowUpload?: boolean;
+            allowedMediaTypes: string[];
+            /** Format: int32 */
+            grantTtlSeconds?: number;
+            /** Format: int32 */
+            maxConcurrentUploads?: number;
+            /** Format: int64 */
+            maxFileBytes?: number;
+            /** Format: int32 */
+            maxFiles?: number;
+            /** Format: int64 */
+            maxRequestBytes?: number;
+            /** Format: int32 */
+            retentionDays?: number;
+        };
+        approval_ApprovalAttachmentSavePolicy: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            rules: components["schemas"]["approval_ApprovalAttachmentRules"];
+        };
+        approval_ApprovalAttachmentSelection: {
+            attachmentIds: string[];
+            /** Format: int32 */
+            expectedPayloadRevision?: number;
+            /** Format: int64 */
+            expectedPolicyVersion?: number;
+            /** Format: int64 */
+            expectedSelectionVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+        };
+        approval_ApprovalAttachmentTool: {
+            allowed?: boolean;
+            reason?: string;
+        };
+        approval_ApprovalAttachmentUpload: {
+            /** Format: uuid */
+            attachmentId?: string;
+            avState?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            passiveContentState?: string;
+            reason?: string;
+            sha256?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            /** @enum {string} */
+            state?: "RESERVED" | "UPLOADING" | "STORAGE_RECONCILING" | "QUARANTINED" | "SCANNING" | "AVAILABLE" | "REJECTED" | "CANCELLED";
+            /** Format: uuid */
+            uploadId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         approval_ApprovalAuditorIntegrationDeliveryV1: {
             /** Format: int32 */
             attemptCount?: number;
@@ -13221,6 +15383,371 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApprovalDocumentAppendComment: {
+            /** Format: int64 */
+            expectedCommentsVersion: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            text: string;
+        };
+        approval_ApprovalDocumentArchiveExport: {
+            /** Format: uuid */
+            expectedPolicyId: string;
+            /** Format: int64 */
+            expectedPolicyVersion: number;
+            idempotencyKey: string;
+            items: components["schemas"]["approval_ApprovalDocumentArchiveItem"][];
+            reason: string;
+            resourceSetKey: string;
+        };
+        approval_ApprovalDocumentArchiveItem: {
+            /** Format: int64 */
+            expectedVersion: number;
+            /** Format: int32 */
+            payloadRevision: number;
+            /** Format: uuid */
+            requestId: string;
+        };
+        approval_ApprovalDocumentComment: {
+            /** Format: int64 */
+            authorUserId?: number;
+            /** Format: uuid */
+            commentId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: date-time */
+            retainUntil?: string;
+            /** Format: int64 */
+            sequence?: number;
+            /** Format: uuid */
+            sourceTaskId?: string;
+            text?: string;
+        };
+        approval_ApprovalDocumentComments: {
+            /** Format: int64 */
+            commentsVersion?: number;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            items?: components["schemas"]["approval_ApprovalDocumentComment"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        approval_ApprovalDocumentExport: {
+            /** Format: int64 */
+            expectedPolicyVersion: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            /** @enum {string} */
+            intent: "PRINT" | "DOWNLOAD";
+            /** Format: int32 */
+            payloadRevision: number;
+            reason: string;
+        };
+        approval_ApprovalDocumentFieldRule: {
+            children: components["schemas"]["approval_ApprovalDocumentFieldRule"][];
+            key: string;
+            /** Format: int32 */
+            maxLength?: number;
+            /** Format: int32 */
+            maxRows?: number;
+            /** @enum {string} */
+            type: "STRING" | "NUMBER" | "DECIMAL_STRING" | "BOOLEAN" | "STRING_LIST" | "OBJECT" | "OBJECT_LIST";
+        };
+        approval_ApprovalDocumentHold: {
+            active?: boolean;
+            journal?: components["schemas"]["approval_ApprovalDocumentHoldEntry"][];
+            pending?: components["schemas"]["approval_ApprovalDocumentPendingHold"];
+            preservationPending?: boolean;
+            purgeEligible?: boolean;
+            purgeState?: string;
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: date-time */
+            retainUntil?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalDocumentHoldEntry: {
+            /** Format: int64 */
+            checkerUserId?: number;
+            /** Format: uuid */
+            entryId?: string;
+            /** Format: int64 */
+            makerUserId?: number;
+            /** Format: date-time */
+            occurredAt?: string;
+            /** @enum {string} */
+            operation?: "PLACE" | "RELEASE";
+            reason?: string;
+            reviewComment?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalDocumentHoldProposal: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            /** @enum {string} */
+            operation: "PLACE" | "RELEASE";
+            reason: string;
+        };
+        approval_ApprovalDocumentPendingHold: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            makerUserId?: number;
+            /** @enum {string} */
+            operation?: "PLACE" | "RELEASE";
+            /** Format: uuid */
+            proposalId?: string;
+            reason?: string;
+        };
+        approval_ApprovalDocumentPolicy: {
+            pending?: components["schemas"]["approval_ApprovalDocumentPolicyRevision"];
+            /** Format: uuid */
+            policyId?: string;
+            published?: components["schemas"]["approval_ApprovalDocumentPolicyRevision"];
+            resourceSetKey?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalDocumentPolicyRevision: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            makerUserId?: number;
+            /** Format: int32 */
+            revision?: number;
+            rules?: components["schemas"]["approval_ApprovalDocumentRules"];
+            sha256?: string;
+        };
+        approval_ApprovalDocumentPublishHold: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            /** Format: uuid */
+            proposalId: string;
+            reviewComment: string;
+        };
+        approval_ApprovalDocumentPublishPolicy: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            reviewComment: string;
+        };
+        approval_ApprovalDocumentRules: {
+            allowArchiveExport?: boolean;
+            allowComments?: boolean;
+            allowJsonExport?: boolean;
+            allowPrint?: boolean;
+            allowedClassifications: string[];
+            /** Format: int32 */
+            evidenceRetentionDays?: number;
+            fields: components["schemas"]["approval_ApprovalDocumentFieldRule"][];
+            includeComments?: boolean;
+            includeEvidence?: boolean;
+            /** Format: int32 */
+            maxBatchItems?: number;
+            /** Format: int32 */
+            maxBytes?: number;
+            /** Format: int32 */
+            snapshotTtlSeconds?: number;
+        };
+        approval_ApprovalDocumentSavePolicy: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            rules: components["schemas"]["approval_ApprovalDocumentRules"];
+        };
+        approval_ApprovalDocumentTool: {
+            allowed?: boolean;
+            reason?: string;
+        };
+        approval_ApprovalDocumentTools: {
+            archiveExport?: components["schemas"]["approval_ApprovalDocumentTool"];
+            attachments?: components["schemas"]["approval_ApprovalDocumentTool"];
+            comment?: components["schemas"]["approval_ApprovalDocumentTool"];
+            /** Format: int64 */
+            commentsVersion?: number;
+            copyIdentifier?: components["schemas"]["approval_ApprovalDocumentTool"];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            history?: components["schemas"]["approval_ApprovalDocumentTool"];
+            /** Format: int64 */
+            holdVersion?: number;
+            jsonExport?: components["schemas"]["approval_ApprovalDocumentTool"];
+            legalHold?: boolean;
+            /** Format: int32 */
+            maxBatchItems?: number;
+            /** Format: int32 */
+            payloadRevision?: number;
+            payloadSha256?: string;
+            /** Format: uuid */
+            policyId?: string;
+            /** Format: int64 */
+            policyVersion?: number;
+            preservationPending?: boolean;
+            print?: components["schemas"]["approval_ApprovalDocumentTool"];
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: int64 */
+            requestVersion?: number;
+            resourceSetKey?: string;
+            /** Format: uuid */
+            taskId?: string;
+            /** Format: int64 */
+            taskVersion?: number;
+        };
+        approval_ApprovalFormLifecycleAvailabilityChange: {
+            /** Format: int64 */
+            expectedFormRevision: number;
+            /** Format: int64 */
+            expectedWorkspaceRevision?: number;
+        };
+        approval_ApprovalFormLifecycleBranch: {
+            /** Format: int64 */
+            expectedFormRevision: number;
+            /** Format: int64 */
+            expectedWorkspaceRevision?: number;
+        };
+        approval_ApprovalFormLifecycleChange: {
+            after?: unknown;
+            before?: unknown;
+            path?: string;
+        };
+        approval_ApprovalFormLifecycleDiff: {
+            changes?: components["schemas"]["approval_ApprovalFormLifecycleChange"][];
+            complete?: boolean;
+            fromMetadataProvenance?: string;
+            fromSchemaSha256?: string;
+            /** Format: uuid */
+            fromVersionId?: string;
+            toMetadataProvenance?: string;
+            toSchemaSha256?: string;
+            /** Format: uuid */
+            toVersionId?: string;
+        };
+        approval_ApprovalFormLifecycleHistory: {
+            mayBeTruncated?: boolean;
+            versions?: components["schemas"]["approval_ApprovalFormLifecycleVersion"][];
+        };
+        approval_ApprovalFormLifecycleMetadataInput: {
+            /** Format: uuid */
+            categoryId: string;
+            descriptionEn: string;
+            descriptionKo: string;
+            formKind: string;
+            nameEn: string;
+            nameKo: string;
+            ownerGroupRef: string;
+        };
+        approval_ApprovalFormLifecyclePublishReviewed: {
+            /** Format: uuid */
+            basePublishedVersionId?: string;
+            /** Format: uuid */
+            draftFormVersionId: string;
+            /** Format: int64 */
+            expectedFormRevision: number;
+            /** Format: int64 */
+            expectedWorkspaceRevision: number;
+            reviewContentDigest: string;
+            schemaSha256: string;
+        };
+        approval_ApprovalFormLifecycleReview: {
+            /** Format: date-time */
+            authorityValidUntil?: string;
+            /** Format: uuid */
+            basePublishedVersionId?: string;
+            /** Format: uuid */
+            draftFormVersionId?: string;
+            /** Format: uuid */
+            formId?: string;
+            /** Format: int64 */
+            formRevision?: number;
+            independentCheckerEligible?: boolean;
+            /** Format: int64 */
+            lastEditorUserId?: number;
+            /** Format: int64 */
+            makerUserId?: number;
+            reviewContentDigest?: string;
+            schemaSha256?: string;
+            /** Format: int64 */
+            workspaceRevision?: number;
+        };
+        approval_ApprovalFormLifecycleUpdateWorkingDraft: {
+            /** Format: uuid */
+            defaultWorkflowId: string;
+            /** Format: uuid */
+            draftFormVersionId: string;
+            /** Format: int64 */
+            expectedFormRevision: number;
+            /** Format: int64 */
+            expectedWorkspaceRevision?: number;
+            metadata: components["schemas"]["approval_ApprovalFormLifecycleMetadataInput"];
+            schema: {
+                [key: string]: unknown;
+            };
+        };
+        approval_ApprovalFormLifecycleVersion: {
+            /** Format: uuid */
+            basePublishedVersionId?: string;
+            /** Format: date-time */
+            capturedAt?: string;
+            /** Format: int64 */
+            capturedBy?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdBy?: number;
+            /** Format: uuid */
+            formVersionId?: string;
+            lifecycleState?: string;
+            materialDigest?: string;
+            metadata?: {
+                [key: string]: unknown;
+            };
+            metadataProvenance?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            route?: {
+                [key: string]: unknown;
+            };
+            schema?: {
+                [key: string]: unknown;
+            };
+            schemaSha256?: string;
+            /** Format: uuid */
+            sourceVersionId?: string;
+            /** Format: int32 */
+            versionNumber?: number;
+        };
+        approval_ApprovalFormLifecycleWorkspace: {
+            /** @enum {string} */
+            catalogAvailability?: "ACTIVE" | "RETIRED";
+            catalogPolicyEligible?: boolean;
+            /** Format: uuid */
+            formId?: string;
+            /** Format: int64 */
+            formRevision?: number;
+            /** Format: int64 */
+            lastEditorUserId?: number;
+            /** Format: date-time */
+            observedAt?: string;
+            published?: components["schemas"]["approval_ApprovalFormLifecycleVersion"];
+            workingDraft?: components["schemas"]["approval_ApprovalFormLifecycleVersion"];
+            /** Format: int64 */
+            workspaceRevision?: number;
+        };
         approval_ApprovalFormPublishResponse: {
             correlationId?: string;
             data?: components["schemas"]["approval_FormDetail"];
@@ -13230,6 +15757,26 @@ export interface components {
             success?: boolean;
             /** Format: date-time */
             timestamp?: string;
+        };
+        approval_ApprovalFormUserCandidate: {
+            displayName?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+        };
+        approval_ApprovalFormUserCandidates: {
+            decisionRevision?: string;
+            fieldPath?: string;
+            /** Format: uuid */
+            formVersionId?: string;
+            mayBeTruncated?: boolean;
+            people?: components["schemas"]["approval_ApprovalFormUserCandidate"][];
+            /** Format: uuid */
+            requestId?: string | null;
+            /** Format: int64 */
+            requestVersion?: number | null;
+            schemaSha256?: string;
+            /** Format: date-time */
+            validUntil?: string;
         };
         approval_ApprovalFullFormCategoryListResponse: {
             correlationId?: string;
@@ -13262,6 +15809,7 @@ export interface components {
             timestamp?: string;
         };
         approval_ApprovalFullManagementSignatureV1: {
+            capabilities?: components["schemas"]["approval_SignatureCapabilities"];
             credentialConfigured?: boolean;
             displayName?: string;
             /** Format: date-time */
@@ -13344,6 +15892,25 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApprovalGeneratedDocument: {
+            content?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: uuid */
+            exportId?: string;
+            fileName?: string;
+            format?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            mediaType?: string;
+            /** Format: int64 */
+            policyVersion?: number;
+            /** Format: date-time */
+            retainUntil?: string;
+            sha256?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+        };
         approval_ApprovalGovernedConflictError: {
             correlationId?: string;
             /** @enum {string} */
@@ -13373,6 +15940,26 @@ export interface components {
             success?: boolean;
             /** Format: date-time */
             timestamp?: string;
+        };
+        approval_ApprovalInformationCommandReceipt: {
+            /** Format: int64 */
+            generation: number;
+            materialChange: boolean;
+            /** Format: int32 */
+            payloadRevision: number;
+            payloadSha256: string;
+            /** Format: int64 */
+            requestVersion: number;
+            /** Format: uuid */
+            roundId: string;
+            /** @enum {string} */
+            status: "COMPLETED";
+        };
+        approval_ApprovalInformationReceiptBody: {
+            /** @enum {string} */
+            operation: "REQUEST_INFO" | "REPLY";
+            /** @description Canonical padded Base64 of the exact original HTTP JSON body, at most 262144 decoded bytes */
+            originalBodyBase64: string;
         };
         approval_ApprovalMetrics: {
             /** Format: double */
@@ -13647,6 +16234,113 @@ export interface components {
             workflowId?: string;
             workflowKey?: string;
         };
+        approval_ApprovalPolicyImpactAuthority: {
+            accessMode?: string;
+            /** Format: int64 */
+            actorId?: number;
+            contextKey?: string;
+            contextScopeKey?: string;
+            decisionRevision?: string;
+            entitlementSatisfied?: boolean;
+            grants?: {
+                [key: string]: components["schemas"]["approval_ApprovalPolicyImpactGrant"];
+            };
+            providerIdentity?: boolean;
+            resourceSetKey?: string;
+            rolloutState?: string;
+            routeKey?: string;
+            supportSession?: boolean;
+            /** Format: int64 */
+            tenantId?: number;
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        approval_ApprovalPolicyImpactCounts: {
+            complete?: boolean;
+            /** Format: int32 */
+            configurationOnly?: number;
+            /** Format: int32 */
+            constraintChanged?: number;
+            countKind?: string;
+            /** Format: int32 */
+            examined?: number;
+            /** Format: int32 */
+            pinConflict?: number;
+            /** Format: int32 */
+            unknown?: number;
+        };
+        approval_ApprovalPolicyImpactDiff: {
+            current?: unknown;
+            kind?: string;
+            path?: string;
+            proposed?: unknown;
+        };
+        approval_ApprovalPolicyImpactEffect: {
+            configurationOnly?: boolean;
+            constraintChanged?: boolean;
+            pinConflict?: boolean;
+            reasons?: string[];
+            unknown?: boolean;
+        };
+        approval_ApprovalPolicyImpactFamily: {
+            counts?: components["schemas"]["approval_ApprovalPolicyImpactCounts"];
+            items?: components["schemas"]["approval_ApprovalPolicyImpactItem"][];
+        };
+        approval_ApprovalPolicyImpactGrant: {
+            permission?: string;
+            resourceSetKey?: string;
+        };
+        approval_ApprovalPolicyImpactHead: {
+            /** Format: date-time */
+            capturedAt?: string;
+            current?: components["schemas"]["approval_ApprovalPolicyImpactRules"];
+            metadataProvenance?: string;
+            pending?: components["schemas"]["approval_ApprovalPolicyImpactRules"];
+            /** Format: date-time */
+            pendingAt?: string;
+            /** Format: int64 */
+            pendingBy?: number;
+            /** Format: uuid */
+            policyId?: string;
+            policyKey?: string;
+            /** Format: int32 */
+            publishedVersion?: number;
+            /** Format: uuid */
+            publishedVersionId?: string;
+            /** Format: int64 */
+            rowVersion?: number;
+        };
+        approval_ApprovalPolicyImpactItem: {
+            effect?: components["schemas"]["approval_ApprovalPolicyImpactEffect"];
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: int64 */
+            version?: number;
+            /** Format: uuid */
+            workflowVersionId?: string;
+        };
+        approval_ApprovalPolicyImpactResult: {
+            authority?: components["schemas"]["approval_ApprovalPolicyImpactAuthority"];
+            /** Format: date-time */
+            observedAt?: string;
+            policy?: components["schemas"]["approval_ApprovalPolicyImpactHead"];
+            requests?: components["schemas"]["approval_ApprovalPolicyImpactFamily"];
+            semanticDiff?: components["schemas"]["approval_ApprovalPolicyImpactDiff"][];
+            sourceDigest?: string;
+            status?: string;
+            tasks?: components["schemas"]["approval_ApprovalPolicyImpactFamily"];
+            workflows?: components["schemas"]["approval_ApprovalPolicyImpactFamily"];
+        };
+        approval_ApprovalPolicyImpactRules: {
+            enforcementMode?: string;
+            lifecycleState?: string;
+            rule?: {
+                [key: string]: unknown;
+            };
+            severity?: string;
+        };
         approval_ApprovalPolicyPublishResponse: {
             correlationId?: string;
             data?: components["schemas"]["approval_PolicySummary"][];
@@ -13667,6 +16361,345 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApprovalRetentionClaim: {
+            /** Format: uuid */
+            claimId?: string;
+            /** Format: uuid */
+            executionClaimId?: string;
+            foreignCopyState?: string;
+            /** Format: int32 */
+            foreignRequests?: number;
+            inventorySha256?: string;
+            reason?: string;
+            /** Format: uuid */
+            requestId?: string;
+            resourceSetKey?: string;
+            runtimeReadiness?: string;
+            state?: string;
+            /** Format: int32 */
+            verifiedAcknowledgements?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalRetentionCreateClaim: {
+            /** Format: int64 */
+            expectedHoldVersion: number;
+            /** Format: int64 */
+            expectedPolicyVersion: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            inventorySha256: string;
+            /** Format: uuid */
+            policyId: string;
+        };
+        approval_ApprovalRetentionInitializePolicy: {
+            expectedAbsent: boolean;
+            idempotencyKey: string;
+        };
+        approval_ApprovalRetentionPolicy: {
+            pending?: components["schemas"]["approval_ApprovalRetentionPublicRules"];
+            /** Format: int64 */
+            pendingMakerUserId?: number;
+            /** Format: int32 */
+            pendingRevision?: number;
+            pendingRulesSha256?: string;
+            /** Format: uuid */
+            policyId?: string;
+            publishEligible?: boolean;
+            publishReason?: string;
+            published?: components["schemas"]["approval_ApprovalRetentionPublicRules"];
+            /** Format: int32 */
+            publishedRevision?: number;
+            publishedRulesSha256?: string;
+            resourceSetKey?: string;
+            runtimeReadiness?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalRetentionPublicRules: {
+            allowPurge: boolean;
+            allowedClassifications: string[];
+            /** Format: int32 */
+            auditEvidenceRetentionDays: number;
+            /** Format: int32 */
+            deletedDraftRecoveryDays: number;
+            /** Format: int32 */
+            holdEvidenceRetentionDays: number;
+            /** Format: int32 */
+            maxInventoryRows: number;
+            /** Format: int32 */
+            maxObjectsPerRecord: number;
+            /** Format: int32 */
+            receiptRetentionDays: number;
+            /** Format: int32 */
+            recordRetentionDays: number;
+        };
+        approval_ApprovalRetentionPublishPolicy: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            reviewComment: string;
+        };
+        approval_ApprovalRetentionRecord: {
+            claimEligible?: boolean;
+            /** Format: uuid */
+            claimId?: string;
+            claimReason?: string;
+            /** Format: date-time */
+            eligibleAfter?: string;
+            /** Format: int64 */
+            holdVersion?: number;
+            /** Format: int32 */
+            inventoryRows?: number;
+            inventorySha256?: string;
+            /** Format: int32 */
+            inventoryTables?: number;
+            /** Format: int32 */
+            objectCount?: number;
+            /** Format: uuid */
+            policyId?: string;
+            /** Format: int64 */
+            policyVersion?: number;
+            /** Format: uuid */
+            requestId?: string;
+            resourceSetKey?: string;
+            runtimeReadiness?: string;
+            state?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalRetentionSavePolicy: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            rules: components["schemas"]["approval_ApprovalRetentionPublicRules"];
+        };
+        approval_ApprovalSignatureArtifact: {
+            content: string;
+            mediaType: string;
+            rendererVersion: string;
+            sha256: string;
+            /** Format: int64 */
+            sizeBytes: number;
+        };
+        approval_ApprovalSignatureAudit: {
+            items: components["schemas"]["approval_ApprovalSignatureEvent"][];
+            truncated: boolean;
+        };
+        approval_ApprovalSignatureCancel: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            sourceDigest: string;
+        };
+        approval_ApprovalSignatureCeremony: {
+            artifact: components["schemas"]["approval_ApprovalSignatureArtifact"];
+            /** Format: uuid */
+            consentReceiptId?: string | null;
+            evidence?: components["schemas"]["approval_ApprovalSignatureEvidence"] | components["schemas"]["approval_ApprovalSignatureNullEvidence"];
+            /** Format: date-time */
+            expiresAt: string;
+            preservationState: string;
+            /** Format: uuid */
+            requestId: string;
+            /** Format: uuid */
+            signatureRequestId: string;
+            /** @enum {string} */
+            signerKind: "SELF_ATTESTATION";
+            source: components["schemas"]["approval_ApprovalSignatureSourcePin"];
+            sourceDigest: string;
+            /** @enum {string} */
+            state: "AWAITING_CONSENT" | "CONSENTED" | "ATTESTED" | "CANCELLED";
+            terms: components["schemas"]["approval_ApprovalSignatureTerms"];
+            /** Format: int64 */
+            version: number;
+        };
+        approval_ApprovalSignatureCommandReceiptMetadata: {
+            /** Format: date-time */
+            committedAt: string;
+            /** Format: int64 */
+            eventSequence: number;
+            /** @enum {string} */
+            originalOperation: "CREATE" | "CONSENT" | "SIGN" | "CANCEL";
+            /** Format: uuid */
+            receiptId: string;
+            /** Format: uuid */
+            requestId: string;
+            /** @enum {string} */
+            resultState: "AWAITING_CONSENT" | "CONSENTED" | "ATTESTED" | "CANCELLED";
+            /** Format: int64 */
+            resultVersion: number;
+            /** Format: uuid */
+            signatureRequestId: string;
+            sourceCurrent: boolean;
+        };
+        approval_ApprovalSignatureConsent: {
+            /** @default false */
+            accepted: boolean;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            locale: string;
+            sourceDigest: string;
+            termsId: string;
+            termsSha256: string;
+            /** Format: int64 */
+            termsVersion: number;
+        };
+        approval_ApprovalSignatureContext: {
+            artifact: components["schemas"]["approval_ApprovalSignatureArtifact"];
+            consentRequired: boolean;
+            /** Format: date-time */
+            evaluatedAt: string;
+            /** @enum {string} */
+            signerKind: "SELF_ATTESTATION";
+            signingReadiness: string;
+            source: components["schemas"]["approval_ApprovalSignatureSourcePin"];
+            sourceDigest: string;
+            terms: components["schemas"]["approval_ApprovalSignatureTerms"];
+        };
+        approval_ApprovalSignatureCreate: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            locale: string;
+            /** @enum {string} */
+            signerKind: "SELF_ATTESTATION";
+            sourceDigest: string;
+        };
+        approval_ApprovalSignatureEvent: {
+            action: string;
+            /** Format: uuid */
+            eventId: string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: int64 */
+            sequence: number;
+            sourceDigest: string;
+        };
+        approval_ApprovalSignatureEvidence: {
+            artifactSha256: string;
+            /** Format: date-time */
+            attestedAt: string;
+            compactJws: string;
+            /** Format: uuid */
+            evidenceId: string;
+            keyId: string;
+            proofKind: string;
+            publicKeyJson: string;
+            sourceDigest: string;
+        };
+        approval_ApprovalSignatureNullEvidence: null;
+        approval_ApprovalSignatureReceipt: {
+            ceremony: components["schemas"]["approval_ApprovalSignatureCeremony"];
+            /** Format: uuid */
+            commandReceiptId: string;
+            /** Format: date-time */
+            committedAt: string;
+            outcome: string;
+        };
+        approval_ApprovalSignatureSign: {
+            /** Format: uuid */
+            consentReceiptId: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            sourceDigest: string;
+        };
+        approval_ApprovalSignatureSourcePin: {
+            artifactSha256: string;
+            /** Format: uuid */
+            attachmentPolicyId: string;
+            /** Format: int32 */
+            attachmentPolicyRevision: number;
+            attachmentPolicySha256: string;
+            /** Format: int64 */
+            attachmentPolicyVersion: number;
+            /** Format: uuid */
+            documentPolicyId: string;
+            /** Format: int32 */
+            documentPolicyRevision: number;
+            documentPolicySha256: string;
+            /** Format: int64 */
+            documentPolicyVersion: number;
+            formSchemaSha256: string;
+            /** Format: uuid */
+            formVersionId: string;
+            manifestSha256: string;
+            /** Format: int64 */
+            ownerUserId: number;
+            /** Format: int32 */
+            payloadRevision: number;
+            payloadSha256: string;
+            /** Format: uuid */
+            providerId: string;
+            providerSha256: string;
+            /** Format: int64 */
+            providerVersion: number;
+            rendererVersion: string;
+            /** Format: uuid */
+            requestId: string;
+            /** Format: int64 */
+            requestVersion: number;
+            resourceSetKey: string;
+            signingKeySha256?: string | null;
+            workflowSha256: string;
+            /** Format: uuid */
+            workflowVersionId: string;
+        };
+        approval_ApprovalSignatureTerms: {
+            /** Format: date-time */
+            expiresAt: string;
+            locale: string;
+            sha256: string;
+            termsId: string;
+            text: string;
+            /** Format: int64 */
+            version: number;
+        };
+        approval_ApprovalWorkflowPlanningBody: {
+            formSchemaSha256: string;
+            /** Format: uuid */
+            formVersionId: string;
+            managementResourceSetKey: string;
+            policySha256: string;
+            /** Format: int64 */
+            policyVersion: number;
+            samplePayload: {
+                [key: string]: unknown;
+            };
+            /** Format: int64 */
+            workflowRevision: number;
+            workflowSha256: string;
+        };
+        approval_ApprovalWorkflowPlanningResult: {
+            authorityRevision: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** @enum {string} */
+            mode: "ROLE_POOL_PREVIEW";
+            /** @enum {string} */
+            requesterExclusion: "NOT_EVALUATED";
+            /** @enum {string} */
+            runtimeEligibility: "NOT_EVALUATED";
+            snapshotSha256: string;
+            stages: components["schemas"]["approval_ApprovalWorkflowPlanningStage"][];
+        };
+        approval_ApprovalWorkflowPlanningStage: {
+            /** Format: int32 */
+            activeMemberCount: number;
+            /** Format: int32 */
+            indicativeThreshold?: number;
+            poolWarning?: string;
+            predecessors: string[];
+            quorumMode: string;
+            /** Format: int32 */
+            quorumValue?: number;
+            roleCode: string;
+            selected: boolean;
+            stepKey: string;
+        };
         approval_ApprovalWorkflowPublishResponse: {
             correlationId?: string;
             data?: components["schemas"]["approval_WorkflowSummary"][];
@@ -13682,6 +16715,14 @@ export interface components {
             exceptions?: number;
             key?: string;
             state?: string;
+        };
+        approval_ContentAccess: {
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** @enum {string} */
+            reason?: "CURRENT_AUTHORITY_VERIFIED" | "LEGACY_CURRENT_AUTHORITY_VERIFIED" | "CURRENT_AUTHORITY_UNAVAILABLE" | "CURRENT_IDENTITY_INACTIVE" | "CURRENT_PERMISSION_REVOKED" | "TASK_NOT_AVAILABLE" | "DELEGATION_AUTHORITY_REVOKED" | "CURRENT_ROLE_REVOKED";
+            /** @enum {string} */
+            state?: "FULL" | "REDACTED";
         };
         approval_CreateDelegationRequest: {
             /** Format: int64 */
@@ -13722,11 +16763,14 @@ export interface components {
             defaultWorkflowId: string;
             descriptionEn: string;
             descriptionKo: string;
-            fields: components["schemas"]["approval_FormFieldInput"][];
+            fields?: components["schemas"]["approval_FormFieldInput"][];
             formKey: string;
             nameEn: string;
             nameKo: string;
             ownerGroupRef: string;
+            typedSchema?: {
+                [key: string]: unknown;
+            };
         };
         approval_CreateRequest: {
             /** Format: uuid */
@@ -13750,7 +16794,11 @@ export interface components {
             ownerGroupRef: string;
             /** Format: int32 */
             slaMinutes: number;
-            steps: components["schemas"]["approval_WorkflowStepInput"][];
+            steps?: components["schemas"]["approval_WorkflowStepInput"][];
+            /** @description Exclusive alternative to legacy steps: a tagged DWP_APPROVAL_WORKFLOW_QUORUM_V2 definition with exact SLA and predecessor graph */
+            typedDefinition?: {
+                [key: string]: unknown;
+            };
             workflowKey: string;
         };
         approval_DecisionInsight: {
@@ -13767,6 +16815,7 @@ export interface components {
             decision: string;
             /** Format: int64 */
             expectedVersion: number;
+            quorum?: components["schemas"]["approval_QuorumVotePrecondition"];
         };
         approval_DelegationCandidate: {
             displayName?: string;
@@ -13809,6 +16858,57 @@ export interface components {
              */
             workflowKey?: string;
         };
+        approval_DraftCommand: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            reason: string;
+        };
+        approval_DraftReceipt: {
+            commandType?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            draft?: components["schemas"]["approval_DraftState"];
+            route?: string;
+        };
+        approval_DraftReconciliation: {
+            idempotencyKey?: string;
+            receipts?: components["schemas"]["approval_DraftReceipt"][];
+        };
+        approval_DraftRevision: {
+            changeType?: string;
+            /** Format: int64 */
+            changedBy?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            payloadSha256?: string;
+            reason?: string;
+            recoverable?: boolean;
+            recoveryReason?: string;
+            /** Format: int32 */
+            revision?: number;
+        };
+        approval_DraftRevisionDetail: {
+            draftSnapshot?: {
+                [key: string]: unknown;
+            };
+            payload?: {
+                [key: string]: unknown;
+            };
+            revision?: components["schemas"]["approval_DraftRevision"];
+        };
+        approval_DraftState: {
+            /** Format: date-time */
+            deletedAt?: string;
+            /** Format: int64 */
+            deletedBy?: number;
+            /** Format: int32 */
+            payloadRevision?: number;
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         approval_FormCategorySummary: {
             /** Format: uuid */
             categoryId?: string;
@@ -13830,6 +16930,8 @@ export interface components {
         };
         approval_FormDetail: {
             form?: components["schemas"]["approval_FormSummary"];
+            /** Format: uuid */
+            formVersionId?: string;
             routes?: components["schemas"]["approval_FormRouteSummary"][];
             schema?: {
                 [key: string]: unknown;
@@ -13907,9 +17009,12 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
             message: string;
+            /** @description Top-level form-field merge patch; null values and system fields are rejected */
             payload?: {
                 [key: string]: unknown;
             };
+            /** Format: int64 */
+            sourceGeneration?: number;
         };
         approval_IntegrationDeliverySummary: {
             /** Format: int32 */
@@ -13932,6 +17037,7 @@ export interface components {
             publishedAt?: string;
             /** Format: uuid */
             requestId?: string;
+            retryEligibility?: components["schemas"]["approval_RetryEligibility"];
             status?: string;
             /** Format: int64 */
             version?: number;
@@ -13952,6 +17058,48 @@ export interface components {
             generatedAt?: string;
             integrationDeliveries?: components["schemas"]["approval_IntegrationDeliverySummary"][];
             signals?: components["schemas"]["approval_OperationSignal"][];
+        };
+        approval_PageDraftRevision: {
+            /** Format: date-time */
+            evaluatedAt?: string;
+            hasNext?: boolean;
+            items?: components["schemas"]["approval_DraftRevision"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        approval_PageRequestSummary: {
+            /** Format: date-time */
+            evaluatedAt?: string;
+            hasNext?: boolean;
+            items?: components["schemas"]["approval_RequestSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        approval_PageTaskSummary: {
+            /** Format: date-time */
+            evaluatedAt?: string;
+            hasNext?: boolean;
+            items?: components["schemas"]["approval_TaskSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
         approval_PolicySummary: {
             enforcementMode?: string;
@@ -14016,12 +17164,64 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
+        approval_QuorumInformationSnapshot: {
+            /** Format: int32 */
+            payloadRevision?: number;
+            payloadSha256?: string;
+            pins?: components["schemas"]["approval_WorkflowRuntimePins"];
+            /** Format: uuid */
+            roundId?: string;
+            /** Format: int64 */
+            sourceGeneration?: number;
+            /** Format: int64 */
+            targetGeneration?: number;
+        };
+        approval_QuorumTaskSnapshot: {
+            /** Format: int64 */
+            generation?: number;
+            /** Format: int32 */
+            payloadRevision?: number;
+            payloadSha256?: string;
+            pins?: components["schemas"]["approval_WorkflowRuntimePins"];
+            /** Format: uuid */
+            principalPersonPublicId?: string;
+            /** Format: int64 */
+            requestVersion?: number;
+            /** Format: int64 */
+            stageVersion?: number;
+        };
+        approval_QuorumVotePrecondition: {
+            /** Format: int64 */
+            expectedRequestVersion?: number;
+            /** Format: int64 */
+            expectedStageVersion?: number;
+            /** Format: int64 */
+            generation?: number;
+            /** Format: int32 */
+            payloadRevision?: number;
+            payloadSha256: string;
+            pins: components["schemas"]["approval_WorkflowRuntimePins"];
+        };
+        approval_RecoverDraft: {
+            /** Format: int64 */
+            expectedVersion: number;
+            idempotencyKey: string;
+            reason: string;
+            /** Format: int32 */
+            revision: number;
+        };
         approval_RequestDetail: {
             /** Format: uuid */
             formId?: string;
             formSchema?: {
                 [key: string]: unknown;
             };
+            formSchemaSha256?: string;
+            /** Format: uuid */
+            formVersionId?: string;
+            /** Format: int64 */
+            informationGeneration?: number;
+            informationRound?: components["schemas"]["approval_QuorumInformationSnapshot"];
             payload?: {
                 [key: string]: unknown;
             };
@@ -14064,6 +17264,23 @@ export interface components {
             };
             workflow?: components["schemas"]["approval_WorkflowSummary"];
         };
+        approval_RetryEligibility: {
+            eligible?: boolean;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            /** @enum {string} */
+            reason?: "ELIGIBLE" | "STATUS_NOT_RETRYABLE" | "AUDITOR_ASSIGNMENT_NOT_READY" | "SCOPE_EVIDENCE_MISMATCH" | "RECOVERY_EVIDENCE_INCOMPLETE" | "SEPARATION_OF_DUTIES";
+        };
+        approval_SignatureCapabilities: {
+            auditEvidence?: boolean;
+            internalAttestation?: boolean;
+            /** @enum {string} */
+            readiness?: "READY" | "DISABLED" | "DEGRADED" | "CONFIGURATION_REQUIRED" | "NOT_VERIFIED" | "EXTERNAL_VERIFICATION_REQUIRED";
+            remoteSigningSupported?: boolean;
+            verifiedIdentity?: boolean;
+        };
         approval_StageMetric: {
             /** Format: int32 */
             atRisk?: number;
@@ -14074,12 +17291,14 @@ export interface components {
         approval_TaskDetail: {
             canClaim?: boolean;
             canDecide?: boolean;
+            contentAccess?: components["schemas"]["approval_ContentAccess"];
             formSchema?: {
                 [key: string]: unknown;
             };
             payload?: {
                 [key: string]: unknown;
             };
+            quorum?: components["schemas"]["approval_QuorumTaskSnapshot"];
             selfApprovalBlocked?: boolean;
             task?: components["schemas"]["approval_TaskSummary"];
             timeline?: components["schemas"]["approval_TimelineEvent"][];
@@ -14165,10 +17384,13 @@ export interface components {
             descriptionKo: string;
             /** Format: int64 */
             expectedVersion: number;
-            fields: components["schemas"]["approval_FormFieldInput"][];
+            fields?: components["schemas"]["approval_FormFieldInput"][];
             nameEn: string;
             nameKo: string;
             ownerGroupRef: string;
+            typedSchema?: {
+                [key: string]: unknown;
+            };
         };
         approval_UpdatePolicyRequest: {
             changeReason: string;
@@ -14193,7 +17415,11 @@ export interface components {
             ownerGroupRef: string;
             /** Format: int32 */
             slaMinutes: number;
-            steps: components["schemas"]["approval_WorkflowStepInput"][];
+            steps?: components["schemas"]["approval_WorkflowStepInput"][];
+            /** @description Exclusive alternative to legacy steps: a tagged DWP_APPROVAL_WORKFLOW_QUORUM_V2 definition with exact SLA and predecessor graph */
+            typedDefinition?: {
+                [key: string]: unknown;
+            };
         };
         approval_VersionedActionRequest: {
             /** Format: int64 */
@@ -14205,6 +17431,17 @@ export interface components {
             };
             definitionHash?: string;
             workflow?: components["schemas"]["approval_WorkflowSummary"];
+        };
+        approval_WorkflowRuntimePins: {
+            formSchemaSha256: string;
+            policySha256: string;
+            /** Format: int64 */
+            policyVersion?: number;
+            workflowDefinitionSha256: string;
+            /** Format: int32 */
+            workflowVersion?: number;
+            /** Format: uuid */
+            workflowVersionId: string;
         };
         approval_WorkflowStepInput: {
             candidateRole: string;
@@ -22263,6 +25500,20 @@ export interface components {
             /** Format: date-time */
             generatedAt?: string;
         };
+        platform_AccessRuleChangeRequest: {
+            confirmed?: boolean;
+            proposed: components["schemas"]["platform_SiteAccessRuleRequest"];
+            reason?: string;
+        };
+        platform_AccessRuleFloorOption: {
+            /** Format: uuid */
+            floorId?: string;
+            name?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "DRAFT" | "ACTIVE" | "CLOSED";
+        };
         platform_AccountSummary: {
             /** Format: uuid */
             accountId?: string;
@@ -22786,6 +26037,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseBookingAvailability: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BookingAvailability"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseBookingSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_BookingSummary"];
@@ -22886,6 +26147,36 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseClosure: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Closure"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseClosurePage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ClosurePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseCollaborationOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CollaborationOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseCommunicationItem: {
             correlationId?: string;
             data?: components["schemas"]["platform_CommunicationItem"];
@@ -22959,6 +26250,16 @@ export interface components {
         platform_ApiResponseConnector: {
             correlationId?: string;
             data?: components["schemas"]["platform_Connector"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseConnectorStatus: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ConnectorStatus"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -23116,6 +26417,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseFacilityRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_FacilityRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseFeedResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_FeedResponse"];
@@ -23169,6 +26480,36 @@ export interface components {
         platform_ApiResponseFolderSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_FolderSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseFutureBookingImpact: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_FutureBookingImpact"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseGovernanceChangeReview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_GovernanceChangeReview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseGovernanceOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_GovernanceOverview"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -23826,6 +27167,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseMutationResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_MutationResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseOrganizationResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_OrganizationResponse"];
@@ -23966,6 +27317,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponsePolicyImpact: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PolicyImpact"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponsePolicyRevision: {
             correlationId?: string;
             data?: components["schemas"]["platform_PolicyRevision"];
@@ -24086,6 +27447,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseRequestPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RequestPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseResourcePhoto: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ResourcePhoto"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseResourceSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_ResourceSummary"];
@@ -24129,6 +27510,16 @@ export interface components {
         platform_ApiResponseRoomAvailabilityResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_RoomAvailabilityResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseRoomBookingImpact: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RoomBookingImpact"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -24219,6 +27610,26 @@ export interface components {
         platform_ApiResponseSharedInboxSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_SharedInboxSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseSharingPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SharingPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseSharingPreference: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SharingPreference"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -24396,6 +27807,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseWorkPlan: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkPlan"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseWorkQueue: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkQueue"];
@@ -24459,6 +27880,26 @@ export interface components {
         platform_ApiResponseWorkplaceDelegatedAdminScope: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceDelegatedAdminScope"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceExperienceBookingDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceExperienceBookingDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceExperienceReport: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceExperienceReport"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -24873,11 +28314,44 @@ export interface components {
             items: components["schemas"]["platform_WorkStatusChange"][];
             status: string;
         };
+        platform_BookingAvailability: {
+            available?: boolean;
+            closures?: components["schemas"]["platform_PublicClosure"][];
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            guaranteesBooking?: boolean;
+            owner?: string;
+            reason?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+        };
         platform_BookingDecisionRequest: {
             decision: string;
             note?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_BookingPage: {
+            content?: components["schemas"]["platform_WorkplaceExperienceBookingDetail"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        platform_BookingPolicyChangeRequest: {
+            confirmed?: boolean;
+            proposed: components["schemas"]["platform_PolicyRequest"];
+            reason?: string;
         };
         platform_BookingRequest: {
             /** Format: date-time */
@@ -25094,6 +28568,12 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_CancelClosure: {
+            confirmed?: boolean;
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_CaseActivity: {
             /** Format: uuid */
             activityId?: string;
@@ -25268,6 +28748,68 @@ export interface components {
             sortOrder?: number;
             tone?: string;
         };
+        platform_ChangeRequestStatus: {
+            confirmed?: boolean;
+            reason: string;
+            /** @enum {string} */
+            status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CANCELLED";
+            /** Format: int64 */
+            version: number;
+        };
+        platform_Closure: {
+            affectedBookingsPath?: string;
+            cancellationReason?: string;
+            /** Format: uuid */
+            closureId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            floorId?: string;
+            reason?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            /** Format: int64 */
+            resourceVersionAtCreate?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            status?: "ACTIVE" | "CANCELLED";
+            timeZone?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ClosurePage: {
+            allowedFloorIds?: string[];
+            content?: components["schemas"]["platform_Closure"][];
+            countsScope?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        platform_CollaborationOverview: {
+            actualPresence?: components["schemas"]["platform_ConnectorStatus"];
+            /** Format: date-time */
+            generatedAt?: string;
+            ownPlans?: components["schemas"]["platform_WorkPlan"][];
+            policy?: components["schemas"]["platform_SharingPolicy"];
+            preference?: components["schemas"]["platform_SharingPreference"];
+            shareableGroups?: components["schemas"]["platform_ShareableGroup"][];
+            sharedPlans?: components["schemas"]["platform_SharedWorkPlan"][];
+        };
         platform_CommentRequest: {
             body: string;
             mentionedUserIds: number[];
@@ -25365,6 +28907,17 @@ export interface components {
             version?: number;
             /** @enum {string} */
             visibility?: "DEFAULT" | "PUBLIC" | "PRIVATE" | "CONFIDENTIAL";
+        };
+        platform_Comparison: {
+            /** Format: double */
+            noShowChangePercentagePoints?: number;
+            previous?: components["schemas"]["platform_Summary"];
+            /** Format: date */
+            previousFrom?: string;
+            /** Format: date */
+            previousTo?: string;
+            /** Format: double */
+            utilizationChangePercentagePoints?: number;
         };
         platform_CompatibilityRule: {
             contentSha256?: string;
@@ -25509,6 +29062,27 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_ConnectorRequest: {
+            configurationReference?: string;
+            confirmed?: boolean;
+            enabled?: boolean;
+            provider: string;
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ConnectorStatus: {
+            configurationReference?: string;
+            /** @enum {string} */
+            kind?: "CALENDAR" | "ACTUAL_PRESENCE" | "SIGNAGE" | "VISITOR" | "VEHICLE";
+            /** Format: date-time */
+            lastVerifiedAt?: string;
+            provider?: string;
+            /** @enum {string} */
+            status?: "NOT_CONFIGURED" | "DISABLED" | "CONFIGURED_UNVERIFIED";
+            /** Format: int64 */
+            version?: number;
+        };
         platform_Contact: {
             /** Format: uuid */
             contactId?: string;
@@ -25643,6 +29217,16 @@ export interface components {
             sourceLocale: string;
             targetLocale: string;
         };
+        platform_CreateClosure: {
+            confirmed?: boolean;
+            /** Format: date-time */
+            endsAt: string;
+            reason: string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_CreateComposerProposalRequest: {
             /** Format: int64 */
             baseViewVersion: number;
@@ -25766,6 +29350,23 @@ export interface components {
             name: string;
             setKey: string;
         };
+        platform_CurrentCounts: {
+            /** Format: int64 */
+            activeSites?: number;
+            /** Format: int64 */
+            assignedResources?: number;
+            /** Format: int64 */
+            bookingsThisWeek?: number;
+            /** Format: int64 */
+            checkedInToday?: number;
+            /** Format: int64 */
+            configuredFloors?: number;
+            policy?: components["schemas"]["platform_WorkplacePolicy"];
+            /** Format: int64 */
+            reservableResources?: number;
+            /** Format: double */
+            utilizationPercent?: number;
+        };
         platform_CustodyCandidate: {
             displayName?: string;
             eligibilityStatus?: string;
@@ -25782,6 +29383,22 @@ export interface components {
             tenantId?: number;
             /** Format: int64 */
             userId?: number;
+        };
+        platform_DailyTrend: {
+            /** Format: double */
+            bookedMinutes?: number;
+            /** Format: int64 */
+            bookingCount?: number;
+            /** Format: date */
+            date?: string;
+            /** Format: double */
+            denominatorResourceMinutes?: number;
+            /** Format: int64 */
+            noShowCount?: number;
+            /** Format: double */
+            noShowPercent?: number;
+            /** Format: double */
+            utilizationPercent?: number;
         };
         platform_DecideExceptionRequest: {
             decision: string;
@@ -25813,6 +29430,7 @@ export interface components {
             delegateType: "USER" | "GROUP_REF";
             /** Format: int64 */
             delegateUserId?: number;
+            floorIds?: string[];
             /** Format: uuid */
             managedGroupRef?: string;
             permissions: ("CATALOG_VIEW" | "CATALOG_MANAGE" | "ACCESS_MANAGE" | "POLICY_MANAGE" | "FLOOR_PLAN_MANAGE" | "DELEGATION_VIEW")[];
@@ -25828,6 +29446,11 @@ export interface components {
             validUntil?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_DelegationChangeRequest: {
+            confirmed?: boolean;
+            proposed: components["schemas"]["platform_DelegatedAdminScopeRequest"];
+            reason?: string;
         };
         platform_DeleteHomeViewResponse: {
             /** Format: uuid */
@@ -25927,6 +29550,7 @@ export interface components {
         platform_EffectiveDelegatedScope: {
             /** Format: uuid */
             delegationId?: string;
+            floorIds?: string[];
             permissions?: ("CATALOG_VIEW" | "CATALOG_MANAGE" | "ACCESS_MANAGE" | "POLICY_MANAGE" | "FLOOR_PLAN_MANAGE" | "DELEGATION_VIEW")[];
             /** Format: uuid */
             scopeId?: string;
@@ -26226,6 +29850,42 @@ export interface components {
             /** @enum {string} */
             window?: "H24" | "D7" | "D30" | "D90";
         };
+        platform_ExternalSource: {
+            /** @enum {string} */
+            availability?: "AVAILABLE" | "EMPTY" | "UNAVAILABLE";
+            configurationStatus?: string;
+            integrationPath?: string;
+            kind?: string;
+            /** Format: date-time */
+            lastVerifiedAt?: string;
+            owner?: string;
+            provider?: string;
+            reason?: string;
+        };
+        platform_FacilityRequest: {
+            /** @enum {string} */
+            category?: "REPAIR" | "CLEANING" | "ACCESS" | "OTHER";
+            /** Format: date-time */
+            createdAt?: string;
+            description?: string;
+            /** Format: uuid */
+            floorId?: string;
+            owner?: string;
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            status?: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CANCELLED";
+            statusReason?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_FeedResponse: {
             /** @description Reader-wide action-first detail slice; intentionally independent of scope and query filters. */
             actionableItems?: components["schemas"]["platform_CommunicationItem"][];
@@ -26364,6 +30024,14 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_FloorSummary: {
+            /** Format: uuid */
+            floorId?: string;
+            floorName?: string;
+            /** Format: int64 */
+            resourceCount?: number;
+            summary?: components["schemas"]["platform_Summary"];
+        };
         platform_FolderCreateRequest: {
             /** Format: uuid */
             accountId: string;
@@ -26404,6 +30072,44 @@ export interface components {
             parentFolderId?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_FutureBookingImpact: {
+            affectedBookings?: components["schemas"]["platform_BookingPage"];
+            /** Format: date-time */
+            from?: string;
+            metadata?: components["schemas"]["platform_Metadata"];
+            mutatesBookings?: boolean;
+            notificationScheduled?: boolean;
+            owner?: string;
+            replacementScheduled?: boolean;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            resourceState?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: date-time */
+            to?: string;
+        };
+        platform_GovernanceChangeReview: {
+            current?: components["schemas"]["platform_JsonNode"];
+            currentActorAccess?: components["schemas"]["platform_SiteAccessDecision"];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            knownImpact?: string[];
+            proposed?: components["schemas"]["platform_JsonNode"];
+            proposedActorAccess?: components["schemas"]["platform_SiteAccessDecision"];
+            /** Format: uuid */
+            targetId?: string;
+            targetType?: string;
+            warnings?: string[];
+        };
+        platform_GovernanceOverview: {
+            connectors?: components["schemas"]["platform_ConnectorStatus"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            policy?: components["schemas"]["platform_SharingPolicy"];
+            privacy?: components["schemas"]["platform_PrivacySummary"];
         };
         platform_GovernedHomeZone: {
             height?: string;
@@ -26455,6 +30161,25 @@ export interface components {
             /** Format: uuid */
             idempotencyKey: string;
             subject: string;
+        };
+        platform_HeatmapCell: {
+            /** Format: double */
+            bookedMinutes?: number;
+            /** Format: date */
+            date?: string;
+            /** Format: int32 */
+            dayOfWeek?: number;
+            /** Format: double */
+            denominatorResourceMinutes?: number;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: int32 */
+            hour?: number;
+            offset?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: double */
+            utilizationPercent?: number;
         };
         platform_HomeAppPlacement: {
             groupKey?: string;
@@ -26922,6 +30647,21 @@ export interface components {
             /** Format: date-time */
             sentAt?: string;
         };
+        platform_Metadata: {
+            /** @enum {string} */
+            availability?: "AVAILABLE" | "EMPTY" | "UNAVAILABLE";
+            denominatorBasis?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            historicalRosterAvailable?: boolean;
+            owner?: string;
+            recurringOccurrencesIncluded?: boolean;
+            /** Format: date-time */
+            sourceUpdatedAt?: string;
+        };
+        platform_MutationResult: {
+            removed?: boolean;
+        };
         platform_OrganizationResponse: {
             accounts?: components["schemas"]["platform_AccountSummary"][];
             folders?: components["schemas"]["platform_FolderSummary"][];
@@ -27366,6 +31106,30 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_PolicyChanges: {
+            /** Format: int32 */
+            autoReleaseMinutes?: number;
+            /** Format: int32 */
+            maximumBookingMinutes?: number;
+            /** Format: int32 */
+            minimumBookingMinutes?: number;
+            requireCheckIn?: boolean;
+            workingDayEnd?: string;
+            workingDayStart?: string;
+        };
+        platform_PolicyDailyImpact: {
+            /** Format: int64 */
+            affectedBookings?: number;
+            /** Format: date */
+            date?: string;
+            /** Format: int64 */
+            reviewedBookings?: number;
+            timeZone?: string;
+        };
+        platform_PolicyEffect: {
+            booking?: components["schemas"]["platform_WorkplaceExperienceBookingDetail"];
+            knownEffects?: string[];
+        };
         platform_PolicyFieldSource: {
             /** Format: uuid */
             policyOverrideId?: string;
@@ -27375,6 +31139,39 @@ export interface components {
             scopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
             /** Format: int64 */
             version?: number;
+        };
+        platform_PolicyImpact: {
+            /** Format: int64 */
+            affectedBookings?: number;
+            allowedFloorIds?: string[];
+            content?: components["schemas"]["platform_PolicyEffect"][];
+            countsScope?: string;
+            dailyImpact?: components["schemas"]["platform_PolicyDailyImpact"][];
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: date-time */
+            from?: string;
+            limitations?: string[];
+            metadata?: components["schemas"]["platform_Metadata"];
+            mutatesExistingBookings?: boolean;
+            /** Format: int32 */
+            page?: number;
+            proposed?: components["schemas"]["platform_PolicyChanges"];
+            /** Format: int64 */
+            reviewedBookings?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: date-time */
+            to?: string;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        platform_PolicyOverrideChangeRequest: {
+            confirmed?: boolean;
+            proposed: components["schemas"]["platform_PolicyOverrideRequest"];
+            reason?: string;
         };
         platform_PolicyOverrideRequest: {
             policyPatch: components["schemas"]["platform_JsonNode"];
@@ -27526,6 +31323,24 @@ export interface components {
             };
             unknownKeys?: string[];
         };
+        platform_PrivacySummary: {
+            /** Format: int64 */
+            anonymizedBookingCount?: number;
+            /** Format: int64 */
+            bookingRetentionDays?: number;
+            /** Format: int64 */
+            expiredEligibleBookingCount?: number;
+            /** Format: int64 */
+            facilityClosureEligibleRetentionCount?: number;
+            /** Format: int64 */
+            facilityClosuresPurgedCount?: number;
+            /** Format: int64 */
+            facilityRequestEligibleRetentionCount?: number;
+            /** Format: int64 */
+            facilityRequestsPurgedCount?: number;
+            /** Format: int64 */
+            legalHoldCount?: number;
+        };
         platform_ProductSurfaceTelemetryEventRequest: {
             /** Format: uuid */
             attemptId?: string;
@@ -27586,6 +31401,15 @@ export interface components {
             /** @enum {string} */
             runtimeState?: "AVAILABLE" | "DEPLOYMENT_REQUIRED";
             tenantWideSupported?: boolean;
+        };
+        platform_PublicClosure: {
+            availability?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
         };
         platform_ReactionRequest: {
             /** @enum {string} */
@@ -27797,6 +31621,21 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        platform_RequestPage: {
+            allowedFloorIds?: string[];
+            content?: components["schemas"]["platform_FacilityRequest"][];
+            countsScope?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         platform_RequestSummary: {
             assignedGroup?: string;
             assignedTo?: string;
@@ -27830,6 +31669,18 @@ export interface components {
             resourceId?: string;
             /** Format: date-time */
             startsAt?: string;
+        };
+        platform_ResourcePhoto: {
+            altText?: string;
+            contentType?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            sha256?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            url?: string;
+            /** Format: int64 */
+            version?: number;
         };
         platform_ResourcePlacement: {
             heightPercent: number;
@@ -27986,6 +31837,22 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_RoomAffectedBooking: {
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: uuid */
+            calendarResourceId?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            eventId?: string;
+            owner?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            status?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_RoomAvailabilityResponse: {
             bookingEligibility?: components["schemas"]["platform_RoomBookingEligibility"][];
             /** Format: date-time */
@@ -28011,6 +31878,33 @@ export interface components {
             resourceId?: string;
             /** Format: int64 */
             resourceVersion?: number;
+        };
+        platform_RoomBookingImpact: {
+            availability?: string;
+            /** Format: uuid */
+            calendarResourceId?: string;
+            content?: components["schemas"]["platform_RoomAffectedBooking"][];
+            /** Format: date-time */
+            endsAt?: string;
+            existingBookingsMutated?: boolean;
+            /** Format: date-time */
+            generatedAt?: string;
+            owner?: string;
+            /** Format: int32 */
+            page?: number;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: int32 */
+            size?: number;
+            source?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
         platform_RuleAction: {
             /** Format: uuid */
@@ -28313,6 +32207,11 @@ export interface components {
             /** @enum {string} */
             status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
         };
+        platform_ShareableGroup: {
+            displayName?: string;
+            /** Format: uuid */
+            groupRef?: string;
+        };
         platform_SharedInboxMember: {
             displayName?: string;
             emailAddress?: string;
@@ -28360,11 +32259,64 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_SharedWorkPlan: {
+            displayName?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** @enum {string} */
+            mode?: "OFFICE" | "REMOTE" | "OFF";
+            /** Format: date */
+            planDate?: string;
+            /** Format: uuid */
+            planId?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: uuid */
+            siteId?: string;
+            source?: string;
+            /** Format: int64 */
+            userId?: number;
+            /** @enum {string} */
+            visibility?: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+        };
+        platform_SharingPolicy: {
+            /** @enum {string} */
+            maximumVisibility?: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+            sharingEnabled?: boolean;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_SharingPolicyRequest: {
+            confirmed?: boolean;
+            /** @enum {string} */
+            maximumVisibility: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+            reason: string;
+            sharingEnabled?: boolean;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_SharingPreference: {
+            optIn?: boolean;
+            /** Format: int64 */
+            version?: number;
+            /** @enum {string} */
+            visibility?: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+        };
+        platform_SharingPreferenceRequest: {
+            optIn?: boolean;
+            /** Format: int64 */
+            version: number;
+            /** @enum {string} */
+            visibility: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+        };
         platform_SiteAccessDecision: {
             allowed?: boolean;
+            availableFloors?: components["schemas"]["platform_AccessRuleFloorOption"][];
             decision?: string;
             /** Format: date-time */
             evaluatedAt?: string;
+            /** Format: uuid */
+            floorId?: string;
             matchedRuleIds?: string[];
             /** @enum {string} */
             requestedPermission?: "VIEW" | "BOOK" | "MANAGE";
@@ -28376,6 +32328,8 @@ export interface components {
         platform_SiteAccessRuleRequest: {
             /** @enum {string} */
             effect: "ALLOW" | "DENY";
+            /** Format: uuid */
+            floorId?: string;
             /** @enum {string} */
             permission: "VIEW" | "BOOK" | "MANAGE";
             /** @enum {string} */
@@ -28443,6 +32397,28 @@ export interface components {
             tokenExpiresAt?: string;
             /** Format: int64 */
             userId?: number;
+        };
+        platform_Summary: {
+            /** Format: double */
+            bookedMinutes?: number;
+            /** Format: int64 */
+            bookingCount?: number;
+            /** Format: int64 */
+            cancelledCount?: number;
+            /** Format: double */
+            denominatorResourceMinutes?: number;
+            /** Format: int64 */
+            noShowCount?: number;
+            /** Format: int64 */
+            noShowEligibleCount?: number;
+            /** Format: double */
+            noShowPercent?: number;
+            /** Format: double */
+            peakUtilizationPercent?: number;
+            /** Format: int64 */
+            unresolvedPastBookings?: number;
+            /** Format: double */
+            utilizationPercent?: number;
         };
         platform_SyncRequest: {
             reset?: boolean;
@@ -29058,6 +33034,44 @@ export interface components {
             /** Format: uuid */
             workItemId?: string;
         };
+        platform_WorkPlan: {
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: uuid */
+            groupRef?: string;
+            /** @enum {string} */
+            mode?: "OFFICE" | "REMOTE" | "OFF";
+            /** Format: date */
+            planDate?: string;
+            /** Format: uuid */
+            planId?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: int64 */
+            version?: number;
+            /** @enum {string} */
+            visibility?: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+        };
+        platform_WorkPlanRequest: {
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: uuid */
+            groupRef?: string;
+            /** @enum {string} */
+            mode: "OFFICE" | "REMOTE" | "OFF";
+            /** Format: date */
+            planDate: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: int64 */
+            version?: number;
+            /** @enum {string} */
+            visibility: "PRIVATE" | "SITE" | "FLOOR" | "RESOURCE";
+        };
         platform_WorkQueue: {
             /** Format: date-time */
             generatedAt?: string;
@@ -29100,6 +33114,8 @@ export interface components {
             createdAt?: string;
             /** Format: date-time */
             endsAt?: string;
+            /** Format: uuid */
+            floorId?: string;
             floorName?: string;
             legalHold?: boolean;
             /** Format: uuid */
@@ -29114,6 +33130,8 @@ export interface components {
             resourceName?: string;
             /** @enum {string} */
             resourceType?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+            /** Format: uuid */
+            siteId?: string;
             siteName?: string;
             /** Format: date-time */
             startsAt?: string;
@@ -29223,6 +33241,7 @@ export interface components {
             delegateUserId?: number;
             /** Format: uuid */
             delegationId?: string;
+            floorIds?: string[];
             /** Format: uuid */
             managedGroupRef?: string;
             permissions?: ("CATALOG_VIEW" | "CATALOG_MANAGE" | "ACCESS_MANAGE" | "POLICY_MANAGE" | "FLOOR_PLAN_MANAGE" | "DELEGATION_VIEW")[];
@@ -29239,7 +33258,68 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_WorkplaceExperienceBookingDetail: {
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: date-time */
+            checkedInAt?: string;
+            detailHref?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            exceptionReasons?: string[];
+            /** Format: uuid */
+            floorId?: string;
+            floorName?: string;
+            legalHold?: boolean;
+            /** Format: date-time */
+            releasedAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            resourceType?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            status?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceExperienceReport: {
+            comparison?: components["schemas"]["platform_Comparison"];
+            current?: components["schemas"]["platform_CurrentCounts"];
+            dailyTrend?: components["schemas"]["platform_DailyTrend"][];
+            definitions?: string[];
+            exceptions?: components["schemas"]["platform_BookingPage"];
+            externalSources?: components["schemas"]["platform_ExternalSource"][];
+            floors?: components["schemas"]["platform_FloorSummary"][];
+            hourlyHeatmap?: components["schemas"]["platform_HeatmapCell"][];
+            metadata?: components["schemas"]["platform_Metadata"];
+            scope?: components["schemas"]["platform_WorkplaceExperienceScope"];
+            summary?: components["schemas"]["platform_Summary"];
+        };
+        platform_WorkplaceExperienceScope: {
+            allowedFloorIds?: string[];
+            countsScope?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: date */
+            from?: string;
+            /** Format: uuid */
+            siteId?: string;
+            siteName?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            timeZone?: string;
+            /** Format: date */
+            to?: string;
+        };
         platform_WorkplaceExploreResponse: {
+            closures?: components["schemas"]["platform_PublicClosure"][];
             floors?: components["schemas"]["platform_WorkplaceFloor"][];
             /** Format: date-time */
             generatedAt?: string;
@@ -29499,11 +33579,13 @@ export interface components {
         };
         platform_WorkplaceSite: {
             address?: string;
+            allowedFloorIds?: string[];
             /** Format: uuid */
             campusId?: string;
             code?: string;
             /** Format: int64 */
             configuredFloorCount?: number;
+            countsScope?: string;
             name?: string;
             nameEn?: string;
             nameKo?: string;
@@ -29526,6 +33608,8 @@ export interface components {
             accessRuleId?: string;
             /** @enum {string} */
             effect?: "ALLOW" | "DENY";
+            /** Format: uuid */
+            floorId?: string;
             /** @enum {string} */
             permission?: "VIEW" | "BOOK" | "MANAGE";
             /** Format: uuid */
@@ -32019,6 +36103,308 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    approval_initialize_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentInitializePolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentPolicy"];
+                };
+            };
+        };
+    };
+    approval_draft_3: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentSavePolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentPolicy"];
+                };
+            };
+        };
+    };
+    approval_publish_3: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentPublishPolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentPolicy"];
+                };
+            };
+        };
+    };
+    approval_policy_2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentPolicy"];
+                };
+            };
+        };
+    };
+    approval_hold: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentHold"];
+                };
+            };
+        };
+    };
+    approval_propose: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentHoldProposal"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentHold"];
+                };
+            };
+        };
+    };
+    approval_publishHold: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentPublishHold"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentHold"];
+                };
+            };
+        };
+    };
+    approval_draft_2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentSavePolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentPolicy"];
+                };
+            };
+        };
+    };
+    approval_publish_2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentPublishPolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentPolicy"];
+                };
+            };
+        };
+    };
+    approval_policy_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentPolicy"];
+                };
+            };
+        };
+    };
     approval_formCategories: {
         parameters: {
             query?: {
@@ -32185,6 +36571,33 @@ export interface operations {
             };
         };
     };
+    approval_diff: {
+        parameters: {
+            query: {
+                fromVersionId: string;
+                toVersionId: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleDiff"];
+                };
+            };
+        };
+    };
     approval_updateFormDraft: {
         parameters: {
             query?: {
@@ -32287,6 +36700,307 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApprovalAuthorityUnavailableError"];
+                };
+            };
+        };
+    };
+    approval_review: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleReview"];
+                };
+            };
+        };
+    };
+    approval_publish_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-DWP-Step-Up-Challenge": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version": number;
+            };
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormLifecyclePublishReviewed"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleWorkspace"];
+                };
+            };
+        };
+    };
+    approval_reinstate: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormLifecycleAvailabilityChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleWorkspace"];
+                };
+            };
+        };
+    };
+    approval_retire: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormLifecycleAvailabilityChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleWorkspace"];
+                };
+            };
+        };
+    };
+    approval_history: {
+        parameters: {
+            query?: {
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleHistory"];
+                };
+            };
+        };
+    };
+    approval_version: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+                formVersionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleVersion"];
+                };
+            };
+        };
+    };
+    approval_branch: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                formId: string;
+                formVersionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormLifecycleBranch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleWorkspace"];
+                };
+            };
+        };
+    };
+    approval_admin: {
+        parameters: {
+            query: {
+                schemaSha256: string;
+                fieldKey: string;
+                groupKey?: string;
+                query: string;
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+                formVersionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormUserCandidates"];
+                };
+            };
+        };
+    };
+    approval_draft_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleWorkspace"];
+                };
+            };
+        };
+    };
+    approval_update: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormLifecycleUpdateWorkingDraft"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormLifecycleWorkspace"];
                 };
             };
         };
@@ -32464,6 +37178,32 @@ export interface operations {
             };
         };
     };
+    approval_impact: {
+        parameters: {
+            query: {
+                expectedVersion: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalPolicyImpactResult"];
+                };
+            };
+        };
+    };
     approval_publishPolicy: {
         parameters: {
             query?: {
@@ -32558,6 +37298,182 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApprovalFullPolicyVersionListResponse"] | components["schemas"]["approval_ApprovalOversightPolicyVersionListResponse"];
+                };
+            };
+        };
+    };
+    approval_claim_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                claimId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionClaim"];
+                };
+            };
+        };
+    };
+    approval_initialize: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalRetentionInitializePolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionPolicy"];
+                };
+            };
+        };
+    };
+    approval_draft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalRetentionSavePolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionPolicy"];
+                };
+            };
+        };
+    };
+    approval_publish: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalRetentionPublishPolicy"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionPolicy"];
+                };
+            };
+        };
+    };
+    approval_policy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionPolicy"];
+                };
+            };
+        };
+    };
+    approval_record: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionRecord"];
+                };
+            };
+        };
+    };
+    approval_claim_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalRetentionCreateClaim"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionClaim"];
                 };
             };
         };
@@ -32770,6 +37686,181 @@ export interface operations {
             };
         };
     };
+    approval_simulate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workflowId: string;
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalWorkflowPlanningBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["approval_ApiResponseApprovalWorkflowPlanningResult"];
+                };
+            };
+        };
+    };
+    approval_content: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                grantId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    approval_status: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                uploadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentUpload"];
+                };
+            };
+        };
+    };
+    approval_cancel_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                uploadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentCancel"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentUpload"];
+                };
+            };
+        };
+    };
+    approval_upload: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "X-DWP-Expected-Object-Version": number;
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                uploadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/octet-stream": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentUpload"];
+                };
+            };
+        };
+    };
+    approval_reconcile: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                uploadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentCancel"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentUpload"];
+                };
+            };
+        };
+    };
     approval_formCatalog: {
         parameters: {
             query?: {
@@ -32814,6 +37905,38 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseRequestTemplate"];
+                };
+            };
+        };
+    };
+    approval_work: {
+        parameters: {
+            query: {
+                schemaSha256: string;
+                fieldKey: string;
+                groupKey?: string;
+                query: string;
+                size?: number;
+                requestId?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+                formVersionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormUserCandidates"];
                 };
             };
         };
@@ -32930,6 +38053,31 @@ export interface operations {
             };
         };
     };
+    approval_reconcile_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                idempotencyKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseDraftReconciliation"];
+                };
+            };
+        };
+    };
     approval_home: {
         parameters: {
             query?: {
@@ -32984,7 +38132,8 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: {
+            header: {
+                "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
@@ -33009,7 +38158,69 @@ export interface operations {
             };
         };
     };
-    approval_request: {
+    approval_archive: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentArchiveExport"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalGeneratedDocument"];
+                };
+            };
+        };
+    };
+    approval_requests_1: {
+        parameters: {
+            query?: {
+                view?: "SUBMITTED" | "DRAFTS" | "DELETED" | "ARCHIVE" | "NEEDS_INFO";
+                query?: string;
+                status?: string;
+                priority?: string;
+                workflowId?: string;
+                due?: "ALL" | "OVERDUE" | "TODAY";
+                page?: number;
+                size?: number;
+                sort?: "PRIORITY" | "NEWEST" | "OLDEST";
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponsePageRequestSummary"];
+                };
+            };
+        };
+    };
+    approval_request_1: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -33030,6 +38241,187 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseRequestSummary"];
+                };
+            };
+        };
+    };
+    approval_reserve: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentReserve"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentUpload"];
+                };
+            };
+        };
+    };
+    approval_request: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentAttachments"];
+                };
+            };
+        };
+    };
+    approval_select: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentSelection"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentAttachments"];
+                };
+            };
+        };
+    };
+    approval_requestGrant: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentDownload"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentGrant"];
+                };
+            };
+        };
+    };
+    approval_requestComments: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentComments"];
+                };
+            };
+        };
+    };
+    approval_appendRequestComment: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentAppendComment"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentComment"];
                 };
             };
         };
@@ -33059,13 +38451,71 @@ export interface operations {
             };
         };
     };
-    approval_updateDraft: {
+    approval_exportRequest: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
             header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentExport"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalGeneratedDocument"];
+                };
+            };
+        };
+    };
+    approval_requestTools: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentTools"];
+                };
+            };
+        };
+    };
+    approval_updateDraft: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
@@ -33092,6 +38542,188 @@ export interface operations {
             };
         };
     };
+    approval_delete: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DraftCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseDraftState"];
+                };
+            };
+        };
+    };
+    approval_recover: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_RecoverDraft"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseDraftState"];
+                };
+            };
+        };
+    };
+    approval_restore: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DraftCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseDraftState"];
+                };
+            };
+        };
+    };
+    approval_revisions: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponsePageDraftRevision"];
+                };
+            };
+        };
+    };
+    approval_revision: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseDraftRevisionDetail"];
+                };
+            };
+        };
+    };
+    approval_receipt: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+                originalKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalInformationReceiptBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalInformationCommandReceipt"];
+                };
+            };
+        };
+    };
     approval_respondToInformationRequest: {
         parameters: {
             query?: {
@@ -33099,6 +38731,8 @@ export interface operations {
                 contextScopeKey?: string;
             };
             header?: {
+                /** @description Original command identity is required for visible USER references in the immutable published typed form. Never replace it on retry. */
+                "Idempotency-Key"?: string;
                 "X-Correlation-ID"?: string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
@@ -33125,6 +38759,56 @@ export interface operations {
             };
         };
     };
+    approval_context: {
+        parameters: {
+            query?: {
+                locale?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureContext"];
+                };
+            };
+        };
+    };
+    approval_create_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureCreate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureReceipt"];
+                };
+            };
+        };
+    };
     approval_submit: {
         parameters: {
             query?: {
@@ -33132,6 +38816,8 @@ export interface operations {
                 contextScopeKey?: string;
             };
             header?: {
+                /** @description Original command identity is required for visible USER references in a published typed form. Never replace it on retry. */
+                "Idempotency-Key"?: string;
                 "X-Correlation-ID"?: string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
@@ -33191,6 +38877,154 @@ export interface operations {
             };
         };
     };
+    approval_read: {
+        parameters: {
+            query: {
+                originalOperation: "CREATE" | "CONSENT" | "SIGN" | "CANCEL";
+                targetId: string;
+                bodySha256: string;
+            };
+            header?: never;
+            path: {
+                idempotencyKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureCommandReceiptMetadata"];
+                };
+            };
+        };
+    };
+    approval_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureCeremony"];
+                };
+            };
+        };
+    };
+    approval_audit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureAudit"];
+                };
+            };
+        };
+    };
+    approval_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureCancel"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureReceipt"];
+                };
+            };
+        };
+    };
+    approval_consent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureConsent"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureReceipt"];
+                };
+            };
+        };
+    };
+    approval_sign: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureSign"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureReceipt"];
+                };
+            };
+        };
+    };
     approval_tasks: {
         parameters: {
             query?: {
@@ -33216,6 +39050,39 @@ export interface operations {
             };
         };
     };
+    approval_tasks_1: {
+        parameters: {
+            query?: {
+                view?: "INBOX" | "DELEGATED" | "COMPLETED";
+                query?: string;
+                status?: string;
+                priority?: string;
+                workflowId?: string;
+                due?: "ALL" | "OVERDUE" | "TODAY";
+                page?: number;
+                size?: number;
+                sort?: "PRIORITY" | "NEWEST" | "OLDEST";
+                minRiskScore?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponsePageTaskSummary"];
+                };
+            };
+        };
+    };
     approval_task: {
         parameters: {
             query?: {
@@ -33237,6 +39104,64 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseTaskDetail"];
+                };
+            };
+        };
+    };
+    approval_task_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentAttachments"];
+                };
+            };
+        };
+    };
+    approval_taskGrant: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                taskId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalAttachmentDownload"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalAttachmentGrant"];
                 };
             };
         };
@@ -33274,6 +39199,65 @@ export interface operations {
             };
         };
     };
+    approval_taskComments: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentComments"];
+                };
+            };
+        };
+    };
+    approval_appendTaskComment: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentAppendComment"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentComment"];
+                };
+            };
+        };
+    };
     approval_decide: {
         parameters: {
             query?: {
@@ -33303,6 +39287,63 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseTaskDetail"];
+                };
+            };
+        };
+    };
+    approval_exportTask: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDocumentExport"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalGeneratedDocument"];
+                };
+            };
+        };
+    };
+    approval_taskTools: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalDocumentTools"];
                 };
             };
         };
@@ -43335,7 +49376,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_6: {
+    platform_overview_8: {
         parameters: {
             query?: {
                 window?: "H1" | "H6" | "H24" | "D7" | "D30";
@@ -43362,7 +49403,7 @@ export interface operations {
             };
         };
     };
-    platform_requests_4: {
+    platform_requests_5: {
         parameters: {
             query?: {
                 state?: string;
@@ -43971,7 +50012,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_5: {
+    platform_overview_7: {
         parameters: {
             query?: {
                 window?: "H24" | "D7" | "D30" | "D90";
@@ -43993,7 +50034,7 @@ export interface operations {
             };
         };
     };
-    platform_policy_1: {
+    platform_policy_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -44544,7 +50585,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_4: {
+    platform_overview_6: {
         parameters: {
             query?: never;
             header?: {
@@ -44566,7 +50607,7 @@ export interface operations {
             };
         };
     };
-    platform_policy: {
+    platform_policy_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -44668,7 +50709,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_3: {
+    platform_overview_5: {
         parameters: {
             query?: {
                 query?: string;
@@ -45488,7 +51529,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_2: {
+    platform_overview_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -45882,7 +51923,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_1: {
+    platform_overview_3: {
         parameters: {
             query?: never;
             header?: never;
@@ -46270,7 +52311,7 @@ export interface operations {
             };
         };
     };
-    platform_requests_3: {
+    platform_requests_4: {
         parameters: {
             query?: {
                 state?: string;
@@ -47297,7 +53338,7 @@ export interface operations {
             };
         };
     };
-    platform_requests_2: {
+    platform_requests_3: {
         parameters: {
             query?: {
                 status?: "DRAFT" | "SUBMITTED" | "TRIAGED" | "IN_PROGRESS" | "AWAITING_REQUESTER" | "RESOLVED" | "CLOSED" | "CANCELLED";
@@ -47606,6 +53647,8 @@ export interface operations {
             query: {
                 from: string;
                 to: string;
+                siteId?: string;
+                floorId?: string;
                 status?: "RESERVED" | "CHECKED_IN" | "COMPLETED" | "NO_SHOW" | "RELEASED" | "CANCELLED";
                 resourceId?: string;
                 userId?: number;
@@ -47685,6 +53728,835 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminBooking"];
+                };
+            };
+        };
+    };
+    platform_report: {
+        parameters: {
+            query: {
+                siteId: string;
+                floorId?: string;
+                from: string;
+                to: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceExperienceReport"];
+                };
+            };
+        };
+    };
+    platform_booking: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header?: never;
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceExperienceBookingDetail"];
+                };
+            };
+        };
+    };
+    platform_changeBookingPolicy: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_BookingPolicyChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
+                };
+            };
+        };
+    };
+    platform_reviewBookingPolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_BookingPolicyChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_configureConnector: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "CALENDAR" | "ACTUAL_PRESENCE" | "SIGNAGE" | "VISITOR" | "VEHICLE";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ConnectorRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseConnectorStatus"];
+                };
+            };
+        };
+    };
+    platform_changeDelegation_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DelegationChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceDelegatedAdminScope"];
+                };
+            };
+        };
+    };
+    platform_reviewDelegation_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DelegationChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_changeDelegation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                delegationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DelegationChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceDelegatedAdminScope"];
+                };
+            };
+        };
+    };
+    platform_reviewDelegation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delegationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DelegationChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_overview_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceOverview"];
+                };
+            };
+        };
+    };
+    platform_policy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSharingPolicy"];
+                };
+            };
+        };
+    };
+    platform_savePolicy: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SharingPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSharingPolicy"];
+                };
+            };
+        };
+    };
+    platform_changePolicyOverride: {
+        parameters: {
+            query: {
+                scopeType: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyOverrideChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicyOverride"];
+                };
+            };
+        };
+    };
+    platform_reviewPolicyOverride_1: {
+        parameters: {
+            query: {
+                scopeType: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyOverrideChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_changePolicyOverride_1: {
+        parameters: {
+            query: {
+                scopeType: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                overrideId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyOverrideChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicyOverride"];
+                };
+            };
+        };
+    };
+    platform_reviewPolicyOverride: {
+        parameters: {
+            query: {
+                scopeType: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
+            header?: never;
+            path: {
+                overrideId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyOverrideChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_photo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    platform_uploadPhoto: {
+        parameters: {
+            query: {
+                version: number;
+                reason: string;
+                altText: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourcePhoto"];
+                };
+            };
+        };
+    };
+    platform_deletePhoto: {
+        parameters: {
+            query: {
+                version: number;
+                reason: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseMutationResult"];
+                };
+            };
+        };
+    };
+    platform_photoMetadata_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourcePhoto"];
+                };
+            };
+        };
+    };
+    platform_changeRule_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_AccessRuleChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSiteAccessRule"];
+                };
+            };
+        };
+    };
+    platform_reviewRule_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_AccessRuleChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_changeRule: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+                ruleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_AccessRuleChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSiteAccessRule"];
+                };
+            };
+        };
+    };
+    platform_reviewRule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                siteId: string;
+                ruleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_AccessRuleChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseGovernanceChangeReview"];
+                };
+            };
+        };
+    };
+    platform_closures: {
+        parameters: {
+            query: {
+                siteId: string;
+                floorId?: string;
+                resourceId?: string;
+                from: string;
+                to: string;
+                includeCancelled?: boolean;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseClosurePage"];
+                };
+            };
+        };
+    };
+    platform_closure: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header?: never;
+            path: {
+                closureId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseClosure"];
+                };
+            };
+        };
+    };
+    platform_cancelClosure: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                closureId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CancelClosure"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseClosure"];
+                };
+            };
+        };
+    };
+    platform_requests_2: {
+        parameters: {
+            query: {
+                siteId: string;
+                floorId?: string;
+                status?: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CANCELLED";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRequestPage"];
+                };
+            };
+        };
+    };
+    platform_status: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ChangeRequestStatus"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFacilityRequest"];
+                };
+            };
+        };
+    };
+    platform_createClosure: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateClosure"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseClosure"];
+                };
+            };
+        };
+    };
+    platform_roomImpact: {
+        parameters: {
+            query: {
+                siteId: string;
+                from: string;
+                to: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRoomBookingImpact"];
                 };
             };
         };
@@ -48750,6 +55622,67 @@ export interface operations {
             };
         };
     };
+    platform_policyImpact: {
+        parameters: {
+            query: {
+                siteId: string;
+                floorId?: string;
+                from: string;
+                to: string;
+                requireCheckIn?: boolean;
+                autoReleaseMinutes?: number;
+                minimumBookingMinutes?: number;
+                maximumBookingMinutes?: number;
+                workingDayStart?: string;
+                workingDayEnd?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePolicyImpact"];
+                };
+            };
+        };
+    };
+    platform_futureImpact: {
+        parameters: {
+            query: {
+                siteId: string;
+                from: string;
+                to: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFutureBookingImpact"];
+                };
+            };
+        };
+    };
     platform_getWorkplaceSites: {
         parameters: {
             query?: never;
@@ -48951,7 +55884,7 @@ export interface operations {
             };
         };
     };
-    platform_availability: {
+    platform_availability_1: {
         parameters: {
             query: {
                 personIds?: string[];
@@ -51636,7 +58569,7 @@ export interface operations {
             };
         };
     };
-    platform_overview: {
+    platform_overview_1: {
         parameters: {
             query?: {
                 timeZone?: string;
@@ -52792,7 +59725,7 @@ export interface operations {
             };
         };
     };
-    platform_policy_2: {
+    platform_policy_3: {
         parameters: {
             query?: never;
             header?: never;
@@ -53520,6 +60453,275 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_overview: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                groupRef?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCollaborationOverview"];
+                };
+            };
+        };
+    };
+    platform_photo_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    platform_photoMetadata: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourcePhoto"];
+                };
+            };
+        };
+    };
+    platform_savePreference: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SharingPreferenceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSharingPreference"];
+                };
+            };
+        };
+    };
+    platform_revokePreference: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSharingPreference"];
+                };
+            };
+        };
+    };
+    platform_savePlan: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkPlanRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkPlan"];
+                };
+            };
+        };
+    };
+    platform_deletePlan: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseMutationResult"];
+                };
+            };
+        };
+    };
+    platform_ownRequests: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRequestPage"];
+                };
+            };
+        };
+    };
+    platform_ownRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFacilityRequest"];
+                };
+            };
+        };
+    };
+    platform_availability: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingAvailability"];
+                };
+            };
+        };
+    };
+    platform_createRequest: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFacilityRequest"];
                 };
             };
         };

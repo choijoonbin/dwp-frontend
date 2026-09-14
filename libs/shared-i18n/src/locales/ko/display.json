@@ -78,6 +78,9 @@
     "WARNING": "경고"
   },
   "outcomes": {
+    "COMMITTED": "기록 완료",
+    "UNKNOWN": "결과 확인 필요",
+    "INVALID": "잘못된 요청",
     "ACCEPTED": "수락됨",
     "ALREADY_APPLIED": "이미 적용됨",
     "ALLOW": "허용됨",
@@ -378,7 +381,8 @@
     "SITE": "사업장",
     "TENANT": "테넌트",
     "TYPE": "유형",
-    "WORKFLOW": "워크플로"
+    "WORKFLOW": "워크플로",
+    "CAMPUS": "근무 권역"
   },
   "targetTypes": {
     "AUDIT_CASE": "감사 사건",
@@ -394,7 +398,8 @@
     "SUPPORT_ACCESS_REQUEST": "지원 접근 요청",
     "SUPPORT_SESSION": "지원 세션",
     "TENANT": "테넌트",
-    "USER": "사용자"
+    "USER": "사용자",
+    "WP_DELEGATION": "근무공간 관리 위임"
   },
   "relationTypes": {
     "CONSUMES": "소비",

@@ -444,63 +444,25 @@
       "RawRadius": 6,
       "RawTypography": 4
     },
-    "apps/dwp/src/features/approvals/approval-admin.tsx": {
-      "RawTypography": 3,
-      "Alert": 2
-    },
-    "apps/dwp/src/features/approvals/approval-delegations.tsx": {
-      "Alert": 3,
-      "HardcodedColor": 3,
-      "RawRadius": 1,
-      "RawTypography": 1
-    },
-    "apps/dwp/src/features/approvals/approval-form-studio.tsx": {
-      "Alert": 4,
-      "RawTypography": 8,
-      "RawShadow": 1
-    },
     "apps/dwp/src/features/approvals/approval-home.tsx": {
       "Skeleton": 3,
       "Alert": 2
     },
     "apps/dwp/src/features/approvals/approval-inbox.tsx": {
-      "RawRadius": 1,
       "RawTypography": 4,
       "Alert": 2,
-      "HardcodedColor": 3,
       "RawShadow": 1
     },
-    "apps/dwp/src/features/approvals/approval-policy-studio.tsx": {
-      "RawTypography": 8,
-      "Alert": 5,
-      "RawShadow": 1,
-      "HardcodedColor": 1
-    },
     "apps/dwp/src/features/approvals/approval-request-detail-drawer.tsx": {
-      "HardcodedColor": 1,
-      "Alert": 1,
       "RawTypography": 2
     },
     "apps/dwp/src/features/approvals/approval-request-form-context.tsx": {
-      "Alert": 1,
       "RawTypography": 2
-    },
-    "apps/dwp/src/features/approvals/approval-requests.tsx": {
-      "Alert": 5,
-      "HardcodedColor": 5,
-      "RawTypography": 6,
-      "RawRadius": 1
     },
     "apps/dwp/src/features/approvals/approval-ui.tsx": {
       "HardcodedColor": 5,
-      "RawRadius": 2,
-      "RawTypography": 2
-    },
-    "apps/dwp/src/features/approvals/approval-workflow-studio.tsx": {
-      "Alert": 3,
-      "RawShadow": 1,
-      "RawTypography": 3,
-      "RawRadius": 3
+      "RawTypography": 2,
+      "RawRadius": 1
     },
     "apps/dwp/src/features/calendar/calendar-admin-booking-inbox.tsx": {
       "RawRadius": 1,
@@ -806,7 +768,6 @@
     "apps/dwp/src/features/home/flow-home/flow-home-context.tsx": {
       "HardcodedColor": 23,
       "RawTypography": 13,
-      "CircularProgress": 2,
       "RawRadius": 5
     },
     "apps/dwp/src/features/home/flow-home/flow-home.tsx": {
@@ -1162,7 +1123,6 @@
       "Alert": 1
     },
     "apps/dwp/src/features/notifications/notification-header-glance.tsx": {
-      "RawRadius": 1,
       "RawTypography": 1
     },
     "apps/dwp/src/features/notifications/notification-policy-studio.tsx": {
@@ -1170,8 +1130,6 @@
       "Alert": 7
     },
     "apps/dwp/src/features/notifications/notification-preferences.tsx": {
-      "RawRadius": 2,
-      "RawTypography": 1,
       "Alert": 4
     },
     "apps/dwp/src/features/notifications/notification-suppression-studio.tsx": {
@@ -1184,8 +1142,7 @@
     "apps/dwp/src/features/notifications/notification-ui.tsx": {
       "Alert": 1,
       "RawTypography": 4,
-      "RawMotion": 1,
-      "RawRadius": 2
+      "RawMotion": 1
     },
     "apps/dwp/src/features/people/directory/people-directory.tsx": {
       "Dialog": 1,
@@ -1442,46 +1399,23 @@
       "RawTypography": 1
     },
     "apps/dwp/src/features/rooms/room-bookings.tsx": {
-      "Alert": 3,
-      "RawRadius": 1,
       "Skeleton": 1,
-      "RawShadow": 1,
-      "RawTypography": 1
+      "RawShadow": 1
     },
     "apps/dwp/src/features/rooms/rooms-admin-operations.tsx": {
-      "Alert": 1,
-      "RawRadius": 3,
-      "RawTypography": 4,
       "Skeleton": 2
     },
     "apps/dwp/src/features/rooms/rooms-admin-policies.tsx": {
-      "Alert": 1,
-      "Skeleton": 2,
-      "RawRadius": 2,
-      "RawTypography": 2
+      "Skeleton": 2
     },
     "apps/dwp/src/features/rooms/rooms-find.tsx": {
-      "RawRadius": 2,
-      "Alert": 3,
       "LinearProgress": 1,
-      "RawTypography": 1,
       "Skeleton": 1
     },
     "apps/dwp/src/features/rooms/rooms-ui.tsx": {
       "Alert": 1,
       "RawTypography": 2,
       "RawRadius": 1
-    },
-    "apps/dwp/src/features/rooms/workplace-admin-dialogs.tsx": {
-      "Alert": 2
-    },
-    "apps/dwp/src/features/rooms/workplace-admin-governance-access.tsx": {
-      "Alert": 2,
-      "RawTypography": 2
-    },
-    "apps/dwp/src/features/rooms/workplace-admin-governance-delegation.tsx": {
-      "Alert": 2,
-      "RawTypography": 3
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance-floor-plans.tsx": {
       "Alert": 4,
@@ -1491,79 +1425,38 @@
       "RawTypography": 2,
       "Alert": 1
     },
-    "apps/dwp/src/features/rooms/workplace-admin-governance-policy.tsx": {
-      "Alert": 4,
-      "RawTypography": 3
-    },
     "apps/dwp/src/features/rooms/workplace-admin-governance-ui.tsx": {
-      "RawTypography": 1,
       "Alert": 1
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance.tsx": {
       "Alert": 2
     },
     "apps/dwp/src/features/rooms/workplace-admin-locations.tsx": {
-      "Alert": 4,
       "Skeleton": 2,
-      "RawTypography": 4
+      "RawTypography": 1
     },
     "apps/dwp/src/features/rooms/workplace-admin-operations.tsx": {
       "LinearProgress": 1,
       "Alert": 2,
-      "RawRadius": 2,
-      "RawTypography": 6,
-      "Skeleton": 1
-    },
-    "apps/dwp/src/features/rooms/workplace-admin-overview.tsx": {
-      "RawTypography": 9,
-      "Alert": 1,
-      "Skeleton": 1,
-      "LinearProgress": 1
+      "RawTypography": 6
     },
     "apps/dwp/src/features/rooms/workplace-admin-policy.tsx": {
-      "RawTypography": 1,
-      "Skeleton": 1,
-      "Alert": 2
-    },
-    "apps/dwp/src/features/rooms/workplace-booking-dialog.tsx": {
-      "Alert": 3,
-      "RawTypography": 1
+      "Skeleton": 1
     },
     "apps/dwp/src/features/rooms/workplace-bookings.tsx": {
-      "Alert": 2,
-      "RawRadius": 1,
       "Skeleton": 1,
-      "RawShadow": 1,
-      "RawTypography": 1
+      "RawShadow": 1
     },
     "apps/dwp/src/features/rooms/workplace-explore.tsx": {
-      "Alert": 3,
       "Skeleton": 1,
       "CircularProgress": 1
     },
     "apps/dwp/src/features/rooms/workplace-floor-plan.tsx": {
-      "RawRadius": 3,
+      "RawRadius": 1,
       "RawMotion": 1,
       "RawTypography": 1
     },
-    "apps/dwp/src/features/rooms/workplace-home-section-frame.tsx": {
-      "RawRadius": 1,
-      "RawTypography": 1
-    },
     "apps/dwp/src/features/rooms/workplace-home-sections.tsx": {
-      "RawTypography": 29,
-      "RawRadius": 2
-    },
-    "apps/dwp/src/features/rooms/workplace-home-workload-bar.tsx": {
-      "RawTypography": 2,
-      "RawRadius": 1
-    },
-    "apps/dwp/src/features/rooms/workplace-home.tsx": {
-      "Alert": 1,
-      "RawRadius": 1
-    },
-    "apps/dwp/src/features/rooms/workplace-layout-editor.tsx": {
-      "HardcodedColor": 3,
       "RawTypography": 1
     },
     "apps/dwp/src/features/rooms/workplace-legal-hold-control.tsx": {
@@ -1573,21 +1466,11 @@
       "RawTypography": 2
     },
     "apps/dwp/src/features/rooms/workplace-release-windows.tsx": {
-      "Skeleton": 3,
-      "Alert": 4,
-      "RawTypography": 2
+      "Skeleton": 3
     },
     "apps/dwp/src/features/rooms/workplace-relocate-booking-dialog.tsx": {
       "Skeleton": 1,
       "Alert": 2
-    },
-    "apps/dwp/src/features/rooms/workplace-resource-inspector.tsx": {
-      "Alert": 1,
-      "RawTypography": 1
-    },
-    "apps/dwp/src/features/rooms/workplace-week-rhythm.tsx": {
-      "RawRadius": 1,
-      "RawTypography": 4
     },
     "apps/dwp/src/features/search/global-search-dialog.tsx": {
       "Dialog": 1,

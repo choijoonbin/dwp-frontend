@@ -11,12 +11,12 @@ const roomsViews = [
   'rooms-find',
   'workplace-admin-locations',
   'workplace-admin-governance',
-  'workplace-admin-operations',
+  'workplace-admin-facilities',
   'workplace-admin-overview',
   'workplace-admin-policy',
   'workplace-bookings',
   'workplace-explore',
-  'workplace-home',
+  'workplace-member-workspace',
 ] as const;
 
 describe('Rooms page loading boundary', () => {

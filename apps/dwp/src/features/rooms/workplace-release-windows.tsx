@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Armchair, CalendarRange, Plus, XCircle } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import {
   createWorkplaceIdempotencyKey,
   getWorkplaceAssignedResources,
   getWorkplaceReleaseWindows,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -22,7 +23,7 @@ import {
 } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
-import Alert from '@mui/material/Alert';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -31,6 +32,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
+import { workplaceHomeSourceData, workplaceHomeSourceState } from './workplace-home-source-state';
+import { workplaceMemberCard } from './workplace-member-surfaces';
 
 import type { WorkplaceAssignedResource, WorkplaceReleaseWindow } from '@dwp-frontend/shared-utils';
 
@@ -57,29 +61,58 @@ export function WorkplaceReleaseWindows() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
+  const auth = useAuth();
+  const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
+  const identityRef = useRef(identityKey);
+  identityRef.current = identityKey;
   const range = useMemo(queryPeriod, []);
   const resourcesQuery = useQuery({
-    queryKey: ['workplace', 'release-windows', 'eligible-resources'],
+    queryKey: ['workplace', 'release-windows', identityKey, 'eligible-resources'],
     queryFn: getWorkplaceAssignedResources,
     staleTime: 60_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const windowsQuery = useQuery({
-    queryKey: ['workplace', 'release-windows', range.from, range.to],
+    queryKey: ['workplace', 'release-windows', identityKey, range.from, range.to],
     queryFn: () => getWorkplaceReleaseWindows(range.from, range.to),
     staleTime: 20_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
-  const resources = resourcesQuery.data ?? [];
-  const windows = (windowsQuery.data ?? []).sort(
+  const resourcesState = workplaceHomeSourceState({
+    data: resourcesQuery.data,
+    error: resourcesQuery.error,
+    failureCount: resourcesQuery.failureCount,
+    failureReason: resourcesQuery.failureReason,
+    isError: resourcesQuery.isError,
+    isPending: resourcesQuery.isPending,
+    required: true,
+  });
+  const windowsState = workplaceHomeSourceState({
+    data: windowsQuery.data,
+    error: windowsQuery.error,
+    failureCount: windowsQuery.failureCount,
+    failureReason: windowsQuery.failureReason,
+    isError: windowsQuery.isError,
+    isPending: windowsQuery.isPending,
+    required: true,
+  });
+  const resources = workplaceHomeSourceData(resourcesState, resourcesQuery.data) ?? [];
+  const windows = [...(workplaceHomeSourceData(windowsState, windowsQuery.data) ?? [])].sort(
     (left, right) => Date.parse(left.startsAt) - Date.parse(right.startsAt)
   );
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogIdentity, setDialogIdentity] = useState(identityKey);
+  const [reconcileIdentity, setReconcileIdentity] = useState<string | null>(null);
   const [resourceId, setResourceId] = useState('');
   const [startsAt, setStartsAt] = useState(defaultPeriod().startsAt);
   const [endsAt, setEndsAt] = useState(defaultPeriod().endsAt);
   const [note, setNote] = useState('');
-  const [cancelling, setCancelling] = useState<WorkplaceReleaseWindow | null>(null);
+  const [cancelling, setCancelling] = useState<{
+    identityKey: string;
+    window: WorkplaceReleaseWindow;
+  } | null>(null);
+  const activeCancelling = cancelling?.identityKey === identityKey ? cancelling.window : null;
+  const requiresReconcile = reconcileIdentity === identityKey;
   const commandRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const selectedResource =
     resources.find((resource) => resource.resourceId === resourceId) ?? resources[0] ?? null;
@@ -96,8 +129,14 @@ export function WorkplaceReleaseWindows() {
     );
 
   const createMutation = useMutation({
-    mutationFn: () => {
-      if (!selectedResource || !capabilities.canCreateWorkplaceBooking) {
+    mutationFn: (submittedIdentity: string) => {
+      if (
+        submittedIdentity !== identityRef.current ||
+        resourcesState !== 'READY' ||
+        requiresReconcile ||
+        !selectedResource ||
+        !capabilities.canCreateWorkplaceBooking
+      ) {
         throw new Error(t('workplace.my.releaseWindows.readOnly', {}));
       }
       const input = {
@@ -117,34 +156,76 @@ export function WorkplaceReleaseWindows() {
       commandRef.current = command;
       return createWorkplaceReleaseWindow(input, command.key);
     },
-    onSuccess: async () => {
+    onSuccess: async (_, submittedIdentity) => {
+      if (submittedIdentity !== identityRef.current) return;
       commandRef.current = null;
       setDialogOpen(false);
       setNote('');
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      if (submittedIdentity !== identityRef.current) return;
       toast.success(t('workplace.my.releaseWindows.created'));
     },
-    onError: () => toast.error(t('workplace.my.releaseWindows.saveError')),
+    onError: (_, submittedIdentity) => {
+      if (submittedIdentity === identityRef.current) setReconcileIdentity(submittedIdentity);
+    },
   });
   const cancelMutation = useMutation({
-    mutationFn: (window: WorkplaceReleaseWindow) => {
-      if (!capabilities.canUpdateWorkplaceBooking) {
+    mutationFn: ({
+      identityKey: submittedIdentity,
+      window,
+    }: {
+      identityKey: string;
+      window: WorkplaceReleaseWindow;
+    }) => {
+      const current = windows.find(
+        (candidate) =>
+          candidate.releaseWindowId === window.releaseWindowId &&
+          candidate.version === window.version
+      );
+      if (
+        submittedIdentity !== identityRef.current ||
+        windowsState !== 'READY' ||
+        requiresReconcile ||
+        !current?.canCancel ||
+        !capabilities.canUpdateWorkplaceBooking
+      ) {
         throw new Error(t('workplace.my.releaseWindows.readOnly', {}));
       }
       return cancelWorkplaceReleaseWindow(window.releaseWindowId, window.version);
     },
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
+      if (variables.identityKey !== identityRef.current) return;
       setCancelling(null);
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      if (variables.identityKey !== identityRef.current) return;
       toast.success(t('workplace.my.releaseWindows.cancelled'));
     },
-    onError: () => toast.error(t('workplace.my.releaseWindows.cancelError')),
+    onError: (_, variables) => {
+      if (variables.identityKey === identityRef.current)
+        setReconcileIdentity(variables.identityKey);
+    },
   });
+  const busy = createMutation.isPending || cancelMutation.isPending;
+  useEffect(() => {
+    setDialogOpen(false);
+    setCancelling(null);
+    setNote('');
+    commandRef.current = null;
+  }, [identityKey]);
+  const recheck = async () => {
+    const submittedIdentity = identityKey;
+    const results = await Promise.all([resourcesQuery.refetch(), windowsQuery.refetch()]);
+    if (submittedIdentity === identityRef.current && results.every((result) => !result.isError)) {
+      setReconcileIdentity(null);
+      createMutation.reset();
+      cancelMutation.reset();
+    }
+  };
 
   if (resourcesQuery.isLoading) return <Skeleton variant="rectangular" height={176} />;
   if (resourcesQuery.isError && !resourcesQuery.data) {
     return (
-      <Alert
+      <InlineFeedback
         severity="error"
         action={
           <ActionButton intent="quiet" onClick={() => resourcesQuery.refetch()}>
@@ -153,7 +234,7 @@ export function WorkplaceReleaseWindows() {
         }
       >
         {t('workplace.my.releaseWindows.resourceLoadError')}
-      </Alert>
+      </InlineFeedback>
     );
   }
   if (resources.length === 0) return null;
@@ -165,11 +246,24 @@ export function WorkplaceReleaseWindows() {
     setEndsAt(period.endsAt);
     setNote('');
     commandRef.current = null;
+    setDialogIdentity(identityKey);
     setDialogOpen(true);
   };
 
   return (
-    <Box sx={{ mt: 2, border: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
+    <Box sx={(theme) => ({ ...workplaceMemberCard(theme), mt: 2.5 })}>
+      {requiresReconcile ? (
+        <InlineFeedback
+          severity="warning"
+          action={
+            <ActionButton intent="secondary" onClick={() => void recheck()}>
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('workplace.experience.changeUnknown')}
+        </InlineFeedback>
+      ) : null}
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
@@ -191,7 +285,7 @@ export function WorkplaceReleaseWindows() {
             <Armchair size={18} />
           </Box>
           <Box>
-            <Typography component="h2" fontWeight={800}>
+            <Typography component="h2" fontWeight="fontWeightBold">
               {t('workplace.my.releaseWindows.title')}
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -200,14 +294,19 @@ export function WorkplaceReleaseWindows() {
           </Box>
         </Stack>
         {capabilities.canCreateWorkplaceBooking && (
-          <ActionButton intent="secondary" startIcon={<Plus size={16} />} onClick={openDialog}>
+          <ActionButton
+            intent="primary"
+            startIcon={<Plus size={16} />}
+            disabled={resourcesState !== 'READY' || busy || requiresReconcile}
+            onClick={openDialog}
+          >
             {t('workplace.my.releaseWindows.add')}
           </ActionButton>
         )}
       </Stack>
 
       {resourcesQuery.isError && resourcesQuery.data && (
-        <Alert
+        <InlineFeedback
           severity="warning"
           action={
             <ActionButton intent="quiet" onClick={() => resourcesQuery.refetch()}>
@@ -216,7 +315,7 @@ export function WorkplaceReleaseWindows() {
           }
         >
           {t('workplace.staleWarning')}
-        </Alert>
+        </InlineFeedback>
       )}
 
       {windowsQuery.isLoading && (
@@ -226,7 +325,7 @@ export function WorkplaceReleaseWindows() {
         </Stack>
       )}
       {windowsQuery.isError && (
-        <Alert
+        <InlineFeedback
           severity={windowsQuery.data ? 'warning' : 'error'}
           action={
             <ActionButton intent="quiet" onClick={() => windowsQuery.refetch()}>
@@ -237,7 +336,7 @@ export function WorkplaceReleaseWindows() {
           {t(
             windowsQuery.data ? 'workplace.staleWarning' : 'workplace.my.releaseWindows.loadError'
           )}
-        </Alert>
+        </InlineFeedback>
       )}
       {!windowsQuery.isLoading &&
         (!windowsQuery.isError || windowsQuery.data) &&
@@ -262,7 +361,7 @@ export function WorkplaceReleaseWindows() {
               >
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" gap={0.8} alignItems="center" flexWrap="wrap">
-                    <Typography fontWeight={750}>{window.resourceName}</Typography>
+                    <Typography fontWeight="fontWeightBold">{window.resourceName}</Typography>
                     <Chip
                       size="small"
                       variant="outlined"
@@ -280,8 +379,9 @@ export function WorkplaceReleaseWindows() {
                 {window.canCancel && capabilities.canUpdateWorkplaceBooking && (
                   <ActionButton
                     intent="danger"
+                    disabled={windowsState !== 'READY' || busy || requiresReconcile}
                     startIcon={<XCircle size={16} />}
-                    onClick={() => setCancelling(window)}
+                    onClick={() => setCancelling({ identityKey, window })}
                   >
                     {t('workplace.my.releaseWindows.cancel')}
                   </ActionButton>
@@ -292,19 +392,37 @@ export function WorkplaceReleaseWindows() {
         )}
 
       <FormDialog
-        open={dialogOpen}
+        open={dialogOpen && dialogIdentity === identityKey && resourcesState !== 'DENIED'}
         title={t('workplace.my.releaseWindows.dialogTitle')}
         description={t('workplace.my.releaseWindows.dialogDescription')}
         cancelLabel={t('actions.cancel')}
         submitLabel={t('workplace.my.releaseWindows.publish')}
         submittingLabel={t('actions.saving')}
         busy={createMutation.isPending}
-        submitDisabled={!valid || !capabilities.canCreateWorkplaceBooking}
+        submitDisabled={
+          !valid ||
+          !capabilities.canCreateWorkplaceBooking ||
+          resourcesState !== 'READY' ||
+          requiresReconcile
+        }
         onClose={() => setDialogOpen(false)}
-        onSubmit={() => createMutation.mutate()}
+        onSubmit={() => createMutation.mutate(identityKey)}
         maxWidth="sm"
+        mobileFullScreen
       >
         <Stack spacing={2}>
+          {requiresReconcile ? (
+            <InlineFeedback
+              severity="warning"
+              action={
+                <ActionButton intent="secondary" onClick={() => void recheck()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              {t('workplace.experience.changeUnknown')}
+            </InlineFeedback>
+          ) : null}
           <SelectField
             label={t('workplace.my.releaseWindows.resource')}
             value={selectedResource?.resourceId ?? ''}
@@ -347,12 +465,14 @@ export function WorkplaceReleaseWindows() {
             onChange={(event) => setNote(event.target.value)}
             inputProps={{ maxLength: 240 }}
           />
-          <Alert severity="info">{t('workplace.my.releaseWindows.policyNotice')}</Alert>
+          <InlineFeedback severity="info">
+            {t('workplace.my.releaseWindows.policyNotice')}
+          </InlineFeedback>
         </Stack>
       </FormDialog>
 
       <ConfirmDialog
-        open={Boolean(cancelling)}
+        open={Boolean(activeCancelling) && windowsState !== 'DENIED'}
         title={t('workplace.my.releaseWindows.cancelTitle')}
         description={t('workplace.my.releaseWindows.cancelDescription')}
         cancelLabel={t('actions.keep')}
@@ -360,9 +480,12 @@ export function WorkplaceReleaseWindows() {
         confirmingLabel={t('actions.saving')}
         intent="danger"
         busy={cancelMutation.isPending}
+        minimumActionHeight={44}
+        focusCancelAfterOpen
         onClose={() => setCancelling(null)}
         onConfirm={() => {
-          if (cancelling) cancelMutation.mutate(cancelling);
+          if (activeCancelling && windowsState === 'READY' && !requiresReconcile)
+            cancelMutation.mutate({ identityKey, window: activeCancelling });
         }}
       />
     </Box>

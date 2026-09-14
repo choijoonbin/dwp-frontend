@@ -83,6 +83,52 @@ for (const view of views) {
     await page.goto('/approvals/home');
     const briefing = page.getByTestId('approval-daily-briefing');
     await expect(briefing).toBeVisible();
+    const homeSurfaces = page.locator('[data-workspace-widget-content] > section.MuiPaper-root');
+    expect(await homeSurfaces.count()).toBeGreaterThan(0);
+    expect(
+      await homeSurfaces.evaluateAll((elements) =>
+        elements.every((element) => getComputedStyle(element).boxShadow === 'none')
+      )
+    ).toBe(true);
+    const quickActions = page.getByTestId('approval-quick-actions').getByRole('button');
+    await expect(quickActions).toHaveCount(4);
+    const quickActionBounds = await quickActions.evaluateAll((elements) =>
+      elements.map((element) => {
+        const bounds = element.getBoundingClientRect();
+        return {
+          x: bounds.x,
+          y: bounds.y,
+          right: bounds.right,
+          bottom: bounds.bottom,
+          border: parseFloat(getComputedStyle(element).borderTopWidth),
+        };
+      })
+    );
+    for (const [index, bounds] of quickActionBounds.entries()) {
+      expect(bounds.border).toBeGreaterThan(0);
+      for (const other of quickActionBounds.slice(index + 1)) {
+        expect(bounds.right < other.x || other.right < bounds.x || bounds.bottom < other.y).toBe(
+          true
+        );
+      }
+    }
+    const briefingStyle = await page.getByTestId('approval-briefing-band').evaluate((element) => ({
+      background: getComputedStyle(element).backgroundColor,
+      decoration: getComputedStyle(element, '::after').content,
+    }));
+    if (!view.dark) expect(briefingStyle.background).toBe('rgb(255, 255, 255)');
+    expect(briefingStyle.decoration).toBe('none');
+    if (view.width >= 1280) {
+      const primary = page.locator('[data-approval-primary-column]');
+      const support = page.locator('[data-approval-support-column]');
+      const [left, right] = await Promise.all([primary.boundingBox(), support.boundingBox()]);
+      expect(left).not.toBeNull();
+      expect(right).not.toBeNull();
+      expect(left!.width / right!.width).toBeCloseTo(2, 1);
+      const focus = await primary.locator('[data-workspace-widget="focus-queue"]').boundingBox();
+      const requests = await primary.locator('[data-workspace-widget="my-requests"]').boundingBox();
+      expect(requests!.y - (focus!.y + focus!.height)).toBeLessThanOrEqual(20);
+    }
     await expect(page.getByRole('heading', { level: 1 })).toContainText('이서연');
     await expect(
       briefing.getByRole('button', { name: /긴급 결재 보기|View urgent approvals/u })
@@ -96,6 +142,10 @@ for (const view of views) {
     ).toBe(1);
     const metricCards = page.getByTestId('approval-kpi-card');
     await expect(metricCards).toHaveCount(4);
+    const colors = await metricCards.evaluateAll((elements) =>
+      elements.map((element) => getComputedStyle(element, '::before').backgroundColor)
+    );
+    expect(new Set(colors).size).toBe(4);
     const measurements = await metricCards.evaluateAll((elements) =>
       elements.map((element) => {
         const style = getComputedStyle(element);
@@ -194,6 +244,83 @@ test('keyboard customization enters its toolbar and restores the opener after ca
   await expect(customize).toBeFocused();
 });
 
+test('home preference 409 preserves local edits and requires an explicit recovery choice', async ({
+  page,
+}) => {
+  await prepare(page, views[0]);
+  let currentVersion = 1;
+  let writes = 0;
+  let reappliedLayout: { presentation?: string } | undefined;
+  await page.route('**/api/platform/v1/home-preferences/surfaces/approval-home', async (route) => {
+    if (route.request().method() === 'PUT') {
+      writes += 1;
+      const body = route.request().postDataJSON() as {
+        layout: { presentation?: string };
+        version: number;
+      };
+      if (writes === 1) {
+        currentVersion = 2;
+        return route.fulfill({
+          status: 409,
+          json: { status: 'ERROR', errorCode: 'HOME_PREFERENCE_VERSION_CONFLICT' },
+        });
+      }
+      reappliedLayout = body.layout;
+      expect(body.version).toBe(2);
+      currentVersion = 3;
+      return route.fulfill({
+        json: {
+          status: 'SUCCESS',
+          data: {
+            schemaVersion: 4,
+            surfaceKey: 'approval-home',
+            customized: true,
+            layout: body.layout,
+            version: currentVersion,
+            updatedAt: '2026-09-11T02:00:00Z',
+          },
+        },
+      });
+    }
+    return route.fulfill({
+      json: {
+        status: 'SUCCESS',
+        data: {
+          schemaVersion: 4,
+          surfaceKey: 'approval-home',
+          customized: currentVersion > 1,
+          layout: {
+            appLayout: null,
+            presentation: currentVersion > 1 ? 'expressive' : 'balanced',
+            widgets: [],
+          },
+          version: currentVersion,
+          updatedAt: null,
+        },
+      },
+    });
+  });
+
+  await page.goto('/approvals/home');
+  await page.getByRole('button', { name: '결재 홈 편집' }).click();
+  await page.getByRole('button', { name: '집중', exact: true }).click();
+  await page
+    .getByRole('navigation', { name: '홈 구성 편집 도구' })
+    .getByRole('button', { name: '저장', exact: true })
+    .click();
+
+  const conflict = page.getByRole('alert').filter({ hasText: '로컬 편집은 보존' });
+  await expect(conflict).toBeVisible();
+  await expect(page.getByRole('button', { name: '집중', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await conflict.getByRole('button', { name: '내 변경 다시 적용' }).click();
+  await expect(conflict).toHaveCount(0);
+  expect(writes).toBe(2);
+  expect(reappliedLayout?.presentation).toBe('focused');
+});
+
 test('cancel after personalization failure focuses its actionable retry instead of the disabled opener', async ({
   page,
 }) => {
@@ -271,7 +398,16 @@ test('long identifiers and 200 percent text fit locally and retain forced-color 
         (elements) => new Set(elements.map((element) => element.getBoundingClientRect().x)).size
       )
     )
-    .toBe(1);
+    .toBe(2);
+  expect(
+    await metrics.evaluateAll((elements) =>
+      elements.every((element) => element.scrollWidth <= element.clientWidth + 1)
+    )
+  ).toBe(true);
+  await metrics
+    .first()
+    .locator('..')
+    .screenshot({ path: info.outputPath('approval-metrics-forced-200.png') });
   const meters = page.getByRole('progressbar');
   await expect(meters).toHaveCount(4);
   for (const meter of await meters.all()) {

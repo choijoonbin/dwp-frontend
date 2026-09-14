@@ -1,6 +1,8 @@
-import type { ApprovalFormDraftInput } from '@dwp-frontend/shared-utils';
+import type { ApprovalFormDraftInput, ApprovalTypedFormSchema } from '@dwp-frontend/shared-utils';
 
 export type FormDraft = ApprovalFormDraftInput & { formKey: string };
+export type LegacyFormDraft = FormDraft & { typedSchema?: never };
+export type TypedFormDraft = FormDraft & { typedSchema: ApprovalTypedFormSchema; fields?: never };
 export type CategoryDraft = {
   categoryKey: string;
   parentCategoryId: string;
@@ -13,7 +15,7 @@ export type CategoryDraft = {
   lifecycleState: 'ACTIVE' | 'INACTIVE';
 };
 
-export const emptyFormDraft = (): FormDraft => ({
+export const emptyFormDraft = (): LegacyFormDraft => ({
   formKey: '',
   categoryId: '',
   nameKo: '',

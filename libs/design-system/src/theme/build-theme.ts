@@ -200,6 +200,27 @@ export function buildDwpTheme({
                 boxShadow: `0 0 0 3px ${alpha(primary, highContrast ? 0.34 : 0.18)}`,
               },
             },
+            '@media (forced-colors: active)': {
+              '&.MuiButton-contained, &.MuiButton-outlined, &.MuiButton-text': {
+                color: 'ButtonText',
+                backgroundColor: 'ButtonFace',
+                border: '1px solid ButtonText',
+                boxShadow: 'none',
+                '&:hover': {
+                  color: 'HighlightText',
+                  backgroundColor: 'Highlight',
+                  borderColor: 'Highlight',
+                  boxShadow: 'none',
+                },
+                '&.Mui-disabled': {
+                  color: 'GrayText',
+                  backgroundColor: 'ButtonFace',
+                  borderColor: 'GrayText',
+                  boxShadow: 'none',
+                },
+              },
+              '&.Mui-focusVisible, &:focus-visible': { outlineColor: 'Highlight' },
+            },
           },
         },
       },
@@ -285,7 +306,23 @@ export function buildDwpTheme({
       },
       MuiTooltip: {
         defaultProps: { arrow: true },
-        styleOverrides: { tooltip: { borderRadius: tokens.radius.compact, fontSize: 12 } },
+        styleOverrides: {
+          tooltip: {
+            borderRadius: tokens.radius.compact,
+            fontSize: 12,
+            color: dark ? tokens.color.neutral[900] : '#FFFFFF',
+            backgroundColor: dark ? tokens.color.neutral[25] : tokens.color.neutral[900],
+            '@media (forced-colors: active)': {
+              color: 'CanvasText',
+              backgroundColor: 'Canvas',
+              border: '1px solid CanvasText',
+            },
+          },
+          arrow: {
+            color: dark ? tokens.color.neutral[25] : tokens.color.neutral[900],
+            '@media (forced-colors: active)': { color: 'CanvasText' },
+          },
+        },
       },
       MuiDialog: {
         defaultProps: { fullWidth: true },

@@ -27,7 +27,6 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
-  PageCanvas,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -41,6 +40,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { notificationQueryKeys } from './integration-contract';
 import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
 import { NotificationBulkUndoBanner } from './notification-bulk-undo-banner';
+import { NotificationPageFrame } from './notification-page-frame';
 import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import { GovernedSavedViewControl } from '../../components/governed-saved-view-control';
 import {
@@ -70,6 +70,7 @@ import {
 import type { CenterFilters } from './notification-filter-model';
 export type { CenterFilters, NotificationCenterScope } from './notification-filter-model';
 import { NotificationCenterDetail } from './notification-center-detail';
+import { useNotificationInspectorHeight } from './use-notification-inspector-height';
 import type { NotificationCenterProps } from './notification-center-contract';
 import {
   NotificationStreamGroupHeading,
@@ -145,6 +146,7 @@ export function NotificationCenter({
   const [resynchronizing, setResynchronizing] = useState(false);
   const [triageAnnouncement, setTriageAnnouncement] = useState('');
   const rowRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const inspector = useNotificationInspectorHeight();
   const lastSummaryChangeVersionRef = useRef<string | null>(null);
   const closeItemDetails = useCallback(() => {
     setDetailOpen(false);
@@ -573,6 +575,7 @@ export function NotificationCenter({
   ];
   const streamGroups = groupNotificationStream(items);
   const itemIndexById = new Map(items.map((item, index) => [item.notificationId, index]));
+  const privacyReady = Boolean(profileQuery.data);
 
   const selectView = (nextView: NotificationView) => {
     if (detailOpen) closeItemDetails();
@@ -633,8 +636,8 @@ export function NotificationCenter({
   };
 
   return (
-    <PageCanvas mode="workspace">
-      <Box sx={{ width: 1, maxWidth: 1720, mx: 'auto', pb: 8 }}>
+    <NotificationPageFrame>
+      <Box sx={{ pb: 8 }}>
         <NotificationWorkbenchHeader
           state={connectionState}
           generatedAt={summaryQuery.data?.generatedAt}
@@ -688,6 +691,7 @@ export function NotificationCenter({
               py: 0.75,
               border: 1,
               borderColor: 'divider',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               bgcolor: 'action.hover',
             }}
           >
@@ -743,22 +747,23 @@ export function NotificationCenter({
             display: 'grid',
             gridTemplateColumns: {
               xs: 'minmax(0, 1fr)',
-              lg: 'minmax(0, 1.3fr) minmax(360px, .7fr)',
+              lg: 'minmax(0, 1.1fr) minmax(360px, 1fr)',
             },
             gap: { lg: 1.5 },
             alignItems: 'start',
           }}
         >
           <Box minWidth={0}>
-            {inboxQuery.isLoading ? (
+            {inboxQuery.isLoading || profileQuery.isLoading ? (
               <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
-            ) : inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error) ? (
+            ) : (inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error)) ||
+              profileQuery.isError ? (
               <ErrorState
                 title={t('states.loadErrorTitle')}
                 description={t('states.loadErrorDescription')}
                 retryLabel={t('actions.retry')}
-                onRetry={() => void inboxQuery.refetch()}
-                retrying={inboxQuery.isFetching}
+                onRetry={() => void Promise.all([inboxQuery.refetch(), profileQuery.refetch()])}
+                retrying={inboxQuery.isFetching || profileQuery.isFetching}
               />
             ) : cursorResetRequired && items.length === 0 ? (
               <NotificationSyncResetNotice
@@ -806,6 +811,7 @@ export function NotificationCenter({
                         };
                         const concealContext =
                           item.sensitive ||
+                          !profileQuery.data ||
                           profileQuery.data?.presentation.previewMode === 'HIDDEN';
                         return (
                           <Box component="li" key={item.notificationId}>
@@ -874,31 +880,36 @@ export function NotificationCenter({
             )}
           </Box>
           <Box
+            ref={inspector.ref}
+            data-testid="notification-desktop-inspector"
             sx={{
               display: { xs: 'none', lg: 'block' },
               position: 'sticky',
-              top: 16,
+              top: 'calc(var(--dwp-shell-desktop-sticky-offset, 64px) + 16px)',
               minWidth: 0,
-              minHeight: 360,
-              height: 'calc(100vh - 120px)',
-              maxHeight: 'calc(100vh - 120px)',
+              minHeight: 0,
+              height: inspector.height ?? 'calc(100dvh - 360px)',
+              scrollMarginBottom: (theme) => theme.spacing(2),
               overflow: 'hidden',
               border: 1,
               borderColor: 'divider',
-              borderRadius: 'shape.borderRadius',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               bgcolor: 'background.paper',
+              boxShadow: 'var(--notification-panel-shadow)',
             }}
           >
             <NotificationCenterDetail
-              item={detailOpen ? detailItem : null}
+              item={detailOpen && privacyReady ? detailItem : null}
               open={detailOpen}
               mode="desktop"
-              loading={routedDetailQuery.isLoading}
-              error={routedDetailQuery.isError}
-              fetching={routedDetailQuery.isFetching}
+              loading={routedDetailQuery.isLoading || profileQuery.isLoading}
+              error={routedDetailQuery.isError || profileQuery.isError}
+              fetching={routedDetailQuery.isFetching || profileQuery.isFetching}
               busy={triageMutation.isPending || !online}
               onBack={closeItemDetails}
-              onRetry={() => void routedDetailQuery.refetch()}
+              onRetry={() =>
+                void Promise.all([routedDetailQuery.refetch(), profileQuery.refetch()])
+              }
               onTriage={(action, snoozedUntil) => {
                 if (detailItem) triageMutation.mutate({ item: detailItem, action, snoozedUntil });
               }}
@@ -947,15 +958,15 @@ export function NotificationCenter({
         }}
       >
         <NotificationCenterDetail
-          item={detailItem}
+          item={privacyReady ? detailItem : null}
           open={detailOpen}
           mode="mobile"
-          loading={routedDetailQuery.isLoading}
-          error={routedDetailQuery.isError}
-          fetching={routedDetailQuery.isFetching}
+          loading={routedDetailQuery.isLoading || profileQuery.isLoading}
+          error={routedDetailQuery.isError || profileQuery.isError}
+          fetching={routedDetailQuery.isFetching || profileQuery.isFetching}
           busy={triageMutation.isPending || !online}
           onBack={closeItemDetails}
-          onRetry={() => void routedDetailQuery.refetch()}
+          onRetry={() => void Promise.all([routedDetailQuery.refetch(), profileQuery.refetch()])}
           onTriage={(action, snoozedUntil) => {
             if (detailItem) triageMutation.mutate({ item: detailItem, action, snoozedUntil });
           }}
@@ -967,6 +978,6 @@ export function NotificationCenter({
           }
         />
       </Drawer>
-    </PageCanvas>
+    </NotificationPageFrame>
   );
 }

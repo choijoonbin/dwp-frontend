@@ -1,0 +1,204 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open approval navigation" [ref=e8]:
+          - button "Open approval navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Approvals" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - 'button "Account: 이서연, Tenant administrator" [ref=e26] [cursor=pointer]':
+            - generic [ref=e27]: 이
+            - img [ref=e28]
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - text: Approval home
+            - heading "Hello, 이서연" [level=1] [ref=e34]
+            - paragraph [ref=e35]: See the decisions that need you and the health of every approval flow.
+          - generic [ref=e36]:
+            - button "New request" [ref=e37] [cursor=pointer]:
+              - img [ref=e39]
+              - text: New request
+            - button "Customize approval home" [ref=e42] [cursor=pointer]:
+              - img [ref=e44]
+              - text: Customize approval home
+        - generic [ref=e52]:
+          - region "Make the highest-priority decisions first" [ref=e55]:
+            - generic [ref=e57]:
+              - generic [ref=e58]:
+                - generic [ref=e59]:
+                  - img [ref=e60]
+                  - generic [ref=e67]: Today's approval workflow brief
+                  - generic [ref=e68]: Aug 14, 11:30 AM
+                - heading "Make the highest-priority decisions first" [level=2] [ref=e69]
+                - paragraph [ref=e70]: "Pending reviews: 1 · Due today: 0 · Overdue: 1"
+                - generic [ref=e71]:
+                  - generic [ref=e72]:
+                    - generic [ref=e74]: High
+                    - generic [ref=e75]: APR-20260814-002
+                    - generic [ref=e76]: Risk 69
+                  - paragraph [ref=e77]: 신규 협력사 보안 예외
+                  - text: 협력사 온보딩 전에 보안 통제를 검토합니다.
+              - generic [ref=e78]:
+                - button "Review priority decisions" [ref=e79] [cursor=pointer]:
+                  - text: Review priority decisions
+                  - img [ref=e81]
+                - button "Decision inbox" [ref=e83] [cursor=pointer]:
+                  - img [ref=e85]
+                  - text: Decision inbox
+            - region "Approval decision metrics" [ref=e89]:
+              - button "Pending 1 1 overdue request" [ref=e90] [cursor=pointer]:
+                - generic [ref=e91]:
+                  - generic [ref=e92]:
+                    - paragraph [ref=e93]: Pending
+                    - img [ref=e95]
+                  - paragraph [ref=e100]: "1"
+                  - paragraph [ref=e101]: 1 overdue request
+              - button "Due today 0 Due before day end" [ref=e102] [cursor=pointer]:
+                - generic [ref=e103]:
+                  - generic [ref=e104]:
+                    - paragraph [ref=e105]: Due today
+                    - img [ref=e107]
+                  - paragraph [ref=e112]: "0"
+                  - paragraph [ref=e113]: Due before day end
+              - button "My requests in flight 2 Submitted by you and still in progress" [ref=e114] [cursor=pointer]:
+                - generic [ref=e115]:
+                  - generic [ref=e116]:
+                    - paragraph [ref=e117]: My requests in flight
+                    - img [ref=e119]
+                  - paragraph [ref=e123]: "2"
+                  - paragraph [ref=e124]: Submitted by you and still in progress
+              - generic [ref=e126]:
+                - generic [ref=e127]:
+                  - paragraph [ref=e128]: Average decision time
+                  - img [ref=e130]
+                - generic [ref=e133]:
+                  - paragraph [ref=e134]: "5.4"
+                  - generic [ref=e135]: hours
+                - paragraph [ref=e136]: 96% SLA compliance
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - generic [ref=e141]:
+                - generic [ref=e142]:
+                  - generic [ref=e143]:
+                    - heading "Priority review queue" [level=2] [ref=e144]
+                    - text: 1 priority review
+                  - button "View all" [ref=e145] [cursor=pointer]:
+                    - text: View all
+                    - img [ref=e147]
+                - button "신규 협력사 보안 예외 Open approval details" [ref=e149] [cursor=pointer]:
+                  - generic [ref=e150]:
+                    - generic [ref=e151]:
+                      - generic [ref=e153]: High
+                      - generic [ref=e154]: APR-20260814-002
+                    - generic [ref=e155]: Risk 69
+                  - paragraph [ref=e156]: 신규 협력사 보안 예외
+                  - generic [ref=e157]: 박지호 · 보안 검토
+                  - generic [ref=e158]:
+                    - generic [ref=e159]: Due Aug 14, 04:00 PM
+                    - generic [ref=e160]:
+                      - generic [ref=e161]: Open review
+                      - img [ref=e162]
+              - generic [ref=e167]:
+                - generic [ref=e168]:
+                  - generic [ref=e169]:
+                    - heading "My request tracker" [level=2] [ref=e170]
+                    - text: Current state of recent submissions
+                  - button "View all" [ref=e171] [cursor=pointer]
+                - button "APR-20260813-003 GPU 증설 투자 검토 In review 2/3 · 구매 조건 검토 33% 33%" [ref=e172] [cursor=pointer]:
+                  - generic [ref=e173]:
+                    - generic [ref=e174]:
+                      - text: APR-20260813-003
+                      - paragraph [ref=e175]: GPU 증설 투자 검토
+                    - generic [ref=e177]: In review
+                  - generic [ref=e178]:
+                    - generic [ref=e179]:
+                      - generic [ref=e180]: 2/3 · 구매 조건 검토
+                      - generic [ref=e181]: 33%
+                    - progressbar "2/3 · 구매 조건 검토" [ref=e182]
+              - generic [ref=e186]:
+                - generic [ref=e188]:
+                  - heading "Approval flow status" [level=2] [ref=e189]
+                  - text: Volume and risk by stage
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - generic [ref=e192]:
+                      - generic [ref=e193]: In review
+                      - generic [ref=e194]: 7 · 2 at risk
+                    - progressbar "In review" [ref=e195]
+                  - generic [ref=e197]:
+                    - generic [ref=e198]:
+                      - generic [ref=e199]: Needs information
+                      - generic [ref=e200]: 1 · 1 at risk
+                    - progressbar "Needs information" [ref=e201]
+                  - generic [ref=e203]:
+                    - generic [ref=e204]:
+                      - generic [ref=e205]: Approved
+                      - generic [ref=e206]: 12 · 0 at risk
+                    - progressbar "Approved" [ref=e207]
+            - generic [ref=e209]:
+              - generic [ref=e212]:
+                - generic [ref=e214]:
+                  - heading "Quick actions" [level=2] [ref=e215]
+                  - text: Common approval tasks
+                - generic [ref=e216]:
+                  - 'button "New request: Start from an approved form" [ref=e217] [cursor=pointer]':
+                    - img [ref=e219]
+                    - generic [ref=e222]:
+                      - paragraph [ref=e223]: New request
+                      - generic [ref=e224]: Start from an approved form
+                    - img [ref=e225]
+                  - 'button "Open inbox: Review decisions and policy signals" [ref=e228] [cursor=pointer]':
+                    - img [ref=e230]
+                    - generic [ref=e234]:
+                      - paragraph [ref=e235]: Open inbox
+                      - generic [ref=e236]: Review decisions and policy signals
+                    - img [ref=e237]
+                  - 'button "Saved drafts: Continue requests already in progress" [ref=e240] [cursor=pointer]':
+                    - img [ref=e242]
+                    - generic [ref=e246]:
+                      - paragraph [ref=e247]: Saved drafts
+                      - generic [ref=e248]: Continue requests already in progress
+                    - img [ref=e249]
+                  - 'button "Delegation: Manage coverage and decision authority" [ref=e252] [cursor=pointer]':
+                    - img [ref=e254]
+                    - generic [ref=e257]:
+                      - paragraph [ref=e258]: Delegation
+                      - generic [ref=e259]: Manage coverage and decision authority
+                    - img [ref=e260]
+              - generic [ref=e265]:
+                - generic [ref=e267]:
+                  - heading "Decision navigator" [level=2] [ref=e268]
+                  - text: Policy and SLA signals to address
+                - button "Decisions have passed their due time Review high-risk items first to reduce downstream delay. Review related work" [ref=e270] [cursor=pointer]:
+                  - img [ref=e272]
+                  - generic [ref=e274]:
+                    - paragraph [ref=e275]: Decisions have passed their due time
+                    - generic [ref=e276]: Review high-risk items first to reduce downstream delay.
+                    - generic [ref=e277]:
+                      - generic [ref=e278]: Review related work
+                      - img [ref=e279]
+              - generic [ref=e283]:
+                - generic [ref=e285]:
+                  - heading "Recent approval activity" [level=2] [ref=e286]
+                  - text: Latest states in the canonical response
+                - list [ref=e287]:
+                  - listitem [ref=e288]:
+                    - button "GPU 증설 투자 검토 In review APR-20260813-003 · Submitted Aug 13, 02:00 PM" [ref=e289] [cursor=pointer]:
+                      - generic [ref=e292]:
+                        - generic [ref=e293]:
+                          - paragraph [ref=e294]: GPU 증설 투자 검토
+                          - generic [ref=e296]: In review
+                        - generic [ref=e297]: APR-20260813-003 · Submitted Aug 13, 02:00 PM
+```

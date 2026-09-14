@@ -48,6 +48,159 @@ function comparable(values: readonly ComparableContract[]) {
     );
 }
 
+const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
+  createApprovalRequest: ['approvalRequestExecutionConfig'],
+  updateApprovalDraft: ['approvalRequestExecutionConfig'],
+  submitApprovalRequest: ['approvalRequestExecutionConfig'],
+  respondToApprovalInformationRequest: ['approvalRequestExecutionConfig'],
+  recoverApprovalDraft: ['draftCommand'],
+  deleteApprovalDraft: ['draftCommand'],
+  restoreApprovalDraft: ['draftCommand'],
+  appendApprovalRequestComment: ['appendApprovalDocumentComment', 'command', 'executionConfig'],
+  appendApprovalTaskComment: ['appendApprovalDocumentComment', 'command', 'executionConfig'],
+  exportApprovalRequestDocument: ['exportApprovalDocument', 'command', 'executionConfig'],
+  exportApprovalTaskDocument: ['exportApprovalDocument', 'command', 'executionConfig'],
+  exportApprovalArchive: ['command', 'executionConfig'],
+  saveApprovalDocumentPolicy: ['command', 'executionConfig'],
+  publishApprovalDocumentPolicy: ['command', 'executionConfig'],
+  proposeApprovalDocumentHold: ['command', 'executionConfig'],
+  publishApprovalDocumentHold: ['command', 'executionConfig'],
+  reserveApprovalAttachmentUpload: ['command', 'config'],
+  uploadApprovalAttachmentContent: ['config'],
+  reconcileApprovalAttachmentUpload: ['command', 'config'],
+  cancelApprovalAttachmentUpload: ['command', 'config'],
+  selectApprovalAttachments: ['command', 'config'],
+  createApprovalRequestAttachmentDownloadGrant: [
+    'createApprovalAttachmentDownloadGrant',
+    'command',
+    'config',
+  ],
+  createApprovalTaskAttachmentDownloadGrant: [
+    'createApprovalAttachmentDownloadGrant',
+    'command',
+    'config',
+  ],
+  branchApprovalFormWorkspaceVersion: ['command'],
+  updateApprovalFormWorkingDraft: ['command'],
+  retireApprovalFormWorkspace: ['command'],
+  reinstateApprovalFormWorkspace: ['command'],
+  publishReviewedApprovalFormWorkspace: ['command'],
+  saveApprovalAttachmentPolicyDraft: ['settings'],
+  publishApprovalAttachmentPolicy: ['settings'],
+  initializeApprovalRetentionPolicy: ['command'],
+  saveApprovalRetentionPolicy: ['command'],
+  publishApprovalRetentionPolicy: ['command'],
+  createApprovalRetentionClaim: ['command'],
+  createApprovalSignatureRequest: ['command'],
+  consentApprovalSignatureRequest: ['command'],
+  signApprovalSignatureRequest: ['command'],
+  cancelApprovalSignatureRequest: ['command'],
+};
+
+// Shared transports must forward the same authority at every AST call edge.
+function approvalExecutionBody(source: ts.SourceFile, apiFunction: string) {
+  const declarations = new Map(
+    source.statements
+      .filter(ts.isFunctionDeclaration)
+      .filter((node) => node.name && node.body)
+      .map((node) => [node.name!.text, node])
+  );
+  const chain = APPROVAL_EXECUTION_CHAINS[apiFunction];
+  if (!chain) throw new Error(`Unregistered approval execution chain: ${apiFunction}`);
+  const highRisk = [
+    'publishApprovalDocumentPolicy',
+    'publishApprovalDocumentHold',
+    'publishReviewedApprovalFormWorkspace',
+    'publishApprovalAttachmentPolicy',
+  ].includes(apiFunction);
+  const bodies: string[] = [];
+  let current = declarations.get(apiFunction);
+  for (const calleeName of chain) {
+    if (!current?.body) throw new Error(`Missing approval wrapper: ${apiFunction}`);
+    bodies.push(current.body.getText(source));
+    const calls: ts.CallExpression[] = [];
+    const visit = (node: ts.Node) => {
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === calleeName
+      )
+        calls.push(node);
+      ts.forEachChild(node, visit);
+    };
+    visit(current.body);
+    expect(calls, `${current.name?.text} -> ${calleeName}`).toHaveLength(1);
+    const callee = declarations.get(calleeName);
+    const executionIndex = callee?.parameters.findIndex(
+      (parameter) => parameter.name.getText(source) === 'execution'
+    );
+    expect(executionIndex, `${calleeName} authority parameter`).toBeGreaterThanOrEqual(0);
+    expect(calls[0]?.arguments[executionIndex!]?.getText(source)).toBe('execution');
+    if (calleeName === 'command' && source.fileName.endsWith('approval-document-api.ts')) {
+      expect(calls[0]?.arguments[3]?.getText(source) ?? 'false').toBe(String(highRisk));
+      expect(callee?.parameters[3]?.initializer?.getText(source)).toBe('false');
+    }
+    if (calleeName === 'command' && source.fileName.endsWith('approval-form-workspace-api.ts')) {
+      expect(calls[0]?.arguments[5]?.getText(source) ?? 'false').toBe(String(highRisk));
+      expect(callee?.parameters[5]?.initializer?.getText(source)).toBe('false');
+    }
+    if (calleeName === 'settings' && source.fileName.endsWith('approval-attachment-policy-api.ts'))
+      expect(calls[0]?.arguments[3]?.getText(source)).toBe(String(highRisk));
+    if (calleeName === 'command' && source.fileName.endsWith('approval-retention-api.ts')) {
+      const high = ['publishApprovalRetentionPolicy', 'createApprovalRetentionClaim'].includes(
+        apiFunction
+      );
+      const options = calls[0]?.arguments[3];
+      const highProperty =
+        options && ts.isObjectLiteralExpression(options)
+          ? options.properties.find(
+              (property) =>
+                ts.isPropertyAssignment(property) && property.name.getText(source) === 'high'
+            )
+          : undefined;
+      expect(
+        highProperty && ts.isPropertyAssignment(highProperty)
+          ? highProperty.initializer.getText(source)
+          : 'false'
+      ).toBe(String(high));
+      expect(current.body.getText(source)).toContain('Object.freeze(');
+      expect(callee?.body?.getText(source)).toContain("csrfReplay: 'NEVER'");
+      expect(callee?.body?.getText(source)).toContain('objectVersionHeader: true');
+    }
+    if (calleeName === 'command' && source.fileName.endsWith('approval-signature-api.ts')) {
+      const operation = {
+        createApprovalSignatureRequest: 'CREATE',
+        consentApprovalSignatureRequest: 'CONSENT',
+        signApprovalSignatureRequest: 'SIGN',
+        cancelApprovalSignatureRequest: 'CANCEL',
+      }[apiFunction];
+      expect(calls[0]?.arguments[0]?.getText(source)).toBe(`'${operation}'`);
+      expect(callee?.body?.getText(source)).toContain("operation === 'SIGN'");
+      expect(callee?.body?.getText(source)).toContain('objectVersionHeader: false');
+      expect(callee?.body?.getText(source)).toContain("csrfReplay: 'NEVER'");
+      expect(callee?.body?.getText(source)).toContain('Object.freeze({');
+    }
+    if (calleeName === 'executionConfig')
+      expect(calls[0]?.arguments[2]?.getText(source)).toBe('publish');
+    if (calleeName === 'draftCommand') {
+      const action = {
+        recoverApprovalDraft: 'recover',
+        deleteApprovalDraft: 'delete',
+        restoreApprovalDraft: 'restore',
+      }[apiFunction];
+      expect(calls[0]?.arguments[1]?.getText(source)).toBe(`'${action}'`);
+    }
+    current = callee;
+  }
+  if (!current?.body) throw new Error('Missing approval authority configuration');
+  bodies.push(current.body.getText(source));
+  if (chain.at(-1) === 'executionConfig')
+    expect(current.body.getText(source)).toContain(
+      "if (publish && execution.mode !== 'SECURE') invalid();"
+    );
+  return bodies.join('\n');
+}
+
 describe('Generated product ACTION mutation closure', () => {
   it('maps every generated production ACTION binding with no missing or extra API boundary', () => {
     const canonical = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
@@ -84,6 +237,14 @@ describe('Generated product ACTION mutation closure', () => {
     const apiRoot = path.resolve(process.cwd(), 'libs/shared-utils/src/api');
     const files = [
       'approval-api.ts',
+      'approval-document-api.ts',
+      'approval-draft-api.ts',
+      'approval-form-workspace-api.ts',
+      'approval-attachment-api.ts',
+      'approval-attachment-policy-api.ts',
+      'approval-attachment-policy-initialize-api.ts',
+      'approval-retention-api.ts',
+      'approval-signature-api.ts',
       'announcement-api.ts',
       'communication-api.ts',
       'service-center-api.ts',
@@ -113,7 +274,9 @@ describe('Generated product ACTION mutation closure', () => {
         ) {
           found.set(node.name.text, {
             parameters: node.parameters.map((parameter) => parameter.name.getText(source)),
-            body: node.body.getText(source),
+            body: Object.hasOwn(APPROVAL_EXECUTION_CHAINS, node.name.text)
+              ? approvalExecutionBody(source, node.name.text)
+              : node.body.getText(source),
           });
         }
         ts.forEachChild(node, visit);
@@ -149,6 +312,14 @@ describe('Generated product ACTION mutation closure', () => {
         }>;
       }>;
     };
+    const ownerOpenApi = JSON.parse(
+      fs.readFileSync(
+        path.resolve(process.cwd(), 'libs/api-contracts/openapi/gateway-public.json'),
+        'utf8'
+      )
+    ) as {
+      paths: Record<string, Record<string, { parameters?: Array<{ in: string; name: string }> }>>;
+    };
     const highRiskBindings = (snapshot.bundles.at(-1)?.routes ?? []).flatMap((route) =>
       (route.stepUpCommandBindings ?? []).map((stepUp) => {
         const gateway = (route.gatewayApiBindings ?? []).find(
@@ -162,21 +333,44 @@ describe('Generated product ACTION mutation closure', () => {
             candidate.path === gateway.path
         );
         if (!contract) throw new Error(`Missing HIGH frontend binding: ${stepUp.bindingKey}`);
+        const ownerDeclaresVersionHeader = ownerOpenApi.paths[gateway.path]?.[
+          gateway.method.toLowerCase()
+        ]?.parameters?.some(
+          (parameter) =>
+            parameter.in === 'header' && parameter.name === 'X-DWP-Expected-Object-Version'
+        );
+        const apiFunction = contract.apiFunction.split(':')[0];
+        const supplementalOwnerHeader = [
+          'createApprovalRetentionClaim',
+          'publishApprovalRetentionPolicy',
+        ].includes(apiFunction);
+        if (supplementalOwnerHeader) {
+          expect(stepUp.expectedObjectVersionSource).toBe('COMMAND_BODY');
+          expect(ownerDeclaresVersionHeader, `${apiFunction} native header`).toBe(true);
+        }
         return {
-          apiFunction: contract.apiFunction.split(':')[0],
-          objectVersionHeader: stepUp.expectedObjectVersionSource === 'COMMAND_HEADER',
+          apiFunction,
+          canonicalHeader: stepUp.expectedObjectVersionSource === 'COMMAND_HEADER',
+          supplementalOwnerHeader,
         };
       })
     );
 
-    expect(highRiskBindings).toHaveLength(11);
+    expect(highRiskBindings).toHaveLength(18);
+    // Retention compares the signed body version and an additional native owner header.
+    expect(
+      highRiskBindings
+        .filter((binding) => !binding.canonicalHeader && binding.supplementalOwnerHeader)
+        .map((binding) => binding.apiFunction)
+        .sort()
+    ).toEqual(['createApprovalRetentionClaim', 'publishApprovalRetentionPolicy']);
     for (const binding of highRiskBindings) {
       const body = found.get(binding.apiFunction)?.body ?? '';
       expect(body, `${binding.apiFunction} strict HIGH config`).toMatch(
         /(approvalHighRiskMutationExecutionConfig|productSurfaceHighRiskMutationConfig)\(/u
       );
       expect(body, `${binding.apiFunction} version binding`).toContain(
-        `objectVersionHeader: ${binding.objectVersionHeader}`
+        `objectVersionHeader: ${binding.canonicalHeader || binding.supplementalOwnerHeader}`
       );
     }
   });

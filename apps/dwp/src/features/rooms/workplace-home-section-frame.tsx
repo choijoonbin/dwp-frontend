@@ -1,7 +1,9 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
+
+import { workplaceMemberCard } from './workplace-member-surfaces';
 
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -12,42 +14,59 @@ export function WorkplaceHomeSectionHeader({
   title,
   description,
   action,
+  mobileIcon = false,
 }: {
   id: string;
   icon: LucideIcon;
   title: string;
   description: string;
   action?: ReactNode;
+  mobileIcon?: boolean;
 }) {
   return (
     <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      alignItems={{ xs: 'flex-start', sm: 'center' }}
+      direction="row"
+      alignItems="center"
       justifyContent="space-between"
       gap={1.25}
-      sx={{ px: { xs: 2, md: 2.5 }, py: 1.75 }}
+      sx={{
+        px: { xs: 0, md: foundationTokens.workplace.layout.gutter + 'px' },
+        pt: { xs: 0, md: foundationTokens.workplace.layout.gutter + 'px' },
+        pb: { xs: 1, md: foundationTokens.workplace.layout.cardGap + 'px' },
+      }}
     >
       <Stack direction="row" spacing={1.1} alignItems="flex-start" minWidth={0}>
         <Box
           aria-hidden="true"
-          sx={(theme) => ({
-            width: 34,
-            height: 34,
-            flex: '0 0 34px',
-            display: 'grid',
+          sx={{
+            width: 20,
+            height: 26,
+            flex: '0 0 20px',
+            display: { xs: mobileIcon ? 'grid' : 'none', md: 'grid' },
             placeItems: 'center',
-            borderRadius: 1,
-            color: 'primary.main',
-            bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.09),
-          })}
+            borderRadius: foundationTokens.radius.control + 'px',
+            color: mobileIcon ? 'error.main' : 'primary.main',
+          }}
         >
           <Icon size={17} strokeWidth={1.9} />
         </Box>
         <Box minWidth={0}>
-          <Typography id={id} component="h2" variant="subtitle1" fontWeight={800}>
+          <Typography
+            id={id}
+            component="h2"
+            sx={foundationTokens.workplace.typography.subsectionTitle}
+          >
             {title}
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.2 }}>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              ...foundationTokens.workplace.typography.smallBody,
+              display: { xs: 'none', md: 'block' },
+              mt: 0.5,
+            }}
+          >
             {description}
           </Typography>
         </Box>
@@ -60,22 +79,26 @@ export function WorkplaceHomeSectionHeader({
 export function WorkplaceHomeSectionShell({
   labelledBy,
   children,
+  mobileSurface = 'transparent',
 }: {
   labelledBy: string;
   children: ReactNode;
+  mobileSurface?: 'transparent' | 'attention';
 }) {
   return (
     <Box
       component="section"
       aria-labelledby={labelledBy}
-      sx={{
-        minWidth: 0,
-        borderTop: 1,
-        borderBottom: 1,
-        borderColor: 'divider',
-        bgcolor: 'transparent',
-        overflow: 'hidden',
-      }}
+      sx={(theme) => ({
+        ...workplaceMemberCard(theme),
+        borderWidth: { xs: 0, md: 1 },
+        bgcolor: {
+          xs: mobileSurface === 'attention' ? 'var(--dwp-product-soft)' : 'transparent',
+          md: 'background.paper',
+        },
+        p: { xs: mobileSurface === 'attention' ? 1 : 0, md: 0 },
+        borderRadius: foundationTokens.workplace.radius.card + 'px',
+      })}
     >
       {children}
     </Box>

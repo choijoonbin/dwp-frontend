@@ -518,6 +518,11 @@ export async function mockWorkHubFoundation(
               ...approvalDecisionEvents,
             ]
           : [],
+        contentAccess: {
+          state: 'FULL',
+          reason: 'CURRENT_AUTHORITY_VERIFIED',
+          evaluatedAt: stamp,
+        },
         canClaim: false,
         canDecide: Boolean(
           options.designDetails && ['PENDING', 'CLAIMED'].includes(approval.status)

@@ -36,6 +36,9 @@ export * from './api/idempotent-mutation-intent';
 export * from './api/rooms-api';
 export * from './api/workplace-api';
 export * from './api/workplace-governance-api';
+export * from './api/workplace-collaboration-api';
+export * from './api/workplace-experience-report-api';
+export * from './api/workplace-experience-facilities-api';
 export * from './api/mail-api';
 export * from './api/mail-address-book-api';
 export * from './api/video-meeting-api';
@@ -46,6 +49,23 @@ export * from './api/notification-app-summary-api';
 export * from './api/people-admin-api';
 export * from './api/hr-api';
 export * from './api/approval-api';
+export * from './api/approval-form-workspace-api';
+export type * from './api/approval-form-workspace-contract';
+export {
+  approvalFormWorkspaceId,
+  approvalFormWorkspaceRevision,
+  assertApprovalFormWorkspaceRevisionInput,
+  readApprovalFormWorkspace,
+  readApprovalFormWorkspaceReview,
+  readApprovalFormWorkspaceVersion,
+  snapshotApprovalFormWorkspace,
+} from './api/approval-form-workspace-contract';
+export * from './api/approval-attachment-api';
+export * from './api/approval-attachment-policy-api';
+export type * from './api/approval-attachment-policy-contract';
+export * from './api/approval-attachment-action-contracts';
+export * from './api/approval-information-receipt-api';
+export type * from './api/approval-attachment-contract';
 export * from './api/approval-governed-mutation';
 export * from './api/product-surface-governed-mutation';
 export * from './api/space-api';

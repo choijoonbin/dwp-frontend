@@ -109,6 +109,7 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
     expect(glanceGeometry?.x ?? -1).toBeGreaterThanOrEqual(0);
     expect((glanceGeometry?.x ?? 0) + (glanceGeometry?.width ?? 0)).toBeLessThanOrEqual(width + 1);
     await page.keyboard.press('Escape');
+    await expect(glance).toBeHidden();
 
     const selection = page.getByRole('checkbox').first();
     await selection.check();
@@ -187,7 +188,7 @@ test('알림 홈은 실제 집계와 우선 업무를 반응형 실행 허브로
     await expect(page.getByRole('region', { name: '먼저 확인할 알림' })).toBeVisible();
     await expect(page.getByRole('region', { name: '앱별 알림' })).toBeVisible();
     await expect(page.getByRole('region', { name: '알림 수신 방식' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: '조치 필요' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '먼저 확인할 알림' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '멘션 및 대화' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '업무 업데이트' })).toBeVisible();
     await expect(page.getByText('전자결재', { exact: true }).first()).toBeVisible();
@@ -257,18 +258,35 @@ test('알림 설정은 긴 정책 화면을 섹션 바로가기로 탐색하고 
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/notifications/settings');
+    await page.getByRole('tab', { name: '내 수신 상태', exact: true }).click();
     await expect(page.getByRole('heading', { name: '내 수신 상태' })).toBeVisible();
     await expect(page.getByText('앱 내 수신 가능', { exact: true })).toBeVisible();
     await expect(page.getByText('연결 준비 중', { exact: true }).first()).toBeVisible();
+    await page.getByRole('tab', { name: '알림 설정', exact: true }).click();
     const navigation = page.getByRole('navigation', { name: '알림 설정 바로가기' });
+    const presentationSection = page.locator('#notification-preferences-presentation');
+    const appsSection = page.locator('#notification-preferences-apps');
     await expect(navigation).toBeVisible();
+    await expect(presentationSection).toBeVisible();
+    await expect(appsSection).toBeVisible();
     await navigation.getByRole('button', { name: '앱별 알림' }).click();
     await expect
       .poll(() =>
         navigation.getByRole('button', { name: '앱별 알림' }).getAttribute('aria-current')
       )
       .toBe('location');
+    await expect(presentationSection).toBeVisible();
+    await expect(appsSection).toBeVisible();
     await expect(page.getByRole('button', { name: '전자결재', exact: true })).toBeVisible();
+    if (width < 1200) {
+      const [headerBox, navigationBox] = await Promise.all([
+        page.getByRole('banner').boundingBox(),
+        navigation.boundingBox(),
+      ]);
+      expect(headerBox).not.toBeNull();
+      expect(navigationBox).not.toBeNull();
+      expect(navigationBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1);
+    }
     await expectNoHorizontalOverflow(page);
   }
 
@@ -280,7 +298,38 @@ test('알림 설정은 긴 정책 화면을 섹션 바로가기로 탐색하고 
   ).toEqual([]);
 });
 
-test('알림 운영 개요는 실시간 상태와 추이를 먼저 보여주고 정확한 수치를 보존한다', async ({
+test('데스크톱 설정 위치는 모바일 전환 후에도 같은 설정군을 유지한다', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Responsive section continuity is covered once.');
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page);
+  await mockNotificationPreferences(page);
+  await mockNotificationProfile(page);
+  await page.setViewportSize({ width: 1440, height: 844 });
+  await page.goto('/notifications/settings');
+
+  const navigation = page.getByRole('navigation', { name: '알림 설정 바로가기' });
+  const appsTab = navigation.getByRole('button', { name: '앱별 알림' });
+  const presentationSection = page.locator('#notification-preferences-presentation');
+  const appsSection = page.locator('#notification-preferences-apps');
+  await appsSection.evaluate((section) => section.scrollIntoView({ block: 'start' }));
+  await expect(appsTab).toHaveAttribute('aria-current', 'location');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(appsSection).toBeVisible();
+  await expect(presentationSection).toBeVisible();
+  await expect(appsTab).toHaveAttribute('aria-current', 'location');
+  await expect(
+    appsSection.getByRole('heading', { name: '앱별 알림', exact: true })
+  ).toBeInViewport();
+  await expectNoHorizontalOverflow(page);
+});
+
+test('알림 운영 개요는 이상 항목과 실시간 추이를 함께 보여주고 정확한 수치를 보존한다', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Operations overview is covered once.');
@@ -303,7 +352,20 @@ test('알림 운영 개요는 실시간 상태와 추이를 먼저 보여주고 
         name: /8월 29일: 생성 7, 조치 필요 2, 실패 1, 음소거 1/,
       })
     ).toBeVisible();
+    const metrics = page.getByRole('region', { name: '알림 운영 핵심 지표' });
+    await expect(metrics.getByText('계약', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('알림', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('작업', { exact: true }).first()).toBeVisible();
     await expect(page.getByText('실시간 연결됨', { exact: true })).toBeVisible();
+    const findings = page.getByRole('heading', { name: '조치 대기열', level: 2 });
+    const trend = page.getByRole('heading', { name: '발생과 사용자 영향', level: 2 });
+    const [findingsBox, trendBox] = await Promise.all([
+      findings.boundingBox(),
+      trend.boundingBox(),
+    ]);
+    expect(findingsBox).not.toBeNull();
+    expect(trendBox).not.toBeNull();
+    expect(findingsBox!.x).toBeLessThanOrEqual(trendBox!.x);
     await page.getByText('정확한 수치 보기', { exact: true }).click();
     await expect(page.getByRole('table', { name: '알림 발생과 사용자 영향 추이' })).toBeVisible();
     await expectNoHorizontalOverflow(page);
@@ -768,8 +830,12 @@ test('20건 알림 burst는 한 번의 집계 안내로 버퍼링하고 열린 �
   const { glance } = await openHeaderNotificationGlance(page);
   await glance.getByRole('tab', { name: /^받은 알림/ }).click();
   const originalRow = glance.getByRole('button', { name: /보호된 업무 알림/ }).first();
-  await originalRow.focus();
-  await expect(originalRow).toBeFocused();
+  await expect
+    .poll(async () => {
+      await originalRow.focus();
+      return originalRow.evaluate((element) => element === document.activeElement);
+    })
+    .toBe(true);
 
   const arrivalIds = Array.from(
     { length: 20 },
@@ -872,7 +938,11 @@ test('영어 세션은 제목과 CTA 및 상대·절대 시각을 지역화해 �
   await expect(page.getByText(englishItem.title, { exact: true }).first()).toBeVisible();
   await expect(page.getByText(/days ago$/).first()).toBeVisible();
   await page.getByRole('button', { name: englishItem.title }).click();
-  await expect(page.getByRole('heading', { name: englishItem.title, level: 3 })).toBeVisible();
+  await expect(
+    page
+      .getByRole('complementary', { name: 'Selected notification details' })
+      .getByRole('heading', { name: englishItem.title, level: 3 })
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Review request' })).toBeVisible();
   await expect(page.getByText(/August 19, 2026/)).toBeVisible();
 });

@@ -1,0 +1,226 @@
+{
+  "verifiedAtUtc": "2026-09-14T09:19:36.275619+00:00",
+  "kind": "documentation integrity and static menu coverage only; no product tests executed",
+  "accountNavigationCount": 8,
+  "adminNavigationCount": 24,
+  "legacyAdminCount": 1,
+  "inventoryExistingCount": 33,
+  "missingInventoryRoutes": [],
+  "missingPromptRoutes": [],
+  "screenPromptCount": 13,
+  "standalonePromptCount": 13,
+  "brokenLocalLinks": [],
+  "sourceFileCount": 139,
+  "files": [
+    {
+      "path": "00-current-analysis-and-renewal-plan.md",
+      "bytes": 14045,
+      "sha256": "8ecd02fea966e1601779934af5de2ac30bdd521631ee5688bb1b7f19cc34ff78"
+    },
+    {
+      "path": "02-design-delivery-and-acceptance.md",
+      "bytes": 8743,
+      "sha256": "751028a41ca9c9407eb8d97b8cd21424317028425a06188f154761c818c91a9b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 7236,
+      "sha256": "bb4587d5775cba8b049a4f79dbcb6f7bc978edf995eb23a290b0603081f10aad"
+    },
+    {
+      "path": "assets/approved-my-app-2026-09-14.png",
+      "bytes": 119734,
+      "sha256": "cc2d292e866e8d88cee0639e74fdc061797ff43cd0464d7d73b494f7f5822c7a"
+    },
+    {
+      "path": "audits/01-home-experience-audit.md",
+      "bytes": 15482,
+      "sha256": "3dd75a6bc5ff6c103746f593e05972f46f30cfe631ab7b3c24241c0a40639313"
+    },
+    {
+      "path": "audits/02-widget-data-audit.md",
+      "bytes": 16966,
+      "sha256": "2227720d2c52ae8fe0246f0f6aeaef0c34b3b31efa723d1314d5de88604077a4"
+    },
+    {
+      "path": "audits/03-home-personalization-audit.md",
+      "bytes": 6331,
+      "sha256": "d09838b1c90ad8ddf490ddff0ed773cb65b08f196cd25bbdda1dd3ed2fa4734e"
+    },
+    {
+      "path": "audits/04-account-admin-audit.md",
+      "bytes": 20768,
+      "sha256": "4f4de336932ff475a4f8fe234acc9bfe80e22ce9c9e0afa538f43be8cbf318e8"
+    },
+    {
+      "path": "contracts/account-admin-menu-inventory.md",
+      "bytes": 20897,
+      "sha256": "caee010b2cdecece9b1d828d6e5418d30f8bd89568e4b78bbb112767ca2954a4"
+    },
+    {
+      "path": "contracts/app-expansion-and-new-app-plan.md",
+      "bytes": 12999,
+      "sha256": "d8ff4005a2849784c145bdb50b7d6f93664c8e382b05291041640a91daae2b02"
+    },
+    {
+      "path": "contracts/build-package.py",
+      "bytes": 9408,
+      "sha256": "8bc539b9b1f523e255258826c3c3325c654cd42369e9d263da53a27ce369f291"
+    },
+    {
+      "path": "contracts/screen-delivery-registry.md",
+      "bytes": 6664,
+      "sha256": "a917ddaea2a38b2339347f945b3bd2abefbe9c032c4da7250c822e24baf87112"
+    },
+    {
+      "path": "contracts/source-snapshot.json",
+      "bytes": 27501,
+      "sha256": "53241c12d4e4c4ade99e3d3d6a8b0a6ad2cfb9e193721ac067f22b15b0ad8a89"
+    },
+    {
+      "path": "contracts/widget-extensibility-contract.md",
+      "bytes": 11196,
+      "sha256": "0993b54b525dbfe70a262bbc085fcc4ca3e9f3ef2713ea720885278e4d7d1372"
+    },
+    {
+      "path": "contracts/widget-source-matrix.md",
+      "bytes": 10808,
+      "sha256": "7df135bad65e44a629b02b3212baf9a5acb0f3caacff6b5ab5db41454c1468e2"
+    },
+    {
+      "path": "prompts/00-common-contract.md",
+      "bytes": 19562,
+      "sha256": "d0f7575623e186d29fe27f34e16ab01951613960ff525ea0d6b2d25f69f7d17c"
+    },
+    {
+      "path": "prompts/01-classic-home.md",
+      "bytes": 15251,
+      "sha256": "be2315786fd1005ba72c14e47e7e1ca0d843df15ed70f89ce534084dd0aaba01"
+    },
+    {
+      "path": "prompts/02-flow-home.md",
+      "bytes": 15229,
+      "sha256": "fbad19710d749fcddd90e4324d142a8735c647ef4fd95b94596d7fe97db170d8"
+    },
+    {
+      "path": "prompts/03-adaptive-home-concept.md",
+      "bytes": 23533,
+      "sha256": "29d633d5ad39ee96a7e87d60bcf57981fc15f692bde8c9d8b816db07e877c00f"
+    },
+    {
+      "path": "prompts/04-home-editor-and-widget-library.md",
+      "bytes": 7601,
+      "sha256": "b14e22a46e67c92c97c6061982e189d3f2c78ebd29e9045a53cd8a95e23849f6"
+    },
+    {
+      "path": "prompts/05-home-views-templates-history.md",
+      "bytes": 4769,
+      "sha256": "48f5620aef078a1a193edc3b96352bec8b73365e22e91cba94af9e5706341ab9"
+    },
+    {
+      "path": "prompts/06-home-appearance-and-devices.md",
+      "bytes": 4573,
+      "sha256": "7d35f83844d0a06d5c51977e74905ca0af92996e12aa41515d128054fad3ed71"
+    },
+    {
+      "path": "prompts/07-account-settings.md",
+      "bytes": 20265,
+      "sha256": "e6a66aaf3e86c98f889ba37acc12359baef83fb2475e05950afbb39c6dc13df4"
+    },
+    {
+      "path": "prompts/08-admin-home-and-experience.md",
+      "bytes": 23292,
+      "sha256": "c3f5cf652dabbf37665fc972563b8e4beb5052d49e1e8e06bc8f53988bc797f4"
+    },
+    {
+      "path": "prompts/09-admin-identity-and-platform.md",
+      "bytes": 24620,
+      "sha256": "05eb741745fb06d75bceb19cf276eb9605020762ffe0e1925ad2378c6224f0ba"
+    },
+    {
+      "path": "prompts/10-admin-integrations-and-governance.md",
+      "bytes": 18884,
+      "sha256": "178064407755dfcd4088f1ce12c33110f3c66aee21eb4f61042889e0cbfe0dc3"
+    },
+    {
+      "path": "prompts/11-cross-app-widget-designs.md",
+      "bytes": 12520,
+      "sha256": "5b537725a20c3d545881fca47ddfa1d00d695f19dc1ad856013474a463b7d9b0"
+    },
+    {
+      "path": "prompts/12-cross-app-expansion-menus.md",
+      "bytes": 8245,
+      "sha256": "631530b2351ce7fd00ae667b6359bda6f5d6c5f9b11696d907f05e0500ad665c"
+    },
+    {
+      "path": "prompts/13-new-apps-and-ai-workspace.md",
+      "bytes": 6221,
+      "sha256": "4c0eac17ee5060f43ce9a4d2c89ce70ead25536278266a2a1c1ba7a02bf22f94"
+    },
+    {
+      "path": "ready-to-send/01-classic-home.md",
+      "bytes": 60451,
+      "sha256": "17526c39d277b0f23422341178def498f1e21717d7ba6bbb94b9d560e4b88392"
+    },
+    {
+      "path": "ready-to-send/02-flow-home.md",
+      "bytes": 60429,
+      "sha256": "d8b49f0767348e2474452a977bb6a2de36907e07b85c5e2700be93df283348ba"
+    },
+    {
+      "path": "ready-to-send/03-adaptive-home-concept.md",
+      "bytes": 81739,
+      "sha256": "ccfd50eaca7aecd5982c6a54d793fd81fa9f6f2f867ff60efd4bc0f244df008c"
+    },
+    {
+      "path": "ready-to-send/04-home-editor-and-widget-library.md",
+      "bytes": 49546,
+      "sha256": "58a2a0bb336258c3899d397954c1395ed6d4d4af81dfc838b0849207d0885d5d"
+    },
+    {
+      "path": "ready-to-send/05-home-views-templates-history.md",
+      "bytes": 35899,
+      "sha256": "1b286e237f57d825f8d27d8c5c7a3383fa58efb7dc07f5fa82ffaf3eb7052d63"
+    },
+    {
+      "path": "ready-to-send/06-home-appearance-and-devices.md",
+      "bytes": 35703,
+      "sha256": "9158c05477c868154558e984d46e0377d55f2dff6e65adb1e3173beb260398c2"
+    },
+    {
+      "path": "ready-to-send/07-account-settings.md",
+      "bytes": 61096,
+      "sha256": "257f52dc8651c8bd2e57f3e3d97c4f8bce2182a42eb4307632992a3288ac08fa"
+    },
+    {
+      "path": "ready-to-send/08-admin-home-and-experience.md",
+      "bytes": 75326,
+      "sha256": "2bf442f9740b72bf67174c62efaac5bd148c3866bb0d01131140a720133817af"
+    },
+    {
+      "path": "ready-to-send/09-admin-identity-and-platform.md",
+      "bytes": 76654,
+      "sha256": "6e810b3aca2acd6feb5f833b5d1dead1df5fde153725cbffbe93984698ca0dc8"
+    },
+    {
+      "path": "ready-to-send/10-admin-integrations-and-governance.md",
+      "bytes": 72721,
+      "sha256": "7e3263005a5711c13da772d16198be0e7ba0637008a126e581af84728c51efe1"
+    },
+    {
+      "path": "ready-to-send/11-cross-app-widget-designs.md",
+      "bytes": 54465,
+      "sha256": "e2cb8783f7408d0801c42ce57c0630a8a8680e654862ea88c1440ac5ea2a8037"
+    },
+    {
+      "path": "ready-to-send/12-cross-app-expansion-menus.md",
+      "bytes": 51993,
+      "sha256": "b98c860a36cbe91f74bfd6d61ae21ba5e91ea1f44e8066c694921b5443d8353c"
+    },
+    {
+      "path": "ready-to-send/13-new-apps-and-ai-workspace.md",
+      "bytes": 39154,
+      "sha256": "9ef6ab03ec9fcaeac67efa0e8fd5e27089efec716ef18a1e10d3e8c7b1f5fe08"
+    }
+  ]
+}

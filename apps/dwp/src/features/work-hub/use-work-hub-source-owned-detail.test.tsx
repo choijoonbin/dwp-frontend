@@ -28,6 +28,11 @@ vi.mock('./use-work-hub-operation-owner', () => ({
 vi.mock('@dwp-frontend/shared-utils/api/approval-api', () => ({
   getApprovalTask: mocks.getApprovalTask,
   getApprovalRequestDetail: mocks.getApprovalRequestDetail,
+  resolveApprovalContentAccess: (approval: ApprovalTaskDetail) => ({
+    full: approval.contentAccess.state === 'FULL',
+    reason: approval.contentAccess.reason,
+    evaluatedAt: approval.contentAccess.evaluatedAt,
+  }),
 }));
 vi.mock('@dwp-frontend/shared-utils/api/service-center-api', () => ({
   getServiceMyRequest: mocks.getServiceMyRequest,
@@ -58,6 +63,11 @@ const task: ApprovalTask = {
 function detail(version = task.version, value = 'Current evidence'): ApprovalTaskDetail {
   return {
     task: { ...task, version },
+    contentAccess: {
+      state: 'FULL',
+      reason: 'CURRENT_AUTHORITY_VERIFIED',
+      evaluatedAt: '2026-09-04T00:01:00Z',
+    },
     payload: { purpose: value },
     formSchema: {
       schemaVersion: 1,

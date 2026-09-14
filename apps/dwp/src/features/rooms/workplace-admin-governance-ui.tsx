@@ -1,6 +1,12 @@
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ActionButton, EmptyState, LoadingState } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EmptyState,
+  LoadingState,
+  SectionHeader,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -21,7 +27,18 @@ export function GovernancePanel({
   children: ReactNode;
 }) {
   return (
-    <Box sx={{ border: 1, borderColor: 'divider', bgcolor: 'background.paper', minWidth: 0 }}>
+    <Box
+      component="section"
+      aria-label={title}
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control + 'px',
+        overflow: 'hidden',
+        bgcolor: 'background.paper',
+        minWidth: 0,
+      }}
+    >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
@@ -30,9 +47,7 @@ export function GovernancePanel({
         sx={{ px: { xs: 1.5, md: 2 }, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" fontWeight={800}>
-            {title}
-          </Typography>
+          <SectionHeader icon={ShieldCheck} title={title} density="compact" />
           {description ? (
             <Typography variant="caption" color="text.secondary">
               {description}

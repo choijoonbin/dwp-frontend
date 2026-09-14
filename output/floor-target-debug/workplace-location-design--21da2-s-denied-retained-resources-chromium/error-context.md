@@ -1,0 +1,170 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic "Workplace management" [ref=e13]
+        - generic [ref=e14]:
+          - button "Search DWP" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+          - generic "0 actionable notifications, 0 total unread" [ref=e22]:
+            - button "0 actionable notifications, 0 total unread" [ref=e23] [cursor=pointer]:
+              - generic [ref=e24]:
+                - img [ref=e25]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e29] [cursor=pointer]':
+            - generic [ref=e30]: T
+            - img [ref=e31]
+          - generic "Open DWAI·ON" [ref=e34]:
+            - button "Open DWAI·ON" [ref=e35] [cursor=pointer]
+      - generic [ref=e39]:
+        - navigation "App area switcher" [ref=e41]:
+          - generic [ref=e43]: Manage
+          - 'link "Return to work: Workplace" [ref=e45] [cursor=pointer]':
+            - /url: /workplace/home
+            - img [ref=e47]
+            - generic [ref=e49]: Work
+        - generic "SKAX" [ref=e50]
+    - main [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - text: Spatial inventory and digital floor plans
+            - heading "Sites and floor plans" [level=1] [ref=e55]
+            - paragraph [ref=e56]: Register headquarters and flexible offices, then place desks, rooms, lockers, and other reservable resources by floor.
+          - generic [ref=e58]:
+            - button "Refresh" [ref=e59] [cursor=pointer]:
+              - img [ref=e61]
+              - text: Refresh
+            - button "Add site" [ref=e66] [cursor=pointer]:
+              - img [ref=e68]
+              - text: Add site
+        - generic [ref=e70]:
+          - generic [ref=e71]: Sites
+          - generic [ref=e72]:
+            - combobox "Sites Pangyo HQ" [ref=e73] [cursor=pointer]: Pangyo HQ
+            - textbox: 10000000-0000-4000-8000-000000000001
+            - img
+            - group:
+              - generic: Sites
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - img [ref=e78]
+                - generic [ref=e82]:
+                  - generic [ref=e83]:
+                    - paragraph [ref=e84]: Pangyo HQ
+                    - generic [ref=e86]: Active
+                  - text: Bundang-gu, Seongnam
+              - generic [ref=e87]:
+                - button "Add floor" [ref=e88] [cursor=pointer]:
+                  - img [ref=e90]
+                  - text: Add floor
+                - button "Add space" [ref=e94] [cursor=pointer]:
+                  - img [ref=e96]
+                  - text: Add space
+            - generic [ref=e97]:
+              - tablist [ref=e101]:
+                - tab "12F (1) · Active" [selected] [ref=e102] [cursor=pointer]
+              - generic "Edit floor" [ref=e104]:
+                - button "Edit floor" [ref=e105] [cursor=pointer]:
+                  - img [ref=e106]
+            - generic [ref=e110]:
+              - region "Selected floor catalog" [ref=e111]:
+                - heading "Selected floor catalog" [level=2] [ref=e112]
+                - generic [ref=e113]:
+                  - button "All spaces 1" [pressed] [ref=e114] [cursor=pointer]:
+                    - generic [ref=e115]: All spaces
+                    - generic [ref=e116]: "1"
+                  - button "Desk 1" [ref=e117] [cursor=pointer]:
+                    - generic [ref=e118]: Desk
+                    - generic [ref=e119]: "1"
+              - status [ref=e120]:
+                - img [ref=e122]
+                - generic: Placement and background changes are allowed only through the auditable Draft, Review, and Publish workflow. This view shows the current catalog projection.
+                - button "Manage floor-plan release" [ref=e125] [cursor=pointer]:
+                  - img [ref=e127]
+                  - text: Manage floor-plan release
+              - group "View mode" [ref=e131]:
+                - button "List view" [ref=e132] [cursor=pointer]
+                - button "Map view" [active] [pressed] [ref=e133] [cursor=pointer]: Map view
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - generic [ref=e138]: 1 resources
+                  - generic [ref=e139]:
+                    - generic "Zoom out" [ref=e140]:
+                      - button "Zoom out" [ref=e141] [cursor=pointer]:
+                        - img [ref=e142]
+                    - generic [ref=e143]: 100%
+                    - generic "Zoom in" [ref=e144]:
+                      - button "Zoom in" [ref=e145] [cursor=pointer]:
+                        - img [ref=e146]
+                    - generic "Fit to width" [ref=e147]:
+                      - button "Fit to width" [disabled]:
+                        - img
+                    - button "Save layout" [disabled]:
+                      - generic:
+                        - img
+                      - text: Save layout
+                - generic [ref=e148]:
+                  - button "Focus desk 12" [pressed] [ref=e151] [cursor=pointer]: D-1208
+                  - status [ref=e152]
+                - generic [ref=e153]: Select a space to inspect its details.
+          - complementary "Focus desk 12" [ref=e154]:
+            - generic [ref=e155]:
+              - generic [ref=e156]:
+                - generic [ref=e157]:
+                  - text: Space information
+                  - heading "Focus desk 12" [level=2] [ref=e158]
+                - generic [ref=e160]: In service
+              - generic [ref=e162]:
+                - img [ref=e163]
+                - generic [ref=e165]: No space photo is registered.
+              - generic [ref=e166]:
+                - generic [ref=e168]: Desk
+                - generic [ref=e170]: Advance booking
+              - generic [ref=e171]:
+                - generic [ref=e172]:
+                  - img [ref=e173]
+                  - paragraph [ref=e176]: Pangyo HQ · 12F
+                - generic [ref=e177]:
+                  - img [ref=e178]
+                  - paragraph [ref=e182]: 1 people
+              - generic [ref=e183]:
+                - generic [ref=e185]: Monitor
+                - generic [ref=e187]: Standing desk
+              - region "Floor-plan coordinates" [ref=e188]:
+                - text: Floor-plan coordinates
+                - generic [ref=e189]:
+                  - term [ref=e190]: Horizontal position (%)
+                  - definition [ref=e191]: 12%
+                  - term [ref=e192]: Vertical position (%)
+                  - definition [ref=e193]: 18%
+              - button "Edit" [ref=e194] [cursor=pointer]:
+                - img [ref=e196]
+                - text: Edit
+              - generic [ref=e199]:
+                - heading "Manage space photo" [level=3] [ref=e200]:
+                  - button "Manage space photo" [ref=e201] [cursor=pointer]:
+                    - paragraph [ref=e203]: Manage space photo
+                    - img [ref=e205]
+                - generic: Photo file · PNG/JPEG, up to 10 MiB
+                - generic: Photo description
+                - generic: Reason for change
+              - generic [ref=e207]:
+                - heading "Scheduled space closure" [level=3] [ref=e208]:
+                  - button "Scheduled space closure" [ref=e209] [cursor=pointer]:
+                    - paragraph [ref=e211]: Scheduled space closure
+                    - img [ref=e213]
+                - generic: Start date and time
+                - generic: End date and time
+                - generic: Closure reason
+```
