@@ -13,11 +13,11 @@ const manifestSchemaSource = readFileSync(manifestSchemaUrl, 'utf8');
 
 const anchors = Object.freeze({
   schemaFile: '840c4002bc67dc214b36057f274ca79a046ad54a4f7c085dee72f9de5d3c2139',
-  goldenFile: 'b71455ce969ce19b13a6783c98cbad310f50355e6a15f78193df01fd32225941',
+  goldenFile: 'c7bea92fa38e826d089ea33c6ab51929291f67f94f3896b824536f6b9538200a',
   negativeFile: '1b88e11b59e2d9f315bce8ff3229193017a7d33591beeb6a548bed12f72dddc9',
-  positiveResponsesCanonical: 'aed088b1e21ad7b461ca3bb2c42392989eee3e64656504181e839928ee2f545d',
+  positiveResponsesCanonical: '986b11ab36f92e22e12266376ffc87d275fa96fe9cc6a526ee31a6f8f1b5f506',
   trustedLedgerContextsCanonical:
-    'c4a324f36bd61d2accaa2f1748aac261aa225205118a9b3ceb684ceda3071d43',
+    '81b40187119843d7e0467e17c1ed588e782b24d9d6ed011d00dea7a808f2542c',
   completionCatalogCanonical: 'ecb0111dc58b181dd6399a2e812ac6e8992482a2d6193f48deb94b69ba94cbb4',
   negativeCatalogCanonical: '4a4cdabe668163a0f8c824eefaf984b94bf36e4d7b37aeaf411f01fe2087bb52',
 });

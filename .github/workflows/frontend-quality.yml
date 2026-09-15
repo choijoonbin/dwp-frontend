@@ -97,6 +97,9 @@ jobs:
       - name: Check generated Gateway API contracts
         run: corepack yarn openapi:check
 
+      - name: Verify widget golden manifests and dependent semantic evidence
+        run: node docs/05-features/DWP-R1-ADM-009-widget-ecosystem-governance/fixtures/verify-golden.mjs
+
       - name: Run unit tests
         run: corepack yarn test
 

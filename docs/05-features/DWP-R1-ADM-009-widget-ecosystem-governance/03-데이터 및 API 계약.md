@@ -899,9 +899,19 @@ Verifier는 Fixture 내부 `expectedSha256`를 자기참조하지 않고 독립�
 고정한다. 따라서 key 교체, Manifest+digest 동시 변경, duplicate JSON key·공백 변경도 명시적
 Golden 승인 없이 통과하지 못한다.
 
+2026-09-16 Wave3 정합 보정으로 `command-rail` Golden을 `1.0.1`의 PERSONAL /
+`CLASSIC_PERSONAL`, `FLOW_PERSONAL` 내용으로 재봉인했다. `focus-balance`와 `meeting-load`의
+Native 확장도 `1.0.1`이며 나머지 4종은 `1.0.0`을 유지한다. `focus-balance`는 기존
+identity `core.work.focus-balance`를 보존하고 owner/source/authority/data capability를 Calendar에
+맞춘다. 기존 1.0.0 DB version은 수정하지
+않고 후속 version으로 대체한다. 연결된 command/completion/tenant/bootstrap/rollout fixture의
+독립 hash anchor도 함께 갱신했다. Bootstrap JWS와 public JWKS는 새 fixture 전용 EC 키로 만든
+비운영 계약 테스트 데이터이며, private key는 저장하거나 배포하지 않는다. 이전 fixture 서명과
+변조된 manifest/hash는 검증에서 거부해야 한다.
+
 | Legacy key     | expected SHA-256                                                   |
 | -------------- | ------------------------------------------------------------------ |
-| `command-rail` | `a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97` |
+| `command-rail` | `36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13` |
 | `daily-brief`  | `9b7f48b7ea4ef429120db330a4972c3315ad682759fa86e49c212c42bdd02406` |
 | `focus`        | `36d1b02326e4725a235749e173dfdf50a0423ef30f42d7ccab97946ba826d893` |
 | `schedule`     | `7f3e090997a213e9d3e6f8184e1458e57382c5f31db79f00fbf678d36f884f5d` |
@@ -1265,7 +1275,9 @@ Cache-Control: private, no-store
           "resolvedVersionId": "uuid",
           "semanticVersion": "1.0.0",
           "effectiveState": "AVAILABLE",
-          "reasonCodes": ["AVAILABLE"],
+          "reasonCodes": [
+            "AVAILABLE"
+          ],
           "placementCapabilities": {
             "canAdd": true,
             "canHide": true,
@@ -1273,31 +1285,20 @@ Cache-Control: private, no-store
             "canResize": true
           },
           "addedInstanceCount": 0
-        }
-      ]
-    },
-    {
-      "placementContext": "FLOW_GOVERNED",
-      "capabilities": {
-        "libraryRead": false,
-        "legacyPlacementWrite": false,
-        "instanceV6Write": false,
-        "brokerRead": false,
-        "presetCreate": false,
-        "presetShare": false
-      },
-      "items": [
+        },
         {
           "definitionId": "uuid",
           "definitionKey": "core.workspace.command-rail",
           "legacyWidgetKey": "command-rail",
           "resolvedVersionId": "uuid",
-          "semanticVersion": "1.0.0",
+          "semanticVersion": "1.0.1",
           "effectiveState": "ALREADY_ADDED",
-          "reasonCodes": ["ALREADY_ADDED"],
+          "reasonCodes": [
+            "ALREADY_ADDED"
+          ],
           "placementCapabilities": {
             "canAdd": false,
-            "canHide": false,
+            "canHide": true,
             "canMove": false,
             "canResize": false
           },
@@ -1321,7 +1322,9 @@ field, context는 `placementContext`, 표본의 6개 Boolean `capabilities`, `it
 `[CLASSIC_PERSONAL]` exact 1개다. `FLOW`이면 `FLOW_PERSONAL`이 항상 첫 번째이고, 정규화된 Published
 governed zone이 있으면 `FLOW_GOVERNED`가 두 번째다. 같은 Definition은 Manifest가 두 Context를 모두
 지원하더라도 context별 독립 item/capability로 평가하며 `(placementContext,definitionId)`가 unique다.
-Personal Library 항목과 managed `command-rail`을 단일 context로 합치거나 Browser가 Context를 선택할 수 없다.
+Wave3의 7종 Native 위젯은 `command-rail`을 포함해 모두 PERSONAL이다. `command-rail` 1.0.1은
+Flow 개인 action-queue이므로 `FLOW_PERSONAL`에서 평가한다. 향후 별도 GOVERNED Definition은
+정규화된 관리형 zone에서만 평가하며 Browser가 Context를 선택할 수 없다.
 
 Browser는 `hostMode`, `placementContext`, 관리형 zone, Host Capability Version과 Home revision을 보내지
 않는다. Gateway도 외부의 동명 Header를 제거한다. Platform의 신규 `HomeHostContextResolver`가 다음 서버
@@ -1366,9 +1369,9 @@ Mutation은 응답의 `hostContext.decisionRevision`과 대상 `placementContext
 
 Manifest 지원 여부와 서버 Zone을 교차한 최종 Capability는 다음 규칙을 사용한다.
 
-| Placement context  | Personal Definition                             | `command-rail` Governed Definition                            |
+| Placement context  | Personal Definition (`command-rail` 1.0.1 포함) | 향후 별도 Governed Definition |
 | ------------------ | ----------------------------------------------- | ------------------------------------------------------------- |
-| `CLASSIC_PERSONAL` | `add/hide/move/resize`를 Manifest 범위에서 허용 | 기존 v5 호환 범위의 `hide/move/resize`; `add=false`           |
+| `CLASSIC_PERSONAL` | `add/hide/move/resize`를 Manifest 범위에서 허용 | Manifest와 호환 정책에 따라 별도 평가 |
 | `FLOW_PERSONAL`    | `add/hide/move/resize`를 Manifest 범위에서 허용 | 일반 Library Payload에서 생략                                 |
 | `FLOW_GOVERNED`    | 일반 Library Payload에서 생략                   | `add=false, hide=false, move=false, resize=false`인 Host 항목 |
 

@@ -112,11 +112,11 @@
         "commandType": "CREATE_VERSION",
         "target": {
           "targetType": "DEFINITION_SEMVER_HASH",
-          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "targetId": "c16404b233f7a3a70d1b30d154f24d5f932d3689b31b9667ddc96643f88af51f",
           "definitionId": "11111111-1111-4111-8111-111111111111"
         },
         "payload": {
-          "semanticVersion": "1.0.0",
+          "semanticVersion": "1.0.1",
           "manifest": {
             "schemaVersion": 1,
             "definitionKey": "core.workspace.command-rail",
@@ -132,8 +132,8 @@
             "supportedSurfaces": ["workspace-home"],
             "requiredAuthorities": ["APP.WORK:VIEW"],
             "placement": {
-              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
-              "policyClass": "GOVERNED",
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_PERSONAL"],
+              "policyClass": "PERSONAL",
               "canHide": true,
               "defaultSize": "large",
               "allowedSizes": ["large", "full"],
@@ -155,11 +155,11 @@
             }
           },
           "reasonCode": "VERSION_CREATE_APPROVED",
-          "reasonText": "Create version 1.0.0 from the validated manifest.",
+          "reasonText": "Create version 1.0.1 from the validated manifest.",
           "expectedVersion": 1
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000002",
-        "publicRequestFingerprint": "3d6596b730e970614e14ff879eabe3f85178b25dadfe388c1b80e2c274bd25cc",
+        "publicRequestFingerprint": "5920225cf2d394c87bcfbc7e0ecbbe440e473b7eebb555bacf3a561d5db6f00b",
         "expectedVersion": 1,
         "correlationId": "30000000-0000-4000-8000-000000000002",
         "operatorRef": "actor_ref_widget_admin",
@@ -175,12 +175,12 @@
         "signedCommandType": "CREATE_VERSION",
         "signedTarget": {
           "targetType": "DEFINITION_SEMVER_HASH",
-          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "targetId": "c16404b233f7a3a70d1b30d154f24d5f932d3689b31b9667ddc96643f88af51f",
           "definitionId": "11111111-1111-4111-8111-111111111111"
         },
         "trustedCurrentTarget": {
           "targetType": "DEFINITION_SEMVER_HASH",
-          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "targetId": "c16404b233f7a3a70d1b30d154f24d5f932d3689b31b9667ddc96643f88af51f",
           "ownerProductKey": "core.workspace",
           "riskTier": "HIGH",
           "actorHistory": {
@@ -202,14 +202,14 @@
           "verifiedAt": "2026-08-27T10:00:00Z",
           "validUntil": "2026-08-27T10:05:00Z",
           "targetType": "DEFINITION_SEMVER_HASH",
-          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "targetId": "c16404b233f7a3a70d1b30d154f24d5f932d3689b31b9667ddc96643f88af51f",
           "targetOwnerProductKey": "core.workspace",
           "separationActors": []
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000002",
-        "signedPublicRequestFingerprint": "3d6596b730e970614e14ff879eabe3f85178b25dadfe388c1b80e2c274bd25cc",
-        "signedPayloadHash": "5780375d6e718a436a6e15bca9a3f3055513258dd3cca2bc787e225fb23c3ff9",
-        "signedReasonDigest": "a0c9154d2ee1cd010fb02e4a5e2c92b9a3da5754e0e83f262eacf46506ca27f7"
+        "signedPublicRequestFingerprint": "5920225cf2d394c87bcfbc7e0ecbbe440e473b7eebb555bacf3a561d5db6f00b",
+        "signedPayloadHash": "147974433816411bd4420c9217c42940e3d546c16d82fed0fdd2b884fe49e6fe",
+        "signedReasonDigest": "cd69cbc3a72f8dc97f4c7ef9aeb2d9f256e7e49011b257e7a5d2df996d8ad581"
       }
     },
     {
@@ -240,8 +240,8 @@
             "supportedSurfaces": ["workspace-home"],
             "requiredAuthorities": ["APP.WORK:VIEW"],
             "placement": {
-              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
-              "policyClass": "GOVERNED",
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_PERSONAL"],
+              "policyClass": "PERSONAL",
               "canHide": true,
               "defaultSize": "large",
               "allowedSizes": ["large", "full"],
@@ -267,7 +267,7 @@
           "expectedVersion": 2
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000003",
-        "publicRequestFingerprint": "18cec6259203133c26cc3a750153e0c769a92db9853ccf95ab2e9f08056b0f30",
+        "publicRequestFingerprint": "f4f6ae12e3dacbe7d3864d5ec319f2a1f6fa7fcf24198521f5f3ac46cf1b7e82",
         "expectedVersion": 2,
         "correlationId": "30000000-0000-4000-8000-000000000003",
         "operatorRef": "actor_ref_widget_admin",
@@ -315,8 +315,8 @@
           "separationActors": []
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000003",
-        "signedPublicRequestFingerprint": "18cec6259203133c26cc3a750153e0c769a92db9853ccf95ab2e9f08056b0f30",
-        "signedPayloadHash": "e3a2ccf086110410c785dba03e910222918a2d8dc9d19ac547e638ed1968e7cf",
+        "signedPublicRequestFingerprint": "f4f6ae12e3dacbe7d3864d5ec319f2a1f6fa7fcf24198521f5f3ac46cf1b7e82",
+        "signedPayloadHash": "4dfc528220f7cd52c5475f02fefba0f76bf3e9baf4c859f4ce034706f7956a3b",
         "signedReasonDigest": "4d3bda5c40fb974870207077ee3db9c01be775a941c8fda4f798e18c12b4ce6c"
       }
     },
@@ -333,13 +333,13 @@
           "versionId": "22222222-2222-4222-8222-222222222222"
         },
         "payload": {
-          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "manifestHash": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
           "reasonCode": "VERSION_VALIDATION_COMPLETED",
           "reasonText": "Run every static validation gate.",
           "expectedVersion": 3
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000004",
-        "publicRequestFingerprint": "05a6e5e0ce132660ecdd91edcade6652adf12853fc33366ed2573c97f826682e",
+        "publicRequestFingerprint": "e5acea92d8f112bbf1f49913472451b224985642834a8f43cfd19be8f162564b",
         "expectedVersion": 3,
         "correlationId": "30000000-0000-4000-8000-000000000004",
         "operatorRef": "actor_ref_widget_admin",
@@ -387,8 +387,8 @@
           "separationActors": []
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000004",
-        "signedPublicRequestFingerprint": "05a6e5e0ce132660ecdd91edcade6652adf12853fc33366ed2573c97f826682e",
-        "signedPayloadHash": "11b2d6047b6c551164c8923668d74853cf2f72e2c5df7da344280574abf9f852",
+        "signedPublicRequestFingerprint": "e5acea92d8f112bbf1f49913472451b224985642834a8f43cfd19be8f162564b",
+        "signedPayloadHash": "a51238f325042a6cb7a27509878b31314fa3ecf965f636d1709f1d6985ac7f36",
         "signedReasonDigest": "4e88701bb162d20b844eb02b48e22277a81496272f9c9467ef558c87019d158f"
       }
     },
@@ -629,7 +629,7 @@
         "payload": {
           "evidenceType": "SECURITY",
           "decision": "PASS",
-          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "manifestHash": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
           "evidenceRef": "security_attestation_20260827",
           "evidenceSha256": "4c5f0d6b25f4b3f2ce4d86663252844e7bb7c0d94a0b3a07aca2bccf14569f35",
           "expiresAt": "2026-09-30T00:00:00Z",
@@ -639,7 +639,7 @@
           "expectedVersion": 7
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000008",
-        "publicRequestFingerprint": "57381b944cae01f870cad0461b1c5a0f576f7fedf71a1824baf599d64f42e8a7",
+        "publicRequestFingerprint": "1b7527a314749a07d798413471a59f1131851769c620f44a8396abd8f2584310",
         "expectedVersion": 7,
         "correlationId": "30000000-0000-4000-8000-000000000008",
         "operatorRef": "actor_ref_widget_admin",
@@ -687,8 +687,8 @@
           "separationActors": []
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000008",
-        "signedPublicRequestFingerprint": "57381b944cae01f870cad0461b1c5a0f576f7fedf71a1824baf599d64f42e8a7",
-        "signedPayloadHash": "c99c292b02e547575b5083cbe4596fcaeb4a6026045725f431434daf54901120",
+        "signedPublicRequestFingerprint": "1b7527a314749a07d798413471a59f1131851769c620f44a8396abd8f2584310",
+        "signedPayloadHash": "4c7bdbd2546d5aa37a676ef4848abaa2ad838ccc6c0c9a1837d02d15e305a582",
         "signedReasonDigest": "f9391e87642e1e33cc6ff64efa2b07d8a341dbff1a66ac9505c8bb9a5cafb018"
       }
     },
@@ -706,7 +706,7 @@
           "evidenceId": "33333333-3333-4333-8333-333333333333"
         },
         "payload": {
-          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "manifestHash": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
           "waiverExpiresAt": "2026-09-15T00:00:00Z",
           "waiverReason": "Temporary localization exception with a committed remediation date.",
           "trackingTicketRef": "DWP-ADM009-LOC-42",
@@ -715,7 +715,7 @@
           "expectedVersion": 8
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000009",
-        "publicRequestFingerprint": "a5a8929b46cd750bb4e5c1cd65a6c2cb578d932ae4e9f44a7eab45dcec3cef2f",
+        "publicRequestFingerprint": "ffb02ede8c5ca74c0f7353aba90c6880644ca3c335c9c0447b33b3271567c780",
         "expectedVersion": 8,
         "correlationId": "30000000-0000-4000-8000-000000000009",
         "operatorRef": "actor_ref_widget_admin",
@@ -773,8 +773,8 @@
           ]
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000009",
-        "signedPublicRequestFingerprint": "a5a8929b46cd750bb4e5c1cd65a6c2cb578d932ae4e9f44a7eab45dcec3cef2f",
-        "signedPayloadHash": "4cc6bdd56b6033cf9f46695ca377151d59fcb4fa1e0e2e3fa0b32d8b0659c7af",
+        "signedPublicRequestFingerprint": "ffb02ede8c5ca74c0f7353aba90c6880644ca3c335c9c0447b33b3271567c780",
+        "signedPayloadHash": "29ada40761e54aa18056386d397b1e41242a6eb47a4effe0a0a0f20b77151367",
         "signedReasonDigest": "f1ccb19b92d7fa2c4926a99923324c075c2869966310fd4193999abfa640948f"
       }
     },
@@ -794,13 +794,13 @@
           "channel": "STABLE",
           "validationRunId": "77777777-7777-4777-8777-777777777777",
           "evidenceIds": ["33333333-3333-4333-8333-333333333333"],
-          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "manifestHash": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
           "reasonCode": "VERSION_PUBLISHED",
           "reasonText": "Publish the approved and certified version.",
           "expectedVersion": 9
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000010",
-        "publicRequestFingerprint": "adb884fddbd0d782369439d70792386ed644c1ee117470946296a855e584c868",
+        "publicRequestFingerprint": "a6e2e9d106f87c417306ef82882d0ec165c1d3c211cfd62f67f598fb054a0448",
         "expectedVersion": 9,
         "correlationId": "30000000-0000-4000-8000-000000000010",
         "operatorRef": "actor_ref_widget_admin",
@@ -853,8 +853,8 @@
           ]
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000010",
-        "signedPublicRequestFingerprint": "adb884fddbd0d782369439d70792386ed644c1ee117470946296a855e584c868",
-        "signedPayloadHash": "dca1e2fc326e059f25dbcf8681a1c3ddf98a255a2beb28c6d704da822044c1fe",
+        "signedPublicRequestFingerprint": "a6e2e9d106f87c417306ef82882d0ec165c1d3c211cfd62f67f598fb054a0448",
+        "signedPayloadHash": "956bfaf806e7f72d7907db7898113efca8048927a3d2436441eb1109383ed614",
         "signedReasonDigest": "4af353c49a22c86dd237d4754afa511307e57c79c4418a509dbb714a35ef550e"
       }
     },
@@ -1329,13 +1329,13 @@
         "payload": {
           "versionId": "22222222-2222-4222-8222-222222222222",
           "validationRunId": "77777777-7777-4777-8777-777777777777",
-          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "manifestHash": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
           "reasonCode": "CHANNEL_PROMOTION_APPROVED",
           "reasonText": "Promote the current certified version to STABLE.",
           "expectedVersion": 16
         },
         "publicIdempotencyKey": "20000000-0000-4000-8000-000000000017",
-        "publicRequestFingerprint": "f5caa7f1f4fdae212c190f58f7a19f64698334b54f0765f251cf9408a8f01bbd",
+        "publicRequestFingerprint": "60d77b67d31cc3ce18df1dc879bacb629ca22863974d3aa011c749907f8b99bd",
         "expectedVersion": 16,
         "correlationId": "30000000-0000-4000-8000-000000000017",
         "operatorRef": "actor_ref_widget_admin",
@@ -1384,8 +1384,8 @@
           "separationActors": []
         },
         "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000017",
-        "signedPublicRequestFingerprint": "f5caa7f1f4fdae212c190f58f7a19f64698334b54f0765f251cf9408a8f01bbd",
-        "signedPayloadHash": "855c8670ec08cbdd70ab80f31d48d0320144f12da20098edd3ecb296a4ee4b82",
+        "signedPublicRequestFingerprint": "60d77b67d31cc3ce18df1dc879bacb629ca22863974d3aa011c749907f8b99bd",
+        "signedPayloadHash": "52cdb58aaeea85e0ced3c7f3d3af0491e978faeca3a2000c701fa1f9598ddd85",
         "signedReasonDigest": "530a4ed4a56a59c0fb40769b0cc534e6ea2949b1d8d6ff83259358b9c58b2905"
       }
     },

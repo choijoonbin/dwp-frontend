@@ -43,7 +43,8 @@ export function homeWidgetRegistryEffectiveQueryKey(
 export type NativeHomeWidgetBinding = Readonly<{
   legacyWidgetKey: HomeWidgetKey;
   definitionKey: string;
-  semanticVersion: '1.0.0';
+  semanticVersion: '1.0.0' | '1.0.1';
+  expectedManifestHash: string;
   rendererKey: string;
   minimumHostApiVersion: 1;
   supportedContexts: readonly WidgetPlacementContext[];
@@ -53,15 +54,17 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
   {
     legacyWidgetKey: 'command-rail',
     definitionKey: 'core.workspace.command-rail',
-    semanticVersion: '1.0.0',
+    semanticVersion: '1.0.1',
+    expectedManifestHash: '36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13',
     rendererKey: 'home.command-rail',
     minimumHostApiVersion: 1,
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_GOVERNED'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
   },
   {
     legacyWidgetKey: 'daily-brief',
     definitionKey: 'core.workspace.daily-brief',
     semanticVersion: '1.0.0',
+    expectedManifestHash: '9b7f48b7ea4ef429120db330a4972c3315ad682759fa86e49c212c42bdd02406',
     rendererKey: 'home.daily-brief',
     minimumHostApiVersion: 1,
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
@@ -70,6 +73,7 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
     legacyWidgetKey: 'focus',
     definitionKey: 'core.work.focus',
     semanticVersion: '1.0.0',
+    expectedManifestHash: '36d1b02326e4725a235749e173dfdf50a0423ef30f42d7ccab97946ba826d893',
     rendererKey: 'home.focus',
     minimumHostApiVersion: 1,
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
@@ -78,6 +82,7 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
     legacyWidgetKey: 'schedule',
     definitionKey: 'core.calendar.schedule',
     semanticVersion: '1.0.0',
+    expectedManifestHash: '7f3e090997a213e9d3e6f8184e1458e57382c5f31db79f00fbf678d36f884f5d',
     rendererKey: 'home.schedule',
     minimumHostApiVersion: 1,
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
@@ -86,6 +91,7 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
     legacyWidgetKey: 'activity',
     definitionKey: 'core.activity.activity',
     semanticVersion: '1.0.0',
+    expectedManifestHash: 'fbab61015ec3b20c2faf9810b1758aebbd7517029baa64cb6b99190815836ca1',
     rendererKey: 'home.activity',
     minimumHostApiVersion: 1,
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
@@ -93,7 +99,8 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
   {
     legacyWidgetKey: 'focus-balance',
     definitionKey: 'core.work.focus-balance',
-    semanticVersion: '1.0.0',
+    semanticVersion: '1.0.1',
+    expectedManifestHash: '5f4c5990a0b1b417832c93074f92a00cbb8c9e4f4e49240073120c485a8c9436',
     rendererKey: 'home.focus-balance',
     minimumHostApiVersion: 1,
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
@@ -101,12 +108,18 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
   {
     legacyWidgetKey: 'meeting-load',
     definitionKey: 'core.calendar.meeting-load',
-    semanticVersion: '1.0.0',
+    semanticVersion: '1.0.1',
+    expectedManifestHash: '90d31f29e1dbc8e26a49475174aca5ecd76d557f3b7d39975f58ff1f047bb6c3',
     rendererKey: 'home.meeting-load',
     minimumHostApiVersion: 1,
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
   },
 ] as const;
+
+// Sort ACTIVE bindings by rendererKey (before appending :manifestHash), then SHA-256 the lines.
+// Each manifest hash covers owner, source, authority, policy, preset and every other semantic field.
+export const HOME_NATIVE_BINDING_CATALOG_REVISION =
+  '656986e3056f42073ff5af2b6501d798d33ee2fabc615c8d602bd7f0edc20939';
 
 const PUBLIC_REASON_CODES = new Set<WidgetPublicReasonCode>([
   'NOT_AVAILABLE',
@@ -371,7 +384,10 @@ export function resolveHomeWidgetRuntimeDecisions(
   catalog: EffectiveWidgetCatalog | null | undefined
 ): HomeWidgetRuntimeDecisions {
   if (connection.runtimeSource !== 'AUTHORITATIVE') return staticHomeWidgetRuntimeDecisions();
-  if (!isCatalogForMode(catalog, 'AUTHORITATIVE')) {
+  if (
+    !isCatalogForMode(catalog, 'AUTHORITATIVE') ||
+    catalog.bindingCatalogRevision !== HOME_NATIVE_BINDING_CATALOG_REVISION
+  ) {
     return Object.fromEntries(
       NATIVE_HOME_WIDGET_BINDINGS.map((binding) => [
         binding.legacyWidgetKey,
@@ -440,6 +456,19 @@ export function observeHomeWidgetShadow(
   }
   if (!isCatalogForMode(catalog, 'SHADOW')) {
     return { status: 'INVALID', mismatchCount: 0, decisionRevision: null, mismatches: [] };
+  }
+
+  if (catalog.bindingCatalogRevision !== HOME_NATIVE_BINDING_CATALOG_REVISION) {
+    return {
+      status: 'DRIFT',
+      mismatchCount: NATIVE_HOME_WIDGET_BINDINGS.length,
+      decisionRevision: catalog.hostContext.decisionRevision,
+      mismatches: NATIVE_HOME_WIDGET_BINDINGS.map((binding) => ({
+        widgetKey: binding.legacyWidgetKey,
+        observedRender: 'UNAVAILABLE',
+        observedReason: 'INCOMPATIBLE',
+      })),
+    };
   }
 
   const observed = resolveValidatedCatalog(catalog);

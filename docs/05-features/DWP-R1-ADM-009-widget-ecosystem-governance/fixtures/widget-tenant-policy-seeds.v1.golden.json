@@ -1,6 +1,6 @@
 {
   "fixtureVersion": 1,
-  "expectedBaselineDigest": "cd91459ee7ae40e1ec4082b5d66bc848b9cbe59d57bae7b3f7f3d3dcc5e8c92b",
+  "expectedBaselineDigest": "6ad03d93e58cc482c87625fb1e7b3b937ad4da1badf8f216fab49eb6557fdb7f",
   "baseline": {
     "schemaVersion": 1,
     "baselineGeneration": 1,
@@ -31,7 +31,7 @@
       {
         "legacyWidgetKey": "command-rail",
         "definitionKey": "core.workspace.command-rail",
-        "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+        "manifestHash": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
         "state": "PUBLISHED",
         "revision": 1,
         "predecessorRevision": null,

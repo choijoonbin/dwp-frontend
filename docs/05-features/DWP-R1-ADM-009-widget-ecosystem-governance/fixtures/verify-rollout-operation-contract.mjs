@@ -19,11 +19,11 @@ const sources = Object.fromEntries(
 
 const anchors = Object.freeze({
   schemaFile: 'fa83b976eb505a7a2669f85847dfa62478b2b936710d2815812c4a62d4d84e23',
-  goldenFile: '254d9c9ce8808214618500ef2ecb7c15371d2a7e7a249604626b6ad4d6331526',
+  goldenFile: '7d7c0d60f22aa522c7dc00502f0e3e3c16baa5f99721ab4a0fe5d429532bf930',
   negativeFile: '929f5dce5299376fc9da7cbe9a8d8039c0b7f572ba6ea770d9ee5953ce33218b',
   bootstrapSchemaFile: 'abb40678362b5522cc200e1c6644036f22a3a8d5e18b53a6da091fcaeef652b6',
   evidenceSchemaFile: '607f7dc49953800e043113394e9f11590192e6055ce8dd4eb8f4205832dd7b20',
-  goldenCanonical: 'dceb39dc467a7779b12098af39134134135e4530db71ac202c2e0bc581f54af2',
+  goldenCanonical: 'e81b1ccb70638d23d3ae5a7cd6c535b2f2b477d32e88b69f6f5f0d46296679ba',
   negativeCanonical: 'a566f656b4aa6e54e9f7e010fe8afbe2f007bd1b69313658b181ba86341a4b8a',
 });
 
@@ -220,7 +220,7 @@ const attestationKeyPins = Object.freeze({
   CI_BOOTSTRAP: Object.freeze({
     issuer: 'dwp-ci-attestation-authority',
     kid: 'ci-widget-bootstrap-2026-08',
-    publicKeyFingerprint: 'dc8fd8ed454e0b4ba28919436c4b417b4e5e2ff665d53feacbe0fd84b4bc0201',
+    publicKeyFingerprint: '581bfe81c3c62a302ff39689dab7e282b9140a65839036b8fb835daff529f75f',
   }),
   EVIDENCE_AUTHORITY: Object.freeze({
     issuer: 'dwp-release-approval-authority',

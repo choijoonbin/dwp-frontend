@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { resolveWidgetRegistryConnection } from '@dwp-frontend/shared-utils';
 
@@ -7,6 +8,7 @@ import { defaultHomeWidgets } from '../home-widget-registry';
 import {
   homeWidgetRegistryEffectiveQueryKey,
   NATIVE_HOME_WIDGET_BINDINGS,
+  HOME_NATIVE_BINDING_CATALOG_REVISION,
   observeHomeWidgetShadow,
   resolveHomeWidgetRuntimeDecisions,
 } from './widget-registry-runtime';
@@ -16,6 +18,15 @@ import type {
   EffectiveWidgetCatalogItem,
   WidgetRegistryReadiness,
 } from '@dwp-frontend/shared-utils';
+
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  if (value !== null && typeof value === 'object') {
+    return `{${Object.entries(value).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
+      .map(([key, child]) => `${JSON.stringify(key)}:${canonical(child)}`).join(',')}}`;
+  }
+  return JSON.stringify(value);
+}
 
 const capabilities = [
   'WIDGET_REGISTRY_CONTROL_PLANE',
@@ -51,7 +62,7 @@ function item(
     definitionKey,
     legacyWidgetKey,
     resolvedVersionId: `40000000-0000-4000-8000-${suffix}`,
-    semanticVersion: '1.0.0',
+    semanticVersion: NATIVE_HOME_WIDGET_BINDINGS[index]!.semanticVersion,
     effectiveState: 'AVAILABLE',
     reasonCodes: ['AVAILABLE'],
     placementCapabilities: { canAdd: true, canHide: true, canMove: true, canResize: true },
@@ -68,7 +79,7 @@ function catalog(
     schemaVersion: 1,
     mode: 'AUTHORITATIVE',
     catalogRevision: 'catalog-1',
-    bindingCatalogRevision: 'a'.repeat(64),
+    bindingCatalogRevision: HOME_NATIVE_BINDING_CATALOG_REVISION,
     policyRevision: 'policy-1',
     safetyRevision: 'safety-1',
     hostContext: {
@@ -168,16 +179,30 @@ describe('widget registry connection', () => {
 
 describe('native renderer allowlist', () => {
   it('matches all seven first-party fixture bindings exactly', () => {
-    const fixtureBindings = firstPartyFixture.fixtures.map(({ legacyWidgetKey, manifest }) => ({
+    const fixtureBindings = firstPartyFixture.fixtures.map(({ legacyWidgetKey, manifest, semanticVersion, expectedSha256 }) => ({
       legacyWidgetKey,
       definitionKey: manifest.definitionKey,
-      semanticVersion: '1.0.0',
+      semanticVersion,
+      expectedManifestHash: expectedSha256,
       rendererKey: manifest.renderer.rendererKey,
       minimumHostApiVersion: manifest.renderer.minimumHostApiVersion,
       supportedContexts: manifest.placement.supportedContexts,
     }));
     expect(NATIVE_HOME_WIDGET_BINDINGS).toEqual(fixtureBindings);
     expect(new Set(fixtureBindings.map((binding) => binding.rendererKey)).size).toBe(7);
+  });
+
+  it('pins the full semantic manifest hashes in the backend binding revision format', () => {
+    const sorted = [...NATIVE_HOME_WIDGET_BINDINGS]
+      .sort((a, b) => a.rendererKey < b.rendererKey ? -1 : a.rendererKey > b.rendererKey ? 1 : 0);
+    expect(sorted.map((binding) => binding.rendererKey)).toEqual([
+      'home.activity', 'home.command-rail', 'home.daily-brief', 'home.focus',
+      'home.focus-balance', 'home.meeting-load', 'home.schedule',
+    ]);
+    const material = sorted
+      .map((binding) => `${binding.rendererKey}:${binding.expectedManifestHash}`).join('\n');
+    expect(createHash('sha256').update(material).digest('hex'))
+      .toBe(HOME_NATIVE_BINDING_CATALOG_REVISION);
   });
 
   it('never accepts a renderer transport or executable location from registry data', () => {
@@ -271,6 +296,33 @@ describe('shadow drift observation', () => {
     expect(resolveHomeWidgetRuntimeDecisions(shadowConnection, null).focus.render).toBe('NATIVE');
   });
 
+  it.each(['owner', 'source', 'authority', 'capability', 'policy', 'preset', 'contexts'])(
+    'reports semantic %s drift even when every effective rendering decision is available', (field) => {
+      const changed = structuredClone(firstPartyFixture.fixtures);
+      const manifest = changed.find((fixture) => fixture.legacyWidgetKey === 'focus-balance')!.manifest;
+      if (field === 'owner') manifest.owner.productKey = 'core.work';
+      if (field === 'source') manifest.owner.sourceAppResourceKey = 'APP.WORK';
+      if (field === 'authority') manifest.requiredAuthorities = ['APP.WORK:VIEW'];
+      if (field === 'capability') manifest.dataCapabilities = ['WORK.ITEMS.LIST'];
+      if (field === 'policy') manifest.placement.policyClass = 'GOVERNED';
+      if (field === 'preset') manifest.sharing.presetEligible = true;
+      if (field === 'contexts') manifest.placement.supportedContexts = ['CLASSIC_PERSONAL', 'FLOW_GOVERNED'];
+      const material = changed.sort((a, b) => a.manifest.renderer.rendererKey < b.manifest.renderer.rendererKey ? -1 : 1).map((fixture) => `${fixture.manifest.renderer.rendererKey}:${
+        createHash('sha256').update(canonical(fixture.manifest)).digest('hex')
+      }`).join('\n');
+      const revision = createHash('sha256').update(material).digest('hex');
+      expect(revision).not.toBe(HOME_NATIVE_BINDING_CATALOG_REVISION);
+      const shadow = catalog({ mode: 'SHADOW', bindingCatalogRevision: revision });
+      const observation = observeHomeWidgetShadow(shadowConnection, shadow);
+      expect(observation.status).toBe('DRIFT');
+      expect(observation.mismatchCount).toBe(7);
+      expect(observation.mismatches.every((mismatch) => mismatch.observedReason === 'INCOMPATIBLE'))
+        .toBe(true);
+      expect(resolveHomeWidgetRuntimeDecisions(shadowConnection, shadow)['focus-balance'].render)
+        .toBe('NATIVE');
+    }
+  );
+
   it('reports a matching shadow decision revision while ignoring disabled shadow mutations', () => {
     const shadow = catalog({
       mode: 'SHADOW',
@@ -356,6 +408,8 @@ describe('authoritative widget access', () => {
   it('fails closed for missing, duplicate, mismatched, or unresolved definitions', () => {
     expect(resolveHomeWidgetRuntimeDecisions(connection, null).focus.render).toBe('UNAVAILABLE');
     const complete = catalog();
+    expect(resolveHomeWidgetRuntimeDecisions(connection, catalog({ bindingCatalogRevision: 'b'.repeat(64) })).focus.render)
+      .toBe('UNAVAILABLE');
     const missing = catalog({
       contexts: [
         {
@@ -507,7 +561,7 @@ describe('authoritative widget access', () => {
     });
   });
 
-  it('resolves the governed command rail independently from personal Flow widgets', () => {
+  it('resolves the command rail in the personal Flow context', () => {
     const classicCatalog = catalog();
     const flowCatalog = catalog({
       hostContext: { ...classicCatalog.hostContext, resolvedHostMode: 'FLOW' },
@@ -515,14 +569,12 @@ describe('authoritative widget access', () => {
         {
           ...classicCatalog.contexts[0]!,
           placementContext: 'FLOW_PERSONAL',
-          items: classicCatalog.contexts[0]!.items.filter(
-            (candidate) => candidate.legacyWidgetKey !== 'command-rail'
-          ),
+          items: classicCatalog.contexts[0]!.items,
         },
         {
           ...classicCatalog.contexts[0]!,
           placementContext: 'FLOW_GOVERNED',
-          items: [item('command-rail', 'core.workspace.command-rail')],
+          items: [],
         },
       ],
     });

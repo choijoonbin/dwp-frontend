@@ -1,5 +1,8 @@
 import type { Page, Route } from '@playwright/test';
+import firstPartyFixture from '../../architecture/widget-registry-native-manifests.v1.json' with { type: 'json' };
+import { createHash } from 'node:crypto';
 
+// Persisted pre-correction provider records remain visible during the 1.0.1 migration.
 const BINDINGS = [
   ['command-rail', 'core.workspace.command-rail', 'home.command-rail', 'core.workspace'],
   ['daily-brief', 'core.workspace.daily-brief', 'home.daily-brief', 'core.workspace'],
@@ -9,6 +12,10 @@ const BINDINGS = [
   ['focus-balance', 'core.work.focus-balance', 'home.focus-balance', 'core.work'],
   ['meeting-load', 'core.calendar.meeting-load', 'home.meeting-load', 'core.calendar'],
 ] as const;
+const BINDING_REVISION = createHash('sha256').update([...firstPartyFixture.fixtures]
+  .sort((a, b) => a.manifest.renderer.rendererKey < b.manifest.renderer.rendererKey ? -1 : 1)
+  .map(({ manifest, expectedSha256 }) => `${manifest.renderer.rendererKey}:${expectedSha256}`)
+  .join('\n')).digest('hex');
 
 const CAPABILITIES = [
   'WIDGET_REGISTRY_CONTROL_PLANE',
@@ -69,7 +76,7 @@ export function widgetRegistryEffectiveCatalog(
     definitionKey,
     legacyWidgetKey,
     resolvedVersionId: uuid('4', index + 1),
-    semanticVersion: '1.0.0',
+    semanticVersion: firstPartyFixture.fixtures[index]!.semanticVersion,
     effectiveState: state,
     reasonCodes: [
       state === 'AVAILABLE'
@@ -90,7 +97,7 @@ export function widgetRegistryEffectiveCatalog(
     schemaVersion: 1,
     mode,
     catalogRevision: '7',
-    bindingCatalogRevision: HASH,
+    bindingCatalogRevision: BINDING_REVISION,
     policyRevision: '7',
     safetyRevision: '1',
     hostContext: {
@@ -309,7 +316,16 @@ export async function mockProviderWidgetRegistry(page: Page) {
 }
 
 export async function mockTenantWidgetRegistry(page: Page) {
-  const effective = widgetRegistryEffectiveCatalog('SHADOW', 'DENY');
+  // Administration can inspect historical persisted versions while native Home uses the corrected baseline.
+  const canonical = widgetRegistryEffectiveCatalog('SHADOW', 'DENY');
+  const effective = {
+    ...canonical,
+    bindingCatalogRevision: HASH,
+    contexts: canonical.contexts.map((context) => ({
+      ...context,
+      items: context.items.map((item) => ({ ...item, semanticVersion: '1.0.0' })),
+    })),
+  };
   await page.route('**/api/platform/v1/widget-catalog/readiness', (route) =>
     route.fulfill(success(widgetRegistryReadiness()))
   );
