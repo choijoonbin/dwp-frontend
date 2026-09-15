@@ -114,6 +114,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'work',
     tone: '#315FD5',
     resourceKey: 'APP.WORK',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'dwp-ask',
@@ -125,6 +126,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'ask',
     tone: '#7A4FC4',
     resourceKey: 'APP.ASK',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'dwp-activity',
@@ -136,6 +138,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'activity',
     tone: '#087E8B',
     resourceKey: 'APP.ACTIVITY',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'dwp-approvals',
@@ -147,6 +150,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'approvals',
     tone: '#2856C7',
     resourceKey: 'APP.APPROVALS',
+    requiredPermissionCode: 'VIEW',
     notificationSourceKey: 'approvals',
   },
   {
@@ -159,6 +163,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'notifications',
     tone: '#2F5E8A',
     resourceKey: 'APP.NOTIFICATIONS',
+    requiredPermissionCode: 'VIEW',
     notificationSourceKey: 'notifications',
   },
   {
@@ -171,6 +176,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'communications',
     tone: '#E14F5A',
     resourceKey: 'APP.COMMUNICATIONS',
+    requiredPermissionCode: 'VIEW',
     notificationSourceKey: 'communications',
   },
   {
@@ -183,6 +189,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'calendar',
     tone: '#0F766E',
     resourceKey: 'APP.CALENDAR',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'ref-app-mail',
@@ -194,6 +201,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'mail',
     tone: '#176B63',
     resourceKey: 'APP.MAIL',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'dwp-spaces',
@@ -205,6 +213,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'spaces',
     tone: '#315B7A',
     resourceKey: 'APP.SPACES',
+    requiredPermissionCode: 'VIEW',
     notificationSourceKey: 'space',
   },
   {
@@ -217,6 +226,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'rooms',
     tone: '#176F6A',
     resourceKey: 'APP.WORKPLACE',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'dwp-messaging',
@@ -228,6 +238,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'messaging',
     tone: '#2856C7',
     resourceKey: 'APP.MESSAGING',
+    requiredPermissionCode: 'VIEW',
     notificationSourceKey: 'messaging',
   },
   {
@@ -240,6 +251,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'meetings',
     tone: '#0B6B74',
     resourceKey: 'APP.MEETINGS',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'ref-app-service',
@@ -251,6 +263,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'services',
     tone: '#15805A',
     resourceKey: 'APP.EMPLOYEE_SERVICES',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'ref-app-people',
@@ -262,6 +275,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'hcm',
     tone: '#176B68',
     resourceKey: 'APP.HCM',
+    requiredPermissionCode: 'VIEW',
     notificationSourceKey: 'hcm',
   },
   {
@@ -274,6 +288,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'knowledge',
     tone: '#A66300',
     resourceKey: 'APP.KNOWLEDGE',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'ref-app-erp',
@@ -285,6 +300,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'erp',
     tone: '#8B5A2B',
     resourceKey: 'APP.BUSINESS_ERP',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'ref-app-legacy',
@@ -296,6 +312,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'legacy',
     tone: '#4B5663',
     resourceKey: 'APP.LEGACY_OPERATIONS',
+    requiredPermissionCode: 'VIEW',
   },
   {
     id: 'dwp-admin',
@@ -307,6 +324,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'admin',
     tone: '#9A3B23',
     resourceKey: 'APP.ADMINISTRATION',
+    requiredPermissionCode: 'VIEW',
     requiredRoles: TENANT_CONTROL_PLANE_ROLES,
   },
 ];

@@ -57,6 +57,8 @@ export type HomeAppDefinition = {
   iconKey: HomeAppIconKey;
   tone: string;
   resourceKey: string;
+  /** Exact application permission required by the canonical launch contract. */
+  requiredPermissionCode?: 'VIEW';
   /** Backward-compatible visual label consumed by Classic and Flow launchers. */
   badge?: string;
   /** Structured semantics for intent styling and an exact accessible announcement. */

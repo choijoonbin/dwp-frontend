@@ -945,12 +945,21 @@ describe('tenant launchpad policy', () => {
 
   it('keeps the canonical route, icon, permission, and badge owner metadata stable', () => {
     const frontendContract = HOME_APPS.map(
-      ({ id, resourceKey, route, iconKey, notificationSourceKey, groupId }) => ({
+      ({
+        id,
+        resourceKey,
+        route,
+        iconKey,
+        requiredPermissionCode,
+        notificationSourceKey,
+        groupId,
+      }) => ({
         id,
         resourceKey,
         route,
         iconKey,
         groupId,
+        requiredPermissionCode,
         notificationSourceKey: notificationSourceKey ?? null,
       })
     );
@@ -961,6 +970,7 @@ describe('tenant launchpad policy', () => {
         route: app.route,
         iconKey: app.iconKey,
         groupId: group.groupKey,
+        requiredPermissionCode: app.requiredPermissionCode,
         notificationSourceKey: app.badgeSourceKey,
       }))
     );
