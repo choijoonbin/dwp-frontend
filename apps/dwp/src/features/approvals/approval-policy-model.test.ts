@@ -9,6 +9,8 @@ import {
   isApprovalPolicyMakerBlocked,
   isApprovalPolicyDraftValid,
   isApprovalPolicySourceCurrent,
+  parseApprovalPolicyProjection,
+  parseApprovalPolicyVersionProjection,
 } from './approval-policy-model';
 
 import type { ApprovalPolicy } from '@dwp-frontend/shared-utils';
@@ -30,6 +32,92 @@ const policy = (patch: Partial<ApprovalPolicy> = {}): ApprovalPolicy => ({
 });
 
 describe('approval policy model', () => {
+  it('strictly tags and sanitizes the full policy projection', () => {
+    const parsed = parseApprovalPolicyProjection([
+      {
+        ...policy(),
+        pendingEnforcementMode: null,
+        pendingSeverity: null,
+        pendingLifecycleState: null,
+        pendingChangeReason: null,
+        pendingBy: null,
+        pendingAt: null,
+      },
+    ]);
+
+    expect(parsed.kind).toBe('full');
+    expect(parsed.policies[0]).toEqual({
+      ...policy(),
+      pendingEnforcementMode: null,
+      pendingSeverity: null,
+      pendingLifecycleState: null,
+      pendingChangeReason: null,
+      pendingBy: null,
+      pendingAt: null,
+    });
+  });
+
+  it('keeps oversight policies metadata-only and rejects mixed or secret-bearing rows', () => {
+    const oversight = {
+      policyId: 'policy-1',
+      policyKey: 'SOD.DEFAULT',
+      nameKo: '직무 분리',
+      nameEn: 'Separation of duties',
+      policyType: 'SEGREGATION_OF_DUTIES',
+      enforcementMode: 'BLOCK',
+      severity: 'HIGH',
+      lifecycleState: 'ACTIVE',
+      version: 4,
+      pendingReview: true,
+      pendingEnforcementMode: 'WARN',
+      pendingSeverity: 'CRITICAL',
+      pendingLifecycleState: 'ACTIVE',
+      pendingAt: '2026-09-14T00:00:00Z',
+    };
+    const parsed = parseApprovalPolicyProjection([oversight]);
+
+    expect(parsed).toEqual({ kind: 'oversight', policies: [oversight] });
+    expect(Object.hasOwn(parsed.policies[0]!, 'rule')).toBe(false);
+    expect(() => parseApprovalPolicyProjection([{ ...oversight, pendingBy: 7 }])).toThrow(
+      /Invalid approval management projection/u
+    );
+    expect(() => parseApprovalPolicyProjection([oversight, policy()])).toThrow(
+      /Invalid approval management projection/u
+    );
+  });
+
+  it('fails closed on malformed policy projections instead of reaching comparison rendering', () => {
+    expect(() => parseApprovalPolicyProjection([{ ...policy(), pendingRule: undefined }])).toThrow(
+      /policies\[0\]\.pendingRule/u
+    );
+    expect(() => parseApprovalPolicyProjection([{ ...policy(), version: Number.NaN }])).toThrow(
+      /policies\[0\]\.version/u
+    );
+    expect(() => parseApprovalPolicyProjection({ data: [policy()] })).toThrow(/policies/u);
+  });
+
+  it('parses policy history only against the selected projection contract', () => {
+    const oversightVersion = {
+      policyVersionId: 'version-1',
+      versionNumber: 1,
+      enforcementMode: 'BLOCK',
+      severity: 'HIGH',
+      lifecycleState: 'ACTIVE',
+      submittedAt: null,
+      publishedAt: '2026-09-14T00:00:00Z',
+    };
+    expect(parseApprovalPolicyVersionProjection([oversightVersion], 'oversight')).toEqual({
+      kind: 'oversight',
+      versions: [oversightVersion],
+    });
+    expect(() =>
+      parseApprovalPolicyVersionProjection([{ ...oversightVersion, rule: {} }], 'oversight')
+    ).toThrow(/policyVersions\[0\]/u);
+    expect(() => parseApprovalPolicyVersionProjection([oversightVersion], 'full')).toThrow(
+      /policyVersions\[0\]\.rule/u
+    );
+  });
+
   it('binds an editor to its original version and complete proposed source without healing', () => {
     const original = policy({
       pendingReview: true,

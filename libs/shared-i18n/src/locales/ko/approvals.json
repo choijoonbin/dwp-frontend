@@ -394,6 +394,10 @@
       "noResultsDescription": "큐 필터나 검색어를 변경하세요.",
       "noDueDate": "기한 없음",
       "riskCompact": "위험 {{score}}",
+      "assignment": {
+        "CLAIMED": "담당 지정",
+        "REASSIGNED": "위임·재배정"
+      },
       "selectForBatch": "{{title}} 배치 승인 선택",
       "selectedCount_one": "{{count}}건 선택",
       "selectedCount_other": "{{count}}건 선택",
@@ -406,6 +410,31 @@
       "batchDialogDescription": "선택한 {{count}}건을 각각 다시 검증한 뒤 한 건씩 승인합니다.",
       "batchDialogEvidence": "각 결재는 승인 직전에 최신 권한과 버전을 다시 확인합니다. 처리할 수 없는 항목은 건너뛰고 권한 또는 저장 실패 시 안전하게 중단합니다.",
       "batchDialogConfirm": "배치 승인 시작",
+      "batchDialogConfirmCount": "배치 승인 시작 · 처리 가능 {{count}}건",
+      "batchPreflight": {
+        "title": "실행 전 처리 가능성 확인",
+        "description": "현재 화면에서 다시 확인한 상세만 처리 가능으로 구분합니다.",
+        "refresh": "다시 확인",
+        "attentionTitle": "제외 또는 재확인이 필요한 항목",
+        "metrics": {
+          "selected": "선택",
+          "eligible": "처리 가능",
+          "excluded": "처리 제외",
+          "recheck": "재확인 필요"
+        },
+        "outcomes": {
+          "EXCLUDED": "처리 제외",
+          "RECHECK": "재확인 필요"
+        },
+        "reasons": {
+          "DETAIL_LOADING": "최신 결재 상세를 확인하고 있습니다.",
+          "DETAIL_UNAVAILABLE": "최신 상세를 확인하지 못했습니다.",
+          "QUEUE_CHANGED": "목록과 상세의 버전이 달라 다시 확인해야 합니다.",
+          "CONTENT_ACCESS_DENIED": "현재 권한으로 본문과 결정 근거를 확인할 수 없습니다.",
+          "SELF_APPROVAL_BLOCKED": "자기 결재 방지 정책으로 처리할 수 없습니다.",
+          "DECISION_AUTHORITY_UNAVAILABLE": "현재 사용자에게 이 결재의 결정 권한이 없습니다."
+        }
+      },
       "batchCompleted": "배치 승인을 완료했습니다.",
       "batchStopped": "배치 승인을 안전하게 중단했습니다. 남은 항목을 확인하세요.",
       "batchFailed": "배치 승인을 시작하지 못했습니다.",
@@ -550,6 +579,7 @@
     "INFO_REQUESTED": "보완 응답 대기",
     "APPROVED": "승인",
     "REJECTED": "반려",
+    "REASSIGNED": "위임·재배정",
     "DRAFT": "초안",
     "WITHDRAWN": "회수",
     "CANCELLED": "취소",
@@ -666,6 +696,8 @@
     "selfApprovalBlocked": "요청자와 결재자가 같아 자기 결재 방지 정책에 의해 결정할 수 없습니다.",
     "context": "결재 맥락",
     "requestData": "요청 데이터",
+    "supportingEvidence": "문서 및 첨부 증빙",
+    "supportingEvidenceDescription": "현재 권한과 보안 검사에서 확인된 자료만 표시합니다.",
     "timeline": "결정 타임라인",
     "timelineMeta": "변경 불가능한 업무 증적",
     "requester": "요청자",
@@ -683,6 +715,20 @@
       "unknown": "확인할 수 없음"
     },
     "comment": "결정 사유",
+    "payload": {
+      "empty": "기록된 요청 데이터가 없습니다.",
+      "booleanTrue": "예",
+      "booleanFalse": "아니요"
+    },
+    "confirmation": {
+      "targetTitle": "결정 대상 다시 확인",
+      "requester": "요청자",
+      "stage": "현재 단계",
+      "risk": "위험 점수",
+      "riskValue": "{{score}}점",
+      "version": "문서 버전",
+      "verifiedAt": "최신 검증 시각"
+    },
     "decisionSaved": "결정을 기록했습니다.",
     "decisionError": "결정을 기록하지 못했습니다.",
     "claimed": "결재 업무를 가져왔습니다.",

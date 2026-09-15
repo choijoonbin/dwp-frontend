@@ -22,6 +22,7 @@ import Stack from '@mui/material/Stack';
 
 import { StatusChip } from './approval-ui';
 import { ApprovalWorkflowDefinitionFields } from './approval-workflow-definition-fields';
+import { focusApprovalLabeledControl, focusApprovalSelector } from './approval-focus-navigation';
 import { ApprovalWorkflowStageCanvas } from './approval-workflow-stage-canvas';
 import { ApprovalWorkflowStageInspector } from './approval-workflow-stage-inspector';
 import {
@@ -89,6 +90,9 @@ export function ApprovalWorkflowInlineEditor({
   const [panel, setPanel] = useState<Panel>('canvas');
   const [definitionOpen, setDefinitionOpen] = useState(creating);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const inspectorRef = useRef<HTMLDivElement>(null);
+  const inspectorFocus = useRef<string | null | undefined>(undefined);
+  const restoreCanvasFocus = useRef(false);
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const selectedStep = draft.steps[selectedIndex];
   const issues = approvalWorkflowDraftIssues(draft);
@@ -99,6 +103,8 @@ export function ApprovalWorkflowInlineEditor({
     setSelectedIndex(0);
     setPanel(creating ? 'inspector' : 'canvas');
     setDefinitionOpen(creating);
+    inspectorFocus.current = creating ? null : undefined;
+    restoreCanvasFocus.current = false;
   }, [workspaceKey, creating]);
   useEffect(() => {
     if (selectedIndex >= draft.steps.length) setSelectedIndex(Math.max(0, draft.steps.length - 1));
@@ -106,6 +112,7 @@ export function ApprovalWorkflowInlineEditor({
 
   const selectStage = (index: number) => {
     setSelectedIndex(index);
+    inspectorFocus.current = t('admin.studio.stepKey');
     setPanel('inspector');
   };
   const changeStep = (patch: Partial<ApprovalWorkflowStep>) =>
@@ -129,16 +136,45 @@ export function ApprovalWorkflowInlineEditor({
     if (next !== draft) {
       onChange(next);
       setSelectedIndex(next.steps.length - 1);
+      inspectorFocus.current = t('admin.studio.stepKey');
       setPanel('inspector');
     }
   };
   const backToCanvas = () => {
+    restoreCanvasFocus.current = true;
     setPanel('canvas');
-    window.requestAnimationFrame(() =>
-      canvasRef.current
-        ?.querySelector<HTMLElement>(`[data-approval-stage="${selectedIndex}"]`)
-        ?.focus()
-    );
+  };
+  useEffect(() => {
+    if (panel === 'canvas' && restoreCanvasFocus.current) {
+      restoreCanvasFocus.current = false;
+      const frame = window.requestAnimationFrame(() => {
+        focusApprovalSelector(canvasRef.current, `[data-approval-stage="${selectedIndex}"]`);
+      });
+      return () => window.cancelAnimationFrame(frame);
+    }
+    if (panel !== 'inspector' || inspectorFocus.current === undefined) return;
+    const label = inspectorFocus.current;
+    inspectorFocus.current = undefined;
+    const frame = window.requestAnimationFrame(() => {
+      focusApprovalLabeledControl(inspectorRef.current, label, 'start');
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [definitionOpen, panel, selectedIndex]);
+
+  const issueLabel = (field: (typeof issues)[number]['field']) => {
+    const key =
+      field === 'slaMinutes'
+        ? 'workflowSlaMinutes'
+        : field === 'stepSlaMinutes'
+          ? 'stepSla'
+          : field === 'steps'
+            ? null
+            : field === 'stepMode'
+              ? 'mode'
+              : field === 'ownerGroupRef'
+                ? 'owner'
+                : field;
+    return key ? t(`admin.studio.${key}`) : null;
   };
 
   return (
@@ -275,7 +311,11 @@ export function ApprovalWorkflowInlineEditor({
               label={t(label)}
               intent={panel === value ? 'primary' : 'default'}
               aria-pressed={panel === value}
-              onClick={() => setPanel(value)}
+              onClick={() => {
+                if (value === 'canvas') restoreCanvasFocus.current = true;
+                if (value === 'inspector') inspectorFocus.current = null;
+                setPanel(value);
+              }}
             >
               <Icon size={18} />
             </ActionIconButton>
@@ -332,6 +372,10 @@ export function ApprovalWorkflowInlineEditor({
           />
         </Box>
         <Stack
+          ref={inspectorRef}
+          role="region"
+          aria-label={t('admin.studio.processInspector')}
+          tabIndex={-1}
           gap={2}
           sx={{
             p: 1.5,
@@ -391,13 +435,12 @@ export function ApprovalWorkflowInlineEditor({
                   onClick={() => {
                     if (issue.stepIndex !== undefined) setSelectedIndex(issue.stepIndex);
                     else setDefinitionOpen(true);
+                    inspectorFocus.current = issueLabel(issue.field);
                     setPanel('inspector');
                   }}
                 >
                   {t('admin.studio.validationIssue', {
-                    field: t(
-                      `admin.studio.${issue.field === 'slaMinutes' ? 'workflowSlaMinutes' : issue.field === 'stepSlaMinutes' ? 'stepSla' : issue.field === 'steps' ? 'stepsSection' : issue.field === 'stepMode' ? 'mode' : issue.field === 'ownerGroupRef' ? 'owner' : issue.field}`
-                    ),
+                    field: issueLabel(issue.field) ?? t('admin.studio.stepsSection'),
                   })}
                 </ActionButton>
               ))}

@@ -36,7 +36,18 @@ export const MENU_VISUAL_BASELINE_EXCEPTIONS: readonly MenuVisualBaselineExcepti
         'The domain team owns dedicated experience coverage and must approve deterministic menu snapshots before this temporary structural-only coverage can be retired.',
       reviewBy: POLICY_REVIEW_BY,
     },
-    ['home.personal', 'catalog.apps', 'work.queue', 'activity.home', 'activity.timeline']
+    [
+      'home.personal',
+      'catalog.apps',
+      'work.queue',
+      'work.action-required',
+      'work.day-plan',
+      'work.in-progress',
+      'work.awaiting-response',
+      'work.completed',
+      'activity.home',
+      'activity.timeline',
+    ]
   ),
   ...defineExceptions(
     {
@@ -50,6 +61,9 @@ export const MENU_VISUAL_BASELINE_EXCEPTIONS: readonly MenuVisualBaselineExcepti
       'dwaion.new',
       'dwaion.conversations',
       'dwaion.activity',
+      'dwaion.routines',
+      'dwaion.personal-controls',
+      'dwaion.artifacts',
       'dwaion.proposals',
       'dwaion.agents',
       'dwaion.actions',
@@ -174,6 +188,7 @@ export const MENU_VISUAL_BASELINE_EXCEPTIONS: readonly MenuVisualBaselineExcepti
       'mail.shared',
       'mail.organization',
       'mail.accounts',
+      'mail.contacts',
       'mail.admin-overview',
       'mail.admin-connections',
       'mail.admin-shared-inboxes',
@@ -192,6 +207,9 @@ export const MENU_VISUAL_BASELINE_EXCEPTIONS: readonly MenuVisualBaselineExcepti
       'meetings.join',
       'meetings.mine',
       'meetings.history',
+      'meetings.follow-ups',
+      'meetings.templates',
+      'meetings.preferences',
       'meetings.admin-operations',
       'meetings.admin-policies',
       'meetings.admin-intelligence',
@@ -214,15 +232,6 @@ export const MENU_VISUAL_BASELINE_EXCEPTIONS: readonly MenuVisualBaselineExcepti
       'messaging.admin-overview',
       'messaging.admin-policy',
     ]
-  ),
-  ...defineExceptions(
-    {
-      owner: '@dwp/approvals',
-      reason:
-        'The completed approvals state retains structural runtime coverage until its deterministic visual fixture is reviewed and approved.',
-      reviewBy: POLICY_REVIEW_BY,
-    },
-    ['approvals.completed']
   ),
   ...defineExceptions(
     {

@@ -1,15 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, RefreshCcw, ShieldCheck } from 'lucide-react';
+import {
+  Clock3,
+  Layers3,
+  Plus,
+  RefreshCcw,
+  ShieldCheck,
+  ShieldX,
+  UserRoundCheck,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionIconButton,
   EmptyState,
   ErrorState,
+  InlineFeedback,
   LoadingState,
   SelectField,
 } from '@dwp-frontend/design-system';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   getApprovalPolicies,
   getApprovalPolicyVersions,
@@ -20,8 +29,10 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
 import { approvalPolicyPublishCommand } from './approval-high-risk-command-model';
@@ -41,13 +52,15 @@ import {
   isApprovalPolicyDraftValid,
   isApprovalPolicyMakerBlocked,
   isApprovalPolicySourceCurrent,
+  parseApprovalPolicyProjection,
+  parseApprovalPolicyVersionProjection,
 } from './approval-policy-model';
 import {
   ApprovalPolicyDetail,
   ApprovalPolicyInspector,
   ApprovalPolicyListItem,
 } from './approval-policy-workspace';
-import { ApprovalPolicySection, ApprovalPolicySummary } from './approval-policy-presentation';
+import { ApprovalPolicySection } from './approval-policy-presentation';
 import { ApprovalPolicyImpactPanel } from './approval-policy-impact-panel';
 import { approvalPolicyImpactSourceIdentity } from './approval-policy-impact-source';
 import {
@@ -59,8 +72,14 @@ import {
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
 import { useApprovalPolicyCreate } from './use-approval-policy-create';
+import { StatusChip } from './approval-ui';
 
-import type { ApprovalPolicyDraft } from './approval-policy-model';
+import type {
+  ApprovalOversightPolicy,
+  ApprovalOversightPolicyVersion,
+  ApprovalPolicyDraft,
+  ApprovalPolicyProjection,
+} from './approval-policy-model';
 import type { ApprovalPolicy } from '@dwp-frontend/shared-utils';
 import type { ApprovalManagementScopedCommand } from './approval-management-command-scope';
 
@@ -94,21 +113,48 @@ export function ApprovalPolicyStudio() {
     staleTime: 30_000,
     retry: false,
   });
+  const policyProjection = useMemo(() => {
+    if (!policies.data) return null;
+    try {
+      return parseApprovalPolicyProjection(
+        policies.data,
+        experience.canEditPolicies || experience.canPublishPolicies ? 'full' : 'oversight'
+      );
+    } catch {
+      return null;
+    }
+  }, [experience.canEditPolicies, experience.canPublishPolicies, policies.data]);
+  const projectionInvalid = policies.isSuccess && policyProjection === null;
+  const policyRows = policyProjection?.policies ?? [];
+  const selectedMetadata = policyRows.find((policy) => policy.policyId === selectedId) ?? null;
+  const fullPolicies = policyProjection?.kind === 'full' ? policyProjection.policies : [];
+  const selected = fullPolicies.find((policy) => policy.policyId === selectedId) ?? null;
+  const selectedOversight =
+    policyProjection?.kind === 'oversight'
+      ? (policyProjection.policies.find((policy) => policy.policyId === selectedId) ?? null)
+      : null;
   const versions = useQuery({
-    queryKey: ['approvals', 'admin', 'policies', selectedId, 'versions', ...requestScope.cacheKey],
-    queryFn: ({ signal }) =>
-      getApprovalPolicyVersions(selectedId!, requestScope.contextScopeKey, signal),
-    enabled: scopeReady && Boolean(selectedId),
+    queryKey: [
+      'approvals',
+      'admin',
+      'policies',
+      selectedId,
+      'versions',
+      policyProjection?.kind,
+      ...requestScope.cacheKey,
+    ],
+    queryFn: async ({ signal }) =>
+      parseApprovalPolicyVersionProjection(
+        await getApprovalPolicyVersions(selectedId!, requestScope.contextScopeKey, signal),
+        policyProjection!.kind
+      ),
+    enabled: scopeReady && Boolean(selectedId) && policyProjection !== null,
     staleTime: 30_000,
     retry: 1,
   });
-  const selected = useMemo(
-    () => policies.data?.find((policy) => policy.policyId === selectedId) ?? null,
-    [policies.data, selectedId]
-  );
   const actorId = requestScope.cacheKey[1];
   const makerBlocked = isApprovalPolicyMakerBlocked(selected, actorId);
-  const publishedVersion = versions.data?.[0]?.versionNumber ?? null;
+  const publishedVersion = versions.data?.versions[0]?.versionNumber ?? null;
   const publishedVersionLabel = versions.isError
     ? t('admin.studio.policyVersionUnavailable')
     : versions.isLoading
@@ -117,13 +163,17 @@ export function ApprovalPolicyStudio() {
         ? t('admin.studio.unpublishedVersion')
         : `v${publishedVersion}`;
   const sourceReady =
-    scopeReady && policies.isSuccess && !policies.isFetching && policies.failureCount === 0;
+    scopeReady &&
+    policies.isSuccess &&
+    !policies.isFetching &&
+    policies.failureCount === 0 &&
+    policyProjection?.kind === 'full';
   const policyCreate = useApprovalPolicyCreate({
     requestScope,
     scopeReady,
     sourceReady,
     canCreate: experience.canEditPolicies,
-    policies: policies.data ?? [],
+    policies: fullPolicies,
     policiesQueryKey,
     onCreated: (policy) => {
       setSelectedId(policy.policyId);
@@ -145,7 +195,15 @@ export function ApprovalPolicyStudio() {
   const isImpactSourceCurrent = (policy: ApprovalPolicy) => {
     const current = sourceState.current;
     const state = queryClient.getQueryState<ApprovalPolicy[]>(current.queryKey);
-    const latest = state?.data?.find((candidate) => candidate.policyId === policy.policyId);
+    let latest: ApprovalPolicy | undefined;
+    try {
+      const projection = parseApprovalPolicyProjection(state?.data, 'full');
+      if (projection.kind === 'full') {
+        latest = projection.policies.find((candidate) => candidate.policyId === policy.policyId);
+      }
+    } catch {
+      latest = undefined;
+    }
     return Boolean(
       current.scopeReady &&
       state?.status === 'success' &&
@@ -161,6 +219,15 @@ export function ApprovalPolicyStudio() {
   ) => {
     const current = sourceState.current;
     const state = queryClient.getQueryState<ApprovalPolicy[]>(current.queryKey);
+    let latest: ApprovalPolicy | undefined;
+    try {
+      const projection = parseApprovalPolicyProjection(state?.data, 'full');
+      if (projection.kind === 'full') {
+        latest = projection.policies.find((policy) => policy.policyId === origin?.input.policyId);
+      }
+    } catch {
+      latest = undefined;
+    }
     return Boolean(
       origin &&
       commandScope.isCurrent(origin) &&
@@ -169,10 +236,7 @@ export function ApprovalPolicyStudio() {
       state?.status === 'success' &&
       state.fetchStatus === 'idle' &&
       !state.error &&
-      isApprovalPolicySourceCurrent(
-        origin.input,
-        state.data?.find((policy) => policy.policyId === origin.input.policyId)
-      )
+      isApprovalPolicySourceCurrent(origin.input, latest)
     );
   };
   const requireOriginal = (
@@ -184,7 +248,7 @@ export function ApprovalPolicyStudio() {
   };
 
   useEffect(() => {
-    const available = policies.data ?? [];
+    const available = policyRows;
     if (available.length === 0) {
       if (selectedId) setSelectedId(null);
       return;
@@ -192,7 +256,7 @@ export function ApprovalPolicyStudio() {
     if (!selectedId || !available.some((policy) => policy.policyId === selectedId)) {
       setSelectedId(available[0].policyId);
     }
-  }, [policies.data, selectedId]);
+  }, [policyRows, selectedId]);
 
   const runUpdate = useApprovalGovernedMutation('route.approvals.admin.policy-update.action');
   const highRiskPublish = useApprovalManagementHighRiskCommand({
@@ -230,6 +294,7 @@ export function ApprovalPolicyStudio() {
             'policies',
             command.targetId,
             'versions',
+            'full',
             ...requestScope.cacheKey,
           ],
           exact: true,
@@ -379,7 +444,7 @@ export function ApprovalPolicyStudio() {
     );
   }
 
-  if (policies.isError) {
+  if (policies.isError || projectionInvalid || !policyProjection) {
     return (
       <ErrorState
         title={t('admin.loadError')}
@@ -392,7 +457,12 @@ export function ApprovalPolicyStudio() {
 
   return (
     <>
-      <ApprovalPolicySummary policies={policies.data} />
+      <ApprovalPolicyMetadataSummary policies={policyRows} />
+      {policyProjection.kind === 'oversight' ? (
+        <InlineFeedback severity="info" sx={{ mb: 2 }}>
+          {t('admin.studio.readOnly')}
+        </InlineFeedback>
+      ) : null}
       <Box
         sx={{
           display: 'grid',
@@ -410,8 +480,8 @@ export function ApprovalPolicyStudio() {
           meta={t('admin.policies.meta')}
           action={
             <Stack direction="row" gap={1} alignItems="center">
-              <Chip size="small" label={policies.data.length} />
-              {experience.canEditPolicies ? (
+              <Chip size="small" label={policyRows.length} />
+              {policyProjection.kind === 'full' && experience.canEditPolicies ? (
                 <ActionIconButton
                   label={t('admin.policyCreate.open')}
                   intent="primary"
@@ -435,7 +505,7 @@ export function ApprovalPolicyStudio() {
             <SelectField
               aria-label={t('admin.policies.title')}
               value={selectedId ?? ''}
-              options={policies.data.map((policy) => ({
+              options={policyRows.map((policy) => ({
                 value: policy.policyId,
                 label:
                   resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko'
@@ -449,25 +519,45 @@ export function ApprovalPolicyStudio() {
             component="ul"
             sx={{ m: 0, p: 0, listStyle: 'none', display: { xs: 'none', md: 'flex' } }}
           >
-            {policies.data.map((policy) => (
-              <ApprovalPolicyListItem
-                key={policy.policyId}
-                policy={policy}
-                selected={policy.policyId === selectedId}
-                locale={i18n.resolvedLanguage}
-                onSelect={() => setSelectedId(policy.policyId)}
-              />
-            ))}
+            {policyProjection.kind === 'full'
+              ? policyProjection.policies.map((policy) => (
+                  <ApprovalPolicyListItem
+                    key={policy.policyId}
+                    policy={policy}
+                    selected={policy.policyId === selectedId}
+                    locale={i18n.resolvedLanguage}
+                    onSelect={() => setSelectedId(policy.policyId)}
+                  />
+                ))
+              : policyProjection.policies.map((policy) => (
+                  <ApprovalOversightPolicyListItem
+                    key={policy.policyId}
+                    policy={policy}
+                    selected={policy.policyId === selectedId}
+                    locale={i18n.resolvedLanguage}
+                    onSelect={() => setSelectedId(policy.policyId)}
+                  />
+                ))}
           </Stack>
         </ApprovalPolicySection>
 
-        {!selected ? (
+        {!selectedMetadata ? (
           <EmptyState
             title={t('admin.studio.noPolicy')}
             description={t('admin.studio.noPolicyDescription')}
             icon={<ShieldCheck size={24} />}
           />
-        ) : (
+        ) : policyProjection.kind === 'oversight' && selectedOversight ? (
+          <ApprovalOversightPolicyWorkspace
+            policy={selectedOversight}
+            versions={versions.data?.kind === 'oversight' ? versions.data.versions : undefined}
+            versionsLoading={versions.isLoading}
+            versionsError={versions.isError}
+            versionsFetching={versions.isFetching}
+            locale={i18n.resolvedLanguage}
+            onRetryVersions={() => void versions.refetch()}
+          />
+        ) : selected ? (
           <>
             <ApprovalPolicyDetail
               policy={selected}
@@ -477,7 +567,7 @@ export function ApprovalPolicyStudio() {
             <Box sx={{ minWidth: 0, gridColumn: { md: 2, lg: 'auto' } }}>
               <ApprovalPolicyInspector
                 policy={selected}
-                versions={versions.data}
+                versions={versions.data?.kind === 'full' ? [...versions.data.versions] : undefined}
                 versionsLoading={versions.isLoading}
                 versionsError={versions.isError}
                 versionsFetching={versions.isFetching}
@@ -505,7 +595,7 @@ export function ApprovalPolicyStudio() {
               />
             </Box>
           </>
-        )}
+        ) : null}
       </Box>
 
       <ApprovalPolicyEditorDialog
@@ -558,6 +648,272 @@ export function ApprovalPolicyStudio() {
         onRefreshSource={policyCreate.refreshSource}
       />
       <ApprovalHighRiskCommandDialog controller={highRiskPublish.controller} />
+    </>
+  );
+}
+
+function ApprovalPolicyMetadataSummary({
+  policies,
+}: {
+  policies: ApprovalPolicyProjection['policies'];
+}) {
+  const { t } = useTranslation('approvals');
+  const signals = [
+    ['totalPolicies', policies.length, Layers3, 'primary.main'],
+    [
+      'pendingReviews',
+      policies.filter((policy) => policy.pendingReview).length,
+      UserRoundCheck,
+      'warning.main',
+    ],
+    [
+      'blockingPolicies',
+      policies.filter((policy) => policy.enforcementMode === 'BLOCK').length,
+      ShieldX,
+      'error.main',
+    ],
+    [
+      'activePolicies',
+      policies.filter((policy) => policy.lifecycleState === 'ACTIVE').length,
+      ShieldCheck,
+      'success.main',
+    ],
+    [
+      'slaPolicies',
+      policies.filter((policy) => policy.policyType === 'SLA').length,
+      Clock3,
+      'info.main',
+    ],
+  ] as const;
+  return (
+    <Box
+      component="dl"
+      sx={{
+        m: 0,
+        py: 2,
+        display: 'grid',
+        gridTemplateColumns: { xs: 'repeat(2,minmax(0,1fr))', sm: 'repeat(5,minmax(0,1fr))' },
+        gap: 1.5,
+      }}
+    >
+      {signals.map(([key, count, Icon, color]) => (
+        <Box
+          key={key}
+          sx={{
+            minWidth: 0,
+            p: 1.5,
+            border: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Stack component="dt" direction="row" justifyContent="space-between" gap={1}>
+            <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
+              {t(`admin.studio.workspace.${key}`)}
+            </Box>
+            <Box sx={{ color, display: 'flex', flexShrink: 0 }}>
+              <Icon size={18} aria-hidden="true" />
+            </Box>
+          </Stack>
+          <Box component="dd" sx={{ m: 0, mt: 0.75, typography: 'h4' }}>
+            {count}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+function ApprovalOversightPolicyListItem({
+  policy,
+  selected,
+  locale,
+  onSelect,
+}: {
+  policy: ApprovalOversightPolicy;
+  selected: boolean;
+  locale?: string;
+  onSelect: () => void;
+}) {
+  const { t, i18n } = useTranslation('approvals');
+  const korean = resolveSupportedLocale(locale, i18n.resolvedLanguage, i18n.language) === 'ko';
+  return (
+    <Box component="li">
+      <ButtonBase
+        onClick={onSelect}
+        aria-current={selected ? 'true' : undefined}
+        sx={(theme) => ({
+          width: 1,
+          minHeight: 96,
+          p: 1.5,
+          display: 'block',
+          textAlign: 'left',
+          borderBottom: 1,
+          borderColor: 'divider',
+          borderInlineStart: 3,
+          borderInlineStartColor: selected ? 'primary.main' : 'transparent',
+          bgcolor: selected ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+          '&:hover': { bgcolor: 'action.hover' },
+          '&.Mui-focusVisible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: -2,
+          },
+        })}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Chip size="small" variant="outlined" label={policy.severity} />
+          <StatusChip status={policy.pendingReview ? 'ATTENTION' : policy.lifecycleState} />
+        </Stack>
+        <Box
+          sx={{
+            mt: 1,
+            typography: 'body2',
+            fontWeight: 'fontWeightBold',
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {korean ? policy.nameKo : policy.nameEn}
+        </Box>
+        <Box
+          sx={{ mt: 0.5, typography: 'caption', color: 'text.secondary', overflowWrap: 'anywhere' }}
+        >
+          {policy.policyKey}
+        </Box>
+        <Box sx={{ mt: 0.5, typography: 'caption', color: 'text.secondary' }}>
+          {t(`admin.studio.policyTypes.${policy.policyType}`, { defaultValue: policy.policyType })}
+        </Box>
+      </ButtonBase>
+    </Box>
+  );
+}
+
+function ApprovalOversightPolicyWorkspace({
+  policy,
+  versions,
+  versionsLoading,
+  versionsError,
+  versionsFetching,
+  locale,
+  onRetryVersions,
+}: {
+  policy: ApprovalOversightPolicy;
+  versions: readonly ApprovalOversightPolicyVersion[] | undefined;
+  versionsLoading: boolean;
+  versionsError: boolean;
+  versionsFetching: boolean;
+  locale?: string;
+  onRetryVersions: () => void;
+}) {
+  const { t, i18n } = useTranslation('approvals');
+  const displayLocale = resolveSupportedLocale(locale, i18n.resolvedLanguage, i18n.language);
+  const korean = displayLocale === 'ko';
+  const rows = [
+    [t('admin.studio.enforcement'), policy.enforcementMode],
+    [t('admin.studio.severity'), policy.severity],
+    [t('admin.studio.lifecycle'), policy.lifecycleState],
+    [t('admin.studio.policyVersion'), String(policy.version)],
+  ];
+  return (
+    <>
+      <Stack gap={2} minWidth={0}>
+        <Box component="header" sx={{ py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+          <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+            <StatusChip status={policy.lifecycleState} />
+            <Chip size="small" variant="outlined" label={t('admin.studio.readOnly')} />
+          </Stack>
+          <Box component="h2" sx={{ m: 0, mt: 1, typography: 'h5', overflowWrap: 'anywhere' }}>
+            {korean ? policy.nameKo : policy.nameEn}
+          </Box>
+          <Box
+            sx={{ mt: 1, typography: 'caption', color: 'text.secondary', overflowWrap: 'anywhere' }}
+          >
+            {policy.policyKey}
+          </Box>
+        </Box>
+        <ApprovalPolicySection title={t('admin.studio.readOnly')}>
+          <Box component="dl" sx={{ m: 0, py: 1 }}>
+            {rows.map(([label, value]) => (
+              <Stack
+                key={label}
+                direction="row"
+                justifyContent="space-between"
+                gap={2}
+                sx={{ py: 1, borderBottom: 1, borderColor: 'divider' }}
+              >
+                <Box component="dt" sx={{ typography: 'caption', color: 'text.secondary' }}>
+                  {label}
+                </Box>
+                <Box component="dd" sx={{ m: 0, typography: 'body2', overflowWrap: 'anywhere' }}>
+                  {value}
+                </Box>
+              </Stack>
+            ))}
+            {policy.pendingAt ? (
+              <Stack direction="row" justifyContent="space-between" gap={2} sx={{ py: 1 }}>
+                <Box component="dt" sx={{ typography: 'caption', color: 'text.secondary' }}>
+                  {t('admin.studio.workspace.requestedAt')}
+                </Box>
+                <Box component="dd" sx={{ m: 0, typography: 'body2' }}>
+                  {formatDate(
+                    policy.pendingAt,
+                    { dateStyle: 'medium', timeStyle: 'short' },
+                    displayLocale
+                  )}
+                </Box>
+              </Stack>
+            ) : null}
+          </Box>
+        </ApprovalPolicySection>
+      </Stack>
+      <Box sx={{ minWidth: 0, gridColumn: { md: 2, lg: 'auto' } }}>
+        <ApprovalPolicySection
+          title={t('admin.studio.historyTitle')}
+          meta={t('admin.studio.historyMeta')}
+        >
+          {versionsError ? (
+            <Box sx={{ py: 1.5 }}>
+              <ErrorState
+                title={t('admin.studio.historyLoadError')}
+                retryLabel={t('actions.retry')}
+                retrying={versionsFetching}
+                onRetry={onRetryVersions}
+                size="compact"
+              />
+            </Box>
+          ) : versionsLoading ? (
+            <LoadingState label={t('admin.studio.policyVersionLoading')} size="compact" />
+          ) : (versions?.length ?? 0) === 0 ? (
+            <EmptyState
+              title={t('admin.studio.historyEmpty')}
+              description={t('admin.studio.historyMeta')}
+              icon={<Clock3 size={22} />}
+            />
+          ) : (
+            <Stack component="ol" sx={{ m: 0, p: 0, listStyle: 'none' }}>
+              {versions?.slice(0, 8).map((version) => (
+                <Box
+                  key={version.policyVersionId}
+                  component="li"
+                  sx={{ py: 1.5, borderBottom: 1, borderColor: 'divider' }}
+                >
+                  <Stack direction="row" gap={0.75} flexWrap="wrap">
+                    <Chip size="small" variant="outlined" label={`v${version.versionNumber}`} />
+                    <StatusChip status={version.lifecycleState} />
+                  </Stack>
+                  <Box sx={{ mt: 0.75, typography: 'caption', color: 'text.secondary' }}>
+                    {formatDate(
+                      version.publishedAt,
+                      { dateStyle: 'medium', timeStyle: 'short' },
+                      displayLocale
+                    )}
+                  </Box>
+                </Box>
+              ))}
+            </Stack>
+          )}
+        </ApprovalPolicySection>
+      </Box>
     </>
   );
 }

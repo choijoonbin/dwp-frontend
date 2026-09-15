@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, ListChecks, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ListChecks, Search, UserRoundCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionIconButton, FormField } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -13,7 +13,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { APPROVAL_BATCH_LIMIT } from './approval-command-center-model';
-import { PriorityChip } from './approval-ui';
+import { PriorityChip, StatusChip } from './approval-ui';
 
 import type { ApprovalTask } from '@dwp-frontend/shared-utils';
 
@@ -58,8 +58,17 @@ export function ApprovalCommandTaskList({
 }) {
   const { t } = useTranslation('approvals');
   return (
-    <Box sx={{ minWidth: 0, borderRight: { md: 1 }, borderColor: 'divider' }}>
-      <Box sx={{ px: 1.75, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+    <Box
+      sx={{
+        minWidth: 0,
+        height: { md: '100%' },
+        display: { md: 'flex' },
+        flexDirection: 'column',
+        borderRight: { md: 1 },
+        borderColor: 'divider',
+      }}
+    >
+      <Box sx={{ flex: '0 0 auto', px: 1.75, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
         <FormField
           size="small"
           label={t('home.commandCenter.searchLabel')}
@@ -119,9 +128,15 @@ export function ApprovalCommandTaskList({
         </Stack>
       </Box>
       <Box
-        role={tasks.length > 0 ? 'list' : undefined}
+        role={tasks.length > 0 ? 'grid' : undefined}
         aria-label={tasks.length > 0 ? t('home.commandCenter.taskList') : undefined}
-        sx={{ maxHeight: { md: 690 }, overflowY: 'auto' }}
+        sx={{
+          minHeight: { md: 0 },
+          flex: { md: '1 1 auto' },
+          overflowY: { md: 'auto' },
+          overscrollBehavior: { md: 'contain' },
+          scrollbarGutter: { md: 'stable' },
+        }}
       >
         {tasks.map((task) => (
           <ApprovalCommandTaskRow
@@ -151,7 +166,7 @@ export function ApprovalCommandTaskList({
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        sx={{ px: 1.5, py: 1, borderTop: 1, borderColor: 'divider' }}
+        sx={{ flex: '0 0 auto', px: 1.5, py: 1, borderTop: 1, borderColor: 'divider' }}
       >
         <ActionIconButton
           size="small"
@@ -197,20 +212,25 @@ function ApprovalCommandTaskRow({
   const { t } = useTranslation('approvals');
   return (
     <Box
-      role="listitem"
+      role="row"
+      aria-selected={selected}
       data-approval-task-id={task.taskId}
-      sx={{
+      sx={(theme) => ({
         display: 'grid',
         gridTemplateColumns: selectionMode ? '44px minmax(0, 1fr)' : 'minmax(0, 1fr)',
         minHeight: 118,
         borderBottom: 1,
         borderColor: 'divider',
         bgcolor: selected ? 'action.selected' : 'background.paper',
+        boxShadow: selected ? `inset 3px 0 0 ${theme.palette.primary.main}` : 'none',
         '&:focus-within': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
-      }}
+      })}
     >
       {selectionMode && (
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', pt: 1.25 }}>
+        <Box
+          role="gridcell"
+          sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', pt: 1.25 }}
+        >
           <Checkbox
             size="small"
             checked={checked}
@@ -224,65 +244,92 @@ function ApprovalCommandTaskRow({
           />
         </Box>
       )}
-      <ButtonBase
-        aria-pressed={selected}
-        aria-current={selected ? 'true' : undefined}
-        disabled={disabled}
-        onClick={onSelect}
-        sx={{
-          minWidth: 0,
-          px: 1.25,
-          py: 1.25,
-          display: 'block',
-          textAlign: 'left',
-          '&:hover': { bgcolor: 'action.hover' },
-        }}
-      >
-        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Typography variant="caption" color="text.secondary">
-            {task.requestNumber}
-          </Typography>
-          <Stack direction="row" gap={0.5} alignItems="center">
-            <PriorityChip priority={task.priority} />
-            <Chip
-              size="small"
-              variant="outlined"
-              color={task.riskScore >= 80 ? 'error' : task.riskScore >= 60 ? 'warning' : 'default'}
-              label={t('home.commandCenter.riskCompact', { score: task.riskScore })}
-            />
-          </Stack>
-        </Stack>
-        <Typography
-          variant="body2"
+      <Box role="gridcell" sx={{ minWidth: 0 }}>
+        <ButtonBase
+          aria-current={selected ? 'true' : undefined}
+          disabled={disabled}
+          onClick={onSelect}
           sx={{
-            mt: 0.75,
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 2,
-            overflow: 'hidden',
-            overflowWrap: 'anywhere',
+            width: '100%',
+            minWidth: 0,
+            px: 1.25,
+            py: 1.25,
+            display: 'block',
+            textAlign: 'left',
+            '&:hover': { bgcolor: 'action.hover' },
           }}
         >
-          {task.title}
-        </Typography>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', mt: 0.4, overflowWrap: 'anywhere' }}
-        >
-          {task.requesterName ?? t('home.unknownRequester')} · {task.requesterOrgName ?? '-'}
-        </Typography>
-        <Stack direction="row" justifyContent="space-between" gap={1} sx={{ mt: 0.45 }}>
-          <Typography variant="caption" color="primary.main">
-            {t('inbox.stageProgress', { current: task.stepSequence, name: task.stepName })}
+          <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
+            <Typography variant="caption" color="text.secondary">
+              {task.requestNumber}
+            </Typography>
+            <Stack
+              direction="row"
+              gap={0.5}
+              alignItems="center"
+              justifyContent="flex-end"
+              flexWrap="wrap"
+            >
+              <StatusChip status={task.status} />
+              <PriorityChip priority={task.priority} />
+              <Chip
+                size="small"
+                variant="outlined"
+                color={
+                  task.riskScore >= 80 ? 'error' : task.riskScore >= 60 ? 'warning' : 'default'
+                }
+                label={t('home.commandCenter.riskCompact', { score: task.riskScore })}
+              />
+            </Stack>
+          </Stack>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 0.75,
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 2,
+              overflow: 'hidden',
+              overflowWrap: 'anywhere',
+            }}
+          >
+            {task.title}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {task.dueAt
-              ? formatDate(task.dueAt, { month: 'short', day: 'numeric', hour: '2-digit' })
-              : t('home.commandCenter.noDueDate')}
-          </Typography>
-        </Stack>
-      </ButtonBase>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1}
+            sx={{ mt: 0.4 }}
+          >
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
+            >
+              {task.requesterName ?? t('home.unknownRequester')} · {task.requesterOrgName ?? '-'}
+            </Typography>
+            {(task.status === 'CLAIMED' || task.status === 'REASSIGNED') && (
+              <Stack direction="row" alignItems="center" gap={0.4} sx={{ flex: '0 0 auto' }}>
+                <UserRoundCheck size={14} aria-hidden="true" />
+                <Typography variant="caption" color="primary.main">
+                  {t(`home.commandCenter.assignment.${task.status}`)}
+                </Typography>
+              </Stack>
+            )}
+          </Stack>
+          <Stack direction="row" justifyContent="space-between" gap={1} sx={{ mt: 0.45 }}>
+            <Typography variant="caption" color="primary.main">
+              {t('inbox.stageProgress', { current: task.stepSequence, name: task.stepName })}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {task.dueAt
+                ? formatDate(task.dueAt, { month: 'short', day: 'numeric', hour: '2-digit' })
+                : t('home.commandCenter.noDueDate')}
+            </Typography>
+          </Stack>
+        </ButtonBase>
+      </Box>
     </Box>
   );
 }

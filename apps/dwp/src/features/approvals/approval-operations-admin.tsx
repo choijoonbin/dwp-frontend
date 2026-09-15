@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { Activity, CloudCog, RefreshCcw, RotateCcw } from 'lucide-react';
+import { Activity, ArrowLeft, CloudCog, RefreshCcw, RotateCcw } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  ActionButton,
   ActionIconButton,
   EmptyState,
   ErrorState,
+  InlineFeedback,
   LoadingState,
   SignalMetric,
   SelectField,
@@ -22,9 +24,12 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
 import { approvalDeliveryRetryCommand } from './approval-high-risk-command-model';
+import { focusApprovalRegion, focusApprovalSelector } from './approval-focus-navigation';
 import { useApprovalManagementHighRiskCommand } from './approval-management-command-scope';
 import { summarizeApprovalOperations } from './approval-management-model';
 import {
@@ -51,7 +56,7 @@ import {
   ApprovalOperationsTaskPane,
 } from './approval-operations-task-pane';
 import { ApprovalRetentionWorkspace } from './approval-retention-workspace';
-import { ApprovalSurface } from './approval-ui';
+import { ApprovalSurface, StatusChip } from './approval-ui';
 import {
   useApprovalExperience,
   useApprovalManagementRequestScope,
@@ -61,6 +66,7 @@ import {
   approvalOperationsQueueFromSearch,
   approvalOperationsRetrySnapshotCurrent,
   approvalOperationsSourceCurrent,
+  parseApprovalOperationsProjection,
 } from './approval-operations-workbench-model';
 
 import type {
@@ -73,6 +79,7 @@ import type { ApprovalNativeDeliveryAction } from '@dwp-frontend/shared-utils/ap
 import type { ApprovalNativeOperationProposal } from './approval-native-operations-model';
 import type {
   ApprovalOperationsQueue,
+  ApprovalOperationsProjection,
   ApprovalOperationsSort,
   ApprovalOperationsStatus,
 } from './approval-operations-workbench-model';
@@ -98,6 +105,8 @@ export function ApprovalOperationsAdmin() {
 
 function ApprovalOperationsWorkbench() {
   const { t, i18n } = useTranslation('approvals');
+  const theme = useTheme();
+  const compact = useMediaQuery(theme.breakpoints.down('lg'));
   const queryClient = useQueryClient();
   const { canOperate } = useApprovalExperience();
   const requestScope = useApprovalManagementRequestScope();
@@ -128,6 +137,10 @@ function ApprovalOperationsWorkbench() {
   const [status, setStatus] = useState<ApprovalOperationsStatus>('ALL');
   const [sort, setSort] = useState<ApprovalOperationsSort>('OLDEST');
   const [, expireSource] = useState(0);
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+  const queueRef = useRef<HTMLDivElement>(null);
+  const inspectorRef = useRef<HTMLDivElement>(null);
+  const focusInspector = useRef(false);
   const operationsQueryKey = [
     'approvals',
     'admin',
@@ -142,33 +155,40 @@ function ApprovalOperationsWorkbench() {
     retry: false,
     notifyOnChangeProps: 'all',
   });
-  const summary = summarizeApprovalOperations(operations.data);
+  const projection = useMemo(() => {
+    if (!operations.data) return null;
+    try {
+      return parseApprovalOperationsProjection(operations.data);
+    } catch {
+      return null;
+    }
+  }, [operations.data]);
+  const projectionInvalid = operations.isSuccess && projection === null;
+  const fullOperations = projection?.kind === 'full' ? projection.data : null;
+  const summary = summarizeApprovalOperations(projection ?? undefined);
   const scopeFingerprint = JSON.stringify(requestScope.cacheKey);
 
   useEffect(() => {
-    const expiresAt = Date.parse(operations.data?.generatedAt ?? '') + 45_000;
+    const expiresAt = Date.parse(projection?.data.generatedAt ?? '') + 45_000;
     if (!Number.isFinite(expiresAt)) return;
     const timer = window.setTimeout(
       () => expireSource((value) => value + 1),
       Math.max(1, expiresAt - Date.now())
     );
     return () => window.clearTimeout(timer);
-  }, [operations.data?.generatedAt]);
+  }, [projection?.data.generatedAt]);
 
   const deliveries = useMemo(
     () =>
       approvalOperationsDeliveryQueue(
-        operations.data?.integrationDeliveries ?? [],
+        fullOperations?.integrationDeliveries ?? [],
         queue,
         status,
         sort
       ),
-    [operations.data?.integrationDeliveries, queue, status, sort]
+    [fullOperations?.integrationDeliveries, queue, status, sort]
   );
-  const tasks = useMemo(
-    () => operations.data?.breachedTasks ?? [],
-    [operations.data?.breachedTasks]
-  );
+  const tasks = useMemo(() => fullOperations?.breachedTasks ?? [], [fullOperations?.breachedTasks]);
   const selectedTask = tasks.find((task) => task.taskId === selectedId) ?? null;
   const selectedDelivery = deliveries.find((delivery) => delivery.outboxId === selectedId) ?? null;
 
@@ -181,6 +201,33 @@ function ApprovalOperationsWorkbench() {
     }
     if (!ids.includes(selectedId ?? '')) setSelectedId(ids[0]!);
   }, [deliveries, queue, selectedId, tasks]);
+
+  const selectForInspection = useCallback(
+    (id: string) => {
+      setSelectedId(id);
+      if (compact) {
+        focusInspector.current = true;
+        setMobileInspectorOpen(true);
+      }
+    },
+    [compact]
+  );
+  useEffect(() => {
+    if (!compact || !focusInspector.current || (!selectedTask && !selectedDelivery)) return;
+    focusInspector.current = false;
+    const frame = window.requestAnimationFrame(() => {
+      focusApprovalRegion(inspectorRef.current, 'start');
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [compact, selectedDelivery, selectedTask]);
+
+  const backToSelectedOperation = () => {
+    focusInspector.current = false;
+    setMobileInspectorOpen(false);
+    window.requestAnimationFrame(() => {
+      focusApprovalSelector(queueRef.current, '[aria-current="true"]', 'center');
+    });
+  };
 
   const replaceSelection = useCallback((ids: readonly string[]) => {
     const next = new Set(ids.slice(0, 50));
@@ -244,6 +291,8 @@ function ApprovalOperationsWorkbench() {
     replaceSelection([]);
     setNativeDialog(null);
     setNativeProposal(null);
+    setMobileInspectorOpen(false);
+    focusInspector.current = false;
     retryOriginal.current = null;
     closeHighRiskRetry();
   }, [closeHighRiskRetry, replaceSelection]);
@@ -269,6 +318,7 @@ function ApprovalOperationsWorkbench() {
     approvalOperationsSourceCurrent(
       queryClient.getQueryState<ApprovalOperations>(operationsQueryKey)
     ) &&
+    projection?.kind === 'full' &&
     canOperate &&
     !nativeProposal;
   const formatTimestamp = (value?: string | null) =>
@@ -297,7 +347,7 @@ function ApprovalOperationsWorkbench() {
     });
   };
   const submitNativeCommand = (reason: string, candidate: ApprovalDelegationCandidate | null) => {
-    if (!nativeDialog || !operations.data || !operationWriteReady) return;
+    if (!nativeDialog || !fullOperations || !operationWriteReady) return;
     const proposal =
       nativeDialog.action === 'TASK_REASSIGN'
         ? candidate
@@ -305,7 +355,7 @@ function ApprovalOperationsWorkbench() {
               targets: nativeDialog.tasks,
               candidate,
               reason,
-              generatedAt: operations.data.generatedAt,
+              generatedAt: fullOperations.generatedAt,
               scopeFingerprint,
             })
           : null
@@ -313,7 +363,7 @@ function ApprovalOperationsWorkbench() {
             action: nativeDialog.action,
             targets: nativeDialog.deliveries,
             reason,
-            generatedAt: operations.data.generatedAt,
+            generatedAt: fullOperations.generatedAt,
             scopeFingerprint,
           });
     if (
@@ -382,7 +432,7 @@ function ApprovalOperationsWorkbench() {
       />
     );
   }
-  if (operations.isError) {
+  if (operations.isError || projectionInvalid || !projection) {
     return (
       <ErrorState
         title={t('admin.loadError')}
@@ -390,6 +440,17 @@ function ApprovalOperationsWorkbench() {
         retrying={operations.isFetching}
         onRetry={() => void operations.refetch()}
         size="compact"
+      />
+    );
+  }
+  if (projection.kind !== 'full') {
+    return (
+      <ApprovalRestrictedOperations
+        projection={projection}
+        korean={korean}
+        refreshing={operations.isFetching}
+        formatTimestamp={formatTimestamp}
+        onRefresh={() => void operations.refetch()}
       />
     );
   }
@@ -407,9 +468,7 @@ function ApprovalOperationsWorkbench() {
           sx={{ typography: 'caption', color: 'text.secondary' }}
           aria-live="polite"
         >
-          {operations.data
-            ? `${t('admin.metricDetail')} · ${formatTimestamp(operations.data.generatedAt)}`
-            : t('admin.metricDetail')}
+          {`${t('admin.metricDetail')} · ${formatTimestamp(projection.data.generatedAt)}`}
         </Box>
         <ActionIconButton
           label={t('actions.refresh')}
@@ -430,7 +489,7 @@ function ApprovalOperationsWorkbench() {
           gap: 1.25,
         }}
       >
-        {(operations.data?.signals ?? []).map((signal) => (
+        {projection.data.signals.map((signal) => (
           <SignalMetric
             key={signal.key}
             label={korean ? signal.titleKo : signal.titleEn}
@@ -450,7 +509,7 @@ function ApprovalOperationsWorkbench() {
           label={t('admin.operationsQueue.retryReady')}
           value={
             operationWriteReady
-              ? String(summary.retryCandidates)
+              ? String(summary.retryCandidates ?? 0)
               : t('admin.integrations.notAvailable')
           }
           detail={
@@ -470,17 +529,18 @@ function ApprovalOperationsWorkbench() {
           alignItems: 'start',
         }}
       >
-        <ApprovalSurface
-          title={t('admin.integrations.title')}
-          meta={t('admin.integrations.meta')}
-          action={
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t('admin.integrations.eventCount', { count: summary.totalDeliveries })}
-            />
-          }
-        >
+        <Box ref={queueRef} minWidth={0}>
+          <ApprovalSurface
+            title={t('admin.integrations.title')}
+            meta={t('admin.integrations.meta')}
+            action={
+              <Chip
+                size="small"
+                variant="outlined"
+                label={t('admin.integrations.eventCount', { count: summary.totalDeliveries })}
+              />
+            }
+          >
           <Tabs
             value={queue}
             onChange={(_, value: ApprovalOperationsQueue) => setQueue(value)}
@@ -544,7 +604,7 @@ function ApprovalOperationsWorkbench() {
                 selectedIds={selectedIds}
                 canOperate={operationWriteReady}
                 busy={Boolean(nativeProposal)}
-                onSelect={(task) => setSelectedId(task.taskId)}
+                onSelect={(task) => selectForInspection(task.taskId)}
                 onToggle={toggleSelection}
                 onToggleVisible={(targets, checked) =>
                   replaceSelection(checked ? targets.map((target) => target.taskId) : [])
@@ -559,7 +619,7 @@ function ApprovalOperationsWorkbench() {
                 canOperate={operationWriteReady && queue === 'delivery'}
                 busy={Boolean(nativeProposal)}
                 formatTimestamp={formatTimestamp}
-                onSelect={(delivery) => setSelectedId(delivery.outboxId)}
+                onSelect={(delivery) => selectForInspection(delivery.outboxId)}
                 onToggle={toggleSelection}
                 onToggleVisible={(targets, checked) =>
                   replaceSelection(checked ? targets.map((target) => target.outboxId) : [])
@@ -568,43 +628,63 @@ function ApprovalOperationsWorkbench() {
               />
             )}
           </Box>
-        </ApprovalSurface>
-        {queue === 'sla' && selectedTask ? (
-          <ApprovalOperationsTaskInspector
-            task={selectedTask}
-            canOperate={operationWriteReady}
-            busy={Boolean(nativeProposal)}
-            formatTimestamp={formatTimestamp}
-            onReassign={openTaskCommand}
-          />
-        ) : selectedDelivery ? (
-          <ApprovalOperationsDeliveryInspector
-            delivery={selectedDelivery}
-            canOperate={operationWriteReady && queue === 'delivery'}
-            busy={highRiskRetry.controller.busy || Boolean(nativeProposal)}
-            formatTimestamp={formatTimestamp}
-            onRetry={(expectedVersion) => {
-              if (!operationWriteReady || queue !== 'delivery') return;
-              retryOriginal.current = {
-                outboxId: selectedDelivery.outboxId,
-                expectedVersion,
-                deliveryFingerprint: JSON.stringify(selectedDelivery),
-                scopeFingerprint,
-              };
-              assertRetryCurrent();
-              void highRiskRetry.begin(
-                approvalDeliveryRetryCommand(selectedDelivery.outboxId, expectedVersion)
-              );
-            }}
-            onNative={openDeliveryCommand}
-          />
-        ) : (
-          <EmptyState
-            title={t('admin.integrations.empty')}
-            description={t('admin.integrations.meta')}
-            icon={<CloudCog size={24} />}
-          />
-        )}
+          </ApprovalSurface>
+        </Box>
+        <Box
+          ref={inspectorRef}
+          role="region"
+          aria-label={t('admin.studio.processInspector')}
+          tabIndex={-1}
+          sx={{ minWidth: 0, scrollMarginBlockStart: 16 }}
+        >
+          {compact && mobileInspectorOpen ? (
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<ArrowLeft size={16} />}
+              onClick={backToSelectedOperation}
+              sx={{ mb: 1 }}
+            >
+              {t('home.commandCenter.backToQueue')}
+            </ActionButton>
+          ) : null}
+          {queue === 'sla' && selectedTask ? (
+            <ApprovalOperationsTaskInspector
+              task={selectedTask}
+              canOperate={operationWriteReady}
+              busy={Boolean(nativeProposal)}
+              formatTimestamp={formatTimestamp}
+              onReassign={openTaskCommand}
+            />
+          ) : selectedDelivery ? (
+            <ApprovalOperationsDeliveryInspector
+              delivery={selectedDelivery}
+              canOperate={operationWriteReady && queue === 'delivery'}
+              busy={highRiskRetry.controller.busy || Boolean(nativeProposal)}
+              formatTimestamp={formatTimestamp}
+              onRetry={(expectedVersion) => {
+                if (!operationWriteReady || queue !== 'delivery') return;
+                retryOriginal.current = {
+                  outboxId: selectedDelivery.outboxId,
+                  expectedVersion,
+                  deliveryFingerprint: JSON.stringify(selectedDelivery),
+                  scopeFingerprint,
+                };
+                assertRetryCurrent();
+                void highRiskRetry.begin(
+                  approvalDeliveryRetryCommand(selectedDelivery.outboxId, expectedVersion)
+                );
+              }}
+              onNative={openDeliveryCommand}
+            />
+          ) : (
+            <EmptyState
+              title={t('admin.integrations.empty')}
+              description={t('admin.integrations.meta')}
+              icon={<CloudCog size={24} />}
+            />
+          )}
+        </Box>
       </Box>
       <ApprovalHighRiskCommandDialog controller={highRiskRetry.controller} />
       <ApprovalNativeOperationDialog
@@ -636,6 +716,131 @@ function ApprovalOperationsWorkbench() {
           onDismiss={() => setNativeProposal(null)}
         />
       ) : null}
+    </Stack>
+  );
+}
+
+function ApprovalRestrictedOperations({
+  projection,
+  korean,
+  refreshing,
+  formatTimestamp,
+  onRefresh,
+}: {
+  projection: Exclude<ApprovalOperationsProjection, { kind: 'full' }>;
+  korean: boolean;
+  refreshing: boolean;
+  formatTimestamp: (value?: string | null) => string;
+  onRefresh: () => void;
+}) {
+  const { t } = useTranslation('approvals');
+  return (
+    <Stack gap={2}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ sm: 'center' }}
+        justifyContent="space-between"
+        gap={1}
+      >
+        <Box component="span" sx={{ typography: 'caption', color: 'text.secondary' }}>
+          {`${t('admin.metricDetail')} · ${formatTimestamp(projection.data.generatedAt)}`}
+        </Box>
+        <ActionIconButton
+          label={t('actions.refresh')}
+          size="small"
+          loading={refreshing}
+          onClick={onRefresh}
+        >
+          <RefreshCcw size={16} />
+        </ActionIconButton>
+      </Stack>
+      <InlineFeedback severity="info">{t('admin.studio.readOnly')}</InlineFeedback>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(2,minmax(0,1fr))', lg: 'repeat(4,minmax(0,1fr))' },
+          gap: 1.25,
+        }}
+      >
+        {projection.data.signals.map((signal) => (
+          <SignalMetric
+            key={signal.key}
+            label={'titleKo' in signal ? (korean ? signal.titleKo : signal.titleEn) : signal.key}
+            value={String(signal.count)}
+            detail={signal.state}
+            icon={signal.key === 'integration' ? <CloudCog size={17} /> : <Activity size={17} />}
+            tone={
+              signal.state === 'HEALTHY'
+                ? 'success'
+                : signal.state === 'INFORMATIONAL'
+                  ? 'info'
+                  : 'warning'
+            }
+          />
+        ))}
+      </Box>
+      <ApprovalSurface
+        title={t('admin.integrations.title')}
+        meta={t('admin.integrations.meta')}
+        action={
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('admin.integrations.eventCount', {
+              count: projection.data.integrationDeliveries.length,
+            })}
+          />
+        }
+      >
+        {projection.data.integrationDeliveries.length === 0 ? (
+          <EmptyState
+            title={t('admin.integrations.empty')}
+            description={t('admin.integrations.meta')}
+            icon={<CloudCog size={24} />}
+          />
+        ) : (
+          <Stack component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }}>
+            {projection.data.integrationDeliveries.map((delivery, index) => (
+              <Stack
+                component="li"
+                key={`${delivery.eventType}:${delivery.availableAt}:${index}`}
+                direction={{ xs: 'column', sm: 'row' }}
+                alignItems={{ sm: 'center' }}
+                justifyContent="space-between"
+                gap={1}
+                sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
+              >
+                <Box minWidth={0}>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'block',
+                      typography: 'body2',
+                      fontWeight: 700,
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
+                    {delivery.eventType}
+                  </Box>
+                  <Box component="span" sx={{ typography: 'caption', color: 'text.secondary' }}>
+                    {`${t('admin.integrations.availableAt')} · ${formatTimestamp(delivery.availableAt)}`}
+                  </Box>
+                </Box>
+                <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                  <StatusChip status={delivery.status} />
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t('admin.nativeOperations.attempts.automatic', {
+                      count: delivery.attemptCount,
+                    })}
+                  />
+                </Stack>
+              </Stack>
+            ))}
+          </Stack>
+        )}
+      </ApprovalSurface>
     </Stack>
   );
 }

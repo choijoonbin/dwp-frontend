@@ -9,6 +9,7 @@ import {
   isApprovalDeliveryRetryCandidate,
   summarizeApprovalOperations,
 } from './approval-management-model';
+import { parseApprovalOperationsProjection } from './approval-management-projection';
 
 import type {
   ApprovalAdminPulse,
@@ -231,11 +232,25 @@ describe('approval management model', () => {
       integrationDeliveries: [delivery(), delivery({ outboxId: 'outbox-2', status: 'PUBLISHED' })],
     } satisfies ApprovalOperations;
 
-    expect(summarizeApprovalOperations(operations)).toEqual({
+    expect(summarizeApprovalOperations(parseApprovalOperationsProjection(operations))).toEqual({
       breached: 2,
       retryCandidates: 1,
       blockedDeliveries: 1,
       totalDeliveries: 2,
+    });
+  });
+
+  it('keeps unavailable operation counts unknown for restricted projections', () => {
+    const restricted = parseApprovalOperationsProjection({
+      generatedAt: '2026-09-11T01:00:00Z',
+      signals: [],
+      integrationDeliveries: [],
+    });
+    expect(summarizeApprovalOperations(restricted)).toEqual({
+      breached: null,
+      retryCandidates: null,
+      blockedDeliveries: null,
+      totalDeliveries: 0,
     });
   });
 

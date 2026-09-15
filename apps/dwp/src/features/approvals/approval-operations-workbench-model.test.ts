@@ -5,6 +5,7 @@ import {
   approvalOperationsQueueFromSearch,
   approvalOperationsRetrySnapshotCurrent,
   approvalOperationsSourceCurrent,
+  parseApprovalOperationsProjection,
 } from './approval-operations-workbench-model';
 
 const now = Date.parse('2026-09-14T10:00:00Z');
@@ -47,6 +48,77 @@ const current = {
 };
 
 describe('Approval operations workbench', () => {
+  it('strictly tags full, auditor and oversight projections without inventing omitted data', () => {
+    expect(parseApprovalOperationsProjection(data)).toMatchObject({ kind: 'full' });
+    const auditor = parseApprovalOperationsProjection({
+      generatedAt: date,
+      signals: [{ key: 'DELIVERY', state: 'ATTENTION', count: 2 }],
+      integrationDeliveries: [
+        {
+          eventType: 'APPROVED',
+          status: 'FAILED',
+          attemptCount: 2,
+          manualRetryCount: 0,
+          availableAt: date,
+          publishedAt: null,
+        },
+      ],
+    });
+    expect(auditor).toMatchObject({ kind: 'auditor' });
+    expect(Object.hasOwn(auditor.data, 'breachedTasks')).toBe(false);
+
+    const oversight = parseApprovalOperationsProjection({
+      generatedAt: date,
+      signals: [
+        {
+          key: 'DELIVERY',
+          state: 'ATTENTION',
+          titleKo: '전달',
+          titleEn: 'Delivery',
+          count: 2,
+        },
+      ],
+      integrationDeliveries: [
+        {
+          outboxId: 'outbox-1',
+          eventType: 'APPROVED',
+          status: 'FAILED',
+          attemptCount: 2,
+          manualRetryCount: 0,
+          availableAt: date,
+          publishedAt: null,
+          createdAt: date,
+          lastRetriedAt: null,
+        },
+      ],
+    });
+    expect(oversight).toMatchObject({ kind: 'oversight' });
+    expect(Object.hasOwn(oversight.data.integrationDeliveries[0]!, 'version')).toBe(false);
+  });
+
+  it('rejects malformed or cross-projection operations and closes source currency', () => {
+    const malformed = {
+      generatedAt: date,
+      signals: [{ key: 'DELIVERY', state: 'ATTENTION', count: 2, detailEn: 'secret' }],
+      integrationDeliveries: [],
+    };
+    expect(() => parseApprovalOperationsProjection(malformed)).toThrow(
+      /Invalid approval management projection/u
+    );
+    expect(
+      approvalOperationsSourceCurrent(
+        { ...state(), data: malformed as unknown as ApprovalOperations },
+        now
+      )
+    ).toBe(false);
+    const oversight = {
+      generatedAt: date,
+      signals: [],
+      integrationDeliveries: [],
+    } as unknown as ApprovalOperations;
+    expect(approvalOperationsSourceCurrent({ ...state(), data: oversight }, now)).toBe(false);
+  });
+
   it.each([
     ['', 'delivery'],
     ['queue=sla', 'sla'],

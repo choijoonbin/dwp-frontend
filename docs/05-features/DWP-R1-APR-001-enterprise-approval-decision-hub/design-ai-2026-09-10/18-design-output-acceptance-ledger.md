@@ -2,6 +2,8 @@
 
 - 최초 검수일: 2026-09-11 · 요구사항 재대조: 2026-09-14 · 최종 통합 검증: 2026-09-15
 - 원본: [Google Stitch 프로젝트](https://stitch.withgoogle.com/projects/13391261371843159731)
+- 원본 인계 ZIP: `stitch_enterprise_grid_calendar_application.zip`
+  (`SHA-256 2ee7954e2f62bccfe2dd8063ac9536a001fae84bedab92388cadfe54678f42dd`)
 - 검수 범위: APR-01~16 사용자·관리자 desktop/mobile/예외 상태 프레임
 - 현재 판정: 내부 구현 `CLOSED / FROZEN`, 운영 출시 `BLOCKED_EXTERNAL`
 - 정정: 2026-09-11과 2026-09-14의 `IN_PROGRESS` 수치는 역사적 중간 지점이다. 아래
@@ -20,10 +22,10 @@
 - Frontend 전체 Vitest 704 files/6,310 tests, non-incremental typecheck와 공식 production build가
   통과했다. 초기 bundle은 raw 1,055.9/1,074.2 KiB, gzip 306.5/317.4 KiB, request 4/5다.
 - Approval Chromium/mobile 40 specs는 730 pass, 의도된 2 skip, flaky 0이며 visual owner는
-  snapshot 갱신 없이 28/28 통과했다.
-- Stitch source Gate는 41/41 pair와 checker 4/4를 검증했다. 이 중 실제 raster는 30개이고
-  11개는 원본의 28-byte fetch-failure placeholder이므로, 해당 11개까지 포함한 pixel 100%
-  일치는 주장하지 않는다.
+  `내 처리 완료함` desktop/mobile 승인본을 포함해 최종 snapshot 갱신 없이 30/30 통과했다.
+- 최종 인계 ZIP의 Stitch source Gate는 APR-01~16의 서로 다른 43/43 HTML·PNG pair를 검증했다.
+  43개 PNG 모두 실제 raster이며 fetch-failure placeholder는 0개다. ZIP SHA, 각 파일 byte/hash,
+  PNG IHDR 크기와 화면별 HTML landmark token을 실행 가능한 Gate로 고정했다.
 - 전체 서비스를 완전 정지한 뒤 새 프로세스로 재기동했다. Auth부터 Meeting, Agent, Gateway의
   health와 Frontend가 모두 정상이며 `/approvals/home`, `/approvals/inbox`, `/mail/home`, 실제
   결재 검색과 `approval-home` 개인화 조회가 HTTP 200이다.
@@ -117,9 +119,9 @@ Stitch는 시각 원본이지만 권한·API·운영 readiness의 권위 원본�
 - 실제 전자서명 ceremony와 provider production readiness
 
 자동 저장·수정 이력·초안 휴지통/복원·서버 검색은 V17 및 전용 frontend 구현과 실제 회귀를 완료했다.
-카테고리 탐색·모바일 편집·검증 정합·운영 정보 계층도 재개했다. 나머지 내부 항목은
-요구사항 원장에 미완료로 유지한다. 실제 공급자 credential, 법적 승인, 운영 인프라 증적은
-코드 구현만으로 완료 처리할 수 없으며 별도 외부 조건으로 보존한다.
+카테고리 탐색·모바일 편집·검증 정합·운영 정보 계층도 완료했다. 실제 공급자 credential,
+법적 승인, 운영 인프라 증적은 코드 구현만으로 완료 처리할 수 없으며 별도 외부 조건으로
+보존한다.
 
 ## 6. 2026-09-14 실행 검증 중간 지점 (최종 판정으로 대체됨)
 

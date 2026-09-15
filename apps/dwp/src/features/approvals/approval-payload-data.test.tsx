@@ -8,7 +8,12 @@ import { ApprovalPayloadData } from './approval-payload-data';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key,
+    t: (key: string, options?: { defaultValue?: string }) =>
+      key === 'inbox.payload.booleanTrue'
+        ? '예'
+        : key === 'inbox.payload.booleanFalse'
+          ? '아니요'
+          : (options?.defaultValue ?? key),
     i18n: { resolvedLanguage: 'ko', language: 'ko' },
   }),
 }));
@@ -76,5 +81,51 @@ describe('approval persisted payload presentation', () => {
     expect(container.textContent).toContain('요청 내용');
     expect(container.textContent).toContain('권한 검토');
     expect(container.textContent).not.toContain('createdFrom');
+  });
+
+  it('uses schema order, sorts unknown fields, and safely formats typed and structured values', async () => {
+    await act(async () =>
+      root.render(
+        <ApprovalPayloadData
+          payload={{
+            zeta: { z: 'last', a: 'first' },
+            tags: ['security', 'finance'],
+            amount: '12345678901234567890.12345678',
+            approved: true,
+            neededBy: '2026-09-30',
+            alpha: { amount: 4200000, currency: 'KRW' },
+          }}
+          formSchema={{
+            schemaContract: 'DWP_APPROVAL_FORM_TYPED_V2',
+            schemaVersion: 2,
+            fields: [
+              { key: 'neededBy', type: 'DATE', labelKo: '필요 일자', labelEn: 'Needed by' },
+              { key: 'amount', type: 'NUMBER', labelKo: '금액', labelEn: 'Amount' },
+              {
+                key: 'approved',
+                type: 'SELECT',
+                labelKo: '승인 여부',
+                labelEn: 'Approved',
+                options: ['true', 'false'],
+              },
+            ],
+          }}
+        />
+      )
+    );
+
+    const text = container.textContent ?? '';
+    expect(text.indexOf('필요 일자')).toBeLessThan(text.indexOf('금액'));
+    expect(text.indexOf('금액')).toBeLessThan(text.indexOf('승인 여부'));
+    expect(text.indexOf('승인 여부')).toBeLessThan(text.indexOf('alpha'));
+    expect(text.indexOf('alpha')).toBeLessThan(text.indexOf('tags'));
+    expect(text.indexOf('tags')).toBeLessThan(text.indexOf('zeta'));
+    expect(text).toContain('12345678901234567890.12345678');
+    expect(text).toContain('security');
+    expect(text).toContain('finance');
+    expect(text).toContain('KRW');
+    expect(text).toContain('예');
+    expect(text.indexOf('a')).toBeLessThan(text.lastIndexOf('z'));
+    expect(text).not.toContain('[object Object]');
   });
 });

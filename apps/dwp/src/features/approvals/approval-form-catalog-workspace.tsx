@@ -5,6 +5,14 @@ import { ActionIconButton } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+
+import {
+  focusApprovalLabeledControl,
+  focusApprovalRegion,
+  focusApprovalSelector,
+} from './approval-focus-navigation';
 
 import type { ReactNode } from 'react';
 
@@ -24,15 +32,35 @@ export function ApprovalFormCatalogWorkspace({
   inspector: ReactNode;
 }) {
   const { t } = useTranslation('approvals');
+  const theme = useTheme();
+  const compact = useMediaQuery(theme.breakpoints.down('lg'));
+  const categoriesRef = useRef<HTMLDivElement>(null);
   const formsRef = useRef<HTMLDivElement>(null);
+  const inspectorRef = useRef<HTMLDivElement>(null);
   const previousPanel = useRef(panel);
 
   useEffect(() => {
-    if (panel === 'forms' && previousPanel.current === 'inspector') {
-      formsRef.current?.querySelector<HTMLElement>('[aria-current="true"]')?.focus();
-    }
+    const previous = previousPanel.current;
     previousPanel.current = panel;
-  }, [panel]);
+    if (!compact || previous === panel) return;
+    const frame = window.requestAnimationFrame(() => {
+      if (panel === 'categories') {
+        focusApprovalSelector(
+          categoriesRef.current,
+          '[role="treeitem"][aria-selected="true"], [role="treeitem"][tabindex="0"]'
+        );
+        return;
+      }
+      if (panel === 'forms') {
+        if (focusApprovalSelector(formsRef.current, '[aria-current="true"]')) return;
+        if (focusApprovalSelector(formsRef.current, 'ul button')) return;
+        focusApprovalLabeledControl(formsRef.current, null);
+        return;
+      }
+      focusApprovalRegion(inspectorRef.current, 'start');
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [compact, panel]);
 
   return (
     <Box>
@@ -87,6 +115,7 @@ export function ApprovalFormCatalogWorkspace({
         }}
       >
         <Box
+          ref={categoriesRef}
           sx={{
             minWidth: 0,
             display: { xs: panel === 'categories' ? 'block' : 'none', lg: 'block' },
@@ -101,6 +130,10 @@ export function ApprovalFormCatalogWorkspace({
           {forms}
         </Box>
         <Box
+          ref={inspectorRef}
+          role="region"
+          aria-label={t('admin.formCatalog.mobile.inspector')}
+          tabIndex={-1}
           sx={{
             minWidth: 0,
             display: { xs: panel === 'inspector' ? 'block' : 'none', lg: 'block' },

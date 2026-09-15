@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 
 const routeById = new Map(PRODUCT_MENU_ROUTES.map((route) => [route.id, route]));
 const baselineRouteIds = [...new Set(MENU_VISUAL_BASELINE_INVENTORY.map((entry) => entry.routeId))];
-const APPROVED_BASELINE_FLOOR = { routes: 86, chromium: 86, mobile: 85 } as const;
+const APPROVED_BASELINE_FLOOR = { routes: 87, chromium: 87, mobile: 86 } as const;
 
 test('checked-in menu baseline inventory matches the current route manifest and snapshots', () => {
   const keys = MENU_VISUAL_BASELINE_INVENTORY.map(

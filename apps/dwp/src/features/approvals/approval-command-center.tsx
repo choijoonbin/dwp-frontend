@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, CheckCheck, ListChecks, ListPlus, RefreshCw, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, FormDialog, FormField, LoadingState } from '@dwp-frontend/design-system';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 import {
   HttpError,
   type ApprovalTaskDetail,
@@ -21,9 +20,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/approval-quorum-contract';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -38,7 +35,15 @@ import {
 } from './approval-command-center-model';
 import { ApprovalCommandTaskList } from './approval-command-task-list';
 import { ApprovalCommandBatchResult } from './approval-command-batch-result';
+import {
+  approvalBatchEligibleTaskIds,
+  buildApprovalBatchPreflight,
+} from './approval-batch-preflight';
 import { ApprovalDecisionDetail, type ApprovalDecisionKind } from './approval-decision-detail';
+import {
+  ApprovalCommandCenterDialogs,
+  ApprovalCommandCenterHeader,
+} from './approval-command-center-presentation';
 import {
   ApprovalDecisionRecoveryNotice,
   type ApprovalDecisionRecovery,
@@ -85,6 +90,7 @@ export function ApprovalCommandCenter() {
   scopeIdentityRef.current = scopeIdentity;
   const previousScopeIdentity = useRef(scopeIdentity);
   const restoreTaskIdRef = useRef<string | undefined>(undefined);
+  const commandCenterRef = useRef<HTMLDivElement>(null);
   const detailPaneRef = useRef<HTMLDivElement>(null);
   const nowMs = useApprovalQueueClock();
 
@@ -101,6 +107,31 @@ export function ApprovalCommandCenter() {
   const [comment, setComment] = useState('');
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchResult, setBatchResult] = useState<ApprovalBatchResult>();
+  const [desktopWorkspaceHeight, setDesktopWorkspaceHeight] = useState<number>();
+
+  useEffect(() => {
+    if (mobile) {
+      setDesktopWorkspaceHeight(undefined);
+      return undefined;
+    }
+    let frame = 0;
+    const measure = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const top = commandCenterRef.current?.getBoundingClientRect().top;
+        if (top === undefined) return;
+        setDesktopWorkspaceHeight(Math.max(520, Math.floor(window.innerHeight - top - 24)));
+      });
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    window.visualViewport?.addEventListener('resize', measure);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', measure);
+      window.visualViewport?.removeEventListener('resize', measure);
+    };
+  }, [mobile]);
 
   const filter: ApprovalQueueFilter = parseApprovalQueueFilter(searchParams.get('queue'));
   const requestedPage = Number(searchParams.get('page') ?? '0');
@@ -231,6 +262,42 @@ export function ApprovalCommandCenter() {
 
   const tasksReady =
     requestScope.ready && tasks.isSuccess && !tasks.isFetching && tasks.failureCount === 0;
+  const batchDetailQueries = useQueries({
+    queries: selectedBatchIds.map((taskId) => ({
+      queryKey: ['approvals', 'command-task', taskId, ...requestScope.cacheKey],
+      queryFn: ({ signal }: { signal: AbortSignal }) =>
+        getApprovalTask(taskId, requestScope.contextScopeKey, signal),
+      enabled: batchDialogOpen && requestScope.ready && tasksReady,
+      staleTime: 0,
+      retry: 0,
+      meta: requestScope.queryMeta,
+    })),
+  });
+  const batchPreflight = useMemo(
+    () =>
+      buildApprovalBatchPreflight({
+        selectedTaskIds: selectedBatchIds,
+        queueTasks: visibleTasks,
+        inspections: selectedBatchIds.map((taskId, index) => {
+          const query = batchDetailQueries[index];
+          const error = query?.failureReason ?? query?.error;
+          return {
+            taskId,
+            detail: query?.data,
+            state: query?.isFetching
+              ? 'LOADING'
+              : query?.isSuccess && query.failureCount === 0
+                ? 'READY'
+                : query?.isError
+                  ? 'ERROR'
+                  : 'LOADING',
+            denied: error instanceof HttpError && [401, 403, 404].includes(error.status),
+          };
+        }),
+      }),
+    [batchDetailQueries, selectedBatchIds, visibleTasks]
+  );
+  const batchPreflightRefreshing = batchDetailQueries.some((query) => query.isFetching);
   const selected =
     tasksReady &&
     detail.isSuccess &&
@@ -662,135 +729,65 @@ export function ApprovalCommandCenter() {
 
   return (
     <Paper
+      ref={commandCenterRef}
       component="section"
       variant="outlined"
       aria-labelledby="approval-command-center-title"
-      sx={{ overflow: 'hidden' }}
+      sx={{
+        overflow: 'hidden',
+        display: { md: 'flex' },
+        flexDirection: 'column',
+        height: {
+          md: desktopWorkspaceHeight ? `${desktopWorkspaceHeight}px` : 'calc(100dvh - 208px)',
+        },
+        minHeight: { md: 520 },
+      }}
     >
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        alignItems={{ sm: 'center' }}
-        justifyContent="space-between"
-        gap={1.5}
-        sx={{ px: { xs: 1.5, sm: 2 }, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Stack direction="row" alignItems="center" gap={1.25}>
-          <Box sx={{ color: 'primary.main' }}>
-            <ListChecks size={21} aria-hidden="true" />
-          </Box>
-          <Box>
-            <Typography
-              id="approval-command-center-title"
-              component="h2"
-              variant="subtitle1"
-              tabIndex={-1}
-              data-approval-command-center-heading
-            >
-              {t('home.commandCenter.title')}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t('home.commandCenter.description')}
-            </Typography>
-            {tasks.data && (
-              <Typography
-                component="p"
-                variant="caption"
-                color="text.secondary"
-                role="status"
-                aria-live="polite"
-                sx={{ mt: 0.25 }}
-              >
-                {t('home.commandCenter.queueContext', {
-                  queue: t(`home.commandCenter.filters.${filter}`),
-                  count: tasks.pageInfo?.totalElements ?? visibleTasks.length,
-                  checkedAt: checkedAt ?? t('home.commandCenter.checkingFreshness'),
-                })}
-              </Typography>
-            )}
-          </Box>
-        </Stack>
-        <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-          {returnTarget && (
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<ArrowLeft size={16} />}
-              onClick={returnToWork}
-            >
-              {t('common:productSurface.actions.returnToWork')}
-            </ActionButton>
-          )}
-          <ActionButton
-            intent="quiet"
-            size="small"
-            startIcon={<RefreshCw size={16} />}
-            aria-label={t('home.commandCenter.refreshQueue')}
-            disabled={tasks.isFetching || busy}
-            onClick={() => void tasks.refetch()}
-          >
-            {t('actions.refresh')}
-          </ActionButton>
-          {mobile && showQueue && (
-            <ActionButton
-              intent={mobileSelectionMode ? 'secondary' : 'quiet'}
-              size="small"
-              startIcon={mobileSelectionMode ? <X size={16} /> : <ListPlus size={16} />}
-              disabled={busy || !tasksReady}
-              aria-pressed={mobileSelectionMode}
-              onClick={() => {
-                setMobileSelectionMode((current) => {
-                  if (current) setSelectedBatchIds([]);
-                  return !current;
-                });
-              }}
-            >
-              {t(
-                mobileSelectionMode
-                  ? 'home.commandCenter.cancelSelection'
-                  : 'home.commandCenter.startSelection'
-              )}
-            </ActionButton>
-          )}
-          {selectionMode && (
-            <>
-              <Chip
-                size="small"
-                color={selectedBatchIds.length > 0 ? 'primary' : 'default'}
-                label={t('home.commandCenter.selectedCount', { count: selectedBatchIds.length })}
-              />
-              <ActionButton
-                intent="primary"
-                size="small"
-                startIcon={<CheckCheck size={16} />}
-                disabled={selectedBatchIds.length === 0 || busy || !tasksReady}
-                onClick={() => setBatchDialogOpen(true)}
-              >
-                {t('home.commandCenter.batchApprove')}
-              </ActionButton>
-            </>
-          )}
-        </Stack>
-      </Stack>
+      <ApprovalCommandCenterHeader
+        filter={filter}
+        hasQueueData={Boolean(tasks.data)}
+        queueCount={tasks.pageInfo?.totalElements ?? visibleTasks.length}
+        checkedAt={checkedAt}
+        returnAvailable={Boolean(returnTarget)}
+        refreshDisabled={tasks.isFetching || busy}
+        mobile={mobile}
+        showQueue={showQueue}
+        mobileSelectionMode={mobileSelectionMode}
+        selectionMode={selectionMode}
+        selectedCount={selectedBatchIds.length}
+        batchDisabled={selectedBatchIds.length === 0 || busy || !tasksReady}
+        onReturn={returnToWork}
+        onRefresh={() => void tasks.refetch()}
+        onToggleMobileSelection={() => {
+          setMobileSelectionMode((current) => {
+            if (current) setSelectedBatchIds([]);
+            return !current;
+          });
+        }}
+        onOpenBatch={() => setBatchDialogOpen(true)}
+      />
 
       {batchResult && tasks.data && (
-        <ApprovalCommandBatchResult
-          result={batchResult}
-          tasks={tasks.data}
-          retrying={batchApprove.isPending}
-          onRetry={(taskIds, previousResult) => {
-            batchApprove.mutate({
-              taskIds,
-              scopeIdentity,
-              previousResult,
-            });
-          }}
-          onOpenTask={selectTask}
-          onDismiss={() => setBatchResult(undefined)}
-        />
+        <Box sx={{ flex: '0 1 auto', maxHeight: { md: '34%' }, overflowY: { md: 'auto' } }}>
+          <ApprovalCommandBatchResult
+            result={batchResult}
+            tasks={tasks.data}
+            retrying={batchApprove.isPending}
+            onRetry={(taskIds, previousResult) => {
+              batchApprove.mutate({
+                taskIds,
+                scopeIdentity,
+                previousResult,
+              });
+            }}
+            onOpenTask={selectTask}
+            onDismiss={() => setBatchResult(undefined)}
+          />
+        </Box>
       )}
 
       {tasks.isError ? (
-        <Box role="alert" sx={{ px: 3, py: 6, textAlign: 'center' }}>
+        <Box role="alert" sx={{ flex: 1, px: 3, py: 6, textAlign: 'center' }}>
           <Typography component="p" variant="subtitle1">
             {t('inbox.loadError')}
           </Typography>
@@ -808,12 +805,14 @@ export function ApprovalCommandCenter() {
           </ActionButton>
         </Box>
       ) : tasks.isLoading || !tasks.data ? (
-        <Box sx={{ minHeight: 620, display: 'grid', placeItems: 'center' }}>
+        <Box sx={{ minHeight: { xs: 620, md: 0 }, flex: 1, display: 'grid', placeItems: 'center' }}>
           <LoadingState label={t('common:labels.loading')} size="page" embedded />
         </Box>
       ) : (
         <Box
           sx={{
+            flex: { md: '1 1 auto' },
+            minHeight: { md: 0 },
             display: 'grid',
             gridTemplateAreas: {
               xs: '"list" "detail"',
@@ -821,12 +820,22 @@ export function ApprovalCommandCenter() {
             },
             gridTemplateColumns: {
               xs: 'minmax(0, 1fr)',
-              md: 'minmax(350px, 0.78fr) minmax(520px, 1.5fr)',
+              md: 'minmax(300px, 38%) minmax(0, 1fr)',
+              xl: 'minmax(360px, 36%) minmax(0, 1fr)',
             },
-            gridTemplateRows: { md: 'minmax(680px, auto)' },
+            gridTemplateRows: { md: 'minmax(0, 1fr)' },
           }}
         >
-          <Box sx={{ gridArea: 'list', display: showQueue ? 'block' : 'none', minWidth: 0 }}>
+          <Box
+            sx={{
+              gridArea: 'list',
+              display: showQueue ? 'block' : 'none',
+              minWidth: 0,
+              minHeight: { md: 0 },
+              height: { md: '100%' },
+              overflow: { md: 'hidden' },
+            }}
+          >
             <ApprovalCommandTaskList
               tasks={visibleTasks}
               selectedTaskId={selectedTaskId}
@@ -855,8 +864,12 @@ export function ApprovalCommandCenter() {
             tabIndex={-1}
             sx={{
               gridArea: 'detail',
-              display: showDetail ? 'block' : 'none',
+              display: showDetail ? { xs: 'block', md: 'flex' } : 'none',
               minWidth: 0,
+              minHeight: { md: 0 },
+              height: { md: '100%' },
+              overflow: { md: 'hidden' },
+              flexDirection: 'column',
               bgcolor: 'background.paper',
             }}
           >
@@ -886,115 +899,115 @@ export function ApprovalCommandCenter() {
                 }}
               />
             )}
-            <ApprovalDecisionDetail
-              detail={displayedSelection}
-              loading={Boolean(selectedTaskId) && (detail.isFetching || tasks.isFetching)}
-              error={
-                Boolean(selectedTaskId) &&
-                (detail.isError || detail.failureCount > 0 || tasks.failureCount > 0)
-              }
-              mobile={mobile}
-              decisionBusy={decide.isPending || batchApprove.isPending}
-              claimBusy={claim.isPending}
-              verifiedAt={detail.dataUpdatedAt}
-              onRevalidateDocument={async () => {
-                if (!selected || activeDecisionRecovery)
-                  throw new Error('approval document unavailable');
-                const expected = {
-                  taskId: selected.task.taskId,
-                  expectedVersion: selected.task.version,
-                  quorum: readApprovalQuorumTaskSnapshot(selected.quorum),
-                  scopeIdentity,
-                };
-                assertCurrentAuthority(expected, 'read');
-                const refreshed = await detail.refetch();
-                if (!refreshed.isSuccess || !refreshed.data)
-                  throw new Error('approval refresh failed');
-                assertCurrentAuthority(expected, 'read');
-                return refreshed.data;
-              }}
-              documents={taskDocuments}
-              onBack={backToQueue}
-              onRetry={() => void detail.refetch()}
-              onClaim={() => {
-                if (!selected || activeDecisionRecovery) return;
-                claim.mutate({
-                  taskId: selected.task.taskId,
-                  expectedVersion: selected.task.version,
-                  scopeIdentity,
-                });
-              }}
-              onDecision={(kind) => {
-                if (
-                  !selected ||
-                  activeDecisionRecovery ||
-                  !selected.canDecide ||
-                  selected.selfApprovalBlocked
-                )
-                  return;
-                setConfirmation({
-                  decision: kind,
-                  taskId: selected.task.taskId,
-                  expectedVersion: selected.task.version,
-                  quorum: readApprovalQuorumTaskSnapshot(selected.quorum),
-                  scopeIdentity,
-                });
-              }}
-            />
+            <Box sx={{ minHeight: { md: 0 }, flex: { md: '1 1 auto' } }}>
+              <ApprovalDecisionDetail
+                detail={displayedSelection}
+                loading={Boolean(selectedTaskId) && (detail.isFetching || tasks.isFetching)}
+                error={
+                  Boolean(selectedTaskId) &&
+                  (detail.isError || detail.failureCount > 0 || tasks.failureCount > 0)
+                }
+                mobile={mobile}
+                decisionBusy={decide.isPending || batchApprove.isPending}
+                claimBusy={claim.isPending}
+                verifiedAt={detail.dataUpdatedAt}
+                onRevalidateDocument={async () => {
+                  if (!selected || activeDecisionRecovery)
+                    throw new Error('approval document unavailable');
+                  const expected = {
+                    taskId: selected.task.taskId,
+                    expectedVersion: selected.task.version,
+                    quorum: readApprovalQuorumTaskSnapshot(selected.quorum),
+                    scopeIdentity,
+                  };
+                  assertCurrentAuthority(expected, 'read');
+                  const refreshed = await detail.refetch();
+                  if (!refreshed.isSuccess || !refreshed.data)
+                    throw new Error('approval refresh failed');
+                  assertCurrentAuthority(expected, 'read');
+                  return refreshed.data;
+                }}
+                documents={taskDocuments}
+                onBack={backToQueue}
+                onRetry={() => void detail.refetch()}
+                onClaim={() => {
+                  if (!selected || activeDecisionRecovery) return;
+                  claim.mutate({
+                    taskId: selected.task.taskId,
+                    expectedVersion: selected.task.version,
+                    scopeIdentity,
+                  });
+                }}
+                onDecision={(kind) => {
+                  if (
+                    !selected ||
+                    activeDecisionRecovery ||
+                    !selected.canDecide ||
+                    selected.selfApprovalBlocked
+                  )
+                    return;
+                  setConfirmation({
+                    decision: kind,
+                    taskId: selected.task.taskId,
+                    expectedVersion: selected.task.version,
+                    quorum: readApprovalQuorumTaskSnapshot(selected.quorum),
+                    scopeIdentity,
+                  });
+                }}
+              />
+            </Box>
           </Box>
         </Box>
       )}
 
-      <FormDialog
-        open={Boolean(confirmation && confirmationReady)}
-        title={t(`inbox.dialog.${decision ?? 'APPROVE'}.title`)}
-        description={t(`inbox.dialog.${decision ?? 'APPROVE'}.description`)}
-        cancelLabel={t('actions.cancel')}
-        submitLabel={t(`inbox.dialog.${decision ?? 'APPROVE'}.confirm`)}
-        submitIntent={decision === 'REJECT' ? 'danger' : 'primary'}
-        busy={decide.isPending}
-        submitDisabled={!confirmationReady || (decision !== 'APPROVE' && comment.trim().length < 8)}
-        onClose={() => setConfirmation(undefined)}
-        onSubmit={() => {
+      <ApprovalCommandCenterDialogs
+        decisionOpen={Boolean(confirmation && confirmationReady)}
+        decision={decision}
+        decisionTarget={selected}
+        verifiedAt={detail.dataUpdatedAt}
+        comment={comment}
+        decisionBusy={decide.isPending}
+        decisionSubmitDisabled={
+          !confirmationReady || (decision !== 'APPROVE' && comment.trim().length < 8)
+        }
+        batchOpen={batchDialogOpen}
+        batchSelectedCount={selectedBatchIds.length}
+        batchEligibleCount={batchPreflight.eligibleCount}
+        batchBusy={batchApprove.isPending}
+        batchSubmitDisabled={
+          !tasksReady ||
+          batchPreflightRefreshing ||
+          batchPreflight.recheckCount > 0 ||
+          batchPreflight.eligibleCount === 0
+        }
+        batchPreflight={batchPreflight}
+        batchPreflightRefreshing={batchPreflightRefreshing}
+        onDecisionClose={() => setConfirmation(undefined)}
+        onCommentChange={setComment}
+        onDecisionSubmit={() => {
           if (!confirmation || !confirmationReady || decide.isPending) return;
-          decide.mutate({
-            ...confirmation,
-            comment: comment.trim() || undefined,
-          });
+          decide.mutate({ ...confirmation, comment: comment.trim() || undefined });
         }}
-      >
-        <FormField
-          autoFocus
-          multiline
-          minRows={3}
-          label={t('inbox.comment')}
-          value={comment}
-          onChange={(event) => setComment(event.target.value)}
-          required={decision !== 'APPROVE'}
-        />
-      </FormDialog>
-
-      <FormDialog
-        open={batchDialogOpen}
-        title={t('home.commandCenter.batchDialogTitle')}
-        description={t('home.commandCenter.batchDialogDescription', {
-          count: selectedBatchIds.length,
-        })}
-        cancelLabel={t('actions.cancel')}
-        submitLabel={t('home.commandCenter.batchDialogConfirm')}
-        submitIntent="primary"
-        busy={batchApprove.isPending}
-        submitDisabled={selectedBatchIds.length === 0 || !tasksReady}
-        onClose={() => setBatchDialogOpen(false)}
-        onSubmit={() => {
-          if (!tasksReady || batchApprove.isPending) return;
-          batchApprove.mutate({ taskIds: [...selectedBatchIds], scopeIdentity });
+        onBatchClose={() => setBatchDialogOpen(false)}
+        onBatchSubmit={() => {
+          if (
+            !tasksReady ||
+            batchApprove.isPending ||
+            batchPreflightRefreshing ||
+            batchPreflight.recheckCount > 0
+          )
+            return;
+          const taskIds = approvalBatchEligibleTaskIds(batchPreflight);
+          if (taskIds.length === 0) return;
+          batchApprove.mutate({ taskIds, scopeIdentity });
         }}
-      >
-        <Box role="note" sx={{ py: 1 }}>
-          <Typography variant="body2">{t('home.commandCenter.batchDialogEvidence')}</Typography>
-        </Box>
-      </FormDialog>
+        onBatchRefresh={() => {
+          void Promise.all([
+            tasks.refetch(),
+            ...batchDetailQueries.map((query) => query.refetch()),
+          ]);
+        }}
+      />
     </Paper>
   );
 }

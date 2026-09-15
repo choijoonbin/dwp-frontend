@@ -9,7 +9,6 @@ export const APPROVAL_STITCH_MANIFEST_PATH = path.resolve(
   '../e2e/support/approval-stitch-source-manifest.json'
 );
 export const APPROVAL_STITCH_SOURCE_ENV = 'APPROVAL_STITCH_SOURCE_DIR';
-export const APPROVAL_STITCH_FETCH_ERROR = '<FIFE Image failed to fetch>';
 
 const APPROVAL_IDS = Array.from(
   { length: 16 },
@@ -66,11 +65,38 @@ export async function readApprovalStitchManifest(manifestPath = APPROVAL_STITCH_
 
 export function validateApprovalStitchManifest(manifest) {
   assert(manifest && typeof manifest === 'object', 'manifest must be an object');
-  assert(manifest.schemaVersion === 1, 'manifest schemaVersion must be 1');
+  assert(manifest.schemaVersion === 2, 'manifest schemaVersion must be 2');
   assert(manifest.sourceProjectId === '13391261371843159731', 'unexpected Stitch project');
   assert(manifest.sourceRootEnv === APPROVAL_STITCH_SOURCE_ENV, 'unexpected source env contract');
+  assert(
+    manifest.sourceArchive?.fileName === 'stitch_enterprise_grid_calendar_application.zip',
+    'unexpected Stitch source archive name'
+  );
+  assert(SHA256_PATTERN.test(manifest.sourceArchive?.sha256), 'source archive SHA-256 is invalid');
+  assert(
+    manifest.sourceArchive.sha256 ===
+      '2ee7954e2f62bccfe2dd8063ac9536a001fae84bedab92388cadfe54678f42dd',
+    'source archive SHA-256 differs from the reviewed delivery'
+  );
+  assert(
+    JSON.stringify(manifest.retiredFrameIds) ===
+      JSON.stringify(['STITCH-026', 'STITCH-040', 'STITCH-041']),
+    'retired duplicate or quarantined frame ids changed'
+  );
+  assert(
+    JSON.stringify(manifest.ignoredArtifacts) ===
+      JSON.stringify([
+        {
+          path: 'precision_calendar_system/DESIGN.md',
+          reason: 'Calendar design-system metadata is not an Approval screen source.',
+          bytes: 12_283,
+          sha256: 'dc14f164e1578db21a976c88f25d293d6e54e7b845b360d203603dcfbed675cc',
+        },
+      ]),
+    'ignored non-Approval artifact contract changed'
+  );
   assert(Array.isArray(manifest.frames), 'manifest frames must be an array');
-  assert(manifest.frames.length === 41, `expected 41 source pairs, got ${manifest.frames.length}`);
+  assert(manifest.frames.length === 43, `expected 43 source pairs, got ${manifest.frames.length}`);
   assert(manifest.pairCount === manifest.frames.length, 'pairCount differs from frames length');
   assert(SHA256_PATTERN.test(manifest.integritySha256), 'manifest integritySha256 is invalid');
   assert(
@@ -95,23 +121,15 @@ export function validateApprovalStitchManifest(manifest) {
     assert(!pairPaths.has(frame.pairPath), `duplicate pairPath: ${frame.pairPath}`);
     pairPaths.add(frame.pairPath);
 
-    if (frame.apr === null) {
-      quarantinedFrames += 1;
-      assert(frame.renderClass === 'quarantine', `${frame.id} null APR must be quarantined`);
-      assert(
-        frame.pairPath === 'quarantine-zip4-workplace',
-        `${frame.id} is an unrecognized non-Approval source`
-      );
-    } else {
-      approvalFrames += 1;
-      assert(APPROVAL_IDS.includes(frame.apr), `${frame.id} has invalid APR id: ${frame.apr}`);
-      assert(
-        APPROVAL_RENDER_CLASSES.has(frame.renderClass),
-        `${frame.id} has invalid render class: ${frame.renderClass}`
-      );
-      approvalIds.add(frame.apr);
-      renderClasses.add(frame.renderClass);
-    }
+    approvalFrames += 1;
+    assert(APPROVAL_IDS.includes(frame.apr), `${frame.id} has invalid APR id: ${frame.apr}`);
+    assert(
+      APPROVAL_RENDER_CLASSES.has(frame.renderClass),
+      `${frame.id} has invalid render class: ${frame.renderClass}`
+    );
+    assert(frame.duplicateOf === undefined, `${frame.id} must be a distinct reviewed export`);
+    approvalIds.add(frame.apr);
+    renderClasses.add(frame.renderClass);
 
     assertRelativePath(frame.screen?.path, `${frame.id}.screen.path`);
     assertRelativePath(frame.code?.path, `${frame.id}.code.path`);
@@ -140,43 +158,23 @@ export function validateApprovalStitchManifest(manifest) {
       `${frame.id} contains an invalid source token`
     );
 
-    if (frame.screen.status === 'raster') {
-      rasterFrames += 1;
-      assert(frame.screen.mediaType === 'image/png', `${frame.id} raster must be image/png`);
-      assert(
-        Number.isSafeInteger(frame.screen.width) && frame.screen.width > 0,
-        `${frame.id} width invalid`
-      );
-      assert(
-        Number.isSafeInteger(frame.screen.height) && frame.screen.height > 0,
-        `${frame.id} height invalid`
-      );
-    } else {
-      placeholderFrames += 1;
-      assert(
-        frame.screen.status === 'fetch-error-placeholder',
-        `${frame.id} has an unknown screen status`
-      );
-      assert(frame.screen.mediaType === 'text/plain', `${frame.id} placeholder must be text/plain`);
-      assert(
-        frame.screen.bytes === Buffer.byteLength(APPROVAL_STITCH_FETCH_ERROR),
-        `${frame.id} placeholder byte count changed`
-      );
-      assert(
-        frame.screen.width === null && frame.screen.height === null,
-        `${frame.id} placeholder cannot claim raster dimensions`
-      );
-      assert(
-        frame.screen.sha256 === sha256(APPROVAL_STITCH_FETCH_ERROR),
-        `${frame.id} placeholder SHA-256 changed`
-      );
-    }
+    rasterFrames += 1;
+    assert(frame.screen.status === 'raster', `${frame.id} must contain a reviewed PNG raster`);
+    assert(frame.screen.mediaType === 'image/png', `${frame.id} raster must be image/png`);
+    assert(
+      Number.isSafeInteger(frame.screen.width) && frame.screen.width > 0,
+      `${frame.id} width invalid`
+    );
+    assert(
+      Number.isSafeInteger(frame.screen.height) && frame.screen.height > 0,
+      `${frame.id} height invalid`
+    );
   }
 
-  assert(approvalFrames === 40, `expected 40 Approval frames, got ${approvalFrames}`);
-  assert(quarantinedFrames === 1, `expected one quarantined frame, got ${quarantinedFrames}`);
-  assert(rasterFrames === 30, `expected 30 raster frames, got ${rasterFrames}`);
-  assert(placeholderFrames === 11, `expected 11 fetch placeholders, got ${placeholderFrames}`);
+  assert(approvalFrames === 43, `expected 43 Approval frames, got ${approvalFrames}`);
+  assert(quarantinedFrames === 0, `expected no quarantined frames, got ${quarantinedFrames}`);
+  assert(rasterFrames === 43, `expected 43 raster frames, got ${rasterFrames}`);
+  assert(placeholderFrames === 0, `expected no fetch placeholders, got ${placeholderFrames}`);
   assert(manifest.approvalFrameCount === approvalFrames, 'approvalFrameCount mismatch');
   assert(manifest.quarantinedFrameCount === quarantinedFrames, 'quarantinedFrameCount mismatch');
   assert(manifest.rasterFrameCount === rasterFrames, 'rasterFrameCount mismatch');
@@ -191,14 +189,6 @@ export function validateApprovalStitchManifest(manifest) {
     'normal/mobile/exception/board source classes are not all represented'
   );
 
-  for (const frame of manifest.frames) {
-    if (!frame.duplicateOf) continue;
-    const original = manifest.frames.find((candidate) => candidate.pairPath === frame.duplicateOf);
-    assert(original, `${frame.id} duplicateOf target does not exist: ${frame.duplicateOf}`);
-    assert(original.apr === frame.apr, `${frame.id} duplicate crosses APR ownership`);
-    assert(original.code.sha256 === frame.code.sha256, `${frame.id} duplicate code hash differs`);
-  }
-
   return {
     pairCount: manifest.frames.length,
     approvalFrameCount: approvalFrames,
@@ -208,8 +198,20 @@ export function validateApprovalStitchManifest(manifest) {
   };
 }
 
-async function sourcePairPaths(sourceDir) {
+export function validateApprovalStitchSourceFileInventory(actualFiles, manifest) {
+  const expectedFiles = manifest.frames
+    .flatMap((frame) => [frame.code.path, frame.screen.path])
+    .concat(manifest.ignoredArtifacts.map((artifact) => artifact.path))
+    .sort();
+  assert(
+    JSON.stringify([...actualFiles].sort()) === JSON.stringify(expectedFiles),
+    'source file inventory differs from the immutable manifest'
+  );
+}
+
+async function sourceInventory(sourceDir) {
   const pairs = new Map();
+  const files = [];
   async function visit(relativeDir) {
     const absoluteDir = path.join(sourceDir, relativeDir);
     for (const entry of await readdir(absoluteDir, { withFileTypes: true })) {
@@ -218,7 +220,9 @@ async function sourcePairPaths(sourceDir) {
         entry.name
       );
       if (entry.isDirectory()) await visit(relativePath);
-      else if (entry.isFile() && (entry.name === 'screen.png' || entry.name === 'code.html')) {
+      else if (entry.isFile()) {
+        files.push(relativePath);
+        if (entry.name !== 'screen.png' && entry.name !== 'code.html') continue;
         const pairPath = path.posix.dirname(relativePath);
         const pair = pairs.get(pairPath) ?? new Set();
         pair.add(entry.name);
@@ -227,7 +231,7 @@ async function sourcePairPaths(sourceDir) {
     }
   }
   await visit('');
-  return pairs;
+  return { files, pairs };
 }
 
 export async function verifyApprovalStitchFrame(sourceDir, frame) {
@@ -239,20 +243,9 @@ export async function verifyApprovalStitchFrame(sourceDir, frame) {
   assert(sha256(codeBuffer) === frame.code.sha256, `${frame.id} code SHA-256 differs`);
 
   const dimensions = readPngDimensions(screenBuffer);
-  if (frame.screen.status === 'raster') {
-    assert(dimensions !== null, `${frame.id} no longer contains a PNG raster`);
-    assert(dimensions.width === frame.screen.width, `${frame.id} raster width differs`);
-    assert(dimensions.height === frame.screen.height, `${frame.id} raster height differs`);
-  } else {
-    assert(
-      dimensions === null,
-      `${frame.id} placeholder unexpectedly became a raster; recapture and review it`
-    );
-    assert(
-      screenBuffer.toString('utf8') === APPROVAL_STITCH_FETCH_ERROR,
-      `${frame.id} placeholder payload differs`
-    );
-  }
+  assert(dimensions !== null, `${frame.id} no longer contains a PNG raster`);
+  assert(dimensions.width === frame.screen.width, `${frame.id} raster width differs`);
+  assert(dimensions.height === frame.screen.height, `${frame.id} raster height differs`);
 
   const html = codeBuffer.toString('utf8');
   let cursor = -1;
@@ -264,7 +257,8 @@ export async function verifyApprovalStitchFrame(sourceDir, frame) {
 }
 
 export async function verifyApprovalStitchSource(sourceDir, manifest) {
-  const pairs = await sourcePairPaths(sourceDir);
+  const { files, pairs } = await sourceInventory(sourceDir);
+  validateApprovalStitchSourceFileInventory(files, manifest);
   const expectedPaths = manifest.frames.map((frame) => frame.pairPath).sort();
   const actualPaths = [...pairs.keys()].sort();
   assert(
@@ -278,6 +272,11 @@ export async function verifyApprovalStitchSource(sourceDir, manifest) {
     );
   }
   for (const frame of manifest.frames) await verifyApprovalStitchFrame(sourceDir, frame);
+  for (const artifact of manifest.ignoredArtifacts) {
+    const buffer = await readFile(path.join(sourceDir, artifact.path));
+    assert(buffer.length === artifact.bytes, `${artifact.path} byte count differs`);
+    assert(sha256(buffer) === artifact.sha256, `${artifact.path} SHA-256 differs`);
+  }
 }
 
 export async function runApprovalStitchSourceCheck({

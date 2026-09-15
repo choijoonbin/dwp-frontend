@@ -26,6 +26,7 @@ describe('Approval view loading boundaries', () => {
     expect(permissionCheck).toBeLessThan(page.indexOf('<ApprovalHome />'));
     expect(page.match(/<Suspense fallback={<RouteFallback \/>}>/g)).toHaveLength(2);
     expect(page.indexOf('<ApprovalPageHeader')).toBeLessThan(page.lastIndexOf('<Suspense'));
+    expect(page).toContain('<PageCanvas topInset="compact">');
     expect(page).toContain('view="COMPLETED"');
     expect(page).toContain('governed = false');
   });

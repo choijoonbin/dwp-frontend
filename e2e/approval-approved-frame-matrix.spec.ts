@@ -19,9 +19,9 @@ interface SourceFrame {
   readonly pairPath: string;
   readonly duplicateOf?: string;
   readonly screen: {
-    readonly status: 'raster' | 'fetch-error-placeholder';
-    readonly width: number | null;
-    readonly height: number | null;
+    readonly status: 'raster';
+    readonly width: number;
+    readonly height: number;
   };
   readonly code: { readonly sourceTokens: readonly string[] };
 }
@@ -67,12 +67,12 @@ function baselineRouteId(filePath: string) {
   return slug.replace(/^approvals-/u, 'approvals.');
 }
 
-test('immutable source inventory is completely classified without treating quarantine as Approval', () => {
-  expect(manifest.pairCount).toBe(41);
-  expect(manifest.approvalFrameCount).toBe(40);
-  expect(manifest.quarantinedFrameCount).toBe(1);
-  expect(manifest.rasterFrameCount).toBe(30);
-  expect(manifest.fetchErrorPlaceholderCount).toBe(11);
+test('immutable source inventory completely classifies all reviewed Approval frames', () => {
+  expect(manifest.pairCount).toBe(43);
+  expect(manifest.approvalFrameCount).toBe(43);
+  expect(manifest.quarantinedFrameCount).toBe(0);
+  expect(manifest.rasterFrameCount).toBe(43);
+  expect(manifest.fetchErrorPlaceholderCount).toBe(0);
 
   const approvalFrames = manifest.frames.filter((frame) => frame.apr !== null);
   const contractedIds = APPROVAL_APPROVED_FRAME_CONTRACTS.flatMap((entry) => entry.frameIds);
@@ -166,13 +166,9 @@ for (const contract of APPROVAL_APPROVED_FRAME_CONTRACTS) {
 
     for (const frame of frames) {
       expect(frame.code.sourceTokens.length).toBeGreaterThanOrEqual(2);
-      if (frame.screen.status === 'raster') {
-        expect(frame.screen.width).toBeGreaterThan(0);
-        expect(frame.screen.height).toBeGreaterThan(0);
-      } else {
-        expect(frame.screen.width).toBeNull();
-        expect(frame.screen.height).toBeNull();
-      }
+      expect(frame.screen.status).toBe('raster');
+      expect(frame.screen.width).toBeGreaterThan(0);
+      expect(frame.screen.height).toBeGreaterThan(0);
       if (frame.viewportIntent.startsWith('mobile')) expect(evidenceProjects).toContain('mobile');
       else expect(evidenceProjects).toContain('desktop');
     }

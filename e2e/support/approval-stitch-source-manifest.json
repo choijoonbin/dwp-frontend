@@ -1,33 +1,69 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "sourceProjectId": "13391261371843159731",
-  "capturedOn": "2026-09-14",
+  "capturedOn": "2026-09-15",
   "sourceRootEnv": "APPROVAL_STITCH_SOURCE_DIR",
-  "pairCount": 41,
-  "approvalFrameCount": 40,
-  "quarantinedFrameCount": 1,
-  "rasterFrameCount": 30,
-  "fetchErrorPlaceholderCount": 11,
+  "sourceArchive": {
+    "fileName": "stitch_enterprise_grid_calendar_application.zip",
+    "sha256": "2ee7954e2f62bccfe2dd8063ac9536a001fae84bedab92388cadfe54678f42dd"
+  },
+  "retiredFrameIds": ["STITCH-026", "STITCH-040", "STITCH-041"],
+  "ignoredArtifacts": [
+    {
+      "path": "precision_calendar_system/DESIGN.md",
+      "reason": "Calendar design-system metadata is not an Approval screen source.",
+      "bytes": 12283,
+      "sha256": "dc14f164e1578db21a976c88f25d293d6e54e7b845b360d203603dcfbed675cc"
+    }
+  ],
+  "pairCount": 43,
+  "approvalFrameCount": 43,
+  "quarantinedFrameCount": 0,
+  "rasterFrameCount": 43,
+  "fetchErrorPlaceholderCount": 0,
   "frames": [
     {
       "id": "STITCH-001",
       "apr": "APR-01",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-01-desktop",
+      "pairPath": "01._1440px",
       "screen": {
-        "path": "APR-01-desktop/screen.png",
-        "sha256": "29cdbde9c359c0b73a896858f86d36b232e223077c79146d84e63a9688c17658",
-        "bytes": 335653,
+        "path": "01._1440px/screen.png",
+        "sha256": "9987d2de7bdf7b27c639b905c296e7aad44935de318360f2e7ba86d3a4100c32",
+        "bytes": 575056,
         "mediaType": "image/png",
         "status": "raster",
         "width": 1280,
-        "height": 2377
+        "height": 1259
       },
       "code": {
-        "path": "APR-01-desktop/code.html",
-        "sha256": "f737712af572cba3e33d8e6f005e8195ba55955666935972da607b55beafcec9",
-        "bytes": 47643,
+        "path": "01._1440px/code.html",
+        "sha256": "88ec5b7706235a7d7c13b64fea93924849722037ffdadab01078f22b72730541",
+        "bytes": 47672,
+        "mediaType": "text/html",
+        "sourceTokens": ["안녕하세요, 최준빈님", "우선 심의 큐", "최근 결재 활동"]
+      }
+    },
+    {
+      "id": "STITCH-042",
+      "apr": "APR-01",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "01._apr_01_390_light_populated",
+      "screen": {
+        "path": "01._apr_01_390_light_populated/screen.png",
+        "sha256": "b40372b10a299d696bd72d6c34ac0b7df638acb7353405792c92bc816544af6c",
+        "bytes": 261485,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 305,
+        "height": 1600
+      },
+      "code": {
+        "path": "01._apr_01_390_light_populated/code.html",
+        "sha256": "a6ef4968476a132d45558c68cff5b337997c642ba72ff929d4d234618bc54f44",
+        "bytes": 30175,
         "mediaType": "text/html",
         "sourceTokens": ["안녕하세요, 최준빈님", "우선 심의 큐", "최근 결재 활동"]
       }
@@ -37,18 +73,18 @@
       "apr": "APR-02",
       "renderClass": "board",
       "viewportIntent": "desktop",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px",
+      "pairPath": "02._action_center_1440px",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px/screen.png",
-        "sha256": "852f71fc0d770b5988bd6f78c89b443e5ee96116981aedfae69528fdfd78db33",
-        "bytes": 428500,
+        "path": "02._action_center_1440px/screen.png",
+        "sha256": "bb013260c5c9523aaf7125aac3f9db2ef48f159ba5dd6192fec962016c464b81",
+        "bytes": 923641,
         "mediaType": "image/png",
         "status": "raster",
         "width": 1280,
-        "height": 1312
+        "height": 1284
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px/code.html",
+        "path": "02._action_center_1440px/code.html",
         "sha256": "2a654d822f6e204405a7d49e20de7c7421617f54bef22f01aa0e1051963232a7",
         "bytes": 40563,
         "mediaType": "text/html",
@@ -60,18 +96,18 @@
       "apr": "APR-02",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px_list_detail",
+      "pairPath": "02._action_center_1440px_list_detail",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px_list_detail/screen.png",
-        "sha256": "be79a79be5158790a43296eee61418b1301ca4f8a7dddb54c864cb54c1ce84ff",
-        "bytes": 374720,
+        "path": "02._action_center_1440px_list_detail/screen.png",
+        "sha256": "c2e34e0535ff802fdb30a048a3f5cb623f5b96015c03ce9c8b5436b5a35f116d",
+        "bytes": 559088,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1048
+        "width": 1600,
+        "height": 1350
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px_list_detail/code.html",
+        "path": "02._action_center_1440px_list_detail/code.html",
         "sha256": "b409f4c2be3ed82b741e6b2d71c6605ae6a5e3f0244ca892c0dbd1a10cb1e538",
         "bytes": 43667,
         "mediaType": "text/html",
@@ -87,18 +123,18 @@
       "apr": "APR-02",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_390px",
+      "pairPath": "02._action_center_390px",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_390px/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "02._action_center_390px/screen.png",
+        "sha256": "09794558d9171197dfcee0b6b4596e1ab6cc939f626e577a14d35ac43d0039b1",
+        "bytes": 378360,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 390,
+        "height": 1198
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_390px/code.html",
+        "path": "02._action_center_390px/code.html",
         "sha256": "79499b37604525d08e65598e13e61b28aee002a94da5d00b5c5536a2bcf724d3",
         "bytes": 21770,
         "mediaType": "text/html",
@@ -110,18 +146,18 @@
       "apr": "APR-02",
       "renderClass": "exception",
       "viewportIntent": "desktop",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_loading_empty_503_403_409",
+      "pairPath": "02._action_center_loading_empty_503_403_409",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_loading_empty_503_403_409/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "02._action_center_loading_empty_503_403_409/screen.png",
+        "sha256": "448255a9622c8832b43ee0ea3765cb03a96a29b0b7bbd9dd2c172196ba0e3579",
+        "bytes": 980591,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1586
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_loading_empty_503_403_409/code.html",
+        "path": "02._action_center_loading_empty_503_403_409/code.html",
         "sha256": "c10f425b678982a9cad2210160e00831f4b5ecfc596591c3849e7a3a8aae3258",
         "bytes": 34716,
         "mediaType": "text/html",
@@ -137,18 +173,18 @@
       "apr": "APR-03",
       "renderClass": "board",
       "viewportIntent": "desktop",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1",
+      "pairPath": "03._2",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1/screen.png",
-        "sha256": "02befec62b8b56a4787f981d05a2962a4b58a502f090044ca395d9dc74c5fe88",
-        "bytes": 427771,
+        "path": "03._2/screen.png",
+        "sha256": "64b94bf5f46be476625c1963fd842f75c282734c5333a16b11b81e0780a481fc",
+        "bytes": 936056,
         "mediaType": "image/png",
         "status": "raster",
         "width": 1280,
-        "height": 1413
+        "height": 1397
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1/code.html",
+        "path": "03._2/code.html",
         "sha256": "4cdc819aa98537f640fbd0a01248a24cc67fa7ac13152c3e236f4ac7a95c5dc7",
         "bytes": 46128,
         "mediaType": "text/html",
@@ -164,18 +200,18 @@
       "apr": "APR-03",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1440px_split_pane",
+      "pairPath": "03._1440px_split_pane",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1440px_split_pane/screen.png",
-        "sha256": "0dd1b96b689b50a0842f0be8cb61f75a005e22c5b06550ec927982b2d183fb7b",
-        "bytes": 597772,
+        "path": "03._1440px_split_pane/screen.png",
+        "sha256": "741c9aee46298df39145a8eeb24e9f99e228618574bbae4771e8f0292c49e251",
+        "bytes": 773591,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 2088
+        "width": 990,
+        "height": 1600
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1440px_split_pane/code.html",
+        "path": "03._1440px_split_pane/code.html",
         "sha256": "4b180000ddb0b4598a7a8bcc7bbb450df07765ba8dd9f3b9bfd4b25f10896051",
         "bytes": 52983,
         "mediaType": "text/html",
@@ -187,18 +223,18 @@
       "apr": "APR-03",
       "renderClass": "exception",
       "viewportIntent": "desktop",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._2",
+      "pairPath": "03._1",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._2/screen.png",
-        "sha256": "7b4bc8888f006e17ed03364678fe649adaad828dc617993be95ac0a97508a155",
-        "bytes": 839883,
+        "path": "03._1/screen.png",
+        "sha256": "418b04915aa25c6eddcab404cb78c9ca5a687d038b7606c3421fa482a3a80c03",
+        "bytes": 55455,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 2850
+        "width": 744,
+        "height": 1600
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._2/code.html",
+        "path": "03._1/code.html",
         "sha256": "1966f0d5b440d58bf3e57133352a5377cbe05b35a99d6e2508f5d004d757e5a4",
         "bytes": 53951,
         "mediaType": "text/html",
@@ -214,18 +250,18 @@
       "apr": "APR-03",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px",
+      "pairPath": "03._390px",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px/screen.png",
-        "sha256": "eb59f91f28345dbf31cb2f407895658cff60107a9a1150dc98c10f80a7f173b1",
-        "bytes": 172735,
+        "path": "03._390px/screen.png",
+        "sha256": "22da2dcc49577e6448548621320530e6b8509e3660abd0c4f46201cd571d4000",
+        "bytes": 346689,
         "mediaType": "image/png",
         "status": "raster",
         "width": 390,
         "height": 1373
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px/code.html",
+        "path": "03._390px/code.html",
         "sha256": "a166c84ffba8483310a70020a2541fb18ebcf495210a8533f80be497ebdb5f71",
         "bytes": 21082,
         "mediaType": "text/html",
@@ -237,18 +273,18 @@
       "apr": "APR-04",
       "renderClass": "board",
       "viewportIntent": "mobile-320",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/04._320px",
+      "pairPath": "04._320px",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._320px/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "04._320px/screen.png",
+        "sha256": "4ec1ffec2e4b27488e61768f7f791a54959508eefdfd588ce7d1bd81101eccd2",
+        "bytes": 187042,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 706,
+        "height": 1600
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._320px/code.html",
+        "path": "04._320px/code.html",
         "sha256": "5e8e4d1a595c1fcd99031b7cca6123cb4c20c1578a0bf45a7de1a60b661c60ac",
         "bytes": 31032,
         "mediaType": "text/html",
@@ -260,18 +296,18 @@
       "apr": "APR-04",
       "renderClass": "board",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_1",
+      "pairPath": "04._390px_1",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_1/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "04._390px_1/screen.png",
+        "sha256": "ef7dff5b0fabb157191fc6d71b714ea9e536c37430e930274a77105073ec2325",
+        "bytes": 260211,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 493,
+        "height": 1600
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_1/code.html",
+        "path": "04._390px_1/code.html",
         "sha256": "aa318b64512c66aefe0bedd24cd1b5f5d61d8d28c5b86c3da94cde3cc62d42b9",
         "bytes": 17299,
         "mediaType": "text/html",
@@ -283,18 +319,18 @@
       "apr": "APR-04",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_2",
+      "pairPath": "04._390px_2",
       "screen": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_2/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "04._390px_2/screen.png",
+        "sha256": "d4544cd54c1aca5d25e3266b1b9ba39bf6376e45e63a1bb373362a0e0d75ecb3",
+        "bytes": 262571,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 706,
+        "height": 1600
       },
       "code": {
-        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_2/code.html",
+        "path": "04._390px_2/code.html",
         "sha256": "c56b7dce2dee7308ef899bdb46c7f1b91c74985237b6039b282108d52d3ded48",
         "bytes": 15570,
         "mediaType": "text/html",
@@ -306,18 +342,18 @@
       "apr": "APR-05",
       "renderClass": "exception",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/05.",
+      "pairPath": "05.",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05./screen.png",
-        "sha256": "bb6561322623ef4e275f903c761c6c6dcd46b394954b4fb9790319b959b60d4f",
-        "bytes": 501459,
+        "path": "05./screen.png",
+        "sha256": "e02c998aef099c030adcfa3f4f69ec3ebace52606a1698de8530b8d04036d944",
+        "bytes": 559232,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1541
+        "width": 1284,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05./code.html",
+        "path": "05./code.html",
         "sha256": "ab67deaa2b099c7fab14105eeb8fa070138477e69d0a4ad06358b5b05e995962",
         "bytes": 37655,
         "mediaType": "text/html",
@@ -333,20 +369,20 @@
       "apr": "APR-05",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/05._1440px",
+      "pairPath": "05._1440px",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._1440px/screen.png",
-        "sha256": "046672d95aa796995adf3d46d2945d0088f32c6f4265d8a6fe93679e825bc560",
-        "bytes": 413017,
+        "path": "05._1440px/screen.png",
+        "sha256": "39f95fc1cc7192b67c830aa2b4f3395bf52e1efd3ea7b2006611c024ceb8291a",
+        "bytes": 565250,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1376
+        "width": 1461,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._1440px/code.html",
-        "sha256": "39aa988b73b2acee8c2abd2954395ec845c0b7aaaf2c03b18dc42d785c86287c",
-        "bytes": 40520,
+        "path": "05._1440px/code.html",
+        "sha256": "262daa736354f9201d675b9eff7c59b1a8f352e0edf6cc6866872afbf71da482",
+        "bytes": 40505,
         "mediaType": "text/html",
         "sourceTokens": ["새 결재 기안 작성", "기안 기본 정보", "상신 전 필수 검증 점검"]
       }
@@ -356,20 +392,20 @@
       "apr": "APR-05",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/05._390px",
+      "pairPath": "05._390px",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._390px/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "05._390px/screen.png",
+        "sha256": "d83d561c8b5d65c3434797c4460725c43c2f24b07b31a75bbab35ae4653e7bf8",
+        "bytes": 225432,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 514,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._390px/code.html",
-        "sha256": "6b899189542eb2221afa42999d2473c058f014ec2eb3627d4a74aef7184ff8e6",
-        "bytes": 19235,
+        "path": "05._390px/code.html",
+        "sha256": "6adae4e9fece6a1b8f38d1a6d12845a191e46c5a846c07c891773f8da7ba440b",
+        "bytes": 19311,
         "mediaType": "text/html",
         "sourceTokens": ["기안 기본 정보", "신청 상세 명세", "초안 저장"]
       }
@@ -379,18 +415,18 @@
       "apr": "APR-06",
       "renderClass": "exception",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/06.",
+      "pairPath": "06.",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06./screen.png",
-        "sha256": "07803031954947b99769c8ba93b1d07a3cfc0f1bf6f937a76829a1ca19401925",
-        "bytes": 764166,
+        "path": "06./screen.png",
+        "sha256": "8a9eb6cce311b00fd51d9a19b76131f3a4938a7cec85f7bc10948e292e601808",
+        "bytes": 606880,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1860
+        "width": 1059,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06./code.html",
+        "path": "06./code.html",
         "sha256": "fe4a42390dd695d2c70ba300068069f2dc73acab4f10225ecbf4b611c159689a",
         "bytes": 47598,
         "mediaType": "text/html",
@@ -406,20 +442,20 @@
       "apr": "APR-06",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/06._1440px",
+      "pairPath": "06._1440px",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._1440px/screen.png",
-        "sha256": "b85d71ff43273fcc34b1ae2aab8bcf9a6b298aeacbb64d3ec3d387fdc9999500",
-        "bytes": 439095,
+        "path": "06._1440px/screen.png",
+        "sha256": "bd9f41e3bf6e364b2950e2e425c6965573a500195d267ac0ef4a7ef848924056",
+        "bytes": 600846,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1369
+        "width": 1435,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._1440px/code.html",
-        "sha256": "81ee5f8bd2cfe21c5e43b33c4db7f21225c7ef3290e63a7e9a4ffd18175c1f35",
-        "bytes": 44754,
+        "path": "06._1440px/code.html",
+        "sha256": "b8670afc2955dbc0c65639c096d8bcfeb7480160581314921d84d0279047835f",
+        "bytes": 44747,
         "mediaType": "text/html",
         "sourceTokens": [
           "상신 전 무결성 검증 및 결재선 확인",
@@ -433,18 +469,18 @@
       "apr": "APR-06",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/06._390px",
+      "pairPath": "06._390px",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._390px/screen.png",
-        "sha256": "d4515b6459d6fbb4bbac1e2d86ab68640bb8db8844751c1bfffda483d72d9faa",
-        "bytes": 167517,
+        "path": "06._390px/screen.png",
+        "sha256": "b51a84420edfc1fc369273cd004e5f1ac0820550c9644359858a58afc93130ae",
+        "bytes": 309619,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 390,
-        "height": 1007
+        "width": 598,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._390px/code.html",
+        "path": "06._390px/code.html",
         "sha256": "80a2025e934c0e3532be0399b437548ee86eecfbf53eb2507e91cba0ef63d5fa",
         "bytes": 19116,
         "mediaType": "text/html",
@@ -456,18 +492,18 @@
       "apr": "APR-07",
       "renderClass": "exception",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/07.",
+      "pairPath": "07.",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07./screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "07./screen.png",
+        "sha256": "a5a98ca9b87f3c3eec01fe3aec07411eb46f4e5a6bfca36fb10c065b2f59015e",
+        "bytes": 526088,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1101,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07./code.html",
+        "path": "07./code.html",
         "sha256": "6fc4fe27dd79b27a0518d569751c70ae98ad52f4c947570a79d54b020cc48fc1",
         "bytes": 43134,
         "mediaType": "text/html",
@@ -483,18 +519,18 @@
       "apr": "APR-07",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/07._1440px",
+      "pairPath": "07._1440px",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._1440px/screen.png",
-        "sha256": "5e0a3e2cc57a3e64f626ee5d1889bfbc58fb6ec1a42b087f0d0dcd05028e432b",
-        "bytes": 394609,
+        "path": "07._1440px/screen.png",
+        "sha256": "ac52375e6349014dc2ac8f269494c45b34017c5b16dd469cdab7d529009e325f",
+        "bytes": 590270,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1188
+        "width": 1600,
+        "height": 1508
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._1440px/code.html",
+        "path": "07._1440px/code.html",
         "sha256": "3b2559aca5dc3ca133333e143da2498e57e339fbf931c2654c1a00a1fed2685d",
         "bytes": 41094,
         "mediaType": "text/html",
@@ -506,18 +542,18 @@
       "apr": "APR-07",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/07._390px",
+      "pairPath": "07._390px",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._390px/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "07._390px/screen.png",
+        "sha256": "e87a685fc9c098f36da954f2a2954ef9ad0add2edc7c6c0463a8edfb36121474",
+        "bytes": 265636,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 527,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._390px/code.html",
+        "path": "07._390px/code.html",
         "sha256": "8aceebaed395bbf8abb8f300c7b7d59d9a2e8f8a8ae50835a3f2719185fad760",
         "bytes": 19395,
         "mediaType": "text/html",
@@ -529,18 +565,18 @@
       "apr": "APR-08",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/08._1440px_submitted",
+      "pairPath": "08._1440px_submitted",
       "screen": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/08._1440px_submitted/screen.png",
-        "sha256": "89bdcbae4273eb1b8e71b350c0ddc36820acce95accf81ae6790b872e9116a02",
-        "bytes": 491009,
+        "path": "08._1440px_submitted/screen.png",
+        "sha256": "da21dc56f8d05e1034ac9827c468fa794d4367ec0c6bd4916cc37270e6b25500",
+        "bytes": 604610,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1514
+        "width": 1337,
+        "height": 1600
       },
       "code": {
-        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/08._1440px_submitted/code.html",
+        "path": "08._1440px_submitted/code.html",
         "sha256": "63811fda9e3708f10e216a40be9b3ed13e24032a22229edb67ced6f2b2396a7b",
         "bytes": 39218,
         "mediaType": "text/html",
@@ -548,22 +584,72 @@
       }
     },
     {
+      "id": "STITCH-043",
+      "apr": "APR-08",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "08._390px_needs_info",
+      "screen": {
+        "path": "08._390px_needs_info/screen.png",
+        "sha256": "2ce46c9cb5178ce14a8625fe3d74859096a590aa1ecae272ca8778e731d0bb49",
+        "bytes": 245203,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 538,
+        "height": 1600
+      },
+      "code": {
+        "path": "08._390px_needs_info/code.html",
+        "sha256": "3ef63587120871c5d5f15db7aca64c87adaa9e64cf6b2f0fbae59cef31195046",
+        "bytes": 23355,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "보완 요청 답변 작성",
+          "진행 중인 결재 회수하기 (Withdraw)",
+          "보완 답변 제출 (v3 발행)"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-044",
+      "apr": "APR-08",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "08._partial_403_409_fulfillment",
+      "screen": {
+        "path": "08._partial_403_409_fulfillment/screen.png",
+        "sha256": "d68774c4989b93733b9d45384c2cc5ce805239af4646b13c8db3d086cc7cc66f",
+        "bytes": 551807,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1023,
+        "height": 1600
+      },
+      "code": {
+        "path": "08._partial_403_409_fulfillment/code.html",
+        "sha256": "040d265b4ab7269d0a48c55159d8cd746aabfc96f2034a40e90188a6ee32bc54",
+        "bytes": 41090,
+        "mediaType": "text/html",
+        "sourceTokens": ["APR-08 REQUEST RESILIENCE", "Revision Recovery", "Permission Revocation"]
+      }
+    },
+    {
       "id": "STITCH-023",
       "apr": "APR-09",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-09-archive-desktop",
+      "pairPath": "09._1440px_approvals_requests_archive_read_only",
       "screen": {
-        "path": "APR-09-archive-desktop/screen.png",
-        "sha256": "14822241211fdd324cf6acc6ba1aef2269bbaf30fd2cdc781051bf6370d50052",
-        "bytes": 524341,
+        "path": "09._1440px_approvals_requests_archive_read_only/screen.png",
+        "sha256": "a796bac5ce2386c3a520eed9c18fab0169eb863bbf7d23205ee9de5e29d97e2f",
+        "bytes": 555106,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1563
+        "width": 1207,
+        "height": 1600
       },
       "code": {
-        "path": "APR-09-archive-desktop/code.html",
+        "path": "09._1440px_approvals_requests_archive_read_only/code.html",
         "sha256": "b710a560d0e2b5d44b6fdce2651fb0f03586f96452f12bbf6bd7b5110a793d9f",
         "bytes": 48357,
         "mediaType": "text/html",
@@ -571,22 +657,49 @@
       }
     },
     {
+      "id": "STITCH-045",
+      "apr": "APR-09",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "09._1440px_approvals_completed_read_only",
+      "screen": {
+        "path": "09._1440px_approvals_completed_read_only/screen.png",
+        "sha256": "d1f8d20fec7ac31bafb27590b58307f06b969bc836d8de0bd3bbd6dedc8183ef",
+        "bytes": 497705,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1375,
+        "height": 1600
+      },
+      "code": {
+        "path": "09._1440px_approvals_completed_read_only/code.html",
+        "sha256": "e1773f7c8a70d54a073e861b7f2f28bdada1266985d3833340983979ffc04b76",
+        "bytes": 36814,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "내 처리 완료함 (Completed Decisions by Me)",
+          "결정 증적 요약 (Decision Evidence Record)",
+          "결정 증적 PDF 다운로드 (개인 열람용)"
+        ]
+      }
+    },
+    {
       "id": "STITCH-024",
       "apr": "APR-10",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-10-desktop",
+      "pairPath": "10._1440px_outgoing_incoming",
       "screen": {
-        "path": "APR-10-desktop/screen.png",
-        "sha256": "cdfe3ea041af8e658890ba9317a8d845c15852a5d89e8b61df81f970d822af52",
-        "bytes": 337991,
+        "path": "10._1440px_outgoing_incoming/screen.png",
+        "sha256": "07785c6ed3e026639aba5b1fb85a6251cda2af9c1413780f7cede559d260b0e8",
+        "bytes": 704683,
         "mediaType": "image/png",
         "status": "raster",
         "width": 1280,
-        "height": 1054
+        "height": 1140
       },
       "code": {
-        "path": "APR-10-desktop/code.html",
+        "path": "10._1440px_outgoing_incoming/code.html",
         "sha256": "19ab2c2025415d1ad565ed85cd63bb7b577c20340636f248eb7a36598cd75265",
         "bytes": 57236,
         "mediaType": "text/html",
@@ -598,18 +711,18 @@
       "apr": "APR-10",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-10-mobile",
+      "pairPath": "10._390px",
       "screen": {
-        "path": "APR-10-mobile/screen.png",
-        "sha256": "cb3e76d68299470665d63380c1433e437a7de1b8f2b530bf4e80d2ef6f581e7a",
-        "bytes": 222696,
+        "path": "10._390px/screen.png",
+        "sha256": "d1282cb8482227d89c407186651f82e39f6820a7e4e9db7ffb9e26c80c403361",
+        "bytes": 260001,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 390,
-        "height": 1496
+        "width": 397,
+        "height": 1600
       },
       "code": {
-        "path": "APR-10-mobile/code.html",
+        "path": "10._390px/code.html",
         "sha256": "9cf9160ea28e30559e56be5eed627d8e28540868e064b574c8a27ccfeefc8709",
         "bytes": 26581,
         "mediaType": "text/html",
@@ -617,46 +730,22 @@
       }
     },
     {
-      "id": "STITCH-026",
-      "apr": "APR-03",
-      "renderClass": "mobile",
-      "viewportIntent": "mobile-390",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/03._390px",
-      "duplicateOf": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px",
-      "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/03._390px/screen.png",
-        "sha256": "7b30a81a3033f629de2be5331fa1bac7231bfd1208c219afdfc47578cb668664",
-        "bytes": 243293,
-        "mediaType": "image/png",
-        "status": "raster",
-        "width": 390,
-        "height": 6675
-      },
-      "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/03._390px/code.html",
-        "sha256": "a166c84ffba8483310a70020a2541fb18ebcf495210a8533f80be497ebdb5f71",
-        "bytes": 21082,
-        "mediaType": "text/html",
-        "sourceTokens": ["신청 상세 명세", "결재 진행선", "승인 및 서명"]
-      }
-    },
-    {
       "id": "STITCH-027",
       "apr": "APR-11",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/11._1440px_overview",
+      "pairPath": "11._1440px_overview",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._1440px_overview/screen.png",
-        "sha256": "e23aa3f2fabfd5b957d64ecbd258d13feb0828f999e0ef0f8c347728a5ebfc2b",
-        "bytes": 360843,
+        "path": "11._1440px_overview/screen.png",
+        "sha256": "61a20c7f1127bb21785cac976c475b57bcd26f92115d00d81aa4e8d3610b7d6a",
+        "bytes": 555916,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1244
+        "width": 1600,
+        "height": 1585
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._1440px_overview/code.html",
+        "path": "11._1440px_overview/code.html",
         "sha256": "ff9b9d884827ed2bab121d7c87316681a2c7899aa4b3fb1fe8b2a1cb55340a20",
         "bytes": 35996,
         "mediaType": "text/html",
@@ -668,18 +757,18 @@
       "apr": "APR-11",
       "renderClass": "board",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/11._390px_partial_read_only_stale_403_persona_board",
+      "pairPath": "11._390px_partial_read_only_stale_403_persona_board",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._390px_partial_read_only_stale_403_persona_board/screen.png",
-        "sha256": "0d8639208871df42afcfd995f6a2d1688365b5fbbb619b97c85348acae139d5f",
-        "bytes": 648318,
+        "path": "11._390px_partial_read_only_stale_403_persona_board/screen.png",
+        "sha256": "b05a0c9acb21850b0fa67b71f3d1dc344b414fc05114f8d1460206f4f7a118fb",
+        "bytes": 507426,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1934
+        "width": 986,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._390px_partial_read_only_stale_403_persona_board/code.html",
+        "path": "11._390px_partial_read_only_stale_403_persona_board/code.html",
         "sha256": "30df0009980205bab7a8924c3da5c48fccae47917d2dc034fd82b7f5dc611564",
         "bytes": 52070,
         "mediaType": "text/html",
@@ -691,18 +780,18 @@
       "apr": "APR-12",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/12._1440px_category_tree_form_list_inspector",
+      "pairPath": "12._1440px_category_tree_form_list_inspector",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._1440px_category_tree_form_list_inspector/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "12._1440px_category_tree_form_list_inspector/screen.png",
+        "sha256": "157ef75cc4abe6a6652a5f9d7764583ca7f8b5363c64052fbbc95ad4979f9e04",
+        "bytes": 474018,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1280
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._1440px_category_tree_form_list_inspector/code.html",
+        "path": "12._1440px_category_tree_form_list_inspector/code.html",
         "sha256": "d8e7cdabf6bd3422a35e5bab1ba72ac78b79113f812bdd6dcaebf54a7c9c444d",
         "bytes": 36312,
         "mediaType": "text/html",
@@ -714,18 +803,18 @@
       "apr": "APR-12",
       "renderClass": "board",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/12._390px_drill_in_designer_publisher_auditor_board",
+      "pairPath": "12._390px_drill_in_designer_publisher_auditor_board",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._390px_drill_in_designer_publisher_auditor_board/screen.png",
-        "sha256": "9b865f116693713ecce5de8b97fa32378407cabace83425f8baa74214793832a",
-        "bytes": 514381,
+        "path": "12._390px_drill_in_designer_publisher_auditor_board/screen.png",
+        "sha256": "217d2c42954a6c95b20d79ddc7fba345de83365c8f5a02610def8d49c605b76d",
+        "bytes": 568503,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1579
+        "width": 1260,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._390px_drill_in_designer_publisher_auditor_board/code.html",
+        "path": "12._390px_drill_in_designer_publisher_auditor_board/code.html",
         "sha256": "c4bcef1019a7f7e5a1d6dea1eeab987f4dbe8a21313a493bf4388c927f710e1c",
         "bytes": 42498,
         "mediaType": "text/html",
@@ -741,18 +830,18 @@
       "apr": "APR-13",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector",
+      "pairPath": "13._1440px_field_list_form_canvas_property_inspector",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "13._1440px_field_list_form_canvas_property_inspector/screen.png",
+        "sha256": "a6350fe9f4eb69346078885d7c3bba1858887d9851f81351dcfdc1d6018538ca",
+        "bytes": 449624,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1385
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector/code.html",
+        "path": "13._1440px_field_list_form_canvas_property_inspector/code.html",
         "sha256": "768890de0863a99438ba6ba374a6528217f9ceaf66f84b0ff508a47ce431b3e8",
         "bytes": 51146,
         "mediaType": "text/html",
@@ -764,18 +853,18 @@
       "apr": "APR-13",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/13._390px",
+      "pairPath": "13._390px",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._390px/screen.png",
-        "sha256": "593a1c5455a76caaac67199a66745e0d53dd531a4d77ad10209e4edb541a4291",
-        "bytes": 268407,
+        "path": "13._390px/screen.png",
+        "sha256": "de0d46823c7a3d1063b39fc815ac7595dc82f29722137721886fc499045ef255",
+        "bytes": 310206,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1434
+        "width": 1400,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._390px/code.html",
+        "path": "13._390px/code.html",
         "sha256": "1bd1beccb85d179548527b4ebc113b98a2ddba67e32f969d30e5613693d54bf7",
         "bytes": 33915,
         "mediaType": "text/html",
@@ -787,18 +876,18 @@
       "apr": "APR-13",
       "renderClass": "exception",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/13._validation_dirty_saving_409_503_persona_state_board",
+      "pairPath": "13._validation_dirty_saving_409_503_persona_state_board",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._validation_dirty_saving_409_503_persona_state_board/screen.png",
-        "sha256": "610c03f419707ee6c01c01b486052522eb5a43085623432407e449f41d103cd4",
-        "bytes": 566540,
+        "path": "13._validation_dirty_saving_409_503_persona_state_board/screen.png",
+        "sha256": "89b9046a2599e2931b533cdd371ec38f1332ab169e8b0adc3e03d3671f8c4a4d",
+        "bytes": 539301,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1692
+        "width": 1106,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._validation_dirty_saving_409_503_persona_state_board/code.html",
+        "path": "13._validation_dirty_saving_409_503_persona_state_board/code.html",
         "sha256": "72bbafd0c05e5172ba312a2b4daff61c849e65c4cc57222258c8e43003d8d969",
         "bytes": 43642,
         "mediaType": "text/html",
@@ -810,20 +899,20 @@
       "apr": "APR-14",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_1440px",
+      "pairPath": "14._workflow_routing_studio_1440px",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_1440px/screen.png",
-        "sha256": "98170918c8db2de339d56704f132af07b5a8d4c14c4a0107a68df427d413e54d",
-        "bytes": 367190,
+        "path": "14._workflow_routing_studio_1440px/screen.png",
+        "sha256": "10494e4b214431280e8ae9fbd2275af585f45670d9112b8897475c12cb4236a4",
+        "bytes": 557186,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1024
+        "width": 1600,
+        "height": 1345
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_1440px/code.html",
-        "sha256": "d9d005adbcd6d1f38d9327776da4ce70294fe1aa21891691413cccd290fb8b24",
-        "bytes": 40001,
+        "path": "14._workflow_routing_studio_1440px/code.html",
+        "sha256": "afa603c2f0d01f402b483ee9ed47d1ffce2864a81720683ba18de1559f5160d2",
+        "bytes": 40006,
         "mediaType": "text/html",
         "sourceTokens": ["클라우드 인프라 긴급 증설 결재선", "새 단계 추가", "ANY (단일 승인)"]
       }
@@ -833,20 +922,20 @@
       "apr": "APR-14",
       "renderClass": "mobile",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_390px",
+      "pairPath": "14._workflow_routing_studio_390px",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_390px/screen.png",
-        "sha256": "ff4b35e50b683aea906ce56b7625cf4170f48991e82822c51105734a12ab28cf",
-        "bytes": 457427,
+        "path": "14._workflow_routing_studio_390px/screen.png",
+        "sha256": "a53e43987520a3decfc6b78a168576eabc0afb4f93505dba22673f705888d9cd",
+        "bytes": 608962,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1362
+        "width": 1405,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_390px/code.html",
-        "sha256": "2475040c973b35d82e9482a6b9092a75b73d8ba8ab03428913c5d9897f8cc703",
-        "bytes": 46191,
+        "path": "14._workflow_routing_studio_390px/code.html",
+        "sha256": "9e546ce74b3a3c24911dc65462015a1f6ea0d57b76432fb5080c076281f95fec",
+        "bytes": 46196,
         "mediaType": "text/html",
         "sourceTokens": ["APR-14 WORKFLOW GOVERNANCE", "신규 승인/합의 단계 추가", "단계 설정 완료"]
       }
@@ -856,20 +945,20 @@
       "apr": "APR-15",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_1440px_current_proposed_comparison_assurance",
+      "pairPath": "15._sod_sla_1440px_current_proposed_comparison_assurance",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_1440px_current_proposed_comparison_assurance/screen.png",
-        "sha256": "b7f6cdb2a7ccf2b376a25f9d3cb2515ee57d729f7271015f2aefe00eee7cd3a3",
-        "bytes": 427652,
+        "path": "15._sod_sla_1440px_current_proposed_comparison_assurance/screen.png",
+        "sha256": "7ffb3728b02ab1ff148aba51d62683714059e9d9907a02fa2641b0efae2baab8",
+        "bytes": 624060,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1298
+        "width": 1528,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_1440px_current_proposed_comparison_assurance/code.html",
-        "sha256": "f99dacd6be0be410e5a158dc99d21571aa86ac2647453391e44f5bf3c1502f01",
-        "bytes": 38260,
+        "path": "15._sod_sla_1440px_current_proposed_comparison_assurance/code.html",
+        "sha256": "99b7ef9ab9789dc07c5d81473f959936b9f2ccda75a1ba1d51a60d6f3eba017b",
+        "bytes": 38271,
         "mediaType": "text/html",
         "sourceTokens": ["고위험 결재 기안자 자기승인 금지", "SLA 임계치", "게시 승인 요청"]
       }
@@ -879,20 +968,20 @@
       "apr": "APR-15",
       "renderClass": "board",
       "viewportIntent": "mobile-390",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_390px_drill_in_persona_409_503_step_up_board",
+      "pairPath": "15._sod_sla_390px_drill_in_persona_409_503_step_up_board",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_390px_drill_in_persona_409_503_step_up_board/screen.png",
-        "sha256": "9ec743c48119333c1d3b031ddc90bd0d509e1e4109c71d028db2186e4e401888",
-        "bytes": 618971,
+        "path": "15._sod_sla_390px_drill_in_persona_409_503_step_up_board/screen.png",
+        "sha256": "a85fa1b8d7b9e2799cb9375dbecb2075eca8939722aa747c41c1b5aa9bebf848",
+        "bytes": 453580,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 2069
+        "width": 938,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_390px_drill_in_persona_409_503_step_up_board/code.html",
-        "sha256": "97fae4d6bbcf45a7fa85797b2f8f5d3642bc16d2ebc148a40a229f102b3c42cc",
-        "bytes": 50419,
+        "path": "15._sod_sla_390px_drill_in_persona_409_503_step_up_board/code.html",
+        "sha256": "2649fad5cabfbf130f835d3edcad6b249f173a9dd5b183333b5eafa4ef353bf6",
+        "bytes": 50412,
         "mediaType": "text/html",
         "sourceTokens": [
           "APR-15 POLICY GOVERNANCE",
@@ -906,20 +995,20 @@
       "apr": "APR-16",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/16a._operations_1440px_sla",
+      "pairPath": "16a._operations_1440px_sla",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16a._operations_1440px_sla/screen.png",
-        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
-        "bytes": 28,
-        "mediaType": "text/plain",
-        "status": "fetch-error-placeholder",
-        "width": null,
-        "height": null
+        "path": "16a._operations_1440px_sla/screen.png",
+        "sha256": "dc0a2aa0831d7c50d01b36d998219085a999029ec4b1fc6c3f93d686e83a91bc",
+        "bytes": 552571,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1343,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16a._operations_1440px_sla/code.html",
-        "sha256": "544734ce2484e325e579dc33b7ee40e3de63e0d737409f26f83f36597a3122c7",
-        "bytes": 39591,
+        "path": "16a._operations_1440px_sla/code.html",
+        "sha256": "c86c0163edc4e1ee437da45659d9ef23c81b10683e0f90fb0cefcdbf7ffb8a33",
+        "bytes": 39599,
         "mediaType": "text/html",
         "sourceTokens": ["운영 및 복구 관제 워크벤치", "SLA 위반 업무", "연계 전달 실패"]
       }
@@ -929,20 +1018,20 @@
       "apr": "APR-16",
       "renderClass": "normal",
       "viewportIntent": "desktop",
-      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/16b._signatures_1440px_provider_readiness_gate",
+      "pairPath": "16b._signatures_1440px_provider_readiness_gate",
       "screen": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16b._signatures_1440px_provider_readiness_gate/screen.png",
-        "sha256": "15a752df888cdc639d162bb7a9fcd860a39162e4f19e559f92e054e17622e293",
-        "bytes": 536317,
+        "path": "16b._signatures_1440px_provider_readiness_gate/screen.png",
+        "sha256": "b2a4f14ac2575143c646e0c43469033db2cdd1893daf136b6c5f4aaa80b9581f",
+        "bytes": 587084,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1280,
-        "height": 1690
+        "width": 1195,
+        "height": 1600
       },
       "code": {
-        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16b._signatures_1440px_provider_readiness_gate/code.html",
-        "sha256": "1c323f0ca6c631a0e34f5c321a2e25c0c7fa163bdc10aaab73923b1a71ad930e",
-        "bytes": 41789,
+        "path": "16b._signatures_1440px_provider_readiness_gate/code.html",
+        "sha256": "62271742643b961bd414e6d9484938bb7e9ca22070b45a9de946714faa690354",
+        "bytes": 41802,
         "mediaType": "text/html",
         "sourceTokens": [
           "전자서명 제공자 준비 상태 및 외부 게이트",
@@ -952,52 +1041,32 @@
       }
     },
     {
-      "id": "STITCH-040",
-      "apr": "APR-13",
-      "renderClass": "normal",
-      "viewportIntent": "desktop",
-      "pairPath": "APR-13-desktop",
-      "duplicateOf": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector",
+      "id": "STITCH-046",
+      "apr": "APR-16",
+      "renderClass": "exception",
+      "viewportIntent": "mobile-390",
+      "pairPath": "16._390px_exception_matrix",
       "screen": {
-        "path": "APR-13-desktop/screen.png",
-        "sha256": "a6350fe9f4eb69346078885d7c3bba1858887d9851f81351dcfdc1d6018538ca",
-        "bytes": 449624,
+        "path": "16._390px_exception_matrix/screen.png",
+        "sha256": "cb39d29976be1422ce1564406d345431e99af70f17d2193c082053218580d2e2",
+        "bytes": 495055,
         "mediaType": "image/png",
         "status": "raster",
-        "width": 1600,
-        "height": 1385
-      },
-      "code": {
-        "path": "APR-13-desktop/code.html",
-        "sha256": "768890de0863a99438ba6ba374a6528217f9ceaf66f84b0ff508a47ce431b3e8",
-        "bytes": 51146,
-        "mediaType": "text/html",
-        "sourceTokens": ["필드 구조", "운영 로그 접근 신청서", "속성 인스펙터"]
-      }
-    },
-    {
-      "id": "STITCH-041",
-      "apr": null,
-      "renderClass": "quarantine",
-      "viewportIntent": "mobile",
-      "pairPath": "quarantine-zip4-workplace",
-      "screen": {
-        "path": "quarantine-zip4-workplace/screen.png",
-        "sha256": "f0799129266ccdb8a2188782122dee718a90149bfd85bcfe0173bc7f0fc97938",
-        "bytes": 211127,
-        "mediaType": "image/png",
-        "status": "raster",
-        "width": 706,
+        "width": 1070,
         "height": 1600
       },
       "code": {
-        "path": "quarantine-zip4-workplace/code.html",
-        "sha256": "82f04c965d547522ffda59ac6b6c1efcfee4ec85d81fb301369cfdc371afee53",
-        "bytes": 15961,
+        "path": "16._390px_exception_matrix/code.html",
+        "sha256": "6ff785f2f259d93e86d46b20d9e78ca691479e8df71fcb92a07926bf0115ae0f",
+        "bytes": 52534,
         "mediaType": "text/html",
-        "sourceTokens": ["예약 최종 확인", "예약 확정하기"]
+        "sourceTokens": [
+          "APR-16 OPERATIONS",
+          "외부 서명 게이트 진단 새로고침",
+          "운영자 권한 회수 시 즉각 차단"
+        ]
       }
     }
   ],
-  "integritySha256": "dd51626ce077a29e7309d6c4481ee2807553ad53256185a66801a009251a17a8"
+  "integritySha256": "e6ae5f247659487013ac2a4ade2fac2c72f37e9bb2f41aeb3d23b573b137d075"
 }

@@ -21,9 +21,13 @@ import Stack from '@mui/material/Stack';
 
 import { StatusChip } from './approval-ui';
 import { ApprovalWorkflowDefinitionFields } from './approval-workflow-definition-fields';
+import { focusApprovalLabeledControl, focusApprovalSelector } from './approval-focus-navigation';
 import { ApprovalWorkflowTypedCanvas } from './approval-workflow-typed-canvas';
 import { ApprovalWorkflowTypedInspector } from './approval-workflow-typed-inspector';
 import { ApprovalWorkflowTypedConditionPanel } from './approval-workflow-typed-condition-panel';
+import { validateApprovalTypedWorkflow } from './approval-workflow-typed-compiler';
+import { ApprovalTypedWorkflowError } from './approval-workflow-typed-model';
+import { approvalWorkflowMetadataIssues } from './approval-workflow-model';
 import { approvalTypedWorkflowDraftValid } from './approval-workflow-typed-workspace-model';
 import {
   addApprovalTypedWorkflowStage,
@@ -43,6 +47,7 @@ import type { ApprovalWorkflowConditionSource } from './approval-workflow-typed-
 import type { ReactNode } from 'react';
 
 type Panel = 'library' | 'canvas' | 'inspector';
+type InspectorFocus = Readonly<{ label: string | null; occurrence?: number }>;
 
 export function ApprovalWorkflowTypedInlineEditor({
   workspaceKey,
@@ -98,6 +103,9 @@ export function ApprovalWorkflowTypedInlineEditor({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const inspectorRef = useRef<HTMLDivElement>(null);
+  const inspectorFocus = useRef<InspectorFocus | undefined>(undefined);
+  const restoreCanvasFocus = useRef(false);
   const firstKey = useRef(draft.typedDefinition.stages[0].key);
   firstKey.current = draft.typedDefinition.stages[0].key;
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
@@ -111,6 +119,8 @@ export function ApprovalWorkflowTypedInlineEditor({
     setPanel(creating ? 'inspector' : 'canvas');
     setDefinitionOpen(creating);
     setError(false);
+    inspectorFocus.current = creating ? { label: null } : undefined;
+    restoreCanvasFocus.current = false;
   }, [workspaceKey, creating]);
   const change = (action: () => ApprovalTypedWorkflowDefinition, nextSelection?: string) => {
     if (!editable) return;
@@ -125,15 +135,114 @@ export function ApprovalWorkflowTypedInlineEditor({
   };
   const select = (key: string) => {
     setSelectedKey(key);
+    inspectorFocus.current = { label: t('admin.studio.stepKey') };
     setPanel('inspector');
   };
   const back = () => {
+    restoreCanvasFocus.current = true;
     setPanel('canvas');
-    window.requestAnimationFrame(() =>
-      canvasRef.current
-        ?.querySelector<HTMLElement>(`[data-approval-typed-stage="${selectedStage.key}"]`)
-        ?.focus()
+  };
+  useEffect(() => {
+    if (panel === 'canvas' && restoreCanvasFocus.current) {
+      restoreCanvasFocus.current = false;
+      const frame = window.requestAnimationFrame(() => {
+        focusApprovalSelector(
+          canvasRef.current,
+          `[data-approval-typed-stage="${selectedStage.key}"]`
+        );
+      });
+      return () => window.cancelAnimationFrame(frame);
+    }
+    if (panel !== 'inspector' || inspectorFocus.current === undefined) return;
+    const request = inspectorFocus.current;
+    inspectorFocus.current = undefined;
+    const frame = window.requestAnimationFrame(() => {
+      focusApprovalLabeledControl(
+        inspectorRef.current,
+        request.label,
+        'start',
+        request.occurrence
+      );
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [definitionOpen, panel, selectedStage.key]);
+
+  const metadataLabel = (field: ReturnType<typeof approvalWorkflowMetadataIssues>[number]['field']) =>
+    t(
+      `admin.studio.${field === 'slaMinutes' ? 'workflowSlaMinutes' : field === 'ownerGroupRef' ? 'owner' : field}`
     );
+  const jumpToValidation = () => {
+    const metadataIssue = approvalWorkflowMetadataIssues(draft)[0];
+    if (metadataIssue) {
+      setDefinitionOpen(true);
+      inspectorFocus.current = { label: metadataLabel(metadataIssue.field) };
+      setPanel('inspector');
+      return;
+    }
+    if (draft.slaMinutes !== draft.typedDefinition.slaMinutes) {
+      setDefinitionOpen(true);
+      inspectorFocus.current = { label: t('admin.studio.workflowSlaMinutes') };
+      setPanel('inspector');
+      return;
+    }
+    const longRoleIndex = draft.typedDefinition.stages.findIndex(
+      (stage) => stage.candidateRole.length > 50
+    );
+    if (longRoleIndex >= 0) {
+      setSelectedKey(draft.typedDefinition.stages[longRoleIndex].key);
+      inspectorFocus.current = { label: t('admin.studio.candidateRole') };
+      setPanel('inspector');
+      return;
+    }
+    try {
+      validateApprovalTypedWorkflow(draft.typedDefinition);
+    } catch (reason) {
+      const path = reason instanceof ApprovalTypedWorkflowError ? reason.path : 'stages';
+      if (path === 'slaMinutes') {
+        setDefinitionOpen(true);
+        inspectorFocus.current = { label: t('admin.studio.workflowSlaMinutes') };
+      } else {
+        const stageMatch = /^stages\[(\d+)](?:\.(.*))?$/u.exec(path);
+        const stageIndex = stageMatch ? Number(stageMatch[1]) : 0;
+        const field = stageMatch?.[2] ?? '';
+        const stage = draft.typedDefinition.stages[stageIndex] ?? selectedStage;
+        setSelectedKey(stage.key);
+        const conditionIndex = Number(/routeCondition\.all\[(\d+)]/u.exec(field)?.[1] ?? 0);
+        const label = field.startsWith('key')
+          ? 'admin.studio.stepKey'
+          : field.startsWith('name')
+            ? 'admin.studio.stepName'
+            : field.startsWith('candidateRole')
+              ? 'admin.studio.candidateRole'
+              : field.startsWith('slaMinutes')
+                ? 'admin.studio.stepSla'
+                : field.startsWith('quorum.value')
+                  ? 'admin.typedWorkflow.quorumValue'
+                  : field.startsWith('quorum')
+                    ? 'admin.studio.mode'
+                    : field.includes('.field')
+                      ? 'admin.typedWorkflow.conditionField'
+                      : field.includes('.operator')
+                        ? 'admin.typedWorkflow.conditionOperator'
+                        : field.includes('.value')
+                          ? 'admin.typedWorkflow.conditionValue'
+                          : 'admin.studio.stepKey';
+        inspectorFocus.current = {
+          label: t(label),
+          ...(field.startsWith('routeCondition') ? { occurrence: conditionIndex } : {}),
+        };
+      }
+      setPanel('inspector');
+      return;
+    }
+    inspectorFocus.current = {
+      label: t(
+        draft.typedDefinition.stages.some((stage) => stage.routeCondition)
+          ? 'admin.typedWorkflow.sourceForm'
+          : 'admin.studio.stepKey'
+      ),
+    };
+    setPanel('inspector');
   };
   return (
     <Box
@@ -267,7 +376,11 @@ export function ApprovalWorkflowTypedInlineEditor({
               label={t(label)}
               intent={panel === value ? 'primary' : 'default'}
               aria-pressed={panel === value}
-              onClick={() => setPanel(value)}
+              onClick={() => {
+                if (value === 'canvas') restoreCanvasFocus.current = true;
+                if (value === 'inspector') inspectorFocus.current = { label: null };
+                setPanel(value);
+              }}
             >
               <Icon size={18} />
             </ActionIconButton>
@@ -343,6 +456,10 @@ export function ApprovalWorkflowTypedInlineEditor({
           />
         </Box>
         <Stack
+          ref={inspectorRef}
+          role="region"
+          aria-label={t('admin.studio.processInspector')}
+          tabIndex={-1}
           gap={2}
           sx={{
             p: 1.5,
@@ -422,7 +539,12 @@ export function ApprovalWorkflowTypedInlineEditor({
       </Box>
       {editing && !valid ? (
         <InlineFeedback severity="warning" sx={{ mt: 1.5 }}>
-          {t('admin.typedWorkflow.validationFailed')}
+          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+            <Box sx={{ typography: 'body2' }}>{t('admin.typedWorkflow.validationFailed')}</Box>
+            <ActionButton size="small" intent="quiet" onClick={jumpToValidation}>
+              {t('admin.typedWorkflow.validationFailed')}
+            </ActionButton>
+          </Stack>
         </InlineFeedback>
       ) : null}
     </Box>

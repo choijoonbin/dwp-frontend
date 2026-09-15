@@ -196,13 +196,16 @@ vi.mock('./approval-ui', () => ({
 vi.mock('./approval-request-list-panel', () => ({
   ApprovalRequestListPanel: ({
     requests,
+    selectedId,
     onRespond,
   }: {
     requests: ApprovalRequest[];
+    selectedId?: string;
     onRespond: (request: ApprovalRequest) => void;
   }) => (
     <div>
       <span data-testid="request-scope">{requests[0]?.requestId}</span>
+      <span data-testid="selected-request">{selectedId}</span>
       {requests[0] && (
         <button type="button" onClick={() => onRespond(requests[0]!)}>
           open response
@@ -345,14 +348,14 @@ let container: HTMLDivElement;
 let root: Root;
 let queryClient: QueryClient;
 
-function renderLifecycle() {
+function renderLifecycle(initialEntry = '/approvals/requests/needs-info') {
   root.render(
     createElement(
       QueryClientProvider,
       { client: queryClient },
       createElement(
         MemoryRouter,
-        { initialEntries: ['/approvals/requests/needs-info'] },
+        { initialEntries: [initialEntry] },
         createElement(ApprovalRequestLifecycle, { view: 'needs-info' })
       )
     )
@@ -490,6 +493,56 @@ describe('ApprovalRequestLifecycle mutation binding', () => {
     vi.unstubAllGlobals();
     resetCsrfToken();
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = false;
+  });
+
+  it('resolves an owner-scoped deep link outside the current page without selecting the first row', async () => {
+    dependencies.getApprovalRequestDetail.mockImplementation((requestId: string) =>
+      Promise.resolve(requestId === 'request-b' ? detail('b') : detail('a'))
+    );
+
+    await act(async () =>
+      renderLifecycle('/approvals/requests/needs-info?request=request-b')
+    );
+
+    await vi.waitFor(() =>
+      expect(getByTestId(container, 'selected-request').textContent).toBe('request-b')
+    );
+    expect(getByTestId(container, 'request-scope').textContent).toBe('request-b');
+    expect(dependencies.getApprovalRequestDetail).toHaveBeenCalledWith(
+      'request-b',
+      'scope-a',
+      expect.any(AbortSignal)
+    );
+  });
+
+  it('keeps a wrong-view deep link unselected and exposes an explicit current-state error', async () => {
+    dependencies.getApprovalRequestDetail.mockResolvedValue({
+      ...detail('b'),
+      request: { ...request('b'), status: 'IN_REVIEW' },
+    });
+
+    await act(async () =>
+      renderLifecycle('/approvals/requests/needs-info?request=request-b')
+    );
+
+    await vi.waitFor(() =>
+      expect(container.textContent).toContain('requests.draftLoadError')
+    );
+    expect(getByTestId(container, 'selected-request').textContent).toBe('');
+    expect(container.textContent).toContain('status.IN_REVIEW');
+  });
+
+  it('does not fall back after an owner-scoped deep link denial', async () => {
+    dependencies.getApprovalRequestDetail.mockRejectedValue(new HttpError('Denied', 403));
+
+    await act(async () =>
+      renderLifecycle('/approvals/requests/needs-info?request=request-b')
+    );
+
+    await vi.waitFor(() =>
+      expect(container.textContent).toContain('requests.draftLoadError')
+    );
+    expect(getByTestId(container, 'selected-request').textContent).toBe('');
   });
 
   it('submits the immutable reviewed response while fields stay disabled during freshness check', async () => {

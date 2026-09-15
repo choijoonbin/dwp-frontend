@@ -1,10 +1,12 @@
 # 20. 승인 Stitch 원본과 Runtime 추적성
 
-- 기준일: 2026-09-14 · 최종 실행 검증: 2026-09-15
+- 기준일: 2026-09-15 · 최종 실행 검증: 2026-09-15
 - Stitch 프로젝트: `13391261371843159731`
+- 인계 ZIP: `stitch_enterprise_grid_calendar_application.zip`
+- 인계 ZIP SHA-256: `2ee7954e2f62bccfe2dd8063ac9536a001fae84bedab92388cadfe54678f42dd`
 - 원본 경로 환경 변수: `APPROVAL_STITCH_SOURCE_DIR`
 - 권위 manifest: `e2e/support/approval-stitch-source-manifest.json`
-- manifest canonical SHA-256: `dd51626ce077a29e7309d6c4481ee2807553ad53256185a66801a009251a17a8`
+- manifest canonical SHA-256: `e6ae5f247659487013ac2a4ade2fac2c72f37e9bb2f41aeb3d23b573b137d075`
 - 판정: `TRACEABILITY GATE ACTIVE`
 
 이 문서는 Stitch 디자인을 현재 DWP 전자결재 runtime과 연결한다. Stitch는 승인된 정보 구조와
@@ -20,14 +22,14 @@ media type과 함께 봉인한다. PNG는 IHDR에서 읽은 실제 raster 크기
 
 | 항목                        | 고정 값 |
 | --------------------------- | ------: |
-| 전체 source pair            |      41 |
-| APR-01~16 source frame      |      40 |
-| 격리된 비전자결재 frame     |       1 |
-| 유효 PNG raster             |      30 |
-| 원본 fetch 실패 placeholder |      11 |
+| 전체 source pair            |      43 |
+| APR-01~16 source frame      |      43 |
+| 격리된 비전자결재 frame     |       0 |
+| 유효 PNG raster             |      43 |
+| 원본 fetch 실패 placeholder |       0 |
 | `normal`                    |      17 |
-| `mobile`                    |      10 |
-| `exception`                 |       6 |
+| `mobile`                    |      11 |
+| `exception`                 |       8 |
 | `board`                     |       7 |
 
 `normal`, `mobile`, `exception`, `board`는 화면의 대표 검증 성격이다. 예를 들어 모바일 persona
@@ -41,25 +43,25 @@ screenshot을 검증한다. `menu-visual-baseline.spec.ts`는 각 DWP route를 �
 Axe serious/critical 0, 수평 overflow 1px 이하와 checked-in pixel snapshot 후보를 검사한다. 해당
 snapshot이 현재 구현의 승인본인지는 fresh owner run이 통과할 때만 성립한다.
 
-| APR     | source frame ID         | 현재 route                                       | 실제 owner spec과 검증 token                                                                                                | 구현 screenshot evidence                                                     |
-| ------- | ----------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| APR-01  | `STITCH-001`            | `/approvals/home`                                | `approval-home-publishing.spec.ts`: `전자결재 홈`, `approval-home.png`                                                      | `approvals-home-{chromium,mobile}-darwin.png`                                |
-| APR-02  | `STITCH-002~005`        | `/approvals/inbox`                               | `approval-command-center-resilience.spec.ts`: `data-approval-command-center-heading`, `approval-inbox.png`                  | `approvals-inbox-{chromium,mobile}-darwin.png`                               |
-| APR-03  | `STITCH-006~009`, `026` | `/approvals/inbox?task=...`                      | `approval-command-center-resilience.spec.ts`, `approval-task-documents.spec.ts`: 상세 320/forced/200%, 댓글·JSON·인쇄       | `approvals-inbox-{chromium,mobile}-darwin.png` + runtime 상세 capture        |
-| APR-04  | `STITCH-010~012`        | `/approvals/inbox`                               | `approval-command-center-resilience.spec.ts`: 320px, focus, overflow, `approval-detail-320-forced-200.png`                  | `approvals-inbox-mobile-darwin.png`                                          |
-| APR-05  | `STITCH-013~015`        | `/approvals/requests/new`                        | `approval-request-lifecycle.spec.ts`, `approval-request-typed.spec.ts`: `새 결재 작성`, `결재 경로 안내`, preflight capture | `approvals-new-{chromium,mobile}-darwin.png`                                 |
-| APR-06  | `STITCH-016~018`        | `/approvals/requests/new`                        | 동일 owner: `상신 전 통제`, 409·503, schema-complete 상신                                                                   | `approvals-new-{chromium,mobile}-darwin.png` + `typed-request-preflight.png` |
-| APR-07  | `STITCH-019~021`        | `/approvals/requests/drafts`                     | `approval-request-draft-recovery.spec.ts`: revision 복구, receipt, 실제 UTF-8 JSON, `draft-workspace.png`                   | `approvals-drafts-{chromium,mobile}-darwin.png`                              |
-| APR-08  | `STITCH-022`            | `/approvals/requests/submitted` 및 `/needs-info` | `approval-request-lifecycle.spec.ts`, `approval-request-search.spec.ts`: 회수·보완·서버 page·320px                          | `approvals-submitted-{chromium,mobile}-darwin.png`                           |
-| APR-09  | `STITCH-023`            | `/approvals/requests/archive`                    | `approval-request-search.spec.ts`, `approval-request-documents.spec.ts`: 읽기 전용 보관, JSON byte/SHA, 인쇄                | `approvals-archive-{chromium,mobile}-darwin.png`                             |
-| APR-10  | `STITCH-024~025`        | `/approvals/delegations`                         | `approval-delegation-workspace.spec.ts`: inspector, 320px/200%, authority recovery                                          | `approvals-delegations-{chromium,mobile}-darwin.png`                         |
-| APR-11  | `STITCH-027~028`        | `/approvals/admin/overview`                      | `approval-admin-overview.spec.ts`: `결재 운영 개요`, persona, 403·503, overflow                                             | `approvals-admin-overview-{chromium,mobile}-darwin.png`                      |
-| APR-12  | `STITCH-029~030`        | `/approvals/admin/forms`                         | `approval-admin-workspace.spec.ts`: `양식 카탈로그`, 참조 실패, maker/publisher 경계                                        | `approvals-forms-{chromium,mobile}-darwin.png`                               |
-| APR-13  | `STITCH-031~033`, `040` | `/approvals/admin/forms`                         | `approval-form-typed-studio.spec.ts`: builder layout, USER preview, validation                                              | `approvals-forms-{chromium,mobile}-darwin.png` + typed runtime captures      |
-| APR-14  | `STITCH-034~035`        | `/approvals/admin/workflows`                     | `approval-workflow-typed-studio.spec.ts`: DAG/quorum inspector, 320px/200%                                                  | `approvals-workflows-{chromium,mobile}-darwin.png`                           |
-| APR-15  | `STITCH-036~037`        | `/approvals/admin/policies`                      | `approval-policy-workspace.spec.ts`: current/proposed comparison, 320/1440/200%                                             | `approvals-policies-{chromium,mobile}-darwin.png`                            |
-| APR-16A | `STITCH-038`            | `/approvals/admin/operations`                    | `approval-operations-workbench.spec.ts`: queue/detail/SLA inspector, 320px·dark·forced                                      | `approvals-operations-{chromium,mobile}-darwin.png`                          |
-| APR-16B | `STITCH-039`            | `/approvals/admin/signatures`                    | `approval-signature-source.spec.ts`: current source, UNKNOWN, forced colors, overflow                                       | `approvals-signatures-{chromium,mobile}-darwin.png`                          |
+| APR     | source frame ID      | 현재 route                                       | 실제 owner spec과 검증 token                                                                                                | 구현 screenshot evidence                                                     |
+| ------- | -------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| APR-01  | `STITCH-001,042`     | `/approvals/home`                                | `approval-home-publishing.spec.ts`: `전자결재 홈`, `approval-home.png`                                                      | `approvals-home-{chromium,mobile}-darwin.png`                                |
+| APR-02  | `STITCH-002~005`     | `/approvals/inbox`                               | `approval-command-center-resilience.spec.ts`: `data-approval-command-center-heading`, `approval-inbox.png`                  | `approvals-inbox-{chromium,mobile}-darwin.png`                               |
+| APR-03  | `STITCH-006~009`     | `/approvals/inbox?task=...`                      | `approval-command-center-resilience.spec.ts`, `approval-task-documents.spec.ts`: 상세 320/forced/200%, 댓글·JSON·인쇄       | `approvals-inbox-{chromium,mobile}-darwin.png` + runtime 상세 capture        |
+| APR-04  | `STITCH-010~012`     | `/approvals/inbox`                               | `approval-command-center-resilience.spec.ts`: 320px, focus, overflow, `approval-detail-320-forced-200.png`                  | `approvals-inbox-mobile-darwin.png`                                          |
+| APR-05  | `STITCH-013~015`     | `/approvals/requests/new`                        | `approval-request-lifecycle.spec.ts`, `approval-request-typed.spec.ts`: `새 결재 작성`, `결재 경로 안내`, preflight capture | `approvals-new-{chromium,mobile}-darwin.png`                                 |
+| APR-06  | `STITCH-016~018`     | `/approvals/requests/new`                        | 동일 owner: `상신 전 통제`, 409·503, schema-complete 상신                                                                   | `approvals-new-{chromium,mobile}-darwin.png` + `typed-request-preflight.png` |
+| APR-07  | `STITCH-019~021`     | `/approvals/requests/drafts`                     | `approval-request-draft-recovery.spec.ts`: revision 복구, receipt, 실제 UTF-8 JSON, `draft-workspace.png`                   | `approvals-drafts-{chromium,mobile}-darwin.png`                              |
+| APR-08  | `STITCH-022,043,044` | `/approvals/requests/submitted` 및 `/needs-info` | `approval-request-lifecycle.spec.ts`, `approval-request-search.spec.ts`: 회수·보완·서버 page·320px·예외 복구                | `approvals-{submitted,needs-info}-{chromium,mobile}-darwin.png`              |
+| APR-09  | `STITCH-023,045`     | `/approvals/completed` 및 `/requests/archive`    | `approval-experience.spec.ts`, `approval-request-search.spec.ts`, `approval-request-documents.spec.ts`: 결정 증적·보관      | `approvals-{completed,archive}-{chromium,mobile}-darwin.png`                 |
+| APR-10  | `STITCH-024~025`     | `/approvals/delegations`                         | `approval-delegation-workspace.spec.ts`: inspector, 320px/200%, authority recovery                                          | `approvals-delegations-{chromium,mobile}-darwin.png`                         |
+| APR-11  | `STITCH-027~028`     | `/approvals/admin/overview`                      | `approval-admin-overview.spec.ts`: `결재 운영 개요`, persona, 403·503, overflow                                             | `approvals-admin-overview-{chromium,mobile}-darwin.png`                      |
+| APR-12  | `STITCH-029~030`     | `/approvals/admin/forms`                         | `approval-admin-workspace.spec.ts`: `양식 카탈로그`, 참조 실패, maker/publisher 경계                                        | `approvals-forms-{chromium,mobile}-darwin.png`                               |
+| APR-13  | `STITCH-031~033`     | `/approvals/admin/forms`                         | `approval-form-typed-studio.spec.ts`: builder layout, USER preview, validation                                              | `approvals-forms-{chromium,mobile}-darwin.png` + typed runtime captures      |
+| APR-14  | `STITCH-034~035`     | `/approvals/admin/workflows`                     | `approval-workflow-typed-studio.spec.ts`: DAG/quorum inspector, 320px/200%                                                  | `approvals-workflows-{chromium,mobile}-darwin.png`                           |
+| APR-15  | `STITCH-036~037`     | `/approvals/admin/policies`                      | `approval-policy-workspace.spec.ts`: current/proposed comparison, 320/1440/200%                                             | `approvals-policies-{chromium,mobile}-darwin.png`                            |
+| APR-16A | `STITCH-038,046`     | `/approvals/admin/operations`                    | `approval-operations-workbench.spec.ts`: queue/detail/SLA inspector, 320px·dark·forced·예외 matrix                          | `approvals-operations-{chromium,mobile}-darwin.png`                          |
+| APR-16B | `STITCH-039`         | `/approvals/admin/signatures`                    | `approval-signature-source.spec.ts`: current source, UNKNOWN, forced colors, overflow                                       | `approvals-signatures-{chromium,mobile}-darwin.png`                          |
 
 `approval-approved-frame-matrix.spec.ts`가 위 연결을 executable contract로 유지한다. frame은 한 APR
 owner에 정확히 한 번만 배정되어야 하고, route 등록 token, owner spec의 검증 token, snapshot
@@ -84,8 +86,9 @@ inventory와 실제 PNG 크기가 하나라도 사라지면 실패한다. APR-16
 
 ## 4. 실행 Gate
 
-원본 경로가 없는 CI에서도 manifest 자체의 integrity, 41/40/1 inventory, APR-01~16 및 네 분류,
-known gap을 검증한다.
+원본 경로가 없는 CI에서도 manifest 자체의 integrity, 43/43/0 inventory, APR-01~16, 네 분류와
+원본 인계 ZIP SHA를 검증한다. 이 manifest-only 검사는 공식 `build`와 `architecture:check`에
+항상 포함된다.
 
 ```bash
 node scripts/check-approval-stitch-source.mjs
@@ -97,9 +100,9 @@ corepack yarn playwright test e2e/approval-approved-frame-matrix.spec.ts \
 원본이 있는 검수 환경에서는 모든 byte/hash/raster/source token을 다시 읽는다.
 
 ```bash
-APPROVAL_STITCH_SOURCE_DIR=/absolute/path/to/approval-stitch-2026-09-14 \
+APPROVAL_STITCH_SOURCE_DIR=/absolute/path/to/stitch_enterprise_grid_calendar_application \
   node scripts/check-approval-stitch-source.mjs
-APPROVAL_STITCH_SOURCE_DIR=/absolute/path/to/approval-stitch-2026-09-14 \
+APPROVAL_STITCH_SOURCE_DIR=/absolute/path/to/stitch_enterprise_grid_calendar_application \
   node --test scripts/check-approval-stitch-source.test.mjs
 ```
 
@@ -112,12 +115,15 @@ corepack yarn playwright test e2e/menu-visual-baseline.spec.ts \
 
 ### 4.1 2026-09-15 fresh 실행 판정
 
-- source/traceability Gate는 실제 source 경로의 41/41 pair와 checker 4/4를 통과했다.
+- source/traceability Gate는 최종 인계 ZIP의 실제 source 경로에서 43/43 pair, 43 raster,
+  fetch gap 0과 checker 5/5를 통과했다.
 - Approval owner visual Gate는 fixture와 의도된 DWP rendering을 정합한 뒤 snapshot 갱신 없이
-  Chromium/mobile 28/28을 통과했다. Axe serious/critical, overflow와 route H1 검증도 포함한다.
+  Chromium/mobile 30/30을 통과했다. APR-09 `내 처리 완료함` desktop/mobile도 신규 원본
+  수용 범위에 추가했으며 Axe serious/critical, overflow와 route H1 검증을 포함한다.
 - Approval 전체 browser 회귀 40 specs는 730 pass, 의도된 2 skip, flaky 0이다.
-- 이 결과는 현재 DWP snapshot의 회귀 안정성을 승인한다. 아래 11개 source raster gap까지 포함한
-  Stitch pixel identity를 증명하지 않으며 `NO_PIXEL_IDENTITY` 원칙은 그대로 유지한다.
+- 이 결과는 최종 Stitch 원본 전체와 현재 DWP snapshot 사이의 구조·기능·viewport 추적성과
+  회귀 안정성을 승인한다. 운영 shell·권위 데이터·fail-closed 상태 때문에 두 결과물의 byte 단위
+  pixel identity를 주장하지 않는 `NO_PIXEL_IDENTITY` 원칙은 그대로 유지한다.
 
 ### 4.2 live runtime 판정
 
@@ -129,33 +135,22 @@ corepack yarn playwright test e2e/menu-visual-baseline.spec.ts \
 - Gateway의 정적 `/tasks/search`와 동적 `/tasks/{taskId}` 중복 매칭은 정적 경로 우선으로
   보정했고, shared Platform approval-home 경로의 Auth permission scope도 회귀 테스트로 고정했다.
 
-## 5. 남은 source frame gap
+## 5. 최종 source 회수와 provenance 정리
 
-다음 11개 `screen.png`는 PNG가 아니라 정확히 28바이트의
-`<FIFE Image failed to fetch>` payload다. SHA-256과 byte 수는 봉인하지만 raster 크기나 pixel
-비교를 주장하지 않는다. 대응 `code.html`의 SHA와 순서화된 landmark token은 계속 검증한다.
+2026-09-15 최종 ZIP에서 이전 11개 fetch placeholder를 모두 실제 PNG로 회수했고, APR-01~16의
+서로 다른 43개 화면을 완전한 `code.html` + `screen.png` pair로 봉인했다. 새로 확인된 대표 변형은
+APR-01 mobile, APR-08 보완 mobile·예외 board, APR-09 내 처리 완료함, APR-16 mobile exception이다.
 
-- `STITCH-004`: APR-02 390px
-- `STITCH-005`: APR-02 loading/empty/503/403/409
-- `STITCH-010~012`: APR-04 320px 및 390px 2종
-- `STITCH-015`: APR-05 390px
-- `STITCH-019`, `STITCH-021`: APR-07 exception board 및 390px
-- `STITCH-029`: APR-12 1440px catalog
-- `STITCH-031`: APR-13 1440px builder
-- `STITCH-038`: APR-16A operations 1440px
+이전 임시 수집본의 다음 frame ID는 최종 manifest에서 명시적으로 retired 처리한다.
 
-원본 재수집 시 이 파일들을 제자리에서 교체하고 manifest hash·크기·token을 명시적으로 재검토해야
-한다. 기존 placeholder를 정상 PNG로 바꾸기만 해도 현재 Gate는 의도적으로 실패한다.
+- `STITCH-026`: APR-03의 중복 export
+- `STITCH-040`: APR-13의 중복 export
+- `STITCH-041`: Approval이 아닌 Workplace 예약 화면
 
-추가로 다음 provenance 차이를 보존한다.
+ZIP에 함께 들어 있던 `precision_calendar_system/DESIGN.md`는 Calendar 디자인 시스템 메타데이터로,
+전자결재 화면 source가 아니므로 경로와 제외 사유를 manifest에 고정했다. 파일의 문구를 제품 요구나
+실행 지시로 해석하지 않는다.
 
-- `STITCH-026`은 `STITCH-009`와 HTML SHA가 같은 APR-03 중복 export지만 raster는 별도 파일이다.
-- `STITCH-040`은 `STITCH-031`과 HTML SHA가 같은 APR-13 중복 export다. 전자는 raster가 있고
-  후자는 fetch placeholder이므로 하나로 합쳐 정상 원본처럼 취급하지 않는다.
-- `STITCH-041`은 `quarantine-zip4-workplace` 예약 화면이다. 41쌍 inventory에는 포함하지만
-  Approval 구현·완료·coverage 근거에서는 제외한다.
-
-따라서 현재 확보된 source pixel reference는 30개뿐이다. 11개 원본 raster를 재수집하기 전에는
-APR-01~16 전체의 source-to-implementation pixel 유사도 수치를 만들거나 100% pixel 일치를
-선언할 수 없다. 이 제한은 현재 DWP 구현의 별도 desktop/mobile visual regression 통과 여부와
-구분한다.
+남은 source frame gap은 0이다. 신규 인계본이 들어오면 ZIP SHA 또는 43개 pair의 byte/hash/크기,
+HTML token, APR ownership 중 하나라도 달라지는 순간 Gate가 실패하며, 명시적 재검수 없이 현재
+승인 원본을 조용히 교체할 수 없다.

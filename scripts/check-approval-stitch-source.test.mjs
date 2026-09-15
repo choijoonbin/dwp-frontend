@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
-  APPROVAL_STITCH_FETCH_ERROR,
   APPROVAL_STITCH_SOURCE_ENV,
   ApprovalStitchSourceError,
   readApprovalStitchManifest,
@@ -10,16 +9,17 @@ import {
   runApprovalStitchSourceCheck,
   sha256,
   validateApprovalStitchManifest,
+  validateApprovalStitchSourceFileInventory,
 } from './check-approval-stitch-source.mjs';
 
-test('tracked manifest seals all 41 pairs and explicitly records source gaps', async () => {
+test('tracked manifest seals all 43 reviewed Approval source pairs', async () => {
   const result = await runApprovalStitchSourceCheck({ sourceDir: null });
   assert.deepEqual(result, {
-    pairCount: 41,
-    approvalFrameCount: 40,
-    quarantinedFrameCount: 1,
-    rasterFrameCount: 30,
-    fetchErrorPlaceholderCount: 11,
+    pairCount: 43,
+    approvalFrameCount: 43,
+    quarantinedFrameCount: 0,
+    rasterFrameCount: 43,
+    fetchErrorPlaceholderCount: 0,
     mode: 'manifest-only',
     skippedSourceReason: `${APPROVAL_STITCH_SOURCE_ENV} is not set`,
   });
@@ -36,17 +36,35 @@ test('manifest integrity rejects a changed source hash even when shape is unchan
   );
 });
 
-test('PNG dimensions come only from a valid IHDR and placeholders never claim raster size', () => {
+test('PNG dimensions come only from a valid IHDR', () => {
   const png = Buffer.alloc(24);
   Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(png);
   png.write('IHDR', 12, 'ascii');
   png.writeUInt32BE(390, 16);
   png.writeUInt32BE(844, 20);
   assert.deepEqual(readPngDimensions(png), { width: 390, height: 844 });
-  assert.equal(readPngDimensions(Buffer.from(APPROVAL_STITCH_FETCH_ERROR)), null);
+  assert.equal(readPngDimensions(Buffer.from('not-a-png')), null);
   assert.equal(
-    sha256(APPROVAL_STITCH_FETCH_ERROR),
-    '6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b'
+    sha256('not-a-png'),
+    'f6340893e73ce5f7c019eeebfc6d38224824f8f7565b421b51d54c1c0d25d5c6'
+  );
+});
+
+test('source inventory rejects files that are not sealed by the reviewed delivery', async () => {
+  const manifest = await readApprovalStitchManifest();
+  const expectedFiles = manifest.frames
+    .flatMap((frame) => [frame.code.path, frame.screen.path])
+    .concat(manifest.ignoredArtifacts.map((artifact) => artifact.path));
+  assert.doesNotThrow(() => validateApprovalStitchSourceFileInventory(expectedFiles, manifest));
+  assert.throws(
+    () =>
+      validateApprovalStitchSourceFileInventory(
+        [...expectedFiles, 'unreviewed/source-instruction.md'],
+        manifest
+      ),
+    (error) =>
+      error instanceof ApprovalStitchSourceError &&
+      error.message === 'source file inventory differs from the immutable manifest'
   );
 });
 
@@ -56,6 +74,6 @@ test(
   async () => {
     const result = await runApprovalStitchSourceCheck();
     assert.equal(result.mode, 'source-and-manifest');
-    assert.equal(result.pairCount, 41);
+    assert.equal(result.pairCount, 43);
   }
 );

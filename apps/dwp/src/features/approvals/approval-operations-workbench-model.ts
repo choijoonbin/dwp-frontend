@@ -1,5 +1,9 @@
 import type { ApprovalIntegrationDelivery, ApprovalOperations } from '@dwp-frontend/shared-utils';
 import { approvalDeliveryRetryEligibility } from './approval-management-model';
+import { parseApprovalOperationsProjection } from './approval-management-projection';
+
+export { parseApprovalOperationsProjection } from './approval-management-projection';
+export type { ApprovalOperationsProjection } from './approval-management-projection';
 
 export type ApprovalOperationsQueue = 'delivery' | 'sla' | 'resolved';
 export type ApprovalOperationsStatus = 'ALL' | 'PENDING' | 'SENDING' | 'FAILED' | 'DEAD';
@@ -63,8 +67,14 @@ export function approvalOperationsSourceCurrent(
     !state.data
   )
     return false;
-  const generatedAt = Date.parse(state.data.generatedAt);
-  return Number.isFinite(generatedAt) && generatedAt <= now && now - generatedAt < 45_000;
+  try {
+    const projection = parseApprovalOperationsProjection(state.data);
+    if (projection.kind !== 'full') return false;
+    const generatedAt = Date.parse(projection.data.generatedAt);
+    return Number.isFinite(generatedAt) && generatedAt <= now && now - generatedAt < 45_000;
+  } catch {
+    return false;
+  }
 }
 
 export function approvalOperationsRetrySnapshotCurrent(

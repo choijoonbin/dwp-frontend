@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ApprovalDraftAutosave,
+  approvalDraftMergeReview,
   ApprovalDraftSaveBlockedError,
   ApprovalDraftSaveConflictError,
 } from './approval-request-autosave-model';
@@ -134,14 +135,72 @@ describe('Approval draft autosave queue', () => {
     controller.update(input('Preserved edit'), true);
     await expect(controller.flush()).rejects.toThrow('409');
     await expect(controller.reapply()).rejects.toBeInstanceOf(ApprovalDraftSaveBlockedError);
-    controller.reviewLatest(receipt(7));
+    controller.reviewLatest(receipt(7), input('Server baseline'));
     expect(save).toHaveBeenCalledTimes(1);
-    await controller.reapply();
+    const reapplied = await controller.reapply();
     expect(save.mock.calls[1]![0]).toMatchObject({
       expectedVersion: 7,
       input: { title: 'Preserved edit' },
     });
+    expect(reapplied.input.title).toBe('Preserved edit');
     expect(controller.getSnapshot().receipt?.version).toBe(8);
+  });
+
+  it('merges independent local and server fields against the last committed draft', async () => {
+    const save = vi.fn().mockRejectedValueOnce(new Error('409')).mockResolvedValueOnce(receipt(8));
+    const controller = new ApprovalDraftAutosave({
+      save,
+      reconcile: save,
+      classify: () => 'CONFLICT',
+    });
+    const baseline = { ...input('Baseline'), summary: 'Original summary' };
+    controller.hydrate(receipt(3), baseline);
+    controller.update({ ...baseline, title: 'Local title' }, true);
+    await expect(controller.flush()).rejects.toThrow('409');
+    controller.reviewLatest(receipt(7), { ...baseline, summary: 'Server summary' });
+
+    const result = await controller.reapply();
+
+    expect(result.input).toMatchObject({ title: 'Local title', summary: 'Server summary' });
+    expect(save.mock.calls[1]![0]).toMatchObject({
+      expectedVersion: 7,
+      input: { title: 'Local title', summary: 'Server summary' },
+    });
+  });
+
+  it('blocks reapply when local and server changed the same field', async () => {
+    const save = vi.fn().mockRejectedValueOnce(new Error('409'));
+    const controller = new ApprovalDraftAutosave({
+      save,
+      reconcile: save,
+      classify: () => 'CONFLICT',
+    });
+    controller.hydrate(receipt(3), input('Baseline'));
+    controller.update(input('Local title'), true);
+    await expect(controller.flush()).rejects.toThrow('409');
+    controller.reviewLatest(receipt(7), input('Server title'));
+
+    expect(controller.getSnapshot().conflicts).toEqual([
+      { path: 'title', localValue: 'Local title', serverValue: 'Server title' },
+    ]);
+    await expect(controller.reapply()).rejects.toBeInstanceOf(ApprovalDraftSaveBlockedError);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+
+  it('treats a schema change as an unresolved conflict', () => {
+    const review = approvalDraftMergeReview({
+      baseline: input('Baseline'),
+      local: input('Local title'),
+      server: input('Baseline'),
+      currentSchemaHash: 'schema-a',
+      serverSchemaHash: 'schema-b',
+    });
+
+    expect(review.conflicts).toContainEqual({
+      path: '$schema',
+      localValue: 'schema-a',
+      serverValue: 'schema-b',
+    });
   });
 
   it.each(['DENIED', 'UNAVAILABLE'] as const)(
@@ -162,7 +221,7 @@ describe('Approval draft autosave queue', () => {
     }
   );
 
-  it('binds a reconciled create conflict to the existing document before explicit reapply', async () => {
+  it('keeps a reconciled create conflict blocked without a committed merge baseline', async () => {
     const save = vi
       .fn()
       .mockRejectedValueOnce(new Error('Unknown'))
@@ -183,13 +242,10 @@ describe('Approval draft autosave queue', () => {
       receipt: receipt(4),
       latestLoaded: false,
     });
-    controller.reviewLatest(receipt(4));
-    await controller.reapply();
-    expect(save.mock.calls[1]![0]).toMatchObject({
-      requestId: 'request-1',
-      expectedVersion: 4,
-      input: { title: 'Preserved local input' },
-    });
+    controller.reviewLatest(receipt(4), input('Server recovered input'));
+    expect(controller.getSnapshot().conflicts.map((conflict) => conflict.path)).toContain('title');
+    await expect(controller.reapply()).rejects.toBeInstanceOf(ApprovalDraftSaveBlockedError);
+    expect(save).toHaveBeenCalledTimes(1);
   });
 
   it('drops late success after disposal and never hydrates a new session with its receipt', async () => {

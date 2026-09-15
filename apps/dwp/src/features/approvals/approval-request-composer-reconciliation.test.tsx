@@ -430,19 +430,11 @@ describe('Actual composer and autosave receipt-denial recovery', () => {
     expect(dependencies.update).not.toHaveBeenCalled();
     await act(async () => api.refreshContext());
     expect(api.autosave.latestLoaded).toBe(true);
+    expect(api.autosave.conflicts.map((conflict) => conflict.path)).toEqual(['$document']);
     dependencies.update.mockResolvedValue(detail(5));
     await act(async () => api.reapply());
-    expect(dependencies.update).toHaveBeenCalledWith(
-      'request-1',
-      expect.objectContaining({
-        title: original.title,
-        summary: original.summary,
-        expectedVersion: 4,
-        payload: expect.objectContaining({ costCenter: 'A', summary: original.summary }),
-      }),
-      expect.anything(),
-      { idempotencyKey: expect.any(String) }
-    );
+    expect(dependencies.update).not.toHaveBeenCalled();
+    expect(api.autosave.status).toBe('CONFLICT');
     expect(dependencies.create).toHaveBeenCalledTimes(1);
   });
 });

@@ -284,6 +284,22 @@ describe('Stable task controller with actual conditional detail and parent query
     vi.resetAllMocks();
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = false;
   });
+  it('orders decision identity, brief, request data, evidence, and audit history', () => {
+    const text = container.textContent ?? '';
+    const identity = text.indexOf('Private selected document');
+    const brief = text.indexOf('home.commandCenter.decisionBrief');
+    const requestData = text.indexOf('inbox.requestData');
+    const payload = text.indexOf('Restore a customer-facing integration');
+    const evidence = text.indexOf('inbox.supportingEvidence');
+    const timeline = text.indexOf('inbox.timeline');
+
+    expect(identity).toBeGreaterThanOrEqual(0);
+    expect(brief).toBeGreaterThan(identity);
+    expect(requestData).toBeGreaterThan(brief);
+    expect(payload).toBeGreaterThan(requestData);
+    expect(evidence).toBeGreaterThan(payload);
+    expect(timeline).toBeGreaterThan(evidence);
+  });
   it('retains the original descriptor and input through pending detail and actual child unmount', async () => {
     const original = await unknown();
     let finish!: (value: ApprovalTaskDetail) => void;

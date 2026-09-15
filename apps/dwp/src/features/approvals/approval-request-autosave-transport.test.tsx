@@ -132,7 +132,7 @@ describe('Approval autosave transport and receipt binding', () => {
     expect(api).toMatchObject({ status: 'SAVED', receipt: { requestId: 'request-1', version: 3 } });
   });
 
-  it('preserves local input and reuses the real document after CREATE reconciliation finds a later edit', async () => {
+  it('preserves local input and blocks overwrite when CREATE reconciliation finds a later edit', async () => {
     await loseCreateResponse();
     dependencies.detail.mockResolvedValue(detail(4, 'Another editor changed the title'));
     await act(async () => {
@@ -146,16 +146,14 @@ describe('Approval autosave transport and receipt binding', () => {
     });
     await act(async () => {
       api.reviewLatest(detail(4).request);
-      await api.reapply();
+    });
+    expect(api.conflicts.map((conflict) => conflict.path)).toEqual(['$document']);
+    await act(async () => {
+      await expect(api.reapply()).rejects.toBeInstanceOf(ApprovalDraftSaveBlockedError);
     });
     expect(dependencies.create).toHaveBeenCalledTimes(1);
-    expect(dependencies.update).toHaveBeenCalledWith(
-      'request-1',
-      { ...input, expectedVersion: 4 },
-      expect.anything(),
-      { idempotencyKey: expect.any(String) }
-    );
-    expect(api.status).toBe('SAVED');
+    expect(dependencies.update).not.toHaveBeenCalled();
+    expect(api.status).toBe('CONFLICT');
   });
 
   it('replays only the identical immutable CREATE key when no receipt exists', async () => {

@@ -1,9 +1,9 @@
 import type {
   ApprovalAdminPulse,
   ApprovalIntegrationDelivery,
-  ApprovalOperations,
   ApprovalSignatureProvider,
 } from '@dwp-frontend/shared-utils';
+import type { ApprovalOperationsProjection } from './approval-management-projection';
 
 import { approvalManagementReadDenied } from './approval-management-source-state';
 
@@ -38,9 +38,9 @@ export type ApprovalCapabilityEntry = Readonly<{
 }>;
 
 export type ApprovalOperationSummary = Readonly<{
-  breached: number;
-  retryCandidates: number;
-  blockedDeliveries: number;
+  breached: number | null;
+  retryCandidates: number | null;
+  blockedDeliveries: number | null;
   totalDeliveries: number;
 }>;
 
@@ -287,12 +287,23 @@ export function isApprovalDeliveryRetryCandidate(delivery: ApprovalIntegrationDe
 }
 
 export function summarizeApprovalOperations(
-  operations: ApprovalOperations | undefined
+  operations: ApprovalOperationsProjection | undefined
 ): ApprovalOperationSummary {
-  const deliveries = operations?.integrationDeliveries ?? [];
+  if (!operations) {
+    return { breached: null, retryCandidates: null, blockedDeliveries: null, totalDeliveries: 0 };
+  }
+  if (operations.kind !== 'full') {
+    return {
+      breached: null,
+      retryCandidates: null,
+      blockedDeliveries: null,
+      totalDeliveries: operations.data.integrationDeliveries.length,
+    };
+  }
+  const deliveries = operations.data.integrationDeliveries;
   const retryCandidates = deliveries.filter(isApprovalDeliveryRetryCandidate).length;
   return {
-    breached: operations?.breachedTasks.length ?? 0,
+    breached: operations.data.breachedTasks.length,
     retryCandidates,
     blockedDeliveries: deliveries.length - retryCandidates,
     totalDeliveries: deliveries.length,

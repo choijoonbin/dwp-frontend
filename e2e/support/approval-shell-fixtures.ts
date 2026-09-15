@@ -71,6 +71,26 @@ const APPROVAL_ATTACHMENT_POLICY_FIXTURE = {
   publishReason: 'PENDING_POLICY_REQUIRED',
 } as const;
 
+const APPROVAL_COMPLETED_TASK_FIXTURE = {
+  ...APPROVAL_TASK_FIXTURE,
+  taskId: 'approval-task-completed-001',
+  status: 'APPROVED',
+  version: 4,
+} as const;
+
+const APPROVAL_COMPLETED_TASK_DETAIL_FIXTURE = {
+  ...APPROVAL_TASK_DETAIL_FIXTURE,
+  task: APPROVAL_COMPLETED_TASK_FIXTURE,
+  timeline: APPROVAL_TASK_DETAIL_FIXTURE.timeline.map((event) => ({
+    ...event,
+    actorDisplayName: '박지호',
+    stepName: '보안 검토',
+    stepSequence: 2,
+    delegated: false,
+  })),
+  canDecide: false,
+} as const;
+
 export function resolveApprovalShellFixture(url: URL): unknown {
   const path = url.pathname;
   if (path === '/api/approvals/v1/home') {
@@ -80,7 +100,14 @@ export function resolveApprovalShellFixture(url: URL): unknown {
     return [APPROVAL_TASK_FIXTURE];
   }
   if (path === '/api/approvals/v1/tasks/search') {
-    return approvalTaskSearchPage(url, [APPROVAL_TASK_FIXTURE]);
+    return approvalTaskSearchPage(url, [
+      url.searchParams.get('view') === 'COMPLETED'
+        ? APPROVAL_COMPLETED_TASK_FIXTURE
+        : APPROVAL_TASK_FIXTURE,
+    ]);
+  }
+  if (path === `/api/approvals/v1/tasks/${APPROVAL_COMPLETED_TASK_FIXTURE.taskId}`) {
+    return APPROVAL_COMPLETED_TASK_DETAIL_FIXTURE;
   }
   if (/^\/api\/approvals\/v1\/tasks\/[^/]+$/u.test(path)) {
     return APPROVAL_TASK_DETAIL_FIXTURE;

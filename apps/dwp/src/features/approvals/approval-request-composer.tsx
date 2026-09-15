@@ -210,7 +210,9 @@ export function ApprovalRequestComposer() {
                       {t('requests.autosave.reconcile')}
                     </ActionButton>
                   )}
-                  {recovery.kind === 'CONFLICT' && recovery.latestLoaded && (
+                  {recovery.kind === 'CONFLICT' &&
+                    recovery.latestLoaded &&
+                    autosave.conflicts.length === 0 && (
                     <ActionButton
                       type="button"
                       intent="secondary"

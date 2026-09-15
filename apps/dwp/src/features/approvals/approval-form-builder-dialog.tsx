@@ -40,6 +40,7 @@ import { ApprovalFormFieldEditor } from './approval-form-field-editor';
 import { ApprovalFormDefinitionFields } from './approval-form-builder-definition-fields';
 import { ApprovalLegacyFormCanvas } from './approval-form-builder-preview';
 import { ApprovalTypedFormBuilderDialog } from './approval-form-builder-typed-dialog';
+import { focusApprovalLabeledControl, focusApprovalSelector } from './approval-focus-navigation';
 import { StatusChip, approvalTone } from './approval-ui';
 
 import type { ApprovalFormField } from '@dwp-frontend/shared-utils';
@@ -48,6 +49,10 @@ import type { ApprovalFormBuilderProps } from './approval-form-builder-props';
 import type { LucideIcon } from 'lucide-react';
 
 type BuilderPanel = 'structure' | 'properties' | 'canvas';
+type BuilderFocusRequest = Readonly<{
+  panel: 'structure' | 'properties';
+  property?: string;
+}>;
 
 const FIELD_ICONS: Record<ApprovalFormField['type'], LucideIcon> = {
   TEXT: Type,
@@ -88,7 +93,8 @@ function ApprovalLegacyFormBuilderDialog({
   const [activePanel, setActivePanel] = useState<BuilderPanel>('structure');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lockedFieldKeys, setLockedFieldKeys] = useState<ReadonlySet<string>>(new Set());
-  const [focusProperty, setFocusProperty] = useState<string | null>(null);
+  const [focusRequest, setFocusRequest] = useState<BuilderFocusRequest | null>(null);
+  const structureRef = useRef<HTMLDivElement>(null);
   const propertyRef = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(false);
   const issues = useMemo(() => approvalFormFieldIssues(draft.fields), [draft.fields]);
@@ -99,6 +105,7 @@ function ApprovalLegacyFormBuilderDialog({
     if (open && !wasOpen.current) {
       setSelectedIndex(0);
       setActivePanel('structure');
+      setFocusRequest(null);
       setLockedFieldKeys(new Set(creating ? [] : draft.fields.map((field) => field.key)));
     }
     wasOpen.current = open;
@@ -109,14 +116,26 @@ function ApprovalLegacyFormBuilderDialog({
     setSelectedIndex(Math.max(0, draft.fields.length - 1));
   }, [draft.fields.length, selectedIndex]);
   useEffect(() => {
-    if (!focusProperty || !propertyRef.current) return;
-    const input = propertyRef.current.querySelector<HTMLElement>(
-      `[data-approval-field-property="${focusProperty}"]`
-    );
-    if (input && !input.hasAttribute('disabled')) input.focus();
-    else propertyRef.current.querySelector<HTMLElement>('input:not(:disabled)')?.focus();
-    setFocusProperty(null);
-  }, [activePanel, focusProperty, selectedIndex]);
+    if (!focusRequest || focusRequest.panel !== activePanel) return;
+    const frame = window.requestAnimationFrame(() => {
+      if (focusRequest.panel === 'structure') {
+        focusApprovalSelector(
+          structureRef.current,
+          `[data-approval-legacy-field="${selectedIndex}"]`
+        );
+      } else if (
+        !focusRequest.property ||
+        !focusApprovalSelector(
+          propertyRef.current,
+          `[data-approval-field-property="${focusRequest.property}"]`
+        )
+      ) {
+        focusApprovalLabeledControl(propertyRef.current, null);
+      }
+      setFocusRequest(null);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activePanel, focusRequest, selectedIndex]);
 
   const updateSelected = (field: ApprovalFormField) => {
     onChange({
@@ -148,6 +167,7 @@ function ApprovalLegacyFormBuilderDialog({
     });
     setSelectedIndex(nextIndex);
     setActivePanel('properties');
+    setFocusRequest({ panel: 'properties', property: 'key' });
   };
 
   return (
@@ -206,7 +226,14 @@ function ApprovalLegacyFormBuilderDialog({
             fullWidth
             size="small"
             value={activePanel}
-            onChange={(_, value: BuilderPanel | null) => value && setActivePanel(value)}
+            onChange={(_, value: BuilderPanel | null) => {
+              if (!value) return;
+              setActivePanel(value);
+              if (value === 'structure') setFocusRequest({ panel: 'structure' });
+              if (value === 'properties') {
+                setFocusRequest({ panel: 'properties', property: 'key' });
+              }
+            }}
             aria-label={t('admin.studio.definitionSection')}
           >
             <Tooltip title={t('admin.studio.formFields')}>
@@ -239,16 +266,21 @@ function ApprovalLegacyFormBuilderDialog({
           }}
         >
           {(!compact || activePanel === 'structure') && (
-            <FieldStructurePanel
-              fields={draft.fields}
-              selectedIndex={selectedIndex}
-              issueIndexes={issueIndexes}
-              onSelect={(index) => {
-                setSelectedIndex(index);
-                if (compact) setActivePanel('properties');
-              }}
-              onAdd={addField}
-            />
+            <Box ref={structureRef}>
+              <FieldStructurePanel
+                fields={draft.fields}
+                selectedIndex={selectedIndex}
+                issueIndexes={issueIndexes}
+                onSelect={(index) => {
+                  setSelectedIndex(index);
+                  if (compact) {
+                    setActivePanel('properties');
+                    setFocusRequest({ panel: 'properties', property: 'key' });
+                  }
+                }}
+                onAdd={addField}
+              />
+            </Box>
           )}
 
           {(!compact || activePanel === 'canvas') && (
@@ -327,7 +359,7 @@ function ApprovalLegacyFormBuilderDialog({
                     onClick={() => {
                       setSelectedIndex(issue.index);
                       setActivePanel('properties');
-                      setFocusProperty(property);
+                      setFocusRequest({ panel: 'properties', property });
                     }}
                   >
                     {t('admin.studio.fieldOrdinal', { count: issue.index + 1 })} ·{' '}
@@ -391,6 +423,7 @@ function FieldStructurePanel({
           return (
             <Box component="li" key={`${field.key}-${index}`}>
               <ButtonBase
+                data-approval-legacy-field={index}
                 onClick={() => onSelect(index)}
                 aria-pressed={selected}
                 sx={{

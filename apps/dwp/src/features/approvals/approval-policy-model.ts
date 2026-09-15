@@ -1,5 +1,16 @@
 import type { ApprovalPolicy } from '@dwp-frontend/shared-utils';
 
+export {
+  parseApprovalPolicyProjection,
+  parseApprovalPolicyVersionProjection,
+} from './approval-management-projection';
+export type {
+  ApprovalOversightPolicy,
+  ApprovalOversightPolicyVersion,
+  ApprovalPolicyProjection,
+  ApprovalPolicyVersionProjection,
+} from './approval-management-projection';
+
 export type ApprovalPolicyRuleEditorEntry = Readonly<{
   key: string;
   kind: 'boolean' | 'number' | 'string' | 'structured';

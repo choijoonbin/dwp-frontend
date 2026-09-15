@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, FilePlus2, MessageSquareReply } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import {
-  ActionButton,
-  FormDialog,
-  InlineFeedback,
-  LoadingState,
-} from '@dwp-frontend/design-system';
+import { ActionButton, FormDialog, InlineFeedback } from '@dwp-frontend/design-system';
 import {
   getApprovalRequestDetail,
   HttpError,
@@ -17,10 +12,8 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
@@ -28,11 +21,9 @@ import { ApprovalInformationResponseFields } from './approval-information-respon
 import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
 import { ApprovalRequestArchiveExport } from './approval-request-archive-export';
 import { ApprovalRequestInformationReceipt } from './approval-request-information-receipt';
-import { ApprovalRequestLifecycleInspector } from './approval-request-lifecycle-inspector';
 import { ApprovalResubmitDraftDialog } from './approval-resubmit-draft-dialog';
 import { useApprovalAttachmentClient } from './use-approval-attachment-client';
 import { ApprovalAttachmentNavigationGuard } from './approval-attachment-navigation-guard';
-import { ApprovalRequestListPanel } from './approval-request-list-panel';
 import { ApprovalRequestSearchControls } from './approval-request-search-controls';
 import { useApprovalRequestSearch } from './use-approval-request-search';
 import {
@@ -52,8 +43,19 @@ import { ApprovalSurface } from './approval-ui';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { useApprovalExperience } from './use-approval-experience';
 import { isProductSurfaceOperationCancelledError } from './use-approval-governed-mutation';
+import { approvalRequestBelongsToView } from './approval-request-lifecycle-deep-link';
+import { latestApprovalInformationRequestEvent } from './approval-request-information-context';
+import {
+  ApprovalRequestActionFeedback,
+  ApprovalRequestDeepLinkProblem,
+  ApprovalRequestInformationContext,
+  ApprovalRequestInformationDetailStatus,
+  ApprovalRequestInformationPrompt,
+  ApprovalRequestLifecycleCollection,
+  ApprovalRequestUnknownResponseNotice,
+} from './approval-request-lifecycle-presentation';
 
-import type { ApprovalRequest } from '@dwp-frontend/shared-utils';
+import type { ApprovalRequest, ApprovalRequestDetail } from '@dwp-frontend/shared-utils';
 import type { ApprovalRequestRecovery, ApprovalRequestView } from './approval-request-model';
 import type { ApprovalRequestUserContext } from './approval-request-user-picker';
 import type { ApprovalRequestInformationSnapshot } from './approval-request-information-snapshot';
@@ -67,7 +69,7 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
   const toast = useToast();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const requestedId = searchParams.get('request');
+  const requestedId = searchParams.get('request')?.trim() || null;
   const requestedReturnTarget = searchParams.get('returnTo');
   const { permissions } = usePermissions();
   const returnTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
@@ -102,12 +104,63 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
 
   const search = useApprovalRequestSearch(view, requestScope);
   const requests = search.requests;
-  const visibleRequests = useMemo(
+  const deepLinkQueryKey = [
+    'approvals',
+    ...requestScope.cacheKey,
+    'requests',
+    'lifecycle-deep-link',
+    requestedId,
+  ];
+  const requestedDetail = useQuery({
+    queryKey: deepLinkQueryKey,
+    queryFn: ({ signal }) =>
+      getApprovalRequestDetail(requestedId!, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready && Boolean(requestedId),
+    meta: requestScope.queryMeta,
+    staleTime: 0,
+    retry: false,
+  });
+  const requestedRequest =
+    requestedId &&
+    !requestedDetail.isFetching &&
+    !requestedDetail.isError &&
+    requestedDetail.data?.request.requestId === requestedId &&
+    approvalRequestBelongsToView(view, requestedDetail.data.request.status)
+      ? requestedDetail.data.request
+      : undefined;
+  const requestedProblem = (() => {
+    if (!requestedId || requestedDetail.isFetching || requestedRequest) return undefined;
+    if (requestedDetail.isError) {
+      if (requestedDetail.error instanceof HttpError && requestedDetail.error.status === 404)
+        return 'NOT_FOUND' as const;
+      if (
+        requestedDetail.error instanceof HttpError &&
+        [401, 403].includes(requestedDetail.error.status)
+      )
+        return 'DENIED' as const;
+      return 'ERROR' as const;
+    }
+    if (
+      requestedDetail.data?.request.requestId !== requestedId ||
+      !requestedDetail.data?.request.status ||
+      !approvalRequestBelongsToView(view, requestedDetail.data.request.status)
+    )
+      return 'WRONG_VIEW' as const;
+    return 'ERROR' as const;
+  })();
+  const searchedRequests = useMemo(
     () => (requests.isError || requests.isFetching ? [] : (requests.data ?? [])),
     [requests.data, requests.isError, requests.isFetching]
   );
-  const selectedRequest =
-    visibleRequests.find((request) => request.requestId === selectedId) ?? visibleRequests[0];
+  const visibleRequests = useMemo(
+    () =>
+      requestedRequest &&
+      !searchedRequests.some((request) => request.requestId === requestedRequest.requestId)
+        ? [requestedRequest, ...searchedRequests]
+        : searchedRequests,
+    [requestedRequest, searchedRequests]
+  );
+  const selectedRequest = visibleRequests.find((request) => request.requestId === selectedId);
 
   useEffect(() => {
     setSelectedId(undefined);
@@ -130,19 +183,24 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
       openedRequestRef.current = undefined;
       return;
     }
-    const requested = visibleRequests.find((request) => request.requestId === requestedId);
-    if (!requested || openedRequestRef.current === requestedId) return;
+    if (!requestedRequest || openedRequestRef.current === requestedId) return;
     openedRequestRef.current = requestedId;
     setSelectedId(requestedId);
     setDetailId(requestedId);
-  }, [requestedId, visibleRequests]);
+  }, [requestedId, requestedRequest]);
 
   useEffect(() => {
-    if (!selectedId && visibleRequests[0]) setSelectedId(visibleRequests[0].requestId);
-    if (selectedId && !visibleRequests.some((request) => request.requestId === selectedId)) {
+    if (!selectedId && !requestedId && visibleRequests[0]) {
+      setSelectedId(visibleRequests[0].requestId);
+    }
+    if (
+      selectedId &&
+      selectedId !== requestedId &&
+      !visibleRequests.some((request) => request.requestId === selectedId)
+    ) {
       setSelectedId(visibleRequests[0]?.requestId);
     }
-  }, [selectedId, visibleRequests]);
+  }, [requestedId, selectedId, visibleRequests]);
 
   const informationQueryKey = [
     'approvals',
@@ -178,6 +236,10 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     informationDetail.data?.request.status !== 'NEEDS_INFO'
       ? undefined
       : informationDetail.data;
+  const informationRequestEvent = useMemo(
+    () => latestApprovalInformationRequestEvent(reviewedInformationDetail),
+    [reviewedInformationDetail]
+  );
   const amendmentIdentity = JSON.stringify([
     commandScope.binding.scopeIdentity,
     commandScope.binding.scopeEpoch,
@@ -256,6 +318,7 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     ready: false,
     informationQueryKey,
     searchQueryKey: search.queryKey,
+    deepLinkQueryKey,
   });
   informationAuthority.current = {
     ready:
@@ -274,6 +337,7 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
       informationSource.matches,
     informationQueryKey,
     searchQueryKey: search.queryKey,
+    deepLinkQueryKey,
   };
   const informationSnapshotIsCurrent = (snapshot: ApprovalRequestInformationSnapshot) => {
     const live = informationAuthority.current;
@@ -282,11 +346,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
       live.informationQueryKey
     );
     const list = queryClient.getQueryState<typeof search.result.data>(live.searchQueryKey);
-    return Boolean(
-      source?.status === 'success' &&
-      source.fetchStatus === 'idle' &&
-      source.fetchFailureCount === 0 &&
-      !source.error &&
+    const linked = queryClient.getQueryState<ApprovalRequestDetail>(live.deepLinkQueryKey);
+    const listOwnsSnapshot = Boolean(
       list?.status === 'success' &&
       list.fetchStatus === 'idle' &&
       list.fetchFailureCount === 0 &&
@@ -296,16 +357,36 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
           request.requestId === snapshot.requestId &&
           request.version === snapshot.requestVersion &&
           request.status === 'NEEDS_INFO'
-      ) &&
+      )
+    );
+    const deepLinkOwnsSnapshot = Boolean(
+      linked?.status === 'success' &&
+      linked.fetchStatus === 'idle' &&
+      linked.fetchFailureCount === 0 &&
+      !linked.error &&
+      linked.data?.request.requestId === snapshot.requestId &&
+      linked.data.request.version === snapshot.requestVersion &&
+      linked.data.request.status === 'NEEDS_INFO'
+    );
+    return Boolean(
+      source?.status === 'success' &&
+      source.fetchStatus === 'idle' &&
+      source.fetchFailureCount === 0 &&
+      !source.error &&
+      (listOwnsSnapshot || deepLinkOwnsSnapshot) &&
       sameApprovalRequestInformationSnapshot(snapshot, source.data)
     );
   };
 
+  const deepLinkAuthorityReady =
+    !requestedId ||
+    Boolean(requestedRequest && !requestedDetail.isFetching && !requestedDetail.isError);
   const requestActionsReady =
     requestScope.ready &&
     canUpdateRequests &&
     !requests.isFetching &&
     !requests.isError &&
+    deepLinkAuthorityReady &&
     !actionRecovery &&
     !unresolvedResponse.current;
   const resubmitAuthorized =
@@ -332,9 +413,9 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     },
   });
   const actionRequestIsCurrent = (request: ApprovalRequest) =>
-    requestActionsReady && isApprovalRequestSnapshotCurrent(requests.data, request);
-  const latestAuthority = useRef({ ready: requestActionsReady, requests: requests.data });
-  latestAuthority.current = { ready: requestActionsReady, requests: requests.data };
+    requestActionsReady && isApprovalRequestSnapshotCurrent(visibleRequests, request);
+  const latestAuthority = useRef({ ready: requestActionsReady, requests: visibleRequests });
+  latestAuthority.current = { ready: requestActionsReady, requests: visibleRequests };
   const activeAction = useRef<RequestActionCommand | undefined>(undefined);
 
   const act = useApprovalRequestLifecycleAction({
@@ -410,15 +491,21 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     ready: requestScope.ready && !requests.isFetching && !requests.isError && !act.isPending,
     isOwnerCurrent: () => {
       const state = queryClient.getQueryState<{ items: ApprovalRequest[] }>(search.queryKey);
+      const linked = queryClient.getQueryState<ApprovalRequestDetail>(deepLinkQueryKey);
       return Boolean(
-        state?.status === 'success' &&
-        state.fetchStatus === 'idle' &&
-        !state.error &&
-        state.data?.items.some(
-          (request) =>
-            request.requestId === attachmentOwner.current?.requestId &&
-            request.version === attachmentOwner.current?.version
-        )
+        (state?.status === 'success' &&
+          state.fetchStatus === 'idle' &&
+          !state.error &&
+          state.data?.items.some(
+            (request) =>
+              request.requestId === attachmentOwner.current?.requestId &&
+              request.version === attachmentOwner.current?.version
+          )) ||
+        (linked?.status === 'success' &&
+          linked.fetchStatus === 'idle' &&
+          !linked.error &&
+          linked.data?.request.requestId === attachmentOwner.current?.requestId &&
+          linked.data?.request.version === attachmentOwner.current?.version)
       );
     },
   });
@@ -584,7 +671,19 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     const currentTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
     if (currentTarget) navigate(currentTarget);
   };
-
+  const clearRequested = () => {
+    openedRequestRef.current = undefined;
+    setSelectedId(undefined);
+    setDetailId(undefined);
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.delete('request');
+        return next;
+      },
+      { replace: true }
+    );
+  };
   return (
     <ApprovalSurface
       title={t(`requests.views.${view}.title`)}
@@ -625,88 +724,38 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
         locked={act.isPending || archiveBlocked}
         isLocked={() => archiveGuard.current()}
       />
+      {requestedProblem && (
+        <ApprovalRequestDeepLinkProblem
+          problem={requestedProblem}
+          status={requestedDetail.data?.request.status}
+          retrying={requestedDetail.isFetching}
+          onRetry={() => void requestedDetail.refetch()}
+          onClose={clearRequested}
+        />
+      )}
       {!actionOpen && actionIsOwned && unresolvedResponse.current?.input.informationSnapshot && (
-        <InlineFeedback
-          severity="warning"
-          action={
-            <ActionButton intent="quiet" size="small" onClick={() => setActionOpen(true)}>
-              {t('requests.amendment.resumeUnknown')}
-            </ActionButton>
-          }
-        >
-          {t('requests.commands.unknown')}
-        </InlineFeedback>
+        <ApprovalRequestUnknownResponseNotice onResume={() => setActionOpen(true)} />
       )}
-      {requests.isError ? (
-        <InlineFeedback
-          severity="error"
-          action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              disabled={requests.isFetching}
-              onClick={() => void requests.refetch()}
-            >
-              {t('actions.retry')}
-            </ActionButton>
-          }
-        >
-          {t('requests.loadError')}
-        </InlineFeedback>
-      ) : requests.isFetching ? (
-        <LoadingState label={t('common:labels.loading')} size="page" embedded />
-      ) : visibleRequests.length ? (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'minmax(0, 1fr)',
-              lg: 'minmax(360px, .9fr) minmax(340px, 1.1fr)',
-            },
-            minHeight: 520,
-          }}
-        >
-          <Box sx={{ minWidth: 0, borderRight: { lg: 1 }, borderColor: 'divider' }}>
-            <ApprovalRequestListPanel
-              requests={visibleRequests}
-              selectedId={selectedRequest?.requestId}
-              actionsReady={requestActionsReady}
-              pending={act.isPending}
-              onSelect={(request) => selectRequest(request)}
-              onOpenDetails={(request) => selectRequest(request, true)}
-              onEdit={(request) => navigate(`/approvals/requests/new?draft=${request.requestId}`)}
-              onRespond={(request) => openAction('respond', request)}
-              onWithdraw={(request) => openAction('withdraw', request)}
-              onResubmit={resubmitReady ? resubmit.open : undefined}
-              resubmitPendingId={resubmit.pending ? resubmit.candidate?.requestId : undefined}
-            />
-          </Box>
-          <Box sx={{ display: { xs: 'none', lg: 'block' }, minWidth: 0, p: 2 }}>
-            <ApprovalRequestLifecycleInspector
-              attachments={attachments}
-              request={selectedRequest}
-              actionsReady={requestActionsReady}
-              pending={act.isPending}
-              onOpenDetails={(request) => selectRequest(request, true)}
-              onEdit={(request) => navigate(`/approvals/requests/new?draft=${request.requestId}`)}
-              onRespond={(request) => openAction('respond', request)}
-              onWithdraw={(request) => openAction('withdraw', request)}
-              onResubmit={resubmitReady ? resubmit.open : undefined}
-              resubmitPendingId={resubmit.pending ? resubmit.candidate?.requestId : undefined}
-            />
-          </Box>
-        </Box>
-      ) : (
-        <Stack alignItems="center" gap={1} sx={{ py: 8, color: 'text.secondary' }}>
-          <FilePlus2 size={32} aria-hidden="true" />
-          <Typography component="p" variant="subtitle1">
-            {t(search.filtered ? 'requests.search.noResults' : 'requests.empty')}
-          </Typography>
-          <Typography variant="body2" textAlign="center">
-            {t('requests.emptyDescription')}
-          </Typography>
-        </Stack>
-      )}
+      <ApprovalRequestLifecycleCollection
+        deepLinkLoading={Boolean(requestedId && requestedDetail.isFetching)}
+        loading={requests.isFetching}
+        error={requests.isError}
+        retrying={requests.isFetching}
+        filtered={search.filtered}
+        requests={visibleRequests}
+        selected={selectedRequest}
+        actionsReady={requestActionsReady}
+        pending={act.isPending}
+        attachments={attachments}
+        onRetry={() => void requests.refetch()}
+        onSelect={(request) => selectRequest(request)}
+        onOpenDetails={(request) => selectRequest(request, true)}
+        onEdit={(request) => navigate(`/approvals/requests/new?draft=${request.requestId}`)}
+        onRespond={(request) => openAction('respond', request)}
+        onWithdraw={(request) => openAction('withdraw', request)}
+        onResubmit={resubmitReady ? resubmit.open : undefined}
+        resubmitPendingId={resubmit.pending ? resubmit.candidate?.requestId : undefined}
+      />
 
       <ApprovalResubmitDraftDialog controller={resubmit} onRefresh={requests.refetch} />
 
@@ -724,7 +773,7 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
         submitDisabled={
           !requestActionsReady ||
           !requestAction ||
-          !isApprovalRequestSnapshotCurrent(requests.data, requestAction.request) ||
+          !isApprovalRequestSnapshotCurrent(visibleRequests, requestAction.request) ||
           (requestAction.kind === 'respond' &&
             (responseMessage.trim().length < 4 ||
               informationDetail.isFetching ||
@@ -776,42 +825,16 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
         }}
       >
         <Stack gap={2}>
-          {actionRecovery && (
-            <InlineFeedback
-              severity={actionRecovery === 'CONFLICT' ? 'warning' : 'error'}
-              action={
-                <ActionButton
-                  type="button"
-                  intent="quiet"
-                  size="small"
-                  onClick={() => void refreshActionContext()}
-                >
-                  {t('actions.refresh')}
-                </ActionButton>
-              }
-            >
-              {t(unresolvedResponse.current ? 'requests.commands.unknown' : 'requests.actionError')}
-            </InlineFeedback>
-          )}
-          {(informationSource.changed || informationBlocked) && !informationDenied && (
-            <InlineFeedback
-              severity="warning"
-              action={
-                !actionRecovery ? (
-                  <ActionButton
-                    intent="quiet"
-                    size="small"
-                    disabled={act.isPending || informationDetail.isFetching || requests.isFetching}
-                    onClick={() => void refreshActionContext()}
-                  >
-                    {t('actions.refresh')}
-                  </ActionButton>
-                ) : undefined
-              }
-            >
-              {t('requests.amendment.sourceChanged')}
-            </InlineFeedback>
-          )}
+          <ApprovalRequestActionFeedback
+            recovery={actionRecovery}
+            unresolved={Boolean(unresolvedResponse.current)}
+            sourceChanged={informationSource.changed || informationBlocked}
+            informationDenied={informationDenied}
+            pending={act.isPending}
+            detailFetching={informationDetail.isFetching}
+            requestsFetching={requests.isFetching}
+            onRefresh={() => void refreshActionContext()}
+          />
           {unresolvedResponse.current?.input.informationSnapshot && (
             <>
               <ApprovalRequestInformationReceipt
@@ -872,6 +895,12 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
           )}
           {requestAction?.kind === 'respond' && !informationDenied && (
             <>
+              {reviewedInformationDetail && (
+                <ApprovalRequestInformationContext
+                  detail={reviewedInformationDetail}
+                  event={informationRequestEvent}
+                />
+              )}
               {informationSource.snapshot && (
                 <Chip
                   size="small"
@@ -881,12 +910,9 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
                 />
               )}
               {requestAction.request.latestInformationRequest && (
-                <InlineFeedback
-                  severity="warning"
-                  icon={<MessageSquareReply size={18} aria-hidden="true" />}
-                >
-                  {requestAction.request.latestInformationRequest}
-                </InlineFeedback>
+                <ApprovalRequestInformationPrompt
+                  message={requestAction.request.latestInformationRequest}
+                />
               )}
               <ApprovalInformationResponseFields
                 key={userProofGeneration}
@@ -915,27 +941,11 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
                 }
                 korean={korean}
                 detailStatus={
-                  informationDetail.isFetching ? (
-                    <Typography variant="body2" color="text.secondary">
-                      {t('requests.amendmentLoading')}
-                    </Typography>
-                  ) : informationDetail.isError ? (
-                    <InlineFeedback
-                      severity="error"
-                      action={
-                        <ActionButton
-                          type="button"
-                          intent="quiet"
-                          size="small"
-                          onClick={() => void informationDetail.refetch()}
-                        >
-                          {t('actions.retry')}
-                        </ActionButton>
-                      }
-                    >
-                      {t('requests.draftLoadError')}
-                    </InlineFeedback>
-                  ) : undefined
+                  <ApprovalRequestInformationDetailStatus
+                    loading={informationDetail.isFetching}
+                    error={informationDetail.isError}
+                    onRetry={() => void informationDetail.refetch()}
+                  />
                 }
                 onResponseMessageChange={(value) => {
                   if (

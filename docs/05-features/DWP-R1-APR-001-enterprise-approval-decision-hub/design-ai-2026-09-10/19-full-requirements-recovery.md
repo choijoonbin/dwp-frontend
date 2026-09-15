@@ -20,14 +20,15 @@
 - Frontend 전체 704 files/6,310 tests, non-incremental TypeScript, 공식 build, architecture,
   OpenAPI, i18n, display, source-size와 bundle budget이 통과했다.
 - Chromium/mobile Approval 40 specs는 730 pass와 의도된 2 skip이며 flaky는 0이다. 현재 DWP
-  visual snapshot은 update 없이 28/28 통과했다.
+  visual snapshot은 `내 처리 완료함` desktop/mobile 승인본까지 포함해 update 없이 30/30 통과했다.
 - live OpenAPI는 9 services/962 Gateway public paths로 backend export와 frontend generated
   contract가 일치한다.
 - 전체 clean stop 후 full start에서 12개 app process가 준비 완료됐다. 실제 브라우저에서
   홈, 결재함 split view, sidebar 큐 collapse/expand, 작성과 관리 surface를 확인했고 결재 검색과
   홈 개인화 owner API는 HTTP 200이다.
-- Stitch source는 41/41 pair지만 유효 raster는 30개다. 원본 자체가 fetch-failure payload인
-  11개 화면은 HTML landmark와 hash만 검증하므로 전체 pixel identity를 주장하지 않는다.
+- 최종 인계 ZIP에서 Stitch APR-01~16의 서로 다른 43/43 HTML·PNG pair를 회수했다. 43개 모두
+  유효 raster이며 fetch-failure payload는 0개다. ZIP·파일 hash, PNG 크기와 HTML landmark를
+  상시 Gate로 검증한다.
 - 외부 공급자 credential, 법적 서명, KMS/WORM, 고객 승인, staging·침투·부하·운영 증거는
   실제 evidence가 들어오기 전까지 `BLOCKED_EXTERNAL`이며 내부 완료로 변조하지 않는다.
 
@@ -92,8 +93,10 @@
 
 ## 원본 및 검증 증적
 
-- APR-01 desktop 원본 HTML/PNG/DESIGN.md: workspace output/approval-stitch-2026-09-14/APR-01-desktop.
-- 추가 원본 ZIP은 Stitch UI의 16-screen export 제한에 맞춰 묶음별로 확보한다.
+- 최종 APR-01~16 원본 HTML/PNG 43쌍:
+  `output/approval-stitch-2026-09-15-full/stitch_enterprise_grid_calendar_application`.
+- 인계 ZIP SHA-256과 각 pair의 byte/hash/IHDR/HTML token은
+  `e2e/support/approval-stitch-source-manifest.json`과 상시 Gate가 소유한다.
 - 2026-09-11 테스트 수치는 이전 범위의 이력이며 재개 코드의 최신 검증으로 재사용하지 않는다.
 - 전체 완료 보고 전에는 모든 원장 행의 미완료를 구현 또는 명시적인 실제 외부 조건으로
   판정해야 한다. 내부 기능 미구현을 외부 조건으로 이동하지 않는다.

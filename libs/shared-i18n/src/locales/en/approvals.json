@@ -394,6 +394,10 @@
       "noResultsDescription": "Change the queue filter or search term.",
       "noDueDate": "No due date",
       "riskCompact": "Risk {{score}}",
+      "assignment": {
+        "CLAIMED": "Claimed",
+        "REASSIGNED": "Delegated or reassigned"
+      },
       "selectForBatch": "Select {{title}} for batch approval",
       "selectedCount_one": "{{count}} selected",
       "selectedCount_other": "{{count}} selected",
@@ -406,6 +410,31 @@
       "batchDialogDescription": "{{count}} requests will be reverified and approved one at a time.",
       "batchDialogEvidence": "Each request is loaded again before approval. Ineligible work is skipped, and processing stops safely on an authority or write failure.",
       "batchDialogConfirm": "Start batch approval",
+      "batchDialogConfirmCount": "Start batch approval · {{count}} eligible",
+      "batchPreflight": {
+        "title": "Confirm processing readiness",
+        "description": "Only details rechecked in this view are classified as ready to process.",
+        "refresh": "Check again",
+        "attentionTitle": "Items excluded or requiring another check",
+        "metrics": {
+          "selected": "Selected",
+          "eligible": "Ready",
+          "excluded": "Excluded",
+          "recheck": "Recheck"
+        },
+        "outcomes": {
+          "EXCLUDED": "Excluded",
+          "RECHECK": "Recheck"
+        },
+        "reasons": {
+          "DETAIL_LOADING": "The latest approval detail is being checked.",
+          "DETAIL_UNAVAILABLE": "The latest detail could not be verified.",
+          "QUEUE_CHANGED": "The queue and detail versions differ and must be checked again.",
+          "CONTENT_ACCESS_DENIED": "The request body and decision evidence are unavailable with current authority.",
+          "SELF_APPROVAL_BLOCKED": "The self-approval policy prevents this decision.",
+          "DECISION_AUTHORITY_UNAVAILABLE": "The current user does not have decision authority for this approval."
+        }
+      },
       "batchCompleted": "Batch approval completed.",
       "batchStopped": "Batch approval stopped safely. Review the remaining requests.",
       "batchFailed": "Batch approval could not start.",
@@ -550,6 +579,7 @@
     "INFO_REQUESTED": "Awaiting information response",
     "APPROVED": "Approved",
     "REJECTED": "Rejected",
+    "REASSIGNED": "Delegated or reassigned",
     "DRAFT": "Draft",
     "WITHDRAWN": "Withdrawn",
     "CANCELLED": "Cancelled",
@@ -666,6 +696,8 @@
     "selfApprovalBlocked": "Self-approval is blocked because requester and decision maker are the same identity.",
     "context": "Decision context",
     "requestData": "Request data",
+    "supportingEvidence": "Documents and attachment evidence",
+    "supportingEvidenceDescription": "Only evidence verified by current authority and security checks is shown.",
     "timeline": "Decision timeline",
     "timelineMeta": "Immutable business evidence",
     "requester": "Requester",
@@ -683,6 +715,20 @@
       "unknown": "Unavailable"
     },
     "comment": "Decision reason",
+    "payload": {
+      "empty": "No request data was recorded.",
+      "booleanTrue": "Yes",
+      "booleanFalse": "No"
+    },
+    "confirmation": {
+      "targetTitle": "Confirm the decision target",
+      "requester": "Requester",
+      "stage": "Current stage",
+      "risk": "Risk score",
+      "riskValue": "{{score}} points",
+      "version": "Document version",
+      "verifiedAt": "Latest verification"
+    },
     "decisionSaved": "Decision recorded.",
     "decisionError": "The decision could not be recorded.",
     "claimed": "The approval task is now assigned to you.",

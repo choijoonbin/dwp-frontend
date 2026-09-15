@@ -24,6 +24,22 @@ export type ApprovalDraftSaveAttempt = Readonly<{
 
 export type ApprovalDraftSaveProblem = 'CONFLICT' | 'DENIED' | 'UNAVAILABLE' | 'UNKNOWN' | 'ERROR';
 
+export type ApprovalDraftConflictField = Readonly<{
+  path: string;
+  localValue: unknown;
+  serverValue: unknown;
+}>;
+
+export type ApprovalDraftMergeReview = Readonly<{
+  merged: ApprovalDraftSnapshot;
+  conflicts: readonly ApprovalDraftConflictField[];
+}>;
+
+export type ApprovalDraftReapplyResult = Readonly<{
+  receipt: ApprovalDraftReceipt;
+  input: ApprovalDraftSnapshot;
+}>;
+
 export type ApprovalDraftAutosaveState = Readonly<{
   status: 'LOCAL' | 'SAVING' | 'SAVED' | ApprovalDraftSaveProblem;
   dirty: boolean;
@@ -31,6 +47,7 @@ export type ApprovalDraftAutosaveState = Readonly<{
   savedAt?: number;
   latestLoaded: boolean;
   unresolved: boolean;
+  conflicts: readonly ApprovalDraftConflictField[];
 }>;
 
 function ordered(value: unknown): unknown {
@@ -47,6 +64,110 @@ function ordered(value: unknown): unknown {
 
 export function approvalDraftFingerprint(input: ApprovalDraftSnapshot): string {
   return JSON.stringify(ordered(input));
+}
+
+function sameValue(left: unknown, right: unknown): boolean {
+  return JSON.stringify(ordered(left)) === JSON.stringify(ordered(right));
+}
+
+function cloneValue<T>(value: T): T {
+  return value === undefined ? value : structuredClone(value);
+}
+
+function mergeValue(
+  path: string,
+  baseline: unknown,
+  local: unknown,
+  server: unknown,
+  conflicts: ApprovalDraftConflictField[]
+): unknown {
+  if (sameValue(local, server)) return cloneValue(local);
+  const localChanged = !sameValue(local, baseline);
+  const serverChanged = !sameValue(server, baseline);
+  if (localChanged && serverChanged) {
+    conflicts.push({
+      path,
+      localValue: cloneValue(local),
+      serverValue: cloneValue(server),
+    });
+    return cloneValue(server);
+  }
+  return cloneValue(localChanged ? local : server);
+}
+
+export function approvalDraftMergeReview(input: {
+  baseline: ApprovalDraftSnapshot | undefined;
+  local: ApprovalDraftSnapshot;
+  server: ApprovalDraftSnapshot;
+  currentSchemaHash?: string;
+  serverSchemaHash?: string;
+}): ApprovalDraftMergeReview {
+  const conflicts: ApprovalDraftConflictField[] = [];
+  if (!sameValue(input.currentSchemaHash, input.serverSchemaHash)) {
+    conflicts.push({
+      path: '$schema',
+      localValue: input.currentSchemaHash,
+      serverValue: input.serverSchemaHash,
+    });
+  }
+  const baseline = input.baseline;
+  const payload: Record<string, unknown> = {};
+  const payloadKeys = new Set([
+    ...Object.keys(baseline?.payload ?? {}),
+    ...Object.keys(input.local.payload),
+    ...Object.keys(input.server.payload),
+  ]);
+  for (const key of [...payloadKeys].sort()) {
+    const value = mergeValue(
+      `payload.${key}`,
+      baseline?.payload[key],
+      input.local.payload[key],
+      input.server.payload[key],
+      conflicts
+    );
+    if (value !== undefined) payload[key] = value;
+  }
+  return {
+    merged: {
+      workflowId: mergeValue(
+        'workflowId',
+        baseline?.workflowId,
+        input.local.workflowId,
+        input.server.workflowId,
+        conflicts
+      ) as string,
+      formId: mergeValue(
+        'formId',
+        baseline?.formId,
+        input.local.formId,
+        input.server.formId,
+        conflicts
+      ) as string,
+      title: mergeValue(
+        'title',
+        baseline?.title,
+        input.local.title,
+        input.server.title,
+        conflicts
+      ) as string,
+      summary: mergeValue(
+        'summary',
+        baseline?.summary,
+        input.local.summary,
+        input.server.summary,
+        conflicts
+      ) as string,
+      priority: mergeValue(
+        'priority',
+        baseline?.priority,
+        input.local.priority,
+        input.server.priority,
+        conflicts
+      ) as ApprovalPriority,
+      payload,
+    },
+    conflicts,
+  };
 }
 
 export function approvalDraftHasContent(input: ApprovalDraftSnapshot): boolean {
@@ -87,6 +208,7 @@ export class ApprovalDraftAutosave {
     dirty: false,
     latestLoaded: false,
     unresolved: false,
+    conflicts: [],
   };
   private listeners = new Set<() => void>();
   private input?: ApprovalDraftSnapshot;
@@ -97,7 +219,14 @@ export class ApprovalDraftAutosave {
   private timer?: ReturnType<typeof setTimeout>;
   private flight?: Promise<ApprovalDraftReceipt>;
   private unresolved?: ApprovalDraftSaveAttempt;
-  private latest?: ApprovalDraftReceipt;
+  private committedInput?: ApprovalDraftSnapshot;
+  private latest?: Readonly<{
+    receipt: ApprovalDraftReceipt;
+    input: ApprovalDraftSnapshot;
+    currentSchemaHash?: string;
+    serverSchemaHash?: string;
+  }>;
+  private reviewedMerge?: ApprovalDraftSnapshot;
 
   constructor(private readonly dependencies: AutosaveDependencies) {}
 
@@ -122,6 +251,7 @@ export class ApprovalDraftAutosave {
     if (this.flight || this.state.dirty || this.state.receipt) return;
     this.requireReceipt(receipt);
     this.committed = approvalDraftFingerprint(input);
+    this.committedInput = structuredClone(input);
     this.publish({ receipt, status: 'SAVED', dirty: false });
   }
 
@@ -131,6 +261,7 @@ export class ApprovalDraftAutosave {
     const dirty = Boolean(input && approvalDraftFingerprint(input) !== this.committed);
     const status = this.blocked() || this.flight ? this.state.status : dirty ? 'LOCAL' : 'SAVED';
     this.publish({ dirty, status });
+    if (this.state.status === 'CONFLICT' && this.latest) this.reviewLatestInput();
     this.cancelTimer();
     if (
       ready &&
@@ -178,28 +309,75 @@ export class ApprovalDraftAutosave {
     );
   }
 
-  reviewLatest(receipt: ApprovalDraftReceipt) {
+  reviewLatest(
+    receipt: ApprovalDraftReceipt,
+    input?: ApprovalDraftSnapshot,
+    schema: Readonly<{ currentSchemaHash?: string; serverSchemaHash?: string }> = {}
+  ) {
     if (this.state.status !== 'CONFLICT' || this.flight) throw new ApprovalDraftSaveBlockedError();
     this.requireReceipt(receipt);
     if (receipt.requestId !== this.state.receipt?.requestId)
       throw new ApprovalDraftSaveBlockedError();
-    this.latest = receipt;
-    this.publish({ latestLoaded: true });
+    if (!input) {
+      this.latest = undefined;
+      this.reviewedMerge = undefined;
+      this.publish({
+        latestLoaded: true,
+        conflicts: [
+          {
+            path: '$document',
+            localValue: this.input ? structuredClone(this.input) : undefined,
+            serverValue: undefined,
+          },
+        ],
+      });
+      return;
+    }
+    this.latest = {
+      receipt,
+      input: structuredClone(input),
+      currentSchemaHash: schema.currentSchemaHash,
+      serverSchemaHash: schema.serverSchemaHash,
+    };
+    this.reviewLatestInput();
   }
 
   markConflict() {
     if (this.flight) throw new ApprovalDraftSaveBlockedError();
-    this.publish({ status: 'CONFLICT', latestLoaded: false });
+    this.latest = undefined;
+    this.reviewedMerge = undefined;
+    this.publish({ status: 'CONFLICT', latestLoaded: false, conflicts: [] });
   }
 
-  async reapply(): Promise<ApprovalDraftReceipt> {
-    if (!this.latest || !this.state.latestLoaded || this.state.status !== 'CONFLICT') {
+  async reapply(): Promise<ApprovalDraftReapplyResult> {
+    if (
+      !this.latest ||
+      !this.reviewedMerge ||
+      !this.state.latestLoaded ||
+      this.state.conflicts.length > 0 ||
+      this.state.status !== 'CONFLICT'
+    ) {
       throw new ApprovalDraftSaveBlockedError();
     }
+    const latest = this.latest;
+    const merged = structuredClone(this.reviewedMerge);
     this.unresolved = undefined;
-    this.publish({ receipt: this.latest, status: 'LOCAL', latestLoaded: false, unresolved: false });
+    this.committedInput = structuredClone(latest.input);
+    this.committed = approvalDraftFingerprint(latest.input);
+    this.input = structuredClone(merged);
     this.latest = undefined;
-    return this.flush();
+    this.reviewedMerge = undefined;
+    const dirty = approvalDraftFingerprint(merged) !== this.committed;
+    this.publish({
+      receipt: latest.receipt,
+      status: dirty ? 'LOCAL' : 'SAVED',
+      dirty,
+      latestLoaded: false,
+      unresolved: false,
+      conflicts: [],
+    });
+    const receipt = dirty ? await this.flush() : latest.receipt;
+    return { receipt, input: merged };
   }
 
   resume() {
@@ -260,6 +438,7 @@ export class ApprovalDraftAutosave {
       throw error;
     }
     this.committed = approvalDraftFingerprint(attempt.input);
+    this.committedInput = structuredClone(attempt.input);
     this.unresolved = undefined;
     const dirty = Boolean(this.input && approvalDraftFingerprint(this.input) !== this.committed);
     this.publish({
@@ -268,6 +447,7 @@ export class ApprovalDraftAutosave {
       status: dirty ? 'LOCAL' : 'SAVED',
       savedAt: this.dependencies.now?.() ?? Date.now(),
       unresolved: false,
+      conflicts: [],
     });
     return receipt;
   }
@@ -278,11 +458,18 @@ export class ApprovalDraftAutosave {
       if (error instanceof ApprovalDraftSaveConflictError && error.receipt.status === 'DRAFT') {
         this.publish({ receipt: error.receipt });
       }
+      this.latest = undefined;
+      this.reviewedMerge = undefined;
       this.unresolved =
         status === 'UNKNOWN' || (this.unresolved === attempt && status !== 'CONFLICT')
           ? attempt
           : undefined;
-      this.publish({ status, latestLoaded: false, unresolved: Boolean(this.unresolved) });
+      this.publish({
+        status,
+        latestLoaded: false,
+        unresolved: Boolean(this.unresolved),
+        conflicts: [],
+      });
     }
     throw error;
   }
@@ -300,6 +487,23 @@ export class ApprovalDraftAutosave {
 
   private blocked() {
     return ['CONFLICT', 'DENIED', 'UNAVAILABLE', 'UNKNOWN', 'ERROR'].includes(this.state.status);
+  }
+
+  private reviewLatestInput() {
+    if (!this.latest || !this.input || this.state.status !== 'CONFLICT') {
+      this.reviewedMerge = undefined;
+      this.publish({ latestLoaded: false, conflicts: [] });
+      return;
+    }
+    const review = approvalDraftMergeReview({
+      baseline: this.committedInput,
+      local: this.input,
+      server: this.latest.input,
+      currentSchemaHash: this.latest.currentSchemaHash,
+      serverSchemaHash: this.latest.serverSchemaHash,
+    });
+    this.reviewedMerge = structuredClone(review.merged);
+    this.publish({ latestLoaded: true, conflicts: review.conflicts });
   }
 
   private cancelTimer() {

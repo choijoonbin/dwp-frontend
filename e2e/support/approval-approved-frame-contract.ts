@@ -57,7 +57,7 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
     title: '개인 전자결재 홈',
     route: '/approvals/home',
     routeRegistrationToken: "path: '/approvals/home'",
-    frameIds: ['STITCH-001'],
+    frameIds: ['STITCH-001', 'STITCH-042'],
     ownerSpecs: [
       {
         path: 'e2e/approval-home-publishing.spec.ts',
@@ -97,7 +97,7 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
     title: '결재 상세와 결정',
     route: '/approvals/inbox',
     routeRegistrationToken: "path: '/approvals/inbox'",
-    frameIds: ['STITCH-006', 'STITCH-007', 'STITCH-008', 'STITCH-009', 'STITCH-026'],
+    frameIds: ['STITCH-006', 'STITCH-007', 'STITCH-008', 'STITCH-009'],
     ownerSpecs: [
       {
         path: 'e2e/approval-command-center-resilience.spec.ts',
@@ -205,7 +205,14 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
     title: '내가 올린 결재와 보완',
     route: '/approvals/requests/submitted',
     routeRegistrationToken: "path: '/approvals/requests/submitted'",
-    frameIds: ['STITCH-022'],
+    frameIds: ['STITCH-022', 'STITCH-043', 'STITCH-044'],
+    frameRouteOverrides: [
+      {
+        frameId: 'STITCH-043',
+        route: '/approvals/requests/needs-info',
+        routeRegistrationToken: "path: '/approvals/requests/needs-info'",
+      },
+    ],
     ownerSpecs: [
       {
         path: 'e2e/approval-request-lifecycle.spec.ts',
@@ -220,8 +227,11 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
         verificationTokens: ["outputPath('request-search.png')", '서버 조건·페이지'],
       },
     ],
-    screenshotEvidence: menuSnapshots('approvals-submitted'),
-    requiredViewportEvidence: ['desktop'],
+    screenshotEvidence: [
+      ...menuSnapshots('approvals-submitted'),
+      ...menuSnapshots('approvals-needs-info'),
+    ],
+    requiredViewportEvidence: ['desktop', 'mobile'],
     differenceKeys,
   },
   {
@@ -229,8 +239,23 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
     title: '처리 완료와 요청 보관',
     route: '/approvals/requests/archive',
     routeRegistrationToken: "path: '/approvals/requests/archive'",
-    frameIds: ['STITCH-023'],
+    frameIds: ['STITCH-023', 'STITCH-045'],
+    frameRouteOverrides: [
+      {
+        frameId: 'STITCH-045',
+        route: '/approvals/completed',
+        routeRegistrationToken: "path: '/approvals/completed'",
+      },
+    ],
     ownerSpecs: [
+      {
+        path: 'e2e/approval-experience.spec.ts',
+        verificationTokens: [
+          "page.goto('/approvals/completed')",
+          "name: '내 처리 완료함'",
+          '실제 결정자 증거를 기준으로 표시',
+        ],
+      },
       {
         path: 'e2e/approval-request-search.spec.ts',
         verificationTokens: [
@@ -248,8 +273,11 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
         ],
       },
     ],
-    screenshotEvidence: menuSnapshots('approvals-archive'),
-    requiredViewportEvidence: ['desktop'],
+    screenshotEvidence: [
+      ...menuSnapshots('approvals-archive'),
+      ...menuSnapshots('approvals-completed'),
+    ],
+    requiredViewportEvidence: ['desktop', 'mobile'],
     differenceKeys,
   },
   {
@@ -317,7 +345,7 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
     title: '양식 빌더와 미리보기',
     route: '/approvals/admin/forms',
     routeRegistrationToken: "path: '/approvals/admin/forms'",
-    frameIds: ['STITCH-031', 'STITCH-032', 'STITCH-033', 'STITCH-040'],
+    frameIds: ['STITCH-031', 'STITCH-032', 'STITCH-033'],
     ownerSpecs: [
       {
         path: 'e2e/approval-form-typed-studio.spec.ts',
@@ -377,7 +405,7 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
     title: '운영 복구와 서명 준비',
     route: '/approvals/admin/operations',
     routeRegistrationToken: "path: '/approvals/admin/operations'",
-    frameIds: ['STITCH-038', 'STITCH-039'],
+    frameIds: ['STITCH-038', 'STITCH-039', 'STITCH-046'],
     frameRouteOverrides: [
       {
         frameId: 'STITCH-039',
@@ -412,5 +440,5 @@ export const APPROVAL_APPROVED_FRAME_CONTRACTS = [
   },
 ] as const satisfies readonly ApprovalApprovedFrameContract[];
 
-export const APPROVAL_STITCH_QUARANTINED_FRAME_IDS = ['STITCH-041'] as const;
+export const APPROVAL_STITCH_QUARANTINED_FRAME_IDS = [] as const;
 export const APPROVAL_STITCH_SOURCE_IS_PIXEL_BASELINE = false;

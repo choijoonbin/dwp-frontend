@@ -328,6 +328,16 @@ export const MENU_VISUAL_BASELINE_INVENTORY: readonly MenuVisualBaselineEntry[] 
     fileName: 'approvals-archive-mobile-darwin.png',
   },
   {
+    routeId: 'approvals.completed',
+    project: 'chromium',
+    fileName: 'approvals-completed-chromium-darwin.png',
+  },
+  {
+    routeId: 'approvals.completed',
+    project: 'mobile',
+    fileName: 'approvals-completed-mobile-darwin.png',
+  },
+  {
     routeId: 'approvals.delegations',
     project: 'chromium',
     fileName: 'approvals-delegations-chromium-darwin.png',

@@ -73,9 +73,9 @@ export default function ApprovalsPage({ governed = false }: { governed?: boolean
       />
     );
   return (
-    <PageCanvas>
+    <PageCanvas topInset="compact">
       <ApprovalPageHeader view={page.view} icon={page.icon} />
-      <Box sx={{ mt: 3 }}>
+      <Box sx={{ mt: { xs: 2.5, md: 3 } }}>
         <Suspense fallback={<RouteFallback />}>{content}</Suspense>
       </Box>
     </PageCanvas>
