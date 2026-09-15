@@ -1,0 +1,1056 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "none",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 1,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true VITE_WEB_VITALS_ENDPOINT=/api/platform/v1/observability/web-vitals corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://localhost:4200",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "home-wave2-acceptance.spec.ts",
+      "file": "home-wave2-acceptance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Classic compositions preserve the 18-app contract and document scroll at every edge",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C01-D1440-BASE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C02-D1280-BASE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C03-M390-BASE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C04-M320-BASE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10008,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:32:44.920Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C01-D1440-BASE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C02-D1280-BASE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C03-M390-BASE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C04-M320-BASE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-cf98f23dd453bf70afec",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 256,
+          "column": 1
+        },
+        {
+          "title": "HomeLayout toggles its real navigation allocation without right clipping",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1287,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:32:55.259Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-bbf99efae5a9075a9808",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 410,
+          "column": 1
+        },
+        {
+          "title": "Flow base and personalized compositions keep personal-action IA and all approved apps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-BASE-DESKTOP-FINAL"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-BASE-MOBILE-FINAL"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-PERSONALIZED-DESKTOP-FINAL"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11378,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:32:56.550Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-BASE-DESKTOP-FINAL"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-BASE-MOBILE-FINAL"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-PERSONALIZED-DESKTOP-FINAL"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-b7e8c39260dd842b1f72",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 441,
+          "column": 1
+        },
+        {
+          "title": "Flow Studio owns panel scrolling, traps focus, and restores the launch point",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-EDITOR-DESKTOP"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4040,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:07.932Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-EDITOR-DESKTOP"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-48cc509920e69aa898f2",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 663,
+          "column": 1
+        },
+        {
+          "title": "200% browser and text reflow keep the complete Home document usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_ZOOM_200"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_TEXT_200"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5779,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:11.977Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_ZOOM_200"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_TEXT_200"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-55cbfc0c525256f7cfaf",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 767,
+          "column": 1
+        },
+        {
+          "title": "long English content wraps without clipping or deleting its accessible meaning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_LONG_EN"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2579,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:17.760Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_LONG_EN"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-da45fa601deebaf8a022",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 847,
+          "column": 1
+        },
+        {
+          "title": "dark and forced-color modes retain contrast, focus, and structure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_DARK"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_HIGH_CONTRAST"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5516,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:20.344Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_DARK"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_HIGH_CONTRAST"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-a587176ca646e055ecd3",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 880,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "home-wave2-state-evidence.spec.ts",
+      "file": "home-wave2-state-evidence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "C10-C13 render the real Classic Home state contract on desktop and mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_EMPTY_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_EMPTY_MOBILE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_PARTIAL_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_PARTIAL_MOBILE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_FORBIDDEN_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_FORBIDDEN_MOBILE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_STALE_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_STALE_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17127,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:25.877Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_EMPTY_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_EMPTY_MOBILE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_PARTIAL_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_PARTIAL_MOBILE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_FORBIDDEN_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_FORBIDDEN_MOBILE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_STALE_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_STALE_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-a7e683a6e20212366cd1",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 487,
+          "column": 1
+        },
+        {
+          "title": "C14 initial loading keeps the two-card geometry on desktop and mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_INITIAL_LOADING_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4573,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:43.009Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_INITIAL_LOADING_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-2f58f7b11089ccf8df43",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 525,
+          "column": 1
+        },
+        {
+          "title": "C14 background refresh preserves verified content on desktop and mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_BACKGROUND_REFRESH_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4598,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:47.586Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_BACKGROUND_REFRESH_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-65d39be8bd880e6bc6c0",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 551,
+          "column": 1
+        },
+        {
+          "title": "C15 dirty editing remains visible and keyboard reachable on desktop and mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_DIRTY_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_DIRTY_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8537,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:33:52.188Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_DIRTY_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_DIRTY_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-57fba9e77df2f8035f03",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 590,
+          "column": 1
+        },
+        {
+          "title": "C16 an actual 409 shows the conflict dialog and preserves the draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_CONFLICT_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_CONFLICT_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7190,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:00.729Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_CONFLICT_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_CONFLICT_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-f0821d3e1a440302b790",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 661,
+          "column": 1
+        },
+        {
+          "title": "C17 round-trips isolated Classic and Flow overlays through the real device API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_MODE_PRESET"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4014,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:07.923Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_MODE_PRESET"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-9f554947ca160d16dfa8",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 702,
+          "column": 1
+        },
+        {
+          "title": "C18 keeps the real Home keyboard path and disables motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3533,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:11.941Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-e726baae304d5901cf52",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 806,
+          "column": 1
+        },
+        {
+          "title": "the canonical state sheet renders all nine production primitives",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_ALL_STATES_DESKTOP"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1838,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:15.479Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_ALL_STATES_DESKTOP"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-21d3806504496fe0508e",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 876,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "widget-governance-surfaces.spec.ts",
+      "file": "widget-governance-surfaces.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "tenant administration reviews shadow policy decisions without enabling mutations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2079,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:17.342Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9eae8f0a7c01a21c4b7e-f31ba5f4e6c03290b146",
+          "file": "widget-governance-surfaces.spec.ts",
+          "line": 88,
+          "column": 1
+        },
+        {
+          "title": "tenant administrators review blueprint impact and recovery before lifecycle changes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1897,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:19.426Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9eae8f0a7c01a21c4b7e-973110ab2157780f658c",
+          "file": "widget-governance-surfaces.spec.ts",
+          "line": 171,
+          "column": 1
+        },
+        {
+          "title": "provider governance shows legacy-unverified evidence and keeps lifecycle commands closed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2052,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:21.326Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9eae8f0a7c01a21c4b7e-f27afe661b5997016b80",
+          "file": "widget-governance-surfaces.spec.ts",
+          "line": 310,
+          "column": 1
+        },
+        {
+          "title": "shadow evaluation cannot change Home and authoritative denial fails closed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4256,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T18:34:23.382Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9eae8f0a7c01a21c4b7e-6a600c28f76ac702b1a9",
+          "file": "widget-governance-surfaces.spec.ts",
+          "line": 393,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-15T18:32:41.865Z",
+    "duration": 105845.617,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

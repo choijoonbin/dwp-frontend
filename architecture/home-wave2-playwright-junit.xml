@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="15" failures="0" skipped="0" errors="0" time="99.504015">
-<testsuite name="home-wave2-acceptance.spec.ts" timestamp="2026-09-15T15:05:35.141Z" hostname="chromium" tests="7" failures="0" skipped="0" time="43.841" errors="0">
-<testcase name="Classic compositions preserve the 18-app contract and document scroll at every edge" classname="home-wave2-acceptance.spec.ts" time="10.574">
+<testsuites id="" name="" tests="15" failures="0" skipped="0" errors="0" time="97.963378">
+<testsuite name="home-wave2-acceptance.spec.ts" timestamp="2026-09-15T18:34:44.615Z" hostname="chromium" tests="7" failures="0" skipped="0" time="40.43" errors="0">
+<testcase name="Classic compositions preserve the 18-app contract and document scroll at every edge" classname="home-wave2-acceptance.spec.ts" time="10.171">
 <properties>
 <property name="canonical-fixture" value="WAVE2_C01-D1440-BASE">
 </property>
@@ -12,9 +12,9 @@
 </property>
 </properties>
 </testcase>
-<testcase name="HomeLayout toggles its real navigation allocation without right clipping" classname="home-wave2-acceptance.spec.ts" time="1.318">
+<testcase name="HomeLayout toggles its real navigation allocation without right clipping" classname="home-wave2-acceptance.spec.ts" time="1.189">
 </testcase>
-<testcase name="Flow base and personalized compositions keep personal-action IA and all approved apps" classname="home-wave2-acceptance.spec.ts" time="12.201">
+<testcase name="Flow base and personalized compositions keep personal-action IA and all approved apps" classname="home-wave2-acceptance.spec.ts" time="11.319">
 <properties>
 <property name="canonical-fixture" value="WAVE2_FLOW-BASE-DESKTOP-FINAL">
 </property>
@@ -26,13 +26,13 @@
 </property>
 </properties>
 </testcase>
-<testcase name="Flow Studio owns panel scrolling, traps focus, and restores the launch point" classname="home-wave2-acceptance.spec.ts" time="4.244">
+<testcase name="Flow Studio owns panel scrolling, traps focus, and restores the launch point" classname="home-wave2-acceptance.spec.ts" time="4.146">
 <properties>
 <property name="canonical-fixture" value="WAVE2_FLOW-EDITOR-DESKTOP">
 </property>
 </properties>
 </testcase>
-<testcase name="200% browser and text reflow keep the complete Home document usable" classname="home-wave2-acceptance.spec.ts" time="6.308">
+<testcase name="200% browser and text reflow keep the complete Home document usable" classname="home-wave2-acceptance.spec.ts" time="5.512">
 <properties>
 <property name="canonical-fixture" value="HOME_SPEC_ZOOM_200">
 </property>
@@ -40,13 +40,13 @@
 </property>
 </properties>
 </testcase>
-<testcase name="long English content wraps without clipping or deleting its accessible meaning" classname="home-wave2-acceptance.spec.ts" time="2.981">
+<testcase name="long English content wraps without clipping or deleting its accessible meaning" classname="home-wave2-acceptance.spec.ts" time="2.569">
 <properties>
 <property name="canonical-fixture" value="HOME_SPEC_LONG_EN">
 </property>
 </properties>
 </testcase>
-<testcase name="dark and forced-color modes retain contrast, focus, and structure" classname="home-wave2-acceptance.spec.ts" time="6.215">
+<testcase name="dark and forced-color modes retain contrast, focus, and structure" classname="home-wave2-acceptance.spec.ts" time="5.524">
 <properties>
 <property name="canonical-fixture" value="HOME_SPEC_DARK">
 </property>
@@ -57,8 +57,8 @@
 </properties>
 </testcase>
 </testsuite>
-<testsuite name="home-wave2-state-evidence.spec.ts" timestamp="2026-09-15T15:05:35.141Z" hostname="chromium" tests="8" failures="0" skipped="0" time="54.393" errors="0">
-<testcase name="C10-C13 render the real Classic Home state contract on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="18.022">
+<testsuite name="home-wave2-state-evidence.spec.ts" timestamp="2026-09-15T18:34:44.615Z" hostname="chromium" tests="8" failures="0" skipped="0" time="53.979" errors="0">
+<testcase name="C10-C13 render the real Classic Home state contract on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="16.997">
 <properties>
 <property name="canonical-fixture" value="HOME_STATE_EMPTY_DESKTOP">
 </property>
@@ -78,7 +78,7 @@
 </property>
 </properties>
 </testcase>
-<testcase name="C14 initial loading keeps the two-card geometry on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="4.842">
+<testcase name="C14 initial loading keeps the two-card geometry on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="4.519">
 <properties>
 <property name="canonical-fixture" value="HOME_STATE_INITIAL_LOADING_DESKTOP">
 </property>
@@ -86,7 +86,7 @@
 </property>
 </properties>
 </testcase>
-<testcase name="C14 background refresh preserves verified content on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="4.852">
+<testcase name="C14 background refresh preserves verified content on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="4.596">
 <properties>
 <property name="canonical-fixture" value="HOME_STATE_BACKGROUND_REFRESH_DESKTOP">
 </property>
@@ -94,7 +94,7 @@
 </property>
 </properties>
 </testcase>
-<testcase name="C15 dirty editing remains visible and keyboard reachable on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="9.176">
+<testcase name="C15 dirty editing remains visible and keyboard reachable on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="9.624">
 <properties>
 <property name="canonical-fixture" value="HOME_STATE_DIRTY_DESKTOP">
 </property>
@@ -102,7 +102,7 @@
 </property>
 </properties>
 </testcase>
-<testcase name="C16 an actual 409 shows the conflict dialog and preserves the draft" classname="home-wave2-state-evidence.spec.ts" time="7.342">
+<testcase name="C16 an actual 409 shows the conflict dialog and preserves the draft" classname="home-wave2-state-evidence.spec.ts" time="7.77">
 <properties>
 <property name="canonical-fixture" value="HOME_STATE_CONFLICT_DESKTOP">
 </property>
@@ -110,19 +110,19 @@
 </property>
 </properties>
 </testcase>
-<testcase name="C17 round-trips isolated Classic and Flow overlays through the real device API" classname="home-wave2-state-evidence.spec.ts" time="4.219">
+<testcase name="C17 round-trips isolated Classic and Flow overlays through the real device API" classname="home-wave2-state-evidence.spec.ts" time="4.27">
 <properties>
 <property name="canonical-fixture" value="HOME_SPEC_MODE_PRESET">
 </property>
 </properties>
 </testcase>
-<testcase name="C18 keeps the real Home keyboard path and disables motion" classname="home-wave2-state-evidence.spec.ts" time="3.987">
+<testcase name="C18 keeps the real Home keyboard path and disables motion" classname="home-wave2-state-evidence.spec.ts" time="4.316">
 <properties>
 <property name="canonical-fixture" value="HOME_SPEC_ACCESSIBILITY_SPEC">
 </property>
 </properties>
 </testcase>
-<testcase name="the canonical state sheet renders all nine production primitives" classname="home-wave2-state-evidence.spec.ts" time="1.953">
+<testcase name="the canonical state sheet renders all nine production primitives" classname="home-wave2-state-evidence.spec.ts" time="1.887">
 <properties>
 <property name="canonical-fixture" value="HOME_STATE_ALL_STATES_DESKTOP">
 </property>
