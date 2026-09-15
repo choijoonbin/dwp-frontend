@@ -423,6 +423,7 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
     });
   });
   let mode: 'SHADOW' | 'AUTHORITATIVE' = 'SHADOW';
+  let injectUnknownRenderer = true;
   let effectiveReads = 0;
   await page.route('**/api/platform/v1/widget-catalog/readiness', (route) =>
     route.fulfill({
@@ -434,6 +435,7 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
   await page.route('**/api/platform/v1/widget-catalog/effective**', (route) => {
     effectiveReads += 1;
     const catalog = widgetRegistryEffectiveCatalog(mode, 'DENY');
+    if (!injectUnknownRenderer) return route.fulfill({ json: { data: catalog } });
     const maliciousCatalog = {
       ...catalog,
       contexts: catalog.contexts.map((context) => ({
@@ -461,19 +463,34 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
 
   await page.goto('/');
   await expect(page.locator('[data-widget-runtime-state="unavailable"]')).toHaveCount(0);
+  // Classic's read surface is the W2 personal summary. Native catalog widgets are
+  // rendered in its editor, where SHADOW must preserve the existing content.
+  await page.getByRole('button', { name: 'Edit home', exact: true }).click();
   await expect(page.getByText('Live activity', { exact: true }).first()).toBeVisible();
   await expect.poll(() => effectiveReads).toBe(1);
 
   mode = 'AUTHORITATIVE';
+  injectUnknownRenderer = false;
   await page.reload();
   const unavailable = page.locator('[data-widget-runtime-state="unavailable"]');
   await expect(unavailable).toHaveCount(4);
-  await expect(page.getByRole('status', { name: 'Schedule is unavailable' })).toContainText(
-    'Your organization has disabled this widget.'
-  );
-  await expect(page.getByRole('status', { name: 'Focus now is unavailable' })).toContainText(
-    'The widget was stopped by a safety or availability control.'
-  );
+  await expect(
+    page.getByRole('status', { name: 'Schedule is unavailable', includeHidden: true })
+  ).toContainText('Your organization has disabled this widget.');
+  await expect.poll(() => effectiveReads).toBe(2);
+
+  // A renderer field makes the closed catalog contract invalid. The entire
+  // authoritative response must fail closed, rather than trust sibling reasons.
+  injectUnknownRenderer = true;
+  await page.reload();
+  await expect(unavailable).toHaveCount(4);
+  await expect(
+    page.getByRole('status', { name: 'Schedule is unavailable', includeHidden: true })
+  ).toContainText('The widget was stopped by a safety or availability control.');
+  await expect(
+    page.getByRole('status', { name: 'Focus now is unavailable', includeHidden: true })
+  ).toContainText('The widget was stopped by a safety or availability control.');
+  await expect.poll(() => effectiveReads).toBe(3);
   await expect(page.getByText(/core\.(?:workspace|work|calendar|activity)/u)).toHaveCount(0);
   await expect(page.locator('script[src^="javascript:"]')).toHaveCount(0);
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();

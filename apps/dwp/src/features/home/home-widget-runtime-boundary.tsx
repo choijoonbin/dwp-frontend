@@ -40,13 +40,22 @@ export function HomeWidgetRuntimeBoundary({
       </Box>
     );
   }
+  if (!decision.deprecated) {
+    return (
+      <Box
+        data-widget-runtime-state="available"
+        data-workspace-widget-transparent
+        sx={{ display: 'contents' }}
+      >
+        {children}
+      </Box>
+    );
+  }
   return (
-    <Stack gap={1} data-widget-runtime-state={decision.deprecated ? 'deprecated' : 'available'}>
-      {decision.deprecated && (
-        <InlineFeedback severity="warning" sx={{ py: 0 }}>
-          {t('widgetRuntime.deprecatedNotice')}
-        </InlineFeedback>
-      )}
+    <Stack gap={1} data-widget-runtime-state="deprecated" data-workspace-widget-transparent>
+      <InlineFeedback severity="warning" sx={{ py: 0 }}>
+        {t('widgetRuntime.deprecatedNotice')}
+      </InlineFeedback>
       {children}
     </Stack>
   );

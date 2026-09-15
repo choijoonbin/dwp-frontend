@@ -819,7 +819,7 @@ export default function HomePage() {
           availableWidth={homeAvailableWidth}
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
-          onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
+          onStartEditing={homePageGate.editActionAvailable ? () => beginEditing() : undefined}
           onOpenStudio={homeStudioEnabled && !editorOpen ? openHomeStudio : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onSectionsChange={updateFlowSections}
@@ -860,7 +860,7 @@ export default function HomePage() {
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
           onOpenOrganizationUpdates={() => navigate('/communications')}
-          onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
+          onStartEditing={homePageGate.editActionAvailable ? () => beginEditing() : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onWidgetsChange={setDraftWidgets}
           onLaunchApp={launchApp}

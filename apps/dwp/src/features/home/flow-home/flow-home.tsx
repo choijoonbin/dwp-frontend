@@ -303,7 +303,7 @@ export function FlowHome({
         stage.querySelectorAll<HTMLElement>('[data-workspace-widget]')
       ).map((widget) => {
         const surface = widget.querySelector<HTMLElement>(
-          '[data-workspace-widget-content] > section'
+          ':is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section'
         );
         const visibleRect = (surface ?? widget).getBoundingClientRect();
         return {
@@ -602,24 +602,26 @@ export function FlowHome({
             '& [data-workspace-widget-content]': {
               height: '100%',
             },
-            '& [data-workspace-widget-content] > section': {
-              height: '100% !important',
-              minHeight: 0,
-              bgcolor: 'var(--home-surface)',
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 'var(--flow-surface-radius)',
-              boxShadow: '0 1px 3px rgba(15,23,42,0.035)',
-            },
-            '&:not([data-flow-read-template="editing"]) [data-workspace-widget]:hover [data-workspace-widget-content] > section':
+            '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+              {
+                height: '100% !important',
+                minHeight: 0,
+                bgcolor: 'var(--home-surface)',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 'var(--flow-surface-radius)',
+                boxShadow: '0 1px 3px rgba(15,23,42,0.035)',
+              },
+            '&:not([data-flow-read-template="editing"]) [data-workspace-widget]:hover :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
               {
                 borderColor: 'rgba(49,95,213,0.28)',
               },
-            '& [data-flow-launcher-edge="true"] [data-workspace-widget-content] > section': {
-              '@media (min-width: 900px)': {
-                paddingInlineEnd: 'var(--flow-launcher-clearance, 0px)',
+            '& [data-flow-launcher-edge="true"] :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+              {
+                '@media (min-width: 900px)': {
+                  paddingInlineEnd: 'var(--flow-launcher-clearance, 0px)',
+                },
               },
-            },
             '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget="action-queue"]': {
               gridColumn: '1 / -1',
             },
@@ -653,7 +655,8 @@ export function FlowHome({
               {
                 alignSelf: 'start',
                 '& [data-workspace-widget-content]': { height: 'auto' },
-                '& [data-workspace-widget-content] > section': { height: 'auto !important' },
+                '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                  { height: 'auto !important' },
               },
             '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
               mx: '-7px',
@@ -672,15 +675,17 @@ export function FlowHome({
                 px: '0 !important',
               },
               '& [data-workspace-widget-content]': { height: editing ? '100%' : 'auto' },
-              '& [data-workspace-widget-content] > section': {
-                height: editing ? '100% !important' : 'auto !important',
-              },
+              '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                {
+                  height: editing ? '100% !important' : 'auto !important',
+                },
             },
             '@media (forced-colors: active)': {
-              '& [data-workspace-widget-content] > section': { borderColor: 'CanvasText' },
+              '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                { borderColor: 'CanvasText' },
             },
             '@media (prefers-reduced-motion: reduce)': {
-              '& [data-workspace-widget-content] > section, & [data-workspace-widget]:hover [data-workspace-widget-content] > section':
+              '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section, & [data-workspace-widget]:hover :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
                 {
                   transition: 'none',
                   transform: 'none',

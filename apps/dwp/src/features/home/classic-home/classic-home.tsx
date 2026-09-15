@@ -238,15 +238,16 @@ export function ClassicHome({
           aria-labelledby="classic-personal-flow-title"
           sx={{
             mt: { xs: 3, md: 4 },
-            '& [data-workspace-widget-surface="card"] [data-workspace-widget-content] > section': {
-              bgcolor: 'background.paper',
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 0.5,
-              overflow: 'hidden',
-              px: { xs: 1.75, md: 2 },
-              py: { xs: 1.75, md: 2 },
-            },
+            '& [data-workspace-widget-surface="card"] :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+              {
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 0.5,
+                overflow: 'hidden',
+                px: { xs: 1.75, md: 2 },
+                py: { xs: 1.75, md: 2 },
+              },
           }}
         >
           <ClassicSectionHeading
