@@ -73,9 +73,21 @@ function parseArguments(argumentsList, root) {
     values.set(name, rest.join('='));
   }
 
-  const allowed = new Set(['registry', 'evidence', 'source-root', 'implementation-root', 'write']);
+  const allowed = new Set([
+    'registry',
+    'evidence',
+    'source-root',
+    'implementation-root',
+    'allow-unsealed-implementation',
+    'write',
+  ]);
   for (const name of values.keys()) {
     if (!allowed.has(name)) throw new Error(`Unsupported option: --${name}`);
+  }
+
+  const allowUnsealedValue = values.get('allow-unsealed-implementation') ?? 'false';
+  if (!['true', 'false'].includes(allowUnsealedValue)) {
+    throw new Error('--allow-unsealed-implementation must be true or false.');
   }
 
   return {
@@ -88,6 +100,7 @@ function parseArguments(argumentsList, root) {
       ? normalizePath(root, values.get('implementation-root'))
       : root,
     outputPath: values.has('write') ? normalizePath(root, values.get('write')) : undefined,
+    allowUnsealedImplementation: allowUnsealedValue === 'true',
   };
 }
 
@@ -185,6 +198,7 @@ export function buildReferenceNormalizationReport({
   sourceRoot,
   implementationRoot,
   reportRoot = repositoryRoot,
+  allowUnsealedImplementation = false,
 }) {
   const registryHash = sha256(registryPath);
   if (evidence.sourceRegistrySha256 && evidence.sourceRegistrySha256 !== registryHash) {
@@ -260,7 +274,11 @@ export function buildReferenceNormalizationReport({
         `${sourceRecord.id} accepted-source hash differs between registry and evidence.`
       );
     }
-    if (implementationRecord.visualEvidenceSha256 !== implementationHash) {
+    const implementationManifestBinding =
+      implementationRecord.visualEvidenceSha256 === implementationHash
+        ? 'MATCH'
+        : 'MISMATCH_UNSEALED_SCREENSHOT';
+    if (implementationManifestBinding !== 'MATCH' && !allowUnsealedImplementation) {
       throw new Error(
         `${sourceRecord.id} implementation SHA-256 differs from the evidence record.`
       );
@@ -293,6 +311,8 @@ export function buildReferenceNormalizationReport({
       implementationEvidence: {
         path: stablePath(implementationRoot, implementationPath),
         sha256: implementationHash,
+        manifestSha256: implementationRecord.visualEvidenceSha256,
+        manifestBinding: implementationManifestBinding,
         dimensionsPx: implementationDimensions,
       },
       normalization: calculatePairNormalization(
@@ -304,6 +324,10 @@ export function buildReferenceNormalizationReport({
     };
   });
 
+  const unsealedImplementationCount = pairs.filter(
+    (pair) => pair.implementationEvidence.manifestBinding !== 'MATCH'
+  ).length;
+
   return {
     schemaVersion: 1,
     purpose: 'HOME_WAVE2_ACCEPTED_SOURCE_PAIRWISE_NORMALIZATION',
@@ -314,6 +338,10 @@ export function buildReferenceNormalizationReport({
       evidence: stablePath(reportRoot, evidencePath),
       evidenceSha256: sha256(evidencePath),
       acceptedSourcesReadOnly: true,
+      implementationEvidenceBinding:
+        unsealedImplementationCount === 0
+          ? 'SEALED_MANIFEST_MATCH'
+          : 'UNSEALED_SCREENSHOTS_PRESENT',
     },
     method: {
       canonicalCoordinateSystem: 'EVIDENCE_CSS_VIEWPORT',
@@ -327,6 +355,7 @@ export function buildReferenceNormalizationReport({
       registry: registry.screens.length,
       evidence: evidence.canonicalScreens.length,
       paired: pairs.length,
+      unsealedImplementation: unsealedImplementationCount,
     },
     pairs,
   };
@@ -345,6 +374,7 @@ export function runReferenceNormalization(
     sourceRoot: options.sourceRoot,
     implementationRoot: options.implementationRoot,
     reportRoot: root,
+    allowUnsealedImplementation: options.allowUnsealedImplementation,
   });
   const serialized = `${JSON.stringify(report, null, 2)}\n`;
 

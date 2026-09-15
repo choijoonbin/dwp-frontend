@@ -120,7 +120,12 @@ test('report pairs every registry record and verifies both image hashes and dime
     reportRoot: fixtureRoot,
   });
 
-  assert.deepEqual(report.counts, { registry: 1, evidence: 1, paired: 1 });
+  assert.deepEqual(report.counts, {
+    registry: 1,
+    evidence: 1,
+    paired: 1,
+    unsealedImplementation: 0,
+  });
   assert.equal(report.inputs.acceptedSourcesReadOnly, true);
   assert.deepEqual(report.pairs[0].acceptedSource.dimensionsPx, { width: 245, height: 1600 });
   assert.deepEqual(report.pairs[0].implementationEvidence.dimensionsPx, {
@@ -180,4 +185,83 @@ test('report rejects a registry that is not the one bound into the evidence reco
       }),
     /sourceRegistrySha256 differs/u
   );
+});
+
+test('unsealed review mode records a changed implementation without treating it as manifest-bound', () => {
+  const fixtureRoot = mkdtempSync(resolve(tmpdir(), 'home-wave2-normalization-'));
+  const sourceRoot = resolve(fixtureRoot, 'accepted');
+  const implementationRoot = resolve(fixtureRoot, 'implementation');
+  const sourcePath = resolve(sourceRoot, 'reference/example/screen.png');
+  const implementationPath = resolve(implementationRoot, 'evidence/example.png');
+  const registryPath = resolve(fixtureRoot, 'registry.json');
+  const evidencePath = resolve(fixtureRoot, 'evidence.json');
+  mkdirSync(dirname(sourcePath), { recursive: true });
+  mkdirSync(dirname(implementationPath), { recursive: true });
+  const sourceImage = createPngHeader(100, 200);
+  const implementationImage = createPngHeader(100, 300);
+  writeFileSync(sourcePath, sourceImage);
+  writeFileSync(implementationPath, implementationImage);
+  const registry = {
+    screens: [
+      {
+        id: 'C01',
+        family: 'CLASSIC',
+        role: 'BASE',
+        device: 'DESKTOP',
+        png: {
+          path: 'reference/example/screen.png',
+          width: 100,
+          height: 200,
+          sha256: hash(sourceImage),
+        },
+      },
+    ],
+  };
+  writeFileSync(registryPath, `${JSON.stringify(registry)}\n`);
+  const evidence = {
+    sourceRegistrySha256: hash(`${JSON.stringify(registry)}\n`),
+    canonicalScreens: [
+      {
+        id: 'C01',
+        sourcePngSha256: hash(sourceImage),
+        viewport: { width: 100, height: 100 },
+        visualEvidence: 'evidence/example.png',
+        visualEvidenceSha256: '0'.repeat(64),
+      },
+    ],
+  };
+  writeFileSync(evidencePath, `${JSON.stringify(evidence)}\n`);
+
+  assert.throws(
+    () =>
+      buildReferenceNormalizationReport({
+        registry,
+        evidence,
+        registryPath,
+        evidencePath,
+        sourceRoot,
+        implementationRoot,
+        reportRoot: fixtureRoot,
+      }),
+    /implementation SHA-256 differs/u
+  );
+
+  const report = buildReferenceNormalizationReport({
+    registry,
+    evidence,
+    registryPath,
+    evidencePath,
+    sourceRoot,
+    implementationRoot,
+    reportRoot: fixtureRoot,
+    allowUnsealedImplementation: true,
+  });
+  assert.equal(report.inputs.implementationEvidenceBinding, 'UNSEALED_SCREENSHOTS_PRESENT');
+  assert.equal(report.counts.unsealedImplementation, 1);
+  assert.equal(
+    report.pairs[0].implementationEvidence.manifestBinding,
+    'MISMATCH_UNSEALED_SCREENSHOT'
+  );
+  assert.equal(report.pairs[0].implementationEvidence.sha256, hash(implementationImage));
+  assert.equal(report.pairs[0].implementationEvidence.manifestSha256, '0'.repeat(64));
 });

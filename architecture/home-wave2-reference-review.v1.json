@@ -1,0 +1,3000 @@
+{
+  "schemaVersion": 1,
+  "schema": "architecture/home-wave2-reference-review.schema.json",
+  "purpose": "HOME_WAVE2_PER_CANONICAL_REFERENCE_REVIEW",
+  "status": "DRAFT_PENDING_REVIEW",
+  "decisionPolicy": "EVERY_LANDMARK_AND_AXIS_REQUIRES_EXPLICIT_PASS_OR_FAIL",
+  "tolerances": {
+    "desktop": {
+      "maxVerticalLandmarkDriftCss": 24,
+      "maxHorizontalLandmarkDriftCss": 24
+    },
+    "mobile": {
+      "maxVerticalLandmarkDriftCss": 16,
+      "maxHorizontalLandmarkDriftCss": 16
+    },
+    "maxHorizontalOverflowCss": 0,
+    "maxUnexplainedDocumentHeightDeltaRatio": 0.1,
+    "maxSectionOrderChanges": 0,
+    "maxMissingRequiredLandmarks": 0
+  },
+  "adaptationDefinitions": {
+    "design-system-primitives": {
+      "category": "DESIGN_SYSTEM_PRIMITIVE_SUBSTITUTION",
+      "scope": "Use maintained DWP and MUI primitives while preserving reference hierarchy, geometry, emphasis and control meaning.",
+      "rationale": "Production code must use supported components instead of reference HTML internals."
+    },
+    "runtime-data-values": {
+      "category": "RUNTIME_DATA_VALUE_VARIATION",
+      "scope": "Live names, dates and counts may vary while locale, semantic state, line budget and information density remain equivalent.",
+      "rationale": "Reference fixtures establish content intent rather than immutable enterprise records."
+    },
+    "approved-local-media": {
+      "category": "LOCAL_APPROVED_MEDIA_SUBSTITUTION",
+      "scope": "Use an approved local image with equivalent subject, crop, contrast and visual footprint when a reference asset is remote.",
+      "rationale": "Production evidence cannot depend on the reference export network hosts."
+    },
+    "accessibility-semantics": {
+      "category": "ACCESSIBILITY_ENHANCEMENT",
+      "scope": "Add focus, labels, live-region semantics and target sizing without moving or hiding required visual landmarks.",
+      "rationale": "Runtime accessibility contracts are stronger than the visual reference markup."
+    },
+    "dynamic-content-length": {
+      "category": "DYNAMIC_CONTENT_LENGTH",
+      "scope": "Document length may reflect bounded live item counts while section order, first-viewport priority and all required landmarks remain.",
+      "rationale": "Full-page height can change with governed runtime content budgets."
+    },
+    "reference-export-boundary": {
+      "category": "REFERENCE_EXPORT_BOUNDARY",
+      "scope": "Explain only canvas padding or truncation proven to come from the accepted export; it cannot excuse a missing product section.",
+      "rationale": "Accepted PNG height and pixel scale do not consistently equal a browser full-page capture."
+    },
+    "permission-guard": {
+      "category": "SECURITY_PERMISSION_GUARD",
+      "scope": "Keep unauthorized data absent while preserving the reference denial placement, unaffected regions and recovery guidance.",
+      "rationale": "Production authorization must remain fail closed."
+    }
+  },
+  "records": [
+    {
+      "id": "C01-D1440-BASE",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C02-D1280-BASE",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C03-M390-BASE",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C04-M320-BASE",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C05-BROWSER-ZOOM-200-CSS720-r01",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C06-TEXT-200-D1440-r04",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C07-LONG-EN-D1280-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C08-DARK-D1440-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C09-HIGH-CONTRAST-D1440-r04",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "OPERATIONAL_NOTICE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FEATURED_COMMUNICATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SUPPORT_AND_PERSONAL_REGIONS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C10-D1440-EMPTY-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C10-M390-EMPTY-r01",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C11-D1440-PARTIAL-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C11-M390-PARTIAL-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C12-D1440-FORBIDDEN-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary",
+        "permission-guard"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C12-M390-FORBIDDEN-r04",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary",
+        "permission-guard"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C13-D1440-STALE-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C13-M390-STALE-r03",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C14-D1440-BACKGROUND-REFRESH-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C14-D1440-INITIAL-LOADING-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C14-M390-BACKGROUND-REFRESH-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C14-M390-INITIAL-LOADING-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TARGET_STATE_REGION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "UNAFFECTED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "STATE_PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_OR_NEXT_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_CONTAINMENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C15-D1440-EDITOR-DIRTY-r01",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "EDITOR_DIRTY_INDICATOR",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "EDITED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SAVE_CANCEL_CONTROLS",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "DRAFT_PRESERVATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "EDITOR_SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CONTROL_REACHABILITY",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C15-M390-EDITOR-DIRTY-r01",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_NAVIGATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "EDITOR_DIRTY_INDICATOR",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "EDITED_CONTENT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SAVE_CANCEL_CONTROLS",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "DRAFT_PRESERVATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "EDITOR_SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CONTROL_REACHABILITY",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C16-D1440-SAVE-CONFLICT-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "UNDERLYING_COMPOSITION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CONFLICT_DIALOG",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FOCUS_CONTEXT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RESOLUTION_ACTIONS",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "DRAFT_PRESERVATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "BACKGROUND_INERTNESS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "DIALOG_VIEWPORT_FIT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RETURN_FOCUS_PATH",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C16-M390-SAVE-CONFLICT-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "UNDERLYING_COMPOSITION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CONFLICT_DIALOG",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FOCUS_CONTEXT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RESOLUTION_ACTIONS",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "DRAFT_PRESERVATION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "BACKGROUND_INERTNESS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "DIALOG_VIEWPORT_FIT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RETURN_FOCUS_PATH",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C17-MODE-PRESET",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "MODE_CHOOSER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CURRENT_AND_SELECTED_STATE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "LOCKED_SHARED_APPS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "DIRTY_AND_APPLY_STATE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "CLASSIC_FLOW_SIDE_BY_SIDE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MODE_INDEPENDENCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APPLY_RESULT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "KEYBOARD_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "C18-KEYBOARD-REDUCED-MOTION-SPEC-r02",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "SKIP_LINK",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FOCUS_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "VISIBLE_FOCUS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "REDUCED_MOTION_SCOPE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "SHELL_MAIN_DIALOG_COVERAGE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "KEYBOARD_REACHABILITY",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TOUCH_TARGET_COVERAGE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "FORCED_COLORS_SEMANTICS",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "CLASSIC-STATE-COMPONENT-SPEC-A",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "STATE_VARIANT_OVERVIEW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SEMANTIC_STATUS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PROVENANCE",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "RECOVERY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "ALL_REQUIRED_VARIANTS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRESERVE_VERSUS_BLOCK_RULES",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "TRANSITION_RULES",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "LOCALIZED_COPY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "FLOW-BASE-DESKTOP-FINAL",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "COLLAPSED_RAIL_OR_MOBILE_SHELL",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIORITY_HERO",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "EXECUTION_SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "THREE_COLUMN_OR_SINGLE_COLUMN_LAYOUT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "FLOW-BASE-MOBILE-FINAL",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "COLLAPSED_RAIL_OR_MOBILE_SHELL",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIORITY_HERO",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIMARY_ACTION",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GRID_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "EXECUTION_SECTION_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "THREE_COLUMN_OR_SINGLE_COLUMN_LAYOUT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "FLOW-EDITOR-DESKTOP",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "STUDIO_SHELL",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CATALOG_PANEL",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "CANVAS_PREVIEW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "INSPECTOR_PANEL",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "TWELVE_WIDGET_CATALOG",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "LAYOUT_CONTRACT",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SAVE_RESET_RESTORE_CONTROLS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "BOUNDED_STUDIO_SCROLL",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "FLOW-PERSONALIZED-DESKTOP-FINAL",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "COLLAPSED_RAIL_OR_MOBILE_SHELL",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIORITY_HERO",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PERSONALIZED_WIDGET_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "LOADED_SUCCESS_OR_EXPLICIT_STATE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "PERSONALIZED_WIDGET_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PROVIDER_STATE_SEMANTICS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    },
+    {
+      "id": "FLOW-PERSONALIZED-MOBILE-FINAL",
+      "reviewedArtifacts": {
+        "sourcePngSha256": null,
+        "implementationEvidenceSha256": null
+      },
+      "reviewer": {
+        "name": null,
+        "reviewedAt": null
+      },
+      "allowedAdaptationIds": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "accessibility-semantics",
+        "approved-local-media",
+        "dynamic-content-length",
+        "reference-export-boundary"
+      ],
+      "appliedAdaptationIds": [],
+      "firstViewport": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "maxVerticalLandmarkDriftCss": null,
+          "maxHorizontalLandmarkDriftCss": null,
+          "horizontalOverflowCss": null
+        },
+        "landmarks": [
+          {
+            "id": "COLLAPSED_RAIL_OR_MOBILE_SHELL",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PRIORITY_HERO",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PERSONALIZED_WIDGET_ENTRY",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "LOADED_SUCCESS_OR_EXPLICIT_STATE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "fullDocument": {
+        "decision": "PENDING",
+        "finding": null,
+        "measurements": {
+          "unexplainedHeightDeltaRatio": null,
+          "sectionOrderChanges": null,
+          "missingRequiredLandmarks": null,
+          "heightDeltaAdaptationId": null
+        },
+        "landmarks": [
+          {
+            "id": "PERSONALIZED_WIDGET_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "PROVIDER_STATE_SEMANTICS",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "APP_GROUP_ORDER",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "SINGLE_DOCUMENT_FLOW",
+            "decision": "PENDING",
+            "finding": null
+          },
+          {
+            "id": "MOBILE_NAV_CLEARANCE",
+            "decision": "PENDING",
+            "finding": null
+          }
+        ]
+      },
+      "overallDecision": "PENDING",
+      "overallFinding": null
+    }
+  ]
+}

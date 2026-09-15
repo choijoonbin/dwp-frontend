@@ -27,6 +27,9 @@ Before calculating geometry, the script requires a one-to-one ID set, reads dime
 PNG IHDR header, and verifies both source and implementation hashes. A missing record, duplicate ID,
 dimension mismatch, or hash mismatch stops the run. The script only writes when `--write` is passed,
 and that output must remain an unsealed review artifact until the associated screenshots are final.
+A normal run requires each implementation hash to match the sealed evidence manifest. During a
+redesign review, pass `--allow-unsealed-implementation=true`; the report then marks each changed
+screenshot as `MISMATCH_UNSEALED_SCREENSHOT` and remains ineligible for sealing.
 
 ## Canonical coordinate system
 
@@ -69,6 +72,32 @@ The report also records a top-anchored cover transform for a named semantic regi
 only after the reviewer names the region and confirms that the crop excludes no required content.
 It must never be used as whole-page acceptance evidence.
 
+## Decision tolerances
+
+The reviewer input follows `architecture/home-wave2-reference-review.schema.json`. Each canonical
+ID has separate first-viewport and full-document landmark decisions plus an overall decision. A
+review stays `PENDING` until every landmark is explicitly `PASS` or `FAIL`; changing only an axis or
+overall label is rejected.
+
+A PASS must satisfy all of these limits:
+
+- maximum measured landmark drift: 24 CSS pixels on desktop and 16 CSS pixels on mobile, on each
+  axis;
+- horizontal overflow: 0 CSS pixels;
+- missing required landmarks: 0;
+- section-order changes: 0;
+- unexplained normalized document-height delta: at most 0.10.
+
+If the raw normalized height delta exceeds 0.10, a PASS also requires a named applied adaptation
+from that canonical ID's allowlist. The reviewer must reduce the _unexplained_ delta only after
+documenting the exact dynamic-content or reference-export difference. An adaptation cannot excuse a
+missing landmark, a changed order, overflow, or first-viewport drift above the limit.
+
+Final PASS or FAIL records require findings for every landmark and both axes, reviewer identity and
+time, and the exact source and implementation hashes reviewed. A PASS over a screenshot whose hash
+has not yet been updated in the evidence manifest is recorded as `REVIEW_PASS_UNSEALED_INPUTS` and
+remains ineligible for sealing.
+
 ## Semantic landmark review
 
 Geometry is necessary but insufficient. The reviewer records findings for these landmarks where
@@ -93,6 +122,7 @@ From the frontend repository root:
 ```bash
 node scripts/home-wave2-reference-normalization.mjs \
   --source-root=/absolute/path/to/dwp-home-implementation-readiness-2026-09-15 \
+  --allow-unsealed-implementation=true \
   --write=/tmp/home-wave2-reference-normalization.json
 ```
 
@@ -101,3 +131,25 @@ paths and hashes, both actual PNG dimensions, the evidence CSS viewport, first-v
 contain/cover geometry, normalized full heights, and unmatched tails. Regenerate it after any
 implementation screenshot changes and before evidence sealing; do not edit the accepted registry,
 accepted PNGs, or sealed evidence manifest to make a comparison pass.
+
+Initialize the reviewer record once, then build the durable pairwise report and an optional local
+contact sheet:
+
+```bash
+node scripts/home-wave2-reference-review.mjs \
+  --normalization=/tmp/home-wave2-reference-normalization.json \
+  --init-review=architecture/home-wave2-reference-review.v1.json
+
+node scripts/home-wave2-reference-review.mjs \
+  --normalization=/tmp/home-wave2-reference-normalization.json \
+  --review=architecture/home-wave2-reference-review.v1.json \
+  --write=architecture/home-wave2-reference-comparison.v1.json \
+  --contact-sheet=/tmp/home-wave2-reference-contact-sheet.html \
+  --source-root=/absolute/path/to/dwp-home-implementation-readiness-2026-09-15
+```
+
+The initializer refuses to overwrite reviewer work. The HTML contact sheet references the two input
+files directly and shows a width-normalized first-viewport crop and full-document pair; it creates no
+derived bitmap and changes neither input. After every record is reviewed, rerun with
+`--require-reviewed=true`. A final seal is eligible only when all 33 records PASS and all current
+implementation hashes match the evidence manifest.
