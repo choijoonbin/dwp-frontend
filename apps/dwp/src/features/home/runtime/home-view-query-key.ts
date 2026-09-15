@@ -28,9 +28,9 @@ export function homeViewQueryKey(scope: HomeViewQueryScope) {
 export function requireHomeViewMode<T extends Partial<Pick<HomeView, 'modeKey'>>>(
   view: T,
   expectedMode: HomeExperienceVariant,
-  allowLegacyClassic = false
+  allowLegacyMissingMode = false
 ): T & { modeKey: HomeExperienceVariant } {
-  const resolvedMode = view.modeKey ?? (allowLegacyClassic ? 'CLASSIC' : undefined);
+  const resolvedMode = view.modeKey ?? (allowLegacyMissingMode ? expectedMode : undefined);
   if (resolvedMode !== expectedMode) {
     throw new Error(
       `Home view mutation returned ${resolvedMode ?? 'no mode'}, not requested mode ${expectedMode}.`

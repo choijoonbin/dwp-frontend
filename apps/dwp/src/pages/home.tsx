@@ -289,7 +289,7 @@ export default function HomePage() {
   );
   const homeModeKey = resolveModeIsolatedHomeExperience(
     homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
-    viewStoreEnabled && modeScopedHomeViewsSupported
+    viewStoreEnabled
   );
   const flowHomeEnabled = homeModeKey === 'FLOW_V1';
   const activeHomeViewQueryKey = useMemo(
@@ -322,8 +322,7 @@ export default function HomePage() {
   });
   const homeViewsQuery = useQuery({
     queryKey: activeHomeViewQueryKey,
-    queryFn: () =>
-      getHomeViews('workspace-home', modeScopedHomeViewsSupported ? homeModeKey : undefined),
+    queryFn: () => getHomeViews('workspace-home', homeModeKey, modeScopedHomeViewsSupported),
     enabled: homeExperienceQuery.isSuccess && activeStoreUsesViews,
     staleTime: 30_000,
     retry: homeQueryRetry,

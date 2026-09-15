@@ -41,11 +41,13 @@ describe('home personalization API boundary', () => {
     vi.unstubAllGlobals();
   });
 
-  it('keeps the default Classic read compatible with pre-Wave 1 servers', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
+  it('omits mode for a legacy read and preserves the tenant effective mode', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse([{ viewId: 'legacy-flow-view' }]));
     vi.stubGlobal('fetch', fetchMock);
 
-    await getHomeViews('workspace-home');
+    await expect(getHomeViews('workspace-home', 'FLOW_V1', false)).resolves.toEqual([
+      { viewId: 'legacy-flow-view', modeKey: 'FLOW_V1' },
+    ]);
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/platform/v1/home-views?surfaceKey=workspace-home'
@@ -56,7 +58,7 @@ describe('home personalization API boundary', () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
     vi.stubGlobal('fetch', fetchMock);
 
-    await getHomeViews('workspace-home', 'CLASSIC');
+    await getHomeViews('workspace-home', 'CLASSIC', true);
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/platform/v1/home-views?surfaceKey=workspace-home&modeKey=CLASSIC'
@@ -67,7 +69,7 @@ describe('home personalization API boundary', () => {
     const flowFetch = vi.fn().mockResolvedValue(jsonResponse([]));
     vi.stubGlobal('fetch', flowFetch);
 
-    await getHomeViews('workspace-home', 'FLOW_V1');
+    await getHomeViews('workspace-home', 'FLOW_V1', true);
 
     expect(flowFetch.mock.calls[0]?.[0]).toBe(
       '/api/platform/v1/home-views?surfaceKey=workspace-home&modeKey=FLOW_V1'
@@ -82,22 +84,24 @@ describe('home personalization API boundary', () => {
       ])
     );
     vi.stubGlobal('fetch', mismatchedFetch);
-    await expect(getHomeViews('workspace-home', 'FLOW_V1')).rejects.toThrow(
+    await expect(getHomeViews('workspace-home', 'FLOW_V1', true)).rejects.toThrow(
       /belongs to CLASSIC, not requested mode FLOW_V1/u
     );
   });
 
-  it('maps a pre-mode response only to Classic for rolling compatibility', async () => {
+  it('maps a pre-mode response to the effective mode only on the legacy bridge', async () => {
     const classicFetch = vi.fn().mockResolvedValue(jsonResponse([{ viewId: 'legacy-view' }]));
     vi.stubGlobal('fetch', classicFetch);
 
-    await expect(getHomeViews('workspace-home', 'CLASSIC')).resolves.toEqual([
+    await expect(getHomeViews('workspace-home', 'CLASSIC', false)).resolves.toEqual([
       { viewId: 'legacy-view', modeKey: 'CLASSIC' },
     ]);
 
-    const flowFetch = vi.fn().mockResolvedValue(jsonResponse([{ viewId: 'legacy-view' }]));
-    vi.stubGlobal('fetch', flowFetch);
-    await expect(getHomeViews('workspace-home', 'FLOW_V1')).rejects.toThrow(/belongs to CLASSIC/u);
+    const scopedFetch = vi.fn().mockResolvedValue(jsonResponse([{ viewId: 'invalid-view' }]));
+    vi.stubGlobal('fetch', scopedFetch);
+    await expect(getHomeViews('workspace-home', 'FLOW_V1', true)).rejects.toThrow(
+      /belongs to no mode/u
+    );
   });
 
   it('creates a view through a retry-safe command', async () => {

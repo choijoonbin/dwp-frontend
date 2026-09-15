@@ -17,12 +17,12 @@ export function activeHomeStoreUsesViews(
 
 /**
  * The legacy preference row predates Home modes and is the Classic rollback
- * source only. Flow becomes active once the mode-isolated Views store is ready,
- * so it can never overwrite or interpret the Classic legacy row.
+ * source only. A pre-Wave 1 VIEWS store is already tied to the tenant's effective
+ * mode, while the LEGACY store must never be interpreted as a Flow layout.
  */
 export function resolveModeIsolatedHomeExperience(
   configuredVariant: HomeExperienceVariant,
-  modeScopedViewsReady: boolean
+  viewsStoreReady: boolean
 ): HomeExperienceVariant {
-  return configuredVariant === 'FLOW_V1' && !modeScopedViewsReady ? 'CLASSIC' : configuredVariant;
+  return configuredVariant === 'FLOW_V1' && !viewsStoreReady ? 'CLASSIC' : configuredVariant;
 }

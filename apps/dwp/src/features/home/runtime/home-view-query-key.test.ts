@@ -37,9 +37,9 @@ describe('Home view query identity', () => {
     );
   });
 
-  it('only treats a missing mutation mode as Classic on the explicit legacy bridge', () => {
+  it('uses the tenant effective mode for a missing mode on the explicit legacy bridge', () => {
     expect(requireHomeViewMode({}, 'CLASSIC', true)).toEqual({ modeKey: 'CLASSIC' });
+    expect(requireHomeViewMode({}, 'FLOW_V1', true)).toEqual({ modeKey: 'FLOW_V1' });
     expect(() => requireHomeViewMode({}, 'CLASSIC')).toThrow(/returned no mode/u);
-    expect(() => requireHomeViewMode({}, 'FLOW_V1', true)).toThrow(/returned CLASSIC/u);
   });
 });

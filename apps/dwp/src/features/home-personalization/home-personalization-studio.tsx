@@ -134,7 +134,7 @@ export function HomePersonalizationStudio({
 
   const viewsQuery = useQuery({
     queryKey: viewQueryKey,
-    queryFn: () => getHomeViews('workspace-home', modeScopedViews ? modeKey : undefined),
+    queryFn: () => getHomeViews('workspace-home', modeKey, modeScopedViews),
     enabled: open,
     staleTime: 30_000,
     retry: 1,

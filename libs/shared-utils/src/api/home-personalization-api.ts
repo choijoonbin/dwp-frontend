@@ -191,20 +191,22 @@ export function createHomeCommandKey(command: string): string {
 }
 
 export async function getHomeViews(
-  surfaceKey: HomeSurfaceKey = 'workspace-home',
-  modeKey?: HomeExperienceVariant
+  surfaceKey: HomeSurfaceKey,
+  effectiveMode: HomeExperienceVariant,
+  modeScoped: boolean
 ): Promise<HomeView[]> {
   const query = new URLSearchParams({ surfaceKey });
-  if (modeKey) query.set('modeKey', modeKey);
+  if (modeScoped) query.set('modeKey', effectiveMode);
   const response = await axiosInstance.get<
     ApiResponse<Array<Omit<HomeView, 'modeKey'> & { modeKey?: HomeExperienceVariant }>>
   >(`${VIEW_BASE}?${query.toString()}`);
-  const requestedMode = modeKey ?? 'CLASSIC';
   return response.data.data.map((view) => {
-    const resolvedMode = view.modeKey ?? 'CLASSIC';
-    if (resolvedMode !== requestedMode) {
+    // Pre-Wave 1 responses omit modeKey. Their unscoped workspace-home row
+    // belongs to the tenant's effective mode supplied by Home Experience.
+    const resolvedMode = view.modeKey ?? (modeScoped ? undefined : effectiveMode);
+    if (resolvedMode !== effectiveMode) {
       throw new Error(
-        `Home view ${view.viewId} belongs to ${resolvedMode}, not requested mode ${requestedMode}.`
+        `Home view ${view.viewId} belongs to ${resolvedMode ?? 'no mode'}, not requested mode ${effectiveMode}.`
       );
     }
     return { ...view, modeKey: resolvedMode };

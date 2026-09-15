@@ -48,7 +48,7 @@ describe('home personalization store capabilities', () => {
     expect(resolveModeIsolatedHomeExperience('CLASSIC', true)).toBe('CLASSIC');
   });
 
-  it('only activates Flow when the mode-isolated Views store is ready', () => {
+  it('keeps Flow off the Classic legacy row but preserves a pre-Wave 1 Views tenant mode', () => {
     expect(resolveModeIsolatedHomeExperience('FLOW_V1', false)).toBe('CLASSIC');
     expect(resolveModeIsolatedHomeExperience('FLOW_V1', true)).toBe('FLOW_V1');
   });
