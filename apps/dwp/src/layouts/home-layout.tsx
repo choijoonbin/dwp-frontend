@@ -20,7 +20,9 @@ import {
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { getHomeExperience, useAuth, usePermissions } from '@dwp-frontend/shared-utils';
+import { getHomeExperience } from '@dwp-frontend/shared-utils/api/home-experience-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
