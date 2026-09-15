@@ -56,7 +56,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     analyticsKey: 'home.command-rail',
     runtime: 'NATIVE',
     lifecycle: 'ACTIVE',
-    policyClass: 'PERSONAL',
+    policyClass: 'GOVERNED',
     canHide: true,
     defaultSize: 'large',
     allowedSizes: ['large', 'full'],
@@ -188,10 +188,10 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
   {
     key: 'focus-balance',
     manifestVersion: 1,
-    ownerProduct: 'core.calendar',
-    sourceAppResourceKey: 'APP.CALENDAR',
-    contributorAppResourceKeys: ['APP.CALENDAR'],
-    dataSource: 'DWP_CALENDAR',
+    ownerProduct: 'core.work',
+    sourceAppResourceKey: 'APP.WORK',
+    contributorAppResourceKeys: ['APP.WORK'],
+    dataSource: 'DWP_WORKSPACE',
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -206,7 +206,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     allowedHeights: ['short', 'standard'],
     configuration: null,
     recipientContextBinding: true,
-    shareableAsPreset: false,
+    shareableAsPreset: true,
   },
   {
     key: 'meeting-load',
@@ -229,7 +229,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     allowedHeights: ['short', 'standard'],
     configuration: null,
     recipientContextBinding: true,
-    shareableAsPreset: false,
+    shareableAsPreset: true,
   },
 ];
 

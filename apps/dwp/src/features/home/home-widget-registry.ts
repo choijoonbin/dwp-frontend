@@ -25,6 +25,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 import type { WorkspaceWidgetLifecycle } from '../../components/workspace-composer/workspace-widget-catalog';
+import type { HomeWidgetRuntimeDecisions } from './runtime/widget-registry-runtime';
 
 export const HOME_OVERVIEW_FRESHNESS_SECONDS = 30;
 
@@ -131,13 +132,16 @@ function orderedRegistry(
 
 export function defaultHomeWidgets(
   registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS,
-  profile: HomeAudienceProfile = 'MEMBER'
+  profile: HomeAudienceProfile = 'MEMBER',
+  runtimeDecisions?: HomeWidgetRuntimeDecisions
 ): HomeWidgetPreference[] {
   return defaultWorkspaceWidgets(
     orderedRegistry(registeredOrder, profile).filter((widget) => {
       const definition = workspaceWidgetCatalogDefinition(widget.key);
       return Boolean(
-        definition && homeWidgetLifecyclePolicy(definition.lifecycle).allowNewPlacement
+        definition &&
+        homeWidgetLifecyclePolicy(definition.lifecycle).allowNewPlacement &&
+        (runtimeDecisions?.[widget.key].canAdd ?? true)
       );
     })
   );
@@ -146,7 +150,8 @@ export function defaultHomeWidgets(
 export function reconcileHomeWidgets(
   value: unknown,
   registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS,
-  profile: HomeAudienceProfile = 'MEMBER'
+  profile: HomeAudienceProfile = 'MEMBER',
+  runtimeDecisions?: HomeWidgetRuntimeDecisions
 ): HomeWidgetPreference[] {
   const persistedKeys = new Set<HomeWidgetKey>();
   if (Array.isArray(value)) {
@@ -160,7 +165,10 @@ export function reconcileHomeWidgets(
     const definition = workspaceWidgetCatalogDefinition(widget.key);
     if (!definition) return false;
     const policy = homeWidgetLifecyclePolicy(definition.lifecycle);
-    return policy.allowNewPlacement || (policy.renderExisting && persistedKeys.has(widget.key));
+    const runtimeDecision = runtimeDecisions?.[widget.key];
+    const allowNewPlacement = policy.allowNewPlacement && (runtimeDecision?.canAdd ?? true);
+    const preserveExisting = policy.renderExisting && persistedKeys.has(widget.key);
+    return allowNewPlacement || preserveExisting;
   });
   return reconcileWorkspaceWidgets(value, registry);
 }
@@ -168,10 +176,16 @@ export function reconcileHomeWidgets(
 export function setHomeWidgetVisibility(
   widgets: readonly HomeWidgetPreference[],
   widgetKey: HomeWidgetKey,
-  visible: boolean
+  visible: boolean,
+  runtimeDecisions?: HomeWidgetRuntimeDecisions
 ): HomeWidgetPreference[] {
   const definition = workspaceWidgetCatalogDefinition(widgetKey);
-  if (visible && (!definition || !homeWidgetLifecyclePolicy(definition.lifecycle).allowRestore)) {
+  if (
+    visible &&
+    (!definition ||
+      !homeWidgetLifecyclePolicy(definition.lifecycle).allowRestore ||
+      runtimeDecisions?.[widgetKey].canRestore === false)
+  ) {
     return [...widgets];
   }
   return setWorkspaceWidgetVisibility(widgets, HOME_WIDGET_REGISTRY, widgetKey, visible);

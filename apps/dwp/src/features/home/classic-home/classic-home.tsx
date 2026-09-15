@@ -17,6 +17,7 @@ import type {
   HomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 import type { GovernedWorkspaceWidget } from '../../../components/workspace-composer/workspace-widget-canvas';
+import type { HomeWidgetRuntimeDecisions } from '../runtime/widget-registry-runtime';
 import type {
   HomeAppDefinition,
   HomeAppGroup,
@@ -36,6 +37,7 @@ type ClassicHomeProps = {
   appGroups: readonly HomeAppGroup[];
   appLayout: LaunchpadLayout;
   widgets: readonly HomeWidgetPreference[];
+  widgetRuntimeDecisions: HomeWidgetRuntimeDecisions;
   governedWidgets: readonly GovernedWorkspaceWidget[];
   overview?: HomeOverview;
   overviewLoading: boolean;
@@ -71,6 +73,7 @@ export function ClassicHome({
   appGroups,
   appLayout,
   widgets,
+  widgetRuntimeDecisions,
   governedWidgets,
   overview,
   overviewLoading,
@@ -174,6 +177,8 @@ export function ClassicHome({
                 widgetKey={widgetKey}
                 size={size}
                 height={height}
+                runtimeDecision={widgetRuntimeDecisions[widgetKey]}
+                label={t(`widgets.registry.${widgetKey}.label`)}
                 overview={overview}
                 loading={overviewLoading}
                 fetching={overviewFetching}

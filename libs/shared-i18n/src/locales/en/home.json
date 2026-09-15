@@ -1075,5 +1075,20 @@
       "retry": "Try again",
       "empty": "There is no recent activity"
     }
+  },
+  "widgetRuntime": {
+    "unavailableLabel": "{{label}} is unavailable",
+    "unavailableTitle": "This widget is unavailable",
+    "deprecatedNotice": "This placed widget is deprecated. It remains readable, but it cannot be newly added or restored.",
+    "reasons": {
+      "NOT_AVAILABLE": "The registered version is no longer available.",
+      "DISABLED_BY_ORGANIZATION": "Your organization has disabled this widget.",
+      "APP_ACCESS_REQUIRED": "Access to the source app is required.",
+      "INCOMPATIBLE": "This widget is incompatible with the current Home host.",
+      "TEMPORARILY_UNAVAILABLE": "The widget was stopped by a safety or availability control.",
+      "DEPRECATED": "This widget is deprecated.",
+      "AVAILABLE": "The widget is available.",
+      "ALREADY_ADDED": "The widget is already on Home."
+    }
   }
 }

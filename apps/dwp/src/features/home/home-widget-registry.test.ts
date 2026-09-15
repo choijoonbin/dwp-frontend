@@ -8,6 +8,7 @@ import {
   setHomeWidgetVisibility,
 } from './home-widget-registry';
 import { reorderWorkspaceWidgets } from '../../components/workspace-composer/workspace-composer-model';
+import { staticHomeWidgetRuntimeDecisions } from './runtime/widget-registry-runtime';
 
 describe('home widget registry', () => {
   it('fails closed for blocked lifecycle and preserves deprecated instances without new placement', () => {
@@ -176,5 +177,46 @@ describe('home widget registry', () => {
         height: 'standard',
       },
     ]);
+  });
+
+  it('keeps deprecated and unavailable instances only when already placed', () => {
+    const staticDecisions = staticHomeWidgetRuntimeDecisions();
+    const decisions = {
+      ...staticDecisions,
+      focus: {
+        ...staticDecisions.focus,
+        deprecated: true,
+        canAdd: false,
+        canRestore: false,
+        publicReason: 'DEPRECATED' as const,
+      },
+      activity: {
+        ...staticDecisions.activity,
+        render: 'UNAVAILABLE' as const,
+        canAdd: false,
+        canRestore: false,
+        publicReason: 'TEMPORARILY_UNAVAILABLE' as const,
+      },
+    };
+
+    expect(
+      defaultHomeWidgets(undefined, 'MEMBER', decisions).map(({ widgetKey }) => widgetKey)
+    ).not.toContain('focus');
+    expect(
+      defaultHomeWidgets(undefined, 'MEMBER', decisions).map(({ widgetKey }) => widgetKey)
+    ).not.toContain('activity');
+    const persisted = reconcileHomeWidgets(
+      [
+        { widgetKey: 'focus', visible: false },
+        { widgetKey: 'activity', visible: true },
+      ],
+      undefined,
+      'MEMBER',
+      decisions
+    );
+    expect(persisted.map(({ widgetKey }) => widgetKey)).toEqual(
+      expect.arrayContaining(['focus', 'activity'])
+    );
+    expect(setHomeWidgetVisibility(persisted, 'focus', true, decisions)).toEqual(persisted);
   });
 });
