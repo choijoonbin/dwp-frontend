@@ -108,6 +108,20 @@ export type HomeWidgetRuntimeDecision = Readonly<{
 
 export type HomeWidgetRuntimeDecisions = Readonly<Record<HomeWidgetKey, HomeWidgetRuntimeDecision>>;
 
+export type HomeWidgetShadowObservationStatus =
+  'MATCH' | 'DRIFT' | 'INVALID' | 'PENDING' | 'INACTIVE';
+
+export type HomeWidgetShadowObservation = Readonly<{
+  status: HomeWidgetShadowObservationStatus;
+  mismatchCount: number;
+  decisionRevision: string | null;
+  mismatches: readonly Readonly<{
+    widgetKey: HomeWidgetKey;
+    observedRender: HomeWidgetRuntimeDecision['render'];
+    observedReason: WidgetPublicReasonCode;
+  }>[];
+}>;
+
 const PUBLIC_REASON_CODES = new Set<WidgetPublicReasonCode>([
   'NOT_AVAILABLE',
   'DISABLED_BY_ORGANIZATION',
@@ -259,11 +273,14 @@ function isCatalogContext(
   );
 }
 
-function isAuthoritativeCatalog(value: unknown): value is EffectiveWidgetCatalog {
+function isCatalogForMode(
+  value: unknown,
+  expectedMode: 'SHADOW' | 'AUTHORITATIVE'
+): value is EffectiveWidgetCatalog {
   if (!hasExactKeys(value, CATALOG_KEYS)) return false;
   if (
     value.schemaVersion !== 1 ||
-    value.mode !== 'AUTHORITATIVE' ||
+    value.mode !== expectedMode ||
     typeof value.catalogRevision !== 'string' ||
     !value.catalogRevision ||
     typeof value.bindingCatalogRevision !== 'string' ||
@@ -278,7 +295,7 @@ function isAuthoritativeCatalog(value: unknown): value is EffectiveWidgetCatalog
     return false;
   }
   const host = value.hostContext;
-  return (
+  const validHost =
     host.surfaceKey === 'workspace-home' &&
     (host.resolvedHostMode === 'CLASSIC' || host.resolvedHostMode === 'FLOW') &&
     Number.isSafeInteger(host.homeExperienceVersion) &&
@@ -290,8 +307,24 @@ function isAuthoritativeCatalog(value: unknown): value is EffectiveWidgetCatalog
     Boolean(host.hostConfigurationRevision) &&
     Number.isSafeInteger(host.hostCapabilityVersion) &&
     typeof host.decisionRevision === 'string' &&
-    Boolean(host.decisionRevision)
-  );
+    Boolean(host.decisionRevision);
+  if (!validHost) return false;
+  const seenContexts = new Set<WidgetPlacementContext>();
+  return value.contexts.every((context) => {
+    const placementContext = (context as { placementContext?: unknown }).placementContext;
+    if (
+      !['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'FLOW_GOVERNED'].includes(
+        placementContext as string
+      ) ||
+      seenContexts.has(placementContext as WidgetPlacementContext) ||
+      !isCatalogContext(context, placementContext as WidgetPlacementContext) ||
+      !context.items.every(isEffectiveItem)
+    ) {
+      return false;
+    }
+    seenContexts.add(placementContext as WidgetPlacementContext);
+    return true;
+  });
 }
 
 function validateResolvedItem(
@@ -352,7 +385,7 @@ export function resolveHomeWidgetRuntimeDecisions(
   catalog: EffectiveWidgetCatalog | null | undefined
 ): HomeWidgetRuntimeDecisions {
   if (connection.runtimeSource !== 'AUTHORITATIVE') return staticHomeWidgetRuntimeDecisions();
-  if (!isAuthoritativeCatalog(catalog)) {
+  if (!isCatalogForMode(catalog, 'AUTHORITATIVE')) {
     return Object.fromEntries(
       NATIVE_HOME_WIDGET_BINDINGS.map((binding) => [
         binding.legacyWidgetKey,
@@ -360,14 +393,10 @@ export function resolveHomeWidgetRuntimeDecisions(
       ])
     ) as HomeWidgetRuntimeDecisions;
   }
-  if (!Array.isArray(catalog.contexts)) {
-    return Object.fromEntries(
-      NATIVE_HOME_WIDGET_BINDINGS.map((binding) => [
-        binding.legacyWidgetKey,
-        unavailable(binding.legacyWidgetKey),
-      ])
-    ) as HomeWidgetRuntimeDecisions;
-  }
+  return resolveValidatedCatalog(catalog);
+}
+
+function resolveValidatedCatalog(catalog: EffectiveWidgetCatalog): HomeWidgetRuntimeDecisions {
   return Object.fromEntries(
     NATIVE_HOME_WIDGET_BINDINGS.map((binding) => {
       const placementContext = expectedContext(catalog, binding);
@@ -406,4 +435,48 @@ export function resolveHomeWidgetRuntimeDecisions(
       ];
     })
   ) as HomeWidgetRuntimeDecisions;
+}
+
+/**
+ * Compares a valid SHADOW projection with the immutable native baseline. The result is
+ * diagnostic evidence only: placement mutation flags are intentionally excluded and this
+ * function never supplies renderer decisions to the Home runtime.
+ */
+export function observeHomeWidgetShadow(
+  connection: WidgetRegistryConnection,
+  catalog: EffectiveWidgetCatalog | null | undefined
+): HomeWidgetShadowObservation {
+  if (!connection.observeShadow) {
+    return { status: 'INACTIVE', mismatchCount: 0, decisionRevision: null, mismatches: [] };
+  }
+  if (catalog === undefined) {
+    return { status: 'PENDING', mismatchCount: 0, decisionRevision: null, mismatches: [] };
+  }
+  if (!isCatalogForMode(catalog, 'SHADOW')) {
+    return { status: 'INVALID', mismatchCount: 0, decisionRevision: null, mismatches: [] };
+  }
+
+  const observed = resolveValidatedCatalog(catalog);
+  const mismatches: Array<HomeWidgetShadowObservation['mismatches'][number]> = [];
+  NATIVE_HOME_WIDGET_BINDINGS.forEach((binding) => {
+    const decision = observed[binding.legacyWidgetKey];
+    const matchesStaticBaseline =
+      decision.render === 'NATIVE' &&
+      decision.rendererKey === binding.rendererKey &&
+      !decision.deprecated &&
+      (decision.publicReason === 'AVAILABLE' || decision.publicReason === 'ALREADY_ADDED');
+    if (!matchesStaticBaseline) {
+      mismatches.push({
+        widgetKey: binding.legacyWidgetKey,
+        observedRender: decision.render,
+        observedReason: decision.publicReason,
+      });
+    }
+  });
+  return {
+    status: mismatches.length === 0 ? 'MATCH' : 'DRIFT',
+    mismatchCount: mismatches.length,
+    decisionRevision: catalog.hostContext.decisionRevision,
+    mismatches,
+  };
 }

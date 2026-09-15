@@ -237,10 +237,8 @@ export default function HomePage() {
     staleTime: 60_000,
     retry: 1,
   });
-  const widgetRuntimeDecisions = useHomeWidgetRegistryRuntime(
-    auth.user?.tenantId,
-    auth.user?.userId
-  );
+  const { decisions: widgetRuntimeDecisions, shadowObservation: widgetShadowObservation } =
+    useHomeWidgetRegistryRuntime(auth.user?.tenantId, auth.user?.userId);
   const launchpadCatalog = useMemo(
     () =>
       resolveHomeLaunchpadCatalog(
@@ -962,6 +960,9 @@ export default function HomePage() {
   return (
     <Box
       data-home-assistant-rail={homeAssistantAvailable ? 'header' : 'none'}
+      data-home-widget-shadow-status={widgetShadowObservation.status}
+      data-home-widget-shadow-mismatch-count={widgetShadowObservation.mismatchCount}
+      data-home-widget-shadow-decision-revision={widgetShadowObservation.decisionRevision ?? 'none'}
       sx={{
         minHeight: 0,
         flex: '1 1 auto',

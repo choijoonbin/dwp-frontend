@@ -5,6 +5,7 @@ import firstPartyFixture from '../../../../../../architecture/widget-registry-na
 import {
   homeWidgetRegistryEffectiveQueryKey,
   NATIVE_HOME_WIDGET_BINDINGS,
+  observeHomeWidgetShadow,
   resolveHomeWidgetRuntimeDecisions,
 } from './widget-registry-runtime';
 
@@ -183,6 +184,91 @@ describe('native renderer allowlist', () => {
     expect(
       firstPartyFixture.fixtures.every(({ manifest }) => manifest.renderer.kind === 'NATIVE')
     ).toBe(true);
+  });
+});
+
+describe('shadow drift observation', () => {
+  const shadowConnection = resolveWidgetRegistryConnection(readiness());
+
+  it('reports inactive, pending, and invalid observations without changing static decisions', () => {
+    expect(observeHomeWidgetShadow(resolveWidgetRegistryConnection(undefined), undefined)).toEqual({
+      status: 'INACTIVE',
+      mismatchCount: 0,
+      decisionRevision: null,
+      mismatches: [],
+    });
+    expect(observeHomeWidgetShadow(shadowConnection, undefined).status).toBe('PENDING');
+    expect(observeHomeWidgetShadow(shadowConnection, null).status).toBe('INVALID');
+    expect(observeHomeWidgetShadow(shadowConnection, catalog()).status).toBe('INVALID');
+    expect(resolveHomeWidgetRuntimeDecisions(shadowConnection, null).focus.render).toBe('NATIVE');
+  });
+
+  it('reports a matching shadow decision revision while ignoring disabled shadow mutations', () => {
+    const shadow = catalog({
+      mode: 'SHADOW',
+      contexts: catalog().contexts.map((context) => ({
+        ...context,
+        capabilities: {
+          ...context.capabilities,
+          legacyPlacementWrite: false,
+          instanceV6Write: false,
+        },
+        items: context.items.map((candidate) => ({
+          ...candidate,
+          placementCapabilities: {
+            canAdd: false,
+            canHide: false,
+            canMove: false,
+            canResize: false,
+          },
+        })),
+      })),
+    });
+
+    expect(observeHomeWidgetShadow(shadowConnection, shadow)).toEqual({
+      status: 'MATCH',
+      mismatchCount: 0,
+      decisionRevision: 'decision-1',
+      mismatches: [],
+    });
+  });
+
+  it('reports exact native drift evidence and still returns the static renderer decision', () => {
+    const complete = catalog();
+    const shadow = catalog({
+      mode: 'SHADOW',
+      contexts: [
+        {
+          ...complete.contexts[0]!,
+          items: complete.contexts[0]!.items.map((candidate) =>
+            candidate.legacyWidgetKey === 'focus'
+              ? {
+                  ...candidate,
+                  effectiveState: 'DENY' as const,
+                  reasonCodes: ['DISABLED_BY_ORGANIZATION' as const],
+                }
+              : candidate
+          ),
+        },
+      ],
+    });
+
+    expect(observeHomeWidgetShadow(shadowConnection, shadow)).toEqual({
+      status: 'DRIFT',
+      mismatchCount: 1,
+      decisionRevision: 'decision-1',
+      mismatches: [
+        {
+          widgetKey: 'focus',
+          observedRender: 'UNAVAILABLE',
+          observedReason: 'DISABLED_BY_ORGANIZATION',
+        },
+      ],
+    });
+    expect(resolveHomeWidgetRuntimeDecisions(shadowConnection, shadow).focus).toMatchObject({
+      render: 'NATIVE',
+      publicReason: 'AVAILABLE',
+    });
   });
 });
 

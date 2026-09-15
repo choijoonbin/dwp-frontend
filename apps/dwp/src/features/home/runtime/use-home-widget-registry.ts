@@ -8,6 +8,7 @@ import {
 
 import {
   homeWidgetRegistryEffectiveQueryKey,
+  observeHomeWidgetShadow,
   resolveHomeWidgetRuntimeDecisions,
 } from './widget-registry-runtime';
 
@@ -34,7 +35,13 @@ export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number)
     retry: false,
   });
   return useMemo(
-    () => resolveHomeWidgetRuntimeDecisions(connection, effectiveCatalogQuery.data),
-    [connection, effectiveCatalogQuery.data]
+    () => ({
+      decisions: resolveHomeWidgetRuntimeDecisions(connection, effectiveCatalogQuery.data),
+      shadowObservation: observeHomeWidgetShadow(
+        connection,
+        effectiveCatalogQuery.isError ? null : effectiveCatalogQuery.data
+      ),
+    }),
+    [connection, effectiveCatalogQuery.data, effectiveCatalogQuery.isError]
   );
 }
