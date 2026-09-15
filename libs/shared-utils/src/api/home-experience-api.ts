@@ -37,6 +37,13 @@ export type HomeGovernedZoneKey = 'announcements';
 export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
 export type HomeExperienceVariant = 'CLASSIC' | 'FLOW_V1';
 export type HomePreferenceStore = 'LEGACY' | 'VIEWS';
+export const HOME_CONTRACT_CAPABILITIES = {
+  compositionV4: 'HOME_COMPOSITION_V4',
+  modeScopedViews: 'MODE_SCOPED_HOME_VIEWS',
+  fourDeviceLayouts: 'FOUR_DEVICE_LAYOUTS',
+} as const;
+export type HomeContractCapability =
+  (typeof HOME_CONTRACT_CAPABILITIES)[keyof typeof HOME_CONTRACT_CAPABILITIES];
 
 export type GovernedHomeZone = {
   zoneKey: HomeGovernedZoneKey;
@@ -102,10 +109,19 @@ export type HomeExperience = {
   advancedPersonalizationEnabled?: boolean;
   composerEnabled?: boolean;
   homePreferenceStore?: HomePreferenceStore;
+  /** Absent or empty until the backend fleet can safely serve the Wave 1 contracts. */
+  homeContractCapabilities?: string[];
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
 };
+
+export function hasHomeContractCapability(
+  experience: Pick<HomeExperience, 'homeContractCapabilities'> | null | undefined,
+  capability: HomeContractCapability
+): boolean {
+  return experience?.homeContractCapabilities?.includes(capability) === true;
+}
 
 export type HomeExperienceRevision = {
   revisionId: number;
@@ -218,12 +234,12 @@ export async function updateHomeLaunchpadConfiguration(
 }
 
 export async function updateHomeCompositionPolicy(
-  policy: HomeCompositionPolicy,
+  policy: HomeCompositionPolicy | TenantHomeCompositionPolicyV3,
   version: number
 ): Promise<HomeExperience> {
   const response = await axiosInstance.put<
     ApiResponse<HomeExperience>,
-    { policy: HomeCompositionPolicy; version: number }
+    { policy: HomeCompositionPolicy | TenantHomeCompositionPolicyV3; version: number }
   >('/api/platform/v1/admin/home-experience/composition', { policy, version });
   return response.data.data;
 }

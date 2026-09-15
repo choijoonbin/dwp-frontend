@@ -8,6 +8,7 @@ import {
   createHomeView,
   getHomeDeviceLayouts,
   getHomeViews,
+  homeDeviceClassRequestValue,
   resetHomeView,
   restoreHomeViewRevision,
   updateHomeDeviceLayout,
@@ -40,11 +41,22 @@ describe('home personalization API boundary', () => {
     vi.unstubAllGlobals();
   });
 
-  it('lists only the requested home surface', async () => {
+  it('keeps the default Classic read compatible with pre-Wave 1 servers', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
     vi.stubGlobal('fetch', fetchMock);
 
     await getHomeViews('workspace-home');
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/home-views?surfaceKey=workspace-home'
+    );
+  });
+
+  it('only sends an explicit Classic mode after the caller selects that contract', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getHomeViews('workspace-home', 'CLASSIC');
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/platform/v1/home-views?surfaceKey=workspace-home&modeKey=CLASSIC'
@@ -109,6 +121,19 @@ describe('home personalization API boundary', () => {
     });
   });
 
+  it('omits modeKey from a legacy-compatible create request', async () => {
+    const fetchMock = mutationFetch({ viewId: 'view-1' });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await createHomeView(
+      { viewKey: 'focus', name: 'Focus', makeDefault: false, layout },
+      '11111111-1111-4111-8111-111111111111'
+    );
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(JSON.parse(String(request.body))).not.toHaveProperty('modeKey');
+  });
+
   it('stores a device overlay without changing semantic content order', async () => {
     const fetchMock = mutationFetch({ deviceClass: 'MOBILE_COMPACT', viewVersion: 5 });
     vi.stubGlobal('fetch', fetchMock);
@@ -135,6 +160,27 @@ describe('home personalization API boundary', () => {
     expect(
       new Headers((fetchMock.mock.calls[1]?.[1] as RequestInit).headers).get('Idempotency-Key')
     ).toBe('55555555-5555-4555-8555-555555555555');
+  });
+
+  it('uses legacy device names until the four-layout capability is advertised', async () => {
+    const fetchMock = mutationFetch({ deviceClass: 'MOBILE', viewVersion: 5 });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await updateHomeDeviceLayout(
+      'view-1',
+      homeDeviceClassRequestValue('MOBILE_STANDARD', false),
+      { widgetOrder: [], widgetSizes: {}, density: 'compact' },
+      4,
+      null,
+      '55555555-5555-4555-8555-555555555555'
+    );
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/home-views/view-1/device-layouts/MOBILE'
+    );
+    expect(result.deviceClass).toBe('MOBILE_STANDARD');
+    expect(homeDeviceClassRequestValue('DESKTOP_WIDE', false)).toBe('DESKTOP');
+    expect(homeDeviceClassRequestValue('DESKTOP_WIDE', true)).toBe('DESKTOP_WIDE');
   });
 
   it('normalizes legacy device overlays and lets canonical rows win deterministically', async () => {

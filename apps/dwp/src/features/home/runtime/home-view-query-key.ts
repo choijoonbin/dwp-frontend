@@ -5,6 +5,7 @@ export type HomeViewQueryScope = Readonly<{
   userId?: number | null;
   surfaceKey: HomeSurfaceKey;
   modeKey: HomeExperienceVariant;
+  modeScoped: boolean;
 }>;
 
 /**
@@ -20,17 +21,20 @@ export function homeViewQueryKey(scope: HomeViewQueryScope) {
     scope.userId ?? 'anonymous-user',
     scope.surfaceKey,
     scope.modeKey,
+    scope.modeScoped ? 'MODE_SCOPED' : 'LEGACY_UNSCOPED',
   ] as const;
 }
 
-export function requireHomeViewMode<T extends Pick<HomeView, 'modeKey'>>(
+export function requireHomeViewMode<T extends Partial<Pick<HomeView, 'modeKey'>>>(
   view: T,
-  expectedMode: HomeExperienceVariant
-): T {
-  if (view.modeKey !== expectedMode) {
+  expectedMode: HomeExperienceVariant,
+  allowLegacyClassic = false
+): T & { modeKey: HomeExperienceVariant } {
+  const resolvedMode = view.modeKey ?? (allowLegacyClassic ? 'CLASSIC' : undefined);
+  if (resolvedMode !== expectedMode) {
     throw new Error(
-      `Home view mutation returned ${view.modeKey}, not requested mode ${expectedMode}.`
+      `Home view mutation returned ${resolvedMode ?? 'no mode'}, not requested mode ${expectedMode}.`
     );
   }
-  return view;
+  return { ...view, modeKey: resolvedMode };
 }

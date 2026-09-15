@@ -29,6 +29,14 @@ export function normalizeHomeDeviceClass(
 export function isMobileHomeDeviceClass(value: HomeDeviceClass): boolean {
   return value === 'MOBILE_STANDARD' || value === 'MOBILE_COMPACT';
 }
+
+export function homeDeviceClassRequestValue(
+  value: HomeDeviceClass,
+  fourDeviceLayoutsSupported: boolean
+): HomeDeviceClass | LegacyHomeDeviceClass {
+  if (fourDeviceLayoutsSupported) return value;
+  return isMobileHomeDeviceClass(value) ? 'MOBILE' : 'DESKTOP';
+}
 export type HomeTemplateLifecycle = 'DRAFT' | 'PUBLISHED' | 'REVOKED';
 export type HomeComposerState = 'PREVIEWED' | 'APPLIED' | 'UNDONE' | 'CANCELLED' | 'FAILED';
 
@@ -151,7 +159,8 @@ export type HomeComposerProposal = {
 export type CreateHomeViewRequest = {
   viewKey: string;
   name: string;
-  modeKey: HomeExperienceVariant;
+  /** Omitted only when talking to a pre-Wave 1 backend. */
+  modeKey?: HomeExperienceVariant;
   makeDefault: boolean;
   layout: HomeViewLayout;
 };
@@ -183,18 +192,19 @@ export function createHomeCommandKey(command: string): string {
 
 export async function getHomeViews(
   surfaceKey: HomeSurfaceKey = 'workspace-home',
-  modeKey: HomeExperienceVariant = 'CLASSIC'
+  modeKey?: HomeExperienceVariant
 ): Promise<HomeView[]> {
+  const query = new URLSearchParams({ surfaceKey });
+  if (modeKey) query.set('modeKey', modeKey);
   const response = await axiosInstance.get<
     ApiResponse<Array<Omit<HomeView, 'modeKey'> & { modeKey?: HomeExperienceVariant }>>
-  >(
-    `${VIEW_BASE}?surfaceKey=${encodeURIComponent(surfaceKey)}&modeKey=${encodeURIComponent(modeKey)}`
-  );
+  >(`${VIEW_BASE}?${query.toString()}`);
+  const requestedMode = modeKey ?? 'CLASSIC';
   return response.data.data.map((view) => {
     const resolvedMode = view.modeKey ?? 'CLASSIC';
-    if (resolvedMode !== modeKey) {
+    if (resolvedMode !== requestedMode) {
       throw new Error(
-        `Home view ${view.viewId} belongs to ${resolvedMode}, not requested mode ${modeKey}.`
+        `Home view ${view.viewId} belongs to ${resolvedMode}, not requested mode ${requestedMode}.`
       );
     }
     return { ...view, modeKey: resolvedMode };
@@ -320,14 +330,18 @@ export async function getHomeDeviceLayouts(viewId: string): Promise<HomeDeviceLa
 
 export async function updateHomeDeviceLayout(
   viewId: string,
-  deviceClass: HomeDeviceClass,
+  deviceClass: HomeDeviceClass | LegacyHomeDeviceClass,
   overlay: HomeDeviceLayoutOverlay,
   viewVersion: number,
   deviceVersion: number | null,
   idempotencyKey: string
 ): Promise<HomeDeviceLayout> {
   const response = await axiosInstance.put<
-    ApiResponse<HomeDeviceLayout>,
+    ApiResponse<
+      Omit<HomeDeviceLayout, 'deviceClass'> & {
+        deviceClass: HomeDeviceClass | LegacyHomeDeviceClass;
+      }
+    >,
     { overlay: HomeDeviceLayoutOverlay; viewVersion: number; version: number | null }
   >(
     `${VIEW_BASE}/${encodeURIComponent(viewId)}/device-layouts/${deviceClass}`,
@@ -338,7 +352,10 @@ export async function updateHomeDeviceLayout(
     },
     commandConfig(idempotencyKey)
   );
-  return response.data.data;
+  return {
+    ...response.data.data,
+    deviceClass: normalizeHomeDeviceClass(response.data.data.deviceClass),
+  };
 }
 
 export async function getHomeViewRevisions(viewId: string): Promise<HomeViewRevision[]> {

@@ -18,7 +18,9 @@ import {
   useToast,
   HttpError,
   HOME_PERSONALIZATION_V2_ENABLED,
+  HOME_CONTRACT_CAPABILITIES,
   HOME_WIDGET_LIBRARY_ENABLED,
+  hasHomeContractCapability,
   isAppResourceEntitled,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -277,9 +279,17 @@ export default function HomePage() {
   const viewStoreEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED && homeExperience?.homePreferenceStore === 'VIEWS'
   );
+  const modeScopedHomeViewsSupported = hasHomeContractCapability(
+    homeExperience,
+    HOME_CONTRACT_CAPABILITIES.modeScopedViews
+  );
+  const fourDeviceLayoutsSupported = hasHomeContractCapability(
+    homeExperience,
+    HOME_CONTRACT_CAPABILITIES.fourDeviceLayouts
+  );
   const homeModeKey = resolveModeIsolatedHomeExperience(
     homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
-    viewStoreEnabled
+    viewStoreEnabled && modeScopedHomeViewsSupported
   );
   const flowHomeEnabled = homeModeKey === 'FLOW_V1';
   const activeHomeViewQueryKey = useMemo(
@@ -289,8 +299,9 @@ export default function HomePage() {
         userId: auth.user?.userId,
         surfaceKey: 'workspace-home',
         modeKey: homeModeKey,
+        modeScoped: modeScopedHomeViewsSupported,
       }),
-    [auth.user?.tenantId, auth.user?.userId, homeModeKey]
+    [auth.user?.tenantId, auth.user?.userId, homeModeKey, modeScopedHomeViewsSupported]
   );
   const advancedPersonalizationEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED &&
@@ -311,7 +322,8 @@ export default function HomePage() {
   });
   const homeViewsQuery = useQuery({
     queryKey: activeHomeViewQueryKey,
-    queryFn: () => getHomeViews('workspace-home', homeModeKey),
+    queryFn: () =>
+      getHomeViews('workspace-home', modeScopedHomeViewsSupported ? homeModeKey : undefined),
     enabled: homeExperienceQuery.isSuccess && activeStoreUsesViews,
     staleTime: 30_000,
     retry: homeQueryRetry,
@@ -432,6 +444,7 @@ export default function HomePage() {
   const currentEditSession = useMemo<HomeEditSession>(
     () => ({
       experienceVariant: homeModeKey,
+      modeScopedViews: modeScopedHomeViewsSupported,
       store: viewStoreEnabled ? 'VIEWS' : 'LEGACY',
       viewId: viewStoreEnabled ? (selectedHomeView?.viewId ?? null) : null,
       viewName: viewStoreEnabled ? (selectedHomeView?.name ?? null) : null,
@@ -441,6 +454,7 @@ export default function HomePage() {
     [
       durableResetAvailable,
       homeModeKey,
+      modeScopedHomeViewsSupported,
       persistedVersion,
       selectedHomeView?.name,
       selectedHomeView?.viewId,
@@ -624,6 +638,7 @@ export default function HomePage() {
             userId: auth.user?.userId,
             surfaceKey: result.view.surfaceKey,
             modeKey: result.view.modeKey,
+            modeScoped: result.modeScopedViews,
           }),
           (current) =>
             current?.map((view) => (view.viewId === result.view.viewId ? result.view : view)) ?? [
@@ -722,6 +737,7 @@ export default function HomePage() {
       pendingHomeSaveCommandRef.current,
       layout,
       editSession.experienceVariant,
+      editSession.modeScopedViews,
       () => createHomeCommandKey(reset ? 'reset-home-view' : 'save-home-view'),
       reset
     );
@@ -1004,6 +1020,8 @@ export default function HomePage() {
             open={studioOpen}
             composerEnabled={composerEnabled}
             modeKey={homeModeKey}
+            modeScopedViews={modeScopedHomeViewsSupported}
+            fourDeviceLayoutsSupported={fourDeviceLayoutsSupported}
             tenantId={auth.user?.tenantId}
             userId={auth.user?.userId}
             seedLayout={effectiveHomeLayout ?? null}

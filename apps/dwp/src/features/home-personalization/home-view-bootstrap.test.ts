@@ -41,17 +41,19 @@ describe('home view cutover bootstrap', () => {
       .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
       .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
 
-    const first = resolvePendingHomeSaveCommand(null, layout, 'FLOW_V1', createKey);
+    const first = resolvePendingHomeSaveCommand(null, layout, 'FLOW_V1', true, createKey);
     const retry = resolvePendingHomeSaveCommand(
       first,
       structuredClone(layout),
       'FLOW_V1',
+      true,
       createKey
     );
     const changed = resolvePendingHomeSaveCommand(
       retry,
       { ...layout, presentation: 'expressive' },
       'FLOW_V1',
+      true,
       createKey
     );
 
@@ -65,8 +67,8 @@ describe('home view cutover bootstrap', () => {
       .fn()
       .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
       .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
-    const save = resolvePendingHomeSaveCommand(null, layout, 'FLOW_V1', createKey);
-    const reset = resolvePendingHomeSaveCommand(save, layout, 'FLOW_V1', createKey, true);
+    const save = resolvePendingHomeSaveCommand(null, layout, 'FLOW_V1', true, createKey);
+    const reset = resolvePendingHomeSaveCommand(save, layout, 'FLOW_V1', true, createKey, true);
 
     expect(reset.idempotencyKey).not.toBe(save.idempotencyKey);
     expect(createKey).toHaveBeenCalledTimes(2);
@@ -77,10 +79,22 @@ describe('home view cutover bootstrap', () => {
       .fn()
       .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
       .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
-    const classic = resolvePendingHomeSaveCommand(null, layout, 'CLASSIC', createKey);
-    const flow = resolvePendingHomeSaveCommand(classic, layout, 'FLOW_V1', createKey);
+    const classic = resolvePendingHomeSaveCommand(null, layout, 'CLASSIC', true, createKey);
+    const flow = resolvePendingHomeSaveCommand(classic, layout, 'FLOW_V1', true, createKey);
 
     expect(flow.idempotencyKey).not.toBe(classic.idempotencyKey);
+    expect(createKey).toHaveBeenCalledTimes(2);
+  });
+
+  it('rotates the command key when the server activates mode-scoped views', () => {
+    const createKey = vi
+      .fn()
+      .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
+      .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
+    const legacy = resolvePendingHomeSaveCommand(null, layout, 'CLASSIC', false, createKey);
+    const scoped = resolvePendingHomeSaveCommand(legacy, layout, 'CLASSIC', true, createKey);
+
+    expect(scoped.idempotencyKey).not.toBe(legacy.idempotencyKey);
     expect(createKey).toHaveBeenCalledTimes(2);
   });
 });

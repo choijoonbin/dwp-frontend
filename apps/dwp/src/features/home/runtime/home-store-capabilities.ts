@@ -22,7 +22,7 @@ export function activeHomeStoreUsesViews(
  */
 export function resolveModeIsolatedHomeExperience(
   configuredVariant: HomeExperienceVariant,
-  viewsStoreReady: boolean
+  modeScopedViewsReady: boolean
 ): HomeExperienceVariant {
-  return configuredVariant === 'FLOW_V1' && !viewsStoreReady ? 'CLASSIC' : configuredVariant;
+  return configuredVariant === 'FLOW_V1' && !modeScopedViewsReady ? 'CLASSIC' : configuredVariant;
 }

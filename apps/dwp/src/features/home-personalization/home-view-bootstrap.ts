@@ -24,10 +24,11 @@ export function resolvePendingHomeSaveCommand(
   current: PendingHomeSaveCommand | null,
   layout: HomePreferenceLayout,
   modeKey: HomeExperienceVariant,
+  modeScopedViews: boolean,
   createKey: () => string,
   reset = false
 ): PendingHomeSaveCommand {
-  const fingerprint = JSON.stringify({ modeKey, layout, reset });
+  const fingerprint = JSON.stringify({ modeKey, modeScopedViews, layout, reset });
   if (current?.fingerprint === fingerprint) return current;
   return { fingerprint, idempotencyKey: createKey() };
 }

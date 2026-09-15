@@ -7,6 +7,7 @@ import type {
   HomePersonalZoneKey,
   HomeWidgetHeight,
   HomeWidgetSize,
+  TenantHomeCompositionPolicyV3,
 } from '@dwp-frontend/shared-utils';
 
 export type HomeGovernedZoneDefinition = Readonly<{
@@ -136,6 +137,14 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
 
 export function isFlowHomeVariant(policy: HomeCompositionPolicy): boolean {
   return policy.schemaVersion === 4 && policy.experienceVariant === 'FLOW_V1';
+}
+
+export function homeCompositionPolicyWritePayload(
+  policy: HomeCompositionPolicy,
+  v4Supported: boolean
+): HomeCompositionPolicy | TenantHomeCompositionPolicyV3 {
+  if (v4Supported) return policy;
+  return { ...policy, schemaVersion: 3 };
 }
 
 export function governedHomeZone(

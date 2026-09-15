@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { HOME_CONTRACT_CAPABILITIES, hasHomeContractCapability } from '@dwp-frontend/shared-utils';
 
 import {
   activeHomeStoreUsesViews,
@@ -6,6 +7,30 @@ import {
 } from './home-store-capabilities';
 
 describe('home personalization store capabilities', () => {
+  it('only trusts the exact server-advertised Wave 1 capability', () => {
+    expect(hasHomeContractCapability(undefined, HOME_CONTRACT_CAPABILITIES.modeScopedViews)).toBe(
+      false
+    );
+    expect(
+      hasHomeContractCapability(
+        { homeContractCapabilities: [] },
+        HOME_CONTRACT_CAPABILITIES.modeScopedViews
+      )
+    ).toBe(false);
+    expect(
+      hasHomeContractCapability(
+        { homeContractCapabilities: ['MODE_SCOPED_HOME_VIEW'] },
+        HOME_CONTRACT_CAPABILITIES.modeScopedViews
+      )
+    ).toBe(false);
+    expect(
+      hasHomeContractCapability(
+        { homeContractCapabilities: ['MODE_SCOPED_HOME_VIEWS'] },
+        HOME_CONTRACT_CAPABILITIES.modeScopedViews
+      )
+    ).toBe(true);
+  });
+
   it('does not expose VIEWS-only capabilities for the LEGACY store', () => {
     expect(activeHomeStoreUsesViews(false)).toBe(false);
   });

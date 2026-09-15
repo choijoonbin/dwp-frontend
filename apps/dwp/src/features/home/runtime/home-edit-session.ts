@@ -5,11 +5,18 @@ import {
   updateHomePreference,
   updateHomeView,
 } from '@dwp-frontend/shared-utils';
+import { requireHomeViewMode } from './home-view-query-key';
 
-import type { HomePreference, HomePreferenceLayout, HomeView } from '@dwp-frontend/shared-utils';
+import type {
+  CreateHomeViewRequest,
+  HomePreference,
+  HomePreferenceLayout,
+  HomeView,
+} from '@dwp-frontend/shared-utils';
 
 export type HomeEditSession = {
   experienceVariant: 'CLASSIC' | 'FLOW_V1';
+  modeScopedViews: boolean;
   store: 'LEGACY' | 'VIEWS';
   viewId: string | null;
   viewName: string | null;
@@ -79,24 +86,33 @@ export function rebaseHomeEditSession(
   return { ...session, ...target };
 }
 
+export function createHomeViewRequest(
+  session: HomeEditSession,
+  layout: HomePreferenceLayout,
+  defaultViewName: string
+): CreateHomeViewRequest {
+  return {
+    viewKey: 'default',
+    name: session.viewName ?? defaultViewName,
+    ...(session.modeScopedViews ? { modeKey: session.experienceVariant } : {}),
+    makeDefault: true,
+    layout,
+  };
+}
+
 export async function saveHomeEditSession(request: HomeSaveMutation, defaultViewName: string) {
   const { session } = request;
   if (session.store === 'VIEWS') {
     if (!session.viewId) {
       const view = await createHomeView(
-        {
-          viewKey: 'default',
-          name: session.viewName ?? defaultViewName,
-          modeKey: session.experienceVariant,
-          makeDefault: true,
-          layout: request.layout,
-        },
+        createHomeViewRequest(session, request.layout, defaultViewName),
         request.idempotencyKey
       );
-      if (view.modeKey !== session.experienceVariant) {
-        throw new Error('The created Home view did not preserve its requested mode.');
-      }
-      return { store: 'VIEWS' as const, view };
+      return {
+        store: 'VIEWS' as const,
+        view: requireHomeViewMode(view, session.experienceVariant, !session.modeScopedViews),
+        modeScopedViews: session.modeScopedViews,
+      };
     }
     const view = request.reset
       ? await resetHomeView(session.viewId, session.version, request.idempotencyKey)
@@ -109,10 +125,11 @@ export async function saveHomeEditSession(request: HomeSaveMutation, defaultView
           },
           request.idempotencyKey
         );
-    if (view.modeKey !== session.experienceVariant) {
-      throw new Error('The saved Home view changed its immutable mode.');
-    }
-    return { store: 'VIEWS' as const, view };
+    return {
+      store: 'VIEWS' as const,
+      view: requireHomeViewMode(view, session.experienceVariant, !session.modeScopedViews),
+      modeScopedViews: session.modeScopedViews,
+    };
   }
   const preference = request.reset
     ? await resetHomePreference(session.version)

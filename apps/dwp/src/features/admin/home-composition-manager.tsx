@@ -16,7 +16,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system';
 import {
   HOME_WIDGET_LIBRARY_ENABLED,
+  HOME_CONTRACT_CAPABILITIES,
   getAdminHomeExperience,
+  hasHomeContractCapability,
   updateHomeCompositionPolicy,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -43,6 +45,7 @@ import {
 } from '../../components/workspace-composer/workspace-widget-footprint-picker';
 import {
   governedHomeZone,
+  homeCompositionPolicyWritePayload,
   reconcileHomeCompositionPolicy,
 } from '../../components/workspace-composer/home-composition-policy';
 import {
@@ -149,6 +152,10 @@ function HomeCompositionPolicyPanel() {
     () => reconcileHomeCompositionPolicy(experienceQuery.data?.compositionPolicy),
     [experienceQuery.data?.compositionPolicy]
   );
+  const compositionV4Supported = hasHomeContractCapability(
+    experienceQuery.data,
+    HOME_CONTRACT_CAPABILITIES.modeScopedViews
+  );
 
   useEffect(() => {
     setDraft(clonePolicy(published));
@@ -156,7 +163,11 @@ function HomeCompositionPolicyPanel() {
 
   const changed = Boolean(draft && JSON.stringify(draft) !== JSON.stringify(published));
   const saveMutation = useMutation({
-    mutationFn: () => updateHomeCompositionPolicy(draft!, experienceQuery.data?.version ?? 0),
+    mutationFn: () =>
+      updateHomeCompositionPolicy(
+        homeCompositionPolicyWritePayload(draft!, compositionV4Supported),
+        experienceQuery.data?.version ?? 0
+      ),
     onSuccess: async (next) => {
       queryClient.setQueryData(['admin', 'home-experience'], next);
       await Promise.all([

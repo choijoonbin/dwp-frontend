@@ -7,6 +7,7 @@ import {
   HOME_PERSONAL_ZONE_KEYS,
   defaultHomeCompositionPolicy,
   governedHomeZone,
+  homeCompositionPolicyWritePayload,
   isFlowHomeVariant,
   reconcileHomeCompositionPolicy,
 } from './home-composition-policy';
@@ -89,6 +90,13 @@ describe('home composition policy', () => {
         governedZones: [],
       })
     ).toMatchObject({ schemaVersion: 4, experienceVariant: 'FLOW_V1' });
+  });
+
+  it('only serializes v4 after the backend advertises the Wave 1 contract', () => {
+    const policy = defaultHomeCompositionPolicy();
+
+    expect(homeCompositionPolicyWritePayload(policy, false).schemaVersion).toBe(3);
+    expect(homeCompositionPolicyWritePayload(policy, true).schemaVersion).toBe(4);
   });
 
   it('only enables Flow Home for an explicit valid versioned tenant variant', () => {

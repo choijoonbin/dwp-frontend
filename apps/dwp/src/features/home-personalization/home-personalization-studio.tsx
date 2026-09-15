@@ -25,6 +25,7 @@ import {
   getHomeTemplates,
   getHomeViewRevisions,
   getHomeViews,
+  homeDeviceClassRequestValue,
   isMobileHomeDeviceClass,
   publishHomeTemplate,
   restoreHomeViewRevision,
@@ -77,6 +78,8 @@ type HomePersonalizationStudioProps = {
   open: boolean;
   composerEnabled: boolean;
   modeKey: HomeExperienceVariant;
+  modeScopedViews: boolean;
+  fourDeviceLayoutsSupported: boolean;
   tenantId?: number | null;
   userId?: number | null;
   seedLayout: HomePreferenceLayout<string> | null;
@@ -99,6 +102,8 @@ export function HomePersonalizationStudio({
   open,
   composerEnabled,
   modeKey,
+  modeScopedViews,
+  fourDeviceLayoutsSupported,
   tenantId,
   userId,
   seedLayout,
@@ -116,13 +121,20 @@ export function HomePersonalizationStudio({
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
   const [proposal, setProposal] = useState<HomeComposerProposal | null>(null);
   const viewQueryKey = useMemo(
-    () => homeViewQueryKey({ tenantId, userId, surfaceKey: 'workspace-home', modeKey }),
-    [modeKey, tenantId, userId]
+    () =>
+      homeViewQueryKey({
+        tenantId,
+        userId,
+        surfaceKey: 'workspace-home',
+        modeKey,
+        modeScoped: modeScopedViews,
+      }),
+    [modeKey, modeScopedViews, tenantId, userId]
   );
 
   const viewsQuery = useQuery({
     queryKey: viewQueryKey,
-    queryFn: () => getHomeViews('workspace-home', modeKey),
+    queryFn: () => getHomeViews('workspace-home', modeScopedViews ? modeKey : undefined),
     enabled: open,
     staleTime: 30_000,
     retry: 1,
@@ -167,15 +179,17 @@ export function HomePersonalizationStudio({
   }, [composerEnabled, section]);
 
   const currentModeView = async (request: Promise<HomeView>) =>
-    requireHomeViewMode(await request, modeKey);
+    requireHomeViewMode(await request, modeKey, !modeScopedViews);
 
   const refreshViewDependencies = async (view: HomeView) => {
-    requireHomeViewMode(view, modeKey);
-    queryClient.setQueryData<HomeView[]>(viewQueryKey, (current) => replaceView(current, view));
+    const resolvedView = requireHomeViewMode(view, modeKey, !modeScopedViews);
+    queryClient.setQueryData<HomeView[]>(viewQueryKey, (current) =>
+      replaceView(current, resolvedView)
+    );
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: viewQueryKey }),
       queryClient.invalidateQueries({
-        queryKey: ['home-personalization', 'revisions', view.viewId],
+        queryKey: ['home-personalization', 'revisions', resolvedView.viewId],
       }),
       queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
     ]);
@@ -202,7 +216,7 @@ export function HomePersonalizationStudio({
               (viewsQuery.data ?? []).map((view) => view.viewKey)
             ),
             name,
-            modeKey,
+            ...(modeScopedViews ? { modeKey } : {}),
             makeDefault: (viewsQuery.data?.length ?? 0) === 0,
             layout: baseLayout,
           },
@@ -306,7 +320,7 @@ export function HomePersonalizationStudio({
         .map((widget) => widget.widgetKey);
       return updateHomeDeviceLayout(
         selectedView.viewId,
-        deviceClass,
+        homeDeviceClassRequestValue(deviceClass, fourDeviceLayoutsSupported),
         {
           density,
           widgetOrder: semanticOrder,

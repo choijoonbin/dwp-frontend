@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { createHomeEditConflictTarget, rebaseHomeEditSession } from './home-edit-session';
+import {
+  createHomeEditConflictTarget,
+  createHomeViewRequest,
+  rebaseHomeEditSession,
+} from './home-edit-session';
 
 import type { HomeEditSession } from './home-edit-session';
-import type { HomeView } from '@dwp-frontend/shared-utils';
+import type { HomePreferenceLayout, HomeView } from '@dwp-frontend/shared-utils';
+
+const layout: HomePreferenceLayout = { appLayout: null, widgets: [] };
 
 const emptyViewsSession: HomeEditSession = {
   experienceVariant: 'FLOW_V1',
+  modeScopedViews: true,
   store: 'VIEWS',
   viewId: null,
   viewName: 'My work home',
@@ -23,6 +30,23 @@ const concurrentView = {
 } as HomeView;
 
 describe('home edit conflict session', () => {
+  it('omits modeKey from creates until mode-scoped views are advertised', () => {
+    const request = createHomeViewRequest(
+      {
+        ...emptyViewsSession,
+        experienceVariant: 'CLASSIC',
+        modeScopedViews: false,
+      },
+      layout,
+      'Default Home'
+    );
+
+    expect(request).not.toHaveProperty('modeKey');
+    expect(createHomeViewRequest(emptyViewsSession, layout, 'Default Home')).toMatchObject({
+      modeKey: 'FLOW_V1',
+    });
+  });
+
   it('rebases an empty VIEWS session to the concurrently created view', () => {
     const target = createHomeEditConflictTarget(emptyViewsSession, concurrentView);
 
