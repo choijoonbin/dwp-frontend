@@ -233,9 +233,7 @@ export function useHomePersonalizationReadModel({
     ]
   );
   const advancedPersonalizationEnabled = Boolean(
-    HOME_PERSONALIZATION_V2_ENABLED &&
-    flowHomeEnabled &&
-    homeExperience?.advancedPersonalizationEnabled
+    HOME_PERSONALIZATION_V2_ENABLED && homeExperience?.advancedPersonalizationEnabled
   );
   const composerEnabled = Boolean(
     advancedPersonalizationEnabled && homeExperience?.composerEnabled

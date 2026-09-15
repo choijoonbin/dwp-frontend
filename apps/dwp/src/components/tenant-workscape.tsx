@@ -138,9 +138,14 @@ export function TenantWorkscape({
       data-tenant-background-focal-y={activeFocalY}
       data-tenant-content-alignment={resolvedContentAlignment.toLowerCase()}
       data-tenant-image-opacity={sceneUrl ? '1' : '0'}
+      data-flow-hero-treatment={sceneUrl ? 'tenant-workscape' : 'priority-blue'}
       sx={(theme) => {
         const dark = darkPreview || theme.palette.mode === 'dark';
-        const workscape = HOME_WORKSCAPE_TOKENS[dark ? 'dark' : 'light'];
+        const configuredWorkscape = HOME_WORKSCAPE_TOKENS[dark ? 'dark' : 'light'];
+        const workscape =
+          !sceneUrl && !dark
+            ? { ...configuredWorkscape, base: theme.palette.primary.main }
+            : configuredWorkscape;
         const opacity = (minimum: number) => Math.min(0.78, Math.max(minimum, configuredOverlay));
         const contentScrim =
           resolvedContentAlignment === 'CENTER'

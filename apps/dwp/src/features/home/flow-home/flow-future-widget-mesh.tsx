@@ -73,10 +73,11 @@ export const FLOW_FUTURE_WIDGET_CONTRACTS: readonly FlowFutureWidgetContract[] =
   },
 ] as const;
 
-type PrototypeState = 'preview' | Extract<HomeContentStateKind, 'empty' | 'partial' | 'stale'>;
+export type FlowFutureWidgetState =
+  'loaded' | 'preview' | Extract<HomeContentStateKind, 'empty' | 'partial' | 'stale'>;
 
 type FlowFutureWidgetMeshProps = Readonly<{
-  stateByKey?: Partial<Record<FlowFutureWidgetKey, PrototypeState>>;
+  stateByKey?: Partial<Record<FlowFutureWidgetKey, FlowFutureWidgetState>>;
 }>;
 
 function Surface({
@@ -85,7 +86,7 @@ function Surface({
   children,
 }: {
   contract: FlowFutureWidgetContract;
-  state: PrototypeState;
+  state: FlowFutureWidgetState;
   children: React.ReactNode;
 }) {
   const { t } = useTranslation('home');
@@ -102,8 +103,9 @@ function Surface({
       data-widget-source={contract.source}
       data-widget-permission={contract.permission}
       data-integration-boundary={contract.connection}
-      data-flow-projection-kind="preview"
-      data-flow-provider-status="unavailable"
+      data-flow-projection-kind={state === 'loaded' ? 'deterministic-evidence' : 'preview'}
+      data-flow-provider-status={state === 'loaded' ? 'available' : 'unavailable'}
+      data-flow-provider-activation={state === 'loaded' ? 'fixture-only' : 'blocked'}
       sx={{
         minWidth: 0,
         height: '100%',
@@ -118,7 +120,9 @@ function Surface({
         boxShadow: foundationTokens.home.shadow.quietCard,
       }}
     >
-      {state === 'preview' ? (
+      {state === 'loaded' ? (
+        verified
+      ) : state === 'preview' ? (
         <>
           <Typography role="status" variant="caption" color="text.secondary">
             {t('flow.future.previewUnavailable')}
@@ -215,7 +219,9 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
   const { t } = useTranslation('home');
   const contract = (key: FlowFutureWidgetKey) =>
     FLOW_FUTURE_WIDGET_CONTRACTS.find((candidate) => candidate.key === key)!;
-  const state = (key: FlowFutureWidgetKey): PrototypeState => stateByKey[key] ?? 'preview';
+  const state = (key: FlowFutureWidgetKey): FlowFutureWidgetState => stateByKey[key] ?? 'preview';
+  const fixtureActionEnabled = (key: FlowFutureWidgetKey) => state(key) === 'loaded';
+  const loadedEvidence = FLOW_FUTURE_WIDGET_CONTRACTS.every(({ key }) => state(key) === 'loaded');
 
   return (
     <Box
@@ -240,7 +246,12 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
             {t('flow.future.description')}
           </Typography>
         </Box>
-        <Chip size="small" color="primary" variant="outlined" label={t('flow.future.preview')} />
+        <Chip
+          size="small"
+          color="primary"
+          variant="outlined"
+          label={t(loadedEvidence ? 'flow.future.loadedEvidence' : 'flow.future.preview')}
+        />
       </Stack>
       <Box
         sx={{
@@ -324,10 +335,18 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
             <Typography variant="body2">{t('flow.future.meeting.decision')}</Typography>
           </Box>
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-            <ActionButton disabled intent="primary" sx={{ minHeight: 44 }}>
+            <ActionButton
+              disabled={!fixtureActionEnabled('meetings-prep-decisions')}
+              intent="primary"
+              sx={{ minHeight: 44 }}
+            >
               {t('flow.future.meeting.accept')}
             </ActionButton>
-            <ActionButton disabled intent="secondary" sx={{ minHeight: 44 }}>
+            <ActionButton
+              disabled={!fixtureActionEnabled('meetings-prep-decisions')}
+              intent="secondary"
+              sx={{ minHeight: 44 }}
+            >
               {t('flow.future.meeting.assign')}
             </ActionButton>
           </Stack>
@@ -361,7 +380,11 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
               </Box>
             ))}
           </Stack>
-          <ActionButton disabled intent="quiet" sx={{ minHeight: 44, alignSelf: 'flex-start' }}>
+          <ActionButton
+            disabled={!fixtureActionEnabled('space-change-feed')}
+            intent="quiet"
+            sx={{ minHeight: 44, alignSelf: 'flex-start' }}
+          >
             {t('flow.future.space.action')}
           </ActionButton>
         </Surface>
@@ -396,7 +419,11 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
           <Typography variant="caption" color="text.secondary">
             {t('flow.future.artifact.saved')}
           </Typography>
-          <ActionButton disabled intent="primary" sx={{ minHeight: 44 }}>
+          <ActionButton
+            disabled={!fixtureActionEnabled('dwaion-artifact')}
+            intent="primary"
+            sx={{ minHeight: 44 }}
+          >
             {t('flow.future.artifact.action')}
           </ActionButton>
         </Surface>
@@ -410,7 +437,11 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
           <Typography variant="body2" color="text.secondary">
             {t('flow.future.booking.detail')}
           </Typography>
-          <ActionButton disabled intent="secondary" sx={{ minHeight: 44, alignSelf: 'flex-start' }}>
+          <ActionButton
+            disabled={!fixtureActionEnabled('workplace-booking')}
+            intent="secondary"
+            sx={{ minHeight: 44, alignSelf: 'flex-start' }}
+          >
             {t('flow.future.booking.action')}
           </ActionButton>
         </Surface>

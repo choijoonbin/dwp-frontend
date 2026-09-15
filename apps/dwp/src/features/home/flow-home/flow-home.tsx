@@ -46,7 +46,11 @@ import { NextActionCue } from './next-actions';
 import { CalendarInsightHomeWidget } from '../calendar-insight-home-widget';
 import { HomeWidgetRuntimeBoundary } from '../home-widget-runtime-boundary';
 import { HomeWidgetErrorBoundary } from '../runtime/home-content-state';
-import { FlowBaseSpaceCompactPreview, FlowFutureWidgetMesh } from './flow-future-widget-mesh';
+import {
+  FlowBaseSpaceCompactPreview,
+  FlowFutureWidgetMesh,
+  type FlowFutureWidgetState,
+} from './flow-future-widget-mesh';
 import { FlowMeetingPrep } from './flow-meeting-prep';
 
 import type {
@@ -121,6 +125,8 @@ type FlowHomeProps = {
   onRetryOverview: () => void;
   onRetryContributions: () => void;
   onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  /** Test/runtime adapter input. Omission keeps every future provider fail-closed. */
+  futureWidgetStateByKey?: Readonly<Record<string, FlowFutureWidgetState>>;
 };
 
 function contributionCount(items: HomeContributionModel['buckets']['action']): number {
@@ -182,6 +188,7 @@ export function FlowHome({
   onRetryOverview,
   onRetryContributions,
   onRecommendationFeedback,
+  futureWidgetStateByKey,
 }: FlowHomeProps) {
   const { t } = useTranslation('home');
   const narrowViewport = availableWidth < 600;
@@ -560,7 +567,7 @@ export function FlowHome({
       )}
 
       {!editing && presentation === 'expressive' ? (
-        <FlowFutureWidgetMesh />
+        <FlowFutureWidgetMesh stateByKey={futureWidgetStateByKey} />
       ) : !editing ? (
         <FlowMeetingPrep
           title={linkedCalendar?.title}

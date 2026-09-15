@@ -631,7 +631,7 @@ export function HomePersonalizationStudio({
       onClose={handleClose}
       busy={busy || modeApplying || Boolean(modePreset?.applying)}
       fullScreen={fullScreen}
-      maxWidth={modeKey === 'FLOW_V1' ? 'xl' : 'lg'}
+      maxWidth={modePreset || modeKey === 'FLOW_V1' ? 'xl' : 'lg'}
       contentDividers
       contentSx={{ p: 0, overflow: 'hidden' }}
       slotProps={{ transition: { onExited } }}

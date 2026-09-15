@@ -13,6 +13,7 @@ import {
   ClassicOrganizationResources,
   ClassicSectionHeading,
 } from './classic-organization-resources';
+import type { ClassicOrganizationResourceState } from './classic-organization-resources';
 import { ClassicPersonalSummary } from './classic-personal-summary';
 
 import type {
@@ -60,12 +61,16 @@ type ClassicHomeProps = {
   onBrowseAllApps: () => void;
   onOpenOrganizationUpdates: () => void;
   onStartEditing?: () => void;
+  onOpenStudio?: () => void;
   onAppLayoutChange: (layout: LaunchpadLayout) => void;
   onWidgetsChange: (widgets: HomeWidgetPreference[]) => void;
   onLaunchApp: (app: HomeAppDefinition) => void;
   onManageApp?: (app: HomeAppDefinition) => void;
   onRetryOverview: () => void;
   onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  /** Deterministic source-state projection supplied by the evidence/runtime adapter. */
+  organizationResourceState?: ClassicOrganizationResourceState;
+  disabledAppIds?: readonly string[];
 };
 
 /** Stable rollback renderer. It shares the launcher/editor contracts with Flow but keeps Classic IA. */
@@ -98,14 +103,23 @@ export function ClassicHome({
   onBrowseAllApps,
   onOpenOrganizationUpdates,
   onStartEditing,
+  onOpenStudio,
   onAppLayoutChange,
   onWidgetsChange,
   onLaunchApp,
   onManageApp,
   onRetryOverview,
   onRecommendationFeedback,
+  organizationResourceState,
+  disabledAppIds,
 }: ClassicHomeProps) {
   const { t } = useTranslation('home');
+  const communicationFeed =
+    overview?.communications.status === 'AVAILABLE' ? overview.communications.data : undefined;
+  const featuredStory = communicationFeed?.featured ?? communicationFeed?.items[0];
+  const requiredStory = [communicationFeed?.featured, ...(communicationFeed?.items ?? [])].find(
+    (item) => item?.acknowledgementRequired && !item.readerState.acknowledged
+  );
   return (
     <Box
       data-testid="classic-home"
@@ -163,15 +177,13 @@ export function ClassicHome({
         usesDefaultBackground={usesDefaultBackground}
         backgroundPosition={backgroundPosition}
         overlayOpacity={overlayOpacity}
-        featuredStory={
-          overview?.communications.status === 'AVAILABLE'
-            ? (overview.communications.data?.featured ?? overview.communications.data?.items[0])
-            : undefined
-        }
+        featuredStory={featuredStory}
+        requiredStory={requiredStory}
         assignedAppCount={apps.length}
         onBrowseAll={onBrowseAllApps}
         onOpenOrganizationUpdates={onOpenOrganizationUpdates}
         onStartEditing={onStartEditing}
+        onOpenStudio={onOpenStudio}
         workspaceTools={
           <AppLaunchpad
             apps={apps}
@@ -185,6 +197,7 @@ export function ClassicHome({
             onLaunch={onLaunchApp}
             onManage={onManageApp}
             onStartEditing={onStartEditing}
+            disabledAppIds={disabledAppIds}
           />
         }
         personalizationBusy={personalizationLoading || customizationBusy}
@@ -194,8 +207,8 @@ export function ClassicHome({
           width: 1,
           maxWidth: 2240,
           mx: 'auto',
-          px: { xs: 2, md: '50px' },
-          py: { xs: 3, md: 4 },
+          px: { xs: 2, md: 4 },
+          py: { xs: 2.5, md: 3 },
         }}
       >
         {!editing && governedWidgets.length > 0 && (
@@ -230,7 +243,7 @@ export function ClassicHome({
           </Box>
         )}
 
-        {!editing && <ClassicOrganizationResources />}
+        {!editing && <ClassicOrganizationResources resourceState={organizationResourceState} />}
 
         <Box
           data-testid="home-workspace-grid"

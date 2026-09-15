@@ -59,7 +59,11 @@ export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
   };
 }
 
-export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme> {
+export function launchpadTileSx(
+  editing: boolean,
+  motionDelayMs: number,
+  disabled = false
+): SxProps<Theme> {
   return {
     width: 1,
     height: LAUNCHPAD_TILE_HEIGHT_CSS,
@@ -78,7 +82,9 @@ export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProp
     borderRadius: 1,
     bgcolor: 'transparent',
     textAlign: 'center',
-    cursor: editing ? 'grab' : 'pointer',
+    cursor: disabled ? 'not-allowed' : editing ? 'grab' : 'pointer',
+    opacity: disabled ? 0.48 : 1,
+    filter: disabled ? 'grayscale(1)' : 'none',
     touchAction: 'manipulation',
     transition: (theme) =>
       theme.transitions.create(['background-color', 'border-color', 'box-shadow', 'transform'], {

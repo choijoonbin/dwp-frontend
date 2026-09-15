@@ -95,6 +95,7 @@ import {
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
 import { useHomeCoreReadModel, useHomePersonalizationReadModel } from './home/home-page-read-model';
+import { resolveWave2Evidence } from './home/home-wave2-evidence-adapter';
 
 import type { FlowHomeSectionPreference } from '../features/home/flow-home/flow-home-preference';
 import type { HomeDraft } from '../features/home/home-draft-history';
@@ -110,6 +111,7 @@ export default function HomePage() {
   const { hasPermission, permissions } = usePermissions();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const wave2Evidence = resolveWave2Evidence(searchParams);
   const queryClient = useQueryClient();
   const [editorOpen, setEditorOpen] = useState(searchParams.get('edit') === 'home');
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -605,7 +607,6 @@ export default function HomePage() {
     );
     setConflictTarget(null);
   };
-
   const reapplyAfterConflict = () => {
     conflictResolutionRef.current = 'reapply';
     if (editBaseDraft) {
@@ -618,7 +619,6 @@ export default function HomePage() {
     );
     setConflictTarget(null);
   };
-
   const saveHome = () => {
     if (!draftDirty || !editSession || !editBaseDraft || editorSourceFailed) return;
     const reset = draftHistory.present.resetIntent;
@@ -650,7 +650,6 @@ export default function HomePage() {
       session: editSession,
     });
   };
-
   const resetDraft = () => {
     const defaultWidgets = defaultHomeWidgets(
       registeredWidgetKeys,
@@ -695,7 +694,6 @@ export default function HomePage() {
       homeContributionRuntime.retry,
     ]
   );
-
   const backgroundUrl = resolveHomeBackgroundUrl(homeExperience);
   const currentDate = formatDate(currentInstant, { dateStyle: 'full' });
   const workQueue = homeOverview?.work.data;
@@ -741,7 +739,6 @@ export default function HomePage() {
     fallbackSubheadline: t('page.commandDescription'),
   });
   const homeAssistantAvailable = !editorOpen && isAppResourceEntitled('APP.ASK', permissions);
-
   return (
     <Box
       ref={homeAvailableWidthRef}
@@ -784,7 +781,7 @@ export default function HomePage() {
           subheadline={homeSubheadline}
           updatedAt={workspaceUpdatedAt}
           timeZone={timeZone}
-          backgroundUrl={backgroundUrl}
+          backgroundUrl={homeExperience?.backgroundUrl ? backgroundUrl : undefined}
           backgroundPosition={homeExperience?.backgroundPosition ?? 'RIGHT'}
           focalX={homeExperience?.backgroundFocalX}
           focalY={homeExperience?.backgroundFocalY}
@@ -830,6 +827,7 @@ export default function HomePage() {
           onRetryOverview={homeDataRetry.retry}
           onRetryContributions={homeDataRetry.retry}
           onRecommendationFeedback={recommendationFeedback.dismiss}
+          futureWidgetStateByKey={wave2Evidence.loadedFlow}
         />
       ) : (
         <ClassicHome
@@ -861,6 +859,7 @@ export default function HomePage() {
           onBrowseAllApps={() => navigate('/apps')}
           onOpenOrganizationUpdates={() => navigate('/communications')}
           onStartEditing={homePageGate.editActionAvailable ? () => beginEditing() : undefined}
+          onOpenStudio={homeStudioEnabled && !editorOpen ? openHomeStudio : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onWidgetsChange={setDraftWidgets}
           onLaunchApp={launchApp}
@@ -869,14 +868,18 @@ export default function HomePage() {
           }}
           onRetryOverview={() => void homeOverviewQuery.refetch()}
           onRecommendationFeedback={recommendationFeedback.dismiss}
+          organizationResourceState={wave2Evidence.resource}
+          disabledAppIds={
+            wave2Evidence.resource?.kind === 'forbidden'
+              ? ['ref-app-erp', 'ref-app-legacy', 'dwp-admin']
+              : undefined
+          }
         />
       )}
-
       <HomeFooter
         updatedAt={workspaceUpdatedAt}
         freshnessInHeader={homePageGate.state.kind === 'ready' && editorFlowHomeEnabled}
       />
-
       {editorActive && editorFlowHomeEnabled && <HomeEditorSafeArea />}
 
       <HomeItemGallery
@@ -966,6 +969,17 @@ export default function HomePage() {
             onRecommendationFeedback={recommendationFeedback.dismiss}
             onClose={closeHomeStudio}
             onExited={restoreHomeStudioEntryFocus}
+            modePreset={
+              wave2Evidence.modePreset
+                ? {
+                    ...wave2Evidence.modePreset,
+                    sharedAppOrder: entitledApps.map((app) => ({
+                      id: app.id,
+                      label: app.name,
+                    })),
+                  }
+                : undefined
+            }
             onEditView={(view) => {
               studioFocusRestorePendingRef.current = false;
               beginEditing(view);

@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { useCallback, useEffect, useId, useRef } from 'react';
 
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -56,11 +56,15 @@ export function FormDialog({
   const descriptionId = useId();
   const compact = useMediaQuery('(max-width:599.95px)', { noSsr: true });
   const coarsePointer = useMediaQuery('(pointer: coarse)', { noSsr: true });
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', { noSsr: true });
   const fullScreen = mobileFullScreen && compact;
   const touchActionTarget = compact || coarsePointer ? { minHeight: 44, minWidth: 44 } : undefined;
   const dialogRootRef = useRef<HTMLDivElement | null>(null);
-  const lastExternalFocusRef = useRef<HTMLElement | null>(null);
-  const previousOpenRef = useRef(open);
+  const lastExternalFocusRef = useRef<HTMLElement | null>(
+    typeof document !== 'undefined' && document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null
+  );
 
   useEffect(() => {
     if (open) return undefined;
@@ -90,28 +94,12 @@ export function FormDialog({
     return () => document.removeEventListener('focusin', rememberExternalFocus, true);
   }, [open]);
 
-  useEffect(() => {
-    const wasOpen = previousOpenRef.current;
-    previousOpenRef.current = open;
-    if (!wasOpen || open) return undefined;
-    const frame = window.requestAnimationFrame(() => {
-      const target = lastExternalFocusRef.current;
-      const activeElement = document.activeElement;
-      const focusNeedsRestoring =
-        activeElement === null ||
-        activeElement === document.body ||
-        activeElement === document.documentElement ||
-        (activeElement instanceof HTMLElement && dialogRootRef.current?.contains(activeElement));
-      if (
-        focusNeedsRestoring &&
-        target?.isConnected &&
-        !target.matches(':disabled, [aria-disabled="true"]')
-      ) {
-        target.focus({ preventScroll: true });
-      }
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [open]);
+  const restoreExternalFocus = useCallback(() => {
+    const target = lastExternalFocusRef.current;
+    if (target?.isConnected && !target.matches(':disabled, [aria-disabled="true"]')) {
+      target.focus({ preventScroll: true });
+    }
+  }, []);
 
   return (
     <Dialog
@@ -123,6 +111,19 @@ export function FormDialog({
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
       onClose={busy ? undefined : onClose}
+      disableRestoreFocus
+      transitionDuration={reducedMotion ? 0 : undefined}
+      slotProps={{ transition: { onExited: restoreExternalFocus } }}
+      sx={{
+        '@media (prefers-reduced-motion: reduce)': {
+          '&, & *, & *::before, & *::after': {
+            scrollBehavior: 'auto !important',
+            transitionDuration: '0s !important',
+            animationDuration: '0s !important',
+            animationIterationCount: '1 !important',
+          },
+        },
+      }}
     >
       <Box
         component="form"
@@ -179,7 +180,13 @@ export function FormDialog({
             }}
           >
             {showCancel && (
-              <ActionButton intent="quiet" onClick={onClose} disabled={busy} sx={touchActionTarget}>
+              <ActionButton
+                type="button"
+                intent="quiet"
+                onClick={onClose}
+                disabled={busy}
+                sx={touchActionTarget}
+              >
                 {cancelLabel}
               </ActionButton>
             )}

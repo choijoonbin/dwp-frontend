@@ -65,11 +65,44 @@
     "featuredLabel": "Featured organization update",
     "openOrganizationUpdates": "View organization updates",
     "openFeaturedStory": "Read original",
+    "openStudio": "Home settings",
+    "notice": {
+      "required": "An organization update requires your acknowledgement",
+      "complete": "All required updates are complete",
+      "completeDescription": "There are no required updates now (all required items complete · 09:58 KST).",
+      "action": "Review now"
+    },
     "resources": {
       "secondaryTitle": "Company news and notices",
       "secondaryDescription": "Review the latest updates from across the organization.",
       "knowledgeTitle": "Knowledge and organization support",
       "knowledgeDescription": "Connect to frequently used guides and employee support channels.",
+      "states": {
+        "initial-loading": {
+          "title": "Loading the workplace usage guide",
+          "description": "Waiting for the organization support source."
+        },
+        "background-refresh": {
+          "title": "Checking the workplace usage guide",
+          "description": "You can continue using the previous content."
+        },
+        "empty": {
+          "title": "No organization guides are published",
+          "description": "New guides will appear here after they are published."
+        },
+        "partial": {
+          "title": "Company knowledge base temporarily delayed",
+          "description": "Some knowledge could not be loaded. The last verified document remains available."
+        },
+        "forbidden": {
+          "title": "Restricted item",
+          "description": "Organization policy prevents access to this item. Review the security governance access policy."
+        },
+        "stale": {
+          "title": "Refresh delayed",
+          "description": "The workplace usage guide is from the last successful check."
+        }
+      },
       "personalTitle": "My work flow",
       "personalDescription": "Personal work and schedule summaries follow the organization information.",
       "summary": {
@@ -675,6 +708,7 @@
       "description": "Continue work in context with a personalized set of projection widgets.",
       "personalized": "Personalized preset",
       "preview": "Connection preview",
+      "loadedEvidence": "Verified fixture connection",
       "previewUnavailable": "Sample content before connection. Actions become available after the provider is connected.",
       "lastVerified": "Today 08:50",
       "space": {
@@ -858,6 +892,7 @@
     "groupFolder": "{{group}} folder",
     "groupApps": "{{group}} apps",
     "openApp": "Open {{app}}",
+    "forbiddenApp": "Permission required for {{app}}",
     "manageApp": "Manage {{app}}",
     "dragApp": "Move {{app}}",
     "removeApp": "Remove from home",

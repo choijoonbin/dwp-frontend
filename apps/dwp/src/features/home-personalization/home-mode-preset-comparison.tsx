@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Chip,
   FormControl,
   FormControlLabel,
@@ -14,6 +13,8 @@ import { Check, Columns3, LockKeyhole, Rows3 } from 'lucide-react';
 import { useId, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ActionButton } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
 export interface HomeModeSharedApp {
@@ -29,6 +30,7 @@ export interface HomeModePresetComparisonProps {
   disabled?: boolean;
   applying?: boolean;
   onSelect: (mode: HomeExperienceVariant) => void;
+  onCancel?: () => void;
   onApply: () => void;
 }
 
@@ -50,20 +52,22 @@ function ModePreview({ mode }: { mode: HomeExperienceVariant }) {
         overflow: 'hidden',
         border: 1,
         borderColor: 'divider',
-        borderRadius: 2,
+        borderRadius: foundationTokens.home.radius.surface,
         bgcolor: flow
-          ? theme.palette.mode === 'dark'
-            ? '#0B1D3A'
-            : '#EAF1FF'
-          : theme.palette.mode === 'dark'
-            ? '#111827'
-            : '#F7F8FB',
+          ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
+          : theme.palette.background.default,
       })}
     >
       {flow ? (
         <>
           <Stack gap={0.75}>
-            <Box sx={{ height: 38, borderRadius: 1.25, bgcolor: 'primary.main' }} />
+            <Box
+              sx={{
+                height: 38,
+                borderRadius: foundationTokens.home.radius.control,
+                bgcolor: 'primary.main',
+              }}
+            />
             <Box
               sx={{
                 flex: 1,
@@ -73,13 +77,31 @@ function ModePreview({ mode }: { mode: HomeExperienceVariant }) {
               }}
             >
               {[0, 1, 2].map((item) => (
-                <Box key={item} sx={{ borderRadius: 0.75, bgcolor: 'background.paper' }} />
+                <Box
+                  key={item}
+                  sx={{
+                    borderRadius: foundationTokens.home.radius.subtle,
+                    bgcolor: 'background.paper',
+                  }}
+                />
               ))}
             </Box>
           </Stack>
           <Stack gap={0.75}>
-            <Box sx={{ flex: 1, borderRadius: 1, bgcolor: 'background.paper' }} />
-            <Box sx={{ flex: 0.7, borderRadius: 1, bgcolor: 'background.paper' }} />
+            <Box
+              sx={{
+                flex: 1,
+                borderRadius: foundationTokens.home.radius.control,
+                bgcolor: 'background.paper',
+              }}
+            />
+            <Box
+              sx={{
+                flex: 0.7,
+                borderRadius: foundationTokens.home.radius.control,
+                bgcolor: 'background.paper',
+              }}
+            />
           </Stack>
         </>
       ) : (
@@ -90,14 +112,20 @@ function ModePreview({ mode }: { mode: HomeExperienceVariant }) {
                 key={item}
                 sx={{
                   height: 10,
-                  borderRadius: 0.75,
+                  borderRadius: foundationTokens.home.radius.subtle,
                   bgcolor: item === 0 ? 'primary.main' : 'action.hover',
                 }}
               />
             ))}
           </Stack>
           <Stack gap={0.75}>
-            <Box sx={{ height: 38, borderRadius: 1.25, bgcolor: 'background.paper' }} />
+            <Box
+              sx={{
+                height: 38,
+                borderRadius: foundationTokens.home.radius.control,
+                bgcolor: 'background.paper',
+              }}
+            />
             <Box
               sx={{
                 flex: 1,
@@ -107,7 +135,13 @@ function ModePreview({ mode }: { mode: HomeExperienceVariant }) {
               }}
             >
               {[0, 1, 2].map((item) => (
-                <Box key={item} sx={{ borderRadius: 0.75, bgcolor: 'background.paper' }} />
+                <Box
+                  key={item}
+                  sx={{
+                    borderRadius: foundationTokens.home.radius.subtle,
+                    bgcolor: 'background.paper',
+                  }}
+                />
               ))}
             </Box>
           </Stack>
@@ -153,6 +187,7 @@ export function HomeModePresetComparison({
   disabled = false,
   applying = false,
   onSelect,
+  onCancel,
   onApply,
 }: HomeModePresetComparisonProps) {
   const { t } = useTranslation('homeStudio');
@@ -202,12 +237,17 @@ export function HomeModePresetComparison({
         p: { xs: 2, sm: 3 },
         border: 1,
         borderColor: 'divider',
-        borderRadius: 3,
+        borderRadius: foundationTokens.home.radius.heroSurface,
         bgcolor: 'background.paper',
       }}
     >
       <Stack gap={0.75}>
-        <Typography id={headingId} component="h2" variant="h5" fontWeight={800}>
+        <Typography
+          id={headingId}
+          component="h2"
+          variant="h5"
+          fontWeight={foundationTokens.home.typography.weightHeavy}
+        >
           {t('modePreset.title')}
         </Typography>
         <Typography id={descriptionId} color="text.secondary">
@@ -216,7 +256,12 @@ export function HomeModePresetComparison({
       </Stack>
 
       <FormControl component="fieldset" disabled={controlsDisabled} fullWidth sx={{ mt: 3 }}>
-        <Typography component="legend" variant="subtitle2" fontWeight={750} sx={{ mb: 1.25 }}>
+        <Typography
+          component="legend"
+          variant="subtitle2"
+          fontWeight={foundationTokens.home.typography.weightEmphasis}
+          sx={{ mb: 1.25 }}
+        >
           {t('modePreset.groupLabel')}
         </Typography>
         <RadioGroup
@@ -255,7 +300,11 @@ export function HomeModePresetComparison({
                       flexWrap="wrap"
                     >
                       <OptionIcon size={19} aria-hidden="true" />
-                      <Typography component="span" variant="subtitle1" fontWeight={800}>
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        fontWeight={foundationTokens.home.typography.weightHeavy}
+                      >
                         {t(`modePreset.options.${mode}.title`)}
                       </Typography>
                       {isCurrent && (
@@ -290,7 +339,7 @@ export function HomeModePresetComparison({
                   gap: 0.75,
                   border: isSelected ? 2 : 1,
                   borderColor: isSelected ? 'primary.main' : 'divider',
-                  borderRadius: 2.5,
+                  borderRadius: foundationTokens.home.radius.surface,
                   bgcolor: isSelected
                     ? alpha(theme.palette.primary.main, 0.055)
                     : 'background.paper',
@@ -325,14 +374,17 @@ export function HomeModePresetComparison({
           p: 2,
           border: 1,
           borderColor: 'divider',
-          borderRadius: 2.5,
+          borderRadius: foundationTokens.home.radius.surface,
           bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.025),
         })}
       >
         <Stack direction="row" alignItems="flex-start" gap={1.25}>
           <LockKeyhole size={20} aria-hidden="true" />
           <Stack gap={0.25} sx={{ minWidth: 0 }}>
-            <Typography variant="subtitle2" fontWeight={800}>
+            <Typography
+              variant="subtitle2"
+              fontWeight={foundationTokens.home.typography.weightHeavy}
+            >
               {t('modePreset.sharedApps.title', { count: sharedAppOrder.length })}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -368,7 +420,7 @@ export function HomeModePresetComparison({
                 py: 0.75,
                 border: 1,
                 borderColor: 'divider',
-                borderRadius: 1.25,
+                borderRadius: foundationTokens.home.radius.control,
                 bgcolor: 'background.paper',
               }}
             >
@@ -378,7 +430,7 @@ export function HomeModePresetComparison({
               <Typography
                 display="block"
                 variant="caption"
-                fontWeight={750}
+                fontWeight={foundationTokens.home.typography.weightEmphasis}
                 noWrap
                 title={app.label}
               >
@@ -402,21 +454,39 @@ export function HomeModePresetComparison({
           aria-live="polite"
           variant="body2"
           color={hasApplicableChange ? 'warning.main' : 'text.secondary'}
-          fontWeight={hasApplicableChange ? 750 : 500}
+          fontWeight={
+            hasApplicableChange
+              ? foundationTokens.home.typography.weightEmphasis
+              : 'fontWeightMedium'
+          }
         >
           {statusMessage}
         </Typography>
-        <Button
-          type="button"
-          variant="contained"
-          disabled={controlsDisabled || !hasApplicableChange}
-          onClick={onApply}
-          startIcon={<Check size={18} aria-hidden="true" />}
-          data-mode-apply
-          sx={{ minHeight: 44, minWidth: { xs: 1, sm: 184 } }}
-        >
-          {applying ? t('modePreset.applying') : t('modePreset.apply')}
-        </Button>
+        <Stack direction={{ xs: 'column-reverse', sm: 'row' }} gap={1}>
+          {onCancel && (
+            <ActionButton
+              type="button"
+              intent="quiet"
+              disabled={controlsDisabled}
+              onClick={onCancel}
+              data-mode-cancel
+              sx={{ minHeight: 44, minWidth: { xs: 1, sm: 96 } }}
+            >
+              {t('common.cancel')}
+            </ActionButton>
+          )}
+          <ActionButton
+            type="button"
+            intent="primary"
+            disabled={controlsDisabled || !hasApplicableChange}
+            onClick={onApply}
+            startIcon={<Check size={18} aria-hidden="true" />}
+            data-mode-apply
+            sx={{ minHeight: 44, minWidth: { xs: 1, sm: 184 } }}
+          >
+            {applying ? t('modePreset.applying') : t('modePreset.apply')}
+          </ActionButton>
+        </Stack>
       </Stack>
     </Box>
   );

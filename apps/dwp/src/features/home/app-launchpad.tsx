@@ -92,6 +92,7 @@ type AppLaunchpadProps = {
   variant?: 'classic' | 'flow';
   flowItemLimit?: number;
   flowItemLimitPerGroup?: number;
+  disabledAppIds?: readonly string[];
 };
 
 type PendingFolderCreation = LaunchpadFolderCreationRequest | null;
@@ -118,6 +119,7 @@ export function AppLaunchpad({
   variant = 'classic',
   flowItemLimit,
   flowItemLimitPerGroup,
+  disabledAppIds = [],
 }: AppLaunchpadProps) {
   const { t } = useTranslation('home');
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -158,6 +160,7 @@ export function AppLaunchpad({
     () => (groups?.length ? [...groups] : localizeHomeAppGroups(t)),
     [groups, t]
   );
+  const disabledApps = useMemo(() => new Set(disabledAppIds), [disabledAppIds]);
   const groupById = useMemo(
     () => new Map(localizedGroups.map((group) => [group.id, group])),
     [localizedGroups]
@@ -802,6 +805,7 @@ export function AppLaunchpad({
                         <AppTile
                           key={app.id}
                           app={app}
+                          disabled={disabledApps.has(app.id)}
                           groupId={group.id}
                           immersive={Boolean(immersive)}
                           editing={editing}
