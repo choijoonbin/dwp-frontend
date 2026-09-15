@@ -53,6 +53,7 @@ import {
   HomeTemplatesSection,
 } from './home-studio-sections';
 import { HomeAppearanceSection } from './home-appearance-section';
+import { HomeModePresetComparison, type HomeModeSharedApp } from './home-mode-preset-comparison';
 import { HomeLayoutStudioWorkbench } from '../../components/home-layout-studio-workbench';
 import {
   activeHomeView,
@@ -79,6 +80,15 @@ import type {
 import type { HomeStudioSection, HomeWorkstyleIntent } from './home-personalization-model';
 import type { HomeWidgetRuntimeDecisions } from '../../components/home-widget-runtime-contract';
 
+export interface HomeModeStudioPreset {
+  currentMode: HomeExperienceVariant;
+  initialSelectedMode: HomeExperienceVariant;
+  sharedAppOrder: readonly HomeModeSharedApp[];
+  disabled?: boolean;
+  applying?: boolean;
+  onApply?: (mode: HomeExperienceVariant) => void | Promise<void>;
+}
+
 type HomePersonalizationStudioProps = {
   open: boolean;
   composerEnabled: boolean;
@@ -100,7 +110,10 @@ type HomePersonalizationStudioProps = {
   onExited?: () => void;
   onEditView: (view: HomeView) => void;
   onActiveViewChanged?: (view: HomeView) => void;
+  modePreset?: HomeModeStudioPreset;
 };
+
+type ActiveHomeStudioSection = HomeStudioSection | 'mode';
 
 const templateQueryKey = ['home-personalization', 'templates'] as const;
 
@@ -133,6 +146,7 @@ export function HomePersonalizationStudio({
   onExited,
   onEditView,
   onActiveViewChanged,
+  modePreset,
 }: HomePersonalizationStudioProps) {
   const { t } = useTranslation('homeStudio');
   const theme = useTheme();
@@ -140,9 +154,17 @@ export function HomePersonalizationStudio({
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission } = usePermissions();
-  const [section, setSection] = useState<HomeStudioSection>(
-    modeKey === 'FLOW_V1' ? 'layout' : 'profiles'
+  const hasModePreset = modePreset !== undefined;
+  const modePresetCurrentMode = modePreset?.currentMode;
+  const modePresetInitialSelectedMode = modePreset?.initialSelectedMode;
+  const [section, setSection] = useState<ActiveHomeStudioSection>(
+    modePreset ? 'mode' : modeKey === 'FLOW_V1' ? 'layout' : 'profiles'
   );
+  const [appliedMode, setAppliedMode] = useState(modePreset?.currentMode ?? modeKey);
+  const [selectedMode, setSelectedMode] = useState(
+    modePreset?.initialSelectedMode ?? modePreset?.currentMode ?? modeKey
+  );
+  const [modeApplying, setModeApplying] = useState(false);
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
   const [proposal, setProposal] = useState<HomeComposerProposal | null>(null);
   const viewQueryKey = useMemo(
@@ -202,6 +224,22 @@ export function HomePersonalizationStudio({
   useEffect(() => {
     if (!composerEnabled && section === 'ai') setSection('profiles');
   }, [composerEnabled, section]);
+
+  useEffect(() => {
+    if (modePresetCurrentMode) setAppliedMode(modePresetCurrentMode);
+  }, [modePresetCurrentMode]);
+
+  useEffect(() => {
+    if (!open || !hasModePreset || !modePresetInitialSelectedMode) return;
+    setSection('mode');
+    setSelectedMode(modePresetInitialSelectedMode);
+  }, [hasModePreset, modePresetInitialSelectedMode, open]);
+
+  useEffect(() => {
+    if (!hasModePreset && section === 'mode') {
+      setSection(modeKey === 'FLOW_V1' ? 'layout' : 'profiles');
+    }
+  }, [hasModePreset, modeKey, section]);
 
   const currentModeView = async (request: Promise<HomeView>) =>
     requireHomeViewMode(await request, modeKey, !modeScopedViews);
@@ -554,7 +592,8 @@ export function HomePersonalizationStudio({
   const loading = viewsQuery.isLoading;
   const failed = viewsQuery.isError;
 
-  const navItems: Array<{ key: HomeStudioSection; icon: typeof LayoutDashboard }> = [
+  const navItems: Array<{ key: ActiveHomeStudioSection; icon: typeof LayoutDashboard }> = [
+    ...(modePreset ? ([{ key: 'mode', icon: PanelsTopLeft }] as const) : []),
     ...(modeKey === 'FLOW_V1' ? ([{ key: 'layout', icon: PanelsTopLeft }] as const) : []),
     { key: 'profiles', icon: LayoutDashboard },
     { key: 'appearance', icon: Palette },
@@ -565,14 +604,32 @@ export function HomePersonalizationStudio({
     ...(composerEnabled ? ([{ key: 'ai', icon: Bot }] as const) : []),
   ];
 
+  const handleModeApply = async () => {
+    if (!modePreset || selectedMode === appliedMode || modeApplying || modePreset.applying) return;
+    setModeApplying(true);
+    try {
+      await modePreset.onApply?.(selectedMode);
+      setAppliedMode(selectedMode);
+    } catch {
+      toast.error(t('feedback.failed'));
+    } finally {
+      setModeApplying(false);
+    }
+  };
+
+  const handleClose = () => {
+    if (modePreset) setSelectedMode(appliedMode);
+    onClose();
+  };
+
   return (
     <ContentDialog
       open={open}
       title={t('title')}
       description={t('description')}
       closeLabel={t('close')}
-      onClose={onClose}
-      busy={busy}
+      onClose={handleClose}
+      busy={busy || modeApplying || Boolean(modePreset?.applying)}
       fullScreen={fullScreen}
       maxWidth={modeKey === 'FLOW_V1' ? 'xl' : 'lg'}
       contentDividers
@@ -600,7 +657,7 @@ export function HomePersonalizationStudio({
           variant="scrollable"
           allowScrollButtonsMobile
           value={section}
-          onChange={(_, value: HomeStudioSection) => setSection(value)}
+          onChange={(_, value: ActiveHomeStudioSection) => setSection(value)}
           aria-label={t('title')}
           sx={{
             borderRight: { md: modeKey === 'FLOW_V1' ? 0 : 1 },
@@ -648,7 +705,21 @@ export function HomePersonalizationStudio({
             },
           }}
         >
-          {loading ? (
+          {section === 'mode' && modePreset ? (
+            <Box data-home-studio-mode-surface>
+              <HomeModePresetComparison
+                currentMode={appliedMode}
+                selectedMode={selectedMode}
+                sharedAppOrder={modePreset.sharedAppOrder}
+                dirty={selectedMode !== appliedMode}
+                disabled={modePreset.disabled}
+                applying={modeApplying || modePreset.applying}
+                onSelect={setSelectedMode}
+                onCancel={() => setSelectedMode(appliedMode)}
+                onApply={() => void handleModeApply()}
+              />
+            </Box>
+          ) : loading ? (
             <LoadingState label={t('common.loading')} variant="skeleton" size="page" />
           ) : failed ? (
             <ErrorState

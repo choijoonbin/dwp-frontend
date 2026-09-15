@@ -3,6 +3,7 @@
   "description": "Keep your work context intact while tailoring the home composition to you.",
   "close": "Close home studio",
   "sections": {
+    "mode": "Home mode",
     "layout": "Layout studio",
     "profiles": "My homes",
     "appearance": "Layout style",

@@ -3,6 +3,7 @@
   "description": "업무 맥락은 유지하고, 홈의 구성과 표현만 나에게 맞게 조정합니다.",
   "close": "홈 스튜디오 닫기",
   "sections": {
+    "mode": "홈 모드",
     "layout": "레이아웃 스튜디오",
     "profiles": "내 홈",
     "appearance": "레이아웃 스타일",
