@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { resolveWidgetRegistryConnection } from '@dwp-frontend/shared-utils';
 
 import firstPartyFixture from '../../../../../../architecture/widget-registry-native-manifests.v1.json';
+import { resolveHomeWidgetGalleryItems } from '../home-item-gallery-model';
+import { defaultHomeWidgets } from '../home-widget-registry';
 import {
   homeWidgetRegistryEffectiveQueryKey,
   NATIVE_HOME_WIDGET_BINDINGS,
@@ -189,6 +191,72 @@ describe('native renderer allowlist', () => {
 
 describe('shadow drift observation', () => {
   const shadowConnection = resolveWidgetRegistryConnection(readiness());
+
+  it.each([
+    { mode: 'OFF', flow: false },
+    { mode: 'OFF', flow: true },
+    { mode: 'SHADOW', flow: false },
+    { mode: 'SHADOW', flow: true },
+  ])('preserves Calendar-only discovery and restore in $mode (Flow: $flow)', ({ mode, flow }) => {
+    const connection =
+      mode === 'SHADOW' ? shadowConnection : resolveWidgetRegistryConnection(undefined);
+    const deniedCatalog = catalog(
+      { mode: 'SHADOW' },
+      {
+        effectiveState: 'DENY',
+        reasonCodes: ['APP_ACCESS_REQUIRED'],
+        placementCapabilities: { canAdd: false, canHide: false, canMove: false, canResize: false },
+      }
+    );
+    const decisions = resolveHomeWidgetRuntimeDecisions(connection, deniedCatalog);
+    const keys = ['focus-balance', 'meeting-load'] as const;
+    const hidden = defaultHomeWidgets(keys).map((preference) => ({
+      ...preference,
+      visible: false,
+    }));
+
+    for (const [preferences, expectedState] of [
+      [[], 'ADD'],
+      [hidden, 'RESTORE'],
+    ] as const) {
+      const calendarItems = resolveHomeWidgetGalleryItems(
+        keys,
+        preferences,
+        [{ resourceKey: 'APP.CALENDAR' }],
+        flow,
+        decisions
+      );
+      expect(calendarItems.map(({ widget, state }) => [widget.key, state])).toEqual([
+        ['focus-balance', expectedState],
+        ['meeting-load', expectedState],
+      ]);
+      expect(
+        resolveHomeWidgetGalleryItems(
+          keys,
+          preferences,
+          [{ resourceKey: 'APP.WORK' }],
+          flow,
+          decisions
+        )
+      ).toEqual([]);
+    }
+
+    expect(decisions['focus-balance']).toMatchObject({
+      render: 'NATIVE',
+      canAdd: true,
+      canRestore: true,
+    });
+    const observation = observeHomeWidgetShadow(connection, deniedCatalog);
+    expect(observation.status).toBe(mode === 'SHADOW' ? 'DRIFT' : 'INACTIVE');
+    if (mode === 'SHADOW') {
+      expect(observation.mismatches).toContainEqual({
+        widgetKey: 'focus-balance',
+        observedRender: 'UNAVAILABLE',
+        observedReason: 'APP_ACCESS_REQUIRED',
+      });
+      expect(observation.decisionRevision).toBe('decision-1');
+    }
+  });
 
   it('reports inactive, pending, and invalid observations without changing static decisions', () => {
     expect(observeHomeWidgetShadow(resolveWidgetRegistryConnection(undefined), undefined)).toEqual({

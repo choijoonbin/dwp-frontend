@@ -126,11 +126,11 @@ describe('home item gallery model', () => {
     ]);
   });
 
-  it('uses each insight widget owner entitlement independently', () => {
+  it('requires Calendar entitlement for both fixed calendar insights', () => {
     const withCalendar = resolveHomeWidgetGalleryItems(
       ['focus-balance', 'meeting-load'],
       [],
-      APPS,
+      APPS.filter((app) => app.resourceKey === 'APP.CALENDAR'),
       true
     );
     const withoutCalendar = resolveHomeWidgetGalleryItems(
@@ -144,9 +144,7 @@ describe('home item gallery model', () => {
       ['focus-balance', 'ADD'],
       ['meeting-load', 'ADD'],
     ]);
-    expect(withoutCalendar.map(({ widget, state }) => [widget.key, state])).toEqual([
-      ['focus-balance', 'ADD'],
-    ]);
+    expect(withoutCalendar).toEqual([]);
   });
 
   it('restores the personal Flow action queue after the user hides it', () => {
