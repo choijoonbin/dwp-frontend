@@ -1,14 +1,17 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 import {
+  expectNoHorizontalOverflow,
+  expectNoSeriousAccessibilityViolations,
+  tabTo,
+} from './support/accessibility';
+import {
   FULL_PRODUCT_PERMISSIONS,
-  HOME_COMMUNICATIONS_FIXTURE,
-  createHomeOverviewFixture,
   fulfillSuccess,
   mockShellSession,
 } from './support/shell-session';
 import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
+import { createHomeWave2NewsOverviewFixture } from './support/home-wave2-acceptance-fixtures';
 
 import type { Locator, Page } from '@playwright/test';
 
@@ -38,92 +41,25 @@ const FLOW_WIDGETS = [
   { widgetKey: 'meeting-load', visible: false, size: 'medium', height: 'short' },
 ] as const;
 
-function freshOverview() {
-  const base = createHomeOverviewFixture(['TENANT_ADMIN']);
-  const generatedAt = FIXED_NOW.toISOString();
-  return {
-    ...base,
-    work: {
-      ...base.work,
-      generatedAt,
-      data: { ...base.work.data, generatedAt },
-    },
-    calendar: {
-      ...base.calendar,
-      generatedAt,
-      data: { ...base.calendar.data, generatedAt },
-    },
-    communications: {
-      status: 'AVAILABLE' as const,
-      source: 'DWP_COMMUNICATIONS',
-      generatedAt,
-      data: { ...HOME_COMMUNICATIONS_FIXTURE, generatedAt },
-      reason: null,
-    },
-    activity: {
-      ...base.activity,
-      generatedAt,
-      data: { ...base.activity.data, generatedAt },
-    },
-    generatedAt,
-  };
-}
-
-function overviewForState(state: 'empty' | 'partial' | 'forbidden' | 'stale') {
-  const overview = freshOverview();
-  if (state === 'empty') {
-    return {
-      ...overview,
-      work: {
-        ...overview.work,
-        data: {
-          ...overview.work.data,
-          items: [],
-          summary: { total: 0, dueSoon: 0, inProgress: 0, waiting: 0, completed: 0 },
-        },
-      },
-      calendar: {
-        ...overview.calendar,
-        data: { ...overview.calendar.data, nextEvent: null, today: [], attention: [] },
-      },
-    };
-  }
-  if (state === 'partial') {
-    return {
-      ...overview,
-      calendar: {
-        status: 'UNAVAILABLE' as const,
-        source: 'DWP_CALENDAR',
-        generatedAt: FIXED_NOW.toISOString(),
-        data: null,
-        reason: 'UPSTREAM_UNAVAILABLE',
-      },
-    };
-  }
-  if (state === 'forbidden') {
-    return {
-      ...overview,
-      work: {
-        status: 'FORBIDDEN' as const,
-        source: 'DWP_WORKSPACE',
-        generatedAt: FIXED_NOW.toISOString(),
-        data: null,
-        reason: 'PERMISSION_REQUIRED',
-      },
-      calendar: {
-        status: 'FORBIDDEN' as const,
-        source: 'DWP_CALENDAR',
-        generatedAt: FIXED_NOW.toISOString(),
-        data: null,
-        reason: 'PERMISSION_REQUIRED',
-      },
-    };
-  }
-  const staleAt = '2026-08-10T23:00:00.000Z';
+function freshOverview(requiredNotice = true) {
+  const overview = createHomeWave2NewsOverviewFixture(['TENANT_ADMIN']);
+  if (requiredNotice || overview.communications.status !== 'AVAILABLE') return overview;
   return {
     ...overview,
-    work: { ...overview.work, generatedAt: staleAt },
-    calendar: { ...overview.calendar, generatedAt: staleAt },
+    communications: {
+      ...overview.communications,
+      data: {
+        ...overview.communications.data,
+        featured: overview.communications.data.featured
+          ? {
+              ...overview.communications.data.featured,
+              acknowledgementRequired: false,
+              acknowledgementDueAt: null,
+            }
+          : null,
+        summary: { ...overview.communications.data.summary, required: 0 },
+      },
+    },
   };
 }
 
@@ -197,23 +133,6 @@ async function stabilizeVisual(page: Page) {
   });
 }
 
-async function expectNoHorizontalOverflow(page: Page) {
-  const geometry = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    document: document.documentElement.scrollWidth,
-  }));
-  expect(geometry.document).toBeLessThanOrEqual(geometry.viewport + 1);
-}
-
-async function expectNoSeriousAxeViolations(page: Page, include: string) {
-  const result = await new AxeBuilder({ page }).include(include).analyze();
-  expect(
-    result.violations.filter(
-      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
-    )
-  ).toEqual([]);
-}
-
 async function captureEvidence(
   page: Page,
   canonicalId: string,
@@ -223,7 +142,7 @@ async function captureEvidence(
   test.info().annotations.push({ type: 'canonical-fixture', description: fixtureId });
   await stabilizeVisual(page);
   await expectNoHorizontalOverflow(page);
-  await expectNoSeriousAxeViolations(page, include);
+  await expectNoSeriousAccessibilityViolations(page, include);
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await expect(page).toHaveScreenshot(`home-wave2-${canonicalId}.png`, {
@@ -240,7 +159,7 @@ async function captureViewportInteraction(
   include = '#dwp-main-content'
 ) {
   await expectNoHorizontalOverflow(page);
-  await expectNoSeriousAxeViolations(page, include);
+  await expectNoSeriousAccessibilityViolations(page, include);
   await expect(page).toHaveScreenshot(`home-wave2-${canonicalId}-interaction.png`, {
     animations: 'disabled',
     caret: 'hide',
@@ -248,14 +167,6 @@ async function captureViewportInteraction(
     maxDiffPixels: 100,
     scale: 'css',
   });
-}
-
-async function tabTo(page: Page, target: Locator, maximumTabs = 120, reverse = false) {
-  for (let attempt = 0; attempt < maximumTabs; attempt += 1) {
-    if (await target.evaluate((node) => node === document.activeElement)) return;
-    await page.keyboard.press(reverse ? 'Shift+Tab' : 'Tab');
-  }
-  throw new Error(`Keyboard traversal did not reach ${await target.getAttribute('data-testid')}.`);
 }
 
 async function expectFocusableAboveToolbar(target: Locator, toolbar: Locator) {
@@ -414,12 +325,12 @@ async function routeModeIsolatedHomeViews(page: Page) {
       backgroundUrl: null,
       compositionPolicy: {
         schemaVersion: 4,
-        experienceVariant: 'FLOW_V1',
+        experienceVariant: 'CLASSIC',
         personalCustomizationEnabled: true,
         governedZones: [],
         modeLayouts: MODE_LAYOUTS,
       },
-      effectiveExperienceVariant: 'FLOW_V1',
+      effectiveExperienceVariant: 'CLASSIC',
       advancedPersonalizationEnabled: true,
       composerEnabled: true,
       homePreferenceStore: 'VIEWS',
@@ -484,106 +395,205 @@ test.beforeEach(async ({ page }, testInfo) => {
   await prepareClassic(page);
 });
 
-test('C10-C13 render the real Classic Home state contract on desktop and mobile', async ({
+test('C10 renders the required-notice complete state in the first Classic viewport', async ({
   page,
 }) => {
   const cases = [
-    ['C10-D1440-EMPTY-r02', 'HOME_STATE_EMPTY_DESKTOP', 'empty', false],
-    ['C10-M390-EMPTY-r01', 'HOME_STATE_EMPTY_MOBILE', 'empty', true],
-    ['C11-D1440-PARTIAL-r02', 'HOME_STATE_PARTIAL_DESKTOP', 'partial', false],
-    ['C11-M390-PARTIAL-r02', 'HOME_STATE_PARTIAL_MOBILE', 'partial', true],
-    ['C12-D1440-FORBIDDEN-r02', 'HOME_STATE_FORBIDDEN_DESKTOP', 'forbidden', false],
-    ['C12-M390-FORBIDDEN-r04', 'HOME_STATE_FORBIDDEN_MOBILE', 'forbidden', true],
-    ['C13-D1440-STALE-r02', 'HOME_STATE_STALE_DESKTOP', 'stale', false],
-    ['C13-M390-STALE-r03', 'HOME_STATE_STALE_MOBILE', 'stale', true],
+    ['C10-D1440-EMPTY-r02', 'HOME_STATE_EMPTY_DESKTOP', false],
+    ['C10-M390-EMPTY-r01', 'HOME_STATE_EMPTY_MOBILE', true],
+  ] as const;
+
+  for (const [canonicalId, fixtureId, mobile] of cases) {
+    await page.unroute(OVERVIEW_ROUTE);
+    await routeOverview(page, freshOverview(false));
+    await configureViewport(page, mobile);
+    await page.goto('/');
+    const root = page.getByTestId('classic-home');
+    await expect(root).toContainText(
+      '2026 하반기 통합 디지털 워크플레이스 고도화 방향과 전사 적용 일정 안내'
+    );
+    await expect(root).not.toContainText('Leadership town hall questions and answers');
+    const notice = page.locator('[data-classic-required-notice="complete"]');
+    await expect(notice).toBeVisible();
+    await expect(notice).toContainText('필수 확인을 모두 완료했습니다');
+    await expect(notice).toContainText('현재 확인할 필수 항목이 없습니다');
+    const noticeBounds = await notice.boundingBox();
+    expect((noticeBounds?.y ?? Infinity) + (noticeBounds?.height ?? Infinity)).toBeLessThanOrEqual(
+      mobile ? 844 : 900
+    );
+    await captureEvidence(page, canonicalId, fixtureId);
+  }
+});
+
+test('C11-C13 target the accepted organization resource and preserve unaffected cards', async ({
+  page,
+}) => {
+  const cases = [
+    [
+      'C11-D1440-PARTIAL-r02',
+      'HOME_STATE_PARTIAL_DESKTOP',
+      'partial',
+      'handbook',
+      'DWP_KNOWLEDGE',
+      false,
+    ],
+    [
+      'C11-M390-PARTIAL-r02',
+      'HOME_STATE_PARTIAL_MOBILE',
+      'partial',
+      'handbook',
+      'DWP_KNOWLEDGE',
+      true,
+    ],
+    [
+      'C12-D1440-FORBIDDEN-r02',
+      'HOME_STATE_FORBIDDEN_DESKTOP',
+      'forbidden',
+      'it',
+      'DWP_IT_SUPPORT',
+      false,
+    ],
+    [
+      'C12-M390-FORBIDDEN-r04',
+      'HOME_STATE_FORBIDDEN_MOBILE',
+      'forbidden',
+      'it',
+      'DWP_IT_SUPPORT',
+      true,
+    ],
+    [
+      'C13-D1440-STALE-r02',
+      'HOME_STATE_STALE_DESKTOP',
+      'stale',
+      'workplace',
+      'DWP_WORKPLACE',
+      false,
+    ],
+    ['C13-M390-STALE-r03', 'HOME_STATE_STALE_MOBILE', 'stale', 'workplace', 'DWP_WORKPLACE', true],
+  ] as const;
+
+  for (const [canonicalId, fixtureId, state, region, source, mobile] of cases) {
+    await page.unroute(OVERVIEW_ROUTE);
+    await routeOverview(page, freshOverview());
+    await configureViewport(page, mobile);
+    await page.goto(`/?wave2ResourceState=${state}`);
+    const root = page.getByTestId('classic-home');
+    await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
+      'data-home-experience-mode',
+      'CLASSIC'
+    );
+    await expect(root.locator('[data-launchpad-tile]')).toHaveCount(18);
+    await expect(root).toContainText(
+      '2026 하반기 통합 디지털 워크플레이스 고도화 방향과 전사 적용 일정 안내'
+    );
+    await expect(root).not.toContainText('Leadership town hall questions and answers');
+    const regionState = root.locator(`[data-classic-resource-state-region="${region}"]`);
+    await expect(regionState).toHaveAttribute('data-classic-resource-source', source);
+    await expect(regionState.locator(`[data-home-content-state="${state}"]`)).toBeVisible();
+    await expect(root.locator('[data-classic-resource-card]')).toHaveCount(
+      state === 'forbidden' ? 3 : 4
+    );
+    const resourceOrder = await root
+      .locator('[data-classic-resource-grid]')
+      .locator(':scope > *')
+      .evaluateAll((items) =>
+        items.map(
+          (item) =>
+            item.getAttribute('data-classic-resource-state-region') ??
+            item
+              .querySelector('[data-classic-resource-card]')
+              ?.getAttribute('data-classic-resource-card')
+        )
+      );
+    expect(resourceOrder).toEqual(['handbook', 'onboarding', 'workplace', 'it']);
+    if (state === 'partial' || state === 'stale') {
+      await expect(regionState.locator('[data-home-content-preserved="true"]')).toBeVisible();
+      await expect(regionState.locator('[data-home-state-last-success]')).toBeVisible();
+    }
+    await expect(root.locator('[data-classic-resource-state-notice]')).toHaveCount(0);
+    if (state === 'forbidden') {
+      const disabledApps = root.locator('[data-launchpad-app-disabled]');
+      await expect(disabledApps).toHaveCount(3);
+      expect(
+        await disabledApps.evaluateAll((apps) =>
+          apps.map((app) => app.getAttribute('data-launchpad-app-disabled')).sort()
+        )
+      ).toEqual(['dwp-admin', 'ref-app-erp', 'ref-app-legacy']);
+      for (const app of await disabledApps.all()) {
+        await expect(app).toBeDisabled();
+        await expect(app).toHaveAttribute('tabindex', '-1');
+        await expect(app).toHaveAttribute('aria-label', /사용 권한 필요/u);
+      }
+      const knowledge = root.locator(
+        '[data-launchpad-item="ref-app-knowledge"] [data-launchpad-tile]'
+      );
+      await expect(knowledge).toBeEnabled();
+      await expect(knowledge).not.toHaveAttribute('data-launchpad-app-disabled');
+      await knowledge.focus();
+      await expect(knowledge).toBeFocused();
+      await expect(root.locator('[data-classic-resource-card="handbook"]')).toBeVisible();
+    }
+    await captureEvidence(page, canonicalId, fixtureId);
+  }
+});
+
+test('C14 loading and refresh stay in the workplace resource slot', async ({ page }) => {
+  const cases = [
+    [
+      'C14-D1440-INITIAL-LOADING-r02',
+      'HOME_STATE_INITIAL_LOADING_DESKTOP',
+      'initial-loading',
+      false,
+    ],
+    ['C14-M390-INITIAL-LOADING-r02', 'HOME_STATE_INITIAL_LOADING_MOBILE', 'initial-loading', true],
+    [
+      'C14-D1440-BACKGROUND-REFRESH-r02',
+      'HOME_STATE_BACKGROUND_REFRESH_DESKTOP',
+      'background-refresh',
+      false,
+    ],
+    [
+      'C14-M390-BACKGROUND-REFRESH-r02',
+      'HOME_STATE_BACKGROUND_REFRESH_MOBILE',
+      'background-refresh',
+      true,
+    ],
   ] as const;
 
   for (const [canonicalId, fixtureId, state, mobile] of cases) {
     await page.unroute(OVERVIEW_ROUTE);
-    await routeOverview(page, overviewForState(state));
+    await routeOverview(page, freshOverview());
     await configureViewport(page, mobile);
-    await page.goto('/');
-    const homeState = page
-      .getByTestId('home-workspace-grid')
-      .locator(`[data-home-content-state="${state}"]`);
-    await expect(homeState).toBeVisible();
-    if (state === 'empty') {
-      const action = homeState.getByRole('button', { name: '새로 확인' });
-      await expect(action).toBeVisible();
-      expect((await action.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
-    }
-    if (state === 'partial' || state === 'stale') {
-      await expect(homeState).toHaveAttribute('data-home-content-preserved', 'true');
-      await expect(homeState.locator('[data-classic-personal-summary]')).toBeVisible();
-      await expect(homeState.locator('[data-home-state-sources]')).toBeVisible();
-      await expect(homeState.getByRole('button', { name: '다시 시도' })).toBeVisible();
-    }
+    await page.goto(`/?wave2ResourceState=${state}`);
+    const root = page.getByTestId('classic-home');
+    await expect(root.locator('[data-launchpad-tile]')).toHaveCount(18);
+    await expect(root).toContainText(
+      '2026 하반기 통합 디지털 워크플레이스 고도화 방향과 전사 적용 일정 안내'
+    );
+    await expect(root).not.toContainText('Leadership town hall questions and answers');
+    const region = root.locator('[data-classic-resource-state-region="workplace"]');
+    await expect(region).toHaveAttribute('data-classic-resource-source', 'DWP_WORKPLACE');
+    const homeState = region.locator(`[data-home-content-state="${state}"]`);
+    await expect(homeState).toHaveAttribute('aria-busy', 'true');
+    await expect(homeState).toHaveAttribute(
+      'data-home-content-preserved',
+      state === 'background-refresh' ? 'true' : 'false'
+    );
+    const resourceOrder = await root
+      .locator('[data-classic-resource-grid]')
+      .locator(':scope > *')
+      .evaluateAll((items) =>
+        items.map(
+          (item) =>
+            item.getAttribute('data-classic-resource-state-region') ??
+            item
+              .querySelector('[data-classic-resource-card]')
+              ?.getAttribute('data-classic-resource-card')
+        )
+      );
+    expect(resourceOrder).toEqual(['handbook', 'onboarding', 'workplace', 'it']);
+    await expect(root.locator('[data-classic-resource-state-notice]')).toHaveCount(0);
     await captureEvidence(page, canonicalId, fixtureId);
-  }
-});
-
-test('C14 initial loading keeps the two-card geometry on desktop and mobile', async ({ page }) => {
-  const cases = [
-    ['C14-D1440-INITIAL-LOADING-r02', 'HOME_STATE_INITIAL_LOADING_DESKTOP', false],
-    ['C14-M390-INITIAL-LOADING-r02', 'HOME_STATE_INITIAL_LOADING_MOBILE', true],
-  ] as const;
-
-  for (const [canonicalId, fixtureId, mobile] of cases) {
-    await page.unroute(OVERVIEW_ROUTE);
-    let releaseRequest: (() => void) | undefined;
-    await page.route(OVERVIEW_ROUTE, async (route) => {
-      await new Promise<void>((resolve) => {
-        releaseRequest = resolve;
-      });
-      await fulfillSuccess(route, freshOverview());
-    });
-    await configureViewport(page, mobile);
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const layout = page.locator('[data-classic-summary-loading-layout]');
-    await expect(layout).toBeVisible();
-    await expect(layout.locator('[data-home-content-state="initial-loading"]')).toHaveCount(2);
-    await captureEvidence(page, canonicalId, fixtureId);
-    releaseRequest?.();
-    await expect(layout).toHaveCount(0);
-  }
-});
-
-test('C14 background refresh preserves verified content on desktop and mobile', async ({
-  page,
-}) => {
-  const cases = [
-    ['C14-D1440-BACKGROUND-REFRESH-r02', 'HOME_STATE_BACKGROUND_REFRESH_DESKTOP', false],
-    ['C14-M390-BACKGROUND-REFRESH-r02', 'HOME_STATE_BACKGROUND_REFRESH_MOBILE', true],
-  ] as const;
-
-  for (const [canonicalId, fixtureId, mobile] of cases) {
-    await page.unroute(OVERVIEW_ROUTE);
-    let requestCount = 0;
-    let releaseRefresh: (() => void) | undefined;
-    await page.route(OVERVIEW_ROUTE, async (route) => {
-      requestCount += 1;
-      if (requestCount > 1) {
-        await new Promise<void>((resolve) => {
-          releaseRefresh = resolve;
-        });
-      }
-      await fulfillSuccess(route, requestCount > 1 ? freshOverview() : overviewForState('stale'));
-    });
-    await configureViewport(page, mobile);
-    await page.goto('/');
-    const summary = page.getByTestId('home-workspace-grid');
-    await summary
-      .locator('[data-home-content-state="stale"]')
-      .getByRole('button', { name: '다시 시도' })
-      .click();
-    const refreshing = summary.locator('[data-home-content-state="background-refresh"]');
-    await expect(refreshing).toBeVisible();
-    await expect(refreshing).toHaveAttribute('aria-busy', 'true');
-    await expect(refreshing).toHaveAttribute('data-home-content-preserved', 'true');
-    await expect(refreshing.locator('[data-classic-personal-summary]')).toBeVisible();
-    await captureEvidence(page, canonicalId, fixtureId);
-    releaseRefresh?.();
-    await expect(refreshing).toHaveCount(0);
   }
 });
 
@@ -699,7 +709,7 @@ test('C16 an actual 409 shows the conflict dialog and preserves the draft', asyn
   }
 });
 
-test('C17 round-trips isolated Classic and Flow overlays through the real device API', async ({
+test('C17 compares Classic and Flow in the real Studio after mode-scoped device round-trips', async ({
   page,
 }) => {
   const fixtureId = 'HOME_SPEC_MODE_PRESET';
@@ -707,13 +717,12 @@ test('C17 round-trips isolated Classic and Flow overlays through the real device
   await routeOverview(page, freshOverview());
   const runtime = await routeModeIsolatedHomeViews(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
+  await page.goto('/?wave2ModePreset=comparison');
   await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
     'data-home-experience-mode',
-    'FLOW_V1'
+    'CLASSIC'
   );
-  await page.getByRole('button', { name: '홈 편집 옵션' }).click();
-  await page.getByRole('menuitem', { name: /홈 설정/u }).click();
+  await page.getByRole('button', { name: '홈 설정', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: '나만의 업무 홈' });
   await dialog.getByRole('tab', { name: '기기별 보기' }).click();
   const options = dialog.locator('[data-home-device-class-option]');
@@ -735,7 +744,7 @@ test('C17 round-trips isolated Classic and Flow overlays through the real device
       () =>
         runtime.requests.filter(
           ({ method, path }) =>
-            method === 'PUT' && path.endsWith('/wave2-flow-preset/device-layouts/MOBILE_COMPACT')
+            method === 'PUT' && path.endsWith('/wave2-classic-preset/device-layouts/MOBILE_COMPACT')
         ).length
     )
     .toBe(1);
@@ -744,14 +753,14 @@ test('C17 round-trips isolated Classic and Flow overlays through the real device
       () =>
         runtime.requests.filter(
           ({ method, path }) =>
-            method === 'GET' && path.endsWith('/wave2-flow-preset/device-layouts')
+            method === 'GET' && path.endsWith('/wave2-classic-preset/device-layouts')
         ).length
     )
     .toBeGreaterThanOrEqual(2);
 
   const roundTrip = await page.evaluate(async () => {
     const update = await fetch(
-      '/api/platform/v1/home-views/wave2-classic-preset/device-layouts/DESKTOP_STANDARD',
+      '/api/platform/v1/home-views/wave2-flow-preset/device-layouts/DESKTOP_STANDARD',
       {
         method: 'PUT',
         headers: {
@@ -769,7 +778,7 @@ test('C17 round-trips isolated Classic and Flow overlays through the real device
         }),
       }
     );
-    if (!update.ok) throw new Error(`Classic device save failed: ${update.status}`);
+    if (!update.ok) throw new Error(`Flow device save failed: ${update.status}`);
     const read = async (viewId: string) => {
       const response = await fetch(`/api/platform/v1/home-views/${viewId}/device-layouts`);
       if (!response.ok) throw new Error(`Device requery failed: ${response.status}`);
@@ -786,21 +795,66 @@ test('C17 round-trips isolated Classic and Flow overlays through the real device
   expect(roundTrip.flow.data).toEqual(
     MODE_LAYOUTS.FLOW_V1.deviceClasses.map((value) => runtime.layouts.FLOW_V1[value])
   );
-  expect(runtime.layouts.FLOW_V1.MOBILE_COMPACT).not.toEqual(before.FLOW_V1.MOBILE_COMPACT);
-  expect(runtime.layouts.CLASSIC.DESKTOP_STANDARD).not.toEqual(before.CLASSIC.DESKTOP_STANDARD);
-  for (const deviceClass of ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD'] as const) {
+  expect(runtime.layouts.CLASSIC.MOBILE_COMPACT).not.toEqual(before.CLASSIC.MOBILE_COMPACT);
+  expect(runtime.layouts.FLOW_V1.DESKTOP_STANDARD).not.toEqual(before.FLOW_V1.DESKTOP_STANDARD);
+  for (const deviceClass of ['DESKTOP_WIDE', 'MOBILE_STANDARD', 'MOBILE_COMPACT'] as const) {
     expect(runtime.layouts.FLOW_V1[deviceClass]).toEqual(before.FLOW_V1[deviceClass]);
   }
-  for (const deviceClass of ['DESKTOP_WIDE', 'MOBILE_STANDARD', 'MOBILE_COMPACT'] as const) {
+  for (const deviceClass of ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD'] as const) {
     expect(runtime.layouts.CLASSIC[deviceClass]).toEqual(before.CLASSIC[deviceClass]);
   }
-  await dialog.locator('[data-home-device-class-option="MOBILE_COMPACT"]').click();
-  await expect(dialog.getByRole('button', { name: '간결하게' })).toHaveAttribute(
-    'aria-pressed',
+  await dialog.getByRole('tab', { name: '홈 모드' }).click();
+  const comparison = dialog.locator('[data-home-studio-mode-surface]');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-current-mode',
+    'CLASSIC'
+  );
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-selected-mode',
+    'FLOW_V1'
+  );
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-dirty',
     'true'
   );
+  await expect(comparison.locator('[data-mode-choice]')).toHaveCount(2);
+  await expect(comparison.locator('[data-shared-app-id]')).toHaveCount(18);
+  const flowMode = comparison.getByRole('radio', { name: /Flow 업무 홈/u });
+  await flowMode.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-dirty',
+    'false'
+  );
+  await expect(comparison.getByRole('button', { name: '변경 사항 적용하기' })).toBeDisabled();
+  await page.keyboard.press('ArrowRight');
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-dirty',
+    'true'
+  );
+  await expect(comparison.getByRole('button', { name: '변경 사항 적용하기' })).toBeEnabled();
   await captureViewportInteraction(page, 'C17-MODE-PRESET', '[role="dialog"]');
   await captureEvidence(page, 'C17-MODE-PRESET', fixtureId, '[role="dialog"]');
+  await comparison.getByRole('button', { name: '변경 사항 적용하기' }).click();
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-current-mode',
+    'FLOW_V1'
+  );
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-dirty',
+    'false'
+  );
+  await comparison.getByRole('radio', { name: /Classic 조직 포털/u }).click();
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-dirty',
+    'true'
+  );
+  await comparison.getByRole('button', { name: '취소' }).click();
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-selected-mode',
+    'FLOW_V1'
+  );
 });
 
 test('C18 keeps the real Home keyboard path and disables motion', async ({ page }) => {
@@ -844,33 +898,66 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Tab');
   await expect(footerAction).toBeFocused();
-  const motion = await page.evaluate(() => ({
-    reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
-    animations: Array.from(document.querySelectorAll<HTMLElement>('#dwp-main-content *')).filter(
-      (element) => {
+  await page.unroute('**/api/platform/v1/home-preferences');
+  await routeConflictPreference(page);
+  const conflictToolbar = await enterClassicEdit(page);
+  await conflictToolbar.getByRole('button', { name: '저장', exact: true }).click();
+  const conflictDialog = page.getByRole('dialog');
+  await expect(conflictDialog).toBeVisible();
+
+  const motion = await page.evaluate(() => {
+    const seconds = (value: string) =>
+      value.split(',').some((part) => {
+        const duration = Number.parseFloat(part);
+        return part.trim().endsWith('ms') ? duration > 1 : duration > 0.001;
+      });
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        '[data-testid="personal-home-shell"], [data-testid="personal-home-shell"] *, .MuiDialog-root, .MuiDialog-root *'
+      )
+    );
+    const offenders = candidates
+      .filter((element) => {
         const style = getComputedStyle(element);
-        return style.animationName !== 'none' && parseFloat(style.animationDuration) > 0.001;
-      }
-    ).length,
-    transitions: Array.from(document.querySelectorAll<HTMLElement>('#dwp-main-content *')).filter(
-      (element) => parseFloat(getComputedStyle(element).transitionDuration) > 0.001
-    ).length,
-    smoothScroll: [document.documentElement, document.body].some(
-      (element) => getComputedStyle(element).scrollBehavior === 'smooth'
-    ),
-    carousel: document
-      .querySelector('[data-testid="home-news-carousel"]')
-      ?.getAttribute('data-news-auto-rotation'),
-  }));
+        return (
+          (style.animationName !== 'none' && seconds(style.animationDuration)) ||
+          seconds(style.transitionDuration)
+        );
+      })
+      .map((element) => ({
+        tag: element.tagName,
+        testId: element.dataset.testid ?? null,
+        className: typeof element.className === 'string' ? element.className : null,
+      }));
+    return {
+      reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      offenders,
+      smoothScroll: [document.documentElement, document.body].some(
+        (element) => getComputedStyle(element).scrollBehavior === 'smooth'
+      ),
+      autoRotatingCarousels: Array.from(
+        document.querySelectorAll('[data-news-auto-rotation]')
+      ).filter(
+        (carousel) => carousel.getAttribute('data-news-auto-rotation') !== 'paused-reduced-motion'
+      ).length,
+      shellVisible: Boolean(document.querySelector('[data-testid="personal-home-shell"]')),
+      dialogVisible: Boolean(document.querySelector('.MuiDialog-root [role="dialog"]')),
+    };
+  });
   expect(motion).toEqual({
     reduce: true,
-    animations: 0,
-    transitions: 0,
+    offenders: [],
     smoothScroll: false,
-    carousel: 'paused-reduced-motion',
+    autoRotatingCarousels: 0,
+    shellVisible: true,
+    dialogVisible: true,
   });
-  await captureViewportInteraction(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02');
-  await captureEvidence(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', fixtureId);
+  await test.info().attach('HOME_SPEC_ACCESSIBILITY_SPEC-motion-scope.json', {
+    body: Buffer.from(JSON.stringify(motion, null, 2)),
+    contentType: 'application/json',
+  });
+  await captureViewportInteraction(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', 'body');
+  await captureEvidence(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', fixtureId, 'body');
 });
 
 test('the canonical state sheet renders all nine production primitives', async ({ page }) => {

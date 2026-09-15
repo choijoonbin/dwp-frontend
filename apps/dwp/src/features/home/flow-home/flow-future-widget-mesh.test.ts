@@ -43,4 +43,19 @@ describe('Flow personalized projection widget boundary', () => {
     );
     expect(markup).not.toContain('data-flow-provider-status="ready"');
   });
+
+  it('renders deterministic loaded evidence without activating the production provider boundary', () => {
+    const stateByKey = Object.fromEntries(
+      FLOW_FUTURE_WIDGET_CONTRACTS.map(({ key }) => [key, 'loaded'] as const)
+    );
+    const markup = renderToStaticMarkup(createElement(FlowFutureWidgetMesh, { stateByKey }));
+
+    expect(markup.match(/data-flow-provider-status="available"/gu)).toHaveLength(5);
+    expect(markup.match(/data-flow-projection-kind="deterministic-evidence"/gu)).toHaveLength(5);
+    expect(markup.match(/data-flow-provider-activation="fixture-only"/gu)).toHaveLength(5);
+    expect(markup).toContain('flow.future.loadedEvidence');
+    expect(markup).not.toContain('flow.future.previewUnavailable');
+    expect(markup).not.toContain(' disabled=""');
+    expect(markup.match(/data-integration-boundary="WAVE4_PROVIDER_PROJECTION"/gu)).toHaveLength(5);
+  });
 });

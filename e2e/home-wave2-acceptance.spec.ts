@@ -1,6 +1,9 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+import {
+  expectMinimumTouchTargets,
+  expectNoSeriousAccessibilityViolations,
+} from './support/accessibility';
 import {
   CANONICAL_HOME_APP_IDS_BY_GROUP,
   routeCanonicalHomeWorkspaceApps,
@@ -82,15 +85,6 @@ async function stabilizeVisual(page: Page) {
   });
 }
 
-async function expectNoSeriousAxeViolations(page: Page, include: string) {
-  const accessibility = await new AxeBuilder({ page }).include(include).analyze();
-  expect(
-    accessibility.violations.filter(
-      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
-    )
-  ).toEqual([]);
-}
-
 async function expectNoDocumentOrNestedScroll(root: Locator) {
   const geometry = await root.evaluate((node) => {
     const viewportWidth = document.documentElement.clientWidth;
@@ -155,10 +149,8 @@ async function expectCanonicalClassicLaunchpad(root: Locator) {
 }
 
 async function expectNoLaunchpadLabelClipping(root: Locator) {
-  const clippedLabels = await root
-    .locator('[data-launchpad-item-label]')
-    .evaluateAll((labels) =>
-      labels
+  const clippedLabels = await root.locator('[data-launchpad-item-label]').evaluateAll((labels) =>
+    labels
       .filter(
         (label) =>
           label.scrollWidth > label.clientWidth + 1 || label.scrollHeight > label.clientHeight + 1
@@ -387,17 +379,28 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
     await expectNoDocumentOrNestedScroll(root);
 
     if (item.width <= 390) {
-      const targets = await root.locator('[data-launchpad-tile]').evaluateAll((buttons) =>
-        buttons.map((button) => {
-          const bounds = button.getBoundingClientRect();
-          return { width: bounds.width, height: bounds.height };
-        })
-      );
-      expect(targets.every(({ width, height }) => width >= 44 && height >= 44)).toBe(true);
+      const touchReport = {
+        launchpad: await expectMinimumTouchTargets(
+          root.locator('[data-launchpad-tile]'),
+          `${item.id} launchpad`
+        ),
+        hero: await expectMinimumTouchTargets(
+          root.locator('[data-home-action-placement="hero"] button, [data-classic-primary-action]'),
+          `${item.id} hero actions`
+        ),
+        resources: await expectMinimumTouchTargets(
+          root.locator('[data-classic-resource-card] a'),
+          `${item.id} resource actions`
+        ),
+      };
+      await test.info().attach(`${item.id}-touch-targets.json`, {
+        body: Buffer.from(JSON.stringify(touchReport, null, 2)),
+        contentType: 'application/json',
+      });
     }
 
     await stabilizeVisual(page);
-    await expectNoSeriousAxeViolations(page, '[data-testid="classic-home"]');
+    await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
     await expect(page).toHaveScreenshot(`home-wave2-${item.id}.png`, {
       animations: 'disabled',
       caret: 'hide',
@@ -479,7 +482,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
     await page.unroute('**/api/platform/v1/home-views**');
     await routeHomeWave2Flow(page, item.presentation);
     await page.setViewportSize({ width: item.width, height: item.height });
-    await page.goto('/');
+    await page.goto(item.presentation === 'expressive' ? '/?wave2FlowState=loaded' : '/');
     const root = page.getByTestId('flow-home');
     await expect(root).toBeVisible();
     await expect(root).toHaveAttribute('data-home-ia', 'personal-action');
@@ -506,6 +509,30 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       await expect(mobileNavigation).toBeVisible();
       await expect(mobileNavigation.locator('a')).toHaveCount(5);
       await expectMobileNavigation(mobileNavigation, FLOW_MOBILE_NAVIGATION, 'FLOW_V1');
+      const touchReport: Record<string, unknown> = {
+        navigation: await expectMinimumTouchTargets(
+          mobileNavigation.locator('a'),
+          `${item.id} mobile navigation`
+        ),
+        primaryAction: await expectMinimumTouchTargets(
+          root.locator('[data-flow-primary-action-cta]'),
+          `${item.id} primary action`
+        ),
+        launchpad: await expectMinimumTouchTargets(
+          root.locator('[data-flow-dock-launch]'),
+          `${item.id} launchpad`
+        ),
+      };
+      if (item.presentation === 'expressive') {
+        touchReport.futureWidgets = await expectMinimumTouchTargets(
+          root.locator('[data-flow-future-widget] button'),
+          `${item.id} future widget actions`
+        );
+      }
+      await test.info().attach(`${item.id}-touch-targets.json`, {
+        body: Buffer.from(JSON.stringify(touchReport, null, 2)),
+        contentType: 'application/json',
+      });
     }
     await expect(root.locator('[data-flow-primary-action]')).toBeVisible();
     await expect(root.locator('[data-flow-primary-action-cta]')).toBeVisible();
@@ -568,11 +595,10 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       await expect(
         mesh.locator('[data-integration-boundary="WAVE4_PROVIDER_PROJECTION"]')
       ).toHaveCount(5);
-      await expect(mesh.locator('[data-flow-provider-status="unavailable"]')).toHaveCount(5);
+      await expect(mesh.locator('[data-flow-provider-status="available"]')).toHaveCount(5);
+      await expect(mesh.locator('[data-flow-provider-activation="fixture-only"]')).toHaveCount(5);
       await expect(mesh.getByRole('button')).toHaveCount(5);
-      expect(await mesh.getByRole('button').all()).toHaveLength(5);
-      for (const action of await mesh.getByRole('button').all())
-        await expect(action).toBeDisabled();
+      for (const action of await mesh.getByRole('button').all()) await expect(action).toBeEnabled();
       await expect(root.getByTestId('flow-home-personal-sections')).toHaveCount(0);
     } else {
       await expect(root.locator('[data-flow-meeting-prep]')).toBeVisible();
@@ -635,7 +661,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
     }
     await expectNoDocumentOrNestedScroll(root);
     await stabilizeVisual(page);
-    await expectNoSeriousAxeViolations(page, '[data-testid="flow-home"]');
+    await expectNoSeriousAccessibilityViolations(page, '[data-testid="flow-home"]');
     await expect(page).toHaveScreenshot(`home-wave2-${item.id}.png`, {
       animations: 'disabled',
       caret: 'hide',
@@ -745,7 +771,7 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
   await page.keyboard.press('Control+z');
   await expect(workbench.locator('[data-home-studio-dirty="false"]').first()).toBeVisible();
   await stabilizeVisual(page);
-  await expectNoSeriousAxeViolations(page, '[role="dialog"]');
+  await expectNoSeriousAccessibilityViolations(page, '[role="dialog"]');
   await expect(page).toHaveScreenshot('home-wave2-FLOW-EDITOR-DESKTOP.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -771,8 +797,35 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
       { type: 'canonical-fixture', description: 'HOME_SPEC_ZOOM_200' },
       { type: 'canonical-fixture', description: 'HOME_SPEC_TEXT_200' }
     );
-  await page.setViewportSize({ width: 720, height: 900 });
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 720,
+    height: 450,
+    screenWidth: 1440,
+    screenHeight: 900,
+    deviceScaleFactor: 2,
+    mobile: false,
+  });
   await page.goto('/');
+  const browserZoomEvidence = await page.evaluate(() => ({
+    cssViewport: { width: window.innerWidth, height: window.innerHeight },
+    physicalViewport: {
+      width: Math.round(window.innerWidth * window.devicePixelRatio),
+      height: Math.round(window.innerHeight * window.devicePixelRatio),
+    },
+    devicePixelRatio: window.devicePixelRatio,
+    screen: { width: window.screen.width, height: window.screen.height },
+  }));
+  expect(browserZoomEvidence).toEqual({
+    cssViewport: { width: 720, height: 450 },
+    physicalViewport: { width: 1440, height: 900 },
+    devicePixelRatio: 2,
+    screen: { width: 1440, height: 900 },
+  });
+  await test.info().attach('HOME_SPEC_ZOOM_200-browser-metrics.json', {
+    body: Buffer.from(JSON.stringify(browserZoomEvidence, null, 2)),
+    contentType: 'application/json',
+  });
   let root = page.getByTestId('classic-home');
   await expect(root).toBeVisible();
   await expect(page.getByTestId('home-sidebar')).toBeHidden();
@@ -792,7 +845,7 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
   await expectCanonicalClassicLaunchpad(root);
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeVisual(page);
-  await expectNoSeriousAxeViolations(page, '[data-testid="classic-home"]');
+  await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -800,6 +853,7 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
     scale: 'css',
   });
 
+  await cdp.send('Emulation.clearDeviceMetricsOverride');
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await page.evaluate(() => {
@@ -835,7 +889,7 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
     );
   expect(largeTextGroupColumns.every((count) => count <= 2)).toBe(true);
   await stabilizeVisual(page);
-  await expectNoSeriousAxeViolations(page, '[data-testid="classic-home"]');
+  await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C06-TEXT-200-D1440-r04.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -868,7 +922,7 @@ test('long English content wraps without clipping or deleting its accessible mea
   await expectNoLaunchpadLabelClipping(root);
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeVisual(page);
-  await expectNoSeriousAxeViolations(page, '[data-testid="classic-home"]');
+  await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C07-LONG-EN-D1280-r02.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -897,7 +951,7 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
   await expect(root).toBeVisible();
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeVisual(page);
-  await expectNoSeriousAxeViolations(page, '[data-testid="classic-home"]');
+  await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C08-DARK-D1440-r02.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -918,7 +972,7 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
   await page.keyboard.press('Tab');
   await expect(page.locator(':focus')).toBeVisible();
   await stabilizeVisual(page);
-  await expectNoSeriousAxeViolations(page, '[data-testid="classic-home"]');
+  await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C09-HIGH-CONTRAST-D1440-r04.png', {
     animations: 'disabled',
     caret: 'hide',

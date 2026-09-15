@@ -4,6 +4,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { createHomeModeLayouts, HOME_DEVICE_CLASSES } from '@dwp-frontend/shared-utils';
 
 import { HOME_CONTENT_STATES, HomeContentState } from './home-content-state';
+import { ClassicOrganizationResources } from '../classic-home/classic-organization-resources';
+import {
+  FLOW_FUTURE_WIDGET_CONTRACTS,
+  FlowFutureWidgetMesh,
+} from '../flow-home/flow-future-widget-mesh';
+import { HomeModePresetComparison } from '../../home-personalization/home-mode-preset-comparison';
 
 import type { HomeContentStateKind } from './home-content-state';
 
@@ -86,5 +92,61 @@ describe('Wave 2 canonical state fixture evidence', () => {
     expect(Object.keys(layouts)).toEqual(['CLASSIC', 'FLOW_V1']);
     expect(layouts.CLASSIC.deviceClasses).toEqual(HOME_DEVICE_CLASSES);
     expect(layouts.FLOW_V1.deviceClasses).toEqual(HOME_DEVICE_CLASSES);
+    const sharedAppOrder = Array.from({ length: 18 }, (_, index) => ({
+      id: `app-${index + 1}`,
+      label: `앱 ${index + 1}`,
+    }));
+    const markup = renderToStaticMarkup(
+      createElement(HomeModePresetComparison, {
+        currentMode: 'CLASSIC',
+        selectedMode: 'FLOW_V1',
+        sharedAppOrder,
+        dirty: true,
+        onSelect: () => undefined,
+        onApply: () => undefined,
+      })
+    );
+    expect(markup).toContain('data-current-mode="CLASSIC"');
+    expect(markup).toContain('data-selected-mode="FLOW_V1"');
+    expect(markup).toContain('data-dirty="true"');
+    expect(markup.match(/data-shared-app-id=/gu)).toHaveLength(18);
+  });
+
+  it.each([
+    ['C11', 'partial', 'handbook', 'DWP_KNOWLEDGE'],
+    ['C12', 'forbidden', 'it', 'DWP_IT_SUPPORT'],
+    ['C13', 'stale', 'workplace', 'DWP_WORKPLACE'],
+    ['C14', 'background-refresh', 'workplace', 'DWP_WORKPLACE'],
+    ['C14', 'initial-loading', 'workplace', 'DWP_WORKPLACE'],
+  ] as const)('%s targets the accepted %s region for %s', (_id, kind, targetKey, source) => {
+    const markup = renderToStaticMarkup(
+      createElement(ClassicOrganizationResources, {
+        resourceState: {
+          kind,
+          targetKey,
+          source,
+          lastSuccessfulAt: ['partial', 'stale', 'background-refresh'].includes(kind)
+            ? '오전 9:24'
+            : undefined,
+          onRetry: () => undefined,
+        },
+      })
+    );
+    expect(markup).toContain(`data-classic-resource-state-region="${targetKey}"`);
+    expect(markup).toContain(`data-classic-resource-source="${source}"`);
+    expect(markup).toContain(`data-home-content-state="${kind}"`);
+  });
+
+  it('personalized Flow has deterministic loaded reference evidence while production defaults fail closed', () => {
+    const stateByKey = Object.fromEntries(
+      FLOW_FUTURE_WIDGET_CONTRACTS.map(({ key }) => [key, 'loaded'] as const)
+    );
+    const loaded = renderToStaticMarkup(createElement(FlowFutureWidgetMesh, { stateByKey }));
+    const productionDefault = renderToStaticMarkup(createElement(FlowFutureWidgetMesh));
+
+    expect(loaded.match(/data-flow-provider-status="available"/gu)).toHaveLength(5);
+    expect(loaded.match(/data-flow-provider-activation="fixture-only"/gu)).toHaveLength(5);
+    expect(productionDefault.match(/data-flow-provider-status="unavailable"/gu)).toHaveLength(5);
+    expect(productionDefault.match(/data-flow-provider-activation="blocked"/gu)).toHaveLength(5);
   });
 });

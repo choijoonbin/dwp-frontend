@@ -813,10 +813,8 @@
       "RawTypography": 7
     },
     "apps/dwp/src/features/home/home-day-rail.tsx": {
-      "HardcodedColor": 31,
-      "RawTypography": 13,
-      "RawShadow": 4,
-      "RawRadius": 1
+      "HardcodedColor": 9,
+      "RawTypography": 13
     },
     "apps/dwp/src/features/home/home-item-gallery.tsx": {
       "HardcodedColor": 2,
