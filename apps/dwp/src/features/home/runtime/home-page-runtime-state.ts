@@ -1,4 +1,5 @@
 import type { HomeDeviceClass, HomeExperience } from '@dwp-frontend/shared-utils';
+import { homeDeviceClassForAvailableWidth } from './home-available-width';
 
 type HomeCopyExperience = Pick<
   HomeExperience,
@@ -49,16 +50,16 @@ export function canStartHomeEditing({
 export function resolveHomeDeviceClass({
   editPreviewActive,
   previewDevice,
-  runtimeMobile,
+  availableWidth,
 }: Readonly<{
   editPreviewActive: boolean;
   previewDevice: 'desktop' | 'mobile';
-  runtimeMobile: boolean;
+  availableWidth: number;
 }>): HomeDeviceClass {
   if (editPreviewActive) {
     return previewDevice === 'mobile' ? 'MOBILE_STANDARD' : 'DESKTOP_STANDARD';
   }
-  return runtimeMobile ? 'MOBILE_STANDARD' : 'DESKTOP_STANDARD';
+  return homeDeviceClassForAvailableWidth(availableWidth);
 }
 
 export function resolveHomePageCopy({

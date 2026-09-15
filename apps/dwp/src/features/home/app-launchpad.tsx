@@ -590,6 +590,7 @@ export function AppLaunchpad({
           />
         ) : (
           <Box
+            data-launchpad-group-grid
             data-flow-app-dock-list={flow ? true : undefined}
             sx={{
               width: 1,

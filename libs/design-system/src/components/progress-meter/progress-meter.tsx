@@ -11,6 +11,7 @@ export type ProgressMeterProps = {
   tone?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error';
   size?: 'compact' | 'standard';
   valueLabel?: string;
+  showLabel?: boolean;
   sx?: SxProps<Theme>;
 };
 
@@ -25,40 +26,43 @@ export function ProgressMeter({
   tone = 'primary',
   size = 'standard',
   valueLabel,
+  showLabel = true,
   sx,
 }: ProgressMeterProps) {
   const normalizedValue = normalizedProgress(value);
   return (
     <Box sx={[{ minWidth: 0 }, ...(Array.isArray(sx) ? sx : [sx])]}>
-      <Stack
-        direction="row"
-        alignItems="baseline"
-        justifyContent="space-between"
-        gap={1}
-        flexWrap="wrap"
-      >
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ minWidth: 0, flex: '1 1 90px', overflowWrap: 'anywhere' }}
+      {showLabel ? (
+        <Stack
+          direction="row"
+          alignItems="baseline"
+          justifyContent="space-between"
+          gap={1}
+          flexWrap="wrap"
         >
-          {label}
-        </Typography>
-        {valueLabel ? (
           <Typography
             variant="caption"
             color="text.secondary"
-            sx={{
-              fontVariantNumeric: 'tabular-nums',
-              minWidth: 0,
-              maxWidth: 1,
-              overflowWrap: 'anywhere',
-            }}
+            sx={{ minWidth: 0, flex: '1 1 90px', overflowWrap: 'anywhere' }}
           >
-            {valueLabel}
+            {label}
           </Typography>
-        ) : null}
-      </Stack>
+          {valueLabel ? (
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                fontVariantNumeric: 'tabular-nums',
+                minWidth: 0,
+                maxWidth: 1,
+                overflowWrap: 'anywhere',
+              }}
+            >
+              {valueLabel}
+            </Typography>
+          ) : null}
+        </Stack>
+      ) : null}
       <LinearProgress
         variant="determinate"
         value={normalizedValue}
@@ -67,7 +71,7 @@ export function ProgressMeter({
         aria-valuenow={normalizedValue}
         aria-valuetext={valueLabel}
         sx={{
-          mt: 0.5,
+          mt: showLabel ? 0.5 : 0,
           height: size === 'compact' ? 4 : 6,
           borderRadius: 999,
           '@media (forced-colors: active)': {

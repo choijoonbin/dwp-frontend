@@ -21,6 +21,7 @@ import {
 import { measureFlowLaunchDeck } from './support/flow-home-launch-deck-contract';
 import { routeEmptyFlowExecutionSummaries } from './support/flow-home-provider-fixtures';
 import { emulateVisualTransparency } from './support/visual-media';
+import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -87,7 +88,6 @@ function flowExperience(
     backgroundPosition: 'RIGHT',
     overlayOpacity: 18,
     backgroundUrl: null,
-    launchpadConfiguration: { schemaVersion: 1, groups: [], placements: [] },
     compositionPolicy: FLOW_POLICY,
     effectiveExperienceVariant: 'FLOW_V1',
     advancedPersonalizationEnabled: false,
@@ -260,6 +260,7 @@ async function mockFlowHome(
       reduceMotion: true,
     },
   });
+  await routeCanonicalHomeWorkspaceApps(page);
   await routeEmptyFlowExecutionSummaries(page, FLOW_VISUAL_NOW.toISOString());
   await page.route('**/api/platform/v1/home-experience', (route) =>
     fulfillSuccess(route, flowExperience(experienceOverrides))
@@ -337,8 +338,7 @@ async function emulateReducedTransparency(page: Page, colorScheme: 'light' | 'da
 async function waitForVisualState(page: Page) {
   await page.waitForLoadState('networkidle');
   await page.evaluate(async () => {
-    // Vite's development-only checker is verified by the independent type and
-    // lint gates. It must not become part of the product visual contract when
+    // Vite's development-only checker is covered by the independent type/lint gates and must not
     // another local task is compiling in the shared workspace.
     document.querySelectorAll('vite-plugin-checker-error-overlay').forEach((overlay) => {
       overlay.remove();
@@ -950,7 +950,7 @@ test('Flow Home purpose-led Korean mobile 390 visual baseline', async ({ page },
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'balanced');
   await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
-  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(17);
   await expect(flowHome.locator('[data-flow-section="updates"]')).toHaveAttribute(
     'data-flow-updates-visible-count',
     '1'
@@ -986,7 +986,7 @@ test('Flow Home expressive Korean mobile 390 actual visual baseline', async ({
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
   await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
-  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(17);
   await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
     'data-flow-read-template',
     'standard'
@@ -1014,7 +1014,7 @@ test('Flow Home Korean mobile 320 full-page visual baseline', async ({ page }, t
   const flowHome = page.getByTestId('flow-home');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
-  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(17);
   const columns = await flowHome
     .locator('[data-workspace-presentation]')
     .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);

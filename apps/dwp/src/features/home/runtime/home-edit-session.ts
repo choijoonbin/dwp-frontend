@@ -5,7 +5,7 @@ import {
   updateHomePreference,
   updateHomeView,
 } from '@dwp-frontend/shared-utils';
-import { requireHomeViewMode } from './home-view-query-key';
+import { requireHomeViewMode } from '../../../components/home-view-query-key';
 
 import type {
   CreateHomeViewRequest,

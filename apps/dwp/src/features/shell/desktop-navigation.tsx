@@ -10,12 +10,24 @@ import type { ShellDefinition } from './shell-registry';
 
 const STORAGE_PREFIX = 'dwp:shell:desktop-navigation';
 
-function readCompactPreference(storageKey: string): boolean {
-  if (typeof window === 'undefined') return false;
+export function resolveDesktopNavigationCompactPreference(
+  value: string | null,
+  defaultCompact = false
+): boolean {
+  if (value === 'compact') return true;
+  if (value === 'expanded') return false;
+  return defaultCompact;
+}
+
+function readCompactPreference(storageKey: string, defaultCompact = false): boolean {
+  if (typeof window === 'undefined') return defaultCompact;
   try {
-    return window.localStorage.getItem(storageKey) === 'compact';
+    return resolveDesktopNavigationCompactPreference(
+      window.localStorage.getItem(storageKey),
+      defaultCompact
+    );
   } catch {
-    return false;
+    return defaultCompact;
   }
 }
 
@@ -29,23 +41,32 @@ function writeCompactPreference(storageKey: string, compact: boolean): void {
 
 type DesktopNavigationOptions = {
   allowTopNavigation?: boolean;
+  defaultCompact?: boolean;
+  storageScope?: string;
 };
 
 export function useDesktopNavigation(
   shell: ShellDefinition,
-  { allowTopNavigation = false }: DesktopNavigationOptions = {}
+  {
+    allowTopNavigation = false,
+    defaultCompact = false,
+    storageScope,
+  }: DesktopNavigationOptions = {}
 ) {
   const appearance = useAppearance();
   const auth = useAuth();
   const storageKey = useMemo(
-    () => `${STORAGE_PREFIX}:${auth.user?.tenantId ?? 'tenant'}:${auth.user?.userId ?? 'user'}`,
-    [auth.user?.tenantId, auth.user?.userId]
+    () =>
+      `${STORAGE_PREFIX}:${auth.user?.tenantId ?? 'tenant'}:${auth.user?.userId ?? 'user'}${storageScope ? `:${storageScope}` : ''}`,
+    [auth.user?.tenantId, auth.user?.userId, storageScope]
   );
-  const [preferredCompact, setPreferredCompact] = useState(() => readCompactPreference(storageKey));
+  const [preferredCompact, setPreferredCompact] = useState(() =>
+    readCompactPreference(storageKey, defaultCompact)
+  );
 
   useEffect(() => {
-    setPreferredCompact(readCompactPreference(storageKey));
-  }, [storageKey]);
+    setPreferredCompact(readCompactPreference(storageKey, defaultCompact));
+  }, [defaultCompact, storageKey]);
 
   const topNavigation = allowTopNavigation && appearance.navigationPattern === 'top';
   const forcedCompact = appearance.navigationPattern === 'rail';

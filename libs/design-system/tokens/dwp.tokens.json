@@ -260,6 +260,11 @@
         "$description": "Desktop compact navigation rail width.",
         "$value": { "value": 72, "unit": "px" }
       },
+      "homeNavigationCompact": {
+        "$type": "dimension",
+        "$description": "Approved compact navigation rail width for the Home Flow experience.",
+        "$value": { "value": 64, "unit": "px" }
+      },
       "headerHeight": {
         "$type": "dimension",
         "$description": "Global command header height.",

@@ -48,7 +48,7 @@ export function HomePreferenceConflictDialog({
         </ActionButton>
       }
     >
-      <Stack gap={2}>
+      <Stack gap={2} data-home-content-state="conflict" data-home-draft-preserved="true">
         <Alert severity="warning">{t('flow.conflict.description')}</Alert>
         <Stack gap={1.25}>
           <Typography variant="body2">

@@ -1419,8 +1419,8 @@
       "RawTypography": 5
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance-hierarchy.tsx": {
-      "RawTypography": 2,
-      "Alert": 1
+      "Alert": 1,
+      "RawTypography": 2
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance-ui.tsx": {
       "Alert": 1
@@ -1597,9 +1597,7 @@
       "RawTypography": 6
     },
     "apps/dwp/src/layouts/home-layout.tsx": {
-      "HardcodedColor": 1,
-      "RawRadius": 2,
-      "RawTypography": 1
+      "RawRadius": 2
     },
     "apps/dwp/src/layouts/provider-layout.tsx": {
       "RawTypography": 2,

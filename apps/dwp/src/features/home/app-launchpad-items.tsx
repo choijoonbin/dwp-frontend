@@ -315,10 +315,16 @@ export function AppTile({
                 WebkitBoxOrient: 'vertical',
                 lineHeight: editing ? 'var(--launchpad-label-line-height, 12px)' : 1.2,
                 wordBreak: 'normal',
-                overflowWrap: 'normal',
+                overflowWrap: 'anywhere',
+                '& [data-launchpad-label-full]': { display: 'none' },
               }}
             >
-              {app.shortName}
+              <Box component="span" data-launchpad-label-short aria-hidden="true">
+                {app.shortName}
+              </Box>
+              <Box component="span" data-launchpad-label-full aria-hidden="true">
+                {app.name}
+              </Box>
             </Typography>
           </ButtonBase>
           {!editing && app.managementRoute && onManage && (

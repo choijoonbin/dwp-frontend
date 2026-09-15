@@ -16,7 +16,7 @@ export const LAUNCHPAD_TILE_HEIGHT = HOME_LAUNCHPAD_TILE_HEIGHT;
 export const LAUNCHPAD_TILE_HEIGHT_CSS = `var(--launchpad-tile-height, ${LAUNCHPAD_TILE_HEIGHT}px)`;
 
 export function launchpadLabelFontSize(label: string) {
-  return label.length > 8 ? '0.625rem' : '0.6875rem';
+  return label.length > 6 ? '0.5625rem' : '0.6875rem';
 }
 
 export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {

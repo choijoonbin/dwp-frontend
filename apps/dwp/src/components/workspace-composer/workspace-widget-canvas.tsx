@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DndContext,
@@ -86,6 +86,8 @@ type WorkspaceWidgetCanvasProps<WidgetKey extends string> = {
     size: HomeWidgetSize,
     height: HomeWidgetHeight
   ) => React.ReactNode;
+  renderWidgetBoundary?: (widgetKey: string, content: React.ReactNode) => React.ReactNode;
+  renderAfterWidget?: (widgetKey: WidgetKey) => React.ReactNode;
   onStartEditing?: () => void;
   scrollMode?: 'contained' | 'document';
 };
@@ -611,6 +613,8 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
   getLabel,
   onChange,
   renderWidget,
+  renderWidgetBoundary = (_widgetKey, content) => content,
+  renderAfterWidget,
   onStartEditing,
   scrollMode = 'contained',
 }: WorkspaceWidgetCanvasProps<WidgetKey>) {
@@ -786,7 +790,10 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
           {governedWidgets.map((widget) => (
             <GovernedWidget
               key={widget.widgetKey}
-              widget={widget}
+              widget={{
+                ...widget,
+                content: renderWidgetBoundary(widget.widgetKey, widget.content),
+              }}
               editing={editing}
               inlineInset={inlineInset}
               scrollMode={scrollMode}
@@ -799,43 +806,53 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
             const size = widget.size ?? definition.defaultSize;
             const height = widget.height ?? definition.defaultHeight;
             return (
-              <SortableWidget
-                key={widget.widgetKey}
-                definition={definition}
-                widget={widget}
-                editing={editing}
-                busy={busy}
-                label={getLabel(widget.widgetKey)}
-                onRemove={() =>
-                  onChange(setWorkspaceWidgetVisibility(widgets, registry, widget.widgetKey, false))
-                }
-                onResize={(nextSize) =>
-                  onChange(setWorkspaceWidgetSize(widgets, registry, widget.widgetKey, nextSize))
-                }
-                onResizeHeight={(nextHeight) =>
-                  onChange(
-                    setWorkspaceWidgetHeight(widgets, registry, widget.widgetKey, nextHeight)
-                  )
-                }
-                onMove={(direction) =>
-                  onChange(moveWorkspaceWidget(widgets, widget.widgetKey, direction))
-                }
-                first={index === 0}
-                last={index === previewVisible.length - 1}
-                keyboardDragging={activeKey === widget.widgetKey && activeInput === 'keyboard'}
-                motionDelayMs={workspaceWidgetSettleDelayMs(index)}
-                inlineInset={inlineInset}
-                scrollMode={scrollMode}
-                onStartEditing={!editing && !busy ? onStartEditing : undefined}
-              >
-                {renderWidget(widget.widgetKey, size, height)}
-              </SortableWidget>
+              <Fragment key={widget.widgetKey}>
+                <SortableWidget
+                  definition={definition}
+                  widget={widget}
+                  editing={editing}
+                  busy={busy}
+                  label={getLabel(widget.widgetKey)}
+                  onRemove={() =>
+                    onChange(
+                      setWorkspaceWidgetVisibility(widgets, registry, widget.widgetKey, false)
+                    )
+                  }
+                  onResize={(nextSize) =>
+                    onChange(setWorkspaceWidgetSize(widgets, registry, widget.widgetKey, nextSize))
+                  }
+                  onResizeHeight={(nextHeight) =>
+                    onChange(
+                      setWorkspaceWidgetHeight(widgets, registry, widget.widgetKey, nextHeight)
+                    )
+                  }
+                  onMove={(direction) =>
+                    onChange(moveWorkspaceWidget(widgets, widget.widgetKey, direction))
+                  }
+                  first={index === 0}
+                  last={index === previewVisible.length - 1}
+                  keyboardDragging={activeKey === widget.widgetKey && activeInput === 'keyboard'}
+                  motionDelayMs={workspaceWidgetSettleDelayMs(index)}
+                  inlineInset={inlineInset}
+                  scrollMode={scrollMode}
+                  onStartEditing={!editing && !busy ? onStartEditing : undefined}
+                >
+                  {renderWidgetBoundary(
+                    widget.widgetKey,
+                    renderWidget(widget.widgetKey, size, height)
+                  )}
+                </SortableWidget>
+                {renderAfterWidget?.(widget.widgetKey)}
+              </Fragment>
             );
           })}
           {trailingGovernedWidgets.map((widget) => (
             <GovernedWidget
               key={widget.widgetKey}
-              widget={widget}
+              widget={{
+                ...widget,
+                content: renderWidgetBoundary(widget.widgetKey, widget.content),
+              }}
               editing={editing}
               inlineInset={inlineInset}
               scrollMode={scrollMode}

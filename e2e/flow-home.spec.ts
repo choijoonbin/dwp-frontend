@@ -38,6 +38,7 @@ import {
   readFlowNewsLauncherGeometry,
 } from './support/flow-home-launcher-clearance';
 import { mockShellNotificationRuntime } from './support/runtime-access';
+import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
 
 const FLOW_FIXTURE_NOW = new Date('2026-08-11T00:30:00.000Z');
 const MINIMUM_ACTION_TARGET_PX = 44;
@@ -137,7 +138,6 @@ function flowExperience(overrides: Record<string, unknown> = {}) {
     backgroundPosition: 'RIGHT',
     overlayOpacity: 18,
     backgroundUrl: null,
-    launchpadConfiguration: { schemaVersion: 1, groups: [], placements: [] },
     compositionPolicy: FLOW_POLICY,
     effectiveExperienceVariant: 'FLOW_V1',
     advancedPersonalizationEnabled: false,
@@ -603,6 +603,7 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     permissions: FLOW_PERMISSIONS,
   });
+  await routeCanonicalHomeWorkspaceApps(page);
   await mockShellNotificationRuntime(page);
   await routeFlowExperience(page);
   await routeDefaultPreference(page);
@@ -897,7 +898,7 @@ test('Dock lift responds only to pointer intent and is removed for reduced motio
   expect(Number.parseFloat(reduced.duration)).toBeLessThanOrEqual(0.00001);
 });
 
-test('Expressive Wide composes reference 8+4, 4+4+4, and 8+4 source-backed tiers', async ({
+test('Expressive Wide composes the approved 38/34/28 source-backed tiers', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wide geometry runs once in Chromium.');
@@ -923,7 +924,7 @@ test('Expressive Wide composes reference 8+4, 4+4+4, and 8+4 source-backed tiers
   await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
   await expect(stage).toHaveAttribute('data-flow-adaptive-applied', 'true');
   await expect(stage).toHaveAttribute('data-flow-adaptive-first-section', 'today');
-  await expect(stage).toHaveAttribute('data-flow-wide-composition', '8-4/4-4-4/8-4');
+  await expect(stage).toHaveAttribute('data-flow-wide-composition', '38-34-28');
   await expectFlowWideWidgetContract(stage);
 
   const workscapeAlignment = await flowHome
@@ -1069,7 +1070,7 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   await expect(loadingSkeleton).toHaveAttribute('data-home-loading-read-template', 'adaptive-wide');
   await expect(page.locator('[data-home-loading-widgets]')).toHaveAttribute(
     'data-home-loading-grid-contract',
-    '8-4/4-4-4/8-4'
+    '38-34-28'
   );
   await expect(page.locator('[data-home-loading-dock-group]')).toHaveCount(4);
   await expect(page.locator('[data-home-loading-dock-item]:visible')).toHaveCount(17);
@@ -1158,8 +1159,7 @@ test('Balanced Home reload keeps the saved four-group Dock geometry stable', asy
 
   await page.addInitScript(() => {
     window.sessionStorage.setItem('dwp.home.presentation-hint.v1', 'balanced');
-    // A cached entitlement hint can trail the current app catalog by one item.
-    // Both states still occupy two rows, so resolving the live catalog must not shift the Dock.
+    // A cached entitlement hint can trail by one item; both states still occupy two rows.
     window.sessionStorage.setItem('dwp.home.launchpad-hint.v1', JSON.stringify([5, 6, 2, 3]));
   });
   await page.route('**/api/platform/v1/home-preferences**', async (route) => {
@@ -1534,7 +1534,7 @@ for (const viewport of [
     }
 
     if (viewport.width < 600) {
-      await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+      await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(17);
       const firstContribution = purpose(flowHome, 'action')
         .locator('[data-home-contribution]')
         .first();

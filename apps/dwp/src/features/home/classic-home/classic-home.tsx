@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
 import Box from '@mui/material/Box';
 
@@ -7,6 +8,12 @@ import { AppLaunchpad } from '../app-launchpad';
 import { HomeDayRail } from '../home-day-rail';
 import { HomeOverviewWidget } from '../home-overview-widget';
 import { HOME_WIDGET_REGISTRY } from '../home-widget-registry';
+import { HomeWidgetErrorBoundary } from '../runtime/home-content-state';
+import {
+  ClassicOrganizationResources,
+  ClassicSectionHeading,
+} from './classic-organization-resources';
+import { ClassicPersonalSummary } from './classic-personal-summary';
 
 import type {
   HomeAudienceProfile,
@@ -48,8 +55,10 @@ type ClassicHomeProps = {
   customizationBusy: boolean;
   personalizationLoading: boolean;
   presentation: HomePresentation;
+  availableWidth: number;
   feedbackBusy: boolean;
   onBrowseAllApps: () => void;
+  onOpenOrganizationUpdates: () => void;
   onStartEditing?: () => void;
   onAppLayoutChange: (layout: LaunchpadLayout) => void;
   onWidgetsChange: (widgets: HomeWidgetPreference[]) => void;
@@ -84,8 +93,10 @@ export function ClassicHome({
   customizationBusy,
   personalizationLoading,
   presentation,
+  availableWidth,
   feedbackBusy,
   onBrowseAllApps,
+  onOpenOrganizationUpdates,
   onStartEditing,
   onAppLayoutChange,
   onWidgetsChange,
@@ -96,7 +107,53 @@ export function ClassicHome({
 }: ClassicHomeProps) {
   const { t } = useTranslation('home');
   return (
-    <>
+    <Box
+      data-testid="classic-home"
+      data-home-ia="organization-portal"
+      data-home-scroll-contract="single-document"
+      data-classic-home-available-width={Math.round(availableWidth)}
+      sx={{
+        width: 1,
+        minWidth: 0,
+        '& [data-launchpad-group-target]': {
+          overflowY: 'hidden !important',
+          overscrollBehaviorY: 'auto !important',
+          scrollbarGutter: 'auto !important',
+        },
+        '@container dwp-home-workspace (min-width: 900px)': {
+          '& [data-launchpad-group-grid]': {
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr)) !important',
+          },
+          '& [data-launchpad-group-target]': {
+            gridTemplateColumns: 'repeat(5, minmax(0, 1fr)) !important',
+          },
+        },
+        '@container dwp-home-workspace (min-width: 1100px)': {
+          '& [data-launchpad-group-grid]': {
+            gridTemplateColumns: 'repeat(4, minmax(0, 1fr)) !important',
+          },
+          '& [data-launchpad-group-target]': {
+            gridTemplateColumns: 'repeat(5, minmax(0, 1fr)) !important',
+          },
+        },
+        '@media (forced-colors: active)': {
+          bgcolor: 'Canvas',
+          color: 'CanvasText',
+          '&, & *': {
+            color: 'CanvasText !important',
+            borderColor: 'CanvasText !important',
+            boxShadow: 'none !important',
+            textShadow: 'none !important',
+          },
+          '& a, & button, & [role="button"]': {
+            color: 'LinkText !important',
+          },
+          '& :disabled, & [aria-disabled="true"]': {
+            color: 'GrayText !important',
+          },
+        },
+      }}
+    >
       <HomeDayRail
         audience={audience}
         currentDate={currentDate}
@@ -106,8 +163,14 @@ export function ClassicHome({
         usesDefaultBackground={usesDefaultBackground}
         backgroundPosition={backgroundPosition}
         overlayOpacity={overlayOpacity}
+        featuredStory={
+          overview?.communications.status === 'AVAILABLE'
+            ? (overview.communications.data?.featured ?? overview.communications.data?.items[0])
+            : undefined
+        }
         assignedAppCount={apps.length}
         onBrowseAll={onBrowseAllApps}
+        onOpenOrganizationUpdates={onOpenOrganizationUpdates}
         onStartEditing={onStartEditing}
         workspaceTools={
           <AppLaunchpad
@@ -118,7 +181,6 @@ export function ClassicHome({
             reorderable={customizationEnabled}
             title={t('page.appsTitle')}
             customizationBusy={customizationBusy}
-            onImageBackground
             onLayoutChange={onAppLayoutChange}
             onLaunch={onLaunchApp}
             onManage={onManageApp}
@@ -136,21 +198,46 @@ export function ClassicHome({
           py: { xs: 3, md: 4 },
         }}
       >
+        {!editing && governedWidgets.length > 0 && (
+          <Box
+            component="section"
+            aria-labelledby="classic-secondary-news-title"
+            data-classic-secondary-news
+            sx={{ mb: { xs: 3, md: 4 } }}
+          >
+            <ClassicSectionHeading
+              id="classic-secondary-news-title"
+              title={t('classic.resources.secondaryTitle')}
+              description={t('classic.resources.secondaryDescription')}
+            />
+            <Box
+              sx={{
+                '& > *': { minWidth: 0 },
+                '& section': {
+                  bgcolor: 'background.paper',
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: foundationTokens.home.radius.control,
+                },
+              }}
+            >
+              {governedWidgets.map((widget) => (
+                <Box key={widget.widgetKey} data-classic-secondary-news-widget={widget.widgetKey}>
+                  {widget.content}
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        )}
+
+        {!editing && <ClassicOrganizationResources />}
+
         <Box
           data-testid="home-workspace-grid"
+          component="section"
+          aria-labelledby="classic-personal-flow-title"
           sx={{
-            '& [data-workspace-widget-content]': {
-              overflowY: { xs: 'visible !important', sm: 'hidden !important' },
-              scrollbarGutter: 'auto !important',
-              '& > section': {
-                height: { xs: 'auto !important', sm: '100% !important' },
-                minHeight: { xs: 'auto !important', sm: '100% !important' },
-                overflowX: { xs: 'visible !important', sm: 'hidden !important' },
-                overflowY: { xs: 'visible !important', sm: 'auto !important' },
-                overscrollBehaviorY: 'auto',
-                scrollbarGutter: { xs: 'auto', sm: 'stable' },
-              },
-            },
+            mt: { xs: 3, md: 4 },
             '& [data-workspace-widget-surface="card"] [data-workspace-widget-content] > section': {
               bgcolor: 'background.paper',
               border: 1,
@@ -162,36 +249,56 @@ export function ClassicHome({
             },
           }}
         >
-          <WorkspaceWidgetCanvas
-            registry={HOME_WIDGET_REGISTRY}
-            widgets={widgets}
-            governedWidgets={governedWidgets}
-            editing={editing && customizationEnabled}
-            busy={customizationBusy}
-            presentation={presentation}
-            getLabel={(widgetKey) => t(`widgets.registry.${widgetKey}.label`)}
-            onChange={onWidgetsChange}
-            onStartEditing={onStartEditing}
-            renderWidget={(widgetKey, size, height) => (
-              <HomeOverviewWidget
-                widgetKey={widgetKey}
-                size={size}
-                height={height}
-                runtimeDecision={widgetRuntimeDecisions[widgetKey]}
-                label={t(`widgets.registry.${widgetKey}.label`)}
-                overview={overview}
-                loading={overviewLoading}
-                fetching={overviewFetching}
-                requestFailed={overviewFailed}
-                onRetry={onRetryOverview}
-                feedbackBusy={feedbackBusy}
-                onRecommendationFeedback={onRecommendationFeedback}
-              />
-            )}
+          <ClassicSectionHeading
+            id="classic-personal-flow-title"
+            title={t('classic.resources.personalTitle')}
+            description={t('classic.resources.personalDescription')}
           />
+          {editing ? (
+            <WorkspaceWidgetCanvas
+              registry={HOME_WIDGET_REGISTRY}
+              widgets={widgets}
+              editing={customizationEnabled}
+              busy={customizationBusy}
+              presentation={presentation}
+              scrollMode="document"
+              getLabel={(widgetKey) => t(`widgets.registry.${widgetKey}.label`)}
+              onChange={onWidgetsChange}
+              onStartEditing={onStartEditing}
+              renderWidgetBoundary={(widgetKey, content) => (
+                <HomeWidgetErrorBoundary widgetKey={widgetKey} resetKey={overview?.generatedAt}>
+                  {content}
+                </HomeWidgetErrorBoundary>
+              )}
+              renderWidget={(widgetKey, size, height) => (
+                <HomeOverviewWidget
+                  widgetKey={widgetKey}
+                  size={size}
+                  height={height}
+                  runtimeDecision={widgetRuntimeDecisions[widgetKey]}
+                  label={t(`widgets.registry.${widgetKey}.label`)}
+                  overview={overview}
+                  loading={overviewLoading}
+                  fetching={overviewFetching}
+                  requestFailed={overviewFailed}
+                  onRetry={onRetryOverview}
+                  feedbackBusy={feedbackBusy}
+                  onRecommendationFeedback={onRecommendationFeedback}
+                />
+              )}
+            />
+          ) : (
+            <ClassicPersonalSummary
+              overview={overview}
+              loading={overviewLoading}
+              fetching={overviewFetching}
+              requestFailed={overviewFailed}
+              onRetry={onRetryOverview}
+            />
+          )}
         </Box>
         {editing && <Box aria-hidden="true" sx={{ height: { xs: 196, sm: 88 } }} />}
       </Box>
-    </>
+    </Box>
   );
 }
