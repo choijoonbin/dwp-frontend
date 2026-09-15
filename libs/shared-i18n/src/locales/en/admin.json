@@ -1024,6 +1024,57 @@
           "action": "Revoke blueprint"
         }
       }
+    },
+    "controlPlane": {
+      "loading": "Loading widget registry readiness",
+      "unavailable": "Widget registry control plane is unavailable",
+      "unavailableDescription": "Tenant widget policy controls stay closed until the complete registry capability contract is available.",
+      "retry": "Retry widget registry",
+      "catalogLoading": "Loading the tenant widget catalog",
+      "catalogFailed": "Tenant widget catalog could not be loaded",
+      "catalogFailedDescription": "No policy state or certification claim is inferred while the authoritative catalog is unavailable.",
+      "shadowTitle": "Widget control plane is in shadow mode",
+      "shadowDescription": "Registry, policy, evidence, and audit records are read-only. Shadow results do not change Home runtime, layout, or placement.",
+      "activeTitle": "Authoritative widget control plane",
+      "activeDescription": "Runtime and policy decisions come from the activated registry contract.",
+      "resultCount_one": "{{count}} controlled widget definition",
+      "resultCount_other": "{{count}} controlled widget definitions",
+      "unresolved": "Unresolved version",
+      "effective": {
+        "AVAILABLE": "Available",
+        "ALREADY_ADDED": "Already placed",
+        "DEPRECATED": "Deprecated",
+        "DENY": "Denied"
+      },
+      "noPublicReason": "No public decision reason",
+      "publicReasons": {
+        "NOT_AVAILABLE": "The registered version is unavailable",
+        "DISABLED_BY_ORGANIZATION": "Disabled by the organization",
+        "APP_ACCESS_REQUIRED": "Source app access is required",
+        "INCOMPATIBLE": "Incompatible with this Home host",
+        "TEMPORARILY_UNAVAILABLE": "Temporarily stopped by a safety or availability control",
+        "DEPRECATED": "Deprecated for new placement",
+        "AVAILABLE": "Available for placement",
+        "ALREADY_ADDED": "Already placed on Home"
+      },
+      "required": "Required placement",
+      "policyTitle": "Tenant policy head",
+      "policyLoading": "Loading current policy",
+      "policySummary": "{{state}} · revision {{revision}}",
+      "policyMissing": "No published tenant policy exists. The effective result remains fail closed.",
+      "shadowMutationDisabled": "Mutations are disabled while registry migration mode is SHADOW.",
+      "actions": {
+        "impact": "Preview impact",
+        "publish": "Publish policy",
+        "block": "Block policy",
+        "rollback": "Rollback policy"
+      },
+      "auditTitle": "Policy revision history",
+      "auditEmpty": "No policy revision is available.",
+      "auditRevision": "Revision {{revision}} · {{state}}",
+      "impactTitle": "Draft policy impact",
+      "impactSummary": "{{tenants}} tenants and {{instances}} existing instances are affected.",
+      "impactUnavailable": "Impact is available only for a draft policy revision."
     }
   },
   "homeApps": {
@@ -3057,9 +3108,18 @@
     },
     "decision": {
       "description": "Decide {{person}}'s request for {{role}}. Self-approval is blocked by the server.",
-      "APPROVE": { "title": "Approve temporary privileged access", "action": "Approve" },
-      "DENY": { "title": "Deny privileged access request", "action": "Deny" },
-      "REVOKE": { "title": "Revoke active privileged access", "action": "Revoke now" }
+      "APPROVE": {
+        "title": "Approve temporary privileged access",
+        "action": "Approve"
+      },
+      "DENY": {
+        "title": "Deny privileged access request",
+        "action": "Deny"
+      },
+      "REVOKE": {
+        "title": "Revoke active privileged access",
+        "action": "Revoke now"
+      }
     },
     "policyDialog": {
       "title": "{{role}} activation policy",

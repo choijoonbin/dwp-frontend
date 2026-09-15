@@ -128,6 +128,7 @@ import {
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
 import { useGovernedHomeAppCatalog } from '../features/shell/use-governed-home-app-catalog';
+import { useHomeWidgetRegistryRuntime } from '../features/home/runtime/use-home-widget-registry';
 
 import type { FlowHomeSectionPreference } from '../features/home/flow-home/flow-home-preference';
 import type { HomeDraft } from '../features/home/home-draft-history';
@@ -236,6 +237,10 @@ export default function HomePage() {
     staleTime: 60_000,
     retry: 1,
   });
+  const widgetRuntimeDecisions = useHomeWidgetRegistryRuntime(
+    auth.user?.tenantId,
+    auth.user?.userId
+  );
   const launchpadCatalog = useMemo(
     () =>
       resolveHomeLaunchpadCatalog(
@@ -276,7 +281,7 @@ export default function HomePage() {
     undoDraft,
     redoDraft,
   } = useHomeDraftController(() => ({
-    widgets: defaultHomeWidgets(registeredWidgetKeys),
+    widgets: defaultHomeWidgets(registeredWidgetKeys, 'MEMBER', widgetRuntimeDecisions),
     appLayout: createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups),
     presentation: 'balanced',
     resetIntent: false,
@@ -439,9 +444,20 @@ export default function HomePage() {
   const widgetPreferences = useMemo(
     () =>
       homeCustomized && effectiveHomeLayout
-        ? reconcileHomeWidgets(effectiveHomeLayout.widgets, registeredWidgetKeys, audienceProfile)
-        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile),
-    [audienceProfile, effectiveHomeLayout, homeCustomized, registeredWidgetKeys]
+        ? reconcileHomeWidgets(
+            effectiveHomeLayout.widgets,
+            registeredWidgetKeys,
+            audienceProfile,
+            widgetRuntimeDecisions
+          )
+        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile, widgetRuntimeDecisions),
+    [
+      audienceProfile,
+      effectiveHomeLayout,
+      homeCustomized,
+      registeredWidgetKeys,
+      widgetRuntimeDecisions,
+    ]
   );
   const deviceClass = resolveHomeDeviceClass({
     editPreviewActive: editorOpen && editSession !== null,
@@ -532,10 +548,18 @@ export default function HomePage() {
           registeredWidgetKeys,
           activeWidgets,
           entitledApps,
-          editorFlowHomeEnabled
+          editorFlowHomeEnabled,
+          widgetRuntimeDecisions
         ),
       ]),
-    [activeAppLayout, activeWidgets, editorFlowHomeEnabled, entitledApps, registeredWidgetKeys]
+    [
+      activeAppLayout,
+      activeWidgets,
+      editorFlowHomeEnabled,
+      entitledApps,
+      registeredWidgetKeys,
+      widgetRuntimeDecisions,
+    ]
   );
   const activePresentation = editorActive
     ? draftPresentation
@@ -644,8 +668,13 @@ export default function HomePage() {
       }
       const selectedViewCustomized = resolveHomeViewCustomized(studioView, undefined);
       const selectedWidgets = selectedViewCustomized
-        ? reconcileHomeWidgets(studioView.layout.widgets, registeredWidgetKeys, audienceProfile)
-        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile);
+        ? reconcileHomeWidgets(
+            studioView.layout.widgets,
+            registeredWidgetKeys,
+            audienceProfile,
+            widgetRuntimeDecisions
+          )
+        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile, widgetRuntimeDecisions);
       const selectedAppLayout = reconcileLaunchpadLayout(
         canonicalizePersistedLaunchpadLayout(
           studioView.layout.appLayout,
@@ -842,7 +871,11 @@ export default function HomePage() {
   };
 
   const resetDraft = () => {
-    const defaultWidgets = defaultHomeWidgets(registeredWidgetKeys, audienceProfile);
+    const defaultWidgets = defaultHomeWidgets(
+      registeredWidgetKeys,
+      audienceProfile,
+      widgetRuntimeDecisions
+    );
     const resetWidgets = editorFlowHomeEnabled
       ? applyFlowHomeSections(defaultWidgets, deriveFlowHomeSections(defaultWidgets, false))
       : defaultWidgets;
@@ -965,6 +998,7 @@ export default function HomePage() {
           appLayout={activeAppLayout}
           sections={flowSections}
           widgetConfigurations={activeWidgetConfigurations}
+          widgetRuntimeDecisions={widgetRuntimeDecisions}
           overview={homeOverview}
           overviewLoading={homeOverviewQuery.isLoading}
           overviewFetching={homeOverviewQuery.isFetching}
@@ -1011,6 +1045,7 @@ export default function HomePage() {
           appGroups={launchpadCatalog.groups}
           appLayout={activeAppLayout}
           widgets={activeWidgets}
+          widgetRuntimeDecisions={widgetRuntimeDecisions}
           governedWidgets={governedCanvasWidgets}
           overview={homeOverview}
           overviewLoading={homeOverviewQuery.isLoading}
@@ -1048,13 +1083,16 @@ export default function HomePage() {
         appLayout={activeAppLayout}
         availableWidgetKeys={registeredWidgetKeys}
         widgetPreferences={activeWidgets}
+        widgetRuntimeDecisions={widgetRuntimeDecisions}
         catalogEnabled={HOME_WIDGET_LIBRARY_ENABLED}
         flow={editorFlowHomeEnabled}
         busy={customizationBusy}
         onClose={() => setGalleryOpen(false)}
         onAddApp={(app) => setDraftAppLayout((current) => placeLaunchpadApp(current, app))}
         onAddWidget={(widgetKey) =>
-          setDraftWidgets((current) => setHomeWidgetVisibility(current, widgetKey, true))
+          setDraftWidgets((current) =>
+            setHomeWidgetVisibility(current, widgetKey, true, widgetRuntimeDecisions)
+          )
         }
         onOpenStudio={homeStudioEnabled ? openStudioFromGallery : undefined}
       />

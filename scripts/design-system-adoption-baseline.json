@@ -284,7 +284,7 @@
       "Alert": 3
     },
     "apps/dwp/src/features/admin/home-widget-manager.tsx": {
-      "Alert": 3
+      "Alert": 1
     },
     "apps/dwp/src/features/admin/identity-provisioning-manager.tsx": {
       "RawTypography": 5,
@@ -1389,9 +1389,6 @@
       "TextField": 1,
       "CircularProgress": 1,
       "RawTypography": 3
-    },
-    "apps/dwp/src/features/provider/provider-widget-catalog.tsx": {
-      "Alert": 2
     },
     "apps/dwp/src/features/rooms/room-booking-dialog.tsx": {
       "Alert": 3,

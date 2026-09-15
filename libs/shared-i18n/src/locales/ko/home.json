@@ -1075,5 +1075,20 @@
     "terms": "이용약관",
     "help": "헬프 데스크",
     "status": "시스템 상태"
+  },
+  "widgetRuntime": {
+    "unavailableLabel": "{{label}}을(를) 사용할 수 없음",
+    "unavailableTitle": "이 위젯을 사용할 수 없습니다",
+    "deprecatedNotice": "지원 종료 예정인 배치 위젯입니다. 계속 읽을 수 있지만 새로 추가하거나 복원할 수 없습니다.",
+    "reasons": {
+      "NOT_AVAILABLE": "등록된 버전을 더 이상 사용할 수 없습니다.",
+      "DISABLED_BY_ORGANIZATION": "조직에서 이 위젯을 사용 중지했습니다.",
+      "APP_ACCESS_REQUIRED": "원천 앱 접근 권한이 필요합니다.",
+      "INCOMPATIBLE": "현재 홈 호스트와 호환되지 않는 위젯입니다.",
+      "TEMPORARILY_UNAVAILABLE": "안전 또는 가용성 통제로 위젯이 일시 중지되었습니다.",
+      "DEPRECATED": "지원 종료 예정인 위젯입니다.",
+      "AVAILABLE": "사용 가능한 위젯입니다.",
+      "ALREADY_ADDED": "홈에 이미 추가된 위젯입니다."
+    }
   }
 }

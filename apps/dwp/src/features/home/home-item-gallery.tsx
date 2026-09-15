@@ -46,6 +46,7 @@ import type {
   HomeGalleryStatusFilter,
   HomeGalleryView,
 } from './home-item-gallery-model';
+import type { HomeWidgetRuntimeDecisions } from './runtime/widget-registry-runtime';
 
 type HomeItemGalleryProps = {
   open: boolean;
@@ -53,6 +54,7 @@ type HomeItemGalleryProps = {
   appLayout: LaunchpadLayout;
   availableWidgetKeys: readonly HomeWidgetKey[];
   widgetPreferences: readonly HomeWidgetPreference[];
+  widgetRuntimeDecisions?: HomeWidgetRuntimeDecisions;
   catalogEnabled?: boolean;
   flow?: boolean;
   busy?: boolean;
@@ -124,6 +126,7 @@ export function HomeItemGallery({
   appLayout,
   availableWidgetKeys,
   widgetPreferences,
+  widgetRuntimeDecisions,
   catalogEnabled = false,
   flow = false,
   busy = false,
@@ -161,8 +164,14 @@ export function HomeItemGallery({
   );
   const widgetItems = useMemo(
     () =>
-      resolveHomeWidgetGalleryItems(availableWidgetKeys, widgetPreferences, availableApps, flow),
-    [availableApps, availableWidgetKeys, flow, widgetPreferences]
+      resolveHomeWidgetGalleryItems(
+        availableWidgetKeys,
+        widgetPreferences,
+        availableApps,
+        flow,
+        widgetRuntimeDecisions
+      ),
+    [availableApps, availableWidgetKeys, flow, widgetPreferences, widgetRuntimeDecisions]
   );
   const allItems = useMemo(() => [...appItems, ...widgetItems], [appItems, widgetItems]);
   const hiddenCount = homeGalleryRestorableCount(allItems);

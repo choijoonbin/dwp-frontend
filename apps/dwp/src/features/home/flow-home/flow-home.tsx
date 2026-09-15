@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, CalendarRange, Inbox, ListTodo, Zap } from 'lucide-react';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -42,6 +42,7 @@ import { FlowHomeHeroSurface } from './flow-home-hero-surface';
 import { filterRolePulseSignals, filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
 import { NextActionCue } from './next-actions';
 import { CalendarInsightHomeWidget } from '../calendar-insight-home-widget';
+import { HomeWidgetRuntimeBoundary } from '../home-widget-runtime-boundary';
 
 import type {
   HomeAudienceProfile,
@@ -60,6 +61,7 @@ import type {
 import type { HomeContributionModel } from '../contributions';
 import type { FlowHomeSectionKey, FlowHomeSectionPreference } from './flow-home-preference';
 import type { HomeContentAlignment } from '@dwp-frontend/shared-utils';
+import type { HomeWidgetRuntimeDecisions } from '../runtime/widget-registry-runtime';
 
 type FlowHomeProps = {
   audience: HomeAudienceProfile;
@@ -82,6 +84,7 @@ type FlowHomeProps = {
   appLayout: LaunchpadLayout;
   sections: readonly FlowHomeSectionPreference[];
   widgetConfigurations: Record<string, HomeWidgetConfiguration>;
+  widgetRuntimeDecisions: HomeWidgetRuntimeDecisions;
   overview?: HomeOverview;
   overviewLoading: boolean;
   overviewFetching: boolean;
@@ -168,6 +171,7 @@ export function FlowHome({
   appLayout,
   sections,
   widgetConfigurations,
+  widgetRuntimeDecisions,
   overview,
   overviewLoading,
   overviewFetching,
@@ -668,6 +672,17 @@ export function FlowHome({
           onStartEditing={customizationEnabled && !editing ? onStartEditing : undefined}
           onChange={onSectionsChange}
           renderWidget={(sectionKey, _size, height) => {
+            const storageKey = FLOW_HOME_STORAGE_ALIAS[sectionKey];
+            const runtimeDecision = widgetRuntimeDecisions[storageKey];
+            const wrapRuntime = (content: ReactNode) => (
+              <HomeWidgetRuntimeBoundary
+                decision={runtimeDecision}
+                label={t(`widgets.registry.${storageKey}.label`)}
+              >
+                {content}
+              </HomeWidgetRuntimeBoundary>
+            );
+            if (runtimeDecision.render === 'UNAVAILABLE') return wrapRuntime(null);
             const common = {
               loading: contributionLoading,
               fetching: contributionFetching,
@@ -677,7 +692,7 @@ export function FlowHome({
               onRetry: onRetryContributions,
             };
             if (sectionKey === 'action-queue') {
-              return (
+              return wrapRuntime(
                 <HomePurposeWidget
                   {...common}
                   sectionKey="action"
@@ -705,7 +720,7 @@ export function FlowHome({
               );
             }
             if (sectionKey === 'today') {
-              return (
+              return wrapRuntime(
                 <HomePurposeWidget
                   {...common}
                   sectionKey="timeline"
@@ -719,7 +734,7 @@ export function FlowHome({
               );
             }
             if (sectionKey === 'response-hub') {
-              return (
+              return wrapRuntime(
                 <HomePurposeWidget
                   {...common}
                   sectionKey="response"
@@ -732,7 +747,7 @@ export function FlowHome({
               );
             }
             if (sectionKey === 'request-tracker') {
-              return (
+              return wrapRuntime(
                 <HomePurposeWidget
                   {...common}
                   sectionKey="request"
@@ -745,7 +760,7 @@ export function FlowHome({
               );
             }
             if (sectionKey === 'role-pulse') {
-              return (
+              return wrapRuntime(
                 <HomePurposeWidget
                   {...common}
                   sectionKey="pulse"
@@ -765,7 +780,7 @@ export function FlowHome({
                 />
               );
             }
-            return (
+            return wrapRuntime(
               <CalendarInsightHomeWidget
                 widgetKey={sectionKey}
                 overview={overview}

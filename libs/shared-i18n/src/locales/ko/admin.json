@@ -941,6 +941,57 @@
           "action": "청사진 회수"
         }
       }
+    },
+    "controlPlane": {
+      "loading": "위젯 레지스트리 준비 상태를 불러오는 중",
+      "unavailable": "위젯 레지스트리 제어면을 사용할 수 없습니다",
+      "unavailableDescription": "완전한 레지스트리 기능 계약이 확인될 때까지 테넌트 위젯 정책 제어를 닫아 둡니다.",
+      "retry": "위젯 레지스트리 다시 시도",
+      "catalogLoading": "테넌트 위젯 카탈로그를 불러오는 중",
+      "catalogFailed": "테넌트 위젯 카탈로그를 불러오지 못했습니다",
+      "catalogFailedDescription": "권한원 카탈로그를 사용할 수 없는 동안 정책 상태나 인증 완료를 추정하지 않습니다.",
+      "shadowTitle": "위젯 제어면이 섀도 모드입니다",
+      "shadowDescription": "레지스트리, 정책, 증거 및 감사 기록은 읽기 전용입니다. 섀도 결과는 홈 실행, 배치 또는 추가 가능 여부를 바꾸지 않습니다.",
+      "activeTitle": "권한원 위젯 제어면",
+      "activeDescription": "활성화된 레지스트리 계약이 실행 및 정책 판정을 담당합니다.",
+      "resultCount_one": "통제된 위젯 정의 {{count}}개",
+      "resultCount_other": "통제된 위젯 정의 {{count}}개",
+      "unresolved": "해석되지 않은 버전",
+      "effective": {
+        "AVAILABLE": "사용 가능",
+        "ALREADY_ADDED": "이미 배치됨",
+        "DEPRECATED": "지원 중단 예정",
+        "DENY": "사용 불가"
+      },
+      "noPublicReason": "공개 판정 사유 없음",
+      "publicReasons": {
+        "NOT_AVAILABLE": "등록된 버전을 사용할 수 없습니다",
+        "DISABLED_BY_ORGANIZATION": "조직 정책으로 비활성화되었습니다",
+        "APP_ACCESS_REQUIRED": "원본 앱 접근 권한이 필요합니다",
+        "INCOMPATIBLE": "현재 홈 호스트와 호환되지 않습니다",
+        "TEMPORARILY_UNAVAILABLE": "안전 또는 가용성 통제로 일시 중지되었습니다",
+        "DEPRECATED": "신규 배치가 중단되었습니다",
+        "AVAILABLE": "배치할 수 있습니다",
+        "ALREADY_ADDED": "이미 홈에 배치되었습니다"
+      },
+      "required": "필수 배치",
+      "policyTitle": "테넌트 정책 헤드",
+      "policyLoading": "현재 정책 불러오는 중",
+      "policySummary": "{{state}} · 개정 {{revision}}",
+      "policyMissing": "게시된 테넌트 정책이 없어 Fail Closed 상태를 유지합니다.",
+      "shadowMutationDisabled": "레지스트리 마이그레이션 모드가 SHADOW인 동안 변경 작업을 사용할 수 없습니다.",
+      "actions": {
+        "impact": "영향 미리보기",
+        "publish": "정책 게시",
+        "block": "정책 차단",
+        "rollback": "정책 롤백"
+      },
+      "auditTitle": "정책 개정 이력",
+      "auditEmpty": "정책 개정 기록이 없습니다.",
+      "auditRevision": "개정 {{revision}} · {{state}}",
+      "impactTitle": "정책 초안 영향",
+      "impactSummary": "{{tenants}}개 테넌트와 기존 인스턴스 {{instances}}개가 영향을 받습니다.",
+      "impactUnavailable": "정책 초안 리비전이 있을 때 영향도를 확인할 수 있습니다."
     }
   },
   "homeApps": {
@@ -2974,9 +3025,18 @@
     },
     "decision": {
       "description": "{{person}}의 {{role}} 요청을 판단합니다. 자기 승인은 서버에서 차단됩니다.",
-      "APPROVE": { "title": "임시 특권 접근 승인", "action": "승인" },
-      "DENY": { "title": "특권 접근 요청 거부", "action": "거부" },
-      "REVOKE": { "title": "활성 특권 접근 회수", "action": "즉시 회수" }
+      "APPROVE": {
+        "title": "임시 특권 접근 승인",
+        "action": "승인"
+      },
+      "DENY": {
+        "title": "특권 접근 요청 거부",
+        "action": "거부"
+      },
+      "REVOKE": {
+        "title": "활성 특권 접근 회수",
+        "action": "즉시 회수"
+      }
     },
     "policyDialog": {
       "title": "{{role}} 활성화 정책",
