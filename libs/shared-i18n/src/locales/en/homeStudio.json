@@ -214,6 +214,37 @@
     "failed": "The request could not be completed. Refresh the latest state and try again.",
     "conflict": "This home changed elsewhere. The latest version has been loaded."
   },
+  "modePreset": {
+    "title": "Choose a Home mode",
+    "description": "Compare how Classic and Flow organize information. Changing modes preserves the order and access rights of all 18 approved shared apps.",
+    "groupLabel": "Home mode",
+    "current": "Currently applied",
+    "selected": "Selected",
+    "apply": "Apply changes",
+    "applying": "Applying",
+    "options": {
+      "CLASSIC": {
+        "title": "Classic organization portal",
+        "description": "Review organization news, approved apps, and support information in a familiar portal structure."
+      },
+      "FLOW_V1": {
+        "title": "Flow work home",
+        "description": "Review priority work, calendar events, and response requests in one action-oriented flow."
+      }
+    },
+    "sharedApps": {
+      "title": "Shared order locked for {{count}} apps",
+      "description": "Both modes use the same approved apps in the same order. Choosing a mode does not change app access or placement order.",
+      "orderLabel": "Locked shared app order",
+      "position": "Position {{position}}"
+    },
+    "status": {
+      "saved": "The selected mode matches the currently applied mode.",
+      "dirty": "{{mode}} is selected. Your current Home remains active until you apply it.",
+      "applying": "Applying the selected Home mode.",
+      "disabled": "Home mode changes are currently unavailable."
+    }
+  },
   "layout": {
     "catalog": {
       "title": "Widget catalog",
