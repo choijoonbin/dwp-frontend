@@ -7,7 +7,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export type HomeStudioSection =
-  'profiles' | 'appearance' | 'content' | 'device' | 'templates' | 'history' | 'ai';
+  'layout' | 'profiles' | 'appearance' | 'content' | 'device' | 'templates' | 'history' | 'ai';
 export type HomeWorkstyleIntent = 'FOCUS_DEADLINES' | 'BALANCE_DAY' | 'REDUCE_NOISE';
 
 const FIXED_WIDGET_KEYS = new Set(['my-app-dock', 'announcements', 'now']);

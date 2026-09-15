@@ -26,8 +26,6 @@ import {
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import { ClassicHome } from '../features/home/classic-home/classic-home';
 import { classicHomeGovernedWidgets } from '../features/home/classic-home/classic-home-governed-widgets';
 import { FlowHome } from '../features/home/flow-home/flow-home';
@@ -46,12 +44,13 @@ import {
 } from '../features/home/home-item-gallery-model';
 import { HomeEditorSafeArea } from '../features/home/home-editor-safe-area';
 import { homeUserAccessFingerprint } from '../features/home/runtime/home-access-fingerprint';
-import { homeViewQueryKey } from '../features/home/runtime/home-view-query-key';
+import { homeViewQueryKey } from '../components/home-view-query-key';
 import {
   resolveHomeDeviceClass,
   resolveHomePageCopy,
 } from '../features/home/runtime/home-page-runtime-state';
 import { HomePageStatePanel } from '../features/home/runtime/home-page-state-panel';
+import { useHomeAvailableWidth } from '../features/home/runtime/home-available-width';
 import { useHomePageGate } from '../features/home/runtime/use-home-page-gate';
 import { resolveHomeOverviewQueryFailureState } from '../features/home/runtime/home-overview-query-state';
 import {
@@ -134,8 +133,11 @@ import type { HomeDraft } from '../features/home/home-draft-history';
 export default function HomePage() {
   const { t, i18n } = useTranslation('home');
   const auth = useAuth();
-  const theme = useTheme();
-  const runtimeMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const {
+    elementRef: homeAvailableWidthRef,
+    availableWidth: homeAvailableWidth,
+    widthClass: homeAvailableWidthClass,
+  } = useHomeAvailableWidth();
   const toast = useToast();
   const { hasPermission, permissions } = usePermissions();
   const navigate = useNavigate();
@@ -154,6 +156,8 @@ export default function HomePage() {
   const [conflictTarget, setConflictTarget] = useState<HomeEditConflictTarget | null>(null);
   const currentInstant = useHomeCurrentInstant();
   const editEntryFocusRef = useRef<HTMLElement | null>(null);
+  const studioEntryFocusRef = useRef<HTMLElement | null>(null);
+  const studioFocusRestorePendingRef = useRef(false);
   const editEntryScrollRef = useRef(0);
   const conflictResolutionRef = useRef<'reload' | 'reapply' | null>(null);
   const pendingHomeSaveCommandRef = useRef<ReturnType<typeof resolvePendingHomeSaveCommand> | null>(
@@ -314,6 +318,12 @@ export default function HomePage() {
   );
   const effectiveHomeStudioContractScope = studioContractScope ?? liveHomeStudioContractScope;
   const openHomeStudio = useCallback(() => {
+    const activeElement = document.activeElement as HTMLElement | null;
+    studioEntryFocusRef.current =
+      (activeElement?.matches('[data-home-edit-trigger]') ? activeElement : null) ??
+      document.querySelector<HTMLElement>('[data-home-edit-trigger]') ??
+      activeElement;
+    studioFocusRestorePendingRef.current = false;
     setStudioContractScope((current) =>
       freezeHomeStudioContractScope(current, liveHomeStudioContractScope)
     );
@@ -324,8 +334,18 @@ export default function HomePage() {
     openHomeStudio();
   }, [openHomeStudio]);
   const closeHomeStudio = useCallback(() => {
+    studioFocusRestorePendingRef.current = true;
     setStudioOpen(false);
     setStudioContractScope(null);
+  }, []);
+  const restoreHomeStudioEntryFocus = useCallback(() => {
+    if (!studioFocusRestorePendingRef.current) return;
+    const retainedEntry = studioEntryFocusRef.current;
+    const fallbackEntry = document.querySelector<HTMLElement>('[data-home-edit-trigger]');
+    const target = retainedEntry?.isConnected ? retainedEntry : fallbackEntry;
+    target?.focus({ preventScroll: true });
+    studioEntryFocusRef.current = null;
+    studioFocusRestorePendingRef.current = false;
   }, []);
   const activeHomeViewScope = resolveActiveHomeViewScope(
     { modeKey: homeModeKey, modeScoped: modeScopedHomeViewsSupported },
@@ -446,7 +466,7 @@ export default function HomePage() {
   const deviceClass = resolveHomeDeviceClass({
     editPreviewActive: editorOpen && editSession !== null,
     previewDevice,
-    runtimeMobile,
+    availableWidth: homeAvailableWidth,
   });
   const activeDeviceOverlay = activeStoreUsesViews
     ? homeDeviceLayoutsQuery.data?.find((layout) => layout.deviceClass === deviceClass)?.overlay
@@ -928,12 +948,25 @@ export default function HomePage() {
 
   return (
     <Box
+      ref={homeAvailableWidthRef}
       data-home-assistant-rail={homeAssistantAvailable ? 'header' : 'none'}
+      data-home-available-width-class={homeAvailableWidthClass}
+      data-home-device-class={deviceClass}
+      data-home-mode={editorFlowHomeEnabled ? 'FLOW_V1' : 'CLASSIC'}
+      data-home-personal-customization-enabled={personalCustomizationEnabled ? 'true' : 'false'}
+      data-home-editor-state={editorOpen ? (editSession ? 'ready' : 'opening') : 'closed'}
+      data-home-persisted-source-state={
+        persistedSourceLoading ? 'loading' : persistedSourceFailed ? 'failed' : 'ready'
+      }
       sx={{
+        width: 1,
+        maxWidth: '100%',
         minHeight: 0,
+        minWidth: 0,
         flex: '1 1 auto',
         display: 'flex',
         flexDirection: 'column',
+        overflowX: 'clip',
         '& > footer': { mt: 'auto' },
       }}
     >
@@ -983,6 +1016,7 @@ export default function HomePage() {
           presentation={activePresentation}
           density={activeDeviceOverlay?.density ?? 'comfortable'}
           previewDevice={previewDevice}
+          availableWidth={homeAvailableWidth}
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
           onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
@@ -1021,8 +1055,10 @@ export default function HomePage() {
           customizationBusy={customizationBusy}
           personalizationLoading={homePreferenceQuery.isLoading}
           presentation={activePresentation}
+          availableWidth={homeAvailableWidth}
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
+          onOpenOrganizationUpdates={() => navigate('/communications')}
           onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onWidgetsChange={setDraftWidgets}
@@ -1116,8 +1152,19 @@ export default function HomePage() {
             tenantId={auth.user?.tenantId}
             userId={auth.user?.userId}
             seedLayout={effectiveHomeLayout ?? null}
+            overview={homeOverview}
+            overviewLoading={homeOverviewQuery.isLoading}
+            overviewFetching={homeOverviewQuery.isFetching}
+            overviewFailed={homeOverviewHardFailed}
+            feedbackBusy={recommendationFeedback.busy}
+            onRetryOverview={homeDataRetry.retry}
+            onRecommendationFeedback={recommendationFeedback.dismiss}
             onClose={closeHomeStudio}
-            onEditView={(view) => beginEditing(view)}
+            onExited={restoreHomeStudioEntryFocus}
+            onEditView={(view) => {
+              studioFocusRestorePendingRef.current = false;
+              beginEditing(view);
+            }}
           />
         </Suspense>
       )}

@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
   AlertTriangle,
+  ArrowRight,
+  BriefcaseBusiness,
+  CalendarDays,
   CheckCircle2,
   ChevronDown,
   Clock3,
@@ -13,6 +16,9 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -31,6 +37,21 @@ import type { HomeAudienceProfile, HomeContentAlignment } from '@dwp-frontend/sh
 import type { FlowHomeHealth, FlowHomeHealthDomain, FlowHomeHealthIssue } from './flow-home-health';
 import { FlowHomeStatusChip, type FlowHomeContextMetrics } from './flow-home-status-chip';
 
+export type FlowHomePriorityAction = Readonly<{
+  title: string;
+  detail: string;
+  route: string;
+  source: string;
+  dueAt?: string | null;
+}>;
+
+export type FlowHomeLinkedEvent = Readonly<{
+  title: string;
+  route: string;
+  startsAt: string;
+  location?: string | null;
+}>;
+
 type FlowHomeContextProps = {
   audience: HomeAudienceProfile;
   currentDate: string;
@@ -40,6 +61,8 @@ type FlowHomeContextProps = {
   contentAlignment: HomeContentAlignment;
   health: FlowHomeHealth;
   metrics: FlowHomeContextMetrics;
+  priorityAction?: FlowHomePriorityAction;
+  linkedEvent?: FlowHomeLinkedEvent;
   editing: boolean;
   customizationEnabled: boolean;
   customizationBusy: boolean;
@@ -98,6 +121,8 @@ export function FlowHomeContext({
   contentAlignment,
   health,
   metrics,
+  priorityAction,
+  linkedEvent,
   editing,
   customizationEnabled,
   customizationBusy,
@@ -124,7 +149,7 @@ export function FlowHomeContext({
       data-testid="flow-home-context"
       data-flow-context-side={copyOnRight ? 'right' : 'left'}
       data-flow-context-alignment={contentAlignment.toLowerCase()}
-      data-flow-context-composition="inline-greeting"
+      data-flow-context-composition={priorityAction ? 'priority-action' : 'inline-greeting'}
       sx={{
         position: 'relative',
         width: 1,
@@ -226,7 +251,7 @@ export function FlowHomeContext({
             overflowWrap: 'break-word',
           }}
         >
-          {headline}
+          {priorityAction?.title ?? headline}
         </Typography>
         <Typography
           data-flow-context-description
@@ -245,8 +270,55 @@ export function FlowHomeContext({
             WebkitBoxOrient: 'vertical',
           }}
         >
-          {subheadline}
+          {priorityAction?.detail ?? subheadline}
         </Typography>
+        {priorityAction && (
+          <Stack
+            data-flow-primary-action
+            direction="row"
+            alignItems="center"
+            gap={1}
+            flexWrap="wrap"
+            sx={{ mt: 1 }}
+          >
+            <Chip
+              size="small"
+              icon={<BriefcaseBusiness size={14} aria-hidden="true" />}
+              label={t('flow.now.title')}
+              sx={{
+                color: foundationTokens.home.color.heroChipText,
+                bgcolor: foundationTokens.home.color.heroActionSurface,
+                '& .MuiChip-icon': { color: 'inherit' },
+              }}
+            />
+            {priorityAction.dueAt && (
+              <Typography variant="caption" sx={{ color: foundationTokens.home.color.heroMuted86 }}>
+                {t('flow.now.due', {
+                  time: formatDate(priorityAction.dueAt, {
+                    dateStyle: priorityCompact ? undefined : 'short',
+                    timeStyle: 'short',
+                  }),
+                })}
+              </Typography>
+            )}
+            <ActionButton
+              component={Link}
+              to={priorityAction.route}
+              data-flow-primary-action-cta
+              intent="primary"
+              size="small"
+              endIcon={<ArrowRight size={16} aria-hidden="true" />}
+              sx={{
+                minHeight: 44,
+                bgcolor: foundationTokens.home.color.heroActionSurface,
+                color: foundationTokens.home.color.heroActionText,
+                '&:hover': { bgcolor: foundationTokens.home.color.heroActionHover },
+              }}
+            >
+              {t('flow.now.openInSource', { source: priorityAction.source })}
+            </ActionButton>
+          </Stack>
+        )}
       </Box>
 
       <Box
@@ -266,7 +338,60 @@ export function FlowHomeContext({
           },
         }}
       >
-        <FlowHomeStatusChip metrics={metrics} />
+        <Stack gap={0.75} sx={{ width: 1 }}>
+          {linkedEvent && !priorityCompact && (
+            <Box
+              component={Link}
+              to={linkedEvent.route}
+              data-flow-linked-calendar-context
+              sx={{
+                minHeight: 54,
+                px: 1.25,
+                py: 0.75,
+                display: 'grid',
+                gridTemplateColumns: 'auto minmax(0, 1fr)',
+                gap: 1,
+                alignItems: 'center',
+                color: foundationTokens.home.color.heroOn,
+                textDecoration: 'none',
+                bgcolor: foundationTokens.home.color.heroLinkedSurface,
+                border: 1,
+                borderColor: foundationTokens.home.color.heroLinkedBorder,
+                borderRadius: foundationTokens.home.radius.heroSurface,
+                '&:hover': { bgcolor: foundationTokens.home.color.heroLinkedHover },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: foundationTokens.home.color.heroFocus,
+                  outlineOffset: 2,
+                },
+                '@media (forced-colors: active)': {
+                  color: 'LinkText',
+                  bgcolor: 'Canvas',
+                  borderColor: 'CanvasText',
+                },
+              }}
+            >
+              <CalendarDays size={20} aria-hidden="true" />
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="caption" sx={{ display: 'block', opacity: 0.78 }}>
+                  {t('flow.context.linkedCalendar')}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={foundationTokens.home.typography.weightBold}
+                  noWrap
+                >
+                  {linkedEvent.title}
+                </Typography>
+                <Typography variant="caption" sx={{ display: 'block', opacity: 0.84 }} noWrap>
+                  {formatDate(linkedEvent.startsAt, { timeStyle: 'short' })}
+                  {linkedEvent.location ? ` · ${linkedEvent.location}` : ''}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          <FlowHomeStatusChip metrics={metrics} />
+        </Stack>
       </Box>
 
       <Stack

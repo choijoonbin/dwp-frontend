@@ -53,12 +53,13 @@ import {
   HomeTemplatesSection,
 } from './home-studio-sections';
 import { HomeAppearanceSection } from './home-appearance-section';
+import { HomeLayoutStudioWorkbench } from '../../components/home-layout-studio-workbench';
 import {
   activeHomeView,
   buildWorkstyleChanges,
   createHomeViewKey,
 } from './home-personalization-model';
-import { homeViewQueryKey, requireHomeViewMode } from '../home/runtime/home-view-query-key';
+import { homeViewQueryKey, requireHomeViewMode } from '../../components/home-view-query-key';
 
 import type {
   HomeComposerProposal,
@@ -70,6 +71,9 @@ import type {
   HomeView,
   HomeViewRevision,
   HomeWidgetConfiguration,
+  HomeOverview,
+  HomeRecommendation,
+  HomeWidgetPreference,
   HomeWidgetSize,
 } from '@dwp-frontend/shared-utils';
 import type { HomeStudioSection, HomeWorkstyleIntent } from './home-personalization-model';
@@ -83,7 +87,15 @@ type HomePersonalizationStudioProps = {
   tenantId?: number | null;
   userId?: number | null;
   seedLayout: HomePreferenceLayout<string> | null;
+  overview?: HomeOverview;
+  overviewLoading: boolean;
+  overviewFetching: boolean;
+  overviewFailed: boolean;
+  feedbackBusy: boolean;
+  onRetryOverview: () => void;
+  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
   onClose: () => void;
+  onExited?: () => void;
   onEditView: (view: HomeView) => void;
   onActiveViewChanged?: (view: HomeView) => void;
 };
@@ -107,7 +119,15 @@ export function HomePersonalizationStudio({
   tenantId,
   userId,
   seedLayout,
+  overview,
+  overviewLoading,
+  overviewFetching,
+  overviewFailed,
+  feedbackBusy,
+  onRetryOverview,
+  onRecommendationFeedback,
   onClose,
+  onExited,
   onEditView,
   onActiveViewChanged,
 }: HomePersonalizationStudioProps) {
@@ -117,7 +137,9 @@ export function HomePersonalizationStudio({
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission } = usePermissions();
-  const [section, setSection] = useState<HomeStudioSection>('profiles');
+  const [section, setSection] = useState<HomeStudioSection>(
+    modeKey === 'FLOW_V1' ? 'layout' : 'profiles'
+  );
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
   const [proposal, setProposal] = useState<HomeComposerProposal | null>(null);
   const viewQueryKey = useMemo(
@@ -298,6 +320,27 @@ export function HomePersonalizationStudio({
     onSuccess: async (view) => {
       await refreshViewDependencies(view);
       toast.success(t('appearance.saved'));
+    },
+    onError: showMutationError,
+  });
+  const layoutMutation = useMutation({
+    mutationFn: (widgets: HomeWidgetPreference[]) => {
+      if (!selectedView) throw new Error('A home view must be selected.');
+      return currentModeView(
+        updateHomeView(
+          selectedView.viewId,
+          {
+            name: selectedView.name,
+            layout: { ...selectedView.layout, widgets },
+            version: selectedView.version,
+          },
+          createHomeCommandKey('configure-layout')
+        )
+      );
+    },
+    onSuccess: async (view) => {
+      await refreshViewDependencies(view);
+      toast.success(t('feedback.saved'));
     },
     onError: showMutationError,
   });
@@ -493,6 +536,7 @@ export function HomePersonalizationStudio({
     activateMutation,
     deleteMutation,
     appearanceMutation,
+    layoutMutation,
     contentMutation,
     deviceMutation,
     templateApplyMutation,
@@ -508,6 +552,7 @@ export function HomePersonalizationStudio({
   const failed = viewsQuery.isError;
 
   const navItems: Array<{ key: HomeStudioSection; icon: typeof LayoutDashboard }> = [
+    ...(modeKey === 'FLOW_V1' ? ([{ key: 'layout', icon: PanelsTopLeft }] as const) : []),
     { key: 'profiles', icon: LayoutDashboard },
     { key: 'appearance', icon: Palette },
     { key: 'content', icon: SlidersHorizontal },
@@ -526,33 +571,42 @@ export function HomePersonalizationStudio({
       onClose={onClose}
       busy={busy}
       fullScreen={fullScreen}
-      maxWidth="lg"
+      maxWidth={modeKey === 'FLOW_V1' ? 'xl' : 'lg'}
       contentDividers
       contentSx={{ p: 0, overflow: 'hidden' }}
+      slotProps={{ transition: { onExited } }}
     >
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: '220px minmax(0, 1fr)' },
-          height: fullScreen ? 'calc(100dvh - 73px)' : 'min(720px, calc(100dvh - 150px))',
+          gridTemplateColumns:
+            modeKey === 'FLOW_V1'
+              ? 'minmax(0, 1fr)'
+              : { xs: 'minmax(0, 1fr)', md: '220px minmax(0, 1fr)' },
+          gridTemplateRows: modeKey === 'FLOW_V1' ? 'auto minmax(0, 1fr)' : undefined,
+          height: fullScreen
+            ? 'calc(100dvh - 73px)'
+            : modeKey === 'FLOW_V1'
+              ? 'min(880px, calc(100dvh - 132px))'
+              : 'min(720px, calc(100dvh - 150px))',
           minHeight: { md: 560 },
         }}
       >
         <Tabs
-          orientation={fullScreen ? 'horizontal' : 'vertical'}
+          orientation={fullScreen || modeKey === 'FLOW_V1' ? 'horizontal' : 'vertical'}
           variant="scrollable"
           allowScrollButtonsMobile
           value={section}
           onChange={(_, value: HomeStudioSection) => setSection(value)}
           aria-label={t('title')}
           sx={{
-            borderRight: { md: 1 },
-            borderBottom: { xs: 1, md: 0 },
+            borderRight: { md: modeKey === 'FLOW_V1' ? 0 : 1 },
+            borderBottom: { xs: 1, md: modeKey === 'FLOW_V1' ? 1 : 0 },
             borderColor: 'divider',
             bgcolor: 'background.default',
             '& .MuiTab-root': {
               minHeight: 48,
-              justifyContent: { md: 'flex-start' },
+              justifyContent: { md: modeKey === 'FLOW_V1' ? 'center' : 'flex-start' },
               alignItems: 'center',
               textTransform: 'none',
               px: 2,
@@ -572,8 +626,24 @@ export function HomePersonalizationStudio({
         </Tabs>
         <Box
           role="tabpanel"
+          tabIndex={0}
           aria-label={t(`sections.${section}`)}
-          sx={{ overflowY: 'auto', overscrollBehaviorY: 'contain', p: { xs: 2, sm: 3, lg: 4 } }}
+          data-home-editor-scroll-scope="active-panel"
+          data-home-editor-focus-contract="dialog-trap-panel-focus-close-restore"
+          sx={{
+            overflowY: section === 'layout' ? 'hidden' : 'auto',
+            overscrollBehaviorY: 'contain',
+            scrollBehavior: 'auto',
+            p: section === 'layout' ? 0 : { xs: 2, sm: 3, lg: 4 },
+            '&:focus-visible': {
+              outline: '3px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: -3,
+            },
+            '@media (forced-colors: active)': {
+              '&:focus-visible': { outlineColor: 'Highlight' },
+            },
+          }}
         >
           {loading ? (
             <LoadingState label={t('common.loading')} variant="skeleton" size="page" />
@@ -587,6 +657,21 @@ export function HomePersonalizationStudio({
             />
           ) : (
             <>
+              {section === 'layout' && (
+                <HomeLayoutStudioWorkbench
+                  view={selectedView}
+                  overview={overview}
+                  overviewLoading={overviewLoading}
+                  overviewFetching={overviewFetching}
+                  overviewFailed={overviewFailed}
+                  busy={busy}
+                  feedbackBusy={feedbackBusy}
+                  onRetryOverview={onRetryOverview}
+                  onRecommendationFeedback={onRecommendationFeedback}
+                  onSave={(widgets) => layoutMutation.mutate(widgets)}
+                  onOpenHistory={() => setSection('history')}
+                />
+              )}
               {section === 'profiles' && (
                 <HomeProfilesSection
                   views={viewsQuery.data ?? []}
@@ -632,6 +717,7 @@ export function HomePersonalizationStudio({
                     view={selectedView}
                     layouts={deviceLayoutsQuery.data ?? []}
                     busy={busy || deviceLayoutsQuery.isLoading}
+                    fourDeviceLayoutsSupported={fourDeviceLayoutsSupported}
                     onSave={(deviceClass, density, widgetSizes) =>
                       deviceMutation.mutate({ deviceClass, density, widgetSizes })
                     }

@@ -3,6 +3,7 @@
   "description": "업무 맥락은 유지하고, 홈의 구성과 표현만 나에게 맞게 조정합니다.",
   "close": "홈 스튜디오 닫기",
   "sections": {
+    "layout": "레이아웃 스튜디오",
     "profiles": "내 홈",
     "appearance": "레이아웃 스타일",
     "content": "콘텐츠",
@@ -103,6 +104,12 @@
     "description": "의미 순서는 유지하면서 밀도와 위젯 크기만 기기별로 조정합니다.",
     "desktop": "데스크톱",
     "mobile": "모바일",
+    "classes": {
+      "DESKTOP_WIDE": "와이드 데스크톱",
+      "DESKTOP_STANDARD": "표준 데스크톱",
+      "MOBILE_STANDARD": "표준 모바일",
+      "MOBILE_COMPACT": "컴팩트 모바일"
+    },
     "density": "표시 밀도",
     "comfortable": "여유 있게",
     "compact": "간결하게",
@@ -206,5 +213,68 @@
     "saved": "변경 사항을 저장했습니다.",
     "failed": "요청을 완료하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도하세요.",
     "conflict": "다른 위치에서 홈이 변경되었습니다. 최신 버전을 불러왔습니다."
+  },
+  "layout": {
+    "catalog": {
+      "title": "위젯 카탈로그",
+      "count": "호환 위젯 {{count}}종",
+      "search": "위젯 검색",
+      "preview": "연결 예정",
+      "filters": {
+        "all": "전체",
+        "native": "사용 가능",
+        "projection": "연결 예정"
+      },
+      "items": {
+        "command-rail": "우선 처리 큐",
+        "schedule": "오늘의 시간 흐름",
+        "daily-brief": "답변·확인 요청",
+        "focus": "내 요청 마일스톤",
+        "activity": "역할별 업무 현황",
+        "focus-balance": "집중 시간 균형",
+        "meeting-load": "회의 부하",
+        "space-change-feed": "Space 협업 변경 피드",
+        "meetings-prep-decisions": "회의 준비와 결정 사항",
+        "dwaion-artifact": "DWAI·ON 아티팩트",
+        "workplace-booking": "장소 예약과 체크인",
+        "learning-progress": "직무 교육 진척"
+      }
+    },
+    "inspector": {
+      "title": "선택 위젯 속성",
+      "native": "현재 사용 가능",
+      "projection": "Wave 4 연결 예정",
+      "owner": "소유 제품",
+      "source": "데이터 원천",
+      "permission": "필요 권한",
+      "supportedWidths": "지원 너비",
+      "dataBudget": "데이터 예산",
+      "targetRegion": "대상 영역·배치",
+      "order": "키보드·화면 순서",
+      "visibility": "표시 상태",
+      "wave4Title": "안전한 프로토타입 경계",
+      "wave4Description": "이 항목은 현재 저장·실행하지 않으며 Wave 4 제공자 계약이 활성화되면 등록됩니다."
+    },
+    "canvas": {
+      "title": "3영역 실시간 캔버스",
+      "description": "실제 7개 렌더러 · 데스크톱 38% / 34% / 28%",
+      "projectionPreview": "향후 위젯 배치 미리보기",
+      "projectionPreviewDescription": "Wave 4 제공자 연결 전에는 표시 위치만 확인할 수 있으며 실행과 저장은 차단됩니다."
+    },
+    "status": {
+      "dirty": "저장하지 않은 변경",
+      "saved": "최신 상태"
+    },
+    "shortcuts": "⌘/Ctrl+S 저장 · ⌘/Ctrl+Z 실행 취소",
+    "actions": {
+      "history": "복원 기록",
+      "undo": "실행 취소",
+      "reset": "초기화",
+      "save": "레이아웃 저장",
+      "moveEarlier": "앞으로 이동",
+      "moveLater": "뒤로 이동",
+      "hide": "숨기기",
+      "show": "표시하기"
+    }
   }
 }

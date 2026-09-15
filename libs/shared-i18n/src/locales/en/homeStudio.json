@@ -3,6 +3,7 @@
   "description": "Keep your work context intact while tailoring the home composition to you.",
   "close": "Close home studio",
   "sections": {
+    "layout": "Layout studio",
     "profiles": "My homes",
     "appearance": "Layout style",
     "content": "Content",
@@ -103,6 +104,12 @@
     "description": "Tune density and widget sizes by device while preserving semantic order.",
     "desktop": "Desktop",
     "mobile": "Mobile",
+    "classes": {
+      "DESKTOP_WIDE": "Wide desktop",
+      "DESKTOP_STANDARD": "Standard desktop",
+      "MOBILE_STANDARD": "Standard mobile",
+      "MOBILE_COMPACT": "Compact mobile"
+    },
     "density": "Display density",
     "comfortable": "Comfortable",
     "compact": "Compact",
@@ -206,5 +213,68 @@
     "saved": "Changes saved.",
     "failed": "The request could not be completed. Refresh the latest state and try again.",
     "conflict": "This home changed elsewhere. The latest version has been loaded."
+  },
+  "layout": {
+    "catalog": {
+      "title": "Widget catalog",
+      "count": "{{count}} compatible widgets",
+      "search": "Search widgets",
+      "preview": "Planned",
+      "filters": {
+        "all": "All",
+        "native": "Available",
+        "projection": "Planned"
+      },
+      "items": {
+        "command-rail": "My action queue",
+        "schedule": "Today's timeline",
+        "daily-brief": "Replies and confirmations",
+        "focus": "My request milestones",
+        "activity": "Role work status",
+        "focus-balance": "Focus balance",
+        "meeting-load": "Meeting load",
+        "space-change-feed": "Space collaboration change feed",
+        "meetings-prep-decisions": "Meeting prep and decisions",
+        "dwaion-artifact": "DWAI·ON artifact",
+        "workplace-booking": "Booking and check-in",
+        "learning-progress": "Role learning progress"
+      }
+    },
+    "inspector": {
+      "title": "Selected widget properties",
+      "native": "Available now",
+      "projection": "Wave 4 connection planned",
+      "owner": "Owning product",
+      "source": "Data source",
+      "permission": "Required permission",
+      "supportedWidths": "Supported widths",
+      "dataBudget": "Data budget",
+      "targetRegion": "Target region and placement",
+      "order": "Keyboard and visual order",
+      "visibility": "Visibility",
+      "wave4Title": "Safe prototype boundary",
+      "wave4Description": "This item is not saved or executed yet. It will register after the Wave 4 provider contract is activated."
+    },
+    "canvas": {
+      "title": "Live three-region canvas",
+      "description": "7 production renderers · desktop 38% / 34% / 28%",
+      "projectionPreview": "Future widget placement preview",
+      "projectionPreviewDescription": "Only placement can be reviewed before the Wave 4 provider connection; execution and persistence remain blocked."
+    },
+    "status": {
+      "dirty": "Unsaved changes",
+      "saved": "Up to date"
+    },
+    "shortcuts": "⌘/Ctrl+S save · ⌘/Ctrl+Z undo",
+    "actions": {
+      "history": "Restore history",
+      "undo": "Undo",
+      "reset": "Reset",
+      "save": "Save layout",
+      "moveEarlier": "Move earlier",
+      "moveLater": "Move later",
+      "hide": "Hide",
+      "show": "Show"
+    }
   }
 }

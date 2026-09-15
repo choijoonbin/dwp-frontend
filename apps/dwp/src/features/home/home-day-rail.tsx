@@ -1,7 +1,15 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppWindow, Settings2, ShieldCheck } from 'lucide-react';
+import {
+  AppWindow,
+  Building2,
+  CalendarDays,
+  Newspaper,
+  Settings2,
+  ShieldCheck,
+} from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -11,7 +19,11 @@ import { alpha } from '@mui/material/styles';
 
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
-import type { HomeBackgroundPosition, HomeAudienceProfile } from '@dwp-frontend/shared-utils';
+import type {
+  CommunicationItem,
+  HomeBackgroundPosition,
+  HomeAudienceProfile,
+} from '@dwp-frontend/shared-utils';
 
 type HomeDayRailProps = {
   audience: HomeAudienceProfile;
@@ -22,9 +34,11 @@ type HomeDayRailProps = {
   usesDefaultBackground: boolean;
   backgroundPosition: HomeBackgroundPosition;
   overlayOpacity: number;
+  featuredStory?: CommunicationItem | null;
   workspaceTools?: ReactNode;
   assignedAppCount: number;
   onBrowseAll: () => void;
+  onOpenOrganizationUpdates: () => void;
   personalizationBusy?: boolean;
   onStartEditing?: () => void;
 };
@@ -44,9 +58,11 @@ export function HomeDayRail({
   usesDefaultBackground,
   backgroundPosition,
   overlayOpacity,
+  featuredStory,
   workspaceTools,
   assignedAppCount,
   onBrowseAll,
+  onOpenOrganizationUpdates,
   personalizationBusy = false,
   onStartEditing,
 }: HomeDayRailProps) {
@@ -56,13 +72,14 @@ export function HomeDayRail({
     : `${backgroundPosition.toLowerCase()} center`;
   const backgroundOverlay = Math.min(0.8, Math.max(0, overlayOpacity / 100));
   const mobileScrim = Math.max(0.58, backgroundOverlay);
-  const desktopImageScrim = Math.min(0.05, backgroundOverlay);
+  const desktopImageScrim = Math.min(featuredStory ? 0.3 : 0.05, backgroundOverlay);
 
   return (
     <Box
       component="section"
-      aria-label={t('page.personalWorkspace')}
+      aria-label={t('classic.portalAriaLabel')}
       data-testid="home-command-center"
+      data-home-ia="organization-portal"
       sx={{
         bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.default' : '#FAF8FF'),
       }}
@@ -134,6 +151,18 @@ export function HomeDayRail({
                 gap={1}
                 flexWrap="wrap"
               >
+                <Chip
+                  size="small"
+                  icon={<Building2 size={14} aria-hidden="true" />}
+                  label={t('classic.portalBadge')}
+                  sx={{
+                    color: foundationTokens.home.color.heroChipText,
+                    bgcolor: 'common.white',
+                    border: 1,
+                    borderColor: 'divider',
+                    '& .MuiChip-icon': { color: 'inherit' },
+                  }}
+                />
                 <Typography
                   variant="overline"
                   sx={{
@@ -173,7 +202,7 @@ export function HomeDayRail({
                   textShadow: { md: '0 2px 8px rgba(0,0,0,0.42)' },
                 }}
               >
-                {headline}
+                {featuredStory ? t('classic.portalTitle') : headline}
               </Typography>
               <Typography
                 variant="body1"
@@ -193,8 +222,20 @@ export function HomeDayRail({
                   textShadow: { md: '0 1px 4px rgba(0,0,0,0.42)' },
                 }}
               >
-                {subheadline}
+                {featuredStory ? t('classic.portalDescription') : subheadline}
               </Typography>
+              {!featuredStory && (
+                <ActionButton
+                  data-classic-primary-action
+                  intent="primary"
+                  size="small"
+                  startIcon={<Newspaper size={17} aria-hidden="true" />}
+                  onClick={onOpenOrganizationUpdates}
+                  sx={{ mt: 1.25, minHeight: 44 }}
+                >
+                  {t('classic.openOrganizationUpdates')}
+                </ActionButton>
+              )}
             </Box>
             <Stack
               data-launchpad-actions
@@ -214,7 +255,7 @@ export function HomeDayRail({
                 bgcolor: 'rgba(7,18,42,0.46)',
                 border: 1,
                 borderColor: 'rgba(255,255,255,0.34)',
-                borderRadius: 1,
+                borderRadius: foundationTokens.home.radius.control,
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.13), 0 8px 24px rgba(0,7,24,0.16)',
                 backdropFilter: 'blur(16px) saturate(145%)',
                 WebkitBackdropFilter: 'blur(16px) saturate(145%)',
@@ -295,10 +336,9 @@ export function HomeDayRail({
           </Stack>
         </Box>
 
-        {workspaceTools && (
+        {featuredStory && (
           <Box
-            data-home-zone="workspace-tools"
-            data-home-zone-policy="PERSONAL"
+            data-classic-featured-news
             sx={{
               width: 1,
               maxWidth: 2240,
@@ -309,10 +349,102 @@ export function HomeDayRail({
               zIndex: 1,
             }}
           >
-            {workspaceTools}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(280px, 38%) 1fr' },
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 1,
+                overflow: 'hidden',
+                boxShadow: 2,
+              }}
+            >
+              <Box
+                component="img"
+                src={featuredStory.coverImageUrl || backgroundUrl}
+                alt=""
+                sx={{
+                  width: 1,
+                  height: 1,
+                  minHeight: { xs: 156, md: 224 },
+                  maxHeight: { xs: 210, md: 260 },
+                  objectFit: 'cover',
+                }}
+              />
+              <Stack sx={{ minWidth: 0, p: { xs: 2, md: 3 } }} gap={1}>
+                <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                  <Chip size="small" color="primary" label={t('classic.featuredLabel')} />
+                  <Typography variant="caption" color="text.secondary">
+                    {featuredStory.publisherName}
+                  </Typography>
+                  {featuredStory.publishedAt && (
+                    <Stack direction="row" alignItems="center" gap={0.5} color="text.secondary">
+                      <CalendarDays size={14} aria-hidden="true" />
+                      <Typography variant="caption">
+                        {formatDate(featuredStory.publishedAt, { dateStyle: 'medium' })}
+                      </Typography>
+                    </Stack>
+                  )}
+                </Stack>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: {
+                      xs: foundationTokens.home.typography.mobileHeroSize,
+                      md: foundationTokens.home.typography.desktopHeroSize,
+                    },
+                    lineHeight: foundationTokens.home.typography.titleLineHeight,
+                    fontWeight: foundationTokens.home.typography.weightBold,
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {featuredStory.title}
+                </Typography>
+                <Typography
+                  color="text.secondary"
+                  sx={{
+                    lineHeight: foundationTokens.home.typography.readingLineHeight,
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {featuredStory.summary}
+                </Typography>
+                <ActionButton
+                  data-classic-primary-action
+                  intent="primary"
+                  size="small"
+                  startIcon={<Newspaper size={17} aria-hidden="true" />}
+                  onClick={onOpenOrganizationUpdates}
+                  sx={{ mt: 'auto', alignSelf: 'flex-start', minHeight: 44 }}
+                >
+                  {t('classic.openFeaturedStory')}
+                </ActionButton>
+              </Stack>
+            </Box>
           </Box>
         )}
       </Box>
+
+      {workspaceTools && (
+        <Box
+          data-home-zone="workspace-tools"
+          data-home-zone-policy="PERSONAL"
+          sx={{
+            width: 1,
+            maxWidth: 2240,
+            mx: 'auto',
+            px: { xs: 2, md: '50px' },
+            py: { xs: 2, md: 3 },
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {workspaceTools}
+        </Box>
+      )}
     </Box>
   );
 }

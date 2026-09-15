@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { HOME_LAUNCHPAD_GROUP_ITEM_LIMIT } from '../../../components/workspace-composer/home-launchpad-layout-contract';
 import { AppLaunchpad } from '../app-launchpad';
@@ -53,9 +52,12 @@ export function MyAppDock({
   onLayoutChange,
 }: MyAppDockProps) {
   const { t } = useTranslation('home');
-  const narrowViewport = useMediaQuery('(max-width:599.95px)', { noSsr: true });
-  const itemLimitPerGroup = compact || narrowViewport ? undefined : HOME_LAUNCHPAD_GROUP_ITEM_LIMIT;
-  const itemLimit = itemLimitPerGroup ? groups.length * itemLimitPerGroup : 4;
+  const narrowViewport = priorityCompact;
+  // The approved Dock is the full authority-filtered 5/7/2/4 launchpad on every
+  // device. Mobile changes its grid geometry; it never turns the other groups
+  // into an unlabelled hidden remainder.
+  const itemLimitPerGroup = HOME_LAUNCHPAD_GROUP_ITEM_LIMIT;
+  const itemLimit = groups.length * itemLimitPerGroup;
   const dockModel = resolveFlowAppDockModel({
     apps,
     groups,

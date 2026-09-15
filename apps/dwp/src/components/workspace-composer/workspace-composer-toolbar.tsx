@@ -94,6 +94,8 @@ export function WorkspaceComposerToolbar({
       component="nav"
       aria-label={t('toolbarLabel')}
       data-workspace-composer-placement={placement}
+      data-home-content-state={dirtyCount > 0 ? 'dirty' : undefined}
+      data-home-draft-preserved={dirtyCount > 0 ? 'true' : undefined}
       elevation={0}
       sx={{
         position: floating ? 'fixed' : 'sticky',
@@ -254,6 +256,7 @@ export function WorkspaceComposerToolbar({
       )}
       {dirtyCount > 0 && (
         <Chip
+          data-home-content-state="dirty"
           size="small"
           color="warning"
           aria-live="polite"

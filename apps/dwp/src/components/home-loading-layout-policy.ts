@@ -24,18 +24,18 @@ export const HOME_LOADING_LARGE_TEXT_ROOT_PX = 24;
 // One width contract for saved presentation, editor preview, and loading geometry.
 export const HOME_PRESENTATION_MAX_WIDTH = {
   focused: 1280,
-  balanced: 1680,
-  expressive: 2560,
+  balanced: 1808,
+  expressive: 1808,
 } as const satisfies Record<HomePresentation, number>;
 
 export const HOME_REFERENCE_GRID_PLACEMENTS = {
-  'action-queue': { gridColumn: '1 / span 40', row: 1 },
-  'role-pulse': { gridColumn: '41 / span 20', row: 1 },
-  today: { gridColumn: '1 / span 20', row: 2 },
-  'response-hub': { gridColumn: '21 / span 20', row: 2 },
-  'focus-balance': { gridColumn: '41 / span 20', row: 2 },
-  'request-tracker': { gridColumn: '1 / span 40', row: 3 },
-  'meeting-load': { gridColumn: '41 / span 20', row: 3 },
+  'action-queue': { gridColumn: '1 / span 72', row: 1 },
+  'role-pulse': { gridColumn: '73 / span 28', row: 1 },
+  today: { gridColumn: '1 / span 38', row: 2 },
+  'response-hub': { gridColumn: '39 / span 34', row: 2 },
+  'focus-balance': { gridColumn: '73 / span 28', row: 2 },
+  'request-tracker': { gridColumn: '1 / span 72', row: 3 },
+  'meeting-load': { gridColumn: '73 / span 28', row: 3 },
 } as const;
 
 const DEFAULT_PRESENTATION: HomePresentationHint = 'balanced';
@@ -134,7 +134,7 @@ export function resolveHomeLoadingLayout({
   const template: HomeLoadingReadTemplate =
     largeText || safeViewportWidth < 900
       ? 'single-column'
-      : safeViewportWidth >= 1200
+      : safeViewportWidth >= 1600
         ? 'adaptive-wide'
         : 'standard';
   const dockItemCount =

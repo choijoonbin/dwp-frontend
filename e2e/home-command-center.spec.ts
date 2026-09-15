@@ -405,7 +405,7 @@ test('home app actions occupy the hero utility position without refresh controls
   await expect(page.locator('[data-workspace-composer-placement="floating"]')).toBeVisible();
 });
 
-test('home composer enforces semantic height tokens and releases them on phones', async ({
+test('home composer enforces semantic height tokens without creating nested scroll owners', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -431,15 +431,15 @@ test('home composer enforces semantic height tokens and releases them on phones'
   await expect(activityWidget).toHaveAttribute('data-workspace-widget-height', 'short');
   await expect(activityWidget).toHaveCSS('height', '212px');
   await expect(activityContent).toHaveCSS('overflow-y', 'hidden');
-  await expect(activitySurface).toHaveCSS('overflow-y', 'auto');
+  await expect(activitySurface).toHaveCSS('overflow-y', 'hidden');
   expect(await activitySurface.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(
     true
   );
 
   await page.setViewportSize({ width: 320, height: 720 });
   await expect(activityWidget).not.toHaveCSS('height', '212px');
-  await expect(activityContent).toHaveCSS('overflow-y', 'visible');
-  await expect(activitySurface).toHaveCSS('overflow-y', 'visible');
+  await expect(activityContent).toHaveCSS('overflow-y', 'hidden');
+  await expect(activitySurface).toHaveCSS('overflow-y', 'hidden');
   expect(await activitySurface.evaluate((node) => node.scrollHeight === node.clientHeight)).toBe(
     true
   );

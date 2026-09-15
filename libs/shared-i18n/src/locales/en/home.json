@@ -57,6 +57,95 @@
     "noRecommendation": "There are no additional recommendations to review.",
     "review": "Review"
   },
+  "classic": {
+    "portalAriaLabel": "Organization portal",
+    "portalBadge": "Organization portal",
+    "portalTitle": "DWP Workplace organization portal",
+    "portalDescription": "Find essential organization news, knowledge, and support guidance in one place.",
+    "featuredLabel": "Featured organization update",
+    "openOrganizationUpdates": "View organization updates",
+    "openFeaturedStory": "Read original",
+    "resources": {
+      "secondaryTitle": "Company news and notices",
+      "secondaryDescription": "Review the latest updates from across the organization.",
+      "knowledgeTitle": "Knowledge and organization support",
+      "knowledgeDescription": "Connect to frequently used guides and employee support channels.",
+      "personalTitle": "My work flow",
+      "personalDescription": "Personal work and schedule summaries follow the organization information.",
+      "summary": {
+        "nextSchedule": "Next event",
+        "openCalendar": "Open calendar",
+        "noSchedule": "No upcoming events.",
+        "priorityWork": "Priority approvals and work",
+        "itemCount": "{{count}} items",
+        "noPriorityWork": "No priority work needs your attention."
+      },
+      "cards": {
+        "handbook": {
+          "title": "Employee work handbook",
+          "description": "Review work setup, collaboration, and security standards.",
+          "action": "Open guide"
+        },
+        "onboarding": {
+          "title": "New employee onboarding",
+          "description": "Follow the steps from joining through team onboarding.",
+          "action": "View steps"
+        },
+        "workplace": {
+          "title": "Workplace usage guide",
+          "description": "Find desks, rooms, visitor, and facility support information.",
+          "action": "View support"
+        },
+        "it": {
+          "title": "IT device and account help",
+          "description": "Resolve account, device, and network issues.",
+          "action": "Get help"
+        }
+      }
+    }
+  },
+  "states": {
+    "retry": "Try again",
+    "affectedSources": "Affected sources: {{sources}}",
+    "lastSuccessfulAt": "Last successful update: {{time}}",
+    "initial-loading": {
+      "title": "Preparing your Home",
+      "description": "The layout remains stable while authorized sources load."
+    },
+    "background-refresh": {
+      "title": "Updating this information",
+      "description": "Verified information remains available while its sources refresh."
+    },
+    "empty": {
+      "title": "Nothing needs attention here",
+      "description": "This is a confirmed empty result. New items will appear automatically.",
+      "action": "Check again"
+    },
+    "partial": {
+      "title": "Some sources are delayed",
+      "description": "Available information is shown. Delayed sources are identified separately."
+    },
+    "forbidden": {
+      "title": "This area is outside your access",
+      "description": "It will appear when your role and data scope allow it."
+    },
+    "stale": {
+      "title": "This information may be out of date",
+      "description": "The last verified result remains visible with its successful update time."
+    },
+    "widget-error": {
+      "title": "This widget could not be displayed",
+      "description": "{{widget}} stopped safely. The rest of Home remains available."
+    },
+    "dirty": {
+      "title": "You have unsaved Home changes",
+      "description": "Your draft is retained until you save or explicitly discard it."
+    },
+    "conflict": {
+      "title": "A newer Home version is available",
+      "description": "Your draft is preserved while you compare or reapply it to the latest version."
+    }
+  },
   "flow": {
     "workscape": {
       "label": "Tenant work launch area"
@@ -316,6 +405,7 @@
       "editLayoutDescription": "Edit widget and app position, size, and visibility.",
       "editSettings": "Home settings",
       "editSettingsDescription": "Set the mood, content, and device experience.",
+      "linkedCalendar": "Linked next event",
       "metrics": {
         "label": "Today's work summary",
         "action": "To handle",
@@ -567,6 +657,74 @@
       "reload": "Reload latest",
       "reapply": "Reapply my draft",
       "toast": "A newer home version was found. Your draft has been kept."
+    },
+    "meetingPrep": {
+      "title": "Prepare for the next meeting",
+      "next": "Next event",
+      "fallbackTitle": "Review the agenda and preparation items for your next meeting",
+      "startsAt": "Starts {{time}}",
+      "checks": {
+        "agenda": "Agenda reviewed",
+        "brief": "Brief prepared",
+        "room": "Room check"
+      },
+      "action": "Open prep room"
+    },
+    "future": {
+      "title": "Personalized collaboration and insights",
+      "description": "Continue work in context with a personalized set of projection widgets.",
+      "personalized": "Personalized preset",
+      "preview": "Connection preview",
+      "previewUnavailable": "Sample content before connection. Actions become available after the provider is connected.",
+      "lastVerified": "Today 08:50",
+      "space": {
+        "eyebrow": "SPACE CHANGE FEED",
+        "title": "Important changes in your documents",
+        "items": {
+          "one": {
+            "title": "Operations transition checklist v3",
+            "detail": "Jihyun Kim resolved two risk items."
+          },
+          "two": {
+            "title": "Mobile release plan",
+            "detail": "The release schedule and owners were updated."
+          }
+        },
+        "action": "Review in Space"
+      },
+      "meeting": {
+        "eyebrow": "MEETING PREP & DECISIONS",
+        "title": "Launch readiness review · 10:30",
+        "checks": {
+          "agenda": "4 agenda items reviewed",
+          "brief": "Pre-read complete",
+          "room": "Check room equipment"
+        },
+        "decisionLabel": "FOLLOW-UP CANDIDATE",
+        "decision": "Add the high-contrast verification results to the release checklist",
+        "accept": "Accept as my work",
+        "assign": "Assign owner"
+      },
+      "artifact": {
+        "eyebrow": "DWAI·ON ARTIFACT",
+        "title": "Continue an AI artifact",
+        "document": "H2 2026 operating strategy draft",
+        "detail": "Eight sources and two unfinished sections are safely preserved.",
+        "saved": "Last edited today at 08:42",
+        "action": "Continue in editor"
+      },
+      "booking": {
+        "eyebrow": "WORKPLACE PREP",
+        "title": "Focus booth B-14 · 13:00",
+        "detail": "Check-in opens ten minutes before the reservation. Review the floor map and Wi-Fi details.",
+        "action": "View booking and check-in"
+      },
+      "learning": {
+        "eyebrow": "ROLE DEVELOPMENT",
+        "title": "Required learning progress",
+        "detail": "Security and AI use modules 3/4 complete",
+        "progress": "Required learning 75% complete"
+      }
     }
   },
   "footer": {

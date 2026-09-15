@@ -15,8 +15,8 @@ import {
 describe('Home loading layout policy', () => {
   it.each([
     ['focused', 1280],
-    ['balanced', 1680],
-    ['expressive', 2560],
+    ['balanced', 1808],
+    ['expressive', 1808],
   ] as const)(
     'preserves the distinct %s width limit at every viewport',
     (presentation, maxWidth) => {
@@ -108,17 +108,17 @@ describe('Home loading layout policy', () => {
     expect(() => writeHomeLaunchpadGroupItemCounts(storage, [5, 7, 2, 4])).not.toThrow();
   });
 
-  it('keeps the balanced 1440 skeleton on the reference 8+4 contract', () => {
+  it('keeps the balanced 1440 skeleton on the standard two-column contract', () => {
     expect(
       resolveHomeLoadingLayout({
         presentation: 'balanced',
         viewportWidth: 1440,
         rootFontSize: 16,
       })
-    ).toMatchObject({ template: 'adaptive-wide', dockItemCount: 8, dockStacked: true });
+    ).toMatchObject({ template: 'standard', dockItemCount: 8, dockStacked: true });
   });
 
-  it('restores the expressive 1920 skeleton on the reference 8+4 contract', () => {
+  it('restores the expressive 1920 skeleton on the approved 38/34/28 contract', () => {
     expect(
       resolveHomeLoadingLayout({
         presentation: 'expressive',
