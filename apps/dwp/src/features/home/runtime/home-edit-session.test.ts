@@ -17,6 +17,7 @@ const emptyViewsSession: HomeEditSession = {
 const concurrentView = {
   viewId: 'view-concurrent',
   name: 'Concurrent home',
+  modeKey: 'FLOW_V1',
   version: 5,
   customized: true,
 } as HomeView;
@@ -27,6 +28,7 @@ describe('home edit conflict session', () => {
 
     expect(target).toEqual({
       store: 'VIEWS',
+      experienceVariant: 'FLOW_V1',
       viewId: 'view-concurrent',
       viewName: 'Concurrent home',
       version: 5,
@@ -48,6 +50,15 @@ describe('home edit conflict session', () => {
     );
 
     expect(rebaseHomeEditSession(emptyViewsSession, legacyTarget!)).toBe(emptyViewsSession);
+  });
+
+  it('rejects a conflict target from the other Home mode', () => {
+    expect(
+      createHomeEditConflictTarget(emptyViewsSession, {
+        ...concurrentView,
+        modeKey: 'CLASSIC',
+      })
+    ).toBeNull();
   });
 
   it('preserves LEGACY identity while rebasing its version and reset state', () => {

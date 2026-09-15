@@ -244,7 +244,9 @@ function compositionPolicy(value: unknown, path: string): HomeCompositionPolicy 
     'personalCustomizationEnabled',
     'governedZones',
   ]);
-  if (source.schemaVersion !== 3) fail(`${path}.schemaVersion`, 'expected version 3');
+  if (source.schemaVersion !== 3 && source.schemaVersion !== 4) {
+    fail(`${path}.schemaVersion`, 'expected version 3 or 4');
+  }
   if (!Array.isArray(source.governedZones) || source.governedZones.length > 1) {
     return fail(`${path}.governedZones`, 'invalid governed zone count');
   }
@@ -252,7 +254,7 @@ function compositionPolicy(value: unknown, path: string): HomeCompositionPolicy 
     governedZone(zone, `${path}.governedZones[${index}]`)
   );
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     experienceVariant: enumeration(
       source.experienceVariant,
       `${path}.experienceVariant`,

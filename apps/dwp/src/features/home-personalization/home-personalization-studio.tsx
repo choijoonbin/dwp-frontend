@@ -25,6 +25,7 @@ import {
   getHomeTemplates,
   getHomeViewRevisions,
   getHomeViews,
+  isMobileHomeDeviceClass,
   publishHomeTemplate,
   restoreHomeViewRevision,
   revokeHomeTemplate,
@@ -56,10 +57,12 @@ import {
   buildWorkstyleChanges,
   createHomeViewKey,
 } from './home-personalization-model';
+import { homeViewQueryKey, requireHomeViewMode } from '../home/runtime/home-view-query-key';
 
 import type {
   HomeComposerProposal,
   HomeDeviceClass,
+  HomeExperienceVariant,
   HomePresentation,
   HomePreferenceLayout,
   HomeTemplate,
@@ -73,13 +76,15 @@ import type { HomeStudioSection, HomeWorkstyleIntent } from './home-personalizat
 type HomePersonalizationStudioProps = {
   open: boolean;
   composerEnabled: boolean;
+  modeKey: HomeExperienceVariant;
+  tenantId?: number | null;
+  userId?: number | null;
   seedLayout: HomePreferenceLayout<string> | null;
   onClose: () => void;
   onEditView: (view: HomeView) => void;
   onActiveViewChanged?: (view: HomeView) => void;
 };
 
-const viewQueryKey = ['home-personalization', 'views', 'workspace-home'] as const;
 const templateQueryKey = ['home-personalization', 'templates'] as const;
 
 function replaceView(views: readonly HomeView[] | undefined, next: HomeView): HomeView[] {
@@ -93,6 +98,9 @@ function replaceView(views: readonly HomeView[] | undefined, next: HomeView): Ho
 export function HomePersonalizationStudio({
   open,
   composerEnabled,
+  modeKey,
+  tenantId,
+  userId,
   seedLayout,
   onClose,
   onEditView,
@@ -107,10 +115,14 @@ export function HomePersonalizationStudio({
   const [section, setSection] = useState<HomeStudioSection>('profiles');
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
   const [proposal, setProposal] = useState<HomeComposerProposal | null>(null);
+  const viewQueryKey = useMemo(
+    () => homeViewQueryKey({ tenantId, userId, surfaceKey: 'workspace-home', modeKey }),
+    [modeKey, tenantId, userId]
+  );
 
   const viewsQuery = useQuery({
     queryKey: viewQueryKey,
-    queryFn: () => getHomeViews('workspace-home'),
+    queryFn: () => getHomeViews('workspace-home', modeKey),
     enabled: open,
     staleTime: 30_000,
     retry: 1,
@@ -154,7 +166,11 @@ export function HomePersonalizationStudio({
     if (!composerEnabled && section === 'ai') setSection('profiles');
   }, [composerEnabled, section]);
 
+  const currentModeView = async (request: Promise<HomeView>) =>
+    requireHomeViewMode(await request, modeKey);
+
   const refreshViewDependencies = async (view: HomeView) => {
+    requireHomeViewMode(view, modeKey);
     queryClient.setQueryData<HomeView[]>(viewQueryKey, (current) => replaceView(current, view));
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: viewQueryKey }),
@@ -178,17 +194,20 @@ export function HomePersonalizationStudio({
     mutationFn: (name: string) => {
       const baseLayout = selectedView?.layout ?? seedLayout;
       if (!baseLayout) throw new Error('A source layout is required to create a home view.');
-      return createHomeView(
-        {
-          viewKey: createHomeViewKey(
+      return currentModeView(
+        createHomeView(
+          {
+            viewKey: createHomeViewKey(
+              name,
+              (viewsQuery.data ?? []).map((view) => view.viewKey)
+            ),
             name,
-            (viewsQuery.data ?? []).map((view) => view.viewKey)
-          ),
-          name,
-          makeDefault: (viewsQuery.data?.length ?? 0) === 0,
-          layout: baseLayout,
-        },
-        createHomeCommandKey('create-view')
+            modeKey,
+            makeDefault: (viewsQuery.data?.length ?? 0) === 0,
+            layout: baseLayout,
+          },
+          createHomeCommandKey('create-view')
+        )
       );
     },
     onSuccess: async (view) => {
@@ -200,7 +219,9 @@ export function HomePersonalizationStudio({
   });
   const activateMutation = useMutation({
     mutationFn: (view: HomeView) =>
-      activateHomeView(view.viewId, view.version, createHomeCommandKey('activate-view')),
+      currentModeView(
+        activateHomeView(view.viewId, view.version, createHomeCommandKey('activate-view'))
+      ),
     onSuccess: async (view) => {
       setSelectedViewId(view.viewId);
       await queryClient.invalidateQueries({ queryKey: viewQueryKey });
@@ -229,12 +250,14 @@ export function HomePersonalizationStudio({
       configuration: HomeWidgetConfiguration;
     }) => {
       if (!selectedView) throw new Error('A home view must be selected.');
-      return updateHomeWidgetConfiguration(
-        selectedView.viewId,
-        widgetKey,
-        configuration,
-        selectedView.version,
-        createHomeCommandKey('configure-widget')
+      return currentModeView(
+        updateHomeWidgetConfiguration(
+          selectedView.viewId,
+          widgetKey,
+          configuration,
+          selectedView.version,
+          createHomeCommandKey('configure-widget')
+        )
       );
     },
     onSuccess: async (view) => {
@@ -246,14 +269,16 @@ export function HomePersonalizationStudio({
   const appearanceMutation = useMutation({
     mutationFn: (presentation: HomePresentation) => {
       if (!selectedView) throw new Error('A home view must be selected.');
-      return updateHomeView(
-        selectedView.viewId,
-        {
-          name: selectedView.name,
-          layout: { ...selectedView.layout, presentation },
-          version: selectedView.version,
-        },
-        createHomeCommandKey('configure-appearance')
+      return currentModeView(
+        updateHomeView(
+          selectedView.viewId,
+          {
+            name: selectedView.name,
+            layout: { ...selectedView.layout, presentation },
+            version: selectedView.version,
+          },
+          createHomeCommandKey('configure-appearance')
+        )
       );
     },
     onSuccess: async (view) => {
@@ -309,7 +334,9 @@ export function HomePersonalizationStudio({
       ]);
       toast.success(
         t('device.saved', {
-          device: layout.deviceClass === 'MOBILE' ? t('device.mobile') : t('device.desktop'),
+          device: isMobileHomeDeviceClass(layout.deviceClass)
+            ? t('device.mobile')
+            : t('device.desktop'),
         })
       );
     },
@@ -318,11 +345,13 @@ export function HomePersonalizationStudio({
   const templateApplyMutation = useMutation({
     mutationFn: (template: HomeTemplate) => {
       if (!selectedView) throw new Error('A home view must be selected.');
-      return applyHomeTemplate(
-        template.templateId,
-        selectedView.viewId,
-        selectedView.version,
-        createHomeCommandKey('apply-template')
+      return currentModeView(
+        applyHomeTemplate(
+          template.templateId,
+          selectedView.viewId,
+          selectedView.version,
+          createHomeCommandKey('apply-template')
+        )
       );
     },
     onSuccess: async (view) => {
@@ -372,11 +401,13 @@ export function HomePersonalizationStudio({
   const restoreMutation = useMutation({
     mutationFn: (revision: HomeViewRevision) => {
       if (!selectedView) throw new Error('A home view must be selected.');
-      return restoreHomeViewRevision(
-        selectedView.viewId,
-        revision.revisionId,
-        selectedView.version,
-        createHomeCommandKey('restore-revision')
+      return currentModeView(
+        restoreHomeViewRevision(
+          selectedView.viewId,
+          revision.revisionId,
+          selectedView.version,
+          createHomeCommandKey('restore-revision')
+        )
       );
     },
     onSuccess: async (view) => {

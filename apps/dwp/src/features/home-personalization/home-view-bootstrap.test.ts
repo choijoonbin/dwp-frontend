@@ -15,6 +15,7 @@ function view(overrides: Partial<HomeView> = {}): HomeView {
     viewId: 'view-1',
     viewKey: 'default',
     surfaceKey: 'workspace-home',
+    modeKey: 'FLOW_V1',
     name: 'My work home',
     isDefault: true,
     schemaVersion: 1,
@@ -40,11 +41,17 @@ describe('home view cutover bootstrap', () => {
       .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
       .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
 
-    const first = resolvePendingHomeSaveCommand(null, layout, createKey);
-    const retry = resolvePendingHomeSaveCommand(first, structuredClone(layout), createKey);
+    const first = resolvePendingHomeSaveCommand(null, layout, 'FLOW_V1', createKey);
+    const retry = resolvePendingHomeSaveCommand(
+      first,
+      structuredClone(layout),
+      'FLOW_V1',
+      createKey
+    );
     const changed = resolvePendingHomeSaveCommand(
       retry,
       { ...layout, presentation: 'expressive' },
+      'FLOW_V1',
       createKey
     );
 
@@ -58,10 +65,22 @@ describe('home view cutover bootstrap', () => {
       .fn()
       .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
       .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
-    const save = resolvePendingHomeSaveCommand(null, layout, createKey);
-    const reset = resolvePendingHomeSaveCommand(save, layout, createKey, true);
+    const save = resolvePendingHomeSaveCommand(null, layout, 'FLOW_V1', createKey);
+    const reset = resolvePendingHomeSaveCommand(save, layout, 'FLOW_V1', createKey, true);
 
     expect(reset.idempotencyKey).not.toBe(save.idempotencyKey);
+    expect(createKey).toHaveBeenCalledTimes(2);
+  });
+
+  it('rotates the command key when an identical layout belongs to another Home mode', () => {
+    const createKey = vi
+      .fn()
+      .mockReturnValueOnce('11111111-1111-4111-8111-111111111111')
+      .mockReturnValueOnce('22222222-2222-4222-8222-222222222222');
+    const classic = resolvePendingHomeSaveCommand(null, layout, 'CLASSIC', createKey);
+    const flow = resolvePendingHomeSaveCommand(classic, layout, 'FLOW_V1', createKey);
+
+    expect(flow.idempotencyKey).not.toBe(classic.idempotencyKey);
     expect(createKey).toHaveBeenCalledTimes(2);
   });
 });

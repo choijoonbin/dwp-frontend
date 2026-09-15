@@ -33,6 +33,37 @@ export type { AppEntitlementPermission };
 
 export type HomeTranslate = (key: string, options?: Record<string, string | number>) => string;
 
+export const APPROVED_HOME_LAUNCHPAD_RESOURCE_ORDER = {
+  work: ['APP.WORK', 'APP.ASK', 'APP.ACTIVITY', 'APP.APPROVALS', 'APP.NOTIFICATIONS'],
+  connect: [
+    'APP.COMMUNICATIONS',
+    'APP.CALENDAR',
+    'APP.MAIL',
+    'APP.SPACES',
+    'APP.WORKPLACE',
+    'APP.MESSAGING',
+    'APP.MEETINGS',
+  ],
+  services: ['APP.EMPLOYEE_SERVICES', 'APP.HCM'],
+  systems: ['APP.KNOWLEDGE', 'APP.BUSINESS_ERP', 'APP.LEGACY_OPERATIONS', 'APP.ADMINISTRATION'],
+} as const;
+
+export const APPROVED_HOME_LAUNCHPAD_GROUP_ORDER = Object.freeze([
+  'work',
+  'connect',
+  'services',
+  'systems',
+] as const);
+
+export const APPROVED_HOME_LAUNCHPAD_RESOURCE_KEYS = Object.freeze(
+  APPROVED_HOME_LAUNCHPAD_GROUP_ORDER.flatMap(
+    (groupId) => APPROVED_HOME_LAUNCHPAD_RESOURCE_ORDER[groupId]
+  )
+);
+
+export type HomeLaunchpadContractStatus =
+  'ALIGNED' | 'MISSING_SERVER_CONFIGURATION' | 'INVALID_SERVER_SCHEMA' | 'SERVER_CONTRACT_DRIFT';
+
 export type TenantHomeLaunchpadConfiguration = {
   schemaVersion: number;
   groups: Array<{
@@ -107,18 +138,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     resourceKey: 'APP.ACTIVITY',
   },
   {
-    id: 'dwp-notifications',
-    name: 'Notification center',
-    shortName: 'Notifications',
-    description: 'Triage actionable updates from every DWP application',
-    groupId: 'work',
-    route: '/notifications/home',
-    iconKey: 'notifications',
-    tone: '#2F5E8A',
-    resourceKey: 'APP.NOTIFICATIONS',
-    notificationSourceKey: 'notifications',
-  },
-  {
     id: 'dwp-approvals',
     name: 'Approvals',
     shortName: 'Approvals',
@@ -129,6 +148,18 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     tone: '#2856C7',
     resourceKey: 'APP.APPROVALS',
     notificationSourceKey: 'approvals',
+  },
+  {
+    id: 'dwp-notifications',
+    name: 'Notification center',
+    shortName: 'Notifications',
+    description: 'Triage actionable updates from every DWP application',
+    groupId: 'work',
+    route: '/notifications/home',
+    iconKey: 'notifications',
+    tone: '#2F5E8A',
+    resourceKey: 'APP.NOTIFICATIONS',
+    notificationSourceKey: 'notifications',
   },
   {
     id: 'dwp-communications',
@@ -154,17 +185,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     resourceKey: 'APP.CALENDAR',
   },
   {
-    id: 'dwp-rooms',
-    name: 'Workplace',
-    shortName: 'Workplace',
-    description: 'Office maps, rooms, desks, lockers, and flexible workplace reservations',
-    groupId: 'connect',
-    route: '/workplace/home',
-    iconKey: 'rooms',
-    tone: '#176F6A',
-    resourceKey: 'APP.WORKPLACE',
-  },
-  {
     id: 'ref-app-mail',
     name: 'Mail',
     shortName: 'Mail',
@@ -174,6 +194,29 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'mail',
     tone: '#176B63',
     resourceKey: 'APP.MAIL',
+  },
+  {
+    id: 'dwp-spaces',
+    name: 'Spaces',
+    shortName: 'Spaces',
+    description: 'Purpose-built collaboration spaces for teams, knowledge, apps, and governed AI',
+    groupId: 'connect',
+    route: '/spaces/home',
+    iconKey: 'spaces',
+    tone: '#315B7A',
+    resourceKey: 'APP.SPACES',
+    notificationSourceKey: 'space',
+  },
+  {
+    id: 'dwp-rooms',
+    name: 'Workplace',
+    shortName: 'Workplace',
+    description: 'Office maps, rooms, desks, lockers, and flexible workplace reservations',
+    groupId: 'connect',
+    route: '/workplace/home',
+    iconKey: 'rooms',
+    tone: '#176F6A',
+    resourceKey: 'APP.WORKPLACE',
   },
   {
     id: 'dwp-messaging',
@@ -197,18 +240,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'meetings',
     tone: '#0B6B74',
     resourceKey: 'APP.MEETINGS',
-  },
-  {
-    id: 'dwp-spaces',
-    name: 'Spaces',
-    shortName: 'Spaces',
-    description: 'Purpose-built collaboration spaces for teams, knowledge, apps, and governed AI',
-    groupId: 'connect',
-    route: '/spaces/home',
-    iconKey: 'spaces',
-    tone: '#315B7A',
-    resourceKey: 'APP.SPACES',
-    notificationSourceKey: 'space',
   },
   {
     id: 'ref-app-service',
@@ -377,10 +408,40 @@ export function resolveHomeLaunchpadCatalog(
   configuration: TenantHomeLaunchpadConfiguration | null | undefined,
   locale: string,
   translate: HomeTranslate
-): { groups: HomeAppGroup[]; apps: HomeAppDefinition[] } {
+): {
+  groups: HomeAppGroup[];
+  apps: HomeAppDefinition[];
+  source: 'SERVER' | 'CANONICAL_FALLBACK';
+  contractStatus: HomeLaunchpadContractStatus;
+} {
   const fallbackGroups = localizeHomeAppGroups(translate);
-  if (configuration?.schemaVersion !== 1 || !configuration.groups?.length) {
-    return { groups: fallbackGroups, apps: [...apps] };
+  const appByResourceKey = new Map(apps.map((app) => [app.resourceKey, app]));
+  const fallbackApps = APPROVED_HOME_LAUNCHPAD_GROUP_ORDER.flatMap((groupId) =>
+    APPROVED_HOME_LAUNCHPAD_RESOURCE_ORDER[groupId].flatMap((resourceKey) => {
+      const app = appByResourceKey.get(resourceKey);
+      return app ? [{ ...app, groupId }] : [];
+    })
+  );
+  if (!configuration) {
+    return {
+      groups: fallbackGroups,
+      apps: fallbackApps,
+      source: 'CANONICAL_FALLBACK',
+      contractStatus: 'MISSING_SERVER_CONFIGURATION',
+    };
+  }
+  if (
+    configuration.schemaVersion !== 1 ||
+    !Array.isArray(configuration.groups) ||
+    configuration.groups.length === 0 ||
+    !Array.isArray(configuration.placements)
+  ) {
+    return {
+      groups: fallbackGroups,
+      apps: [],
+      source: 'SERVER',
+      contractStatus: 'INVALID_SERVER_SCHEMA',
+    };
   }
 
   const groups = configuration.groups
@@ -394,19 +455,67 @@ export function resolveHomeLaunchpadCatalog(
       name: localizedPolicyValue(group.labels, locale, group.groupKey),
       description: localizedPolicyValue(group.descriptions, locale, ''),
     }));
-  if (groups.length === 0) return { groups: fallbackGroups, apps: [...apps] };
+  const canonicalizedPlacements = configuration.placements.map((placement) => ({
+    ...placement,
+    resourceKey: appResourceAliasCandidates(placement.resourceKey)[0]!,
+  }));
+  const orderedPlacements = [...canonicalizedPlacements].sort(
+    (left, right) =>
+      left.sortOrder - right.sortOrder || left.resourceKey.localeCompare(right.resourceKey)
+  );
+  const groupKeys = groups.map((group) => group.id);
+  const serverContractAligned =
+    groupKeys.length === APPROVED_HOME_LAUNCHPAD_GROUP_ORDER.length &&
+    configuration.groups.length === APPROVED_HOME_LAUNCHPAD_GROUP_ORDER.length &&
+    groupKeys.every((groupKey, index) => groupKey === APPROVED_HOME_LAUNCHPAD_GROUP_ORDER[index]) &&
+    new Set(configuration.groups.map((group) => group.groupKey)).size ===
+      configuration.groups.length &&
+    orderedPlacements.length === APPROVED_HOME_LAUNCHPAD_RESOURCE_KEYS.length &&
+    new Set(orderedPlacements.map((placement) => placement.resourceKey)).size ===
+      orderedPlacements.length &&
+    APPROVED_HOME_LAUNCHPAD_GROUP_ORDER.every((groupKey) => {
+      const actual = orderedPlacements
+        .filter((placement) => placement.groupKey === groupKey)
+        .map((placement) => placement.resourceKey);
+      const expected = APPROVED_HOME_LAUNCHPAD_RESOURCE_ORDER[groupKey];
+      return (
+        actual.length === expected.length && actual.every((key, index) => key === expected[index])
+      );
+    });
+  const canonicalGroupByResourceKey = new Map<string, string>(
+    APPROVED_HOME_LAUNCHPAD_GROUP_ORDER.flatMap((groupId) =>
+      APPROVED_HOME_LAUNCHPAD_RESOURCE_ORDER[groupId].map(
+        (resourceKey) => [resourceKey, groupId] as const
+      )
+    )
+  );
+  const validServerResourceKeys = new Set<string>();
+  canonicalizedPlacements.forEach((placement) => {
+    if (
+      canonicalGroupByResourceKey.get(placement.resourceKey) === placement.groupKey &&
+      configuration.groups.some((group) => group.enabled && group.groupKey === placement.groupKey)
+    ) {
+      validServerResourceKeys.add(placement.resourceKey);
+    }
+  });
+  if (!serverContractAligned) {
+    return {
+      groups: fallbackGroups,
+      apps: fallbackApps.filter((app) => validServerResourceKeys.has(app.resourceKey)),
+      source: 'SERVER',
+      contractStatus: 'SERVER_CONTRACT_DRIFT',
+    };
+  }
 
   const enabledGroupIds = new Set(groups.map((group) => group.id));
   const firstGroupId = groups[0]!.id;
   const placements = new Map(
-    configuration.placements.map((placement) => [placement.resourceKey, placement])
+    canonicalizedPlacements.map((placement) => [placement.resourceKey, placement])
   );
   const resolvePlacement = (resourceKey: string) =>
-    appResourceAliasCandidates(resourceKey)
-      .map((candidate) => placements.get(candidate))
-      .find((placement) => placement !== undefined);
+    placements.get(appResourceAliasCandidates(resourceKey)[0]!);
   const groupOrder = new Map(groups.map((group, index) => [group.id, index]));
-  const resolvedApps = apps
+  const resolvedApps = fallbackApps
     .map((app) => {
       const placement = resolvePlacement(app.resourceKey);
       const configuredGroupId = placement?.groupKey;
@@ -428,7 +537,7 @@ export function resolveHomeLaunchpadCatalog(
       return leftOrder - rightOrder || left.name.localeCompare(right.name);
     });
 
-  return { groups, apps: resolvedApps };
+  return { groups, apps: resolvedApps, source: 'SERVER', contractStatus: 'ALIGNED' };
 }
 
 export function localizeHomeApps(translate: HomeTranslate): HomeAppDefinition[] {

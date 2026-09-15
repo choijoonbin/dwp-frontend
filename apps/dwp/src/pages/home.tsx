@@ -43,6 +43,7 @@ import {
 } from '../features/home/home-item-gallery-model';
 import { HomeEditorSafeArea } from '../features/home/home-editor-safe-area';
 import { homeUserAccessFingerprint } from '../features/home/runtime/home-access-fingerprint';
+import { homeViewQueryKey } from '../features/home/runtime/home-view-query-key';
 import {
   resolveHomeDeviceClass,
   resolveHomePageCopy,
@@ -99,7 +100,10 @@ import { useHomeDataRetry } from '../features/home/runtime/use-home-data-retry';
 import { useHomeDraftController } from '../features/home/runtime/use-home-draft-controller';
 import { useHomeRecommendationFeedback } from '../features/home/runtime/use-home-recommendation-feedback';
 import { resolveHomeTimeZone } from '../features/home/runtime/home-time-zone';
-import { activeHomeStoreUsesViews } from '../features/home/runtime/home-store-capabilities';
+import {
+  activeHomeStoreUsesViews,
+  resolveModeIsolatedHomeExperience,
+} from '../features/home/runtime/home-store-capabilities';
 import { HomeEditorGuards } from '../features/home/runtime/home-editor-guards';
 import {
   resolveHomeViewCustomized,
@@ -270,7 +274,24 @@ export default function HomePage() {
     retry: 1,
   });
   const homeExperience = homeExperienceQuery.data;
-  const flowHomeEnabled = homeExperience?.effectiveExperienceVariant === 'FLOW_V1';
+  const viewStoreEnabled = Boolean(
+    HOME_PERSONALIZATION_V2_ENABLED && homeExperience?.homePreferenceStore === 'VIEWS'
+  );
+  const homeModeKey = resolveModeIsolatedHomeExperience(
+    homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
+    viewStoreEnabled
+  );
+  const flowHomeEnabled = homeModeKey === 'FLOW_V1';
+  const activeHomeViewQueryKey = useMemo(
+    () =>
+      homeViewQueryKey({
+        tenantId: auth.user?.tenantId,
+        userId: auth.user?.userId,
+        surfaceKey: 'workspace-home',
+        modeKey: homeModeKey,
+      }),
+    [auth.user?.tenantId, auth.user?.userId, homeModeKey]
+  );
   const advancedPersonalizationEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED &&
     flowHomeEnabled &&
@@ -278,9 +299,6 @@ export default function HomePage() {
   );
   const composerEnabled = Boolean(
     advancedPersonalizationEnabled && homeExperience?.composerEnabled
-  );
-  const viewStoreEnabled = Boolean(
-    advancedPersonalizationEnabled && homeExperience?.homePreferenceStore === 'VIEWS'
   );
   const activeStoreUsesViews = activeHomeStoreUsesViews(viewStoreEnabled, editSession?.store);
   const homeStudioEnabled = advancedPersonalizationEnabled && activeStoreUsesViews;
@@ -292,8 +310,8 @@ export default function HomePage() {
     retry: homeQueryRetry,
   });
   const homeViewsQuery = useQuery({
-    queryKey: ['home-personalization', 'views', 'workspace-home'],
-    queryFn: () => getHomeViews('workspace-home'),
+    queryKey: activeHomeViewQueryKey,
+    queryFn: () => getHomeViews('workspace-home', homeModeKey),
     enabled: homeExperienceQuery.isSuccess && activeStoreUsesViews,
     staleTime: 30_000,
     retry: homeQueryRetry,
@@ -413,7 +431,7 @@ export default function HomePage() {
   });
   const currentEditSession = useMemo<HomeEditSession>(
     () => ({
-      experienceVariant: flowHomeEnabled ? 'FLOW_V1' : 'CLASSIC',
+      experienceVariant: homeModeKey,
       store: viewStoreEnabled ? 'VIEWS' : 'LEGACY',
       viewId: viewStoreEnabled ? (selectedHomeView?.viewId ?? null) : null,
       viewName: viewStoreEnabled ? (selectedHomeView?.name ?? null) : null,
@@ -422,7 +440,7 @@ export default function HomePage() {
     }),
     [
       durableResetAvailable,
-      flowHomeEnabled,
+      homeModeKey,
       persistedVersion,
       selectedHomeView?.name,
       selectedHomeView?.viewId,
@@ -601,7 +619,12 @@ export default function HomePage() {
       pendingHomeSaveCommandRef.current = null;
       if (result.store === 'VIEWS') {
         queryClient.setQueryData<typeof homeViewsQuery.data>(
-          ['home-personalization', 'views', 'workspace-home'],
+          homeViewQueryKey({
+            tenantId: auth.user?.tenantId,
+            userId: auth.user?.userId,
+            surfaceKey: result.view.surfaceKey,
+            modeKey: result.view.modeKey,
+          }),
           (current) =>
             current?.map((view) => (view.viewId === result.view.viewId ? result.view : view)) ?? [
               result.view,
@@ -617,9 +640,7 @@ export default function HomePage() {
         queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] }),
         queryClient.invalidateQueries({ queryKey: ['home-personalization', 'device-layouts'] }),
         queryClient.invalidateQueries({ queryKey: ['home-personalization', 'revisions'] }),
-        queryClient.invalidateQueries({
-          queryKey: ['home-personalization', 'views', 'workspace-home'],
-        }),
+        queryClient.invalidateQueries({ queryKey: activeHomeViewQueryKey }),
         queryClient.invalidateQueries({
           queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
         }),
@@ -700,6 +721,7 @@ export default function HomePage() {
     const command = resolvePendingHomeSaveCommand(
       pendingHomeSaveCommandRef.current,
       layout,
+      editSession.experienceVariant,
       () => createHomeCommandKey(reset ? 'reset-home-view' : 'save-home-view'),
       reset
     );
@@ -981,6 +1003,9 @@ export default function HomePage() {
           <LazyHomePersonalizationStudio
             open={studioOpen}
             composerEnabled={composerEnabled}
+            modeKey={homeModeKey}
+            tenantId={auth.user?.tenantId}
+            userId={auth.user?.userId}
             seedLayout={effectiveHomeLayout ?? null}
             onClose={() => setStudioOpen(false)}
             onEditView={() => beginEditing()}

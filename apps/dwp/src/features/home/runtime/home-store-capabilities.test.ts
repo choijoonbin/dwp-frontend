@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { activeHomeStoreUsesViews } from './home-store-capabilities';
+import {
+  activeHomeStoreUsesViews,
+  resolveModeIsolatedHomeExperience,
+} from './home-store-capabilities';
 
 describe('home personalization store capabilities', () => {
   it('does not expose VIEWS-only capabilities for the LEGACY store', () => {
@@ -13,5 +16,15 @@ describe('home personalization store capabilities', () => {
 
   it('keeps an active VIEWS edit session on VIEWS until that draft closes', () => {
     expect(activeHomeStoreUsesViews(false, 'VIEWS')).toBe(true);
+  });
+
+  it('keeps Classic on its legacy rollback source', () => {
+    expect(resolveModeIsolatedHomeExperience('CLASSIC', false)).toBe('CLASSIC');
+    expect(resolveModeIsolatedHomeExperience('CLASSIC', true)).toBe('CLASSIC');
+  });
+
+  it('only activates Flow when the mode-isolated Views store is ready', () => {
+    expect(resolveModeIsolatedHomeExperience('FLOW_V1', false)).toBe('CLASSIC');
+    expect(resolveModeIsolatedHomeExperience('FLOW_V1', true)).toBe('FLOW_V1');
   });
 });

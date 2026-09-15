@@ -50,7 +50,7 @@ const definitionByKey = new Map(HOME_GOVERNED_ZONE_REGISTRY.map((zone) => [zone.
 
 export function defaultHomeCompositionPolicy(): HomeCompositionPolicy {
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     experienceVariant: 'CLASSIC',
     personalCustomizationEnabled: true,
     governedZones: HOME_GOVERNED_ZONE_REGISTRY.map((definition) => ({
@@ -79,14 +79,16 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
     experienceVariant?: unknown;
   };
   const supportedSchema =
-    candidate.schemaVersion === 1 || candidate.schemaVersion === 2 || candidate.schemaVersion === 3;
+    candidate.schemaVersion === 1 ||
+    candidate.schemaVersion === 2 ||
+    candidate.schemaVersion === 3 ||
+    candidate.schemaVersion === 4;
   if (!supportedSchema) return failClosedHomeCompositionPolicy();
+  const hasVariant = candidate.schemaVersion === 3 || candidate.schemaVersion === 4;
   const experienceVariant: HomeExperienceVariant =
-    candidate.schemaVersion === 3 && candidate.experienceVariant === 'FLOW_V1'
-      ? 'FLOW_V1'
-      : 'CLASSIC';
-  const invalidV3Variant =
-    candidate.schemaVersion === 3 &&
+    hasVariant && candidate.experienceVariant === 'FLOW_V1' ? 'FLOW_V1' : 'CLASSIC';
+  const invalidVersionedVariant =
+    hasVariant &&
     candidate.experienceVariant !== 'CLASSIC' &&
     candidate.experienceVariant !== 'FLOW_V1';
   const requested = Array.isArray(candidate.governedZones) ? candidate.governedZones : [];
@@ -124,16 +126,16 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
     (left, right) => left.sortOrder - right.sortOrder || left.zoneKey.localeCompare(right.zoneKey)
   );
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     experienceVariant,
     personalCustomizationEnabled:
-      !invalidV3Variant && candidate.personalCustomizationEnabled === true,
+      !invalidVersionedVariant && candidate.personalCustomizationEnabled === true,
     governedZones: zones,
   };
 }
 
 export function isFlowHomeVariant(policy: HomeCompositionPolicy): boolean {
-  return policy.schemaVersion === 3 && policy.experienceVariant === 'FLOW_V1';
+  return policy.schemaVersion === 4 && policy.experienceVariant === 'FLOW_V1';
 }
 
 export function governedHomeZone(

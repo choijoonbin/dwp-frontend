@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  appResourceAliasCandidates,
   isAppPermissionEntitled,
   isAppReadEntitled,
   isAppResourceEntitled,
@@ -15,6 +16,16 @@ const permission = (resourceKey: string, effect = 'ALLOW') => ({
 });
 
 describe('application entitlement aliases', () => {
+  it.each([
+    ['APP.MAIL_CALENDAR', ['APP.MAIL', 'APP.MAIL_CALENDAR']],
+    ['APP.COLLABORATION', ['APP.MESSAGING', 'APP.COLLABORATION']],
+    ['APP.ROOMS', ['APP.WORKPLACE', 'APP.ROOMS']],
+    ['APP.HRIS', ['APP.HCM', 'APP.HRIS']],
+  ])('canonicalizes %s with deterministic canonical-first candidates', (legacy, expected) => {
+    expect(appResourceAliasCandidates(legacy)).toEqual(expected);
+    expect(appResourceAliasCandidates(expected[0]!)).toEqual(expected);
+  });
+
   it('accepts a legacy HRIS grant for the canonical HCM application', () => {
     expect(isAppResourceEntitled('APP.HCM', [permission('APP.HRIS')])).toBe(true);
   });

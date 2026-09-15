@@ -47,11 +47,19 @@ export type GovernedHomeZone = {
   sortOrder: number;
 };
 
-export type HomeCompositionPolicy = {
-  schemaVersion: 3;
+/** Tenant-level mode and governed-zone policy; distinct from a personal Home view layout. */
+export type TenantHomeCompositionPolicyV4 = {
+  schemaVersion: 4;
   experienceVariant: HomeExperienceVariant;
   personalCustomizationEnabled: boolean;
   governedZones: GovernedHomeZone[];
+};
+
+/** Compatibility name retained for existing consumers of the tenant policy API. */
+export type HomeCompositionPolicy = TenantHomeCompositionPolicyV4;
+
+export type TenantHomeCompositionPolicyV3 = Omit<TenantHomeCompositionPolicyV4, 'schemaVersion'> & {
+  schemaVersion: 3;
 };
 
 export type LegacyHomeCompositionPolicy = {
@@ -60,7 +68,8 @@ export type LegacyHomeCompositionPolicy = {
   governedZones?: GovernedHomeZone[];
 };
 
-export type HomeCompositionPolicyPayload = HomeCompositionPolicy | LegacyHomeCompositionPolicy;
+export type HomeCompositionPolicyPayload =
+  HomeCompositionPolicy | TenantHomeCompositionPolicyV3 | LegacyHomeCompositionPolicy;
 
 export type HomeExperience = {
   headline?: string | null;

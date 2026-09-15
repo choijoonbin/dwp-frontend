@@ -392,7 +392,7 @@ export function HomeDeviceSection({
   ) => void;
 }) {
   const { t } = useTranslation('homeStudio');
-  const [deviceClass, setDeviceClass] = useState<HomeDeviceClass>('DESKTOP');
+  const [deviceClass, setDeviceClass] = useState<HomeDeviceClass>('DESKTOP_STANDARD');
   const saved = layouts.find((layout) => layout.deviceClass === deviceClass);
   const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable');
   const [widgetSizes, setWidgetSizes] = useState<Record<string, HomeWidgetSize>>({});
@@ -435,13 +435,13 @@ export function HomeDeviceSection({
           aria-label={t('device.title')}
           onChange={(_, next: HomeDeviceClass | null) => next && setDeviceClass(next)}
         >
-          <ToggleButton value="DESKTOP">
+          <ToggleButton value="DESKTOP_STANDARD">
             <Laptop size={17} />
             <Box component="span" sx={{ ml: 1 }}>
               {t('device.desktop')}
             </Box>
           </ToggleButton>
-          <ToggleButton value="MOBILE">
+          <ToggleButton value="MOBILE_STANDARD">
             <Smartphone size={17} />
             <Box component="span" sx={{ ml: 1 }}>
               {t('device.mobile')}
@@ -462,7 +462,7 @@ export function HomeDeviceSection({
             <ToggleButton value="compact">{t('device.compact')}</ToggleButton>
           </ToggleButtonGroup>
         </Box>
-        {deviceClass === 'DESKTOP' && widthControls.length > 0 && (
+        {deviceClass === 'DESKTOP_STANDARD' && widthControls.length > 0 && (
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {t('device.widgetSizes')}
@@ -508,7 +508,7 @@ export function HomeDeviceSection({
             onSave(
               deviceClass,
               density,
-              deviceClass === 'DESKTOP'
+              deviceClass === 'DESKTOP_STANDARD'
                 ? mergeFlowDeviceWidthOverrides(saved?.overlay.widgetSizes ?? {}, widgetSizes)
                 : mergeFlowDeviceWidthOverrides(saved?.overlay.widgetSizes ?? {}, {})
             )

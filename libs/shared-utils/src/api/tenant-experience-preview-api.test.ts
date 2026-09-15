@@ -52,7 +52,7 @@ const tenantExperiencePreviewFixture = {
       placements: [],
     },
     compositionPolicy: {
-      schemaVersion: 3,
+      schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
       personalCustomizationEnabled: true,
       governedZones: [
@@ -103,6 +103,30 @@ describe('tenant experience preview API boundary', () => {
         signal: expect.any(AbortSignal),
       })
     );
+  });
+
+  it('bridges a v3 tenant policy to the namespaced v4 policy for rolling deployments', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        ...tenantExperiencePreviewFixture,
+        home: {
+          ...tenantExperiencePreviewFixture.home,
+          compositionPolicy: {
+            ...tenantExperiencePreviewFixture.home.compositionPolicy,
+            schemaVersion: 3,
+          },
+        },
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await getTenantExperiencePreview();
+
+    expect(result.home.compositionPolicy).toMatchObject({
+      schemaVersion: 4,
+      experienceVariant: 'FLOW_V1',
+      personalCustomizationEnabled: true,
+    });
   });
 
   it.each([

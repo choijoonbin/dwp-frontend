@@ -49,7 +49,7 @@ describe('home composition policy', () => {
       ],
     });
 
-    expect(policy.schemaVersion).toBe(3);
+    expect(policy.schemaVersion).toBe(4);
     expect(policy.experienceVariant).toBe('CLASSIC');
     expect(policy.personalCustomizationEnabled).toBe(false);
     expect(governedHomeZone(policy, 'announcements')).toMatchObject({
@@ -70,11 +70,32 @@ describe('home composition policy', () => {
     ).toBe(false);
   });
 
-  it('only enables Flow Home for an explicit, valid v3 tenant variant', () => {
+  it('migrates an explicit v3 Flow policy to v4 without changing its mode', () => {
     expect(
       isFlowHomeVariant(
         reconcileHomeCompositionPolicy({
           schemaVersion: 3,
+          experienceVariant: 'FLOW_V1',
+          personalCustomizationEnabled: true,
+          governedZones: [],
+        })
+      )
+    ).toBe(true);
+    expect(
+      reconcileHomeCompositionPolicy({
+        schemaVersion: 3,
+        experienceVariant: 'FLOW_V1',
+        personalCustomizationEnabled: true,
+        governedZones: [],
+      })
+    ).toMatchObject({ schemaVersion: 4, experienceVariant: 'FLOW_V1' });
+  });
+
+  it('only enables Flow Home for an explicit valid versioned tenant variant', () => {
+    expect(
+      isFlowHomeVariant(
+        reconcileHomeCompositionPolicy({
+          schemaVersion: 4,
           experienceVariant: 'FLOW_V1',
           personalCustomizationEnabled: true,
           governedZones: [],
@@ -92,7 +113,7 @@ describe('home composition policy', () => {
     ).toBe(false);
     expect(
       reconcileHomeCompositionPolicy({
-        schemaVersion: 3,
+        schemaVersion: 4,
         experienceVariant: 'UNKNOWN',
         personalCustomizationEnabled: true,
         governedZones: [],

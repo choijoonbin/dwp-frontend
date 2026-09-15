@@ -101,14 +101,14 @@ describe('Home page runtime state', () => {
         previewDevice: 'mobile',
         runtimeMobile: false,
       })
-    ).toBe('MOBILE');
+    ).toBe('MOBILE_STANDARD');
     expect(
       resolveHomeDeviceClass({
         editPreviewActive: false,
         previewDevice: 'desktop',
         runtimeMobile: true,
       })
-    ).toBe('MOBILE');
+    ).toBe('MOBILE_STANDARD');
   });
 
   it('resolves localized copy through exact, language, default, and global fallbacks', () => {

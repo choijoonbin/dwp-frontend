@@ -1,0 +1,32 @@
+import { describe, expect, it } from 'vitest';
+
+import { homeViewQueryKey, requireHomeViewMode } from './home-view-query-key';
+
+describe('Home view query identity', () => {
+  const scope = {
+    tenantId: 7,
+    userId: 11,
+    surfaceKey: 'workspace-home' as const,
+  };
+
+  it('isolates Classic and Flow cache entries', () => {
+    expect(homeViewQueryKey({ ...scope, modeKey: 'CLASSIC' })).not.toEqual(
+      homeViewQueryKey({ ...scope, modeKey: 'FLOW_V1' })
+    );
+  });
+
+  it('isolates owner transitions as well as the Home surface', () => {
+    expect(homeViewQueryKey({ ...scope, modeKey: 'CLASSIC' })).not.toEqual(
+      homeViewQueryKey({ ...scope, userId: 12, modeKey: 'CLASSIC' })
+    );
+  });
+
+  it('rejects a mutation response from another immutable Home mode', () => {
+    expect(requireHomeViewMode({ modeKey: 'FLOW_V1' }, 'FLOW_V1')).toEqual({
+      modeKey: 'FLOW_V1',
+    });
+    expect(() => requireHomeViewMode({ modeKey: 'CLASSIC' }, 'FLOW_V1')).toThrow(
+      /returned CLASSIC, not requested mode FLOW_V1/u
+    );
+  });
+});

@@ -1,4 +1,4 @@
-import type { HomeExperience } from '@dwp-frontend/shared-utils';
+import type { HomeDeviceClass, HomeExperience } from '@dwp-frontend/shared-utils';
 
 type HomeCopyExperience = Pick<
   HomeExperience,
@@ -54,9 +54,11 @@ export function resolveHomeDeviceClass({
   editPreviewActive: boolean;
   previewDevice: 'desktop' | 'mobile';
   runtimeMobile: boolean;
-}>): 'DESKTOP' | 'MOBILE' {
-  if (editPreviewActive) return previewDevice === 'mobile' ? 'MOBILE' : 'DESKTOP';
-  return runtimeMobile ? 'MOBILE' : 'DESKTOP';
+}>): HomeDeviceClass {
+  if (editPreviewActive) {
+    return previewDevice === 'mobile' ? 'MOBILE_STANDARD' : 'DESKTOP_STANDARD';
+  }
+  return runtimeMobile ? 'MOBILE_STANDARD' : 'DESKTOP_STANDARD';
 }
 
 export function resolveHomePageCopy({

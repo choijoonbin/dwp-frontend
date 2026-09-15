@@ -1,4 +1,5 @@
 import type { HomeEditSession } from './home-edit-session';
+import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
 export type HomePreferenceStore = HomeEditSession['store'];
 
@@ -12,4 +13,16 @@ export function activeHomeStoreUsesViews(
   editingStore?: HomePreferenceStore | null
 ): boolean {
   return editingStore ? editingStore === 'VIEWS' : configuredUsesViews;
+}
+
+/**
+ * The legacy preference row predates Home modes and is the Classic rollback
+ * source only. Flow becomes active once the mode-isolated Views store is ready,
+ * so it can never overwrite or interpret the Classic legacy row.
+ */
+export function resolveModeIsolatedHomeExperience(
+  configuredVariant: HomeExperienceVariant,
+  viewsStoreReady: boolean
+): HomeExperienceVariant {
+  return configuredVariant === 'FLOW_V1' && !viewsStoreReady ? 'CLASSIC' : configuredVariant;
 }

@@ -18,7 +18,7 @@ function experience(overrides: Partial<HomeExperience> = {}): HomeExperience {
     overlayOpacity: 18,
     launchpadConfiguration: { schemaVersion: 1, groups: [], placements: [] },
     compositionPolicy: {
-      schemaVersion: 3,
+      schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
       personalCustomizationEnabled: true,
       governedZones: [],

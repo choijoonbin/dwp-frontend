@@ -27,6 +27,7 @@ export type HomeSaveMutation = {
 export type HomeEditConflictTarget =
   | {
       store: 'VIEWS';
+      experienceVariant: 'CLASSIC' | 'FLOW_V1';
       viewId: string;
       viewName: string;
       version: number;
@@ -34,6 +35,7 @@ export type HomeEditConflictTarget =
     }
   | {
       store: 'LEGACY';
+      experienceVariant: 'CLASSIC' | 'FLOW_V1';
       viewId: null;
       viewName: null;
       version: number;
@@ -46,8 +48,10 @@ export function createHomeEditConflictTarget(
 ): HomeEditConflictTarget | null {
   if (session.store === 'VIEWS') {
     if (!source || !('viewId' in source)) return null;
+    if (source.modeKey !== session.experienceVariant) return null;
     return {
       store: 'VIEWS',
+      experienceVariant: source.modeKey,
       viewId: source.viewId,
       viewName: source.name,
       version: source.version,
@@ -57,6 +61,7 @@ export function createHomeEditConflictTarget(
   const preference = source && !('viewId' in source) ? source : undefined;
   return {
     store: 'LEGACY',
+    experienceVariant: session.experienceVariant,
     viewId: null,
     viewName: null,
     version: preference?.version ?? session.version,
@@ -68,7 +73,9 @@ export function rebaseHomeEditSession(
   session: HomeEditSession,
   target: HomeEditConflictTarget
 ): HomeEditSession {
-  if (session.store !== target.store) return session;
+  if (session.store !== target.store || session.experienceVariant !== target.experienceVariant) {
+    return session;
+  }
   return { ...session, ...target };
 }
 
@@ -80,11 +87,15 @@ export async function saveHomeEditSession(request: HomeSaveMutation, defaultView
         {
           viewKey: 'default',
           name: session.viewName ?? defaultViewName,
+          modeKey: session.experienceVariant,
           makeDefault: true,
           layout: request.layout,
         },
         request.idempotencyKey
       );
+      if (view.modeKey !== session.experienceVariant) {
+        throw new Error('The created Home view did not preserve its requested mode.');
+      }
       return { store: 'VIEWS' as const, view };
     }
     const view = request.reset
@@ -98,6 +109,9 @@ export async function saveHomeEditSession(request: HomeSaveMutation, defaultView
           },
           request.idempotencyKey
         );
+    if (view.modeKey !== session.experienceVariant) {
+      throw new Error('The saved Home view changed its immutable mode.');
+    }
     return { store: 'VIEWS' as const, view };
   }
   const preference = request.reset

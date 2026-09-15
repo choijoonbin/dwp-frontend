@@ -2,9 +2,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
 import {
+  HOME_DEVICE_CLASSES,
   applyHomeComposerProposal,
   createHomeComposerProposal,
   createHomeView,
+  getHomeDeviceLayouts,
   getHomeViews,
   resetHomeView,
   restoreHomeViewRevision,
@@ -45,8 +47,45 @@ describe('home personalization API boundary', () => {
     await getHomeViews('workspace-home');
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      '/api/platform/v1/home-views?surfaceKey=workspace-home'
+      '/api/platform/v1/home-views?surfaceKey=workspace-home&modeKey=CLASSIC'
     );
+  });
+
+  it('scopes Flow view reads and rejects a cross-mode response', async () => {
+    const flowFetch = vi.fn().mockResolvedValue(jsonResponse([]));
+    vi.stubGlobal('fetch', flowFetch);
+
+    await getHomeViews('workspace-home', 'FLOW_V1');
+
+    expect(flowFetch.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/home-views?surfaceKey=workspace-home&modeKey=FLOW_V1'
+    );
+
+    const mismatchedFetch = vi.fn().mockResolvedValue(
+      jsonResponse([
+        {
+          viewId: 'classic-view',
+          modeKey: 'CLASSIC',
+        },
+      ])
+    );
+    vi.stubGlobal('fetch', mismatchedFetch);
+    await expect(getHomeViews('workspace-home', 'FLOW_V1')).rejects.toThrow(
+      /belongs to CLASSIC, not requested mode FLOW_V1/u
+    );
+  });
+
+  it('maps a pre-mode response only to Classic for rolling compatibility', async () => {
+    const classicFetch = vi.fn().mockResolvedValue(jsonResponse([{ viewId: 'legacy-view' }]));
+    vi.stubGlobal('fetch', classicFetch);
+
+    await expect(getHomeViews('workspace-home', 'CLASSIC')).resolves.toEqual([
+      { viewId: 'legacy-view', modeKey: 'CLASSIC' },
+    ]);
+
+    const flowFetch = vi.fn().mockResolvedValue(jsonResponse([{ viewId: 'legacy-view' }]));
+    vi.stubGlobal('fetch', flowFetch);
+    await expect(getHomeViews('workspace-home', 'FLOW_V1')).rejects.toThrow(/belongs to CLASSIC/u);
   });
 
   it('creates a view through a retry-safe command', async () => {
@@ -54,7 +93,7 @@ describe('home personalization API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await createHomeView(
-      { viewKey: 'focus', name: 'Focus', makeDefault: false, layout },
+      { viewKey: 'focus', name: 'Focus', modeKey: 'FLOW_V1', makeDefault: false, layout },
       '11111111-1111-4111-8111-111111111111'
     );
 
@@ -65,17 +104,18 @@ describe('home personalization API boundary', () => {
     );
     expect(JSON.parse(String(request.body))).toMatchObject({
       viewKey: 'focus',
+      modeKey: 'FLOW_V1',
       makeDefault: false,
     });
   });
 
   it('stores a device overlay without changing semantic content order', async () => {
-    const fetchMock = mutationFetch({ deviceClass: 'MOBILE', viewVersion: 5 });
+    const fetchMock = mutationFetch({ deviceClass: 'MOBILE_COMPACT', viewVersion: 5 });
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await updateHomeDeviceLayout(
       'view/1',
-      'MOBILE',
+      'MOBILE_COMPACT',
       { widgetOrder: ['schedule'], widgetSizes: {}, density: 'compact' },
       4,
       2,
@@ -85,7 +125,7 @@ describe('home personalization API boundary', () => {
     expect(result.viewVersion).toBe(5);
 
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      '/api/platform/v1/home-views/view%2F1/device-layouts/MOBILE'
+      '/api/platform/v1/home-views/view%2F1/device-layouts/MOBILE_COMPACT'
     );
     expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
       overlay: { widgetOrder: ['schedule'], widgetSizes: {}, density: 'compact' },
@@ -95,6 +135,65 @@ describe('home personalization API boundary', () => {
     expect(
       new Headers((fetchMock.mock.calls[1]?.[1] as RequestInit).headers).get('Idempotency-Key')
     ).toBe('55555555-5555-4555-8555-555555555555');
+  });
+
+  it('normalizes legacy device overlays and lets canonical rows win deterministically', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse([
+        {
+          deviceLayoutId: 'wide-desktop',
+          viewId: 'view-1',
+          deviceClass: 'DESKTOP_WIDE',
+          overlay: { widgetOrder: [], widgetSizes: {}, density: 'comfortable' },
+          version: 1,
+          viewVersion: 1,
+          updatedAt: '2026-09-15T00:00:00Z',
+        },
+        {
+          deviceLayoutId: 'legacy-desktop',
+          viewId: 'view-1',
+          deviceClass: 'DESKTOP',
+          overlay: { widgetOrder: [], widgetSizes: {}, density: 'comfortable' },
+          version: 1,
+          viewVersion: 1,
+          updatedAt: '2026-09-15T00:00:00Z',
+        },
+        {
+          deviceLayoutId: 'canonical-desktop',
+          viewId: 'view-1',
+          deviceClass: 'DESKTOP_STANDARD',
+          overlay: { widgetOrder: ['schedule'], widgetSizes: {}, density: 'compact' },
+          version: 2,
+          viewVersion: 2,
+          updatedAt: '2026-09-15T00:01:00Z',
+        },
+        {
+          deviceLayoutId: 'legacy-mobile',
+          viewId: 'view-1',
+          deviceClass: 'MOBILE',
+          overlay: { widgetOrder: [], widgetSizes: {}, density: 'comfortable' },
+          version: 1,
+          viewVersion: 1,
+          updatedAt: '2026-09-15T00:00:00Z',
+        },
+        {
+          deviceLayoutId: 'compact-mobile',
+          viewId: 'view-1',
+          deviceClass: 'MOBILE_COMPACT',
+          overlay: { widgetOrder: [], widgetSizes: {}, density: 'compact' },
+          version: 1,
+          viewVersion: 1,
+          updatedAt: '2026-09-15T00:00:00Z',
+        },
+      ])
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const layouts = await getHomeDeviceLayouts('view-1');
+
+    expect(layouts.map((entry) => entry.deviceClass)).toEqual(HOME_DEVICE_CLASSES);
+    expect(layouts[1]?.deviceLayoutId).toBe('canonical-desktop');
+    expect(layouts[2]?.deviceLayoutId).toBe('legacy-mobile');
   });
 
   it('resets a view through the dedicated retry-safe command', async () => {

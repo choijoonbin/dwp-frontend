@@ -14,6 +14,7 @@ function view(widgets: HomeView['layout']['widgets']): HomeView {
     viewId: 'view-1',
     viewKey: 'default',
     surfaceKey: 'workspace-home',
+    modeKey: 'FLOW_V1',
     name: 'Default',
     isDefault: true,
     schemaVersion: 1,
