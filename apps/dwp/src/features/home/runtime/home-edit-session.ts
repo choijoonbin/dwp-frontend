@@ -100,6 +100,21 @@ export function createHomeViewRequest(
   };
 }
 
+export function createHomeEditSessionFromView(
+  view: HomeView,
+  modeScopedViews: boolean
+): HomeEditSession {
+  return {
+    experienceVariant: view.modeKey,
+    modeScopedViews,
+    store: 'VIEWS',
+    viewId: view.viewId,
+    viewName: view.name,
+    version: view.version,
+    resetAvailable: view.customized ?? true,
+  };
+}
+
 export async function saveHomeEditSession(request: HomeSaveMutation, defaultViewName: string) {
   const { session } = request;
   if (session.store === 'VIEWS') {

@@ -71,6 +71,16 @@ function clonePolicy(policy: HomeCompositionPolicy): HomeCompositionPolicy {
   return {
     ...policy,
     governedZones: policy.governedZones.map((zone) => ({ ...zone })),
+    modeLayouts: {
+      CLASSIC: {
+        ...policy.modeLayouts.CLASSIC,
+        deviceClasses: [...policy.modeLayouts.CLASSIC.deviceClasses],
+      },
+      FLOW_V1: {
+        ...policy.modeLayouts.FLOW_V1,
+        deviceClasses: [...policy.modeLayouts.FLOW_V1.deviceClasses],
+      },
+    },
   };
 }
 
@@ -154,7 +164,7 @@ function HomeCompositionPolicyPanel() {
   );
   const compositionV4Supported = hasHomeContractCapability(
     experienceQuery.data,
-    HOME_CONTRACT_CAPABILITIES.modeScopedViews
+    HOME_CONTRACT_CAPABILITIES.compositionV4
   );
 
   useEffect(() => {

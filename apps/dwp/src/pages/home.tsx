@@ -22,6 +22,7 @@ import {
   HOME_WIDGET_LIBRARY_ENABLED,
   hasHomeContractCapability,
   isAppResourceEntitled,
+  type HomeView,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
@@ -89,6 +90,7 @@ import { applyHomeDeviceOverlay } from '../features/home-personalization/home-de
 import { LazyHomePersonalizationStudio } from '../features/home-personalization/home-personalization-studio-lazy';
 import {
   createHomeEditConflictTarget,
+  createHomeEditSessionFromView,
   rebaseHomeEditSession,
   saveHomeEditSession,
   type HomeEditConflictTarget,
@@ -104,7 +106,10 @@ import { useHomeRecommendationFeedback } from '../features/home/runtime/use-home
 import { resolveHomeTimeZone } from '../features/home/runtime/home-time-zone';
 import {
   activeHomeStoreUsesViews,
+  freezeHomeStudioContractScope,
+  resolveActiveHomeViewScope,
   resolveModeIsolatedHomeExperience,
+  type HomeStudioContractScope,
 } from '../features/home/runtime/home-store-capabilities';
 import { HomeEditorGuards } from '../features/home/runtime/home-editor-guards';
 import {
@@ -114,6 +119,7 @@ import {
 import {
   canonicalizePersistedLaunchpadLayout,
   createDefaultLaunchpadLayout,
+  filterHomeAppsByWorkspaceCatalog,
   localizeHomeApps,
   mergeEntitledLaunchpadProjection,
   placeLaunchpadApp,
@@ -138,10 +144,9 @@ export default function HomePage() {
   const [editorOpen, setEditorOpen] = useState(searchParams.get('edit') === 'home');
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [studioOpen, setStudioOpen] = useState(false);
-  const openStudioFromGallery = () => {
-    setGalleryOpen(false);
-    setStudioOpen(true);
-  };
+  const [studioContractScope, setStudioContractScope] = useState<HomeStudioContractScope | null>(
+    null
+  );
   const [discardEditorOpen, setDiscardEditorOpen] = useState(false);
   const [editBaseDraft, setEditBaseDraft] = useState<HomeDraft | null>(null);
   const [editSession, setEditSession] = useState<HomeEditSession | null>(null);
@@ -225,6 +230,12 @@ export default function HomePage() {
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
+  const workspaceAppsQuery = useQuery({
+    queryKey: ['workspace', 'apps'],
+    queryFn: getWorkspaceApps,
+    staleTime: 60_000,
+    retry: 1,
+  });
   const launchpadCatalog = useMemo(
     () =>
       resolveHomeLaunchpadCatalog(
@@ -250,7 +261,11 @@ export default function HomePage() {
       !notificationSummaryQuery.isRefetchError,
     notificationSummaryNow: currentInstant,
   });
-  const entitledApps = useGovernedHomeAppCatalog(entitledAppsWithBadges);
+  const governedEntitledApps = useGovernedHomeAppCatalog(entitledAppsWithBadges);
+  const entitledApps = useMemo(
+    () => filterHomeAppsByWorkspaceCatalog(governedEntitledApps, workspaceAppsQuery.data),
+    [governedEntitledApps, workspaceAppsQuery.data]
+  );
   const {
     draftHistory,
     setDraftHistory,
@@ -269,12 +284,6 @@ export default function HomePage() {
   const draftWidgets = draftHistory.present.widgets;
   const draftAppLayout = draftHistory.present.appLayout;
   const draftPresentation = draftHistory.present.presentation;
-  const workspaceAppsQuery = useQuery({
-    queryKey: ['workspace', 'apps'],
-    queryFn: getWorkspaceApps,
-    staleTime: 60_000,
-    retry: 1,
-  });
   const homeExperience = homeExperienceQuery.data;
   const viewStoreEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED && homeExperience?.homePreferenceStore === 'VIEWS'
@@ -291,6 +300,38 @@ export default function HomePage() {
     homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
     viewStoreEnabled
   );
+  const editingHomeViewScope = resolveActiveHomeViewScope(
+    { modeKey: homeModeKey, modeScoped: modeScopedHomeViewsSupported },
+    editSession
+  );
+  const liveHomeStudioContractScope = useMemo<HomeStudioContractScope>(
+    () => ({
+      modeKey: editingHomeViewScope.modeKey,
+      modeScopedViews: editingHomeViewScope.modeScoped,
+      fourDeviceLayoutsSupported,
+    }),
+    [editingHomeViewScope.modeKey, editingHomeViewScope.modeScoped, fourDeviceLayoutsSupported]
+  );
+  const effectiveHomeStudioContractScope = studioContractScope ?? liveHomeStudioContractScope;
+  const openHomeStudio = useCallback(() => {
+    setStudioContractScope((current) =>
+      freezeHomeStudioContractScope(current, liveHomeStudioContractScope)
+    );
+    setStudioOpen(true);
+  }, [liveHomeStudioContractScope]);
+  const openStudioFromGallery = useCallback(() => {
+    setGalleryOpen(false);
+    openHomeStudio();
+  }, [openHomeStudio]);
+  const closeHomeStudio = useCallback(() => {
+    setStudioOpen(false);
+    setStudioContractScope(null);
+  }, []);
+  const activeHomeViewScope = resolveActiveHomeViewScope(
+    { modeKey: homeModeKey, modeScoped: modeScopedHomeViewsSupported },
+    editSession,
+    studioOpen ? studioContractScope : null
+  );
   const flowHomeEnabled = homeModeKey === 'FLOW_V1';
   const activeHomeViewQueryKey = useMemo(
     () =>
@@ -298,10 +339,15 @@ export default function HomePage() {
         tenantId: auth.user?.tenantId,
         userId: auth.user?.userId,
         surfaceKey: 'workspace-home',
-        modeKey: homeModeKey,
-        modeScoped: modeScopedHomeViewsSupported,
+        modeKey: activeHomeViewScope.modeKey,
+        modeScoped: activeHomeViewScope.modeScoped,
       }),
-    [auth.user?.tenantId, auth.user?.userId, homeModeKey, modeScopedHomeViewsSupported]
+    [
+      activeHomeViewScope.modeKey,
+      activeHomeViewScope.modeScoped,
+      auth.user?.tenantId,
+      auth.user?.userId,
+    ]
   );
   const advancedPersonalizationEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED &&
@@ -322,7 +368,8 @@ export default function HomePage() {
   });
   const homeViewsQuery = useQuery({
     queryKey: activeHomeViewQueryKey,
-    queryFn: () => getHomeViews('workspace-home', homeModeKey, modeScopedHomeViewsSupported),
+    queryFn: () =>
+      getHomeViews('workspace-home', activeHomeViewScope.modeKey, activeHomeViewScope.modeScoped),
     enabled: homeExperienceQuery.isSuccess && activeStoreUsesViews,
     staleTime: 30_000,
     retry: homeQueryRetry,
@@ -576,7 +623,7 @@ export default function HomePage() {
     persistedVersion,
     replaceDraft,
   ]);
-  const beginEditing = () => {
+  const beginEditing = (studioView?: HomeView) => {
     if (
       persistedSourceLoading ||
       persistedSourceFailed ||
@@ -588,9 +635,54 @@ export default function HomePage() {
     editEntryFocusRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     editEntryScrollRef.current = document.scrollingElement?.scrollTop ?? window.scrollY;
-    replaceDraft(initialEditingDraft);
-    setEditBaseDraft(initialEditingDraft);
-    setEditSession(currentEditSession);
+    let editingDraft = initialEditingDraft;
+    let nextEditSession = currentEditSession;
+    if (studioView) {
+      if (studioView.modeKey !== effectiveHomeStudioContractScope.modeKey) {
+        toast.error(t('page.saveError'));
+        return;
+      }
+      const selectedViewCustomized = resolveHomeViewCustomized(studioView, undefined);
+      const selectedWidgets = selectedViewCustomized
+        ? reconcileHomeWidgets(studioView.layout.widgets, registeredWidgetKeys, audienceProfile)
+        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile);
+      const selectedAppLayout = reconcileLaunchpadLayout(
+        canonicalizePersistedLaunchpadLayout(
+          studioView.layout.appLayout,
+          launchpadCatalog.apps,
+          launchpadCatalog.groups
+        ),
+        entitledApps,
+        launchpadCatalog.groups
+      );
+      editingDraft = {
+        appLayout: selectedAppLayout,
+        widgets: selectedWidgets,
+        presentation: studioView.layout.presentation ?? 'balanced',
+        resetIntent: false,
+      };
+      if (studioView.modeKey === 'FLOW_V1') {
+        const migrationEligible = isFlowLegacyGeometryMigrationEligible(
+          studioView.schemaVersion,
+          studioView.updatedAt
+        );
+        const sections = normalizeLegacyFlowHomeSections(
+          deriveFlowHomeSections(editingDraft.widgets, selectedViewCustomized),
+          migrationEligible
+        );
+        editingDraft = {
+          ...editingDraft,
+          widgets: applyFlowHomeSections(editingDraft.widgets, sections),
+        };
+      }
+      nextEditSession = createHomeEditSessionFromView(
+        studioView,
+        effectiveHomeStudioContractScope.modeScopedViews
+      );
+    }
+    replaceDraft(editingDraft);
+    setEditBaseDraft(editingDraft);
+    setEditSession(nextEditSession);
     setEditorOpen(true);
     if (searchParams.get('edit') !== 'home') {
       const next = new URLSearchParams(searchParams);
@@ -802,13 +894,13 @@ export default function HomePage() {
       : '-';
   const runtimeAppById = new Map((workspaceAppsQuery.data ?? []).map((app) => [app.id, app]));
   const launchApp = (app: (typeof entitledApps)[number]) => {
-    if (app.managementOnly && app.managementRoute) {
-      navigate(app.managementRoute);
-      return;
-    }
     const runtimeApp = runtimeAppById.get(app.id);
     if (!runtimeApp) {
-      navigate(app.route);
+      toast.error(t('page.appLaunchError'));
+      return;
+    }
+    if (app.managementOnly && app.managementRoute) {
+      navigate(app.managementRoute);
       return;
     }
     if (runtimeApp.health === 'configuration-required') {
@@ -894,7 +986,7 @@ export default function HomePage() {
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
           onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
-          onOpenStudio={homeStudioEnabled && !editorOpen ? () => setStudioOpen(true) : undefined}
+          onOpenStudio={homeStudioEnabled && !editorOpen ? openHomeStudio : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onSectionsChange={updateFlowSections}
           onLaunchApp={launchApp}
@@ -1013,19 +1105,19 @@ export default function HomePage() {
         onStayOnHome={() => navigationBlocker.reset?.()}
         onLeaveHome={() => navigationBlocker.proceed?.()}
       />
-      {homeStudioEnabled && (
+      {(homeStudioEnabled || (studioOpen && studioContractScope !== null)) && (
         <Suspense fallback={null}>
           <LazyHomePersonalizationStudio
             open={studioOpen}
             composerEnabled={composerEnabled}
-            modeKey={homeModeKey}
-            modeScopedViews={modeScopedHomeViewsSupported}
-            fourDeviceLayoutsSupported={fourDeviceLayoutsSupported}
+            modeKey={effectiveHomeStudioContractScope.modeKey}
+            modeScopedViews={effectiveHomeStudioContractScope.modeScopedViews}
+            fourDeviceLayoutsSupported={effectiveHomeStudioContractScope.fourDeviceLayoutsSupported}
             tenantId={auth.user?.tenantId}
             userId={auth.user?.userId}
             seedLayout={effectiveHomeLayout ?? null}
-            onClose={() => setStudioOpen(false)}
-            onEditView={() => beginEditing()}
+            onClose={closeHomeStudio}
+            onEditView={(view) => beginEditing(view)}
           />
         </Suspense>
       )}

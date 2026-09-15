@@ -558,6 +558,20 @@ export function resolveHomeLaunchpadCatalog(
   return { groups, apps: resolvedApps, source: 'SERVER', contractStatus: 'ALIGNED' };
 }
 
+/**
+ * Once the runtime workspace catalog is available it is authoritative for app
+ * existence. An absent catalog keeps the existing loading/error projection,
+ * while a partial successful catalog can never be padded from local metadata.
+ */
+export function filterHomeAppsByWorkspaceCatalog<T extends HomeAppDefinition>(
+  apps: readonly T[],
+  workspaceApps: readonly { id: string }[] | undefined
+): T[] {
+  if (workspaceApps === undefined) return [...apps];
+  const runtimeAppIds = new Set(workspaceApps.map((app) => app.id));
+  return apps.filter((app) => runtimeAppIds.has(app.id));
+}
+
 export function localizeHomeApps(translate: HomeTranslate): HomeAppDefinition[] {
   return HOME_APPS.map((app) => ({
     ...app,

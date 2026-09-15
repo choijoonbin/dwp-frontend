@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createHomeEditConflictTarget,
+  createHomeEditSessionFromView,
   createHomeViewRequest,
   rebaseHomeEditSession,
 } from './home-edit-session';
@@ -44,6 +45,18 @@ describe('home edit conflict session', () => {
     expect(request).not.toHaveProperty('modeKey');
     expect(createHomeViewRequest(emptyViewsSession, layout, 'Default Home')).toMatchObject({
       modeKey: 'FLOW_V1',
+    });
+  });
+
+  it('hands a selected Studio view to an edit session without changing its scope', () => {
+    expect(createHomeEditSessionFromView(concurrentView, true)).toEqual({
+      experienceVariant: 'FLOW_V1',
+      modeScopedViews: true,
+      store: 'VIEWS',
+      viewId: 'view-concurrent',
+      viewName: 'Concurrent home',
+      version: 5,
+      resetAvailable: true,
     });
   });
 

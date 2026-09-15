@@ -1,3 +1,5 @@
+import { createHomeModeLayouts, isHomeModeLayouts } from '@dwp-frontend/shared-utils';
+
 import type {
   GovernedHomeZone,
   HomeCompositionPolicy,
@@ -54,6 +56,7 @@ export function defaultHomeCompositionPolicy(): HomeCompositionPolicy {
     schemaVersion: 4,
     experienceVariant: 'CLASSIC',
     personalCustomizationEnabled: true,
+    modeLayouts: createHomeModeLayouts(),
     governedZones: HOME_GOVERNED_ZONE_REGISTRY.map((definition) => ({
       zoneKey: definition.key,
       placement: definition.placement,
@@ -78,6 +81,7 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
   const candidate = value as Partial<HomeCompositionPolicyPayload> & {
     schemaVersion?: unknown;
     experienceVariant?: unknown;
+    modeLayouts?: unknown;
   };
   const supportedSchema =
     candidate.schemaVersion === 1 ||
@@ -92,6 +96,8 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
     hasVariant &&
     candidate.experienceVariant !== 'CLASSIC' &&
     candidate.experienceVariant !== 'FLOW_V1';
+  const invalidModeLayouts =
+    candidate.schemaVersion === 4 && !isHomeModeLayouts(candidate.modeLayouts);
   const requested = Array.isArray(candidate.governedZones) ? candidate.governedZones : [];
   const used = new Set<HomeGovernedZoneKey>();
   const zones: GovernedHomeZone[] = [];
@@ -130,8 +136,13 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
     schemaVersion: 4,
     experienceVariant,
     personalCustomizationEnabled:
-      !invalidVersionedVariant && candidate.personalCustomizationEnabled === true,
+      !invalidVersionedVariant &&
+      !invalidModeLayouts &&
+      candidate.personalCustomizationEnabled === true,
     governedZones: zones,
+    modeLayouts: isHomeModeLayouts(candidate.modeLayouts)
+      ? structuredClone(candidate.modeLayouts)
+      : createHomeModeLayouts(),
   };
 }
 
@@ -144,7 +155,12 @@ export function homeCompositionPolicyWritePayload(
   v4Supported: boolean
 ): HomeCompositionPolicy | TenantHomeCompositionPolicyV3 {
   if (v4Supported) return policy;
-  return { ...policy, schemaVersion: 3 };
+  return {
+    schemaVersion: 3,
+    experienceVariant: policy.experienceVariant,
+    personalCustomizationEnabled: policy.personalCustomizationEnabled,
+    governedZones: policy.governedZones,
+  };
 }
 
 export function governedHomeZone(

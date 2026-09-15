@@ -13,6 +13,7 @@ import {
   canonicalizePersistedLaunchpadLayout,
   createDefaultLaunchpadLayout,
   createLaunchpadFolder,
+  filterHomeAppsByWorkspaceCatalog,
   hideLaunchpadApp,
   isAppEntitled,
   moveLaunchpadItem,
@@ -1006,6 +1007,19 @@ describe('tenant launchpad policy', () => {
     expect(catalog.apps.map((app) => app.resourceKey)).toEqual(
       APPROVED_HOME_LAUNCHPAD_RESOURCE_KEYS.slice(0, 15)
     );
+  });
+
+  it('does not pad a partial successful workspace catalog with local apps', () => {
+    const completeServerApps = HOME_APPS.map((app) => ({ id: app.id }));
+    const serverApps = [
+      ...HOME_APPS.slice(0, 15).map((app) => ({ id: app.id })),
+      { id: HOME_APPS[0]!.id },
+      { id: 'unknown-server-app' },
+    ];
+
+    expect(filterHomeAppsByWorkspaceCatalog(HOME_APPS, completeServerApps)).toEqual(HOME_APPS);
+    expect(filterHomeAppsByWorkspaceCatalog(HOME_APPS, serverApps)).toEqual(HOME_APPS.slice(0, 15));
+    expect(filterHomeAppsByWorkspaceCatalog(HOME_APPS, undefined)).toEqual(HOME_APPS);
   });
 
   it('canonicalizes legacy resource aliases while preserving the approved order', () => {

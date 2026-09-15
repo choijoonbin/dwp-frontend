@@ -37,6 +37,18 @@ export type HomeGovernedZoneKey = 'announcements';
 export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
 export type HomeExperienceVariant = 'CLASSIC' | 'FLOW_V1';
 export type HomePreferenceStore = 'LEGACY' | 'VIEWS';
+export const HOME_COMPOSITION_DEVICE_CLASSES = [
+  'DESKTOP_WIDE',
+  'DESKTOP_STANDARD',
+  'MOBILE_STANDARD',
+  'MOBILE_COMPACT',
+] as const;
+export type HomeCompositionDeviceClass = (typeof HOME_COMPOSITION_DEVICE_CLASSES)[number];
+export type HomeModeLayoutContract = {
+  layoutScope: 'MODE_SCOPED_VIEW';
+  deviceClasses: HomeCompositionDeviceClass[];
+};
+export type HomeModeLayouts = Record<HomeExperienceVariant, HomeModeLayoutContract>;
 export const HOME_CONTRACT_CAPABILITIES = {
   compositionV4: 'HOME_COMPOSITION_V4',
   modeScopedViews: 'MODE_SCOPED_HOME_VIEWS',
@@ -60,14 +72,16 @@ export type TenantHomeCompositionPolicyV4 = {
   experienceVariant: HomeExperienceVariant;
   personalCustomizationEnabled: boolean;
   governedZones: GovernedHomeZone[];
+  modeLayouts: HomeModeLayouts;
 };
 
 /** Compatibility name retained for existing consumers of the tenant policy API. */
 export type HomeCompositionPolicy = TenantHomeCompositionPolicyV4;
 
-export type TenantHomeCompositionPolicyV3 = Omit<TenantHomeCompositionPolicyV4, 'schemaVersion'> & {
-  schemaVersion: 3;
-};
+export type TenantHomeCompositionPolicyV3 = Omit<
+  TenantHomeCompositionPolicyV4,
+  'schemaVersion' | 'modeLayouts'
+> & { schemaVersion: 3 };
 
 export type LegacyHomeCompositionPolicy = {
   schemaVersion: 1 | 2;
@@ -77,6 +91,42 @@ export type LegacyHomeCompositionPolicy = {
 
 export type HomeCompositionPolicyPayload =
   HomeCompositionPolicy | TenantHomeCompositionPolicyV3 | LegacyHomeCompositionPolicy;
+
+export function createHomeModeLayouts(): HomeModeLayouts {
+  const contract = (): HomeModeLayoutContract => ({
+    layoutScope: 'MODE_SCOPED_VIEW',
+    deviceClasses: [...HOME_COMPOSITION_DEVICE_CLASSES],
+  });
+  return { CLASSIC: contract(), FLOW_V1: contract() };
+}
+
+export function isHomeModeLayouts(value: unknown): value is HomeModeLayouts {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const layouts = value as Record<string, unknown>;
+  if (
+    Object.keys(layouts).length !== 2 ||
+    !Object.prototype.hasOwnProperty.call(layouts, 'CLASSIC') ||
+    !Object.prototype.hasOwnProperty.call(layouts, 'FLOW_V1')
+  ) {
+    return false;
+  }
+  return (['CLASSIC', 'FLOW_V1'] as const).every((mode) => {
+    const contract = layouts[mode];
+    if (!contract || typeof contract !== 'object' || Array.isArray(contract)) return false;
+    const candidate = contract as Record<string, unknown>;
+    return (
+      Object.keys(candidate).length === 2 &&
+      Object.prototype.hasOwnProperty.call(candidate, 'layoutScope') &&
+      Object.prototype.hasOwnProperty.call(candidate, 'deviceClasses') &&
+      candidate.layoutScope === 'MODE_SCOPED_VIEW' &&
+      Array.isArray(candidate.deviceClasses) &&
+      candidate.deviceClasses.length === HOME_COMPOSITION_DEVICE_CLASSES.length &&
+      candidate.deviceClasses.every(
+        (deviceClass, index) => deviceClass === HOME_COMPOSITION_DEVICE_CLASSES[index]
+      )
+    );
+  });
+}
 
 export type HomeExperience = {
   headline?: string | null;

@@ -1,4 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import {
+  HOME_CONTRACT_CAPABILITIES,
+  createHomeModeLayouts,
+  hasHomeContractCapability,
+} from '@dwp-frontend/shared-utils';
 
 import { WORKSPACE_WIDGET_SIZE_POLICY } from '../../components/workspace-composer/workspace-widget-layout-policy';
 import { HOME_WIDGET_KEYS, HOME_WIDGET_REGISTRY } from './home-widget-registry';
@@ -31,6 +36,7 @@ describe('home composition policy', () => {
     expect(WORKSPACE_WIDGET_SIZE_POLICY[commandRail!.defaultSize].lg).toBe(40);
     expect(announcements.height).toBe('short');
     expect(commandRail!.defaultHeight).toBe('short');
+    expect(policy.modeLayouts).toEqual(createHomeModeLayouts());
   });
 
   it('reconciles malformed client data back to the versioned governed contract', () => {
@@ -69,6 +75,17 @@ describe('home composition policy', () => {
       reconcileHomeCompositionPolicy({ schemaVersion: 2, governedZones: [] })
         .personalCustomizationEnabled
     ).toBe(false);
+    expect(
+      reconcileHomeCompositionPolicy({
+        schemaVersion: 4,
+        experienceVariant: 'FLOW_V1',
+        personalCustomizationEnabled: true,
+        governedZones: [],
+      })
+    ).toMatchObject({
+      personalCustomizationEnabled: false,
+      modeLayouts: createHomeModeLayouts(),
+    });
   });
 
   it('migrates an explicit v3 Flow policy to v4 without changing its mode', () => {
@@ -89,14 +106,31 @@ describe('home composition policy', () => {
         personalCustomizationEnabled: true,
         governedZones: [],
       })
-    ).toMatchObject({ schemaVersion: 4, experienceVariant: 'FLOW_V1' });
+    ).toMatchObject({
+      schemaVersion: 4,
+      experienceVariant: 'FLOW_V1',
+      modeLayouts: createHomeModeLayouts(),
+    });
   });
 
   it('only serializes v4 after the backend advertises the Wave 1 contract', () => {
     const policy = defaultHomeCompositionPolicy();
+    const partialCapabilities = {
+      homeContractCapabilities: [HOME_CONTRACT_CAPABILITIES.modeScopedViews],
+    };
+    const compositionV4Supported = hasHomeContractCapability(
+      partialCapabilities,
+      HOME_CONTRACT_CAPABILITIES.compositionV4
+    );
+    const legacyPayload = homeCompositionPolicyWritePayload(policy, compositionV4Supported);
 
-    expect(homeCompositionPolicyWritePayload(policy, false).schemaVersion).toBe(3);
-    expect(homeCompositionPolicyWritePayload(policy, true).schemaVersion).toBe(4);
+    expect(compositionV4Supported).toBe(false);
+    expect(legacyPayload.schemaVersion).toBe(3);
+    expect(legacyPayload).not.toHaveProperty('modeLayouts');
+    expect(homeCompositionPolicyWritePayload(policy, true)).toMatchObject({
+      schemaVersion: 4,
+      modeLayouts: createHomeModeLayouts(),
+    });
   });
 
   it('only enables Flow Home for an explicit valid versioned tenant variant', () => {
@@ -107,6 +141,7 @@ describe('home composition policy', () => {
           experienceVariant: 'FLOW_V1',
           personalCustomizationEnabled: true,
           governedZones: [],
+          modeLayouts: createHomeModeLayouts(),
         })
       )
     ).toBe(true);

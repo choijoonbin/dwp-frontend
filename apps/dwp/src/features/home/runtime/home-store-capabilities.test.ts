@@ -3,6 +3,8 @@ import { HOME_CONTRACT_CAPABILITIES, hasHomeContractCapability } from '@dwp-fron
 
 import {
   activeHomeStoreUsesViews,
+  freezeHomeStudioContractScope,
+  resolveActiveHomeViewScope,
   resolveModeIsolatedHomeExperience,
 } from './home-store-capabilities';
 
@@ -41,6 +43,49 @@ describe('home personalization store capabilities', () => {
 
   it('keeps an active VIEWS edit session on VIEWS until that draft closes', () => {
     expect(activeHomeStoreUsesViews(false, 'VIEWS')).toBe(true);
+  });
+
+  it('pins a Flow scoped edit until close, then rotates to the live Classic scope', () => {
+    const liveScope = { modeKey: 'CLASSIC' as const, modeScoped: false };
+    const editingScope = resolveActiveHomeViewScope(liveScope, {
+      store: 'VIEWS',
+      experienceVariant: 'FLOW_V1',
+      modeScopedViews: true,
+    });
+
+    expect(editingScope).toEqual({ modeKey: 'FLOW_V1', modeScoped: true });
+    expect(resolveActiveHomeViewScope(liveScope, null)).toEqual({
+      modeKey: 'CLASSIC',
+      modeScoped: false,
+    });
+  });
+
+  it('freezes the Studio contract until its scope is cleared on close', () => {
+    const opened = freezeHomeStudioContractScope(null, {
+      modeKey: 'FLOW_V1',
+      modeScopedViews: true,
+      fourDeviceLayoutsSupported: true,
+    });
+    const whileOpen = freezeHomeStudioContractScope(opened, {
+      modeKey: 'CLASSIC',
+      modeScopedViews: false,
+      fourDeviceLayoutsSupported: false,
+    });
+    const reopened = freezeHomeStudioContractScope(null, {
+      modeKey: 'CLASSIC',
+      modeScopedViews: false,
+      fourDeviceLayoutsSupported: false,
+    });
+
+    expect(whileOpen).toBe(opened);
+    expect(
+      resolveActiveHomeViewScope({ modeKey: 'CLASSIC', modeScoped: false }, null, whileOpen)
+    ).toEqual({ modeKey: 'FLOW_V1', modeScoped: true });
+    expect(reopened).toEqual({
+      modeKey: 'CLASSIC',
+      modeScopedViews: false,
+      fourDeviceLayoutsSupported: false,
+    });
   });
 
   it('keeps Classic on its legacy rollback source', () => {

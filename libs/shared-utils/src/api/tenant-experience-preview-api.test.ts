@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
+import { createHomeModeLayouts } from './home-experience-api';
 import { getTenantExperiencePreview } from './tenant-experience-preview-api';
 
 function jsonResponse(data: unknown): Response {
@@ -65,6 +66,7 @@ const tenantExperiencePreviewFixture = {
           sortOrder: 20,
         },
       ],
+      modeLayouts: createHomeModeLayouts(),
     },
     effectiveExperienceVariant: 'FLOW_V1',
     version: 7,
@@ -114,6 +116,7 @@ describe('tenant experience preview API boundary', () => {
           compositionPolicy: {
             ...tenantExperiencePreviewFixture.home.compositionPolicy,
             schemaVersion: 3,
+            modeLayouts: undefined,
           },
         },
       })
@@ -126,7 +129,30 @@ describe('tenant experience preview API boundary', () => {
       schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
       personalCustomizationEnabled: true,
+      modeLayouts: createHomeModeLayouts(),
     });
+  });
+
+  it('rejects an incomplete v4 mode layout contract', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        ...tenantExperiencePreviewFixture,
+        home: {
+          ...tenantExperiencePreviewFixture.home,
+          compositionPolicy: {
+            ...tenantExperiencePreviewFixture.home.compositionPolicy,
+            modeLayouts: {
+              CLASSIC: createHomeModeLayouts().CLASSIC,
+            },
+          },
+        },
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getTenantExperiencePreview()).rejects.toThrow(
+      /home\.compositionPolicy\.modeLayouts/u
+    );
   });
 
   it.each([

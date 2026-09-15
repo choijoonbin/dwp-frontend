@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createHomeModeLayouts } from '@dwp-frontend/shared-utils';
 
 import {
   createHomeExperienceStudioForm,
@@ -22,6 +23,7 @@ function experience(overrides: Partial<HomeExperience> = {}): HomeExperience {
       experienceVariant: 'FLOW_V1',
       personalCustomizationEnabled: true,
       governedZones: [],
+      modeLayouts: createHomeModeLayouts(),
     },
     version: 4,
     ...overrides,
