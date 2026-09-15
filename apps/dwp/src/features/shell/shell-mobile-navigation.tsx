@@ -121,6 +121,7 @@ type ShellMobileNavigationDrawerProps = {
   controlsId: string;
   label: string;
   onDismiss: () => void;
+  onExited?: () => void;
   open: boolean;
   testId: string;
   width: number;
@@ -131,6 +132,7 @@ export function ShellMobileNavigationDrawer({
   controlsId,
   label,
   onDismiss,
+  onExited,
   open,
   testId,
   width,
@@ -141,6 +143,7 @@ export function ShellMobileNavigationDrawer({
       onClose={onDismiss}
       ModalProps={{ disableRestoreFocus: true }}
       slotProps={{
+        transition: { onExited },
         paper: {
           id: controlsId,
           'aria-label': label,

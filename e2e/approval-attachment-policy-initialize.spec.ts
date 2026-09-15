@@ -46,8 +46,8 @@ function policy(): ApprovalAttachmentPolicy {
 
 async function setup(page: Page, options: { update?: boolean; readOnly?: boolean } = {}) {
   // Only Auth/API responses are fixtures. The browser uses the actual sealed
-  // generated V9 module; this is UI integration proof, not live Auth activation.
-  expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBe(9);
+  // generated V14 module; this is UI integration proof, not live Auth activation.
+  expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBe(14);
   const route = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
     (item) => item.routeContractKey === routeKey
   );
@@ -107,7 +107,7 @@ async function setup(page: Page, options: { update?: boolean; readOnly?: boolean
   return state;
 }
 
-test('정본9 UI fixture: 최초 설정은 명시적 단건 쓰기이며 현재 조회로 복구하고 업로드·다운로드를 열지 않는다', async ({
+test('정본14 UI fixture: 최초 설정은 명시적 단건 쓰기이며 현재 조회로 복구하고 업로드·다운로드를 열지 않는다', async ({
   page,
 }) => {
   const state = await setup(page);
@@ -142,7 +142,7 @@ test('정본9 UI fixture: 최초 설정은 명시적 단건 쓰기이며 현재 
   await expect(page.getByText('준비 완료', { exact: true })).toHaveCount(0);
 });
 
-test('정본9 UI fixture: 연결 결과 불명확은 자동 재시도 없이 원본 body/key만 명시적으로 재확인한다', async ({
+test('정본14 UI fixture: 연결 결과 불명확은 자동 재시도 없이 원본 body/key만 명시적으로 재확인한다', async ({
   page,
 }) => {
   const state = await setup(page);
@@ -163,7 +163,7 @@ test('정본9 UI fixture: 연결 결과 불명확은 자동 재시도 없이 원
 });
 
 for (const options of [{ update: false }, { readOnly: true }])
-  test(`정본9 UI fixture: ${options.update === false ? 'UPDATE 부재' : '읽기 전용'} 최초 설정 POST0`, async ({
+  test(`정본14 UI fixture: ${options.update === false ? 'UPDATE 부재' : '읽기 전용'} 최초 설정 POST0`, async ({
     page,
   }) => {
     const state = await setup(page, options);
@@ -172,7 +172,7 @@ for (const options of [{ update: false }, { readOnly: true }])
   });
 
 for (const status of [403, 503])
-  test(`정본9 UI fixture: 첫 ${status}는 미설정으로 오인하지 않고 화면과 쓰기를 닫는다`, async ({
+  test(`정본14 UI fixture: 첫 ${status}는 미설정으로 오인하지 않고 화면과 쓰기를 닫는다`, async ({
     page,
   }) => {
     const state = await setup(page);
@@ -190,7 +190,7 @@ for (const status of [403, 503])
   });
 
 for (const mode of ['light', 'dark', 'forced'] as const)
-  test(`정본9 UI fixture 최초 설정 ${mode}: 실제 tooltip·200%·320px 및 성공 Toast 접근성`, async ({
+  test(`정본14 UI fixture 최초 설정 ${mode}: 실제 tooltip·200%·320px 및 성공 Toast 접근성`, async ({
     page,
     isMobile,
   }, testInfo) => {
@@ -213,8 +213,8 @@ for (const mode of ['light', 'dark', 'forced'] as const)
       await refresh.hover();
       await expect.poll(() => refresh.evaluate((element) => element.matches(':hover'))).toBe(true);
       await expect(tooltip).toBeVisible({ timeout: 1500 });
+      await expect(tooltip).toHaveCSS('opacity', '1', { timeout: 1500 });
     }).toPass({ timeout: 8000, intervals: [1500] });
-    await expect(tooltip).toHaveCSS('opacity', '1');
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(
       false

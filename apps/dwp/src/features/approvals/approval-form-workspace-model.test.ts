@@ -17,7 +17,8 @@ import {
 } from './approval-form-workspace.test-support';
 
 const scope = { scopeIdentity: 'actual-scope', scopeEpoch: 0 };
-const original = () => captureApprovalFormWorkspace(workspaceFixture(), scope, 13, 7);
+const reviewerUserId = 32;
+const original = () => captureApprovalFormWorkspace(workspaceFixture(), scope, reviewerUserId, 7);
 describe('form workspace immutable source semantics', () => {
   it('freezes both pointers, legacy unmarked v2 and actual draft metadata', () => {
     const source = workspaceFixture();
@@ -84,14 +85,24 @@ describe('form workspace immutable source semantics', () => {
     expect(approvalFormWorkspaceReviewMatches(reviewFixture(), original(), Date.now())).toBe(true);
     expect(
       approvalFormWorkspaceReviewMatches(
-        { ...reviewFixture(), makerUserId: 13 },
+        { ...reviewFixture(), makerUserId: reviewerUserId },
         original(),
         Date.now()
       )
     ).toBe(false);
     expect(
       approvalFormWorkspaceReviewMatches(
-        { ...reviewFixture(), lastEditorUserId: 13 },
+        { ...reviewFixture(), lastEditorUserId: reviewerUserId },
+        original(),
+        Date.now()
+      )
+    ).toBe(false);
+    expect(
+      approvalFormWorkspaceReviewMatches(
+        {
+          ...reviewFixture(),
+          reviewRequest: { ...reviewFixture().reviewRequest, reviewerUserId: 99 },
+        },
         original(),
         Date.now()
       )

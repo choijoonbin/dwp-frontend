@@ -20,12 +20,18 @@ export function SignatureDiagnosticsOverview({
   now,
   providerAction,
   action,
+  kmsAction,
+  wormAction,
+  onRetry,
 }: {
   data: SignatureProviderOverview | null;
   readState: SignatureDiagnosticsReadState;
   now: number;
   providerAction?: (provider: SignatureProviderCard) => ReactNode;
   action?: ReactNode;
+  kmsAction?: ReactNode;
+  wormAction?: ReactNode;
+  onRetry?: () => void;
 }) {
   const { t, i18n } = useTranslation('approvals');
   const label = (key: string) => t(`admin.signatureDiagnostics.labels.${key}`);
@@ -38,6 +44,8 @@ export function SignatureDiagnosticsOverview({
       <ErrorState
         title={label('title')}
         description={t(`admin.signatureDiagnostics.states.${readState}`)}
+        retryLabel={t('actions.retry')}
+        onRetry={onRetry}
         size="compact"
       />
     );
@@ -164,6 +172,8 @@ export function SignatureDiagnosticsOverview({
         worm={data.worm}
         readState={readState}
         now={now}
+        kmsAction={kmsAction}
+        wormAction={wormAction}
       />
     </Stack>
   );

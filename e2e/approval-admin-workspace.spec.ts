@@ -12,6 +12,10 @@ import {
   APPROVAL_WORKFLOW_DETAIL_FIXTURE,
 } from './support/product-area-fixtures';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
+import {
+  diffFixture as approvalFormDiffFixture,
+  workspaceFixture as approvalFormWorkspaceFixture,
+} from '../apps/dwp/src/features/approvals/approval-form-workspace.test-support';
 
 import { ADMIN_PERSONAS } from './support/approval-admin-personas';
 
@@ -88,7 +92,7 @@ test('정책 이력 조회 실패는 미게시 상태로 퇴화하지 않고 게
   const error = page.getByRole('alert').filter({ hasText: '게시 이력을 확인하지 못했습니다' });
   await expect(error).toBeVisible();
   await expect(page.getByText('아직 게시 증적이 없습니다')).toHaveCount(0);
-  await expect(page.getByText('버전 확인 실패')).toBeVisible();
+  await expect(page.getByText('버전 확인 실패')).toHaveCount(2);
   await expect(page.getByRole('button', { name: '검토 및 게시' })).toBeDisabled();
 
   recovered = true;
@@ -147,7 +151,8 @@ test('양식 설계자는 카테고리와 기본 결재선을 함께 관리하�
   await expect(page.getByRole('heading', { name: '양식 카탈로그', level: 1 })).toBeVisible();
   if (isMobile)
     await page.getByRole('button').filter({ hasText: '데이터 접근 예외 신청서' }).click();
-  if (!isMobile) await expect(page.getByText('업무 분류', { exact: true })).toBeVisible();
+  if (!isMobile)
+    await expect(page.getByRole('heading', { name: '업무 분류', level: 2 }).first()).toBeVisible();
   await expect(
     page.getByRole('heading', { name: '데이터 접근 예외 신청서', level: 2 })
   ).toBeVisible();
@@ -329,9 +334,11 @@ for (const kind of ['form', 'workflow'] as const) {
       ],
     });
     await mockLegacyApprovalSurface(page);
-    const original = kind === 'form' ? APPROVAL_FORM_FIXTURE : APPROVAL_WORKFLOW_FIXTURE;
-    const id =
-      kind === 'form' ? APPROVAL_FORM_FIXTURE.formId : APPROVAL_WORKFLOW_FIXTURE.workflowId;
+    const original =
+      kind === 'form'
+        ? { ...APPROVAL_FORM_FIXTURE, formId: approvalFormWorkspaceFixture().formId }
+        : APPROVAL_WORKFLOW_FIXTURE;
+    const id = original.formId ?? original.workflowId;
     const collection = kind === 'form' ? 'forms' : 'workflows';
     let version = original.version;
     let nameKo: string = original.nameKo;
@@ -339,7 +346,7 @@ for (const kind of ['form', 'workflow'] as const) {
     let savedBody: Record<string, unknown> | undefined;
     const record = () =>
       kind === 'form'
-        ? { ...APPROVAL_FORM_FIXTURE, lifecycleState: 'DRAFT', version, nameKo }
+        ? { ...original, lifecycleState: 'DRAFT', version, nameKo }
         : {
             ...APPROVAL_WORKFLOW_FIXTURE,
             lifecycleState: 'DRAFT',
@@ -352,20 +359,65 @@ for (const kind of ['form', 'workflow'] as const) {
       kind === 'form'
         ? { ...APPROVAL_FORM_DETAIL_FIXTURE, form: record() }
         : { ...APPROVAL_WORKFLOW_DETAIL_FIXTURE, workflow: record() };
+    const workspaceRecord = () => {
+      const workspace = approvalFormWorkspaceFixture();
+      return {
+        ...workspace,
+        formId: id,
+        formRevision: version,
+        workspaceRevision: version,
+        published: workspace.published
+          ? {
+              ...workspace.published,
+              schema: APPROVAL_FORM_DETAIL_FIXTURE.schema,
+            }
+          : null,
+        workingDraft: workspace.workingDraft
+          ? {
+              ...workspace.workingDraft,
+              schema: APPROVAL_FORM_DETAIL_FIXTURE.schema,
+              metadata: {
+                ...workspace.workingDraft.metadata,
+                categoryId: APPROVAL_FORM_FIXTURE.categoryId,
+                nameKo,
+                nameEn: APPROVAL_FORM_FIXTURE.nameEn,
+                descriptionKo: APPROVAL_FORM_FIXTURE.descriptionKo,
+                descriptionEn: APPROVAL_FORM_FIXTURE.descriptionEn,
+                ownerGroupRef: APPROVAL_FORM_FIXTURE.ownerGroupRef,
+              },
+              route: { workflowId: APPROVAL_WORKFLOW_FIXTURE.workflowId },
+            }
+          : null,
+      };
+    };
     await page.route(
       (url) => url.pathname === `/api/approvals/v1/admin/${collection}`,
       (route) => fulfillSuccess(route, [record()])
     );
     await page.route(
-      (url) =>
-        [
-          `/api/approvals/v1/admin/${collection}/${id}`,
-          `/api/approvals/v1/admin/${collection}/${id}/draft`,
-        ].includes(url.pathname),
+      (url) => {
+        const base = `/api/approvals/v1/admin/${collection}/${id}`;
+        return kind === 'form'
+          ? url.pathname === base || url.pathname.startsWith(`${base}/`)
+          : [base, `${base}/draft`].includes(url.pathname);
+      },
       (route) => {
+        const path = new URL(route.request().url()).pathname;
+        if (kind === 'form' && route.request().method() === 'GET') {
+          const workspace = workspaceRecord();
+          if (path.endsWith('/working-draft')) return fulfillSuccess(route, workspace);
+          if (path.endsWith('/versions'))
+            return fulfillSuccess(route, {
+              versions: [workspace.workingDraft, workspace.published],
+              mayBeTruncated: false,
+            });
+          if (path.endsWith('/diff')) return fulfillSuccess(route, approvalFormDiffFixture());
+        }
         if (route.request().method() !== 'GET') {
           writes += 1;
           savedBody = route.request().postDataJSON() as Record<string, unknown>;
+          if (kind === 'form' && path.endsWith('/working-draft'))
+            return fulfillSuccess(route, workspaceRecord());
         }
         return fulfillSuccess(route, detailRecord());
       }
@@ -375,12 +427,12 @@ for (const kind of ['form', 'workflow'] as const) {
       await page.getByRole('button').filter({ hasText: original.nameKo }).click();
     const editor =
       kind === 'form'
-        ? page.getByRole('dialog', { name: '양식 초안 편집', exact: true })
+        ? page.getByRole('dialog', { name: /^(?:양식|작업) 초안 편집$/u })
         : page.getByRole('region', { name: '프로세스 초안 편집', exact: true });
     const openEditor = async () => {
       await page
         .getByRole('button', {
-          name: kind === 'form' ? '양식 초안 편집' : '초안 편집',
+          name: kind === 'form' ? '작업 초안 편집' : '초안 편집',
           exact: true,
         })
         .click();
@@ -402,13 +454,23 @@ for (const kind of ['form', 'workflow'] as const) {
     nameKo = 'Latest independently updated definition';
     await editor.getByRole('button', { name: '다시 시도', exact: true }).click();
     await expect(
-      editor.getByText('다른 사용자가 먼저 변경했습니다. 최신 버전을 불러온 뒤 다시 시도하세요.')
+      editor.getByText(
+        kind === 'form'
+          ? '원본 버전이 변경되었습니다. 입력은 보존됩니다. 새로고침 후 계속하세요.'
+          : '다른 사용자가 먼저 변경했습니다. 최신 버전을 불러온 뒤 다시 시도하세요.'
+      )
     ).toBeVisible();
     await expect(editor.getByRole('button', { name: '저장', exact: true })).toBeDisabled();
     await expect(editor.getByRole('textbox', { name: '한국어 이름', exact: true })).toHaveValue(
       'Preserved editor-start input'
     );
     expect(writes).toBe(0);
+    if (kind === 'form') {
+      await editor.getByRole('button', { name: '닫기', exact: true }).click();
+      // Native workspace recovery and CAS save are exercised end to end in
+      // approval-form-workspace-actions.spec.ts.
+      return;
+    }
     await editor.getByRole('button', { name: '취소', exact: true }).click();
     await openEditor();
     await expect(editor.getByRole('textbox', { name: '한국어 이름', exact: true })).toHaveValue(

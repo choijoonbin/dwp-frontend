@@ -4,7 +4,7 @@ import { mockShellSession } from './support/shell-session';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 
-// This verifies the actual installed registry's unavailable path. Positive V9
+// This verifies the actual installed registry's unavailable path. Positive V14
 // workspace writes are separately gated on the sealed registry, not simulated
 // by replacing the browser's generated authorization module.
 for (const mode of ['light', 'dark', 'forced'] as const) {

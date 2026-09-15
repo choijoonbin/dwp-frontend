@@ -45,6 +45,7 @@ type Props = {
   sourceReady: boolean;
   pending: boolean;
   onSelect: (delegation: ApprovalDelegation) => void;
+  onEdit: (delegation: ApprovalDelegation) => void;
   onRevoke: (delegation: ApprovalDelegation) => void;
 };
 
@@ -55,6 +56,7 @@ export function ApprovalDelegationWorkspace({
   sourceReady,
   pending,
   onSelect,
+  onEdit,
   onRevoke,
 }: Props) {
   const { t } = useTranslation('approvals');
@@ -102,6 +104,10 @@ export function ApprovalDelegationWorkspace({
       canManage={canManage}
       sourceReady={sourceReady}
       pending={pending}
+      onEdit={(delegation) => {
+        setDetailOpen(false);
+        onEdit(delegation);
+      }}
       onRevoke={onRevoke}
     />
   );
@@ -249,7 +255,9 @@ export function ApprovalDelegationWorkspace({
           {filtered.length === 0 ? (
             <Stack alignItems="center" gap={1} sx={{ py: 6, px: 2, color: 'text.secondary' }}>
               <CalendarClock size={32} aria-hidden="true" />
-              <Typography variant="subtitle2">{t('delegations.empty')}</Typography>
+              <Typography component="p" variant="subtitle2">
+                {t('delegations.empty')}
+              </Typography>
               <Typography variant="body2" textAlign="center">
                 {t('delegations.emptyDescription')}
               </Typography>

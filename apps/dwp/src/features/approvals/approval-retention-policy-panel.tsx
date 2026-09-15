@@ -44,6 +44,7 @@ export function ApprovalRetentionPolicyPanel({
   canEdit,
   canPublish,
   busy,
+  blocked = false,
   onRefresh,
   onSave,
   onPublish,
@@ -57,12 +58,13 @@ export function ApprovalRetentionPolicyPanel({
   canEdit: boolean;
   canPublish: boolean;
   busy: boolean;
+  blocked?: boolean;
   onRefresh: () => void;
   onSave: (
     rules: Readonly<ApprovalRetentionRules>,
     original: Readonly<ApprovalRetentionPolicy>
   ) => Promise<void>;
-  onPublish: (comment: string, original: Readonly<ApprovalRetentionPolicy>) => boolean;
+  onPublish: (comment: string, original: Readonly<ApprovalRetentionPolicy>) => Promise<boolean>;
   editor: ApprovalRetentionPolicyEditor | null;
   onEditorChange: (editor: ApprovalRetentionPolicyEditor | null) => void;
   review: ApprovalRetentionPolicyReview | null;
@@ -92,13 +94,17 @@ export function ApprovalRetentionPolicyPanel({
       meta={policy.resourceSetKey}
       action={
         <Stack direction="row" gap={0.5}>
-          <ActionIconButton label={t('actions.refresh')} onClick={onRefresh} disabled={busy}>
+          <ActionIconButton
+            label={t('actions.refresh')}
+            onClick={onRefresh}
+            disabled={busy || blocked}
+          >
             <RefreshCcw size={16} />
           </ActionIconButton>
           {canEdit ? (
             <ActionIconButton
               label={t('admin.retention.edit')}
-              disabled={!ready || busy}
+              disabled={!ready || busy || blocked}
               onClick={() =>
                 setEditor({ original: policy, rules: policy.pending ?? policy.published })
               }
@@ -151,7 +157,7 @@ export function ApprovalRetentionPolicyPanel({
             </InlineFeedback>
             <ActionButton
               startIcon={<ShieldCheck size={16} />}
-              disabled={!ready || !canPublish || busy}
+              disabled={!ready || !canPublish || busy || blocked}
               onClick={() => setReview({ original: policy, comment: '' })}
             >
               {t('admin.retention.reviewPublish')}
@@ -165,12 +171,14 @@ export function ApprovalRetentionPolicyPanel({
         title={t('admin.retention.edit')}
         submitLabel={t('admin.retention.saveDraft')}
         busy={busy}
-        submitDisabled={!editor || !sourceCurrent(editor.original) || !canEdit || !valid || busy}
+        submitDisabled={
+          !editor || !sourceCurrent(editor.original) || !canEdit || !valid || busy || blocked
+        }
         onClose={() => {
           if (!busy) setEditor(null);
         }}
         onSubmit={() => {
-          if (editor && sourceCurrent(editor.original) && valid && canEdit && !busy)
+          if (editor && sourceCurrent(editor.original) && valid && canEdit && !busy && !blocked)
             void onSave(editor.rules, editor.original)
               .then(() => setEditor(null))
               .catch(() => undefined);
@@ -194,7 +202,9 @@ export function ApprovalRetentionPolicyPanel({
               control={
                 <Switch
                   checked={editor.rules.allowPurge}
-                  disabled={busy || !sourceCurrent(editor.original) || editor.attempt != null}
+                  disabled={
+                    busy || blocked || !sourceCurrent(editor.original) || editor.attempt != null
+                  }
                   onChange={(_, allowPurge) =>
                     setEditor({ ...editor, rules: { ...editor.rules, allowPurge } })
                   }
@@ -206,7 +216,9 @@ export function ApprovalRetentionPolicyPanel({
             </InlineFeedback>
             <Box
               component="fieldset"
-              disabled={busy || !sourceCurrent(editor.original) || editor.attempt != null}
+              disabled={
+                busy || blocked || !sourceCurrent(editor.original) || editor.attempt != null
+              }
               sx={{ p: 0, m: 0, border: 0, minWidth: 0 }}
             >
               <Stack gap={2}>
@@ -268,20 +280,20 @@ export function ApprovalRetentionPolicyPanel({
           !sourceCurrent(review.original) ||
           !canPublish ||
           review.comment.trim().length < 10 ||
-          busy
+          busy ||
+          blocked
         }
         onClose={() => {
           if (!busy) setReview(null);
         }}
         onSubmit={() => {
-          if (
-            review &&
-            sourceCurrent(review.original) &&
-            canPublish &&
-            !busy &&
-            onPublish(review.comment, review.original)
-          )
-            setReview(null);
+          if (review && sourceCurrent(review.original) && canPublish && !busy && !blocked) {
+            const original = review.original;
+            const comment = review.comment;
+            void onPublish(comment, original).then((accepted) => {
+              if (accepted) setReview(null);
+            });
+          }
         }}
         mobileFullScreen
       >
@@ -292,7 +304,7 @@ export function ApprovalRetentionPolicyPanel({
           minRows={3}
           value={review?.comment ?? ''}
           slotProps={{ htmlInput: { maxLength: 1000 } }}
-          disabled={busy || !review || !sourceCurrent(review.original)}
+          disabled={busy || blocked || !review || !sourceCurrent(review.original)}
           onChange={(event) => {
             if (review) setReview({ ...review, comment: event.target.value });
           }}

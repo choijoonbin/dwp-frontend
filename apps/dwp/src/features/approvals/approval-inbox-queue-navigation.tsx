@@ -25,7 +25,15 @@ const FILTER_ICONS: Record<ApprovalQueueFilter, LucideIcon> = {
   HIGH_RISK: ShieldAlert,
 };
 
-export function ApprovalInboxQueueNavigation({ onNavigate }: { onNavigate?: () => void }) {
+type ApprovalInboxQueueNavigationProps = {
+  onNavigate?: () => void;
+  onNavigateToTarget?: (resolveTarget: () => HTMLElement | null) => void;
+};
+
+export function ApprovalInboxQueueNavigation({
+  onNavigate,
+  onNavigateToTarget,
+}: ApprovalInboxQueueNavigationProps) {
   const { t } = useTranslation('approvals');
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,15 +96,12 @@ export function ApprovalInboxQueueNavigation({ onNavigate }: { onNavigate?: () =
                 next.set('queue', filter);
                 next.delete('page');
                 setSearchParams(next);
-                onNavigate?.();
-                if (onNavigate) {
-                  window.requestAnimationFrame(() => {
-                    window.requestAnimationFrame(() => {
-                      document
-                        .querySelector<HTMLElement>('[data-approval-command-center-heading]')
-                        ?.focus();
-                    });
-                  });
+                if (onNavigateToTarget) {
+                  onNavigateToTarget(() =>
+                    document.querySelector<HTMLElement>('[data-approval-command-center-heading]')
+                  );
+                } else {
+                  onNavigate?.();
                 }
               }}
               sx={{

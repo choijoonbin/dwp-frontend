@@ -354,7 +354,7 @@ test('entered policy draft survives actual503 refresh and same-source explicit r
 });
 
 for (const source of ['unchanged', 'advanced'] as const) {
-  test(`UNKNOWN policy command keeps its original wire after ${source} source refresh`, async ({
+  test(`UNKNOWN policy command locks its original wire for receipt lookup after ${source} source refresh`, async ({
     page,
   }) => {
     const { state } = await setup(page);
@@ -367,7 +367,7 @@ for (const source of ['unchanged', 'advanced'] as const) {
     await save.click();
     await expect(
       page.getByText(
-        '처리 결과 또는 현재 권한이 불확실합니다. 입력을 보존하고 원본을 확인한 뒤 새로운 명령을 진행해 주세요.',
+        '명령 처리 결과가 불확실합니다. 정확한 원본 시도를 보존하며, 일치하는 커밋 증적을 확인하기 전까지 모든 신규 변경을 차단합니다.',
         { exact: true }
       )
     ).toBeVisible();
@@ -395,30 +395,34 @@ for (const source of ['unchanged', 'advanced'] as const) {
         publishReason: 'INDEPENDENT_CHECKER_REQUIRED',
       };
     }
-    const reads = state.reads.length;
     const section = page
       .locator('section')
       .filter({ has: page.getByRole('heading', { name: '결재 기록 보존 정책', exact: true }) });
-    await section.getByRole('button', { name: '새로고침', exact: true }).click();
-    await expect.poll(() => state.reads.length).toBeGreaterThan(reads);
-    await page.getByRole('button', { name: '보존 정책 변경안 작성', exact: true }).click();
-    await expect(days).toHaveValue('123');
-    await expect(days).toBeDisabled();
-    if (source === 'unchanged') {
-      await expect(save).toBeEnabled();
-      await save.click();
-      await expect.poll(() => state.commands.length).toBe(2);
-      expect(state.commands[1]!.headers['idempotency-key']).toBe(
-        original.headers['idempotency-key']
-      );
-      expect(state.commands[1]!.body).toBe(original.body);
-    } else {
-      await expect(save).toBeDisabled();
-      expect(state.commands).toHaveLength(1);
-      await expect(
-        page.getByText('정책 명령이 완료되어 현재 정책 증적을 다시 확인합니다.', { exact: true })
-      ).toHaveCount(0);
-    }
+    await expect(section.getByRole('button', { name: '새로고침', exact: true })).toBeDisabled();
+    await expect(
+      section.getByRole('button', { name: '보존 정책 변경안 작성', exact: true })
+    ).toBeDisabled();
+    const receiptLookup = page.getByRole('button', {
+      name: '원본 명령 처리 증적 확인',
+      exact: true,
+    });
+    await expect(receiptLookup).toBeEnabled();
+    const reads = state.reads.length;
+    await receiptLookup.click();
+    await expect.poll(() => state.reads.length).toBe(reads + 1);
+    expect(state.reads.at(-1)?.path).toBe(
+      `${base}/policies/${policyId}/draft-commands/${original.headers['idempotency-key']}`
+    );
+    await expect(
+      page.getByText(
+        '처리 증적이 원본 명령의 커밋을 확정하지 못했습니다. 변경 명령은 재전송하지 않았으며 원본 시도는 불확실 상태로 유지됩니다.',
+        { exact: true }
+      )
+    ).toBeVisible();
+    expect(state.commands).toHaveLength(1);
+    await expect(
+      page.getByText('정책 명령이 완료되어 현재 정책 증적을 다시 확인합니다.', { exact: true })
+    ).toHaveCount(0);
   });
 }
 

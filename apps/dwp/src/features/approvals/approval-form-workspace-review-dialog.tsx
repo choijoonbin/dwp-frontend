@@ -1,5 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { FormDialog, InlineFeedback, LoadingState } from '@dwp-frontend/design-system';
+import { useEffect, useState } from 'react';
+import {
+  ActionButton,
+  FormDialog,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+} from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import type { ApprovalFormWorkspaceReview } from '@dwp-frontend/shared-utils';
@@ -14,6 +21,7 @@ export function ApprovalFormWorkspaceReviewDialog({
   busy,
   onClose,
   onConfirm,
+  onReject,
 }: {
   open: boolean;
   review: ApprovalFormWorkspaceReview | null;
@@ -22,9 +30,15 @@ export function ApprovalFormWorkspaceReviewDialog({
   expired: boolean;
   busy: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (comment: string) => void;
+  onReject: (comment: string) => void;
 }) {
   const { t } = useTranslation('approvals');
+  const [comment, setComment] = useState('');
+  useEffect(() => {
+    if (!open) setComment('');
+  }, [open]);
+  const decisionReady = ready && comment.trim().length >= 10 && comment.trim().length <= 1000;
   return (
     <FormDialog
       open={open}
@@ -33,9 +47,9 @@ export function ApprovalFormWorkspaceReviewDialog({
       submitLabel={t('actions.publish')}
       submittingLabel={t('actions.publish')}
       busy={busy}
-      submitDisabled={!ready}
+      submitDisabled={!decisionReady}
       onClose={onClose}
-      onSubmit={onConfirm}
+      onSubmit={() => onConfirm(comment.trim())}
       maxWidth="sm"
       mobileFullScreen
     >
@@ -82,6 +96,14 @@ export function ApprovalFormWorkspaceReviewDialog({
             ))}
           </Box>
         ) : null}
+        {review ? (
+          <InlineFeedback severity="info">
+            {t('admin.formWorkspace.assignedReview', {
+              reviewer: review.reviewRequest.reviewerUserId,
+              requestedAt: review.reviewRequest.requestedAt,
+            })}
+          </InlineFeedback>
+        ) : null}
         {review && !review.independentCheckerEligible ? (
           <InlineFeedback severity="error">
             {t('admin.formWorkspace.independentCheckerRequired')}
@@ -97,6 +119,25 @@ export function ApprovalFormWorkspaceReviewDialog({
             {t('admin.formWorkspace.sourceChanged')}
           </InlineFeedback>
         ) : null}
+        <FormField
+          required
+          multiline
+          minRows={3}
+          label={t('admin.formWorkspace.reviewComment')}
+          supportingText={t('admin.formWorkspace.reviewCommentHelp')}
+          value={comment}
+          disabled={busy || !review}
+          inputProps={{ maxLength: 1000 }}
+          onChange={(event) => setComment(event.target.value)}
+        />
+        <ActionButton
+          type="button"
+          intent="danger"
+          disabled={!decisionReady || busy}
+          onClick={() => onReject(comment.trim())}
+        >
+          {t('admin.formWorkspace.rejectReview')}
+        </ActionButton>
       </Stack>
     </FormDialog>
   );

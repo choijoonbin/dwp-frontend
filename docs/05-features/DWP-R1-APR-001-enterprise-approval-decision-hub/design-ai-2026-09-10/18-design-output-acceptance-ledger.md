@@ -1,13 +1,35 @@
 # 18. 디자인 산출물 수용 원장
 
-- 최초 검수일: 2026-09-11 · 요구사항 재대조: 2026-09-14
+- 최초 검수일: 2026-09-11 · 요구사항 재대조: 2026-09-14 · 최종 통합 검증: 2026-09-15
 - 원본: [Google Stitch 프로젝트](https://stitch.withgoogle.com/projects/13391261371843159731)
 - 검수 범위: APR-01~16 사용자·관리자 desktop/mobile/예외 상태 프레임
-- 현재 판정: `REOPENED / IMPLEMENTATION IN PROGRESS`
-- 정정: 2026-09-11 검증은 아래에 기록된 기존 계약 기반 구현 범위만 증명한다. 디자인의
-  모든 기능과 상태, 원본 대비 시각 일치를 증명하지 않으므로 APR-01~16 전체 완료 근거로
-  사용할 수 없다. API가 없다는 이유만으로 필요한 내부 신규 기능을 제외하지 않는다.
+- 현재 판정: 내부 구현 `CLOSED / FROZEN`, 운영 출시 `BLOCKED_EXTERNAL`
+- 정정: 2026-09-11과 2026-09-14의 `IN_PROGRESS` 수치는 역사적 중간 지점이다. 아래
+  2026-09-15 최종 통합 판정이 이를 대체한다. API가 없다는 이유로 필요한 내부 신규 기능을
+  제외하지 않았으며, 외부 공급자와 법적·운영 증거만 출시 차단으로 남긴다.
 - 재개 범위와 항목별 완료 기준: [19-full-requirements-recovery.md](19-full-requirements-recovery.md).
+
+## 0. 2026-09-15 최종 통합 판정
+
+- APR-01~16의 사용자·관리자 route, desktop/mobile, 예외·복구 상태와 실제 owner API/DB/PEP
+  연결을 내부 완료로 수용한다. 홈은 독립 executive surface이고 결재함 4개 큐는 sidebar의
+  접이식 하위 메뉴로만 동작한다.
+- Approval `check`는 207 suites/2,198 tests, Auth는 173 suites/795 tests, Notification의 실제
+  PostgreSQL 검증은 59 suites/336 tests가 failure/error/skip 0으로 통과했다. 서비스 경계
+  62/62와 backend source-size 2,047도 통과했다.
+- Frontend 전체 Vitest 704 files/6,310 tests, non-incremental typecheck와 공식 production build가
+  통과했다. 초기 bundle은 raw 1,055.9/1,074.2 KiB, gzip 306.5/317.4 KiB, request 4/5다.
+- Approval Chromium/mobile 40 specs는 730 pass, 의도된 2 skip, flaky 0이며 visual owner는
+  snapshot 갱신 없이 28/28 통과했다.
+- Stitch source Gate는 41/41 pair와 checker 4/4를 검증했다. 이 중 실제 raster는 30개이고
+  11개는 원본의 28-byte fetch-failure placeholder이므로, 해당 11개까지 포함한 pixel 100%
+  일치는 주장하지 않는다.
+- 전체 서비스를 완전 정지한 뒤 새 프로세스로 재기동했다. Auth부터 Meeting, Agent, Gateway의
+  health와 Frontend가 모두 정상이며 `/approvals/home`, `/approvals/inbox`, `/mail/home`, 실제
+  결재 검색과 `approval-home` 개인화 조회가 HTTP 200이다.
+- 실제 공급자 credential, 외부 법적 서명 ceremony, KMS/WORM 운영 증거, 고객 승인과 침투·부하
+  시험은 코드 완료와 구분해 `BLOCKED_EXTERNAL`로 유지한다. UI는 해당 증거가 없으면 계속
+  `UNKNOWN` 또는 비활성으로 fail-closed한다.
 
 ## 1. 최종 수용 판정
 
@@ -81,11 +103,11 @@ Stitch는 시각 원본이지만 권한·API·운영 readiness의 권위 원본�
 다른 제품의 shared-worktree 변경은 보존했으며 부분 commit이나 타 제품 의미 변경으로
 전자결재 구현을 섞지 않았다.
 
-## 5. 재개된 신규 기능과 외부 운영 조건
+## 5. 재개된 신규 기능과 외부 운영 조건의 역사 기록
 
-아래 내부 기능은 미완료 개발 항목이다. 지원하지 않는 기능을 가짜 활성 상태로 표시하지
-않되, 계약·저장 모델·권한·회귀 검증을 추가해 구현한다. 원본의 예시 문구와 실제 외부
-운영 승인은 구분한다.
+아래 목록은 2026-09-14 당시의 재개 대상이다. 2026-09-15 최종 통합에서는 내부 계약·저장
+모델·권한·회귀 연결을 완료했고, 실제 공급자와 법적·운영 증거는 외부 Gate로 분리했다.
+원본의 예시 문구와 실제 운영 승인은 계속 구분한다.
 
 - attachment ingestion·malware scan·content sanitization
 - parallel/quorum workflow와 routing/policy simulation
@@ -99,7 +121,7 @@ Stitch는 시각 원본이지만 권한·API·운영 readiness의 권위 원본�
 요구사항 원장에 미완료로 유지한다. 실제 공급자 credential, 법적 승인, 운영 인프라 증적은
 코드 구현만으로 완료 처리할 수 없으며 별도 외부 조건으로 보존한다.
 
-## 6. 2026-09-14 실행 검증 중간 지점
+## 6. 2026-09-14 실행 검증 중간 지점 (최종 판정으로 대체됨)
 
 - 원본 APR-01 홈과 APR-02~04 선택/예외: 최신 분리 spec 실행 58건 중 56 통과. 나머지 2건은
   claim 후 GET mock이 이전 상태를 반환한 fixture 결함을 수정하고 2/2 재실행 통과했다.

@@ -52,6 +52,7 @@ import {
   approvalSignatureDocumentFingerprint,
   approvalSignatureRouteInstalled,
 } from './approval-signature-source-model';
+import { approvalSignatureInternalRuntimeReady } from './approval-signature-runtime-readiness';
 import type { ApprovalSignatureDocument } from './approval-signature-source-model';
 
 type Original = Readonly<{
@@ -479,6 +480,9 @@ export function useApprovalSignatureController(props: ApprovalSignatureControlle
     if (lock.current || high.controller.open || uncertain) return;
     const original = capture();
     const document = original?.document;
+    const runtimeContext = client.getQueryData<ApprovalSignatureContext>(
+      current.current.contextKey
+    );
     if (
       !original ||
       !document ||
@@ -487,7 +491,7 @@ export function useApprovalSignatureController(props: ApprovalSignatureControlle
       !document.consentReceiptId ||
       !hasRight('approvals.work.signature.sign') ||
       !approvalSignatureRouteInstalled('signature-sign.action') ||
-      !document.source.signingKeySha256
+      !approvalSignatureInternalRuntimeReady(runtimeContext)
     )
       return;
     lock.current = true;
@@ -614,7 +618,9 @@ export function useApprovalSignatureController(props: ApprovalSignatureControlle
     createAvailable: createDispatch.available,
     consentAvailable: consentDispatch.available,
     cancelAvailable: cancelDispatch.available,
-    signAvailable: approvalSignatureRouteInstalled('signature-sign.action'),
+    signAvailable:
+      approvalSignatureRouteInstalled('signature-sign.action') &&
+      approvalSignatureInternalRuntimeReady(context.data),
     blocked,
     isBlocked: () => blockedRef.current || lock.current,
     create: () => low('CREATE'),

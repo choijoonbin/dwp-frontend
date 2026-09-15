@@ -33,6 +33,7 @@ import Stack from '@mui/material/Stack';
 
 import {
   appendProductPageShortcutScope,
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
   resolveProductPageShortcutAccess,
 } from '../../components/product-page-shortcut-access';
 import { useProductSurfaceCanaryAuthority } from '../../components/product-surface-canary-runtime';
@@ -45,17 +46,22 @@ import {
 import { approvalManagementReadDenied } from './approval-management-source-state';
 import { useApprovalManagementScopeReady } from './approval-management-scope';
 import { ApprovalLinkRow, ApprovalSurface, approvalTone } from './approval-ui';
+import { ApprovalAdminTrend } from './approval-admin-trend';
 import { useApprovalManagementRequestScope } from './use-approval-experience';
 
 import type { ApprovalAdminPulse } from '@dwp-frontend/shared-utils';
 import type { ProductPageShortcutAccess } from '../../components/product-page-shortcut-access';
 
 const PAGE_TARGETS = {
-  overview: 'route.approvals.admin.overview.page',
-  workflows: 'route.approvals.admin.workflows.page',
-  policies: 'route.approvals.admin.policies.page',
-  operations: 'route.approvals.admin.operations.page',
-  signatures: 'route.approvals.admin.signatures.page',
+  overview: {
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeContractKey: 'route.approvals.admin.overview.page',
+  },
+  workflows: PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows,
+  policies: PRODUCT_PAGE_SHORTCUT_TARGETS.approvalPolicies,
+  operations: PRODUCT_PAGE_SHORTCUT_TARGETS.approvalOperations,
+  signatures: PRODUCT_PAGE_SHORTCUT_TARGETS.approvalSignatures,
 } as const;
 
 type OverviewPage = keyof typeof PAGE_TARGETS;
@@ -68,6 +74,7 @@ export function ApprovalAdminOverview() {
   const requestScope = useApprovalManagementRequestScope();
   const scopeReady = useApprovalManagementScopeReady(requestScope);
   const identity = JSON.stringify(requestScope.cacheKey);
+  const [committedIdentity, setCommittedIdentity] = useState<string>();
   const live = useRef({
     identity,
     epoch: 0,
@@ -84,7 +91,26 @@ export function ApprovalAdminOverview() {
   Object.assign(live.current, { identity, scopeReady, requestScope, canary, authority });
   const epoch = live.current.epoch;
   const [, expireSource] = useState(0);
+  // Let StrictMode finish its probe before a stable authority identity starts the first read.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCommittedIdentity(identity), 0);
+    return () => window.clearTimeout(timer);
+  }, [identity]);
+  const identityCommitted = committedIdentity === identity;
   const queryKey = ['approvals', 'admin', 'overview', ...requestScope.cacheKey];
+  const cachedSource = queryClient.getQueryState<ApprovalAdminPulse>(queryKey);
+  // A failed cache remains explicit-retry only, including after a child remount.
+  const cachedFailure = Boolean(
+    cachedSource?.status === 'error' ||
+    cachedSource?.fetchFailureCount ||
+    cachedSource?.fetchFailureReason != null
+  );
+  if (
+    approvalManagementReadDenied(cachedSource?.error) ||
+    approvalManagementReadDenied(cachedSource?.fetchFailureReason)
+  ) {
+    live.current.denied = true;
+  }
   const accessFor = (page: OverviewPage) => {
     const current = live.current;
     return resolveProductPageShortcutAccess(
@@ -94,7 +120,7 @@ export function ApprovalAdminOverview() {
           ? productSurfaceServerNow(current.authority.snapshot)
           : Date.now(),
       },
-      { productId: 'approvals', surfaceId: 'approvals.admin', routeContractKey: PAGE_TARGETS[page] }
+      PAGE_TARGETS[page]
     );
   };
   const canReadCurrent = () => {
@@ -128,7 +154,7 @@ export function ApprovalAdminOverview() {
         throw error;
       }
     },
-    enabled: canReadCurrent(),
+    enabled: identityCommitted && canReadCurrent() && !cachedFailure,
     staleTime: APPROVAL_OVERVIEW_FRESHNESS_MS,
     retry: false,
     retryOnMount: false,
@@ -137,6 +163,7 @@ export function ApprovalAdminOverview() {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
     refetchInterval: (query) =>
+      identityCommitted &&
       canReadCurrent() &&
       !live.current.denied &&
       query.state.status === 'success' &&
@@ -173,7 +200,7 @@ export function ApprovalAdminOverview() {
   const sourceState = currentSourceState();
   const sourceReady = canReadCurrent() && sourceState === 'READY';
   const refresh = () => {
-    if (!canReadCurrent()) return;
+    if (!identityCommitted || !canReadCurrent()) return;
     const state = queryClient.getQueryState(queryKey);
     if (state?.fetchStatus === 'idle') void overview.refetch();
   };
@@ -329,6 +356,7 @@ export function ApprovalAdminOverview() {
           size="small"
           loading={overview.isFetching}
           onClick={refresh}
+          tooltipDisablePortal
         >
           <RefreshCcw size={16} />
         </ActionIconButton>
@@ -391,145 +419,162 @@ export function ApprovalAdminOverview() {
         </InlineFeedback>
       ) : null}
 
-      {sourceReady && exceptions.some((exception) => accessFor(exception.target).disclosed) ? (
-        <ApprovalSurface title={t('admin.breached.title')} meta={t('admin.breached.meta')}>
-          {exceptions.map((exception, index) => {
-            const access = accessFor(exception.target);
-            if (!access.disclosed) return null;
-            const assuranceKey = ['identity', 'segregation', 'evidence', 'delivery'].includes(
-              exception.key
-            )
-              ? exception.key
-              : null;
-            const title =
-              exception.key === 'overdue'
-                ? t('admin.overdueTasks')
-                : exception.key === 'failedIntegrations'
-                  ? t('admin.failedIntegrations')
-                  : t(`admin.assurance.${assuranceKey}.title`);
-            const detail = assuranceKey
-              ? t(`admin.assurance.${assuranceKey}.detail`)
-              : t('admin.metricDetail');
-            return (
-              <Box
-                key={`${exception.key}-${index}`}
-                onClickCapture={(event) => guardNavigation(event, exception.target, access)}
-              >
-                <ApprovalLinkRow
-                  title={title}
-                  detail={detail}
-                  route={appendProductPageShortcutScope(exception.route, access)}
-                  icon={exception.severity === 'error' ? TriangleAlert : TimerReset}
-                  tone={exception.severity === 'error' ? approvalTone.red : approvalTone.amber}
-                  trailing={
-                    <Chip
-                      size="small"
-                      color={exception.severity}
-                      variant="outlined"
-                      label={exception.count}
-                    />
-                  }
-                />
-              </Box>
-            );
-          })}
-        </ApprovalSurface>
-      ) : null}
-
       <Box
-        sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, 1fr)' }, gap: 2 }}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr)',
+            lg: 'minmax(0, 2fr) minmax(18rem, 1fr)',
+          },
+          alignItems: 'start',
+          gap: 2,
+        }}
       >
-        <ApprovalSurface
-          title={t('admin.controlModel.title')}
-          meta={t('admin.overview.roleReference')}
-        >
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: 'minmax(0,1fr)', sm: 'repeat(2,minmax(0,1fr))' },
-              gap: 2,
-              p: 2,
-            }}
-          >
-            {(['designer', 'publisher', 'operator', 'auditor'] as const).map((role) => (
-              <Box key={role} sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
-                <Box sx={{ typography: 'body2', fontWeight: 'fontWeightBold' }}>
-                  {t(`admin.controlModel.${role}.title`)}
-                </Box>
-                <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-                  {t(`admin.controlModel.${role}.detail`)}
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        </ApprovalSurface>
+        <Stack gap={2} sx={{ minWidth: 0 }}>
+          {sourceReady && exceptions.some((exception) => accessFor(exception.target).disclosed) ? (
+            <ApprovalSurface title={t('admin.breached.title')} meta={t('admin.breached.meta')}>
+              {exceptions.map((exception, index) => {
+                const access = accessFor(exception.target);
+                if (!access.disclosed) return null;
+                const assuranceKey = ['identity', 'segregation', 'evidence', 'delivery'].includes(
+                  exception.key
+                )
+                  ? exception.key
+                  : null;
+                const title =
+                  exception.key === 'overdue'
+                    ? t('admin.overdueTasks')
+                    : exception.key === 'failedIntegrations'
+                      ? t('admin.failedIntegrations')
+                      : t(`admin.assurance.${assuranceKey}.title`);
+                const detail = assuranceKey
+                  ? t(`admin.assurance.${assuranceKey}.detail`)
+                  : t('admin.metricDetail');
+                return (
+                  <Box
+                    key={`${exception.key}-${index}`}
+                    onClickCapture={(event) => guardNavigation(event, exception.target, access)}
+                  >
+                    <ApprovalLinkRow
+                      title={title}
+                      detail={detail}
+                      route={appendProductPageShortcutScope(exception.route, access)}
+                      icon={exception.severity === 'error' ? TriangleAlert : TimerReset}
+                      tone={exception.severity === 'error' ? approvalTone.red : approvalTone.amber}
+                      trailing={
+                        <Chip
+                          size="small"
+                          color={exception.severity}
+                          variant="outlined"
+                          label={exception.count}
+                        />
+                      }
+                    />
+                  </Box>
+                );
+              })}
+            </ApprovalSurface>
+          ) : null}
 
-        <ApprovalSurface title={t('admin.assurance.title')} meta={t('admin.assurance.meta')}>
-          {assessment.assurance.map((signal) => {
-            const attention = signal.state === 'ATTENTION' || signal.exceptions > 0;
-            const SignalIcon = !sourceReady || attention ? TriangleAlert : CheckCircle2;
-            return (
-              <Stack
-                key={signal.key}
-                direction={{ xs: 'column', sm: 'row' }}
-                alignItems={{ sm: 'flex-start' }}
-                gap={1.25}
-                sx={{ px: 2, py: 1.6, borderBottom: 1, borderColor: 'divider' }}
-              >
-                <SignalIcon
-                  size={18}
-                  color={!sourceReady || attention ? approvalTone.amber : approvalTone.teal}
-                />
-                <Box sx={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>
+          <ApprovalSurface
+            title={t('admin.controlModel.title')}
+            meta={t('admin.overview.roleReference')}
+          >
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0,1fr)', sm: 'repeat(2,minmax(0,1fr))' },
+                gap: 2,
+                p: 2,
+              }}
+            >
+              {(['designer', 'publisher', 'operator', 'auditor'] as const).map((role) => (
+                <Box key={role} sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
                   <Box sx={{ typography: 'body2', fontWeight: 'fontWeightBold' }}>
-                    {t(`admin.assurance.${signal.key}.title`)}
+                    {t(`admin.controlModel.${role}.title`)}
                   </Box>
                   <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-                    {t(`admin.assurance.${signal.key}.detail`)}
+                    {t(`admin.controlModel.${role}.detail`)}
                   </Box>
                 </Box>
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  color={!sourceReady || attention ? 'warning' : 'success'}
-                  sx={{
-                    alignSelf: 'flex-start',
-                    maxWidth: 1,
-                    height: 'auto',
-                    '& .MuiChip-label': { whiteSpace: 'normal', py: 0.5 },
-                  }}
-                  label={
-                    !sourceReady
-                      ? t('status.UNKNOWN')
-                      : attention
-                        ? t('admin.assurance.states.attention', { count: signal.exceptions })
-                        : t('admin.assurance.states.enforced')
-                  }
-                />
-              </Stack>
-            );
-          })}
-        </ApprovalSurface>
-      </Box>
+              ))}
+            </Box>
+          </ApprovalSurface>
 
-      {sourceReady && quickLinks.some(({ page }) => accessFor(page).disclosed) ? (
-        <ApprovalSurface title={t('admin.overview.quickAccess')}>
-          {quickLinks.map(({ page, route, icon: Icon, tone }) => {
-            const access = accessFor(page);
-            if (!access.disclosed) return null;
-            return (
-              <Box key={page} onClickCapture={(event) => guardNavigation(event, page, access)}>
-                <ApprovalLinkRow
-                  title={t(`pages.${page}.title`)}
-                  route={appendProductPageShortcutScope(route, access)}
-                  icon={Icon}
-                  tone={tone}
-                />
-              </Box>
-            );
-          })}
-        </ApprovalSurface>
-      ) : null}
+          {sourceReady && data ? <ApprovalAdminTrend trend={data.trend} /> : null}
+        </Stack>
+
+        <Stack gap={2} sx={{ minWidth: 0 }}>
+          <ApprovalSurface title={t('admin.assurance.title')} meta={t('admin.assurance.meta')}>
+            {assessment.assurance.map((signal) => {
+              const attention = signal.state === 'ATTENTION' || signal.exceptions > 0;
+              const SignalIcon = !sourceReady || attention ? TriangleAlert : CheckCircle2;
+              return (
+                <Stack
+                  key={signal.key}
+                  direction={{ xs: 'column', sm: 'row', lg: 'column', xl: 'row' }}
+                  alignItems={{ sm: 'flex-start' }}
+                  gap={1.25}
+                  sx={{ px: 2, py: 1.6, borderBottom: 1, borderColor: 'divider' }}
+                >
+                  <SignalIcon
+                    size={18}
+                    color={!sourceReady || attention ? approvalTone.amber : approvalTone.teal}
+                  />
+                  <Box sx={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>
+                    <Box sx={{ typography: 'body2', fontWeight: 'fontWeightBold' }}>
+                      {t(`admin.assurance.${signal.key}.title`)}
+                    </Box>
+                    <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
+                      {t(`admin.assurance.${signal.key}.detail`)}
+                    </Box>
+                  </Box>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color={!sourceReady || attention ? 'warning' : 'success'}
+                    sx={{
+                      alignSelf: 'flex-start',
+                      maxWidth: 1,
+                      height: 'auto',
+                      '& .MuiChip-label': { whiteSpace: 'normal', py: 0.5 },
+                    }}
+                    label={
+                      !sourceReady
+                        ? t('status.UNKNOWN')
+                        : attention
+                          ? t('admin.assurance.states.attention', { count: signal.exceptions })
+                          : t('admin.assurance.states.enforced')
+                    }
+                  />
+                </Stack>
+              );
+            })}
+          </ApprovalSurface>
+
+          {sourceReady && quickLinks.some(({ page }) => accessFor(page).disclosed) ? (
+            <ApprovalSurface title={t('admin.overview.quickAccess')}>
+              {quickLinks.map(({ page, route, icon: Icon, tone }) => {
+                const shortcut = accessFor(page);
+                if (!shortcut.disclosed) return null;
+                return (
+                  <Box
+                    key={page}
+                    onClickCapture={(event) => guardNavigation(event, page, shortcut)}
+                  >
+                    <ApprovalLinkRow
+                      title={t(`pages.${page}.title`)}
+                      route={appendProductPageShortcutScope(route, shortcut)}
+                      icon={Icon}
+                      tone={tone}
+                    />
+                  </Box>
+                );
+              })}
+            </ApprovalSurface>
+          ) : null}
+        </Stack>
+      </Box>
     </Stack>
   );
 }

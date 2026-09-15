@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, MessageSquareReply, Undo2, X } from 'lucide-react';
+import { ArrowLeft, CopyPlus, MessageSquareReply, Undo2, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
@@ -31,6 +31,7 @@ import {
   approvalTimelineEventDetail,
 } from './approval-timeline-copy';
 import { ApprovalSurface, StatusChip } from './approval-ui';
+import { canCreateResubmissionDraft } from './use-approval-resubmit-draft';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 import type { ApprovalRequest, ApprovalRequestDetail } from '@dwp-frontend/shared-utils';
@@ -42,6 +43,8 @@ type ApprovalRequestDetailDrawerProps = {
   onReturnToWork?: () => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
+  onResubmit?: (request: ApprovalRequest) => void;
+  resubmitPending?: boolean;
   attachments: ApprovalAttachmentClient;
 };
 
@@ -52,6 +55,8 @@ export function ApprovalRequestDetailDrawer({
   onReturnToWork,
   onRespond,
   onWithdraw,
+  onResubmit,
+  resubmitPending,
   attachments,
 }: ApprovalRequestDetailDrawerProps) {
   const { t, i18n } = useTranslation('approvals');
@@ -162,6 +167,19 @@ export function ApprovalRequestDetailDrawer({
                       onClick={() => onWithdraw(visibleDetail.request)}
                     >
                       {t('actions.withdraw')}
+                    </ActionButton>
+                  )}
+                {canUpdateRequests &&
+                  onResubmit &&
+                  canCreateResubmissionDraft(visibleDetail.request) && (
+                    <ActionButton
+                      intent="primary"
+                      size="small"
+                      startIcon={<CopyPlus size={15} />}
+                      disabled={documentBlocked || resubmitPending}
+                      onClick={() => onResubmit(visibleDetail.request)}
+                    >
+                      {t('requests.resubmit.action')}
                     </ActionButton>
                   )}
               </Stack>

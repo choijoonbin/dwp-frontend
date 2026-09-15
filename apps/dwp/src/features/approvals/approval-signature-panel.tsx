@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Check,
@@ -26,6 +26,7 @@ import { ApprovalSurface } from './approval-ui';
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
 import { ApprovalSignatureConsentDialog } from './approval-signature-consent-dialog';
 import { ApprovalSignatureEvidence } from './approval-signature-evidence';
+import { ApprovalExternalSignaturePanel } from './approval-external-signature-panel';
 import { useApprovalSignatureController } from './approval-signature-controller';
 import type { ApprovalSignatureControllerProps } from './approval-signature-controller';
 
@@ -36,14 +37,16 @@ export function ApprovalSignaturePanel(
 ) {
   const { t } = useTranslation('approvals');
   const model = useApprovalSignatureController(props);
+  const [externalBlocked, setExternalBlocked] = useState(false);
   const notify = useRef(props.onBlockedChange);
   const closeGuard = useRef(model.isBlocked);
+  const externalGuard = useRef<() => boolean>(() => false);
   notify.current = props.onBlockedChange;
-  closeGuard.current = model.isBlocked;
+  closeGuard.current = () => model.isBlocked() || externalGuard.current();
   useEffect(() => {
-    notify.current?.(model.blocked, () => closeGuard.current());
+    notify.current?.(model.blocked || externalBlocked, () => closeGuard.current());
     return () => notify.current?.(false, () => false);
-  }, [model.blocked]);
+  }, [externalBlocked, model.blocked]);
   const document = model.visible;
   const state = document && 'state' in document ? document.state : undefined;
   const disabled = !model.ready || model.busy || model.high.open || Boolean(model.uncertain);
@@ -357,6 +360,13 @@ export function ApprovalSignaturePanel(
         onSubmit={() => void model.consent()}
       />
       <ApprovalHighRiskCommandDialog controller={model.high} />
+      <ApprovalExternalSignaturePanel
+        {...props}
+        onBlockedChange={(blocked, isBlocked) => {
+          externalGuard.current = isBlocked;
+          setExternalBlocked(blocked);
+        }}
+      />
     </Box>
   );
 }

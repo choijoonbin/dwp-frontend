@@ -12,6 +12,7 @@ import {
   APPROVAL_ACTION_CAPABILITY,
   mockApprovalProductSurfaceAuthority,
 } from './support/product-surface-authority';
+import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
 import { mockShellSession } from './support/shell-session';
 
 import type { ApprovalRequestDetail } from '@dwp-frontend/shared-utils';
@@ -31,6 +32,7 @@ function failure(route: Route, status: number) {
 }
 
 async function informationSession(page: Page, withUser = false) {
+  const wireCaptures = await installApprovalInformationWireCapture(page);
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
@@ -144,7 +146,11 @@ async function informationSession(page: Page, withUser = false) {
     (route) => {
       const key = route.request().headers()['idempotency-key'];
       expect(key).toMatch(/^[A-Za-z0-9._:-]{1,120}$/u);
-      state.commands.push({ key, body: route.request().postDataJSON() as Record<string, unknown> });
+      const capture = wireCaptures.at(-1);
+      expect(capture?.pathname).toBe(
+        `/api/approvals/v1/requests/${original.request.requestId}/information-response`
+      );
+      state.commands.push({ key, body: capture!.body });
       return state.postFailure
         ? failure(route, state.postFailure)
         : success(route, { ...original.request, status: 'IN_REVIEW', version: 4 });
@@ -424,11 +430,13 @@ test('API9 USER 다른 UUID 후보는 원래 미확인 입력을 바꾸거나 wr
 test('API9 USER TTL 만료는 HTTP write를 닫고 같은 UUID의 새 조회 증적만 복구한다', async ({
   page,
 }) => {
+  await page.clock.install({ time: new Date() });
   const { state, dialog, originalCommand } = await unknownUserSession(page);
   await qualifyOriginalUser(dialog);
-  state.directoryTtlMs = 1_200;
+  state.directoryTtlMs = 10_000;
   await verifyOriginalUser(page, dialog);
   await expect(dialog.getByRole('button', { name: '원래 보완 요청 재시도' })).toBeEnabled();
+  await page.clock.fastForward(10_001);
   await expect(dialog.getByRole('button', { name: '원래 보완 요청 재시도' })).toBeDisabled();
   state.directoryFailure = 503;
   const readsBeforeFailure = state.directoryReads;

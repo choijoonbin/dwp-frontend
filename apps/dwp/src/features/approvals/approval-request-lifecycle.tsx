@@ -29,6 +29,7 @@ import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
 import { ApprovalRequestArchiveExport } from './approval-request-archive-export';
 import { ApprovalRequestInformationReceipt } from './approval-request-information-receipt';
 import { ApprovalRequestLifecycleInspector } from './approval-request-lifecycle-inspector';
+import { ApprovalResubmitDraftDialog } from './approval-resubmit-draft-dialog';
 import { useApprovalAttachmentClient } from './use-approval-attachment-client';
 import { ApprovalAttachmentNavigationGuard } from './approval-attachment-navigation-guard';
 import { ApprovalRequestListPanel } from './approval-request-list-panel';
@@ -42,6 +43,7 @@ import { useApprovalManagementCommandScope } from './approval-management-command
 import { useApprovalRequestAmendment } from './use-approval-request-amendment';
 import { useApprovalRequestInformationSource } from './use-approval-request-information-source';
 import { useApprovalRequestLifecycleAction } from './use-approval-request-lifecycle-action';
+import { useApprovalResubmitDraft } from './use-approval-resubmit-draft';
 import { sameApprovalRequestInformationSnapshot } from './approval-request-information-snapshot';
 import { approvalRequestCommandResultUnknown } from './approval-request-command-model';
 import { useApprovalRequestUserSource } from './use-approval-request-user-source';
@@ -69,7 +71,7 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
   const requestedReturnTarget = searchParams.get('returnTo');
   const { permissions } = usePermissions();
   const returnTarget = authorizedApprovalWorkReturnTarget(requestedReturnTarget, permissions);
-  const { canUpdateRequests } = useApprovalExperience();
+  const { canCreateRequests, canUpdateRequests } = useApprovalExperience();
   const queryClient = useQueryClient();
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'approvals',
@@ -306,6 +308,29 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     !requests.isError &&
     !actionRecovery &&
     !unresolvedResponse.current;
+  const resubmitAuthorized =
+    view === 'archive' &&
+    requestScope.ready &&
+    canCreateRequests &&
+    canUpdateRequests &&
+    !actionRecovery &&
+    !unresolvedResponse.current;
+  const resubmitReady = resubmitAuthorized && !requests.isFetching && !requests.isError;
+  const resubmitAuthority = useRef(resubmitAuthorized);
+  resubmitAuthority.current = resubmitAuthorized;
+  const resubmit = useApprovalResubmitDraft({
+    identity: JSON.stringify([identityKey, view]),
+    enabled: resubmitAuthorized,
+    contextScopeKey: requestScope.contextScopeKey,
+    requests: requests.data,
+    refetch: requests.refetch,
+    isAuthorityCurrent: () => resubmitAuthority.current,
+    onSuccess: async ({ draft }) => {
+      await queryClient.invalidateQueries({ queryKey: ['approvals'] });
+      toast.success(t('requests.resubmit.created'));
+      navigate(`/approvals/requests/new?draft=${encodeURIComponent(draft.requestId)}`);
+    },
+  });
   const actionRequestIsCurrent = (request: ApprovalRequest) =>
     requestActionsReady && isApprovalRequestSnapshotCurrent(requests.data, request);
   const latestAuthority = useRef({ ready: requestActionsReady, requests: requests.data });
@@ -652,6 +677,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
               onEdit={(request) => navigate(`/approvals/requests/new?draft=${request.requestId}`)}
               onRespond={(request) => openAction('respond', request)}
               onWithdraw={(request) => openAction('withdraw', request)}
+              onResubmit={resubmitReady ? resubmit.open : undefined}
+              resubmitPendingId={resubmit.pending ? resubmit.candidate?.requestId : undefined}
             />
           </Box>
           <Box sx={{ display: { xs: 'none', lg: 'block' }, minWidth: 0, p: 2 }}>
@@ -664,6 +691,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
               onEdit={(request) => navigate(`/approvals/requests/new?draft=${request.requestId}`)}
               onRespond={(request) => openAction('respond', request)}
               onWithdraw={(request) => openAction('withdraw', request)}
+              onResubmit={resubmitReady ? resubmit.open : undefined}
+              resubmitPendingId={resubmit.pending ? resubmit.candidate?.requestId : undefined}
             />
           </Box>
         </Box>
@@ -678,6 +707,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
           </Typography>
         </Stack>
       )}
+
+      <ApprovalResubmitDraftDialog controller={resubmit} onRefresh={requests.refetch} />
 
       <FormDialog
         open={Boolean(requestAction) && actionOpen && actionIsOwned}
@@ -949,6 +980,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
           closeDetail();
           openAction('withdraw', request);
         }}
+        onResubmit={resubmitReady ? resubmit.open : undefined}
+        resubmitPending={resubmit.pending}
       />
     </ApprovalSurface>
   );

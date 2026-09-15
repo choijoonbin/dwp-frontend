@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import { readFile } from 'node:fs/promises';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
@@ -670,6 +671,129 @@ test('완료 문서 권한이 회수되면 본문과 이력을 가리고 단건�
   expect(posts).toBe(0);
 });
 
+test('처리 불가 결과는 쓰기 없이 해당 결재의 최신 상세를 연다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await prepare(page);
+  let posts = 0;
+  await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) =>
+    success(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: APPROVAL_HOME_FIXTURE.focusQueue[0],
+      canDecide: false,
+    })
+  );
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    posts += 1;
+    return success(route, {});
+  });
+
+  await page.goto('/approvals/inbox');
+  await page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택').check();
+  await page.getByRole('button', { name: '선택 항목 승인' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+  const result = page.getByRole('status').filter({ hasText: '배치 처리 결과' });
+  await expect(result).toContainText('처리 불가 1건');
+  expect(posts).toBe(0);
+
+  await result.getByRole('button', { name: '결재 상세 열기' }).click();
+  await expect(page).toHaveURL(/task=approval-task-1/u);
+  await expect(page.getByRole('heading', { name: '고객 분석 환경 접근 연장' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toBeDisabled();
+});
+
+test('배치 409는 최신 큐·권한·버전으로 실패 및 미시도 항목만 새 명령으로 재개하고 비식별 CSV를 제공한다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await prepare(page);
+  const thirdTask = {
+    ...APPROVAL_HOME_FIXTURE.focusQueue[1],
+    taskId: 'approval-task-3',
+    requestId: 'approval-request-3',
+    requestNumber: 'APR-20260814-003',
+    title: '개인정보 포함 가능 비공개 제목',
+    requesterName: '비공개 요청자',
+  };
+  const queue = [...APPROVAL_HOME_FIXTURE.focusQueue, thirdTask];
+  const taskReads: string[] = [];
+  await page.route('**/api/approvals/v1/tasks/search?*', async (route) =>
+    success(route, approvalTaskSearchPage(new URL(route.request().url()), queue))
+  );
+
+  let task2Version = 0;
+  for (const task of queue) {
+    await page.route(`**/api/approvals/v1/tasks/${task.taskId}`, (route) => {
+      taskReads.push(task.taskId);
+      return success(route, {
+        ...APPROVAL_TASK_DETAIL_FIXTURE,
+        task: {
+          ...task,
+          version: task.taskId === 'approval-task-2' ? task2Version : task.version,
+        },
+        canDecide: true,
+      });
+    });
+  }
+
+  const writes: Array<{
+    taskId: string;
+    version: number;
+  }> = [];
+  await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
+    const body = route.request().postDataJSON() as { expectedVersion: number };
+    const taskId = new URL(route.request().url()).pathname.split('/').at(-2)!;
+    writes.push({
+      taskId,
+      version: body.expectedVersion,
+    });
+    if (taskId === 'approval-task-2' && task2Version === 0) {
+      task2Version = 1;
+      return route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', errorCode: 'VERSION_CONFLICT' }),
+      });
+    }
+    return success(route, {});
+  });
+
+  await page.goto('/approvals/inbox');
+  for (const task of queue) {
+    await page.getByLabel(`${task.title} 배치 승인 선택`).check();
+  }
+  await page.getByRole('button', { name: '선택 항목 승인' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+
+  const result = page.getByRole('status').filter({ hasText: '배치 처리 결과' });
+  await expect(result).toContainText('승인 1건 · 처리 불가 0건 · 남음 2건');
+  await expect(result).toContainText('결재 내용이 변경되었습니다');
+  await expect(result).toContainText('재시도 가능');
+
+  const downloadPromise = page.waitForEvent('download');
+  await result.getByRole('button', { name: 'CSV 다운로드' }).click();
+  const download = await downloadPromise;
+  const path = await download.path();
+  expect(path).toBeTruthy();
+  const csv = await readFile(path!, 'utf8');
+  expect(csv).toContain('"approval-task-2","FAILED","VERSION_CONFLICT","true"');
+  expect(csv).toContain('"approval-task-3","NOT_ATTEMPTED","EARLIER_FAILURE","true"');
+  expect(csv).not.toContain(thirdTask.title);
+  expect(csv).not.toContain(thirdTask.requesterName);
+
+  await result.getByRole('button', { name: '다시 시도 (2)' }).click();
+  await expect(result).toContainText('승인 3건 · 처리 불가 0건 · 남음 0건');
+  expect(writes.map(({ taskId, version }) => [taskId, version])).toEqual([
+    ['approval-task-1', 0],
+    ['approval-task-2', 0],
+    ['approval-task-2', 1],
+    ['approval-task-3', 0],
+  ]);
+  expect(taskReads.filter((taskId) => taskId === 'approval-task-2').length).toBeGreaterThanOrEqual(
+    2
+  );
+  expect(taskReads).toContain('approval-task-3');
+});
+
 test('배치가 확인한 권한 회수는 우측 상세에도 즉시 반영된다', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 });
   await prepare(page);
@@ -720,6 +844,13 @@ test('모바일은 명시적 선택 모드에서만 배치 제어를 열고 항�
   await expect(page.getByRole('status').filter({ hasText: '배치 처리 결과' })).toContainText(
     '승인 완료'
   );
+  await expect(
+    page.getByRole('status').filter({ hasText: '배치 처리 결과' }).getByRole('button')
+  ).toHaveCount(2);
+  const accessibility = await new AxeBuilder({ page })
+    .include('[aria-labelledby="approval-batch-result-title"]')
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
   expect(posts).toBe(1);
   await page.getByRole('button', { name: '닫기', exact: true }).click();
   await expect(page.getByRole('status').filter({ hasText: '배치 처리 결과' })).toHaveCount(0);
@@ -747,7 +878,7 @@ test('결재함은 현재 큐와 확인 시각을 표시하고 사용자가 최�
   await page.goto('/approvals/inbox?queue=HIGH_RISK');
   await expect(page.getByRole('status').filter({ hasText: '고위험 · 2건' })).toBeVisible();
   const before = reads;
-  await page.getByRole('button', { name: '새로고침', exact: true }).click();
+  await page.getByRole('button', { name: '결재 목록 새로고침', exact: true }).click();
   await expect.poll(() => reads).toBeGreaterThan(before);
 });
 

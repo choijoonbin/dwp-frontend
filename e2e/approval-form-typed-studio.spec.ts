@@ -14,6 +14,17 @@ import {
 } from './support/product-surface-authority';
 
 import type { ApprovalTypedFormSchema } from '../libs/shared-utils/src/api/approval-form-typed-contract';
+import type {
+  ApprovalFormWorkspace,
+  ApprovalFormWorkspaceVersion,
+  ApprovalFormWorkingDraftInput,
+} from '../libs/shared-utils/src/api/approval-form-workspace-contract';
+
+const FORM_ID = '11111111-1111-4111-8111-111111111111';
+const CATEGORY_ID = '22222222-2222-4222-8222-222222222222';
+const PUBLISHED_VERSION_ID = '33333333-3333-4333-8333-333333333333';
+const WORKFLOW_ID = '44444444-4444-4444-8444-444444444444';
+const DRAFT_VERSION_ID = '55555555-5555-4555-8555-555555555555';
 
 async function mockLegacyApprovalSurface(page: Page) {
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
@@ -118,13 +129,15 @@ async function mockTypedFormAdmin(
   if (!options.governed) await mockLegacyApprovalSurface(page);
   const state = {
     authority,
-    formId: options.userFields
-      ? '11111111-1111-1111-1111-111111111111'
-      : APPROVAL_FORM_FIXTURE.formId,
+    formId: FORM_ID,
+    categoryId: CATEGORY_ID,
+    workflowId: WORKFLOW_ID,
+    draftFormVersionId: DRAFT_VERSION_ID,
     corruptHash,
     lifecycleState: options.published ? 'PUBLISHED' : 'DRAFT',
-    formVersionId: '33333333-3333-3333-3333-333333333333' as string | null,
+    formVersionId: PUBLISHED_VERSION_ID as string | null,
     version: APPROVAL_FORM_FIXTURE.version,
+    workspaceRevision: 2,
     schema: typedAdminSchema(),
     writes: [] as Record<string, unknown>[],
     creates: [] as Record<string, unknown>[],
@@ -151,6 +164,7 @@ async function mockTypedFormAdmin(
   const record = () => ({
     ...APPROVAL_FORM_FIXTURE,
     formId: state.formId,
+    categoryId: state.categoryId,
     lifecycleState: state.lifecycleState,
     fieldCount: state.schema.fields.length,
     version: state.version,
@@ -161,7 +175,105 @@ async function mockTypedFormAdmin(
     schema: state.schema,
     formVersionId: state.formVersionId,
     schemaHash: state.corruptHash ? '0'.repeat(64) : typedAdminHash(state.schema),
+    routes: APPROVAL_FORM_DETAIL_FIXTURE.routes.map((route) => ({
+      ...route,
+      workflowId: state.workflowId,
+    })),
   });
+  const version = (
+    formVersionId: string,
+    versionNumber: number,
+    lifecycleState: ApprovalFormWorkspaceVersion['lifecycleState']
+  ): ApprovalFormWorkspaceVersion => ({
+    formVersionId,
+    versionNumber,
+    lifecycleState,
+    sourceVersionId: lifecycleState === 'DRAFT' ? state.formVersionId : null,
+    basePublishedVersionId: lifecycleState === 'DRAFT' ? state.formVersionId : null,
+    schema: state.schema,
+    schemaSha256: typedAdminHash(state.schema),
+    metadata: {
+      categoryId: state.categoryId,
+      nameKo: record().nameKo,
+      nameEn: record().nameEn,
+      descriptionKo: record().descriptionKo,
+      descriptionEn: record().descriptionEn,
+      ownerGroupRef: record().ownerGroupRef,
+      formKind: record().formKind,
+    },
+    route: { workflowId: state.workflowId },
+    materialDigest: 'a'.repeat(64),
+    metadataProvenance: lifecycleState === 'DRAFT' ? 'AUTHORING_SNAPSHOT' : 'PUBLISH_SNAPSHOT',
+    capturedAt: '2026-09-11T00:00:00Z',
+    capturedBy: 1,
+    createdAt: '2026-09-11T00:00:00Z',
+    createdBy: 1,
+    publishedAt: lifecycleState === 'PUBLISHED' ? '2026-09-11T00:00:00Z' : null,
+    publishedBy: lifecycleState === 'PUBLISHED' ? 2 : null,
+  });
+  const workspace = (): ApprovalFormWorkspace => ({
+    formId: state.formId,
+    formRevision: state.version,
+    workspaceRevision: state.workspaceRevision,
+    catalogAvailability: 'ACTIVE',
+    published: version(state.formVersionId ?? PUBLISHED_VERSION_ID, 3, 'PUBLISHED'),
+    workingDraft: version(state.draftFormVersionId, 4, 'DRAFT'),
+    lastEditorUserId: 1,
+    catalogPolicyEligible: true,
+    observedAt: '2026-09-11T00:00:00Z',
+  });
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/form-categories',
+    (route) =>
+      fulfillSuccess(route, [
+        {
+          categoryId: state.categoryId,
+          categoryKey: 'ACCESS',
+          parentCategoryId: null,
+          nameKo: '접근·보안',
+          nameEn: 'Access and security',
+          descriptionKo: '권한 요청과 보안 예외',
+          descriptionEn: 'Access and security exceptions',
+          iconKey: 'shield-check',
+          sortOrder: 0,
+          lifecycleState: 'ACTIVE',
+          formCount: 1,
+          version: 0,
+        },
+      ])
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/workflows',
+    (route) =>
+      fulfillSuccess(route, [
+        {
+          ...APPROVAL_FORM_DETAIL_FIXTURE.routes[0],
+          workflowId: state.workflowId,
+          workflowKey: 'DATA_ACCESS_EXCEPTION',
+          nameKo: '데이터 접근 예외',
+          nameEn: 'Data access exception',
+          descriptionKo: '보안 예외 검토',
+          descriptionEn: 'Security exception review',
+          category: 'SECURITY',
+          dataClassification: 'RESTRICTED',
+          lifecycleState: 'PUBLISHED',
+          currentVersion: 4,
+          allowSelfApproval: false,
+          ownerGroupRef: 'SECURITY_APPROVER',
+          version: 4,
+          updatedAt: '2026-09-11T00:00:00Z',
+        },
+      ])
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/forms/publish-review-requests',
+    (route) =>
+      fulfillSuccess(route, {
+        items: [],
+        mayBeTruncated: false,
+        generatedAt: '2026-09-11T00:00:00Z',
+      })
+  );
   await page.route(
     (url) => url.pathname === '/api/approvals/v1/admin/forms',
     (route) => {
@@ -176,18 +288,52 @@ async function mockTypedFormAdmin(
   );
   await page.route(
     (url) =>
-      [
-        `/api/approvals/v1/admin/forms/${state.formId}`,
-        `/api/approvals/v1/admin/forms/${state.formId}/draft`,
-      ].includes(url.pathname),
+      url.pathname === `/api/approvals/v1/admin/forms/${state.formId}` ||
+      url.pathname.startsWith(`/api/approvals/v1/admin/forms/${state.formId}/`),
     (route) => {
-      if (route.request().method() === 'PUT') {
-        const input = route.request().postDataJSON() as Record<string, unknown>;
-        state.writes.push(input);
-        state.schema = input.typedSchema as ApprovalTypedFormSchema;
-        state.version += 1;
+      const request = route.request();
+      const path = new URL(request.url()).pathname;
+      const base = `/api/approvals/v1/admin/forms/${state.formId}`;
+      if (path === base) return fulfillSuccess(route, detail());
+      if (path === `${base}/working-draft`) {
+        if (request.method() === 'PUT') {
+          const input = request.postDataJSON() as ApprovalFormWorkingDraftInput;
+          state.writes.push(input as unknown as Record<string, unknown>);
+          state.schema = input.schema as ApprovalTypedFormSchema;
+          state.version += 1;
+          state.workspaceRevision += 1;
+        }
+        return fulfillSuccess(route, workspace());
       }
-      return fulfillSuccess(route, detail());
+      if (path === `${base}/publish-review-request`)
+        return fulfillSuccess(route, { request: null });
+      if (path === `${base}/versions`)
+        return fulfillSuccess(route, {
+          versions: [workspace().workingDraft, workspace().published],
+          mayBeTruncated: false,
+        });
+      if (path === `${base}/diff`) {
+        const query = new URL(request.url()).searchParams;
+        return fulfillSuccess(route, {
+          fromVersionId: query.get('fromVersionId'),
+          toVersionId: query.get('toVersionId'),
+          fromSchemaSha256: typedAdminHash(state.schema),
+          toSchemaSha256: typedAdminHash(state.schema),
+          changes: [],
+          complete: true,
+          fromMetadataProvenance: 'PUBLISH_SNAPSHOT',
+          toMetadataProvenance: 'AUTHORING_SNAPSHOT',
+        });
+      }
+      if (path.startsWith(`${base}/versions/`)) {
+        const id = path.split('/').at(-1);
+        const current = workspace();
+        return fulfillSuccess(
+          route,
+          id === state.draftFormVersionId ? current.workingDraft : current.published
+        );
+      }
+      return route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
     }
   );
   return state;
@@ -236,7 +382,7 @@ test('고급 양식은 실제 조건·반복 계산·숫자 문자열과 편집 
   await page.goto('/approvals/admin/forms');
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
-  await page.getByRole('button', { name: '양식 초안 편집', exact: true }).click();
+  await page.getByRole('button', { name: '작업 초안 편집', exact: true }).click();
   const editor = page.getByRole('dialog', { name: '양식 초안 편집', exact: true });
   const previewPanel = async () => {
     if (isMobile) await editor.getByRole('button', { name: '양식 미리보기', exact: true }).click();
@@ -292,13 +438,14 @@ test('고급 양식은 실제 조건·반복 계산·숫자 문자열과 편집 
   expect(accessibility.violations).toEqual([]);
   state.version += 1;
   await editor.getByRole('button', { name: '다시 시도', exact: true }).click();
-  await expect(editor.getByRole('button', { name: '저장', exact: true })).toBeDisabled();
-  await expect(editor.getByRole('textbox', { name: '최솟값', exact: true })).toHaveValue(
-    '12345678901234567890.12345678'
-  );
+  await expect(editor).toHaveCount(0);
+  const preserved = page.getByRole('dialog', { name: '작업 초안 편집', exact: true });
+  await expect(preserved.getByRole('button', { name: '저장', exact: true })).toBeDisabled();
+  await expect(preserved).toContainText('원본 버전이 변경되었습니다. 입력은 보존됩니다.');
+  await expect(preserved).toContainText('구매 항목 · Items · items');
   expect(state.writes).toHaveLength(0);
-  await editor.getByRole('button', { name: '취소', exact: true }).click();
-  await page.getByRole('button', { name: '양식 초안 편집', exact: true }).click();
+  await preserved.getByRole('button', { name: '닫기', exact: true }).click();
+  await page.getByRole('button', { name: '작업 초안 편집', exact: true }).click();
   await editor
     .getByRole('textbox', { name: '한국어 이름', exact: true })
     .fill('고급 양식 최신 버전');
@@ -311,12 +458,15 @@ test('고급 양식은 실제 조건·반복 계산·숫자 문자열과 편집 
   await editor.getByRole('button', { name: '저장', exact: true }).click();
   await expect.poll(() => state.writes.length).toBe(1);
   expect(state.writes[0]).toMatchObject({
-    expectedVersion: version,
-    nameKo: '고급 양식 최신 버전',
-    typedSchema: { schemaContract: 'DWP_APPROVAL_FORM_TYPED_V2', schemaVersion: 2 },
+    expectedFormRevision: version,
+    expectedWorkspaceRevision: 2,
+    draftFormVersionId: DRAFT_VERSION_ID,
+    metadata: { nameKo: '고급 양식 최신 버전' },
+    schema: { schemaContract: 'DWP_APPROVAL_FORM_TYPED_V2', schemaVersion: 2 },
   });
   expect(state.writes[0]).not.toHaveProperty('fields');
-  const savedSchema = state.writes[0].typedSchema as ApprovalTypedFormSchema;
+  expect(state.writes[0]).not.toHaveProperty('typedSchema');
+  const savedSchema = state.writes[0].schema as ApprovalTypedFormSchema;
   const savedGroup = savedSchema.fields.find((field) => field.key === 'items');
   expect(
     savedGroup?.type === 'REPEATING_GROUP' &&
@@ -333,15 +483,15 @@ test('고급 양식의 저장된 정의 해시 불일치는 편집과 게시를 
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
   await expect(page.getByText('저장된 스키마 해시를 검증할 수 없습니다.')).toBeVisible();
-  await expect(page.getByRole('button', { name: '양식 초안 편집', exact: true })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: '게시', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '작업 초안 편집', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '게시 검토 요청', exact: true })).toHaveCount(0);
   expect(state.writes).toHaveLength(0);
   state.corruptHash = false;
   await page.reload();
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
-  await expect(page.getByRole('button', { name: '양식 초안 편집', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: '게시', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '작업 초안 편집', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '게시 검토 요청', exact: true })).toBeVisible();
   expect(state.writes).toHaveLength(0);
 });
 
@@ -412,7 +562,7 @@ test('관리자 USER 미리보기는 초안 검색을 막고 게시 버전·해�
   await page.goto('/approvals/admin/forms');
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
-  await page.getByRole('button', { name: '양식 초안 편집', exact: true }).click();
+  await page.getByRole('button', { name: '작업 초안 편집', exact: true }).click();
   const editor = page.getByRole('dialog', { name: '양식 초안 편집', exact: true });
   if (isMobile) await editor.getByRole('button', { name: '양식 미리보기', exact: true }).click();
   const draftPreview = editor.getByRole('region', { name: '양식 미리보기', exact: true });
@@ -537,7 +687,7 @@ test('고급 양식은 실제 도구 설명과 320px·200%·대비 모드에서 
   await page.goto('/approvals/admin/forms');
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
-  await page.getByRole('button', { name: '양식 초안 편집', exact: true }).click();
+  await page.getByRole('button', { name: '작업 초안 편집', exact: true }).click();
   const editor = page.getByRole('dialog', { name: '양식 초안 편집', exact: true });
   if (isMobile) await editor.getByRole('button', { name: '양식 미리보기', exact: true }).click();
   const preview = editor.getByRole('region', { name: '양식 미리보기', exact: true });
@@ -586,7 +736,7 @@ test('고급 양식의 잘못된 런타임 필드는 렌더러 충돌 없이 닫
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
   await expect(page.getByText('저장된 스키마 해시를 검증할 수 없습니다.')).toBeVisible();
-  await expect(page.getByRole('button', { name: '양식 초안 편집', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '작업 초안 편집', exact: true })).toHaveCount(0);
   expect(crashes).toEqual([]);
   expect(state.writes).toHaveLength(0);
 });
@@ -599,7 +749,7 @@ test('선택 캔버스와 속성 검사기는 실제 필드·그룹 복제를 �
   await page.goto('/approvals/admin/forms');
   if (isMobile)
     await page.getByRole('button').filter({ hasText: APPROVAL_FORM_FIXTURE.nameKo }).click();
-  await page.getByRole('button', { name: '양식 초안 편집', exact: true }).click();
+  await page.getByRole('button', { name: '작업 초안 편집', exact: true }).click();
   const editor = page.getByRole('dialog', { name: '양식 초안 편집', exact: true });
   if (isMobile) await editor.getByRole('button', { name: '양식 미리보기', exact: true }).click();
   const preview = editor.getByRole('region', { name: '양식 미리보기', exact: true });
@@ -684,8 +834,8 @@ test('선택 캔버스와 속성 검사기는 실제 필드·그룹 복제를 �
   const version = state.version;
   await editor.getByRole('button', { name: '저장', exact: true }).click();
   await expect.poll(() => state.writes.length).toBe(1);
-  expect(state.writes[0]).toHaveProperty('expectedVersion', version);
-  const saved = state.writes[0].typedSchema as ApprovalTypedFormSchema;
+  expect(state.writes[0]).toHaveProperty('expectedFormRevision', version);
+  const saved = state.writes[0].schema as ApprovalTypedFormSchema;
   expect(saved.fields.find((field) => field.key === 'amount')).not.toHaveProperty('min');
   expect(saved.fields.find((field) => field.key === 'amount_copy_1')).toHaveProperty(
     'min',

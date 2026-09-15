@@ -5,10 +5,16 @@ import { createRoot, type Root } from 'react-dom/client';
 import { fireEvent, getByRole, getByTestId, queryByText } from '@testing-library/dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HttpError } from '@dwp-frontend/shared-utils';
 
 import { ApprovalDelegations } from './approval-delegations';
 
-import type { ApprovalDelegation, ApprovalDelegationCreateInput } from '@dwp-frontend/shared-utils';
+import type {
+  ApprovalDelegation,
+  ApprovalDelegationCreateInput,
+  ApprovalDelegationUpdateInput,
+} from '@dwp-frontend/shared-utils';
+import type { ApprovalDelegationEditorSubmission } from './approval-delegation-editor';
 
 const dependencies = vi.hoisted(() => ({
   scope: {
@@ -31,6 +37,7 @@ const dependencies = vi.hoisted(() => ({
   },
   getApprovalDelegations: vi.fn(),
   createApprovalDelegation: vi.fn(),
+  updateApprovalDelegation: vi.fn(),
   success: vi.fn(),
   error: vi.fn(),
 }));
@@ -56,6 +63,14 @@ const previousDelegation: ApprovalDelegation = {
   version: 1,
   direction: 'OUTGOING',
 };
+const updateInput: ApprovalDelegationUpdateInput = {
+  delegateUserId: previousDelegation.delegateUserId,
+  scopeType: 'ALL',
+  startsAt: previousDelegation.startsAt,
+  endsAt: previousDelegation.endsAt,
+  reason: 'Updated bounded delegation coverage',
+  expectedVersion: previousDelegation.version,
+};
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -67,6 +82,7 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => {
     ...actual,
     getApprovalDelegations: dependencies.getApprovalDelegations,
     createApprovalDelegation: dependencies.createApprovalDelegation,
+    updateApprovalDelegation: dependencies.updateApprovalDelegation,
     useToast: () => ({ success: dependencies.success, error: dependencies.error }),
   };
 });
@@ -83,6 +99,8 @@ vi.mock('./use-approval-governed-mutation', () => ({
   isProductSurfaceOperationCancelledError: () => false,
   useApprovalGovernedMutation: () =>
     vi.fn((operation: (execution: Record<string, never>) => Promise<unknown>) => operation({})),
+  useApprovalDelegationUpdateGovernedMutation: () =>
+    vi.fn((operation: (execution: Record<string, never>) => Promise<unknown>) => operation({})),
 }));
 
 vi.mock('./approval-ui', () => ({
@@ -95,25 +113,56 @@ vi.mock('./approval-ui', () => ({
 }));
 
 vi.mock('./approval-delegation-workspace', () => ({
-  ApprovalDelegationWorkspace: ({ delegations }: { delegations: ApprovalDelegation[] }) => (
-    <div data-testid="delegation-count">{delegations.length}</div>
+  ApprovalDelegationWorkspace: ({
+    delegations,
+    onEdit,
+  }: {
+    delegations: ApprovalDelegation[];
+    onEdit: (delegation: ApprovalDelegation) => void;
+  }) => (
+    <div>
+      <div data-testid="delegation-count">{delegations.length}</div>
+      {delegations[0] && (
+        <button type="button" onClick={() => onEdit(delegations[0]!)}>
+          edit delegation
+        </button>
+      )}
+    </div>
   ),
 }));
 
 vi.mock('./approval-delegation-editor', () => ({
   ApprovalDelegationEditor: ({
     open,
+    delegation,
     recoveryMessage,
     onSubmit,
+    onRecover,
   }: {
     open: boolean;
+    delegation?: ApprovalDelegation | null;
     recoveryMessage?: string;
-    onSubmit: (input: ApprovalDelegationCreateInput) => void;
+    onSubmit: (submission: ApprovalDelegationEditorSubmission) => void;
+    onRecover: () => void;
   }) =>
     open ? (
       <div data-testid="delegation-editor">
         {recoveryMessage && <div>{recoveryMessage}</div>}
-        <button type="button" onClick={() => onSubmit(createInput)}>
+        {recoveryMessage && (
+          <button type="button" onClick={onRecover}>
+            recover delegation
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() =>
+            onSubmit(
+              delegation
+                ? { kind: 'update', source: delegation, input: updateInput }
+                : { kind: 'create', input: createInput }
+            )
+          }
+        >
           submit delegation
         </button>
       </div>
@@ -182,6 +231,20 @@ async function moveToScopeAndReopenEditor(suffix: 'a' | 'b') {
   });
   await act(async () =>
     fireEvent.click(getByRole(container, 'button', { name: 'delegations.add' }))
+  );
+  await vi.waitFor(() => expect(getByTestId(container, 'delegation-editor')).toBeTruthy());
+}
+
+async function loadDelegation(delegation: ApprovalDelegation = previousDelegation) {
+  dependencies.getApprovalDelegations.mockResolvedValue([delegation]);
+  await act(async () => renderDelegations());
+  await vi.waitFor(() => expect(getByTestId(container, 'delegation-count').textContent).toBe('1'));
+}
+
+async function beginUpdate(delegation: ApprovalDelegation = previousDelegation) {
+  await loadDelegation(delegation);
+  await act(async () =>
+    fireEvent.click(getByRole(container, 'button', { name: 'edit delegation' }))
   );
   await vi.waitFor(() => expect(getByTestId(container, 'delegation-editor')).toBeTruthy());
 }
@@ -291,4 +354,93 @@ describe('ApprovalDelegations mutation scope transition', () => {
     expect(dependencies.createApprovalDelegation).not.toHaveBeenCalled();
     expect(dependencies.success).not.toHaveBeenCalled();
   });
+
+  it('updates one outgoing ACTIVE delegation with its fixed delegate, version, and stable command key', async () => {
+    const updated = { ...previousDelegation, reason: updateInput.reason, version: 2 };
+    dependencies.updateApprovalDelegation.mockResolvedValue([updated]);
+    await beginUpdate();
+
+    await act(async () =>
+      fireEvent.click(getByRole(container, 'button', { name: 'submit delegation' }))
+    );
+    await vi.waitFor(() => expect(dependencies.updateApprovalDelegation).toHaveBeenCalledTimes(1));
+    expect(dependencies.updateApprovalDelegation).toHaveBeenCalledWith(
+      previousDelegation.delegationId,
+      updateInput,
+      expect.objectContaining({
+        idempotencyKey: expect.stringMatching(/^delegation-update:[0-9a-f-]{36}$/u),
+      })
+    );
+    await vi.waitFor(() => expect(queryByText(container, 'submit delegation')).toBeNull());
+    expect(dependencies.success).toHaveBeenCalledWith('delegations.update.saved');
+  });
+
+  it('never opens the update editor for an incoming delegation', async () => {
+    await loadDelegation({ ...previousDelegation, direction: 'INCOMING' });
+    await act(async () =>
+      fireEvent.click(getByRole(container, 'button', { name: 'edit delegation' }))
+    );
+    expect(queryByText(container, 'submit delegation')).toBeNull();
+    expect(dependencies.updateApprovalDelegation).not.toHaveBeenCalled();
+  });
+
+  it('sends PUT0 when the delegation changes during the final freshness read', async () => {
+    await beginUpdate();
+    let release!: (items: ApprovalDelegation[]) => void;
+    dependencies.getApprovalDelegations.mockImplementationOnce(
+      () =>
+        new Promise<ApprovalDelegation[]>((resolve) => {
+          release = resolve;
+        })
+    );
+    await act(async () =>
+      fireEvent.click(getByRole(container, 'button', { name: 'submit delegation' }))
+    );
+    await vi.waitFor(() => expect(release).toBeDefined());
+    await act(async () => release([{ ...previousDelegation, version: 2 }]));
+
+    expect(dependencies.updateApprovalDelegation).not.toHaveBeenCalled();
+    await vi.waitFor(() =>
+      expect(queryByText(container, 'delegations.update.errors.CONFLICT')).not.toBeNull()
+    );
+  });
+
+  it.each([
+    [new HttpError('denied', 403), 'DENIED'],
+    [new HttpError('conflict', 409), 'CONFLICT'],
+    [new HttpError('unavailable', 503), 'UNAVAILABLE'],
+    [new Error('unknown outcome'), 'ERROR'],
+  ])(
+    'preserves the update and reuses its idempotency key after explicit recovery for %s',
+    async (failure, recoveryKind) => {
+      dependencies.updateApprovalDelegation
+        .mockRejectedValueOnce(failure)
+        .mockResolvedValueOnce([{ ...previousDelegation, version: 2 }]);
+      await beginUpdate();
+      await act(async () =>
+        fireEvent.click(getByRole(container, 'button', { name: 'submit delegation' }))
+      );
+      await vi.waitFor(() =>
+        expect(queryByText(container, `delegations.update.errors.${recoveryKind}`)).not.toBeNull()
+      );
+      expect(getByTestId(container, 'delegation-editor')).toBeTruthy();
+      const originalKey = dependencies.updateApprovalDelegation.mock.calls[0]?.[2]?.idempotencyKey;
+
+      await act(async () =>
+        fireEvent.click(getByRole(container, 'button', { name: 'recover delegation' }))
+      );
+      await vi.waitFor(() =>
+        expect(queryByText(container, `delegations.update.errors.${recoveryKind}`)).toBeNull()
+      );
+      await act(async () =>
+        fireEvent.click(getByRole(container, 'button', { name: 'submit delegation' }))
+      );
+      await vi.waitFor(() =>
+        expect(dependencies.updateApprovalDelegation).toHaveBeenCalledTimes(2)
+      );
+      expect(dependencies.updateApprovalDelegation.mock.calls[1]?.[2]?.idempotencyKey).toBe(
+        originalKey
+      );
+    }
+  );
 });

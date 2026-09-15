@@ -61,6 +61,57 @@
     "requestId": "Request ID",
     "openRequests": "Open my requests"
   },
+  "externalSignature": {
+    "title": "External provider signature",
+    "kind": "Provider ceremony and verified retained artifacts",
+    "reload": "Reload external signature source",
+    "trustBoundary": "External handover is separate from internal self-attestation and requires current provider, policy, callback, KMS, and WORM evidence.",
+    "checking": "Checking external signing eligibility",
+    "unavailable": "External signing authority or its current source is unavailable.",
+    "unknown": "The remote result is unknown. This command is locked and will not be sent again.",
+    "changed": "The request, signature session, or authority changed. Reload before acting.",
+    "failed": "The command was rejected. No automatic retry was attempted.",
+    "unknownOperation": "Locked operation",
+    "idempotencyKey": "Idempotency key",
+    "gate": {
+      "NOT_EVALUATED": "Not evaluated",
+      "BLOCKED": "Blocked",
+      "ELIGIBLE": "Eligible"
+    },
+    "create": "Prepare provider request",
+    "noProvider": "No policy-required verified production provider is available.",
+    "loadingSession": "Loading the external signature session",
+    "policy": "Frozen policy",
+    "provider": "Provider binding",
+    "updatedAt": "Updated",
+    "handover": "Verify identity and hand over",
+    "refreshProvider": "Refresh provider status",
+    "audit": "External signature audit",
+    "checkingAudit": "Checking audit",
+    "auditUnavailable": "The current audit could not be verified.",
+    "auditEmpty": "No external signature events are recorded.",
+    "auditTruncated": "This audit projection is partial.",
+    "artifact": "Retained artifact evidence",
+    "artifactId": "Artifact ID",
+    "inspectArtifact": "Inspect evidence",
+    "checkingArtifact": "Checking artifact",
+    "artifactUnavailable": "Artifact evidence is unavailable or no longer current.",
+    "retainUntil": "retain until",
+    "cancelTitle": "Cancel external signature ceremony",
+    "cancelDescription": "The current request and provider state are revalidated immediately before cancellation.",
+    "cancelWarning": "A cancellation request may already be in flight at the provider.",
+    "states": {
+      "PREPARED": "Prepared",
+      "HANDOVER_PENDING": "Handover pending",
+      "OUT_FOR_SIGNATURE": "Out for signature",
+      "COMPLETION_PENDING": "Completion pending",
+      "COMPLETED_VERIFIED": "Completed and verified",
+      "CANCEL_PENDING": "Cancellation pending",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed",
+      "UNKNOWN_REMOTE_OUTCOME": "Unknown remote outcome"
+    }
+  },
   "surfaces": {
     "work": "Approval work",
     "management": "Approval management"
@@ -309,6 +360,7 @@
     },
     "commandCenter": {
       "title": "Decision command center",
+      "refreshQueue": "Refresh approval queue",
       "description": "Review, verify, and decide without leaving this workspace.",
       "queueContext": "{{queue}} · {{count}} items · checked {{checkedAt}}",
       "checkingFreshness": "checking latest state",
@@ -358,6 +410,7 @@
       "batchStopped": "Batch approval stopped safely. Review the remaining requests.",
       "batchFailed": "Batch approval could not start.",
       "batchResultTitle": "Batch result",
+      "downloadBatchCsv": "Download CSV",
       "batchOutcomes": {
         "APPROVED": "Approved",
         "INELIGIBLE": "Skipped after latest authority or state check",
@@ -503,6 +556,7 @@
     "EXPIRED": "Expired",
     "PUBLISHED": "Published",
     "PILOT": "Pilot",
+    "HIGH": "High",
     "REVOKED": "Revoked",
     "SKIPPED": "Skipped",
     "FAILED": "Failed",
@@ -522,6 +576,13 @@
     "RECOVERY_EVIDENCE_INCOMPLETE": "Recovery evidence incomplete",
     "SEPARATION_OF_DUTIES": "Separation of duties",
     "CURRENT_PERMISSION_REVOKED": "Current approval read permission revoked",
+    "CURRENT_AUTHORITY_UNAVAILABLE": "Current authority unavailable",
+    "CURRENT_IDENTITY_INACTIVE": "Current identity inactive",
+    "TASK_NOT_AVAILABLE": "Approval task unavailable",
+    "DELEGATION_AUTHORITY_REVOKED": "Delegation authority revoked",
+    "CURRENT_ROLE_REVOKED": "Current role revoked",
+    "CURRENT_AUTHORITY_VERIFIED": "Current authority verified",
+    "LEGACY_CURRENT_AUTHORITY_VERIFIED": "Compatibility authority verified",
     "DISABLED": "Disabled",
     "RETIRED": "Retired",
     "CONFIGURATION_REQUIRED": "Configuration required"
@@ -880,9 +941,51 @@
       "sort": "Sort",
       "newest": "Newest first",
       "oldest": "Oldest first",
+      "backup": "Back up JSON data",
+      "backupPreparing": "Checking the latest draft...",
+      "backupSTALE": "The server draft changed after this list or preview loaded. No backup file is created until you refresh the latest state.",
+      "backupDENIED": "The current account's draft ownership or read authority could not be verified, so backup is blocked.",
+      "backupUNAVAILABLE": "The latest draft could not be verified, so backup is blocked. Check the connection and try again.",
+      "migrationAction": "Recover to current form",
+      "migrationTitle": "Recover this draft to a current published form?",
+      "migrationDescription": "Keep the original draft intact and create a separate draft mapped to the selected current form and approval route.",
+      "migrationConfirm": "Create recovery draft",
+      "migrationSource": "Preserved source",
+      "migrationSourceVersion": "Source version {{version}}",
+      "migrationTarget": "New recovery draft",
+      "migrationTargetPending": "Select a current published form",
+      "migrationTargetVersion": "Form v{{formVersion}} · route v{{workflowVersion}}",
+      "migrationImmutableSource": "The original document and revision history are not changed or deleted. The server revalidates the current published versions and hashes before creating a separate draft.",
+      "migrationForm": "Published recovery form",
+      "migrationEvaluating": "Checking current form and field compatibility.",
+      "migrationPreviewError": "The current published form and recovery preview could not be verified. Check authority and connectivity.",
+      "migrationNotRequired": "The selected form and route are already bound to the source draft, so recovery is not required.",
+      "migrationRouteIncompatible": "The current input does not satisfy the selected approval route conditions. Select another published form.",
+      "migrationReady": "This draft can be recovered to the current published form and route.",
+      "migrationFieldReport": "Draft field recovery result",
+      "migrationMapped": "Mapped fields",
+      "migrationRequiredFields": "Input still required",
+      "migrationDropped": "Fields excluded",
+      "migrationIncompatible": "Type mismatches",
+      "migrationCompleteAfter_one": "Enter {{count}} required field in the new draft before submitting it.",
+      "migrationCompleteAfter_other": "Enter {{count}} required fields in the new draft before submitting it.",
+      "migrationAllMapped": "All required input was mapped. Review the new draft before submitting it.",
+      "migrationReason": "Recovery reason",
+      "migrationCreated": "A new recovery draft was created on the current published form.",
+      "migrationRetryOriginal": "Retry original command",
+      "migrationErrors": {
+        "CONFLICT": "The source draft or target published version changed. Refresh and review the current state.",
+        "DENIED": "The current account's source ownership or draft creation authority could not be verified, so recovery was blocked.",
+        "INCOMPATIBLE": "Field or route compatibility changed, so this preview can no longer be used.",
+        "UNAVAILABLE": "Current authority or the command result is unavailable. Only the same original command can be retried to prevent duplicates.",
+        "UNKNOWN": "The recovery result is unknown. Only the same original command can be retried to prevent duplicate drafts.",
+        "ERROR": "The recovery draft could not be created. Recheck the latest source and published form."
+      },
       "reason": "Reason for change",
       "deleteTitle": "Move draft to trash?",
-      "deleteDescription": "This draft will not be permanently deleted. You can restore it from trash.",
+      "deleteDescription": "This is a restorable soft delete. Input and revision history remain subject to retention policy; no physical deletion is performed.",
+      "discardLifecycleNotice": "Moving to trash is a restorable soft delete and does not physically delete input or revision history.",
+      "trashRetentionNotice": "This draft is scheduled for retention in trash. It has not been physically deleted and remains restorable.",
       "restoreTitle": "Restore this draft?",
       "restoreDescription": "After restoring, review the latest published form and approval route before continuing.",
       "recoverTitle": "Recover draft from this revision?",
@@ -900,6 +1003,23 @@
     },
     "commands": {
       "unknown": "The command result could not be confirmed. Resending is disabled to prevent duplicate processing. Refresh to check the current document state."
+    },
+    "resubmit": {
+      "action": "Copy as resubmission draft",
+      "title": "Create a new resubmission draft?",
+      "description": "Create a new draft from the current completed record for {{title}}.",
+      "confirm": "Copy draft",
+      "immutableSource": "The original request and decision evidence remain immutable. Only the title, summary, priority, and entered data are copied; the editor revalidates the latest form and approval route.",
+      "created": "The resubmission draft was created.",
+      "retryOriginal": "Retry original command",
+      "errors": {
+        "CONFLICT": "The source request version or state changed. Refresh the latest completed record.",
+        "DENIED": "The current account's ownership or draft creation authority could not be verified, so the operation was blocked.",
+        "INCOMPATIBLE": "This request is not compatible with the currently published form or approval route and cannot be copied.",
+        "UNAVAILABLE": "Current authority or the command result is unavailable. Retry only the same original command.",
+        "UNKNOWN": "The outcome is unknown. Retry only the same original command to prevent a duplicate draft.",
+        "ERROR": "The resubmission draft could not be created. Refresh the completed record and try again."
+      }
     },
     "search": {
       "label": "Search number, title or summary",
@@ -984,6 +1104,7 @@
     "loadError": "Delegations could not be loaded. No delegation action is available until the list is verified.",
     "candidateLoadError": "Eligible members could not be verified. Retry before selecting a delegate.",
     "workflowLoadError": "Published approval processes could not be verified. Retry before limiting this delegation to one process.",
+    "periodInvalid": "The end must be after the start and the delegation may not exceed 90 days.",
     "created": "Delegation created.",
     "createError": "The delegation could not be created.",
     "revoked": "The delegation was revoked.",
@@ -992,6 +1113,21 @@
       "title": "Add approval delegation",
       "description": "Choose a verified member, the minimum approval scope, and a bounded absence period."
     },
+    "update": {
+      "action": "Edit delegation",
+      "title": "Edit approval delegation",
+      "description": "Keep the delegate fixed and update the scope, period, and reason against the latest delegation version.",
+      "delegateLocked": "Changing the delegate creates different authority and is not editable. Revoke this delegation and create a new one if needed.",
+      "currentWorkflow": "Current selection · {{key}}",
+      "saved": "The approval delegation was updated.",
+      "failed": "The approval delegation could not be updated.",
+      "errors": {
+        "CONFLICT": "The delegation direction, state, or version changed. Your input is preserved and cannot be saved until the latest delegation is reviewed.",
+        "DENIED": "The current account's ownership or update authority could not be verified. Your input is preserved until authority is rechecked.",
+        "UNAVAILABLE": "The latest delegation and authority could not be verified. Your input is preserved until the connection recovers and you refresh.",
+        "ERROR": "The update outcome could not be confirmed. The input and original request key are preserved, and no resend is allowed until current state is checked."
+      }
+    },
     "fields": {
       "delegate": "Delegate",
       "delegateHelp": "Search active members in this tenant by name or email.",
@@ -999,6 +1135,7 @@
       "workflow": "Approval process",
       "startsAt": "Starts at",
       "endsAt": "Ends at",
+      "periodHelp": "Use the displayed local time. The server stores the same instant in UTC and limits the period to 90 days.",
       "reason": "Reason",
       "reasonHelp": "Enter at least 10 characters so the delegation remains reviewable evidence."
     },
@@ -1031,9 +1168,51 @@
       "sourceExpired": "Aggregate verification has expired. Recheck the current data.",
       "aggregateEnforced": "No control exceptions in the current aggregate",
       "roleReference": "Role separation reference",
-      "quickAccess": "Management shortcuts"
+      "quickAccess": "Management shortcuts",
+      "trend": {
+        "title": "72-hour in-flight trend & SLA compliance",
+        "meta": "Actual {{hours}}-hour window · {{bucketHours}}-hour buckets",
+        "actualSource": "Computed from actual requests, completed decisions, due tasks and unresolved delivery updates.",
+        "compliance": "SLA compliance {{value}}%",
+        "complianceUnavailable": "No SLA-eligible tasks",
+        "chartLabel": "72-hour approval trend. Maximum in-flight {{maximum}}, submitted {{submittedRequests}}, completed {{completedRequests}}, SLA breaches {{slaBreaches}}.",
+        "series": {
+          "inFlightRequests": "In flight",
+          "submittedRequests": "Submitted",
+          "completedRequests": "Completed",
+          "slaBreaches": "SLA breaches"
+        }
+      }
     },
     "signatureDiagnostics": {
+      "nativeUnavailable": "Native Source13 signature diagnostics are not installed in the current authorization contract. No legacy metadata is promoted to readiness.",
+      "directiveTitle": "External legal signatures stay blocked until current provider evidence is verified",
+      "directiveBody": "Internal approval evidence and SELF attestation never prove an external legal signing ceremony. Provider account, callback trust, KMS and WORM evidence must all come from the current native source.",
+      "separationTitle": "Internal approval and external legal signatures are separate trust decisions",
+      "separationBody": "An approved DWP request does not receive an external-signature badge until the provider ceremony and immutable archive are independently verified.",
+      "phaseNumber": "Phase {{number}}",
+      "separation": {
+        "internalDecision": {
+          "title": "DWP internal decision",
+          "description": "Workflow decisions and SELF cryptographic evidence complete only the internal approval record."
+        },
+        "externalGate": {
+          "title": "External ceremony gate",
+          "description": "A policy-required provider, verified production account and current trust evidence are mandatory before handover."
+        },
+        "verifiedArchive": {
+          "title": "Verified callback and archive",
+          "description": "Authenticated completion evidence is bound to the signed artifact and a compliant WORM object version."
+        }
+      },
+      "secretBoundary": "Only hashes, bounded status codes and registered configuration references are displayed. Credential secrets and provider payloads never cross this screen boundary.",
+      "policyReadOnly": "Published and working policy facts from the current native source. Editing is unavailable until its dedicated governed command is installed.",
+      "providerDialogDescription": "Current registered configuration, gate guide, KMS/WORM inspection and policy evidence. Sensitive credentials are never returned.",
+      "historyDescription": "Recorded provider probes and policy versions for the currently selected tenant scope.",
+      "probeUnknown": "The probe response is uncertain. The original idempotency key and frozen source are retained; use the reconcile action instead of starting a new probe.",
+      "sourceChanged": "Authority, source revision or provider configuration changed. Refresh current facts before starting another probe.",
+      "probeSucceeded": "Signature provider diagnostics were refreshed.",
+      "kmsProbeSucceeded": "KMS binding diagnostics were refreshed.",
       "labels": {
         "title": "Signature provider diagnostics",
         "metrics": "Provider readiness",
@@ -1116,6 +1295,16 @@
         "diagnosticHistory": "Provider verification history",
         "historyContinuation": "More recorded history is available",
         "nextHistory": "Load next recorded history",
+        "historyAction": "Verification history",
+        "runAllProbes": "Run all provider probes",
+        "reconcileProbe": "Reconcile original probe",
+        "runKmsProbe": "Run KMS binding probe",
+        "reconcileKmsProbe": "Reconcile original KMS probe",
+        "viewRetentionPolicy": "View retention policy",
+        "runProviderProbe": "Run provider probe",
+        "viewConfiguration": "View configuration",
+        "guide": "Provider gate guide",
+        "officialDocumentation": "Open official provider documentation",
         "none": "None"
       },
       "states": {
@@ -1173,7 +1362,34 @@
         "INTERNAL_KEY": "Internal key",
         "CONFIGURED_KMS": "Configured KMS",
         "HARDWARE_TOKEN": "Hardware token"
+      },
+      "guideSections": {
+        "PROVIDER_CONFIGURATION": "Provider configuration"
+      },
+      "guideSteps": {
+        "REGISTER_CONFIGURATION": "Register a governed provider configuration",
+        "VERIFY_CREDENTIAL": "Verify the registered credential reference",
+        "RUN_PROBE": "Run a current production probe"
       }
+    },
+    "signaturePolicy": {
+      "title": "E-signature policy",
+      "description": "Govern external providers, trust verification, and immutable retention through independent review.",
+      "currentPolicyDescription": "Verify the published policy and working draft from the current native authority source.",
+      "initialize": "Initialize policy",
+      "initializeNotice": "No e-signature policy exists for this management scope. Signing remains blocked until a first proposal is independently reviewed.",
+      "sourceUnavailable": "The e-signature policy source could not be confirmed under the current authority.",
+      "editorDescription": "Edit provider and evidence requirements. A reviewer other than the maker must publish the saved proposal.",
+      "inspectWorm": "Inspect WORM evidence",
+      "artifactId": "Signature artifact ID",
+      "wormDescription": "Inspect whether the selected provider artifact is bound to a compliance WORM object.",
+      "wormTruth": "The inspection uses only current object-lock and retention evidence returned by storage and never infers readiness.",
+      "invalidRules": "Review required providers, classifications, retention days, and probe age.",
+      "commandSeparation": "Policy save, publish, and WORM inspection are recorded as separate audited commands.",
+      "commandUnknown": "The command outcome could not be confirmed. Preserve the original idempotency key and input while refreshing current state.",
+      "saved": "The e-signature policy proposal was saved.",
+      "published": "The e-signature policy was published after independent review.",
+      "wormCompleted": "The WORM evidence inspection completed."
     },
     "attachmentPolicy": {
       "title": "Attachment policy",
@@ -1243,6 +1459,11 @@
       "sourceChanged": "The original version changed. Your input is retained. Reload to continue.",
       "commandUnknown": "The result could not be verified. Refresh before retrying this command.",
       "review": "Review publication",
+      "assignedReview": "Assigned to publisher user {{reviewer}} at {{requestedAt}}.",
+      "reviewComment": "Independent review comment",
+      "reviewCommentHelp": "Record the evidence checked and the reason for this decision in 10 to 1,000 characters.",
+      "rejectReview": "Reject review",
+      "reviewRejected": "Publication review rejected.",
       "reviewExpired": "The publication review expired.",
       "independentCheckerRequired": "The maker and last editor cannot publish this version.",
       "publishedContinues": "The published version remains available while this draft is edited.",
@@ -1611,7 +1832,8 @@
         "SEGREGATION_OF_DUTIES": "Separation of duties",
         "DATA": "Evidence and data",
         "DECISION": "Decision control",
-        "SLA": "SLA control"
+        "SLA": "SLA control",
+        "IDENTITY": "Identity and access"
       },
       "enforcementModes": {
         "BLOCK": "Block",
@@ -1667,6 +1889,99 @@
       "backToRoute": "Back to route canvas",
       "readOnly": "Read-only definition",
       "draftEditing": "Unsaved draft"
+    },
+    "policyCreate": {
+      "open": "Create policy draft",
+      "title": "Create governed approval policy",
+      "description": "Create a versioned draft for independent review. This does not change the active runtime policy.",
+      "saving": "Creating draft",
+      "retryOriginal": "Retry original command",
+      "editPreserved": "Edit preserved input",
+      "makerChecker": "The creator remains the maker and cannot publish this draft. An independent publisher must verify and publish it.",
+      "originalLocked": "This attempt has been dispatched. Its policy key, type, rules, and idempotency key are locked until the result is resolved.",
+      "policyKey": "Policy key",
+      "policyKeyHelp": "Use a stable uppercase integration key. It cannot duplicate a current catalog entry.",
+      "policyType": "Policy type",
+      "addRule": "Add rule",
+      "ruleKey_one": "Rule {{count}} key",
+      "ruleKey_other": "Rule {{count}} key",
+      "ruleKind": "Value type",
+      "removeRule_one": "Remove rule {{count}}",
+      "removeRule_other": "Remove rule {{count}}",
+      "feedback": {
+        "DENIED": "Your current authority does not allow this policy draft to be created.",
+        "CONFLICT": "The policy catalog changed or this key now exists. Review the latest catalog before retrying.",
+        "UNAVAILABLE": "Current authority or the policy catalog could not be verified. No command was sent.",
+        "UNKNOWN": "The server result is unknown. Retry only the original locked command.",
+        "ERROR": "The policy draft could not be created. Review the preserved input."
+      },
+      "ruleKinds": {
+        "BOOLEAN": "True or false",
+        "INTEGER": "Integer",
+        "STRING": "Text",
+        "JSON": "Structured JSON"
+      },
+      "validation": {
+        "REQUIRED": "Enter a required value.",
+        "FORMAT": "Use the required key or value format.",
+        "TOO_LONG": "Shorten this value.",
+        "DUPLICATE": "Use a unique key.",
+        "INVALID_VALUE": "Enter a value valid for the selected type.",
+        "TOO_MANY": "Remove excess rules.",
+        "TOO_LARGE": "Reduce the structured value size."
+      }
+    },
+    "formPublishReview": {
+      "request": "Request publication review",
+      "reassign": "Change assigned reviewer",
+      "status": {
+        "title": "Publication review assignment",
+        "loading": "Checking publication review assignment",
+        "unavailable": "The current publication review assignment could not be verified.",
+        "reviewer": "Assigned publisher user ID {{id}}",
+        "values": {
+          "PENDING": "Review pending",
+          "PUBLISHED": "Published",
+          "REJECTED": "Changes requested",
+          "SUPERSEDED": "Superseded"
+        }
+      },
+      "dialog": {
+        "title": "Assign an independent publisher",
+        "description": "Send the exact current draft and evidence digest to one eligible publisher.",
+        "submit": "Send review request",
+        "submitting": "Sending request",
+        "makerChecker": "The latest editor cannot review or publish this draft. The selected publisher is revalidated immediately before commit.",
+        "reassignWarning": "A pending request already exists. Reassignment supersedes it only if its exact request ID and version are still current.",
+        "reviewer": "Independent publisher",
+        "reviewerHelp": "Search current tenant users with publication authority. The maker and latest editor are excluded.",
+        "searchHint": "Enter at least two characters to search",
+        "noCandidates": "No eligible independent publishers found",
+        "candidateError": "Eligible publishers could not be verified.",
+        "reason": "Review request reason",
+        "reasonHelp": "Explain the scope and evidence to verify in 10 to 1,000 characters.",
+        "retryOriginal": "Retry original request",
+        "editPreserved": "Edit preserved request"
+      },
+      "problem": {
+        "DENIED": "Publication-review authority was revoked. The request was not accepted.",
+        "CONFLICT": "The form, assigned request, or reviewer eligibility changed. Refresh before creating a new request.",
+        "UNAVAILABLE": "Current authority or source evidence could not be verified. No request was sent.",
+        "UNKNOWN": "The result is unknown. Retry only the original locked request.",
+        "CHANGED": "The form or review source changed. Refresh and review the preserved input."
+      },
+      "queue": {
+        "title": "My publication review queue",
+        "description": "Only requests explicitly assigned to your current identity are shown.",
+        "checking": "Checking current assignments",
+        "count_one": "{{count}} form awaits your review",
+        "count_other": "{{count}} forms await your review",
+        "open": "Open review queue",
+        "unavailable": "The assigned review queue could not be verified.",
+        "empty": "No assigned publication reviews",
+        "emptyDescription": "New requests appear here only after an independent designer assigns them to you.",
+        "truncated": "Only the first 50 assignments are shown. Complete or reject older reviews before continuing."
+      }
     },
     "formCatalog": {
       "metrics": {
@@ -1767,7 +2082,13 @@
       "selectForm": "Select a published form"
     },
     "retention": {
-      "originalAttempt": "The original input and command key are preserved. Refresh the source before explicitly retrying this same command; its input cannot be changed.",
+      "originalAttempt": "The original input and command key are preserved. Do not issue another command while its outcome is uncertain.",
+      "receiptOriginalPreserved": "The exact original command and idempotency key are preserved privately. Only its read-only transaction receipt can resolve this outcome; the mutation will not be retried.",
+      "receiptUnavailable": "The matching receipt route, source snapshot or current authority is unavailable. The original attempt remains UNKNOWN.",
+      "receiptLookup": "Check original command receipt",
+      "receiptCommitted": "The original command was committed with matching actor, authority, resource set, snapshot and request digest evidence.",
+      "receiptAccept": "Accept receipt and refresh",
+      "receiptReadError": "The receipt did not conclusively confirm the original command. No mutation was retried and the original attempt remains UNKNOWN.",
       "policyTitle": "Record retention policy",
       "recordTitle": "Record preservation and deletion",
       "recordDescription": "Current retention, legal hold and delivered-copy evidence",
@@ -1790,7 +2111,7 @@
       "intentNotDeletion": "Registering an intent does not delete the record. Legal holds, eligibility, owner execution and every declared consumer copy must be verified independently.",
       "saved": "The policy command completed. Current policy evidence is being refreshed.",
       "accepted": "The deletion intent was registered. This is not a deletion-completion confirmation.",
-      "commandUnknown": "The outcome or current authority is uncertain. Preserve the inputs and refresh the source before any new command.",
+      "commandUnknown": "The command outcome is uncertain. The original attempt is preserved and every new mutation is blocked until its matching committed receipt is verified.",
       "requestId": "Approval request ID",
       "inspect": "Inspect record",
       "inventoryRows": "Inventory rows",
@@ -1874,6 +2195,32 @@
         "OLDEST": "Oldest first",
         "NEWEST": "Newest first",
         "AVAILABLE": "Next available first"
+      }
+    },
+    "nativeOperations": {
+      "batchLimit": "Maximum 50 · all or nothing",
+      "selectTarget": "Select {{target}}",
+      "selectedCount_one": "{{count}} selected",
+      "selectedCount_other": "{{count}} selected",
+      "actions": {
+        "RETRY": "Retry selected",
+        "DEAD_LETTER": "Move to dead-letter",
+        "REPLAY": "Replay selected",
+        "RECONCILE": "Reconcile delivery state",
+        "TASK_REASSIGN": "Reassign task"
+      },
+      "dialog": {
+        "description_one": "Review {{count}} selected target. This command is not sent until verification is complete.",
+        "description_other": "Review {{count}} selected targets. This command is not sent until verification is complete.",
+        "atomic": "All selected targets commit together. If any target changed or is ineligible, none are changed.",
+        "reasonHelp": "Enter at least 10 characters. The reason is preserved in the durable operation receipt."
+      },
+      "attempts": {
+        "title": "Delivery attempts",
+        "automatic_one": "{{count}} automatic attempt",
+        "automatic_other": "{{count}} automatic attempts",
+        "manual_one": "{{count}} manual retry",
+        "manual_other": "{{count}} manual retries"
       }
     },
     "integrations": {

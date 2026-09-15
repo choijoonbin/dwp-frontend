@@ -9,7 +9,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_initialize_1"];
+        post: operations["approval_initialize_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -41,7 +41,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_publish_3"];
+        post: operations["approval_publish_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -55,7 +55,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_policy_2"];
+        get: operations["approval_policy_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -137,7 +137,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_publish_2"];
+        post: operations["approval_publish_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -151,7 +151,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_policy_1"];
+        get: operations["approval_policy_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -202,6 +202,38 @@ export interface paths {
         get: operations["approval_forms"];
         put?: never;
         post: operations["approval_createFormDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/publish-review-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_candidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/publish-review-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_queue"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -288,6 +320,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/forms/{formId}/publish-review-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_current"];
+        put?: never;
+        post: operations["approval_request_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/forms/{formId}/publish-review-requests/{requestId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/forms/{formId}/publish-reviewed": {
         parameters: {
             query?: never;
@@ -297,7 +361,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_publish_1"];
+        post: operations["approval_publish_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -343,7 +407,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_history"];
+        get: operations["approval_history_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -432,6 +496,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/operations/deliveries/dead-letter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_deadLetterBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/deliveries/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reconcile_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/deliveries/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_replayBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/deliveries/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_retryBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/events/{outboxId}/dead-letter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_deadLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/events/{outboxId}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_replay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/operations/events/{outboxId}/retry": {
         parameters: {
             query?: never;
@@ -442,6 +602,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["approval_retryIntegrationDelivery"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/tasks/reassign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reassignTasks"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/tasks/{taskId}/reassign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_reassignTask"];
         delete?: never;
         options?: never;
         head?: never;
@@ -473,7 +665,7 @@ export interface paths {
         };
         get: operations["approval_policies"];
         put?: never;
-        post?: never;
+        post: operations["approval_create_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -552,7 +744,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_claim_2"];
+        get: operations["approval_claim_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -570,7 +762,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_initialize"];
+        post: operations["approval_initialize_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -593,6 +785,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/retention/policies/{policyId}/draft-commands/{idempotencyKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_draft_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/policies/{policyId}/publication-commands/{idempotencyKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_publication"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/retention/policies/{policyId}/publish": {
         parameters: {
             query?: never;
@@ -602,7 +826,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_publish"];
+        post: operations["approval_publish_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -616,7 +840,23 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_policy"];
+        get: operations["approval_policy_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/policy-initialization-commands/{idempotencyKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_initialization"];
         put?: never;
         post?: never;
         delete?: never;
@@ -633,6 +873,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["approval_record"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/retention/records/{requestId}/claim-commands/{idempotencyKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_claim_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -667,6 +923,182 @@ export interface paths {
         get: operations["approval_signatures"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/diagnostic-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/diagnostics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_diagnostics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/kms/probes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_probeKms"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_initialize"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/policies/{policyId}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/policies/{policyId}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_policyHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/policies/{policyId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_policy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/probes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_probe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/providers/{providerId}/diagnostics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_provider"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/signatures/worm-inspections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_inspectWorm"];
         delete?: never;
         options?: never;
         head?: never;
@@ -714,6 +1146,22 @@ export interface paths {
         };
         get?: never;
         put: operations["approval_updateWorkflowDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/workflows/{workflowId}/planning-selection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_selection"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -794,7 +1242,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["approval_cancel_1"];
+        post: operations["approval_cancel_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -913,6 +1361,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/delegations/{delegationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_updateDelegation"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/delegations/{delegationId}/revoke": {
         parameters: {
             query?: never;
@@ -936,9 +1400,105 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_reconcile_1"];
+        get: operations["approval_reconcile_2"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/external-signature-requests/{signatureRequestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_get_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/external-signature-requests/{signatureRequestId}/artifacts/{artifactId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_artifact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/external-signature-requests/{signatureRequestId}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_audit_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/external-signature-requests/{signatureRequestId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_cancel_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/external-signature-requests/{signatureRequestId}/handovers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_handover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/external-signature-requests/{signatureRequestId}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_refresh"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1016,7 +1576,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["approval_request_1"];
+        get: operations["approval_request_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1169,6 +1729,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/requests/{requestId}/draft/migrate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_migrate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/draft/migration-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_preview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/requests/{requestId}/draft/recover": {
         parameters: {
             query?: never;
@@ -1233,6 +1825,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/requests/{requestId}/external-signature-context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_context_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/external-signature-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/requests/{requestId}/information-commands/{originalKey}/receipt": {
         parameters: {
             query?: never;
@@ -1260,6 +1884,23 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["approval_respondToInformationRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/requests/{requestId}/resubmit-draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create an owned resubmission draft from a terminal request */
+        post: operations["approval_resubmitDraft"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5111,6 +5752,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/notifications/v1/admin/policies/{policyId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_rejectPolicyDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/policies/{policyId}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_withdrawPolicyDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/notifications/v1/admin/suppressions": {
         parameters: {
             query?: never;
@@ -5152,7 +5825,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["notification_revoke"];
+        post: operations["notification_revoke_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5223,6 +5896,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/notifications/v1/admin/templates/{revisionId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_rejectTemplateDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/notifications/v1/admin/templates/{revisionId}/retire": {
         parameters: {
             query?: never;
@@ -5233,6 +5922,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["notification_retireTemplateDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/templates/{revisionId}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_withdrawTemplateDraft"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5457,6 +6162,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["notification_unsave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/me/delivery-endpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_list_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/me/delivery-endpoints/{endpointId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_revoke"];
         delete?: never;
         options?: never;
         head?: never;
@@ -14692,6 +15429,7 @@ export interface components {
             overdueTasks?: number;
             /** Format: int32 */
             publishedWorkflows?: number;
+            trend?: components["schemas"]["approval_Trend"];
         };
         approval_ApiResponseApprovalAttachmentAttachments: {
             correlationId?: string;
@@ -14783,6 +15521,56 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponseApprovalExternalSignatureArtifact: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalExternalSignatureArtifact"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalExternalSignatureAudit: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalExternalSignatureAudit"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalExternalSignatureContext: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalExternalSignatureContext"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalExternalSignatureReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalExternalSignatureReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalExternalSignatureRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalExternalSignatureRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseApprovalFormLifecycleDiff: {
             correlationId?: string;
             data?: components["schemas"]["approval_ApprovalFormLifecycleDiff"];
@@ -14833,6 +15621,46 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponseApprovalFormPublishReviewCandidates: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormPublishReviewCandidates"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormPublishReviewQueue: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormPublishReviewQueue"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormPublishReviewRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormPublishReviewRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalFormPublishReviewRequestState: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalFormPublishReviewRequestState"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseApprovalFormUserCandidates: {
             correlationId?: string;
             data?: components["schemas"]["approval_ApprovalFormUserCandidates"];
@@ -14876,6 +15704,16 @@ export interface components {
         approval_ApiResponseApprovalRetentionClaim: {
             correlationId?: string;
             data?: components["schemas"]["approval_ApprovalRetentionClaim"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalRetentionCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalRetentionCommandReceipt"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14943,6 +15781,66 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponseApprovalSignatureProviderDiagnostics: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureProviderDiagnostics"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureProviderHistory: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureProviderHistory"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureProviderOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureProviderOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureProviderPolicyHistory: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureProviderPolicyHistory"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureProviderPolicyView: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureProviderPolicyView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalSignatureProviderProbeRun: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalSignatureProviderProbeRun"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseApprovalSignatureReceipt: {
             correlationId?: string;
             data?: components["schemas"]["approval_ApprovalSignatureReceipt"];
@@ -14956,6 +15854,16 @@ export interface components {
         approval_ApiResponseApprovalWorkflowPlanningResult: {
             correlationId?: string;
             data?: components["schemas"]["approval_ApprovalWorkflowPlanningResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseApprovalWorkflowPlanningSelection: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_ApprovalWorkflowPlanningSelection"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15093,6 +16001,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponseOperationReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_OperationReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponsePageDraftRevision: {
             correlationId?: string;
             data?: components["schemas"]["approval_PageDraftRevision"];
@@ -15123,6 +16041,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponsePolicySummary: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_PolicySummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponsePreview: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_Preview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseRequestDetail: {
             correlationId?: string;
             data?: components["schemas"]["approval_RequestDetail"];
@@ -15146,6 +16084,26 @@ export interface components {
         approval_ApiResponseRequestTemplate: {
             correlationId?: string;
             data?: components["schemas"]["approval_RequestTemplate"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_Response"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseResult: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_Result"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15383,6 +16341,23 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApprovalDelegationUpdateRequest: {
+            /** Format: int64 */
+            delegateUserId: number;
+            /** Format: date-time */
+            endsAt: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reason: string;
+            scopeType: string;
+            /** Format: date-time */
+            startsAt: string;
+            /**
+             * Format: uuid
+             * @description Immutable published workflow identity for WORKFLOW scope
+             */
+            workflowId?: string;
+        };
         approval_ApprovalDocumentAppendComment: {
             /** Format: int64 */
             expectedCommentsVersion: number;
@@ -15606,6 +16581,116 @@ export interface components {
             /** Format: int64 */
             taskVersion?: number;
         };
+        approval_ApprovalExternalSignatureArtifact: {
+            /** Format: uuid */
+            artifactId?: string;
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceSha256?: string;
+            /** @enum {string} */
+            kind?: "UNSIGNED_PDF" | "SIGNED_PDF" | "CERTIFICATE" | "AUDIT_TRAIL" | "TSA";
+            mediaType?: string;
+            objectVersionSha256?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+            /** Format: date-time */
+            retainUntil?: string;
+            sha256?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            storageLocatorSha256?: string;
+        };
+        approval_ApprovalExternalSignatureAudit: {
+            items?: components["schemas"]["approval_ApprovalExternalSignatureEvent"][];
+            truncated?: boolean;
+        };
+        approval_ApprovalExternalSignatureCommandInput: {
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            idempotencyKey?: string;
+        };
+        approval_ApprovalExternalSignatureContext: {
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** @enum {string} */
+            gateState?: "NOT_EVALUATED" | "BLOCKED" | "ELIGIBLE";
+            policy?: components["schemas"]["approval_ApprovalSignatureProviderPolicy"];
+            providers?: components["schemas"]["approval_ApprovalSignatureProviderCard"][];
+            reasonCodes?: string[];
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            source?: components["schemas"]["approval_ApprovalExternalSignatureSource"];
+        };
+        approval_ApprovalExternalSignatureCreateInput: {
+            /** Format: int64 */
+            expectedRequestVersion?: number;
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            idempotencyKey?: string;
+            provider?: components["schemas"]["approval_ApprovalSignatureProviderTarget"];
+        };
+        approval_ApprovalExternalSignatureEvent: {
+            action?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceSha256?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            reasonCodes?: string[];
+            /** Format: int64 */
+            sequence?: number;
+            /** @enum {string} */
+            state?: "PREPARED" | "HANDOVER_PENDING" | "OUT_FOR_SIGNATURE" | "COMPLETION_PENDING" | "COMPLETED_VERIFIED" | "CANCEL_PENDING" | "CANCELLED" | "FAILED" | "UNKNOWN_REMOTE_OUTCOME";
+        };
+        approval_ApprovalExternalSignatureReceipt: {
+            /** Format: date-time */
+            committedAt?: string;
+            outcome?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            signatureRequest?: components["schemas"]["approval_ApprovalExternalSignatureRequest"];
+        };
+        approval_ApprovalExternalSignatureRequest: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            policyId?: string;
+            policySha256?: string;
+            /** Format: uuid */
+            policyVersionId?: string;
+            provider?: components["schemas"]["approval_ApprovalSignatureProviderTarget"];
+            reasonCodes?: string[];
+            remoteReferenceSha256?: string;
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            /** Format: uuid */
+            signatureRequestId?: string;
+            source?: components["schemas"]["approval_ApprovalExternalSignatureSource"];
+            /** @enum {string} */
+            state?: "PREPARED" | "HANDOVER_PENDING" | "OUT_FOR_SIGNATURE" | "COMPLETION_PENDING" | "COMPLETED_VERIFIED" | "CANCEL_PENDING" | "CANCELLED" | "FAILED" | "UNKNOWN_REMOTE_OUTCOME";
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalExternalSignatureSource: {
+            dataClassification?: string;
+            /** Format: uuid */
+            formVersionId?: string;
+            /** Format: int32 */
+            payloadRevision?: number;
+            payloadSha256?: string;
+            /** Format: uuid */
+            requestId?: string;
+            /** Format: int64 */
+            requestVersion?: number;
+            resourceSetKey?: string;
+            sourceSha256?: string;
+            /** Format: uuid */
+            workflowVersionId?: string;
+        };
         approval_ApprovalFormLifecycleAvailabilityChange: {
             /** Format: int64 */
             expectedFormRevision: number;
@@ -15657,8 +16742,13 @@ export interface components {
             /** Format: int64 */
             expectedFormRevision: number;
             /** Format: int64 */
+            expectedReviewRequestVersion: number;
+            /** Format: int64 */
             expectedWorkspaceRevision: number;
+            reviewComment: string;
             reviewContentDigest: string;
+            /** Format: uuid */
+            reviewRequestId: string;
             schemaSha256: string;
         };
         approval_ApprovalFormLifecycleReview: {
@@ -15678,6 +16768,7 @@ export interface components {
             /** Format: int64 */
             makerUserId?: number;
             reviewContentDigest?: string;
+            reviewRequest?: components["schemas"]["approval_ApprovalFormPublishReviewRequest"];
             schemaSha256?: string;
             /** Format: int64 */
             workspaceRevision?: number;
@@ -15757,6 +16848,101 @@ export interface components {
             success?: boolean;
             /** Format: date-time */
             timestamp?: string;
+        };
+        approval_ApprovalFormPublishReviewCandidate: {
+            displayName?: string;
+            email?: string;
+            jobTitle?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
+        approval_ApprovalFormPublishReviewCandidates: {
+            /** Format: date-time */
+            authorityValidUntil?: string;
+            candidates?: components["schemas"]["approval_ApprovalFormPublishReviewCandidate"][];
+            decisionRevision?: string;
+            mayBeTruncated?: boolean;
+        };
+        approval_ApprovalFormPublishReviewQueue: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["approval_ApprovalFormPublishReviewQueueItem"][];
+            mayBeTruncated?: boolean;
+        };
+        approval_ApprovalFormPublishReviewQueueItem: {
+            formKey?: string;
+            formNameEn?: string;
+            formNameKo?: string;
+            request?: components["schemas"]["approval_ApprovalFormPublishReviewRequest"];
+        };
+        approval_ApprovalFormPublishReviewRejectInput: {
+            /** Format: int64 */
+            expectedFormRevision: number;
+            /** Format: int64 */
+            expectedReviewRequestVersion: number;
+            /** Format: int64 */
+            expectedWorkspaceRevision: number;
+            reason: string;
+        };
+        approval_ApprovalFormPublishReviewRequest: {
+            /** Format: uuid */
+            basePublishedFormVersionId?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            /** Format: int64 */
+            decidedBy?: number;
+            decisionReason?: string;
+            /** Format: uuid */
+            draftFormVersionId?: string;
+            /** Format: uuid */
+            formId?: string;
+            /** Format: int64 */
+            formRevision?: number;
+            /** Format: int64 */
+            lastEditorUserId?: number;
+            /** Format: int64 */
+            makerUserId?: number;
+            requestReason?: string;
+            /** Format: date-time */
+            requestedAt?: string;
+            reviewContentDigest?: string;
+            /** Format: uuid */
+            reviewRequestId?: string;
+            /** Format: uuid */
+            reviewerPersonPublicId?: string;
+            /** Format: int64 */
+            reviewerUserId?: number;
+            schemaSha256?: string;
+            status?: string;
+            /** Format: int64 */
+            version?: number;
+            /** Format: int64 */
+            workspaceRevision?: number;
+        };
+        approval_ApprovalFormPublishReviewRequestInput: {
+            /** Format: uuid */
+            basePublishedVersionId?: string;
+            /** Format: uuid */
+            draftFormVersionId: string;
+            /** Format: int64 */
+            expectedFormRevision: number;
+            /** Format: uuid */
+            expectedReviewRequestId?: string;
+            /** Format: int64 */
+            expectedReviewRequestVersion?: number;
+            /** Format: int64 */
+            expectedWorkspaceRevision: number;
+            reason: string;
+            /** Format: uuid */
+            reviewerPersonPublicId: string;
+            /** Format: int64 */
+            reviewerUserId: number;
+            schemaSha256: string;
+        };
+        approval_ApprovalFormPublishReviewRequestState: {
+            request?: components["schemas"]["approval_ApprovalFormPublishReviewRequest"];
         };
         approval_ApprovalFormUserCandidate: {
             displayName?: string;
@@ -16381,6 +17567,33 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        approval_ApprovalRetentionCommandReceipt: {
+            /** Format: int64 */
+            actorUserId?: number;
+            /** Format: uuid */
+            commandId?: string;
+            /** Format: date-time */
+            committedAt?: string;
+            idempotencyKey?: string;
+            /** @enum {string} */
+            operation?: "INITIALIZE_POLICY" | "SAVE_POLICY" | "PUBLISH_POLICY" | "CLAIM_RECORD";
+            /** @enum {string} */
+            originAuthorityProfile?: "POLICY_UPDATE_TRUSTED" | "POLICY_PUBLISH_SIGNED_HIGH_INDEPENDENT_CHECKER" | "RETENTION_RECORD_EXECUTE_SIGNED_HIGH";
+            /** Format: int64 */
+            originalExpectedVersion?: number | null;
+            /** Format: uuid */
+            originalTargetId?: string | null;
+            /** @enum {string} */
+            profileVersion?: "RETENTION_COMMAND_RECEIPT_STEP_UP_TYPED_JSON_V1";
+            requestBodySha256?: string;
+            resourceSetKey?: string;
+            /** Format: uuid */
+            resultReferenceId?: string;
+            /** Format: int64 */
+            resultVersion?: number;
+            /** @enum {string} */
+            status?: "COMMITTED";
+        };
         approval_ApprovalRetentionCreateClaim: {
             /** Format: int64 */
             expectedHoldVersion: number;
@@ -16591,6 +17804,388 @@ export interface components {
             sourceDigest: string;
         };
         approval_ApprovalSignatureNullEvidence: null;
+        approval_ApprovalSignatureProviderCard: {
+            adapterInstalled?: boolean;
+            checks?: components["schemas"]["approval_ApprovalSignatureProviderCheck"][];
+            configurationRegistered?: boolean;
+            credentialRegistered?: boolean;
+            credentialVerified?: boolean;
+            displayName?: string;
+            /** @enum {string} */
+            environment?: "UNCONFIGURED" | "INTERNAL" | "SANDBOX" | "PRODUCTION";
+            gateReasonCodes?: string[];
+            /** @enum {string} */
+            kind?: "INTERNAL" | "DOCUSIGN" | "ADOBE_SIGN" | "CUSTOM";
+            /** Format: date-time */
+            lastProbeAt?: string;
+            /** Format: uuid */
+            providerId?: string;
+            providerSha256?: string;
+            /** Format: int64 */
+            providerVersion?: number;
+            /** @enum {string} */
+            readiness?: "MISSING_INTERNAL" | "DISABLED" | "CONFIGURATION_REQUIRED" | "NOT_VERIFIED" | "DEGRADED" | "VERIFIED_INTERNAL_KEY" | "VERIFIED_SANDBOX" | "VERIFIED_PRODUCTION";
+            requiredByPolicy?: boolean;
+        };
+        approval_ApprovalSignatureProviderCheck: {
+            checkKey?: string;
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceSha256?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            reasonCodes?: string[];
+            /** @enum {string} */
+            state?: "PASS" | "FAIL" | "NOT_CONFIGURED" | "NOT_OBSERVED" | "NOT_APPLICABLE";
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        approval_ApprovalSignatureProviderDiagnostics: {
+            gateReasons?: string[];
+            guide?: components["schemas"]["approval_ApprovalSignatureProviderGuide"];
+            kms?: components["schemas"]["approval_ApprovalSignatureProviderKms"];
+            phases?: components["schemas"]["approval_ApprovalSignatureProviderPhase"][];
+            policy?: components["schemas"]["approval_ApprovalSignatureProviderPolicy"];
+            provider?: components["schemas"]["approval_ApprovalSignatureProviderCard"];
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            settings?: components["schemas"]["approval_ApprovalSignatureProviderSettings"];
+            worm?: components["schemas"]["approval_ApprovalSignatureProviderWorm"];
+        };
+        approval_ApprovalSignatureProviderGuide: {
+            sections?: components["schemas"]["approval_ApprovalSignatureProviderGuideSection"][];
+        };
+        approval_ApprovalSignatureProviderGuideSection: {
+            officialDocumentationLinks?: string[];
+            sectionKey?: string;
+            stepKeys?: string[];
+        };
+        approval_ApprovalSignatureProviderHistory: {
+            items?: components["schemas"]["approval_ApprovalSignatureProviderHistoryItem"][];
+            nextCursor?: string;
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            truncated?: boolean;
+        };
+        approval_ApprovalSignatureProviderHistoryItem: {
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceSha256?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            /** Format: uuid */
+            probeRunId?: string;
+            /** Format: uuid */
+            providerId?: string;
+            reasonCodes?: string[];
+            sourceRevision?: string;
+            sourceSha256?: string;
+            /** @enum {string} */
+            state?: "PENDING" | "RUNNING" | "COMPLETE" | "PARTIAL" | "UNKNOWN_REMOTE_OUTCOME";
+        };
+        approval_ApprovalSignatureProviderKms: {
+            algorithm?: string;
+            /** @enum {string} */
+            backend?: "NONE" | "INTERNAL_JCA" | "AWS_KMS" | "PKCS11";
+            /** Format: date-time */
+            checkedAt?: string;
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceSha256?: string;
+            keySha256?: string;
+            reasonCodes?: string[];
+            source?: string;
+            /** @enum {string} */
+            state?: "PASS" | "FAIL" | "NOT_CONFIGURED" | "NOT_OBSERVED" | "NOT_APPLICABLE";
+            /** Format: date-time */
+            validUntil?: string;
+            /** @enum {string} */
+            verificationKind?: "NONE" | "INTERNAL_KEY" | "CONFIGURED_KMS" | "HARDWARE_TOKEN";
+        };
+        approval_ApprovalSignatureProviderKmsProbeInput: {
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            idempotencyKey?: string;
+            target?: components["schemas"]["approval_ApprovalSignatureProviderTarget"];
+        };
+        approval_ApprovalSignatureProviderKpis: {
+            /** Format: int32 */
+            configuredProviderCount?: number;
+            /** @enum {string} */
+            externalGateState?: "NOT_EVALUATED" | "BLOCKED" | "ELIGIBLE";
+            gateReasonCodes?: string[];
+            /** Format: date-time */
+            lastProbeAt?: string;
+            /** Format: int64 */
+            probeIntervalSeconds?: number;
+            /** Format: int32 */
+            registeredProviderCount?: number;
+            /** Format: int32 */
+            requiredProviderCount?: number;
+            requiredProviderKinds?: ("INTERNAL" | "DOCUSIGN" | "ADOBE_SIGN" | "CUSTOM")[];
+            /** Format: int32 */
+            verifiedProductionProviderCount?: number;
+        };
+        approval_ApprovalSignatureProviderOverview: {
+            kms?: components["schemas"]["approval_ApprovalSignatureProviderKms"];
+            kpis?: components["schemas"]["approval_ApprovalSignatureProviderKpis"];
+            phases?: components["schemas"]["approval_ApprovalSignatureProviderPhase"][];
+            policy?: components["schemas"]["approval_ApprovalSignatureProviderPolicy"];
+            providers?: components["schemas"]["approval_ApprovalSignatureProviderCard"][];
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            worm?: components["schemas"]["approval_ApprovalSignatureProviderWorm"];
+        };
+        approval_ApprovalSignatureProviderPhase: {
+            checkKeys?: string[];
+            evidenceIds?: string[];
+            /** @enum {string} */
+            gateState?: "NOT_EVALUATED" | "BLOCKED" | "ELIGIBLE";
+            /** @enum {string} */
+            phaseKind?: "INTERNAL_DECISION" | "EXTERNAL_HANDOVER" | "VERIFIED_COMPLETION";
+            reasonCodes?: string[];
+        };
+        approval_ApprovalSignatureProviderPolicy: {
+            /** Format: int64 */
+            maxProbeAgeSeconds?: number;
+            pin?: components["schemas"]["approval_ApprovalSignatureProviderSourcePin"];
+            /** Format: int64 */
+            probeIntervalSeconds?: number;
+            requiredProviderKinds?: ("INTERNAL" | "DOCUSIGN" | "ADOBE_SIGN" | "CUSTOM")[];
+            /** Format: int64 */
+            retentionFloorSeconds?: number;
+            /** @enum {string} */
+            sourceState?: "AVAILABLE" | "MISSING_INTERNAL" | "NOT_CONFIGURED" | "UNRECORDED";
+        };
+        approval_ApprovalSignatureProviderPolicyDraft: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            lastEditorPersonPublicId?: string;
+            /** Format: uuid */
+            originalMakerPersonPublicId?: string;
+            /** Format: int64 */
+            revision?: number;
+            rules?: components["schemas"]["approval_ApprovalSignatureProviderPolicyRules"];
+            rulesSha256?: string;
+            /** Format: uuid */
+            versionId?: string;
+        };
+        approval_ApprovalSignatureProviderPolicyDraftInput: {
+            /** Format: uuid */
+            expectedDraftVersionId?: string;
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            idempotencyKey?: string;
+            rules?: components["schemas"]["approval_ApprovalSignatureProviderPolicyRules"];
+        };
+        approval_ApprovalSignatureProviderPolicyHistory: {
+            items?: components["schemas"]["approval_ApprovalSignatureProviderPolicyHistoryItem"][];
+            nextCursor?: string;
+            /** Format: uuid */
+            policyId?: string;
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            truncated?: boolean;
+        };
+        approval_ApprovalSignatureProviderPolicyHistoryItem: {
+            /** Format: uuid */
+            checkerPersonPublicId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            lastEditorPersonPublicId?: string;
+            /** Format: uuid */
+            originalMakerPersonPublicId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            reviewContentSha256?: string;
+            /** Format: uuid */
+            reviewEvidenceId?: string;
+            /** Format: int64 */
+            revision?: number;
+            rules?: components["schemas"]["approval_ApprovalSignatureProviderPolicyRules"];
+            rulesSha256?: string;
+            state?: string;
+            /** Format: uuid */
+            versionId?: string;
+        };
+        approval_ApprovalSignatureProviderPolicyInitializeInput: {
+            expectedAbsent?: boolean;
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            idempotencyKey?: string;
+            rules?: components["schemas"]["approval_ApprovalSignatureProviderPolicyRules"];
+        };
+        approval_ApprovalSignatureProviderPolicyPublishInput: {
+            /** Format: uuid */
+            expectedDraftVersionId?: string;
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            idempotencyKey?: string;
+            reviewContentSha256?: string;
+        };
+        approval_ApprovalSignatureProviderPolicyPublishReview: {
+            /** Format: int64 */
+            draftRevision?: number;
+            /** Format: uuid */
+            draftVersionId?: string;
+            /** @enum {string} */
+            eligibility?: "NOT_EVALUATED" | "BLOCKED" | "ELIGIBLE";
+            /** Format: int64 */
+            policyVersion?: number;
+            reasonCodes?: string[];
+            reviewContentSha256?: string;
+            stepUpRequired?: boolean;
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        approval_ApprovalSignatureProviderPolicyPublished: {
+            /** Format: uuid */
+            checkerPersonPublicId?: string;
+            /** Format: uuid */
+            lastEditorPersonPublicId?: string;
+            /** Format: uuid */
+            originalMakerPersonPublicId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            reviewContentSha256?: string;
+            /** Format: uuid */
+            reviewEvidenceId?: string;
+            /** Format: int64 */
+            revision?: number;
+            rules?: components["schemas"]["approval_ApprovalSignatureProviderPolicyRules"];
+            rulesSha256?: string;
+            /** Format: uuid */
+            versionId?: string;
+        };
+        approval_ApprovalSignatureProviderPolicyRules: {
+            allowedClassifications?: string[];
+            configurationBinding?: components["schemas"]["approval_ApprovalSignatureProviderSourcePin"];
+            /** Format: int64 */
+            minimumRetentionDays?: number;
+            /** Format: int64 */
+            probeMaxAgeSeconds?: number;
+            requireAuthenticatedWebhook?: boolean;
+            requireComplianceWormStorage?: boolean;
+            requireFreshRevocationEvidence?: boolean;
+            requireTrustedCertificateChain?: boolean;
+            requireTrustedTimestamp?: boolean;
+            requireVerifiedProviderAccount?: boolean;
+            requiredProviderKinds?: ("INTERNAL" | "DOCUSIGN" | "ADOBE_SIGN" | "CUSTOM")[];
+            signingEnabled?: boolean;
+            /** Format: uuid */
+            trustBundleId?: string;
+        };
+        approval_ApprovalSignatureProviderPolicyView: {
+            /** Format: uuid */
+            policyId?: string;
+            publishReview?: components["schemas"]["approval_ApprovalSignatureProviderPolicyPublishReview"];
+            published?: components["schemas"]["approval_ApprovalSignatureProviderPolicyPublished"];
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            /** Format: int64 */
+            version?: number;
+            workingDraft?: components["schemas"]["approval_ApprovalSignatureProviderPolicyDraft"];
+        };
+        approval_ApprovalSignatureProviderProbeInput: {
+            allProviders?: boolean;
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            idempotencyKey?: string;
+            targets?: components["schemas"]["approval_ApprovalSignatureProviderTarget"][];
+        };
+        approval_ApprovalSignatureProviderProbeResult: {
+            checks?: components["schemas"]["approval_ApprovalSignatureProviderCheck"][];
+            /** Format: date-time */
+            cooldownUntil?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            originalTarget?: components["schemas"]["approval_ApprovalSignatureProviderTarget"];
+            /** @enum {string} */
+            outcome?: "PASS" | "FAIL" | "INELIGIBLE" | "COOLDOWN" | "UNKNOWN_REMOTE_OUTCOME";
+            /** Format: uuid */
+            providerId?: string;
+            reasonCodes?: string[];
+        };
+        approval_ApprovalSignatureProviderProbeRun: {
+            /** Format: date-time */
+            completedAt?: string;
+            originalBodySha256?: string;
+            originalTargets?: components["schemas"]["approval_ApprovalSignatureProviderTarget"][];
+            /** Format: uuid */
+            probeRunId?: string;
+            providerResults?: components["schemas"]["approval_ApprovalSignatureProviderProbeResult"][];
+            scope?: components["schemas"]["approval_ApprovalSignatureProviderScope"];
+            /** Format: date-time */
+            startedAt?: string;
+            /** @enum {string} */
+            state?: "PENDING" | "RUNNING" | "COMPLETE" | "PARTIAL" | "UNKNOWN_REMOTE_OUTCOME";
+        };
+        approval_ApprovalSignatureProviderScope: {
+            contextScopeKey?: string;
+            decisionRevision?: string;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            registrySha256?: string;
+            resourceSetKey?: string;
+            sourceRevision?: string;
+            sourceSha256?: string;
+        };
+        approval_ApprovalSignatureProviderSettings: {
+            accountBindingSha256?: string;
+            callbackAuthenticationMode?: string;
+            configuration?: components["schemas"]["approval_ApprovalSignatureProviderSourcePin"];
+            configurationOwner?: string;
+            credentialRegistered?: boolean;
+            endpointOriginSha256?: string;
+            /** @enum {string} */
+            environment?: "UNCONFIGURED" | "INTERNAL" | "SANDBOX" | "PRODUCTION";
+        };
+        approval_ApprovalSignatureProviderSourcePin: {
+            sha256?: string;
+            /** Format: uuid */
+            sourceId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        approval_ApprovalSignatureProviderTarget: {
+            expectedConfiguration?: components["schemas"]["approval_ApprovalSignatureProviderSourcePin"];
+            expectedProviderSha256?: string;
+            /** Format: int64 */
+            expectedProviderVersion?: number;
+            /** Format: uuid */
+            providerId?: string;
+        };
+        approval_ApprovalSignatureProviderWorm: {
+            /** Format: date-time */
+            checkedAt?: string;
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceSha256?: string;
+            legalHold?: boolean;
+            /** @enum {string} */
+            objectLockMode?: "NONE" | "GOVERNANCE" | "COMPLIANCE";
+            objectVersionSha256?: string;
+            policy?: components["schemas"]["approval_ApprovalSignatureProviderSourcePin"];
+            reasonCodes?: string[];
+            /** Format: date-time */
+            retainUntil?: string;
+            /** Format: int64 */
+            retentionFloorSeconds?: number;
+            /** @enum {string} */
+            state?: "PASS" | "FAIL" | "NOT_CONFIGURED" | "NOT_OBSERVED" | "NOT_APPLICABLE";
+            storageLocatorSha256?: string;
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        approval_ApprovalSignatureProviderWormInspectionInput: {
+            /** Format: uuid */
+            artifactId?: string;
+            expectedSourceRevision?: string;
+            expectedSourceSha256?: string;
+            idempotencyKey?: string;
+            target?: components["schemas"]["approval_ApprovalSignatureProviderTarget"];
+        };
         approval_ApprovalSignatureReceipt: {
             ceremony: components["schemas"]["approval_ApprovalSignatureCeremony"];
             /** Format: uuid */
@@ -16673,6 +18268,22 @@ export interface components {
             workflowRevision: number;
             workflowSha256: string;
         };
+        approval_ApprovalWorkflowPlanningFormPin: {
+            /** Format: uuid */
+            formId: string;
+            /** Format: int64 */
+            formRevision: number;
+            formSchemaSha256: string;
+            /** Format: int32 */
+            formVersion: number;
+            /** Format: uuid */
+            formVersionId: string;
+        };
+        approval_ApprovalWorkflowPlanningPolicyPin: {
+            sha256: string;
+            /** Format: int64 */
+            version: number;
+        };
         approval_ApprovalWorkflowPlanningResult: {
             authorityRevision: string;
             /** Format: date-time */
@@ -16685,6 +18296,22 @@ export interface components {
             runtimeEligibility: "NOT_EVALUATED";
             snapshotSha256: string;
             stages: components["schemas"]["approval_ApprovalWorkflowPlanningStage"][];
+        };
+        approval_ApprovalWorkflowPlanningSelection: {
+            forms: components["schemas"]["approval_ApprovalWorkflowPlanningFormPin"][];
+            /** Format: date-time */
+            generatedAt: string;
+            managementResourceSetKey: string;
+            policy: components["schemas"]["approval_ApprovalWorkflowPlanningPolicyPin"];
+            /** Format: uuid */
+            selectedFormId: string | null;
+            /** Format: uuid */
+            workflowId: string;
+            /** Format: int64 */
+            workflowRevision: number;
+            workflowSha256: string;
+            /** Format: uuid */
+            workflowVersionId: string;
         };
         approval_ApprovalWorkflowPlanningStage: {
             /** Format: int32 */
@@ -16716,6 +18343,44 @@ export interface components {
             key?: string;
             state?: string;
         };
+        approval_Binding: {
+            /** Format: uuid */
+            formId?: string;
+            formNameEn?: string;
+            formNameKo?: string;
+            formSchemaSha256?: string;
+            /** Format: int32 */
+            formVersion?: number;
+            /** Format: uuid */
+            formVersionId?: string;
+            workflowDefinitionSha256?: string;
+            /** Format: uuid */
+            workflowId?: string;
+            workflowNameEn?: string;
+            workflowNameKo?: string;
+            /** Format: int32 */
+            workflowVersion?: number;
+            /** Format: uuid */
+            workflowVersionId?: string;
+        };
+        approval_Bucket: {
+            /** Format: int32 */
+            completedRequests?: number;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: int32 */
+            inFlightRequests?: number;
+            /** Format: int32 */
+            slaBreaches?: number;
+            /** Format: int32 */
+            slaEligibleTasks?: number;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: int32 */
+            submittedRequests?: number;
+            /** Format: int32 */
+            unresolvedDeliveryUpdates?: number;
+        };
         approval_ContentAccess: {
             /** Format: date-time */
             evaluatedAt?: string;
@@ -16723,6 +18388,19 @@ export interface components {
             reason?: "CURRENT_AUTHORITY_VERIFIED" | "LEGACY_CURRENT_AUTHORITY_VERIFIED" | "CURRENT_AUTHORITY_UNAVAILABLE" | "CURRENT_IDENTITY_INACTIVE" | "CURRENT_PERMISSION_REVOKED" | "TASK_NOT_AVAILABLE" | "DELEGATION_AUTHORITY_REVOKED" | "CURRENT_ROLE_REVOKED";
             /** @enum {string} */
             state?: "FULL" | "REDACTED";
+        };
+        approval_Create: {
+            changeReason: string;
+            enforcementMode: string;
+            lifecycleState: string;
+            nameEn: string;
+            nameKo: string;
+            policyKey: string;
+            policyType: string;
+            rule: {
+                [key: string]: unknown;
+            };
+            severity: string;
         };
         approval_CreateDelegationRequest: {
             /** Format: int64 */
@@ -16857,6 +18535,18 @@ export interface components {
              * @description Deprecated display-only workflow key; authorize by workflowId
              */
             workflowKey?: string;
+        };
+        approval_DeliveryBatchCommand: {
+            items: components["schemas"]["approval_DeliveryTarget"][];
+            /** Format: uuid */
+            operationId: string;
+            reason: string;
+        };
+        approval_DeliveryTarget: {
+            /** Format: int64 */
+            expectedVersion?: number;
+            /** Format: uuid */
+            targetId: string;
         };
         approval_DraftCommand: {
             /** Format: int64 */
@@ -17042,6 +18732,49 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        approval_ItemReceipt: {
+            /** Format: int64 */
+            assigneeUserId?: number;
+            /** Format: int64 */
+            committedVersion?: number;
+            /** Format: int64 */
+            previousVersion?: number;
+            /** Format: uuid */
+            requestId?: string;
+            statusAfter?: string;
+            statusBefore?: string;
+            /** Format: uuid */
+            targetId?: string;
+        };
+        approval_MigrateRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            reason: string;
+            /** Format: uuid */
+            targetFormId: string;
+            targetFormSchemaSha256: string;
+            /** Format: uuid */
+            targetFormVersionId: string;
+            targetWorkflowDefinitionSha256: string;
+            /** Format: uuid */
+            targetWorkflowId: string;
+            /** Format: uuid */
+            targetWorkflowVersionId: string;
+        };
+        approval_OperationReceipt: {
+            /** Format: int64 */
+            actorUserId?: number;
+            commandMode?: string;
+            /** Format: date-time */
+            committedAt?: string;
+            /** Format: int32 */
+            itemCount?: number;
+            items?: components["schemas"]["approval_ItemReceipt"][];
+            managementResourceSetKey?: string;
+            operation?: string;
+            /** Format: uuid */
+            operationId?: string;
+        };
         approval_OperationSignal: {
             /** Format: int32 */
             count?: number;
@@ -17151,6 +18884,22 @@ export interface components {
             /** Format: int32 */
             versionNumber?: number;
         };
+        approval_Preview: {
+            droppedFields?: string[];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            incompatibleFields?: string[];
+            mappedFields?: string[];
+            migrationRequired?: boolean;
+            requiredFieldsToComplete?: string[];
+            routeCompatible?: boolean;
+            source?: components["schemas"]["approval_Binding"];
+            /** Format: uuid */
+            sourceRequestId?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
+            target?: components["schemas"]["approval_Binding"];
+        };
         approval_PublishFormRequest: {
             /** Format: int64 */
             expectedVersion: number;
@@ -17202,6 +18951,9 @@ export interface components {
             payloadSha256: string;
             pins: components["schemas"]["approval_WorkflowRuntimePins"];
         };
+        approval_Reason: {
+            reason: string;
+        };
         approval_RecoverDraft: {
             /** Format: int64 */
             expectedVersion: number;
@@ -17209,6 +18961,10 @@ export interface components {
             reason: string;
             /** Format: int32 */
             revision: number;
+        };
+        approval_Request: {
+            /** Format: int64 */
+            expectedVersion: number;
         };
         approval_RequestDetail: {
             /** Format: uuid */
@@ -17264,6 +19020,25 @@ export interface components {
             };
             workflow?: components["schemas"]["approval_WorkflowSummary"];
         };
+        approval_Response: {
+            draft?: components["schemas"]["approval_RequestSummary"];
+            /** Format: uuid */
+            sourceRequestId?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
+        };
+        approval_Result: {
+            draft?: components["schemas"]["approval_RequestSummary"];
+            droppedFields?: string[];
+            incompatibleFields?: string[];
+            mappedFields?: string[];
+            requiredFieldsToComplete?: string[];
+            /** Format: uuid */
+            sourceRequestId?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
+            target?: components["schemas"]["approval_Binding"];
+        };
         approval_RetryEligibility: {
             eligible?: boolean;
             /** Format: date-time */
@@ -17302,6 +19077,29 @@ export interface components {
             selfApprovalBlocked?: boolean;
             task?: components["schemas"]["approval_TaskSummary"];
             timeline?: components["schemas"]["approval_TimelineEvent"][];
+        };
+        approval_TaskReassignment: {
+            /** Format: uuid */
+            assigneePersonPublicId: string;
+            /** Format: int64 */
+            assigneeUserId?: number;
+            reason: string;
+        };
+        approval_TaskReassignmentBatchCommand: {
+            items: components["schemas"]["approval_TaskReassignmentTarget"][];
+            /** Format: uuid */
+            operationId: string;
+            reason: string;
+        };
+        approval_TaskReassignmentTarget: {
+            /** Format: uuid */
+            assigneePersonPublicId: string;
+            /** Format: int64 */
+            assigneeUserId?: number;
+            /** Format: int64 */
+            expectedVersion?: number;
+            /** Format: uuid */
+            targetId: string;
         };
         approval_TaskSummary: {
             dataClassification?: string;
@@ -17346,6 +19144,15 @@ export interface components {
             stepName?: string;
             /** Format: int32 */
             stepSequence?: number;
+        };
+        approval_Trend: {
+            /** Format: int32 */
+            bucketHours?: number;
+            buckets?: components["schemas"]["approval_Bucket"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int32 */
+            windowHours?: number;
         };
         approval_UpdateDraftRequest: {
             /** Format: int64 */
@@ -22798,6 +24605,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        notification_ApiResponseDeliveryEndpoint: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_DeliveryEndpoint"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         notification_ApiResponseDeliveryOperations: {
             correlationId?: string;
             data?: components["schemas"]["notification_DeliveryOperations"];
@@ -22841,6 +24658,16 @@ export interface components {
         notification_ApiResponseInboxPage: {
             correlationId?: string;
             data?: components["schemas"]["notification_InboxPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseListDeliveryEndpoint: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_DeliveryEndpoint"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -23059,6 +24886,25 @@ export interface components {
             realtimeTransport?: string;
             unavailableChannels?: string[];
         };
+        notification_DeliveryEndpoint: {
+            channel?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            displayName?: string;
+            endpointHint?: string;
+            /** Format: uuid */
+            endpointId?: string;
+            /** Format: date-time */
+            lastSeenAt?: string;
+            platform?: string;
+            /** Format: date-time */
+            revokedAt?: string;
+            state?: string;
+            version?: string;
+        };
+        notification_DeliveryEndpointRevokeRequest: {
+            expectedVersion: string;
+        };
         notification_DeliveryLane: {
             /** Format: double */
             failureRatePercent?: number;
@@ -23123,6 +24969,10 @@ export interface components {
             dayOfWeek?: number;
             deliveryTime: string;
             mode: string;
+        };
+        notification_DraftDecisionRequest: {
+            expectedVersion: string;
+            reason: string;
         };
         notification_EffectiveSettings: {
             apps?: components["schemas"]["notification_NotificationAppSetting"][];
@@ -23264,6 +25114,32 @@ export interface components {
             enabled?: boolean;
             managed?: boolean;
             userOverridable?: boolean;
+        };
+        notification_PolicySimulationChannelOutcome: {
+            channel?: string;
+            /** Format: int32 */
+            maxPerWindow?: number;
+            outcome?: string;
+            reason?: string;
+        };
+        notification_PolicySimulationContext: {
+            focusMode?: boolean;
+            localTime: string;
+            persona: string;
+            quietHoursActive?: boolean;
+            timeZone: string;
+        };
+        notification_PolicySimulationOutcome: {
+            attentionRisk?: string;
+            channels?: components["schemas"]["notification_PolicySimulationChannelOutcome"][];
+            context?: components["schemas"]["notification_PolicySimulationContext"];
+            /** Format: int32 */
+            deferredChannelCount?: number;
+            /** Format: int32 */
+            immediateChannelCount?: number;
+            providerCostState?: string;
+            /** Format: int32 */
+            suppressedChannelCount?: number;
         };
         notification_Presentation: {
             bannerMode: string;
@@ -23537,6 +25413,7 @@ export interface components {
             quietHoursBypass?: boolean;
             scopeKey: string;
             scopeType: string;
+            simulation?: components["schemas"]["notification_PolicySimulationContext"];
         };
         notification_TenantPolicyPage: {
             drafts?: components["schemas"]["notification_TenantPolicy"][];
@@ -23553,6 +25430,7 @@ export interface components {
             proposedPolicy?: components["schemas"]["notification_TenantPolicy"];
             riskFlags?: string[];
             runtimeChannels?: components["schemas"]["notification_PolicyRuntimeChannelPreview"][];
+            simulation?: components["schemas"]["notification_PolicySimulationOutcome"];
         };
         notification_TimelineEntry: {
             actorLabel?: string;
@@ -23565,15 +25443,29 @@ export interface components {
         notification_TypeContract: {
             appKey?: string;
             appName?: string;
+            audienceMode?: string;
             channels?: string[];
             contractHealth?: string;
             /** Format: uuid */
             contractId?: string;
+            dataClassification?: string;
+            dedupeStrategy?: string;
+            deepLinkTemplate?: string;
             description?: string;
             displayName?: string;
+            endEventType?: string;
+            interruptionLevel?: string;
             mandatory?: boolean;
+            /** Format: int32 */
+            maxSchemaVersion?: number;
+            /** Format: int32 */
+            minSchemaVersion?: number;
             ownerLabel?: string;
+            previewPolicy?: string;
             priority?: string;
+            requiredVariables?: string[];
+            retentionPolicy?: string;
+            runbookUrl?: string;
             /** Format: int32 */
             schemaVersion?: number;
             sourceEventType?: string;
@@ -23581,6 +25473,7 @@ export interface components {
             typeKey?: string;
             /** Format: date-time */
             updatedAt?: string;
+            userConfigurable?: boolean;
             version?: string;
             /** Format: int64 */
             volume24Hours?: number;
@@ -36103,7 +37996,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    approval_initialize_1: {
+    approval_initialize_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -36165,7 +38058,7 @@ export interface operations {
             };
         };
     };
-    approval_publish_3: {
+    approval_publish_4: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -36200,7 +38093,7 @@ export interface operations {
             };
         };
     };
-    approval_policy_2: {
+    approval_policy_3: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -36347,7 +38240,7 @@ export interface operations {
             };
         };
     };
-    approval_publish_2: {
+    approval_publish_3: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -36382,7 +38275,7 @@ export interface operations {
             };
         };
     };
-    approval_policy_1: {
+    approval_policy_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -36542,6 +38435,55 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseFormDetail"];
+                };
+            };
+        };
+    };
+    approval_candidates: {
+        parameters: {
+            query: {
+                query: string;
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormPublishReviewCandidates"];
+                };
+            };
+        };
+    };
+    approval_queue: {
+        parameters: {
+            query?: {
+                size?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormPublishReviewQueue"];
                 };
             };
         };
@@ -36729,7 +38671,99 @@ export interface operations {
             };
         };
     };
-    approval_publish_1: {
+    approval_current: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormPublishReviewRequestState"];
+                };
+            };
+        };
+    };
+    approval_request_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormPublishReviewRequestInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormPublishReviewRequest"];
+                };
+            };
+        };
+    };
+    approval_reject: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                formId: string;
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalFormPublishReviewRejectInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalFormPublishReviewRequest"];
+                };
+            };
+        };
+    };
+    approval_publish_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -36830,7 +38864,7 @@ export interface operations {
             };
         };
     };
-    approval_history: {
+    approval_history_1: {
         parameters: {
             query?: {
                 size?: number;
@@ -37028,6 +39062,208 @@ export interface operations {
             };
         };
     };
+    approval_deadLetterBatch: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DeliveryBatchCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
+    approval_reconcile_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DeliveryBatchCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
+    approval_replayBatch: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DeliveryBatchCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
+    approval_retryBatch: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DeliveryBatchCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
+    approval_deadLetter: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                outboxId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_Reason"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
+    approval_replay: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                outboxId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_Reason"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
     approval_retryIntegrationDelivery: {
         parameters: {
             query?: {
@@ -37099,6 +39335,74 @@ export interface operations {
             };
         };
     };
+    approval_reassignTasks: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_TaskReassignmentBatchCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
+    approval_reassignTask: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Expected-Object-Version"?: number;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_TaskReassignment"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationReceipt"];
+                };
+            };
+        };
+    };
     approval_overview: {
         parameters: {
             query?: {
@@ -37141,6 +39445,38 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApprovalFullPolicyListResponse"] | components["schemas"]["approval_ApprovalOversightPolicyListResponse"];
+                };
+            };
+        };
+    };
+    approval_create_3: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_Create"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponsePolicySummary"];
                 };
             };
         };
@@ -37302,9 +39638,12 @@ export interface operations {
             };
         };
     };
-    approval_claim_2: {
+    approval_claim_3: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 claimId: string;
@@ -37324,10 +39663,16 @@ export interface operations {
             };
         };
     };
-    approval_initialize: {
+    approval_initialize_1: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -37350,8 +39695,14 @@ export interface operations {
     };
     approval_draft: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 policyId: string;
             };
@@ -37374,12 +39725,68 @@ export interface operations {
             };
         };
     };
-    approval_publish: {
+    approval_draft_4: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                policyId: string;
+                idempotencyKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionCommandReceipt"];
+                };
+            };
+        };
+    };
+    approval_publication: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                policyId: string;
+                idempotencyKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionCommandReceipt"];
+                };
+            };
+        };
+    };
+    approval_publish_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-DWP-Step-Up-Challenge"?: string;
                 "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
                 "X-DWP-Expected-Object-Version"?: number;
             };
@@ -37405,9 +39812,12 @@ export interface operations {
             };
         };
     };
-    approval_policy: {
+    approval_policy_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -37425,9 +39835,37 @@ export interface operations {
             };
         };
     };
+    approval_initialization: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                idempotencyKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionCommandReceipt"];
+                };
+            };
+        };
+    };
     approval_record: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 requestId: string;
@@ -37447,12 +39885,42 @@ export interface operations {
             };
         };
     };
+    approval_claim_2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+                idempotencyKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalRetentionCommandReceipt"];
+                };
+            };
+        };
+    };
     approval_claim_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: {
                 "X-DWP-Step-Up-Challenge"?: string;
                 "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
                 "X-DWP-Expected-Object-Version"?: number;
             };
@@ -37497,6 +39965,314 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApprovalFullSignatureListResponse"] | components["schemas"]["approval_ApprovalOversightSignatureListResponse"];
+                };
+            };
+        };
+    };
+    approval_history: {
+        parameters: {
+            query?: {
+                cursor?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderHistory"];
+                };
+            };
+        };
+    };
+    approval_diagnostics: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderOverview"];
+                };
+            };
+        };
+    };
+    approval_probeKms: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureProviderKmsProbeInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderOverview"];
+                };
+            };
+        };
+    };
+    approval_initialize: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureProviderPolicyInitializeInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderPolicyView"];
+                };
+            };
+        };
+    };
+    approval_save: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureProviderPolicyDraftInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderPolicyView"];
+                };
+            };
+        };
+    };
+    approval_policyHistory: {
+        parameters: {
+            query?: {
+                cursor?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderPolicyHistory"];
+                };
+            };
+        };
+    };
+    approval_publish: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureProviderPolicyPublishInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderPolicyView"];
+                };
+            };
+        };
+    };
+    approval_policy: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderPolicyView"];
+                };
+            };
+        };
+    };
+    approval_probe: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureProviderProbeInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderProbeRun"];
+                };
+            };
+        };
+    };
+    approval_provider: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                providerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderDiagnostics"];
+                };
+            };
+        };
+    };
+    approval_inspectWorm: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalSignatureProviderWormInspectionInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalSignatureProviderOverview"];
                 };
             };
         };
@@ -37613,6 +40389,32 @@ export interface operations {
             };
         };
     };
+    approval_selection: {
+        parameters: {
+            query?: {
+                formId?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                workflowId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["approval_ApiResponseApprovalWorkflowPlanningSelection"];
+                };
+            };
+        };
+    };
     approval_publishWorkflow: {
         parameters: {
             query?: {
@@ -37688,7 +40490,10 @@ export interface operations {
     };
     approval_simulate: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 workflowId: string;
@@ -37763,7 +40568,7 @@ export interface operations {
             };
         };
     };
-    approval_cancel_1: {
+    approval_cancel_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -38020,6 +40825,40 @@ export interface operations {
             };
         };
     };
+    approval_updateDelegation: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                delegationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalDelegationUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListDelegationSummary"];
+                };
+            };
+        };
+    };
     approval_revokeDelegation: {
         parameters: {
             query?: {
@@ -38053,7 +40892,7 @@ export interface operations {
             };
         };
     };
-    approval_reconcile_1: {
+    approval_reconcile_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -38074,6 +40913,181 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseDraftReconciliation"];
+                };
+            };
+        };
+    };
+    approval_get_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureRequest"];
+                };
+            };
+        };
+    };
+    approval_artifact: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                signatureRequestId: string;
+                artifactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureArtifact"];
+                };
+            };
+        };
+    };
+    approval_audit_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureAudit"];
+                };
+            };
+        };
+    };
+    approval_cancel_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalExternalSignatureCommandInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureReceipt"];
+                };
+            };
+        };
+    };
+    approval_handover: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalExternalSignatureCommandInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureReceipt"];
+                };
+            };
+        };
+    };
+    approval_refresh: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                signatureRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalExternalSignatureCommandInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureReceipt"];
                 };
             };
         };
@@ -38220,7 +41234,7 @@ export interface operations {
             };
         };
     };
-    approval_request_1: {
+    approval_request_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -38575,6 +41589,67 @@ export interface operations {
             };
         };
     };
+    approval_migrate: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_MigrateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseResult"];
+                };
+            };
+        };
+    };
+    approval_preview: {
+        parameters: {
+            query: {
+                targetFormId: string;
+                targetWorkflowId: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponsePreview"];
+                };
+            };
+        };
+    };
     approval_recover: {
         parameters: {
             query?: {
@@ -38694,6 +41769,63 @@ export interface operations {
             };
         };
     };
+    approval_context_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureContext"];
+                };
+            };
+        };
+    };
+    approval_create_2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_ApprovalExternalSignatureCreateInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseApprovalExternalSignatureReceipt"];
+                };
+            };
+        };
+    };
     approval_receipt: {
         parameters: {
             query?: {
@@ -38759,10 +41891,46 @@ export interface operations {
             };
         };
     };
+    approval_resubmitDraft: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_Request"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseResponse"];
+                };
+            };
+        };
+    };
     approval_context: {
         parameters: {
             query?: {
                 locale?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path: {
@@ -38785,8 +41953,14 @@ export interface operations {
     };
     approval_create_1: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 requestId: string;
             };
@@ -38883,6 +42057,8 @@ export interface operations {
                 originalOperation: "CREATE" | "CONSENT" | "SIGN" | "CANCEL";
                 targetId: string;
                 bodySha256: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path: {
@@ -38905,7 +42081,10 @@ export interface operations {
     };
     approval_get: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 signatureRequestId: string;
@@ -38927,7 +42106,10 @@ export interface operations {
     };
     approval_audit: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 signatureRequestId: string;
@@ -38949,8 +42131,14 @@ export interface operations {
     };
     approval_cancel: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 signatureRequestId: string;
             };
@@ -38975,8 +42163,14 @@ export interface operations {
     };
     approval_consent: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 signatureRequestId: string;
             };
@@ -39001,8 +42195,14 @@ export interface operations {
     };
     approval_sign: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 signatureRequestId: string;
             };
@@ -46304,6 +49504,62 @@ export interface operations {
             };
         };
     };
+    notification_rejectPolicyDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_DraftDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTenantPolicy"];
+                };
+            };
+        };
+    };
+    notification_withdrawPolicyDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_DraftDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTenantPolicy"];
+                };
+            };
+        };
+    };
     notification_list: {
         parameters: {
             query?: never;
@@ -46374,7 +49630,7 @@ export interface operations {
             };
         };
     };
-    notification_revoke: {
+    notification_revoke_1: {
         parameters: {
             query?: never;
             header: {
@@ -46500,6 +49756,34 @@ export interface operations {
             };
         };
     };
+    notification_rejectTemplateDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_DraftDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplateRevision"];
+                };
+            };
+        };
+    };
     notification_retireTemplateDraft: {
         parameters: {
             query?: never;
@@ -46513,7 +49797,35 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["notification_TemplateDecisionRequest"];
+                "application/json": components["schemas"]["notification_DraftDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplateRevision"];
+                };
+            };
+        };
+    };
+    notification_withdrawTemplateDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_DraftDecisionRequest"];
             };
         };
         responses: {
@@ -46898,6 +50210,54 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_list_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseListDeliveryEndpoint"];
+                };
+            };
+        };
+    };
+    notification_revoke: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                endpointId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_DeliveryEndpointRevokeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseDeliveryEndpoint"];
                 };
             };
         };

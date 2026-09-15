@@ -7,12 +7,14 @@ import { ApprovalSurface } from './approval-ui';
 export function ApprovalRetentionPolicyUnavailable({
   loading,
   busy,
+  blocked,
   canInitialize,
   onRefresh,
   onInitialize,
 }: {
   loading: boolean;
   busy: boolean;
+  blocked: boolean;
   canInitialize: boolean;
   onRefresh: () => void;
   onInitialize: () => void;
@@ -26,8 +28,8 @@ export function ApprovalRetentionPolicyUnavailable({
         ) : (
           <ErrorState
             title={t('admin.retention.sourceChanged')}
-            onRetry={onRefresh}
-            retryLabel={t('actions.refresh')}
+            onRetry={blocked ? undefined : onRefresh}
+            retryLabel={blocked ? undefined : t('actions.refresh')}
             size="compact"
           />
         )}

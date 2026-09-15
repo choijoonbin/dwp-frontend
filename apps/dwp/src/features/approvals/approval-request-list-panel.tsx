@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Eye, MessageSquareReply, Pencil, Undo2 } from 'lucide-react';
+import { CopyPlus, Eye, MessageSquareReply, Pencil, Undo2 } from 'lucide-react';
 import {
   ActionButton,
   ActionIconButton,
@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 
 import { approvalRequestNextCommand, approvalRequestProgress } from './approval-request-model';
 import { PriorityChip, StatusChip } from './approval-ui';
+import { canCreateResubmissionDraft } from './use-approval-resubmit-draft';
 
 import type { ApprovalRequest } from '@dwp-frontend/shared-utils';
 
@@ -31,6 +32,8 @@ type ApprovalRequestListPanelProps = {
   onEdit: (request: ApprovalRequest) => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
+  onResubmit?: (request: ApprovalRequest) => void;
+  resubmitPendingId?: string;
 };
 
 export function ApprovalRequestListPanel({
@@ -43,6 +46,8 @@ export function ApprovalRequestListPanel({
   onEdit,
   onRespond,
   onWithdraw,
+  onResubmit,
+  resubmitPendingId,
 }: ApprovalRequestListPanelProps) {
   const { t, i18n } = useTranslation('approvals');
   const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
@@ -198,6 +203,17 @@ export function ApprovalRequestListPanel({
                   onClick={() => onWithdraw(request)}
                 >
                   {t('actions.withdraw')}
+                </ActionButton>
+              )}
+              {actionsReady && onResubmit && canCreateResubmissionDraft(request) && (
+                <ActionButton
+                  intent="primary"
+                  size="small"
+                  startIcon={<CopyPlus size={15} />}
+                  disabled={pending || Boolean(resubmitPendingId)}
+                  onClick={() => onResubmit(request)}
+                >
+                  {t('requests.resubmit.action')}
                 </ActionButton>
               )}
             </Stack>

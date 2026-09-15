@@ -88,6 +88,8 @@ function authority(
 describe('product PAGE shortcut exact disclosure', () => {
   it.each([
     ['approvalOperations', '/approvals/admin/operations'],
+    ['approvalPolicies', '/approvals/admin/policies'],
+    ['approvalSignatures', '/approvals/admin/signatures'],
     ['approvalWorkflows', '/approvals/admin/workflows'],
     ['hcmControlledExport', '/hr/data/exports'],
     ['hcmOrganizationDesign', '/hr/design/organization'],

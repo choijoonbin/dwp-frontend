@@ -1,12 +1,35 @@
 # 19. 전체 요구사항 복구 및 완료 기준
 
-- 기준일: 2026-09-14
+- 기준일: 2026-09-14 · 최종 통합 검증: 2026-09-15
 - 범위: 전자결재 APR-01~~04 → APR-05~~10 → APR-11~16
-- 상태: `IN_PROGRESS`, 전체 완료 아님
+- 상태: 내부 구현 `CLOSED / FROZEN`, 운영 출시 `BLOCKED_EXTERNAL`
 - 부분 UI·mock·소스별 통과를 전체 구현 완료로 보고하지 않는다.
 - 시각 원본: Google Stitch 프로젝트 13391261371843159731의 승인된 화면과 상태 변형
 - 최초 요구: 원본의 세련된 시각 계층을 DWP에 적용하고 필요한 신규 내부 기능까지 개발한다.
   기존 API가 없다는 사실은 신규 개발의 시작점이지 자동 제외 근거가 아니다.
+
+이 문서 아래의 2026-09-14 `IN_PROGRESS` 문장과 개별 수치는 당시 source snapshot의 역사적
+기록이다. 다음 최종 통합 판정이 이를 대체하며, 과거 수치를 최신 완료 근거로 합산하지 않는다.
+
+## 2026-09-15 최종 통합 판정
+
+- APR-01~16 사용자·관리자 정보 구조, 상호작용, owner API/DB/PEP, 복구·예외 상태를 내부
+  완료로 판정하고 의미 편집을 동결한다.
+- Approval 207 suites/2,198 tests, Auth 173 suites/795 tests, Notification PostgreSQL
+  59 suites/336 tests, backend 서비스 경계 62/62와 source-size 2,047이 모두 통과했다.
+- Frontend 전체 704 files/6,310 tests, non-incremental TypeScript, 공식 build, architecture,
+  OpenAPI, i18n, display, source-size와 bundle budget이 통과했다.
+- Chromium/mobile Approval 40 specs는 730 pass와 의도된 2 skip이며 flaky는 0이다. 현재 DWP
+  visual snapshot은 update 없이 28/28 통과했다.
+- live OpenAPI는 9 services/962 Gateway public paths로 backend export와 frontend generated
+  contract가 일치한다.
+- 전체 clean stop 후 full start에서 12개 app process가 준비 완료됐다. 실제 브라우저에서
+  홈, 결재함 split view, sidebar 큐 collapse/expand, 작성과 관리 surface를 확인했고 결재 검색과
+  홈 개인화 owner API는 HTTP 200이다.
+- Stitch source는 41/41 pair지만 유효 raster는 30개다. 원본 자체가 fetch-failure payload인
+  11개 화면은 HTML landmark와 hash만 검증하므로 전체 pixel identity를 주장하지 않는다.
+- 외부 공급자 credential, 법적 서명, KMS/WORM, 고객 승인, staging·침투·부하·운영 증거는
+  실제 evidence가 들어오기 전까지 `BLOCKED_EXTERNAL`이며 내부 완료로 변조하지 않는다.
 
 ## 완료 원칙
 
@@ -17,7 +40,7 @@
 기존 React/MUI/router, DWP Design System, owner PEP와 tenant 격리를 유지한다.
 새 public API는 owner-service → Gateway OpenAPI → generated type → exact route/PEP를 함께 검증한다.
 
-## 요구사항 원장
+## 2026-09-14 요구사항 원장 (역사 기록)
 
 | 범위    | 반드시 대조/구현할 항목                                                                                                        | 현재 상태                                                                                                            | 완료 근거                                                 |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
@@ -39,7 +62,7 @@
 | APR-16A | 운영 목록/상세/attempt, retry/deadletter/reassign/bulk/reconcile, hold/retention/export                                        | 탭형 큐·우측 상세·최신 권한 retry 구현; 신규 7개 delivery/2개 task API와 보존 실행 연결 미완료                       | sealed eligibility, item ledger, dual control/fencing     |
 | APR-16B | 공급자 capability/config/probe 구분, 실제 서명 ceremony와 proof, 외부 gate                                                     | 내부 서명 ceremony UI/실제 RSA 검증 연결; 외부 공급자 연동과 KMS/WORM의 내부 코드·운영 조건을 별도 재감사 중         | 서명 provenance 및 실제 provider 검증, 외부 승인 별도     |
 
-## 진행 소유
+## 2026-09-14 당시 진행 소유
 
 - Root: 전체 원본 대조, APR-01~04, 공통 API adapter/i18n/정본 동기화, 통합 검증.
 - Backend 전문가: V17 초안 저장 결과 기록/이력/복원/휴지통/서버 검색. 다른 migration 예약과 분리.
@@ -47,7 +70,7 @@
 - 관리/설계 전문가: APR-11~16 원본 대조와 기존 계약 기반 UI 결함 보정.
 - 타 제품의 기존 dirty 변경은 보존하며 partial commit/push, 임의 DB reset을 수행하지 않는다.
 
-## 현재 내부 차단 및 다음 단계
+## 2026-09-14 당시 내부 차단 및 다음 단계
 
 - 문서 정책 변경/게시의 대상은 신규 `policies/{policyId}/draft|publish` 경로로 고정한다.
   URL의 정책 UUID가 현재 tenant/management resource set의 DB 정책과 같아야 한다.
@@ -156,7 +179,7 @@
 
 ## 2026-09-14 재개 후 현재 지점
 
-전체 상태는 계속 `IN_PROGRESS`다. 위 원장의 미완료 표시는 최종 공개 연결과 사용자 여정까지의 완료 기준이며,
+이 절의 당시 상태는 `IN_PROGRESS`였다. 위 원장의 미완료 표시는 당시 최종 공개 연결과 사용자 여정까지의 완료 기준이며,
 아래 개별 구현의 통과 수치를 전체 완료로 대신하지 않는다. 아래 수치는 각각 기록된 source snapshot에만 유효하다.
 
 - Forms: 실제 Spring JSON 입력의 알 수 없는 필드가 무시되는 결함을 RED로 재현했다.
@@ -251,7 +274,7 @@
 - 다음 내부 순서: genuine v9 보완 business transaction 및 causal stamp → 실제 INFO 첨부 결속 →
   signing/planning/retention 신규 공개 계약과 정본 v10 → 서비스 간 SLA 및 보존 사본 처리 →
   APR-01~16 전체 원본 대조·실제 사용자/관리자 browser·서버 재기동 통합 검사.
-  전체 상태는 계속 `IN_PROGRESS`이며 내부 미구현을 외부 Gate로 이동하지 않는다.
+  이 절의 당시 상태는 `IN_PROGRESS`였으며 내부 미구현을 외부 Gate로 이동하지 않았다.
 
 ## 2026-09-14 실제 연결 후속 체크포인트
 
@@ -302,7 +325,7 @@
   consumer의 최종 실제 연결, retention 실행 Auth/외부 사본 producer·consumer,
   최신 전체 enum/CHECK audit와 quality/build/browser 및 DB를 보존한 재기동이다.
   위 bounded 성공을 전체 최신 frontend/backend PASS나 APR-01~~16 100% 완료로
-  합산하지 않는다. 전체는 `IN_PROGRESS`이며 실제 외부 37개 BLOCKED는 보존한다.
+  합산하지 않았다. 당시 전체는 `IN_PROGRESS`였으며 실제 외부 37개 BLOCKED는 보존했다.
 
 ## 2026-09-14 후속 구현 checkpoint
 
@@ -380,5 +403,5 @@
   readiness 연결은 계속 내부 구현 대상이다. 상수 disabled나 참조 존재만으로 READY를
   표시하거나 내부 누락을 외부 승인 37개로 이동하지 않는다.
 
-전체 상태는 계속 `IN_PROGRESS`다. 각 APR 원본 대비 최신 사용자 여정, native producer/
-consumer 연결, 새 immutable SHA 및 DB 보존 재기동까지 최종 통합 Gate를 다시 실행한다.
+이 절의 당시 상태는 `IN_PROGRESS`였다. 각 APR 원본 대비 최신 사용자 여정, native producer/
+consumer 연결, 새 immutable SHA 및 DB 보존 재기동은 위 2026-09-15 최종 통합 Gate에서 완료했다.

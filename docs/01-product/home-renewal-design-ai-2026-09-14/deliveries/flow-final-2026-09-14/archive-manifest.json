@@ -1,0 +1,222 @@
+{
+  "manifestVersion": 1,
+  "artifactSetId": "DWP-FLOW-FINAL-STATIC-HANDOFF-2026-09-14",
+  "archivedAtKst": "2026-09-14T21:38:18+09:00",
+  "archive": {
+    "filename": "stitch_enterprise_grid_calendar_application.zip",
+    "bytes": 1793529,
+    "sha256": "0d784e164deed58de2596f797e092667de088519b70b44b88a77742561d6f553",
+    "zipCrcStatus": "verified",
+    "regularFiles": 11
+  },
+  "figma": {
+    "url": "https://www.figma.com/design/fU45GaHpj1BOscME0wgVp5/Untitled?node-id=0-1",
+    "fileKey": "fU45GaHpj1BOscME0wgVp5",
+    "pageNodeId": "0:1",
+    "metadataAccessStatus": "verified",
+    "editAccessStatus": "not-tested",
+    "selectedFrameCount": 5
+  },
+  "screens": [
+    {
+      "releaseName": "FLOW-BASE-DESKTOP-FINAL",
+      "stitchFolder": "flow_1920px_3",
+      "figmaNodeId": "1:1306",
+      "figmaFrameSize": [
+        1280,
+        1923
+      ],
+      "code": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px_3/code.html",
+        "bytes": 56539,
+        "sha256": "1b53dcfd0a5c6b1f10259225972c966ca6c64a925ce3aa8819dfbc81eefffdc5"
+      },
+      "png": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px_3/screen.png",
+        "bytes": 456657,
+        "sha256": "550ac10ddde00fa4f3041c48bf2778c6d889cd4e2471769396bb5be3a90ece7f",
+        "pixelSize": [
+          1065,
+          1600
+        ]
+      }
+    },
+    {
+      "releaseName": "FLOW-BASE-MOBILE-FINAL",
+      "stitchFolder": "flow_390px_1",
+      "figmaNodeId": "1:2",
+      "figmaFrameSize": [
+        390,
+        2548.75
+      ],
+      "code": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_1/code.html",
+        "bytes": 40889,
+        "sha256": "95072f4549cf529ef85bec5054c8ce2a41e89eda83da9ff04e8cadbacce85065"
+      },
+      "png": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_1/screen.png",
+        "bytes": 175243,
+        "sha256": "8f2a72bc9942cde18e86305b2ddf2528a73b234f5bed960a15a17357e9553e0f",
+        "pixelSize": [
+          245,
+          1600
+        ]
+      }
+    },
+    {
+      "releaseName": "FLOW-PERSONALIZED-DESKTOP-FINAL",
+      "stitchFolder": "flow_1920px",
+      "figmaNodeId": "1:531",
+      "figmaFrameSize": [
+        1280,
+        1819
+      ],
+      "code": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px/code.html",
+        "bytes": 59584,
+        "sha256": "84927617cc1d6853c8f18ad82be3313b732010f4119c37319fd6f9ae37aa48ac"
+      },
+      "png": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px/screen.png",
+        "bytes": 494148,
+        "sha256": "36aeafd08afafcf123c861e461b29e4d4c744dcc758ee47c5ddf3cdf37ba4ba4",
+        "pixelSize": [
+          1280,
+          1788
+        ]
+      }
+    },
+    {
+      "releaseName": "FLOW-PERSONALIZED-MOBILE-FINAL",
+      "stitchFolder": "flow_390px_2",
+      "figmaNodeId": "1:2665",
+      "figmaFrameSize": [
+        390,
+        2521.39990234375
+      ],
+      "code": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_2/code.html",
+        "bytes": 33687,
+        "sha256": "b00772a22ed73ae2c212e87026d311656abcfbfb696d1d7a7f64876a6ef2d64e"
+      },
+      "png": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_2/screen.png",
+        "bytes": 218341,
+        "sha256": "58aedea20849549fad42bab6087fd33ed0c3309c72dd24cb9e46b48dffc60b83",
+        "pixelSize": [
+          250,
+          1600
+        ]
+      }
+    },
+    {
+      "releaseName": "FLOW-EDITOR-DESKTOP",
+      "stitchFolder": "flow_12_1920px",
+      "figmaNodeId": "1:2012",
+      "figmaFrameSize": [
+        1280,
+        1286
+      ],
+      "code": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_12_1920px/code.html",
+        "bytes": 51010,
+        "sha256": "00ce2aaf9c53330877d2d4bd8ea67f4e1591d28ee62a6e1d334ca0d9569c3f0f"
+      },
+      "png": {
+        "zipEntry": "stitch_enterprise_grid_calendar_application/flow_12_1920px/screen.png",
+        "bytes": 437819,
+        "sha256": "96384a16e81627dcbdb654eef5b32dfbcbb73e075452fef0beb3b013980a5dc8",
+        "pixelSize": [
+          1280,
+          1250
+        ]
+      }
+    }
+  ],
+  "entries": [
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_1/code.html",
+      "bytes": 40889,
+      "sha256": "95072f4549cf529ef85bec5054c8ce2a41e89eda83da9ff04e8cadbacce85065"
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_1/screen.png",
+      "bytes": 175243,
+      "sha256": "8f2a72bc9942cde18e86305b2ddf2528a73b234f5bed960a15a17357e9553e0f",
+      "pixelSize": [
+        245,
+        1600
+      ]
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px/code.html",
+      "bytes": 59584,
+      "sha256": "84927617cc1d6853c8f18ad82be3313b732010f4119c37319fd6f9ae37aa48ac"
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px/screen.png",
+      "bytes": 494148,
+      "sha256": "36aeafd08afafcf123c861e461b29e4d4c744dcc758ee47c5ddf3cdf37ba4ba4",
+      "pixelSize": [
+        1280,
+        1788
+      ]
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px_3/code.html",
+      "bytes": 56539,
+      "sha256": "1b53dcfd0a5c6b1f10259225972c966ca6c64a925ce3aa8819dfbc81eefffdc5"
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_1920px_3/screen.png",
+      "bytes": 456657,
+      "sha256": "550ac10ddde00fa4f3041c48bf2778c6d889cd4e2471769396bb5be3a90ece7f",
+      "pixelSize": [
+        1065,
+        1600
+      ]
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_12_1920px/code.html",
+      "bytes": 51010,
+      "sha256": "00ce2aaf9c53330877d2d4bd8ea67f4e1591d28ee62a6e1d334ca0d9569c3f0f"
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_12_1920px/screen.png",
+      "bytes": 437819,
+      "sha256": "96384a16e81627dcbdb654eef5b32dfbcbb73e075452fef0beb3b013980a5dc8",
+      "pixelSize": [
+        1280,
+        1250
+      ]
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_2/code.html",
+      "bytes": 33687,
+      "sha256": "b00772a22ed73ae2c212e87026d311656abcfbfb696d1d7a7f64876a6ef2d64e"
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/flow_390px_2/screen.png",
+      "bytes": 218341,
+      "sha256": "58aedea20849549fad42bab6087fd33ed0c3309c72dd24cb9e46b48dffc60b83",
+      "pixelSize": [
+        250,
+        1600
+      ]
+    },
+    {
+      "zipEntry": "stitch_enterprise_grid_calendar_application/dwp_workplace_operating_system/DESIGN.md",
+      "bytes": 11872,
+      "sha256": "47574a670458a8d2d23da85c27d758a18301e55796c5a80394893378f37b7cb3"
+    }
+  ],
+  "classification": "STATIC_HTML_VISUAL_HANDOFF",
+  "implementationTarget": "DWP React/MUI/Emotion and @dwp-frontend/design-system",
+  "limitations": [
+    "Not a React/MUI source tree",
+    "Tailwind CDN and Google font/icon dependencies",
+    "Some screen labels and actual frame/export dimensions differ",
+    "No API, persistence, routing, permission, or error-state implementation"
+  ]
+}

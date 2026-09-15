@@ -52,6 +52,11 @@ export function ApprovalWorkflowStageInspector({
         disabled={disabled}
         options={[{ value: 'ANY', label: 'ANY' }]}
         supportingText={t('admin.studio.modeHelp')}
+        slotProps={{
+          formHelperText: {
+            sx: { '&.Mui-disabled': { color: 'text.secondary' } },
+          },
+        }}
         onValueChange={(value) => value === 'ANY' && onChange({ mode: value })}
       />
       <FormField

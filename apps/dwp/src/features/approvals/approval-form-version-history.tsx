@@ -23,8 +23,10 @@ import { isApprovalTypedFormSchema } from '@dwp-frontend/shared-utils';
 import { ApprovalFormWorkspaceReviewDialog } from './approval-form-workspace-review-dialog';
 import { ApprovalFormAvailabilityDialog } from './approval-form-availability-dialog';
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
+import { ApprovalFormPublishReviewAssignment } from './approval-form-publish-review';
 import { approvalFormWorkspaceRouteInstalled } from './approval-form-workspace-controller';
 import type { useApprovalFormWorkspaceController } from './approval-form-workspace-controller';
+import type { useApprovalFormPublishReviewAssignment } from './use-approval-form-publish-review';
 
 export function ApprovalFormVersionHistory({
   history,
@@ -54,7 +56,11 @@ export function ApprovalFormVersionHistory({
         <Box component="h3" sx={{ m: 0, typography: 'subtitle2' }}>
           {t('admin.formWorkspace.history')}
         </Box>
-        <ActionIconButton label={t('admin.formWorkspace.reload')} onClick={onReload}>
+        <ActionIconButton
+          label={t('admin.formWorkspace.reload')}
+          tooltipDisablePortal
+          onClick={onReload}
+        >
           <RefreshCcw size={16} />
         </ActionIconButton>
       </Stack>
@@ -171,11 +177,13 @@ export function ApprovalFormVersionBranchDialog({
 
 export function ApprovalFormWorkspacePanel({
   controller,
+  publishReview,
   canEdit,
   canPublish,
   onEdit,
 }: {
   controller: ReturnType<typeof useApprovalFormWorkspaceController>;
+  publishReview: ReturnType<typeof useApprovalFormPublishReviewAssignment>;
   canEdit: boolean;
   canPublish: boolean;
   onEdit: () => void;
@@ -201,6 +209,7 @@ export function ApprovalFormWorkspacePanel({
         </Box>
         <ActionIconButton
           label={t('admin.formWorkspace.reload')}
+          tooltipDisablePortal
           disabled={!controller.installed}
           onClick={() => void controller.reload()}
         >
@@ -285,6 +294,7 @@ export function ApprovalFormWorkspacePanel({
               {t('admin.formWorkspace.publishedContinues')}
             </InlineFeedback>
           ) : null}
+          <ApprovalFormPublishReviewAssignment controller={publishReview} />
           <Stack direction="row" gap={1} flexWrap="wrap">
             {canEdit ? (
               <ActionButton
@@ -296,7 +306,7 @@ export function ApprovalFormWorkspacePanel({
                 {t('admin.formWorkspace.editWorkingDraft')}
               </ActionButton>
             ) : null}
-            {canPublish ? (
+            {canPublish && publishReview.assignedToActor ? (
               <ActionButton
                 intent="primary"
                 startIcon={<Rocket size={16} />}
@@ -440,9 +450,10 @@ export function ApprovalFormWorkspacePanel({
         state={controller.reviewState}
         ready={controller.reviewReady}
         expired={controller.reviewExpired}
-        busy={controller.highRisk.controller.busy}
+        busy={controller.busy || controller.highRisk.controller.busy}
         onClose={controller.closeReview}
         onConfirm={controller.confirmReview}
+        onReject={controller.rejectReview}
       />
       <ApprovalHighRiskCommandDialog controller={controller.highRisk.controller} />
     </Stack>

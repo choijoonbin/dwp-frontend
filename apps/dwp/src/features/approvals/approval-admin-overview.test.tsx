@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act } from 'react';
+import { act, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { onlineManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -54,6 +54,25 @@ const PAGE = (page: string) => `route.approvals.admin.${page}.page`;
 const pages = ['overview', 'workflows', 'policies', 'operations', 'signatures'];
 const pendingReads: Array<() => void> = [];
 
+function trend(): NonNullable<ApprovalAdminPulse['trend']> {
+  const startsAt = Date.parse('2028-12-29T00:00:00Z');
+  return {
+    generatedAt: '2028-12-31T23:30:00Z',
+    windowHours: 72,
+    bucketHours: 6,
+    buckets: Array.from({ length: 12 }, (_, index) => ({
+      startsAt: new Date(startsAt + index * 6 * 60 * 60 * 1000).toISOString(),
+      endsAt: new Date(startsAt + (index + 1) * 6 * 60 * 60 * 1000).toISOString(),
+      submittedRequests: index === 11 ? 4 : 0,
+      completedRequests: index === 10 ? 3 : 0,
+      slaBreaches: index === 9 ? 1 : 0,
+      unresolvedDeliveryUpdates: index === 8 ? 2 : 0,
+      inFlightRequests: 20 + index,
+      slaEligibleTasks: index === 9 ? 4 : 0,
+    })),
+  };
+}
+
 function pulse(overrides: Partial<ApprovalAdminPulse> = {}): ApprovalAdminPulse {
   return {
     publishedWorkflows: 7,
@@ -66,6 +85,7 @@ function pulse(overrides: Partial<ApprovalAdminPulse> = {}): ApprovalAdminPulse 
       state: 'ENFORCED',
       exceptions: 0,
     })),
+    trend: trend(),
     ...overrides,
   };
 }
@@ -167,7 +187,7 @@ async function flush(ms = 30) {
     else await new Promise((resolve) => setTimeout(resolve, ms));
   });
 }
-async function mount(prefill = true) {
+async function mount(prefill = true, strict = false) {
   // Deliberately retry-enabled default: the actual Overview must override it.
   const client = new QueryClient({ defaultOptions: { queries: { retry: 1 } } });
   const key = ['approvals', 'admin', 'overview', ...fixture.scope.cacheKey];
@@ -176,15 +196,15 @@ async function mount(prefill = true) {
   document.body.append(node);
   const root = createRoot(node);
   mounted.push({ root, node, client });
-  const render = () =>
-    root.render(
-      <QueryClientProvider client={client}>
-        <MemoryRouter initialEntries={['/approvals/admin/overview']}>
-          <ApprovalAdminOverview />
-          <LocationProbe />
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
+  const view = () => (
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={['/approvals/admin/overview']}>
+        <ApprovalAdminOverview />
+        <LocationProbe />
+      </MemoryRouter>
+    </QueryClientProvider>
+  );
+  const render = () => root.render(strict ? <StrictMode>{view()}</StrictMode> : view());
   await act(async () => render());
   await flush();
   return { client, key, node, root, render };
@@ -228,6 +248,20 @@ afterEach(async () => {
 });
 
 describe('actual APR11 Overview source and control journey', () => {
+  it('starts one initial read after the StrictMode probe and keeps 503 recovery explicit', async () => {
+    const fetch = network();
+    fetch.mockResolvedValue(response('UNAVAILABLE', 503));
+    const { node } = await mount(false, true);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await flush(60);
+    expect(node.querySelector('[role="alert"]')).not.toBeNull();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    fetch.mockResolvedValue(response(pulse()));
+    await click(node, 'actions.retry');
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(node.textContent).toContain('admin.overview.aggregateEnforced');
+  });
+
   it('labels client receipt time and separates static roles from four native PAGE shortcuts', async () => {
     const fetch = network();
     const { node } = await mount();
@@ -236,6 +270,11 @@ describe('actual APR11 Overview source and control journey', () => {
     expect(node.textContent).not.toContain('admin.overview.updatedAt');
     expect(node.textContent).toContain('admin.overview.aggregateEnforced');
     expect(node.textContent).toContain('admin.overview.roleReference');
+    expect(node.textContent).toContain('admin.overview.trend.title');
+    expect(node.querySelector('[role="img"]')).not.toBeNull();
+    expect(node.querySelectorAll('[data-testid="approval-admin-trend"] svg circle')).toHaveLength(
+      12
+    );
     expect(node.textContent).toContain('admin.controlModel.publisher.title');
     expect(
       Array.from(node.querySelectorAll('button')).some((item) =>

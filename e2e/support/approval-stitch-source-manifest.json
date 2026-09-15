@@ -1,0 +1,1003 @@
+{
+  "schemaVersion": 1,
+  "sourceProjectId": "13391261371843159731",
+  "capturedOn": "2026-09-14",
+  "sourceRootEnv": "APPROVAL_STITCH_SOURCE_DIR",
+  "pairCount": 41,
+  "approvalFrameCount": 40,
+  "quarantinedFrameCount": 1,
+  "rasterFrameCount": 30,
+  "fetchErrorPlaceholderCount": 11,
+  "frames": [
+    {
+      "id": "STITCH-001",
+      "apr": "APR-01",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-01-desktop",
+      "screen": {
+        "path": "APR-01-desktop/screen.png",
+        "sha256": "29cdbde9c359c0b73a896858f86d36b232e223077c79146d84e63a9688c17658",
+        "bytes": 335653,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 2377
+      },
+      "code": {
+        "path": "APR-01-desktop/code.html",
+        "sha256": "f737712af572cba3e33d8e6f005e8195ba55955666935972da607b55beafcec9",
+        "bytes": 47643,
+        "mediaType": "text/html",
+        "sourceTokens": ["안녕하세요, 최준빈님", "우선 심의 큐", "최근 결재 활동"]
+      }
+    },
+    {
+      "id": "STITCH-002",
+      "apr": "APR-02",
+      "renderClass": "board",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px/screen.png",
+        "sha256": "852f71fc0d770b5988bd6f78c89b443e5ee96116981aedfae69528fdfd78db33",
+        "bytes": 428500,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1312
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px/code.html",
+        "sha256": "2a654d822f6e204405a7d49e20de7c7421617f54bef22f01aa0e1051963232a7",
+        "bytes": 40563,
+        "mediaType": "text/html",
+        "sourceTokens": ["전체 대기", "일괄 결재 처리 결과", "원자적 결재 집행 원장"]
+      }
+    },
+    {
+      "id": "STITCH-003",
+      "apr": "APR-02",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px_list_detail",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px_list_detail/screen.png",
+        "sha256": "be79a79be5158790a43296eee61418b1301ca4f8a7dddb54c864cb54c1ce84ff",
+        "bytes": 374720,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1048
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_1440px_list_detail/code.html",
+        "sha256": "b409f4c2be3ed82b741e6b2d71c6605ae6a5e3f0244ca892c0dbd1a10cb1e538",
+        "bytes": 43667,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "전체 12",
+          "신청 개요 및 기술 세부 내역",
+          "결재 이력 및 불변 타임라인 로그"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-004",
+      "apr": "APR-02",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_390px",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_390px/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_390px/code.html",
+        "sha256": "79499b37604525d08e65598e13e61b28aee002a94da5d00b5c5536a2bcf724d3",
+        "bytes": 21770,
+        "mediaType": "text/html",
+        "sourceTokens": ["결재 목록", "운영 로그 조회 권한 연장", "승인 및 서명"]
+      }
+    },
+    {
+      "id": "STITCH-005",
+      "apr": "APR-02",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_loading_empty_503_403_409",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_loading_empty_503_403_409/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/02._action_center_loading_empty_503_403_409/code.html",
+        "sha256": "c10f425b678982a9cad2210160e00831f4b5ecfc596591c3849e7a3a8aae3258",
+        "bytes": 34716,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "결재함 핵심 예외 및 회복 상태 보드",
+          "다시 시도",
+          "안전하게 결재함 목록으로 돌아가기"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-006",
+      "apr": "APR-03",
+      "renderClass": "board",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1/screen.png",
+        "sha256": "02befec62b8b56a4787f981d05a2962a4b58a502f090044ca395d9dc74c5fe88",
+        "bytes": 427771,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1413
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1/code.html",
+        "sha256": "4cdc819aa98537f640fbd0a01248a24cc67fa7ac13152c3e236f4ac7a95c5dc7",
+        "bytes": 46128,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "결재 의사결정 다이얼로그 및 인터랙션 보드",
+          "결재 반려",
+          "기안자 추가 정보 요청"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-007",
+      "apr": "APR-03",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1440px_split_pane",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1440px_split_pane/screen.png",
+        "sha256": "0dd1b96b689b50a0842f0be8cb61f75a005e22c5b06550ec927982b2d183fb7b",
+        "bytes": 597772,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 2088
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._1440px_split_pane/code.html",
+        "sha256": "4b180000ddb0b4598a7a8bcc7bbb450df07765ba8dd9f3b9bfd4b25f10896051",
+        "bytes": 52983,
+        "mediaType": "text/html",
+        "sourceTokens": ["분할 심의 뷰", "운영 로그 조회 권한 연장", "승인 및 서명"]
+      }
+    },
+    {
+      "id": "STITCH-008",
+      "apr": "APR-03",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._2",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._2/screen.png",
+        "sha256": "7b4bc8888f006e17ed03364678fe649adaad828dc617993be95ac0a97508a155",
+        "bytes": 839883,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 2850
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._2/code.html",
+        "sha256": "1966f0d5b440d58bf3e57133352a5377cbe05b35a99d6e2508f5d004d757e5a4",
+        "bytes": 53951,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "결재 상세·결정 핵심 예외 및 회복 상태 보드",
+          "권한 회수 및 민감 상세 제거",
+          "결재 엔진 일시 장애"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-009",
+      "apr": "APR-03",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px/screen.png",
+        "sha256": "eb59f91f28345dbf31cb2f407895658cff60107a9a1150dc98c10f80a7f173b1",
+        "bytes": 172735,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 390,
+        "height": 1373
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px/code.html",
+        "sha256": "a166c84ffba8483310a70020a2541fb18ebcf495210a8533f80be497ebdb5f71",
+        "bytes": 21082,
+        "mediaType": "text/html",
+        "sourceTokens": ["신청 상세 명세", "결재 진행선", "승인 및 서명"]
+      }
+    },
+    {
+      "id": "STITCH-010",
+      "apr": "APR-04",
+      "renderClass": "board",
+      "viewportIntent": "mobile-320",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/04._320px",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._320px/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._320px/code.html",
+        "sha256": "5e8e4d1a595c1fcd99031b7cca6123cb4c20c1578a0bf45a7de1a60b661c60ac",
+        "bytes": 31032,
+        "mediaType": "text/html",
+        "sourceTokens": ["320px 소형 모바일 결재 마스터 보드", "가상 키보드 방어 영역", "터치 타깃"]
+      }
+    },
+    {
+      "id": "STITCH-011",
+      "apr": "APR-04",
+      "renderClass": "board",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_1",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_1/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_1/code.html",
+        "sha256": "aa318b64512c66aefe0bedd24cd1b5f5d61d8d28c5b86c3da94cde3cc62d42b9",
+        "bytes": 17299,
+        "mediaType": "text/html",
+        "sourceTokens": ["배치 집행 종합 결과", "데이터 무결성 및 격리 원칙", "실패 항목 포커스"]
+      }
+    },
+    {
+      "id": "STITCH-012",
+      "apr": "APR-04",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_2",
+      "screen": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_2/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-02-04/stitch_enterprise_grid_calendar_application/04._390px_2/code.html",
+        "sha256": "c56b7dce2dee7308ef899bdb46c7f1b91c74985237b6039b282108d52d3ded48",
+        "bytes": 15570,
+        "mediaType": "text/html",
+        "sourceTokens": ["선택 취소", "단건 개별 검토", "일괄 처리 검토"]
+      }
+    },
+    {
+      "id": "STITCH-013",
+      "apr": "APR-05",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/05.",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05./screen.png",
+        "sha256": "bb6561322623ef4e275f903c761c6c6dcd46b394954b4fb9790319b959b60d4f",
+        "bytes": 501459,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1541
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05./code.html",
+        "sha256": "ab67deaa2b099c7fab14105eeb8fa070138477e69d0a4ad06358b5b05e995962",
+        "bytes": 37655,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "양식 선택 및 기안 작성 예외·인터랙션 보드",
+          "409 Version Conflict",
+          "네트워크 단절 및 로컬 상태 보존"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-014",
+      "apr": "APR-05",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/05._1440px",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._1440px/screen.png",
+        "sha256": "046672d95aa796995adf3d46d2945d0088f32c6f4265d8a6fe93679e825bc560",
+        "bytes": 413017,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1376
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._1440px/code.html",
+        "sha256": "39aa988b73b2acee8c2abd2954395ec845c0b7aaaf2c03b18dc42d785c86287c",
+        "bytes": 40520,
+        "mediaType": "text/html",
+        "sourceTokens": ["새 결재 기안 작성", "기안 기본 정보", "상신 전 필수 검증 점검"]
+      }
+    },
+    {
+      "id": "STITCH-015",
+      "apr": "APR-05",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/05._390px",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._390px/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/05._390px/code.html",
+        "sha256": "6b899189542eb2221afa42999d2473c058f014ec2eb3627d4a74aef7184ff8e6",
+        "bytes": 19235,
+        "mediaType": "text/html",
+        "sourceTokens": ["기안 기본 정보", "신청 상세 명세", "초안 저장"]
+      }
+    },
+    {
+      "id": "STITCH-016",
+      "apr": "APR-06",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/06.",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06./screen.png",
+        "sha256": "07803031954947b99769c8ba93b1d07a3cfc0f1bf6f937a76829a1ca19401925",
+        "bytes": 764166,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1860
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06./code.html",
+        "sha256": "fe4a42390dd695d2c70ba300068069f2dc73acab4f10225ecbf4b611c159689a",
+        "bytes": 47598,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "상신 전 검증·결재선·증빙 상호작용 및 예외 매트릭스",
+          "Submission State Machine",
+          "Preflight Contract Classification Matrix"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-017",
+      "apr": "APR-06",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/06._1440px",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._1440px/screen.png",
+        "sha256": "b85d71ff43273fcc34b1ae2aab8bcf9a6b298aeacbb64d3ec3d387fdc9999500",
+        "bytes": 439095,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1369
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._1440px/code.html",
+        "sha256": "81ee5f8bd2cfe21c5e43b33c4db7f21225c7ef3290e63a7e9a4ffd18175c1f35",
+        "bytes": 44754,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "상신 전 무결성 검증 및 결재선 확인",
+          "상신 문서 최종 요약",
+          "사전 검증 3대 게이트 결과"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-018",
+      "apr": "APR-06",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/06._390px",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._390px/screen.png",
+        "sha256": "d4515b6459d6fbb4bbac1e2d86ab68640bb8db8844751c1bfffda483d72d9faa",
+        "bytes": 167517,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 390,
+        "height": 1007
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/06._390px/code.html",
+        "sha256": "80a2025e934c0e3532be0399b437548ee86eecfbf53eb2507e91cba0ef63d5fa",
+        "bytes": 19116,
+        "mediaType": "text/html",
+        "sourceTokens": ["기안 수정", "자동 산출 결재선", "최종 상신하기"]
+      }
+    },
+    {
+      "id": "STITCH-019",
+      "apr": "APR-07",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/07.",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07./screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07./code.html",
+        "sha256": "6fc4fe27dd79b27a0518d569751c70ae98ad52f4c947570a79d54b020cc48fc1",
+        "bytes": 43134,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "임시 저장 및 충돌 복구 매트릭스",
+          "동시 수정 충돌 및 안전 복구",
+          "통신 단절 및 결과 불명 복구"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-020",
+      "apr": "APR-07",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/07._1440px",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._1440px/screen.png",
+        "sha256": "5e0a3e2cc57a3e64f626ee5d1889bfbc58fb6ec1a42b087f0d0dcd05028e432b",
+        "bytes": 394609,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1188
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._1440px/code.html",
+        "sha256": "3b2559aca5dc3ca133333e143da2498e57e339fbf931c2654c1a00a1fed2685d",
+        "bytes": 41094,
+        "mediaType": "text/html",
+        "sourceTokens": ["임시저장 이력 정리", "선택 초안 영구 폐기", "JSON 데이터 백업"]
+      }
+    },
+    {
+      "id": "STITCH-021",
+      "apr": "APR-07",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/07._390px",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._390px/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/07._390px/code.html",
+        "sha256": "8aceebaed395bbf8abb8f300c7b7d59d9a2e8f8a8ae50835a3f2719185fad760",
+        "bytes": 19395,
+        "mediaType": "text/html",
+        "sourceTokens": ["임시 저장", "이어서 작성하기", "새 결재 작성"]
+      }
+    },
+    {
+      "id": "STITCH-022",
+      "apr": "APR-08",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-05-08/stitch_enterprise_grid_calendar_application/08._1440px_submitted",
+      "screen": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/08._1440px_submitted/screen.png",
+        "sha256": "89bdcbae4273eb1b8e71b350c0ddc36820acce95accf81ae6790b872e9116a02",
+        "bytes": 491009,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1514
+      },
+      "code": {
+        "path": "APR-05-08/stitch_enterprise_grid_calendar_application/08._1440px_submitted/code.html",
+        "sha256": "63811fda9e3708f10e216a40be9b3ed13e24032a22229edb67ced6f2b2396a7b",
+        "bytes": 39218,
+        "mediaType": "text/html",
+        "sourceTokens": ["내가 올린 결재", "보완 필요", "요청 회수"]
+      }
+    },
+    {
+      "id": "STITCH-023",
+      "apr": "APR-09",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-09-archive-desktop",
+      "screen": {
+        "path": "APR-09-archive-desktop/screen.png",
+        "sha256": "14822241211fdd324cf6acc6ba1aef2269bbaf30fd2cdc781051bf6370d50052",
+        "bytes": 524341,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1563
+      },
+      "code": {
+        "path": "APR-09-archive-desktop/code.html",
+        "sha256": "b710a560d0e2b5d44b6fdce2651fb0f03586f96452f12bbf6bd7b5110a793d9f",
+        "bytes": 48357,
+        "mediaType": "text/html",
+        "sourceTokens": ["완료 보관함", "동결된 기안 본문", "전체 결재 라이프사이클 및 연동 이력"]
+      }
+    },
+    {
+      "id": "STITCH-024",
+      "apr": "APR-10",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-10-desktop",
+      "screen": {
+        "path": "APR-10-desktop/screen.png",
+        "sha256": "cdfe3ea041af8e658890ba9317a8d845c15852a5d89e8b61df81f970d822af52",
+        "bytes": 337991,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1054
+      },
+      "code": {
+        "path": "APR-10-desktop/code.html",
+        "sha256": "19ab2c2025415d1ad565ed85cd63bb7b577c20340636f248eb7a36598cd75265",
+        "bytes": 57236,
+        "mediaType": "text/html",
+        "sourceTokens": ["결재 위임·대결 관리", "새 결재 위임 설정", "위임 즉시 철회"]
+      }
+    },
+    {
+      "id": "STITCH-025",
+      "apr": "APR-10",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-10-mobile",
+      "screen": {
+        "path": "APR-10-mobile/screen.png",
+        "sha256": "cb3e76d68299470665d63380c1433e437a7de1b8f2b530bf4e80d2ef6f581e7a",
+        "bytes": 222696,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 390,
+        "height": 1496
+      },
+      "code": {
+        "path": "APR-10-mobile/code.html",
+        "sha256": "9cf9160ea28e30559e56be5eed627d8e28540868e064b574c8a27ccfeefc8709",
+        "bytes": 26581,
+        "mediaType": "text/html",
+        "sourceTokens": ["내가 맡긴 위임", "대신할 위임", "위임 즉시 철회"]
+      }
+    },
+    {
+      "id": "STITCH-026",
+      "apr": "APR-03",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/03._390px",
+      "duplicateOf": "APR-02-04/stitch_enterprise_grid_calendar_application/03._390px",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/03._390px/screen.png",
+        "sha256": "7b30a81a3033f629de2be5331fa1bac7231bfd1208c219afdfc47578cb668664",
+        "bytes": 243293,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 390,
+        "height": 6675
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/03._390px/code.html",
+        "sha256": "a166c84ffba8483310a70020a2541fb18ebcf495210a8533f80be497ebdb5f71",
+        "bytes": 21082,
+        "mediaType": "text/html",
+        "sourceTokens": ["신청 상세 명세", "결재 진행선", "승인 및 서명"]
+      }
+    },
+    {
+      "id": "STITCH-027",
+      "apr": "APR-11",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/11._1440px_overview",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._1440px_overview/screen.png",
+        "sha256": "e23aa3f2fabfd5b957d64ecbd258d13feb0828f999e0ef0f8c347728a5ebfc2b",
+        "bytes": 360843,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1244
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._1440px_overview/code.html",
+        "sha256": "ff9b9d884827ed2bab121d7c87316681a2c7899aa4b3fb1fe8b2a1cb55340a20",
+        "bytes": 35996,
+        "mediaType": "text/html",
+        "sourceTokens": ["전자결재 관리자", "Admin Scope"]
+      }
+    },
+    {
+      "id": "STITCH-028",
+      "apr": "APR-11",
+      "renderClass": "board",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/11._390px_partial_read_only_stale_403_persona_board",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._390px_partial_read_only_stale_403_persona_board/screen.png",
+        "sha256": "0d8639208871df42afcfd995f6a2d1688365b5fbbb619b97c85348acae139d5f",
+        "bytes": 648318,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1934
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/11._390px_partial_read_only_stale_403_persona_board/code.html",
+        "sha256": "30df0009980205bab7a8924c3da5c48fccae47917d2dc034fd82b7f5dc611564",
+        "bytes": 52070,
+        "mediaType": "text/html",
+        "sourceTokens": ["전체 매트릭스", "장애 및 캐시", "인가 및 역할"]
+      }
+    },
+    {
+      "id": "STITCH-029",
+      "apr": "APR-12",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/12._1440px_category_tree_form_list_inspector",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._1440px_category_tree_form_list_inspector/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._1440px_category_tree_form_list_inspector/code.html",
+        "sha256": "d8e7cdabf6bd3422a35e5bab1ba72ac78b79113f812bdd6dcaebf54a7c9c444d",
+        "bytes": 36312,
+        "mediaType": "text/html",
+        "sourceTokens": ["새 양식 생성", "양식 빌더에서 초안 편집", "게시 승인 검토"]
+      }
+    },
+    {
+      "id": "STITCH-030",
+      "apr": "APR-12",
+      "renderClass": "board",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/12._390px_drill_in_designer_publisher_auditor_board",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._390px_drill_in_designer_publisher_auditor_board/screen.png",
+        "sha256": "9b865f116693713ecce5de8b97fa32378407cabace83425f8baa74214793832a",
+        "bytes": 514381,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1579
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/12._390px_drill_in_designer_publisher_auditor_board/code.html",
+        "sha256": "c4bcef1019a7f7e5a1d6dea1eeab987f4dbe8a21313a493bf4388c927f710e1c",
+        "bytes": 42498,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "양식 카탈로그 · 버전 거버넌스",
+          "Self-Publish Strict Block",
+          "Route Conflict"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-031",
+      "apr": "APR-13",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector/code.html",
+        "sha256": "768890de0863a99438ba6ba374a6528217f9ceaf66f84b0ff508a47ce431b3e8",
+        "bytes": 51146,
+        "mediaType": "text/html",
+        "sourceTokens": ["필드 구조", "운영 로그 접근 신청서", "속성 인스펙터"]
+      }
+    },
+    {
+      "id": "STITCH-032",
+      "apr": "APR-13",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/13._390px",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._390px/screen.png",
+        "sha256": "593a1c5455a76caaac67199a66745e0d53dd531a4d77ad10209e4edb541a4291",
+        "bytes": 268407,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1434
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._390px/code.html",
+        "sha256": "1bd1beccb85d179548527b4ebc113b98a2ddba67e32f969d30e5613693d54bf7",
+        "bytes": 33915,
+        "mediaType": "text/html",
+        "sourceTokens": ["390px Viewport Shell", "속성 편집", "다음 필드 편집"]
+      }
+    },
+    {
+      "id": "STITCH-033",
+      "apr": "APR-13",
+      "renderClass": "exception",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/13._validation_dirty_saving_409_503_persona_state_board",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._validation_dirty_saving_409_503_persona_state_board/screen.png",
+        "sha256": "610c03f419707ee6c01c01b486052522eb5a43085623432407e449f41d103cd4",
+        "bytes": 566540,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1692
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/13._validation_dirty_saving_409_503_persona_state_board/code.html",
+        "sha256": "72bbafd0c05e5172ba312a2b4daff61c849e65c4cc57222258c8e43003d8d969",
+        "bytes": 43642,
+        "mediaType": "text/html",
+        "sourceTokens": ["유효성 실패", "409 Lock 충돌", "503 복구 버퍼"]
+      }
+    },
+    {
+      "id": "STITCH-034",
+      "apr": "APR-14",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_1440px",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_1440px/screen.png",
+        "sha256": "98170918c8db2de339d56704f132af07b5a8d4c14c4a0107a68df427d413e54d",
+        "bytes": 367190,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1024
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_1440px/code.html",
+        "sha256": "d9d005adbcd6d1f38d9327776da4ce70294fe1aa21891691413cccd290fb8b24",
+        "bytes": 40001,
+        "mediaType": "text/html",
+        "sourceTokens": ["클라우드 인프라 긴급 증설 결재선", "새 단계 추가", "ANY (단일 승인)"]
+      }
+    },
+    {
+      "id": "STITCH-035",
+      "apr": "APR-14",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_390px",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_390px/screen.png",
+        "sha256": "ff4b35e50b683aea906ce56b7625cf4170f48991e82822c51105734a12ab28cf",
+        "bytes": 457427,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1362
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/14._workflow_routing_studio_390px/code.html",
+        "sha256": "2475040c973b35d82e9482a6b9092a75b73d8ba8ab03428913c5d9897f8cc703",
+        "bytes": 46191,
+        "mediaType": "text/html",
+        "sourceTokens": ["APR-14 WORKFLOW GOVERNANCE", "신규 승인/합의 단계 추가", "단계 설정 완료"]
+      }
+    },
+    {
+      "id": "STITCH-036",
+      "apr": "APR-15",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_1440px_current_proposed_comparison_assurance",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_1440px_current_proposed_comparison_assurance/screen.png",
+        "sha256": "b7f6cdb2a7ccf2b376a25f9d3cb2515ee57d729f7271015f2aefe00eee7cd3a3",
+        "bytes": 427652,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1298
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_1440px_current_proposed_comparison_assurance/code.html",
+        "sha256": "f99dacd6be0be410e5a158dc99d21571aa86ac2647453391e44f5bf3c1502f01",
+        "bytes": 38260,
+        "mediaType": "text/html",
+        "sourceTokens": ["고위험 결재 기안자 자기승인 금지", "SLA 임계치", "게시 승인 요청"]
+      }
+    },
+    {
+      "id": "STITCH-037",
+      "apr": "APR-15",
+      "renderClass": "board",
+      "viewportIntent": "mobile-390",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_390px_drill_in_persona_409_503_step_up_board",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_390px_drill_in_persona_409_503_step_up_board/screen.png",
+        "sha256": "9ec743c48119333c1d3b031ddc90bd0d509e1e4109c71d028db2186e4e401888",
+        "bytes": 618971,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 2069
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/15._sod_sla_390px_drill_in_persona_409_503_step_up_board/code.html",
+        "sha256": "97fae4d6bbcf45a7fa85797b2f8f5d3642bc16d2ebc148a40a229f102b3c42cc",
+        "bytes": 50419,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "APR-15 POLICY GOVERNANCE",
+          "409 Conflict Handling",
+          "FIDO2 Step-up Authentication Gate"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-038",
+      "apr": "APR-16",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/16a._operations_1440px_sla",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16a._operations_1440px_sla/screen.png",
+        "sha256": "6c9a02e2605929162392587c714f045251761b8a72c4bced6d4cbc2e4303ef8b",
+        "bytes": 28,
+        "mediaType": "text/plain",
+        "status": "fetch-error-placeholder",
+        "width": null,
+        "height": null
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16a._operations_1440px_sla/code.html",
+        "sha256": "544734ce2484e325e579dc33b7ee40e3de63e0d737409f26f83f36597a3122c7",
+        "bytes": 39591,
+        "mediaType": "text/html",
+        "sourceTokens": ["운영 및 복구 관제 워크벤치", "SLA 위반 업무", "연계 전달 실패"]
+      }
+    },
+    {
+      "id": "STITCH-039",
+      "apr": "APR-16",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-11-16/stitch_enterprise_grid_calendar_application/16b._signatures_1440px_provider_readiness_gate",
+      "screen": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16b._signatures_1440px_provider_readiness_gate/screen.png",
+        "sha256": "15a752df888cdc639d162bb7a9fcd860a39162e4f19e559f92e054e17622e293",
+        "bytes": 536317,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1280,
+        "height": 1690
+      },
+      "code": {
+        "path": "APR-11-16/stitch_enterprise_grid_calendar_application/16b._signatures_1440px_provider_readiness_gate/code.html",
+        "sha256": "1c323f0ca6c631a0e34f5c321a2e25c0c7fa163bdc10aaab73923b1a71ad930e",
+        "bytes": 41789,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "전자서명 제공자 준비 상태 및 외부 게이트",
+          "Provider별 연계 진단 현황",
+          "외부 법적 서명식"
+        ]
+      }
+    },
+    {
+      "id": "STITCH-040",
+      "apr": "APR-13",
+      "renderClass": "normal",
+      "viewportIntent": "desktop",
+      "pairPath": "APR-13-desktop",
+      "duplicateOf": "APR-11-16/stitch_enterprise_grid_calendar_application/13._1440px_field_list_form_canvas_property_inspector",
+      "screen": {
+        "path": "APR-13-desktop/screen.png",
+        "sha256": "a6350fe9f4eb69346078885d7c3bba1858887d9851f81351dcfdc1d6018538ca",
+        "bytes": 449624,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1385
+      },
+      "code": {
+        "path": "APR-13-desktop/code.html",
+        "sha256": "768890de0863a99438ba6ba374a6528217f9ceaf66f84b0ff508a47ce431b3e8",
+        "bytes": 51146,
+        "mediaType": "text/html",
+        "sourceTokens": ["필드 구조", "운영 로그 접근 신청서", "속성 인스펙터"]
+      }
+    },
+    {
+      "id": "STITCH-041",
+      "apr": null,
+      "renderClass": "quarantine",
+      "viewportIntent": "mobile",
+      "pairPath": "quarantine-zip4-workplace",
+      "screen": {
+        "path": "quarantine-zip4-workplace/screen.png",
+        "sha256": "f0799129266ccdb8a2188782122dee718a90149bfd85bcfe0173bc7f0fc97938",
+        "bytes": 211127,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 706,
+        "height": 1600
+      },
+      "code": {
+        "path": "quarantine-zip4-workplace/code.html",
+        "sha256": "82f04c965d547522ffda59ac6b6c1efcfee4ec85d81fb301369cfdc371afee53",
+        "bytes": 15961,
+        "mediaType": "text/html",
+        "sourceTokens": ["예약 최종 확인", "예약 확정하기"]
+      }
+    }
+  ],
+  "integritySha256": "dd51626ce077a29e7309d6c4481ee2807553ad53256185a66801a009251a17a8"
+}

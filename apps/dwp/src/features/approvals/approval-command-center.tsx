@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton, FormDialog, FormField, LoadingState } from '@dwp-frontend/design-system';
 import {
   HttpError,
+  type ApprovalTaskDetail,
   claimApprovalTask,
   decideApprovalTask,
   getApprovalTask,
@@ -18,7 +19,6 @@ import {
   readApprovalQuorumTaskSnapshot,
   sameApprovalQuorumTaskSnapshot,
 } from '@dwp-frontend/shared-utils/api/approval-quorum-contract';
-import type { ApprovalQuorumTaskSnapshot } from '@dwp-frontend/shared-utils/api/approval-quorum-contract';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -31,12 +31,13 @@ import { useTheme } from '@mui/material/styles';
 import {
   executeSequentialApprovalBatch,
   hasApprovalTaskContentAccess,
+  mergeApprovalBatchRetryResult,
   parseApprovalQueueFilter,
   approvalScopeIdentity,
   toggleApprovalBatchSelection,
 } from './approval-command-center-model';
 import { ApprovalCommandTaskList } from './approval-command-task-list';
-import { ApprovalBatchResultPanel } from './approval-batch-result-panel';
+import { ApprovalCommandBatchResult } from './approval-command-batch-result';
 import { ApprovalDecisionDetail, type ApprovalDecisionKind } from './approval-decision-detail';
 import {
   ApprovalDecisionRecoveryNotice,
@@ -52,16 +53,11 @@ import { useApprovalCommandTaskSearch } from './use-approval-command-task-search
 import { useApprovalTaskDocuments } from './use-approval-task-documents';
 import { authorizedApprovalWorkReturnTarget } from './approval-return-target';
 
-import type { ApprovalBatchResult, ApprovalQueueFilter } from './approval-command-center-model';
-import type { ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
-
-type DecisionConfirmation = {
-  decision: ApprovalDecisionKind;
-  taskId: string;
-  expectedVersion: number;
-  scopeIdentity: string;
-  quorum?: ApprovalQuorumTaskSnapshot | null;
-};
+import type {
+  ApprovalBatchResult,
+  ApprovalDecisionConfirmation,
+  ApprovalQueueFilter,
+} from './approval-command-center-model';
 
 export function ApprovalCommandCenter() {
   const { t } = useTranslation('approvals');
@@ -99,7 +95,7 @@ export function ApprovalCommandCenter() {
   const [mobileQueueMode, setMobileQueueMode] = useState(false);
   const [mobileSelectionMode, setMobileSelectionMode] = useState(false);
   const [selectedBatchIds, setSelectedBatchIds] = useState<string[]>([]);
-  const [confirmation, setConfirmation] = useState<DecisionConfirmation>();
+  const [confirmation, setConfirmation] = useState<ApprovalDecisionConfirmation>();
   const [decisionRecovery, setDecisionRecovery] = useState<ApprovalDecisionRecovery>();
   const decision = confirmation?.decision;
   const [comment, setComment] = useState('');
@@ -260,7 +256,7 @@ export function ApprovalCommandCenter() {
       taskId: string;
       expectedVersion: number;
       scopeIdentity: string;
-      quorum?: ApprovalQuorumTaskSnapshot | null;
+      quorum?: ApprovalDecisionConfirmation['quorum'];
     },
     kind: 'claim' | 'decide' | 'read'
   ) => {
@@ -339,7 +335,7 @@ export function ApprovalCommandCenter() {
       comment?: string;
       expectedVersion: number;
       scopeIdentity: string;
-      quorum?: ApprovalQuorumTaskSnapshot | null;
+      quorum?: ApprovalDecisionConfirmation['quorum'];
     }) => {
       const latest = await getApprovalTask(input.taskId, requestScope.contextScopeKey);
       if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
@@ -464,8 +460,18 @@ export function ApprovalCommandCenter() {
   });
 
   const batchApprove = useMutation({
-    mutationFn: async (input: { taskIds: readonly string[]; scopeIdentity: string }) =>
-      executeSequentialApprovalBatch({
+    mutationFn: async (input: {
+      taskIds: readonly string[];
+      scopeIdentity: string;
+      previousResult?: ApprovalBatchResult;
+    }) => {
+      if (input.previousResult) {
+        const latestQueue = await tasks.refetch();
+        if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
+        if (!latestQueue.isSuccess || latestQueue.error)
+          throw latestQueue.error ?? new HttpError('approval queue refresh failed', 503);
+      }
+      const attempt = await executeSequentialApprovalBatch({
         taskIds: input.taskIds,
         loadTask: async (taskId) => {
           if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
@@ -506,7 +512,11 @@ export function ApprovalCommandCenter() {
             );
           });
         },
-      }),
+      });
+      return input.previousResult
+        ? mergeApprovalBatchRetryResult(input.previousResult, attempt)
+        : attempt;
+    },
     onSuccess: async (result, input) => {
       if (scopeIdentityRef.current !== input.scopeIdentity) return;
       setBatchDialogOpen(false);
@@ -714,6 +724,7 @@ export function ApprovalCommandCenter() {
             intent="quiet"
             size="small"
             startIcon={<RefreshCw size={16} />}
+            aria-label={t('home.commandCenter.refreshQueue')}
             disabled={tasks.isFetching || busy}
             onClick={() => void tasks.refetch()}
           >
@@ -762,9 +773,18 @@ export function ApprovalCommandCenter() {
       </Stack>
 
       {batchResult && tasks.data && (
-        <ApprovalBatchResultPanel
+        <ApprovalCommandBatchResult
           result={batchResult}
           tasks={tasks.data}
+          retrying={batchApprove.isPending}
+          onRetry={(taskIds, previousResult) => {
+            batchApprove.mutate({
+              taskIds,
+              scopeIdentity,
+              previousResult,
+            });
+          }}
+          onOpenTask={selectTask}
           onDismiss={() => setBatchResult(undefined)}
         />
       )}
@@ -889,7 +909,7 @@ export function ApprovalCommandCenter() {
                 assertCurrentAuthority(expected, 'read');
                 const refreshed = await detail.refetch();
                 if (!refreshed.isSuccess || !refreshed.data)
-                  throw new Error('approval document refresh failed');
+                  throw new Error('approval refresh failed');
                 assertCurrentAuthority(expected, 'read');
                 return refreshed.data;
               }}

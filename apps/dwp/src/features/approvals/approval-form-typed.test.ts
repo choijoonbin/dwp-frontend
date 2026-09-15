@@ -49,7 +49,7 @@ describe('typed V2 cross-runtime golden contract', () => {
       new URL('./__fixtures__/approval-form-typed-parity.json', import.meta.url)
     );
     expect(createHash('sha256').update(raw).digest('hex')).toBe(
-      '5867525b45e2eee0d90f9f36d6903f8a03c74561c639a6c5169104b43e55a9a4'
+      'ce823a73199ff6db4fc3d6eb53cc6a33c2b18be137dc337f36469cbfac25ac24'
     );
     const compiled = await compileApprovalTypedForm(fixture.schema);
     expect(compiled.schemaSha256).toBe(

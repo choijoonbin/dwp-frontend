@@ -121,7 +121,7 @@ export function approvalPolicyRuleInput(
   return Object.fromEntries(entries.map((entry) => [entry.key, entry.value]));
 }
 
-export function createApprovalPolicyDraft(policy: ApprovalPolicy): ApprovalPolicyDraft {
+export function createApprovalPolicyEditDraft(policy: ApprovalPolicy): ApprovalPolicyDraft {
   return {
     enforcementMode: policy.pendingReview
       ? (policy.pendingEnforcementMode ?? policy.enforcementMode)

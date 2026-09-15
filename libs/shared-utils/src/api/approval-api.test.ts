@@ -23,6 +23,7 @@ import {
   searchApprovalDelegationCandidates,
   updateApprovalDraft,
 } from './approval-api';
+import { updateApprovalDelegation } from './approval-delegation-api';
 
 const legacy = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '100' } as const;
 
@@ -419,6 +420,130 @@ describe('approval API boundary', () => {
     });
     expect(String(request.body)).not.toContain('workflowKey');
   });
+
+  it('updates a delegation with the exact object version and stable idempotency key', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse([]));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      updateApprovalDelegation(
+        'delegation-1',
+        {
+          delegateUserId: 2,
+          scopeType: 'ALL',
+          startsAt: '2026-08-25T00:00:00.000Z',
+          endsAt: '2026-08-31T00:00:00.000Z',
+          reason: 'Updated planned coverage for the approval queue.',
+          expectedVersion: 4,
+        },
+        {
+          mode: 'SECURE',
+          rolloutState: '111',
+          expectedDecisionRevision: 'delegation-update-revision',
+          contextKey: 'approvals-work',
+          contextScopeKey: 'scope-delegation',
+          objectVersion: 4,
+          idempotencyKey: 'delegation-update-4',
+        }
+      )
+    ).resolves.toEqual([]);
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/approvals/v1/delegations/delegation-1?contextScopeKey=scope-delegation'
+    );
+    expect(request.method).toBe('PUT');
+    expect(request.headers).toEqual(
+      expect.objectContaining({
+        'X-DWP-Expected-Decision-Revision': 'delegation-update-revision',
+        'X-DWP-Expected-Object-Version': '4',
+        'Idempotency-Key': 'delegation-update-4',
+      })
+    );
+    expect(JSON.parse(String(request.body))).toEqual({
+      delegateUserId: 2,
+      scopeType: 'ALL',
+      startsAt: '2026-08-25T00:00:00.000Z',
+      endsAt: '2026-08-31T00:00:00.000Z',
+      reason: 'Updated planned coverage for the approval queue.',
+      expectedVersion: 4,
+    });
+  });
+
+  it('keeps delegation update idempotency in legacy rollout and rejects version drift locally', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse([]));
+    vi.stubGlobal('fetch', fetchMock);
+    const input = {
+      delegateUserId: 2,
+      scopeType: 'ALL' as const,
+      startsAt: '2026-08-25T00:00:00.000Z',
+      endsAt: '2026-08-31T00:00:00.000Z',
+      reason: 'Updated planned coverage for the approval queue.',
+      expectedVersion: 4,
+    };
+
+    await updateApprovalDelegation('delegation-1', input, {
+      ...legacy,
+      idempotencyKey: 'delegation-update-legacy-4',
+    });
+
+    const headers = (fetchMock.mock.calls[1]?.[1] as RequestInit).headers as Record<string, string>;
+    expect(headers).toEqual(
+      expect.objectContaining({ 'Idempotency-Key': 'delegation-update-legacy-4' })
+    );
+    expect(headers).not.toHaveProperty('X-DWP-Expected-Decision-Revision');
+    expect(headers).not.toHaveProperty('X-DWP-Expected-Object-Version');
+    await expect(
+      updateApprovalDelegation('delegation-1', input, {
+        mode: 'SECURE',
+        rolloutState: '111',
+        expectedDecisionRevision: 'delegation-update-revision',
+        contextKey: 'approvals-work',
+        contextScopeKey: 'scope-delegation',
+        objectVersion: 3,
+        idempotencyKey: 'delegation-update-version-drift',
+      })
+    ).rejects.toThrow('Invalid approval delegation update identity');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([403, 409, 503])(
+    'surfaces delegation update HTTP %s without replaying the mutation',
+    async (status) => {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+        .mockResolvedValueOnce(new Response('', { status }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(
+        updateApprovalDelegation(
+          'delegation-1',
+          {
+            delegateUserId: 2,
+            scopeType: 'ALL',
+            startsAt: '2026-08-25T00:00:00.000Z',
+            endsAt: '2026-08-31T00:00:00.000Z',
+            reason: 'Updated planned coverage for the approval queue.',
+            expectedVersion: 4,
+          },
+          { ...legacy, idempotencyKey: `delegation-update-${status}` }
+        )
+      ).rejects.toMatchObject({ status });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(
+        fetchMock.mock.calls.filter(([url]) =>
+          String(url).includes('/api/approvals/v1/delegations/delegation-1')
+        )
+      ).toHaveLength(1);
+    }
+  );
 
   it.each(['000', '100'] as const)(
     'keeps rollout %s delivery retry on the bodyless, headerless legacy wire',

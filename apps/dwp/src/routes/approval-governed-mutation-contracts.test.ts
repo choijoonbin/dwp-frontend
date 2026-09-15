@@ -9,6 +9,7 @@ import {
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from './product-surface-authorization.generated';
 import { PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG } from '../components/product-surface-high-risk-command-catalog';
+import { APPROVAL_NATIVE_HIGH_RISK_OPERATIONS } from '../features/approvals/approval-native-operations-model';
 
 describe('Approval governed mutation contract coverage', () => {
   it('maps every canonical Approval ACTION binding to exactly one frontend API wrapper', () => {
@@ -44,7 +45,9 @@ describe('Approval governed mutation contract coverage', () => {
       ...APPROVAL_GOVERNED_MUTATION_API_CONTRACTS,
       APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT,
     ];
-    const expected = new Set<string>(contracts.map((contract) => contract.apiFunction));
+    const expected = new Set<string>(
+      contracts.map((contract) => contract.apiFunction.split(':')[0]!)
+    );
     const executionParameters = new Map<string, number>();
     const apiRoot = path.resolve(process.cwd(), 'libs/shared-utils/src/api');
     for (const filename of fs
@@ -110,6 +113,18 @@ describe('Approval governed mutation contract coverage', () => {
     expect([...found.keys()].sort()).toEqual([...expected].sort());
     for (const [apiFunction, executionArguments] of found) {
       expect(executionArguments, apiFunction).not.toHaveLength(0);
+      if (apiFunction === 'updateApprovalDelegation') {
+        expect(
+          executionArguments.every(
+            (argument) =>
+              argument.includes('...execution') &&
+              argument.includes('objectVersion: input.expectedVersion') &&
+              argument.includes('idempotencyKey: attempt.idempotencyKey')
+          ),
+          apiFunction
+        ).toBe(true);
+        continue;
+      }
       expect(
         executionArguments.every((argument) => argument === 'execution'),
         apiFunction
@@ -147,7 +162,8 @@ describe('Approval governed mutation contract coverage', () => {
     const canonical = latest[0]!.routes.filter(
       (route) => route.subject.productKey === 'approvals' && route.stepUpCommandBindings?.length
     );
-    expect(catalog).toHaveLength(11);
+    expect(canonical.length).toBeGreaterThan(0);
+    expect(catalog).toHaveLength(canonical.length);
     expect(catalog.map((entry) => entry.routeContractKey).sort()).toEqual(
       canonical.map((route) => route.routeContractKey).sort()
     );
@@ -182,9 +198,16 @@ describe('Approval governed mutation contract coverage', () => {
                 property.name.text === 'operation'
             );
             if (operation && ts.isPropertyAssignment(operation)) {
-              expect(ts.isStringLiteral(operation.initializer), filename).toBe(true);
-              if (ts.isStringLiteral(operation.initializer))
+              if (ts.isStringLiteral(operation.initializer)) {
                 operations.push(operation.initializer.text);
+              } else if (
+                filename === 'use-approval-native-operation-command.tsx' &&
+                operation.initializer.getText(source) === 'proposal.operation'
+              ) {
+                operations.push(...APPROVAL_NATIVE_HIGH_RISK_OPERATIONS);
+              } else {
+                expect(operation.initializer.getText(source), filename).toBe('a literal operation');
+              }
             } else {
               // The management adapter forwards the caller's operation, not a new mount.
               expect(filename).toBe('approval-management-command-scope.ts');

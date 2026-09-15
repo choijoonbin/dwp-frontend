@@ -47,6 +47,7 @@ export function DwaionGlobalHost() {
 
   return (
     <DwaionLauncher
+      dockToHeader={pathname === '/approvals' || pathname.startsWith('/approvals/')}
       firstName={auth.user?.displayName?.trim().split(/\s+/)[0]}
       pageContext={surface.pageContext}
       suggestionKeys={surface.suggestionKeys}

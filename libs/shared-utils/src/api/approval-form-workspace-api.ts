@@ -9,6 +9,9 @@ import {
   assertApprovalFormWorkspaceRevisionInput,
   invalidApprovalFormWorkspace,
   readApprovalFormWorkspace,
+  readApprovalFormPublishReviewCandidates,
+  readApprovalFormPublishReviewQueue,
+  readApprovalFormPublishReviewRequest,
   readApprovalFormWorkspaceReview,
   readApprovalFormWorkspaceVersion,
   snapshotApprovalFormWorkspace,
@@ -24,6 +27,11 @@ import type {
   ApprovalFormWorkspaceReview,
   ApprovalFormWorkingDraftInput,
   ApprovalFormReviewedPublishInput,
+  ApprovalFormPublishReviewCandidates,
+  ApprovalFormPublishReviewQueue,
+  ApprovalFormPublishReviewRequest,
+  ApprovalFormPublishReviewRequestInput,
+  ApprovalFormPublishReviewRejectInput,
 } from './approval-form-workspace-contract';
 
 export type ApprovalFormWorkspaceCommandOptions = Readonly<{
@@ -38,6 +46,12 @@ export class ApprovalFormWorkspaceResponseError extends Error {
 }
 const path = (formId: string) => `/api/approvals/v1/admin/forms/${approvalFormWorkspaceId(formId)}`;
 const sha = /^[a-f0-9]{64}$/u;
+function hasControlCharacter(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const code = character.charCodeAt(0);
+    return code < 32 || code === 127;
+  });
+}
 async function read<T>(url: string, contextScopeKey?: string, signal?: AbortSignal) {
   const response = await axiosInstance.get<ApiResponse<T>>(url, { contextScopeKey, signal });
   return response.data.data;
@@ -159,6 +173,70 @@ export async function getApprovalFormWorkspacePublishReview(
   );
 }
 
+export async function searchApprovalFormPublishReviewCandidates(
+  query: string,
+  size = 10,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+) {
+  if (
+    typeof query !== 'string' ||
+    query !== query.trim() ||
+    query.length < 2 ||
+    query.length > 100 ||
+    hasControlCharacter(query) ||
+    !Number.isSafeInteger(size) ||
+    size < 1 ||
+    size > 30
+  )
+    invalidApprovalFormWorkspace();
+  const params = new URLSearchParams({ query, size: String(size) });
+  return readApprovalFormPublishReviewCandidates(
+    await read<ApprovalFormPublishReviewCandidates>(
+      `/api/approvals/v1/admin/forms/publish-review-candidates?${params}`,
+      contextScopeKey,
+      signal
+    ),
+    size
+  );
+}
+
+export async function getApprovalFormPublishReviewQueue(
+  size = 50,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+) {
+  if (!Number.isSafeInteger(size) || size < 1 || size > 100) invalidApprovalFormWorkspace();
+  return readApprovalFormPublishReviewQueue(
+    await read<ApprovalFormPublishReviewQueue>(
+      `/api/approvals/v1/admin/forms/publish-review-requests?size=${size}`,
+      contextScopeKey,
+      signal
+    ),
+    size
+  );
+}
+
+export async function getApprovalFormPublishReviewRequest(
+  formId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+) {
+  const data = await read<{ request: ApprovalFormPublishReviewRequest | null }>(
+    `${path(formId)}/publish-review-request`,
+    contextScopeKey,
+    signal
+  );
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    Array.isArray(data) ||
+    Object.keys(data).join() !== 'request'
+  )
+    invalidApprovalFormWorkspace();
+  return data.request === null ? null : readApprovalFormPublishReviewRequest(data.request, formId);
+}
+
 async function command<T extends ApprovalFormWorkspaceRevisionInput>(
   formId: string,
   suffix: string,
@@ -202,6 +280,42 @@ async function command<T extends ApprovalFormWorkspaceRevisionInput>(
     return readApprovalFormWorkspace(response.data.data, formId);
   } catch (error) {
     // A successful transport may already have committed; never remint its command.
+    throw new ApprovalFormWorkspaceResponseError(error);
+  }
+}
+
+async function reviewCommand<T extends ApprovalFormWorkspaceRevisionInput>(
+  formId: string,
+  suffix: string,
+  input: T,
+  execution: ApprovalMutationExecution,
+  options: ApprovalFormWorkspaceCommandOptions
+) {
+  assertApprovalFormWorkspaceRevisionInput(input);
+  if (
+    !options ||
+    typeof options.idempotencyKey !== 'string' ||
+    !/^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u.test(options.idempotencyKey) ||
+    execution.mode !== 'SECURE' ||
+    (execution.idempotencyKey !== undefined &&
+      execution.idempotencyKey !== options.idempotencyKey) ||
+    (execution.objectVersion !== undefined &&
+      execution.objectVersion !== input.expectedFormRevision)
+  )
+    invalidApprovalFormWorkspace();
+  const config = approvalMutationExecutionConfig(execution);
+  const response = await axiosInstance.post<ApiResponse<ApprovalFormPublishReviewRequest>, T>(
+    `${path(formId)}/${suffix}`,
+    snapshotApprovalFormWorkspace(input),
+    {
+      ...config,
+      beforeDispatch: options.beforeDispatch,
+      headers: { ...config.headers, 'Idempotency-Key': options.idempotencyKey },
+    }
+  );
+  try {
+    return readApprovalFormPublishReviewRequest(response.data.data, formId);
+  } catch (error) {
     throw new ApprovalFormWorkspaceResponseError(error);
   }
 }
@@ -276,11 +390,77 @@ export async function publishReviewedApprovalFormWorkspace(
 ) {
   approvalFormWorkspaceId(input.draftFormVersionId);
   if (input.basePublishedVersionId !== null) approvalFormWorkspaceId(input.basePublishedVersionId);
+  approvalFormWorkspaceId(input.reviewRequestId);
   if (
     input.expectedWorkspaceRevision === null ||
+    !Number.isSafeInteger(input.expectedReviewRequestVersion) ||
+    input.expectedReviewRequestVersion < 0 ||
     !sha.test(input.schemaSha256) ||
-    !sha.test(input.reviewContentDigest)
+    !sha.test(input.reviewContentDigest) ||
+    typeof input.reviewComment !== 'string' ||
+    input.reviewComment !== input.reviewComment.trim() ||
+    input.reviewComment.length < 10 ||
+    input.reviewComment.length > 1000 ||
+    hasControlCharacter(input.reviewComment)
   )
     invalidApprovalFormWorkspace();
   return command(formId, 'publish-reviewed', input, execution, options, true);
+}
+
+export async function requestApprovalFormPublishReview(
+  formId: string,
+  input: ApprovalFormPublishReviewRequestInput,
+  execution: ApprovalMutationExecution,
+  options: ApprovalFormWorkspaceCommandOptions
+) {
+  approvalFormWorkspaceId(input.draftFormVersionId);
+  if (input.basePublishedVersionId !== null) approvalFormWorkspaceId(input.basePublishedVersionId);
+  approvalFormWorkspaceId(input.reviewerPersonPublicId);
+  if (input.expectedReviewRequestId !== null)
+    approvalFormWorkspaceId(input.expectedReviewRequestId);
+  if (
+    input.expectedWorkspaceRevision === null ||
+    !Number.isSafeInteger(input.reviewerUserId) ||
+    input.reviewerUserId <= 0 ||
+    (input.expectedReviewRequestId === null) !== (input.expectedReviewRequestVersion === null) ||
+    (input.expectedReviewRequestVersion !== null &&
+      (!Number.isSafeInteger(input.expectedReviewRequestVersion) ||
+        input.expectedReviewRequestVersion < 0)) ||
+    !sha.test(input.schemaSha256) ||
+    typeof input.reason !== 'string' ||
+    input.reason !== input.reason.trim() ||
+    input.reason.length < 10 ||
+    input.reason.length > 1000 ||
+    hasControlCharacter(input.reason)
+  )
+    invalidApprovalFormWorkspace();
+  return reviewCommand(formId, 'publish-review-request', input, execution, options);
+}
+
+export async function rejectApprovalFormPublishReview(
+  formId: string,
+  reviewRequestId: string,
+  input: ApprovalFormPublishReviewRejectInput,
+  execution: ApprovalMutationExecution,
+  options: ApprovalFormWorkspaceCommandOptions
+) {
+  approvalFormWorkspaceId(reviewRequestId);
+  if (
+    input.expectedWorkspaceRevision === null ||
+    !Number.isSafeInteger(input.expectedReviewRequestVersion) ||
+    input.expectedReviewRequestVersion < 0 ||
+    typeof input.reason !== 'string' ||
+    input.reason !== input.reason.trim() ||
+    input.reason.length < 10 ||
+    input.reason.length > 1000 ||
+    hasControlCharacter(input.reason)
+  )
+    invalidApprovalFormWorkspace();
+  return reviewCommand(
+    formId,
+    `publish-review-requests/${reviewRequestId}/reject`,
+    input,
+    execution,
+    options
+  );
 }

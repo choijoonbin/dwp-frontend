@@ -21,24 +21,37 @@ import Stack from '@mui/material/Stack';
 
 import {
   buildApprovalDelegationCreateInput,
+  buildApprovalDelegationUpdateInput,
   buildApprovalDelegationWorkflowOptions,
   isApprovalDelegationPeriodValid,
+  isApprovalDelegationWindowCurrent,
 } from './approval-delegation-model';
 
 import type {
+  ApprovalDelegation,
   ApprovalDelegationCandidate,
   ApprovalDelegationCreateInput,
+  ApprovalDelegationUpdateInput,
 } from '@dwp-frontend/shared-utils';
 import type { ProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
+
+export type ApprovalDelegationEditorSubmission =
+  | Readonly<{ kind: 'create'; input: ApprovalDelegationCreateInput }>
+  | Readonly<{
+      kind: 'update';
+      source: ApprovalDelegation;
+      input: ApprovalDelegationUpdateInput;
+    }>;
 
 type ApprovalDelegationEditorProps = {
   open: boolean;
   busy: boolean;
   sourceReady: boolean;
   requestScope: ProductSurfaceRequestScope;
+  delegation?: ApprovalDelegation | null;
   recoveryMessage?: string;
   onClose: () => void;
-  onSubmit: (input: ApprovalDelegationCreateInput) => void;
+  onSubmit: (submission: ApprovalDelegationEditorSubmission) => void;
   onRecover: () => void;
 };
 
@@ -47,6 +60,7 @@ export function ApprovalDelegationEditor({
   busy,
   sourceReady,
   requestScope,
+  delegation,
   recoveryMessage,
   onClose,
   onSubmit,
@@ -62,6 +76,7 @@ export function ApprovalDelegationEditor({
   const [startsAt, setStartsAt] = useState(() => new Date().toISOString());
   const [endsAt, setEndsAt] = useState(() => new Date(Date.now() + 7 * 86_400_000).toISOString());
   const deferredCandidateQuery = useDeferredValue(candidateQuery.trim());
+  const editing = Boolean(delegation);
 
   const candidates = useQuery({
     queryKey: [
@@ -78,7 +93,7 @@ export function ApprovalDelegationEditor({
         requestScope.contextScopeKey,
         signal
       ),
-    enabled: open && requestScope.ready && deferredCandidateQuery.length >= 2,
+    enabled: !editing && open && requestScope.ready && deferredCandidateQuery.length >= 2,
     meta: requestScope.queryMeta,
     staleTime: 30_000,
     retry: false,
@@ -93,22 +108,58 @@ export function ApprovalDelegationEditor({
   });
 
   useEffect(() => {
-    if (open) return;
+    if (open && delegation) {
+      const delegate = {
+        userId: delegation.delegateUserId,
+        personPublicId: delegation.delegatePersonPublicId,
+        displayName: delegation.delegateDisplayName,
+        email: delegation.delegateEmail,
+      } satisfies ApprovalDelegationCandidate;
+      setCandidateQuery(`${delegate.displayName}${delegate.email ? ` · ${delegate.email}` : ''}`);
+      setSelected(delegate);
+      setScopeType(delegation.scopeType);
+      setWorkflowId(delegation.workflowId ?? '');
+      setStartsAt(delegation.startsAt);
+      setEndsAt(delegation.endsAt);
+      setReason(delegation.reason);
+      return;
+    }
+    const now = Date.now();
     setCandidateQuery('');
     setSelected(null);
     setScopeType('ALL');
     setWorkflowId('');
     setReason('');
-  }, [open]);
+    setStartsAt(new Date(now).toISOString());
+    setEndsAt(new Date(now + 7 * 86_400_000).toISOString());
+  }, [open, requestScope.contextScopeKey, delegation]);
 
   const workflowOptions = useMemo(
     () => buildApprovalDelegationWorkflowOptions(workflows.data ?? [], locale),
     [locale, workflows.data]
   );
   const selectedWorkflowAvailable = workflowOptions.some((option) => option.value === workflowId);
-  const input = selected
-    ? buildApprovalDelegationCreateInput({
-        delegateUserId: selected.userId,
+  const displayedWorkflowOptions =
+    delegation && workflowId && !selectedWorkflowAvailable
+      ? [
+          {
+            value: workflowId,
+            label: t('delegations.update.currentWorkflow', {
+              key: delegation.workflowKey ?? workflowId,
+            }),
+          },
+          ...workflowOptions,
+        ]
+      : workflowOptions;
+  const periodValid = isApprovalDelegationPeriodValid(startsAt, endsAt);
+  const windowCurrent = isApprovalDelegationWindowCurrent({
+    startsAt,
+    endsAt,
+    retainedStartsAt: delegation?.startsAt,
+  });
+  const updateInput = delegation
+    ? buildApprovalDelegationUpdateInput({
+        delegation,
         scopeType,
         workflowId,
         startsAt,
@@ -116,29 +167,47 @@ export function ApprovalDelegationEditor({
         reason: reason.trim(),
       })
     : null;
+  const createInput =
+    !delegation && selected
+      ? buildApprovalDelegationCreateInput({
+          delegateUserId: selected.userId,
+          scopeType,
+          workflowId,
+          startsAt,
+          endsAt,
+          reason: reason.trim(),
+        })
+      : null;
+  const input = updateInput ?? createInput;
   const valid =
     sourceReady &&
     !busy &&
     !recoveryMessage &&
     selected !== null &&
-    !candidates.isError &&
+    (!editing || selected.userId === delegation?.delegateUserId) &&
+    (editing || !candidates.isError) &&
     reason.trim().length >= 10 &&
-    isApprovalDelegationPeriodValid(startsAt, endsAt) &&
+    reason.trim().length <= 1000 &&
+    periodValid &&
+    windowCurrent &&
     (scopeType === 'ALL' ||
       (!workflows.isFetching && !workflows.isError && selectedWorkflowAvailable));
 
   return (
     <FormDialog
       open={open}
-      title={t('delegations.dialog.title')}
-      description={t('delegations.dialog.description')}
+      title={t(editing ? 'delegations.update.title' : 'delegations.dialog.title')}
+      description={t(editing ? 'delegations.update.description' : 'delegations.dialog.description')}
       cancelLabel={t('actions.cancel')}
       submitLabel={t('actions.save')}
       busy={busy}
       submitDisabled={!valid || !input}
       onClose={onClose}
       onSubmit={() => {
-        if (valid && input) onSubmit(input);
+        if (!valid || !input) return;
+        if (delegation && updateInput)
+          onSubmit({ kind: 'update', source: delegation, input: updateInput });
+        if (!delegation && createInput) onSubmit({ kind: 'create', input: createInput });
       }}
     >
       <Stack gap={2}>
@@ -154,7 +223,7 @@ export function ApprovalDelegationEditor({
             {recoveryMessage}
           </InlineFeedback>
         )}
-        {candidates.isError && deferredCandidateQuery.length >= 2 && (
+        {!editing && candidates.isError && deferredCandidateQuery.length >= 2 && (
           <InlineFeedback
             severity="error"
             action={
@@ -175,12 +244,16 @@ export function ApprovalDelegationEditor({
         <AutocompleteField<ApprovalDelegationCandidate>
           required
           label={t('delegations.fields.delegate')}
-          supportingText={t('delegations.fields.delegateHelp')}
+          supportingText={t(
+            editing ? 'delegations.update.delegateLocked' : 'delegations.fields.delegateHelp'
+          )}
           value={selected}
           inputValue={candidateQuery}
-          options={candidates.isError ? [] : (candidates.data ?? [])}
-          loading={candidates.isFetching}
-          disabled={!sourceReady || busy || Boolean(recoveryMessage)}
+          options={
+            editing && selected ? [selected] : candidates.isError ? [] : (candidates.data ?? [])
+          }
+          loading={!editing && candidates.isFetching}
+          disabled={editing || !sourceReady || busy || Boolean(recoveryMessage)}
           filterOptions={(options) => options}
           isOptionEqualToValue={(option, value) => option.userId === value.userId}
           getOptionLabel={(option) =>
@@ -191,8 +264,12 @@ export function ApprovalDelegationEditor({
               ? t('delegations.searchHint')
               : t('delegations.noCandidates')
           }
-          onInputChange={(_event, value) => setCandidateQuery(value)}
-          onChange={(_event, value) => setSelected(value)}
+          onInputChange={(_event, value) => {
+            if (!editing) setCandidateQuery(value);
+          }}
+          onChange={(_event, value) => {
+            if (!editing) setSelected(value);
+          }}
         />
         <Box
           sx={{
@@ -236,7 +313,7 @@ export function ApprovalDelegationEditor({
                 label={t('delegations.fields.workflow')}
                 value={workflowId}
                 disabled={workflows.isError || workflows.isFetching || Boolean(recoveryMessage)}
-                options={workflows.isError ? [] : workflowOptions}
+                options={displayedWorkflowOptions}
                 onValueChange={(value) => setWorkflowId(value ?? '')}
               />
             </Stack>
@@ -254,6 +331,12 @@ export function ApprovalDelegationEditor({
             required
             label={t('delegations.fields.endsAt')}
             value={endsAt || null}
+            supportingText={t('delegations.fields.periodHelp')}
+            errorMessage={
+              startsAt && endsAt && (!periodValid || !windowCurrent)
+                ? t('delegations.periodInvalid')
+                : ''
+            }
             disabled={!sourceReady || busy || Boolean(recoveryMessage)}
             onValueChange={(value) => setEndsAt(value ?? '')}
           />

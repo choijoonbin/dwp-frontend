@@ -4,7 +4,10 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 import { mockShellSession } from './support/shell-session';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
-import { APPROVAL_REQUEST_FIXTURE } from './support/product-area-fixtures';
+import {
+  APPROVAL_REQUEST_DETAIL_FIXTURE,
+  APPROVAL_REQUEST_FIXTURE,
+} from './support/product-area-fixtures';
 import { approvalRequestSearchPage } from './support/approval-search-fixtures';
 
 import type { ApprovalRequest } from '@dwp-frontend/shared-utils';
@@ -63,17 +66,22 @@ test('요청 검색은 실제 서버 조건·페이지를 사용하고 검색 �
   expect(seen.at(-1)!.searchParams.get('status')).toBe('NEEDS_INFO');
 });
 
-test('완료 보관함은 소유한 종결 요청을 조회하며 승인·회수·재상신 명령을 다시 열지 않는다', async ({
+test('완료 보관함은 소유한 종결 요청만 재상신용 새 초안으로 복사하고 실제 편집기로 이동한다', async ({
   page,
 }) => {
   await setup(page);
+  const sourceRequestId = '11111111-1111-4111-8111-111111111111';
+  const draftRequestId = '22222222-2222-4222-8222-222222222222';
   const archived: ApprovalRequest = {
     ...APPROVAL_REQUEST_FIXTURE,
+    requestId: sourceRequestId,
     status: 'APPROVED',
     title: '내가 소유한 종결 요청',
     completedAt: '2026-09-14T00:00:00Z',
+    version: 7,
   };
   const views: string[] = [];
+  const commands: Array<{ key?: string; body: unknown }> = [];
   await page.route(
     (url) => url.pathname === `${base}/requests/search`,
     (route) => {
@@ -82,15 +90,121 @@ test('완료 보관함은 소유한 종결 요청을 조회하며 승인·회수
       return success(route, approvalRequestSearchPage(url, [archived]));
     }
   );
+  await page.route(
+    (url) => url.pathname === `${base}/requests/${sourceRequestId}/detail`,
+    (route) =>
+      success(route, {
+        ...APPROVAL_REQUEST_DETAIL_FIXTURE,
+        request: archived,
+      })
+  );
+  await page.route(
+    (url) => url.pathname === `${base}/requests/${sourceRequestId}/resubmit-draft`,
+    async (route) => {
+      commands.push({
+        key: route.request().headers()['idempotency-key'],
+        body: route.request().postDataJSON(),
+      });
+      return success(route, {
+        sourceRequestId,
+        sourceVersion: archived.version,
+        draft: {
+          ...archived,
+          requestId: draftRequestId,
+          requestNumber: 'APR-DRAFT-09',
+          status: 'DRAFT',
+          submittedAt: null,
+          completedAt: null,
+          version: 0,
+        },
+      });
+    }
+  );
   await page.goto('/approvals/requests/archive');
   await expect(page.getByText(archived.title).first()).toBeVisible();
   expect(views.length).toBeGreaterThan(0);
   expect(views.every((view) => view === 'ARCHIVE')).toBe(true);
   await expect(page.getByRole('button', { name: /^(회수|상신|승인|반려|편집)$/u })).toHaveCount(0);
-  const audit = await new AxeBuilder({ page }).analyze();
+  await page.getByRole('button', { name: '재상신용 초안 복사' }).first().click();
+  await expect(page.getByRole('dialog', { name: '새 재상신 초안을 만들까요?' })).toBeVisible();
+  await expect(page.getByText('원본 결재와 결정 증적은 변경되지 않습니다.')).toBeVisible();
+  await page.waitForTimeout(350);
+  const audit = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
   expect(
     audit.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))
   ).toEqual([]);
+  await page.getByRole('button', { name: '초안 복사', exact: true }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/approvals/requests/new\\?draft=${draftRequestId}$`, 'u')
+  );
+  expect(commands).toHaveLength(1);
+  expect(commands[0]).toEqual({ key: expect.any(String), body: { expectedVersion: 7 } });
+});
+
+test('재상신 503은 보관함 선택을 보존하고 동일 원명령 키로만 복구한다', async ({ page }) => {
+  await setup(page);
+  const sourceRequestId = '33333333-3333-4333-8333-333333333333';
+  const draftRequestId = '44444444-4444-4444-8444-444444444444';
+  const archived: ApprovalRequest = {
+    ...APPROVAL_REQUEST_FIXTURE,
+    requestId: sourceRequestId,
+    status: 'REJECTED',
+    title: '재상신 복구 원본',
+    completedAt: '2026-09-14T00:00:00Z',
+    version: 11,
+  };
+  const keys: Array<string | undefined> = [];
+  await page.route(
+    (url) => url.pathname === `${base}/requests/search`,
+    (route) => success(route, approvalRequestSearchPage(new URL(route.request().url()), [archived]))
+  );
+  await page.route(
+    (url) => url.pathname === `${base}/requests/${sourceRequestId}/detail`,
+    (route) =>
+      success(route, {
+        ...APPROVAL_REQUEST_DETAIL_FIXTURE,
+        request: archived,
+      })
+  );
+  await page.route(
+    (url) => url.pathname === `${base}/requests/${sourceRequestId}/resubmit-draft`,
+    (route) => {
+      keys.push(route.request().headers()['idempotency-key']);
+      if (keys.length === 1)
+        return route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', message: 'Authority unavailable' }),
+        });
+      return success(route, {
+        sourceRequestId,
+        sourceVersion: 11,
+        draft: {
+          ...archived,
+          requestId: draftRequestId,
+          requestNumber: 'APR-DRAFT-RECOVERY',
+          status: 'DRAFT',
+          submittedAt: null,
+          completedAt: null,
+          version: 0,
+        },
+      });
+    }
+  );
+
+  await page.goto(`/approvals/requests/archive?request=${sourceRequestId}`);
+  await page.getByRole('button', { name: '재상신용 초안 복사' }).first().click();
+  await page.getByRole('button', { name: '초안 복사', exact: true }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/approvals/requests/archive\\?request=${sourceRequestId}$`, 'u')
+  );
+  await expect(page.getByText(/동일한 원래 명령으로만 다시 확인하세요/u)).toBeVisible();
+  await page.getByRole('button', { name: '원래 명령 다시 확인' }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/approvals/requests/new\\?draft=${draftRequestId}$`, 'u')
+  );
+  expect(keys).toHaveLength(2);
+  expect(keys[1]).toBe(keys[0]);
 });
 
 test('목록 첫 503 재조회 실패는 cached 요청 명령을 즉시 닫고 명시적 재조회 성공 뒤에만 복구한다', async ({

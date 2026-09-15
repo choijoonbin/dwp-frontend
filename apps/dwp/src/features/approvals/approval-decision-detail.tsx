@@ -133,9 +133,11 @@ export function ApprovalDecisionDetail({
     );
   }
 
-  const contentAccess = documents.sourceDenied
-    ? { full: false, reason: 'CURRENT_AUTHORITY_UNAVAILABLE' as const, evaluatedAt: null }
-    : approvalTaskContentAccess(detail);
+  const ownerContentAccess = approvalTaskContentAccess(detail);
+  const contentAccess =
+    documents.sourceDenied && ownerContentAccess.full
+      ? { full: false, reason: 'CURRENT_AUTHORITY_UNAVAILABLE' as const, evaluatedAt: null }
+      : ownerContentAccess;
   if (!contentAccess.full || documents.sourceDenied) {
     return (
       <DetailStateShell mobile={mobile} onBack={onBack}>

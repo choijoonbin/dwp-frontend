@@ -1,265 +1,287 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpRight, KeyRound, RefreshCcw, ShieldCheck } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { History, RefreshCcw, RotateCw, ShieldAlert, ShieldCheck } from 'lucide-react';
 import {
-  ActionIconButton,
   ActionButton,
-  EmptyState,
+  ActionIconButton,
   ErrorState,
+  FormDialog,
   InlineFeedback,
-  LoadingState,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { getApprovalSignatureProviders } from '@dwp-frontend/shared-utils';
-
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-
-import {
-  approvalProviderCapabilityEntries,
-  approvalSignatureReadiness,
-} from './approval-management-model';
-import { useApprovalManagementScopeReady } from './approval-management-scope';
-import {
-  approvalSignatureSourceState,
-  retryApprovalSignatureRead,
-} from './approval-signature-source-state';
-import { ApprovalSurface, StatusChip } from './approval-ui';
-import { useApprovalManagementRequestScope } from './use-approval-experience';
+import { alpha } from '@mui/material/styles';
 import { ApprovalAdminAttachmentPolicyController } from './approval-admin-attachment-policy-controller';
+import { SignatureDiagnosticsHistory } from './approval-signature-diagnostics-history';
+import { SignatureDiagnosticsInspector } from './approval-signature-diagnostics-inspector';
+import { SignatureDiagnosticsOverview } from './approval-signature-diagnostics-overview';
+import { SignatureDiagnosticsPolicyInspector } from './approval-signature-diagnostics-policy-inspector';
+import { ApprovalSignaturePolicyWorkspace } from './approval-signature-policy-workspace';
+import { approvalTone, ApprovalSurface } from './approval-ui';
+import { useApprovalSignatureProviderDiagnostics } from './use-approval-signature-provider-diagnostics';
 
 export function ApprovalSignatureAdmin() {
-  const { t, i18n } = useTranslation('approvals');
-  const requestScope = useApprovalManagementRequestScope();
-  const scopeReady = useApprovalManagementScopeReady(requestScope);
-  const providers = useQuery({
-    queryKey: ['approvals', 'admin', 'signatures', ...requestScope.cacheKey],
-    queryFn: ({ signal }) => getApprovalSignatureProviders(requestScope.contextScopeKey, signal),
-    enabled: scopeReady,
-    staleTime: 60_000,
-    retry: retryApprovalSignatureRead,
-  });
-  const sourceState = approvalSignatureSourceState(providers);
-  const formatTimestamp = (value?: string | null) =>
-    value
-      ? formatDate(
-          value,
-          { dateStyle: 'medium', timeStyle: 'short' },
-          resolveSupportedLocale(i18n.resolvedLanguage, i18n.language)
-        )
-      : t('admin.integrations.notAvailable');
+  const { t } = useTranslation('approvals');
+  const controller = useApprovalSignatureProviderDiagnostics();
+  const [now, setNow] = useState(() => Date.now());
+  const label = (key: string) => t(`admin.signatureDiagnostics.labels.${key}`);
 
-  if (!scopeReady) {
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  if (!controller.contractAvailable) {
     return (
-      <ErrorState
-        title={t('admin.loadError')}
-        description={t('pages.signatures.description')}
-        size="compact"
-      />
+      <Stack gap={3} data-approval-signature-contract="UNAVAILABLE">
+        <ErrorState
+          title={label('title')}
+          description={t('admin.signatureDiagnostics.nativeUnavailable')}
+          size="compact"
+        />
+        <ApprovalAdminAttachmentPolicyController />
+      </Stack>
     );
   }
 
-  if (sourceState === 'LOADING') {
-    return (
-      <LoadingState
-        label={t('pages.signatures.title')}
-        description={t('pages.signatures.description')}
-        variant="skeleton"
-        skeletonRows={3}
-        size="compact"
-      />
-    );
-  }
-
-  if (sourceState === 'DENIED' || sourceState === 'UNAVAILABLE') {
-    return (
-      <ErrorState
-        title={t('admin.loadError')}
-        description={t('admin.signatures.sourceUnavailable')}
-        retryLabel={t('actions.retry')}
-        retrying={providers.isFetching}
-        onRetry={() => void providers.refetch()}
-        size="compact"
-      />
-    );
-  }
+  const selectedProvider = controller.overview.data?.providers.find(
+    (provider) => provider.providerId === controller.selectedProviderId
+  );
+  const hasProbeTargets = Boolean(
+    controller.overview.data?.providers.some(
+      (provider) => provider.kind !== 'INTERNAL' && provider.providerId !== null
+    )
+  );
 
   return (
-    <Stack gap={2}>
-      <ApprovalAdminAttachmentPolicyController />
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
-        gap={2}
-        sx={{ py: 1.5, borderBottom: 1, borderColor: 'divider' }}
+    <Stack
+      gap={3}
+      minWidth={0}
+      data-approval-signature-contract="AVAILABLE"
+      data-approval-signature-runtime-readiness={controller.installed ? 'READY' : 'BLOCKED'}
+    >
+      <InlineFeedback
+        severity={controller.installed ? 'info' : 'error'}
+        icon={controller.installed ? <ShieldCheck size={18} /> : <ShieldAlert size={18} />}
       >
-        <Box minWidth={0}>
-          <Box sx={{ typography: 'subtitle2' }}>{t('signatureCeremony.kind')}</Box>
-          <Box sx={{ typography: 'caption', color: 'text.secondary', mt: 0.5 }}>
-            {t('signatureCeremony.notExternal')}
-          </Box>
-        </Box>
-        <ActionButton
-          intent="secondary"
-          href="/approvals/requests/submitted"
-          endIcon={<ArrowUpRight size={16} />}
-          sx={{ alignSelf: 'flex-start', flexShrink: 0 }}
-        >
-          {t('signatureCeremony.openRequests')}
-        </ActionButton>
-      </Stack>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
-        <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-          {t('admin.metricDetail')} ·{' '}
-          {formatTimestamp(
-            providers.dataUpdatedAt ? new Date(providers.dataUpdatedAt).toISOString() : undefined
-          )}
-        </Box>
-        <ActionIconButton
-          label={t('actions.refresh')}
-          size="small"
-          tooltipDisablePortal
-          loading={providers.isFetching}
-          onClick={() => void providers.refetch()}
-        >
-          <RefreshCcw size={16} />
-        </ActionIconButton>
-      </Stack>
-      <InlineFeedback severity="warning" icon={<ShieldCheck size={18} />}>
-        {t('admin.signatures.gate')}
+        <Box sx={{ typography: 'subtitle2' }}>{t('admin.signatureDiagnostics.directiveTitle')}</Box>
+        <Box sx={{ mt: 0.5 }}>{t('admin.signatureDiagnostics.directiveBody')}</Box>
       </InlineFeedback>
-      {sourceState === 'STALE' ? (
+
+      {controller.probeFeedback ? (
         <InlineFeedback severity="warning">
           {t(
-            providers.failureReason == null &&
-              providers.error == null &&
-              providers.failureCount === 0
-              ? 'admin.signatures.sourceChecking'
-              : 'admin.signatures.sourceStale'
+            controller.probeFeedback === 'UNKNOWN'
+              ? 'admin.signatureDiagnostics.probeUnknown'
+              : 'admin.signatureDiagnostics.sourceChanged'
           )}
         </InlineFeedback>
       ) : null}
-      {(providers.data?.length ?? 0) === 0 ? (
-        <EmptyState
-          title={t('admin.signatures.notConfigured')}
-          description={t('admin.signatures.gate')}
-          icon={<KeyRound size={24} />}
-        />
-      ) : (
+
+      <ApprovalSurface
+        title={t('admin.signatureDiagnostics.separationTitle')}
+        meta={t('admin.signatureDiagnostics.separationBody')}
+        appearance="executive"
+      >
         <Box
-          sx={{
+          sx={(theme) => ({
             display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0,1fr)', lg: 'repeat(3,minmax(0,1fr))' },
-            gap: 2,
-            '& h2, & h2 + .MuiTypography-root': { overflowWrap: 'anywhere' },
-          }}
-        >
-          {(providers.data ?? []).map((provider) => {
-            const capabilities = approvalProviderCapabilityEntries(provider);
-            const readiness =
-              sourceState === 'READY' ? approvalSignatureReadiness(provider) : 'UNKNOWN';
-            return (
-              <ApprovalSurface
-                key={provider.providerId}
-                title={provider.displayName}
-                meta={`${provider.providerType} · ${provider.providerKey}`}
-              >
-                <Stack gap={1.5} sx={{ p: 2 }}>
-                  <Stack direction="row" justifyContent="space-between" gap={1} flexWrap="wrap">
-                    <StatusChip status={provider.lifecycleState} />
-                    <Stack gap={0.5} alignItems="flex-end">
-                      <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-                        {t('admin.signatures.metadataReadiness')}
-                      </Box>
-                      <StatusChip status={readiness} />
-                    </Stack>
-                  </Stack>
-                  <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-                    {formatTimestamp(provider.lastHealthCheckedAt)}
-                  </Box>
-                  <Box sx={{ typography: 'body2', color: 'text.secondary' }}>
-                    {t(
-                      provider.credentialConfigured
-                        ? 'admin.signatures.credentialReferenceRegistered'
-                        : 'admin.signatures.credentialReferenceMissing'
-                    )}
-                  </Box>
-                  <Divider />
-                  {capabilities.length > 0 ? (
-                    <Box component="dl" sx={{ m: 0 }}>
-                      {capabilities.map((capability) => (
-                        <Stack
-                          key={capability.key}
-                          direction="row"
-                          justifyContent="space-between"
-                          gap={1}
-                          sx={{ py: 0.65 }}
-                        >
-                          <Box
-                            component="dt"
-                            sx={{ typography: 'caption', color: 'text.secondary' }}
-                          >
-                            {t(
-                              capability.key === 'remoteSigningSupported'
-                                ? 'admin.signatures.declaredProtocolCapability'
-                                : `admin.signatures.capabilities.${capability.key}`
-                            )}
-                          </Box>
-                          <Box
-                            component="dd"
-                            sx={{
-                              m: 0,
-                              typography: 'caption',
-                              fontWeight: 'fontWeightBold',
-                              textAlign: 'right',
-                              overflowWrap: 'anywhere',
-                            }}
-                          >
-                            {t(
-                              capability.key === 'remoteSigningSupported'
-                                ? capability.value === 'true'
-                                  ? 'admin.signatures.protocolDeclared'
-                                  : 'admin.signatures.protocolNotDeclared'
-                                : capability.value === 'true'
-                                  ? 'admin.signatures.capabilitySupported'
-                                  : 'admin.signatures.capabilityUnsupported'
-                            )}
-                          </Box>
-                        </Stack>
-                      ))}
-                    </Box>
-                  ) : (
-                    <Stack direction="row" alignItems="center" gap={1}>
-                      <KeyRound size={16} />
-                      <StatusChip status="UNKNOWN" />
-                    </Stack>
-                  )}
-                  <Divider />
-                  <Box component="dl" sx={{ m: 0 }}>
-                    {(provider.providerType === 'INTERNAL_ATTESTATION'
-                      ? ['nativeKeyVerification']
-                      : ['adapterVerification', 'probeVerification']
-                    ).map((key) => (
-                      <Stack key={key} gap={0.5} sx={{ py: 0.65 }}>
-                        <Box component="dt" sx={{ typography: 'caption' }}>
-                          {t(`admin.signatures.${key}`)}
-                        </Box>
-                        <Box
-                          component="dd"
-                          sx={{ m: 0, typography: 'caption', color: 'text.secondary' }}
-                        >
-                          {t('admin.signatures.verificationNotReported')}
-                        </Box>
-                      </Stack>
-                    ))}
-                  </Box>
-                </Stack>
-              </ApprovalSurface>
-            );
+            gridTemplateColumns: { xs: 'minmax(0,1fr)', md: 'repeat(3,minmax(0,1fr))' },
+            gap: 1,
+            p: 2,
+            bgcolor: alpha(approvalTone.primary, theme.palette.mode === 'dark' ? 0.08 : 0.025),
           })}
+        >
+          {(['internalDecision', 'externalGate', 'verifiedArchive'] as const).map(
+            (phase, index) => (
+              <Stack
+                key={phase}
+                gap={0.75}
+                sx={{
+                  minWidth: 0,
+                  p: 1.5,
+                  border: 1,
+                  borderColor: index === 1 ? 'error.main' : 'divider',
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Box
+                  sx={{
+                    typography: 'overline',
+                    color: index === 1 ? 'error.main' : 'primary.main',
+                  }}
+                >
+                  {t('admin.signatureDiagnostics.phaseNumber', { number: index + 1 })}
+                </Box>
+                <Box sx={{ typography: 'subtitle2' }}>
+                  {t(`admin.signatureDiagnostics.separation.${phase}.title`)}
+                </Box>
+                <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
+                  {t(`admin.signatureDiagnostics.separation.${phase}.description`)}
+                </Box>
+              </Stack>
+            )
+          )}
         </Box>
-      )}
+      </ApprovalSurface>
+
+      <SignatureDiagnosticsOverview
+        data={controller.overview.data ?? null}
+        readState={controller.overviewState}
+        now={now}
+        action={
+          <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="flex-end">
+            <ActionButton
+              intent="secondary"
+              startIcon={<History size={16} />}
+              disabled={controller.overviewState !== 'CURRENT'}
+              onClick={controller.openHistory}
+            >
+              {label('historyAction')}
+            </ActionButton>
+            <ActionButton
+              intent="primary"
+              startIcon={<RotateCw size={16} />}
+              loading={controller.probeBusy}
+              disabled={!controller.canProbe || !hasProbeTargets}
+              onClick={() => void controller.runProbe(null)}
+            >
+              {label(
+                controller.probeFeedback === 'UNKNOWN' &&
+                  controller.uncertainOperation === 'PROVIDER'
+                  ? 'reconcileProbe'
+                  : 'runAllProbes'
+              )}
+            </ActionButton>
+            <ActionIconButton
+              label={t('actions.refresh')}
+              tooltipDisablePortal
+              loading={controller.overview.isFetching}
+              onClick={() => void controller.refresh()}
+            >
+              <RefreshCcw size={16} />
+            </ActionIconButton>
+          </Stack>
+        }
+        providerAction={(provider) =>
+          provider.providerId ? (
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+              <ActionButton
+                intent="secondary"
+                onClick={() => controller.openProvider(provider.providerId!)}
+              >
+                {label('viewConfiguration')}
+              </ActionButton>
+              {provider.kind !== 'INTERNAL' ? (
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<RotateCw size={15} />}
+                  loading={controller.probeBusy}
+                  disabled={!controller.canProbe || controller.probeFeedback === 'UNKNOWN'}
+                  onClick={() => void controller.runProbe(provider.providerId)}
+                >
+                  {label('runProviderProbe')}
+                </ActionButton>
+              ) : null}
+            </Stack>
+          ) : null
+        }
+        kmsAction={
+          <ActionButton
+            intent="secondary"
+            startIcon={<RotateCw size={15} />}
+            loading={controller.probeBusy}
+            disabled={!controller.canKmsProbe}
+            onClick={() => void controller.runKmsProbe()}
+          >
+            {label(
+              controller.probeFeedback === 'UNKNOWN' && controller.uncertainOperation === 'KMS'
+                ? 'reconcileKmsProbe'
+                : 'runKmsProbe'
+            )}
+          </ActionButton>
+        }
+        wormAction={
+          <ActionButton
+            intent="secondary"
+            disabled={controller.policyState !== 'CURRENT'}
+            onClick={() =>
+              document.getElementById('approval-signature-policy')?.scrollIntoView({
+                block: 'start',
+              })
+            }
+          >
+            {label('viewRetentionPolicy')}
+          </ActionButton>
+        }
+        onRetry={() => void controller.refresh()}
+      />
+
+      <InlineFeedback severity="info" icon={<ShieldCheck size={18} />}>
+        {t('admin.signatureDiagnostics.secretBoundary')}
+      </InlineFeedback>
+
+      <Box id="approval-signature-policy" sx={{ scrollMarginTop: 16 }}>
+        <ApprovalSurface
+          title={label('policy')}
+          meta={t('admin.signaturePolicy.currentPolicyDescription')}
+        >
+          <Box sx={{ p: 2 }}>
+            <SignatureDiagnosticsPolicyInspector
+              policy={controller.policy.data ?? null}
+              readState={controller.policyState}
+              now={now}
+            />
+          </Box>
+        </ApprovalSurface>
+      </Box>
+
+      <ApprovalSignaturePolicyWorkspace />
+
+      <ApprovalAdminAttachmentPolicyController />
+
+      <FormDialog
+        open={controller.selectedProviderId !== null}
+        title={selectedProvider?.displayName ?? label('settings')}
+        description={t('admin.signatureDiagnostics.providerDialogDescription')}
+        cancelLabel={t('actions.close')}
+        submitLabel={t('actions.close')}
+        showSubmit={false}
+        maxWidth="lg"
+        mobileFullScreen
+        onClose={controller.closeProvider}
+        onSubmit={controller.closeProvider}
+      >
+        <SignatureDiagnosticsInspector
+          details={controller.details.data ?? null}
+          policy={controller.policy.data ?? null}
+          readState={controller.detailsState}
+          policyReadState={controller.policyState}
+          now={now}
+        />
+      </FormDialog>
+
+      <FormDialog
+        open={controller.historyOpen}
+        title={label('historyAction')}
+        description={t('admin.signatureDiagnostics.historyDescription')}
+        cancelLabel={t('actions.close')}
+        submitLabel={t('actions.close')}
+        showSubmit={false}
+        maxWidth="lg"
+        mobileFullScreen
+        onClose={controller.closeHistory}
+        onSubmit={controller.closeHistory}
+      >
+        <SignatureDiagnosticsHistory
+          diagnosticHistory={controller.diagnosticHistory.data ?? null}
+          policyHistory={controller.policyHistory.data ?? null}
+          readState={controller.diagnosticHistoryState}
+          policyReadState={controller.policyHistoryState}
+          onNextDiagnostic={controller.nextDiagnosticHistory}
+          onNextPolicy={controller.nextPolicyHistory}
+        />
+      </FormDialog>
     </Stack>
   );
 }

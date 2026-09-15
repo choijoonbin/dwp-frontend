@@ -271,11 +271,11 @@ test('attachment contract absence closes actual browser DATA and writes without 
   expect(s.writes).toHaveLength(0);
 });
 
-test.describe('canonical generation 9 attachment frontend contract journeys', () => {
+test.describe('canonical generation 14 attachment frontend contract journeys', () => {
   test.beforeEach(() => {
     test.skip(
       !installed,
-      'Pending Root canonical generation 9 install. Positive proof must use installed source, not a success-only mock.'
+      'Pending Root canonical generation 14 install. Positive proof must use installed source, not a success-only mock.'
     );
     for (const contract of APPROVAL_ATTACHMENT_ACTION_CONTRACTS) {
       const routes = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(

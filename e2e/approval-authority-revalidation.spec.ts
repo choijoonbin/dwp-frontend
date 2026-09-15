@@ -8,6 +8,10 @@ import {
   APPROVAL_TASK_DETAIL_FIXTURE,
 } from './support/product-area-fixtures';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
+import {
+  approvalRequestSearchPage,
+  approvalTaskSearchPage,
+} from './support/approval-search-fixtures';
 
 const APPROVAL_MEMBER_PERMISSIONS = [
   {
@@ -73,8 +77,17 @@ test('결재 상세 재검증 실패는 캐시된 증적과 결정 작업을 숨
     version: 1,
   };
   await page.route(
-    (url) => url.pathname === '/api/approvals/v1/tasks' && url.searchParams.get('view') === 'INBOX',
-    (route) => fulfillSuccess(route, [APPROVAL_TASK_DETAIL_FIXTURE.task, secondTask])
+    (url) =>
+      url.pathname === '/api/approvals/v1/tasks/search' && url.searchParams.get('view') === 'INBOX',
+    (route) =>
+      fulfillSuccess(
+        route,
+        approvalTaskSearchPage(
+          new URL(route.request().url()),
+          [APPROVAL_TASK_DETAIL_FIXTURE.task, secondTask],
+          Date.now()
+        )
+      )
   );
   let firstDetailAvailable = true;
   let decisionPosts = 0;
@@ -165,8 +178,11 @@ test('보완 상세 권한 확인 실패는 이전 payload 제출을 막고 재�
     status: 'NEEDS_INFO' as const,
     latestInformationRequest: '업무 사유와 만료일을 구체화해 주세요.',
   };
-  await page.route('**/api/approvals/v1/requests?view=NEEDS_INFO', (route) =>
-    fulfillSuccess(route, [needsInformation])
+  await page.route('**/api/approvals/v1/requests/search?view=NEEDS_INFO*', (route) =>
+    fulfillSuccess(
+      route,
+      approvalRequestSearchPage(new URL(route.request().url()), [needsInformation], Date.now())
+    )
   );
   let detailAvailable = false;
   let responsePosts = 0;
@@ -184,7 +200,10 @@ test('보완 상세 권한 확인 실패는 이전 payload 제출을 막고 재�
   );
 
   await page.goto('/approvals/requests/needs-info');
-  await page.getByRole('button', { name: '보완 답변' }).click();
+  await page
+    .getByRole('list', { name: '결재' })
+    .getByRole('button', { name: '보완 답변' })
+    .click();
   const dialog = page.getByRole('dialog');
   const error = dialog
     .getByRole('alert')
@@ -206,8 +225,15 @@ test('보완 상세 권한 확인 실패는 이전 payload 제출을 막고 재�
 
 test('요청 상세 재검증 실패는 캐시된 payload와 회수 작업을 숨기고 복구한다', async ({ page }) => {
   await prepareApprovalSession(page);
-  await page.route('**/api/approvals/v1/requests?view=SUBMITTED', (route) =>
-    fulfillSuccess(route, [APPROVAL_REQUEST_FIXTURE])
+  await page.route('**/api/approvals/v1/requests/search?view=SUBMITTED*', (route) =>
+    fulfillSuccess(
+      route,
+      approvalRequestSearchPage(
+        new URL(route.request().url()),
+        [APPROVAL_REQUEST_FIXTURE],
+        Date.now()
+      )
+    )
   );
   let detailAvailable = true;
   await page.route('**/api/approvals/v1/requests/approval-request-001/detail', (route) =>
@@ -217,7 +243,8 @@ test('요청 상세 재검증 실패는 캐시된 payload와 회수 작업을 �
   );
 
   await page.goto('/approvals/requests/submitted');
-  await page.getByRole('button', { name: '결재 상세 열기' }).click();
+  const requestList = page.getByRole('list', { name: '결재' });
+  await requestList.getByRole('button', { name: '결재 상세 열기' }).click();
   let drawer = page.getByRole('dialog', {
     name: APPROVAL_REQUEST_DETAIL_FIXTURE.request.title,
   });
@@ -227,7 +254,7 @@ test('요청 상세 재검증 실패는 캐시된 payload와 회수 작업을 �
   await drawer.getByRole('button', { name: '닫기' }).click();
 
   detailAvailable = false;
-  await page.getByRole('button', { name: '결재 상세 열기' }).click();
+  await requestList.getByRole('button', { name: '결재 상세 열기' }).click();
   drawer = page.getByRole('dialog', { name: '결재 상세' });
   const error = drawer
     .getByRole('alert')

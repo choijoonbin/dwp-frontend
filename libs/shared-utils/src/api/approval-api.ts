@@ -8,6 +8,7 @@ export type { ApprovalInformationRound } from './approval-information-contract';
 import { APPROVAL_DOCUMENT_ACTION_CONTRACTS } from './approval-document-action-contracts';
 import { APPROVAL_EXTENSION_ACTION_CONTRACTS } from './approval-extension-action-contracts';
 import { APPROVAL_RELEASE10_ACTION_CONTRACTS } from './approval-release10-action-contracts';
+import { APPROVAL_RELEASE14_ACTION_CONTRACTS } from './approval-release14-action-contracts';
 import {
   captureApprovalTypedWorkflowDefinition,
   readApprovalTypedWorkflowDetail,
@@ -183,6 +184,9 @@ export type ApprovalDelegationCreateInput = ApprovalDelegationCreateBase &
         >;
       }
   );
+type ApprovalDelegationUpdateBase = ApprovalDelegationCreateBase & { expectedVersion: number };
+export type ApprovalDelegationUpdateInput = ApprovalDelegationUpdateBase &
+  ({ scopeType: 'ALL'; workflowId?: never } | { scopeType: 'WORKFLOW'; workflowId: string });
 
 const base = '/api/approvals/v1';
 
@@ -197,6 +201,7 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
   ...APPROVAL_DOCUMENT_ACTION_CONTRACTS,
   ...APPROVAL_EXTENSION_ACTION_CONTRACTS,
   ...APPROVAL_RELEASE10_ACTION_CONTRACTS,
+  ...APPROVAL_RELEASE14_ACTION_CONTRACTS,
   {
     apiFunction: 'claimApprovalTask',
     routeContractKey: 'route.approvals.work.task-claim.action',
@@ -220,6 +225,12 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
     routeContractKey: 'route.approvals.work.request-draft-update.action',
     method: 'PUT',
     path: `${base}/requests/{requestId}/draft`,
+  },
+  {
+    apiFunction: 'migrateApprovalDraft',
+    routeContractKey: 'route.approvals.work.request-draft-migrate.action',
+    method: 'POST',
+    path: `${base}/requests/{requestId}/draft/migrate`,
   },
   {
     apiFunction: 'submitApprovalRequest',
@@ -322,6 +333,12 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
     routeContractKey: 'route.approvals.admin.policy-update.action',
     method: 'PUT',
     path: `${base}/admin/policies/{policyId}`,
+  },
+  {
+    apiFunction: 'createApprovalPolicyDraft',
+    routeContractKey: 'route.approvals.admin.policy-create.action',
+    method: 'POST',
+    path: `${base}/admin/policies`,
   },
   {
     apiFunction: 'publishApprovalPolicy',

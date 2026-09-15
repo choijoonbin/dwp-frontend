@@ -2,12 +2,17 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildApprovalDelegationCreateInput,
+  buildApprovalDelegationUpdateInput,
   buildApprovalDelegationWorkflowReference,
   buildApprovalDelegationWorkflowOptions,
   canRevokeApprovalDelegation,
+  canUpdateApprovalDelegation,
   isApprovalDelegationPeriodValid,
   isApprovalDelegationSnapshotCurrent,
+  isApprovalDelegationUpdateSnapshotCurrent,
+  isApprovalDelegationWindowCurrent,
   isApprovalDelegationDirection,
+  sameApprovalDelegationUpdateInput,
 } from './approval-delegation-model';
 
 import type { ApprovalDelegation, ApprovalWorkflow } from '@dwp-frontend/shared-utils';
@@ -47,6 +52,28 @@ describe('approval delegation workflow identity', () => {
       isApprovalDelegationPeriodValid('2026-08-31T00:00:00.000Z', '2026-08-25T00:00:00.000Z')
     ).toBe(false);
     expect(isApprovalDelegationPeriodValid('invalid', '2026-08-31T00:00:00.000Z')).toBe(false);
+    expect(
+      isApprovalDelegationPeriodValid('2026-01-01T00:00:00+09:00', '2026-04-01T00:00:00+09:00')
+    ).toBe(true);
+    expect(
+      isApprovalDelegationPeriodValid('2025-12-31T15:00:00.000Z', '2026-03-31T15:00:00.001Z')
+    ).toBe(false);
+    expect(
+      isApprovalDelegationWindowCurrent({
+        startsAt: '2026-08-25T00:00:00.000Z',
+        endsAt: '2026-08-31T00:00:00.000Z',
+        retainedStartsAt: '2026-08-25T09:00:00+09:00',
+        nowMs: Date.parse('2026-08-26T00:00:00.000Z'),
+      })
+    ).toBe(true);
+    expect(
+      isApprovalDelegationWindowCurrent({
+        startsAt: '2026-08-24T00:00:00.000Z',
+        endsAt: '2026-08-31T00:00:00.000Z',
+        retainedStartsAt: '2026-08-25T00:00:00.000Z',
+        nowMs: Date.parse('2026-08-26T00:00:00.000Z'),
+      })
+    ).toBe(false);
 
     const delegation: ApprovalDelegation = {
       delegationId: 'delegation-1',
@@ -66,8 +93,49 @@ describe('approval delegation workflow identity', () => {
       false
     );
     expect(canRevokeApprovalDelegation(delegation, true)).toBe(true);
+    expect(canUpdateApprovalDelegation(delegation, true)).toBe(true);
     expect(canRevokeApprovalDelegation({ ...delegation, direction: 'INCOMING' }, true)).toBe(false);
+    expect(canUpdateApprovalDelegation({ ...delegation, direction: 'INCOMING' }, true)).toBe(false);
     expect(canRevokeApprovalDelegation(delegation, false)).toBe(false);
+    const update = buildApprovalDelegationUpdateInput({
+      delegation,
+      scopeType: 'ALL',
+      workflowId: '',
+      startsAt: delegation.startsAt,
+      endsAt: delegation.endsAt,
+      reason: 'Updated bounded absence coverage',
+      nowMs: Date.parse('2026-08-26T00:00:00.000Z'),
+    });
+    expect(update).toEqual({
+      delegateUserId: 2,
+      scopeType: 'ALL',
+      startsAt: delegation.startsAt,
+      endsAt: delegation.endsAt,
+      reason: 'Updated bounded absence coverage',
+      expectedVersion: 3,
+    });
+    expect(update && sameApprovalDelegationUpdateInput(update, { ...update })).toBe(true);
+    expect(
+      buildApprovalDelegationUpdateInput({
+        delegation,
+        scopeType: 'ALL',
+        workflowId: '',
+        startsAt: '2025-12-31T15:00:00.000Z',
+        endsAt: '2026-03-31T15:00:00.001Z',
+        reason: 'This update exceeds the maximum window.',
+        nowMs: Date.parse('2025-12-31T15:00:00.000Z'),
+      })
+    ).toBeNull();
+    expect(isApprovalDelegationUpdateSnapshotCurrent([delegation], delegation)).toBe(true);
+    expect(
+      isApprovalDelegationUpdateSnapshotCurrent([{ ...delegation, delegateUserId: 7 }], delegation)
+    ).toBe(false);
+    expect(
+      isApprovalDelegationUpdateSnapshotCurrent(
+        [{ ...delegation, startsAt: '2026-08-25T01:00:00.000Z' }],
+        delegation
+      )
+    ).toBe(false);
   });
 
   it('keeps same-key A/B workflows distinct by immutable UUID and uses the key only in labels', () => {

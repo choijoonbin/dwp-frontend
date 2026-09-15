@@ -15,6 +15,7 @@ import {
   retireApprovalFormWorkspace,
   reinstateApprovalFormWorkspace,
   publishReviewedApprovalFormWorkspace,
+  rejectApprovalFormPublishReview,
   isApprovalTypedFormSchema,
   productSurfaceServerNow,
   useProductSurfaceAuthority,
@@ -46,6 +47,7 @@ import type {
   ApprovalFormWorkingDraftInput,
   ApprovalFormReviewedPublishInput,
   ApprovalFormWorkspaceVersion,
+  ApprovalFormPublishReviewRejectInput,
 } from '@dwp-frontend/shared-utils';
 import type { ApprovalManagementRequestScope } from './use-approval-experience';
 import type { ApprovalFormWorkspacePins } from './approval-form-workspace-model';
@@ -58,6 +60,11 @@ export const APPROVAL_FORM_WORKSPACE_ROUTE_BINDINGS = {
   'form-version-detail.data': ['GET', `${prefix}/versions/{formVersionId}`],
   'form-version-diff.data': ['GET', `${prefix}/diff`],
   'form-publish-review.data': ['GET', `${prefix}/publish-review`],
+  'form-publish-review-request.data': ['GET', `${prefix}/publish-review-request`],
+  'form-publish-review-candidates.data': ['GET', '/api/approvals/v1/admin/forms/publish-review-candidates'],
+  'form-publish-review-queue.data': ['GET', '/api/approvals/v1/admin/forms/publish-review-requests'],
+  'form-publish-review-request.action': ['POST', `${prefix}/publish-review-request`],
+  'form-publish-review-reject.action': ['POST', `${prefix}/publish-review-requests/{requestId}/reject`],
   'form-working-draft-update.action': ['PUT', `${prefix}/working-draft`],
   'form-version-branch.action': ['POST', `${prefix}/versions/{formVersionId}/branch`],
   'form-retire.action': ['POST', `${prefix}/retire`],
@@ -103,6 +110,10 @@ type ReviewAttempt = {
   key: string;
   comparisons: ReadonlyArray<{ key: QueryKey; fingerprint: string }>;
 };
+type RejectAttempt = Omit<ReviewAttempt, 'input'> & {
+  input: ApprovalFormPublishReviewRejectInput;
+};
+type ReviewSourceAttempt = Pick<ReviewAttempt, 'original' | 'parents' | 'review' | 'comparisons'>;
 
 export function useApprovalFormWorkspaceController({
   formId,
@@ -149,6 +160,7 @@ export function useApprovalFormWorkspaceController({
   const dispatched = useRef(new Set<string>());
   const uncertainCommands = useRef(new Set<string>());
   const reviewAttempt = useRef<ReviewAttempt | null>(null);
+  const rejectAttempt = useRef<RejectAttempt | null>(null);
   const editorParents = useRef<LowCommand['parents']>([]);
   const reviewParents = useRef<LowCommand['parents']>([]);
   const selection = useRef({ formId, epoch: 0 });
@@ -291,6 +303,12 @@ export function useApprovalFormWorkspaceController({
     productKey: 'approvals',
     surfaceKey: 'approvals.admin',
     routeContractKey: 'route.approvals.admin.form-reinstate.action',
+    taskKind: 'ADMINISTRATION',
+  });
+  const dispatchRejectReview = useProductSurfaceGovernedMutation({
+    productKey: 'approvals',
+    surfaceKey: 'approvals.admin',
+    routeContractKey: 'route.approvals.admin.form-publish-review-reject.action',
     taskKind: 'ADMINISTRATION',
   });
   const live = useRef({
@@ -510,7 +528,7 @@ export function useApprovalFormWorkspaceController({
     activeLowKey.current = command.key;
     mutation.mutate(command);
   };
-  const assertReview = (attempt: ReviewAttempt) => {
+  const assertReview = (attempt: ReviewSourceAttempt) => {
     const currentReview = client.getQueryData<ApprovalFormWorkspaceReview>(reviewKey);
     const currentHistory =
       client.getQueryData<Awaited<ReturnType<typeof getApprovalFormWorkspaceHistory>>>(historyKey);
@@ -580,6 +598,50 @@ export function useApprovalFormWorkspaceController({
       }
     },
   });
+  const rejectMutation = useMutation({
+    mutationFn: (attempt: RejectAttempt) => {
+      assertReview(attempt);
+      let dispatchChecks = 0;
+      return dispatchRejectReview((execution) =>
+        rejectApprovalFormPublishReview(
+          attempt.original.workspace.formId,
+          attempt.review.reviewRequest.reviewRequestId,
+          attempt.input,
+          execution,
+          {
+            idempotencyKey: attempt.key,
+            beforeDispatch: () => {
+              assertReview(attempt);
+              if (++dispatchChecks === 2) dispatched.current.add(attempt.key);
+            },
+          }
+        )
+      );
+    },
+    onSuccess: async (_value, attempt) => {
+      if (!resultCurrent(attempt.original)) return;
+      uncertainCommands.current.delete(attempt.key);
+      rejectAttempt.current = null;
+      setFeedback(null);
+      setReviewOriginal(null);
+      setReview(null);
+      toast.success(t('admin.formWorkspace.reviewRejected'));
+      await onChanged(attempt.original.workspace.formId);
+      if (resultCurrent(attempt.original)) await client.invalidateQueries({ queryKey: baseKey });
+    },
+    onError: (error, attempt) => {
+      if (!resultCurrent(attempt.original)) return;
+      const uncertain =
+        uncertainCommands.current.has(attempt.key) ||
+        (dispatched.current.has(attempt.key) &&
+          (error instanceof ApprovalFormWorkspaceResponseError ||
+            error instanceof HttpTransportError ||
+            (error instanceof HttpError && error.status >= 500)));
+      if (uncertain) uncertainCommands.current.add(attempt.key);
+      else rejectAttempt.current = null;
+      setFeedback(uncertain ? 'UNKNOWN' : 'CHANGED');
+    },
+  });
   const liveHighClose = useRef(highRisk.controller.close);
   liveHighClose.current = highRisk.controller.close;
   useEffect(() => {
@@ -601,6 +663,7 @@ export function useApprovalFormWorkspaceController({
     pending.current = null;
     activeLowKey.current = null;
     reviewAttempt.current = null;
+    rejectAttempt.current = null;
     editorParents.current = [];
     reviewParents.current = [];
     dispatched.current.clear();
@@ -659,7 +722,7 @@ export function useApprovalFormWorkspaceController({
     editorOriginal,
     editorCurrent: feedback !== 'CHANGED' && originalCurrent(editorOriginal, editorParents.current),
     feedback,
-    busy: mutation.isPending,
+    busy: mutation.isPending || rejectMutation.isPending,
     unknown: feedback === 'UNKNOWN',
     highRisk,
     branchOriginal,
@@ -784,10 +847,11 @@ export function useApprovalFormWorkspaceController({
       void client.resetQueries({ queryKey: reviewKey, exact: true });
     },
     closeReview: () => {
+      if (rejectMutation.isPending) return;
       setReviewOriginal(null);
       setReview(null);
     },
-    confirmReview: () => {
+    confirmReview: (reviewComment: string) => {
       if (!reviewOriginal || !review) return;
       const input = snapshotApprovalFormWorkspace({
         expectedFormRevision: review.formRevision,
@@ -796,6 +860,9 @@ export function useApprovalFormWorkspaceController({
         basePublishedVersionId: review.basePublishedVersionId,
         schemaSha256: review.schemaSha256,
         reviewContentDigest: review.reviewContentDigest,
+        reviewRequestId: review.reviewRequest.reviewRequestId,
+        expectedReviewRequestVersion: review.reviewRequest.version,
+        reviewComment,
       });
       const comparisons = [historyKey, requiredDiffKey, diffKey].map((key) => ({
         key,
@@ -819,6 +886,34 @@ export function useApprovalFormWorkspaceController({
       setReviewOriginal(null);
       void highRisk.begin(approvalFormReviewedPublishCommand(review.formId, input, attempt.key));
     },
+    rejectReview: (reason: string) => {
+      if (!reviewOriginal || !review || rejectMutation.isPending || rejectAttempt.current) return;
+      const comparisons = [historyKey, requiredDiffKey, diffKey].map((key) => ({
+        key,
+        fingerprint: JSON.stringify(client.getQueryData(key)),
+      }));
+      const attempt: RejectAttempt = {
+        original: reviewOriginal,
+        parents: reviewParents.current,
+        review,
+        input: {
+          expectedFormRevision: review.formRevision,
+          expectedWorkspaceRevision: review.workspaceRevision,
+          expectedReviewRequestVersion: review.reviewRequest.version,
+          reason,
+        },
+        key: crypto.randomUUID(),
+        comparisons,
+      };
+      try {
+        assertReview(attempt);
+      } catch {
+        setFeedback('CHANGED');
+        return;
+      }
+      rejectAttempt.current = attempt;
+      rejectMutation.mutate(attempt);
+    },
     reload: async () => {
       if (!readEnabled) return;
       const reloaded = await workspace.refetch();
@@ -837,6 +932,8 @@ export function useApprovalFormWorkspaceController({
     },
     retryOriginal: () => {
       if (pending.current) submitLow(pending.current);
+      else if (rejectAttempt.current && !rejectMutation.isPending)
+        rejectMutation.mutate(rejectAttempt.current);
     },
   };
 }

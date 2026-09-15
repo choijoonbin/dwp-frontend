@@ -165,6 +165,11 @@ for (const status of [403, 503])
     await dialog.getByRole('button', { name: '댓글 등록', exact: true }).click();
     await expect(dialog.getByRole('button', { name: '댓글 등록', exact: true })).toBeDisabled();
     await expect(dialog.getByRole('button', { name: '새로고침', exact: true })).toBeVisible();
+    await expect(
+      dialog.getByText('문서 도구 확인에 실패했습니다. 새로고침 후 다시 확인하세요.', {
+        exact: true,
+      })
+    ).toBeVisible();
     if (status === 403) await expect(page.getByRole('heading', { name: state.title })).toBeHidden();
     expect(state.writes).toHaveLength(0);
   });

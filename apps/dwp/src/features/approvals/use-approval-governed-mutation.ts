@@ -58,3 +58,12 @@ export function useApprovalGovernedMutation(
 ) {
   return useProductSurfaceGovernedMutation(bindings[routeContractKey]);
 }
+
+export function useApprovalDelegationUpdateGovernedMutation() {
+  return useProductSurfaceGovernedMutation({
+    productKey: 'approvals',
+    surfaceKey: 'approvals.work',
+    routeContractKey: 'route.approvals.work.delegation-update.action',
+    taskKind: 'WORK',
+  });
+}

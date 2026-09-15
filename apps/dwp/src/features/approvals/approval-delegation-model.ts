@@ -1,8 +1,12 @@
 import type {
   ApprovalDelegation,
   ApprovalDelegationCreateInput,
+  ApprovalDelegationUpdateInput,
   ApprovalWorkflow,
 } from '@dwp-frontend/shared-utils';
+
+export const APPROVAL_DELEGATION_MAX_DURATION_MS = 90 * 24 * 60 * 60 * 1000;
+const APPROVAL_DELEGATION_START_GRACE_MS = 5 * 60 * 1000;
 
 export type ApprovalDelegationWorkflowOption = Readonly<{
   value: string;
@@ -71,7 +75,69 @@ export function buildApprovalDelegationWorkflowReference(
 export function isApprovalDelegationPeriodValid(startsAt: string, endsAt: string): boolean {
   const starts = Date.parse(startsAt);
   const ends = Date.parse(endsAt);
-  return Number.isFinite(starts) && Number.isFinite(ends) && ends > starts;
+  const duration = ends - starts;
+  return (
+    Number.isFinite(starts) &&
+    Number.isFinite(ends) &&
+    duration > 0 &&
+    duration <= APPROVAL_DELEGATION_MAX_DURATION_MS
+  );
+}
+
+export function isApprovalDelegationWindowCurrent(input: {
+  startsAt: string;
+  endsAt: string;
+  retainedStartsAt?: string;
+  nowMs?: number;
+}): boolean {
+  if (!isApprovalDelegationPeriodValid(input.startsAt, input.endsAt)) return false;
+  const startsAtMs = Date.parse(input.startsAt);
+  const endsAtMs = Date.parse(input.endsAt);
+  const retainedStartsAtMs = input.retainedStartsAt
+    ? Date.parse(input.retainedStartsAt)
+    : Number.NaN;
+  const nowMs = input.nowMs ?? Date.now();
+  return (
+    endsAtMs > nowMs &&
+    (startsAtMs >= nowMs - APPROVAL_DELEGATION_START_GRACE_MS ||
+      (Number.isFinite(retainedStartsAtMs) && startsAtMs === retainedStartsAtMs))
+  );
+}
+
+export function buildApprovalDelegationUpdateInput(input: {
+  delegation: ApprovalDelegation;
+  scopeType: 'ALL' | 'WORKFLOW';
+  workflowId: string;
+  startsAt: string;
+  endsAt: string;
+  reason: string;
+  nowMs?: number;
+}): ApprovalDelegationUpdateInput | null {
+  if (
+    !Number.isSafeInteger(input.delegation.delegateUserId) ||
+    input.delegation.delegateUserId <= 0 ||
+    input.reason.length < 10 ||
+    input.reason.length > 1000 ||
+    !isApprovalDelegationWindowCurrent({
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+      retainedStartsAt: input.delegation.startsAt,
+      nowMs: input.nowMs,
+    })
+  ) {
+    return null;
+  }
+  const period = {
+    delegateUserId: input.delegation.delegateUserId,
+    startsAt: input.startsAt,
+    endsAt: input.endsAt,
+    reason: input.reason,
+    expectedVersion: input.delegation.version,
+  };
+  if (input.scopeType === 'ALL') return { ...period, scopeType: 'ALL' };
+  return input.workflowId
+    ? { ...period, scopeType: 'WORKFLOW', workflowId: input.workflowId }
+    : null;
 }
 
 export function isApprovalDelegationSnapshotCurrent(
@@ -88,6 +154,41 @@ export function isApprovalDelegationSnapshotCurrent(
   );
 }
 
+export function isApprovalDelegationUpdateSnapshotCurrent(
+  current: readonly ApprovalDelegation[] | undefined,
+  snapshot: ApprovalDelegation
+): boolean {
+  const authoritative = current?.find(
+    (delegation) => delegation.delegationId === snapshot.delegationId
+  );
+  return Boolean(
+    authoritative &&
+    isApprovalDelegationSnapshotCurrent(current, snapshot) &&
+    authoritative.delegatorUserId === snapshot.delegatorUserId &&
+    authoritative.delegateUserId === snapshot.delegateUserId &&
+    authoritative.scopeType === snapshot.scopeType &&
+    (authoritative.workflowId ?? null) === (snapshot.workflowId ?? null) &&
+    authoritative.startsAt === snapshot.startsAt &&
+    authoritative.endsAt === snapshot.endsAt &&
+    authoritative.reason === snapshot.reason
+  );
+}
+
+export function sameApprovalDelegationUpdateInput(
+  left: ApprovalDelegationUpdateInput,
+  right: ApprovalDelegationUpdateInput
+): boolean {
+  return (
+    left.delegateUserId === right.delegateUserId &&
+    left.scopeType === right.scopeType &&
+    (left.workflowId ?? null) === (right.workflowId ?? null) &&
+    left.startsAt === right.startsAt &&
+    left.endsAt === right.endsAt &&
+    left.reason === right.reason &&
+    left.expectedVersion === right.expectedVersion
+  );
+}
+
 export function canRevokeApprovalDelegation(
   delegation: Pick<ApprovalDelegation, 'direction' | 'lifecycleState'>,
   sourceReady: boolean
@@ -96,3 +197,5 @@ export function canRevokeApprovalDelegation(
     sourceReady && delegation.direction === 'OUTGOING' && delegation.lifecycleState === 'ACTIVE'
   );
 }
+
+export const canUpdateApprovalDelegation = canRevokeApprovalDelegation;

@@ -98,6 +98,15 @@ export function approvalFormWorkspaceReviewMatches(
     draft.schemaSha256 === review.schemaSha256 &&
     draft.createdBy === review.makerUserId &&
     workspace.lastEditorUserId === review.lastEditorUserId &&
+    review.reviewRequest.status === 'PENDING' &&
+    review.reviewRequest.formId === review.formId &&
+    review.reviewRequest.draftFormVersionId === review.draftFormVersionId &&
+    review.reviewRequest.basePublishedFormVersionId === review.basePublishedVersionId &&
+    review.reviewRequest.formRevision === review.formRevision &&
+    review.reviewRequest.workspaceRevision === review.workspaceRevision &&
+    review.reviewRequest.schemaSha256 === review.schemaSha256 &&
+    review.reviewRequest.reviewContentDigest === review.reviewContentDigest &&
+    review.reviewRequest.reviewerUserId === original.actorId &&
     review.independentCheckerEligible &&
     review.makerUserId !== original.actorId &&
     review.lastEditorUserId !== original.actorId &&

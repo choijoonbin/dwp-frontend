@@ -22,6 +22,7 @@ const mascotAcknowledge = keyframes`
 `;
 
 type DwaionLauncherProps = {
+  dockToHeader?: boolean;
   firstName?: string;
   pageContext?: AskPageContext;
   suggestionKeys?: readonly string[];
@@ -32,6 +33,7 @@ type DwaionLauncherProps = {
 };
 
 export function DwaionLauncher({
+  dockToHeader = false,
   firstName,
   pageContext,
   suggestionKeys,
@@ -47,8 +49,9 @@ export function DwaionLauncher({
   const [motionEvent, setMotionEvent] = useState(0);
   const popoverActions = useRef<PopoverActions>(null);
   const compactViewport = useMediaQuery('(max-width: 899.95px)', { noSsr: true });
-  const compactHeaderDock = compactViewport || reflowHeaderDock;
-  const fullScreenPanel = compactHeaderDock;
+  const responsiveHeaderDock = compactViewport || reflowHeaderDock;
+  const headerDockRequested = dockToHeader || responsiveHeaderDock;
+  const fullScreenPanel = responsiveHeaderDock;
   const open = Boolean(anchorEl);
   const panelId = 'dwaion-home-panel';
   const closePanel = () => {
@@ -80,7 +83,7 @@ export function DwaionLauncher({
   }, []);
 
   useEffect(() => {
-    if (!compactHeaderDock) {
+    if (!headerDockRequested) {
       setHeaderActions(null);
       return undefined;
     }
@@ -93,9 +96,9 @@ export function DwaionLauncher({
     const observer = new MutationObserver(resolveTarget);
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [compactHeaderDock]);
+  }, [headerDockRequested]);
 
-  const headerDocked = compactHeaderDock && Boolean(headerActions);
+  const headerDocked = headerDockRequested && Boolean(headerActions);
 
   const launcherSize = headerDocked ? 44 : { xs: 48, sm: 56 };
   const placement = headerDocked ? 'header' : 'floating';
@@ -316,6 +319,6 @@ export function DwaionLauncher({
     </Box>
   );
 
-  if (compactHeaderDock && !headerActions) return null;
+  if (headerDockRequested && !headerActions) return null;
   return headerDocked && headerActions ? createPortal(launcher, headerActions) : launcher;
 }

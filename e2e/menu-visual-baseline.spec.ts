@@ -139,6 +139,46 @@ for (const routeId of baselineRouteIds) {
       blockingViolations,
       `${productRoute.id}:${project} has serious or critical accessibility violations`
     ).toEqual([]);
+    if (productRoute.id.startsWith('approvals.')) {
+      const launcher = page.getByTestId('dwaion-launcher');
+      await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
+      const geometry = await launcher.evaluate((element) => {
+        const launcherRect = element.getBoundingClientRect();
+        const header = element.closest('header');
+        const visibleMainActions = [
+          ...document.querySelectorAll<HTMLElement>(
+            '#dwp-main-content a, #dwp-main-content button'
+          ),
+        ].filter((action) => {
+          const rect = action.getBoundingClientRect();
+          const style = window.getComputedStyle(action);
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.bottom > 0 &&
+            rect.top < window.innerHeight &&
+            style.display !== 'none' &&
+            style.visibility !== 'hidden'
+          );
+        });
+        return {
+          containedByHeader: Boolean(header?.contains(element)),
+          overlaps: visibleMainActions.filter((action) => {
+            const rect = action.getBoundingClientRect();
+            return (
+              rect.left < launcherRect.right &&
+              rect.right > launcherRect.left &&
+              rect.top < launcherRect.bottom &&
+              rect.bottom > launcherRect.top
+            );
+          }).length,
+        };
+      });
+      expect(geometry.containedByHeader, `${productRoute.id}:${project} launcher header dock`).toBe(
+        true
+      );
+      expect(geometry.overlaps, `${productRoute.id}:${project} launcher action overlap`).toBe(0);
+    }
     await expect(page).toHaveScreenshot(`${productRoute.id}.png`, {
       animations: 'disabled',
       caret: 'hide',

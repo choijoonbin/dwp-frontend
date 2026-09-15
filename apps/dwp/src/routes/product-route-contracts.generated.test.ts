@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
 
@@ -26,6 +28,30 @@ const MAIL_ORGANIZATION_PAGE_ROUTE_KEYS = [
   'route.mail.work.organization.page',
 ] as const;
 
+const authorizationSnapshot = JSON.parse(
+  fs.readFileSync(
+    path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
+    'utf8'
+  )
+) as {
+  index: { indexChecksum: string };
+  latestAlias: { bundleKey: string; version: number; checksum: string };
+  bundles: Array<{
+    bundleKey: string;
+    version: number;
+    routes: Array<{ routeKind: 'PAGE' | 'DATA' | 'ACTION' }>;
+  }>;
+};
+const latestAuthorizationBundles = authorizationSnapshot.bundles.filter(
+  (bundle) =>
+    bundle.bundleKey === authorizationSnapshot.latestAlias.bundleKey &&
+    bundle.version === authorizationSnapshot.latestAlias.version
+);
+if (latestAuthorizationBundles.length !== 1) {
+  throw new Error('Latest product authorization bundle is not exact');
+}
+const latestAuthorizationBundle = latestAuthorizationBundles[0]!;
+
 describe('generated product route authorization contracts', () => {
   it('closes PAGE Router source and Registry projections in both directions', () => {
     const router = [...PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE].sort((left, right) =>
@@ -39,12 +65,12 @@ describe('generated product route authorization contracts', () => {
       surfaceId: route.surfaceId,
     })).sort((left, right) => left.routeContractKey.localeCompare(right.routeContractKey));
 
-    expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION).toEqual(
-      expect.objectContaining({
-        version: 10,
-        checksum: '1f97638c95a192f0ec7f01053c3965f79b7a3ee4eb9781ea56e3cf8eccc6889b',
-      })
-    );
+    expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION).toEqual({
+      bundleKey: authorizationSnapshot.latestAlias.bundleKey,
+      version: authorizationSnapshot.latestAlias.version,
+      checksum: authorizationSnapshot.latestAlias.checksum,
+      indexChecksum: authorizationSnapshot.index.indexChecksum,
+    });
     expect(PRODUCT_SURFACE_ROLLOUT_PRODUCTS).toEqual([
       'approvals',
       'calendar',
@@ -72,9 +98,17 @@ describe('generated product route authorization contracts', () => {
       {}
     );
 
-    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(318);
-    expect(countByKind).toEqual({ ACTION: 161, DATA: 78, PAGE: 79 });
-    expect(nonPages).toHaveLength(239);
+    const latestCountByKind = latestAuthorizationBundle.routes.reduce<Record<string, number>>(
+      (counts, route) => ({ ...counts, [route.routeKind]: (counts[route.routeKind] ?? 0) + 1 }),
+      {}
+    );
+    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(
+      latestAuthorizationBundle.routes.length
+    );
+    expect(countByKind).toEqual(latestCountByKind);
+    expect(nonPages).toHaveLength(
+      latestAuthorizationBundle.routes.filter((route) => route.routeKind !== 'PAGE').length
+    );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(78);
     expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(157);

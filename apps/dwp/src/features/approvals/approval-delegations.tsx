@@ -13,13 +13,17 @@ import {
   getApprovalDelegations,
   HttpError,
   revokeApprovalDelegation,
+  updateApprovalDelegation,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
 import { ApprovalDelegationEditor } from './approval-delegation-editor';
 import {
+  canUpdateApprovalDelegation,
   canRevokeApprovalDelegation,
   isApprovalDelegationSnapshotCurrent,
+  isApprovalDelegationUpdateSnapshotCurrent,
+  sameApprovalDelegationUpdateInput,
 } from './approval-delegation-model';
 import { ApprovalDelegationWorkspace } from './approval-delegation-workspace';
 import { useApprovalManagementCommandScope } from './approval-management-command-scope';
@@ -28,20 +32,36 @@ import { ApprovalSurface } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
+  useApprovalDelegationUpdateGovernedMutation,
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
-import type { ApprovalDelegation, ApprovalDelegationCreateInput } from '@dwp-frontend/shared-utils';
+import type {
+  ApprovalDelegation,
+  ApprovalDelegationCreateInput,
+  ApprovalDelegationUpdateInput,
+} from '@dwp-frontend/shared-utils';
+import type { ApprovalDelegationEditorSubmission } from './approval-delegation-editor';
 import type { ApprovalManagementScopedCommand } from './approval-management-command-scope';
 
 type DelegationRecovery = Readonly<{
-  command: 'create' | 'revoke';
+  command: 'create' | 'update' | 'revoke';
   kind: ReturnType<typeof approvalRequestRecovery>;
 }>;
 
 type CreateDelegationCommand = ApprovalManagementScopedCommand<ApprovalDelegationCreateInput>;
+type UpdateDelegationAttempt = Readonly<{
+  source: ApprovalDelegation;
+  input: ApprovalDelegationUpdateInput;
+  idempotencyKey: string;
+}>;
+type UpdateDelegationCommand = ApprovalManagementScopedCommand<UpdateDelegationAttempt>;
 type RevokeDelegationCommand = ApprovalManagementScopedCommand<ApprovalDelegation>;
+
+function createDelegationUpdateIdempotencyKey(): string {
+  return `delegation-update:${globalThis.crypto.randomUUID()}`;
+}
 
 export function ApprovalDelegations() {
   const { t } = useTranslation('approvals');
@@ -55,6 +75,7 @@ export function ApprovalDelegations() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [editorOpen, setEditorOpen] = useState(false);
+  const [editing, setEditing] = useState<ApprovalDelegation | null>(null);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [revoking, setRevoking] = useState<ApprovalDelegation | null>(null);
   const [recovery, setRecovery] = useState<DelegationRecovery | undefined>(undefined);
@@ -75,18 +96,27 @@ export function ApprovalDelegations() {
     [requestScope.ready, delegations.data, delegations.isError, delegations.isFetching]
   );
   const sourceReady =
-    requestScope.ready && !delegations.isError && !delegations.isFetching && !recovery;
+    requestScope.ready &&
+    delegations.status === 'success' &&
+    delegations.fetchStatus === 'idle' &&
+    delegations.dataUpdatedAt > 0 &&
+    !recovery;
   const latestAuthority = useRef({ sourceReady, canManage, delegations: delegations.data });
   latestAuthority.current = { sourceReady, canManage, delegations: delegations.data };
   const activeCreate = useRef<CreateDelegationCommand | undefined>(undefined);
+  const activeUpdate = useRef<UpdateDelegationCommand | undefined>(undefined);
+  const preservedUpdate = useRef<UpdateDelegationAttempt | undefined>(undefined);
   const activeRevoke = useRef<RevokeDelegationCommand | undefined>(undefined);
 
   useEffect(() => {
     setEditorOpen(false);
+    setEditing(null);
     setRevoking(null);
     setRecovery(undefined);
     setSelectedId(undefined);
     activeCreate.current = undefined;
+    activeUpdate.current = undefined;
+    preservedUpdate.current = undefined;
     activeRevoke.current = undefined;
   }, [identityKey]);
 
@@ -97,6 +127,7 @@ export function ApprovalDelegations() {
       [401, 403, 404].includes(delegations.error.status)
     ) {
       setEditorOpen(false);
+      setEditing(null);
       setSelectedId(undefined);
     }
   }, [delegations.isError, delegations.isFetching, delegations.error]);
@@ -112,6 +143,7 @@ export function ApprovalDelegations() {
   }, [selectedId, visibleDelegations]);
 
   const runCreate = useApprovalGovernedMutation('route.approvals.work.delegation-create.action');
+  const runUpdate = useApprovalDelegationUpdateGovernedMutation();
   const runRevoke = useApprovalGovernedMutation('route.approvals.work.delegation-revoke.action');
 
   const create = useMutation({
@@ -151,6 +183,67 @@ export function ApprovalDelegations() {
     },
     onSettled: (_, __, command) => {
       if (activeCreate.current === command) activeCreate.current = undefined;
+    },
+  });
+
+  const update = useMutation({
+    mutationFn: async (command: UpdateDelegationCommand) => {
+      const attempt = command.input;
+      const { source, input } = attempt;
+      if (
+        !commandScope.isCurrent(command) ||
+        !sourceReady ||
+        !canManage ||
+        !canUpdateApprovalDelegation(source, true) ||
+        !isApprovalDelegationUpdateSnapshotCurrent(delegations.data, source) ||
+        input.delegateUserId !== source.delegateUserId ||
+        input.expectedVersion !== source.version
+      ) {
+        throw new HttpError('Delegation update authority is not current.', 409);
+      }
+      const latest = await getApprovalDelegations(requestScope.contextScopeKey);
+      if (
+        !commandScope.isCurrent(command) ||
+        !isApprovalDelegationUpdateSnapshotCurrent(latest, source)
+      ) {
+        throw new HttpError('Delegation changed before update execution.', 409);
+      }
+      const result = await runUpdate((execution) => {
+        if (
+          !commandScope.isCurrent(command) ||
+          !latestAuthority.current.sourceReady ||
+          !latestAuthority.current.canManage ||
+          !isApprovalDelegationUpdateSnapshotCurrent(latestAuthority.current.delegations, source)
+        ) {
+          throw new HttpError('Delegation authority changed before update dispatch.', 409);
+        }
+        return updateApprovalDelegation(source.delegationId, input, {
+          ...execution,
+          ...(execution.mode === 'SECURE' ? { objectVersion: input.expectedVersion } : {}),
+          idempotencyKey: attempt.idempotencyKey,
+        });
+      });
+      return { result, command };
+    },
+    onSuccess: ({ result, command }) => {
+      if (!commandScope.isCurrent(command)) return;
+      queryClient.setQueryData(delegationsKey, result);
+      setEditorOpen(false);
+      setEditing(null);
+      setRecovery(undefined);
+      preservedUpdate.current = undefined;
+      toast.success(t('delegations.update.saved'));
+    },
+    onError: (error, command) => {
+      if (!commandScope.isCurrent(command)) return;
+      if (isProductSurfaceOperationCancelledError(error)) return;
+      const status = error instanceof HttpError ? error.status : undefined;
+      preservedUpdate.current = command.input;
+      setRecovery({ command: 'update', kind: approvalRequestRecovery(status) });
+      toast.error(t('delegations.update.failed'));
+    },
+    onSettled: (_, __, command) => {
+      if (activeUpdate.current === command) activeUpdate.current = undefined;
     },
   });
 
@@ -209,12 +302,24 @@ export function ApprovalDelegations() {
   const refreshAuthority = async () => {
     const binding = commandScope.binding;
     const result = await delegations.refetch();
-    if (commandScope.isCurrent(binding) && !result.isError) setRecovery(undefined);
+    if (!commandScope.isCurrent(binding) || result.isError) return;
+    if (
+      recovery?.command === 'update' &&
+      editing &&
+      !isApprovalDelegationUpdateSnapshotCurrent(result.data, editing)
+    ) {
+      setRecovery({ command: 'update', kind: 'CONFLICT' });
+      return;
+    }
+    setRecovery(undefined);
   };
   const createPending =
     create.isPending && Boolean(create.variables && commandScope.isCurrent(create.variables));
+  const updatePending =
+    update.isPending && Boolean(update.variables && commandScope.isCurrent(update.variables));
   const revokePending =
     revoke.isPending && Boolean(revoke.variables && commandScope.isCurrent(revoke.variables));
+  const mutationPending = createPending || updatePending || revokePending;
 
   return (
     <ApprovalSurface
@@ -226,8 +331,12 @@ export function ApprovalDelegations() {
             intent="secondary"
             size="small"
             startIcon={<Plus size={16} />}
-            disabled={!sourceReady || createPending || revokePending}
-            onClick={() => setEditorOpen(true)}
+            disabled={!sourceReady || mutationPending}
+            onClick={() => {
+              setEditing(null);
+              preservedUpdate.current = undefined;
+              setEditorOpen(true);
+            }}
           >
             {t('delegations.add')}
           </ActionButton>
@@ -250,6 +359,24 @@ export function ApprovalDelegations() {
           }
         >
           {t('delegations.revokeError')}
+        </InlineFeedback>
+      )}
+      {recovery?.command === 'update' && !editorOpen && (
+        <InlineFeedback
+          severity={recovery.kind === 'CONFLICT' ? 'warning' : 'error'}
+          action={
+            <ActionButton
+              type="button"
+              intent="quiet"
+              size="small"
+              disabled={delegations.isFetching}
+              onClick={() => void refreshAuthority()}
+            >
+              {t('actions.refresh')}
+            </ActionButton>
+          }
+        >
+          {t(`delegations.update.errors.${recovery.kind}`)}
         </InlineFeedback>
       )}
       {delegations.isError ? (
@@ -281,12 +408,27 @@ export function ApprovalDelegations() {
           selectedId={selectedId}
           canManage={canManage}
           sourceReady={sourceReady}
-          pending={createPending || revokePending}
+          pending={mutationPending}
           onSelect={(delegation) => setSelectedId(delegation.delegationId)}
+          onEdit={(delegation) => {
+            if (
+              sourceReady &&
+              !activeCreate.current &&
+              !activeUpdate.current &&
+              !activeRevoke.current &&
+              canUpdateApprovalDelegation(delegation, true) &&
+              isApprovalDelegationUpdateSnapshotCurrent(delegations.data, delegation)
+            ) {
+              setEditing(structuredClone(delegation));
+              preservedUpdate.current = undefined;
+              setEditorOpen(true);
+            }
+          }}
           onRevoke={(delegation) => {
             if (
               sourceReady &&
               !activeCreate.current &&
+              !activeUpdate.current &&
               !activeRevoke.current &&
               canRevokeApprovalDelegation(delegation, true)
             )
@@ -297,19 +439,65 @@ export function ApprovalDelegations() {
 
       <ApprovalDelegationEditor
         open={editorOpen}
-        busy={createPending}
-        sourceReady={sourceReady || recovery?.command === 'create'}
+        busy={createPending || updatePending}
+        sourceReady={
+          sourceReady || recovery?.command === 'create' || recovery?.command === 'update'
+        }
         requestScope={requestScope}
-        recoveryMessage={recovery?.command === 'create' ? t('delegations.createError') : undefined}
+        delegation={editing}
+        recoveryMessage={
+          recovery?.command === 'create'
+            ? t('delegations.createError')
+            : recovery?.command === 'update'
+              ? t(`delegations.update.errors.${recovery.kind}`)
+              : undefined
+        }
         onClose={() => {
+          if (createPending || updatePending) return;
           setEditorOpen(false);
-          setRecovery(undefined);
+          setEditing(null);
+          if (recovery?.command !== 'update') setRecovery(undefined);
+          preservedUpdate.current = undefined;
         }}
-        onSubmit={(input) => {
-          if (!sourceReady || activeCreate.current || activeRevoke.current) return;
-          const command = commandScope.capture(structuredClone(input));
-          activeCreate.current = command;
-          create.mutate(command);
+        onSubmit={(submission: ApprovalDelegationEditorSubmission) => {
+          if (
+            !sourceReady ||
+            activeCreate.current ||
+            activeUpdate.current ||
+            activeRevoke.current
+          ) {
+            return;
+          }
+          if (submission.kind === 'create') {
+            const command = commandScope.capture(structuredClone(submission.input));
+            activeCreate.current = command;
+            create.mutate(command);
+            return;
+          }
+          if (
+            !editing ||
+            !canUpdateApprovalDelegation(editing, true) ||
+            !isApprovalDelegationUpdateSnapshotCurrent([editing], submission.source) ||
+            submission.input.delegateUserId !== editing.delegateUserId ||
+            submission.input.expectedVersion !== editing.version
+          ) {
+            return;
+          }
+          const previous = preservedUpdate.current;
+          const attempt =
+            previous &&
+            isApprovalDelegationUpdateSnapshotCurrent([previous.source], editing) &&
+            sameApprovalDelegationUpdateInput(previous.input, submission.input)
+              ? previous
+              : {
+                  source: structuredClone(editing),
+                  input: structuredClone(submission.input),
+                  idempotencyKey: createDelegationUpdateIdempotencyKey(),
+                };
+          preservedUpdate.current = attempt;
+          const command = commandScope.capture(attempt);
+          activeUpdate.current = command;
+          update.mutate(command);
         }}
         onRecover={() => void refreshAuthority()}
       />
@@ -325,7 +513,13 @@ export function ApprovalDelegations() {
         busy={revokePending}
         onClose={() => setRevoking(null)}
         onConfirm={() => {
-          if (revoking && sourceReady && !activeCreate.current && !activeRevoke.current) {
+          if (
+            revoking &&
+            sourceReady &&
+            !activeCreate.current &&
+            !activeUpdate.current &&
+            !activeRevoke.current
+          ) {
             const command = commandScope.capture(structuredClone(revoking));
             activeRevoke.current = command;
             revoke.mutate(command);

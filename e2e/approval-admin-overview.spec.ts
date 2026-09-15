@@ -24,7 +24,30 @@ const quickLinks = [
 type Appearance = 'light' | 'dark' | 'forced' | 'large-text';
 
 function pulse(): ApprovalAdminPulse {
-  return { ...structuredClone(APPROVAL_ADMIN_FIXTURE), activeRequests: 97, overdueTasks: 0 };
+  const generatedAt = Date.now();
+  const windowEnd =
+    Math.floor(generatedAt / (6 * 60 * 60 * 1000)) * (6 * 60 * 60 * 1000) + 6 * 60 * 60 * 1000;
+  const windowStart = windowEnd - 72 * 60 * 60 * 1000;
+  return {
+    ...structuredClone(APPROVAL_ADMIN_FIXTURE),
+    activeRequests: 97,
+    overdueTasks: 0,
+    trend: {
+      generatedAt: new Date(generatedAt).toISOString(),
+      windowHours: 72,
+      bucketHours: 6,
+      buckets: Array.from({ length: 12 }, (_, index) => ({
+        startsAt: new Date(windowStart + index * 6 * 60 * 60 * 1000).toISOString(),
+        endsAt: new Date(windowStart + (index + 1) * 6 * 60 * 60 * 1000).toISOString(),
+        submittedRequests: 3 + (index % 4),
+        completedRequests: 2 + (index % 3),
+        slaBreaches: index === 11 ? 2 : index === 7 ? 1 : 0,
+        unresolvedDeliveryUpdates: index === 10 ? 1 : 0,
+        inFlightRequests: 71 + index * 2 + (index % 3),
+        slaEligibleTasks: index === 11 ? 8 : index === 7 ? 6 : 4,
+      })),
+    },
+  };
 }
 function success(route: Route, data: unknown) {
   return route.fulfill({
@@ -134,9 +157,12 @@ async function setup(
 }
 async function open(page: Page) {
   await page.goto(overviewUrl);
-  await expect(page.getByRole('heading', { name: '결재 운영 개요', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: '결재 운영 개요', exact: true, level: 1 })
+  ).toBeVisible();
   await expect(main(page).getByText('97', { exact: true })).toBeVisible();
   await expect(shortcuts(page)).toBeVisible();
+  await expect(main(page).getByTestId('approval-admin-trend')).toBeVisible();
 }
 async function refresh(page: Page) {
   await main(page).getByRole('button', { name: '새로고침', exact: true }).click();
@@ -160,7 +186,11 @@ for (const appearance of ['light', 'dark', 'forced', 'large-text'] as const) {
     });
     const { state } = await setup(page, appearance);
     await open(page);
-    const heading = page.getByRole('heading', { name: '결재 운영 개요', exact: true });
+    const heading = page.getByRole('heading', {
+      name: '결재 운영 개요',
+      exact: true,
+      level: 1,
+    });
     const initialHeadingFont = await heading.evaluate((node) =>
       Number.parseFloat(getComputedStyle(node).fontSize)
     );
@@ -187,6 +217,13 @@ for (const appearance of ['light', 'dark', 'forced', 'large-text'] as const) {
       })
     ).toHaveCount(0);
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    const refreshControl = main(page).getByRole('button', { name: '새로고침', exact: true });
+    await refreshControl.hover();
+    const refreshTooltip = main(page).getByRole('tooltip', { name: '새로고침', exact: true });
+    await expect(refreshTooltip).toBeVisible();
+    await expect(page.locator('body > [role="tooltip"]')).toHaveCount(0);
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    await closeTransientTooltip(page);
     for (const [label] of quickLinks) {
       const control = shortcuts(page).getByRole('button', { name: label, exact: true });
       await control.scrollIntoViewIfNeeded();

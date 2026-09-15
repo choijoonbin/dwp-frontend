@@ -51,6 +51,7 @@ const state = vi.hoisted(() => ({
   branch: vi.fn(),
   retire: vi.fn(),
   reinstate: vi.fn(),
+  rejectReview: vi.fn(),
   publish: vi.fn(),
   success: vi.fn(),
   changed: vi.fn(),
@@ -81,6 +82,7 @@ vi.mock('@dwp-frontend/shared-utils', async (original) => ({
   branchApprovalFormWorkspaceVersion: (...args: unknown[]) => state.branch(...args),
   retireApprovalFormWorkspace: (...args: unknown[]) => state.retire(...args),
   reinstateApprovalFormWorkspace: (...args: unknown[]) => state.reinstate(...args),
+  rejectApprovalFormPublishReview: (...args: unknown[]) => state.rejectReview(...args),
   publishReviewedApprovalFormWorkspace: (...args: unknown[]) => state.publish(...args),
 }));
 vi.mock('../../components/use-product-surface-governed-mutation', () => ({
@@ -219,12 +221,25 @@ describe('form workspace controller exact installation and source fencing', () =
         return success;
       }
     );
+    state.rejectReview.mockImplementation(
+      async (_formId, _requestId, body, _execution, options: ApprovalFormWorkspaceCommandOptions) => {
+        dispatchChecks(options);
+        return {
+          ...reviewFixture().reviewRequest,
+          status: 'REJECTED',
+          version: 1,
+          decidedAt: '2026-09-14T00:10:00Z',
+          decidedBy: 32,
+          decisionReason: body.reason,
+        };
+      }
+    );
     state.dispatch.mockImplementation((run) => run(execution));
     props = {
       formId,
       requestScope: {
         contextScopeKey: 'actual-original-scope',
-        cacheKey: ['1', '13', 'NORMAL', 'approvals.admin', 'actual-original-scope', 'revision-a'],
+        cacheKey: ['1', '32', 'NORMAL', 'approvals.admin', 'actual-original-scope', 'revision-a'],
       },
       scopeReady: true,
       parentReady: true,
@@ -492,9 +507,11 @@ describe('form workspace controller exact installation and source fencing', () =
       expectedWorkspaceRevision: 2,
     });
   });
-  it('review uses exact new HIGH purpose and private six-field body, never legacy FORM_PUBLISH', async () => {
+  it('review uses exact new HIGH purpose and private nine-field body, never legacy FORM_PUBLISH', async () => {
     await review();
-    await settle(() => latest.confirmReview());
+    await settle(() =>
+      latest.confirmReview('Independent publisher verified the exact review evidence.')
+    );
     const command: ApprovalHighRiskCommandDescriptor = state.begin.mock.calls[0][0];
     expect(command.operation).toBe('FORM_REVIEWED_PUBLISH');
     expect(command.commandPath).toContain('/publish-reviewed');
@@ -513,8 +530,20 @@ describe('form workspace controller exact installation and source fencing', () =
     });
     expect(state.publish).toHaveBeenCalledTimes(1);
     const publishBody: ApprovalFormReviewedPublishInput = state.publish.mock.calls[0][1];
-    expect(Object.keys(publishBody)).toHaveLength(6);
+    expect(Object.keys(publishBody)).toHaveLength(9);
     expect(Object.isFrozen(publishBody)).toBe(true);
+  });
+  it('closes the independent review dialog after a durable rejection succeeds', async () => {
+    await review();
+    await settle(() =>
+      latest.rejectReview('The form requires additional compliance controls before publication.')
+    );
+    await settle();
+    expect(state.rejectReview).toHaveBeenCalledTimes(1);
+    expect(state.rejectReview.mock.calls[0][1]).toBe(reviewFixture().reviewRequest.reviewRequestId);
+    expect(latest.reviewOriginal).toBeNull();
+    expect(latest.review).toBeNull();
+    expect(state.success).toHaveBeenCalledWith('admin.formWorkspace.reviewRejected');
   });
   it.each(['history', 'diff'] as const)(
     'partial %s remains visible but disables independent publication',
@@ -529,13 +558,13 @@ describe('form workspace controller exact installation and source fencing', () =
           : client.setQueryData(diffKey(), { ...diffFixture(), complete: false })
       );
       expect(latest.reviewReady).toBe(false);
-      await settle(() => latest.confirmReview());
+      await settle(() => latest.confirmReview('Independent publisher verified this form.'));
       expect(state.begin).not.toHaveBeenCalled();
     }
   );
   it('freezes semantic diff through challenge and does not heal changed review digests', async () => {
     await review();
-    await settle(() => latest.confirmReview());
+    await settle(() => latest.confirmReview('Independent publisher verified this form.'));
     const command = state.begin.mock.calls[0][0];
     await settle(() =>
       client.setQueryData(diffKey(), {

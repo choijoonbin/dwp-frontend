@@ -17,11 +17,15 @@ export function renderApprovalNavigationItemChildren({
   item,
   selected,
   onNavigate,
+  onNavigateToTarget,
 }: ProductAreaNavigationItemChildrenContext) {
   if (item.view !== 'inbox' || !selected) return null;
   return (
     <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 156 }} />}>
-      <ApprovalInboxQueueNavigation onNavigate={onNavigate} />
+      <ApprovalInboxQueueNavigation
+        onNavigate={onNavigate}
+        onNavigateToTarget={onNavigateToTarget}
+      />
     </Suspense>
   );
 }

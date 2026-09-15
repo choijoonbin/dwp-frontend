@@ -61,6 +61,57 @@
     "requestId": "결재 요청 ID",
     "openRequests": "내가 올린 결재 보기"
   },
+  "externalSignature": {
+    "title": "외부 제공자 전자서명",
+    "kind": "제공자 서명 절차 및 검증된 보존 증거",
+    "reload": "외부서명 원본 다시 불러오기",
+    "trustBoundary": "외부 제공자 인계는 내부 본인 확인 서명과 분리되며 현재 제공자, 정책, 콜백, KMS 및 WORM 증거가 모두 필요합니다.",
+    "checking": "외부서명 가능 여부 확인 중",
+    "unavailable": "외부서명 권한 또는 현재 원본을 확인할 수 없습니다.",
+    "unknown": "외부 처리 결과를 확인하지 못했습니다. 이 명령은 잠겼으며 다시 전송되지 않습니다.",
+    "changed": "결재 요청, 서명 세션 또는 권한이 변경되었습니다. 작업 전에 다시 불러오세요.",
+    "failed": "명령이 거부되었습니다. 자동 재시도하지 않았습니다.",
+    "unknownOperation": "잠긴 작업",
+    "idempotencyKey": "멱등성 키",
+    "gate": {
+      "NOT_EVALUATED": "미평가",
+      "BLOCKED": "차단됨",
+      "ELIGIBLE": "진행 가능"
+    },
+    "create": "제공자 요청 준비",
+    "noProvider": "정책이 요구하는 검증된 운영 제공자를 사용할 수 없습니다.",
+    "loadingSession": "외부서명 세션 불러오는 중",
+    "policy": "고정된 정책",
+    "provider": "제공자 결속",
+    "updatedAt": "업데이트 시각",
+    "handover": "본인 확인 후 제공자에게 인계",
+    "refreshProvider": "제공자 상태 새로고침",
+    "audit": "외부서명 감사 이력",
+    "checkingAudit": "감사 이력 확인 중",
+    "auditUnavailable": "현재 감사 이력을 검증할 수 없습니다.",
+    "auditEmpty": "기록된 외부서명 이벤트가 없습니다.",
+    "auditTruncated": "일부 감사 이력만 표시하고 있습니다.",
+    "artifact": "보존된 증거 아티팩트",
+    "artifactId": "아티팩트 ID",
+    "inspectArtifact": "증거 확인",
+    "checkingArtifact": "아티팩트 확인 중",
+    "artifactUnavailable": "아티팩트 증거를 사용할 수 없거나 더 이상 최신 상태가 아닙니다.",
+    "retainUntil": "보존 기한",
+    "cancelTitle": "외부서명 절차 취소",
+    "cancelDescription": "취소 직전에 현재 결재 요청과 제공자 상태를 다시 검증합니다.",
+    "cancelWarning": "제공자에서 취소 요청을 이미 처리 중일 수 있습니다.",
+    "states": {
+      "PREPARED": "준비됨",
+      "HANDOVER_PENDING": "인계 대기",
+      "OUT_FOR_SIGNATURE": "서명 진행 중",
+      "COMPLETION_PENDING": "완료 확인 중",
+      "COMPLETED_VERIFIED": "완료 및 검증됨",
+      "CANCEL_PENDING": "취소 처리 중",
+      "CANCELLED": "취소됨",
+      "FAILED": "실패",
+      "UNKNOWN_REMOTE_OUTCOME": "외부 결과 불명확"
+    }
+  },
   "surfaces": {
     "work": "결재 업무",
     "management": "결재 관리"
@@ -309,6 +360,7 @@
     },
     "commandCenter": {
       "title": "전자결재 업무 센터",
+      "refreshQueue": "결재 목록 새로고침",
       "description": "화면을 벗어나지 않고 검토, 증적 확인, 결정을 이어갑니다.",
       "queueContext": "{{queue}} · {{count}}건 · {{checkedAt}} 확인",
       "checkingFreshness": "최신 상태 확인 중",
@@ -358,6 +410,7 @@
       "batchStopped": "배치 승인을 안전하게 중단했습니다. 남은 항목을 확인하세요.",
       "batchFailed": "배치 승인을 시작하지 못했습니다.",
       "batchResultTitle": "배치 처리 결과",
+      "downloadBatchCsv": "CSV 다운로드",
       "batchOutcomes": {
         "APPROVED": "승인 완료",
         "INELIGIBLE": "최신 권한 또는 상태로 처리 제외",
@@ -503,6 +556,7 @@
     "EXPIRED": "만료",
     "PUBLISHED": "게시",
     "PILOT": "파일럿",
+    "HIGH": "높음",
     "REVOKED": "철회",
     "SKIPPED": "건너뜀",
     "FAILED": "실패",
@@ -522,6 +576,13 @@
     "RECOVERY_EVIDENCE_INCOMPLETE": "복구 증거 미완료",
     "SEPARATION_OF_DUTIES": "직무 분리 위반",
     "CURRENT_PERMISSION_REVOKED": "현재 결재 조회 권한 회수",
+    "CURRENT_AUTHORITY_UNAVAILABLE": "현재 권한 확인 불가",
+    "CURRENT_IDENTITY_INACTIVE": "현재 사용자 비활성",
+    "TASK_NOT_AVAILABLE": "결재 작업 조회 불가",
+    "DELEGATION_AUTHORITY_REVOKED": "위임 권한 회수",
+    "CURRENT_ROLE_REVOKED": "현재 역할 회수",
+    "CURRENT_AUTHORITY_VERIFIED": "현재 권한 확인 완료",
+    "LEGACY_CURRENT_AUTHORITY_VERIFIED": "호환 권한 확인 완료",
     "DISABLED": "사용 중지",
     "RETIRED": "폐기",
     "CONFIGURATION_REQUIRED": "구성 필요"
@@ -880,9 +941,51 @@
       "sort": "정렬",
       "newest": "최신순",
       "oldest": "오래된순",
+      "backup": "JSON 데이터 백업",
+      "backupPreparing": "최신 초안 확인 중...",
+      "backupSTALE": "서버 초안이 목록 또는 미리보기 이후 변경되었습니다. 최신 상태를 새로 확인하기 전에는 백업 파일을 만들지 않습니다.",
+      "backupDENIED": "현재 계정의 초안 소유권 또는 열람 권한을 확인할 수 없어 백업을 차단했습니다.",
+      "backupUNAVAILABLE": "최신 초안을 검증할 수 없어 백업을 차단했습니다. 연결을 확인한 뒤 다시 시도하세요.",
+      "migrationAction": "최신 양식으로 복구",
+      "migrationTitle": "현재 게시 양식으로 초안을 복구할까요?",
+      "migrationDescription": "원본 초안은 그대로 보존하고, 선택한 최신 양식과 결재 경로에 매핑된 별도 초안을 만듭니다.",
+      "migrationConfirm": "새 복구 초안 만들기",
+      "migrationSource": "보존할 원본",
+      "migrationSourceVersion": "원본 버전 {{version}}",
+      "migrationTarget": "새 복구 초안",
+      "migrationTargetPending": "현재 게시 양식을 선택하세요",
+      "migrationTargetVersion": "양식 v{{formVersion}} · 경로 v{{workflowVersion}}",
+      "migrationImmutableSource": "원본 문서와 수정 이력은 변경하거나 삭제하지 않습니다. 서버가 현재 게시 버전과 해시를 다시 검증한 뒤 별도 초안을 생성합니다.",
+      "migrationForm": "복구 대상 게시 양식",
+      "migrationEvaluating": "현재 양식과 필드 호환성을 확인하는 중입니다.",
+      "migrationPreviewError": "최신 게시 양식과 복구 미리보기를 확인하지 못했습니다. 권한과 연결 상태를 확인하세요.",
+      "migrationNotRequired": "선택한 양식과 경로가 원본 초안에 이미 적용되어 있어 복구가 필요하지 않습니다.",
+      "migrationRouteIncompatible": "현재 입력이 선택한 결재 경로 조건과 맞지 않아 새 초안을 만들 수 없습니다. 다른 게시 양식을 선택하세요.",
+      "migrationReady": "현재 게시 버전과 결재 경로로 복구할 수 있습니다.",
+      "migrationFieldReport": "초안 필드 복구 결과",
+      "migrationMapped": "매핑된 필드",
+      "migrationRequiredFields": "추가 입력 필요",
+      "migrationDropped": "제외될 필드",
+      "migrationIncompatible": "형식 불일치",
+      "migrationCompleteAfter_one": "새 초안을 만든 뒤 필수 항목 {{count}}개를 입력해야 제출할 수 있습니다.",
+      "migrationCompleteAfter_other": "새 초안을 만든 뒤 필수 항목 {{count}}개를 입력해야 제출할 수 있습니다.",
+      "migrationAllMapped": "필수 입력은 모두 매핑되었습니다. 새 초안에서 내용을 검토한 뒤 제출하세요.",
+      "migrationReason": "복구 사유",
+      "migrationCreated": "현재 게시 양식으로 새 복구 초안을 만들었습니다.",
+      "migrationRetryOriginal": "원래 명령 다시 확인",
+      "migrationErrors": {
+        "CONFLICT": "원본 초안 또는 대상 게시 버전이 변경되었습니다. 최신 상태를 확인한 뒤 새로 검토하세요.",
+        "DENIED": "현재 계정의 원본 소유권 또는 초안 생성 권한을 확인할 수 없어 복구를 차단했습니다.",
+        "INCOMPATIBLE": "필드 또는 결재 경로 호환 조건이 달라져 이 미리보기로 복구할 수 없습니다.",
+        "UNAVAILABLE": "현재 권한 또는 명령 결과를 확인할 수 없습니다. 중복 생성을 막기 위해 같은 원래 명령만 다시 확인합니다.",
+        "UNKNOWN": "복구 결과가 불명확합니다. 중복 초안을 막기 위해 같은 원래 명령만 다시 확인합니다.",
+        "ERROR": "복구 초안을 만들지 못했습니다. 최신 원본과 게시 양식을 다시 확인하세요."
+      },
       "reason": "변경 사유",
       "deleteTitle": "초안을 휴지통으로 이동할까요?",
-      "deleteDescription": "초안은 영구 삭제되지 않으며 휴지통에서 복원할 수 있습니다.",
+      "deleteDescription": "이 작업은 복원 가능한 소프트 삭제입니다. 입력과 수정 이력은 보존 정책에 따라 유지되며 물리 삭제가 수행되지 않습니다.",
+      "discardLifecycleNotice": "휴지통 이동은 복원 가능한 소프트 삭제이며 입력과 수정 이력을 물리 삭제하지 않습니다.",
+      "trashRetentionNotice": "이 초안은 휴지통의 보존 예정 상태입니다. 물리 삭제된 문서가 아니며 복원할 수 있습니다.",
       "restoreTitle": "초안을 복원할까요?",
       "restoreDescription": "복원 후 최신 게시 양식과 결재 경로를 다시 확인하고 이어서 작성할 수 있습니다.",
       "recoverTitle": "이 버전으로 초안을 복구할까요?",
@@ -900,6 +1003,23 @@
     },
     "commands": {
       "unknown": "처리 결과를 확인하지 못했습니다. 중복 처리를 방지하기 위해 다시 전송하지 않습니다. 새로고침으로 현재 문서 상태를 확인하세요."
+    },
+    "resubmit": {
+      "action": "재상신용 초안 복사",
+      "title": "새 재상신 초안을 만들까요?",
+      "description": "{{title}}의 현재 완료 기록을 원본으로 새 초안을 만듭니다.",
+      "confirm": "초안 복사",
+      "immutableSource": "원본 결재와 결정 증적은 변경되지 않습니다. 제목, 요약, 우선순위와 입력 내용만 새 초안으로 복사되며 최신 양식과 결재 경로는 편집 화면에서 다시 검증합니다.",
+      "created": "재상신용 초안을 만들었습니다.",
+      "retryOriginal": "원래 명령 다시 확인",
+      "errors": {
+        "CONFLICT": "원본 결재의 버전 또는 상태가 변경되었습니다. 최신 완료 기록을 다시 확인하세요.",
+        "DENIED": "현재 계정의 원본 소유권 또는 초안 생성 권한을 확인할 수 없어 작업을 차단했습니다.",
+        "INCOMPATIBLE": "현재 게시 양식이나 결재 경로와 호환되지 않아 이 요청을 새 초안으로 복사할 수 없습니다.",
+        "UNAVAILABLE": "최신 권한 또는 명령 결과를 확인할 수 없습니다. 동일한 원래 명령으로만 다시 확인하세요.",
+        "UNKNOWN": "전송 결과가 불명확합니다. 중복 초안을 막기 위해 동일한 원래 명령으로만 다시 확인하세요.",
+        "ERROR": "재상신용 초안을 만들지 못했습니다. 완료 기록을 새로고침한 뒤 다시 시도하세요."
+      }
     },
     "search": {
       "label": "결재 번호·제목·요약 검색",
@@ -984,6 +1104,7 @@
     "loadError": "결재 위임을 불러오지 못했습니다. 목록을 확인하기 전에는 위임 작업을 수행할 수 없습니다.",
     "candidateLoadError": "위임 가능한 구성원을 확인하지 못했습니다. 대행자를 선택하기 전에 다시 시도하세요.",
     "workflowLoadError": "게시된 결재 프로세스를 확인하지 못했습니다. 프로세스 범위를 지정하기 전에 다시 시도하세요.",
+    "periodInvalid": "종료 일시는 시작 일시 이후여야 하며 위임 기간은 최대 90일입니다.",
     "created": "결재 위임을 등록했습니다.",
     "createError": "결재 위임을 등록하지 못했습니다.",
     "revoked": "결재 위임을 철회했습니다.",
@@ -992,6 +1113,21 @@
       "title": "결재 위임 추가",
       "description": "검증된 구성원과 최소 결재 범위, 제한된 부재 기간을 지정합니다."
     },
+    "update": {
+      "action": "위임 수정",
+      "title": "결재 위임 수정",
+      "description": "대행자는 그대로 유지하고 최신 위임 버전에서 범위, 기간, 사유를 수정합니다.",
+      "delegateLocked": "대행자 변경은 다른 권한 위임이므로 수정할 수 없습니다. 필요한 경우 철회 후 새 위임을 등록하세요.",
+      "currentWorkflow": "현재 선택 · {{key}}",
+      "saved": "결재 위임을 수정했습니다.",
+      "failed": "결재 위임을 수정하지 못했습니다.",
+      "errors": {
+        "CONFLICT": "위임 방향, 상태 또는 버전이 변경되었습니다. 입력은 보존되며 최신 위임을 확인하기 전에는 저장할 수 없습니다.",
+        "DENIED": "현재 계정의 위임 소유권 또는 수정 권한을 확인할 수 없습니다. 입력은 보존되며 권한을 다시 확인해야 합니다.",
+        "UNAVAILABLE": "최신 위임과 권한을 확인할 수 없습니다. 입력은 보존되며 연결 복구 후 새로고침해야 합니다.",
+        "ERROR": "수정 결과를 확인할 수 없습니다. 입력과 동일한 요청 키를 보존했으며 최신 상태를 확인하기 전에는 다시 전송하지 않습니다."
+      }
+    },
     "fields": {
       "delegate": "대행자",
       "delegateHelp": "이 테넌트의 활성 구성원을 이름 또는 이메일로 검색합니다.",
@@ -999,6 +1135,7 @@
       "workflow": "결재 프로세스",
       "startsAt": "시작 일시",
       "endsAt": "종료 일시",
+      "periodHelp": "표시된 현지 시각으로 입력하세요. 서버는 같은 시점을 UTC로 저장하며 기간을 90일로 제한합니다.",
       "reason": "위임 사유",
       "reasonHelp": "검토 가능한 증적이 되도록 10자 이상 입력하세요."
     },
@@ -1031,9 +1168,51 @@
       "sourceExpired": "집계 정보의 확인 시간이 지났습니다. 최신 정보를 다시 확인하세요.",
       "aggregateEnforced": "현재 집계에서 통제 예외 없음",
       "roleReference": "역할 분리 참고 기준",
-      "quickAccess": "관리 바로가기"
+      "quickAccess": "관리 바로가기",
+      "trend": {
+        "title": "72시간 인플라이트 처리 추이 및 SLA 준수율",
+        "meta": "실제 {{hours}}시간 · {{bucketHours}}시간 구간",
+        "actualSource": "실제 요청·완료 결정·기한 task·미해결 전달 갱신으로 계산",
+        "compliance": "SLA 준수율 {{value}}%",
+        "complianceUnavailable": "SLA 대상 task 없음",
+        "chartLabel": "72시간 결재 처리 추이. 최대 진행 중 {{maximum}}건, 제출 {{submittedRequests}}건, 완료 {{completedRequests}}건, SLA 위반 {{slaBreaches}}건.",
+        "series": {
+          "inFlightRequests": "진행 중",
+          "submittedRequests": "제출",
+          "completedRequests": "완료",
+          "slaBreaches": "SLA 위반"
+        }
+      }
     },
     "signatureDiagnostics": {
+      "nativeUnavailable": "현재 권한 계약에 Source13 전자서명 진단 경로가 설치되지 않았습니다. 기존 메타데이터를 준비 완료로 승격하지 않습니다.",
+      "directiveTitle": "현재 제공자 증적이 검증될 때까지 외부 법적 서명을 차단합니다",
+      "directiveBody": "내부 결재 증적과 SELF 본인 증적은 외부 법적 서명식을 증명하지 않습니다. 제공자 계정·콜백 신뢰·KMS·WORM 증적은 모두 현재 native 소스에서 확인해야 합니다.",
+      "separationTitle": "내부 결재와 외부 법적 서명은 서로 다른 신뢰 결정입니다",
+      "separationBody": "DWP 요청이 승인되어도 제공자 서명식과 불변 보존이 독립 검증되기 전에는 외부 전자서명 배지를 부여하지 않습니다.",
+      "phaseNumber": "단계 {{number}}",
+      "separation": {
+        "internalDecision": {
+          "title": "DWP 내부 결재 결정",
+          "description": "워크플로 결정과 SELF 암호화 증적은 내부 결재 기록만 완결합니다."
+        },
+        "externalGate": {
+          "title": "외부 서명식 게이트",
+          "description": "정책 필수 제공자, 검증된 상용 계정과 최신 신뢰 증적이 모두 있어야 외부로 인계합니다."
+        },
+        "verifiedArchive": {
+          "title": "검증된 콜백과 보존",
+          "description": "인증된 완료 증적을 서명 산출물과 규정 준수 WORM 객체 버전에 결속합니다."
+        }
+      },
+      "secretBoundary": "해시·제한된 상태 코드·등록 설정 참조만 표시합니다. 자격증명 비밀과 제공자 원문 payload는 이 화면 경계를 통과하지 않습니다.",
+      "policyReadOnly": "현재 native 소스가 제공한 게시·작업 정책입니다. 전용 통제 명령이 설치되기 전에는 편집할 수 없습니다.",
+      "providerDialogDescription": "현재 등록 설정, 게이트 가이드, KMS/WORM 검사와 정책 증적입니다. 민감한 자격증명은 반환하지 않습니다.",
+      "historyDescription": "현재 선택한 테넌트 범위에 기록된 제공자 프로브와 정책 버전입니다.",
+      "probeUnknown": "프로브 응답을 확정하지 못했습니다. 원래 멱등 키와 고정 소스를 유지하며 새 프로브 대신 원본 조정 작업을 사용하세요.",
+      "sourceChanged": "권한·소스 리비전 또는 제공자 설정이 변경되었습니다. 새 프로브 전에 현재 정보를 다시 확인하세요.",
+      "probeSucceeded": "전자서명 제공자 진단을 갱신했습니다.",
+      "kmsProbeSucceeded": "KMS 결속 진단을 갱신했습니다.",
       "labels": {
         "title": "서명 제공자 진단",
         "metrics": "제공자 준비 상태",
@@ -1116,6 +1295,16 @@
         "diagnosticHistory": "제공자 검증 이력",
         "historyContinuation": "추가 기록 이력이 있습니다",
         "nextHistory": "다음 기록 이력 조회",
+        "historyAction": "검증 이력",
+        "runAllProbes": "전체 제공자 프로브 실행",
+        "reconcileProbe": "원본 프로브 결과 조정",
+        "runKmsProbe": "KMS 결속 프로브 실행",
+        "reconcileKmsProbe": "원본 KMS 프로브 결과 조정",
+        "viewRetentionPolicy": "보존 정책 확인",
+        "runProviderProbe": "제공자 프로브 실행",
+        "viewConfiguration": "설정 보기",
+        "guide": "제공자 게이트 가이드",
+        "officialDocumentation": "공식 제공자 문서 열기",
         "none": "없음"
       },
       "states": {
@@ -1173,7 +1362,34 @@
         "INTERNAL_KEY": "내부 키",
         "CONFIGURED_KMS": "설정된 KMS",
         "HARDWARE_TOKEN": "하드웨어 토큰"
+      },
+      "guideSections": {
+        "PROVIDER_CONFIGURATION": "제공자 구성"
+      },
+      "guideSteps": {
+        "REGISTER_CONFIGURATION": "통제된 제공자 구성을 등록합니다",
+        "VERIFY_CREDENTIAL": "등록된 자격증명 참조를 검증합니다",
+        "RUN_PROBE": "최신 운영 프로브를 실행합니다"
       }
+    },
+    "signaturePolicy": {
+      "title": "전자서명 정책",
+      "description": "외부 서명 제공자, 신뢰 검증과 불변 보존 조건을 독립 검토로 관리합니다.",
+      "currentPolicyDescription": "현재 게시 정책과 작업 초안을 native 권위 소스에서 확인합니다.",
+      "initialize": "정책 최초 설정",
+      "initializeNotice": "이 관리 범위에 전자서명 정책이 없습니다. 서명은 계속 차단되며 최초 제안본을 만든 뒤 독립 검토가 필요합니다.",
+      "sourceUnavailable": "현재 권한으로 전자서명 정책 원본을 확인하지 못했습니다.",
+      "editorDescription": "제공자와 증적 조건을 편집합니다. 저장한 제안은 작성자와 다른 검토자가 게시해야 합니다.",
+      "inspectWorm": "WORM 증적 검사",
+      "artifactId": "서명 산출물 ID",
+      "wormDescription": "선택한 제공자의 서명 산출물이 규정 준수 WORM 객체에 결속됐는지 검사합니다.",
+      "wormTruth": "검사는 저장소가 반환한 현재 객체 잠금·보존 증적만 사용하며 준비 상태를 추정하지 않습니다.",
+      "invalidRules": "필수 제공자, 분류, 보존 기간과 프로브 유효 시간을 확인하세요.",
+      "commandSeparation": "정책 저장·게시와 WORM 검사는 서로 다른 감사 명령으로 기록됩니다.",
+      "commandUnknown": "명령 결과를 확정하지 못했습니다. 원래 멱등 키와 입력을 유지한 채 현재 상태를 다시 확인하세요.",
+      "saved": "전자서명 정책 제안을 저장했습니다.",
+      "published": "독립 검토를 거쳐 전자서명 정책을 게시했습니다.",
+      "wormCompleted": "WORM 증적 검사를 완료했습니다."
     },
     "attachmentPolicy": {
       "title": "첨부 파일 정책",
@@ -1243,6 +1459,11 @@
       "sourceChanged": "원본 버전이 변경되었습니다. 입력은 보존됩니다. 새로고침 후 계속하세요.",
       "commandUnknown": "처리 결과를 확인하지 못했습니다. 이 작업을 재시도하기 전에 새로고침하세요.",
       "review": "발행 검토",
+      "assignedReview": "사용자 {{reviewer}}에게 지정됨 · 요청 {{requestedAt}}",
+      "reviewComment": "독립 검토 의견",
+      "reviewCommentHelp": "확인한 증적과 판단 근거를 10자 이상 1,000자 이하로 기록하세요.",
+      "rejectReview": "검토 반려",
+      "reviewRejected": "발행 검토를 반려했습니다.",
       "reviewExpired": "발행 검토가 만료되었습니다.",
       "independentCheckerRequired": "작성자와 마지막 편집자는 이 버전을 발행할 수 없습니다.",
       "publishedContinues": "초안 편집 중에도 발행본은 계속 사용됩니다.",
@@ -1611,7 +1832,8 @@
         "SEGREGATION_OF_DUTIES": "직무 분리",
         "DATA": "증적·데이터",
         "DECISION": "결정 통제",
-        "SLA": "SLA 통제"
+        "SLA": "SLA 통제",
+        "IDENTITY": "신원·접근 통제"
       },
       "enforcementModes": {
         "BLOCK": "차단",
@@ -1667,6 +1889,99 @@
       "backToRoute": "결재선으로 돌아가기",
       "readOnly": "읽기 전용 정의",
       "draftEditing": "저장 전 초안"
+    },
+    "policyCreate": {
+      "open": "정책 초안 만들기",
+      "title": "통제된 결재 정책 만들기",
+      "description": "독립 검토를 위한 버전 초안을 만듭니다. 현재 운영 정책은 즉시 변경되지 않습니다.",
+      "saving": "초안 생성 중",
+      "retryOriginal": "원래 명령 재시도",
+      "editPreserved": "보존된 입력 편집",
+      "makerChecker": "생성자는 작성자로 고정되어 이 초안을 게시할 수 없습니다. 독립 게시자가 검증하고 게시해야 합니다.",
+      "originalLocked": "전송된 시도입니다. 결과가 확정될 때까지 정책 키·유형·규칙·멱등 키를 변경할 수 없습니다.",
+      "policyKey": "정책 키",
+      "policyKeyHelp": "변하지 않는 대문자 연동 키를 사용하세요. 현재 카탈로그의 키와 중복될 수 없습니다.",
+      "policyType": "정책 유형",
+      "addRule": "규칙 추가",
+      "ruleKey_one": "규칙 {{count}} 키",
+      "ruleKey_other": "규칙 {{count}} 키",
+      "ruleKind": "값 유형",
+      "removeRule_one": "규칙 {{count}} 삭제",
+      "removeRule_other": "규칙 {{count}} 삭제",
+      "feedback": {
+        "DENIED": "현재 권한으로 정책 초안을 만들 수 없습니다.",
+        "CONFLICT": "정책 카탈로그가 변경되었거나 같은 키가 생겼습니다. 최신 카탈로그를 확인하세요.",
+        "UNAVAILABLE": "현재 권한 또는 정책 카탈로그를 검증하지 못했습니다. 명령은 전송되지 않았습니다.",
+        "UNKNOWN": "서버 처리 결과를 확인할 수 없습니다. 잠긴 원래 명령만 재시도하세요.",
+        "ERROR": "정책 초안을 만들지 못했습니다. 보존된 입력을 확인하세요."
+      },
+      "ruleKinds": {
+        "BOOLEAN": "참 또는 거짓",
+        "INTEGER": "정수",
+        "STRING": "문자열",
+        "JSON": "구조화 JSON"
+      },
+      "validation": {
+        "REQUIRED": "필수값을 입력하세요.",
+        "FORMAT": "요구되는 키 또는 값 형식을 사용하세요.",
+        "TOO_LONG": "값을 더 짧게 입력하세요.",
+        "DUPLICATE": "중복되지 않은 키를 사용하세요.",
+        "INVALID_VALUE": "선택한 유형에 맞는 값을 입력하세요.",
+        "TOO_MANY": "초과한 규칙을 삭제하세요.",
+        "TOO_LARGE": "구조화 값의 크기를 줄이세요."
+      }
+    },
+    "formPublishReview": {
+      "request": "게시 검토 요청",
+      "reassign": "담당 검토자 변경",
+      "status": {
+        "title": "게시 검토 지정",
+        "loading": "게시 검토 지정 확인 중",
+        "unavailable": "현재 게시 검토 지정 상태를 확인하지 못했습니다.",
+        "reviewer": "담당 게시자 사용자 ID {{id}}",
+        "values": {
+          "PENDING": "검토 대기",
+          "PUBLISHED": "게시 완료",
+          "REJECTED": "보완 요청",
+          "SUPERSEDED": "대체됨"
+        }
+      },
+      "dialog": {
+        "title": "독립 게시자 지정",
+        "description": "현재 초안과 증적 다이제스트를 적격 게시자 한 명에게 정확히 전달합니다.",
+        "submit": "검토 요청 보내기",
+        "submitting": "요청 전송 중",
+        "makerChecker": "최종 편집자는 이 초안을 검토하거나 게시할 수 없습니다. 선택한 게시자의 현재 권한을 커밋 직전에 다시 검증합니다.",
+        "reassignWarning": "대기 중인 요청이 있습니다. 해당 요청 ID와 버전이 그대로일 때만 기존 요청을 대체합니다.",
+        "reviewer": "독립 게시자",
+        "reviewerHelp": "현재 테넌트에서 게시 권한이 있는 사용자를 검색합니다. 작성자와 최종 편집자는 제외됩니다.",
+        "searchHint": "두 글자 이상 입력해 검색하세요",
+        "noCandidates": "지정 가능한 독립 게시자가 없습니다",
+        "candidateError": "적격 게시자를 검증하지 못했습니다.",
+        "reason": "검토 요청 사유",
+        "reasonHelp": "검증할 범위와 증적을 10자 이상 1,000자 이하로 설명하세요.",
+        "retryOriginal": "원래 요청 재시도",
+        "editPreserved": "보존된 요청 편집"
+      },
+      "problem": {
+        "DENIED": "게시 검토 권한이 회수되었습니다. 요청은 반영되지 않았습니다.",
+        "CONFLICT": "양식·지정 요청·검토자 자격이 변경되었습니다. 최신 상태를 확인하세요.",
+        "UNAVAILABLE": "현재 권한 또는 원본 증적을 검증하지 못했습니다. 요청은 전송되지 않았습니다.",
+        "UNKNOWN": "처리 결과를 확인할 수 없습니다. 잠긴 원래 요청만 재시도하세요.",
+        "CHANGED": "양식 또는 검토 원본이 변경되었습니다. 새로고침 후 보존된 입력을 검토하세요."
+      },
+      "queue": {
+        "title": "내 게시 검토함",
+        "description": "현재 신원에 명시적으로 지정된 요청만 표시합니다.",
+        "checking": "현재 지정 요청 확인 중",
+        "count_one": "검토할 양식 {{count}}건",
+        "count_other": "검토할 양식 {{count}}건",
+        "open": "검토함 열기",
+        "unavailable": "지정된 검토함을 확인하지 못했습니다.",
+        "empty": "지정된 게시 검토가 없습니다",
+        "emptyDescription": "독립 설계자가 검토자로 지정한 요청만 이곳에 표시됩니다.",
+        "truncated": "처음 50건만 표시합니다. 오래된 검토를 게시하거나 반려한 뒤 계속하세요."
+      }
     },
     "formCatalog": {
       "metrics": {
@@ -1767,7 +2082,13 @@
       "selectForm": "게시된 양식 선택"
     },
     "retention": {
-      "originalAttempt": "원래 입력과 명령 키를 보존했습니다. 원본을 새로고침한 뒤 같은 명령을 명시적으로 재시도하세요. 이 명령의 입력은 변경할 수 없습니다.",
+      "originalAttempt": "원래 입력과 명령 키를 보존했습니다. 처리 결과가 불확실한 동안 다른 명령을 실행하지 마세요.",
+      "receiptOriginalPreserved": "정확한 원본 명령과 멱등 키를 비공개로 보존했습니다. 읽기 전용 트랜잭션 증적만 이 결과를 확정할 수 있으며 변경 명령은 다시 전송하지 않습니다.",
+      "receiptUnavailable": "일치하는 처리 증적 경로, 원본 스냅샷 또는 현재 권한을 확인할 수 없습니다. 원본 시도는 불확실 상태로 보존됩니다.",
+      "receiptLookup": "원본 명령 처리 증적 확인",
+      "receiptCommitted": "원본 명령이 동일한 실행자·권한·리소스 집합·스냅샷·요청 해시 증적으로 커밋되었음을 확인했습니다.",
+      "receiptAccept": "증적 확인 후 새로고침",
+      "receiptReadError": "처리 증적이 원본 명령의 커밋을 확정하지 못했습니다. 변경 명령은 재전송하지 않았으며 원본 시도는 불확실 상태로 유지됩니다.",
       "policyTitle": "결재 기록 보존 정책",
       "recordTitle": "문서별 보존 및 파기",
       "recordDescription": "현재 보존 기한·법적 보존·전달 사본 증적",
@@ -1790,7 +2111,7 @@
       "intentNotDeletion": "파기 요청 등록은 기록 삭제가 아닙니다. 법적 보존·적격성·소유 서비스 실행과 모든 전달 사본을 각각 검증해야 합니다.",
       "saved": "정책 명령이 완료되어 현재 정책 증적을 다시 확인합니다.",
       "accepted": "파기 요청이 등록되었습니다. 삭제 완료를 의미하지 않습니다.",
-      "commandUnknown": "처리 결과 또는 현재 권한이 불확실합니다. 입력을 보존하고 원본을 확인한 뒤 새로운 명령을 진행해 주세요.",
+      "commandUnknown": "명령 처리 결과가 불확실합니다. 정확한 원본 시도를 보존하며, 일치하는 커밋 증적을 확인하기 전까지 모든 신규 변경을 차단합니다.",
       "requestId": "결재 요청 ID",
       "inspect": "기록 확인",
       "inventoryRows": "인벤토리 행",
@@ -1870,6 +2191,32 @@
         "OLDEST": "오래된 항목부터",
         "NEWEST": "최신 항목부터",
         "AVAILABLE": "다음 전달 가능 시각순"
+      }
+    },
+    "nativeOperations": {
+      "batchLimit": "최대 50건 · 전체 성공 또는 전체 취소",
+      "selectTarget": "{{target}} 선택",
+      "selectedCount_one": "{{count}}건 선택",
+      "selectedCount_other": "{{count}}건 선택",
+      "actions": {
+        "RETRY": "선택 항목 재전달",
+        "DEAD_LETTER": "격리함으로 이동",
+        "REPLAY": "선택 항목 재생",
+        "RECONCILE": "전달 상태 조정",
+        "TASK_REASSIGN": "업무 재배정"
+      },
+      "dialog": {
+        "description_one": "선택한 {{count}}건을 검토하세요. 검증을 완료하기 전에는 명령을 전송하지 않습니다.",
+        "description_other": "선택한 {{count}}건을 검토하세요. 검증을 완료하기 전에는 명령을 전송하지 않습니다.",
+        "atomic": "선택한 모든 항목을 하나의 원자적 명령으로 처리합니다. 하나라도 변경되었거나 처리할 수 없으면 아무 항목도 변경하지 않습니다.",
+        "reasonHelp": "10자 이상 입력하세요. 사유는 영속 작업 증적에 보존됩니다."
+      },
+      "attempts": {
+        "title": "전달 시도",
+        "automatic_one": "자동 시도 {{count}}회",
+        "automatic_other": "자동 시도 {{count}}회",
+        "manual_one": "수동 재처리 {{count}}회",
+        "manual_other": "수동 재처리 {{count}}회"
       }
     },
     "integrations": {

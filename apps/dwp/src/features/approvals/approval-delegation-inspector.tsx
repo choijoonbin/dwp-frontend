@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { RotateCcw } from 'lucide-react';
+import { Pencil, RotateCcw } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import {
   buildApprovalDelegationWorkflowReference,
   canRevokeApprovalDelegation,
+  canUpdateApprovalDelegation,
 } from './approval-delegation-model';
 import { StatusChip } from './approval-ui';
 
@@ -21,12 +22,14 @@ export function ApprovalDelegationInspector({
   canManage,
   sourceReady,
   pending,
+  onEdit,
   onRevoke,
 }: {
   delegation: ApprovalDelegation;
   canManage: boolean;
   sourceReady: boolean;
   pending: boolean;
+  onEdit: (delegation: ApprovalDelegation) => void;
   onRevoke: (delegation: ApprovalDelegation) => void;
 }) {
   const { t } = useTranslation('approvals');
@@ -113,15 +116,27 @@ export function ApprovalDelegationInspector({
           </Box>
         ))}
       </Box>
-      {canManage && canRevokeApprovalDelegation(delegation, sourceReady) && (
-        <ActionButton
-          intent="danger"
-          startIcon={<RotateCcw size={16} />}
-          disabled={pending}
-          onClick={() => onRevoke(delegation)}
-        >
-          {t('delegations.revoke.confirm')}
-        </ActionButton>
+      {canManage && canUpdateApprovalDelegation(delegation, sourceReady) && (
+        <Stack gap={1}>
+          <ActionButton
+            intent="secondary"
+            startIcon={<Pencil size={16} />}
+            disabled={pending}
+            onClick={() => onEdit(delegation)}
+          >
+            {t('delegations.update.action')}
+          </ActionButton>
+          {canRevokeApprovalDelegation(delegation, sourceReady) && (
+            <ActionButton
+              intent="danger"
+              startIcon={<RotateCcw size={16} />}
+              disabled={pending}
+              onClick={() => onRevoke(delegation)}
+            >
+              {t('delegations.revoke.confirm')}
+            </ActionButton>
+          )}
+        </Stack>
       )}
     </Stack>
   );

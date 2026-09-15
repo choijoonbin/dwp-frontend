@@ -43,6 +43,21 @@ export type ApprovalAdminPulse = {
     state: 'ENFORCED' | 'ATTENTION';
     exceptions: number;
   }>;
+  trend?: {
+    generatedAt: string;
+    windowHours: number;
+    bucketHours: number;
+    buckets: Array<{
+      startsAt: string;
+      endsAt: string;
+      submittedRequests: number;
+      completedRequests: number;
+      slaBreaches: number;
+      unresolvedDeliveryUpdates: number;
+      inFlightRequests: number;
+      slaEligibleTasks: number;
+    }>;
+  };
 };
 
 export type ApprovalWorkflow = {

@@ -7,6 +7,7 @@ import {
 } from './support/approval-high-risk';
 import {
   APPROVAL_ACTION_ROUTE_CONTRACT_KEYS,
+  APPROVAL_HIGH_RISK_ACTION_ROUTE_CONTRACT_KEYS,
   mockApprovalProductSurfaceAuthority,
 } from './support/product-surface-authority';
 import {
@@ -16,7 +17,6 @@ import {
   APPROVAL_ADMIN_FIXTURE,
   APPROVAL_OPERATIONS_FIXTURE,
   APPROVAL_POLICIES_FIXTURE,
-  APPROVAL_SIGNATURE_FIXTURES,
   APPROVAL_WORKFLOW_DETAIL_FIXTURE,
   APPROVAL_WORKFLOW_FIXTURE,
 } from './support/product-area-fixtures';
@@ -25,6 +25,7 @@ import { fulfillSuccess, mockShellSession } from './support/shell-session';
 import type { Page } from '@playwright/test';
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../apps/dwp/src/routes/product-surface-authorization.generated';
+import { diagnosticOverview } from '../libs/shared-utils/src/api/approval-signature-diagnostics.test-support';
 
 const draftWorkflow = { ...APPROVAL_WORKFLOW_FIXTURE, lifecycleState: 'DRAFT' };
 const draftWorkflowDetail = {
@@ -46,6 +47,7 @@ const pendingPolicy = {
 };
 
 async function mockDraftData(page: Page) {
+  const operationsEvaluatedAt = new Date().toISOString();
   await page.route(
     (url) => url.pathname === '/api/approvals/v1/admin/workflows',
     (route) => fulfillSuccess(route, [draftWorkflow])
@@ -72,7 +74,19 @@ async function mockDraftData(page: Page) {
   );
   await page.route(
     (url) => url.pathname === '/api/approvals/v1/admin/operations',
-    (route) => fulfillSuccess(route, APPROVAL_OPERATIONS_FIXTURE)
+    (route) =>
+      fulfillSuccess(route, {
+        ...APPROVAL_OPERATIONS_FIXTURE,
+        generatedAt: operationsEvaluatedAt,
+        integrationDeliveries: APPROVAL_OPERATIONS_FIXTURE.integrationDeliveries.map(
+          (delivery) => ({
+            ...delivery,
+            retryEligibility: delivery.retryEligibility
+              ? { ...delivery.retryEligibility, evaluatedAt: operationsEvaluatedAt }
+              : undefined,
+          })
+        ),
+      })
   );
 }
 
@@ -103,21 +117,6 @@ const cases: readonly HighRiskCase[] = [
       await page.getByRole('button', { name: '게시', exact: true }).click();
     },
     successText: '프로세스를 게시했습니다.',
-    objectVersionHeader: false,
-  },
-  {
-    name: 'form publish',
-    path: '/approvals/admin/forms',
-    routeContractKey: 'route.approvals.admin.form-publish.action',
-    commandPath: `/api/approvals/v1/admin/forms/${draftForm.formId}/publish`,
-    expectedVersion: draftForm.version,
-    expectedPayload: { expectedVersion: draftForm.version },
-    commandResult: { ...draftFormDetail, form: { ...draftForm, lifecycleState: 'PUBLISHED' } },
-    start: async (page) => {
-      await page.getByRole('button').filter({ hasText: draftForm.nameKo }).click();
-      await page.getByRole('button', { name: '게시', exact: true }).click();
-    },
-    successText: '결재 양식을 게시했습니다.',
     objectVersionHeader: false,
   },
   {
@@ -165,7 +164,7 @@ const cases: readonly HighRiskCase[] = [
   },
 ];
 
-test('canonical Approval ACTION 21개가 exact surface에서 routine ALLOWED / HIGH STEP_UP으로 평가된다', async ({
+test('정본14 Approval ACTION 80개가 exact surface에서 routine ALLOWED / HIGH STEP_UP으로 평가된다', async ({
   page,
 }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], { locale: 'ko', permissions: [] });
@@ -175,7 +174,8 @@ test('canonical Approval ACTION 21개가 exact surface에서 routine ALLOWED / H
     (route) => route.productId === 'approvals' && route.routeKind === 'ACTION'
   ).map((route) => route.routeContractKey);
   expect([...APPROVAL_ACTION_ROUTE_CONTRACT_KEYS].sort()).toEqual(canonical.sort());
-  expect(canonical).toHaveLength(24);
+  expect(canonical).toHaveLength(80);
+  expect(APPROVAL_HIGH_RISK_ACTION_ROUTE_CONTRACT_KEYS).toHaveLength(21);
 
   const results = await page.evaluate(async (routeContractKeys) => {
     const responses: Array<{ routeContractKey: string; decision: string }> = [];
@@ -202,9 +202,11 @@ test('canonical Approval ACTION 21개가 exact surface에서 routine ALLOWED / H
     return responses;
   }, canonical);
 
+  const highRiskRouteKeys = new Set(APPROVAL_HIGH_RISK_ACTION_ROUTE_CONTRACT_KEYS);
   for (const result of results) {
-    const high = cases.some((candidate) => candidate.routeContractKey === result.routeContractKey);
-    expect(result.decision, result.routeContractKey).toBe(high ? 'STEP_UP_REQUIRED' : 'ALLOWED');
+    expect(result.decision, result.routeContractKey).toBe(
+      highRiskRouteKeys.has(result.routeContractKey) ? 'STEP_UP_REQUIRED' : 'ALLOWED'
+    );
   }
 });
 
@@ -239,34 +241,74 @@ test('관리자 개요는 exact assurance 집합이 아니면 정상으로 승�
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
-test('전자서명 readiness는 capability 누락과 비공인 provider 필드를 노출하지 않고 닫힌다', async ({
+test('전자서명 readiness는 레거시·비정본 provider payload를 소비하거나 노출하지 않고 닫힌다', async ({
   page,
 }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], { locale: 'ko', permissions: [] });
-  await mockApprovalProductSurfaceAuthority(page);
+  const authority = await mockApprovalProductSurfaceAuthority(page, {
+    decisionRevisionFormat: 'sha256',
+    generatedAt: '2026-09-15T00:00:00Z',
+    revalidateAt: '2030-09-15T00:00:00Z',
+  });
+  let nativeReads = 0;
+  let legacyReads = 0;
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/signatures/diagnostics',
+    (route) => {
+      nativeReads += 1;
+      const overview = diagnosticOverview();
+      return fulfillSuccess(route, {
+        ...overview,
+        scope: {
+          ...overview.scope,
+          contextScopeKey: 'scope:approvals:tenant',
+          decisionRevision: authority.revision(),
+          registrySha256: authority.revision().slice(4),
+        },
+        providers: overview.providers.map((provider, index) =>
+          index === 1
+            ? {
+                ...provider,
+                displayName: 'Enterprise e-signature',
+                capabilities: {
+                  credential: 'must-not-render',
+                  privateKey: 'must-not-render',
+                  auditEvidence: 'true',
+                },
+              }
+            : provider
+        ),
+      });
+    }
+  );
   await page.route(
     (url) => url.pathname === '/api/approvals/v1/admin/signatures',
-    (route) =>
-      fulfillSuccess(route, [
+    (route) => {
+      legacyReads += 1;
+      return fulfillSuccess(route, [
         {
-          ...APPROVAL_SIGNATURE_FIXTURES[0],
+          displayName: 'Legacy provider must not render',
           capabilities: {
             credential: 'must-not-render',
             privateKey: 'must-not-render',
-            auditEvidence: 'true',
           },
         },
-      ])
+      ]);
+    }
   );
 
   await page.goto('/approvals/admin/signatures');
 
   await expect(page.getByRole('heading', { name: '전자서명 연계', level: 1 })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Enterprise e-signature' })).toBeVisible();
-  await expect(page.getByText('확인 불가', { exact: true })).toHaveCount(2);
+  await expect(page.getByRole('heading', { name: '서명 제공자 진단' })).toBeVisible();
+  await expect(page.getByText('소스 확인 불가', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enterprise e-signature' })).toHaveCount(0);
+  await expect(page.getByText('Legacy provider must not render')).toHaveCount(0);
   await expect(page.getByText('must-not-render')).toHaveCount(0);
   await expect(page.getByText('credential', { exact: true })).toHaveCount(0);
   await expect(page.getByText('privateKey', { exact: true })).toHaveCount(0);
+  expect(nativeReads).toBeGreaterThan(0);
+  expect(legacyReads).toBe(0);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
@@ -429,13 +471,14 @@ test('typed replay-success 409는 완료로 수렴하고 command를 재시도하
 });
 
 test('expired proof는 network 전송 없이 폐기하고 새 attempt를 요구한다', async ({ page }) => {
+  await page.clock.install({ time: new Date() });
   const { network } = await prepareDirectIssuerWorkflow(
     page,
     [{ type: 'SUCCESS' }],
-    ['2026-08-24T00:00:05Z', '2026-08-25T00:00:00Z']
+    ['2026-08-24T00:01:00Z', '2026-08-25T00:00:00Z']
   );
 
-  await page.waitForTimeout(5_100);
+  await page.clock.fastForward(60_001);
   await page.getByRole('button', { name: '작업 확인' }).click();
   await expect(page.getByText(/본인 확인 증명이 만료되었습니다/u)).toBeVisible();
   expect(network.commandRequests).toHaveLength(0);
@@ -557,14 +600,16 @@ test('stale flow와 foreign-origin completion은 무시하고 닫힌 popup을 �
 });
 
 test('popup timeout은 popup을 닫고 자동 issuer·command 호출 없이 안내한다', async ({ page }) => {
+  await page.clock.install({ time: new Date() });
   const network = await prepareOidcContinuationWorkflow(page, {
     oidcAuthorizationPath: '/sign-in',
-    continuationExpiresAt: '2026-08-24T00:00:03Z',
+    continuationExpiresAt: '2026-08-24T00:01:00Z',
   });
 
   const popupPromise = page.waitForEvent('popup');
   await page.getByRole('button', { name: '인증 공급자에서 계속' }).click();
   const popup = await popupPromise;
+  await page.clock.fastForward(60_001);
   await expect(page.getByText(/인증 창이 만료되었습니다/u)).toBeVisible({ timeout: 5_000 });
   await expect.poll(() => popup.isClosed()).toBe(true);
   expect(network.issuerRequests).toHaveLength(1);

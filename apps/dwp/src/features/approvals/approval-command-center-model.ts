@@ -1,6 +1,15 @@
 import { resolveApprovalContentAccess } from '@dwp-frontend/shared-utils/api/approval-content-access';
 
 import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils/api/approval-api';
+import type { ApprovalQuorumTaskSnapshot } from '@dwp-frontend/shared-utils/api/approval-quorum-contract';
+
+export type ApprovalDecisionConfirmation = Readonly<{
+  decision: 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
+  taskId: string;
+  expectedVersion: number;
+  scopeIdentity: string;
+  quorum?: ApprovalQuorumTaskSnapshot | null;
+}>;
 
 export const APPROVAL_BATCH_LIMIT = 20;
 
@@ -34,10 +43,36 @@ export type ApprovalBatchResult = Readonly<{
   approvedTaskIds: readonly string[];
   ineligibleTaskIds: readonly string[];
   failedTaskId?: string;
+  failure?: ApprovalBatchFailure;
   remainingTaskIds: readonly string[];
 }>;
 
 export type ApprovalBatchOutcome = 'APPROVED' | 'INELIGIBLE' | 'FAILED' | 'NOT_ATTEMPTED';
+
+export type ApprovalBatchFailureReason =
+  'AUTHORITY_DENIED' | 'VERSION_CONFLICT' | 'SERVICE_UNAVAILABLE' | 'UNKNOWN';
+
+export type ApprovalBatchFailure = Readonly<{
+  taskId: string;
+  phase: 'REVALIDATE' | 'DECISION';
+  reason: ApprovalBatchFailureReason;
+  retryable: boolean;
+}>;
+
+function approvalBatchFailure(
+  taskId: string,
+  phase: ApprovalBatchFailure['phase'],
+  error: unknown
+): ApprovalBatchFailure {
+  const status =
+    typeof error === 'object' && error !== null && 'status' in error
+      ? (error as { status?: unknown }).status
+      : undefined;
+  if (status === 403) return { taskId, phase, reason: 'AUTHORITY_DENIED', retryable: false };
+  if (status === 409) return { taskId, phase, reason: 'VERSION_CONFLICT', retryable: true };
+  if (status === 503) return { taskId, phase, reason: 'SERVICE_UNAVAILABLE', retryable: true };
+  return { taskId, phase, reason: 'UNKNOWN', retryable: false };
+}
 
 export function approvalBatchOutcome(
   result: ApprovalBatchResult,
@@ -47,6 +82,43 @@ export function approvalBatchOutcome(
   if (result.ineligibleTaskIds.includes(taskId)) return 'INELIGIBLE';
   if (result.failedTaskId === taskId) return 'FAILED';
   return 'NOT_ATTEMPTED';
+}
+
+export function approvalBatchRetryTaskIds(result: ApprovalBatchResult): string[] {
+  if (!result.failedTaskId || !result.failure?.retryable) return [];
+  return [result.failedTaskId, ...result.remainingTaskIds];
+}
+
+export function mergeApprovalBatchRetryResult(
+  previous: ApprovalBatchResult,
+  retry: ApprovalBatchResult
+): ApprovalBatchResult {
+  const allowed = new Set(approvalBatchRetryTaskIds(previous));
+  if (
+    retry.requestedTaskIds.length === 0 ||
+    retry.requestedTaskIds.length !== allowed.size ||
+    retry.requestedTaskIds.some((taskId) => !allowed.has(taskId))
+  ) {
+    throw new Error('Invalid approval batch retry result');
+  }
+
+  const approvedTaskIds = new Set(previous.approvedTaskIds);
+  const ineligibleTaskIds = new Set(previous.ineligibleTaskIds);
+  for (const taskId of allowed) {
+    approvedTaskIds.delete(taskId);
+    ineligibleTaskIds.delete(taskId);
+  }
+  for (const taskId of retry.approvedTaskIds) approvedTaskIds.add(taskId);
+  for (const taskId of retry.ineligibleTaskIds) ineligibleTaskIds.add(taskId);
+
+  return {
+    requestedTaskIds: previous.requestedTaskIds,
+    approvedTaskIds: previous.requestedTaskIds.filter((taskId) => approvedTaskIds.has(taskId)),
+    ineligibleTaskIds: previous.requestedTaskIds.filter((taskId) => ineligibleTaskIds.has(taskId)),
+    failedTaskId: retry.failedTaskId,
+    failure: retry.failure,
+    remainingTaskIds: retry.remainingTaskIds,
+  };
 }
 
 export type ApprovalDecisionSignalKey =
@@ -210,12 +282,13 @@ export async function executeSequentialApprovalBatch({
     let detail: ApprovalTaskDetail;
     try {
       detail = await loadTask(taskId);
-    } catch {
+    } catch (error) {
       return {
         requestedTaskIds,
         approvedTaskIds,
         ineligibleTaskIds,
         failedTaskId: taskId,
+        failure: approvalBatchFailure(taskId, 'REVALIDATE', error),
         remainingTaskIds: requestedTaskIds.slice(index + 1),
       };
     }
@@ -226,12 +299,13 @@ export async function executeSequentialApprovalBatch({
     try {
       await approveTask(detail);
       approvedTaskIds.push(taskId);
-    } catch {
+    } catch (error) {
       return {
         requestedTaskIds,
         approvedTaskIds,
         ineligibleTaskIds,
         failedTaskId: taskId,
+        failure: approvalBatchFailure(taskId, 'DECISION', error),
         remainingTaskIds: requestedTaskIds.slice(index + 1),
       };
     }

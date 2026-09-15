@@ -5,19 +5,26 @@ import type {
 } from '@dwp-frontend/shared-utils/api/approval-signature-contract';
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../../routes/product-surface-authorization.generated';
 import type { ProductAuthorizationRouteProjection } from '../../routes/product-surface-authorization.generated';
+import {
+  APPROVAL_SIGNATURE_OFFICIAL_GATEWAY_ROUTES,
+  approvalSignatureOfficialGatewayRouteAvailable,
+  type ApprovalSignatureGatewayRouteStatus,
+} from './approval-signature-gateway-contract';
 
 export type ApprovalSignatureLeaf = keyof typeof APPROVAL_SIGNATURE_BINDINGS;
 export type ApprovalSignatureDocument = ApprovalSignatureContext | ApprovalSignatureCeremony;
 
 export function approvalSignatureRouteInstalled(
   leaf: ApprovalSignatureLeaf,
-  projections: readonly ProductAuthorizationRouteProjection[] = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS
+  projections: readonly ProductAuthorizationRouteProjection[] = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+  officialRoutes: readonly ApprovalSignatureGatewayRouteStatus[] = APPROVAL_SIGNATURE_OFFICIAL_GATEWAY_ROUTES
 ) {
   const [method, path] = APPROVAL_SIGNATURE_BINDINGS[leaf];
   const matches = projections.filter(
     (route) => route.routeContractKey === `route.approvals.work.${leaf}`
   );
   return (
+    approvalSignatureOfficialGatewayRouteAvailable(method, path, officialRoutes) &&
     matches.length === 1 &&
     matches[0]!.productId === 'approvals' &&
     matches[0]!.surfaceId === 'approvals.work' &&

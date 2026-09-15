@@ -41,9 +41,16 @@ export function useApprovalRetentionPolicyDraft() {
     preserved.current = null;
     displayEditor(null);
   }, []);
+  const release = useCallback((key: string) => {
+    const current = preserved.current;
+    if (current?.attempt?.idempotencyKey !== key) return;
+    const editable = { original: current.original, rules: current.rules };
+    preserved.current = editable;
+    displayEditor(editable);
+  }, []);
   const reset = useCallback(() => {
     preserved.current = null;
     displayEditor(null);
   }, []);
-  return { editor, setEditor, prepare, complete, reset };
+  return { editor, setEditor, prepare, complete, release, reset };
 }

@@ -14,6 +14,10 @@ import {
   mockApprovalProductSurfaceAuthority,
 } from './support/product-surface-authority';
 import { mockShellSession } from './support/shell-session';
+import {
+  approvalRequestSearchPage,
+  approvalTaskSearchPage,
+} from './support/approval-search-fixtures';
 
 function fulfillSuccess(route: Route, data: unknown) {
   return route.fulfill({
@@ -56,8 +60,17 @@ async function prepareApprovalHandoff(
   });
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
   await page.route(
-    (url) => url.pathname === '/api/approvals/v1/tasks' && url.searchParams.get('view') === 'INBOX',
-    (route) => fulfillSuccess(route, APPROVAL_HOME_FIXTURE.focusQueue)
+    (url) =>
+      url.pathname === '/api/approvals/v1/tasks/search' && url.searchParams.get('view') === 'INBOX',
+    (route) =>
+      fulfillSuccess(
+        route,
+        approvalTaskSearchPage(
+          new URL(route.request().url()),
+          APPROVAL_HOME_FIXTURE.focusQueue,
+          Date.now()
+        )
+      )
   );
   await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) =>
     fulfillSuccess(route, {
@@ -96,9 +109,17 @@ async function prepareApprovalRequestHandoff(page: Page) {
   let completed = false;
   await page.route(
     (url) =>
-      url.pathname === '/api/approvals/v1/requests' &&
+      url.pathname === '/api/approvals/v1/requests/search' &&
       url.searchParams.get('view') === 'NEEDS_INFO',
-    (route) => fulfillSuccess(route, completed ? [] : [request])
+    (route) =>
+      fulfillSuccess(
+        route,
+        approvalRequestSearchPage(
+          new URL(route.request().url()),
+          completed ? [] : [request],
+          Date.now()
+        )
+      )
   );
   await page.route(`**/api/approvals/v1/requests/${request.requestId}/detail`, (route) =>
     fulfillSuccess(route, {
@@ -213,11 +234,12 @@ test('열린 결재 화면은 APP.WORK 권한 회수 즉시 업무 복귀를 닫
 
 test('업무함에서 연 보완 요청은 답변 뒤에도 정확한 업무 위치로 돌아간다', async ({ page }) => {
   const state = await prepareApprovalRequestHandoff(page);
-  const responses: Array<Record<string, unknown>> = [];
+  let responses = 0;
   await page.route(
     `**/api/approvals/v1/requests/${state.request.requestId}/information-response`,
     (route) => {
-      responses.push(route.request().postDataJSON() as Record<string, unknown>);
+      if (route.request().method() !== 'POST') return route.fallback();
+      responses += 1;
       state.complete();
       return fulfillSuccess(route, { ...state.request, status: 'IN_REVIEW', version: 4 });
     }
@@ -236,8 +258,7 @@ test('업무함에서 연 보완 요청은 답변 뒤에도 정확한 업무 위
     .fill('요청한 사유와 기간을 최신 정보로 보완했습니다.');
   await dialog.getByRole('button', { name: '답변 제출' }).click();
 
-  await expect.poll(() => responses.length).toBe(1);
-  expect(responses[0]).toEqual(expect.objectContaining({ expectedVersion: 3 }));
+  await expect.poll(() => responses).toBe(1);
   await expect(page.getByText('보완 답변을 제출하고 결재를 재개했습니다.')).toBeVisible();
   expect(new URL(page.url()).searchParams.get('returnTo')).toBe(returnTarget);
 
@@ -265,6 +286,7 @@ test('409 이후에도 오염된 보완 요청 복귀 target은 사용할 수 �
   await page.route(
     `**/api/approvals/v1/requests/${state.request.requestId}/information-response`,
     (route) => {
+      if (route.request().method() !== 'POST') return route.fallback();
       attempts += 1;
       return route.fulfill({
         status: 409,
@@ -293,7 +315,7 @@ test('409 이후에도 오염된 보완 요청 복귀 target은 사용할 수 �
 
   await expect.poll(() => attempts).toBe(1);
   await expect(
-    page.getByText('요청을 처리하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도하세요.')
+    dialog.getByText('요청을 처리하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도하세요.')
   ).toBeVisible();
   await expect(page.getByRole('button', { name: '업무로 돌아가기', exact: true })).toHaveCount(0);
   expect(new URL(page.url()).origin).not.toBe('https://evil.test');

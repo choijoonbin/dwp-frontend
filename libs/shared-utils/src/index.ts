@@ -49,6 +49,8 @@ export * from './api/notification-app-summary-api';
 export * from './api/people-admin-api';
 export * from './api/hr-api';
 export * from './api/approval-api';
+export * from './api/approval-delegation-api';
+export * from './api/approval-policy-create-api';
 export * from './api/approval-form-workspace-api';
 export type * from './api/approval-form-workspace-contract';
 export {

@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 10,
-  checksum: '1f97638c95a192f0ec7f01053c3965f79b7a3ee4eb9781ea56e3cf8eccc6889b',
-  indexChecksum: 'fd2b1e01c5b90606e71252409dffc28119a159bf5973c54c1f608a8ca8d388c9',
+  version: 14,
+  checksum: '7ee0bac12ddfbc72dda55a5014c67b0798caa68a5ffc73b4be479d06a4590336',
+  indexChecksum: 'b99af40653a99e9ad5a7e22a6b1f2af5bf1d7abca5831aa9bc15161e971468b2',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -265,6 +265,86 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.form-publish-review-candidates.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/publish-review-candidates',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.form-publish-review-queue.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/publish-review-requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.form-publish-review-reject.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/{formId}/publish-review-requests/{requestId}/reject',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.form-publish-review-request.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/{formId}/publish-review-request',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.form-publish-review-request.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/{formId}/publish-review-request',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.form-publish-review.data',
     routeKind: 'DATA',
     navigationContextId: 'approvals.admin',
@@ -501,6 +581,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.operations.batch-dead-letter.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deliveries/dead-letter',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.batch-replay.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deliveries/replay',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.batch-retry.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deliveries/retry',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.dead-letter.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/events/{outboxId}/dead-letter',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.operations.page',
     routeKind: 'PAGE',
     navigationContextId: 'approvals.admin',
@@ -517,6 +661,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.operations.reconcile.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deliveries/reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.replay.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/events/{outboxId}/replay',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.operations.retry.action',
     routeKind: 'ACTION',
     navigationContextId: 'approvals.admin',
@@ -529,6 +705,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/approvals/v1/admin/operations/events/{outboxId}/retry',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.task-batch-reassign.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/tasks/reassign',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.task-reassign.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/tasks/{taskId}/reassign',
       },
     ],
   },
@@ -565,6 +773,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/admin/policies/{policyId}/versions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.policy-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/policies',
       },
     ],
   },
@@ -633,6 +857,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.retention-policy-draft-command.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/retention/policies/{policyId}/draft-commands/{idempotencyKey}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.retention-policy-draft.action',
     routeKind: 'ACTION',
     navigationContextId: 'approvals.admin',
@@ -649,6 +889,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.retention-policy-initialization-command.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/retention/policy-initialization-commands/{idempotencyKey}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.retention-policy-initialize.action',
     routeKind: 'ACTION',
     navigationContextId: 'approvals.admin',
@@ -661,6 +917,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/approvals/v1/admin/retention/policies',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.retention-policy-publication-command.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/retention/policies/{policyId}/publication-commands/{idempotencyKey}',
       },
     ],
   },
@@ -713,6 +985,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.retention-record-command.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/retention/records/{requestId}/claim-commands/{idempotencyKey}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.retention-record.data',
     routeKind: 'DATA',
     navigationContextId: 'approvals.admin',
@@ -725,6 +1013,182 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/admin/retention/records/{requestId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-diagnostic-history.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/signatures/diagnostic-history',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-diagnostics.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/signatures/diagnostics',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-kms-probe.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/signatures/kms/probes',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-policy-draft-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/signatures/policies/{policyId}/draft',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-policy-history.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/signatures/policies/{policyId}/history',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-policy-initialize.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/signatures/policies',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-policy-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/signatures/policies/{policyId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-policy.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/signatures/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-probe.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/signatures/probes',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-provider-diagnostics.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/signatures/providers/{providerId}/diagnostics',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signature-worm-inspection.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/signatures/worm-inspections',
       },
     ],
   },
@@ -757,6 +1221,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/approvals/v1/admin/workflows',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.workflow-planning-selection.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/{workflowId}/planning-selection',
       },
     ],
   },
@@ -973,6 +1453,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.work.delegation-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/delegations/{delegationId}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.work.delegations.page',
     routeKind: 'PAGE',
     navigationContextId: 'approvals.work',
@@ -1009,6 +1505,134 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/draft-commands/{idempotencyKey}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-artifact.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/external-signature-requests/{signatureRequestId}/artifacts/{artifactId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-audit.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/external-signature-requests/{signatureRequestId}/audit',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-cancel.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/external-signature-requests/{signatureRequestId}/cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-context.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/requests/{requestId}/external-signature-context',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-handover.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/external-signature-requests/{signatureRequestId}/handovers',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-refresh.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/external-signature-requests/{signatureRequestId}/refresh',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-request-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/requests/{requestId}/external-signature-requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.external-signature-request.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/external-signature-requests/{signatureRequestId}',
       },
     ],
   },
@@ -1321,6 +1945,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.work.request-draft-migrate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/requests/{requestId}/draft/migrate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.request-draft-migration-preview.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/requests/{requestId}/draft/migration-preview',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.work.request-draft-recover.action',
     routeKind: 'ACTION',
     navigationContextId: 'approvals.work',
@@ -1461,6 +2117,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/catalog/forms',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.request-resubmit-draft.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/requests/{requestId}/resubmit-draft',
       },
     ],
   },

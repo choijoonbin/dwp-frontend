@@ -11,6 +11,7 @@ import {
   APPROVAL_WORKFLOW_FIXTURE,
 } from './support/product-area-fixtures';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
+import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
 
 async function mockLegacyApprovalSurface(page: Page) {
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
@@ -529,6 +530,7 @@ test('결재 위임 응답의 방향이 누락되어도 권한을 열지 않고 
 });
 
 test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 제출한다', async ({ page }) => {
+  const wireCaptures = await installApprovalInformationWireCapture(page);
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
@@ -552,7 +554,11 @@ test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 
   await page.route(
     '**/api/approvals/v1/requests/approval-request-001/information-response',
     (route) => {
-      responseBody = route.request().postDataJSON() as Record<string, unknown>;
+      const capture = wireCaptures.at(-1);
+      expect(capture?.pathname).toBe(
+        '/api/approvals/v1/requests/approval-request-001/information-response'
+      );
+      responseBody = capture!.body;
       return fulfillSuccess(route, { ...needsInformation, status: 'IN_REVIEW', version: 4 });
     }
   );

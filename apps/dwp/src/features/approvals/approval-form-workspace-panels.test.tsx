@@ -114,6 +114,7 @@ describe('real DS form workspace views', () => {
       busy: false,
       onClose: () => {},
       onConfirm: confirm,
+      onReject: vi.fn(),
     };
     await render(<ApprovalFormWorkspaceReviewDialog {...props} />);
     const dialog = getByRole(document.body, 'dialog', { name: 'admin.formWorkspace.review' });

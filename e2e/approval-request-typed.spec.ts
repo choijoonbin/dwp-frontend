@@ -10,6 +10,7 @@ import {
 import { mockShellSession } from './support/shell-session';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
+import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
 import {
   APPROVAL_FORM_DETAIL_FIXTURE,
   APPROVAL_REQUEST_DETAIL_FIXTURE,
@@ -150,6 +151,17 @@ test('Typed 게시 양식은 반복 행과 계산값을 실제 canonical 초안�
   const dialog = page.getByRole('dialog', { name: '상신 전 통제' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('100.5');
+  await expect
+    .poll(() =>
+      dialog.evaluate((element) => {
+        let opacity = 1;
+        for (let node: HTMLElement | null = element; node; node = node.parentElement) {
+          opacity *= Number.parseFloat(getComputedStyle(node).opacity || '1');
+        }
+        return opacity;
+      })
+    )
+    .toBe(1);
   await page.screenshot({
     path: testInfo.outputPath('typed-request-preflight.png'),
     fullPage: false,
@@ -265,6 +277,7 @@ test('Typed marker가 있어도 advertised schema hash가 다르면 저장과 �
 test('Typed 보완 요청은 계산값을 재평가하고 schema-complete canonical payload만 최신 요청 버전으로 전송한다', async ({
   page,
 }) => {
+  const wireCaptures = await installApprovalInformationWireCapture(page);
   const { detail } = await typedSession(page);
   const request = {
     ...detail.request,
@@ -293,7 +306,11 @@ test('Typed 보완 요청은 계산값을 재평가하고 schema-complete canoni
     (url) =>
       url.pathname === '/api/approvals/v1/requests/approval-request-001/information-response',
     (route) => {
-      bodies.push(route.request().postDataJSON() as Record<string, unknown>);
+      const capture = wireCaptures.at(-1);
+      expect(capture?.pathname).toBe(
+        '/api/approvals/v1/requests/approval-request-001/information-response'
+      );
+      bodies.push(capture!.body);
       return success(route, { ...request, status: 'IN_REVIEW', version: 4 });
     }
   );

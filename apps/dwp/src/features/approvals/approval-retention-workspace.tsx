@@ -21,35 +21,40 @@ import {
 } from '@dwp-frontend/shared-utils/api/approval-retention-api';
 import {
   approvalRetentionId,
-  approvalRetentionKey,
-  approvalRetentionVersion,
+  type ApprovalRetentionPolicy,
+  type ApprovalRetentionRecord,
+  type ApprovalRetentionRules,
 } from '@dwp-frontend/shared-utils/api/approval-retention-contract';
-import type {
-  ApprovalRetentionPolicy,
-  ApprovalRetentionRecord,
-  ApprovalRetentionRules,
-} from '@dwp-frontend/shared-utils/api/approval-retention-contract';
+import {
+  prepareApprovalRetentionReceiptOriginal,
+  type ApprovalRetentionReceiptCommand,
+  type ApprovalRetentionReceiptMetadata,
+  type ApprovalRetentionReceiptOriginal,
+} from '@dwp-frontend/shared-utils/api/approval-retention-receipt-profile';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
 import {
   useApprovalManagementCommandScope,
   useApprovalManagementHighRiskCommand,
+  type ApprovalManagementScopeBinding,
 } from './approval-management-command-scope';
 import { approvalManagementSourceState } from './approval-management-source-state';
 import {
   useApprovalManagementScopeReady,
   useApprovalManagementScopeReset,
 } from './approval-management-scope';
-import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils';
+import { useAuth, useProductSurfaceAuthority } from '@dwp-frontend/shared-utils';
 import { useOptionalAllowedProductSurface } from '../../components/allowed-product-surface-context';
+import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../../routes/product-surface-authorization.generated';
 import {
   approvalRetentionPolicyAbsent,
   resolveApprovalRetentionIdentity,
 } from './approval-retention-source';
-import type { ApprovalManagementScopeBinding } from './approval-management-command-scope';
-import { ApprovalRetentionPolicyPanel } from './approval-retention-policy-panel';
-import type { ApprovalRetentionPolicyReview } from './approval-retention-policy-panel';
+import {
+  ApprovalRetentionPolicyPanel,
+  type ApprovalRetentionPolicyReview,
+} from './approval-retention-policy-panel';
 import { ApprovalRetentionPolicyUnavailable } from './approval-retention-policy-unavailable';
 import { useApprovalRetentionPolicyDraft } from './use-approval-retention-policy-draft';
 import {
@@ -65,13 +70,31 @@ import {
   useApprovalManagementRequestScope,
 } from './use-approval-experience';
 import { ApprovalSurface } from './approval-ui';
-
-function sourceIdentity(source: Readonly<ApprovalRetentionPolicy | ApprovalRetentionRecord>) {
-  return JSON.stringify(source);
-}
+import { ApprovalRetentionReceipt } from './approval-retention-receipt';
+import { approvalRetentionReceiptRouteInstalled } from './approval-retention-receipt-authority';
+import {
+  approvalRetentionClaimReceiptCommand,
+  approvalRetentionInitializeReceiptCommand,
+  approvalRetentionPublishReceiptCommand,
+  approvalRetentionQuerySourceReady,
+  approvalRetentionReceiptAttemptMatches,
+  approvalRetentionReceiptCapability,
+  approvalRetentionReceiptCommitsOriginal,
+  approvalRetentionReceiptOnlyController,
+  approvalRetentionReceiptSourceIdentity,
+  approvalRetentionSaveReceiptCommand,
+  clearApprovalRetentionReceiptAttempt,
+  preserveApprovalRetentionReceiptAttempt,
+} from './approval-retention-receipt-owner';
+import type { RetentionReceiptAttempt } from './approval-retention-receipt-owner';
+import {
+  useApprovalRetentionHighRiskReceiptRecovery,
+  useApprovalRetentionHighRiskReceiptTracker,
+} from './use-approval-retention-high-risk-receipt';
 
 export function ApprovalRetentionWorkspace() {
   const { t, i18n } = useTranslation('approvals');
+  const auth = useAuth();
   const experience = useApprovalExperience();
   const requestScope = useApprovalManagementRequestScope();
   const scopeReady = useApprovalManagementScopeReady(requestScope);
@@ -121,17 +144,40 @@ export function ApprovalRetentionWorkspace() {
     setEditor,
     prepare: prepareDraft,
     complete: completeDraft,
+    release: releaseDraft,
     reset: resetDraft,
   } = useApprovalRetentionPolicyDraft();
   const [review, setReview] = useState<ApprovalRetentionPolicyReview | null>(null);
-  const [notice, setNotice] = useState<'saved' | 'accepted' | 'commandUnknown' | null>(null);
+  const [notice, setNotice] = useState<
+    'saved' | 'accepted' | 'commandUnknown' | 'sourceChanged' | null
+  >(null);
   const ordinaryLock = useRef<symbol | null>(null);
+  const [uncertainAttempt, displayUncertainAttempt] = useState<RetentionReceiptAttempt | null>(
+    null
+  );
+  const uncertainAttemptRef = useRef<RetentionReceiptAttempt | null>(null);
+  const setUncertainAttempt = useCallback((value: RetentionReceiptAttempt | null) => {
+    uncertainAttemptRef.current = value;
+    displayUncertainAttempt(value);
+  }, []);
   const selectedRequest = useRef(requestId);
   selectedRequest.current = requestId;
   const publishedOriginal = useRef<Readonly<ApprovalRetentionPolicy> | null>(null);
   const claimedOriginal = useRef<Readonly<ApprovalRetentionRecord> | null>(null);
-  const current = useRef({ scopeReady, experience, binding: scope.binding, requestScope });
-  current.current = { scopeReady, experience, binding: scope.binding, requestScope };
+  const current = useRef({
+    scopeReady,
+    experience,
+    binding: scope.binding,
+    requestScope,
+    actorId: String(auth.user?.userId ?? ''),
+  });
+  current.current = {
+    scopeReady,
+    experience,
+    binding: scope.binding,
+    requestScope,
+    actorId: String(auth.user?.userId ?? ''),
+  };
   const policyKey = ['approvals', 'admin', 'retention-policy', ...requestScope.cacheKey] as const;
   const recordKey = [
     'approvals',
@@ -216,20 +262,76 @@ export function ApprovalRetentionWorkspace() {
     staleTime: 0,
     refetchOnWindowFocus: false,
   });
-  const sourceReady = <T,>(
-    key: readonly unknown[],
-    original: T,
-    identity: (value: T) => string
+  const sourceReady = <T,>(key: readonly unknown[], original: T, identity: (value: T) => string) =>
+    approvalRetentionQuerySourceReady(client.getQueryState<T>(key), original, identity);
+  const receiptAttemptSourceCurrent = (
+    attempt: RetentionReceiptAttempt,
+    requireInstalledRoute = true
   ) => {
-    const state = client.getQueryState<T>(key);
+    const operation = attempt.original.command.operation;
+    const capability = approvalRetentionReceiptCapability(operation);
+    const liveIdentity = identity(capability);
+    const actorId = Number(current.current.actorId);
+    if (
+      !scope.isCurrent(attempt.binding) ||
+      !current.current.scopeReady ||
+      identitySource.current.snapshot !== attempt.authoritySnapshot ||
+      !Number.isSafeInteger(actorId) ||
+      actorId !== attempt.original.actorUserId ||
+      !liveIdentity ||
+      liveIdentity.resourceSetKey !== attempt.original.resourceSetKey ||
+      liveIdentity.fingerprint !== attempt.identityFingerprint ||
+      (requireInstalledRoute &&
+        !approvalRetentionReceiptRouteInstalled(operation, PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS))
+    )
+      return false;
+    if (attempt.source.kind === 'ABSENT_POLICY')
+      return approvalRetentionPolicyAbsent(client.getQueryState(policyKey));
+    if (attempt.source.kind === 'POLICY')
+      return (
+        attempt.source.fingerprint ===
+          approvalRetentionReceiptSourceIdentity(attempt.source.value) &&
+        sourceReady(policyKey, attempt.source.value, approvalRetentionReceiptSourceIdentity)
+      );
     return (
-      state?.status === 'success' &&
-      state.fetchStatus === 'idle' &&
-      state.error == null &&
-      state.fetchFailureCount === 0 &&
-      state.data != null &&
-      identity(state.data) === identity(original)
+      selectedRequest.current === attempt.source.value.requestId &&
+      attempt.source.fingerprint === approvalRetentionReceiptSourceIdentity(attempt.source.value) &&
+      sourceReady(recordKey, attempt.source.value, approvalRetentionReceiptSourceIdentity)
     );
+  };
+  const prepareReceiptAttempt = async (
+    command: ApprovalRetentionReceiptCommand,
+    source: RetentionReceiptAttempt['source'],
+    binding = scope.binding
+  ) => {
+    requireScope(binding);
+    if (uncertainAttemptRef.current) throw new Error('A retention command remains uncertain');
+    const capability = approvalRetentionReceiptCapability(command.operation);
+    const liveIdentity = identity(capability);
+    const authoritySnapshot = identitySource.current.snapshot;
+    const actorUserId = Number(current.current.actorId);
+    if (
+      !liveIdentity ||
+      !authoritySnapshot ||
+      !Number.isSafeInteger(actorUserId) ||
+      actorUserId <= 0
+    )
+      throw new Error('Retention receipt identity is unavailable');
+    const original = await prepareApprovalRetentionReceiptOriginal(
+      command,
+      actorUserId,
+      liveIdentity.resourceSetKey
+    );
+    const attempt = Object.freeze({
+      original,
+      binding,
+      authoritySnapshot,
+      identityFingerprint: liveIdentity.fingerprint,
+      source,
+    });
+    if (!receiptAttemptSourceCurrent(attempt, false))
+      throw new Error('Retention command source changed during preparation');
+    return attempt;
   };
   const requirePolicy = (original: Readonly<ApprovalRetentionPolicy>, publish = false) => {
     requireScope();
@@ -239,7 +341,7 @@ export function ApprovalRetentionWorkspace() {
     if (
       !currentIdentity ||
       currentIdentity.resourceSetKey !== original.resourceSetKey ||
-      !sourceReady(policyKey, original, sourceIdentity) ||
+      !sourceReady(policyKey, original, approvalRetentionReceiptSourceIdentity) ||
       !(publish
         ? current.current.experience.canPublishPolicies
         : current.current.experience.canEditPolicies) ||
@@ -269,7 +371,7 @@ export function ApprovalRetentionWorkspace() {
       !current.current.experience.canOperate ||
       selectedRequest.current !== original.requestId ||
       !original.claimEligible ||
-      !sourceReady(recordKey, original, sourceIdentity)
+      !sourceReady(recordKey, original, approvalRetentionReceiptSourceIdentity)
     )
       throw new Error('Retention record source changed');
   };
@@ -277,89 +379,133 @@ export function ApprovalRetentionWorkspace() {
     await client.invalidateQueries({ queryKey: ['approvals', 'admin', 'retention-policy'] });
     await client.invalidateQueries({ queryKey: ['approvals', 'admin', 'retention-record'] });
   };
+  const preserveUnknown = useCallback(
+    (attempt: RetentionReceiptAttempt) => {
+      setUncertainAttempt(
+        preserveApprovalRetentionReceiptAttempt(uncertainAttemptRef.current, attempt)
+      );
+      setNotice('commandUnknown');
+    },
+    [setUncertainAttempt]
+  );
+  const policyReceipt = useApprovalRetentionHighRiskReceiptTracker(preserveUnknown);
+  const claimReceipt = useApprovalRetentionHighRiskReceiptTracker(preserveUnknown);
   const highPolicy = useApprovalManagementHighRiskCommand({
     cacheKey: requestScope.cacheKey,
     operation: 'RETENTION_POLICY_PUBLISH',
     execute: (command, execution) => {
       const original = publishedOriginal.current;
+      const attempt = policyReceipt.current();
+      const witness = attempt?.original.command;
       if (
         !original ||
+        !attempt ||
+        witness?.operation !== 'PUBLISH_POLICY' ||
+        !receiptAttemptSourceCurrent(attempt, false) ||
         !approvalRetentionRouteInstalled('retention-policy-publish.action') ||
-        command.targetId !== original.policyId ||
-        command.expectedObjectVersion !== original.version
+        command.targetId !== witness.originalTargetId ||
+        command.expectedObjectVersion !== witness.body.expectedVersion ||
+        command.idempotencyKey !== witness.body.idempotencyKey
       )
         throw new Error('Retention publication changed');
       requirePolicy(original, true);
       return publishApprovalRetentionPolicy(
-        command.targetId,
-        {
-          expectedVersion: command.expectedObjectVersion,
-          idempotencyKey: approvalRetentionKey(command.payload.idempotencyKey),
-          reviewComment:
-            typeof command.payload.reviewComment === 'string' ? command.payload.reviewComment : '',
-        },
+        witness.originalTargetId,
+        witness.body,
         execution,
-        () => requirePolicy(original, true)
+        () => {
+          requirePolicy(original, true);
+          if (!receiptAttemptSourceCurrent(attempt, false))
+            throw new Error('Retention publication witness changed');
+          policyReceipt.markDispatched();
+        }
       );
     },
     onSuccess: async () => {
+      policyReceipt.clear();
       setNotice('saved');
       await invalidate();
     },
-    onConflict: invalidate,
+    onConflict: async () => {
+      policyReceipt.clear();
+      await invalidate();
+    },
   });
   const highClaim = useApprovalManagementHighRiskCommand({
     cacheKey: requestScope.cacheKey,
     operation: 'RETENTION_RECORD_CLAIM',
     execute: (command, execution) => {
       const original = claimedOriginal.current;
+      const attempt = claimReceipt.current();
+      const witness = attempt?.original.command;
       if (
         !original ||
+        !attempt ||
+        witness?.operation !== 'CLAIM_RECORD' ||
+        !receiptAttemptSourceCurrent(attempt, false) ||
         !approvalRetentionRouteInstalled('retention-record-claim.action') ||
-        command.targetId !== original.requestId ||
-        command.expectedObjectVersion !== original.version
+        command.targetId !== witness.originalTargetId ||
+        command.expectedObjectVersion !== witness.body.expectedVersion ||
+        command.idempotencyKey !== witness.body.idempotencyKey
       )
         throw new Error('Retention claim changed');
       requireRecord(original);
-      return createApprovalRetentionClaim(
-        command.targetId,
-        {
-          expectedVersion: command.expectedObjectVersion,
-          policyId: approvalRetentionId(command.payload.policyId),
-          expectedPolicyVersion: approvalRetentionVersion(command.payload.expectedPolicyVersion),
-          expectedHoldVersion: approvalRetentionVersion(command.payload.expectedHoldVersion),
-          inventorySha256:
-            typeof command.payload.inventorySha256 === 'string'
-              ? command.payload.inventorySha256
-              : '',
-          idempotencyKey: approvalRetentionKey(command.payload.idempotencyKey),
-        },
-        execution,
-        () => requireRecord(original)
-      );
+      return createApprovalRetentionClaim(witness.originalTargetId, witness.body, execution, () => {
+        requireRecord(original);
+        if (!receiptAttemptSourceCurrent(attempt, false))
+          throw new Error('Retention claim witness changed');
+        claimReceipt.markDispatched();
+      });
     },
     onSuccess: async (data) => {
+      claimReceipt.clear();
       setClaimSelection({ claimId: data.claimId, binding: scope.binding });
       setNotice('accepted');
       await invalidate();
     },
-    onConflict: invalidate,
+    onConflict: async () => {
+      claimReceipt.clear();
+      await invalidate();
+    },
   });
-  const runOrdinary = async (execute: () => Promise<unknown>) => {
+  useApprovalRetentionHighRiskReceiptRecovery(highPolicy.controller, policyReceipt);
+  useApprovalRetentionHighRiskReceiptRecovery(highClaim.controller, claimReceipt);
+  const runOrdinary = async (
+    command: ApprovalRetentionReceiptCommand,
+    commandSource: RetentionReceiptAttempt['source'],
+    execute: (
+      original: ApprovalRetentionReceiptOriginal,
+      beforeDispatch: () => void
+    ) => Promise<unknown>,
+    onNotDispatched?: (original: ApprovalRetentionReceiptOriginal) => void
+  ) => {
     if (ordinaryLock.current) throw new Error('Retention command already running');
+    if (uncertainAttemptRef.current) throw new Error('A retention command remains uncertain');
     const lock = Symbol('retention-command');
     ordinaryLock.current = lock;
     const binding = scope.binding;
+    let attempt: RetentionReceiptAttempt | null = null;
+    let dispatched = false;
     setBusy(true);
     setNotice(null);
     try {
       requireScope(binding);
-      await execute();
+      attempt = await prepareReceiptAttempt(command, commandSource, binding);
+      await execute(attempt.original, () => {
+        requireScope(binding);
+        if (!attempt || !receiptAttemptSourceCurrent(attempt, false))
+          throw new Error('Retention command source changed');
+        dispatched = true;
+      });
       requireScope(binding);
       setNotice('saved');
       await invalidate();
     } catch (error) {
-      if (scope.isCurrent(binding)) setNotice('commandUnknown');
+      if (attempt && dispatched) preserveUnknown(attempt);
+      else if (scope.isCurrent(binding)) {
+        if (attempt) onNotDispatched?.(attempt.original);
+        setNotice('sourceChanged');
+      }
       throw error;
     } finally {
       if (ordinaryLock.current === lock) ordinaryLock.current = null;
@@ -373,7 +519,7 @@ export function ApprovalRetentionWorkspace() {
     recordReadIdentity != null &&
     record.data != null &&
     recordReadIdentity.resourceSetKey === record.data.resourceSetKey &&
-    sourceReady(recordKey, record.data, sourceIdentity);
+    sourceReady(recordKey, record.data, approvalRetentionReceiptSourceIdentity);
   const policyReady =
     approvalManagementSourceState(policy) === 'READY' &&
     !policy.isFetching &&
@@ -381,7 +527,102 @@ export function ApprovalRetentionWorkspace() {
     policyReadIdentity != null &&
     policy.data != null &&
     policyReadIdentity.resourceSetKey === policy.data.resourceSetKey &&
-    sourceReady(policyKey, policy.data, sourceIdentity);
+    sourceReady(policyKey, policy.data, approvalRetentionReceiptSourceIdentity);
+  const commandBusy = busy || highPolicy.controller.busy || highClaim.controller.busy;
+  const commandBlocked =
+    commandBusy ||
+    highPolicy.controller.open ||
+    highClaim.controller.open ||
+    uncertainAttempt != null;
+  const beginPolicyPublish = async (
+    comment: string,
+    originalPolicy: Readonly<ApprovalRetentionPolicy>
+  ) => {
+    if (commandBlocked || ordinaryLock.current) return false;
+    const lock = Symbol('retention-policy-publication');
+    ordinaryLock.current = lock;
+    const binding = scope.binding;
+    setBusy(true);
+    setNotice(null);
+    try {
+      requirePolicy(originalPolicy, true);
+      const command = approvalRetentionPublishReceiptCommand(
+        originalPolicy,
+        comment,
+        crypto.randomUUID()
+      );
+      const attempt = await prepareReceiptAttempt(
+        command,
+        {
+          kind: 'POLICY',
+          value: originalPolicy,
+          fingerprint: approvalRetentionReceiptSourceIdentity(originalPolicy),
+        },
+        binding
+      );
+      requirePolicy(originalPolicy, true);
+      if (attempt.original.command.operation !== 'PUBLISH_POLICY')
+        throw new Error('Retention publication witness changed');
+      policyReceipt.stage(attempt);
+      publishedOriginal.current = originalPolicy;
+      await highPolicy.begin(
+        approvalRetentionPolicyPublishCommand(
+          attempt.original.command.originalTargetId,
+          attempt.original.command.body.expectedVersion,
+          attempt.original.command.body.reviewComment,
+          attempt.original.command.body.idempotencyKey
+        )
+      );
+      return true;
+    } catch {
+      policyReceipt.clear();
+      publishedOriginal.current = null;
+      if (scope.isCurrent(binding)) setNotice('sourceChanged');
+      return false;
+    } finally {
+      if (ordinaryLock.current === lock) ordinaryLock.current = null;
+      if (scope.isCurrent(binding)) setBusy(false);
+    }
+  };
+  const beginRecordClaim = async (originalRecord: Readonly<ApprovalRetentionRecord>) => {
+    if (commandBlocked || ordinaryLock.current) return;
+    const lock = Symbol('retention-record-claim');
+    ordinaryLock.current = lock;
+    const binding = scope.binding;
+    setBusy(true);
+    setNotice(null);
+    try {
+      requireRecord(originalRecord);
+      const command = approvalRetentionClaimReceiptCommand(originalRecord, crypto.randomUUID());
+      const attempt = await prepareReceiptAttempt(
+        command,
+        {
+          kind: 'RECORD',
+          value: originalRecord,
+          fingerprint: approvalRetentionReceiptSourceIdentity(originalRecord),
+        },
+        binding
+      );
+      requireRecord(originalRecord);
+      if (attempt.original.command.operation !== 'CLAIM_RECORD')
+        throw new Error('Retention claim witness changed');
+      claimReceipt.stage(attempt);
+      claimedOriginal.current = originalRecord;
+      await highClaim.begin(
+        approvalRetentionRecordClaimCommand(
+          attempt.original.command.originalTargetId,
+          attempt.original.command.body
+        )
+      );
+    } catch {
+      claimReceipt.clear();
+      claimedOriginal.current = null;
+      if (scope.isCurrent(binding)) setNotice('sourceChanged');
+    } finally {
+      if (ordinaryLock.current === lock) ordinaryLock.current = null;
+      if (scope.isCurrent(binding)) setBusy(false);
+    }
+  };
   const closePolicy = highPolicy.controller.close;
   const closeClaim = highClaim.controller.close;
   const reset = useCallback(() => {
@@ -395,9 +636,12 @@ export function ApprovalRetentionWorkspace() {
     setReview(null);
     publishedOriginal.current = null;
     claimedOriginal.current = null;
+    policyReceipt.settleScopeReset();
+    claimReceipt.settleScopeReset();
+    // UNKNOWN is cleared only by its matching COMMITTED receipt, never by a scope reset.
     closePolicy();
     closeClaim();
-  }, [closePolicy, closeClaim, resetDraft]);
+  }, [claimReceipt, closePolicy, closeClaim, policyReceipt, resetDraft]);
   useApprovalManagementScopeReset(requestScope.cacheKey, reset);
   let validId = false;
   try {
@@ -406,15 +650,62 @@ export function ApprovalRetentionWorkspace() {
   } catch {
     /* Keep the user's lookup input. */
   }
+  const receiptSourceIsCurrent = (attempt: RetentionReceiptAttempt) =>
+    uncertainAttemptRef.current === attempt && receiptAttemptSourceCurrent(attempt);
+  const receiptOriginalIsCurrent = (original: ApprovalRetentionReceiptOriginal) => {
+    const attempt = uncertainAttemptRef.current;
+    return Boolean(
+      attempt &&
+      approvalRetentionReceiptAttemptMatches(attempt, original) &&
+      receiptAttemptSourceCurrent(attempt)
+    );
+  };
+  const confirmReceipt = async (
+    original: ApprovalRetentionReceiptOriginal,
+    receipt: ApprovalRetentionReceiptMetadata
+  ) => {
+    const attempt = uncertainAttemptRef.current;
+    if (
+      !attempt ||
+      !approvalRetentionReceiptAttemptMatches(attempt, original) ||
+      !receiptAttemptSourceCurrent(attempt) ||
+      !approvalRetentionReceiptCommitsOriginal(receipt, original)
+    )
+      return;
+    if (policyReceipt.current()?.original === original) policyReceipt.clear();
+    if (claimReceipt.current()?.original === original) claimReceipt.clear();
+    if (original.command.operation === 'SAVE_POLICY')
+      completeDraft(original.command.body.idempotencyKey);
+    if (original.command.operation === 'CLAIM_RECORD') {
+      setClaimSelection({ claimId: receipt.resultReferenceId, binding: attempt.binding });
+      setNotice('accepted');
+    } else {
+      setNotice('saved');
+    }
+    setUncertainAttempt(clearApprovalRetentionReceiptAttempt(attempt, original));
+    await invalidate();
+  };
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   if (!policyInstalled && !recordInstalled)
     return <InlineFeedback severity="warning">{t('admin.retention.notInstalled')}</InlineFeedback>;
   return (
     <Stack gap={2} minWidth={0}>
       {notice ? (
-        <InlineFeedback severity={notice === 'commandUnknown' ? 'warning' : 'info'}>
+        <InlineFeedback
+          severity={
+            notice === 'commandUnknown' ? 'warning' : notice === 'sourceChanged' ? 'error' : 'info'
+          }
+        >
           {t(`admin.retention.${notice}`)}
         </InlineFeedback>
+      ) : null}
+      {uncertainAttempt ? (
+        <ApprovalRetentionReceipt
+          original={uncertainAttempt.original}
+          sourceIsCurrent={() => receiptSourceIsCurrent(uncertainAttempt)}
+          isOriginal={receiptOriginalIsCurrent}
+          onConfirmed={confirmReceipt}
+        />
       ) : null}
       <Box
         sx={{
@@ -427,7 +718,8 @@ export function ApprovalRetentionWorkspace() {
           <ApprovalRetentionPolicyPanel
             policy={policy.data!}
             ready={policyReady}
-            busy={busy}
+            busy={commandBusy}
+            blocked={commandBlocked}
             editor={editor}
             onEditorChange={setEditor}
             review={review}
@@ -444,67 +736,67 @@ export function ApprovalRetentionWorkspace() {
               void policy.refetch();
             }}
             onSave={(rules: Readonly<ApprovalRetentionRules>, original) => {
-              let key: string | null = null;
-              return runOrdinary(() => {
-                requirePolicy(original);
-                const attempt = prepareDraft(original, rules);
-                key = attempt.idempotencyKey;
-                return save.run((execution) =>
-                  saveApprovalRetentionPolicy(
-                    original.policyId,
-                    {
-                      expectedVersion: original.version,
-                      idempotencyKey: attempt.idempotencyKey,
-                      rules: attempt.rules,
-                    },
-                    execution,
-                    () => requirePolicy(original)
-                  )
-                );
-              }).then(() => {
-                if (key) completeDraft(key);
-              });
-            }}
-            onPublish={(comment, original) => {
-              try {
-                requirePolicy(original, true);
-                publishedOriginal.current = original;
-                void highPolicy
-                  .begin(
-                    approvalRetentionPolicyPublishCommand(
-                      original.policyId,
-                      original.version,
-                      comment,
-                      crypto.randomUUID()
+              requirePolicy(original);
+              const draftAttempt = prepareDraft(original, rules);
+              const command = approvalRetentionSaveReceiptCommand(
+                original,
+                draftAttempt.rules,
+                draftAttempt.idempotencyKey
+              );
+              return runOrdinary(
+                command,
+                {
+                  kind: 'POLICY',
+                  value: original,
+                  fingerprint: approvalRetentionReceiptSourceIdentity(original),
+                },
+                (receiptOriginal, beforeDispatch) => {
+                  const witness = receiptOriginal.command;
+                  if (witness.operation !== 'SAVE_POLICY')
+                    throw new Error('Retention save witness changed');
+                  return save.run((execution) =>
+                    saveApprovalRetentionPolicy(
+                      witness.originalTargetId,
+                      witness.body,
+                      execution,
+                      () => {
+                        requirePolicy(original);
+                        beforeDispatch();
+                      }
                     )
-                  )
-                  .catch(() => setNotice('commandUnknown'));
-                return true;
-              } catch {
-                setNotice('commandUnknown');
-                return false;
-              }
+                  );
+                },
+                () => releaseDraft(draftAttempt.idempotencyKey)
+              ).then(() => completeDraft(draftAttempt.idempotencyKey));
             }}
+            onPublish={beginPolicyPublish}
           />
         ) : (
           <ApprovalRetentionPolicyUnavailable
             loading={policy.isPending && policy.fetchStatus === 'fetching'}
-            busy={busy}
-            canInitialize={!busy && canInitialize()}
+            busy={commandBusy}
+            blocked={commandBlocked}
+            canInitialize={!commandBlocked && canInitialize()}
             onRefresh={() => void policy.refetch()}
             onInitialize={() => {
               const key = crypto.randomUUID();
-              void runOrdinary(() => {
-                requireInitialization();
-                return initialize.run((execution) => {
-                  requireInitialization();
-                  return initializeApprovalRetentionPolicy(
-                    { expectedAbsent: true, idempotencyKey: key },
-                    execution,
-                    requireInitialization
-                  );
-                });
-              }).catch(() => undefined);
+              const command = approvalRetentionInitializeReceiptCommand(key);
+              void runOrdinary(
+                command,
+                { kind: 'ABSENT_POLICY' },
+                (receiptOriginal, beforeDispatch) => {
+                  const witness = receiptOriginal.command;
+                  if (witness.operation !== 'INITIALIZE_POLICY')
+                    throw new Error('Retention initialization witness changed');
+                  return initialize.run((execution) => {
+                    requireInitialization();
+                    return initializeApprovalRetentionPolicy(witness.body, execution, () => {
+                      requireInitialization();
+                      beforeDispatch();
+                    });
+                  });
+                }
+              ).catch(() => undefined);
             }}
           />
         )}
@@ -517,7 +809,13 @@ export function ApprovalRetentionWorkspace() {
               component="form"
               onSubmit={(event) => {
                 event.preventDefault();
-                if (!scopeReady || !recordInstalled || !experience.canViewOperations || !validId)
+                if (
+                  commandBlocked ||
+                  !scopeReady ||
+                  !recordInstalled ||
+                  !experience.canViewOperations ||
+                  !validId
+                )
                   return;
                 const id = input.trim();
                 selectedRequest.current = id;
@@ -530,6 +828,7 @@ export function ApprovalRetentionWorkspace() {
                 <FormField
                   label={t('admin.retention.requestId')}
                   value={input}
+                  disabled={commandBlocked}
                   onChange={(event) => setInput(event.target.value)}
                   fullWidth
                 />
@@ -537,7 +836,11 @@ export function ApprovalRetentionWorkspace() {
                   type="submit"
                   startIcon={<Search size={16} />}
                   disabled={
-                    !scopeReady || !recordInstalled || !experience.canViewOperations || !validId
+                    commandBlocked ||
+                    !scopeReady ||
+                    !recordInstalled ||
+                    !experience.canViewOperations ||
+                    !validId
                   }
                 >
                   {t('admin.retention.inspect')}
@@ -594,7 +897,11 @@ export function ApprovalRetentionWorkspace() {
                   {t('admin.retention.intentNotDeletion')}
                 </InlineFeedback>
                 <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-                  <ActionButton intent="secondary" onClick={() => void record.refetch()}>
+                  <ActionButton
+                    intent="secondary"
+                    disabled={commandBlocked}
+                    onClick={() => void record.refetch()}
+                  >
                     {t('actions.refresh')}
                   </ActionButton>
                   <ActionButton
@@ -602,27 +909,11 @@ export function ApprovalRetentionWorkspace() {
                     disabled={
                       !experience.canOperate ||
                       !record.data!.claimEligible ||
-                      busy ||
+                      commandBlocked ||
                       !approvalRetentionRouteInstalled('retention-record-claim.action')
                     }
                     onClick={() => {
-                      const original = record.data!;
-                      try {
-                        requireRecord(original);
-                        claimedOriginal.current = original;
-                        highClaim.begin(
-                          approvalRetentionRecordClaimCommand(original.requestId, {
-                            expectedVersion: original.version,
-                            policyId: original.policyId,
-                            expectedPolicyVersion: original.policyVersion,
-                            expectedHoldVersion: original.holdVersion,
-                            inventorySha256: original.inventorySha256,
-                            idempotencyKey: crypto.randomUUID(),
-                          })
-                        );
-                      } catch {
-                        setNotice('commandUnknown');
-                      }
+                      void beginRecordClaim(record.data!);
                     }}
                   >
                     {t('admin.retention.registerIntent')}
@@ -632,8 +923,8 @@ export function ApprovalRetentionWorkspace() {
             ) : requestId ? (
               <ErrorState
                 title={t('admin.retention.sourceChanged')}
-                retryLabel={t('actions.refresh')}
-                onRetry={() => void record.refetch()}
+                retryLabel={commandBlocked ? undefined : t('actions.refresh')}
+                onRetry={commandBlocked ? undefined : () => void record.refetch()}
                 size="compact"
               />
             ) : null}
@@ -657,23 +948,31 @@ export function ApprovalRetentionWorkspace() {
                   {t('admin.retention.acknowledgements')} · {claim.data.verifiedAcknowledgements}/
                   {claim.data.foreignRequests}
                 </Box>
-                <ActionButton intent="secondary" onClick={() => void claim.refetch()}>
+                <ActionButton
+                  intent="secondary"
+                  disabled={commandBlocked}
+                  onClick={() => void claim.refetch()}
+                >
                   {t('actions.refresh')}
                 </ActionButton>
               </>
             ) : claimId ? (
               <ErrorState
                 title={t('admin.retention.sourceChanged')}
-                onRetry={() => void claim.refetch()}
-                retryLabel={t('actions.refresh')}
+                onRetry={commandBlocked ? undefined : () => void claim.refetch()}
+                retryLabel={commandBlocked ? undefined : t('actions.refresh')}
                 size="compact"
               />
             ) : null}
           </Stack>
         </ApprovalSurface>
       </Box>
-      <ApprovalHighRiskCommandDialog controller={highPolicy.controller} />
-      <ApprovalHighRiskCommandDialog controller={highClaim.controller} />
+      <ApprovalHighRiskCommandDialog
+        controller={approvalRetentionReceiptOnlyController(highPolicy.controller)}
+      />
+      <ApprovalHighRiskCommandDialog
+        controller={approvalRetentionReceiptOnlyController(highClaim.controller)}
+      />
     </Stack>
   );
 }

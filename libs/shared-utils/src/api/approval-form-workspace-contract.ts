@@ -76,6 +76,55 @@ export interface ApprovalFormWorkspaceReview {
   lastEditorUserId: number | null;
   independentCheckerEligible: boolean;
   authorityValidUntil: string;
+  reviewRequest: ApprovalFormPublishReviewRequest;
+}
+
+export interface ApprovalFormPublishReviewRequest {
+  reviewRequestId: string;
+  formId: string;
+  draftFormVersionId: string;
+  basePublishedFormVersionId: string | null;
+  status: 'PENDING' | 'PUBLISHED' | 'REJECTED' | 'SUPERSEDED';
+  version: number;
+  makerUserId: number;
+  lastEditorUserId: number;
+  reviewerUserId: number;
+  reviewerPersonPublicId: string;
+  formRevision: number;
+  workspaceRevision: number;
+  schemaSha256: string;
+  reviewContentDigest: string;
+  requestReason: string;
+  requestedAt: string;
+  decidedAt: string | null;
+  decidedBy: number | null;
+  decisionReason: string | null;
+}
+
+export interface ApprovalFormPublishReviewCandidate {
+  userId: number;
+  personPublicId: string;
+  displayName: string;
+  email: string | null;
+  jobTitle: string | null;
+}
+
+export interface ApprovalFormPublishReviewCandidates {
+  candidates: ApprovalFormPublishReviewCandidate[];
+  mayBeTruncated: boolean;
+  decisionRevision: string;
+  authorityValidUntil: string;
+}
+
+export interface ApprovalFormPublishReviewQueue {
+  items: Array<{
+    request: ApprovalFormPublishReviewRequest;
+    formKey: string;
+    formNameKo: string;
+    formNameEn: string;
+  }>;
+  mayBeTruncated: boolean;
+  generatedAt: string;
 }
 
 export interface ApprovalFormWorkspaceRevisionInput {
@@ -94,6 +143,25 @@ export interface ApprovalFormReviewedPublishInput extends ApprovalFormWorkspaceR
   basePublishedVersionId: string | null;
   schemaSha256: string;
   reviewContentDigest: string;
+  reviewRequestId: string;
+  expectedReviewRequestVersion: number;
+  reviewComment: string;
+}
+export interface ApprovalFormPublishReviewRequestInput extends ApprovalFormWorkspaceRevisionInput {
+  expectedWorkspaceRevision: number;
+  draftFormVersionId: string;
+  basePublishedVersionId: string | null;
+  schemaSha256: string;
+  reviewerUserId: number;
+  reviewerPersonPublicId: string;
+  expectedReviewRequestId: string | null;
+  expectedReviewRequestVersion: number | null;
+  reason: string;
+}
+export interface ApprovalFormPublishReviewRejectInput extends ApprovalFormWorkspaceRevisionInput {
+  expectedWorkspaceRevision: number;
+  expectedReviewRequestVersion: number;
+  reason: string;
 }
 
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/u;
@@ -131,6 +199,33 @@ function digest(value: string) {
 }
 function object(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value));
+}
+function exactKeys(value: Record<string, unknown>, expected: readonly string[]) {
+  const actual = Object.keys(value).sort();
+  const wanted = [...expected].sort();
+  if (actual.length !== wanted.length || actual.some((key, index) => key !== wanted[index]))
+    invalidApprovalFormWorkspace();
+}
+function hasControlCharacter(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const code = character.charCodeAt(0);
+    return code < 32 || code === 127;
+  });
+}
+function boundedText(
+  value: unknown,
+  maximum: number,
+  nullable = false
+): asserts value is string | null {
+  if (nullable && value === null) return;
+  if (
+    typeof value !== 'string' ||
+    !value.trim() ||
+    value !== value.trim() ||
+    value.length > maximum ||
+    hasControlCharacter(value)
+  )
+    invalidApprovalFormWorkspace();
 }
 
 // Validate before JSON cloning so nonfinite numbers cannot silently become null.
@@ -247,6 +342,136 @@ export function readApprovalFormWorkspaceReview(
   )
     invalidApprovalFormWorkspace();
   date(value.authorityValidUntil);
+  readApprovalFormPublishReviewRequest(value.reviewRequest, formId);
+  if (
+    value.reviewRequest.draftFormVersionId !== value.draftFormVersionId ||
+    value.reviewRequest.reviewContentDigest !== value.reviewContentDigest ||
+    value.reviewRequest.reviewerUserId === value.makerUserId ||
+    value.reviewRequest.reviewerUserId === value.lastEditorUserId
+  )
+    invalidApprovalFormWorkspace();
+  return snapshotApprovalFormWorkspace(value);
+}
+
+export function readApprovalFormPublishReviewRequest(
+  value: ApprovalFormPublishReviewRequest,
+  formId = value?.formId
+) {
+  if (!object(value)) invalidApprovalFormWorkspace();
+  exactKeys(value, [
+    'reviewRequestId',
+    'formId',
+    'draftFormVersionId',
+    'basePublishedFormVersionId',
+    'status',
+    'version',
+    'makerUserId',
+    'lastEditorUserId',
+    'reviewerUserId',
+    'reviewerPersonPublicId',
+    'formRevision',
+    'workspaceRevision',
+    'schemaSha256',
+    'reviewContentDigest',
+    'requestReason',
+    'requestedAt',
+    'decidedAt',
+    'decidedBy',
+    'decisionReason',
+  ]);
+  if (value.formId !== approvalFormWorkspaceId(formId)) invalidApprovalFormWorkspace();
+  approvalFormWorkspaceId(value.reviewRequestId);
+  approvalFormWorkspaceId(value.draftFormVersionId);
+  nullableId(value.basePublishedFormVersionId);
+  approvalFormWorkspaceId(value.reviewerPersonPublicId);
+  if (!['PENDING', 'PUBLISHED', 'REJECTED', 'SUPERSEDED'].includes(value.status))
+    invalidApprovalFormWorkspace();
+  for (const revision of [value.version, value.formRevision, value.workspaceRevision])
+    approvalFormWorkspaceRevision(revision);
+  for (const id of [value.makerUserId, value.lastEditorUserId, value.reviewerUserId])
+    if (!Number.isSafeInteger(id) || id <= 0) invalidApprovalFormWorkspace();
+  if (value.reviewerUserId === value.makerUserId || value.reviewerUserId === value.lastEditorUserId)
+    invalidApprovalFormWorkspace();
+  digest(value.schemaSha256);
+  digest(value.reviewContentDigest);
+  boundedText(value.requestReason, 1000);
+  if (value.requestReason.length < 10) invalidApprovalFormWorkspace();
+  date(value.requestedAt);
+  date(value.decidedAt, true);
+  user(value.decidedBy);
+  boundedText(value.decisionReason, 1000, true);
+  if (
+    (value.status === 'PENDING' &&
+      (value.decidedAt !== null || value.decidedBy !== null || value.decisionReason !== null)) ||
+    (value.status !== 'PENDING' && (value.decidedAt === null || value.decidedBy === null)) ||
+    (value.decisionReason !== null && value.decisionReason.length < 10)
+  )
+    invalidApprovalFormWorkspace();
+  return snapshotApprovalFormWorkspace(value);
+}
+
+export function readApprovalFormPublishReviewCandidates(
+  value: ApprovalFormPublishReviewCandidates,
+  maximum: number
+) {
+  if (!object(value)) invalidApprovalFormWorkspace();
+  exactKeys(value, ['candidates', 'mayBeTruncated', 'decisionRevision', 'authorityValidUntil']);
+  if (
+    !Array.isArray(value.candidates) ||
+    value.candidates.length > maximum ||
+    typeof value.mayBeTruncated !== 'boolean' ||
+    typeof value.decisionRevision !== 'string' ||
+    !/^psr-[a-f0-9]{64}$/u.test(value.decisionRevision)
+  )
+    invalidApprovalFormWorkspace();
+  date(value.authorityValidUntil);
+  const users = new Set<number>();
+  const people = new Set<string>();
+  for (const candidate of value.candidates) {
+    if (!object(candidate)) invalidApprovalFormWorkspace();
+    exactKeys(candidate, ['userId', 'personPublicId', 'displayName', 'email', 'jobTitle']);
+    if (
+      !Number.isSafeInteger(candidate.userId) ||
+      candidate.userId <= 0 ||
+      users.has(candidate.userId)
+    )
+      invalidApprovalFormWorkspace();
+    users.add(candidate.userId);
+    approvalFormWorkspaceId(candidate.personPublicId);
+    if (people.has(candidate.personPublicId)) invalidApprovalFormWorkspace();
+    people.add(candidate.personPublicId);
+    boundedText(candidate.displayName, 200);
+    boundedText(candidate.email, 320, true);
+    boundedText(candidate.jobTitle, 200, true);
+  }
+  return snapshotApprovalFormWorkspace(value);
+}
+
+export function readApprovalFormPublishReviewQueue(
+  value: ApprovalFormPublishReviewQueue,
+  maximum: number
+) {
+  if (!object(value)) invalidApprovalFormWorkspace();
+  exactKeys(value, ['items', 'mayBeTruncated', 'generatedAt']);
+  if (
+    !Array.isArray(value.items) ||
+    value.items.length > maximum ||
+    typeof value.mayBeTruncated !== 'boolean'
+  )
+    invalidApprovalFormWorkspace();
+  date(value.generatedAt);
+  const ids = new Set<string>();
+  for (const item of value.items) {
+    if (!object(item)) invalidApprovalFormWorkspace();
+    exactKeys(item, ['request', 'formKey', 'formNameKo', 'formNameEn']);
+    const request = readApprovalFormPublishReviewRequest(item.request);
+    if (request.status !== 'PENDING' || ids.has(request.reviewRequestId))
+      invalidApprovalFormWorkspace();
+    ids.add(request.reviewRequestId);
+    boundedText(item.formKey, 160);
+    boundedText(item.formNameKo, 200);
+    boundedText(item.formNameEn, 200);
+  }
   return snapshotApprovalFormWorkspace(value);
 }
 

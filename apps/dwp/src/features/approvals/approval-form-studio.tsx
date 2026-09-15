@@ -66,7 +66,12 @@ import { queryApprovalFormCatalog } from './approval-form-catalog-query';
 import { ApprovalFormCatalogWorkspace } from './approval-form-catalog-workspace';
 import { ApprovalFormInspector } from './approval-form-inspector';
 import { ApprovalFormWorkspacePanel } from './approval-form-version-history';
+import { ApprovalFormPublishReviewQueue } from './approval-form-publish-review';
 import { useApprovalFormWorkspaceController } from './approval-form-workspace-controller';
+import {
+  useApprovalFormPublishReviewAssignment,
+  useApprovalFormPublishReviewQueue,
+} from './use-approval-form-publish-review';
 import {
   approvalFormWorkingDraftEditor,
   approvalFormWorkingDraftInput,
@@ -124,21 +129,26 @@ export function ApprovalFormStudio() {
   const [categoryDraft, setCategoryDraft] = useState<CategoryDraft>(emptyCategoryDraft);
   const schemaValidation = useApprovalFormSchemaValidation(formDraft.typedSchema, formEditorOpen);
 
-  const formsQueryKey = ['approvals', 'admin', 'forms', ...requestScope.cacheKey] as const;
-  const categoriesQueryKey = [
-    'approvals',
-    'admin',
-    'form-categories',
-    ...requestScope.cacheKey,
-  ] as const;
-  const referenceWorkflowsQueryKey = [
-    'approvals',
-    'admin',
-    'workflows',
-    'view',
-    'reference',
-    ...requestScope.cacheKey,
-  ] as const;
+  const formsQueryKey = useMemo(
+    () => ['approvals', 'admin', 'forms', ...requestScope.cacheKey] as const,
+    [requestScope.cacheKey]
+  );
+  const categoriesQueryKey = useMemo(
+    () => ['approvals', 'admin', 'form-categories', ...requestScope.cacheKey] as const,
+    [requestScope.cacheKey]
+  );
+  const referenceWorkflowsQueryKey = useMemo(
+    () =>
+      [
+        'approvals',
+        'admin',
+        'workflows',
+        'view',
+        'reference',
+        ...requestScope.cacheKey,
+      ] as const,
+    [requestScope.cacheKey]
+  );
 
   const forms = useQuery({
     queryKey: formsQueryKey,
@@ -196,6 +206,16 @@ export function ApprovalFormStudio() {
     draftBinding,
     detail.data ? { objectId: detail.data.form.formId, ...detail.data.form } : undefined
   );
+  const formChanged = useCallback(
+    async (formId: string) => {
+      await queryClient.invalidateQueries({ queryKey: formsQueryKey, exact: true });
+      await queryClient.invalidateQueries({
+        queryKey: ['approvals', 'admin', 'forms', formId, ...requestScope.cacheKey],
+        exact: true,
+      });
+    },
+    [formsQueryKey, queryClient, requestScope.cacheKey]
+  );
   const workspaceController = useApprovalFormWorkspaceController({
     formId: selectedId,
     requestScope,
@@ -209,13 +229,21 @@ export function ApprovalFormStudio() {
     ],
     canEdit: experience.canEditDesign,
     canPublish: experience.canPublish,
-    onChanged: async (formId) => {
-      await queryClient.invalidateQueries({ queryKey: formsQueryKey, exact: true });
-      await queryClient.invalidateQueries({
-        queryKey: ['approvals', 'admin', 'forms', formId, ...requestScope.cacheKey],
-        exact: true,
-      });
-    },
+    onChanged: formChanged,
+  });
+  const publishReview = useApprovalFormPublishReviewAssignment({
+    formId: selectedId,
+    workspace: workspaceController.workspace.data,
+    requestScope,
+    scopeReady,
+    parentReady: detailWriteReady && workspaceController.ready,
+    canEdit: experience.canEditDesign,
+    onChanged: formChanged,
+  });
+  const publishReviewQueue = useApprovalFormPublishReviewQueue({
+    requestScope,
+    scopeReady,
+    canPublish: experience.canPublish,
   });
   const workspaceEditing = !creatingForm && workspaceController.installed;
   const workspaceEditorReady =
@@ -626,6 +654,13 @@ export function ApprovalFormStudio() {
           {t('admin.loadError')}
         </InlineFeedback>
       ) : null}
+      <ApprovalFormPublishReviewQueue
+        controller={publishReviewQueue}
+        onOpenForm={(formId) => {
+          setSelectedId(formId);
+          setPanel('inspector');
+        }}
+      />
       <ApprovalFormCatalogMetrics
         values={[
           [t('admin.formCatalog.metrics.total'), forms.data?.length ?? 0, FileStack],
@@ -771,6 +806,7 @@ export function ApprovalFormStudio() {
             <>
               <ApprovalFormWorkspacePanel
                 controller={workspaceController}
+                publishReview={publishReview}
                 canEdit={experience.canEditDesign}
                 canPublish={experience.canPublish}
                 onEdit={openEditWorkingDraft}

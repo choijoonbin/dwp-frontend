@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   APPROVAL_QUEUE_FILTERS,
   approvalBatchOutcome,
+  approvalBatchRetryTaskIds,
   approvalQueueCounts,
   approvalScopeIdentity,
   approvalTaskContentAccess,
@@ -10,6 +11,7 @@ import {
   buildApprovalWorkflowEvidence,
   executeSequentialApprovalBatch,
   filterApprovalTasks,
+  mergeApprovalBatchRetryResult,
   parseApprovalQueueFilter,
   toggleApprovalBatchSelection,
 } from './approval-command-center-model';
@@ -222,6 +224,12 @@ describe('approval command center model', () => {
       approvedTaskIds: ['task-1'],
       ineligibleTaskIds: ['task-2'],
       failedTaskId: 'task-3',
+      failure: {
+        taskId: 'task-3',
+        phase: 'DECISION',
+        reason: 'UNKNOWN',
+        retryable: false,
+      },
       remainingTaskIds: ['task-4'],
     });
     expect(approvalBatchOutcome(result, 'task-1')).toBe('APPROVED');
@@ -230,6 +238,88 @@ describe('approval command center model', () => {
     expect(approvalBatchOutcome(result, 'task-4')).toBe('NOT_ATTEMPTED');
     expect(loadTask.mock.calls.map(([taskId]) => taskId)).toEqual(['task-1', 'task-2', 'task-3']);
     expect(approveTask).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
+    [403, 'AUTHORITY_DENIED', false],
+    [409, 'VERSION_CONFLICT', true],
+    [503, 'SERVICE_UNAVAILABLE', true],
+    [0, 'UNKNOWN', false],
+  ] as const)(
+    'records a non-sensitive failure cause for status %s',
+    async (status, reason, retryable) => {
+      const approveTask = vi.fn(async () => {
+        throw status === 0 ? new Error('raw upstream body') : { status, body: 'do not retain' };
+      });
+
+      const result = await executeSequentialApprovalBatch({
+        taskIds: ['task-1', 'task-2'],
+        loadTask: async (taskId) => detail(taskId),
+        approveTask,
+      });
+
+      expect(result.failure).toEqual({
+        taskId: 'task-1',
+        phase: 'DECISION',
+        reason,
+        retryable,
+      });
+      expect(JSON.stringify(result)).not.toContain('raw upstream body');
+      expect(JSON.stringify(result)).not.toContain('do not retain');
+    }
+  );
+
+  it('retries only the failed and interrupted items and merges their new ledger', () => {
+    const previous = {
+      requestedTaskIds: ['task-1', 'task-2', 'task-3', 'task-4'],
+      approvedTaskIds: ['task-1'],
+      ineligibleTaskIds: ['task-2'],
+      failedTaskId: 'task-3',
+      failure: {
+        taskId: 'task-3',
+        phase: 'DECISION',
+        reason: 'VERSION_CONFLICT',
+        retryable: true,
+      },
+      remainingTaskIds: ['task-4'],
+    } as const;
+
+    expect(approvalBatchRetryTaskIds(previous)).toEqual(['task-3', 'task-4']);
+    expect(
+      mergeApprovalBatchRetryResult(previous, {
+        requestedTaskIds: ['task-3', 'task-4'],
+        approvedTaskIds: ['task-3'],
+        ineligibleTaskIds: ['task-4'],
+        remainingTaskIds: [],
+      })
+    ).toEqual({
+      requestedTaskIds: previous.requestedTaskIds,
+      approvedTaskIds: ['task-1', 'task-3'],
+      ineligibleTaskIds: ['task-2', 'task-4'],
+      failedTaskId: undefined,
+      failure: undefined,
+      remainingTaskIds: [],
+    });
+  });
+
+  it('never offers a new command for denied or unknown outcomes', () => {
+    for (const reason of ['AUTHORITY_DENIED', 'UNKNOWN'] as const) {
+      expect(
+        approvalBatchRetryTaskIds({
+          requestedTaskIds: ['task-1', 'task-2'],
+          approvedTaskIds: [],
+          ineligibleTaskIds: [],
+          failedTaskId: 'task-1',
+          failure: {
+            taskId: 'task-1',
+            phase: 'DECISION',
+            reason,
+            retryable: false,
+          },
+          remainingTaskIds: ['task-2'],
+        })
+      ).toEqual([]);
+    }
   });
 
   it('caps the recorded batch result to the same twenty-item execution boundary', async () => {

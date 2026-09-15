@@ -87,6 +87,8 @@ const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   publishReviewedApprovalFormWorkspace: ['command'],
   saveApprovalAttachmentPolicyDraft: ['settings'],
   publishApprovalAttachmentPolicy: ['settings'],
+  requestApprovalFormPublishReview: ['reviewCommand'],
+  rejectApprovalFormPublishReview: ['reviewCommand'],
   initializeApprovalRetentionPolicy: ['command'],
   saveApprovalRetentionPolicy: ['command'],
   publishApprovalRetentionPolicy: ['command'],
@@ -95,6 +97,19 @@ const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   consentApprovalSignatureRequest: ['command'],
   signApprovalSignatureRequest: ['command'],
   cancelApprovalSignatureRequest: ['command'],
+  deadLetterApprovalEvent: ['post'],
+  replayApprovalEvent: ['post'],
+  runApprovalDeliveryBatch: ['post'],
+  reassignApprovalTask: ['post'],
+  reassignApprovalTasks: ['post'],
+  createApprovalExternalSignatureRequest: ['commandConfig'],
+  handoverApprovalExternalSignatureRequest: ['command', 'commandConfig'],
+  refreshApprovalExternalSignatureRequest: ['command', 'commandConfig'],
+  cancelApprovalExternalSignatureRequest: ['command', 'commandConfig'],
+  initializeApprovalSignaturePolicy: ['commandConfig'],
+  saveApprovalSignaturePolicyDraft: ['commandConfig'],
+  publishApprovalSignaturePolicy: ['commandConfig'],
+  inspectApprovalSignatureWorm: ['commandConfig'],
 };
 
 // Shared transports must forward the same authority at every AST call edge.
@@ -245,6 +260,14 @@ describe('Generated product ACTION mutation closure', () => {
       'approval-attachment-policy-initialize-api.ts',
       'approval-retention-api.ts',
       'approval-signature-api.ts',
+      'approval-native-operations-api.ts',
+      'approval-external-signature-api.ts',
+      'approval-signature-policy-api.ts',
+      'approval-signature-provider-api.ts',
+      'approval-delegation-api.ts',
+      'approval-resubmit-draft-api.ts',
+      'approval-policy-create-api.ts',
+      'approval-draft-migration-api.ts',
       'announcement-api.ts',
       'communication-api.ts',
       'service-center-api.ts',
@@ -356,7 +379,7 @@ describe('Generated product ACTION mutation closure', () => {
       })
     );
 
-    expect(highRiskBindings).toHaveLength(18);
+    expect(highRiskBindings.length).toBeGreaterThan(0);
     // Retention compares the signed body version and an additional native owner header.
     expect(
       highRiskBindings

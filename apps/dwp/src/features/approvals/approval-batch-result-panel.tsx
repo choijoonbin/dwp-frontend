@@ -1,4 +1,12 @@
-import { CheckCircle2, CircleSlash2, ShieldX, TimerOff } from 'lucide-react';
+import {
+  CheckCircle2,
+  CircleSlash2,
+  Download,
+  ExternalLink,
+  RotateCcw,
+  ShieldX,
+  TimerOff,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
@@ -7,7 +15,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { approvalBatchOutcome } from './approval-command-center-model';
+import { approvalBatchOutcome, approvalBatchRetryTaskIds } from './approval-command-center-model';
 
 import type { ApprovalBatchOutcome, ApprovalBatchResult } from './approval-command-center-model';
 import type { ApprovalTask } from '@dwp-frontend/shared-utils';
@@ -22,14 +30,34 @@ const OUTCOME_PRESENTATION = {
 export function ApprovalBatchResultPanel({
   result,
   tasks,
+  retrying,
+  onRetry,
+  onOpenTask,
+  onDownload,
   onDismiss,
 }: {
   result: ApprovalBatchResult;
   tasks: readonly ApprovalTask[];
+  retrying: boolean;
+  onRetry: () => void;
+  onOpenTask: (taskId: string) => void;
+  onDownload: () => void;
   onDismiss: () => void;
 }) {
   const { t } = useTranslation('approvals');
   const taskById = new Map(tasks.map((task) => [task.taskId, task]));
+  const retryTaskIds = approvalBatchRetryTaskIds(result);
+  const failureCause = result.failure
+    ? t(
+        `inbox.decisionRecovery.${
+          result.failure.reason === 'AUTHORITY_DENIED'
+            ? 'DENIED'
+            : result.failure.reason === 'VERSION_CONFLICT'
+              ? 'CONFLICT'
+              : 'UNAVAILABLE'
+        }.title`
+      )
+    : undefined;
 
   return (
     <Box
@@ -58,9 +86,31 @@ export function ApprovalBatchResultPanel({
             })}
           </Typography>
         </Box>
-        <ActionButton intent="quiet" size="small" onClick={onDismiss}>
-          {t('actions.dismiss')}
-        </ActionButton>
+        <Stack direction="row" flexWrap="wrap" justifyContent="flex-end" gap={0.5}>
+          <ActionButton
+            intent="quiet"
+            size="small"
+            startIcon={<Download size={15} />}
+            onClick={onDownload}
+          >
+            {t('home.commandCenter.downloadBatchCsv')}
+          </ActionButton>
+          {retryTaskIds.length > 0 && (
+            <ActionButton
+              intent="secondary"
+              size="small"
+              startIcon={<RotateCcw size={15} />}
+              loading={retrying}
+              disabled={retrying}
+              onClick={onRetry}
+            >
+              {t('actions.retry')} ({retryTaskIds.length})
+            </ActionButton>
+          )}
+          <ActionButton intent="quiet" size="small" disabled={retrying} onClick={onDismiss}>
+            {t('actions.dismiss')}
+          </ActionButton>
+        </Stack>
       </Stack>
       <Box
         component="ol"
@@ -98,7 +148,7 @@ export function ApprovalBatchResultPanel({
               <Box sx={{ mt: 0.15, color: presentation.color, flex: '0 0 auto' }}>
                 <Icon size={17} aria-hidden="true" />
               </Box>
-              <Box sx={{ minWidth: 0 }}>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
                 <Typography
                   variant="body2"
                   fontWeight="fontWeightBold"
@@ -109,7 +159,32 @@ export function ApprovalBatchResultPanel({
                 <Typography variant="caption" color={presentation.color}>
                   {t(`home.commandCenter.batchOutcomes.${outcome}`)}
                 </Typography>
+                {outcome === 'FAILED' && failureCause && (
+                  <Typography component="p" variant="caption" color="text.secondary">
+                    {failureCause} ·{' '}
+                    {t(
+                      result.failure?.retryable ? 'status.ELIGIBLE' : 'status.STATUS_NOT_RETRYABLE'
+                    )}
+                  </Typography>
+                )}
+                {outcome === 'NOT_ATTEMPTED' && (
+                  <Typography component="p" variant="caption" color="text.secondary">
+                    {t(
+                      result.failure?.retryable ? 'status.ELIGIBLE' : 'status.STATUS_NOT_RETRYABLE'
+                    )}
+                  </Typography>
+                )}
               </Box>
+              {outcome === 'INELIGIBLE' && (
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  startIcon={<ExternalLink size={15} />}
+                  onClick={() => onOpenTask(taskId)}
+                >
+                  {t('actions.openDetails')}
+                </ActionButton>
+              )}
             </Stack>
           );
         })}

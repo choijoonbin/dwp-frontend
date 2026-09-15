@@ -46,6 +46,9 @@ describe('signature current-source verification', () => {
     expect(
       approvalSignatureSourceState({ data: undefined, isPending: true, isFetching: true })
     ).toBe('LOADING');
+    expect(
+      approvalSignatureSourceState({ data: undefined, isPending: true, isFetching: false })
+    ).toBe('UNAVAILABLE');
     expect(approvalSignatureSourceState({ data: [], isPending: false })).toBe('READY');
     expect(
       approvalSignatureSourceState({ data: undefined, failureReason: new Error('Offline') })

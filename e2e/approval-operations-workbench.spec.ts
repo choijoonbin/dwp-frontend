@@ -541,7 +541,7 @@ test('source failure during real deferred CSRF of an explicit HIGH action cannot
 });
 
 for (const unknown of [false, true]) {
-  test(`operations503 preserves independent retention ${unknown ? 'UNKNOWN original wire' : 'editor input'}`, async ({
+  test(`operations503 preserves independent retention ${unknown ? 'and locks the UNKNOWN original wire' : 'editor input'}`, async ({
     page,
   }) => {
     const { state } = await setup(page);
@@ -573,9 +573,17 @@ for (const unknown of [false, true]) {
     ).toBeVisible();
     await expect(days).toHaveValue('123');
     if (unknown) {
-      await dialog.getByRole('button', { name: '보존 변경안 저장', exact: true }).click();
-      await expect.poll(() => state.policyCommands.length).toBe(2);
-      expect(state.policyCommands[1]).toEqual(state.policyCommands[0]);
+      await expect(
+        dialog.getByRole('button', { name: '보존 변경안 저장', exact: true })
+      ).toBeDisabled();
+      await expect(
+        page.getByRole('button', {
+          name: '원본 명령 처리 증적 확인',
+          exact: true,
+          includeHidden: true,
+        })
+      ).toBeVisible();
+      expect(state.policyCommands).toHaveLength(1);
     } else expect(state.policyCommands).toHaveLength(0);
   });
 }

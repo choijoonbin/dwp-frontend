@@ -10,20 +10,38 @@ import {
 } from './approval-signature-source-model';
 import { APPROVAL_SIGNATURE_BINDINGS } from '@dwp-frontend/shared-utils/api/approval-signature-contract';
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../../routes/product-surface-authorization.generated';
+import type { ApprovalSignatureGatewayRouteStatus } from './approval-signature-gateway-contract';
 
 describe('signature source10 UI selection (not live Auth activation)', () => {
-  it('requires each exact installed work route and rejects absent/wrong/duplicate projections', () => {
+  it('requires official public availability plus one exact work projection', () => {
     for (const leaf of Object.keys(APPROVAL_SIGNATURE_BINDINGS) as Array<
       keyof typeof APPROVAL_SIGNATURE_BINDINGS
     >) {
+      const [method, path] = APPROVAL_SIGNATURE_BINDINGS[leaf];
+      const official: readonly ApprovalSignatureGatewayRouteStatus[] = [
+        { method, path, available: true },
+      ];
+      const unavailable: readonly ApprovalSignatureGatewayRouteStatus[] = [
+        { method, path, available: false },
+      ];
       expect(approvalSignatureRouteInstalled(leaf)).toBe(true);
+      expect(
+        approvalSignatureRouteInstalled(leaf, PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS, official)
+      ).toBe(true);
+      expect(
+        approvalSignatureRouteInstalled(leaf, PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS, unavailable)
+      ).toBe(false);
       expect(approvalSignatureRouteInstalled(leaf, [])).toBe(false);
       const route = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.find(
         (value) => value.routeContractKey === `route.approvals.work.${leaf}`
       )!;
-      expect(approvalSignatureRouteInstalled(leaf, [route, route])).toBe(false);
+      expect(approvalSignatureRouteInstalled(leaf, [route, route], official)).toBe(false);
       expect(
-        approvalSignatureRouteInstalled(leaf, [{ ...route, surfaceId: 'approvals.admin' }])
+        approvalSignatureRouteInstalled(
+          leaf,
+          [{ ...route, surfaceId: 'approvals.admin' }],
+          official
+        )
       ).toBe(false);
     }
   });

@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { Activity, CloudCog, RefreshCcw, RotateCcw, TriangleAlert } from 'lucide-react';
+import { Activity, CloudCog, RefreshCcw, RotateCcw } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  ActionButton,
   ActionIconButton,
   EmptyState,
   ErrorState,
-  InlineFeedback,
   LoadingState,
   SignalMetric,
   SelectField,
@@ -20,44 +18,74 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { alpha } from '@mui/material/styles';
 
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
-import { ApprovalRetentionWorkspace } from './approval-retention-workspace';
 import { approvalDeliveryRetryCommand } from './approval-high-risk-command-model';
-import {
-  approvalDeliveryRetryEligibility,
-  isApprovalDeliveryRetryCandidate,
-  summarizeApprovalOperations,
-} from './approval-management-model';
+import { useApprovalManagementHighRiskCommand } from './approval-management-command-scope';
+import { summarizeApprovalOperations } from './approval-management-model';
 import {
   useApprovalManagementScopeReady,
   useApprovalManagementScopeReset,
 } from './approval-management-scope';
-import { useApprovalManagementHighRiskCommand } from './approval-management-command-scope';
-import { ApprovalLinkRow, ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
+import {
+  approvalNativeOperationSnapshotCurrent,
+  createApprovalDeliveryOperationProposal,
+  createApprovalTaskReassignmentProposal,
+  toggleApprovalOperationSelection,
+} from './approval-native-operations-model';
+import {
+  ApprovalNativeOperationDialog,
+  type ApprovalNativeDialogAction,
+} from './approval-native-operation-dialog';
+import { ApprovalNativeOperationCommand } from './use-approval-native-operation-command';
+import {
+  ApprovalOperationsDeliveryInspector,
+  ApprovalOperationsDeliveryPane,
+} from './approval-operations-delivery-pane';
+import {
+  ApprovalOperationsTaskInspector,
+  ApprovalOperationsTaskPane,
+} from './approval-operations-task-pane';
+import { ApprovalRetentionWorkspace } from './approval-retention-workspace';
+import { ApprovalSurface } from './approval-ui';
 import {
   useApprovalExperience,
   useApprovalManagementRequestScope,
 } from './use-approval-experience';
-
-import type { ApprovalIntegrationDelivery, ApprovalOperations } from '@dwp-frontend/shared-utils';
 import {
   approvalOperationsDeliveryQueue,
   approvalOperationsQueueFromSearch,
   approvalOperationsRetrySnapshotCurrent,
   approvalOperationsSourceCurrent,
 } from './approval-operations-workbench-model';
+
+import type {
+  ApprovalDelegationCandidate,
+  ApprovalIntegrationDelivery,
+  ApprovalOperations,
+  ApprovalTask,
+} from '@dwp-frontend/shared-utils';
+import type { ApprovalNativeDeliveryAction } from '@dwp-frontend/shared-utils/api/approval-native-operations-api';
+import type { ApprovalNativeOperationProposal } from './approval-native-operations-model';
 import type {
   ApprovalOperationsQueue,
   ApprovalOperationsSort,
   ApprovalOperationsStatus,
 } from './approval-operations-workbench-model';
+
+type NativeDialog =
+  | Readonly<{
+      action: ApprovalNativeDeliveryAction;
+      deliveries: readonly ApprovalIntegrationDelivery[];
+    }>
+  | Readonly<{
+      action: 'TASK_REASSIGN';
+      tasks: readonly ApprovalTask[];
+    }>;
 
 export function ApprovalOperationsAdmin() {
   return (
@@ -76,6 +104,12 @@ function ApprovalOperationsWorkbench() {
   const scopeReady = useApprovalManagementScopeReady(requestScope);
   const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const selectedIdsRef = useRef<ReadonlySet<string>>(selectedIds);
+  const [nativeDialog, setNativeDialog] = useState<NativeDialog | null>(null);
+  const [nativeProposal, setNativeProposal] = useState<ApprovalNativeOperationProposal | null>(
+    null
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const queue = approvalOperationsQueueFromSearch(searchParams);
   const setQueue = useCallback(
@@ -109,6 +143,8 @@ function ApprovalOperationsWorkbench() {
     notifyOnChangeProps: 'all',
   });
   const summary = summarizeApprovalOperations(operations.data);
+  const scopeFingerprint = JSON.stringify(requestScope.cacheKey);
+
   useEffect(() => {
     const expiresAt = Date.parse(operations.data?.generatedAt ?? '') + 45_000;
     if (!Number.isFinite(expiresAt)) return;
@@ -118,6 +154,7 @@ function ApprovalOperationsWorkbench() {
     );
     return () => window.clearTimeout(timer);
   }, [operations.data?.generatedAt]);
+
   const deliveries = useMemo(
     () =>
       approvalOperationsDeliveryQueue(
@@ -128,48 +165,52 @@ function ApprovalOperationsWorkbench() {
       ),
     [operations.data?.integrationDeliveries, queue, status, sort]
   );
-  const selectedTask = operations.data?.breachedTasks.find((task) => task.taskId === selectedId);
-  const selected = useMemo(
-    () => deliveries.find((delivery) => delivery.outboxId === selectedId) ?? null,
-    [deliveries, selectedId]
+  const tasks = useMemo(
+    () => operations.data?.breachedTasks ?? [],
+    [operations.data?.breachedTasks]
   );
+  const selectedTask = tasks.find((task) => task.taskId === selectedId) ?? null;
+  const selectedDelivery = deliveries.find((delivery) => delivery.outboxId === selectedId) ?? null;
 
   useEffect(() => {
     const ids =
-      queue === 'sla'
-        ? (operations.data?.breachedTasks ?? []).map((task) => task.taskId)
-        : deliveries.map((delivery) => delivery.outboxId);
+      queue === 'sla' ? tasks.map((task) => task.taskId) : deliveries.map((item) => item.outboxId);
     if (ids.length === 0) {
       setSelectedId(null);
       return;
     }
-    if (!ids.includes(selectedId ?? '')) {
-      setSelectedId(ids[0]!);
-    }
-  }, [deliveries, operations.data?.breachedTasks, queue, selectedId]);
+    if (!ids.includes(selectedId ?? '')) setSelectedId(ids[0]!);
+  }, [deliveries, queue, selectedId, tasks]);
+
+  const replaceSelection = useCallback((ids: readonly string[]) => {
+    const next = new Set(ids.slice(0, 50));
+    selectedIdsRef.current = next;
+    setSelectedIds(next);
+  }, []);
+  const toggleSelection = useCallback((targetId: string, checked: boolean) => {
+    const next = toggleApprovalOperationSelection(selectedIdsRef.current, targetId, checked);
+    selectedIdsRef.current = next;
+    setSelectedIds(next);
+  }, []);
 
   const retryOriginal = useRef<Parameters<typeof approvalOperationsRetrySnapshotCurrent>[1]>(null);
-  const latestScope = useRef({
+  const latestRetryScope = useRef({ selectedId, scopeFingerprint, canOperate: false });
+  latestRetryScope.current = {
     selectedId,
-    scopeFingerprint: JSON.stringify(requestScope.cacheKey),
-    canOperate: scopeReady && canOperate && queue === 'delivery',
-  });
-  latestScope.current = {
-    selectedId,
-    scopeFingerprint: JSON.stringify(requestScope.cacheKey),
-    canOperate: scopeReady && canOperate && queue === 'delivery',
+    scopeFingerprint,
+    canOperate: scopeReady && canOperate && queue === 'delivery' && !nativeProposal,
   };
   const assertRetryCurrent = () => {
     if (
       !approvalOperationsRetrySnapshotCurrent(
         queryClient.getQueryState<ApprovalOperations>(operationsQueryKey),
         retryOriginal.current,
-        latestScope.current
+        latestRetryScope.current
       )
-    )
+    ) {
       throw new Error('Approval recovery source changed');
+    }
   };
-
   const highRiskRetry = useApprovalManagementHighRiskCommand({
     cacheKey: requestScope.cacheKey,
     operation: 'DELIVERY_RETRY',
@@ -178,8 +219,9 @@ function ApprovalOperationsWorkbench() {
       if (
         retryOriginal.current?.outboxId !== command.targetId ||
         retryOriginal.current.expectedVersion !== command.expectedObjectVersion
-      )
+      ) {
         throw new Error('Approval recovery command changed');
+      }
       return retryApprovalIntegrationDelivery(
         command.targetId,
         command.expectedObjectVersion,
@@ -196,23 +238,29 @@ function ApprovalOperationsWorkbench() {
     },
   });
   const { close: closeHighRiskRetry } = highRiskRetry.controller;
+
+  const resetInteraction = useCallback(() => {
+    setSelectedId(null);
+    replaceSelection([]);
+    setNativeDialog(null);
+    setNativeProposal(null);
+    retryOriginal.current = null;
+    closeHighRiskRetry();
+  }, [closeHighRiskRetry, replaceSelection]);
   const previousQueue = useRef(queue);
   useEffect(() => {
     if (previousQueue.current === queue) return;
     previousQueue.current = queue;
-    setSelectedId(null);
-    retryOriginal.current = null;
-    closeHighRiskRetry();
-  }, [queue, closeHighRiskRetry]);
+    resetInteraction();
+  }, [queue, resetInteraction]);
   const resetScopeState = useCallback(() => {
-    setSelectedId(null);
+    resetInteraction();
     setQueue('delivery');
     setStatus('ALL');
     setSort('OLDEST');
-    retryOriginal.current = null;
-    closeHighRiskRetry();
-  }, [closeHighRiskRetry, setQueue]);
+  }, [resetInteraction, setQueue]);
   useApprovalManagementScopeReset(requestScope.cacheKey, resetScopeState);
+
   const operationWriteReady =
     scopeReady &&
     operations.isSuccess &&
@@ -221,7 +269,8 @@ function ApprovalOperationsWorkbench() {
     approvalOperationsSourceCurrent(
       queryClient.getQueryState<ApprovalOperations>(operationsQueryKey)
     ) &&
-    canOperate;
+    canOperate &&
+    !nativeProposal;
   const formatTimestamp = (value?: string | null) =>
     value
       ? formatDate(
@@ -230,6 +279,88 @@ function ApprovalOperationsWorkbench() {
           resolveSupportedLocale(i18n.resolvedLanguage, i18n.language)
         )
       : t('admin.integrations.notAvailable');
+
+  const openDeliveryCommand = (
+    action: ApprovalNativeDeliveryAction,
+    targets: readonly ApprovalIntegrationDelivery[]
+  ) => {
+    if (!operationWriteReady || targets.length === 0) return;
+    replaceSelection(targets.map((target) => target.outboxId));
+    setNativeDialog({ action, deliveries: targets.map((target) => structuredClone(target)) });
+  };
+  const openTaskCommand = (targets: readonly ApprovalTask[]) => {
+    if (!operationWriteReady || targets.length === 0) return;
+    replaceSelection(targets.map((target) => target.taskId));
+    setNativeDialog({
+      action: 'TASK_REASSIGN',
+      tasks: targets.map((target) => structuredClone(target)),
+    });
+  };
+  const submitNativeCommand = (reason: string, candidate: ApprovalDelegationCandidate | null) => {
+    if (!nativeDialog || !operations.data || !operationWriteReady) return;
+    const proposal =
+      nativeDialog.action === 'TASK_REASSIGN'
+        ? candidate
+          ? createApprovalTaskReassignmentProposal({
+              targets: nativeDialog.tasks,
+              candidate,
+              reason,
+              generatedAt: operations.data.generatedAt,
+              scopeFingerprint,
+            })
+          : null
+        : createApprovalDeliveryOperationProposal({
+            action: nativeDialog.action,
+            targets: nativeDialog.deliveries,
+            reason,
+            generatedAt: operations.data.generatedAt,
+            scopeFingerprint,
+          });
+    if (
+      !proposal ||
+      !approvalNativeOperationSnapshotCurrent(
+        queryClient.getQueryState<ApprovalOperations>(operationsQueryKey),
+        proposal,
+        { selectedIds: selectedIdsRef.current, scopeFingerprint, canOperate: operationWriteReady }
+      )
+    ) {
+      void operations.refetch();
+      return;
+    }
+    setNativeDialog(null);
+    setNativeProposal(proposal);
+  };
+  const assertNativeCurrent = () => {
+    if (
+      !nativeProposal ||
+      !approvalNativeOperationSnapshotCurrent(
+        queryClient.getQueryState<ApprovalOperations>(operationsQueryKey),
+        nativeProposal,
+        {
+          selectedIds: selectedIdsRef.current,
+          scopeFingerprint: JSON.stringify(requestScope.cacheKey),
+          canOperate: scopeReady && canOperate,
+        }
+      )
+    ) {
+      throw new Error('Approval native operation source changed');
+    }
+  };
+  const nativeProposalCurrent =
+    !nativeProposal ||
+    approvalNativeOperationSnapshotCurrent(
+      queryClient.getQueryState<ApprovalOperations>(operationsQueryKey),
+      nativeProposal,
+      {
+        selectedIds,
+        scopeFingerprint,
+        canOperate: scopeReady && canOperate,
+      }
+    );
+
+  useEffect(() => {
+    if (nativeProposal && !nativeProposalCurrent) setNativeProposal(null);
+  }, [nativeProposal, nativeProposalCurrent]);
 
   if (!scopeReady) {
     return (
@@ -240,7 +371,6 @@ function ApprovalOperationsWorkbench() {
       />
     );
   }
-
   if (operations.isPending) {
     return (
       <LoadingState
@@ -252,7 +382,6 @@ function ApprovalOperationsWorkbench() {
       />
     );
   }
-
   if (operations.isError) {
     return (
       <ErrorState
@@ -291,11 +420,13 @@ function ApprovalOperationsWorkbench() {
           <RefreshCcw size={16} />
         </ActionIconButton>
       </Stack>
-
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, minmax(0,1fr))', lg: 'repeat(5, minmax(0,1fr))' },
+          gridTemplateColumns: {
+            xs: 'repeat(2,minmax(0,1fr))',
+            lg: 'repeat(5,minmax(0,1fr))',
+          },
           gap: 1.25,
         }}
       >
@@ -318,16 +449,12 @@ function ApprovalOperationsWorkbench() {
         <SignalMetric
           label={t('admin.operationsQueue.retryReady')}
           value={
-            approvalOperationsSourceCurrent(
-              queryClient.getQueryState<ApprovalOperations>(operationsQueryKey)
-            )
+            operationWriteReady
               ? String(summary.retryCandidates)
               : t('admin.integrations.notAvailable')
           }
           detail={
-            approvalOperationsSourceCurrent(
-              queryClient.getQueryState<ApprovalOperations>(operationsQueryKey)
-            )
+            operationWriteReady
               ? t('admin.operationsQueue.loadedOnly')
               : t('admin.operationsQueue.sourceStale')
           }
@@ -335,7 +462,6 @@ function ApprovalOperationsWorkbench() {
           tone="info"
         />
       </Box>
-
       <Box
         sx={{
           display: 'grid',
@@ -357,12 +483,7 @@ function ApprovalOperationsWorkbench() {
         >
           <Tabs
             value={queue}
-            onChange={(_, value: ApprovalOperationsQueue) => {
-              setQueue(value);
-              setSelectedId(null);
-              retryOriginal.current = null;
-              closeHighRiskRetry();
-            }}
+            onChange={(_, value: ApprovalOperationsQueue) => setQueue(value)}
             variant="scrollable"
             scrollButtons="auto"
             aria-label={t('admin.operationsQueue.title')}
@@ -371,6 +492,7 @@ function ApprovalOperationsWorkbench() {
               <Tab
                 key={value}
                 value={value}
+                disabled={Boolean(nativeProposal)}
                 id={`approval-operations-${value}-tab`}
                 aria-controls={`approval-operations-${value}-panel`}
                 label={t(`admin.operationsQueue.${value}`)}
@@ -389,28 +511,24 @@ function ApprovalOperationsWorkbench() {
               size="small"
               label={t('admin.integrations.columns.status')}
               value={status}
-              disabled={queue !== 'delivery'}
+              disabled={queue !== 'delivery' || Boolean(nativeProposal)}
               options={(['ALL', 'PENDING', 'SENDING', 'FAILED', 'DEAD'] as const).map((value) => ({
                 value,
                 label:
                   value === 'ALL' ? t('admin.operationsQueue.allStatuses') : t(`status.${value}`),
               }))}
-              onValueChange={(value) => {
-                if (value) setStatus(value);
-              }}
+              onValueChange={(value) => value && setStatus(value)}
             />
             <SelectField
               size="small"
               label={t('admin.operationsQueue.sort')}
               value={sort}
-              disabled={queue === 'sla'}
+              disabled={queue === 'sla' || Boolean(nativeProposal)}
               options={(['OLDEST', 'NEWEST', 'AVAILABLE'] as const).map((value) => ({
                 value,
                 label: t(`admin.operationsQueue.sorts.${value}`),
               }))}
-              onValueChange={(value) => {
-                if (value) setSort(value);
-              }}
+              onValueChange={(value) => value && setSort(value)}
             />
           </Box>
           <Box
@@ -420,132 +538,65 @@ function ApprovalOperationsWorkbench() {
             tabIndex={0}
           >
             {queue === 'sla' ? (
-              (operations.data?.breachedTasks.length ?? 0) === 0 ? (
-                <EmptyState
-                  title={t('admin.assurance.states.enforced')}
-                  description={t('admin.breached.meta')}
-                  icon={<Activity size={24} />}
-                />
-              ) : (
-                <Stack>
-                  {operations.data?.breachedTasks.map((task) => (
-                    <ButtonBase
-                      key={task.taskId}
-                      onClick={() => setSelectedId(task.taskId)}
-                      aria-current={task.taskId === selectedId ? 'true' : undefined}
-                      sx={{
-                        p: 2,
-                        textAlign: 'left',
-                        display: 'block',
-                        borderBottom: 1,
-                        borderColor: 'divider',
-                        bgcolor: task.taskId === selectedId ? 'action.selected' : 'transparent',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          typography: 'body2',
-                          fontWeight: 'fontWeightBold',
-                          overflowWrap: 'anywhere',
-                        }}
-                      >
-                        {task.title}
-                      </Box>
-                      <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-                        {task.requestNumber} · {task.requesterName}
-                      </Box>
-                    </ButtonBase>
-                  ))}
-                </Stack>
-              )
-            ) : deliveries.length === 0 ? (
-              <EmptyState
-                title={t('admin.integrations.empty')}
-                description={t('admin.integrations.meta')}
-                icon={<CloudCog size={24} />}
+              <ApprovalOperationsTaskPane
+                tasks={tasks}
+                selected={selectedTask}
+                selectedIds={selectedIds}
+                canOperate={operationWriteReady}
+                busy={Boolean(nativeProposal)}
+                onSelect={(task) => setSelectedId(task.taskId)}
+                onToggle={toggleSelection}
+                onToggleVisible={(targets, checked) =>
+                  replaceSelection(checked ? targets.map((target) => target.taskId) : [])
+                }
+                onReassign={openTaskCommand}
               />
             ) : (
-              <Stack
-                component="ul"
-                sx={{ m: 0, p: 0, listStyle: 'none', maxHeight: 540, overflowY: 'auto' }}
-              >
-                {deliveries.map((delivery) => (
-                  <DeliveryQueueRow
-                    key={delivery.outboxId}
-                    delivery={delivery}
-                    selected={delivery.outboxId === selectedId}
-                    updatedAt={formatTimestamp(
-                      delivery.lastRetriedAt ?? delivery.publishedAt ?? delivery.createdAt
-                    )}
-                    onSelect={() => {
-                      setSelectedId(delivery.outboxId);
-                      retryOriginal.current = null;
-                      closeHighRiskRetry();
-                    }}
-                  />
-                ))}
-              </Stack>
+              <ApprovalOperationsDeliveryPane
+                deliveries={deliveries}
+                selected={selectedDelivery}
+                selectedIds={selectedIds}
+                canOperate={operationWriteReady && queue === 'delivery'}
+                busy={Boolean(nativeProposal)}
+                formatTimestamp={formatTimestamp}
+                onSelect={(delivery) => setSelectedId(delivery.outboxId)}
+                onToggle={toggleSelection}
+                onToggleVisible={(targets, checked) =>
+                  replaceSelection(checked ? targets.map((target) => target.outboxId) : [])
+                }
+                onNative={openDeliveryCommand}
+              />
             )}
           </Box>
         </ApprovalSurface>
-
         {queue === 'sla' && selectedTask ? (
-          <ApprovalSurface title={selectedTask.title} meta={selectedTask.requestNumber}>
-            <Stack gap={1.5} sx={{ p: 2 }}>
-              <StatusChip status={selectedTask.status} />
-              <Box sx={{ typography: 'body2', overflowWrap: 'anywhere' }}>
-                {selectedTask.summary}
-              </Box>
-              <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-                {selectedTask.stepName} · {formatTimestamp(selectedTask.dueAt)}
-              </Box>
-              <ApprovalLinkRow
-                title={t('actions.openDetails')}
-                detail={selectedTask.requesterName ?? ''}
-                route={`/approvals/inbox?task=${encodeURIComponent(selectedTask.taskId)}`}
-                tone={approvalTone.primary}
-              />
-            </Stack>
-          </ApprovalSurface>
-        ) : selected ? (
-          <DeliveryInspector
-            delivery={selected}
+          <ApprovalOperationsTaskInspector
+            task={selectedTask}
             canOperate={operationWriteReady}
-            busy={highRiskRetry.controller.busy}
+            busy={Boolean(nativeProposal)}
+            formatTimestamp={formatTimestamp}
+            onReassign={openTaskCommand}
+          />
+        ) : selectedDelivery ? (
+          <ApprovalOperationsDeliveryInspector
+            delivery={selectedDelivery}
+            canOperate={operationWriteReady && queue === 'delivery'}
+            busy={highRiskRetry.controller.busy || Boolean(nativeProposal)}
             formatTimestamp={formatTimestamp}
             onRetry={(expectedVersion) => {
-              if (!operationWriteReady) return;
-              const latest = operations.data?.integrationDeliveries.find(
-                (delivery) => delivery.outboxId === selected.outboxId
-              );
-              const eligibility = latest ? approvalDeliveryRetryEligibility(latest) : null;
-              if (
-                !latest ||
-                !eligibility?.eligible ||
-                eligibility.expectedVersion !== expectedVersion
-              ) {
-                return;
-              }
+              if (!operationWriteReady || queue !== 'delivery') return;
               retryOriginal.current = {
-                outboxId: latest.outboxId,
+                outboxId: selectedDelivery.outboxId,
                 expectedVersion,
-                deliveryFingerprint: JSON.stringify(latest),
-                scopeFingerprint: latestScope.current.scopeFingerprint,
+                deliveryFingerprint: JSON.stringify(selectedDelivery),
+                scopeFingerprint,
               };
-              if (
-                !approvalOperationsRetrySnapshotCurrent(
-                  queryClient.getQueryState<ApprovalOperations>(operationsQueryKey),
-                  retryOriginal.current,
-                  latestScope.current
-                )
-              ) {
-                retryOriginal.current = null;
-                return;
-              }
+              assertRetryCurrent();
               void highRiskRetry.begin(
-                approvalDeliveryRetryCommand(latest.outboxId, expectedVersion)
+                approvalDeliveryRetryCommand(selectedDelivery.outboxId, expectedVersion)
               );
             }}
+            onNative={openDeliveryCommand}
           />
         ) : (
           <EmptyState
@@ -555,168 +606,36 @@ function ApprovalOperationsWorkbench() {
           />
         )}
       </Box>
-
       <ApprovalHighRiskCommandDialog controller={highRiskRetry.controller} />
-    </Stack>
-  );
-}
-
-function DeliveryQueueRow({
-  delivery,
-  selected,
-  updatedAt,
-  onSelect,
-}: {
-  delivery: ApprovalIntegrationDelivery;
-  selected: boolean;
-  updatedAt: string;
-  onSelect: () => void;
-}) {
-  return (
-    <Box component="li">
-      <ButtonBase
-        onClick={onSelect}
-        aria-current={selected ? 'true' : undefined}
-        sx={{
-          width: 1,
-          minHeight: 82,
-          px: 2,
-          py: 1.25,
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 1.25,
-          textAlign: 'left',
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: selected ? alpha(approvalTone.primary, 0.075) : 'transparent',
-          borderInlineStart: 3,
-          borderInlineStartColor: selected ? approvalTone.primary : 'transparent',
-          '&:hover': { bgcolor: alpha(approvalTone.primary, 0.05) },
-        }}
-      >
-        {isApprovalDeliveryRetryCandidate(delivery) ? (
-          <TriangleAlert size={17} color={approvalTone.amber} />
-        ) : (
-          <CloudCog size={17} />
-        )}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ typography: 'body2', fontWeight: 'fontWeightBold' }}>{delivery.eventType}</Box>
-          <Box sx={{ typography: 'caption', color: 'text.secondary' }}>{delivery.eventId}</Box>
-          <Box sx={{ typography: 'caption', color: 'text.secondary' }}>{updatedAt}</Box>
-        </Box>
-        <StatusChip status={delivery.status} />
-      </ButtonBase>
-    </Box>
-  );
-}
-
-function DeliveryInspector({
-  delivery,
-  canOperate,
-  busy,
-  formatTimestamp,
-  onRetry,
-}: {
-  delivery: ApprovalIntegrationDelivery;
-  canOperate: boolean;
-  busy: boolean;
-  formatTimestamp: (value?: string | null) => string;
-  onRetry: (expectedVersion: number) => void;
-}) {
-  const { t } = useTranslation('approvals');
-  const retryEligibility = approvalDeliveryRetryEligibility(delivery);
-  const rows = [
-    [t('admin.integrations.columns.status'), <StatusChip key="status" status={delivery.status} />],
-    [
-      t('admin.integrations.columns.attempts'),
-      `${delivery.attemptCount}${delivery.manualRetryCount > 0 ? ` + ${delivery.manualRetryCount}` : ''}`,
-    ],
-    [
-      t('admin.integrations.columns.updated'),
-      formatTimestamp(delivery.lastRetriedAt ?? delivery.publishedAt ?? delivery.createdAt),
-    ],
-    [t('admin.operationsQueue.eventVersion'), t('admin.version', { version: delivery.version })],
-    [t('admin.integrations.availableAt'), formatTimestamp(delivery.availableAt)],
-    [t('admin.integrations.evaluatedAt'), formatTimestamp(retryEligibility.evaluatedAt)],
-    [t('admin.integrations.requestId'), delivery.requestId ?? t('admin.integrations.notAvailable')],
-    [
-      t('admin.integrations.retry'),
-      <StatusChip key="retry-eligibility" status={retryEligibility.reason} />,
-    ],
-  ] as const;
-
-  return (
-    <ApprovalSurface
-      title={delivery.eventType}
-      meta={delivery.eventId}
-      action={<CloudCog size={18} />}
-    >
-      <Stack gap={2} sx={{ p: 2 }}>
-        <Box
-          component="dl"
-          sx={{
-            m: 0,
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2,minmax(0,1fr))' },
-            gap: 1.5,
+      <ApprovalNativeOperationDialog
+        open={Boolean(nativeDialog)}
+        action={(nativeDialog?.action ?? 'RETRY') as ApprovalNativeDialogAction}
+        count={
+          nativeDialog
+            ? 'tasks' in nativeDialog
+              ? nativeDialog.tasks.length
+              : nativeDialog.deliveries.length
+            : 0
+        }
+        busy={false}
+        sourceReady={operationWriteReady}
+        requestScope={requestScope}
+        onClose={() => setNativeDialog(null)}
+        onSubmit={submitNativeCommand}
+      />
+      {nativeProposal ? (
+        <ApprovalNativeOperationCommand
+          key={`${nativeProposal.operation}:${nativeProposal.selectionFingerprint}`}
+          proposal={nativeProposal}
+          cacheKey={operationsQueryKey}
+          assertCurrent={assertNativeCurrent}
+          onCommitted={() => {
+            setNativeProposal(null);
+            replaceSelection([]);
           }}
-        >
-          {rows.map(([label, value]) => (
-            <Box key={String(label)}>
-              <Box component="dt" sx={{ typography: 'caption', color: 'text.secondary' }}>
-                {label}
-              </Box>
-              <Box component="dd" sx={{ m: 0, mt: 0.35 }}>
-                {typeof value === 'string' ? (
-                  <Box
-                    sx={{
-                      typography: 'body2',
-                      fontWeight: 'fontWeightBold',
-                      overflowWrap: 'anywhere',
-                    }}
-                  >
-                    {value}
-                  </Box>
-                ) : (
-                  value
-                )}
-              </Box>
-            </Box>
-          ))}
-        </Box>
-
-        <InlineFeedback severity={delivery.lastError ? 'error' : 'info'}>
-          <Box sx={{ typography: 'body2', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
-            {delivery.lastError ?? t('admin.integrations.noError')}
-          </Box>
-        </InlineFeedback>
-
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
-          alignItems={{ sm: 'center' }}
-          gap={1.25}
-        >
-          <Box sx={{ typography: 'caption', color: 'text.secondary' }}>
-            {canOperate && retryEligibility.eligible
-              ? t('admin.highRisk.description')
-              : t('admin.integrations.retryRestricted')}
-          </Box>
-          <ActionButton
-            intent="primary"
-            startIcon={<RotateCcw size={17} />}
-            disabled={!canOperate || !retryEligibility.eligible}
-            loading={busy}
-            onClick={() => {
-              if (retryEligibility.expectedVersion !== null) {
-                onRetry(retryEligibility.expectedVersion);
-              }
-            }}
-          >
-            {t('admin.integrations.retry')}
-          </ActionButton>
-        </Stack>
-      </Stack>
-    </ApprovalSurface>
+          onDismiss={() => setNativeProposal(null)}
+        />
+      ) : null}
+    </Stack>
   );
 }

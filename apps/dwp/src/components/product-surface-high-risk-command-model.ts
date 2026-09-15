@@ -33,7 +33,11 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'RETENTION_POLICY'
     | 'RETENTION_RECORD'
     | 'APPROVAL_SIGNATURE_REQUEST'
+    | 'SIGNATURE_POLICY'
+    | 'EXTERNAL_SIGNATURE_REQUEST'
     | 'OUTBOX_EVENT'
+    | 'OPERATION_BATCH'
+    | 'APPROVAL_TASK'
     | 'ORG_SCENARIO'
     | 'EXPORT_DATASET'
     | 'EXPORT_REQUEST'
@@ -109,6 +113,13 @@ export function productSurfaceHighRiskOperationBinding(operation: ApprovalHighRi
 
 function nonBlank(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
+}
+
+function hasControlCharacter(value: string): boolean {
+  return [...value].some((character) => {
+    const code = character.charCodeAt(0);
+    return code <= 0x1f || code === 0x7f;
+  });
 }
 
 function safeVersion(value: unknown): value is number {
@@ -211,10 +222,17 @@ export function approvalFormReviewedPublishCommand(
   assertApprovalFormWorkspaceRevisionInput(input);
   approvalFormWorkspaceId(input.draftFormVersionId);
   if (input.basePublishedVersionId !== null) approvalFormWorkspaceId(input.basePublishedVersionId);
+  approvalFormWorkspaceId(input.reviewRequestId);
   if (
     !safeVersion(input.expectedWorkspaceRevision) ||
+    !safeVersion(input.expectedReviewRequestVersion) ||
     !/^[a-f0-9]{64}$/u.test(input.schemaSha256) ||
     !/^[a-f0-9]{64}$/u.test(input.reviewContentDigest) ||
+    !nonBlank(input.reviewComment) ||
+    input.reviewComment !== input.reviewComment.trim() ||
+    input.reviewComment.length < 10 ||
+    input.reviewComment.length > 1000 ||
+    hasControlCharacter(input.reviewComment) ||
     !nonBlank(idempotencyKey)
   )
     throw new Error('Reviewed form publication binding is invalid.');
@@ -225,6 +243,9 @@ export function approvalFormReviewedPublishCommand(
     basePublishedVersionId: input.basePublishedVersionId,
     schemaSha256: input.schemaSha256,
     reviewContentDigest: input.reviewContentDigest,
+    reviewRequestId: input.reviewRequestId,
+    expectedReviewRequestVersion: input.expectedReviewRequestVersion,
+    reviewComment: input.reviewComment,
   });
   return Object.freeze({
     ...descriptor(
@@ -265,6 +286,111 @@ export function approvalDeliveryRetryCommand(
     expectedVersion,
     targetPath('operations/events', outboxId, 'retry'),
     {}
+  );
+}
+
+type ApprovalOperationsVersionTarget = Readonly<{
+  targetId: string;
+  expectedVersion: number;
+}>;
+
+type ApprovalOperationsTaskTarget = ApprovalOperationsVersionTarget &
+  Readonly<{
+    assigneeUserId: number;
+    assigneePersonPublicId: string;
+  }>;
+
+function nativeApprovalOperationPath(suffix: string): string {
+  return `/api/approvals/v1/admin/operations/${suffix}`;
+}
+
+export function approvalDeliveryDeadLetterCommand(
+  outboxId: string,
+  expectedVersion: number,
+  reason: string
+): ApprovalHighRiskCommandDescriptor {
+  return descriptor(
+    'DELIVERY_DEAD_LETTER',
+    'OUTBOX_EVENT',
+    outboxId,
+    expectedVersion,
+    nativeApprovalOperationPath(`events/${encodeURIComponent(outboxId)}/dead-letter`),
+    { reason }
+  );
+}
+
+export function approvalDeliveryReplayCommand(
+  outboxId: string,
+  expectedVersion: number,
+  reason: string
+): ApprovalHighRiskCommandDescriptor {
+  return descriptor(
+    'DELIVERY_REPLAY',
+    'OUTBOX_EVENT',
+    outboxId,
+    expectedVersion,
+    nativeApprovalOperationPath(`events/${encodeURIComponent(outboxId)}/replay`),
+    { reason }
+  );
+}
+
+export function approvalDeliveryBatchCommand(
+  operation: Extract<
+    ApprovalHighRiskOperation,
+    | 'DELIVERY_BATCH_RETRY'
+    | 'DELIVERY_BATCH_DEAD_LETTER'
+    | 'DELIVERY_BATCH_REPLAY'
+    | 'DELIVERY_RECONCILE'
+  >,
+  operationId: string,
+  items: readonly ApprovalOperationsVersionTarget[],
+  reason: string
+): ApprovalHighRiskCommandDescriptor {
+  const suffix = {
+    DELIVERY_BATCH_RETRY: 'deliveries/retry',
+    DELIVERY_BATCH_DEAD_LETTER: 'deliveries/dead-letter',
+    DELIVERY_BATCH_REPLAY: 'deliveries/replay',
+    DELIVERY_RECONCILE: 'deliveries/reconcile',
+  }[operation];
+  return descriptor(
+    operation,
+    'OPERATION_BATCH',
+    operationId,
+    0,
+    nativeApprovalOperationPath(suffix),
+    { operationId, items: items.map((item) => ({ ...item })), reason }
+  );
+}
+
+export function approvalTaskReassignCommand(
+  taskId: string,
+  expectedVersion: number,
+  assigneeUserId: number,
+  assigneePersonPublicId: string,
+  reason: string
+): ApprovalHighRiskCommandDescriptor {
+  return descriptor(
+    'TASK_REASSIGN',
+    'APPROVAL_TASK',
+    taskId,
+    expectedVersion,
+    nativeApprovalOperationPath(`tasks/${encodeURIComponent(taskId)}/reassign`),
+    { assigneeUserId, assigneePersonPublicId, reason }
+  );
+}
+
+export function approvalTaskBatchReassignCommand(
+  operationId: string,
+  items: readonly ApprovalOperationsTaskTarget[],
+  reason: string
+): ApprovalHighRiskCommandDescriptor {
+  return descriptor(
+    'TASK_BATCH_REASSIGN',
+    'OPERATION_BATCH',
+    operationId,
+    0,
+    nativeApprovalOperationPath('tasks/reassign'),
+    { operationId, items: items.map((item) => ({ ...item })), reason }
   );
 }
 

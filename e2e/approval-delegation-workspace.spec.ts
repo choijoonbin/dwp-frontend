@@ -17,8 +17,8 @@ const outgoing: ApprovalDelegation = {
   scopeType: 'WORKFLOW',
   workflowId: 'workflow-exact-001',
   workflowKey: 'DATA-ACCESS',
-  startsAt: '2026-09-14T00:00:00Z',
-  endsAt: '2026-09-18T00:00:00Z',
+  startsAt: '2099-09-14T00:00:00Z',
+  endsAt: '2099-09-18T00:00:00Z',
   lifecycleState: 'ACTIVE',
   reason: '출장 기간에 지정한 프로세스만 대행합니다.',
   version: 3,
@@ -67,6 +67,20 @@ async function session(page: Page) {
   });
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
 }
+async function publishedWorkflow(page: Page) {
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/workflows/published',
+    (route) =>
+      success(route, [
+        {
+          workflowId: outgoing.workflowId,
+          workflowKey: outgoing.workflowKey,
+          nameKo: '데이터 접근 예외',
+          nameEn: 'Data access exception',
+        },
+      ])
+  );
+}
 async function settledDialog(dialog: Locator) {
   await expect(dialog).toBeVisible();
   await expect
@@ -114,6 +128,7 @@ test('원본 위임 화면의 방향 탭과 실데이터 지표·이력·inspect
   const inspector = await openOutgoing(page);
   await expect(inspector).toContainText('workflow-exact-001');
   await expect(inspector).toContainText('DATA-ACCESS');
+  await expect(inspector.getByRole('button', { name: '위임 수정', exact: true })).toBeVisible();
   await expect(inspector.getByRole('button', { name: '위임 철회', exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('delegation-inspector.png'), fullPage: false });
   if (await page.getByRole('dialog', { name: '위임 상세', exact: true }).isVisible())
@@ -126,12 +141,153 @@ test('원본 위임 화면의 방향 탭과 실데이터 지표·이력·inspect
   await received.click();
   const receivedDialog = page.getByRole('dialog', { name: '위임 상세', exact: true });
   if (await receivedDialog.isVisible()) await settledDialog(receivedDialog);
+  await expect(page.getByRole('button', { name: '위임 수정', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: '위임 철회', exact: true })).toHaveCount(0);
   await expect(page.getByText('모든 결재 프로세스', { exact: true }).first()).toBeVisible();
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(
     accessibility.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))
   ).toEqual([]);
+});
+
+test('발신 위임은 고정된 대행자와 최신 버전으로 수정하고 수신 위임은 수정하지 못한다', async ({
+  page,
+}) => {
+  await session(page);
+  await publishedWorkflow(page);
+  let items: ApprovalDelegation[] = [outgoing, incoming];
+  const puts: Array<{ body: Record<string, unknown>; key: string | undefined }> = [];
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/delegations',
+    (route) => success(route, items)
+  );
+  await page.route(
+    (url) =>
+      url.pathname === '/api/approvals/v1/delegations/delegation-outgoing',
+    (route) => {
+      if (route.request().method() !== 'PUT') return route.fallback();
+      const body = route.request().postDataJSON() as Record<string, unknown>;
+      puts.push({ body, key: route.request().headers()['idempotency-key'] });
+      items = [{ ...outgoing, ...body, version: 4 }, incoming] as ApprovalDelegation[];
+      return success(route, items);
+    }
+  );
+
+  await page.goto('/approvals/delegations');
+  const inspector = await openOutgoing(page);
+  await inspector.getByRole('button', { name: '위임 수정', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: '결재 위임 수정', exact: true });
+  await settledDialog(editor);
+  await expect(editor.getByLabel('대행자')).toBeDisabled();
+  await expect(editor.getByLabel('대행자')).toHaveValue(/김민준/u);
+  await expect(editor.getByRole('group', { name: '시작 일시' }).locator('input')).toHaveValue(
+    /2099/u
+  );
+  await expect(editor.getByRole('group', { name: '종료 일시' }).locator('input')).toHaveValue(
+    /2099/u
+  );
+  await editor.getByLabel('위임 사유').fill('제품 운영 기간의 승인 대행 범위를 조정합니다.');
+  await expect(editor.getByRole('button', { name: '저장', exact: true })).toBeEnabled();
+  await editor.getByRole('button', { name: '저장', exact: true }).click();
+  await expect(editor).toHaveCount(0);
+
+  expect(puts).toHaveLength(1);
+  expect(puts[0]?.body).toEqual({
+    delegateUserId: outgoing.delegateUserId,
+    scopeType: 'WORKFLOW',
+    workflowId: outgoing.workflowId,
+    startsAt: outgoing.startsAt,
+    endsAt: outgoing.endsAt,
+    reason: '제품 운영 기간의 승인 대행 범위를 조정합니다.',
+    expectedVersion: outgoing.version,
+  });
+  expect(puts[0]?.key).toMatch(/^delegation-update:[0-9a-f-]{36}$/u);
+
+  await page.getByRole('tab', { name: '받은 위임', exact: true }).click();
+  await page.getByRole('button', { name: /사용자 22에게서 받은 위임/u }).click();
+  await expect(page.getByRole('button', { name: '위임 수정', exact: true })).toHaveCount(0);
+});
+
+test('위임 수정 409는 입력과 동일 요청 키를 보존하고 명시적 최신 확인 뒤에만 재전송한다', async ({
+  page,
+}) => {
+  await session(page);
+  await publishedWorkflow(page);
+  const keys: Array<string | undefined> = [];
+  let putCount = 0;
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/delegations',
+    (route) => success(route, [outgoing])
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/delegations/delegation-outgoing',
+    (route) => {
+      putCount += 1;
+      keys.push(route.request().headers()['idempotency-key']);
+      return putCount === 1
+        ? unavailable(route, 409)
+        : success(route, [
+            { ...outgoing, reason: '복구 뒤 동일하게 보존된 수정 입력입니다.', version: 4 },
+          ]);
+    }
+  );
+
+  await page.goto('/approvals/delegations');
+  const inspector = await openOutgoing(page);
+  await inspector.getByRole('button', { name: '위임 수정', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: '결재 위임 수정', exact: true });
+  await settledDialog(editor);
+  const reason = editor.getByLabel('위임 사유');
+  await reason.fill('복구 뒤 동일하게 보존된 수정 입력입니다.');
+  await editor.getByRole('button', { name: '저장', exact: true }).click();
+  const recovery = editor.getByRole('alert').filter({
+    hasText: '위임 방향, 상태 또는 버전이 변경되었습니다',
+  });
+  await expect(recovery).toBeVisible();
+  await expect(reason).toHaveValue('복구 뒤 동일하게 보존된 수정 입력입니다.');
+  await expect(reason).toBeDisabled();
+  expect(putCount).toBe(1);
+
+  await recovery.getByRole('button', { name: '새로고침', exact: true }).click();
+  await expect(recovery).toHaveCount(0);
+  await expect(reason).toHaveValue('복구 뒤 동일하게 보존된 수정 입력입니다.');
+  await editor.getByRole('button', { name: '저장', exact: true }).click();
+  await expect(editor).toHaveCount(0);
+  expect(putCount).toBe(2);
+  expect(keys[1]).toBe(keys[0]);
+});
+
+test('수정 직전 위임 snapshot이 바뀌면 PUT0으로 닫고 입력을 보존한다', async ({ page }) => {
+  await session(page);
+  await publishedWorkflow(page);
+  let changed = false;
+  let puts = 0;
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/delegations',
+    (route) => success(route, [changed ? { ...outgoing, version: 4 } : outgoing])
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/delegations/delegation-outgoing',
+    (route) => {
+      puts += 1;
+      return unavailable(route);
+    }
+  );
+
+  await page.goto('/approvals/delegations');
+  const inspector = await openOutgoing(page);
+  await inspector.getByRole('button', { name: '위임 수정', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: '결재 위임 수정', exact: true });
+  await settledDialog(editor);
+  const reason = editor.getByLabel('위임 사유');
+  await reason.fill('최신 위임 snapshot 검증 전에는 전송하지 않습니다.');
+  changed = true;
+  await editor.getByRole('button', { name: '저장', exact: true }).click();
+  await expect(
+    editor.getByRole('alert').filter({ hasText: '위임 방향, 상태 또는 버전이 변경되었습니다' })
+  ).toBeVisible();
+  await expect(reason).toHaveValue('최신 위임 snapshot 검증 전에는 전송하지 않습니다.');
+  expect(puts).toBe(0);
 });
 
 test('위임 철회 직전 첫 503은 POST0으로 닫고 명시적 새로고침 뒤 최신 버전만 한 번 전송한다', async ({

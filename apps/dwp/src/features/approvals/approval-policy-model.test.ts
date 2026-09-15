@@ -5,7 +5,7 @@ import {
   approvalPolicyRuleInput,
   approvalPolicyValuesEqual,
   buildApprovalPolicyComparisonRows,
-  createApprovalPolicyDraft,
+  createApprovalPolicyEditDraft,
   isApprovalPolicyMakerBlocked,
   isApprovalPolicyDraftValid,
   isApprovalPolicySourceCurrent,
@@ -127,7 +127,7 @@ describe('approval policy model', () => {
       pendingRule: { minimumApprovers: 3 },
       pendingChangeReason: 'Existing independent proposal',
     });
-    expect(createApprovalPolicyDraft(proposed)).toEqual({
+    expect(createApprovalPolicyEditDraft(proposed)).toEqual({
       enforcementMode: 'WARN',
       severity: 'CRITICAL',
       lifecycleState: 'RETIRED',
@@ -140,7 +140,7 @@ describe('approval policy model', () => {
   it('ignores inactive proposal remnants when no review is pending', () => {
     const current = policy({ pendingSeverity: 'CRITICAL', pendingRule: { staleRule: true } });
     expect(buildApprovalPolicyComparisonRows(current).every((row) => !row.changed)).toBe(true);
-    expect(createApprovalPolicyDraft(current).rules).toEqual(
+    expect(createApprovalPolicyEditDraft(current).rules).toEqual(
       approvalPolicyRuleEditorEntries(current.rule)
     );
   });
@@ -154,7 +154,7 @@ describe('approval policy model', () => {
   });
 
   it('requires an auditable reason and finite typed rule values', () => {
-    const draft = createApprovalPolicyDraft(policy());
+    const draft = createApprovalPolicyEditDraft(policy());
 
     expect(isApprovalPolicyDraftValid(draft)).toBe(false);
     expect(

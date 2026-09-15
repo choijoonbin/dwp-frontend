@@ -3,6 +3,7 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 import { mockShellSession } from './support/shell-session';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
+import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
 import {
   APPROVAL_FORM_DETAIL_FIXTURE,
   APPROVAL_REQUEST_DETAIL_FIXTURE,
@@ -117,15 +118,15 @@ test('상신의 실제 original key를 전송하고 첫 503 이후 같은 초안
 test('보완 답변의 actual key/header와 원래 입력을 보존하며 UNKNOWN refresh/close가 새 POST를 열지 않는다', async ({
   page,
 }) => {
+  const wireCaptures = await installApprovalInformationWireCapture(page);
   await session(page, 'NEEDS_INFO');
-  const commands: { key?: string; body: unknown }[] = [];
+  const commands: { key?: string }[] = [];
   await page.route(
     (url) =>
       url.pathname === '/api/approvals/v1/requests/approval-request-001/information-response',
     (route) => {
       commands.push({
         key: route.request().headers()['idempotency-key'],
-        body: route.request().postDataJSON(),
       });
       return unknown(route);
     }
@@ -139,7 +140,8 @@ test('보완 답변의 actual key/header와 원래 입력을 보존하며 UNKNOW
   await expect(dialog.getByText(/중복 처리를 방지하기 위해 다시 전송하지 않습니다/u)).toBeVisible();
   expect(commands).toHaveLength(1);
   expect(commands[0]!.key).toMatch(/^[A-Za-z0-9._:-]{1,120}$/u);
-  expect(commands[0]!.body).toMatchObject({
+  expect(wireCaptures).toHaveLength(1);
+  expect(wireCaptures[0]!.body).toMatchObject({
     expectedVersion: 3,
     message: '원래 사용자 액션의 실제 보완 답변입니다.',
   });

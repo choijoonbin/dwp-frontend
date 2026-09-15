@@ -2,7 +2,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, ArrowRight, FilePlus2, Pencil, RotateCcw, Trash2, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Download,
+  FilePlus2,
+  Pencil,
+  RefreshCw,
+  RotateCcw,
+  Trash2,
+  X,
+} from 'lucide-react';
 import {
   ActionButton,
   ActionIconButton,
@@ -28,10 +38,13 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
+import { ApprovalDraftMigrationDialog } from './approval-draft-migration-dialog';
 import { ApprovalRequestRevisionHistory } from './approval-request-revision-history';
 import { missingApprovalRequestFields } from './approval-request-model';
+import { useApprovalDraftMigration } from './use-approval-draft-migration';
 import { useApprovalRequestFormEvaluation } from './use-approval-request-form-evaluation';
 import { useApprovalRequestDraftCommand } from './use-approval-request-draft-command';
+import { useApprovalRequestDraftBackup } from './use-approval-request-draft-backup';
 import { useApprovalRequestRevisionHistory } from './use-approval-request-revision-history';
 import { ApprovalSurface, StatusChip } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
@@ -47,7 +60,7 @@ export function ApprovalRequestDrafts() {
   const mobile = useMediaQuery(theme.breakpoints.down('lg'));
   const [params, setParams] = useSearchParams();
   const deleted = params.get('draftView') === 'trash';
-  const { canUpdateRequests } = useApprovalExperience();
+  const { canViewRequests, canUpdateRequests } = useApprovalExperience();
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
@@ -117,6 +130,19 @@ export function ApprovalRequestDrafts() {
     detail.data?.request.status === 'DRAFT'
       ? detail.data
       : undefined;
+  const backup = useApprovalRequestDraftBackup({
+    cacheKey: requestScope.cacheKey,
+    contextScopeKey: requestScope.contextScopeKey,
+    ready:
+      requestScope.ready &&
+      canViewRequests &&
+      !deleted &&
+      !pendingFilter &&
+      !list.isFetching &&
+      !list.isError,
+    request: selected,
+    detail: visibleDetail,
+  });
   const formEvaluation = useApprovalRequestFormEvaluation({
     schema: visibleDetail?.formSchema,
     values: visibleDetail?.payload ?? {},
@@ -143,6 +169,20 @@ export function ApprovalRequestDrafts() {
       return result.items.find((current) => current.requestId === request.requestId);
     },
   });
+  const migration = useApprovalDraftMigration({
+    cacheKey: requestScope.cacheKey,
+    contextScopeKey: requestScope.contextScopeKey,
+    ready:
+      requestScope.ready &&
+      canUpdateRequests &&
+      !deleted &&
+      !pendingFilter &&
+      !list.isFetching &&
+      !list.isError,
+    request: selected,
+    detail: visibleDetail,
+    onCreated: (draftId) => navigate(`/approvals/requests/new?draft=${draftId}`),
+  });
   const sourceReady =
     requestScope.ready &&
     !pendingFilter &&
@@ -150,7 +190,12 @@ export function ApprovalRequestDrafts() {
     !list.isError &&
     commands.problem !== 'DENIED';
   const navigationLocked =
-    commands.pending || commands.unresolved || commands.problem === 'UNKNOWN';
+    commands.pending ||
+    commands.unresolved ||
+    commands.problem === 'UNKNOWN' ||
+    backup.pending ||
+    migration.locked ||
+    Boolean(migration.candidate);
   const refresh = async () => {
     const results = await Promise.all([
       list.refetch(),
@@ -202,44 +247,92 @@ export function ApprovalRequestDrafts() {
       <Typography variant="caption">
         {t('requests.autosave.saved', { version: selected.version })}
       </Typography>
-      {canUpdateRequests && !commands.problem && (
+      {!commands.problem && (canViewRequests || canUpdateRequests) && (
         <Stack gap={1}>
           {deleted ? (
-            <ActionButton
-              intent="primary"
-              startIcon={<RotateCcw size={16} />}
-              disabled={!history.ready || commands.pending}
-              onClick={() => commands.open('restore', selected)}
-            >
-              {t('requests.autosave.restore')}
-            </ActionButton>
-          ) : (
-            <>
+            canUpdateRequests && (
               <ActionButton
                 intent="primary"
-                startIcon={<Pencil size={16} />}
-                disabled={
-                  !visibleDetail ||
-                  !formEvaluation.schemaReady ||
-                  !formEvaluation.draftValid ||
-                  !history.ready ||
-                  commands.pending
-                }
-                onClick={() => navigate(`/approvals/requests/new?draft=${selected.requestId}`)}
+                startIcon={<RotateCcw size={16} />}
+                disabled={!history.ready || commands.pending}
+                onClick={() => commands.open('restore', selected)}
               >
-                {t('actions.edit')}
+                {t('requests.autosave.restore')}
               </ActionButton>
-              <ActionButton
-                intent="danger"
-                startIcon={<Trash2 size={16} />}
-                disabled={!visibleDetail || !history.ready || commands.pending}
-                onClick={() => commands.open('delete', selected)}
-              >
-                {t('requests.autosave.delete')}
-              </ActionButton>
+            )
+          ) : (
+            <>
+              {canUpdateRequests && (
+                <ActionButton
+                  intent="primary"
+                  startIcon={<Pencil size={16} />}
+                  disabled={
+                    !visibleDetail ||
+                    !formEvaluation.schemaReady ||
+                    !formEvaluation.draftValid ||
+                    !history.ready ||
+                    commands.pending
+                  }
+                  onClick={() => navigate(`/approvals/requests/new?draft=${selected.requestId}`)}
+                >
+                  {t('actions.edit')}
+                </ActionButton>
+              )}
+              {canViewRequests && (
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<Download size={16} />}
+                  disabled={!backup.ready || commands.pending}
+                  onClick={backup.download}
+                >
+                  {backup.pending
+                    ? t('requests.drafts.backupPreparing')
+                    : t('requests.drafts.backup')}
+                </ActionButton>
+              )}
+              {canUpdateRequests && (
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<RefreshCw size={16} />}
+                  disabled={!visibleDetail || !history.ready || commands.pending}
+                  onClick={migration.open}
+                >
+                  {t('requests.drafts.migrationAction')}
+                </ActionButton>
+              )}
+              {canUpdateRequests && (
+                <>
+                  <ActionButton
+                    intent="danger"
+                    startIcon={<Trash2 size={16} />}
+                    disabled={!visibleDetail || !history.ready || commands.pending}
+                    onClick={() => commands.open('delete', selected)}
+                  >
+                    {t('requests.autosave.delete')}
+                  </ActionButton>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('requests.drafts.discardLifecycleNotice')}
+                  </Typography>
+                </>
+              )}
             </>
           )}
         </Stack>
+      )}
+      {deleted && (
+        <InlineFeedback severity="info">{t('requests.drafts.trashRetentionNotice')}</InlineFeedback>
+      )}
+      {backup.problem && (
+        <InlineFeedback
+          severity={backup.problem === 'STALE' ? 'warning' : 'error'}
+          action={
+            <ActionButton intent="quiet" onClick={() => void refresh().catch(() => undefined)}>
+              {t('actions.refresh')}
+            </ActionButton>
+          }
+        >
+          {t(`requests.drafts.backup${backup.problem}`)}
+        </InlineFeedback>
       )}
       {!deleted &&
         (detail.isFetching ? (
@@ -556,6 +649,7 @@ export function ApprovalRequestDrafts() {
           />
         </Stack>
       </FormDialog>
+      <ApprovalDraftMigrationDialog controller={migration} />
     </ApprovalSurface>
   );
 }

@@ -4,12 +4,22 @@ export type ProductSurfaceHighRiskOperation =
   | 'FORM_REVIEWED_PUBLISH'
   | 'POLICY_PUBLISH'
   | 'DELIVERY_RETRY'
+  | 'DELIVERY_DEAD_LETTER'
+  | 'DELIVERY_REPLAY'
+  | 'DELIVERY_BATCH_RETRY'
+  | 'DELIVERY_BATCH_DEAD_LETTER'
+  | 'DELIVERY_BATCH_REPLAY'
+  | 'DELIVERY_RECONCILE'
+  | 'TASK_REASSIGN'
+  | 'TASK_BATCH_REASSIGN'
   | 'DOCUMENT_POLICY_PUBLISH'
   | 'ATTACHMENT_POLICY_PUBLISH'
   | 'DOCUMENT_HOLD_PUBLISH'
   | 'RETENTION_POLICY_PUBLISH'
   | 'RETENTION_RECORD_CLAIM'
   | 'SIGNATURE_SIGN'
+  | 'SIGNATURE_POLICY_PUBLISH'
+  | 'EXTERNAL_SIGNATURE_HANDOVER'
   | 'HCM_ORG_PUBLISH'
   | 'HCM_EXPORT_CREATE'
   | 'HCM_EXPORT_RETRY'
@@ -59,6 +69,54 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       routeContractKey: 'route.approvals.admin.operations.retry.action',
     },
     {
+      operation: 'DELIVERY_DEAD_LETTER',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.dead-letter.action',
+    },
+    {
+      operation: 'DELIVERY_REPLAY',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.replay.action',
+    },
+    {
+      operation: 'DELIVERY_BATCH_RETRY',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.batch-retry.action',
+    },
+    {
+      operation: 'DELIVERY_BATCH_DEAD_LETTER',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.batch-dead-letter.action',
+    },
+    {
+      operation: 'DELIVERY_BATCH_REPLAY',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.batch-replay.action',
+    },
+    {
+      operation: 'DELIVERY_RECONCILE',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.reconcile.action',
+    },
+    {
+      operation: 'TASK_REASSIGN',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.task-reassign.action',
+    },
+    {
+      operation: 'TASK_BATCH_REASSIGN',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.operations.task-batch-reassign.action',
+    },
+    {
       operation: 'HCM_ORG_PUBLISH',
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
@@ -99,6 +157,18 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'approvals',
       surfaceKey: 'approvals.work',
       routeContractKey: 'route.approvals.work.signature-sign.action',
+    },
+    {
+      operation: 'SIGNATURE_POLICY_PUBLISH',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.admin',
+      routeContractKey: 'route.approvals.admin.signature-policy-publish.action',
+    },
+    {
+      operation: 'EXTERNAL_SIGNATURE_HANDOVER',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.work',
+      routeContractKey: 'route.approvals.work.external-signature-handover.action',
     },
     {
       operation: 'HCM_EXPORT_CREATE',

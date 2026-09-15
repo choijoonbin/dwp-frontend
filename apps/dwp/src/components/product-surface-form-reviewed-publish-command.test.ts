@@ -15,6 +15,9 @@ const input = () => ({
   basePublishedVersionId: '30000000-0000-0000-0000-000000000003',
   schemaSha256: 'a'.repeat(64),
   reviewContentDigest: 'b'.repeat(64),
+  reviewRequestId: '40000000-0000-4000-8000-000000000004',
+  expectedReviewRequestVersion: 0,
+  reviewComment: 'Independent publisher verified the exact review evidence.',
 });
 
 describe('reviewed form publication command', () => {
@@ -65,6 +68,10 @@ describe('reviewed form publication command', () => {
       { ...input(), reviewContentDigest: '' },
       { ...input(), schemaSha256: 'A'.repeat(64) },
       { ...input(), draftFormVersionId: 'other' },
+      { ...input(), reviewRequestId: 'other' },
+      { ...input(), expectedReviewRequestVersion: -1 },
+      { ...input(), reviewComment: 'short' },
+      { ...input(), reviewComment: ' padded independent review ' },
     ]) {
       expect(() => approvalFormReviewedPublishCommand(formId, invalid, 'original-key')).toThrow();
     }

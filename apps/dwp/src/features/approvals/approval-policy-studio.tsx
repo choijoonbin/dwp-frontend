@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshCcw, ShieldCheck } from 'lucide-react';
+import { Plus, RefreshCcw, ShieldCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionIconButton,
@@ -34,9 +34,10 @@ import {
   useApprovalManagementScopeReset,
 } from './approval-management-scope';
 import { ApprovalPolicyEditorDialog, ApprovalPolicyReviewDialog } from './approval-policy-dialogs';
+import { ApprovalPolicyCreateDialog } from './approval-policy-create-dialog';
 import {
   approvalPolicyRuleInput,
-  createApprovalPolicyDraft,
+  createApprovalPolicyEditDraft,
   isApprovalPolicyDraftValid,
   isApprovalPolicyMakerBlocked,
   isApprovalPolicySourceCurrent,
@@ -57,6 +58,7 @@ import {
   isProductSurfaceOperationCancelledError,
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
+import { useApprovalPolicyCreate } from './use-approval-policy-create';
 
 import type { ApprovalPolicyDraft } from './approval-policy-model';
 import type { ApprovalPolicy } from '@dwp-frontend/shared-utils';
@@ -116,6 +118,18 @@ export function ApprovalPolicyStudio() {
         : `v${publishedVersion}`;
   const sourceReady =
     scopeReady && policies.isSuccess && !policies.isFetching && policies.failureCount === 0;
+  const policyCreate = useApprovalPolicyCreate({
+    requestScope,
+    scopeReady,
+    sourceReady,
+    canCreate: experience.canEditPolicies,
+    policies: policies.data ?? [],
+    policiesQueryKey,
+    onCreated: (policy) => {
+      setSelectedId(policy.policyId);
+      toast.success(t('admin.studio.policySubmitted'));
+    },
+  });
   const sourceState = useRef({
     scopeReady,
     queryKey: policiesQueryKey,
@@ -297,7 +311,7 @@ export function ApprovalPolicyStudio() {
   const openEditor = () => {
     if (!selected || !sourceReady || !experience.canEditPolicies) return;
     setDraftOrigin(commandScope.capture(structuredClone(selected)));
-    setDraft(createApprovalPolicyDraft(selected));
+    setDraft(createApprovalPolicyEditDraft(selected));
     setEditorOpen(true);
   };
   const openReview = () => {
@@ -397,6 +411,16 @@ export function ApprovalPolicyStudio() {
           action={
             <Stack direction="row" gap={1} alignItems="center">
               <Chip size="small" label={policies.data.length} />
+              {experience.canEditPolicies ? (
+                <ActionIconButton
+                  label={t('admin.policyCreate.open')}
+                  intent="primary"
+                  disabled={!policyCreate.createEnabled}
+                  onClick={policyCreate.openCreate}
+                >
+                  <Plus size={16} />
+                </ActionIconButton>
+              ) : null}
               <ActionIconButton
                 label={t('actions.refresh')}
                 loading={policies.isFetching}
@@ -515,6 +539,23 @@ export function ApprovalPolicyStudio() {
           setReviewComment('');
         }}
         onPublish={beginPublish}
+      />
+      <ApprovalPolicyCreateDialog
+        open={policyCreate.open}
+        draft={policyCreate.draft}
+        validation={policyCreate.validation}
+        problem={policyCreate.problem}
+        busy={policyCreate.busy}
+        locked={policyCreate.locked}
+        canSubmit={policyCreate.canSubmit}
+        canRetry={policyCreate.canRetry}
+        canEditPreserved={policyCreate.canEditPreserved}
+        onChange={policyCreate.setDraft}
+        onClose={policyCreate.close}
+        onSubmit={policyCreate.submit}
+        onRetryOriginal={policyCreate.retryOriginal}
+        onEditPreserved={policyCreate.editPreserved}
+        onRefreshSource={policyCreate.refreshSource}
       />
       <ApprovalHighRiskCommandDialog controller={highRiskPublish.controller} />
     </>

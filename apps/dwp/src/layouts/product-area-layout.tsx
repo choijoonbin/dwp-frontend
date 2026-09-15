@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -76,6 +77,7 @@ export type ProductAreaNavigationItemChildrenContext = Readonly<{
   selected: boolean;
   compact: boolean;
   onNavigate?: () => void;
+  onNavigateToTarget?: (resolveTarget: () => HTMLElement | null) => void;
 }>;
 
 export type ProductAreaMobileShellContext = Readonly<{
@@ -264,6 +266,7 @@ export function ProductAreaLayout({
   const focusLocation = `${location.pathname}${location.search}${location.hash}`;
   const focusIdentityKey = `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`;
   const shellRef = useRef<HTMLDivElement>(null);
+  const mobileNavigationTargetRef = useRef<(() => HTMLElement | null) | null>(null);
   const focusLocationRef = useRef(focusLocation);
   const focusIdentityRef = useRef(focusIdentityKey);
   focusLocationRef.current = focusLocation;
@@ -298,13 +301,45 @@ export function ProductAreaLayout({
     }
   };
   const dismissMobileNavigation = () => {
+    mobileNavigationTargetRef.current = null;
     clearProductSurfaceFocus();
     mobileNavigation.dismiss();
   };
   const navigateMobileNavigation = () => {
+    mobileNavigationTargetRef.current = null;
     clearProductSurfaceFocus();
     mobileNavigation.navigate();
   };
+  const navigateMobileNavigationToTarget = (resolveTarget: () => HTMLElement | null) => {
+    mobileNavigationTargetRef.current = resolveTarget;
+    clearProductSurfaceFocus();
+    mobileNavigation.navigate();
+  };
+  const focusMobileNavigationTarget = useCallback(() => {
+    const resolveTarget = mobileNavigationTargetRef.current;
+    const target = resolveTarget?.();
+    if (!target?.isConnected) return false;
+    target.focus({ preventScroll: true });
+    if (document.activeElement !== target) return false;
+    mobileNavigationTargetRef.current = null;
+    return true;
+  }, []);
+  useEffect(() => {
+    if (mobileNavigation.open || !mobileNavigationTargetRef.current) return undefined;
+    let frame = 0;
+    let remainingFrames = 120;
+    const transferFocus = () => {
+      if (focusMobileNavigationTarget() || !mobileNavigationTargetRef.current) return;
+      remainingFrames -= 1;
+      if (remainingFrames <= 0) {
+        mobileNavigationTargetRef.current = null;
+        return;
+      }
+      frame = window.requestAnimationFrame(transferFocus);
+    };
+    frame = window.requestAnimationFrame(transferFocus);
+    return () => window.cancelAnimationFrame(frame);
+  }, [focusMobileNavigationTarget, mobileNavigation.open]);
   const productLabel = t(`shell.${areaKey}.name`);
   const headerContextLabel =
     presentationPlane === 'management'
@@ -410,6 +445,7 @@ export function ProductAreaLayout({
                       selected,
                       compact: compactNavigation,
                       onNavigate,
+                      onNavigateToTarget: onDismiss ? navigateMobileNavigationToTarget : undefined,
                     })
                   : null;
                 const disclosureChildren =
@@ -638,6 +674,7 @@ export function ProductAreaLayout({
         controlsId={mobileNavigationId}
         label={t(`shell.${areaKey}.navigationLabel`)}
         onDismiss={dismissMobileNavigation}
+        onExited={focusMobileNavigationTarget}
         open={mobileNavigation.open}
         testId={`${areaKey}-mobile-sidebar`}
         width={shell.desktopNavigationWidth}

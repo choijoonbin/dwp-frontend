@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ApprovalDelegationEditor } from './approval-delegation-editor';
 
-import type { ApprovalDelegationCandidate } from '@dwp-frontend/shared-utils';
+import type { ApprovalDelegation, ApprovalDelegationCandidate } from '@dwp-frontend/shared-utils';
 import type { ProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 const dependencies = vi.hoisted(() => ({
@@ -148,5 +148,79 @@ describe('ApprovalDelegationEditor scope transition', () => {
     ) as HTMLInputElement;
     expect(reopenedInput.value).toBe('');
     expect(queryByText(document.body, previousCandidate.displayName)).toBeNull();
+  });
+
+  it('prefills an outgoing update, locks its delegate persona, and preserves edits during recovery', async () => {
+    const delegation: ApprovalDelegation = {
+      delegationId: 'delegation-edit',
+      delegatorUserId: 11,
+      delegateUserId: 91,
+      delegatePersonPublicId: 'person-91',
+      delegateDisplayName: 'Fixed Delegate',
+      delegateEmail: 'fixed@example.test',
+      scopeType: 'ALL',
+      startsAt: '2099-01-01T00:00:00.000Z',
+      endsAt: '2099-01-07T00:00:00.000Z',
+      lifecycleState: 'ACTIVE',
+      reason: 'Original bounded coverage reason',
+      version: 7,
+      direction: 'OUTGOING',
+    };
+    const onSubmit = vi.fn();
+    const renderUpdate = (recoveryMessage?: string) =>
+      root.render(
+        createElement(
+          QueryClientProvider,
+          { client: queryClient },
+          createElement(ApprovalDelegationEditor, {
+            open: true,
+            busy: false,
+            sourceReady: true,
+            requestScope: requestScope('a'),
+            delegation,
+            recoveryMessage,
+            onClose: vi.fn(),
+            onSubmit,
+            onRecover: vi.fn(),
+          })
+        )
+      );
+
+    await act(async () => renderUpdate());
+    const delegate = getByLabelText(
+      document.body,
+      /delegations\.fields\.delegate/u
+    ) as HTMLInputElement;
+    const reason = getByLabelText(
+      document.body,
+      /delegations\.fields\.reason/u
+    ) as HTMLTextAreaElement;
+    expect(delegate.disabled).toBe(true);
+    expect(delegate.value).toContain('Fixed Delegate');
+    expect(reason.value).toBe(delegation.reason);
+    expect(dependencies.searchApprovalDelegationCandidates).not.toHaveBeenCalled();
+
+    const user = userEvent.setup();
+    await user.clear(reason);
+    await user.type(reason, 'Preserved updated coverage reason');
+    await act(async () => renderUpdate('delegations.update.errors.UNAVAILABLE'));
+    expect(reason.value).toBe('Preserved updated coverage reason');
+    expect(reason.disabled).toBe(true);
+
+    await act(async () => renderUpdate());
+    await user.click(document.body.querySelector('button[type="submit"]')!);
+    await vi.waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith({
+      kind: 'update',
+      source: delegation,
+      input: {
+        delegateUserId: 91,
+        scopeType: 'ALL',
+        startsAt: delegation.startsAt,
+        endsAt: delegation.endsAt,
+        reason: 'Preserved updated coverage reason',
+        expectedVersion: 7,
+      },
+    });
   });
 });

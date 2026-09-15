@@ -5,6 +5,16 @@ export const PRODUCT_PAGE_SHORTCUT_TARGET_CATALOG = {
     surfaceId: 'approvals.admin',
     routeContractKey: 'route.approvals.admin.operations.page',
   },
+  approvalPolicies: {
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeContractKey: 'route.approvals.admin.policies.page',
+  },
+  approvalSignatures: {
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeContractKey: 'route.approvals.admin.signatures.page',
+  },
   approvalWorkflows: {
     productId: 'approvals',
     surfaceId: 'approvals.admin',

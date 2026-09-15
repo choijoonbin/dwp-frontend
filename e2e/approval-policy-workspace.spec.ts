@@ -11,7 +11,7 @@ async function capture(target: Page | Locator, name: string, testInfo: TestInfo)
   await testInfo.attach(name, { path, contentType: 'image/png' });
 }
 
-// Canonical V9 UI fixture evidence, not a live Auth/Approval deployment claim.
+// Canonical V14 UI fixture evidence, not a live Auth/Approval deployment claim.
 async function setup(page: Page, mode: 'light' | 'dark' | 'forced') {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',

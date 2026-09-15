@@ -118,7 +118,7 @@ export function ApprovalTaskDocumentTools({
               ? 'requests.documents.unknown'
               : documents.failure === 'CONFLICT'
                 ? 'requests.documents.conflict'
-                : 'requests.documents.error'
+                : 'requests.documents.sourceError'
           )}
         </InlineFeedback>
       )}
@@ -190,7 +190,7 @@ export function ApprovalTaskDocumentTools({
                 ? 'requests.documents.unknown'
                 : documents.failure === 'CONFLICT'
                   ? 'requests.documents.conflict'
-                  : 'requests.documents.error'
+                  : 'requests.documents.sourceError'
             )}
           </InlineFeedback>
         )}

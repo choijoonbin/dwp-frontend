@@ -11,9 +11,9 @@ const completed = '원본 요청의 처리 완료를 확인했습니다.';
 const readError = '처리 결과를 확인하지 못했습니다. 원본 요청은 보존됩니다.';
 test.afterEach(closeApprovalWireTestServers);
 
-test.describe('canonical generation 9 receipt frontend contract journeys (not live Auth)', () => {
+test.describe('canonical generation 14 receipt frontend contract journeys (not live Auth)', () => {
   test.beforeEach(() => {
-    expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBe(9);
+    expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBe(14);
     const routes = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
       (entry) => entry.routeContractKey === 'route.approvals.work.information-command-receipt.data'
     );

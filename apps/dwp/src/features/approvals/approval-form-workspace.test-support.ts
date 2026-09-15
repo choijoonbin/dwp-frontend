@@ -7,6 +7,7 @@ import type {
 export const formId = '11111111-1111-4111-8111-111111111111';
 export const publishedId = '22222222-2222-4222-8222-222222222222';
 export const draftId = '33333333-3333-4333-8333-333333333333';
+export const reviewRequestId = '55555555-5555-4555-8555-555555555555';
 export function workspaceFixture(): ApprovalFormWorkspace {
   const published = {
     formVersionId: publishedId,
@@ -79,6 +80,27 @@ export function reviewFixture(): ApprovalFormWorkspaceReview {
     lastEditorUserId: 31,
     independentCheckerEligible: true,
     authorityValidUntil: '2099-09-14T00:00:30Z',
+    reviewRequest: {
+      reviewRequestId,
+      formId,
+      draftFormVersionId: draftId,
+      basePublishedFormVersionId: publishedId,
+      status: 'PENDING',
+      version: 0,
+      makerUserId: 31,
+      lastEditorUserId: 31,
+      reviewerUserId: 32,
+      reviewerPersonPublicId: '66666666-6666-4666-8666-666666666666',
+      formRevision: 4,
+      workspaceRevision: 2,
+      schemaSha256: 'b'.repeat(64),
+      reviewContentDigest: 'd'.repeat(64),
+      requestReason: 'Please independently review this exact form.',
+      requestedAt: '2026-09-14T00:00:00Z',
+      decidedAt: null,
+      decidedBy: null,
+      decisionReason: null,
+    },
   };
 }
 export function diffFixture(): ApprovalFormWorkspaceDiff {

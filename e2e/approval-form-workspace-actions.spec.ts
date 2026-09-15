@@ -11,6 +11,7 @@ import {
   formId,
   publishedId,
   draftId,
+  reviewRequestId,
 } from '../apps/dwp/src/features/approvals/approval-form-workspace.test-support';
 import type {
   ApprovalForm,
@@ -19,6 +20,7 @@ import type {
   ApprovalWorkflow,
 } from '../libs/shared-utils/src/api/approval-management-contract';
 import type {
+  ApprovalFormPublishReviewRequest,
   ApprovalFormWorkspace,
   ApprovalFormWorkingDraftInput,
 } from '../libs/shared-utils/src/api/approval-form-workspace-contract';
@@ -106,11 +108,16 @@ function detail(workspace: ApprovalFormWorkspace): ApprovalFormDetail {
     ],
   };
 }
-async function setup(page: Page) {
-  // Actual generated V9, real UI controllers/adapters. Auth and owner responses
+async function setup(page: Page, userId = 31) {
+  // Actual generated V14, real UI controllers/adapters. Auth and owner responses
   // below remain explicit fixtures, not persistent runtime authority evidence.
-  expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBe(9);
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], { locale: 'ko', permissions: [] });
+  expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBe(14);
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: [],
+    userId,
+    personPublicId: userId === 32 ? '66666666-6666-4666-8666-666666666666' : 'person-session-user',
+  });
   const authority = await mockApprovalProductSurfaceAuthority(page, {
     decisionRevisionFormat: 'sha256',
   });
@@ -120,6 +127,9 @@ async function setup(page: Page) {
     diffComplete: true,
     checker: true,
     status: 0,
+    reviewRequest: (userId === 32
+      ? reviewFixture().reviewRequest
+      : null) as ApprovalFormPublishReviewRequest | null,
     versions: [workspaceFixture().workingDraft!, workspaceFixture().published!],
     writes: [] as Array<{
       path: string;
@@ -139,6 +149,43 @@ async function setup(page: Page) {
   await page.route(
     (url) => url.pathname === '/api/approvals/v1/admin/forms',
     (route) => success(route, [catalog(state.workspace)])
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/forms/publish-review-candidates',
+    (route) =>
+      success(route, {
+        candidates: [
+          {
+            userId: 32,
+            personPublicId: '66666666-6666-4666-8666-666666666666',
+            displayName: '독립 게시자',
+            email: 'publisher@example.test',
+            jobTitle: '내부통제 책임자',
+          },
+        ],
+        mayBeTruncated: false,
+        decisionRevision: authority.revision(),
+        authorityValidUntil: '2099-09-14T00:00:30Z',
+      })
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/admin/forms/publish-review-requests',
+    (route) =>
+      success(route, {
+        items:
+          state.reviewRequest?.status === 'PENDING' && state.reviewRequest.reviewerUserId === userId
+            ? [
+                {
+                  request: state.reviewRequest,
+                  formKey: 'REQUEST',
+                  formNameKo: '검토 요청서',
+                  formNameEn: 'Review request',
+                },
+              ]
+            : [],
+        mayBeTruncated: false,
+        generatedAt: '2026-09-14T00:00:00Z',
+      })
   );
   await page.route(
     (url) => url.pathname.startsWith(base),
@@ -183,6 +230,8 @@ async function setup(page: Page) {
             toMetadataProvenance: to.metadataProvenance,
           });
         }
+        if (path.endsWith('/publish-review-request'))
+          return success(route, { request: state.reviewRequest });
         if (path.endsWith('/publish-review'))
           return success(route, {
             ...reviewFixture(),
@@ -191,6 +240,7 @@ async function setup(page: Page) {
             draftFormVersionId: state.workspace.workingDraft!.formVersionId,
             schemaSha256: state.workspace.workingDraft!.schemaSha256,
             independentCheckerEligible: state.checker,
+            reviewRequest: state.reviewRequest ?? reviewFixture().reviewRequest,
           });
         return route.fulfill({ status: 404, body: '{}' });
       }
@@ -200,6 +250,33 @@ async function setup(page: Page) {
         body: request.postDataJSON(),
         headers: request.headers(),
       });
+      if (path.endsWith('/publish-review-request')) {
+        const input = request.postDataJSON() as {
+          reviewerUserId: number;
+          reviewerPersonPublicId: string;
+          reason: string;
+        };
+        state.reviewRequest = {
+          ...reviewFixture().reviewRequest,
+          reviewerUserId: input.reviewerUserId,
+          reviewerPersonPublicId: input.reviewerPersonPublicId,
+          requestReason: input.reason,
+          version: state.reviewRequest ? state.reviewRequest.version + 1 : 0,
+        };
+        return success(route, state.reviewRequest);
+      }
+      if (path.endsWith(`/publish-review-requests/${reviewRequestId}/reject`)) {
+        const input = request.postDataJSON() as { reason: string };
+        state.reviewRequest = {
+          ...reviewFixture().reviewRequest,
+          status: 'REJECTED',
+          version: (state.reviewRequest?.version ?? 0) + 1,
+          decisionReason: input.reason,
+          decidedAt: '2026-09-14T00:10:00Z',
+          decidedBy: userId,
+        };
+        return success(route, state.reviewRequest);
+      }
       const next = {
         ...state.workspace,
         formRevision: state.workspace.formRevision + 1,
@@ -261,7 +338,7 @@ async function workspacePanel(page: Page, mobile: boolean) {
   return panel;
 }
 
-test('정본9 UI fixture Forms4: 작업 초안 저장·분기·사용 중지·재개는 각각 원본 CAS와 실제 신규 경로에 결속된다', async ({
+test('정본14 UI fixture Forms4: 작업 초안 저장·분기·사용 중지·재개는 각각 원본 CAS와 실제 신규 경로에 결속된다', async ({
   page,
   isMobile,
 }) => {
@@ -339,11 +416,84 @@ test('정본9 UI fixture Forms4: 작업 초안 저장·분기·사용 중지·�
   }
 });
 
-test('정본9 UI fixture Forms5 HIGH: 해시 검토 후 독립 본인 확인을 거쳐 publish-reviewed만 명시적으로 실행한다', async ({
+test('정본14 UI fixture: 작성자는 적격 독립 게시자에게 현재 초안 CAS로 검토를 요청한다', async ({
   page,
   isMobile,
 }) => {
-  const { state, authority } = await setup(page);
+  const { state, authority } = await setup(page, 31);
+  const panel = await workspacePanel(page, isMobile);
+  await panel.getByRole('button', { name: '게시 검토 요청', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: '독립 게시자 지정', exact: true });
+  await dialog.getByRole('combobox', { name: '독립 게시자', exact: true }).fill('독립');
+  await page.getByRole('option', { name: /독립 게시자/ }).click();
+  await dialog
+    .getByRole('textbox', { name: '검토 요청 사유', exact: true })
+    .fill('재무 통제 변경과 현재 초안 증적을 독립적으로 검토해 주세요.');
+  await dialog.getByRole('button', { name: '검토 요청 보내기', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  expect(state.writes).toHaveLength(1);
+  expect(state.writes[0]).toMatchObject({
+    path: `${base}/publish-review-request`,
+    method: 'POST',
+    body: {
+      expectedFormRevision: 4,
+      expectedWorkspaceRevision: 2,
+      draftFormVersionId: draftId,
+      basePublishedVersionId: publishedId,
+      schemaSha256: 'b'.repeat(64),
+      reviewerUserId: 32,
+      reviewerPersonPublicId: '66666666-6666-4666-8666-666666666666',
+      expectedReviewRequestId: null,
+      expectedReviewRequestVersion: null,
+      reason: '재무 통제 변경과 현재 초안 증적을 독립적으로 검토해 주세요.',
+    },
+  });
+  expect(state.writes[0]!.headers['idempotency-key']).toBeTruthy();
+  expect(state.writes[0]!.headers['x-dwp-expected-decision-revision']).toBe(authority.revision());
+});
+
+test('정본14 UI fixture: 지정 게시자의 검토함과 사유가 결속된 반려만 허용한다', async ({
+  page,
+  isMobile,
+}) => {
+  const { state, authority } = await setup(page, 32);
+  await page.getByRole('button', { name: '검토함 열기', exact: true }).click();
+  const queue = page.getByRole('dialog', { name: '내 게시 검토함', exact: true });
+  await expect(queue.getByText('검토 요청서', { exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations).toEqual(
+    []
+  );
+  await queue.getByRole('button', { name: '닫기', exact: true }).click();
+
+  const panel = await workspacePanel(page, isMobile);
+  await panel.getByRole('button', { name: '발행 검토', exact: true }).click();
+  const review = page.getByRole('dialog', { name: '발행 검토', exact: true });
+  await review
+    .getByRole('textbox', { name: '독립 검토 의견', exact: true })
+    .fill('필수 통제 근거가 부족하므로 보완 후 다시 검토 요청해 주세요.');
+  await review.getByRole('button', { name: '검토 반려', exact: true }).click();
+  await expect(review).toHaveCount(0);
+  expect(state.writes).toHaveLength(1);
+  expect(state.writes[0]).toMatchObject({
+    path: `${base}/publish-review-requests/${reviewRequestId}/reject`,
+    method: 'POST',
+    body: {
+      expectedFormRevision: 4,
+      expectedWorkspaceRevision: 2,
+      expectedReviewRequestVersion: 0,
+      reason: '필수 통제 근거가 부족하므로 보완 후 다시 검토 요청해 주세요.',
+    },
+  });
+  expect(state.writes[0]!.headers['idempotency-key']).toBeTruthy();
+  expect(state.writes[0]!.headers['x-dwp-expected-decision-revision']).toBe(authority.revision());
+  expect(state.writes.some((write) => write.path.endsWith('/publish-reviewed'))).toBe(false);
+});
+
+test('정본14 UI fixture Forms5 HIGH: 지정 게시자가 검토 의견과 요청 CAS를 결속해 publish-reviewed만 실행한다', async ({
+  page,
+  isMobile,
+}) => {
+  const { state, authority } = await setup(page, 32);
   const panel = await workspacePanel(page, isMobile);
   const final: ApprovalFormWorkspace = {
     ...state.workspace,
@@ -370,6 +520,9 @@ test('정본9 UI fixture Forms5 HIGH: 해시 검토 후 독립 본인 확인을 
   await panel.getByRole('button', { name: '발행 검토', exact: true }).click();
   const review = page.getByRole('dialog', { name: '발행 검토', exact: true });
   await expect(review.getByText('b'.repeat(64), { exact: true })).toBeVisible();
+  await review
+    .getByRole('textbox', { name: '독립 검토 의견', exact: true })
+    .fill('현재 초안과 증적 다이제스트를 독립적으로 확인했습니다.');
   await expect(review.getByRole('button', { name: '게시', exact: true })).toBeEnabled();
   await review.getByRole('button', { name: '게시', exact: true }).click();
   const high = page.getByRole('dialog', { name: '고위험 작업 본인 확인', exact: true });
@@ -395,6 +548,9 @@ test('정본9 UI fixture Forms5 HIGH: 해시 검토 후 독립 본인 확인을 
     basePublishedVersionId: publishedId,
     schemaSha256: 'b'.repeat(64),
     reviewContentDigest: 'd'.repeat(64),
+    reviewRequestId,
+    expectedReviewRequestVersion: 0,
+    reviewComment: '현재 초안과 증적 다이제스트를 독립적으로 확인했습니다.',
   });
   expect(network.commandRequests[0]!.headers['x-dwp-expected-object-version']).toBe('4');
   expect(network.commandRequests[0]!.headers['x-dwp-step-up-challenge']).toBeTruthy();
@@ -404,13 +560,25 @@ test('정본9 UI fixture Forms5 HIGH: 해시 검토 후 독립 본인 확인을 
 });
 
 for (const issue of ['maker', 'partial history', 'partial diff'] as const)
-  test(`정본9 UI fixture 발행 검토 ${issue}: 신규 게시 명령0`, async ({ page, isMobile }) => {
-    const { state } = await setup(page);
+  test(`정본14 UI fixture 발행 검토 ${issue}: 신규 게시 명령0`, async ({ page, isMobile }) => {
+    const { state } = await setup(page, issue === 'maker' ? 31 : 32);
     const panel = await workspacePanel(page, isMobile);
     if (issue === 'maker') state.checker = false;
     if (issue === 'partial history') state.historyPartial = true;
     if (issue === 'partial diff') state.diffComplete = false;
     await panel.getByRole('button', { name: '작업 공간 새로고침', exact: true }).first().click();
+    if (issue === 'maker') {
+      await expect(panel.getByRole('button', { name: '발행 검토', exact: true })).toHaveCount(0);
+      expect(state.writes).toEqual([]);
+      expect(
+        (
+          await new AxeBuilder({ page })
+            .include('[aria-label="양식 버전 작업 공간"]')
+            .analyze()
+        ).violations
+      ).toEqual([]);
+      return;
+    }
     await expect(panel.getByRole('button', { name: '발행 검토', exact: true })).toBeEnabled();
     await panel.getByRole('button', { name: '발행 검토', exact: true }).click();
     const review = page.getByRole('dialog', { name: '발행 검토', exact: true });

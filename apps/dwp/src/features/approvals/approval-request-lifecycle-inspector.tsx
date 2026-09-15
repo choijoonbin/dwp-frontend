@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Eye, MessageSquareReply, Pencil, Undo2 } from 'lucide-react';
+import { CopyPlus, Eye, MessageSquareReply, Pencil, Undo2 } from 'lucide-react';
 import { ActionButton, ProgressMeter } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { approvalRequestNextCommand, approvalRequestProgress } from './approval-request-model';
 import { PriorityChip, StatusChip } from './approval-ui';
 import { ApprovalAttachmentPanel } from './approval-attachment-panel';
+import { canCreateResubmissionDraft } from './use-approval-resubmit-draft';
 import type { ApprovalAttachmentClient } from './use-approval-attachment-client';
 
 import type { ApprovalRequest } from '@dwp-frontend/shared-utils';
@@ -24,6 +25,8 @@ type ApprovalRequestLifecycleInspectorProps = {
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
   attachments: ApprovalAttachmentClient;
+  onResubmit?: (request: ApprovalRequest) => void;
+  resubmitPendingId?: string;
 };
 
 export function ApprovalRequestLifecycleInspector({
@@ -35,6 +38,8 @@ export function ApprovalRequestLifecycleInspector({
   onRespond,
   onWithdraw,
   attachments,
+  onResubmit,
+  resubmitPendingId,
 }: ApprovalRequestLifecycleInspectorProps) {
   const { t, i18n } = useTranslation('approvals');
   const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
@@ -158,6 +163,16 @@ export function ApprovalRequestLifecycleInspector({
                 onClick={() => onWithdraw(request)}
               >
                 {t('actions.withdraw')}
+              </ActionButton>
+            )}
+            {actionsReady && onResubmit && canCreateResubmissionDraft(request) && (
+              <ActionButton
+                intent="primary"
+                startIcon={<CopyPlus size={16} />}
+                disabled={pending || Boolean(resubmitPendingId)}
+                onClick={() => onResubmit(request)}
+              >
+                {t('requests.resubmit.action')}
               </ActionButton>
             )}
           </Stack>
