@@ -36,7 +36,7 @@ import type {
   HomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 import type { AriaAttributes, ComponentType } from 'react';
-import type { HomeWidgetRuntimeDecisions } from '../features/home/runtime/widget-registry-runtime';
+import type { HomeWidgetRuntimeDecisions } from './home-widget-runtime-contract';
 
 type StudioIcon = ComponentType<{
   size?: number;

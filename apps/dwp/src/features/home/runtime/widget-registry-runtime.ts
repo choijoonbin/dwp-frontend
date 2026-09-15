@@ -7,6 +7,18 @@ import type {
   WidgetRegistryConnection,
   WidgetRegistryReadiness,
 } from '@dwp-frontend/shared-utils';
+import type {
+  HomeWidgetRuntimeDecision,
+  HomeWidgetRuntimeDecisions,
+  HomeWidgetShadowObservation,
+} from '../../../components/home-widget-runtime-contract';
+
+export type {
+  HomeWidgetRuntimeDecision,
+  HomeWidgetRuntimeDecisions,
+  HomeWidgetShadowObservation,
+  HomeWidgetShadowObservationStatus,
+} from '../../../components/home-widget-runtime-contract';
 
 export const HOME_NATIVE_HOST_API_VERSION = 1;
 
@@ -95,32 +107,6 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
     supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
   },
 ] as const;
-
-export type HomeWidgetRuntimeDecision = Readonly<{
-  widgetKey: HomeWidgetKey;
-  rendererKey: string | null;
-  render: 'NATIVE' | 'UNAVAILABLE';
-  canAdd: boolean;
-  canRestore: boolean;
-  deprecated: boolean;
-  publicReason: WidgetPublicReasonCode;
-}>;
-
-export type HomeWidgetRuntimeDecisions = Readonly<Record<HomeWidgetKey, HomeWidgetRuntimeDecision>>;
-
-export type HomeWidgetShadowObservationStatus =
-  'MATCH' | 'DRIFT' | 'INVALID' | 'PENDING' | 'INACTIVE';
-
-export type HomeWidgetShadowObservation = Readonly<{
-  status: HomeWidgetShadowObservationStatus;
-  mismatchCount: number;
-  decisionRevision: string | null;
-  mismatches: readonly Readonly<{
-    widgetKey: HomeWidgetKey;
-    observedRender: HomeWidgetRuntimeDecision['render'];
-    observedReason: WidgetPublicReasonCode;
-  }>[];
-}>;
 
 const PUBLIC_REASON_CODES = new Set<WidgetPublicReasonCode>([
   'NOT_AVAILABLE',

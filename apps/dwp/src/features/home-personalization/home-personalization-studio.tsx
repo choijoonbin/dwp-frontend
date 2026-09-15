@@ -77,7 +77,7 @@ import type {
   HomeWidgetSize,
 } from '@dwp-frontend/shared-utils';
 import type { HomeStudioSection, HomeWorkstyleIntent } from './home-personalization-model';
-import type { HomeWidgetRuntimeDecisions } from '../home/runtime/widget-registry-runtime';
+import type { HomeWidgetRuntimeDecisions } from '../../components/home-widget-runtime-contract';
 
 type HomePersonalizationStudioProps = {
   open: boolean;

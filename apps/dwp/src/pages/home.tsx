@@ -1,15 +1,8 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  getHomeExperience,
-  getHomeDeviceLayouts,
-  getHomePreference,
-  getHomeViews,
-  getHomeOverview,
-  getNotificationSummaryByApp,
-  getWorkspaceApps,
   launchWorkspaceApp,
   resolveHomeBackgroundUrl,
   createHomeCommandKey,
@@ -29,7 +22,6 @@ import Box from '@mui/material/Box';
 import { ClassicHome } from '../features/home/classic-home/classic-home';
 import { classicHomeGovernedWidgets } from '../features/home/classic-home/classic-home-governed-widgets';
 import { FlowHome } from '../features/home/flow-home/flow-home';
-import { useHomeContributionModel } from '../features/home/flow-home/use-home-contribution-model';
 import {
   applyFlowHomeSections,
   deriveFlowHomeSections,
@@ -43,40 +35,23 @@ import {
   resolveHomeWidgetGalleryItems,
 } from '../features/home/home-item-gallery-model';
 import { HomeEditorSafeArea } from '../features/home/home-editor-safe-area';
-import { homeUserAccessFingerprint } from '../features/home/runtime/home-access-fingerprint';
 import { homeViewQueryKey } from '../components/home-view-query-key';
-import {
-  resolveHomeDeviceClass,
-  resolveHomePageCopy,
-} from '../features/home/runtime/home-page-runtime-state';
+import { resolveHomePageCopy } from '../features/home/runtime/home-page-runtime-state';
 import { HomePageStatePanel } from '../features/home/runtime/home-page-state-panel';
 import { useHomeAvailableWidth } from '../features/home/runtime/home-available-width';
-import { useHomePageGate } from '../features/home/runtime/use-home-page-gate';
 import { resolveHomeOverviewQueryFailureState } from '../features/home/runtime/home-overview-query-state';
-import {
-  homeAuthorizedQueryData,
-  homeQueryRetry,
-  isHomeAuthorizationFailure,
-} from '../features/home/flow-home/home-contribution-runtime-policy';
+
 import { HomeFooter } from '../features/home/home-footer';
-import {
-  HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
-  useHomeAppsWithBadges,
-} from '../features/home/home-app-badge-policy';
-import { notificationQueryKeys } from '../features/notifications/integration-contract';
+
 import { RecommendationUndoSnackbar } from '../features/home/recommendation-undo-snackbar';
 import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
 import {
-  HOME_OVERVIEW_FRESHNESS_SECONDS,
   HOME_WIDGET_KEYS,
   defaultHomeWidgets,
   reconcileHomeWidgets,
   setHomeWidgetVisibility,
 } from '../features/home/home-widget-registry';
-import {
-  governedHomeZone,
-  reconcileHomeCompositionPolicy,
-} from '../features/home/home-composition-policy';
+
 import {
   commitHomeDraftEdit,
   commitHomeDraftReset,
@@ -85,7 +60,6 @@ import {
   reapplyHomeDraft,
 } from '../features/home/home-draft-history';
 import { HomePreferenceConflictDialog } from '../features/home/home-preference-conflict-dialog';
-import { applyHomeDeviceOverlay } from '../features/home-personalization/home-device-overlay';
 import { LazyHomePersonalizationStudio } from '../features/home-personalization/home-personalization-studio-lazy';
 import {
   createHomeEditConflictTarget,
@@ -101,10 +75,7 @@ import { useHomeEditorEntryFocus } from '../features/home/runtime/use-home-edito
 import { useHomeCurrentInstant } from '../features/home/runtime/use-home-current-instant';
 import { useHomeDataRetry } from '../features/home/runtime/use-home-data-retry';
 import { useHomeDraftController } from '../features/home/runtime/use-home-draft-controller';
-import { useHomeRecommendationFeedback } from '../features/home/runtime/use-home-recommendation-feedback';
-import { resolveHomeTimeZone } from '../features/home/runtime/home-time-zone';
 import {
-  activeHomeStoreUsesViews,
   freezeHomeStudioContractScope,
   resolveActiveHomeViewScope,
   resolveModeIsolatedHomeExperience,
@@ -118,16 +89,12 @@ import {
 import {
   canonicalizePersistedLaunchpadLayout,
   createDefaultLaunchpadLayout,
-  filterHomeAppsByWorkspaceCatalog,
-  localizeHomeApps,
   mergeEntitledLaunchpadProjection,
   placeLaunchpadApp,
   reconcileLaunchpadLayout,
-  resolveHomeLaunchpadCatalog,
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
-import { useGovernedHomeAppCatalog } from '../features/shell/use-governed-home-app-catalog';
-import { useHomeWidgetRegistryRuntime } from '../features/home/runtime/use-home-widget-registry';
+import { useHomeCoreReadModel, useHomePersonalizationReadModel } from './home/home-page-read-model';
 
 import type { FlowHomeSectionPreference } from '../features/home/flow-home/flow-home-preference';
 import type { HomeDraft } from '../features/home/home-draft-history';
@@ -187,92 +154,29 @@ export default function HomePage() {
       });
     });
   }, [setSearchParams]);
-  const firstName = auth.user?.displayName?.split(' ')[0];
-  const timeZone = useMemo(resolveHomeTimeZone, []);
-  const accessFingerprint = homeUserAccessFingerprint(permissions, auth.user);
-  const homeOverviewQueryKey = [
-    'home-overview',
-    auth.user?.tenantId,
-    auth.user?.userId,
-    timeZone,
-    accessFingerprint,
-  ] as const;
-  const homeOverviewQuery = useQuery({
-    queryKey: homeOverviewQueryKey,
-    queryFn: () => getHomeOverview(timeZone),
-    staleTime: HOME_OVERVIEW_FRESHNESS_SECONDS * 1000,
-    refetchInterval: HOME_OVERVIEW_FRESHNESS_SECONDS * 1000,
-    refetchIntervalInBackground: false,
-    retry: homeQueryRetry,
-  });
-  const homeOverview = homeAuthorizedQueryData(homeOverviewQuery.data, homeOverviewQuery.error);
-  const recommendationFeedback = useHomeRecommendationFeedback(homeOverviewQueryKey);
-  const notificationSummaryQuery = useQuery({
-    queryKey: notificationQueryKeys.appSummary({
-      tenantId: auth.user?.tenantId,
-      userId: auth.user?.userId,
-      accessFingerprint,
-    }),
-    queryFn: ({ signal }) => getNotificationSummaryByApp(signal),
-    enabled: Boolean(
-      auth.user?.tenantId && auth.user?.userId && hasPermission('APP.NOTIFICATIONS', 'VIEW')
-    ),
-    staleTime: HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
-    refetchInterval: HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
-    refetchIntervalInBackground: false,
-    retry: homeQueryRetry,
-  });
-  const notificationAuthorizationFailed = isHomeAuthorizationFailure(
-    notificationSummaryQuery.error
-  );
-  const notificationSummary = homeAuthorizedQueryData(
-    notificationSummaryQuery.data,
-    notificationSummaryQuery.error
-  );
-  const homeExperienceQuery = useQuery({
-    queryKey: ['home-experience', auth.user?.tenantId],
-    queryFn: getHomeExperience,
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
-  const workspaceAppsQuery = useQuery({
-    queryKey: ['workspace', 'apps'],
-    queryFn: getWorkspaceApps,
-    staleTime: 60_000,
-    retry: 1,
-  });
-  const { decisions: widgetRuntimeDecisions, shadowObservation: widgetShadowObservation } =
-    useHomeWidgetRegistryRuntime(auth.user?.tenantId, auth.user?.userId);
-  const launchpadCatalog = useMemo(
-    () =>
-      resolveHomeLaunchpadCatalog(
-        localizeHomeApps(t),
-        homeExperienceQuery.data?.launchpadConfiguration,
-        i18n.resolvedLanguage || i18n.language || 'en',
-        t
-      ),
-    [homeExperienceQuery.data?.launchpadConfiguration, i18n.language, i18n.resolvedLanguage, t]
-  );
-  const notificationSummaryAuthorized = hasPermission('APP.NOTIFICATIONS', 'VIEW');
-  const entitledAppsWithBadges = useHomeAppsWithBadges({
-    apps: launchpadCatalog.apps,
-    roles: auth.user?.roles ?? [],
+  const homeCore = useHomeCoreReadModel({
+    auth,
     permissions,
-    legacyRoleFallbackAllowed: auth.user?.legacyRoleFallbackAllowed === true,
-    notificationSummary,
-    notificationSummaryAuthorized,
-    notificationSummaryHealthy:
-      notificationSummaryAuthorized &&
-      notificationSummaryQuery.isSuccess &&
-      !notificationSummaryQuery.isError &&
-      !notificationSummaryQuery.isRefetchError,
-    notificationSummaryNow: currentInstant,
+    hasPermission,
+    currentInstant,
+    locale: i18n.resolvedLanguage || i18n.language || 'en',
+    translate: t,
   });
-  const governedEntitledApps = useGovernedHomeAppCatalog(entitledAppsWithBadges);
-  const entitledApps = useMemo(
-    () => filterHomeAppsByWorkspaceCatalog(governedEntitledApps, workspaceAppsQuery.data),
-    [governedEntitledApps, workspaceAppsQuery.data]
-  );
+  const {
+    entitledApps,
+    homeExperienceQuery,
+    homeOverview,
+    homeOverviewQuery,
+    launchpadCatalog,
+    notificationAuthorizationFailed,
+    notificationSummaryAuthorized,
+    notificationSummaryQuery,
+    recommendationFeedback,
+    timeZone,
+    widgetRuntimeDecisions,
+    widgetShadowObservation,
+    workspaceAppsQuery,
+  } = homeCore;
   const {
     draftHistory,
     setDraftHistory,
@@ -355,192 +259,51 @@ export default function HomePage() {
     editSession,
     studioOpen ? studioContractScope : null
   );
-  const flowHomeEnabled = homeModeKey === 'FLOW_V1';
-  const activeHomeViewQueryKey = useMemo(
-    () =>
-      homeViewQueryKey({
-        tenantId: auth.user?.tenantId,
-        userId: auth.user?.userId,
-        surfaceKey: 'workspace-home',
-        modeKey: activeHomeViewScope.modeKey,
-        modeScoped: activeHomeViewScope.modeScoped,
-      }),
-    [
-      activeHomeViewScope.modeKey,
-      activeHomeViewScope.modeScoped,
-      auth.user?.tenantId,
-      auth.user?.userId,
-    ]
-  );
-  const advancedPersonalizationEnabled = Boolean(
-    HOME_PERSONALIZATION_V2_ENABLED &&
-    flowHomeEnabled &&
-    homeExperience?.advancedPersonalizationEnabled
-  );
-  const composerEnabled = Boolean(
-    advancedPersonalizationEnabled && homeExperience?.composerEnabled
-  );
-  const activeStoreUsesViews = activeHomeStoreUsesViews(viewStoreEnabled, editSession?.store);
-  const homeStudioEnabled = advancedPersonalizationEnabled && activeStoreUsesViews;
-  const homePreferenceQuery = useQuery({
-    queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
-    queryFn: getHomePreference,
-    enabled: homeExperienceQuery.isSuccess && !activeStoreUsesViews,
-    staleTime: 5 * 60 * 1000,
-    retry: homeQueryRetry,
-  });
-  const homeViewsQuery = useQuery({
-    queryKey: activeHomeViewQueryKey,
-    queryFn: () =>
-      getHomeViews('workspace-home', activeHomeViewScope.modeKey, activeHomeViewScope.modeScoped),
-    enabled: homeExperienceQuery.isSuccess && activeStoreUsesViews,
-    staleTime: 30_000,
-    retry: homeQueryRetry,
-  });
-  const compositionPolicy = useMemo(
-    () => reconcileHomeCompositionPolicy(homeExperience?.compositionPolicy),
-    [homeExperience?.compositionPolicy]
-  );
-  const announcementsZone = governedHomeZone(compositionPolicy, 'announcements');
-  const personalCustomizationEnabled =
-    homeExperienceQuery.isSuccess && compositionPolicy.personalCustomizationEnabled;
-  const homePreference = homePreferenceQuery.data;
-  const selectedHomeView = useMemo(
-    () => homeViewsQuery.data?.find((view) => view.isDefault) ?? homeViewsQuery.data?.[0] ?? null,
-    [homeViewsQuery.data]
-  );
-  const editSessionHomeView = useMemo(() => {
-    if (editSession?.store !== 'VIEWS' || !editSession.viewId) return null;
-    return homeViewsQuery.data?.find((view) => view.viewId === editSession.viewId) ?? null;
-  }, [editSession?.store, editSession?.viewId, homeViewsQuery.data]);
-  const sourceHomeView = activeStoreUsesViews
-    ? editorOpen && editSession?.store === 'VIEWS'
-      ? editSessionHomeView
-      : selectedHomeView
-    : null;
-  const homeDeviceLayoutsQuery = useQuery({
-    queryKey: ['home-personalization', 'device-layouts', sourceHomeView?.viewId],
-    queryFn: () => getHomeDeviceLayouts(sourceHomeView!.viewId),
-    enabled: activeStoreUsesViews && Boolean(sourceHomeView),
-    staleTime: 30_000,
-    retry: 1,
-  });
-  const effectiveHomeLayout =
-    activeStoreUsesViews && sourceHomeView ? sourceHomeView.layout : homePreference?.layout;
-  const homeCustomized = resolveHomeViewCustomized(
-    activeStoreUsesViews ? sourceHomeView : null,
-    activeStoreUsesViews ? undefined : homePreference?.customized
-  );
-  const durableResetAvailable = activeStoreUsesViews
-    ? Boolean(sourceHomeView && homeCustomized)
-    : Boolean(homePreference && homeCustomized);
-  const audienceProfile = homeOverview?.audience.profile ?? 'MEMBER';
-  const homeContributionRuntime = useHomeContributionModel({
-    tenantId: auth.user?.tenantId,
-    userId: auth.user?.userId,
-    audience: audienceProfile,
-    now: currentInstant,
-    locale: i18n.resolvedLanguage || i18n.language || 'en',
-    timeZone,
-    permissions,
-    roles: auth.user?.roles ?? [],
-    legacyRoleFallbackAllowed: auth.user?.legacyRoleFallbackAllowed === true,
-    accessFingerprint,
-    overview: homeOverview,
-    overviewLoading: homeOverviewQuery.isLoading,
-    overviewFailed: homeOverviewQuery.isError && !homeOverview,
-    overviewRefreshFailed: homeOverviewQuery.isRefetchError,
-    notification: {
-      data: notificationSummaryQuery.data,
-      loading: notificationSummaryQuery.isLoading,
-      fetching: notificationSummaryQuery.isFetching,
-      failed: notificationSummaryQuery.isError,
-      refreshFailed: notificationSummaryQuery.isRefetchError,
-      error: notificationSummaryQuery.error,
-    },
-  });
-  const widgetPreferences = useMemo(
-    () =>
-      homeCustomized && effectiveHomeLayout
-        ? reconcileHomeWidgets(
-            effectiveHomeLayout.widgets,
-            registeredWidgetKeys,
-            audienceProfile,
-            widgetRuntimeDecisions
-          )
-        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile, widgetRuntimeDecisions),
-    [
-      audienceProfile,
-      effectiveHomeLayout,
-      homeCustomized,
-      registeredWidgetKeys,
-      widgetRuntimeDecisions,
-    ]
-  );
-  const deviceClass = resolveHomeDeviceClass({
-    editPreviewActive: editorOpen && editSession !== null,
-    previewDevice,
+  const homeReadModel = useHomePersonalizationReadModel({
+    activeHomeViewScope,
+    auth,
     availableWidth: homeAvailableWidth,
-  });
-  const activeDeviceOverlay = activeStoreUsesViews
-    ? homeDeviceLayoutsQuery.data?.find((layout) => layout.deviceClass === deviceClass)?.overlay
-    : undefined;
-  const activeWidgetConfigurations =
-    activeStoreUsesViews && sourceHomeView ? sourceHomeView.widgetConfigurations : {};
-  const runtimeWidgetPreferences = useMemo(
-    () => applyHomeDeviceOverlay(widgetPreferences, activeDeviceOverlay),
-    [activeDeviceOverlay, widgetPreferences]
-  );
-  const canonicalAppLayout = useMemo(
-    () =>
-      canonicalizePersistedLaunchpadLayout(
-        effectiveHomeLayout?.appLayout,
-        launchpadCatalog.apps,
-        launchpadCatalog.groups
-      ),
-    [effectiveHomeLayout?.appLayout, launchpadCatalog.apps, launchpadCatalog.groups]
-  );
-  const appLayout = useMemo(
-    () => reconcileLaunchpadLayout(canonicalAppLayout, entitledApps, launchpadCatalog.groups),
-    [canonicalAppLayout, entitledApps, launchpadCatalog.groups]
-  );
-  const preferenceVersion = homePreference?.version ?? 0;
-  const persistedVersion =
-    activeStoreUsesViews && sourceHomeView ? sourceHomeView.version : preferenceVersion;
-  const persistedSourceLoading = activeStoreUsesViews
-    ? homeViewsQuery.isLoading
-    : homePreferenceQuery.isLoading;
-  const persistedSourceFailed = activeStoreUsesViews
-    ? homeViewsQuery.isError
-    : homePreferenceQuery.isError;
-  const homePageGate = useHomePageGate({
-    experienceQuery: homeExperienceQuery,
-    layoutQuery: activeStoreUsesViews ? homeViewsQuery : homePreferenceQuery,
-    deviceLayoutPending:
-      activeStoreUsesViews && Boolean(sourceHomeView) && homeDeviceLayoutsQuery.isPending,
-    customizationEnabled: personalCustomizationEnabled,
+    core: homeCore,
+    currentInstant,
+    editSession,
     editorOpen,
+    homeModeKey,
+    locale: i18n.resolvedLanguage || i18n.language || 'en',
+    modeScopedHomeViewsSupported,
+    permissions,
+    previewDevice,
+    registeredWidgetKeys,
+    viewStoreEnabled,
   });
-  const currentEditSession = useMemo<HomeEditSession>(
-    () => ({
-      experienceVariant: homeModeKey,
-      modeScopedViews: modeScopedHomeViewsSupported,
-      store: viewStoreEnabled ? 'VIEWS' : 'LEGACY',
-      viewId: viewStoreEnabled ? (selectedHomeView?.viewId ?? null) : null,
-      viewName: viewStoreEnabled ? (selectedHomeView?.name ?? null) : null,
-      version: persistedVersion,
-      resetAvailable: durableResetAvailable,
-    }),
-    [
-      durableResetAvailable,
-      homeModeKey,
-      modeScopedHomeViewsSupported,
-      persistedVersion,
-      selectedHomeView?.name,
-      selectedHomeView?.viewId,
-      viewStoreEnabled,
-    ]
-  );
+  const {
+    activeDeviceOverlay,
+    activeHomeViewQueryKey,
+    activeWidgetConfigurations,
+    announcementsZone,
+    appLayout,
+    audienceProfile,
+    canonicalAppLayout,
+    composerEnabled,
+    currentEditSession,
+    deviceClass,
+    durableResetAvailable,
+    effectiveHomeLayout,
+    flowHomeEnabled,
+    homeContributionRuntime,
+    homeCustomized,
+    homePageGate,
+    homePreference,
+    homePreferenceQuery,
+    homeStudioEnabled,
+    homeViewsQuery,
+    personalCustomizationEnabled,
+    persistedSourceFailed,
+    persistedSourceLoading,
+    persistedVersion,
+    runtimeWidgetPreferences,
+    sourceHomeView,
+    widgetPreferences,
+  } = homeReadModel;
   const editorFlowHomeEnabled =
     editorOpen && editSession ? editSession.experienceVariant === 'FLOW_V1' : flowHomeEnabled;
   const editorActive = editorOpen && editSession !== null;
@@ -972,7 +735,9 @@ export default function HomePage() {
   const { headline: homeHeadline, subheadline: homeSubheadline } = resolveHomePageCopy({
     experience: homeExperience,
     locale: i18n.resolvedLanguage || i18n.language || '',
-    fallbackHeadline: firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'),
+    fallbackHeadline: auth.user?.displayName?.split(' ')[0]
+      ? t('page.welcomeName', { name: auth.user.displayName.split(' ')[0] })
+      : t('page.welcome'),
     fallbackSubheadline: t('page.commandDescription'),
   });
   const homeAssistantAvailable = !editorOpen && isAppResourceEntitled('APP.ASK', permissions);
