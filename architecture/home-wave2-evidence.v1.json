@@ -1,0 +1,1653 @@
+{
+  "schemaVersion": 1,
+  "wave": "WAVE_2",
+  "sourceDecision": "DESIGN_SET_ACCEPTED_PRODUCTION_REBUILD_REQUIRED",
+  "sourceRegistrySha256": "a27654ddea1abe5faf9d995e223b66e4a0485998520eed3a12427a3c165b73ef",
+  "sourceArchiveSha256": "926a6461af752aa7ed6d0ee036a75de4d9b3396aeeb879eb9f4269751e61ce2b",
+  "sourcePolicy": "HTML_VISUAL_BEHAVIOR_REFERENCE_ONLY",
+  "routePolicy": "BASE_COMPOSITIONS_ONLY_STATE_AND_ACCESSIBILITY_ARE_FIXTURES",
+  "counts": {
+    "canonical": 33,
+    "productionCompositions": 9,
+    "stateAndSpecificationEvidence": 24,
+    "primaryVisualEvidence": 33,
+    "interactionVisualEvidence": 7
+  },
+  "canonicalScreens": [
+    {
+      "id": "C01-D1440-BASE",
+      "family": "CLASSIC",
+      "role": "BASE",
+      "sourcePngSha256": "944b0952dfa70d3f6a963616caef6b5376d3646f49e44b9af508ad7188a8281f",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "WAVE2_C01-D1440-BASE",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C01-D1440-BASE-chromium-darwin.png",
+      "visualEvidenceSha256": "3a71b26def6df294bbb0dd57af5c1827e15ec2f44740fb0f4048c0eaeebfaa0f",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "944b0952dfa70d3f6a963616caef6b5376d3646f49e44b9af508ad7188a8281f",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C02-D1280-BASE",
+      "family": "CLASSIC",
+      "role": "BASE",
+      "sourcePngSha256": "2c9a2447d8c4b4afdbb7349424b5c3d1d7c7513db59cabdd2b18ce100200b72c",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "WAVE2_C02-D1280-BASE",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C02-D1280-BASE-chromium-darwin.png",
+      "visualEvidenceSha256": "ff60beed9c4b3d2d283d7216654e5750ee64f0adc14c2d00dbdabbb732066491",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "2c9a2447d8c4b4afdbb7349424b5c3d1d7c7513db59cabdd2b18ce100200b72c",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C03-M390-BASE",
+      "family": "CLASSIC",
+      "role": "BASE",
+      "sourcePngSha256": "a161877a544fed02e4e840f68b245c8d3bed41c82f9a33c7be9c9252642e07c5",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "WAVE2_C03-M390-BASE",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C03-M390-BASE-chromium-darwin.png",
+      "visualEvidenceSha256": "57f932c2981b2e8533c5142e60d494202ccae8686f583a344661249359aef990",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "a161877a544fed02e4e840f68b245c8d3bed41c82f9a33c7be9c9252642e07c5",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C04-M320-BASE",
+      "family": "CLASSIC",
+      "role": "BASE",
+      "sourcePngSha256": "0aa1e8ed5546fdadd88944c17fddeeff8ae4a4296aaad3077d84947dee4698ec",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "WAVE2_C04-M320-BASE",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C04-M320-BASE-chromium-darwin.png",
+      "visualEvidenceSha256": "02740325c93717d768eec0e799df999bd9b7099747f3eae38fb66754a08ef148",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "0aa1e8ed5546fdadd88944c17fddeeff8ae4a4296aaad3077d84947dee4698ec",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C05-BROWSER-ZOOM-200-CSS720-r01",
+      "family": "CLASSIC",
+      "role": "ZOOM_200",
+      "sourcePngSha256": "22c349574e7de7670102aae6ff1b0c3b958e1680f202ec7eac4dac7663a2ebfa",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "HOME_SPEC_ZOOM_200",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01-chromium-darwin.png",
+      "visualEvidenceSha256": "dd7c6b9cac53484024e2deb546397e34730d3bc6a8572ac1ad73d96fcab1d367",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 720,
+        "height": 900,
+        "browserZoomPercent": 200
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "22c349574e7de7670102aae6ff1b0c3b958e1680f202ec7eac4dac7663a2ebfa",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C06-TEXT-200-D1440-r04",
+      "family": "CLASSIC",
+      "role": "TEXT_200",
+      "sourcePngSha256": "6c0796764f8ac27cb16df3e24087c210787fa3ee561cd6ee39d8f07bbc33207e",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "HOME_SPEC_TEXT_200",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C06-TEXT-200-D1440-r04-chromium-darwin.png",
+      "visualEvidenceSha256": "af08714099e6dc3e9023ef5fed04b8e849a08eae122eb120aeead335e8a7a980",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "textScalePercent": 200
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "6c0796764f8ac27cb16df3e24087c210787fa3ee561cd6ee39d8f07bbc33207e",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C07-LONG-EN-D1280-r02",
+      "family": "CLASSIC",
+      "role": "LONG_EN",
+      "sourcePngSha256": "7990bc98b6bac620295c14771441dac1b18515e38193240f57e97a435ba55942",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "HOME_SPEC_LONG_EN",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C07-LONG-EN-D1280-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "a5c455b481a1c972c1fb2c25d0e0c25c1f4dedf1dfefd333018528fc74533c20",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "locale": "en-US",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "7990bc98b6bac620295c14771441dac1b18515e38193240f57e97a435ba55942",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C08-DARK-D1440-r02",
+      "family": "CLASSIC",
+      "role": "DARK",
+      "sourcePngSha256": "0a398ba516ee7fcb2e02cb33c8bb6ea673d0568411e880697ec397eefda1709d",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "HOME_SPEC_DARK",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C08-DARK-D1440-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "b0b34cb0cfe8c02eae106a57131f215b187d588b1e0d468c56b9a687eec38c44",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "DARK",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "0a398ba516ee7fcb2e02cb33c8bb6ea673d0568411e880697ec397eefda1709d",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C09-HIGH-CONTRAST-D1440-r04",
+      "family": "CLASSIC",
+      "role": "HIGH_CONTRAST",
+      "sourcePngSha256": "868d0fd18f411ce4dca26c7c92ff43eb705fed31d588eb5640a6f87671ae1531",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/classic-home/classic-home.tsx",
+      "fixtureId": "HOME_SPEC_HIGH_CONTRAST",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C09-HIGH-CONTRAST-D1440-r04-chromium-darwin.png",
+      "visualEvidenceSha256": "d5f919e800fa39f3bb0f2ba0a520fe2aeef1e9ad1365d0111691a3c1d241c3fb",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "FORCED_COLORS",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "868d0fd18f411ce4dca26c7c92ff43eb705fed31d588eb5640a6f87671ae1531",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C10-D1440-EMPTY-r02",
+      "family": "CLASSIC",
+      "role": "EMPTY",
+      "sourcePngSha256": "2abb30b57bdbe0c65087d46261bf7f18720a224af4ab3448c7c34796fa3f737b",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_EMPTY_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C10-D1440-EMPTY-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "36aa8bfa72395284297a9077315e65b8cec96de03c69bc36643de9182a15a7a1",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "2abb30b57bdbe0c65087d46261bf7f18720a224af4ab3448c7c34796fa3f737b",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C10-M390-EMPTY-r01",
+      "family": "CLASSIC",
+      "role": "EMPTY",
+      "sourcePngSha256": "44aff32bc1fd508de3635cb1d538f155b5c3ec9d55e519d2f6a73cf8432e6b1c",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_EMPTY_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C10-M390-EMPTY-r01-chromium-darwin.png",
+      "visualEvidenceSha256": "c078ccdc8f8d49031ea199b7c540dc19d449f36be4f6ee5463c5f17de01d3f4d",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "44aff32bc1fd508de3635cb1d538f155b5c3ec9d55e519d2f6a73cf8432e6b1c",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C11-D1440-PARTIAL-r02",
+      "family": "CLASSIC",
+      "role": "PARTIAL",
+      "sourcePngSha256": "730c99b4e766c8605e29400ab3ca283ef81e3c91887ef622c9c61022b62cc6c7",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_PARTIAL_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C11-D1440-PARTIAL-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "538cdb728874e4947522b37612da43a05743efbe1e364e999076b2b1f58cacd4",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "730c99b4e766c8605e29400ab3ca283ef81e3c91887ef622c9c61022b62cc6c7",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C11-M390-PARTIAL-r02",
+      "family": "CLASSIC",
+      "role": "PARTIAL",
+      "sourcePngSha256": "32783b1da9333f160e440b02692bebd6c42e603ab58111667127cd5622bb43e1",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_PARTIAL_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C11-M390-PARTIAL-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "e8b0ffa020fc5710df6a3e811c0a84b90c3eb2a6b148ce0083ebd21a1f59a6c9",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "32783b1da9333f160e440b02692bebd6c42e603ab58111667127cd5622bb43e1",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C12-D1440-FORBIDDEN-r02",
+      "family": "CLASSIC",
+      "role": "FORBIDDEN",
+      "sourcePngSha256": "2855bba945b81ba156d1684752f57f29803f5898e8c61f89bbc524867da78cf7",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_FORBIDDEN_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C12-D1440-FORBIDDEN-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "6847032417e13cdbe8ae980c3a4e30ec04e3548c0fea5be70affa17d99928e7c",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "2855bba945b81ba156d1684752f57f29803f5898e8c61f89bbc524867da78cf7",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C12-M390-FORBIDDEN-r04",
+      "family": "CLASSIC",
+      "role": "FORBIDDEN",
+      "sourcePngSha256": "098669b50614a9affcae10b99464f2f5d39b541abaa779333f3e46cb829c03f3",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_FORBIDDEN_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C12-M390-FORBIDDEN-r04-chromium-darwin.png",
+      "visualEvidenceSha256": "20df677db67ba3e1d3a0efedb7ed95aaf63ee4025ff93fadb62b310dd2d4ed47",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "098669b50614a9affcae10b99464f2f5d39b541abaa779333f3e46cb829c03f3",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C13-D1440-STALE-r02",
+      "family": "CLASSIC",
+      "role": "STALE",
+      "sourcePngSha256": "cac6027eb628b2154c865e3c3dff5e9cec2f0f1f3702c463aa5e1d65d7ee83ee",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_STALE_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C13-D1440-STALE-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "6b099b002f3d54ad532f015ba71e4a6622de9e5ff58bf067207903eefae4baf9",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "cac6027eb628b2154c865e3c3dff5e9cec2f0f1f3702c463aa5e1d65d7ee83ee",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C13-M390-STALE-r03",
+      "family": "CLASSIC",
+      "role": "STALE",
+      "sourcePngSha256": "37562831fa67fd68bc31a1dff31141db98c3421289ac8e8c0b24dd7d92a51f09",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_STALE_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C13-M390-STALE-r03-chromium-darwin.png",
+      "visualEvidenceSha256": "4357e2e665ee9edce8d350df827efc2a5f342e98f62aeade768cbe707d0c430c",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "37562831fa67fd68bc31a1dff31141db98c3421289ac8e8c0b24dd7d92a51f09",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C14-D1440-BACKGROUND-REFRESH-r02",
+      "family": "CLASSIC",
+      "role": "BACKGROUND_REFRESH",
+      "sourcePngSha256": "0f8ec2c28fca88fc9c89cb51d79c1484d7aadb596ad1afb5f9fe6d91c8b7db84",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-D1440-BACKGROUND-REFRESH-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "236be06bd2a56d8a9d3fa2013416796284c1889a60279aee8562adfcd6242821",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "0f8ec2c28fca88fc9c89cb51d79c1484d7aadb596ad1afb5f9fe6d91c8b7db84",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C14-D1440-INITIAL-LOADING-r02",
+      "family": "CLASSIC",
+      "role": "INITIAL_LOADING",
+      "sourcePngSha256": "f3d1706819a5e6a7270da45f78bdcfd5e42ee0f3fca1493742360b7b8b942448",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_INITIAL_LOADING_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-D1440-INITIAL-LOADING-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "ab2aabecaff34c72b3cea3b99c69a34549895b68a66a92f8549128c5fcfe7e70",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "f3d1706819a5e6a7270da45f78bdcfd5e42ee0f3fca1493742360b7b8b942448",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C14-M390-BACKGROUND-REFRESH-r02",
+      "family": "CLASSIC",
+      "role": "BACKGROUND_REFRESH",
+      "sourcePngSha256": "529308ff10fc632ea4738dea223fd2bb736c2d3a053d14b38bba4588df4bc149",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_BACKGROUND_REFRESH_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-M390-BACKGROUND-REFRESH-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "d5aec678beafb72f2fbbeb3eac09dc313f7f8ebb6306e84a72f62719fbb94e98",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "529308ff10fc632ea4738dea223fd2bb736c2d3a053d14b38bba4588df4bc149",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C14-M390-INITIAL-LOADING-r02",
+      "family": "CLASSIC",
+      "role": "INITIAL_LOADING",
+      "sourcePngSha256": "2c2845aec6bac3b5e993b468eae83e3a63eca38f10eb7a3d755d2c246df1d6d5",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_INITIAL_LOADING_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-M390-INITIAL-LOADING-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "54ccfdd0b9c6dae104cc1509714ecfc761b886a3969cb1eaff4c2601fbb4c33d",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "2c2845aec6bac3b5e993b468eae83e3a63eca38f10eb7a3d755d2c246df1d6d5",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "C15-D1440-EDITOR-DIRTY-r01",
+      "family": "CLASSIC",
+      "role": "EDITOR_DIRTY",
+      "sourcePngSha256": "aa940938ef466715f25358fa532b471516500a47c22b3b53b78eeb46c6a62385",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/components/workspace-composer/workspace-composer-toolbar.tsx",
+      "fixtureId": "HOME_STATE_DIRTY_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-D1440-EDITOR-DIRTY-r01-chromium-darwin.png",
+      "visualEvidenceSha256": "3ca2e85b3858b755720991c580446936ae6b7b0b1067308b68b36e0991cf03ed",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "aa940938ef466715f25358fa532b471516500a47c22b3b53b78eeb46c6a62385",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-D1440-EDITOR-DIRTY-r01-interaction-chromium-darwin.png",
+        "sha256": "e08c94c77cf7137a0935acd3320ba4eef87409d6a0a27dc5945f03cbd0b16168",
+        "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
+      }
+    },
+    {
+      "id": "C15-M390-EDITOR-DIRTY-r01",
+      "family": "CLASSIC",
+      "role": "EDITOR_DIRTY",
+      "sourcePngSha256": "52c1df7943e86de8bf73693b034fda9201bffeb32c47059ccb3d2051ee80ce44",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/components/workspace-composer/workspace-composer-toolbar.tsx",
+      "fixtureId": "HOME_STATE_DIRTY_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-M390-EDITOR-DIRTY-r01-chromium-darwin.png",
+      "visualEvidenceSha256": "815a4ab7f149b6d2b3e83a70b7aa89bef141c2dbac67f6646bbb73ccd160fec8",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "52c1df7943e86de8bf73693b034fda9201bffeb32c47059ccb3d2051ee80ce44",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-M390-EDITOR-DIRTY-r01-interaction-chromium-darwin.png",
+        "sha256": "5fa3b0632824b66f2b2081638440585e4da8e41840931958433ec235befde7d3",
+        "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
+      }
+    },
+    {
+      "id": "C16-D1440-SAVE-CONFLICT-r02",
+      "family": "CLASSIC",
+      "role": "SAVE_CONFLICT",
+      "sourcePngSha256": "7936b922b044c6c02d43d7edb45d4c962f42a2e7998fca0938a968a6b4b2ee5f",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/home-preference-conflict-dialog.tsx",
+      "fixtureId": "HOME_STATE_CONFLICT_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-D1440-SAVE-CONFLICT-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "077749e76208a9d5424a2bfba77e25aa5e6327002f28b6ec36e3edbe6009bbd8",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "7936b922b044c6c02d43d7edb45d4c962f42a2e7998fca0938a968a6b4b2ee5f",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-D1440-SAVE-CONFLICT-r02-interaction-chromium-darwin.png",
+        "sha256": "7b314bb2d1032209c57e62d854515f9f540546b87954ff0fc9d3a7f6aac1d792",
+        "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
+      }
+    },
+    {
+      "id": "C16-M390-SAVE-CONFLICT-r02",
+      "family": "CLASSIC",
+      "role": "SAVE_CONFLICT",
+      "sourcePngSha256": "9341aaff1d25993a7be3623117e27cfb49d97e4acee9d1d73c1d5b14d4c42d8a",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/home-preference-conflict-dialog.tsx",
+      "fixtureId": "HOME_STATE_CONFLICT_MOBILE",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-M390-SAVE-CONFLICT-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "7ef886965da0d1f919978a826113a50245e6b1091ffe59a1eac38a160e2627c9",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "9341aaff1d25993a7be3623117e27cfb49d97e4acee9d1d73c1d5b14d4c42d8a",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-M390-SAVE-CONFLICT-r02-interaction-chromium-darwin.png",
+        "sha256": "a2429f4d5b465bb1483342d20839148319735709e29bdb7bee25ccde27fb2c68",
+        "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
+      }
+    },
+    {
+      "id": "C17-MODE-PRESET",
+      "family": "SHARED",
+      "role": "MODE_PRESET",
+      "sourcePngSha256": "ce1ff97fce9a2a02257cdd30616950bca074bf3092da9fd30357090ab3dbb97e",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/home-composition-policy.ts",
+      "fixtureId": "HOME_SPEC_MODE_PRESET",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C17-MODE-PRESET-chromium-darwin.png",
+      "visualEvidenceSha256": "e57f1f0baa1d388b6a9cc8a5085c42d63eeb88495cb420db46c019a888ecfec1",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "ce1ff97fce9a2a02257cdd30616950bca074bf3092da9fd30357090ab3dbb97e",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C17-MODE-PRESET-interaction-chromium-darwin.png",
+        "sha256": "d91e54b4933bf323a8e8b864732f0c93f3f9f1366573c367643b3bc3c3987f9f",
+        "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
+      }
+    },
+    {
+      "id": "C18-KEYBOARD-REDUCED-MOTION-SPEC-r02",
+      "family": "SHARED",
+      "role": "ACCESSIBILITY_SPEC",
+      "sourcePngSha256": "77cd23ab8a73797057e4c5c2b073c2204b1c3f19a4c226e2121a955bc4dc7a96",
+      "implementationKind": "SPEC_EVIDENCE",
+      "component": "apps/dwp/src/features/home/runtime/use-home-editor-safety.ts",
+      "fixtureId": "HOME_SPEC_ACCESSIBILITY_SPEC",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G2",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-chromium-darwin.png",
+      "visualEvidenceSha256": "15744631dc9d7f3af4aacaa6b4ad3ba118cb1acc2288faa09efcc5026fe6b9c0",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "77cd23ab8a73797057e4c5c2b073c2204b1c3f19a4c226e2121a955bc4dc7a96",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-interaction-chromium-darwin.png",
+        "sha256": "012cee5bb0c03d3382f3af6bc80bdfad1535e2dfd5e976f164ead54201ae74b2",
+        "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
+      }
+    },
+    {
+      "id": "CLASSIC-STATE-COMPONENT-SPEC-A",
+      "family": "SHARED",
+      "role": "STATE_SPEC",
+      "sourcePngSha256": "b80ac5f436a92eec20751f917bcf1ef9221830c38fd9abcbdc0c2b1e717b6b07",
+      "implementationKind": "STATE_FIXTURE",
+      "component": "apps/dwp/src/features/home/runtime/home-content-state.tsx",
+      "fixtureId": "HOME_STATE_ALL_STATES_DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-state-evidence.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G3",
+        "G4"
+      ],
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-state-evidence.spec.ts"
+      },
+      "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-CLASSIC-STATE-COMPONENT-SPEC-A-chromium-darwin.png",
+      "visualEvidenceSha256": "7367e00dedb0f1b1ec148386e49667f2dd2493a0fdcab2b4bd450767699fd238",
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "b80ac5f436a92eec20751f917bcf1ef9221830c38fd9abcbdc0c2b1e717b6b07",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "FLOW-BASE-DESKTOP-FINAL",
+      "family": "FLOW",
+      "role": "BASE",
+      "sourcePngSha256": "550ac10ddde00fa4f3041c48bf2778c6d889cd4e2471769396bb5be3a90ece7f",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/flow-home/flow-home.tsx",
+      "fixtureId": "WAVE2_FLOW-BASE-DESKTOP-FINAL",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-BASE-DESKTOP-FINAL-chromium-darwin.png",
+      "visualEvidenceSha256": "d36ec59cc04161d7d2b254abc6b501757216a0c13b357d0f90243f6517a0c9d1",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "550ac10ddde00fa4f3041c48bf2778c6d889cd4e2471769396bb5be3a90ece7f",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "FLOW-BASE-MOBILE-FINAL",
+      "family": "FLOW",
+      "role": "BASE",
+      "sourcePngSha256": "8f2a72bc9942cde18e86305b2ddf2528a73b234f5bed960a15a17357e9553e0f",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/flow-home/flow-home.tsx",
+      "fixtureId": "WAVE2_FLOW-BASE-MOBILE-FINAL",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-BASE-MOBILE-FINAL-chromium-darwin.png",
+      "visualEvidenceSha256": "03fe2a5135167b800847824ee8bc85f478f8b4b1de529fa7ad68064822503215",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "8f2a72bc9942cde18e86305b2ddf2528a73b234f5bed960a15a17357e9553e0f",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "FLOW-EDITOR-DESKTOP",
+      "family": "FLOW",
+      "role": "EDITOR",
+      "sourcePngSha256": "f3d86ccdc6b655ad3abc958c45b76f292b9a428ba407457d100d0366d2a4a353",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home-personalization/home-personalization-studio.tsx",
+      "fixtureId": "WAVE2_FLOW-EDITOR-DESKTOP",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-EDITOR-DESKTOP-chromium-darwin.png",
+      "visualEvidenceSha256": "2528fecf0c859d247631b715e980ae35f7107acc921e517f130cc52d84c66e84",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "f3d86ccdc6b655ad3abc958c45b76f292b9a428ba407457d100d0366d2a4a353",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      },
+      "interactionEvidence": {
+        "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-EDITOR-DESKTOP-interaction-chromium-darwin.png",
+        "sha256": "870a63f4c6448d2f1f9d9bc4bcdad01d648dfbc1f290eabb957f8842d3bb2d5b",
+        "purpose": "FIXED_PANEL_FOCUS_AND_SCROLL_CONTRACT"
+      }
+    },
+    {
+      "id": "FLOW-PERSONALIZED-DESKTOP-FINAL",
+      "family": "FLOW",
+      "role": "PERSONALIZED",
+      "sourcePngSha256": "9f255fc5033bee20554bd32ec6ad7d72d2712cb28ac7d622ea3fc446f6254615",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/flow-home/flow-home.tsx",
+      "fixtureId": "WAVE2_FLOW-PERSONALIZED-DESKTOP-FINAL",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-PERSONALIZED-DESKTOP-FINAL-chromium-darwin.png",
+      "visualEvidenceSha256": "9624c382bce66517770fad590e11fc8a82f76ad50e5df9ea9408d731787d31e9",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "9f255fc5033bee20554bd32ec6ad7d72d2712cb28ac7d622ea3fc446f6254615",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    },
+    {
+      "id": "FLOW-PERSONALIZED-MOBILE-FINAL",
+      "family": "FLOW",
+      "role": "PERSONALIZED",
+      "sourcePngSha256": "58aedea20849549fad42bab6087fd33ed0c3309c72dd24cb9e46b48dffc60b83",
+      "implementationKind": "PRODUCTION_COMPOSITION",
+      "route": "/",
+      "component": "apps/dwp/src/features/home/flow-home/flow-home.tsx",
+      "fixtureId": "WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL",
+      "evidence": [
+        "e2e/home-wave2-acceptance.spec.ts"
+      ],
+      "gates": [
+        "G0",
+        "G1",
+        "G2",
+        "G4"
+      ],
+      "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-PERSONALIZED-MOBILE-FINAL-chromium-darwin.png",
+      "visualEvidenceSha256": "61604c1c2570c7aa375db8db15127e33623aec705ed8f61c2274631bd340614b",
+      "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+      "browser": {
+        "name": "Chromium",
+        "version": "145.0.7632.6",
+        "project": "chromium",
+        "platform": "darwin"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "ko-KR",
+      "theme": "LIGHT",
+      "reducedMotion": "REDUCE",
+      "axeResult": {
+        "status": "PASS",
+        "ruleLevel": "CRITICAL_AND_SERIOUS",
+        "violationCount": 0,
+        "evidence": "e2e/home-wave2-acceptance.spec.ts"
+      },
+      "acceptedSourceComparison": {
+        "status": "PASS",
+        "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+        "sourcePngSha256": "58aedea20849549fad42bab6087fd33ed0c3309c72dd24cb9e46b48dffc60b83",
+        "record": "architecture/home-wave2-visual-comparison.md"
+      }
+    }
+  ],
+  "shellWidthContract": {
+    "layoutOwner": "apps/dwp/src/layouts/home-layout.tsx",
+    "measurement": "ResizeObserver on the HomeLayout main inline-size",
+    "navigationOwnership": "HomeLayout renders the visible desktop navigation and gives the main element the exact remaining inline-size. Classic defaults to the approved 248px expanded navigation; Flow defaults to the approved 64px compact rail. Preferences are isolated by tenant, user, and Home mode. The 390px/320px mobile shell uses a fixed safe-area-aware five-destination bottom navigation. The 600px-1199px compact/tablet shell exposes the same permission-filtered navigation from the header drawer without covering document content.",
+    "integrationEvidence": {
+      "test": "e2e/home-wave2-acceptance.spec.ts",
+      "cases": [
+        {
+          "viewport": "1440x900",
+          "mode": "CLASSIC",
+          "navigationState": "expanded",
+          "navigationWidth": 248,
+          "homeInlineSize": 1192
+        },
+        {
+          "viewport": "1280x900",
+          "mode": "CLASSIC",
+          "navigationState": "expanded",
+          "navigationWidth": 248,
+          "homeInlineSize": 1032
+        },
+        {
+          "viewport": "1920x1080",
+          "mode": "FLOW_V1",
+          "navigationState": "compact",
+          "navigationWidth": 64,
+          "homeInlineSize": 1856
+        },
+        {
+          "viewport": "1440x1080",
+          "mode": "CLASSIC",
+          "navigationState": "user-toggled-compact",
+          "navigationWidth": 64,
+          "homeInlineSize": 1376
+        },
+        {
+          "viewport": "720x900",
+          "mode": "CLASSIC",
+          "navigationState": "header-drawer",
+          "navigationWidth": 0,
+          "homeInlineSize": 720
+        },
+        {
+          "viewport": "390x844 and 320x720",
+          "mode": "CLASSIC and FLOW_V1",
+          "navigationState": "fixed-bottom-safe-area",
+          "navigationWidth": 0,
+          "homeInlineSize": "390 and 320"
+        }
+      ],
+      "assertions": [
+        "visible Home navigation owns the configured mode-specific width",
+        "HomeLayout main receives viewport width minus the actual navigation width",
+        "navigation preference storage is isolated by Home mode",
+        "mobile navigation targets are at least 44px and focused footer content remains above the fixed navigation",
+        "the 720px browser-zoom composition uses the keyboard-accessible header drawer with no fixed bottom overlay",
+        "document has no horizontal overflow",
+        "Home root remains inside viewport bounds",
+        "all 18 launchpad items remain visible"
+      ]
+    }
+  },
+  "evidenceEnvironment": {
+    "implementationCommit": "41e39c2f814b46554c5093752580c2c89d030f26",
+    "browser": {
+      "name": "Chromium",
+      "version": "145.0.7632.6",
+      "project": "chromium",
+      "platform": "darwin"
+    },
+    "reducedMotion": "REDUCE",
+    "axePolicy": "CRITICAL_AND_SERIOUS"
+  },
+  "testOnlyStateSpec": {
+    "html": "apps/dwp/home-wave2-state-spec.html",
+    "source": "apps/dwp/e2e-fixtures/home-wave2-state-spec.tsx",
+    "productionExcluded": true,
+    "productionReachabilityCheck": "scripts/check-production-reachability.mjs",
+    "productionBuildCheck": "scripts/check-home-wave2-production-exclusion.mjs"
+  },
+  "visualReview": {
+    "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
+    "record": "architecture/home-wave2-visual-comparison.md",
+    "decision": "PASS_WITH_PRODUCT_NATIVE_ADAPTATIONS"
+  },
+  "cleanRun": {
+    "status": "PASS",
+    "testCount": 15,
+    "suites": [
+      "e2e/home-wave2-acceptance.spec.ts",
+      "e2e/home-wave2-state-evidence.spec.ts"
+    ],
+    "receipt": "architecture/home-wave2-playwright-junit.xml",
+    "receiptSha256": "d345e1d3fb2777a95da385420745edcb278e240d4fccfe1e237920d37f3efb6b"
+  }
+}

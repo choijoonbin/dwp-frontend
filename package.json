@@ -73,6 +73,8 @@
     "test:performance": "vite build && playwright test --config playwright.performance.config.ts",
     "test:visual": "playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/menu-route-contract.spec.ts e2e/menu-visual-baseline.spec.ts e2e/flow-home-visual.spec.ts e2e/video-meeting-visual-quality.spec.ts",
     "test:visual:update": "playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/menu-route-contract.spec.ts e2e/menu-visual-baseline.spec.ts e2e/flow-home-visual.spec.ts e2e/video-meeting-visual-quality.spec.ts --update-snapshots=all",
+    "home:wave2:evidence:check": "node scripts/check-home-wave2-evidence.mjs && node --test scripts/home-wave2-evidence-validation.test.mjs",
+    "home:wave2:production-exclusion": "vite build && node scripts/check-home-wave2-production-exclusion.mjs",
     "test:storybook": "playwright test --config playwright.storybook.config.ts",
     "test:storybook:update": "playwright test --config playwright.storybook.config.ts --update-snapshots=all",
     "license:check": "node scripts/check-production-licenses.mjs",
