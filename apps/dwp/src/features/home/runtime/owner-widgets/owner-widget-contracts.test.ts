@@ -115,6 +115,7 @@ describe('Wave 4 owner widget contracts', () => {
       expect(value.definitionManifestHash).toMatch(/^[a-f0-9]{64}$/u);
       expect(value.rendererBindingRevision).toBe(value.definitionManifestHash);
       expect(value.commandCapabilities).toEqual([]);
+      expect(Object.isFrozen(value.commandCapabilities)).toBe(true);
     }
   });
 

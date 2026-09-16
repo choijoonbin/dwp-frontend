@@ -20,7 +20,7 @@ const SOURCE_ACTION_KEYS = [
   'requiresConfirmation',
 ] as const;
 
-const NO_COMMAND_ACTIONS = [] as const;
+const NO_COMMAND_ACTIONS = Object.freeze([]) as readonly [];
 
 export type OwnerWidgetSourceAction = Readonly<{
   actionId: 'open-source';

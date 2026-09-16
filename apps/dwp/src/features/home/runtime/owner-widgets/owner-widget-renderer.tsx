@@ -305,9 +305,18 @@ function MetricGrid({
       {values.map((metric) => (
         <Box
           key={metric.key}
-          sx={{ minWidth: 0, p: 1, bgcolor: 'action.hover', borderRadius: 1.5 }}
+          sx={{
+            minWidth: 0,
+            p: 1,
+            bgcolor: 'action.hover',
+            borderRadius: foundationTokens.home.radius.control,
+          }}
         >
-          <Typography component="dd" variant="subtitle2" sx={{ m: 0, fontWeight: 750 }}>
+          <Typography
+            component="dd"
+            variant="subtitle2"
+            sx={{ m: 0, fontWeight: foundationTokens.home.typography.weightEmphasis }}
+          >
             {metric.value.toLocaleString()}
           </Typography>
           <Typography component="dt" variant="caption" color="text.secondary" sx={{ m: 0 }}>
@@ -330,7 +339,11 @@ function ItemList({ values }: { values: readonly Row[] }) {
           sx={{ minWidth: 0, py: 0.75, borderTop: 1, borderColor: 'divider' }}
         >
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" gap={1}>
-            <Typography variant="body2" fontWeight={650} noWrap>
+            <Typography
+              variant="body2"
+              fontWeight={foundationTokens.home.typography.weightSemibold}
+              noWrap
+            >
               {row.title}
             </Typography>
             {row.timestamp && (
@@ -408,7 +421,12 @@ export function OwnerWidgetRenderer({
         >
           <Icon size={19} />
         </Box>
-        <Typography id={headingId} component="h3" variant="subtitle1" fontWeight={750}>
+        <Typography
+          id={headingId}
+          component="h3"
+          variant="subtitle1"
+          fontWeight={foundationTokens.home.typography.weightEmphasis}
+        >
           {label(`ownerWidgets.title.${widget.definitionKey}`)}
         </Typography>
       </Stack>

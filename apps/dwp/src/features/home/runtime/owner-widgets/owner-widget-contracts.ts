@@ -44,7 +44,7 @@ type ContractSeed = Readonly<{
   surface?: OwnerWidgetSurface;
 }>;
 
-const NO_COMMAND_CAPABILITIES = [] as const;
+const NO_COMMAND_CAPABILITIES = Object.freeze([]) as readonly [];
 
 function contract(seed: ContractSeed): OwnerWidgetContract {
   return Object.freeze({
@@ -170,4 +170,3 @@ export function isCanonicalOwnerWidgetSourceRoute(
 ): sourceRoute is OwnerWidgetContract['canonicalSourceRoute'] {
   return sourceRoute === contractValue.canonicalSourceRoute;
 }
-

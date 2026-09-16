@@ -72,6 +72,7 @@ describe('normalizeOwnerWidget', () => {
         payload: approvalPayload,
       },
     });
+    if (result.ok) expect(Object.isFrozen(result.value.commandActions)).toBe(true);
   });
 
   it('fails closed when any signed binding identity field mismatches', () => {
