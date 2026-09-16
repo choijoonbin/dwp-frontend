@@ -16,6 +16,7 @@ type HomePreferenceConflictDialogProps = {
   baseVersion?: number;
   latestVersion?: number;
   busy?: boolean;
+  canReapply?: boolean;
   onReloadLatest: () => void;
   onReapply: () => void;
   onClose: () => void;
@@ -80,10 +81,7 @@ function ChangeSummary({
               flex: '0 0 auto',
               height: 26,
               color: strongColor,
-              bgcolor: alpha(
-                draft ? theme.palette.primary.main : theme.palette.warning.main,
-                0.12
-              ),
+              bgcolor: alpha(draft ? theme.palette.primary.main : theme.palette.warning.main, 0.12),
               '& .MuiChip-label': { px: 1.25 },
             })}
           />
@@ -128,6 +126,7 @@ export function HomePreferenceConflictDialog({
   baseVersion,
   latestVersion,
   busy = false,
+  canReapply = true,
   onReloadLatest,
   onReapply,
   onClose,
@@ -230,7 +229,7 @@ export function HomePreferenceConflictDialog({
             intent="primary"
             aria-label={t('flow.conflict.reapply')}
             onClick={onReapply}
-            disabled={busy}
+            disabled={busy || !canReapply}
             startIcon={<RefreshCw size={17} aria-hidden="true" />}
             sx={{
               order: { xs: 1, sm: 3 },

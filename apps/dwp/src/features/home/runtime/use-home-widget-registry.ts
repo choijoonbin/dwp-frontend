@@ -37,6 +37,7 @@ export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number,
   return useMemo(
     () => ({
       decisions: resolveHomeWidgetRuntimeDecisions(connection, effectiveCatalogQuery.data),
+      effectiveCatalog: effectiveCatalogQuery.data,
       shadowObservation: observeHomeWidgetShadow(
         connection,
         effectiveCatalogQuery.isError ? null : effectiveCatalogQuery.data

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, FileStack } from 'lucide-react';
+import { ExternalLink, FileStack, History } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
@@ -29,6 +29,7 @@ import Typography from '@mui/material/Typography';
 
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { TenantWidgetRegistryPanel } from './tenant-widget-registry-panel';
+import { TenantHomeTemplateHistory } from './tenant-home-template-history';
 
 import type { HomeTemplate } from '@dwp-frontend/shared-utils';
 
@@ -51,11 +52,15 @@ export function TenantHomeBlueprintPanel() {
   const supportContext = useCurrentProviderSupportContext();
   const canWriteSupport =
     !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
-  const canManage = hasPermission('ADMIN.HOME_TEMPLATE', 'MANAGE') && canWriteSupport;
+  const canManage =
+    hasPermission('ADMIN.HOME_EXPERIENCE', 'MANAGE') &&
+    hasPermission('ADMIN.HOME_TEMPLATE', 'MANAGE') &&
+    canWriteSupport;
   const [pending, setPending] = useState<{
     template: HomeTemplate;
     action: 'publish' | 'revoke';
   } | null>(null);
+  const [historyTemplateId, setHistoryTemplateId] = useState<string | null>(null);
   const templatesQuery = useQuery({
     queryKey: ['home-personalization', 'templates'],
     queryFn: getHomeTemplates,
@@ -157,39 +162,54 @@ export function TenantHomeBlueprintPanel() {
             <Stack
               component="li"
               key={template.templateId}
-              direction={{ xs: 'column', md: 'row' }}
-              alignItems={{ xs: 'stretch', md: 'center' }}
-              justifyContent="space-between"
               gap={2}
               sx={{ px: 1, py: 2, borderBottom: 1, borderColor: 'divider' }}
             >
-              <Box sx={{ minWidth: 0 }}>
-                <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                  <Typography variant="subtitle1">{template.name}</Typography>
-                  <Chip
-                    size="small"
-                    color={lifecycleColor(template.lifecycle)}
-                    label={t(`homeWidgets.blueprints.lifecycle.${template.lifecycle}`)}
-                  />
-                </Stack>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                  {t('homeWidgets.blueprints.metadata', {
-                    audience:
-                      template.audience.type === 'ALL'
-                        ? t('homeWidgets.blueprints.allMembers')
-                        : template.audience.values.join(', '),
-                    widgets: formatNumber(template.layout.widgets.length),
-                    date: formatDate(template.updatedAt, { dateStyle: 'medium' }),
-                  })}
-                </Typography>
-              </Box>
-              {canManage && (
+              <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                alignItems={{ xs: 'stretch', md: 'center' }}
+                justifyContent="space-between"
+                gap={2}
+              >
+                <Box sx={{ minWidth: 0 }}>
+                  <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+                    <Typography variant="subtitle1">{template.name}</Typography>
+                    <Chip
+                      size="small"
+                      color={lifecycleColor(template.lifecycle)}
+                      label={t(`homeWidgets.blueprints.lifecycle.${template.lifecycle}`)}
+                    />
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                    {t('homeWidgets.blueprints.metadata', {
+                      audience:
+                        template.audience.type === 'ALL'
+                          ? t('homeWidgets.blueprints.allMembers')
+                          : template.audience.values.join(', '),
+                      widgets: formatNumber(template.layout.widgets.length),
+                      date: formatDate(template.updatedAt, { dateStyle: 'medium' }),
+                    })}
+                  </Typography>
+                </Box>
                 <Stack direction="row" gap={0.75} flexWrap="wrap">
+                  <ActionButton
+                    size="small"
+                    intent="quiet"
+                    startIcon={<History size={15} />}
+                    aria-expanded={historyTemplateId === template.templateId}
+                    onClick={() =>
+                      setHistoryTemplateId((current) =>
+                        current === template.templateId ? null : template.templateId
+                      )
+                    }
+                  >
+                    {t('homeWidgets.blueprints.history.action')}
+                  </ActionButton>
                   {template.lifecycle === 'DRAFT' && (
                     <ActionButton
                       size="small"
                       intent="primary"
-                      disabled={lifecycleMutation.isPending}
+                      disabled={!canManage || lifecycleMutation.isPending}
                       onClick={() => setPending({ template, action: 'publish' })}
                     >
                       {t('homeWidgets.blueprints.publish')}
@@ -199,7 +219,7 @@ export function TenantHomeBlueprintPanel() {
                     <ActionButton
                       size="small"
                       intent="quiet"
-                      disabled={lifecycleMutation.isPending}
+                      disabled={!canManage || lifecycleMutation.isPending}
                       onClick={() => setPending({ template, action: 'revoke' })}
                       sx={{ color: 'error.main' }}
                     >
@@ -207,6 +227,9 @@ export function TenantHomeBlueprintPanel() {
                     </ActionButton>
                   )}
                 </Stack>
+              </Stack>
+              {historyTemplateId === template.templateId && (
+                <TenantHomeTemplateHistory template={template} canManage={canManage} />
               )}
             </Stack>
           ))}

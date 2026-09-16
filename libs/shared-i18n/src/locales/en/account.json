@@ -24,6 +24,15 @@
     "notifications": "Notifications",
     "managed": "Managed settings"
   },
+  "homeSettings": {
+    "eyebrow": "Personal workspace",
+    "title": "Home settings",
+    "description": "Create and edit saved homes, tune each device layout, apply templates, and restore a previous revision without leaving account settings.",
+    "mode": {
+      "CLASSIC": "Classic mode",
+      "FLOW_V1": "Flow mode"
+    }
+  },
   "sections": {
     "appearance": {
       "title": "Appearance",

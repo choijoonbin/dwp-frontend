@@ -123,6 +123,21 @@ export type HomeTemplate = {
   updatedAt: string;
 };
 
+export type HomeTemplateSnapshot = Pick<
+  HomeTemplate,
+  'name' | 'audience' | 'lifecycle' | 'schemaVersion' | 'layout' | 'version'
+>;
+
+export type HomeTemplateRevision = {
+  templateRevisionId: string;
+  templateId: string;
+  revisionNumber: number;
+  source: 'CREATE' | 'UPDATE' | 'PUBLISH' | 'REVOKE' | 'RESTORE';
+  snapshot: HomeTemplateSnapshot;
+  createdAt: string;
+  createdBy: number;
+};
+
 export type HomeComposerOperation =
   | 'MOVE_WIDGET'
   | 'SHOW_WIDGET'
@@ -386,6 +401,15 @@ export async function getHomeTemplates(): Promise<HomeTemplate[]> {
   return response.data.data;
 }
 
+export async function getHomeTemplateRevisions(
+  templateId: string
+): Promise<HomeTemplateRevision[]> {
+  const response = await axiosInstance.get<ApiResponse<HomeTemplateRevision[]>>(
+    `${TEMPLATE_BASE}/${encodeURIComponent(templateId)}/revisions`
+  );
+  return response.data.data;
+}
+
 export async function createHomeTemplate(
   request: Pick<HomeTemplate, 'templateKey' | 'name' | 'audience' | 'layout'>,
   idempotencyKey: string
@@ -431,6 +455,20 @@ export async function revokeHomeTemplate(
 ): Promise<HomeTemplate> {
   const response = await axiosInstance.post<ApiResponse<HomeTemplate>, { version: number }>(
     `${TEMPLATE_BASE}/${encodeURIComponent(templateId)}/revoke`,
+    { version },
+    commandConfig(idempotencyKey)
+  );
+  return response.data.data;
+}
+
+export async function restoreHomeTemplateRevision(
+  templateId: string,
+  revisionId: string,
+  version: number,
+  idempotencyKey: string
+): Promise<HomeTemplate> {
+  const response = await axiosInstance.post<ApiResponse<HomeTemplate>, { version: number }>(
+    `${TEMPLATE_BASE}/${encodeURIComponent(templateId)}/revisions/${encodeURIComponent(revisionId)}/restore`,
     { version },
     commandConfig(idempotencyKey)
   );

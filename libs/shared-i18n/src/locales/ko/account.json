@@ -24,6 +24,15 @@
     "notifications": "알림",
     "managed": "관리형 설정"
   },
+  "homeSettings": {
+    "eyebrow": "개인 작업 환경",
+    "title": "홈 설정",
+    "description": "계정 설정을 벗어나지 않고 저장된 홈을 만들고 편집하며, 기기별 배치와 템플릿을 적용하고 이전 버전을 복원합니다.",
+    "mode": {
+      "CLASSIC": "클래식 모드",
+      "FLOW_V1": "플로우 모드"
+    }
+  },
   "sections": {
     "appearance": {
       "title": "화면 모양",

@@ -32,9 +32,9 @@
         "description": "구성원 경험 전반에 표시할 조직 아이덴티티를 관리합니다."
       },
       "home-experience": {
-        "label": "홈 화면 설정",
-        "title": "홈 화면 설정",
-        "description": "테넌트 홈의 배경 이미지와 다국어 환영 문구를 미리보기·검증하고 게시합니다."
+        "label": "Home Studio",
+        "title": "Home Studio",
+        "description": "테넌트 홈 모드, 앱 Dock, 위젯, 템플릿, 콘텐츠, 릴리스와 감사 근거를 통합 관리합니다."
       },
       "home-apps": {
         "label": "홈 앱 구성",
@@ -894,6 +894,7 @@
       "noResults": "검색 조건에 맞는 위젯이 없습니다",
       "noResultsDescription": "위젯 이름, 소유 제품, 원천 앱 또는 데이터 원천으로 검색하세요.",
       "listLabel": "테넌트 위젯 정의 카탈로그",
+      "keyboardViewport": "테넌트 위젯 카탈로그 결과입니다. Page Up, Page Down, Home, End 키로 탐색하세요.",
       "providerVerified": "현재 빌드에 등록",
       "runtimeContract": "선언된 런타임 값",
       "freshness": "선언된 최신성 목표 · 최대 {{seconds}}초",
@@ -939,6 +940,30 @@
           "title": "이 홈 청사진을 회수할까요?",
           "description": "{{name}} v{{version}} 개정이 {{audience}}에게 더 이상 제공되지 않으며 위젯 {{widgets}}개 구성을 새로 적용할 수 없습니다. 기존 개인 사본은 독립적으로 유지됩니다. 다시 제공하려면 새 개정을 만들어 게시하세요.",
           "action": "청사진 회수"
+        }
+      },
+      "history": {
+        "action": "리비전 이력",
+        "loading": "청사진 리비전 이력을 불러오는 중",
+        "loadFailed": "청사진 리비전 이력을 불러오지 못했습니다",
+        "title": "{{name}} 리비전 이력",
+        "description": "스냅샷을 복구하면 새 초안이 생성됩니다. 이 초안을 명시적으로 게시하기 전까지 게시된 청사진은 바뀌지 않습니다.",
+        "empty": "사용 가능한 청사진 리비전이 없습니다",
+        "revision": "리비전 {{revision}}",
+        "restore": "초안으로 복구",
+        "restored": "청사진 리비전을 새 초안으로 복구했습니다.",
+        "restoreFailed": "청사진 리비전을 복구하지 못했습니다.",
+        "sources": {
+          "CREATE": "생성",
+          "UPDATE": "수정",
+          "PUBLISH": "게시",
+          "REVOKE": "회수",
+          "RESTORE": "복구"
+        },
+        "confirm": {
+          "title": "이 청사진 리비전을 초안으로 복구할까요?",
+          "description": "{{name}}의 리비전 {{revision}}을 새 초안으로 만듭니다. 구성원이 적용할 수 있도록 별도로 검토하고 게시하세요.",
+          "action": "초안 복구"
         }
       }
     },
@@ -4621,6 +4646,52 @@
     "errors": {
       "load": "홈 구성 정책을 불러오지 못했습니다.",
       "save": "홈 구성 정책을 게시하지 못했습니다."
+    }
+  },
+  "homeStudio": {
+    "eyebrow": "테넌트 홈 거버넌스",
+    "title": "Home Studio",
+    "description": "테넌트 홈 변경을 미리보고 영향을 확인한 뒤 통제된 릴리스로 게시하고 복구 근거를 함께 관리합니다.",
+    "shadow": "위젯 레지스트리 · Shadow",
+    "readOnly": {
+      "title": "조회 전용 접근",
+      "description": "Home Studio를 조회할 수 있습니다. 게시, 정책 변경, 롤백에는 홈 경험 관리 권한이 필요합니다."
+    },
+    "sectionAccess": {
+      "widgetsTitle": "위젯 정책 조회 권한 필요",
+      "widgetsDescription": "유효 카탈로그, 테넌트 정책, 영향 분석 근거를 확인하려면 Home Widget Policy 조회 권한을 요청하세요."
+    },
+    "navigationLabel": "Home Studio 섹션",
+    "sections": {
+      "modes": "모드 및 정책",
+      "app-dock": "앱 Dock",
+      "widgets": "위젯 카탈로그",
+      "templates": "홈 청사진",
+      "content": "콘텐츠 및 미리보기",
+      "releases": "릴리스",
+      "audit": "감사"
+    },
+    "release": {
+      "loading": "홈 릴리스 이력을 불러오는 중",
+      "loadFailed": "홈 릴리스 이력을 불러오지 못했습니다",
+      "title": "전체 불변 리비전으로 복구합니다",
+      "description": "복구 전에 영향 범위를 확인하세요. 롤백은 감사 가능한 새 릴리스를 만들며 이후 리비전도 유지합니다.",
+      "currentVersion": "현재 릴리스 v{{version}}",
+      "revisionCount_one": "리비전 {{count}}개",
+      "revisionCount_other": "리비전 {{count}}개",
+      "rollbackImpact": "릴리스 v{{version}}을 복구합니다. 영향 범위: {{scopes}}."
+    },
+    "audit": {
+      "loading": "Home Studio 감사 근거를 불러오는 중",
+      "loadFailed": "Home Studio 감사 근거를 불러오지 못했습니다",
+      "empty": "Home Studio 감사 근거가 아직 없습니다",
+      "emptyDescription": "홈 릴리스를 게시하거나 롤백하면 연계된 근거가 생성됩니다.",
+      "title": "Home Studio 감사 근거",
+      "description": "게시, 롤백, 정책과 위젯 결정을 결과 및 상관관계 ID와 함께 표시합니다.",
+      "noCorrelation": "상관관계 ID 없음",
+      "page": "{{total}}페이지 중 {{page}}페이지",
+      "previousPage": "이전 페이지",
+      "nextPage": "다음 페이지"
     }
   }
 }

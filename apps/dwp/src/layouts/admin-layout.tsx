@@ -46,6 +46,10 @@ function initialExpandedGroups(): Record<AdminSection, boolean> {
   );
 }
 
+function isNavigationItemActive(itemPath: string, pathname: string): boolean {
+  return pathname === itemPath || pathname.startsWith(`${itemPath}/`);
+}
+
 function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNavigationProps) {
   const { t } = useTranslation('admin');
   const { hasPermission, isLoaded } = usePermissions();
@@ -53,7 +57,10 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
   const { pathname } = useLocation();
   const [expanded, setExpanded] = useState(initialExpandedGroups);
   const activeGroup = useMemo(
-    () => ADMIN_NAVIGATION.find((group) => group.items.some((item) => item.path === pathname)),
+    () =>
+      ADMIN_NAVIGATION.find((group) =>
+        group.items.some((item) => isNavigationItemActive(item.path, pathname))
+      ),
     [pathname]
   );
 
@@ -86,7 +93,7 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
           {visibleGroups.flatMap((group) =>
             group.items.map((item) => {
               const ItemIcon = item.icon;
-              const selected = pathname === item.path;
+              const selected = isNavigationItemActive(item.path, pathname);
               const label = t(`navigation.items.${item.view}.label`);
               return (
                 <Box component="li" key={item.path} sx={{ display: 'block' }}>
@@ -136,7 +143,9 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
         {visibleGroups.map((group) => {
           const GroupIcon = group.icon;
           const groupExpanded = expanded[group.id];
-          const groupActive = group.items.some((item) => item.path === pathname);
+          const groupActive = group.items.some((item) =>
+            isNavigationItemActive(item.path, pathname)
+          );
           const regionId = `admin-navigation-${group.id}`;
 
           return (
@@ -189,7 +198,7 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
                 >
                   {group.items.map((item) => {
                     const ItemIcon = item.icon;
-                    const selected = pathname === item.path;
+                    const selected = isNavigationItemActive(item.path, pathname);
                     return (
                       <Box component="li" key={item.path} sx={{ display: 'block' }}>
                         <ListItemButton

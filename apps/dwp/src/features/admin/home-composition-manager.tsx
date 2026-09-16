@@ -20,6 +20,7 @@ import {
   getAdminHomeExperience,
   hasHomeContractCapability,
   updateHomeCompositionPolicy,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
@@ -146,13 +147,15 @@ export function HomeCompositionManager() {
   );
 }
 
-function HomeCompositionPolicyPanel() {
+export function HomeCompositionPolicyPanel() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission } = usePermissions();
   const supportContext = useCurrentProviderSupportContext();
   const canWrite =
-    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
+    hasPermission('ADMIN.HOME_EXPERIENCE', 'MANAGE') &&
+    (!supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE'));
   const [draft, setDraft] = useState<HomeCompositionPolicy | null>(null);
   const experienceQuery = useQuery({
     queryKey: ['admin', 'home-experience'],

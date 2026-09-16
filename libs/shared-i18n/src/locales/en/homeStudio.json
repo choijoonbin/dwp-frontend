@@ -3,6 +3,7 @@
   "description": "Keep your work context intact while tailoring the home composition to you.",
   "close": "Close home studio",
   "sections": {
+    "overview": "Overview",
     "mode": "Home mode",
     "layout": "Layout studio",
     "profiles": "My homes",
@@ -12,6 +13,21 @@
     "templates": "Templates",
     "history": "Version history",
     "ai": "AI proposal"
+  },
+  "overview": {
+    "title": "Home settings overview",
+    "description": "Review the active mode, saved home, device synchronization, and the next personalization action.",
+    "mode": "Current mode",
+    "activeView": "Active home",
+    "sync": "Synchronization",
+    "syncing": "Syncing",
+    "synchronized": "Up to date",
+    "deviceSummary_one": "{{count}} device layout is synchronized for the active home.",
+    "deviceSummary_other": "{{count}} device layouts are synchronized for the active home.",
+    "modes": {
+      "CLASSIC": "Classic",
+      "FLOW_V1": "Flow"
+    }
   },
   "common": {
     "retry": "Try again",
@@ -184,6 +200,7 @@
   "ai": {
     "title": "AI Workstyle Composer",
     "description": "Create a proposal from the current layout and permitted signals without sending work content.",
+    "unavailable": "AI suggestions are disabled by your organization. Your saved homes and device layouts remain available.",
     "focus": "Focus on deadlines",
     "balance": "Balance today's flow",
     "noise": "Reduce distractions",
@@ -295,6 +312,8 @@
       "title": "Widget catalog",
       "count": "{{count}} compatible widgets",
       "search": "Search widgets",
+      "keyboardViewport": "Widget catalog results. Use Page Up, Page Down, Home, or End to browse.",
+      "empty": "No widgets are available for this Home mode.",
       "preview": "Planned",
       "filters": {
         "all": "All",
@@ -319,7 +338,7 @@
     "inspector": {
       "title": "Selected widget properties",
       "native": "Available now",
-      "projection": "Wave 4 connection planned",
+      "projection": "Safe placeholder",
       "owner": "Owning product",
       "source": "Data source",
       "permission": "Required permission",
@@ -328,12 +347,42 @@
       "targetRegion": "Target region and placement",
       "order": "Keyboard and visual order",
       "visibility": "Visibility",
-      "wave4Title": "Safe prototype boundary",
-      "wave4Description": "This item is not saved or executed yet. It will register after the Wave 4 provider contract is activated."
+      "wave4Title": "Safe renderer boundary",
+      "wave4Description": "The definition and permission decision come from the server catalog. Content stays in a safe placeholder until a trusted renderer is available.",
+      "registry": {
+        "owner": "Registry owner · {{owner}}",
+        "version": "Registry version {{version}}",
+        "unresolved": "No compatible renderer version",
+        "permission": "Effective decision · {{reasons}}",
+        "resizable": "Widths controlled by the registry contract",
+        "fixed": "Width fixed by the provider contract",
+        "dataBudget": "Server effective catalog · safe placeholder",
+        "target": "Personal Home · {{state}}",
+        "states": {
+          "AVAILABLE": "Available",
+          "ALREADY_ADDED": "Already added",
+          "DEPRECATED": "Deprecated",
+          "DENY": "Unavailable",
+          "UNKNOWN": "Status unavailable"
+        },
+        "reasons": {
+          "NOT_AVAILABLE": "Not available",
+          "DISABLED_BY_ORGANIZATION": "Disabled by the organization",
+          "APP_ACCESS_REQUIRED": "Source app access required",
+          "INCOMPATIBLE": "Incompatible with this Home host",
+          "TEMPORARILY_UNAVAILABLE": "Temporarily unavailable",
+          "DEPRECATED": "New placement is disabled",
+          "AVAILABLE": "Available to add",
+          "ALREADY_ADDED": "Already added to Home",
+          "UNKNOWN": "Availability details unavailable"
+        }
+      }
     },
     "canvas": {
       "title": "Live three-region canvas",
       "description": "7 production renderers · desktop 38% / 34% / 28%",
+      "unsupportedInstances": "Preserved widget instances",
+      "unsupportedPreserved": "This saved instance is preserved without executing an unsupported renderer.",
       "projectionPreview": "Future widget placement preview",
       "projectionPreviewDescription": "Only placement can be reviewed before the Wave 4 provider connection; execution and persistence remain blocked."
     },
@@ -347,6 +396,7 @@
       "undo": "Undo",
       "reset": "Reset",
       "save": "Save layout",
+      "add": "Add to Home",
       "moveEarlier": "Move earlier",
       "moveLater": "Move later",
       "hide": "Hide",

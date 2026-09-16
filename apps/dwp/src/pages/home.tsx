@@ -59,7 +59,7 @@ import {
   isHomeDraftDirty,
   reapplyHomeDraft,
 } from '../features/home/home-draft-history';
-import { HomePreferenceConflictDialog } from '../features/home/home-preference-conflict-dialog';
+import { HomePreferenceConflictDialog } from '../components/home-preference-conflict-dialog';
 import { LazyHomePersonalizationStudio } from '../features/home-personalization/home-personalization-studio-lazy';
 import {
   createHomeEditConflictTarget,

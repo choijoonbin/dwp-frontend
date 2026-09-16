@@ -1,18 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowDown,
-  ArrowUp,
-  Bot,
-  Building2,
-  CalendarCheck2,
-  History,
-  MessageSquareText,
-  RotateCcw,
-  Save,
-  Search,
-  Undo2,
-} from 'lucide-react';
+import { ArrowDown, ArrowUp, History, RotateCcw, Save, Search, Undo2 } from 'lucide-react';
 import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
@@ -24,204 +12,45 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { HOME_WIDGET_REGISTRY, reconcileHomeWidgets } from '../features/home/home-widget-registry';
 import { HomeOverviewWidget } from '../features/home/home-overview-widget';
 import { HomeWidgetErrorBoundary } from '../features/home/runtime/home-content-state';
+import {
+  HOME_STUDIO_INSTANCE_CAP,
+  homeStudioRegistryReasonKey,
+  homeStudioRegistryStateKey,
+  isNativeWidgetKey,
+  moveStudioWidget,
+  resolveHomeStudioCatalog,
+  type StudioCatalogItem,
+  type StudioCatalogKind,
+} from './home-layout-studio-model';
+import { useHomeLayoutStudioDraft } from './use-home-layout-studio-draft';
+
+export {
+  HOME_STUDIO_CATALOG,
+  HOME_STUDIO_INSTANCE_CAP,
+  homeStudioRegistryReasonKey,
+  homeStudioRegistryStateKey,
+  homeStudioWidgetsEqual,
+  moveStudioWidget,
+  reconcileStudioWidgets,
+  resolveHomeStudioCatalog,
+} from './home-layout-studio-model';
 
 import type {
+  EffectiveWidgetCatalog,
   HomeOverview,
+  PersonalHomeWidgetPreference,
   HomeRecommendation,
   HomeView,
-  HomeWidgetKey,
   HomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
-import type { AriaAttributes, ComponentType } from 'react';
 import type { HomeWidgetRuntimeDecisions } from './home-widget-runtime-contract';
 
-type StudioIcon = ComponentType<{
-  size?: number;
-  strokeWidth?: number;
-  'aria-hidden'?: AriaAttributes['aria-hidden'];
-}>;
-
-type StudioCatalogKind = 'native' | 'projection';
-
-type StudioCatalogItem = Readonly<{
-  key: string;
-  catalogId: string;
-  kind: StudioCatalogKind;
-  owner: string;
-  source: string;
-  permission: string;
-  supportedWidths: string;
-  dataBudget: string;
-  targetRegion: string;
-  icon: StudioIcon;
-}>;
-
-const nativeMetadata: Readonly<
-  Record<HomeWidgetKey, Omit<StudioCatalogItem, 'key' | 'catalogId' | 'kind'>>
-> = {
-  'command-rail': {
-    owner: 'DWP Work',
-    source: 'home.contributions.action',
-    permission: 'APP.WORK:VIEW',
-    supportedWidths: '38% / 34% / 28%',
-    dataBudget: '30 s freshness · 24 KB',
-    targetRegion: 'Priority canvas · lead',
-    icon: HOME_WIDGET_REGISTRY[0]!.icon,
-  },
-  schedule: {
-    owner: 'DWP Calendar',
-    source: 'home.contributions.timeline',
-    permission: 'APP.CALENDAR:VIEW',
-    supportedWidths: '38% / 34%',
-    dataBudget: '60 s freshness · 16 KB',
-    targetRegion: 'Schedule · lead/support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'schedule')!.icon,
-  },
-  'daily-brief': {
-    owner: 'DWP Home',
-    source: 'home.recommendations',
-    permission: 'HOME:VIEW',
-    supportedWidths: '38% / 34% / 28%',
-    dataBudget: '5 min freshness · 20 KB',
-    targetRegion: 'Brief · support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'daily-brief')!.icon,
-  },
-  focus: {
-    owner: 'DWP Services',
-    source: 'home.requests',
-    permission: 'APP.EMPLOYEE_SERVICES:VIEW',
-    supportedWidths: '34% / 28%',
-    dataBudget: '5 min freshness · 12 KB',
-    targetRegion: 'Requests · support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'focus')!.icon,
-  },
-  activity: {
-    owner: 'DWP Activity',
-    source: 'home.activity',
-    permission: 'APP.ACTIVITY:VIEW',
-    supportedWidths: '38% / 34%',
-    dataBudget: '2 min freshness · 24 KB',
-    targetRegion: 'Activity · lead/support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'activity')!.icon,
-  },
-  'focus-balance': {
-    owner: 'DWP Calendar',
-    source: 'calendar.focus-insight',
-    permission: 'APP.CALENDAR:VIEW',
-    supportedWidths: '34% / 28%',
-    dataBudget: '5 min freshness · 8 KB',
-    targetRegion: 'Insight · support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'focus-balance')!.icon,
-  },
-  'meeting-load': {
-    owner: 'DWP Calendar',
-    source: 'calendar.meeting-load',
-    permission: 'APP.CALENDAR:VIEW',
-    supportedWidths: '34% / 28%',
-    dataBudget: '5 min freshness · 8 KB',
-    targetRegion: 'Insight · support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'meeting-load')!.icon,
-  },
-};
-
-function nativeCatalogItem(key: HomeWidgetKey, catalogId: string): StudioCatalogItem {
-  return { key, catalogId, kind: 'native', ...nativeMetadata[key] };
-}
-
-export const HOME_STUDIO_CATALOG: readonly StudioCatalogItem[] = [
-  nativeCatalogItem('schedule', 'meetings.next-prep'),
-  {
-    catalogId: 'meetings.decisions',
-    key: 'meetings-prep-decisions',
-    kind: 'projection',
-    owner: 'DWP Meetings',
-    source: 'meetings.decisions',
-    permission: 'APP.MEETINGS:VIEW',
-    supportedWidths: '38% / 34%',
-    dataBudget: 'Preview only · provider required',
-    targetRegion: 'Meeting preparation · lead',
-    icon: CalendarCheck2,
-  },
-  {
-    catalogId: 'space.feed',
-    key: 'space-change-feed',
-    kind: 'projection',
-    owner: 'DWP Space',
-    source: 'space.change-feed',
-    permission: 'APP.SPACES:VIEW',
-    supportedWidths: '38% / 34%',
-    dataBudget: 'Preview only · provider required',
-    targetRegion: 'Collaboration feed · lead',
-    icon: MessageSquareText,
-  },
-  {
-    catalogId: 'dwai.artifacts',
-    key: 'dwaion-artifact',
-    kind: 'projection',
-    owner: 'DWAI·ON',
-    source: 'dwaion.artifact',
-    permission: 'APP.DWAION_ARTIFACTS:VIEW',
-    supportedWidths: '34% / 28%',
-    dataBudget: 'Preview only · provider required',
-    targetRegion: 'AI continuation · support',
-    icon: Bot,
-  },
-  {
-    catalogId: 'workplace.status',
-    key: 'workplace-booking',
-    kind: 'projection',
-    owner: 'DWP Workplace',
-    source: 'workplace.booking',
-    permission: 'APP.WORKPLACE:VIEW',
-    supportedWidths: '34% / 28%',
-    dataBudget: 'Preview only · provider required',
-    targetRegion: 'Workplace status · support',
-    icon: Building2,
-  },
-  {
-    catalogId: 'hr.learning',
-    key: 'learning-progress',
-    kind: 'projection',
-    owner: 'DWP People',
-    source: 'hr.edu',
-    permission: 'APP.HCM:VIEW',
-    supportedWidths: '34% / 28%',
-    dataBudget: 'Preview only · provider required',
-    targetRegion: 'Learning progress · support',
-    icon: HOME_WIDGET_REGISTRY.find(({ key }) => key === 'focus')!.icon,
-  },
-  nativeCatalogItem('focus', 'services.requests'),
-  nativeCatalogItem('daily-brief', 'security.bulletin'),
-  nativeCatalogItem('command-rail', 'home.priority-queue'),
-  nativeCatalogItem('activity', 'home.role-activity'),
-  nativeCatalogItem('focus-balance', 'calendar.focus-balance'),
-  nativeCatalogItem('meeting-load', 'calendar.meeting-load'),
-] as const;
-
-export function moveStudioWidget(
-  widgets: readonly HomeWidgetPreference[],
-  widgetKey: HomeWidgetKey,
-  direction: -1 | 1
-): HomeWidgetPreference[] {
-  const index = widgets.findIndex((widget) => widget.widgetKey === widgetKey);
-  const target = index + direction;
-  if (index < 0 || target < 0 || target >= widgets.length) return [...widgets];
-  const next = [...widgets];
-  const [widget] = next.splice(index, 1);
-  if (!widget) return [...widgets];
-  next.splice(target, 0, widget);
-  return next;
-}
-
-export function homeStudioWidgetsEqual(
-  left: readonly HomeWidgetPreference[],
-  right: readonly HomeWidgetPreference[]
-): boolean {
-  return JSON.stringify(left) === JSON.stringify(right);
-}
+const CATALOG_ROW_HEIGHT = 64;
+const CATALOG_VIEWPORT_ROWS = 8;
+const CATALOG_OVERSCAN = 3;
+type StudioWidgetPreference = PersonalHomeWidgetPreference<string>;
 
 type HomeLayoutStudioWorkbenchProps = Readonly<{
   view: HomeView | null;
@@ -230,12 +59,14 @@ type HomeLayoutStudioWorkbenchProps = Readonly<{
   overviewFetching: boolean;
   overviewFailed: boolean;
   widgetRuntimeDecisions: HomeWidgetRuntimeDecisions;
+  effectiveWidgetCatalog?: EffectiveWidgetCatalog;
   busy: boolean;
   feedbackBusy: boolean;
   onRetryOverview: () => void;
   onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
-  onSave: (widgets: HomeWidgetPreference[]) => void;
+  onSave: (widgets: StudioWidgetPreference[], baseVersion: number) => void;
   onOpenHistory: () => void;
+  forceResetToken?: number;
 }>;
 
 export function HomeLayoutStudioWorkbench({
@@ -245,59 +76,109 @@ export function HomeLayoutStudioWorkbench({
   overviewFetching,
   overviewFailed,
   widgetRuntimeDecisions,
+  effectiveWidgetCatalog,
   busy,
   feedbackBusy,
   onRetryOverview,
   onRecommendationFeedback,
   onSave,
   onOpenHistory,
+  forceResetToken = 0,
 }: HomeLayoutStudioWorkbenchProps) {
   const { t } = useTranslation('homeStudio');
-  const baseline = useMemo(() => reconcileHomeWidgets(view?.layout.widgets), [view]);
-  const [draft, setDraft] = useState<HomeWidgetPreference[]>(baseline);
-  const [history, setHistory] = useState<HomeWidgetPreference[][]>([]);
+  const { baseline, baseVersion, draft, canUndo, dirty, commitDraft, undo, reset } =
+    useHomeLayoutStudioDraft(view, forceResetToken);
   const [selectedKey, setSelectedKey] = useState<string>(baseline[0]?.widgetKey ?? 'command-rail');
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'all' | StudioCatalogKind>('all');
+  const [catalogScrollTop, setCatalogScrollTop] = useState(0);
+  const catalog = useMemo(
+    () => resolveHomeStudioCatalog(effectiveWidgetCatalog, view?.modeKey),
+    [effectiveWidgetCatalog, view?.modeKey]
+  );
 
   useEffect(() => {
-    setDraft(baseline);
-    setHistory([]);
     setSelectedKey((current) =>
-      HOME_STUDIO_CATALOG.some(({ key }) => key === current)
-        ? current
-        : (baseline[0]?.widgetKey ?? 'command-rail')
+      catalog.some(({ key }) => key === current) ? current : (catalog[0]?.key ?? '')
     );
-  }, [baseline]);
+  }, [catalog]);
 
-  const selected = HOME_STUDIO_CATALOG.find(({ key }) => key === selectedKey)!;
-  const selectedIndex = draft.findIndex(({ widgetKey }) => widgetKey === selectedKey);
+  const selected = catalog.find(({ key }) => key === selectedKey) ?? catalog[0];
+  const selectedIndex = draft.findIndex(({ widgetKey }) => widgetKey === selected?.key);
   const selectedPreference = selectedIndex >= 0 ? draft[selectedIndex] : undefined;
-  const dirty = !homeStudioWidgetsEqual(draft, baseline);
-  const filteredCatalog = HOME_STUDIO_CATALOG.filter((item) => {
+  const selectedRuntimeDecision = isNativeWidgetKey(selected?.key)
+    ? widgetRuntimeDecisions[selected.key]
+    : undefined;
+  const selectedUnavailable =
+    selected?.effectiveState === 'DENY' || selected?.effectiveState === 'DEPRECATED';
+  const selectedCanAdd =
+    Boolean(selected?.canAdd) && !selectedUnavailable && draft.length < HOME_STUDIO_INSTANCE_CAP;
+  const catalogLabel = (item: StudioCatalogItem) =>
+    item.translatedLabel === false ? item.catalogId : t(`layout.catalog.items.${item.key}`);
+  const catalogFieldValue = (
+    item: StudioCatalogItem,
+    field: 'owner' | 'source' | 'permission' | 'supportedWidths' | 'dataBudget' | 'targetRegion'
+  ) => {
+    const registryItem = item.registryItem;
+    if (!registryItem) return item[field];
+    if (field === 'owner') {
+      return t('layout.inspector.registry.owner', {
+        owner: registryItem.definitionKey.split('.').slice(0, 2).join('.'),
+      });
+    }
+    if (field === 'source') {
+      return registryItem.resolvedVersionId
+        ? t('layout.inspector.registry.version', {
+            version: registryItem.semanticVersion ?? registryItem.resolvedVersionId,
+          })
+        : t('layout.inspector.registry.unresolved');
+    }
+    if (field === 'permission') {
+      return t('layout.inspector.registry.permission', {
+        reasons: registryItem.reasonCodes
+          .map((reason) =>
+            t(`layout.inspector.registry.reasons.${homeStudioRegistryReasonKey(reason)}`)
+          )
+          .join(', '),
+      });
+    }
+    if (field === 'supportedWidths') {
+      return t(
+        registryItem.placementCapabilities.canResize
+          ? 'layout.inspector.registry.resizable'
+          : 'layout.inspector.registry.fixed'
+      );
+    }
+    if (field === 'dataBudget') return t('layout.inspector.registry.dataBudget');
+    return t('layout.inspector.registry.target', {
+      state: t(
+        `layout.inspector.registry.states.${homeStudioRegistryStateKey(registryItem.effectiveState)}`
+      ),
+    });
+  };
+  const filteredCatalog = catalog.filter((item) => {
     const matchesKind = filter === 'all' || item.kind === filter;
-    const label = `${t(`layout.catalog.items.${item.key}`)} ${item.catalogId}`.toLocaleLowerCase();
+    const label = `${catalogLabel(item)} ${item.catalogId}`.toLocaleLowerCase();
     return matchesKind && label.includes(query.trim().toLocaleLowerCase());
   });
+  const virtualized = filteredCatalog.length > 30;
+  const firstRenderedCatalogIndex = virtualized
+    ? Math.max(0, Math.floor(catalogScrollTop / CATALOG_ROW_HEIGHT) - CATALOG_OVERSCAN)
+    : 0;
+  const renderedCatalog = virtualized
+    ? filteredCatalog.slice(
+        firstRenderedCatalogIndex,
+        firstRenderedCatalogIndex + CATALOG_VIEWPORT_ROWS + CATALOG_OVERSCAN * 2
+      )
+    : filteredCatalog;
 
-  const commitDraft = (next: HomeWidgetPreference[]) => {
-    setHistory((current) => [...current.slice(-19), draft]);
-    setDraft(next);
-  };
-  const undo = () => {
-    const previous = history.at(-1);
-    if (!previous) return;
-    setDraft(previous);
-    setHistory((current) => current.slice(0, -1));
-  };
-  const reset = () => {
-    if (homeStudioWidgetsEqual(draft, baseline)) return;
-    setHistory((current) => [...current.slice(-19), draft]);
-    setDraft(baseline);
-  };
+  useEffect(() => {
+    setCatalogScrollTop(0);
+  }, [filter, query]);
+
   const save = () => {
-    if (!view || !dirty || busy) return;
-    onSave(draft);
+    if (!view || baseVersion === null || !dirty || busy) return;
+    onSave(draft, baseVersion);
   };
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
@@ -350,7 +231,7 @@ export function HomeLayoutStudioWorkbench({
           intent="quiet"
           size="small"
           startIcon={<Undo2 size={16} />}
-          disabled={history.length === 0 || busy}
+          disabled={!canUndo || busy}
           onClick={undo}
           sx={{ minHeight: 44 }}
         >
@@ -381,18 +262,32 @@ export function HomeLayoutStudioWorkbench({
     </Stack>
   );
 
+  const nativeDraft = draft.filter((widget): widget is HomeWidgetPreference =>
+    isNativeWidgetKey(widget.widgetKey)
+  );
+  const unsupportedDraft = draft.filter((widget) => !isNativeWidgetKey(widget.widgetKey));
+  const projectionCatalog = catalog.filter(({ kind }) => kind === 'projection');
   const columns = [
-    draft.filter((widget) => widget.visible && [0, 3, 6].includes(draft.indexOf(widget))),
-    draft.filter((widget) => widget.visible && [1, 4].includes(draft.indexOf(widget))),
-    draft.filter((widget) => widget.visible && [2, 5].includes(draft.indexOf(widget))),
+    nativeDraft.filter(
+      (widget) => widget.visible && [0, 3, 6].includes(nativeDraft.indexOf(widget))
+    ),
+    nativeDraft.filter((widget) => widget.visible && [1, 4].includes(nativeDraft.indexOf(widget))),
+    nativeDraft.filter((widget) => widget.visible && [2, 5].includes(nativeDraft.indexOf(widget))),
   ] as const;
 
   return (
     <Box
       data-testid="home-layout-studio-workbench"
-      data-home-studio-catalog-count={HOME_STUDIO_CATALOG.length}
-      data-home-studio-native-count={HOME_WIDGET_REGISTRY.length}
-      data-home-studio-projection-count={HOME_STUDIO_CATALOG.length - HOME_WIDGET_REGISTRY.length}
+      data-home-studio-catalog-count={catalog.length}
+      data-home-studio-native-count={catalog.filter(({ kind }) => kind === 'native').length}
+      data-home-studio-projection-count={projectionCatalog.length}
+      data-home-studio-catalog-rendered-count={renderedCatalog.length}
+      data-home-studio-catalog-virtualized={virtualized ? 'true' : 'false'}
+      data-home-studio-catalog-mode={effectiveWidgetCatalog?.mode.toLowerCase() ?? 'static'}
+      data-home-studio-instance-cap={HOME_STUDIO_INSTANCE_CAP}
+      data-home-studio-instance-count={draft.length}
+      data-home-studio-native-instance-count={nativeDraft.length}
+      data-home-studio-unsupported-instance-count={unsupportedDraft.length}
       data-home-editor-focus-contract="dialog-trap-independent-panels-keyboard-save-close-restore"
       onKeyDown={handleKeyDown}
       sx={{
@@ -436,7 +331,7 @@ export function HomeLayoutStudioWorkbench({
             {t('layout.catalog.title')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {t('layout.catalog.count', { count: HOME_STUDIO_CATALOG.length })}
+            {t('layout.catalog.count', { count: catalog.length })}
           </Typography>
           <FormField
             fullWidth
@@ -469,50 +364,92 @@ export function HomeLayoutStudioWorkbench({
               </ActionButton>
             ))}
           </Stack>
-          <Stack gap={0.75}>
-            {filteredCatalog.map((item) => {
-              const Icon = item.icon;
-              const selectedItem = selectedKey === item.key;
-              return (
-                <ButtonBase
-                  key={item.key}
-                  data-home-studio-catalog-item={item.key}
-                  data-home-studio-catalog-id={item.catalogId}
-                  data-home-studio-renderer={item.kind}
-                  aria-pressed={selectedItem}
-                  onClick={() => setSelectedKey(item.key)}
-                  sx={{
-                    width: 1,
-                    minHeight: 52,
-                    p: 1,
-                    gap: 1,
-                    justifyContent: 'flex-start',
-                    textAlign: 'start',
-                    border: 1,
-                    borderColor: selectedItem ? 'primary.main' : 'divider',
-                    borderRadius: foundationTokens.home.radius.control,
-                    bgcolor: selectedItem ? 'action.selected' : 'background.paper',
-                  }}
-                >
-                  <Icon size={18} aria-hidden="true" />
-                  <Box minWidth={0} flex={1}>
-                    <Typography
-                      variant="body2"
-                      fontWeight={foundationTokens.home.typography.weightSemibold}
-                    >
-                      {t(`layout.catalog.items.${item.key}`)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {item.catalogId}
-                    </Typography>
-                  </Box>
-                  {item.kind === 'projection' && (
-                    <Chip size="small" label={t('layout.catalog.preview')} />
-                  )}
-                </ButtonBase>
-              );
-            })}
-          </Stack>
+          <Box
+            key={`${filter}:${query}`}
+            data-home-studio-catalog-viewport
+            tabIndex={virtualized ? 0 : undefined}
+            aria-label={virtualized ? t('layout.catalog.keyboardViewport') : undefined}
+            onScroll={(event) => setCatalogScrollTop(event.currentTarget.scrollTop)}
+            onKeyDown={(event) => {
+              if (!virtualized || event.target !== event.currentTarget) return;
+              const scrollTarget = event.currentTarget;
+              let nextScrollTop = scrollTarget.scrollTop;
+              if (event.key === 'Home') nextScrollTop = 0;
+              else if (event.key === 'End')
+                nextScrollTop = Math.max(0, scrollTarget.scrollHeight - scrollTarget.clientHeight);
+              else if (event.key === 'PageDown') nextScrollTop += scrollTarget.clientHeight;
+              else if (event.key === 'PageUp') nextScrollTop -= scrollTarget.clientHeight;
+              else return;
+              scrollTarget.scrollTop = nextScrollTop;
+              setCatalogScrollTop(nextScrollTop);
+              event.preventDefault();
+            }}
+            sx={{
+              height: virtualized ? CATALOG_ROW_HEIGHT * CATALOG_VIEWPORT_ROWS : 'auto',
+              overflowY: virtualized ? 'auto' : 'visible',
+            }}
+          >
+            <Box
+              sx={
+                virtualized
+                  ? { height: filteredCatalog.length * CATALOG_ROW_HEIGHT, position: 'relative' }
+                  : { display: 'flex', flexDirection: 'column', gap: 0.75 }
+              }
+            >
+              {renderedCatalog.map((item, renderedIndex) => {
+                const Icon = item.icon;
+                const selectedItem = selectedKey === item.key;
+                const catalogIndex = firstRenderedCatalogIndex + renderedIndex;
+                return (
+                  <ButtonBase
+                    key={item.key}
+                    data-home-studio-catalog-item={item.key}
+                    data-home-studio-catalog-id={item.catalogId}
+                    data-home-studio-renderer={item.kind}
+                    data-home-studio-effective-state={item.effectiveState}
+                    data-home-studio-reason-codes={item.reasonCodes?.join(',')}
+                    aria-pressed={selectedItem}
+                    onClick={() => setSelectedKey(item.key)}
+                    sx={{
+                      width: 1,
+                      height: 56,
+                      p: 1,
+                      gap: 1,
+                      justifyContent: 'flex-start',
+                      textAlign: 'start',
+                      border: 1,
+                      borderColor: selectedItem ? 'primary.main' : 'divider',
+                      borderRadius: foundationTokens.home.radius.control,
+                      bgcolor: selectedItem ? 'action.selected' : 'background.paper',
+                      ...(virtualized
+                        ? {
+                            position: 'absolute',
+                            top: catalogIndex * CATALOG_ROW_HEIGHT,
+                            insetInline: 0,
+                          }
+                        : {}),
+                    }}
+                  >
+                    <Icon size={18} aria-hidden="true" />
+                    <Box minWidth={0} flex={1}>
+                      <Typography
+                        variant="body2"
+                        fontWeight={foundationTokens.home.typography.weightSemibold}
+                      >
+                        {catalogLabel(item)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {item.catalogId}
+                      </Typography>
+                    </Box>
+                    {item.kind === 'projection' && (
+                      <Chip size="small" label={t('layout.catalog.preview')} />
+                    )}
+                  </ButtonBase>
+                );
+              })}
+            </Box>
+          </Box>
         </Box>
 
         <Box
@@ -538,112 +475,157 @@ export function HomeLayoutStudioWorkbench({
           >
             {t('layout.inspector.title')}
           </Typography>
-          <Typography
-            variant="body2"
-            fontWeight={foundationTokens.home.typography.weightBold}
-            sx={{ mt: 1.5 }}
-          >
-            {t(`layout.catalog.items.${selected.key}`)}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {selected.catalogId}
-          </Typography>
-          <Chip
-            size="small"
-            color={selected.kind === 'native' ? 'success' : 'default'}
-            label={t(`layout.inspector.${selected.kind}`)}
-            sx={{ mt: 0.75 }}
-          />
-          <Divider sx={{ my: 1.5 }} />
-          {(
-            [
-              'owner',
-              'source',
-              'permission',
-              'supportedWidths',
-              'dataBudget',
-              'targetRegion',
-            ] as const
-          ).map((field) => (
-            <Box key={field} data-home-studio-inspector-field={field} sx={{ mb: 1.25 }}>
-              <Typography variant="caption" color="text.secondary">
-                {t(`layout.inspector.${field}`)}
-              </Typography>
-              <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-                {selected[field]}
-              </Typography>
-            </Box>
-          ))}
-          {selected.kind === 'projection' ? (
-            <Box
-              sx={{
-                mt: 2,
-                p: 1.25,
-                bgcolor: 'warning.light',
-                borderRadius: foundationTokens.home.radius.control,
-              }}
-            >
-              <Typography
-                variant="caption"
-                color="warning.dark"
-                fontWeight={foundationTokens.home.typography.weightBold}
-              >
-                {t('layout.inspector.wave4Title')}
-              </Typography>
-              <Typography variant="body2">{t('layout.inspector.wave4Description')}</Typography>
-            </Box>
-          ) : (
+          {selected ? (
             <>
-              <Typography variant="caption" color="text.secondary">
-                {t('layout.inspector.order')}
-              </Typography>
-              <Stack direction="row" gap={0.5} sx={{ mt: 0.5 }}>
-                <ActionIconButton
-                  label={t('layout.actions.moveEarlier')}
-                  disabled={selectedIndex <= 0 || busy}
-                  onClick={() =>
-                    commitDraft(moveStudioWidget(draft, selected.key as HomeWidgetKey, -1))
-                  }
-                  sx={{ width: 44, height: 44 }}
-                >
-                  <ArrowUp size={17} />
-                </ActionIconButton>
-                <ActionIconButton
-                  label={t('layout.actions.moveLater')}
-                  disabled={selectedIndex < 0 || selectedIndex === draft.length - 1 || busy}
-                  onClick={() =>
-                    commitDraft(moveStudioWidget(draft, selected.key as HomeWidgetKey, 1))
-                  }
-                  sx={{ width: 44, height: 44 }}
-                >
-                  <ArrowDown size={17} />
-                </ActionIconButton>
-              </Stack>
               <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mt: 1.5 }}
+                variant="body2"
+                fontWeight={foundationTokens.home.typography.weightBold}
+                sx={{ mt: 1.5 }}
               >
-                {t('layout.inspector.visibility')}
+                {catalogLabel(selected)}
               </Typography>
-              <ActionButton
-                intent="secondary"
+              <Typography variant="caption" color="text.secondary">
+                {selected.catalogId}
+              </Typography>
+              <Chip
                 size="small"
-                disabled={!selectedPreference || busy}
-                onClick={() =>
-                  commitDraft(
-                    draft.map((widget) =>
-                      widget.widgetKey === selected.key
-                        ? { ...widget, visible: !widget.visible }
-                        : widget
-                    )
-                  )
-                }
-                sx={{ minHeight: 44, mt: 0.5 }}
-              >
-                {selectedPreference?.visible ? t('layout.actions.hide') : t('layout.actions.show')}
-              </ActionButton>
+                color={selected.kind === 'native' ? 'success' : 'default'}
+                label={t(`layout.inspector.${selected.kind}`)}
+                sx={{ mt: 0.75 }}
+              />
+              <Divider sx={{ my: 1.5 }} />
+              {(
+                [
+                  'owner',
+                  'source',
+                  'permission',
+                  'supportedWidths',
+                  'dataBudget',
+                  'targetRegion',
+                ] as const
+              ).map((field) => (
+                <Box key={field} data-home-studio-inspector-field={field} sx={{ mb: 1.25 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    {t(`layout.inspector.${field}`)}
+                  </Typography>
+                  <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
+                    {catalogFieldValue(selected, field)}
+                  </Typography>
+                </Box>
+              ))}
+              {(selected.kind === 'projection' || selectedUnavailable) && (
+                <Box
+                  data-home-studio-safe-placeholder={selected.catalogId}
+                  sx={{
+                    mt: 2,
+                    p: 1.25,
+                    bgcolor: 'warning.light',
+                    borderRadius: foundationTokens.home.radius.control,
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="warning.dark"
+                    fontWeight={foundationTokens.home.typography.weightBold}
+                  >
+                    {t('layout.inspector.wave4Title')}
+                  </Typography>
+                  <Typography variant="body2">{t('layout.inspector.wave4Description')}</Typography>
+                </Box>
+              )}
+              {selectedPreference ? (
+                <>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('layout.inspector.order')}
+                  </Typography>
+                  <Stack direction="row" gap={0.5} sx={{ mt: 0.5 }}>
+                    <ActionIconButton
+                      label={t('layout.actions.moveEarlier')}
+                      disabled={
+                        selectedUnavailable ||
+                        selected.canMove === false ||
+                        selectedIndex <= 0 ||
+                        busy
+                      }
+                      onClick={() => commitDraft(moveStudioWidget(draft, selected.key, -1))}
+                      sx={{ width: 44, height: 44 }}
+                    >
+                      <ArrowUp size={17} />
+                    </ActionIconButton>
+                    <ActionIconButton
+                      label={t('layout.actions.moveLater')}
+                      disabled={
+                        selectedUnavailable ||
+                        selected.canMove === false ||
+                        selectedIndex < 0 ||
+                        selectedIndex === draft.length - 1 ||
+                        busy
+                      }
+                      onClick={() => commitDraft(moveStudioWidget(draft, selected.key, 1))}
+                      sx={{ width: 44, height: 44 }}
+                    >
+                      <ArrowDown size={17} />
+                    </ActionIconButton>
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mt: 1.5 }}
+                  >
+                    {t('layout.inspector.visibility')}
+                  </Typography>
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    disabled={
+                      selectedUnavailable ||
+                      selected.canHide === false ||
+                      (!selectedPreference.visible &&
+                        selectedRuntimeDecision?.canRestore === false) ||
+                      busy
+                    }
+                    onClick={() =>
+                      commitDraft(
+                        draft.map((widget) =>
+                          widget.widgetKey === selected.key
+                            ? { ...widget, visible: !widget.visible }
+                            : widget
+                        )
+                      )
+                    }
+                    sx={{ minHeight: 44, mt: 0.5 }}
+                  >
+                    {selectedPreference.visible
+                      ? t('layout.actions.hide')
+                      : t('layout.actions.show')}
+                  </ActionButton>
+                </>
+              ) : (
+                <ActionButton
+                  intent="primary"
+                  size="small"
+                  disabled={!selectedCanAdd || busy}
+                  onClick={() =>
+                    commitDraft([
+                      ...draft,
+                      {
+                        widgetKey: selected.key,
+                        visible: true,
+                        size: 'compact',
+                        height: 'standard',
+                      },
+                    ])
+                  }
+                  sx={{ minHeight: 44, mt: 1.5 }}
+                >
+                  {t('layout.actions.add')}
+                </ActionButton>
+              )}
             </>
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+              {t('layout.catalog.empty')}
+            </Typography>
           )}
         </Box>
 
@@ -755,10 +737,57 @@ export function HomeLayoutStudioWorkbench({
               </Stack>
             ))}
           </Box>
+          {unsupportedDraft.length > 0 && (
+            <Box
+              component="section"
+              aria-label={t('layout.canvas.unsupportedInstances')}
+              data-home-studio-unsupported-instances={unsupportedDraft.length}
+              sx={{
+                mt: 1.5,
+                p: 1.25,
+                border: 1,
+                borderColor: 'warning.main',
+                borderRadius: foundationTokens.home.radius.compactCard,
+              }}
+            >
+              <Typography
+                variant="subtitle2"
+                fontWeight={foundationTokens.home.typography.weightEmphasis}
+              >
+                {t('layout.canvas.unsupportedInstances')}
+              </Typography>
+              <Stack gap={0.75} sx={{ mt: 1 }}>
+                {unsupportedDraft.map((widget) => (
+                  <Box
+                    key={widget.widgetKey}
+                    data-home-studio-unsupported-instance={widget.widgetKey}
+                    data-home-studio-unsupported-visible={widget.visible ? 'true' : 'false'}
+                    sx={{
+                      p: 1,
+                      bgcolor: 'action.disabledBackground',
+                      borderRadius: foundationTokens.home.radius.control,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      fontWeight={foundationTokens.home.typography.weightBold}
+                    >
+                      {widget.widgetKey}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('layout.canvas.unsupportedPreserved')}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          )}
           <Box
             component="section"
             aria-label={t('layout.canvas.projectionPreview')}
             data-home-studio-projection-preview
+            data-home-studio-projection-total={projectionCatalog.length}
+            data-home-studio-projection-rendered={Math.min(5, projectionCatalog.length)}
             sx={{
               mt: 1.5,
               p: 1.25,
@@ -784,7 +813,7 @@ export function HomeLayoutStudioWorkbench({
                 mt: 1,
               }}
             >
-              {HOME_STUDIO_CATALOG.filter(({ kind }) => kind === 'projection').map((item) => (
+              {projectionCatalog.slice(0, 5).map((item) => (
                 <Box
                   key={item.key}
                   data-home-studio-projection-placeholder={item.catalogId}

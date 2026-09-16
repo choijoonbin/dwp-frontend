@@ -237,8 +237,7 @@ export function HomeProfilesSection({
                     size="small"
                     intent="quiet"
                     onClick={() => onEdit(view)}
-                    disabled={busy || !view.isDefault}
-                    title={!view.isDefault ? t('profiles.activateBeforeEdit') : undefined}
+                    disabled={busy}
                   >
                     {t('profiles.edit')}
                   </ActionButton>

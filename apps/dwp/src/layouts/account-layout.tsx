@@ -54,7 +54,9 @@ function AccountNavigation({
           <List disablePadding sx={{ display: 'grid', gap: 0.25, px: compact ? 1 : 1.25 }}>
             {group.items.map((item) => {
               const Icon = item.icon;
-              const selected = pathname === item.path;
+              const selected =
+                pathname === item.path ||
+                (item.path === '/account/settings/home' && pathname.startsWith(`${item.path}/`));
 
               const label = t(`navigation.${item.key}`);
               return (

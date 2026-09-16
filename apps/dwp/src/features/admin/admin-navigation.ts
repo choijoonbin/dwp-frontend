@@ -7,8 +7,6 @@ import {
   Database,
   FolderTree,
   Fingerprint,
-  Image,
-  LayoutGrid,
   KeyRound,
   PlugZap,
   ScrollText,
@@ -21,7 +19,6 @@ import {
   Network,
   Languages,
   LibraryBig,
-  PanelTop,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
@@ -86,20 +83,10 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
       {
         section: 'experience',
         view: 'home-experience',
-        path: '/admin/experience/home-experience',
-        icon: Image,
-      },
-      {
-        section: 'experience',
-        view: 'home-composition',
-        path: '/admin/experience/home-composition',
-        icon: PanelTop,
-      },
-      {
-        section: 'experience',
-        view: 'home-apps',
-        path: '/admin/experience/home-apps',
-        icon: LayoutGrid,
+        path: '/admin/experience/home',
+        icon: AppWindow,
+        requiredResourceKey: 'ADMIN.HOME_EXPERIENCE',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'experience',

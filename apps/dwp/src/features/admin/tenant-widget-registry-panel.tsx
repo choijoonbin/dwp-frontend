@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useId, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { History, Search, ShieldCheck } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -50,6 +50,10 @@ const STATE_PRIORITY: Record<EffectiveWidgetCatalogItem['effectiveState'], numbe
   AVAILABLE: 1,
 };
 
+const CATALOG_ROW_HEIGHT = 76;
+const CATALOG_VIEWPORT_HEIGHT = CATALOG_ROW_HEIGHT * 8;
+const CATALOG_OVERSCAN = 3;
+
 export function tenantCatalogRows(catalog: EffectiveWidgetCatalog | undefined): TenantCatalogRow[] {
   const rows = new Map<string, TenantCatalogRow>();
   catalog?.contexts.forEach((context) => {
@@ -90,6 +94,8 @@ export function TenantWidgetRegistryPanel({ onOpenPolicy }: { onOpenPolicy: () =
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
   const [selectedId, setSelectedId] = useState('');
+  const [catalogScrollTop, setCatalogScrollTop] = useState(0);
+  const catalogViewportRef = useRef<HTMLDivElement | null>(null);
   const readinessQuery = useQuery({
     queryKey: ['widget-registry', 'readiness', 'tenant-admin'],
     queryFn: getWidgetRegistryReadiness,
@@ -104,16 +110,37 @@ export function TenantWidgetRegistryPanel({ onOpenPolicy }: { onOpenPolicy: () =
     staleTime: 30_000,
     retry: 1,
   });
+  const catalogItems = useMemo(() => tenantCatalogRows(catalogQuery.data), [catalogQuery.data]);
   const items = useMemo(
     () =>
-      tenantCatalogRows(catalogQuery.data).filter((item) => {
+      catalogItems.filter((item) => {
         if (!deferredQuery) return true;
         return `${item.definitionKey} ${item.semanticVersion} ${item.reasonCodes.join(' ')}`
           .toLocaleLowerCase()
           .includes(deferredQuery);
       }),
-    [catalogQuery.data, deferredQuery]
+    [catalogItems, deferredQuery]
   );
+  const firstRenderedIndex = Math.max(
+    0,
+    Math.floor(catalogScrollTop / CATALOG_ROW_HEIGHT) - CATALOG_OVERSCAN
+  );
+  const virtualized = items.length > 30;
+  const renderedItems = virtualized
+    ? items.slice(
+        firstRenderedIndex,
+        Math.min(
+          items.length,
+          firstRenderedIndex +
+            Math.ceil(CATALOG_VIEWPORT_HEIGHT / CATALOG_ROW_HEIGHT) +
+            CATALOG_OVERSCAN * 2
+        )
+      )
+    : items;
+  useEffect(() => {
+    setCatalogScrollTop(0);
+    if (catalogViewportRef.current) catalogViewportRef.current.scrollTop = 0;
+  }, [deferredQuery]);
   useEffect(() => {
     if (items.some((item) => item.definitionId === selectedId)) return;
     setSelectedId(items[0]?.definitionId ?? '');
@@ -176,8 +203,66 @@ export function TenantWidgetRegistryPanel({ onOpenPolicy }: { onOpenPolicy: () =
   }
 
   const shadow = true;
+  const catalogList = (
+    <List
+      disablePadding
+      aria-label={t('homeWidgets.catalog.listLabel')}
+      sx={{
+        ...(virtualized ? { position: 'relative', height: items.length * CATALOG_ROW_HEIGHT } : {}),
+        borderInlineEnd: { md: 1 },
+        borderColor: 'divider',
+      }}
+    >
+      {renderedItems.map((item, renderedIndex) => (
+        <ListItem
+          key={item.definitionId}
+          disablePadding
+          sx={
+            virtualized
+              ? {
+                  position: 'absolute',
+                  insetInline: 0,
+                  top: (firstRenderedIndex + renderedIndex) * CATALOG_ROW_HEIGHT,
+                  height: CATALOG_ROW_HEIGHT,
+                }
+              : undefined
+          }
+        >
+          <ListItemButton
+            selected={item.definitionId === selected?.definitionId}
+            aria-label={item.definitionKey}
+            aria-current={item.definitionId === selected?.definitionId ? 'true' : undefined}
+            aria-controls={detailId}
+            onClick={() => {
+              setSelectedId(item.definitionId);
+              revealDetail(detailId, headingId);
+            }}
+            sx={{ minHeight: 76, borderBottom: 1, borderColor: 'divider' }}
+          >
+            <ListItemText
+              primary={item.definitionKey}
+              secondary={item.semanticVersion || t('homeWidgets.controlPlane.unresolved')}
+              primaryTypographyProps={{ variant: 'subtitle2' }}
+              secondaryTypographyProps={{ variant: 'caption' }}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(`homeWidgets.controlPlane.effective.${item.effectiveState}`)}
+            />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
   return (
-    <Stack gap={2.5} data-widget-control-plane-mode={connection.reason.toLowerCase()}>
+    <Stack
+      gap={2.5}
+      data-widget-control-plane-mode={connection.reason.toLowerCase()}
+      data-widget-catalog-size={catalogItems.length}
+      data-widget-catalog-visible-count={items.length}
+      data-widget-catalog-rendered-count={renderedItems.length}
+    >
       <InlineFeedback
         icon={<ShieldCheck size={19} />}
         severity={shadow ? 'warning' : 'info'}
@@ -233,39 +318,37 @@ export function TenantWidgetRegistryPanel({ onOpenPolicy }: { onOpenPolicy: () =
             borderColor: 'divider',
           }}
         >
-          <List
-            disablePadding
-            aria-label={t('homeWidgets.catalog.listLabel')}
-            sx={{ borderInlineEnd: { md: 1 }, borderColor: 'divider' }}
-          >
-            {items.map((item) => (
-              <ListItem key={item.definitionId} disablePadding>
-                <ListItemButton
-                  selected={item.definitionId === selected?.definitionId}
-                  aria-label={item.definitionKey}
-                  aria-current={item.definitionId === selected?.definitionId ? 'true' : undefined}
-                  aria-controls={detailId}
-                  onClick={() => {
-                    setSelectedId(item.definitionId);
-                    revealDetail(detailId, headingId);
-                  }}
-                  sx={{ minHeight: 76, borderBottom: 1, borderColor: 'divider' }}
-                >
-                  <ListItemText
-                    primary={item.definitionKey}
-                    secondary={item.semanticVersion || t('homeWidgets.controlPlane.unresolved')}
-                    primaryTypographyProps={{ variant: 'subtitle2' }}
-                    secondaryTypographyProps={{ variant: 'caption' }}
-                  />
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    label={t(`homeWidgets.controlPlane.effective.${item.effectiveState}`)}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+          {virtualized ? (
+            <Box
+              ref={catalogViewportRef}
+              data-widget-catalog-virtualized="true"
+              tabIndex={0}
+              aria-label={t('homeWidgets.catalog.keyboardViewport')}
+              onScroll={(event) => setCatalogScrollTop(event.currentTarget.scrollTop)}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+                const scrollTarget = event.currentTarget;
+                let nextScrollTop = scrollTarget.scrollTop;
+                if (event.key === 'Home') nextScrollTop = 0;
+                else if (event.key === 'End')
+                  nextScrollTop = Math.max(
+                    0,
+                    scrollTarget.scrollHeight - scrollTarget.clientHeight
+                  );
+                else if (event.key === 'PageDown') nextScrollTop += scrollTarget.clientHeight;
+                else if (event.key === 'PageUp') nextScrollTop -= scrollTarget.clientHeight;
+                else return;
+                scrollTarget.scrollTop = nextScrollTop;
+                setCatalogScrollTop(nextScrollTop);
+                event.preventDefault();
+              }}
+              sx={{ maxHeight: CATALOG_VIEWPORT_HEIGHT, overflowY: 'auto' }}
+            >
+              {catalogList}
+            </Box>
+          ) : (
+            catalogList
+          )}
           {selected && (
             <TenantWidgetRegistryDetail
               detailId={detailId}

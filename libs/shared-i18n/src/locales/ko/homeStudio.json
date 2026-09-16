@@ -3,6 +3,7 @@
   "description": "업무 맥락은 유지하고, 홈의 구성과 표현만 나에게 맞게 조정합니다.",
   "close": "홈 스튜디오 닫기",
   "sections": {
+    "overview": "개요",
     "mode": "홈 모드",
     "layout": "레이아웃 스튜디오",
     "profiles": "내 홈",
@@ -12,6 +13,21 @@
     "templates": "템플릿",
     "history": "버전 기록",
     "ai": "AI 구성 제안"
+  },
+  "overview": {
+    "title": "홈 설정 개요",
+    "description": "현재 모드, 사용 중인 홈, 기기 동기화 상태와 다음 개인화 작업을 확인합니다.",
+    "mode": "현재 모드",
+    "activeView": "사용 중인 홈",
+    "sync": "동기화",
+    "syncing": "동기화 중",
+    "synchronized": "최신 상태",
+    "deviceSummary_one": "사용 중인 홈에 기기 레이아웃 {{count}}개가 동기화되었습니다.",
+    "deviceSummary_other": "사용 중인 홈에 기기 레이아웃 {{count}}개가 동기화되었습니다.",
+    "modes": {
+      "CLASSIC": "클래식",
+      "FLOW_V1": "플로우"
+    }
   },
   "common": {
     "retry": "다시 시도",
@@ -184,6 +200,7 @@
   "ai": {
     "title": "AI Workstyle Composer",
     "description": "업무 원문 없이 현재 배치와 허용된 신호만 사용해 변경안을 제안합니다.",
+    "unavailable": "조직 정책으로 AI 제안을 사용할 수 없습니다. 저장된 홈과 기기별 배치는 계속 사용할 수 있습니다.",
     "focus": "마감 업무에 집중",
     "balance": "오늘 흐름 균형",
     "noise": "방해 요소 줄이기",
@@ -295,6 +312,8 @@
       "title": "위젯 카탈로그",
       "count": "호환 위젯 {{count}}종",
       "search": "위젯 검색",
+      "keyboardViewport": "위젯 카탈로그 결과입니다. Page Up, Page Down, Home, End 키로 탐색하세요.",
+      "empty": "이 홈 모드에서 사용할 수 있는 위젯이 없습니다.",
       "preview": "연결 예정",
       "filters": {
         "all": "전체",
@@ -319,7 +338,7 @@
     "inspector": {
       "title": "선택 위젯 속성",
       "native": "현재 사용 가능",
-      "projection": "Wave 4 연결 예정",
+      "projection": "안전한 대체 표시",
       "owner": "소유 제품",
       "source": "데이터 원천",
       "permission": "필요 권한",
@@ -328,12 +347,42 @@
       "targetRegion": "대상 영역·배치",
       "order": "키보드·화면 순서",
       "visibility": "표시 상태",
-      "wave4Title": "안전한 프로토타입 경계",
-      "wave4Description": "이 항목은 현재 저장·실행하지 않으며 Wave 4 제공자 계약이 활성화되면 등록됩니다."
+      "wave4Title": "안전한 렌더러 경계",
+      "wave4Description": "정의와 권한 판정은 서버 카탈로그를 따르며, 신뢰된 렌더러를 사용할 수 있을 때까지 콘텐츠를 실행하지 않고 안전하게 대체 표시합니다.",
+      "registry": {
+        "owner": "레지스트리 소유자 · {{owner}}",
+        "version": "레지스트리 버전 {{version}}",
+        "unresolved": "호환되는 렌더러 버전 없음",
+        "permission": "유효 판정 · {{reasons}}",
+        "resizable": "레지스트리 계약에서 너비 제어",
+        "fixed": "제공자 계약에서 너비 고정",
+        "dataBudget": "서버 유효 카탈로그 · 안전한 대체 표시",
+        "target": "개인 홈 · {{state}}",
+        "states": {
+          "AVAILABLE": "사용 가능",
+          "ALREADY_ADDED": "이미 추가됨",
+          "DEPRECATED": "지원 중단 예정",
+          "DENY": "사용 불가",
+          "UNKNOWN": "상태를 확인할 수 없음"
+        },
+        "reasons": {
+          "NOT_AVAILABLE": "사용할 수 없음",
+          "DISABLED_BY_ORGANIZATION": "조직 정책으로 비활성화됨",
+          "APP_ACCESS_REQUIRED": "원본 앱 접근 권한 필요",
+          "INCOMPATIBLE": "현재 홈 호스트와 호환되지 않음",
+          "TEMPORARILY_UNAVAILABLE": "일시적으로 사용할 수 없음",
+          "DEPRECATED": "신규 배치가 중단됨",
+          "AVAILABLE": "추가 가능",
+          "ALREADY_ADDED": "홈에 이미 추가됨",
+          "UNKNOWN": "사용 가능 여부를 확인할 수 없음"
+        }
+      }
     },
     "canvas": {
       "title": "3영역 실시간 캔버스",
       "description": "실제 7개 렌더러 · 데스크톱 38% / 34% / 28%",
+      "unsupportedInstances": "보존된 위젯 인스턴스",
+      "unsupportedPreserved": "지원하지 않는 렌더러를 실행하지 않고 저장된 인스턴스를 그대로 보존합니다.",
       "projectionPreview": "향후 위젯 배치 미리보기",
       "projectionPreviewDescription": "Wave 4 제공자 연결 전에는 표시 위치만 확인할 수 있으며 실행과 저장은 차단됩니다."
     },
@@ -347,6 +396,7 @@
       "undo": "실행 취소",
       "reset": "초기화",
       "save": "레이아웃 저장",
+      "add": "홈에 추가",
       "moveEarlier": "앞으로 이동",
       "moveLater": "뒤로 이동",
       "hide": "숨기기",
