@@ -1,3 +1,5 @@
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+
 import type { OwnerWidgetDefinitionKey } from './owner-widget-contracts';
 import type {
   OwnerApprovalItem,
@@ -218,7 +220,7 @@ function notificationCounter(value: unknown): OwnerNotificationCounter | null {
 }
 
 function localeIsKorean(locale: string | undefined): boolean {
-  return locale?.trim().toLowerCase().startsWith('ko') ?? false;
+  return resolveSupportedLocale(locale) === 'ko';
 }
 
 function localized(primary: string | null, fallback: string | null): string | null {

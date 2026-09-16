@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
+import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -93,10 +94,14 @@ function boundedItemBudget(value: number | undefined): number {
 }
 
 function formatTimestamp(value: string, locale?: string): string {
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(value));
+  return formatDate(
+    value,
+    {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    },
+    locale
+  );
 }
 
 function metrics(widget: NormalizedOwnerWidget): readonly Metric[] {
@@ -288,9 +293,11 @@ function rows(
 function MetricGrid({
   values,
   label,
+  locale,
 }: {
   values: readonly Metric[];
   label: OwnerWidgetLabelResolver;
+  locale?: string;
 }) {
   if (values.length === 0) return null;
   return (
@@ -318,7 +325,7 @@ function MetricGrid({
             variant="subtitle2"
             sx={{ m: 0, fontWeight: foundationTokens.home.typography.weightEmphasis }}
           >
-            {metric.value.toLocaleString()}
+            {formatNumber(metric.value, undefined, locale)}
           </Typography>
           <Typography component="dt" variant="caption" color="text.secondary" sx={{ m: 0 }}>
             {label(metric.label)}
@@ -431,7 +438,7 @@ export function OwnerWidgetRenderer({
           {label(`ownerWidgets.title.${widget.definitionKey}`)}
         </Typography>
       </Stack>
-      <MetricGrid values={values} label={label} />
+      <MetricGrid values={values} label={label} locale={locale} />
       <ItemList values={visibleRows} />
       {values.length === 0 && visibleRows.length === 0 && (
         <Typography variant="body2" color="text.secondary" role="status">
