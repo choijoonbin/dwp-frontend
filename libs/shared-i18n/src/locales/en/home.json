@@ -177,7 +177,7 @@
     },
     "widget-error": {
       "title": "This widget could not be displayed",
-      "description": "{{widget}} stopped safely. The rest of Home remains available."
+      "description": "The affected widget stopped safely. The rest of Home remains available."
     },
     "dirty": {
       "title": "You have unsaved Home changes",

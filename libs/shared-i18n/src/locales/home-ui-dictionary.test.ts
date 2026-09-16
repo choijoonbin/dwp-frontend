@@ -79,4 +79,15 @@ describe('Home purpose UI dictionaries', () => {
     expect(koHome.flow.conflict.closeDialog).toBe('충돌 대화상자 닫기');
     expect(enHome.flow.conflict.closeDialog).toBe('Close conflict dialog');
   });
+
+  it('keeps generic widget failure copy privacy-safe without an interpolation token', () => {
+    expect(enHome.states['widget-error'].description).toBe(
+      'The affected widget stopped safely. The rest of Home remains available.'
+    );
+    expect(koHome.states['widget-error'].description).toBe(
+      '문제가 발생한 위젯만 안전하게 중단되었습니다. 홈의 다른 영역은 계속 사용할 수 있습니다.'
+    );
+    expect(enHome.states['widget-error'].description).not.toContain('{{');
+    expect(koHome.states['widget-error'].description).not.toContain('{{');
+  });
 });

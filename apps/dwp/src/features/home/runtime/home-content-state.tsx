@@ -216,10 +216,8 @@ type HomeWidgetErrorBoundaryProps = Readonly<{
 type HomeWidgetErrorBoundaryState = Readonly<{ error: Error | null }>;
 
 function HomeWidgetCrashFallback({
-  widgetKey,
   onRetry,
 }: {
-  widgetKey: string;
   onRetry: () => void;
 }) {
   const { t } = useTranslation('home');
@@ -227,7 +225,7 @@ function HomeWidgetCrashFallback({
     <HomeContentState
       kind="widget-error"
       title={t('states.widget-error.title')}
-      description={t('states.widget-error.description', { widget: widgetKey })}
+      description={t('states.widget-error.description')}
       actionLabel={t('states.retry')}
       onAction={onRetry}
     />
@@ -259,7 +257,7 @@ export class HomeWidgetErrorBoundary extends Component<
 
   render() {
     if (this.state.error) {
-      return <HomeWidgetCrashFallback widgetKey={this.props.widgetKey} onRetry={this.retry} />;
+      return <HomeWidgetCrashFallback onRetry={this.retry} />;
     }
     return this.props.children;
   }

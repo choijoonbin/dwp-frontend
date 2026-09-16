@@ -105,6 +105,9 @@ describe('OwnerWidgetRuntimeBoundary', () => {
     );
     expect(retryable).toContain('data-home-content-state="widget-error"');
     expect(retryable).toContain('<button');
+    expect(retryable).not.toContain('{{widget}}');
+    expect(retryable).not.toContain('approval.focus-queue');
+    expect(retryable).not.toContain('APPROVAL_HOME');
     expect(fixed).toContain('data-home-content-state="widget-error"');
     expect(fixed).not.toContain('<button');
   });

@@ -63,6 +63,14 @@ describe('Home content state contract', () => {
     expect(resolveHomeContentStateSemantics('conflict').role).toBe('alert');
   });
 
+  it('renders a generic widget failure without requiring an internal widget identifier', () => {
+    const markup = renderToStaticMarkup(
+      createElement(HomeContentState, { kind: 'widget-error' })
+    );
+    expect(markup).not.toContain('{{widget}}');
+    expect(markup).not.toContain('fixture.widget');
+  });
+
   it('attributes partial and stale evidence to sources and last success time', () => {
     const markup = renderToStaticMarkup(
       createElement(HomeContentState, {
@@ -100,6 +108,8 @@ describe('Home content state contract', () => {
       });
 
       expect(host.querySelector('[data-home-content-state="widget-error"]')).not.toBeNull();
+      expect(host.textContent).not.toContain('{{widget}}');
+      expect(host.textContent).not.toContain('fixture.widget');
       expect(host.querySelector('[data-safe-sibling]')?.textContent).toBe(
         'Verified sibling content'
       );
