@@ -558,11 +558,13 @@ describe('axiosInstance browser session contract', () => {
     const revalidated = await sessionHttp.getConditional('/api/private-home', loaded.snapshot);
 
     expect(loaded).toEqual({
+      headers: first.headers,
       snapshot: { data: privateData, etag: '"authority-revision-7"' },
       status: 200,
       notModified: false,
     });
     expect(revalidated).toEqual({
+      headers: notModified.headers,
       snapshot: loaded.snapshot,
       status: 304,
       notModified: true,
