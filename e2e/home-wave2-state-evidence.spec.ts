@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  captureConsoleMessages,
+  collectReducedMotionEvidence,
   expectNoHorizontalOverflow,
   expectNoSeriousAccessibilityViolations,
   tabTo,
@@ -652,15 +654,7 @@ test('C15 dirty editing remains visible and keyboard reachable on desktop and mo
 });
 
 test('C16 an actual 409 shows the conflict dialog and preserves the draft', async ({ page }) => {
-  const missingCloseLabelWarnings: string[] = [];
-  page.on('console', (message) => {
-    if (
-      ['warning', 'error'].includes(message.type()) &&
-      message.text().includes('flow.conflict.closeDialog')
-    ) {
-      missingCloseLabelWarnings.push(message.text());
-    }
-  });
+  const missingCloseLabelWarnings = captureConsoleMessages(page, ['flow.conflict.closeDialog']);
   const cases = [
     ['C16-D1440-SAVE-CONFLICT-r02', 'HOME_STATE_CONFLICT_DESKTOP', false],
     ['C16-M390-SAVE-CONFLICT-r02', 'HOME_STATE_CONFLICT_MOBILE', true],
@@ -858,12 +852,11 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
 });
 
 test('C18 keeps the real Home keyboard path and disables motion', async ({ page }) => {
-  const unexpectedRouterWarnings: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'warning' && message.text().includes('blocker on a POP navigation')) {
-      unexpectedRouterWarnings.push(message.text());
-    }
-  });
+  const unexpectedRouterWarnings = captureConsoleMessages(
+    page,
+    ['blocker on a POP navigation'],
+    ['warning']
+  );
   const fixtureId = 'HOME_SPEC_ACCESSIBILITY_SPEC';
   await page.unroute(OVERVIEW_ROUTE);
   await routeOverview(page, freshOverview());
@@ -912,45 +905,7 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   const conflictDialog = page.getByRole('dialog');
   await expect(conflictDialog).toBeVisible();
 
-  const motion = await page.evaluate(() => {
-    const seconds = (value: string) =>
-      value.split(',').some((part) => {
-        const duration = Number.parseFloat(part);
-        return part.trim().endsWith('ms') ? duration > 1 : duration > 0.001;
-      });
-    const candidates = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        '[data-testid="personal-home-shell"], [data-testid="personal-home-shell"] *, .MuiDialog-root, .MuiDialog-root *'
-      )
-    );
-    const offenders = candidates
-      .filter((element) => {
-        const style = getComputedStyle(element);
-        return (
-          (style.animationName !== 'none' && seconds(style.animationDuration)) ||
-          seconds(style.transitionDuration)
-        );
-      })
-      .map((element) => ({
-        tag: element.tagName,
-        testId: element.dataset.testid ?? null,
-        className: typeof element.className === 'string' ? element.className : null,
-      }));
-    return {
-      reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
-      offenders,
-      smoothScroll: [document.documentElement, document.body].some(
-        (element) => getComputedStyle(element).scrollBehavior === 'smooth'
-      ),
-      autoRotatingCarousels: Array.from(
-        document.querySelectorAll('[data-news-auto-rotation]')
-      ).filter(
-        (carousel) => carousel.getAttribute('data-news-auto-rotation') !== 'paused-reduced-motion'
-      ).length,
-      shellVisible: Boolean(document.querySelector('[data-testid="personal-home-shell"]')),
-      dialogVisible: Boolean(document.querySelector('.MuiDialog-root [role="dialog"]')),
-    };
-  });
+  const motion = await collectReducedMotionEvidence(page);
   expect(motion).toEqual({
     reduce: true,
     offenders: [],

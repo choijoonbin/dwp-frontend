@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  captureConsoleMessages,
   expectMinimumTouchTargets,
   expectNoSeriousAccessibilityViolations,
 } from './support/accessibility';
@@ -20,7 +21,6 @@ import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-sess
 import type { Locator, Page } from '@playwright/test';
 
 const FIXED_NOW = HOME_WAVE2_FIXED_NOW;
-
 test.setTimeout(120_000);
 
 const CLASSIC_MOBILE_NAVIGATION = [
@@ -698,12 +698,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
 test('Flow Studio owns panel scrolling, traps focus, and restores the launch point', async ({
   page,
 }) => {
-  const unsafeSelectorWarnings: string[] = [];
-  page.on('console', (message) => {
-    if (['warning', 'error'].includes(message.type()) && message.text().includes(':first-child')) {
-      unsafeSelectorWarnings.push(message.text());
-    }
-  });
+  const unsafeSelectorWarnings = captureConsoleMessages(page, [':first-child']);
   test.info().annotations.push({
     type: 'canonical-fixture',
     description: 'WAVE2_FLOW-EDITOR-DESKTOP',
