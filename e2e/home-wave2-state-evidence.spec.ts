@@ -858,6 +858,12 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
 });
 
 test('C18 keeps the real Home keyboard path and disables motion', async ({ page }) => {
+  const unexpectedRouterWarnings: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'warning' && message.text().includes('blocker on a POP navigation')) {
+      unexpectedRouterWarnings.push(message.text());
+    }
+  });
   const fixtureId = 'HOME_SPEC_ACCESSIBILITY_SPEC';
   await page.unroute(OVERVIEW_ROUTE);
   await routeOverview(page, freshOverview());
@@ -869,7 +875,8 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await expect(skipLink).toBeVisible();
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('personal-home-main')).toBeFocused();
-  await page.goto('/');
+  await skipLink.focus();
+  await expect(skipLink).toBeFocused();
   const modeControl = page.getByTestId('desktop-navigation-toggle');
   await tabTo(page, modeControl, 8);
   await page.keyboard.press('Enter');
@@ -957,6 +964,12 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
     contentType: 'application/json',
   });
   await captureViewportInteraction(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', 'body');
+  await conflictDialog.getByRole('button', { name: '계속 편집' }).click();
+  await conflictToolbar.getByRole('button', { name: '균형', exact: true }).click({ force: true });
+  await expect(conflictToolbar).not.toHaveAttribute('data-home-content-state', 'dirty');
+  await conflictToolbar.getByRole('button', { name: '변경 취소' }).click({ force: true });
+  await expect(conflictToolbar).toHaveCount(0);
+  expect(unexpectedRouterWarnings).toEqual([]);
   await page.goto('/home-wave2-state-spec.html?board=c18');
   const spec = page.getByTestId('home-wave2-c18-spec');
   await expect(spec).toBeVisible();
@@ -967,6 +980,7 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await expect(spec).toContainText(/Standard Motion vs Reduced Motion/u);
   await expect(spec).toContainText(/Single Document Scroll & Geometry/u);
   await captureEvidence(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', fixtureId, 'body');
+  expect(unexpectedRouterWarnings).toEqual([]);
 });
 test('the canonical state sheet renders all nine production primitives', async ({ page }) => {
   const fixtureId = 'HOME_STATE_ALL_STATES_DESKTOP';

@@ -41,7 +41,8 @@ export function useHomeEditorSafety({
   }, [editorOpen, onRequestCancel, overlayOpen]);
 
   return useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      draftDirty && currentLocation.pathname !== nextLocation.pathname
+    editorOpen && draftDirty
+      ? ({ currentLocation, nextLocation }) => currentLocation.pathname !== nextLocation.pathname
+      : false
   );
 }
