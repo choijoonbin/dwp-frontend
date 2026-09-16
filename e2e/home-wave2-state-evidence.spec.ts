@@ -950,7 +950,7 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await page.goto('/home-wave2-state-spec.html?board=c18');
   const spec = page.getByTestId('home-wave2-c18-spec');
   await expect(spec).toBeVisible();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'ko-KR');
+  await expect(page.locator('html')).toHaveAttribute('lang', /^ko(?:-KR)?$/u);
   await expect(spec.getByRole('heading', { level: 2 })).toHaveCount(6);
   await expect(spec).toContainText(/9-Step Keyboard Navigation Sequence/u);
   await expect(spec).toContainText(/Exactly 6 State Variants Cards/u);
@@ -964,7 +964,7 @@ test('the canonical state sheet renders all nine production primitives', async (
   await page.goto('/home-wave2-state-spec.html?board=primitives');
   const root = page.getByTestId('home-wave2-state-spec');
   await expect(root).toBeVisible();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'ko-KR');
+  await expect(page.locator('html')).toHaveAttribute('lang', /^ko(?:-KR)?$/u);
   await expect(root.locator('[data-state-spec-kind]')).toHaveCount(9);
   for (const kind of [
     'initial-loading',

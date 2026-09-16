@@ -67,8 +67,8 @@
     "workers": 1,
     "webServer": {
       "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true VITE_WEB_VITALS_ENDPOINT=/api/platform/v1/observability/web-vitals corepack yarn dev --mode test --host 127.0.0.1",
-      "url": "http://localhost:4200",
-      "reuseExistingServer": false,
+      "url": "http://127.0.0.1:4230",
+      "reuseExistingServer": true,
       "timeout": 120000
     }
   },
@@ -85,7 +85,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [
                 {
                   "type": "canonical-fixture",
@@ -112,12 +112,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 10008,
+                  "duration": 25492,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:32:44.920Z",
+                  "startTime": "2026-09-16T03:44:57.013Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -136,7 +136,18 @@
                       "description": "WAVE2_C04-M320-BASE"
                     }
                   ],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "C03-M390-BASE-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiRFdBScK3T04g7JuM7YGs7Iqk7Y6Y7J207IqkIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIu2ZnOuPmSDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7JWM66a8IOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLshozsi50g7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOydvCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJTcGFjZSDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOyLoOyggCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZTsg4HtmozsnZgg7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxNjMsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxNjMsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLruYTspojri4jsiqQgRVJQIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuugiOqxsOyLnCDsl4XrrLQg7Je06riwIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfQogIF0sCiAgImhlcm8iOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsm5DrrLgg67O06riwIiwKICAgICAgIndpZHRoIjogOTAuNDEsCiAgICAgICJoZWlnaHQiOiA0NAogICAgfQogIF0sCiAgInJlc291cmNlcyI6IFsKICAgIHsKICAgICAgImxhYmVsIjogIuq1rOyEseybkCDsl4XrrLQg6rCA7J2065Oc7JeF66y0IOyLnOyekSwg7ZiR7JeFLCDrs7TslYgg6riw7KSA7J2EIO2ZleyduO2VmOyEuOyalC7qsIDsnbTrk5wg7Je06riwIiwKICAgICAgIndpZHRoIjogMTc5LAogICAgICAiaGVpZ2h0IjogODgKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsi6Dqt5wg6rWs7ISx7JuQIOyYqOuztOuUqeyeheyCrOu2gO2EsCDtjIAg7KCB7J2R6rmM7KeAIO2VhOyalO2VnCDsoIjssKjrpbwg7JWI64K07ZWp64uI64ukLuygiOywqCDrs7TquLAiLAogICAgICAid2lkdGgiOiAxNzksCiAgICAgICJoZWlnaHQiOiA4OAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIldvcmtwbGFjZSDsnbTsmqkg7JWI64K07KKM7ISdLCDtmozsnZjsi6QsIOuwqeusuOqzvCDsi5zshKQg7KeA7JuQIOygleuztOulvCDtmZXsnbjtlZjshLjsmpQu7KeA7JuQIOuztOq4sCIsCiAgICAgICJ3aWR0aCI6IDE3OSwKICAgICAgImhlaWdodCI6IDg4CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiSVQg7J6l67mE7JmAIOqzhOyglSDsp4Dsm5Dqs4TsoJUsIOq4sOq4sCwg64Sk7Yq47JuM7YGsIOusuOygnOydmCDtlbTqsrAg7KCI7LCo7J6F64uI64ukLuuPhOybgCDrsJvquLAiLAogICAgICAid2lkdGgiOiAxNzksCiAgICAgICJoZWlnaHQiOiA4OAogICAgfQogIF0KfQ=="
+                    },
+                    {
+                      "name": "C04-M320-BASE-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiRFdBScK3T04g7JuM7YGs7Iqk7Y6Y7J207IqkIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDQ4LjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIu2ZnOuPmSDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7JWM66a8IOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLshozsi50g7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDQ4LjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOydvCDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJTcGFjZSDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDQ4LjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOyLoOyggCDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZTsg4HtmozsnZgg7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxMjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxMjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAiLAogICAgICAid2lkdGgiOiA2MiwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi67mE7KaI64uI7IqkIEVSUCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2MiwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66CI6rGw7IucIOyXheustCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2MiwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLAogICAgICAiaGVpZ2h0IjogODQKICAgIH0KICBdLAogICJoZXJvIjogWwogICAgewogICAgICAibGFiZWwiOiAi7JuQ66y4IOuztOq4sCIsCiAgICAgICJ3aWR0aCI6IDkwLjQxLAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0KICBdLAogICJyZXNvdXJjZXMiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLqtazshLHsm5Ag7JeF66y0IOqwgOydtOuTnOyXheustCDsi5zsnpEsIO2YkeyXhSwg67O07JWIIOq4sOykgOydhCDtmZXsnbjtlZjshLjsmpQu6rCA7J2065OcIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDE0NCwKICAgICAgImhlaWdodCI6IDg4CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7Iug6recIOq1rOyEseybkCDsmKjrs7TrlKnsnoXsgqzrtoDthLAg7YyAIOyggeydkeq5jOyngCDtlYTsmpTtlZwg7KCI7LCo66W8IOyViOuCtO2VqeuLiOuLpC7soIjssKgg67O06riwIiwKICAgICAgIndpZHRoIjogMTQ0LAogICAgICAiaGVpZ2h0IjogODgKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJXb3JrcGxhY2Ug7J207JqpIOyViOuCtOyijOyEnSwg7ZqM7J2Y7IukLCDrsKnrrLjqs7wg7Iuc7ISkIOyngOybkCDsoJXrs7Trpbwg7ZmV7J247ZWY7IS47JqULuyngOybkCDrs7TquLAiLAogICAgICAid2lkdGgiOiAxNDQsCiAgICAgICJoZWlnaHQiOiA4OAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIklUIOyepeu5hOyZgCDqs4TsoJUg7KeA7JuQ6rOE7KCVLCDquLDquLAsIOuEpO2KuOybjO2BrCDrrLjsoJzsnZgg7ZW06rKwIOygiOywqOyeheuLiOuLpC7rj4Tsm4Ag67Cb6riwIiwKICAgICAgIndpZHRoIjogMTQ0LAogICAgICAiaGVpZ2h0IjogODgKICAgIH0KICBdCn0="
+                    }
+                  ]
                 }
               ],
               "status": "expected"
@@ -153,7 +164,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "chromium",
@@ -163,12 +174,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1287,
+                  "duration": 4032,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:32:55.259Z",
+                  "startTime": "2026-09-16T03:45:23.554Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -178,7 +189,7 @@
           ],
           "id": "f860d0bee656d9ee4f77-bbf99efae5a9075a9808",
           "file": "home-wave2-acceptance.spec.ts",
-          "line": 410,
+          "line": 422,
           "column": 1
         },
         {
@@ -187,7 +198,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [
                 {
                   "type": "canonical-fixture",
@@ -214,12 +225,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 11378,
+                  "duration": 29611,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:32:56.550Z",
+                  "startTime": "2026-09-16T03:45:27.608Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -238,7 +249,18 @@
                       "description": "WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL"
                     }
                   ],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "FLOW-BASE-MOBILE-FINAL-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJuYXZpZ2F0aW9uIjogWwogICAgewogICAgICAibGFiZWwiOiAi7Jik64qYIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuydvOyglSIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsiqTtjpjsnbTsiqQiLAogICAgICAid2lkdGgiOiA3OCwKICAgICAgImhlaWdodCI6IDY0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZWgIOydvCIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7ZiE7ZmpIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfQogIF0sCiAgInByaW1hcnlBY3Rpb24iOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLTsl5DshJwg7Je06riwIiwKICAgICAgIndpZHRoIjogMzI4LAogICAgICAiaGVpZ2h0IjogNDgKICAgIH0KICBdLAogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJEV0FJwrdPTiDsm4ztgazsiqTtjpjsnbTsiqQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZzrj5kg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLslYzrprwg7IS87YSwIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7IaM7IudIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7J28IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiU3BhY2Ug7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7Iug7KCAIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZmU7IOB7ZqM7J2YIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuu5hOymiOuLiOyKpCBFUlAg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLroIjqsbDsi5wg7JeF66y0IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9CiAgXQp9"
+                    },
+                    {
+                      "name": "FLOW-PERSONALIZED-MOBILE-FINAL-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJuYXZpZ2F0aW9uIjogWwogICAgewogICAgICAibGFiZWwiOiAi7Jik64qYIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuydvOyglSIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsiqTtjpjsnbTsiqQiLAogICAgICAid2lkdGgiOiA3OCwKICAgICAgImhlaWdodCI6IDY0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZWgIOydvCIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7ZiE7ZmpIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfQogIF0sCiAgInByaW1hcnlBY3Rpb24iOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLTsl5DshJwg7Je06riwIiwKICAgICAgIndpZHRoIjogMzI4LAogICAgICAiaGVpZ2h0IjogNDgKICAgIH0KICBdLAogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJEV0FJwrdPTiDsm4ztgazsiqTtjpjsnbTsiqQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZzrj5kg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLslYzrprwg7IS87YSwIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7IaM7IudIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7J28IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiU3BhY2Ug7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7Iug7KCAIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZmU7IOB7ZqM7J2YIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuu5hOymiOuLiOyKpCBFUlAg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLroIjqsbDsi5wg7JeF66y0IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9CiAgXSwKICAiZnV0dXJlV2lkZ2V0cyI6IFsKICAgIHsKICAgICAgImxhYmVsIjogIuuCtCDsl4XrrLTroZwg7IiY6529IiwKICAgICAgIndpZHRoIjogMzI0LAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLri7Tri7nsnpAg7KeA7KCVIiwKICAgICAgIndpZHRoIjogMzI0LAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJTcGFjZeyXkOyEnCDtmZXsnbgiLAogICAgICAid2lkdGgiOiAxMDMuMjgsCiAgICAgICJoZWlnaHQiOiA0NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyXkOuUlO2EsOyXkOyEnCDsnbTslrTsk7DquLAiLAogICAgICAid2lkdGgiOiAzMjQsCiAgICAgICJoZWlnaHQiOiA0NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyYiOyVveqzvCDssrTtgazsnbgg67O06riwIiwKICAgICAgIndpZHRoIjogMTM2LjI1LAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0KICBdCn0="
+                    }
+                  ]
                 }
               ],
               "status": "expected"
@@ -246,7 +268,7 @@
           ],
           "id": "f860d0bee656d9ee4f77-b7e8c39260dd842b1f72",
           "file": "home-wave2-acceptance.spec.ts",
-          "line": 441,
+          "line": 453,
           "column": 1
         },
         {
@@ -255,7 +277,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [
                 {
                   "type": "canonical-fixture",
@@ -270,12 +292,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4040,
+                  "duration": 7474,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:07.932Z",
+                  "startTime": "2026-09-16T03:45:57.241Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -290,7 +312,7 @@
           ],
           "id": "f860d0bee656d9ee4f77-48cc509920e69aa898f2",
           "file": "home-wave2-acceptance.spec.ts",
-          "line": 663,
+          "line": 698,
           "column": 1
         },
         {
@@ -299,7 +321,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [
                 {
                   "type": "canonical-fixture",
@@ -318,12 +340,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5779,
+                  "duration": 13881,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:11.977Z",
+                  "startTime": "2026-09-16T03:46:04.761Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -334,7 +356,13 @@
                       "description": "HOME_SPEC_TEXT_200"
                     }
                   ],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "HOME_SPEC_ZOOM_200-browser-metrics.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJjc3NWaWV3cG9ydCI6IHsKICAgICJ3aWR0aCI6IDcyMCwKICAgICJoZWlnaHQiOiA0NTAKICB9LAogICJwaHlzaWNhbFZpZXdwb3J0IjogewogICAgIndpZHRoIjogMTQ0MCwKICAgICJoZWlnaHQiOiA5MDAKICB9LAogICJkZXZpY2VQaXhlbFJhdGlvIjogMiwKICAic2NyZWVuIjogewogICAgIndpZHRoIjogMTQ0MCwKICAgICJoZWlnaHQiOiA5MDAKICB9Cn0="
+                    }
+                  ]
                 }
               ],
               "status": "expected"
@@ -342,7 +370,7 @@
           ],
           "id": "f860d0bee656d9ee4f77-55cbfc0c525256f7cfaf",
           "file": "home-wave2-acceptance.spec.ts",
-          "line": 767,
+          "line": 802,
           "column": 1
         },
         {
@@ -351,7 +379,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [
                 {
                   "type": "canonical-fixture",
@@ -366,12 +394,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2579,
+                  "duration": 8118,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:17.760Z",
+                  "startTime": "2026-09-16T03:46:18.669Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -386,7 +414,7 @@
           ],
           "id": "f860d0bee656d9ee4f77-da45fa601deebaf8a022",
           "file": "home-wave2-acceptance.spec.ts",
-          "line": 847,
+          "line": 914,
           "column": 1
         },
         {
@@ -395,7 +423,7 @@
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 120000,
               "annotations": [
                 {
                   "type": "canonical-fixture",
@@ -418,12 +446,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5516,
+                  "duration": 19335,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:20.344Z",
+                  "startTime": "2026-09-16T03:46:26.886Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -446,7 +474,7 @@
           ],
           "id": "f860d0bee656d9ee4f77-a587176ca646e055ecd3",
           "file": "home-wave2-acceptance.spec.ts",
-          "line": 880,
+          "line": 948,
           "column": 1
         }
       ]
@@ -458,7 +486,7 @@
       "line": 0,
       "specs": [
         {
-          "title": "C10-C13 render the real Classic Home state contract on desktop and mobile",
+          "title": "C10 renders the required-notice complete state in the first Classic viewport",
           "ok": true,
           "tags": [],
           "tests": [
@@ -472,7 +500,51 @@
                 {
                   "type": "canonical-fixture",
                   "description": "HOME_STATE_EMPTY_MOBILE"
-                },
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11801,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T03:46:46.293Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_EMPTY_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_EMPTY_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-963a56dbfa6773153ed4",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 382,
+          "column": 1
+        },
+        {
+          "title": "C11-C13 target the accepted organization resource and preserve unaffected cards",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
                 {
                   "type": "canonical-fixture",
                   "description": "HOME_STATE_PARTIAL_DESKTOP"
@@ -506,21 +578,13 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 17127,
+                  "duration": 33563,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:25.877Z",
+                  "startTime": "2026-09-16T03:46:58.108Z",
                   "annotations": [
-                    {
-                      "type": "canonical-fixture",
-                      "description": "HOME_STATE_EMPTY_DESKTOP"
-                    },
-                    {
-                      "type": "canonical-fixture",
-                      "description": "HOME_STATE_EMPTY_MOBILE"
-                    },
                     {
                       "type": "canonical-fixture",
                       "description": "HOME_STATE_PARTIAL_DESKTOP"
@@ -552,13 +616,13 @@
               "status": "expected"
             }
           ],
-          "id": "c84281a64d9866f66160-a7e683a6e20212366cd1",
+          "id": "c84281a64d9866f66160-930cd1b2d23992835890",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 487,
+          "line": 412,
           "column": 1
         },
         {
-          "title": "C14 initial loading keeps the two-card geometry on desktop and mobile",
+          "title": "C14 loading and refresh stay in the workplace resource slot",
           "ok": true,
           "tags": [],
           "tests": [
@@ -572,51 +636,7 @@
                 {
                   "type": "canonical-fixture",
                   "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
-                }
-              ],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4573,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T18:33:43.009Z",
-                  "annotations": [
-                    {
-                      "type": "canonical-fixture",
-                      "description": "HOME_STATE_INITIAL_LOADING_DESKTOP"
-                    },
-                    {
-                      "type": "canonical-fixture",
-                      "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
-                    }
-                  ],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "c84281a64d9866f66160-2f58f7b11089ccf8df43",
-          "file": "home-wave2-state-evidence.spec.ts",
-          "line": 525,
-          "column": 1
-        },
-        {
-          "title": "C14 background refresh preserves verified content on desktop and mobile",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [
+                },
                 {
                   "type": "canonical-fixture",
                   "description": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP"
@@ -634,13 +654,21 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4598,
+                  "duration": 21254,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:47.586Z",
+                  "startTime": "2026-09-16T03:47:31.724Z",
                   "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_INITIAL_LOADING_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
+                    },
                     {
                       "type": "canonical-fixture",
                       "description": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP"
@@ -656,9 +684,9 @@
               "status": "expected"
             }
           ],
-          "id": "c84281a64d9866f66160-65d39be8bd880e6bc6c0",
+          "id": "c84281a64d9866f66160-3052a8cc00ed1309ddd1",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 551,
+          "line": 524,
           "column": 1
         },
         {
@@ -686,12 +714,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 8537,
+                  "duration": 26359,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:33:52.188Z",
+                  "startTime": "2026-09-16T03:47:52.993Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -710,7 +738,7 @@
           ],
           "id": "c84281a64d9866f66160-57fba9e77df2f8035f03",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 590,
+          "line": 584,
           "column": 1
         },
         {
@@ -738,12 +766,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 7190,
+                  "duration": 18821,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:00.729Z",
+                  "startTime": "2026-09-16T03:48:19.374Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -762,11 +790,11 @@
           ],
           "id": "c84281a64d9866f66160-f0821d3e1a440302b790",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 661,
+          "line": 654,
           "column": 1
         },
         {
-          "title": "C17 round-trips isolated Classic and Flow overlays through the real device API",
+          "title": "C17 compares Classic and Flow in the real Studio after mode-scoped device round-trips",
           "ok": true,
           "tags": [],
           "tests": [
@@ -786,12 +814,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4014,
+                  "duration": 11123,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:07.923Z",
+                  "startTime": "2026-09-16T03:48:38.239Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -804,9 +832,9 @@
               "status": "expected"
             }
           ],
-          "id": "c84281a64d9866f66160-9f554947ca160d16dfa8",
+          "id": "c84281a64d9866f66160-1b48a82341ec200583a6",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 702,
+          "line": 698,
           "column": 1
         },
         {
@@ -830,19 +858,25 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3533,
+                  "duration": 24211,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:11.941Z",
+                  "startTime": "2026-09-16T03:48:49.392Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
                       "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
                     }
                   ],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "HOME_SPEC_ACCESSIBILITY_SPEC-motion-scope.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJyZWR1Y2UiOiB0cnVlLAogICJvZmZlbmRlcnMiOiBbXSwKICAic21vb3RoU2Nyb2xsIjogZmFsc2UsCiAgImF1dG9Sb3RhdGluZ0Nhcm91c2VscyI6IDAsCiAgInNoZWxsVmlzaWJsZSI6IHRydWUsCiAgImRpYWxvZ1Zpc2libGUiOiB0cnVlCn0="
+                    }
+                  ]
                 }
               ],
               "status": "expected"
@@ -850,7 +884,7 @@
           ],
           "id": "c84281a64d9866f66160-e726baae304d5901cf52",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 806,
+          "line": 850,
           "column": 1
         },
         {
@@ -874,12 +908,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1838,
+                  "duration": 8362,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:15.479Z",
+                  "startTime": "2026-09-16T03:49:13.639Z",
                   "annotations": [
                     {
                       "type": "canonical-fixture",
@@ -894,19 +928,19 @@
           ],
           "id": "c84281a64d9866f66160-21d3806504496fe0508e",
           "file": "home-wave2-state-evidence.spec.ts",
-          "line": 876,
+          "line": 961,
           "column": 1
         }
       ]
     },
     {
-      "title": "widget-governance-surfaces.spec.ts",
-      "file": "widget-governance-surfaces.spec.ts",
+      "title": "wave3-governance.spec.ts",
+      "file": "wave3-governance.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "tenant administration reviews shadow policy decisions without enabling mutations",
+          "title": "app access moves from employee request to governed approval and IAM synchronization",
           "ok": true,
           "tags": [],
           "tests": [
@@ -921,12 +955,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2079,
+                  "duration": 13909,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:17.342Z",
+                  "startTime": "2026-09-16T03:49:22.267Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -934,13 +968,13 @@
               "status": "expected"
             }
           ],
-          "id": "9eae8f0a7c01a21c4b7e-f31ba5f4e6c03290b146",
-          "file": "widget-governance-surfaces.spec.ts",
-          "line": 88,
+          "id": "7ece2ec1789391e3c56b-898616a11591235a16e7",
+          "file": "wave3-governance.spec.ts",
+          "line": 73,
           "column": 1
         },
         {
-          "title": "tenant administrators review blueprint impact and recovery before lifecycle changes",
+          "title": "navigation studio creates, validates, and publishes an immutable revision",
           "ok": true,
           "tags": [],
           "tests": [
@@ -955,12 +989,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1897,
+                  "duration": 5029,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:19.426Z",
+                  "startTime": "2026-09-16T03:49:36.241Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -968,13 +1002,13 @@
               "status": "expected"
             }
           ],
-          "id": "9eae8f0a7c01a21c4b7e-973110ab2157780f658c",
-          "file": "widget-governance-surfaces.spec.ts",
-          "line": 171,
+          "id": "7ece2ec1789391e3c56b-096f7fef165a9663a1ae",
+          "file": "wave3-governance.spec.ts",
+          "line": 229,
           "column": 1
         },
         {
-          "title": "provider governance shows legacy-unverified evidence and keeps lifecycle commands closed",
+          "title": "catalog graph exposes change impact and records an explicit relationship",
           "ok": true,
           "tags": [],
           "tests": [
@@ -989,12 +1023,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2052,
+                  "duration": 4371,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:21.326Z",
+                  "startTime": "2026-09-16T03:49:41.312Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1002,13 +1036,13 @@
               "status": "expected"
             }
           ],
-          "id": "9eae8f0a7c01a21c4b7e-f27afe661b5997016b80",
-          "file": "widget-governance-surfaces.spec.ts",
+          "id": "7ece2ec1789391e3c56b-ea62c11623e4cf6f68b7",
+          "file": "wave3-governance.spec.ts",
           "line": 310,
           "column": 1
         },
         {
-          "title": "shadow evaluation cannot change Home and authoritative denial fails closed",
+          "title": "catalog assurance restores deep links and records governed false-positive evidence",
           "ok": true,
           "tags": [],
           "tests": [
@@ -1023,12 +1057,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4256,
+                  "duration": 4640,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T18:34:23.382Z",
+                  "startTime": "2026-09-16T03:49:45.730Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1036,9 +1070,9 @@
               "status": "expected"
             }
           ],
-          "id": "9eae8f0a7c01a21c4b7e-6a600c28f76ac702b1a9",
-          "file": "widget-governance-surfaces.spec.ts",
-          "line": 393,
+          "id": "7ece2ec1789391e3c56b-f97ee2d857ec2ff5d2cb",
+          "file": "wave3-governance.spec.ts",
+          "line": 412,
           "column": 1
         }
       ]
@@ -1046,8 +1080,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-15T18:32:41.865Z",
-    "duration": 105845.617,
+    "startTime": "2026-09-16T03:44:54.515Z",
+    "duration": 296031.323,
     "expected": 19,
     "skipped": 0,
     "unexpected": 0,
