@@ -726,7 +726,7 @@ export function HomeLayoutStudioWorkbench({
                       '& [data-testid="home-priority-rail"]': {
                         gridTemplateColumns: 'minmax(0, 1fr) !important',
                       },
-                      '& [data-testid="home-priority-rail"] > :not(:first-child)': {
+                      '& [data-testid="home-priority-rail"] > * + *': {
                         display: 'none',
                       },
                     }}

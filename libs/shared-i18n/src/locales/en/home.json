@@ -693,6 +693,7 @@
     "conflict": {
       "title": "Your home changed in another session",
       "description": "The latest saved version is different. Your current draft is kept safely until you choose how to continue.",
+      "closeDialog": "Close conflict dialog",
       "myChanges": "My draft: {{count}} changes",
       "latestVersion": "Latest version: {{version}}",
       "safety": "Reloading discards this draft. Reapply keeps it and saves against the latest version after your review.",

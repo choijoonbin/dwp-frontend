@@ -652,6 +652,15 @@ test('C15 dirty editing remains visible and keyboard reachable on desktop and mo
 });
 
 test('C16 an actual 409 shows the conflict dialog and preserves the draft', async ({ page }) => {
+  const missingCloseLabelWarnings: string[] = [];
+  page.on('console', (message) => {
+    if (
+      ['warning', 'error'].includes(message.type()) &&
+      message.text().includes('flow.conflict.closeDialog')
+    ) {
+      missingCloseLabelWarnings.push(message.text());
+    }
+  });
   const cases = [
     ['C16-D1440-SAVE-CONFLICT-r02', 'HOME_STATE_CONFLICT_DESKTOP', false],
     ['C16-M390-SAVE-CONFLICT-r02', 'HOME_STATE_CONFLICT_MOBILE', true],
@@ -693,6 +702,7 @@ test('C16 an actual 409 shows the conflict dialog and preserves the draft', asyn
     await toolbar.getByRole('button', { name: '변경 취소' }).click({ force: true });
     await expect(toolbar).toHaveCount(0);
   }
+  expect(missingCloseLabelWarnings).toEqual([]);
 });
 
 test('C17 compares Classic and Flow in the real Studio after mode-scoped device round-trips', async ({

@@ -74,4 +74,9 @@ describe('Home purpose UI dictionaries', () => {
       shortName: '메신저',
     });
   });
+
+  it('localizes the preference conflict dialog close control', () => {
+    expect(koHome.flow.conflict.closeDialog).toBe('충돌 대화상자 닫기');
+    expect(enHome.flow.conflict.closeDialog).toBe('Close conflict dialog');
+  });
 });

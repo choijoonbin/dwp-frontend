@@ -698,6 +698,12 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
 test('Flow Studio owns panel scrolling, traps focus, and restores the launch point', async ({
   page,
 }) => {
+  const unsafeSelectorWarnings: string[] = [];
+  page.on('console', (message) => {
+    if (['warning', 'error'].includes(message.type()) && message.text().includes(':first-child')) {
+      unsafeSelectorWarnings.push(message.text());
+    }
+  });
   test.info().annotations.push({
     type: 'canonical-fixture',
     description: 'WAVE2_FLOW-EDITOR-DESKTOP',
@@ -793,6 +799,7 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
     fullPage: false,
     scale: 'css',
   });
+  expect(unsafeSelectorWarnings).toEqual([]);
 
   await dialog.getByRole('button', { name: '홈 스튜디오 닫기' }).click();
   await expect(dialog).not.toBeVisible();
