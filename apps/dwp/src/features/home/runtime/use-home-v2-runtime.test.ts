@@ -44,7 +44,7 @@ describe('Home v2 activation gate', () => {
     });
   });
 
-  it('fails closed instead of enabling legacy fanout after a v2 error', () => {
+  it('fails closed on a cold network/503 error without a trusted runtime-mode header', () => {
     const error = new Error('authority unavailable');
     const activation = resolveHomeV2ActivationState(true, {
       error,

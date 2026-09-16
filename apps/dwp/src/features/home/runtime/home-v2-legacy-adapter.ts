@@ -34,6 +34,35 @@ const NATIVE_WIDGET_KEYS = {
   recommendations: 'core.workspace.daily-brief',
   work: ['core.workspace.command-rail', 'core.work.focus', 'core.work.focus-balance'],
 } as const;
+const NATIVE_DEFINITION_KEYS = new Set<string>([
+  NATIVE_WIDGET_KEYS.activity,
+  ...NATIVE_WIDGET_KEYS.calendar,
+  NATIVE_WIDGET_KEYS.recommendations,
+  ...NATIVE_WIDGET_KEYS.work,
+]);
+
+export type HomeV2NativeRuntimeState = Readonly<{
+  kind: 'partial' | 'stale';
+  lastSuccessfulAt: string;
+}>;
+
+/** Preserves native broker freshness separately because the legacy section DTO has no such state. */
+export function homeV2NativeRuntimeState(model: HomeV2ReadModel): HomeV2NativeRuntimeState | null {
+  const degraded = model.widgets.filter(
+    (widget) =>
+      NATIVE_DEFINITION_KEYS.has(widget.definitionKey) &&
+      (widget.state === 'PARTIAL' || widget.state === 'STALE')
+  );
+  if (degraded.length === 0) return null;
+  const lastSuccessfulAt = degraded
+    .flatMap((widget) => (widget.source.lastSuccessAt ? [widget.source.lastSuccessAt] : []))
+    .sort()
+    .at(-1);
+  return {
+    kind: degraded.some((widget) => widget.state === 'STALE') ? 'stale' : 'partial',
+    lastSuccessfulAt: lastSuccessfulAt ?? model.generatedAt,
+  };
+}
 
 const HOME_V2_GROUP_IDS = {
   WORK_START: 'work',

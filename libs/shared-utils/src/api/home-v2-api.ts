@@ -126,7 +126,6 @@ export type HomeV2ReadResult = Readonly<{
 }>;
 
 export type HomeV2ReadInput = Readonly<{
-  contextScopeKey?: string;
   deviceClass: HomeDeviceClass;
   mode?: HomeExperienceVariant;
   signal?: AbortSignal;
@@ -143,6 +142,10 @@ const HOME_APP_DOCK_GROUP_KEYS = [
   'PEOPLE_SERVICES',
   'SYSTEM_CONTROL',
 ] as const;
+const HOME_APP_DOCK_GROUP_ORDER = new Map(
+  HOME_APP_DOCK_GROUP_KEYS.map((groupKey, index) => [groupKey, index] as const)
+);
+const HOME_APP_DOCK_GROUP_KEY_PATTERN = /^[A-Z][A-Z0-9_]{1,39}$/u;
 const HOME_DEVICES = new Set<HomeDeviceClass>([
   'DESKTOP_WIDE',
   'DESKTOP_STANDARD',
@@ -442,12 +445,22 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
   const groupKeys = new Set<string>();
   const appKeys = new Set<string>();
   const rawAppDock = array(data.appDock, 'data.appDock');
-  if (rawAppDock.length !== HOME_APP_DOCK_GROUP_KEYS.length) invalid('data.appDock');
+  if (rawAppDock.length < 1 || rawAppDock.length > 8) {
+    invalid('data.appDock');
+  }
+  let previousCanonicalGroupOrder = -1;
   const appDock = rawAppDock.map((item, index) => {
     const path = `data.appDock[${index}]`;
     const group = object(item, path);
     const groupKey = string(group.groupKey, `${path}.groupKey`)!;
-    if (groupKey !== HOME_APP_DOCK_GROUP_KEYS[index]) invalid(`${path}.groupKey`);
+    const groupOrder = HOME_APP_DOCK_GROUP_ORDER.get(
+      groupKey as (typeof HOME_APP_DOCK_GROUP_KEYS)[number]
+    );
+    if (!HOME_APP_DOCK_GROUP_KEY_PATTERN.test(groupKey)) invalid(`${path}.groupKey`);
+    if (groupOrder !== undefined) {
+      if (groupOrder <= previousCanonicalGroupOrder) invalid(`${path}.groupKey`);
+      previousCanonicalGroupOrder = groupOrder;
+    }
     if (groupKeys.has(groupKey)) invalid(`${path}.groupKey`);
     groupKeys.add(groupKey);
     return {
@@ -462,10 +475,13 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
     };
   });
   const instanceIds = new Set<string>();
+  const definitionKeys = new Set<string>();
   const widgets = array(data.widgets, 'data.widgets').map((item, index) => {
     const parsed = parseWidget(item, index);
     if (instanceIds.has(parsed.instanceId)) invalid(`data.widgets[${index}].instanceId`);
+    if (definitionKeys.has(parsed.definitionKey)) invalid(`data.widgets[${index}].definitionKey`);
     instanceIds.add(parsed.instanceId);
+    definitionKeys.add(parsed.definitionKey);
     return parsed;
   });
   return {
@@ -574,8 +590,10 @@ export async function getHomeV2(
   const response = await axiosInstance.getConditional<unknown>(
     `/api/platform/v2/home?${query.toString()}`,
     previous as ConditionalHttpSnapshot<unknown> | undefined,
-    { contextScopeKey: input.contextScopeKey, signal: input.signal, timeoutMs: 10_000 }
+    { signal: input.signal, timeoutMs: 10_000 }
   );
+  const responseEtag = response.headers?.get('ETag');
+  if (!responseEtag || response.snapshot.etag !== responseEtag) invalid('headers.ETag');
   const model = response.notModified
     ? previous?.data
     : parseHomeV2ReadModel(response.snapshot.data);

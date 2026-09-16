@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   homeV2ToExperience,
+  homeV2NativeRuntimeState,
   homeV2ToNotificationSummary,
   homeV2ToOverview,
 } from './home-v2-legacy-adapter';
@@ -152,6 +153,23 @@ describe('Home v2 legacy-shaped read adapters', () => {
     expect(overview.work).toMatchObject({ status: 'UNAVAILABLE', data: null });
   });
 
+  it.each(['PARTIAL', 'STALE'] as const)(
+    'preserves verified native %s data with a separate freshness state',
+    (state) => {
+      const native = { ...widget('core.workspace.command-rail', rawWorkQueue), state };
+      const source = model([native]);
+
+      expect(homeV2ToOverview(source).work).toMatchObject({
+        status: 'AVAILABLE',
+        data: { items: [expect.objectContaining({ id: 'approval-14' })] },
+      });
+      expect(homeV2NativeRuntimeState(source)).toEqual({
+        kind: state === 'STALE' ? 'stale' : 'partial',
+        lastSuccessfulAt: generatedAt,
+      });
+    }
+  );
+
   it('drops an app when its canonical backend group does not match the local app contract', () => {
     const source = model();
     const drifted = {
@@ -161,5 +179,23 @@ describe('Home v2 legacy-shaped read adapters', () => {
 
     expect(homeV2ToExperience(drifted, 'en').launchpadConfiguration?.placements).toEqual([]);
     expect(homeV2ToNotificationSummary(drifted).apps).toEqual([]);
+  });
+
+  it('isolates an unsupported tenant extension group from the sealed legacy app dock', () => {
+    const source = model();
+    const extended = {
+      ...source,
+      appDock: [
+        ...source.appDock,
+        {
+          groupKey: 'TENANT_TOOLS',
+          label: 'Tenant tools',
+          apps: source.appDock[0].apps,
+        },
+      ],
+    } as HomeV2ReadModel;
+
+    expect(homeV2ToExperience(extended, 'en').launchpadConfiguration?.groups).toHaveLength(1);
+    expect(homeV2ToNotificationSummary(extended).apps).toHaveLength(1);
   });
 });

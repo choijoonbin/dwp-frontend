@@ -76,6 +76,10 @@ export function homeV2RuntimeEvidence(runtime: HomeV2Runtime): Readonly<Record<s
     'data-home-runtime-path': runtime.readPath.render.toLowerCase(),
     'data-home-runtime-http-status': String(runtime.query.data?.status ?? 'none'),
     'data-home-runtime-not-modified': runtime.query.data?.notModified ? 'true' : 'false',
+    'data-home-runtime-refresh-failed':
+      runtime.activation.kind === 'ACTIVE' || runtime.activation.kind === 'SHADOW'
+        ? String(runtime.activation.refreshFailed)
+        : 'none',
     'data-home-runtime-partial': model ? (model.partial ? 'true' : 'false') : 'none',
     'data-home-runtime-unavailable-count': String(model?.unavailableSources.length ?? 0),
     'data-home-runtime-widget-state-counts': stateCounts,
@@ -230,7 +234,7 @@ export function ActiveHomeOwnerWidgetRegion({
   const { i18n } = useTranslation('home');
   if (runtime.activation.kind !== 'ACTIVE') return null;
   const model = runtime.activation.result.snapshot.data;
-  return (
+  const region = (
     <HomeOwnerWidgetRegion
       model={model}
       variant={model.mode === 'FLOW_V1' ? 'FLOW' : 'CLASSIC'}
@@ -238,5 +242,17 @@ export function ActiveHomeOwnerWidgetRegion({
       refreshing={runtime.query.isFetching && !runtime.query.isLoading}
       onRetry={() => void runtime.query.refetch()}
     />
+  );
+  return runtime.activation.refreshFailed ? (
+    <HomeContentState
+      kind="stale"
+      lastSuccessfulAt={model.generatedAt}
+      onAction={() => void runtime.query.refetch()}
+      busy={runtime.query.isFetching}
+      preservedContent={region}
+      size="compact"
+    />
+  ) : (
+    region
   );
 }

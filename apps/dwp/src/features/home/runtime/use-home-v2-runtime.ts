@@ -16,6 +16,7 @@ type UseHomeV2RuntimeInput = Readonly<{
   accessFingerprint: string;
   deviceClass: HomeDeviceClass;
   enabled: boolean;
+  locale: string;
   mode?: HomeExperienceVariant;
   tenantId?: number | null;
   timeZone: string;
@@ -64,6 +65,7 @@ export function resolveHomeV2ActivationState(
           result: query.data,
         };
   }
+  // A cold network/503 failure has no trusted runtime-mode header, so it cannot authorize rollback.
   return { kind: 'ERROR', error: query.error };
 }
 
@@ -86,6 +88,7 @@ export function useHomeV2Runtime({
   accessFingerprint,
   deviceClass,
   enabled,
+  locale,
   mode,
   tenantId,
   timeZone,
@@ -94,8 +97,8 @@ export function useHomeV2Runtime({
   const queryClient = useQueryClient();
   const identityReady = enabled && tenantId != null && userId != null;
   const scopeKey = useMemo(
-    () => JSON.stringify([accessFingerprint, deviceClass, mode ?? null, timeZone]),
-    [accessFingerprint, deviceClass, mode, timeZone]
+    () => JSON.stringify([accessFingerprint, deviceClass, locale, mode ?? null, timeZone]),
+    [accessFingerprint, deviceClass, locale, mode, timeZone]
   );
   const snapshotRef = useRef<ScopedSnapshot | null>(null);
   const activeScopeRef = useRef(scopeKey);
@@ -122,10 +125,7 @@ export function useHomeV2Runtime({
       const requestedScope = scopeKey;
       const previous =
         snapshotRef.current?.scopeKey === requestedScope ? snapshotRef.current.snapshot : undefined;
-      const result = await getHomeV2(
-        { contextScopeKey: requestedScope, deviceClass, mode, signal, timeZone },
-        previous
-      );
+      const result = await getHomeV2({ deviceClass, mode, signal, timeZone }, previous);
       signal.throwIfAborted();
       if (requestedScope !== activeScopeRef.current) {
         throw new DOMException('Home v2 scope changed', 'AbortError');
@@ -135,6 +135,7 @@ export function useHomeV2Runtime({
     },
     enabled: identityReady,
     gcTime: 0,
+    meta: { accessSensitive: true },
     staleTime: 0,
     refetchInterval: 30_000,
     refetchIntervalInBackground: false,

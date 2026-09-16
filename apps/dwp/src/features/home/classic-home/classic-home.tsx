@@ -32,6 +32,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { GovernedWorkspaceWidget } from '../../../components/workspace-composer/workspace-widget-canvas';
 import type { HomeWidgetRuntimeDecisions } from '../runtime/widget-registry-runtime';
+import type { HomeV2NativeRuntimeState } from '../runtime/home-v2-legacy-adapter';
 import type {
   HomeAppDefinition,
   HomeAppGroup,
@@ -70,6 +71,7 @@ type ClassicHomeProps = {
   overviewLoading: boolean;
   overviewFetching: boolean;
   overviewFailed: boolean;
+  nativeRuntimeState?: HomeV2NativeRuntimeState | null;
   editing: boolean;
   customizationEnabled: boolean;
   customizationBusy: boolean;
@@ -327,6 +329,7 @@ export function ClassicHome({
   overviewLoading,
   overviewFetching,
   overviewFailed,
+  nativeRuntimeState,
   editing,
   customizationEnabled,
   customizationBusy,
@@ -570,6 +573,21 @@ export function ClassicHome({
                   onRecommendationFeedback={onRecommendationFeedback}
                 />
               )}
+            />
+          ) : nativeRuntimeState ? (
+            <HomeContentState
+              kind={nativeRuntimeState.kind}
+              lastSuccessfulAt={nativeRuntimeState.lastSuccessfulAt}
+              onAction={onRetryOverview}
+              preservedContent={
+                <ClassicPersonalSummary
+                  overview={overview}
+                  loading={overviewLoading}
+                  fetching={overviewFetching}
+                  requestFailed={overviewFailed}
+                  onRetry={onRetryOverview}
+                />
+              }
             />
           ) : (
             <ClassicPersonalSummary

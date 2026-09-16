@@ -47,6 +47,7 @@ import { homeUserAccessFingerprint } from '../../features/home/runtime/home-acce
 import { homeDeviceClassForAvailableWidth } from '../../features/home/runtime/home-available-width';
 import { resolveHomeDeviceClass } from '../../features/home/runtime/home-page-runtime-state';
 import {
+  homeV2NativeRuntimeState,
   homeV2ToExperience,
   homeV2ToNotificationSummary,
   homeV2ToOverview,
@@ -92,6 +93,7 @@ export function useHomeCoreReadModel({
     accessFingerprint,
     deviceClass: requestedDeviceClass,
     enabled: true,
+    locale,
     tenantId: auth.user?.tenantId,
     timeZone,
     userId: auth.user?.userId,
@@ -101,6 +103,10 @@ export function useHomeCoreReadModel({
     homeV2Runtime.activation.kind === 'ACTIVE'
       ? homeV2Runtime.activation.result.snapshot.data
       : null;
+  const homeNativeRuntimeState = useMemo(
+    () => (activeHomeV2Model ? homeV2NativeRuntimeState(activeHomeV2Model) : null),
+    [activeHomeV2Model]
+  );
   useEffect(() => {
     if (!activeHomeV2Model) return;
     void Promise.all([
@@ -279,6 +285,8 @@ export function useHomeCoreReadModel({
     accessFingerprint,
     entitledApps,
     homeExperienceQuery,
+    homeNativeRuntimeState,
+    homeRuntimePartial: Boolean(activeHomeV2Model?.partial),
     homeV2Runtime,
     homeOverview,
     homeOverviewQuery,

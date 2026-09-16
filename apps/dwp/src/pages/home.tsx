@@ -78,7 +78,7 @@ import { useHomeDraftController } from '../features/home/runtime/use-home-draft-
 import {
   freezeHomeStudioContractScope,
   resolveActiveHomeViewScope,
-  resolveModeIsolatedHomeExperience,
+  resolveBrokeredHomeExperience,
   type HomeStudioContractScope,
 } from '../features/home/runtime/home-store-capabilities';
 import { HomeEditorGuards } from '../features/home/runtime/home-editor-guards';
@@ -172,6 +172,8 @@ export default function HomePage() {
   const {
     entitledApps,
     homeExperienceQuery,
+    homeNativeRuntimeState,
+    homeRuntimePartial,
     homeV2Runtime,
     homeOverview,
     homeOverviewQuery,
@@ -217,7 +219,10 @@ export default function HomePage() {
     homeExperience,
     HOME_CONTRACT_CAPABILITIES.fourDeviceLayouts
   );
-  const homeModeKey = resolveModeIsolatedHomeExperience(
+  const homeModeKey = resolveBrokeredHomeExperience(
+    homeV2Runtime.activation.kind === 'ACTIVE'
+      ? homeV2Runtime.activation.result.snapshot.data.mode
+      : null,
     homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
     viewStoreEnabled
   );
@@ -684,9 +689,6 @@ export default function HomePage() {
     (notificationSummaryQuery.isError ||
       notificationSummaryQuery.isRefetchError ||
       Boolean(notificationSummaryQuery.data?.partial));
-  const homeRuntimePartial =
-    homeV2Runtime.activation.kind === 'ACTIVE' &&
-    homeV2Runtime.activation.result.snapshot.data.partial;
   const { hardFailed: homeOverviewHardFailed, refreshPartial: homeOverviewRefreshPartial } =
     resolveHomeOverviewQueryFailureState({
       hasData: Boolean(homeOverview),
@@ -846,6 +848,7 @@ export default function HomePage() {
           overviewLoading={homeOverviewQuery.isLoading}
           overviewFetching={homeOverviewQuery.isFetching}
           overviewFailed={homeOverviewHardFailed}
+          nativeRuntimeState={homeNativeRuntimeState}
           editing={editorActive}
           customizationEnabled={personalCustomizationEnabled}
           customizationBusy={customizationBusy}

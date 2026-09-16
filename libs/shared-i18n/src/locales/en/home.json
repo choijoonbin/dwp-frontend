@@ -1294,6 +1294,7 @@
   },
   "ownerWidgets": {
     "regionLabel": "Connected work insights",
+    "sourceLabel": "Connected source",
     "title": {
       "approval": {
         "focus-queue": "Approval focus queue",

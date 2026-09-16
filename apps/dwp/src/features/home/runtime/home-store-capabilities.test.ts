@@ -5,6 +5,7 @@ import {
   activeHomeStoreUsesViews,
   freezeHomeStudioContractScope,
   resolveActiveHomeViewScope,
+  resolveBrokeredHomeExperience,
   resolveModeIsolatedHomeExperience,
 } from './home-store-capabilities';
 
@@ -96,5 +97,10 @@ describe('home personalization store capabilities', () => {
   it('keeps Flow off the Classic legacy row but preserves a pre-Wave 1 Views tenant mode', () => {
     expect(resolveModeIsolatedHomeExperience('FLOW_V1', false)).toBe('CLASSIC');
     expect(resolveModeIsolatedHomeExperience('FLOW_V1', true)).toBe('FLOW_V1');
+  });
+
+  it('renders the ACTIVE broker mode without granting legacy Flow writes', () => {
+    expect(resolveBrokeredHomeExperience('FLOW_V1', 'FLOW_V1', false)).toBe('FLOW_V1');
+    expect(resolveBrokeredHomeExperience(null, 'FLOW_V1', false)).toBe('CLASSIC');
   });
 });

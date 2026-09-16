@@ -74,6 +74,7 @@ export function OwnerWidgetRuntimeBoundary({
 
   const normalized = normalizeOwnerWidget({ ...runtimeWidget, locale });
   if (!normalized.ok) return <HomeContentState kind="widget-error" size="compact" />;
+  const affectedSources = [label('ownerWidgets.sourceLabel')];
   const content = (
     <HomeWidgetErrorBoundary
       widgetKey={normalized.value.definitionKey}
@@ -95,7 +96,7 @@ export function OwnerWidgetRuntimeBoundary({
       <HomeContentState
         kind="partial"
         size="compact"
-        affectedSources={[runtimeWidget.source.sourceKey]}
+        affectedSources={affectedSources}
         preservedContent={content}
         onAction={runtimeWidget.source.retryable ? onRetry : undefined}
       />
@@ -106,7 +107,7 @@ export function OwnerWidgetRuntimeBoundary({
       <HomeContentState
         kind="stale"
         size="compact"
-        affectedSources={[runtimeWidget.source.sourceKey]}
+        affectedSources={affectedSources}
         lastSuccessfulAt={safeLastSuccessAt(runtimeWidget.source.lastSuccessAt)}
         preservedContent={content}
         onAction={runtimeWidget.source.retryable ? onRetry : undefined}
@@ -118,7 +119,7 @@ export function OwnerWidgetRuntimeBoundary({
       <HomeContentState
         kind="background-refresh"
         size="compact"
-        affectedSources={[runtimeWidget.source.sourceKey]}
+        affectedSources={affectedSources}
         preservedContent={content}
       />
     );

@@ -62,3 +62,12 @@ export function resolveModeIsolatedHomeExperience(
 ): HomeExperienceVariant {
   return configuredVariant === 'FLOW_V1' && !viewsStoreReady ? 'CLASSIC' : configuredVariant;
 }
+
+/** The broker read model owns the rendered mode without granting legacy write capabilities. */
+export function resolveBrokeredHomeExperience(
+  brokerVariant: HomeExperienceVariant | null,
+  configuredVariant: HomeExperienceVariant,
+  viewsStoreReady: boolean
+): HomeExperienceVariant {
+  return brokerVariant ?? resolveModeIsolatedHomeExperience(configuredVariant, viewsStoreReady);
+}

@@ -216,10 +216,14 @@ function staticDecision(binding: NativeHomeWidgetBinding): HomeWidgetRuntimeDeci
   };
 }
 
-export function staticHomeWidgetRuntimeDecisions(): HomeWidgetRuntimeDecisions {
-  return Object.fromEntries(
+const STATIC_HOME_WIDGET_RUNTIME_DECISIONS = Object.freeze(
+  Object.fromEntries(
     NATIVE_HOME_WIDGET_BINDINGS.map((binding) => [binding.legacyWidgetKey, staticDecision(binding)])
-  ) as HomeWidgetRuntimeDecisions;
+  )
+) as HomeWidgetRuntimeDecisions;
+
+export function staticHomeWidgetRuntimeDecisions(): HomeWidgetRuntimeDecisions {
+  return STATIC_HOME_WIDGET_RUNTIME_DECISIONS;
 }
 
 function expectedContext(

@@ -1294,6 +1294,7 @@
   },
   "ownerWidgets": {
     "regionLabel": "연결된 업무 인사이트",
+    "sourceLabel": "연결된 원천",
     "title": {
       "approval": {
         "focus-queue": "우선 결재함",

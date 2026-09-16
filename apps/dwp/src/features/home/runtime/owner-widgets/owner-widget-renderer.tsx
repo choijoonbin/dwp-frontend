@@ -24,6 +24,7 @@ export type OwnerWidgetRendererVariant = 'CLASSIC' | 'FLOW';
 
 export type OwnerWidgetLabelKey =
   | `ownerWidgets.title.${OwnerWidgetDefinitionKey}`
+  | 'ownerWidgets.sourceLabel'
   | 'ownerWidgets.action.openSource'
   | 'ownerWidgets.metric.pending'
   | 'ownerWidgets.metric.dueToday'

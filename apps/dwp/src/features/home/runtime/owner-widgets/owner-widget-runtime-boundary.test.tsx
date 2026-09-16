@@ -110,14 +110,23 @@ describe('OwnerWidgetRuntimeBoundary', () => {
   });
 
   it('preserves verified PARTIAL and STALE data with source and freshness evidence', () => {
-    const partial = render(record('PARTIAL'));
+    const resolvedLabels: string[] = [];
+    const partial = render(record('PARTIAL'), {
+      label: (key: string) => {
+        resolvedLabels.push(key);
+        return 'Connected source';
+      },
+    });
     const stale = render(record('STALE'));
     expect(partial).toContain('data-home-content-state="partial"');
     expect(partial).toContain('검증된 승인');
     expect(partial).toContain('data-home-state-sources');
+    expect(resolvedLabels).toContain('ownerWidgets.sourceLabel');
+    expect(partial).not.toContain('APPROVAL_HOME');
     expect(stale).toContain('data-home-content-state="stale"');
     expect(stale).toContain('검증된 승인');
     expect(stale).toContain('data-home-state-last-success');
+    expect(stale).not.toContain('APPROVAL_HOME');
   });
 
   it('isolates malformed payloads and signed tuple mismatches to one widget', () => {

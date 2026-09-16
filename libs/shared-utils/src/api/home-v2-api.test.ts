@@ -113,9 +113,10 @@ function responseFixture(): Record<string, unknown> {
   };
 }
 
-function responseHeaders(mode: 'ACTIVE' | 'SHADOW' = 'ACTIVE'): Headers {
+function responseHeaders(mode: 'ACTIVE' | 'SHADOW' = 'ACTIVE', etag = '"home-change-8"'): Headers {
   return new Headers({
     'Cache-Control': 'private, max-age=0, must-revalidate',
+    ETag: etag,
     Vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision',
     'X-DWP-Home-Commands-Enabled': 'false',
     'X-DWP-Home-Runtime-Mode': mode,
@@ -236,8 +237,33 @@ describe('Home v2 read contract', () => {
     expect(() => parseHomeV2ReadModel(fixture)).toThrow('Home v2 response is invalid');
   });
 
+  it('rejects duplicate widget definitions even when their instance IDs differ', () => {
+    const fixture = responseFixture();
+    const widgets = (fixture.data as Record<string, unknown>).widgets as Array<
+      Record<string, unknown>
+    >;
+    widgets.push({
+      ...structuredClone(widgets[0]),
+      instanceId: '1a0fc323-b622-4af4-a0fd-9cf7462f8eb5',
+    });
+
+    expect(() => parseHomeV2ReadModel(fixture)).toThrow('data.widgets[1].definitionKey');
+  });
+
+  it('accepts canonical ordered subsets and isolated tenant extension groups', () => {
+    const fixture = responseFixture();
+    const groups = (fixture.data as Record<string, unknown>).appDock as unknown[];
+    groups.splice(1, 2);
+    groups.splice(1, 0, { groupKey: 'TENANT_TOOLS', label: 'Tenant tools', apps: [] });
+
+    expect(parseHomeV2ReadModel(fixture).appDock.map((group) => group.groupKey)).toEqual([
+      'WORK_START',
+      'TENANT_TOOLS',
+      'SYSTEM_CONTROL',
+    ]);
+  });
+
   it.each([
-    ['missing', (groups: unknown[]) => groups.pop()],
     [
       'reordered',
       (groups: unknown[]) => {
@@ -245,9 +271,18 @@ describe('Home v2 read contract', () => {
       },
     ],
     [
-      'unknown',
+      'unsafe extension',
       (groups: unknown[]) => {
-        (groups[2] as Record<string, unknown>).groupKey = 'UNKNOWN_GROUP';
+        (groups[2] as Record<string, unknown>).groupKey = 'unknown-group';
+      },
+    ],
+    ['empty', (groups: unknown[]) => groups.splice(0)],
+    [
+      'more than eight groups',
+      (groups: unknown[]) => {
+        for (let index = 0; index < 5; index += 1) {
+          groups.push({ groupKey: `TENANT_${index}`, label: `Tenant ${index}`, apps: [] });
+        }
       },
     ],
   ])('rejects a %s canonical appDock group set', (_label, mutate) => {
@@ -287,13 +322,19 @@ describe('Home v2 read contract', () => {
     expect(() => parseHomeV2ResponseMetadata(authoritativeRegistry)).toThrow(
       'headers.X-DWP-Widget-Registry-Authoritative'
     );
+
+    const disabledRuntime = responseHeaders();
+    disabledRuntime.set('X-DWP-Home-Runtime-Mode', 'DISABLED');
+    expect(() => parseHomeV2ResponseMetadata(disabledRuntime)).toThrow(
+      'headers.X-DWP-Home-Runtime-Mode'
+    );
   });
 
   it('owns the conditional snapshot at the caller and sends the canonical query', async () => {
     const model = parseHomeV2ReadModel(responseFixture());
     const previous = { data: model, etag: '"home-change-7"' };
     const getConditional = vi.spyOn(axiosInstance, 'getConditional').mockResolvedValue({
-      headers: responseHeaders(),
+      headers: responseHeaders('ACTIVE', '"home-change-7"'),
       snapshot: previous,
       status: 304,
       notModified: true,
@@ -304,7 +345,6 @@ describe('Home v2 read contract', () => {
         deviceClass: 'DESKTOP_STANDARD',
         mode: 'CLASSIC',
         timeZone: 'Asia/Seoul',
-        contextScopeKey: 'opaque-scope',
       },
       previous
     );
@@ -312,8 +352,9 @@ describe('Home v2 read contract', () => {
     expect(getConditional).toHaveBeenCalledWith(
       '/api/platform/v2/home?deviceClass=DESKTOP_STANDARD&timeZone=Asia%2FSeoul&mode=CLASSIC',
       previous,
-      expect.objectContaining({ contextScopeKey: 'opaque-scope', timeoutMs: 10_000 })
+      expect.objectContaining({ timeoutMs: 10_000 })
     );
+    expect(getConditional.mock.calls[0]?.[2]?.contextScopeKey).toBeUndefined();
     expect(result).toMatchObject({
       status: 304,
       notModified: true,
@@ -341,6 +382,26 @@ describe('Home v2 read contract', () => {
       etag: '"home-change-8"',
     });
     expect(result.metadata.runtimeMode).toBe('SHADOW');
+  });
+
+  it.each(['200', '304'] as const)('rejects a %s response with a stripped ETag', async (status) => {
+    const parsed = parseHomeV2ReadModel(responseFixture());
+    const previous = { data: parsed, etag: '"home-change-8"' };
+    const headers = responseHeaders();
+    headers.delete('ETag');
+    vi.spyOn(axiosInstance, 'getConditional').mockResolvedValue({
+      headers,
+      snapshot: status === '200' ? { data: responseFixture(), etag: '"home-change-8"' } : previous,
+      status: status === '200' ? 200 : 304,
+      notModified: status === '304',
+    });
+
+    await expect(
+      getHomeV2(
+        { deviceClass: 'DESKTOP_STANDARD', timeZone: 'Asia/Seoul' },
+        status === '304' ? previous : undefined
+      )
+    ).rejects.toThrow('headers.ETag');
   });
 
   it('rejects a fresh response for a different requested device or mode', async () => {

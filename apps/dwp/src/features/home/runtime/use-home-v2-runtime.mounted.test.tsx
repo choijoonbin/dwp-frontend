@@ -22,6 +22,7 @@ import { HOME_V2_QUERY_ROOT, useHomeV2Runtime } from './use-home-v2-runtime';
 
 type ProbeInput = Readonly<{
   accessFingerprint: string;
+  locale: string;
   tenantId: number;
   userId: number;
 }>;
@@ -98,6 +99,7 @@ function Probe() {
     ...input,
     deviceClass: 'DESKTOP_STANDARD',
     enabled: true,
+    locale: input.locale,
     timeZone: 'Asia/Seoul',
   });
   const headline =
@@ -108,6 +110,10 @@ function Probe() {
     'data-activation': runtime.activation.kind,
     'data-headline': headline,
     'data-legacy-enabled': String(runtime.legacyEnabled),
+    'data-refresh-failed':
+      runtime.activation.kind === 'ACTIVE' || runtime.activation.kind === 'SHADOW'
+        ? String(runtime.activation.refreshFailed)
+        : 'none',
     'data-status': String(runtime.query.data?.status ?? 'none'),
   });
 }
@@ -139,7 +145,7 @@ describe('mounted Home v2 runtime receipt', () => {
     host = document.createElement('div');
     document.body.append(host);
     root = createRoot(host);
-    input = { accessFingerprint: 'v1:scope-a', tenantId: 1, userId: 7 };
+    input = { accessFingerprint: 'v1:scope-a', locale: 'ko-KR', tenantId: 1, userId: 7 };
   });
 
   afterEach(async () => {
@@ -164,6 +170,11 @@ describe('mounted Home v2 runtime receipt', () => {
       legacyEnabled: 'false',
       status: '200',
     });
+    expect(client.getQueryCache().findAll({ queryKey: HOME_V2_QUERY_ROOT })[0]?.meta).toMatchObject(
+      {
+        accessSensitive: true,
+      }
+    );
 
     await act(async () => {
       await client.refetchQueries({ queryKey: HOME_V2_QUERY_ROOT, type: 'active' });
@@ -195,6 +206,47 @@ describe('mounted Home v2 runtime receipt', () => {
     });
   });
 
+  it('uses a verified ACTIVE to SHADOW transition as the authorized rollback', async () => {
+    const active = { data: model('Active Home', 'home-active-1'), etag: '"active-1"' };
+    const shadow = { data: model('Shadow Home', 'home-shadow-2'), etag: '"shadow-2"' };
+    transport.getHomeV2
+      .mockResolvedValueOnce(result(active))
+      .mockResolvedValueOnce(result(shadow, 'SHADOW'));
+
+    await render(input);
+    await waitFor(() => expect(receipt().dataset.activation).toBe('ACTIVE'));
+    await act(async () => {
+      await client.refetchQueries({ queryKey: HOME_V2_QUERY_ROOT, type: 'active' });
+    });
+    await waitFor(() => expect(receipt().dataset.activation).toBe('SHADOW'));
+
+    expect(receipt().dataset).toMatchObject({
+      activation: 'SHADOW',
+      headline: 'Shadow Home',
+      legacyEnabled: 'true',
+    });
+  });
+
+  it('preserves verified ACTIVE content and reports a failed background refresh', async () => {
+    const snapshot = { data: model('Verified Home', 'home-active-1'), etag: '"active-1"' };
+    transport.getHomeV2
+      .mockResolvedValueOnce(result(snapshot))
+      .mockRejectedValueOnce(new Error('refresh unavailable'));
+
+    await render(input);
+    await waitFor(() => expect(receipt().dataset.activation).toBe('ACTIVE'));
+    await act(async () => {
+      await client.refetchQueries({ queryKey: HOME_V2_QUERY_ROOT, type: 'active' });
+    });
+    await waitFor(() => expect(receipt().dataset.refreshFailed).toBe('true'));
+
+    expect(receipt().dataset).toMatchObject({
+      activation: 'ACTIVE',
+      headline: 'Verified Home',
+      legacyEnabled: 'false',
+    });
+  });
+
   it('drops old data and ETag before issuing a request for a changed access scope', async () => {
     const firstSnapshot = { data: model('Tenant A Home', 'home-a-1'), etag: '"home-a-1"' };
     const second = deferred<HomeV2ReadResult>();
@@ -205,7 +257,7 @@ describe('mounted Home v2 runtime receipt', () => {
     await render(input);
     await waitFor(() => expect(receipt().dataset.headline).toBe('Tenant A Home'));
 
-    await render({ accessFingerprint: 'v1:scope-b', tenantId: 2, userId: 9 });
+    await render({ accessFingerprint: 'v1:scope-b', locale: 'ko-KR', tenantId: 2, userId: 9 });
     await waitFor(() => expect(transport.getHomeV2).toHaveBeenCalledTimes(2));
     expect(receipt().dataset).toMatchObject({
       activation: 'PENDING',
@@ -223,5 +275,29 @@ describe('mounted Home v2 runtime receipt', () => {
     await waitFor(() => expect(receipt().dataset.headline).toBe('Tenant B Home'));
     expect(receipt().dataset.activation).toBe('ACTIVE');
     expect(receipt().dataset.headline).not.toBe('Tenant A Home');
+  });
+
+  it('drops old localized data and ETag before requesting a changed locale', async () => {
+    const firstSnapshot = { data: model('한국어 홈', 'home-ko-1'), etag: '"home-ko-1"' };
+    const english = deferred<HomeV2ReadResult>();
+    transport.getHomeV2
+      .mockResolvedValueOnce(result(firstSnapshot))
+      .mockImplementationOnce(() => english.promise);
+
+    await render(input);
+    await waitFor(() => expect(receipt().dataset.headline).toBe('한국어 홈'));
+    await render({ ...input, locale: 'en-US' });
+    await waitFor(() => expect(transport.getHomeV2).toHaveBeenCalledTimes(2));
+
+    expect(receipt().dataset).toMatchObject({ activation: 'PENDING', headline: '' });
+    expect(transport.getHomeV2.mock.calls[1]?.[1]).toBeUndefined();
+
+    const englishSnapshot = { data: model('English Home', 'home-en-1'), etag: '"home-en-1"' };
+    await act(async () => {
+      english.resolve(result(englishSnapshot));
+      await english.promise;
+    });
+    await waitFor(() => expect(receipt().dataset.headline).toBe('English Home'));
+    expect(receipt().dataset.headline).not.toBe('한국어 홈');
   });
 });

@@ -11,6 +11,11 @@ import { reorderWorkspaceWidgets } from '../../components/workspace-composer/wor
 import { staticHomeWidgetRuntimeDecisions } from './runtime/widget-registry-runtime';
 
 describe('home widget registry', () => {
+  it('reuses one immutable static decision table across ACTIVE renders', () => {
+    expect(staticHomeWidgetRuntimeDecisions()).toBe(staticHomeWidgetRuntimeDecisions());
+    expect(Object.isFrozen(staticHomeWidgetRuntimeDecisions())).toBe(true);
+  });
+
   it('fails closed for blocked lifecycle and preserves deprecated instances without new placement', () => {
     expect(homeWidgetLifecyclePolicy('ACTIVE')).toEqual({
       renderExisting: true,
