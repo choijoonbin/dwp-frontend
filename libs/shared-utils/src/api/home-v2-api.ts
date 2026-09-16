@@ -135,6 +135,9 @@ export type HomeV2ReadInput = Readonly<{
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const BADGE_VERSION_PATTERN = /^(?:0|[1-9]\d{0,39})$/u;
 const OFFSET_TIMESTAMP_PATTERN = /T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
+const INTERNAL_ROUTE_PATTERN = /^\/[A-Za-z0-9/_?=&.%-]*$/u;
+const INVALID_PERCENT_ESCAPE_PATTERN = /%(?![0-9A-Fa-f]{2})/u;
+const ENCODED_SEQUENCE_PATTERN = /%[0-9A-Fa-f]{2}/u;
 const HOME_MODES = new Set<HomeExperienceVariant>(['CLASSIC', 'FLOW_V1']);
 const HOME_APP_DOCK_GROUP_KEYS = [
   'WORK_START',
@@ -240,19 +243,52 @@ function optionalNullableString(record: Record<string, unknown>, key: string, pa
   return record[key] === undefined ? null : string(record[key], `${path}.${key}`, true);
 }
 
+function hasUnsafeRouteCharacter(value: string): boolean {
+  return [...value].some((character) => {
+    const code = character.codePointAt(0) ?? 0;
+    return character === '\\' || character === '#' || code <= 31 || code >= 127;
+  });
+}
+
+function hasDotSegment(value: string): boolean {
+  return value.split('/').some((segment) => segment === '.' || segment === '..');
+}
+
+export function isSafeHomeInternalRoute(value: unknown): value is string {
+  if (
+    typeof value !== 'string' ||
+    !value.trim() ||
+    value.length > 512 ||
+    !INTERNAL_ROUTE_PATTERN.test(value) ||
+    value.startsWith('//') ||
+    hasUnsafeRouteCharacter(value) ||
+    INVALID_PERCENT_ESCAPE_PATTERN.test(value)
+  ) {
+    return false;
+  }
+  const queryIndex = value.indexOf('?');
+  if (queryIndex !== value.lastIndexOf('?')) return false;
+  const encodedPath = queryIndex === -1 ? value : value.slice(0, queryIndex);
+  if (hasDotSegment(encodedPath)) return false;
+  try {
+    const decodedPath = decodeURIComponent(encodedPath);
+    return (
+      !decodedPath.startsWith('//') &&
+      !hasUnsafeRouteCharacter(decodedPath) &&
+      !decodedPath.includes('?') &&
+      !hasDotSegment(decodedPath) &&
+      decodedPath.split('/').length === encodedPath.split('/').length &&
+      !ENCODED_SEQUENCE_PATTERN.test(decodedPath)
+    );
+  } catch {
+    return false;
+  }
+}
+
 function internalRoute(value: unknown, path: string, nullable = false): string | null {
   const route = string(value, path, nullable);
   if (route === null) return null;
-  if (
-    !route.startsWith('/') ||
-    route.startsWith('//') ||
-    [...route].some((character) => {
-      const code = character.codePointAt(0) ?? 0;
-      return character === '\\' || code <= 31 || code === 127;
-    })
-  ) {
-    invalid(path);
-  }
+  if (!isSafeHomeInternalRoute(route)) invalid(path);
   return route;
 }
 

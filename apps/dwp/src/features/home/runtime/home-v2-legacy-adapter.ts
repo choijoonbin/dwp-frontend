@@ -1,5 +1,6 @@
 import {
   createHomeModeLayouts,
+  isSafeHomeInternalRoute,
   parseAppNotificationSummary,
   type AppNotificationSummary,
   type HomeExperience,
@@ -52,10 +53,10 @@ function hasExactNativeBinding(widget: HomeV2Widget): boolean {
   const binding = NATIVE_BINDING_BY_DEFINITION_KEY.get(widget.definitionKey);
   return Boolean(
     binding &&
-      widget.definitionVersion === binding.semanticVersion &&
-      widget.definitionManifestHash === binding.expectedManifestHash &&
-      widget.rendererBindingRevision === HOME_NATIVE_BINDING_CATALOG_REVISION &&
-      widget.rendererKey === binding.rendererKey
+    widget.definitionVersion === binding.semanticVersion &&
+    widget.definitionManifestHash === binding.expectedManifestHash &&
+    widget.rendererBindingRevision === HOME_NATIVE_BINDING_CATALOG_REVISION &&
+    widget.rendererKey === binding.rendererKey
   );
 }
 
@@ -139,7 +140,7 @@ function rawWorkItem(value: unknown): boolean {
     (item.dueAt === undefined || item.dueAt === null || instant(item.dueAt)) &&
     (item.sourceRoute === undefined ||
       item.sourceRoute === null ||
-      safeInternalRoute(item.sourceRoute)) &&
+      isSafeHomeInternalRoute(item.sourceRoute)) &&
     (!item.capabilities ||
       (capabilities &&
         typeof capabilities.canStart === 'boolean' &&
@@ -249,7 +250,7 @@ function normalizeCalendar(value: unknown): CalendarHome | null {
         ['LOW', 'MEDIUM', 'HIGH'].includes(String(attention.severity)) &&
         text(attention.title) &&
         text(attention.description) &&
-        safeInternalRoute(attention.actionPath)
+        isSafeHomeInternalRoute(attention.actionPath)
       );
     }) ||
     !instant(data.generatedAt)
@@ -318,18 +319,6 @@ function section<T>(
   };
 }
 
-function safeInternalRoute(value: unknown): value is string {
-  return (
-    typeof value === 'string' &&
-    value.startsWith('/') &&
-    !value.startsWith('//') &&
-    ![...value].some((character) => {
-      const code = character.codePointAt(0) ?? 0;
-      return character === '\\' || code <= 31 || code === 127;
-    })
-  );
-}
-
 function normalizeRecommendations(value: unknown): HomeRecommendation[] | null {
   return Array.isArray(value) &&
     value.every((item) => {
@@ -341,7 +330,7 @@ function normalizeRecommendations(value: unknown): HomeRecommendation[] | null {
         ['HIGH', 'MEDIUM', 'LOW'].includes(String(recommendation.priority)) &&
         text(recommendation.title) &&
         text(recommendation.description) &&
-        safeInternalRoute(recommendation.actionPath) &&
+        isSafeHomeInternalRoute(recommendation.actionPath) &&
         text(recommendation.source) &&
         integer(recommendation.evidenceCount) &&
         ['HIGH', 'MEDIUM', 'LOW'].includes(String(recommendation.confidence))

@@ -175,6 +175,41 @@ describe('Home v2 legacy-shaped read adapters', () => {
     expect(overview.work).toMatchObject({ status: 'UNAVAILABLE', data: null });
   });
 
+  it.each(['/work/../admin', '/work/.%2e/admin', '/work/%252e%252e/admin'])(
+    'fails unsafe native sourceRoute %s closed before navigation',
+    (sourceRoute) => {
+      const unsafeWorkQueue = {
+        ...rawWorkQueue,
+        items: [{ ...rawWorkQueue.items[0], sourceRoute }],
+      };
+
+      expect(
+        homeV2ToOverview(model([widget('core.workspace.command-rail', unsafeWorkQueue)])).work
+      ).toMatchObject({ status: 'UNAVAILABLE', data: null });
+    }
+  );
+
+  it('fails an encoded traversal actionPath in a native recommendation closed', () => {
+    const recommendations = [
+      {
+        key: 'unsafe-next-action',
+        kind: 'ACTION',
+        priority: 'HIGH',
+        title: 'Unsafe route',
+        description: 'Must not be navigable.',
+        actionPath: '/work/%2e%2e/admin',
+        source: 'HOME_RUNTIME_V2',
+        evidenceCount: 1,
+        confidence: 'HIGH',
+      },
+    ];
+
+    expect(
+      homeV2ToOverview(model([widget('core.workspace.daily-brief', recommendations)]))
+        .recommendations
+    ).toMatchObject({ status: 'UNAVAILABLE', data: null });
+  });
+
   it.each([
     ['definitionVersion', '9.9.9'],
     ['definitionManifestHash', '0'.repeat(64)],

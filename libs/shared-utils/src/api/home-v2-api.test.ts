@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { axiosInstance } from '../axios-instance';
-import { getHomeV2, parseHomeV2ReadModel, parseHomeV2ResponseMetadata } from './home-v2-api';
+import {
+  getHomeV2,
+  isSafeHomeInternalRoute,
+  parseHomeV2ReadModel,
+  parseHomeV2ResponseMetadata,
+} from './home-v2-api';
 
 function responseFixture(): Record<string, unknown> {
   return {
@@ -144,6 +149,34 @@ function setFixturePath(
 describe('Home v2 read contract', () => {
   afterEach(() => vi.restoreAllMocks());
 
+  it.each([
+    '//admin',
+    '///admin',
+    '/work/./admin',
+    '/work/../admin',
+    '/work/.%2e/admin',
+    '/work/%2E%2E/admin',
+    '/work/%2fadmin',
+    '/work/%5cadmin',
+    '/work/%252e%252e/admin',
+    '/work/%2',
+    '/work?item=1?next=2',
+    '/work#admin',
+    '/work/%00admin',
+    '/work/%C3%A9',
+  ])('rejects non-canonical internal route %s', (route) => {
+    expect(isSafeHomeInternalRoute(route)).toBe(false);
+  });
+
+  it.each([
+    '/',
+    '/work',
+    '/work/queue?item=PERSONAL_TASK%3A123%3A',
+    '/approvals/home?filter=due-today&owner=me',
+  ])('accepts canonical internal route %s', (route) => {
+    expect(isSafeHomeInternalRoute(route)).toBe(true);
+  });
+
   it('strictly normalizes the canonical response envelope', () => {
     const model = parseHomeV2ReadModel(responseFixture());
 
@@ -194,6 +227,11 @@ describe('Home v2 read contract', () => {
       'external source action route',
       ['data', 'widgets', 0, 'actions', 0, 'sourceRoute'],
       'https://example.test',
+    ],
+    [
+      'dot-segment source action route',
+      ['data', 'widgets', 0, 'actions', 0, 'sourceRoute'],
+      '/work/../admin',
     ],
     ['protocol-relative app route', ['data', 'appDock', 0, 'apps', 0, 'sourceRoute'], '//evil'],
     [
