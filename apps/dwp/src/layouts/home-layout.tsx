@@ -1,7 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
   AppWindow,
   Activity,
@@ -20,8 +19,6 @@ import {
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { getHomeExperience } from '@dwp-frontend/shared-utils/api/home-experience-api';
-import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
@@ -194,7 +191,6 @@ function HomeNavigationList({
 
 export function HomeLayout() {
   const { t } = useTranslation('shell');
-  const auth = useAuth();
   const { hasPermission } = usePermissions();
   const [viewportWidth, setViewportWidth] = useState(currentViewportWidth);
   const largeText = useLargeTextReflow();
@@ -213,14 +209,7 @@ export function HomeLayout() {
   const drawerNavigationVisible = !desktopNavigationVisible && !bottomNavigationVisible;
   const mobileNavigation = useShellMobileNavigation({ headerTestId: 'home-header' });
   const shell = shellRegistry.home;
-  const homeExperienceQuery = useQuery({
-    queryKey: ['home-experience', auth.user?.tenantId],
-    queryFn: getHomeExperience,
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
-  const mode: HomeExperienceMode =
-    homeExperienceQuery.data?.effectiveExperienceVariant === 'FLOW_V1' ? 'FLOW_V1' : 'CLASSIC';
+  const [mode, setMode] = useState<HomeExperienceMode>('CLASSIC');
   const navigation = useDesktopNavigation(shell, {
     defaultCompact: mode === 'FLOW_V1',
     storageScope: `home:${mode}`,
@@ -447,7 +436,7 @@ export function HomeLayout() {
           outline: 'none',
         }}
       >
-        <Outlet />
+        <Outlet context={setMode} />
       </Box>
       {bottomNavigationVisible && (
         <Box

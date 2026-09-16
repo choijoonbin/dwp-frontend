@@ -93,7 +93,7 @@ export function selectOwnerRuntimeWidgets(
   );
 }
 
-/** Projects the authoritative Composition v4 order/visibility/size onto owner runtime records. */
+/** Projects the owner-placement subset of Composition v4; native slots stay in their sealed canvas. */
 export function projectOwnerWidgetPlacements(
   model: HomeV2ReadModel
 ): readonly HomeOwnerWidgetPlacement[] {
@@ -167,6 +167,7 @@ export function HomeOwnerWidgetRegion({
       component="section"
       aria-label={t('ownerWidgets.regionLabel')}
       data-home-owner-widget-region={variant.toLowerCase()}
+      data-home-owner-composition-scope="owner-subset"
       data-home-owner-widget-count={placements.length}
       sx={{
         display: 'grid',
@@ -222,20 +223,18 @@ export function HomeOwnerWidgetRegion({
 }
 
 export function ActiveHomeOwnerWidgetRegion({
-  locale,
   runtime,
-  variant,
 }: Readonly<{
-  locale: string;
   runtime: HomeV2Runtime;
-  variant: OwnerWidgetRendererVariant;
 }>) {
+  const { i18n } = useTranslation('home');
   if (runtime.activation.kind !== 'ACTIVE') return null;
+  const model = runtime.activation.result.snapshot.data;
   return (
     <HomeOwnerWidgetRegion
-      model={runtime.activation.result.snapshot.data}
-      variant={variant}
-      locale={locale}
+      model={model}
+      variant={model.mode === 'FLOW_V1' ? 'FLOW' : 'CLASSIC'}
+      locale={i18n.resolvedLanguage || i18n.language || 'en'}
       refreshing={runtime.query.isFetching && !runtime.query.isLoading}
       onRetry={() => void runtime.query.refetch()}
     />

@@ -237,6 +237,26 @@ function optionalNullableString(record: Record<string, unknown>, key: string, pa
   return record[key] === undefined ? null : string(record[key], `${path}.${key}`, true);
 }
 
+function internalRoute(value: unknown, path: string, nullable = false): string | null {
+  const route = string(value, path, nullable);
+  if (route === null) return null;
+  if (
+    !route.startsWith('/') ||
+    route.startsWith('//') ||
+    [...route].some((character) => {
+      const code = character.codePointAt(0) ?? 0;
+      return character === '\\' || code <= 31 || code === 127;
+    })
+  ) {
+    invalid(path);
+  }
+  return route;
+}
+
+function optionalNullableRoute(record: Record<string, unknown>, key: string, path: string) {
+  return record[key] === undefined ? null : internalRoute(record[key], `${path}.${key}`, true);
+}
+
 function parseLayout(value: unknown): HomePreferenceLayout<string> {
   const layout = object(value, 'data.view.composition');
   const widgets = array(layout.widgets, 'data.view.composition.widgets').map((item, index) => {
@@ -302,14 +322,30 @@ function parseDeviceOverlay(value: unknown): HomeDeviceLayoutOverlay | null {
 function parseAction(value: unknown, index: number): HomeV2Action {
   const path = `data.widgets.actions[${index}]`;
   const action = object(value, path);
+  const kind = enumValue(
+    action.kind,
+    new Set(['SOURCE_ROUTE', 'COMMAND'] as const),
+    `${path}.kind`
+  );
+  const commandKey = optionalNullableString(action, 'commandKey', path);
+  const expectedResultVersion = optionalNullableString(action, 'expectedResultVersion', path);
+  const sourceRoute = internalRoute(action.sourceRoute, `${path}.sourceRoute`, true);
+  if (
+    kind !== 'SOURCE_ROUTE' ||
+    commandKey !== null ||
+    expectedResultVersion !== null ||
+    !sourceRoute
+  ) {
+    invalid(path);
+  }
   return {
     actionId: string(action.actionId, `${path}.actionId`)!,
-    commandKey: optionalNullableString(action, 'commandKey', path),
-    expectedResultVersion: optionalNullableString(action, 'expectedResultVersion', path),
-    kind: enumValue(action.kind, new Set(['SOURCE_ROUTE', 'COMMAND'] as const), `${path}.kind`),
+    commandKey,
+    expectedResultVersion,
+    kind,
     labelKey: string(action.labelKey, `${path}.labelKey`)!,
     requiresConfirmation: boolean(action.requiresConfirmation, `${path}.requiresConfirmation`),
-    sourceRoute: optionalNullableString(action, 'sourceRoute', path),
+    sourceRoute,
   };
 }
 
@@ -340,7 +376,7 @@ function parseWidget(value: unknown, index: number): HomeV2Widget {
         governance.sourceAppResourceKey,
         `${path}.governance.sourceAppResourceKey`
       )!,
-      sourceRoute: string(governance.sourceRoute, `${path}.governance.sourceRoute`)!,
+      sourceRoute: internalRoute(governance.sourceRoute, `${path}.governance.sourceRoute`)!,
     },
     instanceId,
     payload: object(widget.payload, `${path}.payload`),
@@ -389,7 +425,7 @@ function parseApp(value: unknown, path: string): HomeV2AppEntry {
     badgeState,
     iconKey: string(app.iconKey, `${path}.iconKey`)!,
     label: string(app.label, `${path}.label`)!,
-    sourceRoute: string(app.sourceRoute, `${path}.sourceRoute`)!,
+    sourceRoute: internalRoute(app.sourceRoute, `${path}.sourceRoute`)!,
   };
 }
 
@@ -453,11 +489,11 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
           dueAt: timestamp(announcement.dueAt, `${path}.dueAt`, true),
           id: string(announcement.id, `${path}.id`)!,
           kind: string(announcement.kind, `${path}.kind`)!,
-          sourceRoute: string(announcement.sourceRoute, `${path}.sourceRoute`)!,
+          sourceRoute: internalRoute(announcement.sourceRoute, `${path}.sourceRoute`)!,
           title: string(announcement.title, `${path}.title`)!,
         };
       }),
-      backgroundAssetRoute: optionalNullableString(shell, 'backgroundAssetRoute', 'data.shell'),
+      backgroundAssetRoute: optionalNullableRoute(shell, 'backgroundAssetRoute', 'data.shell'),
       contentAlignment: string(shell.contentAlignment, 'data.shell.contentAlignment')!,
       density: string(shell.density, 'data.shell.density')!,
       headline: string(shell.headline, 'data.shell.headline')!,

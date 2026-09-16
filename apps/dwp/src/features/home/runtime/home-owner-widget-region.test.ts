@@ -27,7 +27,7 @@ describe('Home owner widget region', () => {
     expect(selectOwnerRuntimeWidgets([widget('hr.edu')])).toHaveLength(1);
   });
 
-  it('applies Composition v4 visibility plus device order and size to owner placements', () => {
+  it('applies Composition v4 visibility plus device order and size within the owner subset', () => {
     const model = {
       view: {
         composition: {

@@ -1,6 +1,6 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   launchWorkspaceApp,
@@ -114,6 +114,7 @@ export default function HomePage() {
   const toast = useToast();
   const { hasPermission, permissions } = usePermissions();
   const navigate = useNavigate();
+  const reportHomeMode = useOutletContext<((mode: 'CLASSIC' | 'FLOW_V1') => void) | null>();
   const [searchParams, setSearchParams] = useSearchParams();
   const wave2Evidence = resolveWave2Evidence(searchParams);
   const queryClient = useQueryClient();
@@ -220,6 +221,7 @@ export default function HomePage() {
     homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
     viewStoreEnabled
   );
+  useEffect(() => reportHomeMode?.(homeModeKey), [homeModeKey, reportHomeMode]);
   const editingHomeViewScope = resolveActiveHomeViewScope(
     { modeKey: homeModeKey, modeScoped: modeScopedHomeViewsSupported },
     editSession
@@ -729,13 +731,7 @@ export default function HomePage() {
     fallbackSubheadline: t('page.commandDescription'),
   });
   const homeAssistantAvailable = !editorOpen && isAppResourceEntitled('APP.ASK', permissions);
-  const ownerWidgetRegion = (
-    <ActiveHomeOwnerWidgetRegion
-      runtime={homeV2Runtime}
-      variant={editorFlowHomeEnabled ? 'FLOW' : 'CLASSIC'}
-      locale={i18n.resolvedLanguage || i18n.language || 'en'}
-    />
-  );
+  const ownerWidgetRegion = <ActiveHomeOwnerWidgetRegion runtime={homeV2Runtime} />;
   return (
     <Box
       ref={homeAvailableWidthRef}

@@ -187,6 +187,36 @@ describe('Home v2 read contract', () => {
   });
 
   it.each([
+    ['command action', ['data', 'widgets', 0, 'actions', 0, 'kind'], 'COMMAND'],
+    ['source action command key', ['data', 'widgets', 0, 'actions', 0, 'commandKey'], 'approve'],
+    [
+      'external source action route',
+      ['data', 'widgets', 0, 'actions', 0, 'sourceRoute'],
+      'https://example.test',
+    ],
+    ['protocol-relative app route', ['data', 'appDock', 0, 'apps', 0, 'sourceRoute'], '//evil'],
+    [
+      'backslash announcement route',
+      ['data', 'shell', 'announcements', 0, 'sourceRoute'],
+      '/\\evil',
+    ],
+    [
+      'control governance route',
+      ['data', 'widgets', 0, 'governance', 'sourceRoute'],
+      '/admin\u0000',
+    ],
+    [
+      'external background route',
+      ['data', 'shell', 'backgroundAssetRoute'],
+      'https://example.test',
+    ],
+  ] as const)('rejects %s in the Wave 4 read-only model', (_label, path, value) => {
+    const fixture = responseFixture();
+    setFixturePath(fixture, path, value);
+    expect(() => parseHomeV2ReadModel(fixture)).toThrow('Home v2 response is invalid');
+  });
+
+  it.each([
     ['group key', ['data', 'appDock']],
     ['widget instance key', ['data', 'widgets']],
   ] as const)('rejects a duplicate %s', (_label, path) => {
