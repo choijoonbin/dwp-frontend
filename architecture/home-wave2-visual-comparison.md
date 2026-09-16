@@ -7,9 +7,9 @@
 
 ## Final integrated verification
 
-- Integrated implementation commit: `56c78e1e7fc51cac40b381d0e5376efceaa65a68`
-- Runtime: Node.js 24.19.0, Playwright 1.58.0, Chromium project, one worker, host
-  timezone with no override
+- Integrated implementation commit: `276879ee876e87f801ca44e9b0b849c25ef8c3fa`
+- Runtime: Node.js 24.19.0, Playwright 1.58.0, Chromium project, one worker,
+  `Asia/Seoul` timezone override
 - Combined acceptance result: clean run of 19/19 tests
   (Wave 2 acceptance 7, Wave 2 state evidence 8, Wave 3 governance 4)
 - Wave 2 JUnit receipt: 15/15 tests, 0 failures, 0 skipped, 0 errors

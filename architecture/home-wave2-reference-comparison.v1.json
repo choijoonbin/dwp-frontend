@@ -60,7 +60,7 @@
     "registry": "architecture/home-wave2-design-source-registry.v1.json",
     "registrySha256": "a27654ddea1abe5faf9d995e223b66e4a0485998520eed3a12427a3c165b73ef",
     "evidence": "architecture/home-wave2-evidence.v1.json",
-    "evidenceSha256": "ba82cb1fd81448f1f665e9ab173dbf5f0b838cb6b7452c1ab57717d5451312e4",
+    "evidenceSha256": "155b8bb726c7bca5d3256d2386cc3feff37d54e3bef9bbcf7b0fd8a9f0ed25da",
     "acceptedSourcesReadOnly": true,
     "implementationEvidenceBinding": "SEALED_MANIFEST_MATCH"
   },
