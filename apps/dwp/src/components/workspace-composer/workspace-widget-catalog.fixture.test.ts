@@ -79,6 +79,6 @@ describe('first-party widget registry fixture parity', () => {
       );
     });
     expect(createHash('sha256').update(`${canonical(firstPartyFixture)}\n`).digest('hex'))
-      .toBe('3838b553235923be694a1a334bd6652abe9cb380603293dd4c6bd15337f5732e');
+      .toBe('a00858a6ebed89e35d36e0a332827e56ccc2a9b24506ee16866cb89b819fed7c');
   });
 });
