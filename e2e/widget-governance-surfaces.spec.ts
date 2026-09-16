@@ -10,6 +10,13 @@ import {
   widgetRegistryEffectiveCatalog,
   widgetRegistryReadiness,
 } from './support/widget-registry';
+import { mockShellHomeReadModels } from './support/shell-spec-foundation';
+import {
+  createHomeWave4Model,
+  HOME_V2_ROUTE,
+  homeWave4ResponseBody,
+  homeWave4ResponseHeaders,
+} from './support/home-wave4-runtime-fixtures';
 
 const reducedMotionAppearance = {
   mode: 'light',
@@ -398,6 +405,21 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
     locale: 'en',
     appearance: reducedMotionAppearance,
   });
+  await mockShellHomeReadModels(page);
+  await page.route(HOME_V2_ROUTE, (route) =>
+    route.fulfill({
+      status: 200,
+      headers: homeWave4ResponseHeaders('SHADOW', '"widget-shadow-legacy"'),
+      contentType: 'application/json',
+      body: homeWave4ResponseBody(
+        createHomeWave4Model({
+          deviceClass: 'DESKTOP_STANDARD',
+          marker: 'widget-shadow-legacy',
+          mode: 'CLASSIC',
+        })
+      ),
+    })
+  );
   await page.route('**/api/platform/v1/home-preferences', (route) => {
     if (route.request().method() !== 'GET') return route.fallback();
     return route.fulfill({

@@ -5,6 +5,8 @@ import type * as ReactRouterDom from 'react-router-dom';
 
 import {
   AdminLegacyRedirect,
+  AdminHomeStudioRouteGuard,
+  AdminHomeLegacyRedirect,
   AdminRouteGuard,
   AdminSectionRedirect,
   ProductApplicationRedirect,
@@ -154,5 +156,64 @@ describe('administration product legacy route lifecycle', () => {
       routeContractKey: 'route.spaces.management.templates.page',
       productPageLifecycle: 'DRAFT',
     });
+  });
+});
+
+describe('Home Studio administration route boundary', () => {
+  it('keeps the common shell and every legacy entry under the guarded admin parent', () => {
+    const admin = administrationRoute('admin');
+    const children = admin.children ?? [];
+    const paths = children.map((route) => route.path);
+
+    expect(paths).toEqual(
+      expect.arrayContaining([
+        'experience/home',
+        'experience/home/:studioSection',
+        'experience/home-experience',
+        'experience/home-composition',
+        'experience/home-apps',
+      ])
+    );
+    expect(
+      administrationRoutes.filter((route) => route.path?.startsWith('admin/experience/home'))
+    ).toHaveLength(0);
+  });
+
+  it('requires exact VIEW authority for direct entry and does not infer it from MANAGE', () => {
+    const child = createElement('span', null, 'home studio');
+    const hasView = vi.fn(
+      (resourceKey: string, permissionCode?: string) =>
+        resourceKey === 'ADMIN.HOME_EXPERIENCE' && permissionCode === 'VIEW'
+    );
+    routeMocks.usePermissions.mockReturnValue({ isLoaded: true, hasPermission: hasView });
+    expect(AdminHomeStudioRouteGuard({ children: child })).toBe(child);
+
+    const hasManageOnly = vi.fn(
+      (resourceKey: string, permissionCode?: string) =>
+        resourceKey === 'ADMIN.HOME_EXPERIENCE' && permissionCode === 'MANAGE'
+    );
+    routeMocks.usePermissions.mockReturnValue({ isLoaded: true, hasPermission: hasManageOnly });
+    const denied = AdminHomeStudioRouteGuard({ children: child });
+    expect(isValidElement(denied)).toBe(true);
+    if (!isValidElement<{ to: string; replace: boolean }>(denied)) {
+      throw new Error('Expected a forbidden redirect element.');
+    }
+    expect(denied.type).toBe(Navigate);
+    expect(denied.props).toMatchObject({ to: '/403', replace: true });
+  });
+
+  it.each([
+    ['catalog', '/admin/experience/home/widgets'],
+    ['blueprints', '/admin/experience/home/templates'],
+    ['policy', '/admin/experience/home/modes'],
+  ])('maps legacy composition tab %s into the common shell', (tab, destination) => {
+    routeMocks.useSearchParams.mockReturnValue([new URLSearchParams({ tab })]);
+    const redirect = AdminHomeLegacyRedirect({ view: 'composition' });
+    expect(isValidElement(redirect)).toBe(true);
+    if (!isValidElement<{ to: string; replace: boolean }>(redirect)) {
+      throw new Error('Expected a Home Studio legacy redirect element.');
+    }
+    expect(redirect.type).toBe(Navigate);
+    expect(redirect.props).toMatchObject({ to: destination, replace: true });
   });
 });

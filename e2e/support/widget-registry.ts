@@ -1,6 +1,5 @@
 import type { Page, Route } from '@playwright/test';
 import firstPartyFixture from '../../architecture/widget-registry-native-manifests.v1.json' with { type: 'json' };
-import { createHash } from 'node:crypto';
 
 // Persisted pre-correction provider records remain visible during the 1.0.1 migration.
 const BINDINGS = [
@@ -12,10 +11,10 @@ const BINDINGS = [
   ['focus-balance', 'core.work.focus-balance', 'home.focus-balance', 'core.work'],
   ['meeting-load', 'core.calendar.meeting-load', 'home.meeting-load', 'core.calendar'],
 ] as const;
-const BINDING_REVISION = createHash('sha256').update([...firstPartyFixture.fixtures]
-  .sort((a, b) => a.manifest.renderer.rendererKey < b.manifest.renderer.rendererKey ? -1 : 1)
-  .map(({ manifest, expectedSha256 }) => `${manifest.renderer.rendererKey}:${expectedSha256}`)
-  .join('\n')).digest('hex');
+// Pinned independently to the backend full binding catalog receipt. The server signs the
+// effective decision with all native and owner definitions, not only this fixture's native rows.
+const BINDING_REVISION =
+  'd9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643';
 
 const CAPABILITIES = [
   'WIDGET_REGISTRY_CONTROL_PLANE',

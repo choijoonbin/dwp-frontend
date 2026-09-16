@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "surface": "account-home-layout-studio",
+  "fixture": {
+    "effectiveCatalogDefinitions": 100,
+    "maximumPersistedInstances": 30,
+    "nativeRendererAllowlist": 7,
+    "migrationMode": "SHADOW",
+    "authoritativeRuntime": false
+  },
+  "budgets": {
+    "routeReadyMilliseconds": 5000,
+    "keyboardSearchAndSelectionMilliseconds": 1000,
+    "maximumRenderedCatalogRows": 14,
+    "maximumProjectionPreviewRows": 5
+  },
+  "evidence": {
+    "playwrightSpec": "e2e/home-wave5-account-settings.spec.ts",
+    "test": "100-definition effective catalog stays bounded at the 30-instance editor ceiling",
+    "attachment": "home-wave5-editor-performance.json"
+  }
+}

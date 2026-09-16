@@ -7,9 +7,11 @@ import {
   createHomeComposerProposal,
   createHomeView,
   getHomeDeviceLayouts,
+  getHomeTemplateRevisions,
   getHomeViews,
   homeDeviceClassRequestValue,
   resetHomeView,
+  restoreHomeTemplateRevision,
   restoreHomeViewRevision,
   updateHomeDeviceLayout,
 } from './home-personalization-api';
@@ -279,6 +281,40 @@ describe('home personalization API boundary', () => {
     expect(new Headers(request.headers).get('Idempotency-Key')).toBe(
       '22222222-2222-4222-8222-222222222222'
     );
+  });
+
+  it('reads template revisions and restores one as a retry-safe draft', async () => {
+    const readFetch = vi
+      .fn()
+      .mockResolvedValue(jsonResponse([{ templateRevisionId: 'revision-1', source: 'PUBLISH' }]));
+    vi.stubGlobal('fetch', readFetch);
+
+    await expect(getHomeTemplateRevisions('template/1')).resolves.toEqual([
+      { templateRevisionId: 'revision-1', source: 'PUBLISH' },
+    ]);
+    expect(readFetch.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/home-templates/template%2F1/revisions'
+    );
+
+    resetCsrfToken();
+    const restoreFetch = mutationFetch({ templateId: 'template-1', lifecycle: 'DRAFT' });
+    vi.stubGlobal('fetch', restoreFetch);
+    const restored = await restoreHomeTemplateRevision(
+      'template/1',
+      'revision/2',
+      7,
+      '77777777-7777-4777-8777-777777777777'
+    );
+
+    const request = restoreFetch.mock.calls[1]?.[1] as RequestInit;
+    expect(restoreFetch.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/home-templates/template%2F1/revisions/revision%2F2/restore'
+    );
+    expect(JSON.parse(String(request.body))).toEqual({ version: 7 });
+    expect(new Headers(request.headers).get('Idempotency-Key')).toBe(
+      '77777777-7777-4777-8777-777777777777'
+    );
+    expect(restored.lifecycle).toBe('DRAFT');
   });
 
   it('keeps AI proposal preview and explicit apply as separate commands', async () => {
