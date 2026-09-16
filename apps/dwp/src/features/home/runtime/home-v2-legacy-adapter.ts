@@ -27,6 +27,10 @@ import type {
   WorkspaceActivityFeed,
   WorkspaceWorkQueue,
 } from '@dwp-frontend/shared-utils/api/workspace-api';
+import {
+  HOME_NATIVE_BINDING_CATALOG_REVISION,
+  NATIVE_HOME_WIDGET_BINDINGS,
+} from './widget-registry-runtime';
 
 const NATIVE_WIDGET_KEYS = {
   activity: 'core.activity.activity',
@@ -40,6 +44,20 @@ const NATIVE_DEFINITION_KEYS = new Set<string>([
   NATIVE_WIDGET_KEYS.recommendations,
   ...NATIVE_WIDGET_KEYS.work,
 ]);
+const NATIVE_BINDING_BY_DEFINITION_KEY = new Map(
+  NATIVE_HOME_WIDGET_BINDINGS.map((binding) => [binding.definitionKey, binding] as const)
+);
+
+function hasExactNativeBinding(widget: HomeV2Widget): boolean {
+  const binding = NATIVE_BINDING_BY_DEFINITION_KEY.get(widget.definitionKey);
+  return Boolean(
+    binding &&
+      widget.definitionVersion === binding.semanticVersion &&
+      widget.definitionManifestHash === binding.expectedManifestHash &&
+      widget.rendererBindingRevision === HOME_NATIVE_BINDING_CATALOG_REVISION &&
+      widget.rendererKey === binding.rendererKey
+  );
+}
 
 export type HomeV2NativeRuntimeState = Readonly<{
   kind: 'partial' | 'stale';
@@ -51,6 +69,7 @@ export function homeV2NativeRuntimeState(model: HomeV2ReadModel): HomeV2NativeRu
   const degraded = model.widgets.filter(
     (widget) =>
       NATIVE_DEFINITION_KEYS.has(widget.definitionKey) &&
+      hasExactNativeBinding(widget) &&
       (widget.state === 'PARTIAL' || widget.state === 'STALE')
   );
   if (degraded.length === 0) return null;
@@ -256,6 +275,7 @@ function availableWidget(
   return widgets.find(
     (widget) =>
       keys.includes(widget.definitionKey) &&
+      hasExactNativeBinding(widget) &&
       (widget.state === 'AVAILABLE' || widget.state === 'PARTIAL' || widget.state === 'STALE')
   );
 }
@@ -277,7 +297,9 @@ function section<T>(
       reason: widget.source.reasonCode,
     };
   }
-  const state = model.widgets.find((candidate) => keys.includes(candidate.definitionKey));
+  const state = model.widgets.find(
+    (candidate) => keys.includes(candidate.definitionKey) && hasExactNativeBinding(candidate)
+  );
   if (state?.state === 'EMPTY') {
     return {
       status: 'AVAILABLE',

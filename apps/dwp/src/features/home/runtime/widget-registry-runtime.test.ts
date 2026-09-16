@@ -190,6 +190,7 @@ describe('native renderer allowlist', () => {
     }));
     expect(NATIVE_HOME_WIDGET_BINDINGS).toEqual(fixtureBindings);
     expect(new Set(fixtureBindings.map((binding) => binding.rendererKey)).size).toBe(7);
+    expect(new Set(fixtureBindings.map((binding) => binding.definitionKey)).size).toBe(7);
   });
 
   it('pins the full semantic manifest hashes in the backend binding revision format', () => {

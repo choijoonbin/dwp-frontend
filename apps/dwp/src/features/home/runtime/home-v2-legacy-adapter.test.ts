@@ -6,14 +6,26 @@ import {
   homeV2ToNotificationSummary,
   homeV2ToOverview,
 } from './home-v2-legacy-adapter';
+import {
+  HOME_NATIVE_BINDING_CATALOG_REVISION,
+  NATIVE_HOME_WIDGET_BINDINGS,
+} from './widget-registry-runtime';
 
 import type { HomeV2ReadModel, HomeV2Widget } from '@dwp-frontend/shared-utils';
 
 const generatedAt = '2026-09-16T00:00:00Z';
 
 function widget(definitionKey: string, data: unknown): HomeV2Widget {
+  const binding = NATIVE_HOME_WIDGET_BINDINGS.find(
+    (candidate) => candidate.definitionKey === definitionKey
+  );
+  if (!binding) throw new Error(`Missing native test binding: ${definitionKey}`);
   return {
     definitionKey,
+    definitionManifestHash: binding.expectedManifestHash,
+    definitionVersion: binding.semanticVersion,
+    rendererBindingRevision: HOME_NATIVE_BINDING_CATALOG_REVISION,
+    rendererKey: binding.rendererKey,
     state: 'AVAILABLE',
     payload: { data },
     source: {
@@ -104,6 +116,16 @@ const rawWorkQueue = {
 };
 
 describe('Home v2 legacy-shaped read adapters', () => {
+  it('pins native fixtures to the backend aggregate binding catalog revision', () => {
+    const native = widget('core.workspace.command-rail', rawWorkQueue);
+
+    expect(native.rendererBindingRevision).toBe(
+      '656986e3056f42073ff5af2b6501d798d33ee2fabc615c8d602bd7f0edc20939'
+    );
+    expect(native.rendererBindingRevision).toBe(HOME_NATIVE_BINDING_CATALOG_REVISION);
+    expect(native.rendererBindingRevision).not.toBe(native.definitionManifestHash);
+  });
+
   it('maps canonical backend appDock groups, placements, and badges exactly', () => {
     const source = model();
     expect(homeV2ToExperience(source, 'ko').launchpadConfiguration).toMatchObject({
@@ -151,6 +173,37 @@ describe('Home v2 legacy-shaped read adapters', () => {
     );
 
     expect(overview.work).toMatchObject({ status: 'UNAVAILABLE', data: null });
+  });
+
+  it.each([
+    ['definitionVersion', '9.9.9'],
+    ['definitionManifestHash', '0'.repeat(64)],
+    ['rendererBindingRevision', '0'.repeat(64)],
+    ['rendererKey', 'home.untrusted'],
+  ] as const)('fails native %s drift closed before using its payload', (field, value) => {
+    const native = { ...widget('core.workspace.command-rail', rawWorkQueue), [field]: value };
+    const source = model([native]);
+
+    expect(homeV2ToOverview(source).work).toMatchObject({
+      status: 'UNAVAILABLE',
+      source: 'HOME_RUNTIME_V2',
+      data: null,
+      reason: 'HOME_RUNTIME_SOURCE_UNAVAILABLE',
+    });
+    expect(homeV2NativeRuntimeState(source)).toBeNull();
+  });
+
+  it('does not treat an unknown native definition alias as an approved binding', () => {
+    const native = {
+      ...widget('core.workspace.command-rail', rawWorkQueue),
+      definitionKey: 'core.workspace.command-rail.alias',
+    };
+
+    expect(homeV2ToOverview(model([native])).work).toMatchObject({
+      status: 'UNAVAILABLE',
+      source: 'HOME_RUNTIME_V2',
+      data: null,
+    });
   });
 
   it.each(['PARTIAL', 'STALE'] as const)(
