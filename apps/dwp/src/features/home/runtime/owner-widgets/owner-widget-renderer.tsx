@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -100,7 +100,7 @@ function formatTimestamp(value: string, locale?: string): string {
       dateStyle: 'medium',
       timeStyle: 'short',
     },
-    locale
+    resolveSupportedLocale(locale)
   );
 }
 
@@ -325,7 +325,7 @@ function MetricGrid({
             variant="subtitle2"
             sx={{ m: 0, fontWeight: foundationTokens.home.typography.weightEmphasis }}
           >
-            {formatNumber(metric.value, undefined, locale)}
+            {formatNumber(metric.value, undefined, resolveSupportedLocale(locale))}
           </Typography>
           <Typography component="dt" variant="caption" color="text.secondary" sx={{ m: 0 }}>
             {label(metric.label)}
