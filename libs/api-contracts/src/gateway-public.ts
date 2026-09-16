@@ -8472,6 +8472,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/home-experience/audit-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listHomeStudioAuditEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/home-experience/background": {
         parameters: {
             query?: never;
@@ -11859,6 +11875,22 @@ export interface paths {
         get: operations["platform_revisions_1"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}/revisions/{revisionId}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_restoreHomeTemplateRevision"];
         delete?: never;
         options?: never;
         head?: never;
@@ -33491,7 +33523,7 @@ export interface components {
             revisionNumber: number;
             snapshot: components["schemas"]["platform_HomeTemplateSnapshot"];
             /** @enum {string} */
-            source: "CREATE" | "UPDATE" | "PUBLISH" | "REVOKE";
+            source: "CREATE" | "UPDATE" | "PUBLISH" | "REVOKE" | "RESTORE";
             /** Format: uuid */
             templateId: string;
             /** Format: uuid */
@@ -33511,6 +33543,32 @@ export interface components {
             schemaVersion: number;
             /** Format: int64 */
             version: number;
+        };
+        platform_HomeViewConflictEnvelope: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeViewConflictResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_HomeViewConflictResponse: {
+            /** Format: int64 */
+            actualDeviceVersion?: number;
+            /** Format: int64 */
+            actualVersion: number;
+            changedFields: string[];
+            /** Format: int64 */
+            expectedDeviceVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            latestDeviceLayout?: components["schemas"]["platform_DeviceLayoutResponse"];
+            latestView: components["schemas"]["platform_HomeViewResponse"];
+            /** @enum {string} */
+            operation: "UPDATE_VIEW" | "RESET_VIEW" | "DELETE_VIEW" | "ACTIVATE_VIEW" | "UPDATE_WIDGET_CONFIGURATION" | "UPDATE_DEVICE_LAYOUT" | "RESTORE_REVISION" | "APPLY_TEMPLATE" | "APPLY_AI" | "APPLY_UNDO";
+            submittedDraft: unknown;
         };
         platform_HomeViewResponse: {
             /** Format: date-time */
@@ -56168,6 +56226,29 @@ export interface operations {
             };
         };
     };
+    platform_listHomeStudioAuditEvents: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAuditPage"];
+                };
+            };
+        };
+    };
     platform_background: {
         parameters: {
             query?: never;
@@ -62233,13 +62314,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -62307,13 +62388,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -62839,13 +62920,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -62982,6 +63063,81 @@ export interface operations {
             };
             /** @description State, version, or idempotency conflict */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_restoreHomeTemplateRevision: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -63308,13 +63464,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -63380,13 +63536,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
         };
@@ -63445,13 +63601,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -63578,13 +63734,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view or device layout version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -63652,13 +63808,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -63785,13 +63941,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -63860,13 +64016,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
