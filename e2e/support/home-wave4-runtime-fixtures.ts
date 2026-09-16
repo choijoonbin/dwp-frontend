@@ -6,7 +6,9 @@ import type {
   HomeDeviceClass,
   HomeExperienceVariant,
   HomeV2ReadModel,
+  HomeV2RolloutRing,
   HomeV2RuntimeMode,
+  HomeV2RuntimeState,
   HomeV2Widget,
   HomeV2WidgetState,
 } from '@dwp-frontend/shared-utils';
@@ -14,7 +16,7 @@ import type { OwnerWidgetDefinitionKey } from '../../apps/dwp/src/features/home/
 
 export const HOME_V2_ROUTE = '**/api/platform/v2/home**';
 export const HOME_V2_VARY =
-  'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision';
+  'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision';
 
 // Independently pinned to the backend V261 full 19-binding catalog receipt.
 // Do not derive this from the frontend constant: the E2E gate must detect drift.
@@ -259,8 +261,17 @@ export function createHomeWave4Model({
   mode?: HomeExperienceVariant;
 }>): HomeV2ReadModel {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     mode,
+    runtime: {
+      state: 'READ_ONLY_ACTIVE',
+      homeMode: mode,
+      rolloutRing: 'INTERNAL',
+      rolloutRevision: 'wave6-read-only-r1',
+      commandsEnabled: false,
+      registryAuthoritative: false,
+      expiresAt: '2026-09-16T00:05:00Z',
+    },
     view: {
       viewId: '33333333-3333-4333-8333-333333333333',
       revision: 4,
@@ -310,6 +321,118 @@ export function createHomeWave4Model({
   };
 }
 
+export function withHomeWave6Runtime(
+  model: HomeV2ReadModel,
+  state: Exclude<HomeV2RuntimeState, 'DISABLED'>,
+  options: Readonly<{
+    registryAuthoritative?: boolean;
+    rolloutRevision?: string;
+    rolloutRing?: HomeV2RolloutRing;
+  }> = {}
+): HomeV2ReadModel {
+  const commandsEnabled = state === 'COMMAND_CANARY';
+  const registryAuthoritative = options.registryAuthoritative === true;
+  return {
+    ...model,
+    registryMode: registryAuthoritative ? 'AUTHORITATIVE' : 'SHADOW',
+    runtime: {
+      state,
+      homeMode: model.mode,
+      rolloutRing: options.rolloutRing ?? (state === 'SHADOW_COMPARE' ? 'CONTROL' : 'INTERNAL'),
+      rolloutRevision: options.rolloutRevision ?? `wave6-${state.toLowerCase()}-r1`,
+      commandsEnabled,
+      registryAuthoritative,
+      expiresAt: '2026-09-16T00:05:00Z',
+    },
+  };
+}
+
+export function withHomeWave6DismissCommand(
+  model: HomeV2ReadModel,
+  widgetState: HomeV2WidgetState = 'AVAILABLE'
+): HomeV2ReadModel {
+  const binding = NATIVE_HOME_WIDGET_BINDINGS.find(
+    (candidate) => candidate.definitionKey === 'core.workspace.daily-brief'
+  );
+  if (!binding) throw new Error('Missing native daily brief contract.');
+  const recommendation = {
+    key: 'wave6-daily-focus',
+    kind: 'ACTION',
+    priority: 'HIGH',
+    title: 'Review the Wave 6 release gate',
+    description: 'Check the bounded rollout evidence before promotion.',
+    actionPath: '/work',
+    source: 'DWP Work',
+    evidenceCount: 3,
+    confidence: 'HIGH',
+  } as const;
+  const commandWidget: HomeV2Widget = {
+    instanceId: '66666666-6666-4666-8666-666666666666',
+    definitionKey: binding.definitionKey,
+    definitionVersion: binding.semanticVersion,
+    definitionManifestHash: binding.expectedManifestHash,
+    rendererBindingRevision: HOME_V2_BACKEND_BINDING_CATALOG_REVISION,
+    rendererKey: binding.rendererKey,
+    state: widgetState,
+    source: {
+      sourceKey: 'HOME_RECOMMENDATIONS',
+      generatedAt: '2026-09-16T00:00:00Z',
+      expiresAt: '2026-09-16T00:05:00Z',
+      lastSuccessAt: '2026-09-16T00:00:00Z',
+      reasonCode: widgetState === 'FORBIDDEN' ? 'ACTION_DENIED' : null,
+      retryable: false,
+      resultVersion: 'recommendation-wave6-1',
+    },
+    payload: { data: [recommendation] },
+    actions:
+      widgetState === 'AVAILABLE'
+        ? [
+            {
+              actionId: 'dismiss-recommendation',
+              commandKey: 'home.recommendation.dismiss',
+              expectedResultVersion: 'recommendation-wave6-1',
+              kind: 'COMMAND',
+              labelKey: 'home.action.dismissRecommendation',
+              requiresConfirmation: true,
+              sourceRoute: null,
+            },
+          ]
+        : [],
+    redactions: [],
+    governance: {
+      owner: 'core.workspace',
+      sourceAppResourceKey: 'APP.WORK',
+      requiredAuthorities: ['APP.WORK:VIEW'],
+      classification: 'INTERNAL',
+      retention: 'NONE',
+      sourceRoute: '/work',
+    },
+  };
+  return withHomeWave6Runtime(
+    {
+      ...model,
+      view: {
+        ...model.view,
+        composition: {
+          ...model.view.composition,
+          widgets: [
+            ...model.view.composition.widgets,
+            { widgetKey: 'daily-brief', visible: true, size: 'large', height: 'standard' },
+          ],
+        },
+        deviceOverlay: model.view.deviceOverlay
+          ? {
+              ...model.view.deviceOverlay,
+              widgetOrder: [...model.view.deviceOverlay.widgetOrder, 'daily-brief'],
+            }
+          : null,
+      },
+      widgets: [...model.widgets, commandWidget],
+    },
+    'COMMAND_CANARY'
+  );
+}
+
 export function createHomeWave4NativeBindingDriftModel(
   input: Parameters<typeof createHomeWave4Model>[0]
 ): HomeV2ReadModel {
@@ -355,15 +478,29 @@ export function createHomeWave4UnsafeRouteModel(
 
 export function homeWave4ResponseHeaders(
   runtimeMode: HomeV2RuntimeMode,
-  etag: string
+  etag: string,
+  options: Readonly<{
+    registryAuthoritative?: boolean;
+    rolloutRevision?: string;
+    rolloutRing?: HomeV2RolloutRing;
+    runtimeState?: Exclude<HomeV2RuntimeState, 'DISABLED'>;
+  }> = {}
 ): Readonly<Record<string, string>> {
+  const runtimeState =
+    options.runtimeState ?? (runtimeMode === 'SHADOW' ? 'SHADOW_COMPARE' : 'READ_ONLY_ACTIVE');
   return {
     'Cache-Control': 'private, max-age=0, must-revalidate',
     Vary: HOME_V2_VARY,
     ETag: etag,
-    'X-DWP-Home-Commands-Enabled': 'false',
+    'X-DWP-Decision-Revision': 'home-route-decision-r1',
+    'X-DWP-Home-Commands-Enabled': runtimeState === 'COMMAND_CANARY' ? 'true' : 'false',
     'X-DWP-Home-Runtime-Mode': runtimeMode,
-    'X-DWP-Widget-Registry-Authoritative': 'false',
+    'X-DWP-Home-Runtime-State': runtimeState,
+    'X-DWP-Home-Rollout-Ring':
+      options.rolloutRing ?? (runtimeState === 'SHADOW_COMPARE' ? 'CONTROL' : 'INTERNAL'),
+    'X-DWP-Home-Rollout-Revision':
+      options.rolloutRevision ?? `wave6-${runtimeState.toLowerCase()}-r1`,
+    'X-DWP-Widget-Registry-Authoritative': options.registryAuthoritative ? 'true' : 'false',
   };
 }
 

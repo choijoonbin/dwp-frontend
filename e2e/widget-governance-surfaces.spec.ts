@@ -16,6 +16,7 @@ import {
   HOME_V2_ROUTE,
   homeWave4ResponseBody,
   homeWave4ResponseHeaders,
+  withHomeWave6Runtime,
 } from './support/home-wave4-runtime-fixtures';
 
 const reducedMotionAppearance = {
@@ -412,11 +413,14 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
       headers: homeWave4ResponseHeaders('SHADOW', '"widget-shadow-legacy"'),
       contentType: 'application/json',
       body: homeWave4ResponseBody(
-        createHomeWave4Model({
-          deviceClass: 'DESKTOP_STANDARD',
-          marker: 'widget-shadow-legacy',
-          mode: 'CLASSIC',
-        })
+        withHomeWave6Runtime(
+          createHomeWave4Model({
+            deviceClass: 'DESKTOP_STANDARD',
+            marker: 'widget-shadow-legacy',
+            mode: 'CLASSIC',
+          }),
+          'SHADOW_COMPARE'
+        )
       ),
     })
   );

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useBlocker } from 'react-router-dom';
 
+import type { Dispatch, SetStateAction } from 'react';
+
 type HomeEditorSafetyOptions = {
   editorOpen: boolean;
   draftDirty: boolean;
@@ -45,4 +47,31 @@ export function useHomeEditorSafety({
       ? ({ currentLocation, nextLocation }) => currentLocation.pathname !== nextLocation.pathname
       : false
   );
+}
+
+/** Hides legacy mutation surfaces immediately when the trusted read authority moves to v2. */
+export function useHomeRolloutOverlayGuard<T>(
+  active: boolean,
+  legacyOverlayOpen: boolean,
+  studioOpen: boolean,
+  closeStudio: () => void,
+  setGalleryOpen: Dispatch<SetStateAction<boolean>>,
+  setDiscardOpen: Dispatch<SetStateAction<boolean>>,
+  setConflictTarget: Dispatch<SetStateAction<T | null>>
+): void {
+  useEffect(() => {
+    if (!active) return;
+    setGalleryOpen(false);
+    setDiscardOpen(false);
+    setConflictTarget(null);
+    if (studioOpen) closeStudio();
+  }, [
+    active,
+    closeStudio,
+    legacyOverlayOpen,
+    setConflictTarget,
+    setDiscardOpen,
+    setGalleryOpen,
+    studioOpen,
+  ]);
 }

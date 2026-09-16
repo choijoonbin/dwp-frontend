@@ -28,12 +28,21 @@ type ProbeInput = Readonly<{
 }>;
 
 const REQUIRED_VARY =
-  'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision';
+  'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision';
 
 function model(headline: string, changeVersion: string): HomeV2ReadModel {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     mode: 'CLASSIC',
+    runtime: {
+      state: 'READ_ONLY_ACTIVE',
+      homeMode: 'CLASSIC',
+      rolloutRing: 'INTERNAL',
+      rolloutRevision: 'wave6-mounted-r1',
+      commandsEnabled: false,
+      registryAuthoritative: false,
+      expiresAt: '2026-09-16T00:05:00Z',
+    },
     view: {
       viewId: 'd1d847f2-0a54-4f50-a157-f57492e626dc',
       revision: 7,
@@ -67,16 +76,36 @@ function result(
   runtimeMode: 'ACTIVE' | 'SHADOW' = 'ACTIVE',
   status: 200 | 304 = 200
 ): HomeV2ReadResult {
+  const resolvedSnapshot =
+    runtimeMode === 'SHADOW'
+      ? {
+          ...snapshot,
+          data: {
+            ...snapshot.data,
+            runtime: {
+              ...snapshot.data.runtime,
+              state: 'SHADOW_COMPARE' as const,
+              rolloutRing: 'CONTROL' as const,
+            },
+          },
+        }
+      : snapshot;
   return {
     metadata: {
+      actionAuthority: 'DISABLED',
       cacheControl: 'private, max-age=0, must-revalidate',
       commandsEnabled: false,
+      decisionRevision: 'home-route-decision-r1',
       registryAuthoritative: false,
+      renderAuthority: runtimeMode === 'ACTIVE' ? 'HOME_V2' : 'LEGACY',
+      rolloutRing: runtimeMode === 'ACTIVE' ? 'INTERNAL' : 'CONTROL',
+      rolloutRevision: 'wave6-mounted-r1',
       runtimeMode,
+      runtimeState: runtimeMode === 'ACTIVE' ? 'READ_ONLY_ACTIVE' : 'SHADOW_COMPARE',
       vary: REQUIRED_VARY,
     },
     notModified: status === 304,
-    snapshot,
+    snapshot: resolvedSnapshot,
     status,
   };
 }

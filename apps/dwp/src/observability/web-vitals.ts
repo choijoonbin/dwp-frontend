@@ -7,6 +7,24 @@ import { classifyRouteGroup } from './route-performance';
 import type { Metric } from 'web-vitals';
 
 type DwpWebVital = components['schemas']['platform_WebVitalRequest'];
+type HomeWebVitalContext = Readonly<{
+  deviceClass: 'DESKTOP_WIDE' | 'DESKTOP_STANDARD' | 'MOBILE_STANDARD' | 'MOBILE_COMPACT';
+  homeMode: 'CLASSIC' | 'FLOW_V1';
+  homeRuntime: 'SHADOW_COMPARE' | 'READ_ONLY_ACTIVE' | 'COMMAND_CANARY';
+  rolloutRing: 'CONTROL' | 'INTERNAL' | 'PILOT' | 'EARLY_ADOPTER' | 'GA';
+}>;
+type Wave6WebVital = DwpWebVital & Partial<HomeWebVitalContext>;
+
+const HOME_MODES = new Set(['CLASSIC', 'FLOW_V1']);
+const HOME_RUNTIMES = new Set(['SHADOW_COMPARE', 'READ_ONLY_ACTIVE', 'COMMAND_CANARY']);
+const HOME_RINGS = new Set(['CONTROL', 'INTERNAL', 'PILOT', 'EARLY_ADOPTER', 'GA']);
+const HOME_DEVICES = new Set([
+  'DESKTOP_WIDE',
+  'DESKTOP_STANDARD',
+  'MOBILE_STANDARD',
+  'MOBILE_COMPACT',
+]);
+let homeContext: HomeWebVitalContext | null = null;
 
 declare global {
   interface Window {
@@ -34,7 +52,7 @@ function configuredCollectorEndpoint(): string | null {
   }
 }
 
-function sendToCollector(payload: DwpWebVital): void {
+function sendToCollector(payload: Wave6WebVital): void {
   const endpoint = configuredCollectorEndpoint();
   if (!endpoint) return;
 
@@ -47,18 +65,41 @@ function sendToCollector(payload: DwpWebVital): void {
 
 function reportMetric(metric: Metric) {
   if (metric.name !== 'CLS' && metric.name !== 'INP' && metric.name !== 'LCP') return;
-  const payload: DwpWebVital = {
+  const routeGroup = classifyRouteGroup(window.location.pathname);
+  if (routeGroup === 'home' && !homeContext) return;
+  const payload: Wave6WebVital = {
     name: metric.name,
+    // web-vitals reports CLS as a dimensionless score and INP/LCP in milliseconds.
+    // Keep the library base unit intact so the server can select the correct histogram.
     value: metric.value,
     delta: metric.delta,
     id: metric.id,
     rating: metric.rating,
     navigationType: metric.navigationType,
-    routeGroup: classifyRouteGroup(window.location.pathname),
+    routeGroup,
+    ...(routeGroup === 'home' && homeContext ? homeContext : {}),
   };
 
-  window.dispatchEvent(new CustomEvent<DwpWebVital>('dwp:web-vital', { detail: payload }));
+  window.dispatchEvent(new CustomEvent<Wave6WebVital>('dwp:web-vital', { detail: payload }));
   sendToCollector(payload);
+}
+
+export function setHomeWebVitalsContext(value: HomeWebVitalContext | null): void {
+  if (value === null) {
+    homeContext = null;
+    return;
+  }
+  const exactKeys =
+    Object.keys(value).sort().join(',') ===
+    ['deviceClass', 'homeMode', 'homeRuntime', 'rolloutRing'].sort().join(',');
+  homeContext =
+    exactKeys &&
+    HOME_MODES.has(value.homeMode) &&
+    HOME_RUNTIMES.has(value.homeRuntime) &&
+    HOME_RINGS.has(value.rolloutRing) &&
+    HOME_DEVICES.has(value.deviceClass)
+      ? Object.freeze({ ...value })
+      : null;
 }
 
 export function registerWebVitals() {

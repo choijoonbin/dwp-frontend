@@ -54,8 +54,12 @@ import {
 } from '../../features/home/runtime/home-v2-legacy-adapter';
 import { useHomePageGate } from '../../features/home/runtime/use-home-page-gate';
 import { useHomeRecommendationFeedback } from '../../features/home/runtime/use-home-recommendation-feedback';
+import { useHomeRecommendationCommand } from '../../features/home/runtime/use-home-recommendation-command';
 import { resolveHomeTimeZone } from '../../features/home/runtime/home-time-zone';
 import { useHomeV2Runtime } from '../../features/home/runtime/use-home-v2-runtime';
+import { useHomeRumContext } from '../../features/home/runtime/use-home-rum-context';
+import { useHomeV2ShadowReceipt } from '../../features/home/runtime/use-home-v2-shadow-receipt';
+import { projectLegacyHomeShadowSnapshot } from '../../features/home/runtime/home-v2-shadow-comparator';
 import { useHomeWidgetRegistryRuntime } from '../../features/home/runtime/use-home-widget-registry';
 import { staticHomeWidgetRuntimeDecisions } from '../../features/home/runtime/widget-registry-runtime';
 import { activeHomeStoreUsesViews } from '../../features/home/runtime/home-store-capabilities';
@@ -98,6 +102,7 @@ export function useHomeCoreReadModel({
     timeZone,
     userId: auth.user?.userId,
   });
+  useHomeRumContext(homeV2Runtime, requestedDeviceClass);
   const legacyEnabled = homeV2Runtime.legacyEnabled;
   const activeHomeV2Model =
     homeV2Runtime.activation.kind === 'ACTIVE'
@@ -161,6 +166,18 @@ export function useHomeCoreReadModel({
     ? homeAuthorizedQueryData(legacyHomeOverviewQuery.data, legacyHomeOverviewQuery.error)
     : v2HomeOverview;
   const recommendationFeedback = useHomeRecommendationFeedback(homeOverviewQueryKey);
+  const recommendationCommand = useHomeRecommendationCommand({
+    deviceClass: requestedDeviceClass,
+    runtime: homeV2Runtime,
+    timeZone,
+  });
+  const recommendationAction = {
+    busy: legacyEnabled ? recommendationFeedback.busy : recommendationCommand.busy,
+    command: recommendationCommand,
+    dismiss: legacyEnabled ? recommendationFeedback.dismiss : recommendationCommand.dismiss,
+    legacy: recommendationFeedback,
+    legacyEnabled,
+  } as const;
   const legacyNotificationSummaryQuery = useQuery({
     queryKey: notificationQueryKeys.appSummary({
       tenantId: auth.user?.tenantId,
@@ -294,7 +311,7 @@ export function useHomeCoreReadModel({
     notificationAuthorizationFailed,
     notificationSummaryAuthorized,
     notificationSummaryQuery,
-    recommendationFeedback,
+    recommendationAction,
     timeZone,
     legacyEnabled,
     widgetRuntimeDecisions,
@@ -342,6 +359,10 @@ export function useHomePersonalizationReadModel({
   const homeExperience = core.homeExperienceQuery.data;
   const activeHomeV2Model =
     core.homeV2Runtime.activation.kind === 'ACTIVE'
+      ? core.homeV2Runtime.activation.result.snapshot.data
+      : null;
+  const shadowHomeV2Model =
+    core.homeV2Runtime.activation.kind === 'SHADOW'
       ? core.homeV2Runtime.activation.result.snapshot.data
       : null;
   const flowHomeEnabled = homeModeKey === 'FLOW_V1';
@@ -525,6 +546,45 @@ export function useHomePersonalizationReadModel({
     customizationEnabled: personalCustomizationEnabled,
     editorOpen,
   });
+  const legacyShadowSnapshot = useMemo(
+    () =>
+      shadowHomeV2Model
+        ? projectLegacyHomeShadowSnapshot({
+            appLayout,
+            apps: core.entitledApps,
+            customized: homeCustomized,
+            deviceOverlay: activeDeviceOverlay,
+            mode: homeModeKey,
+            now: currentInstant.getTime(),
+            overview: core.homeOverview,
+            presentation: effectiveHomeLayout?.presentation ?? 'balanced',
+            widgets: runtimeWidgetPreferences,
+          })
+        : null,
+    [
+      activeDeviceOverlay,
+      appLayout,
+      core.entitledApps,
+      core.homeOverview,
+      currentInstant,
+      effectiveHomeLayout?.presentation,
+      homeCustomized,
+      homeModeKey,
+      runtimeWidgetPreferences,
+      shadowHomeV2Model,
+    ]
+  );
+  const shadowComparison = useHomeV2ShadowReceipt({
+    legacy: legacyShadowSnapshot,
+    runtime: core.homeV2Runtime,
+    settled: Boolean(
+      shadowHomeV2Model &&
+      core.homeExperienceQuery.isSuccess &&
+      core.homeOverview &&
+      !persistedSourceLoading &&
+      !persistedSourceFailed
+    ),
+  });
   const currentEditSession = useMemo<HomeEditSession>(
     () => ({
       experienceVariant: homeModeKey,
@@ -577,6 +637,7 @@ export function useHomePersonalizationReadModel({
     runtimeWidgetPreferences,
     selectedHomeView,
     sourceHomeView,
+    shadowComparison,
     widgetPreferences,
   } as const;
 }

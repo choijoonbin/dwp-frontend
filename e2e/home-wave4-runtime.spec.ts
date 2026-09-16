@@ -17,6 +17,7 @@ import {
   HOME_V2_ROUTE,
   homeWave4ResponseBody,
   homeWave4ResponseHeaders,
+  withHomeWave6Runtime,
 } from './support/home-wave4-runtime-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 import { HOME_WIDGET_BINDING_CATALOG_REVISION } from '../apps/dwp/src/features/home/runtime/widget-registry-runtime';
@@ -152,16 +153,22 @@ async function routeHomeV2(
     }
     const deviceClass = candidate as HomeDeviceClass;
     const marker = `${options.mode.toLowerCase()}-${deviceClass.toLowerCase()}`;
-    const etag = `"wave4-${marker}"`;
-    const ifNoneMatch = request.headers()['if-none-match'] ?? null;
-    const notModified = ifNoneMatch === etag;
     const runtimeMode =
       typeof options.runtimeMode === 'function' ? options.runtimeMode() : options.runtimeMode;
-    const model = (options.modelFactory ?? createHomeWave4Model)({
-      deviceClass,
-      marker,
-      mode: options.mode,
-    });
+    const runtimeState = runtimeMode === 'SHADOW' ? 'SHADOW_COMPARE' : 'READ_ONLY_ACTIVE';
+    const rolloutRevision = `wave6-${runtimeState.toLowerCase()}-r1`;
+    const etag = `"wave4-${marker}-${runtimeState.toLowerCase()}"`;
+    const ifNoneMatch = request.headers()['if-none-match'] ?? null;
+    const notModified = ifNoneMatch === etag;
+    const model = withHomeWave6Runtime(
+      (options.modelFactory ?? createHomeWave4Model)({
+        deviceClass,
+        marker,
+        mode: options.mode,
+      }),
+      runtimeState,
+      { rolloutRevision }
+    );
     const ownerBindingCatalogRevisions = [
       ...new Set(
         model.widgets
@@ -182,7 +189,10 @@ async function routeHomeV2(
       runtimeMode,
       status: notModified ? 304 : 200,
     });
-    const headers = homeWave4ResponseHeaders(runtimeMode, etag);
+    const headers = homeWave4ResponseHeaders(runtimeMode, etag, {
+      runtimeState,
+      rolloutRevision,
+    });
     if (notModified) return route.fulfill({ status: 304, headers });
     return route.fulfill({
       status: 200,
@@ -387,7 +397,7 @@ test('SHADOW keeps the legacy requests and legacy UI authoritative', async ({ pa
   await attachRuntimeEvidence(page, 'wave4-shadow-dom-receipt.json', runtimeErrors);
 });
 
-test('ACTIVE transitions to SHADOW through a conditional receipt and restores legacy fanout', async ({
+test('ACTIVE transitions to SHADOW through a fresh decision receipt and restores legacy fanout', async ({
   page,
 }) => {
   const runtimeErrors = observeReactRuntimeErrors(page);
@@ -412,7 +422,7 @@ test('ACTIVE transitions to SHADOW through a conditional receipt and restores le
 
   await expect(runtime).toHaveAttribute('data-home-runtime-path', 'legacy');
   await expect(runtime).toHaveAttribute('data-home-legacy-fanout', 'enabled');
-  await expect(runtime).toHaveAttribute('data-home-runtime-http-status', '304');
+  await expect(runtime).toHaveAttribute('data-home-runtime-http-status', '200');
   await expect(page.locator('[data-home-owner-widget-region]')).toHaveCount(0);
   await expect(page.getByTestId('classic-home')).toBeVisible();
   await expect.poll(() => evidence.legacy.get('home-overview') ?? 0).toBeGreaterThan(0);
@@ -420,8 +430,8 @@ test('ACTIVE transitions to SHADOW through a conditional receipt and restores le
     evidence.v2.some(
       (receipt) =>
         receipt.runtimeMode === 'SHADOW' &&
-        receipt.status === 304 &&
-        receipt.ifNoneMatch === receipt.etag
+        receipt.status === 200 &&
+        receipt.ifNoneMatch !== receipt.etag
     )
   ).toBe(true);
   expect(runtimeErrors).toEqual([]);

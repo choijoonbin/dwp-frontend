@@ -38,6 +38,26 @@
     "undoRecommendation": "Undo",
     "recommendationFeedbackError": "Recommendation feedback could not be saved."
   },
+  "command": {
+    "dismiss": {
+      "title": "Hide this recommendation?",
+      "description": "The recommendation owner will record this action after you confirm.",
+      "fallbackTitle": "Selected recommendation",
+      "confirm": "Hide recommendation",
+      "pending": "Hiding recommendation"
+    },
+    "status": {
+      "accepted": "The recommendation action was accepted.",
+      "completed": "The recommendation was hidden.",
+      "conflict": "The recommendation changed before the action completed. Review the latest item.",
+      "denied": "This action is no longer allowed.",
+      "unavailable": "The recommendation owner is temporarily unavailable.",
+      "unknown": "The action result is unknown. Check the source before trying again."
+    }
+  },
+  "action": {
+    "dismissRecommendation": "Hide recommendation"
+  },
   "dayRail": {
     "title": "Command rail",
     "description": "Your next work, meeting, and recommended follow-up",

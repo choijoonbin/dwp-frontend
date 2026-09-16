@@ -8,13 +8,25 @@ import {
   parseHomeV2ResponseMetadata,
 } from './home-v2-api';
 
-function responseFixture(): Record<string, unknown> {
+function responseFixture(
+  runtimeState: 'SHADOW_COMPARE' | 'READ_ONLY_ACTIVE' | 'COMMAND_CANARY' = 'READ_ONLY_ACTIVE'
+): Record<string, unknown> {
+  const commandsEnabled = runtimeState === 'COMMAND_CANARY';
   return {
     status: 'SUCCESS',
     message: 'ok',
     data: {
-      schemaVersion: 2,
+      schemaVersion: 3,
       mode: 'CLASSIC',
+      runtime: {
+        state: runtimeState,
+        homeMode: 'CLASSIC',
+        rolloutRing: runtimeState === 'SHADOW_COMPARE' ? 'CONTROL' : 'INTERNAL',
+        rolloutRevision: 'home-wave6-r1',
+        commandsEnabled,
+        registryAuthoritative: false,
+        expiresAt: '2026-09-16T01:00:00Z',
+      },
       view: {
         viewId: 'd1d847f2-0a54-4f50-a157-f57492e626dc',
         revision: 7,
@@ -122,9 +134,13 @@ function responseHeaders(mode: 'ACTIVE' | 'SHADOW' = 'ACTIVE', etag = '"home-cha
   return new Headers({
     'Cache-Control': 'private, max-age=0, must-revalidate',
     ETag: etag,
-    Vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision',
+    Vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision',
     'X-DWP-Home-Commands-Enabled': 'false',
+    'X-DWP-Decision-Revision': 'home-route-decision-r1',
     'X-DWP-Home-Runtime-Mode': mode,
+    'X-DWP-Home-Runtime-State': mode === 'ACTIVE' ? 'READ_ONLY_ACTIVE' : 'SHADOW_COMPARE',
+    'X-DWP-Home-Rollout-Ring': mode === 'ACTIVE' ? 'INTERNAL' : 'CONTROL',
+    'X-DWP-Home-Rollout-Revision': 'home-wave6-r1',
     'X-DWP-Widget-Registry-Authoritative': 'false',
   });
 }
@@ -181,7 +197,7 @@ describe('Home v2 read contract', () => {
     const model = parseHomeV2ReadModel(responseFixture());
 
     expect(model).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       mode: 'CLASSIC',
       changeVersion: 'home-change-8',
       view: { deviceClass: 'DESKTOP_STANDARD', revision: 7 },
@@ -208,7 +224,6 @@ describe('Home v2 read contract', () => {
     ['timestamp without offset', ['data', 'generatedAt'], '2026-09-16T00:00:00'],
     ['invalid widget identifier', ['data', 'widgets', 0, 'instanceId'], 'not-a-uuid'],
     ['unknown registry mode', ['data', 'registryMode'], 'EXPERIMENTAL'],
-    ['premature authoritative registry', ['data', 'registryMode'], 'AUTHORITATIVE'],
     [
       'unknown device widget size',
       ['data', 'view', 'deviceOverlay', 'widgetSizes', 'approval.focus-queue'],
@@ -253,6 +268,55 @@ describe('Home v2 read contract', () => {
     const fixture = responseFixture();
     setFixturePath(fixture, path, value);
     expect(() => parseHomeV2ReadModel(fixture)).toThrow('Home v2 response is invalid');
+  });
+
+  it('admits a structurally exact command only in command canary data', () => {
+    const fixture = responseFixture('COMMAND_CANARY');
+    const widget = (
+      (fixture.data as Record<string, unknown>).widgets as Record<string, unknown>[]
+    )[0]!;
+    widget.definitionKey = 'core.workspace.daily-brief';
+    widget.definitionVersion = '1.0.0';
+    widget.actions = [
+      {
+        actionId: 'dismiss-recommendation',
+        commandKey: 'home.recommendation.dismiss',
+        expectedResultVersion: 'approval-12',
+        kind: 'COMMAND',
+        labelKey: 'home.action.dismissRecommendation',
+        requiresConfirmation: true,
+        sourceRoute: null,
+      },
+    ];
+
+    expect(parseHomeV2ReadModel(fixture).widgets[0]?.actions[0]).toMatchObject({
+      actionId: 'dismiss-recommendation',
+      kind: 'COMMAND',
+    });
+
+    setFixturePath(fixture, ['data', 'runtime', 'state'], 'READ_ONLY_ACTIVE');
+    setFixturePath(fixture, ['data', 'runtime', 'commandsEnabled'], false);
+    expect(() => parseHomeV2ReadModel(fixture)).toThrow('data.widgets.actions');
+  });
+
+  it('rejects a structurally valid command outside the exact owner allowlist', () => {
+    const fixture = responseFixture('COMMAND_CANARY');
+    const widget = (
+      (fixture.data as Record<string, unknown>).widgets as Record<string, unknown>[]
+    )[0]!;
+    widget.actions = [
+      {
+        actionId: 'delete-recommendation',
+        commandKey: 'home.recommendation.delete',
+        expectedResultVersion: 'approval-12',
+        kind: 'COMMAND',
+        labelKey: 'home.action.deleteRecommendation',
+        requiresConfirmation: true,
+        sourceRoute: null,
+      },
+    ];
+
+    expect(() => parseHomeV2ReadModel(fixture)).toThrow('data.widgets.actions');
   });
 
   it.each([
@@ -332,11 +396,17 @@ describe('Home v2 read contract', () => {
 
   it('requires the complete privacy and rollout header contract', () => {
     expect(parseHomeV2ResponseMetadata(responseHeaders('SHADOW'))).toEqual({
+      actionAuthority: 'DISABLED',
       cacheControl: 'private, max-age=0, must-revalidate',
       commandsEnabled: false,
+      decisionRevision: 'home-route-decision-r1',
       registryAuthoritative: false,
+      renderAuthority: 'LEGACY',
+      rolloutRing: 'CONTROL',
+      rolloutRevision: 'home-wave6-r1',
       runtimeMode: 'SHADOW',
-      vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision',
+      runtimeState: 'SHADOW_COMPARE',
+      vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision',
     });
 
     const missingRuntime = responseHeaders();
@@ -357,15 +427,51 @@ describe('Home v2 read contract', () => {
 
     const authoritativeRegistry = responseHeaders();
     authoritativeRegistry.set('X-DWP-Widget-Registry-Authoritative', 'true');
-    expect(() => parseHomeV2ResponseMetadata(authoritativeRegistry)).toThrow(
-      'headers.X-DWP-Widget-Registry-Authoritative'
-    );
+    expect(parseHomeV2ResponseMetadata(authoritativeRegistry).registryAuthoritative).toBe(true);
 
     const disabledRuntime = responseHeaders();
     disabledRuntime.set('X-DWP-Home-Runtime-Mode', 'DISABLED');
     expect(() => parseHomeV2ResponseMetadata(disabledRuntime)).toThrow(
       'headers.X-DWP-Home-Runtime-Mode'
     );
+
+    const missingState = responseHeaders();
+    missingState.delete('X-DWP-Home-Runtime-State');
+    expect(() => parseHomeV2ResponseMetadata(missingState)).toThrow(
+      'headers.X-DWP-Home-Runtime-State'
+    );
+
+    const missingDecisionRevision = responseHeaders();
+    missingDecisionRevision.delete('X-DWP-Decision-Revision');
+    expect(() => parseHomeV2ResponseMetadata(missingDecisionRevision)).toThrow(
+      'headers.X-DWP-Decision-Revision'
+    );
+
+    for (const name of ['X-DWP-Home-Rollout-Ring', 'X-DWP-Home-Rollout-Revision']) {
+      const missing = responseHeaders();
+      missing.delete(name);
+      expect(() => parseHomeV2ResponseMetadata(missing)).toThrow(`headers.${name}`);
+    }
+
+    const malformedRevision = responseHeaders();
+    malformedRevision.set('X-DWP-Home-Rollout-Revision', 'tenant secret/revision');
+    expect(() => parseHomeV2ResponseMetadata(malformedRevision)).toThrow(
+      'headers.X-DWP-Home-Rollout-Revision'
+    );
+
+    const normalizedStateDrift = responseHeaders();
+    normalizedStateDrift.set('X-DWP-Home-Runtime-State', 'read_only_active');
+    expect(() => parseHomeV2ResponseMetadata(normalizedStateDrift)).toThrow(
+      'headers.X-DWP-Home-Runtime-State'
+    );
+
+    const commandCanary = responseHeaders();
+    commandCanary.set('X-DWP-Home-Runtime-State', 'COMMAND_CANARY');
+    commandCanary.set('X-DWP-Home-Commands-Enabled', 'true');
+    expect(parseHomeV2ResponseMetadata(commandCanary)).toMatchObject({
+      actionAuthority: 'EXACT_ALLOWLIST',
+      runtimeState: 'COMMAND_CANARY',
+    });
   });
 
   it('owns the conditional snapshot at the caller and sends the canonical query', async () => {
@@ -401,11 +507,28 @@ describe('Home v2 read contract', () => {
     expect(result.snapshot.data).toBe(model);
   });
 
+  it('rejects a 304 when rollout authority changed without a decision-bound ETag', async () => {
+    const model = parseHomeV2ReadModel(responseFixture());
+    const previous = { data: model, etag: '"home-change-8"' };
+    const headers = responseHeaders('ACTIVE', previous.etag);
+    headers.set('X-DWP-Home-Runtime-State', 'COMMAND_CANARY');
+    headers.set('X-DWP-Home-Commands-Enabled', 'true');
+    vi.spyOn(axiosInstance, 'getConditional').mockResolvedValue({
+      headers,
+      snapshot: previous,
+      status: 304,
+      notModified: true,
+    });
+
+    await expect(
+      getHomeV2({ deviceClass: 'DESKTOP_STANDARD', timeZone: 'Asia/Seoul' }, previous)
+    ).rejects.toThrow('data.runtime');
+  });
+
   it('parses a fresh 200 before storing the privacy-bound snapshot', async () => {
-    const payload = responseFixture();
     vi.spyOn(axiosInstance, 'getConditional').mockResolvedValue({
       headers: responseHeaders('SHADOW'),
-      snapshot: { data: payload, etag: '"home-change-8"' },
+      snapshot: { data: responseFixture('SHADOW_COMPARE'), etag: '"home-change-8"' },
       status: 200,
       notModified: false,
     });
@@ -416,10 +539,28 @@ describe('Home v2 read contract', () => {
     });
 
     expect(result.snapshot).toEqual({
-      data: expect.objectContaining({ schemaVersion: 2 }),
+      data: expect.objectContaining({ schemaVersion: 3 }),
       etag: '"home-change-8"',
     });
     expect(result.metadata.runtimeMode).toBe('SHADOW');
+  });
+
+  it.each([
+    ['body runtime', ['data', 'runtime', 'rolloutRevision'], 'different-revision'],
+    ['registry body/header authority', ['data', 'registryMode'], 'AUTHORITATIVE'],
+  ] as const)('rejects a fresh response with a %s mismatch', async (_label, path, value) => {
+    const fixture = responseFixture();
+    setFixturePath(fixture, path, value);
+    vi.spyOn(axiosInstance, 'getConditional').mockResolvedValue({
+      headers: responseHeaders(),
+      snapshot: { data: fixture, etag: '"home-change-8"' },
+      status: 200,
+      notModified: false,
+    });
+
+    await expect(
+      getHomeV2({ deviceClass: 'DESKTOP_STANDARD', timeZone: 'Asia/Seoul' })
+    ).rejects.toThrow('Home v2 response is invalid');
   });
 
   it.each(['200', '304'] as const)('rejects a %s response with a stripped ETag', async (status) => {

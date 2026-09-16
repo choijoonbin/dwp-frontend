@@ -63,7 +63,12 @@ export type HomeOwnerWidgetPlacement = Readonly<{
 }>;
 
 /** Aggregate-only diagnostics: never expose provider keys, routes, payloads, or user content. */
-export function homeV2RuntimeEvidence(runtime: HomeV2Runtime): Readonly<Record<string, string>> {
+export function homeV2RuntimeEvidence(
+  runtime: HomeV2Runtime,
+  commandState = 'DISABLED',
+  draftPreserved = false,
+  shadowComparison: Readonly<{ count: number; outcome: string }> | null = null
+): Readonly<Record<string, string>> {
   const model =
     runtime.activation.kind === 'ACTIVE' || runtime.activation.kind === 'SHADOW'
       ? runtime.activation.result.snapshot.data
@@ -72,6 +77,10 @@ export function homeV2RuntimeEvidence(runtime: HomeV2Runtime): Readonly<Record<s
     (state) =>
       `${state.toLowerCase()}:${model?.widgets.filter((item) => item.state === state).length ?? 0}`
   ).join(',');
+  const metadata =
+    runtime.activation.kind === 'ACTIVE' || runtime.activation.kind === 'SHADOW'
+      ? runtime.activation.result.metadata
+      : null;
   return {
     'data-home-runtime-path': runtime.readPath.render.toLowerCase(),
     'data-home-runtime-http-status': String(runtime.query.data?.status ?? 'none'),
@@ -84,6 +93,15 @@ export function homeV2RuntimeEvidence(runtime: HomeV2Runtime): Readonly<Record<s
     'data-home-runtime-unavailable-count': String(model?.unavailableSources.length ?? 0),
     'data-home-runtime-widget-state-counts': stateCounts,
     'data-home-legacy-fanout': runtime.legacyEnabled ? 'enabled' : 'disabled',
+    'data-home-runtime-state': metadata?.runtimeState.toLowerCase() ?? 'unavailable',
+    'data-home-rollout-ring': metadata?.rolloutRing.toLowerCase() ?? 'unavailable',
+    'data-home-render-authority': metadata?.renderAuthority.toLowerCase() ?? 'none',
+    'data-home-action-authority': metadata?.actionAuthority.toLowerCase() ?? 'disabled',
+    'data-home-registry-authoritative': metadata?.registryAuthoritative ? 'true' : 'false',
+    'data-home-command-state': commandState.toLowerCase(),
+    'data-home-shadow-outcome': shadowComparison?.outcome.toLowerCase() ?? 'inactive',
+    'data-home-shadow-mismatch-count': String(shadowComparison?.count ?? 0),
+    'data-home-runtime-draft-preserved': draftPreserved ? 'true' : 'false',
   };
 }
 

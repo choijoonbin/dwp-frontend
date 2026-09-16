@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getHomeV2 } from '@dwp-frontend/shared-utils';
+import { getHomeV2, HttpError } from '@dwp-frontend/shared-utils';
 
 import type {
   ConditionalHttpSnapshot,
@@ -53,7 +53,10 @@ export function resolveHomeV2ActivationState(
   if (!enabled) return { kind: 'DISABLED' };
   if (query.isPending) return { kind: 'PENDING' };
   if (query.data) {
-    return query.data.metadata.runtimeMode === 'ACTIVE'
+    if ((query.isError || query.isRefetchError) && query.error instanceof HttpError) {
+      return { kind: 'ERROR', error: query.error };
+    }
+    return query.data.metadata.renderAuthority === 'HOME_V2'
       ? {
           kind: 'ACTIVE',
           refreshFailed: query.isError || query.isRefetchError === true,

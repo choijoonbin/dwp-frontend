@@ -18,33 +18,27 @@
   "v2": [
     {
       "deviceClass": "DESKTOP_STANDARD",
-      "etag": "\"wave4-flow_v1-desktop_standard\"",
+      "etag": "\"wave4-flow_v1-desktop_standard-read_only_active\"",
       "forbiddenIdentityQueryKeys": [],
       "ifNoneMatch": null,
       "mode": "FLOW_V1",
       "ownerBindingCatalogRevisions": [
         "d9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643"
       ],
-      "queryKeys": [
-        "deviceClass",
-        "timeZone"
-      ],
+      "queryKeys": ["deviceClass", "timeZone"],
       "runtimeMode": "ACTIVE",
       "status": 200
     },
     {
       "deviceClass": "DESKTOP_STANDARD",
-      "etag": "\"wave4-flow_v1-desktop_standard\"",
+      "etag": "\"wave4-flow_v1-desktop_standard-read_only_active\"",
       "forbiddenIdentityQueryKeys": [],
       "ifNoneMatch": null,
       "mode": "FLOW_V1",
       "ownerBindingCatalogRevisions": [
         "d9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643"
       ],
-      "queryKeys": [
-        "deviceClass",
-        "timeZone"
-      ],
+      "queryKeys": ["deviceClass", "timeZone"],
       "runtimeMode": "ACTIVE",
       "status": 200
     }

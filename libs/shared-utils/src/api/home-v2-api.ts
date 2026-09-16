@@ -2,10 +2,22 @@ import type { components as GatewayComponents } from '@dwp-frontend/api-contract
 
 import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
+import {
+  HOME_V2_ROLLOUT_RINGS,
+  HOME_V2_RUNTIME_STATES,
+  assertHomeV2RuntimeDecision,
+  parseHomeV2ResponseMetadata,
+} from './home-v2-runtime-contract';
 
 import type { ConditionalHttpSnapshot } from '../http-conditional';
 import type { HomeDeviceClass, HomeDeviceLayoutOverlay } from './home-personalization-api';
 import type { HomeExperienceVariant } from './home-experience-api';
+import type {
+  HomeV2RegistryMode,
+  HomeV2ResponseMetadata,
+  HomeV2RolloutRing,
+  HomeV2RuntimeState,
+} from './home-v2-runtime-contract';
 import type {
   HomePreferenceLayout,
   HomePresentation,
@@ -15,11 +27,30 @@ import type {
 
 type GeneratedHomeReadModel = GatewayComponents['schemas']['platform_HomeReadModel'];
 
-export type HomeV2RuntimeMode = 'ACTIVE' | 'SHADOW';
+export type {
+  HomeV2ActionAuthority,
+  HomeV2RegistryMode,
+  HomeV2RenderAuthority,
+  HomeV2ResponseMetadata,
+  HomeV2RolloutRing,
+  HomeV2RuntimeMode,
+  HomeV2RuntimeState,
+} from './home-v2-runtime-contract';
+export {
+  HOME_V2_COMMANDS_HEADER,
+  HOME_V2_DECISION_REVISION_HEADER,
+  HOME_V2_REGISTRY_HEADER,
+  HOME_V2_REVISION_HEADER,
+  HOME_V2_RING_HEADER,
+  HOME_V2_ROLLOUT_RINGS,
+  HOME_V2_RUNTIME_HEADER,
+  HOME_V2_RUNTIME_STATES,
+  HOME_V2_STATE_HEADER,
+  parseHomeV2ResponseMetadata,
+} from './home-v2-runtime-contract';
 export type HomeV2WidgetState =
   'AVAILABLE' | 'EMPTY' | 'PARTIAL' | 'FORBIDDEN' | 'UNAVAILABLE' | 'STALE';
 export type HomeV2BadgeState = 'NOT_REQUESTED' | 'AVAILABLE' | 'UNAVAILABLE' | 'FORBIDDEN';
-export type HomeV2RegistryMode = 'STATIC' | 'SHADOW' | 'AUTHORITATIVE';
 
 export type HomeV2Action = Readonly<{
   actionId: string;
@@ -70,6 +101,16 @@ export type HomeV2AppEntry = Readonly<{
   sourceRoute: string;
 }>;
 
+export type HomeV2RuntimeDecision = Readonly<{
+  commandsEnabled: boolean;
+  expiresAt: string;
+  homeMode: HomeExperienceVariant;
+  registryAuthoritative: boolean;
+  rolloutRing: HomeV2RolloutRing;
+  rolloutRevision: string;
+  state: HomeV2RuntimeState;
+}>;
+
 export type HomeV2ReadModel = Readonly<{
   appDock: readonly Readonly<{
     apps: readonly HomeV2AppEntry[];
@@ -82,7 +123,8 @@ export type HomeV2ReadModel = Readonly<{
   mode: HomeExperienceVariant;
   partial: boolean;
   registryMode: HomeV2RegistryMode;
-  schemaVersion: 2;
+  runtime: HomeV2RuntimeDecision;
+  schemaVersion: 3;
   shell: Readonly<{
     announcements: readonly Readonly<{
       dueAt: string | null;
@@ -110,14 +152,6 @@ export type HomeV2ReadModel = Readonly<{
   widgets: readonly HomeV2Widget[];
 }>;
 
-export type HomeV2ResponseMetadata = Readonly<{
-  cacheControl: 'private, max-age=0, must-revalidate';
-  commandsEnabled: boolean;
-  registryAuthoritative: boolean;
-  runtimeMode: HomeV2RuntimeMode;
-  vary: string;
-}>;
-
 export type HomeV2ReadResult = Readonly<{
   metadata: HomeV2ResponseMetadata;
   notModified: boolean;
@@ -134,6 +168,9 @@ export type HomeV2ReadInput = Readonly<{
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const BADGE_VERSION_PATTERN = /^(?:0|[1-9]\d{0,39})$/u;
+const ACTION_ID_PATTERN = /^[a-z][a-z0-9.-]{1,79}$/u;
+const COMMAND_KEY_PATTERN = /^[a-z][a-z0-9.-]{2,119}$/u;
+const ROLLOUT_REVISION_PATTERN = /^[A-Za-z0-9._:-]{1,160}$/u;
 const OFFSET_TIMESTAMP_PATTERN = /T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
 const INTERNAL_ROUTE_PATTERN = /^\/[A-Za-z0-9/_?=&.%-]*$/u;
 const INVALID_PERCENT_ESCAPE_PATTERN = /%(?![0-9A-Fa-f]{2})/u;
@@ -170,16 +207,6 @@ const BADGE_STATES = new Set<HomeV2BadgeState>([
   'FORBIDDEN',
 ]);
 const REGISTRY_MODES = new Set<HomeV2RegistryMode>(['STATIC', 'SHADOW', 'AUTHORITATIVE']);
-const HOME_V2_VARY_TOKENS = new Set([
-  'accept-language',
-  'x-dwp-tenant-id',
-  'x-dwp-user-id',
-  'x-dwp-person-public-id',
-  'x-dwp-permissions',
-  'x-dwp-roles',
-  'x-dwp-group-refs',
-  'x-dwp-current-decision-revision',
-]);
 const HOME_PRESENTATIONS = new Set<HomePresentation>(['balanced', 'expressive', 'focused']);
 const HOME_WIDGET_SIZES = new Set<HomeWidgetSize>([
   'fifth',
@@ -198,6 +225,18 @@ function invalid(path: string): never {
 function object(value: unknown, path: string): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) invalid(path);
   return value as Record<string, unknown>;
+}
+
+function requireExactKeys(
+  value: Record<string, unknown>,
+  expected: readonly string[],
+  path: string
+): void {
+  const actual = Object.keys(value).sort();
+  const allowed = [...expected].sort();
+  if (actual.length !== allowed.length || actual.some((key, index) => key !== allowed[index])) {
+    invalid(path);
+  }
 }
 
 function string(value: unknown, path: string, nullable = false): string | null {
@@ -358,9 +397,21 @@ function parseDeviceOverlay(value: unknown): HomeDeviceLayoutOverlay | null {
   };
 }
 
-function parseAction(value: unknown, index: number): HomeV2Action {
-  const path = `data.widgets.actions[${index}]`;
+function parseAction(value: unknown, path: string): HomeV2Action {
   const action = object(value, path);
+  requireExactKeys(
+    action,
+    [
+      'actionId',
+      'commandKey',
+      'expectedResultVersion',
+      'kind',
+      'labelKey',
+      'requiresConfirmation',
+      'sourceRoute',
+    ],
+    path
+  );
   const kind = enumValue(
     action.kind,
     new Set(['SOURCE_ROUTE', 'COMMAND'] as const),
@@ -369,16 +420,22 @@ function parseAction(value: unknown, index: number): HomeV2Action {
   const commandKey = optionalNullableString(action, 'commandKey', path);
   const expectedResultVersion = optionalNullableString(action, 'expectedResultVersion', path);
   const sourceRoute = internalRoute(action.sourceRoute, `${path}.sourceRoute`, true);
+  const actionId = string(action.actionId, `${path}.actionId`)!;
+  if (!ACTION_ID_PATTERN.test(actionId)) invalid(`${path}.actionId`);
   if (
-    kind !== 'SOURCE_ROUTE' ||
-    commandKey !== null ||
-    expectedResultVersion !== null ||
-    !sourceRoute
+    (kind === 'SOURCE_ROUTE' &&
+      (commandKey !== null || expectedResultVersion !== null || !sourceRoute)) ||
+    (kind === 'COMMAND' &&
+      (sourceRoute !== null ||
+        !commandKey ||
+        !COMMAND_KEY_PATTERN.test(commandKey) ||
+        !expectedResultVersion ||
+        expectedResultVersion.length > 160))
   ) {
     invalid(path);
   }
   return {
-    actionId: string(action.actionId, `${path}.actionId`)!,
+    actionId,
     commandKey,
     expectedResultVersion,
     kind,
@@ -396,7 +453,9 @@ function parseWidget(value: unknown, index: number): HomeV2Widget {
   const instanceId = string(widget.instanceId, `${path}.instanceId`)!;
   if (!UUID_PATTERN.test(instanceId)) invalid(`${path}.instanceId`);
   return {
-    actions: array(widget.actions, `${path}.actions`).map(parseAction),
+    actions: array(widget.actions, `${path}.actions`).map((action, actionIndex) =>
+      parseAction(action, `${path}.actions[${actionIndex}]`)
+    ),
     definitionKey: string(widget.definitionKey, `${path}.definitionKey`)!,
     definitionManifestHash: string(
       widget.definitionManifestHash,
@@ -468,16 +527,70 @@ function parseApp(value: unknown, path: string): HomeV2AppEntry {
   };
 }
 
+function parseRuntimeDecision(
+  value: unknown,
+  homeMode: HomeExperienceVariant
+): HomeV2RuntimeDecision {
+  const path = 'data.runtime';
+  const runtime = object(value, path);
+  requireExactKeys(
+    runtime,
+    [
+      'state',
+      'homeMode',
+      'rolloutRing',
+      'rolloutRevision',
+      'commandsEnabled',
+      'registryAuthoritative',
+      'expiresAt',
+    ],
+    path
+  );
+  const runtimeHomeMode = enumValue(runtime.homeMode, HOME_MODES, `${path}.homeMode`);
+  if (runtimeHomeMode !== homeMode) invalid(`${path}.homeMode`);
+  const rolloutRevision = string(runtime.rolloutRevision, `${path}.rolloutRevision`)!;
+  if (!ROLLOUT_REVISION_PATTERN.test(rolloutRevision)) invalid(`${path}.rolloutRevision`);
+  const state = enumValue(
+    runtime.state,
+    new Set<HomeV2RuntimeState>(HOME_V2_RUNTIME_STATES),
+    `${path}.state`
+  );
+  if (state === 'DISABLED') invalid(`${path}.state`);
+  const commandsEnabled = boolean(runtime.commandsEnabled, `${path}.commandsEnabled`);
+  const registryAuthoritative = boolean(
+    runtime.registryAuthoritative,
+    `${path}.registryAuthoritative`
+  );
+  if (commandsEnabled !== (state === 'COMMAND_CANARY')) invalid(`${path}.commandsEnabled`);
+  if (state === 'SHADOW_COMPARE' && registryAuthoritative) {
+    invalid(`${path}.registryAuthoritative`);
+  }
+  return {
+    commandsEnabled,
+    expiresAt: timestamp(runtime.expiresAt, `${path}.expiresAt`)!,
+    homeMode: runtimeHomeMode,
+    registryAuthoritative,
+    rolloutRing: enumValue(
+      runtime.rolloutRing,
+      new Set<HomeV2RolloutRing>(HOME_V2_ROLLOUT_RINGS),
+      `${path}.rolloutRing`
+    ),
+    rolloutRevision,
+    state,
+  };
+}
+
 export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
   const envelope = object(value, 'response');
   const data = object(envelope.data, 'data') as GeneratedHomeReadModel & Record<string, unknown>;
   const schemaVersion = count(data.schemaVersion, 'data.schemaVersion');
-  if (schemaVersion !== 2) invalid('data.schemaVersion');
+  if (schemaVersion !== 3) invalid('data.schemaVersion');
   const mode = enumValue(data.mode, HOME_MODES, 'data.mode');
   const view = object(data.view, 'data.view');
   const viewMode = enumValue(view.mode, HOME_MODES, 'data.view.mode');
   if (viewMode !== mode) invalid('data.view.mode');
   const shell = object(data.shell, 'data.shell');
+  const runtime = parseRuntimeDecision(data.runtime, mode);
   const groupKeys = new Set<string>();
   const appKeys = new Set<string>();
   const rawAppDock = array(data.appDock, 'data.appDock');
@@ -520,6 +633,30 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
     definitionKeys.add(parsed.definitionKey);
     return parsed;
   });
+  const commandActions = widgets.flatMap((widget) =>
+    widget.actions
+      .filter((action) => action.kind === 'COMMAND')
+      .map((action) => ({ action, widget }))
+  );
+  if (!runtime.commandsEnabled && commandActions.length > 0) {
+    invalid('data.widgets.actions');
+  }
+  if (
+    commandActions.length > 1 ||
+    commandActions.some(
+      ({ action, widget }) =>
+        widget.definitionKey !== 'core.workspace.daily-brief' ||
+        widget.definitionVersion !== '1.0.0' ||
+        (widget.state !== 'AVAILABLE' && widget.state !== 'PARTIAL') ||
+        action.actionId !== 'dismiss-recommendation' ||
+        action.commandKey !== 'home.recommendation.dismiss' ||
+        action.labelKey !== 'home.action.dismissRecommendation' ||
+        action.requiresConfirmation !== true ||
+        action.expectedResultVersion !== widget.source.resultVersion
+    )
+  ) {
+    invalid('data.widgets.actions');
+  }
   return {
     appDock,
     changeVersion: string(data.changeVersion, 'data.changeVersion')!,
@@ -527,12 +664,9 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
     generatedAt: timestamp(data.generatedAt, 'data.generatedAt')!,
     mode,
     partial: boolean(data.partial, 'data.partial'),
-    registryMode: (() => {
-      const registryMode = enumValue(data.registryMode, REGISTRY_MODES, 'data.registryMode');
-      if (registryMode !== 'SHADOW') invalid('data.registryMode');
-      return registryMode;
-    })(),
-    schemaVersion: 2,
+    registryMode: enumValue(data.registryMode, REGISTRY_MODES, 'data.registryMode'),
+    runtime,
+    schemaVersion: 3,
     shell: {
       announcements: array(shell.announcements, 'data.shell.announcements').map((item, index) => {
         const path = `data.shell.announcements[${index}]`;
@@ -568,44 +702,6 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
   };
 }
 
-function parseBooleanHeader(headers: Headers, name: string): boolean {
-  const value = headers.get(name)?.trim().toLowerCase();
-  if (value === 'true') return true;
-  if (value === 'false') return false;
-  invalid(`headers.${name}`);
-}
-
-export function parseHomeV2ResponseMetadata(headers: Headers | undefined): HomeV2ResponseMetadata {
-  if (!headers) invalid('headers');
-  const cacheControl = headers.get('Cache-Control')?.trim().toLowerCase();
-  if (cacheControl !== 'private, max-age=0, must-revalidate') invalid('headers.Cache-Control');
-  const runtimeMode = headers.get('X-DWP-Home-Runtime-Mode')?.trim().toUpperCase();
-  if (runtimeMode !== 'ACTIVE' && runtimeMode !== 'SHADOW') {
-    invalid('headers.X-DWP-Home-Runtime-Mode');
-  }
-  const vary = headers.get('Vary')?.trim();
-  if (!vary) invalid('headers.Vary');
-  const varyTokens = vary.split(',').map((token) => token.trim().toLowerCase());
-  if (
-    varyTokens.length !== HOME_V2_VARY_TOKENS.size ||
-    new Set(varyTokens).size !== HOME_V2_VARY_TOKENS.size ||
-    varyTokens.some((token) => !HOME_V2_VARY_TOKENS.has(token))
-  ) {
-    invalid('headers.Vary');
-  }
-  const commandsEnabled = parseBooleanHeader(headers, 'X-DWP-Home-Commands-Enabled');
-  const registryAuthoritative = parseBooleanHeader(headers, 'X-DWP-Widget-Registry-Authoritative');
-  if (commandsEnabled) invalid('headers.X-DWP-Home-Commands-Enabled');
-  if (registryAuthoritative) invalid('headers.X-DWP-Widget-Registry-Authoritative');
-  return {
-    cacheControl,
-    commandsEnabled,
-    registryAuthoritative,
-    runtimeMode,
-    vary,
-  };
-}
-
 function assertRequestedHomeVariant(model: HomeV2ReadModel, input: HomeV2ReadInput): void {
   if (model.view.deviceClass !== input.deviceClass) invalid('data.view.deviceClass');
   if (input.mode && (model.mode !== input.mode || model.view.mode !== input.mode)) {
@@ -630,13 +726,15 @@ export async function getHomeV2(
   );
   const responseEtag = response.headers?.get('ETag');
   if (!responseEtag || response.snapshot.etag !== responseEtag) invalid('headers.ETag');
+  const metadata = parseHomeV2ResponseMetadata(response.headers);
   const model = response.notModified
     ? previous?.data
     : parseHomeV2ReadModel(response.snapshot.data);
   if (!model) invalid('response.304');
   assertRequestedHomeVariant(model, input);
+  assertHomeV2RuntimeDecision(metadata, model.runtime, model.registryMode);
   return {
-    metadata: parseHomeV2ResponseMetadata(response.headers),
+    metadata,
     notModified: response.notModified,
     snapshot: { data: model, etag: response.snapshot.etag },
     status: response.status,

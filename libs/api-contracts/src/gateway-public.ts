@@ -14121,6 +14121,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v2/home/shadow-receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record a bounded privacy-safe Home legacy/v2 comparison receipt */
+        post: operations["platform_recordHomeShadowReceiptV2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v2/home/widget-actions:execute": {
         parameters: {
             query?: never;
@@ -30402,6 +30419,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseShadowReceiptResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ShadowReceiptResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseSharedInboxSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_SharedInboxSummary"];
@@ -33470,6 +33497,7 @@ export interface components {
             mode?: string;
             partial?: boolean;
             registryMode?: string;
+            runtime?: components["schemas"]["platform_RuntimeDecision"];
             /** Format: int32 */
             schemaVersion?: number;
             shell?: components["schemas"]["platform_HomeShell"];
@@ -34656,6 +34684,9 @@ export interface components {
             unread?: boolean;
         };
         platform_ReadinessResponse: {
+            /** Format: int32 */
+            activeBindingCount?: number;
+            bindingCatalogRevision?: string;
             capabilities?: string[];
             controlPlaneReady?: boolean;
             /** @enum {string} */
@@ -35310,6 +35341,16 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_RuntimeDecision: {
+            commandsEnabled?: boolean;
+            /** Format: date-time */
+            expiresAt?: string;
+            homeMode?: string;
+            registryAuthoritative?: boolean;
+            rolloutRevision?: string;
+            rolloutRing?: string;
+            state?: string;
+        };
         platform_RuntimeDisableRequest: {
             /** Format: int64 */
             expectedVersion: number;
@@ -35583,6 +35624,24 @@ export interface components {
             source?: string;
             /** @enum {string} */
             status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
+        };
+        platform_ShadowReceiptRequest: {
+            deviceClass: string;
+            homeMode: string;
+            /** Format: int32 */
+            mismatchCount?: number;
+            /** @enum {string} */
+            outcome: "MATCH" | "EXPECTED_TRANSIENT" | "MISMATCH" | "UNAVAILABLE";
+            reasons: ("MATCH" | "EXPECTED_TRANSIENT" | "STRUCTURE" | "AUTHORITY" | "MODE" | "LAYOUT" | "APP_DOCK" | "WIDGET_STATE" | "ROUTE_ACTION" | "FRESHNESS" | "UNAVAILABLE")[];
+            rolloutRevision: string;
+            rolloutRing: string;
+            runtimeState: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+        };
+        platform_ShadowReceiptResponse: {
+            accepted?: boolean;
+            receiptVersion?: string;
         };
         platform_ShareableGroup: {
             displayName?: string;
@@ -36376,12 +36435,20 @@ export interface components {
         platform_WebVitalRequest: {
             /** Format: double */
             delta: number;
+            /** @enum {string} */
+            deviceClass?: "DESKTOP_WIDE" | "DESKTOP_STANDARD" | "MOBILE_STANDARD" | "MOBILE_COMPACT";
+            /** @enum {string} */
+            homeMode?: "CLASSIC" | "FLOW_V1";
+            /** @enum {string} */
+            homeRuntime?: "DISABLED" | "SHADOW_COMPARE" | "READ_ONLY_ACTIVE" | "COMMAND_CANARY";
             id: string;
             /** @enum {string} */
             name: "CLS" | "INP" | "LCP";
             navigationType: string;
             /** @enum {string} */
             rating: "good" | "needs-improvement" | "poor";
+            /** @enum {string} */
+            rolloutRing?: "CONTROL" | "INTERNAL" | "PILOT" | "EARLY_ADOPTER" | "GA";
             routeGroup: string;
             /** Format: double */
             value: number;
@@ -67854,8 +67921,13 @@ export interface operations {
                     ETag?: string;
                     /** @description Trusted identity, authority and locale dimensions */
                     Vary?: string;
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
                     "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Rollout-Revision"?: string;
+                    "X-DWP-Home-Rollout-Ring"?: string;
                     "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Home-Runtime-State"?: string;
                     "X-DWP-Widget-Registry-Authoritative"?: boolean;
                     [name: string]: unknown;
                 };
@@ -67869,8 +67941,13 @@ export interface operations {
                     "Cache-Control"?: string;
                     ETag?: string;
                     Vary?: string;
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
                     "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Rollout-Revision"?: string;
+                    "X-DWP-Home-Rollout-Ring"?: string;
                     "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Home-Runtime-State"?: string;
                     "X-DWP-Widget-Registry-Authoritative"?: boolean;
                     [name: string]: unknown;
                 };
@@ -67906,6 +67983,53 @@ export interface operations {
             };
         };
     };
+    platform_recordHomeShadowReceiptV2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+                /** @description Required and fail-closed for the Home Runtime authority states 100/110/111; state 000 never enters the Home Runtime owner contract. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ShadowReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description Comparison receipt accepted */
+            202: {
+                headers: {
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseShadowReceiptResponse"];
+                };
+            };
+            /** @description Receipt or trusted rollout context is invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Home rollout decision is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     platform_executeHomeWidgetActionV2: {
         parameters: {
             query: {
@@ -67918,7 +68042,7 @@ export interface operations {
             header: {
                 "Accept-Language"?: string;
                 "Idempotency-Key": string;
-                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                /** @description Required and fail-closed for the Home Runtime authority states 100/110/111; state 000 never enters the Home Runtime owner contract. */
                 "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
@@ -67935,8 +68059,13 @@ export interface operations {
                 headers: {
                     /** @description private, no-store, max-age=0 */
                     "Cache-Control"?: string;
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
                     "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Rollout-Revision"?: string;
+                    "X-DWP-Home-Rollout-Ring"?: string;
                     "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Home-Runtime-State"?: string;
                     "X-DWP-Widget-Registry-Authoritative"?: boolean;
                     [name: string]: unknown;
                 };

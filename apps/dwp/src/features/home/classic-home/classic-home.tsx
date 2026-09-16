@@ -79,6 +79,7 @@ type ClassicHomeProps = {
   presentation: HomePresentation;
   availableWidth: number;
   feedbackBusy: boolean;
+  showRecommendationCommand?: boolean;
   onBrowseAllApps: () => void;
   onOpenOrganizationUpdates: () => void;
   onStartEditing?: () => void;
@@ -337,6 +338,7 @@ export function ClassicHome({
   presentation,
   availableWidth,
   feedbackBusy,
+  showRecommendationCommand = false,
   onBrowseAllApps,
   onOpenOrganizationUpdates,
   onStartEditing,
@@ -369,6 +371,7 @@ export function ClassicHome({
       data-testid="classic-home"
       data-home-ia="organization-portal"
       data-home-scroll-contract="single-document"
+      data-home-presentation={presentation}
       data-classic-home-available-width={Math.round(availableWidth)}
       sx={{
         width: 1,
@@ -590,13 +593,36 @@ export function ClassicHome({
               }
             />
           ) : (
-            <ClassicPersonalSummary
-              overview={overview}
-              loading={overviewLoading}
-              fetching={overviewFetching}
-              requestFailed={overviewFailed}
-              onRetry={onRetryOverview}
-            />
+            <Stack gap={{ xs: 1.5, md: 2 }}>
+              {showRecommendationCommand && (
+                <HomeWidgetErrorBoundary
+                  widgetKey="daily-brief-command"
+                  resetKey={overview?.generatedAt}
+                >
+                  <HomeOverviewWidget
+                    widgetKey="daily-brief"
+                    size="large"
+                    height="standard"
+                    runtimeDecision={widgetRuntimeDecisions['daily-brief']}
+                    label={t('widgets.registry.daily-brief.label')}
+                    overview={overview}
+                    loading={overviewLoading}
+                    fetching={overviewFetching}
+                    requestFailed={overviewFailed}
+                    onRetry={onRetryOverview}
+                    feedbackBusy={feedbackBusy}
+                    onRecommendationFeedback={onRecommendationFeedback}
+                  />
+                </HomeWidgetErrorBoundary>
+              )}
+              <ClassicPersonalSummary
+                overview={overview}
+                loading={overviewLoading}
+                fetching={overviewFetching}
+                requestFailed={overviewFailed}
+                onRetry={onRetryOverview}
+              />
+            </Stack>
           )}
         </Box>
         {editing && <Box aria-hidden="true" sx={{ height: { xs: 196, sm: 88 } }} />}

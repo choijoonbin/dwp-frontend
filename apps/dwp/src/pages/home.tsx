@@ -27,6 +27,7 @@ import {
   deriveFlowHomeSections,
   isFlowLegacyGeometryMigrationEligible,
   normalizeLegacyFlowHomeSections,
+  type FlowHomeSectionPreference,
 } from '../features/home/flow-home/flow-home-preference';
 import { HomeItemGallery } from '../features/home/home-item-gallery';
 import {
@@ -44,7 +45,7 @@ import { HomePageStatePanel } from '../features/home/runtime/home-page-state-pan
 import { useHomeAvailableWidth } from '../features/home/runtime/home-available-width';
 import { resolveHomeOverviewQueryFailureState } from '../features/home/runtime/home-overview-query-state';
 import { HomeFooter } from '../features/home/home-footer';
-import { RecommendationUndoSnackbar } from '../features/home/recommendation-undo-snackbar';
+import { HomeRecommendationActionFeedback } from '../features/home/runtime/home-recommendation-action-feedback';
 import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
 import {
   HOME_WIDGET_KEYS,
@@ -58,6 +59,7 @@ import {
   homeDraftChangeCount,
   isHomeDraftDirty,
   reapplyHomeDraft,
+  type HomeDraft,
 } from '../features/home/home-draft-history';
 import { HomePreferenceConflictDialog } from '../components/home-preference-conflict-dialog';
 import { LazyHomePersonalizationStudio } from '../features/home-personalization/home-personalization-studio-lazy';
@@ -70,7 +72,10 @@ import {
   type HomeEditSession,
   type HomeSaveMutation,
 } from '../features/home/runtime/home-edit-session';
-import { useHomeEditorSafety } from '../features/home/runtime/use-home-editor-safety';
+import {
+  useHomeEditorSafety,
+  useHomeRolloutOverlayGuard,
+} from '../features/home/runtime/use-home-editor-safety';
 import { useHomeEditorEntryFocus } from '../features/home/runtime/use-home-editor-entry-focus';
 import { useHomeCurrentInstant } from '../features/home/runtime/use-home-current-instant';
 import { useHomeDataRetry } from '../features/home/runtime/use-home-data-retry';
@@ -101,8 +106,6 @@ import {
 import { useSystemCodeOptions } from '../components/use-system-code-options';
 import { useHomeCoreReadModel, useHomePersonalizationReadModel } from './home/home-page-read-model';
 import { resolveWave2Evidence } from './home/home-wave2-evidence-adapter';
-import type { FlowHomeSectionPreference } from '../features/home/flow-home/flow-home-preference';
-import type { HomeDraft } from '../features/home/home-draft-history';
 export default function HomePage() {
   const { t, i18n } = useTranslation('home');
   const auth = useAuth();
@@ -182,7 +185,7 @@ export default function HomePage() {
     notificationAuthorizationFailed,
     notificationSummaryAuthorized,
     notificationSummaryQuery,
-    recommendationFeedback,
+    recommendationAction,
     timeZone,
     widgetRuntimeDecisions,
     widgetShadowObservation,
@@ -261,6 +264,15 @@ export default function HomePage() {
     setStudioOpen(false);
     setStudioContractScope(null);
   }, []);
+  useHomeRolloutOverlayGuard(
+    homeV2Runtime.active,
+    galleryOpen || discardEditorOpen || conflictTarget !== null,
+    studioOpen,
+    closeHomeStudio,
+    setGalleryOpen,
+    setDiscardEditorOpen,
+    setConflictTarget
+  );
   const restoreHomeStudioEntryFocus = useCallback(() => {
     if (!studioFocusRestorePendingRef.current) return;
     const retainedEntry = studioEntryFocusRef.current;
@@ -317,12 +329,14 @@ export default function HomePage() {
     persistedSourceLoading,
     persistedVersion,
     runtimeWidgetPreferences,
+    shadowComparison,
     sourceHomeView,
     widgetPreferences,
   } = homeReadModel;
+  const editorSessionActive = editorOpen && editSession !== null;
+  const editorActive = editorSessionActive && !homeV2Runtime.active;
   const editorFlowHomeEnabled =
-    editorOpen && editSession ? editSession.experienceVariant === 'FLOW_V1' : flowHomeEnabled;
-  const editorActive = editorOpen && editSession !== null;
+    editorActive && editSession ? editSession.experienceVariant === 'FLOW_V1' : flowHomeEnabled;
   const editorResetAvailable =
     editorActive && editSession ? editSession.resetAvailable : durableResetAvailable;
   const editorSourceFailed = homeExperienceQuery.isError || persistedSourceFailed;
@@ -384,8 +398,9 @@ export default function HomePage() {
     ]
   );
   const draftDirty = Boolean(
-    editorActive && editBaseDraft && isHomeDraftDirty(editBaseDraft, draftHistory.present)
+    editorSessionActive && editBaseDraft && isHomeDraftDirty(editBaseDraft, draftHistory.present)
   );
+  const rolloutDraftPreserved = homeV2Runtime.active && editSession !== null && draftDirty;
   const draftChangeCount = editBaseDraft
     ? homeDraftChangeCount(editBaseDraft, draftHistory.present)
     : 0;
@@ -402,7 +417,12 @@ export default function HomePage() {
     };
   }, [editorFlowHomeEnabled, homeCustomized, legacyFlowGeometryMigrationEligible, persistedDraft]);
   useEffect(() => {
-    if (homeExperienceQuery.isSuccess && !personalCustomizationEnabled && editorOpen) {
+    if (
+      homeExperienceQuery.isSuccess &&
+      !personalCustomizationEnabled &&
+      editorOpen &&
+      !rolloutDraftPreserved
+    ) {
       closeEditor();
       return;
     }
@@ -443,6 +463,7 @@ export default function HomePage() {
     persistedDraft,
     persistedVersion,
     replaceDraft,
+    rolloutDraftPreserved,
   ]);
   const beginEditing = (studioView?: HomeView) => {
     if (
@@ -741,7 +762,12 @@ export default function HomePage() {
       data-home-widget-shadow-status={widgetShadowObservation.status}
       data-home-widget-shadow-mismatch-count={widgetShadowObservation.mismatchCount}
       data-home-widget-shadow-decision-revision={widgetShadowObservation.decisionRevision ?? 'none'}
-      {...homeV2RuntimeEvidence(homeV2Runtime)}
+      {...homeV2RuntimeEvidence(
+        homeV2Runtime,
+        recommendationAction.command.status,
+        rolloutDraftPreserved,
+        shadowComparison
+      )}
       data-home-available-width-class={homeAvailableWidthClass}
       data-home-device-class={deviceClass}
       data-home-mode={editorFlowHomeEnabled ? 'FLOW_V1' : 'CLASSIC'}
@@ -812,7 +838,7 @@ export default function HomePage() {
           density={activeDeviceOverlay?.density ?? 'comfortable'}
           previewDevice={previewDevice}
           availableWidth={homeAvailableWidth}
-          feedbackBusy={legacyEnabled && recommendationFeedback.busy}
+          feedbackBusy={recommendationAction.busy}
           onBrowseAllApps={() => navigate('/apps')}
           onStartEditing={homePageGate.editActionAvailable ? () => beginEditing() : undefined}
           onOpenStudio={homeStudioEnabled && !editorOpen ? openHomeStudio : undefined}
@@ -824,7 +850,7 @@ export default function HomePage() {
           }}
           onRetryOverview={homeDataRetry.retry}
           onRetryContributions={homeDataRetry.retry}
-          onRecommendationFeedback={legacyEnabled ? recommendationFeedback.dismiss : undefined}
+          onRecommendationFeedback={recommendationAction.dismiss}
           futureWidgetStateByKey={wave2Evidence.loadedFlow}
           ownerWidgetRegion={ownerWidgetRegion}
         />
@@ -855,7 +881,11 @@ export default function HomePage() {
           personalizationLoading={homePreferenceQuery.isLoading}
           presentation={activePresentation}
           availableWidth={homeAvailableWidth}
-          feedbackBusy={legacyEnabled && recommendationFeedback.busy}
+          feedbackBusy={recommendationAction.busy}
+          showRecommendationCommand={
+            homeV2Runtime.activation.kind === 'ACTIVE' &&
+            homeV2Runtime.activation.result.metadata.actionAuthority === 'EXACT_ALLOWLIST'
+          }
           onBrowseAllApps={() => navigate('/apps')}
           onOpenOrganizationUpdates={() => navigate('/communications')}
           onStartEditing={homePageGate.editActionAvailable ? () => beginEditing() : undefined}
@@ -867,7 +897,7 @@ export default function HomePage() {
             if (app.managementRoute) navigate(app.managementRoute);
           }}
           onRetryOverview={() => void homeOverviewQuery.refetch()}
-          onRecommendationFeedback={legacyEnabled ? recommendationFeedback.dismiss : undefined}
+          onRecommendationFeedback={recommendationAction.dismiss}
           organizationResourceState={wave2Evidence.resource}
           disabledAppIds={
             wave2Evidence.resource?.kind === 'forbidden'
@@ -965,9 +995,9 @@ export default function HomePage() {
             overviewFetching={homeOverviewQuery.isFetching}
             overviewFailed={homeOverviewHardFailed}
             widgetRuntimeDecisions={widgetRuntimeDecisions}
-            feedbackBusy={legacyEnabled && recommendationFeedback.busy}
+            feedbackBusy={recommendationAction.busy}
             onRetryOverview={homeDataRetry.retry}
-            onRecommendationFeedback={legacyEnabled ? recommendationFeedback.dismiss : undefined}
+            onRecommendationFeedback={recommendationAction.dismiss}
             onClose={closeHomeStudio}
             onExited={restoreHomeStudioEntryFocus}
             modePreset={
@@ -988,12 +1018,7 @@ export default function HomePage() {
           />
         </Suspense>
       )}
-      <RecommendationUndoSnackbar
-        open={Boolean(recommendationFeedback.hidden)}
-        busy={recommendationFeedback.undoBusy}
-        onClose={recommendationFeedback.clear}
-        onUndo={recommendationFeedback.undo}
-      />
+      <HomeRecommendationActionFeedback action={recommendationAction} />
     </Box>
   );
 }

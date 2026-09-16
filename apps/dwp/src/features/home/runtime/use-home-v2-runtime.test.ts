@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
+import { HttpError } from '@dwp-frontend/shared-utils';
 
 import { resolveHomeV2ActivationState, resolveHomeV2ReadPath } from './use-home-v2-runtime';
 
 const result = (runtimeMode: 'ACTIVE' | 'SHADOW') =>
   ({
-    metadata: { runtimeMode },
+    metadata: {
+      runtimeMode,
+      renderAuthority: runtimeMode === 'ACTIVE' ? 'HOME_V2' : 'LEGACY',
+    },
   }) as never;
 
 describe('Home v2 activation gate', () => {
@@ -69,6 +73,21 @@ describe('Home v2 activation gate', () => {
     expect(resolveHomeV2ReadPath(activation)).toEqual({
       legacyFanoutEnabled: false,
       render: 'V2',
+    });
+  });
+
+  it('fails closed when a refresh returns an HTTP or contract authority failure', () => {
+    const error = new HttpError('runtime decision mismatch', 502);
+    const activation = resolveHomeV2ActivationState(true, {
+      data: result('ACTIVE'),
+      error,
+      isPending: false,
+      isError: true,
+    });
+    expect(activation).toEqual({ kind: 'ERROR', error });
+    expect(resolveHomeV2ReadPath(activation)).toEqual({
+      legacyFanoutEnabled: false,
+      render: 'ERROR',
     });
   });
 
