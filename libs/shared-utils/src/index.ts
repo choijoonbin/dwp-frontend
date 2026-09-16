@@ -24,6 +24,7 @@ export * from './api/platform-admin-api';
 export * from './api/platform-registry-api';
 export * from './api/home-experience-api';
 export * from './api/home-overview-api';
+export * from './api/home-v2-api';
 export * from './api/tenant-branding-api';
 export * from './api/tenant-experience-preview-api';
 export * from './api/home-preference-api';

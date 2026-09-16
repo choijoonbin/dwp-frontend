@@ -14069,6 +14069,46 @@ export interface paths {
         patch: operations["platform_updateWorkStatus"];
         trace?: never;
     };
+    "/api/platform/v2/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the recipient-bound Home v2 projection
+         * @description Returns a private conditional-read model. ETag identity is bound to tenant, recipient, authority revision, mode, device, locale and time zone.
+         */
+        get: operations["platform_readHomeV2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/home/widget-actions:execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Execute an idempotent Home widget action
+         * @description Disabled until the Wave 6 command promotion gate. When enabled, owner-side idempotency and an audit receipt are mandatory.
+         */
+        post: operations["platform_executeHomeWidgetActionV2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/provider/v1/admin/audit-events": {
         parameters: {
             query?: never;
@@ -28091,6 +28131,16 @@ export interface components {
             providerType?: "DWP_SANDBOX" | "MICROSOFT_GRAPH" | "GOOGLE_GMAIL" | "NAVER_WORKS" | "JMAP" | "IMAP_SMTP";
             synchronizationState?: string;
         };
+        platform_Action: {
+            actionId?: string;
+            commandKey?: string;
+            expectedResultVersion?: string;
+            /** @enum {string} */
+            kind?: "SOURCE_ROUTE" | "COMMAND";
+            labelKey?: string;
+            requiresConfirmation?: boolean;
+            sourceRoute?: string;
+        };
         platform_ActionProposal: {
             /** Format: int32 */
             actionContractVersion?: number;
@@ -28329,6 +28379,14 @@ export interface components {
             permissionMatch: "ANY_OF";
             requiredPermissions: string[];
             sourceSystem: string;
+        };
+        platform_Announcement: {
+            /** Format: date-time */
+            dueAt?: string;
+            id?: string;
+            kind?: string;
+            sourceRoute?: string;
+            title?: string;
         };
         platform_AnnouncementDefinition: {
             /** Format: date-time */
@@ -28735,6 +28793,16 @@ export interface components {
         platform_ApiResponseCollaborationOverview: {
             correlationId?: string;
             data?: components["schemas"]["platform_CollaborationOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CommandReceipt"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -29165,6 +29233,16 @@ export interface components {
         platform_ApiResponseHomePreferenceResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_HomePreferenceResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseHomeReadModel: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeReadModel"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -30834,11 +30912,25 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_AppEntry: {
+            appKey?: string;
+            badge?: components["schemas"]["platform_Badge"];
+            /** @enum {string} */
+            badgeState?: "NOT_REQUESTED" | "AVAILABLE" | "UNAVAILABLE" | "FORBIDDEN";
+            iconKey?: string;
+            label?: string;
+            sourceRoute?: string;
+        };
         platform_AppFolderV1: {
             appIds: string[];
             groupId: string;
             id: string;
             name: string;
+        };
+        platform_AppGroup: {
+            apps?: components["schemas"]["platform_AppEntry"][];
+            groupKey?: string;
+            label?: string;
         };
         platform_AppLaunch: {
             appId?: string;
@@ -31061,6 +31153,13 @@ export interface components {
             score?: number;
             /** Format: date-time */
             startsAt?: string;
+        };
+        platform_Badge: {
+            /** Format: int32 */
+            total?: number;
+            /** Format: int32 */
+            urgent?: number;
+            version?: string;
         };
         platform_BatchUpdateWorkStatusRequest: {
             items: components["schemas"]["platform_WorkStatusChange"][];
@@ -31592,6 +31691,27 @@ export interface components {
             preference?: components["schemas"]["platform_SharingPreference"];
             shareableGroups?: components["schemas"]["platform_ShareableGroup"][];
             sharedPlans?: components["schemas"]["platform_SharedWorkPlan"][];
+        };
+        platform_CommandReceipt: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: uuid */
+            commandId?: string;
+            commandKey?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            resultVersion?: string;
+            sourceRoute?: string;
+            status?: string;
+        };
+        platform_CommandRequest: {
+            actionId: string;
+            expectedResultVersion: string;
+            /** Format: uuid */
+            instanceId: string;
+            parameters?: {
+                [key: string]: unknown;
+            };
         };
         platform_CommentRequest: {
             body: string;
@@ -32445,6 +32565,17 @@ export interface components {
             /** @enum {string} */
             targetScopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
         };
+        platform_EffectiveView: {
+            composition?: components["schemas"]["platform_HomeLayoutPayload"];
+            deviceClass?: string;
+            deviceOverlay?: components["schemas"]["platform_DeviceLayoutOverlay"];
+            mode?: string;
+            /** Format: int64 */
+            revision?: number;
+            source?: string;
+            /** Format: uuid */
+            viewId?: string;
+        };
         platform_Entity: {
             description?: string;
             key?: string;
@@ -33011,6 +33142,14 @@ export interface components {
             /** Format: date-time */
             to?: string;
         };
+        platform_Governance: {
+            classification?: string;
+            owner?: string;
+            requiredAuthorities?: string[];
+            retention?: string;
+            sourceAppResourceKey?: string;
+            sourceRoute?: string;
+        };
         platform_GovernanceChangeReview: {
             current?: components["schemas"]["platform_JsonNode"];
             currentActorAccess?: components["schemas"]["platform_SiteAccessDecision"];
@@ -33289,6 +33428,23 @@ export interface components {
             version: number;
             warnings: string[];
         };
+        platform_HomeReadModel: {
+            appDock?: components["schemas"]["platform_AppGroup"][];
+            changeVersion?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            mode?: string;
+            partial?: boolean;
+            registryMode?: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+            shell?: components["schemas"]["platform_HomeShell"];
+            unavailableSources?: string[];
+            view?: components["schemas"]["platform_EffectiveView"];
+            widgets?: components["schemas"]["platform_Widget"][];
+        };
         platform_HomeResponse: {
             accounts?: components["schemas"]["platform_AccountSummary"][];
             focusQueue?: components["schemas"]["platform_ThreadSummary"][];
@@ -33297,6 +33453,14 @@ export interface components {
             metrics?: components["schemas"]["platform_HomeMetrics"];
             proposals?: components["schemas"]["platform_ActionProposal"][];
             sharedInboxes?: components["schemas"]["platform_SharedInboxPulse"][];
+        };
+        platform_HomeShell: {
+            announcements?: components["schemas"]["platform_Announcement"][];
+            backgroundAssetRoute?: string;
+            contentAlignment?: string;
+            density?: string;
+            headline?: string;
+            subheadline?: string;
         };
         platform_HomeTemplateResponse: {
             audience: components["schemas"]["platform_TemplateAudience"];
@@ -35537,6 +35701,18 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_SourceState: {
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: date-time */
+            lastSuccessAt?: string;
+            reasonCode?: string;
+            resultVersion?: string;
+            retryable?: boolean;
+            sourceKey?: string;
+        };
         platform_Subject: {
             /** Format: uuid */
             connectorId?: string;
@@ -36151,6 +36327,24 @@ export interface components {
             routeGroup: string;
             /** Format: double */
             value: number;
+        };
+        platform_Widget: {
+            actions?: components["schemas"]["platform_Action"][];
+            definitionKey?: string;
+            definitionManifestHash?: string;
+            definitionVersion?: string;
+            governance?: components["schemas"]["platform_Governance"];
+            /** Format: uuid */
+            instanceId?: string;
+            payload?: {
+                [key: string]: unknown;
+            };
+            redactions?: string[];
+            rendererBindingRevision?: string;
+            rendererKey?: string;
+            source?: components["schemas"]["platform_SourceState"];
+            /** @enum {string} */
+            state?: "AVAILABLE" | "EMPTY" | "PARTIAL" | "FORBIDDEN" | "UNAVAILABLE" | "STALE";
         };
         platform_WidgetConfigurationPayload: {
             fieldKeys: string[];
@@ -67474,6 +67668,160 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkItem"];
                 };
+            };
+        };
+    };
+    platform_readHomeV2: {
+        parameters: {
+            query: {
+                mode?: string;
+                deviceClass: string;
+                timeZone?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+                "If-None-Match"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recipient-bound Home read model */
+            200: {
+                headers: {
+                    /** @description private, max-age=0, must-revalidate */
+                    "Cache-Control"?: string;
+                    /** @description Recipient and authority-bound entity tag */
+                    ETag?: string;
+                    /** @description Trusted identity, authority and locale dimensions */
+                    Vary?: string;
+                    "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Widget-Registry-Authoritative"?: boolean;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeReadModel"];
+                };
+            };
+            /** @description Entity tag is current; response has no body */
+            304: {
+                headers: {
+                    "Cache-Control"?: string;
+                    ETag?: string;
+                    Vary?: string;
+                    "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Widget-Registry-Authoritative"?: boolean;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid mode, device, locale or time zone */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Trusted recipient identity is missing */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Current authority does not permit a requested source */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Runtime or trusted authority is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    platform_executeHomeWidgetActionV2: {
+        parameters: {
+            query: {
+                mode?: string;
+                deviceClass: string;
+                timeZone?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Accept-Language"?: string;
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Command accepted with an audit receipt */
+            202: {
+                headers: {
+                    /** @description private, no-store, max-age=0 */
+                    "Cache-Control"?: string;
+                    "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Widget-Registry-Authoritative"?: boolean;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCommandReceipt"];
+                };
+            };
+            /** @description Invalid action contract or idempotency key */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Trusted recipient identity is missing */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Action is not authorized */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Idempotency key was reused with a different command */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Commands are disabled or the owner is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

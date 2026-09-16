@@ -9,6 +9,7 @@ export type ConditionalHttpSnapshot<T> = Readonly<{
 }>;
 
 export type ConditionalHttpResult<T> = Readonly<{
+  headers: Headers | undefined;
   snapshot: ConditionalHttpSnapshot<T>;
   status: 200 | 304;
   notModified: boolean;
@@ -49,6 +50,7 @@ export function resolveConditionalHttpResponse<T>(
       throw new HttpError('A 304 response changed the cached entity tag.', 502);
     }
     return {
+      headers: response.headers,
       snapshot: previous,
       status: 304,
       notModified: true,
@@ -59,6 +61,7 @@ export function resolveConditionalHttpResponse<T>(
     throw new HttpError('Conditional GET response is invalid.', 502);
   }
   return {
+    headers: response.headers,
     snapshot: { data: response.data, etag: responseEtag },
     status: 200,
     notModified: false,

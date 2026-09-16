@@ -44,6 +44,7 @@ describe('conditional HTTP snapshot contract', () => {
         snapshot()
       )
     ).toEqual({
+      headers: expect.any(Headers),
       snapshot: { data, etag: '"revision-8"' },
       status: 200,
       notModified: false,
@@ -61,7 +62,12 @@ describe('conditional HTTP snapshot contract', () => {
       previous
     );
 
-    expect(result).toEqual({ snapshot: previous, status: 304, notModified: true });
+    expect(result).toEqual({
+      headers: expect.any(Headers),
+      snapshot: previous,
+      status: 304,
+      notModified: true,
+    });
     expect(result.snapshot).toBe(previous);
     expect(result.snapshot.data).toBe(previous.data);
   });
