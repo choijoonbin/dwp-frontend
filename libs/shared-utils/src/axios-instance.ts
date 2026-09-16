@@ -1,9 +1,15 @@
 import { API_URL } from './env';
+import {
+  conditionalRequestHeaders,
+  resolveConditionalHttpResponse,
+  type ConditionalHttpSnapshot,
+} from './http-conditional';
 import { HttpError, HttpTransportError } from './http-error';
 import { getTenantId } from './tenant-util';
 import { resolveRequestLocale } from './locale-preference';
 
 type AxiosLikeResponse<T> = { data: T; headers?: Headers };
+type TransportResponse<T> = AxiosLikeResponse<T> & { status: number };
 export type SessionEffect = 'authoritative' | 'neutral';
 type RequestConfig = {
   headers?: Record<string, string>;
@@ -15,6 +21,11 @@ type RequestConfig = {
   beforeDispatch?: () => void;
   csrfReplay?: 'NEVER';
 };
+
+export type ConditionalGetConfig = Pick<
+  RequestConfig,
+  'beforeDispatch' | 'contextScopeKey' | 'signal' | 'timeoutMs'
+>;
 
 export type EventStreamMessage = {
   event: string;
@@ -283,6 +294,7 @@ async function request<T>(
   body?: unknown,
   config: RequestConfig = {},
   sessionEffect: SessionEffect = 'authoritative',
+  acceptedStatuses: readonly number[] = [],
   allowCsrfRetry = true,
   unauthorizedRegistration = sessionEffect === 'authoritative'
     ? unauthorizedHandlerRegistration
@@ -290,7 +302,7 @@ async function request<T>(
   accessFailureRegistration = sessionEffect === 'authoritative'
     ? authorizationAccessFailureRegistration
     : null
-): Promise<AxiosLikeResponse<T>> {
+): Promise<TransportResponse<T>> {
   const headers = buildHeaders(body, config.headers);
   const scopedUrl = withContextScope(url, config.contextScopeKey);
   config.beforeDispatch?.();
@@ -338,9 +350,10 @@ async function request<T>(
     if (timeout !== undefined) globalThis.clearTimeout(timeout);
     config.signal?.removeEventListener('abort', abortFromCaller);
   }
-  const payload = await parseBody(response, response.ok ? config.responseType : 'json');
+  const accepted = response.ok || acceptedStatuses.includes(response.status);
+  const payload = await parseBody(response, accepted ? config.responseType : 'json');
 
-  if (!response.ok) {
+  if (!accepted) {
     const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;
     if (csrfRejected) {
       resetCsrfToken();
@@ -351,6 +364,7 @@ async function request<T>(
           body,
           config,
           sessionEffect,
+          acceptedStatuses,
           false,
           unauthorizedRegistration,
           accessFailureRegistration
@@ -380,21 +394,55 @@ async function request<T>(
     throw new HttpError(message, response.status, payload);
   }
 
-  return { data: payload as T, headers: response.headers };
+  return { data: payload as T, headers: response.headers, status: response.status };
+}
+
+async function conditionalGet<T>(
+  sessionEffect: SessionEffect,
+  url: string,
+  previous: ConditionalHttpSnapshot<T> | undefined,
+  config: ConditionalGetConfig = {}
+) {
+  const response = await request<T | undefined>(
+    'GET',
+    url,
+    undefined,
+    {
+      ...config,
+      headers: conditionalRequestHeaders(previous),
+    },
+    sessionEffect,
+    [304]
+  );
+  return resolveConditionalHttpResponse(response, previous);
 }
 
 function createHttpClient(sessionEffect: SessionEffect) {
   return {
-    get: <T>(url: string, config?: RequestConfig) =>
+    get: <T>(url: string, config?: RequestConfig): Promise<AxiosLikeResponse<T>> =>
       request<T>('GET', url, undefined, config, sessionEffect),
-    post: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
-      request<T>('POST', url, body, config, sessionEffect),
-    put: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
-      request<T>('PUT', url, body, config, sessionEffect),
-    patch: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
-      request<T>('PATCH', url, body, config, sessionEffect),
-    delete: <T>(url: string, config?: RequestConfig) =>
+    post: <T, B = unknown>(
+      url: string,
+      body: B,
+      config?: RequestConfig
+    ): Promise<AxiosLikeResponse<T>> => request<T>('POST', url, body, config, sessionEffect),
+    put: <T, B = unknown>(
+      url: string,
+      body: B,
+      config?: RequestConfig
+    ): Promise<AxiosLikeResponse<T>> => request<T>('PUT', url, body, config, sessionEffect),
+    patch: <T, B = unknown>(
+      url: string,
+      body: B,
+      config?: RequestConfig
+    ): Promise<AxiosLikeResponse<T>> => request<T>('PATCH', url, body, config, sessionEffect),
+    delete: <T>(url: string, config?: RequestConfig): Promise<AxiosLikeResponse<T>> =>
       request<T>('DELETE', url, undefined, config, sessionEffect),
+    getConditional: <T>(
+      url: string,
+      previous?: ConditionalHttpSnapshot<T>,
+      config?: ConditionalGetConfig
+    ) => conditionalGet(sessionEffect, url, previous, config),
   };
 }
 

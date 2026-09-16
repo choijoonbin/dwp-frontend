@@ -547,6 +547,60 @@ describe('axiosInstance browser session contract', () => {
     expect(response.data).toBe(download);
   });
 
+  it('revalidates a caller-owned snapshot with If-None-Match and accepts 304', async () => {
+    const privateData = { value: 'recipient-scoped' };
+    const first = jsonResponse(200, privateData, { ETag: '"authority-revision-7"' });
+    const notModified = jsonResponse(304, undefined, { ETag: '"authority-revision-7"' });
+    const fetchMock = vi.fn().mockResolvedValueOnce(first).mockResolvedValueOnce(notModified);
+    vi.stubGlobal('fetch', fetchMock);
+
+    const loaded = await sessionHttp.getConditional<typeof privateData>('/api/private-home');
+    const revalidated = await sessionHttp.getConditional('/api/private-home', loaded.snapshot);
+
+    expect(loaded).toEqual({
+      snapshot: { data: privateData, etag: '"authority-revision-7"' },
+      status: 200,
+      notModified: false,
+    });
+    expect(revalidated).toEqual({
+      snapshot: loaded.snapshot,
+      status: 304,
+      notModified: true,
+    });
+    expect(revalidated.snapshot).toBe(loaded.snapshot);
+    expect(fetchMock.mock.calls[0]?.[1]?.headers).not.toHaveProperty('If-None-Match');
+    expect(fetchMock.mock.calls[1]?.[1]?.headers).toEqual(
+      expect.objectContaining({ 'If-None-Match': '"authority-revision-7"' })
+    );
+  });
+
+  it('does not retain or resend an entity tag without an explicit snapshot', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(200, { value: 'first' }, { ETag: '"revision-1"' }))
+      .mockResolvedValueOnce(jsonResponse(200, { value: 'second' }, { ETag: '"revision-2"' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await sessionHttp.getConditional('/api/private-home');
+    await sessionHttp.getConditional('/api/private-home');
+
+    expect(fetchMock.mock.calls[0]?.[1]?.headers).not.toHaveProperty('If-None-Match');
+    expect(fetchMock.mock.calls[1]?.[1]?.headers).not.toHaveProperty('If-None-Match');
+  });
+
+  it('rejects an unsafe snapshot validator without dispatching a request', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      sessionHttp.getConditional('/api/private-home', {
+        data: { private: true },
+        etag: '"revision"\r\nX-Injected: true',
+      })
+    ).rejects.toMatchObject({ status: 502 });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('aborts non-essential requests after their configured timeout', async () => {
     vi.useFakeTimers();
     const fetchMock = vi.fn(

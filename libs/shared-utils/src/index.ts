@@ -1,6 +1,7 @@
 export * from './env';
 export * from './types';
 export * from './http-error';
+export * from './http-conditional';
 export * from './tenant-util';
 export * from './locale-preference';
 export * from './regional-preference';
