@@ -521,19 +521,12 @@ export function AppLaunchpad({
                 mt: 0,
                 mx: 0,
                 color: onImageBackground ? '#FFFFFF' : 'text.primary',
-                px: { md: onImageBackground ? 0 : 2.5 },
-                py: { md: onImageBackground ? 0 : 2.5 },
-                border: { md: onImageBackground ? 0 : 1 },
-                borderColor: {
-                  md: onImageBackground ? 'rgba(255,255,255,0.72)' : 'divider',
-                },
-                borderRadius: { md: '8px' },
-                bgcolor: (theme) =>
-                  onImageBackground
-                    ? 'transparent'
-                    : theme.palette.mode === 'dark'
-                      ? '#141D28'
-                      : '#F3F4F6',
+                px: 0,
+                py: 0,
+                border: 0,
+                borderColor: 'transparent',
+                borderRadius: 0,
+                bgcolor: 'transparent',
                 boxShadow: 'none',
               }
       }
@@ -651,10 +644,10 @@ export function AppLaunchpad({
                       ? 'auto'
                       : immersive
                         ? LAUNCHPAD_GROUP_MIN_HEIGHT
-                        : { xs: 170, lg: 228 },
+                        : { xs: 'auto', lg: 188 },
                     color: flow ? 'var(--flow-dock-text)' : immersive ? '#F8FAFC' : 'text.primary',
-                    px: flow ? 1.5 : immersive ? 1 : { xs: 1.25, lg: 2.25 },
-                    py: flow ? 0.75 : immersive ? 1.5 : { xs: 1.25, lg: 2 },
+                    px: flow ? 1.5 : immersive ? 1 : { xs: 1.25, lg: 1.5 },
+                    py: flow ? 0.75 : immersive ? 1.5 : { xs: 1.25, lg: 1.5 },
                     border: flow
                       ? '1px dashed'
                       : immersive
@@ -669,7 +662,7 @@ export function AppLaunchpad({
                               theme.palette.mode === 'dark'
                                 ? 'rgba(255,255,255,0.20)'
                                 : 'rgba(255,255,255,0.44)'
-                          : 'divider',
+                          : '#E2E7FF',
                     borderRadius: flow ? 2 : immersive ? 1 : '8px',
                     position: 'relative',
                     overflow: flow ? 'visible' : 'hidden',
@@ -682,7 +675,7 @@ export function AppLaunchpad({
                               theme.palette.mode === 'dark'
                                 ? 'rgba(10,19,33,0.20)'
                                 : 'rgba(255,255,255,0.20)'
-                          : 'background.paper',
+                          : (theme) => (theme.palette.mode === 'dark' ? '#141D28' : '#F2F3FF'),
                     backgroundImage: immersive
                       ? 'linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.035) 50%, rgba(78,165,255,0.08))'
                       : 'none',
@@ -692,7 +685,7 @@ export function AppLaunchpad({
                       ? 'inset 0 1px 0 rgba(255,255,255,0.22), 0 22px 54px rgba(0,7,24,0.24)'
                       : onImageBackground
                         ? 'inset 0 1px 0 rgba(255,255,255,0.28), 0 8px 24px rgba(15,23,42,0.08)'
-                        : '0 1px 2px rgba(15,23,42,0.06)',
+                        : 'none',
                     '&:hover': immersive
                       ? {
                           bgcolor: 'rgba(15,29,56,0.64)',

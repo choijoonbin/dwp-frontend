@@ -292,6 +292,10 @@ export function HomeLayout() {
           wordBreak: 'keep-all',
           overflowWrap: 'anywhere',
         },
+        '&[data-home-large-text="true"] [data-testid="classic-home"] [data-launchpad-group-grid] > section [data-launchpad-group-target]':
+          {
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr)) !important',
+          },
         '&[data-home-large-text="true"] [data-launchpad-label-short]': { display: 'none' },
         '&[data-home-large-text="true"] [data-launchpad-label-full]': {
           display: 'inline',
@@ -300,6 +304,10 @@ export function HomeLayout() {
           '&[data-home-large-text="true"] [data-launchpad-group-target]': {
             gridTemplateColumns: 'minmax(0, 1fr) !important',
           },
+          '&[data-home-large-text="true"] [data-testid="classic-home"] [data-launchpad-group-grid] > section [data-launchpad-group-target]':
+            {
+              gridTemplateColumns: 'minmax(0, 1fr) !important',
+            },
         },
         '@media (prefers-reduced-motion: reduce)': {
           scrollBehavior: 'auto',

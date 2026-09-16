@@ -233,6 +233,50 @@
         "description": "지금 처리할 업무와 일정, 응답 요청을 우선순위에 따라 한 흐름으로 확인합니다."
       }
     },
+    "preview": {
+      "blindTestTitle": "Blind Header Test",
+      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic과 긴급 실행형 Flow가 즉시 구별됩니다.",
+      "axisIntegrity": "정보구조 · 표현 폭 · 공통 앱 18개 순서를 각각 보존",
+      "firstQuestion": "첫 질문:",
+      "primaryAction": "주 행동:",
+      "sharedApps": "내 앱 18종:",
+      "CLASSIC": {
+        "firstQuestion": "조직 지식·경영 공지",
+        "primaryAction": "전사 공지 서명과 핸드북",
+        "sharedApps": "공통 순서 100% 보존"
+      },
+      "FLOW_V1": {
+        "firstQuestion": "마감 업무·회의 사전 준비",
+        "primaryAction": "우선 큐 처리와 일정 재승인",
+        "sharedApps": "공통 순서 100% 보존"
+      },
+      "appsTitle": "내 앱 바로가기 (18개 승인 자산)",
+      "appsSynced": "공통 순서 동기화 완료",
+      "classicTag": "전사 공지",
+      "classicMeta": "인재개발팀 · 오늘 18:00 마감",
+      "classicHero": "전사 조직문화 개편안 및 온보딩 가이드라인 확정 배포",
+      "classicAction": "원문 지침 열람",
+      "flowTag": "마감 22분 전",
+      "flowMeta": "오늘의 긴급 최우선 실행 업무 #1",
+      "flowHero": "출시 점검 회의 사전 브리프 자료 취합 및 최종 검토",
+      "flowAction": "즉시 검토 및 브리프",
+      "news": "사내 소식 · 경영 브리핑 (65%)",
+      "newsItem1": "Q2 글로벌 거점 오피스 자율 좌석제 운영 변경",
+      "newsItem2": "AI 트랜스포메이션 로드맵 다시보기",
+      "handbook": "조직 지원 핸드북 (35%)",
+      "handbookItem1": "경비 청구 규정집",
+      "handbookItem2": "법인차량 배차 신청",
+      "handbookItem3": "IT 헬프데스크 접수",
+      "queue": "우선 대기 큐 (38%)",
+      "queueItem1": "[결재] 구매 품의 요청",
+      "queueItem2": "[업무] 스프린트 재할당",
+      "timeline": "시간 흐름 (34%)",
+      "timelineItem1": "10:30 출시 점검 정기 회의",
+      "timelineItem2": "13:30 집중 업무 블록",
+      "requests": "내 요청 (28%)",
+      "requestsItem1": "미확인 메일 5건",
+      "requestsItem2": "멘션 요청 1건"
+    },
     "sharedApps": {
       "title": "공통 앱 {{count}}개 순서 잠금",
       "description": "두 모드는 동일한 승인 앱과 순서를 사용합니다. 모드 선택으로 앱 권한이나 배치 순서는 바뀌지 않습니다.",

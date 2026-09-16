@@ -584,7 +584,6 @@ export default function HomePage() {
           const latest = await homePreferenceQuery.refetch();
           setConflictTarget(createHomeEditConflictTarget(request.session, latest.data));
         }
-        toast.error(t('flow.conflict.toast'));
         return;
       }
       toast.error(t('page.saveError'));
@@ -934,6 +933,7 @@ export default function HomePage() {
       <HomePreferenceConflictDialog
         open={conflictTarget !== null}
         changeCount={draftChangeCount}
+        baseVersion={editSession?.version}
         latestVersion={conflictTarget?.version}
         busy={homePreferenceQuery.isFetching || homeViewsQuery.isFetching}
         onReloadLatest={reloadLatestAfterConflict}

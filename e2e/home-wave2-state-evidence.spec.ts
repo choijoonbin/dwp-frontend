@@ -12,35 +12,16 @@ import {
 } from './support/shell-session';
 import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
 import { createHomeWave2NewsOverviewFixture } from './support/home-wave2-acceptance-fixtures';
+import {
+  HOME_WAVE2_FLOW_WIDGETS as FLOW_WIDGETS,
+  HOME_WAVE2_MODE_LAYOUTS as MODE_LAYOUTS,
+} from './support/home-wave2-state-fixtures';
 
 import type { Locator, Page } from '@playwright/test';
 
 const FIXED_NOW = new Date('2026-08-11T00:30:00.000Z');
 const OVERVIEW_ROUTE = '**/api/platform/v1/home/overview**';
-
 test.setTimeout(120_000);
-
-const MODE_LAYOUTS = {
-  CLASSIC: {
-    layoutScope: 'MODE_SCOPED_VIEW',
-    deviceClasses: ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD', 'MOBILE_COMPACT'],
-  },
-  FLOW_V1: {
-    layoutScope: 'MODE_SCOPED_VIEW',
-    deviceClasses: ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD', 'MOBILE_COMPACT'],
-  },
-} as const;
-
-const FLOW_WIDGETS = [
-  { widgetKey: 'command-rail', visible: true, size: 'large', height: 'standard' },
-  { widgetKey: 'schedule', visible: true, size: 'compact', height: 'standard' },
-  { widgetKey: 'daily-brief', visible: true, size: 'compact', height: 'standard' },
-  { widgetKey: 'focus', visible: true, size: 'compact', height: 'standard' },
-  { widgetKey: 'activity', visible: false, size: 'compact', height: 'standard' },
-  { widgetKey: 'focus-balance', visible: false, size: 'medium', height: 'short' },
-  { widgetKey: 'meeting-load', visible: false, size: 'medium', height: 'short' },
-] as const;
-
 function freshOverview(requiredNotice = true) {
   const overview = createHomeWave2NewsOverviewFixture(['TENANT_ADMIN']);
   if (requiredNotice || overview.communications.status !== 'AVAILABLE') return overview;
@@ -127,7 +108,8 @@ async function stabilizeVisual(page: Page) {
     document.querySelectorAll('vite-plugin-checker-error-overlay').forEach((node) => node.remove());
     const style = document.createElement('style');
     style.dataset.wave2VisualStability = 'true';
-    style.textContent = '[data-testid="dwaion-launcher"] { visibility: hidden !important; }';
+    style.textContent =
+      '[data-testid="dwaion-launcher"], [role="tooltip"] { visibility: hidden !important; }';
     document.head.append(style);
     await document.fonts.ready;
   });
@@ -137,7 +119,8 @@ async function captureEvidence(
   page: Page,
   canonicalId: string,
   fixtureId: string,
-  include = '#dwp-main-content'
+  include = '#dwp-main-content',
+  maxDiffPixels?: number
 ) {
   test.info().annotations.push({ type: 'canonical-fixture', description: fixtureId });
   await stabilizeVisual(page);
@@ -149,6 +132,7 @@ async function captureEvidence(
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,
+    maxDiffPixels,
     scale: 'css',
   });
 }
@@ -207,10 +191,10 @@ function classicPreference(version: number, presentation: 'balanced' | 'focused'
 }
 
 async function routeConflictPreference(page: Page) {
-  let version = 1;
+  let version = 7;
   await page.route('**/api/platform/v1/home-preferences', (route) => {
     if (route.request().method() === 'PUT') {
-      version = 2;
+      version = 8;
       return route.fulfill({
         status: 409,
         contentType: 'application/json',
@@ -219,7 +203,7 @@ async function routeConflictPreference(page: Page) {
     }
     return fulfillSuccess(
       route,
-      classicPreference(version, version === 1 ? 'balanced' : 'focused')
+      classicPreference(version, version === 7 ? 'balanced' : 'focused')
     );
   });
 }
@@ -633,7 +617,7 @@ test('C15 dirty editing remains visible and keyboard reachable on desktop and mo
       await expect(save).toBeFocused();
       await captureViewportInteraction(page, canonicalId);
     }
-    await captureEvidence(page, canonicalId, fixtureId);
+    await captureEvidence(page, canonicalId, fixtureId, '#dwp-main-content', 200);
     if (mobile) {
       await toolbar.getByRole('button', { name: '생동감', exact: true }).click({ force: true });
       await expect(toolbar).toHaveAttribute('data-home-content-state', 'dirty');
@@ -642,7 +626,6 @@ test('C15 dirty editing remains visible and keyboard reachable on desktop and mo
       await expect(discard).toBeVisible();
       await discard.getByRole('button', { name: '변경 취소' }).click();
       await expect(toolbar).toHaveCount(0);
-
       await page.setViewportSize({ width: 320, height: 568 });
       const compactToolbar = await enterClassicEdit(page);
       await expect(page.getByTestId('home-mobile-bottom-navigation')).toBeHidden();
@@ -673,7 +656,6 @@ test('C16 an actual 409 shows the conflict dialog and preserves the draft', asyn
     ['C16-D1440-SAVE-CONFLICT-r02', 'HOME_STATE_CONFLICT_DESKTOP', false],
     ['C16-M390-SAVE-CONFLICT-r02', 'HOME_STATE_CONFLICT_MOBILE', true],
   ] as const;
-
   for (const [canonicalId, fixtureId, mobile] of cases) {
     await page.unroute(OVERVIEW_ROUTE);
     await routeOverview(page, freshOverview());
@@ -686,6 +668,10 @@ test('C16 an actual 409 shows the conflict dialog and preserves the draft', asyn
     const conflict = page.locator('[data-home-content-state="conflict"]');
     await expect(conflict).toBeVisible();
     await expect(conflict).toHaveAttribute('data-home-draft-preserved', 'true');
+    await expect(conflict.locator('[data-conflict-summary="draft"]')).toContainText('기준: v7');
+    await expect(conflict.locator('[data-conflict-summary="server"]')).toContainText(
+      '최신 저장본 (Version 8)'
+    );
     await expect(toolbar).toHaveAttribute('data-home-content-state', 'dirty');
     await expect(toolbar.locator('[aria-label="집중"]')).toHaveAttribute('aria-pressed', 'true');
     const dialog = page.getByRole('dialog');
@@ -819,6 +805,10 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
     'true'
   );
   await expect(comparison.locator('[data-mode-choice]')).toHaveCount(2);
+  await expect(comparison.locator('[data-mode-preview="CLASSIC"]')).toContainText(
+    '사내 소식 · 경영 브리핑'
+  );
+  await expect(comparison.locator('[data-mode-preview="FLOW_V1"]')).toContainText('우선 대기 큐');
   await expect(comparison.locator('[data-shared-app-id]')).toHaveCount(18);
   const flowMode = comparison.getByRole('radio', { name: /Flow 업무 홈/u });
   await flowMode.focus();
@@ -889,7 +879,7 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Tab');
   await expect(firstApp).toBeFocused();
-  const sectionAction = page.locator('[data-classic-resource-card] a').first();
+  const sectionAction = page.locator('a[data-classic-resource-card]').first();
   await tabTo(page, sectionAction, 100);
   await expect(sectionAction).toBeFocused();
   const footerAction = page.locator('footer a').first();
@@ -957,13 +947,21 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
     contentType: 'application/json',
   });
   await captureViewportInteraction(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', 'body');
+  await page.goto('/home-wave2-state-spec.html?board=c18');
+  const spec = page.getByTestId('home-wave2-c18-spec');
+  await expect(spec).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ko-KR');
+  await expect(spec.getByRole('heading', { level: 2 })).toHaveCount(6);
+  await expect(spec).toContainText(/9-Step Keyboard Navigation Sequence/u);
+  await expect(spec).toContainText(/Exactly 6 State Variants Cards/u);
+  await expect(spec).toContainText(/Standard Motion vs Reduced Motion/u);
+  await expect(spec).toContainText(/Single Document Scroll & Geometry/u);
   await captureEvidence(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', fixtureId, 'body');
 });
-
 test('the canonical state sheet renders all nine production primitives', async ({ page }) => {
   const fixtureId = 'HOME_STATE_ALL_STATES_DESKTOP';
   await page.setViewportSize({ width: 1440, height: 1100 });
-  await page.goto('/home-wave2-state-spec.html');
+  await page.goto('/home-wave2-state-spec.html?board=primitives');
   const root = page.getByTestId('home-wave2-state-spec');
   await expect(root).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko-KR');
@@ -988,6 +986,10 @@ test('the canonical state sheet renders all nine production primitives', async (
   const actions = root.getByRole('button');
   await actions.first().focus();
   await expect(actions.first()).toBeFocused();
+  await page.goto('/home-wave2-state-spec.html');
+  await expect(page.getByTestId('home-wave2-state-spec')).toContainText(
+    /5 Core Component State Variants/u
+  );
   await captureEvidence(
     page,
     'CLASSIC-STATE-COMPONENT-SPEC-A',

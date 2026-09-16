@@ -109,14 +109,15 @@ function Surface({
       sx={{
         minWidth: 0,
         height: '100%',
-        p: { xs: 2, md: 2.25 },
+        minHeight: { xs: 0, md: 308 },
+        p: { xs: 2, md: 2.5 },
         display: 'flex',
         flexDirection: 'column',
         gap: 1.25,
         bgcolor: 'background.paper',
         border: 1,
         borderColor: 'divider',
-        borderRadius: foundationTokens.home.radius.surface,
+        borderRadius: foundationTokens.home.radius.card,
         boxShadow: foundationTokens.home.shadow.quietCard,
       }}
     >
@@ -263,6 +264,7 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
           gap: 2,
           alignItems: 'stretch',
           '@media (min-width: 900px)': {
+            gridAutoRows: 'minmax(308px, auto)',
             '& > [data-flow-future-widget="space-change-feed"]': {
               gridColumn: 1,
               gridRow: 1,
@@ -437,6 +439,20 @@ export function FlowFutureWidgetMesh({ stateByKey = {} }: FlowFutureWidgetMeshPr
           <Typography variant="body2" color="text.secondary">
             {t('flow.future.booking.detail')}
           </Typography>
+          <Box
+            component="img"
+            src="/assets/home/wave2/flow-workplace-booth.jpg"
+            alt=""
+            aria-hidden="true"
+            sx={{
+              width: 1,
+              height: { xs: 136, md: 112 },
+              objectFit: 'cover',
+              borderRadius: foundationTokens.home.radius.control,
+              border: 1,
+              borderColor: 'divider',
+            }}
+          />
           <ActionButton
             disabled={!fixtureActionEnabled('workplace-booking')}
             intent="secondary"

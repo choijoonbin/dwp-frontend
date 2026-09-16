@@ -17,6 +17,15 @@ import type { HomeOverview } from '@dwp-frontend/shared-utils';
 
 const SUMMARY_FRESHNESS_MS = 5 * 60 * 1000;
 
+const classicSummaryTypography = {
+  compact: foundationTokens.home.typography.compactSize,
+  compactHeading: `calc(${foundationTokens.home.typography.captionSize} - 0.03125rem)`,
+  caption: foundationTokens.home.typography.captionSize,
+  supporting: foundationTokens.home.typography.supportingSize,
+  card: foundationTokens.home.typography.cardSize,
+  bodyLineHeight: foundationTokens.home.typography.cardLineHeight + 0.05,
+} as const;
+
 type ClassicSummaryRuntimeState =
   | 'initial-loading'
   | 'background-refresh'
@@ -81,6 +90,18 @@ export function ClassicPersonalSummary({
     overview?.work.status === 'AVAILABLE'
       ? rankWorkspaceWorkItems(overview.work.data?.items ?? []).slice(0, 2)
       : [];
+  const calendarSourceState =
+    overview?.calendar.status === 'AVAILABLE'
+      ? null
+      : overview?.calendar.status === 'FORBIDDEN'
+        ? 'forbidden'
+        : 'widget-error';
+  const workSourceState =
+    overview?.work.status === 'AVAILABLE'
+      ? null
+      : overview?.work.status === 'FORBIDDEN'
+        ? 'forbidden'
+        : 'widget-error';
 
   const runtimeState = resolveClassicSummaryRuntimeState({
     overview,
@@ -126,15 +147,18 @@ export function ClassicPersonalSummary({
       data-classic-personal-summary
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 2fr) minmax(0, 3fr)' },
-        gap: 1.5,
+        gridTemplateColumns: {
+          xs: 'repeat(2, minmax(0, 1fr))',
+          md: 'minmax(0, 2fr) minmax(0, 3fr)',
+        },
+        gap: { xs: 1, md: 1.5 },
       }}
     >
       <Box
         component="article"
         data-classic-summary-card="next-schedule"
         sx={{
-          p: 2,
+          p: { xs: 1.25, md: 2 },
           bgcolor: 'background.paper',
           border: 1,
           borderColor: 'divider',
@@ -147,20 +171,50 @@ export function ClassicPersonalSummary({
             component="h3"
             variant="subtitle2"
             fontWeight={foundationTokens.home.typography.weightEmphasis}
+            sx={{
+              fontSize: {
+                xs: classicSummaryTypography.supporting,
+                md: classicSummaryTypography.card,
+              },
+            }}
           >
             {t('classic.resources.summary.nextSchedule')}
           </Typography>
         </Stack>
-        {event ? (
+        {calendarSourceState ? (
+          <Box data-classic-summary-source-state={calendarSourceState} sx={{ mt: 1 }}>
+            <HomeContentState
+              kind={calendarSourceState}
+              size="compact"
+              onAction={calendarSourceState === 'widget-error' ? onRetry : undefined}
+            />
+          </Box>
+        ) : event ? (
           <>
             <Typography
               variant="body2"
               fontWeight={foundationTokens.home.typography.weightBold}
-              sx={{ mt: 1.25 }}
+              sx={{
+                mt: { xs: 0.75, md: 1.25 },
+                fontSize: {
+                  xs: classicSummaryTypography.caption,
+                  md: classicSummaryTypography.card,
+                },
+                lineHeight: classicSummaryTypography.bodyLineHeight,
+              }}
             >
               {event.title}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                fontSize: {
+                  xs: classicSummaryTypography.compact,
+                  md: classicSummaryTypography.supporting,
+                },
+              }}
+            >
               {formatDate(new Date(event.startsAt), {
                 weekday: 'short',
                 hour: '2-digit',
@@ -173,7 +227,12 @@ export function ClassicPersonalSummary({
               href="/calendar"
               intent="quiet"
               size="small"
-              sx={{ minHeight: 44, mt: 0.75, ml: -1 }}
+              sx={{
+                minHeight: 44,
+                mt: 0.5,
+                ml: -1,
+                fontSize: classicSummaryTypography.caption,
+              }}
             >
               {t('classic.resources.summary.openCalendar')}
             </ActionButton>
@@ -189,7 +248,7 @@ export function ClassicPersonalSummary({
         component="article"
         data-classic-summary-card="priority-work"
         sx={{
-          p: 2,
+          p: { xs: 1.25, md: 2 },
           bgcolor: 'background.paper',
           border: 1,
           borderColor: 'divider',
@@ -203,6 +262,12 @@ export function ClassicPersonalSummary({
               component="h3"
               variant="subtitle2"
               fontWeight={foundationTokens.home.typography.weightEmphasis}
+              sx={{
+                fontSize: {
+                  xs: classicSummaryTypography.supporting,
+                  md: classicSummaryTypography.card,
+                },
+              }}
             >
               {t('classic.resources.summary.priorityWork')}
             </Typography>
@@ -210,9 +275,18 @@ export function ClassicPersonalSummary({
           <Chip
             size="small"
             label={t('classic.resources.summary.itemCount', { count: workItems.length })}
+            sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
           />
         </Stack>
-        {workItems.length > 0 ? (
+        {workSourceState ? (
+          <Box data-classic-summary-source-state={workSourceState} sx={{ mt: 1 }}>
+            <HomeContentState
+              kind={workSourceState}
+              size="compact"
+              onAction={workSourceState === 'widget-error' ? onRetry : undefined}
+            />
+          </Box>
+        ) : workItems.length > 0 ? (
           <Stack divider={<Box sx={{ borderTop: 1, borderColor: 'divider' }} />} sx={{ mt: 0.75 }}>
             {workItems.map((item) => (
               <ActionButton
@@ -221,7 +295,12 @@ export function ClassicPersonalSummary({
                 href={workspaceWorkItemRoute(item)}
                 intent="quiet"
                 endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                sx={{ minHeight: 48, px: 0.5, justifyContent: 'space-between', textAlign: 'start' }}
+                sx={{
+                  minHeight: { xs: 38, md: 48 },
+                  px: 0.5,
+                  justifyContent: 'space-between',
+                  textAlign: 'start',
+                }}
               >
                 <Box component="span" minWidth={0}>
                   <Typography
@@ -229,6 +308,13 @@ export function ClassicPersonalSummary({
                     variant="body2"
                     fontWeight={foundationTokens.home.typography.weightSemibold}
                     display="block"
+                    sx={{
+                      fontSize: {
+                        xs: classicSummaryTypography.compactHeading,
+                        md: classicSummaryTypography.card,
+                      },
+                      lineHeight: foundationTokens.home.typography.cardLineHeight,
+                    }}
                   >
                     {item.title}
                   </Typography>
@@ -237,6 +323,7 @@ export function ClassicPersonalSummary({
                     variant="caption"
                     color="text.secondary"
                     display="block"
+                    sx={{ display: { xs: 'none', sm: 'block' } }}
                   >
                     {item.owner} · {t(`page.priority.${item.priority}`)}
                   </Typography>

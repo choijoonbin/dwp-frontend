@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { BookOpenText, Building2, Headphones, Laptop2 } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
 import Box from '@mui/material/Box';
@@ -17,6 +16,16 @@ const resourceCards = [
   { key: 'workplace', icon: Laptop2, href: '/workplace/home' },
   { key: 'it', icon: Headphones, href: '/services' },
 ] as const;
+
+const classicResourceTypography = {
+  caption: foundationTokens.home.typography.captionSize,
+  supporting: foundationTokens.home.typography.supportingSize,
+  card: foundationTokens.home.typography.cardSize,
+  sectionMobile: foundationTokens.home.typography.mobileHeroSize - 4,
+  sectionDesktop: foundationTokens.home.typography.mobileHeroSize,
+} as const;
+
+const classicResourceFocusOutline = `2px solid ${foundationTokens.color.product.primary}`;
 
 export type ClassicOrganizationResourceState = Readonly<{
   kind:
@@ -44,26 +53,38 @@ function ResourceCard({
   const { t } = useTranslation('home');
   return (
     <Box
-      component="article"
+      component="a"
+      href={href}
       data-classic-resource-card={resourceKey}
       sx={{
         minWidth: 0,
-        p: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+        minHeight: { xs: 88, md: 112 },
+        p: { xs: 1.25, md: 2 },
+        display: 'grid',
+        gridTemplateColumns: { xs: '32px minmax(0, 1fr)', md: '36px minmax(0, 1fr)' },
+        gridTemplateRows: 'auto auto auto',
+        alignItems: 'center',
+        columnGap: 1,
+        textDecoration: 'none',
+        color: 'text.primary',
         bgcolor: 'background.paper',
         border: 1,
         borderColor: 'divider',
         borderRadius: foundationTokens.home.radius.control,
+        '&:hover': { borderColor: 'primary.light', bgcolor: 'action.hover' },
+        '&:focus-visible': {
+          outline: classicResourceFocusOutline,
+          outlineOffset: 2,
+        },
       }}
     >
       <Box
         aria-hidden="true"
         sx={{
-          width: 36,
-          height: 36,
+          width: { xs: 30, md: 36 },
+          height: { xs: 30, md: 36 },
           display: 'grid',
+          gridRow: '1 / span 3',
           placeItems: 'center',
           color: 'primary.main',
           bgcolor: 'action.hover',
@@ -76,22 +97,43 @@ function ResourceCard({
         component="h3"
         variant="subtitle2"
         fontWeight={foundationTokens.home.typography.weightBold}
-        sx={{ mt: 1.25 }}
+        sx={{
+          gridColumn: 2,
+          gridRow: 1,
+          fontSize: {
+            xs: classicResourceTypography.supporting,
+            md: classicResourceTypography.card,
+          },
+        }}
       >
         {t(`classic.resources.cards.${resourceKey}.title`)}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{
+          gridColumn: 2,
+          gridRow: 2,
+          mt: 0.25,
+          fontSize: classicResourceTypography.caption,
+          display: { xs: 'none', md: 'block' },
+        }}
+      >
         {t(`classic.resources.cards.${resourceKey}.description`)}
       </Typography>
-      <ActionButton
-        component="a"
-        href={href}
-        intent="quiet"
-        size="small"
-        sx={{ minHeight: 44, mt: 'auto', ml: -1 }}
+      <Typography
+        component="span"
+        color="primary.main"
+        sx={{
+          gridColumn: 2,
+          gridRow: 3,
+          alignSelf: 'start',
+          fontSize: classicResourceTypography.caption,
+          fontWeight: foundationTokens.home.typography.weightBold,
+        }}
       >
         {t(`classic.resources.cards.${resourceKey}.action`)}
-      </ActionButton>
+      </Typography>
     </Box>
   );
 }
@@ -109,7 +151,7 @@ export function ClassicOrganizationResources({
       component="section"
       aria-labelledby="classic-organization-resources-title"
       data-classic-organization-resources
-      sx={{ mt: { xs: 3, md: 4 } }}
+      sx={{ mt: { xs: 2, md: 4 } }}
     >
       <Typography
         id="classic-organization-resources-title"
@@ -119,7 +161,18 @@ export function ClassicOrganizationResources({
       >
         {t('classic.resources.knowledgeTitle')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 1.5 }}>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{
+          mt: 0.25,
+          mb: 1,
+          fontSize: {
+            xs: classicResourceTypography.caption,
+            md: classicResourceTypography.card,
+          },
+        }}
+      >
         {t('classic.resources.knowledgeDescription')}
       </Typography>
       <Box
@@ -127,11 +180,11 @@ export function ClassicOrganizationResources({
         sx={{
           display: 'grid',
           gridTemplateColumns: {
-            xs: 'minmax(0, 1fr)',
+            xs: 'repeat(2, minmax(0, 1fr))',
             sm: 'repeat(2, minmax(0, 1fr))',
             lg: 'repeat(4, minmax(0, 1fr))',
           },
-          gap: 1.5,
+          gap: { xs: 1, md: 1.5 },
         }}
       >
         {resourceCards.map(({ key, icon, href }) => {
@@ -147,7 +200,7 @@ export function ClassicOrganizationResources({
               key={key}
               data-classic-resource-state-region={targetKey}
               data-classic-resource-source={source}
-              sx={{ minWidth: 0 }}
+              sx={{ minWidth: 0, gridColumn: '1 / -1' }}
             >
               <HomeContentState
                 kind={resourceState.kind}
@@ -182,16 +235,31 @@ export function ClassicSectionHeading({
   description: string;
 }) {
   return (
-    <Stack sx={{ mb: 1.5 }}>
+    <Stack sx={{ mb: { xs: 1, md: 1.5 } }}>
       <Typography
         id={id}
         component="h2"
         variant="h6"
         fontWeight={foundationTokens.home.typography.weightEmphasis}
+        sx={{
+          fontSize: {
+            xs: classicResourceTypography.sectionMobile,
+            md: classicResourceTypography.sectionDesktop,
+          },
+        }}
       >
         {title}
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{
+          fontSize: {
+            xs: classicResourceTypography.caption,
+            md: classicResourceTypography.card,
+          },
+        }}
+      >
         {description}
       </Typography>
     </Stack>

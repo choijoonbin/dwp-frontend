@@ -115,11 +115,6 @@
     "apps/dwp/src/components/workspace-composer/app-launchpad-model.ts": {
       "HardcodedColor": 18
     },
-    "apps/dwp/src/components/workspace-composer/workspace-composer-toolbar.tsx": {
-      "HardcodedColor": 3,
-      "RawRadius": 2,
-      "RawShadow": 1
-    },
     "apps/dwp/src/components/workspace-composer/workspace-widget-canvas.tsx": {
       "RawRadius": 4,
       "RawMotion": 9,
@@ -747,13 +742,10 @@
       "RawShadow": 4
     },
     "apps/dwp/src/features/home/app-launchpad.tsx": {
-      "HardcodedColor": 21,
-      "RawRadius": 2,
+      "HardcodedColor": 20,
+      "RawRadius": 1,
       "RawShadow": 1,
       "RawTypography": 3
-    },
-    "apps/dwp/src/features/home/classic-home/classic-home.tsx": {
-      "RawRadius": 1
     },
     "apps/dwp/src/features/home/command-rail-widget.tsx": {
       "RawRadius": 2,
@@ -813,7 +805,6 @@
       "RawTypography": 7
     },
     "apps/dwp/src/features/home/home-day-rail.tsx": {
-      "HardcodedColor": 9,
       "RawTypography": 13
     },
     "apps/dwp/src/features/home/home-item-gallery.tsx": {
@@ -822,9 +813,6 @@
       "RawShadow": 1,
       "RawTypography": 1,
       "Alert": 2
-    },
-    "apps/dwp/src/features/home/home-preference-conflict-dialog.tsx": {
-      "Alert": 1
     },
     "apps/dwp/src/features/home/home-widgets.tsx": {
       "RawTypography": 3,

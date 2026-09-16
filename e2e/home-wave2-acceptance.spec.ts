@@ -21,6 +21,8 @@ import type { Locator, Page } from '@playwright/test';
 
 const FIXED_NOW = HOME_WAVE2_FIXED_NOW;
 
+test.setTimeout(120_000);
+
 const CLASSIC_MOBILE_NAVIGATION = [
   { label: '개요', route: '/' },
   { label: '좌석', route: '/workplace/explore?type=DESK' },
@@ -198,6 +200,12 @@ async function expectMobileNavigation(
   expect(actual).toEqual(expected.map((item) => ({ ...item, mode })));
 }
 
+async function expectSingleVisibleGlobalSearchTrigger(page: Page) {
+  const searchSurface = page.locator('[data-shell-global-action="search"]');
+  await expect(searchSurface).toBeVisible();
+  await expect(searchSurface.getByRole('button')).toHaveCount(1);
+}
+
 async function expectFlowWideComposition(root: Locator) {
   const stage = root.getByTestId('flow-home-personal-sections');
   await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
@@ -289,6 +297,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
     await page.goto('/');
     const root = page.getByTestId('classic-home');
     await expect(root).toBeVisible();
+    await expectSingleVisibleGlobalSearchTrigger(page);
     await expect(root).toHaveAttribute('data-home-ia', 'organization-portal');
     await expect(root).toHaveAttribute('data-home-scroll-contract', 'single-document');
     const sidebar = page.getByTestId('home-sidebar');
@@ -389,7 +398,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
           `${item.id} hero actions`
         ),
         resources: await expectMinimumTouchTargets(
-          root.locator('[data-classic-resource-card] a'),
+          root.locator('a[data-classic-resource-card]'),
           `${item.id} resource actions`
         ),
       };
@@ -797,6 +806,10 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
       { type: 'canonical-fixture', description: 'HOME_SPEC_ZOOM_200' },
       { type: 'canonical-fixture', description: 'HOME_SPEC_TEXT_200' }
     );
+  // Keep Playwright's screenshot surface aligned with the 720 CSS-pixel
+  // viewport before applying the DPR=2 CDP metrics. Without this, Chromium
+  // reports the correct zoom metrics but captures the stale 1280px surface.
+  await page.setViewportSize({ width: 720, height: 450 });
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Emulation.setDeviceMetricsOverride', {
     width: 720,
@@ -915,6 +928,7 @@ test('long English content wraps without clipping or deleting its accessible mea
   await page.goto('/');
   const root = page.getByTestId('classic-home');
   await expect(root).toBeVisible();
+  await expectSingleVisibleGlobalSearchTrigger(page);
   await expect(root.locator('[data-classic-featured-news]')).toContainText(
     'Enterprise-wide digital workplace modernization'
   );

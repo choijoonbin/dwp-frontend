@@ -6,6 +6,8 @@ import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace
 
 import Box from '@mui/material/Box';
 
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
+
 import { WorkspaceWidgetCanvas } from '../../../components/workspace-composer/workspace-widget-canvas';
 import { useLargeTextReflow } from '../../../components/use-large-text-reflow';
 import {
@@ -404,6 +406,7 @@ export function FlowHome({
           theme.palette.mode === 'dark' ? theme.palette.background.paper : '#FFFFFF',
         '--home-surface-subtle':
           theme.palette.mode === 'dark' ? theme.palette.background.default : '#FAFBFC',
+        '--flow-reference-blue': foundationTokens.color.product.primary,
         width: 1,
         minWidth: 0,
         maxWidth: compactPreview ? 390 : 'var(--flow-shell-width)',
@@ -417,6 +420,11 @@ export function FlowHome({
         borderColor: 'divider',
         borderRadius: compactPreview ? 4 : 0,
         bgcolor: compactPreview ? 'background.default' : 'transparent',
+        '& [data-flow-workscape="true"]': {
+          backgroundColor: 'var(--flow-reference-blue)',
+          borderColor: theme.palette.primary.dark,
+          boxShadow: theme.shadows[4],
+        },
         '&[data-flow-home-presentation="focused"]': {
           '--flow-title-size': 'clamp(1.45rem, 1.8vw, 1.8rem)',
         },
@@ -429,6 +437,19 @@ export function FlowHome({
           },
         },
         '& [data-flow-dock-launch]': { minHeight: editing ? 72 : 62 },
+        '@media (min-width: 1600px)': {
+          '&[data-flow-home-presentation="balanced"] [data-flow-meeting-prep]': {
+            minHeight: 132,
+          },
+          '&[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="action-queue"] > [data-workspace-widget-content] > section, &[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="today"] > [data-workspace-widget-content] > section, &[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="response-hub"] > [data-workspace-widget-content] > section':
+            {
+              minHeight: 430,
+            },
+          '&[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="request-tracker"] > [data-workspace-widget-content] > section':
+            {
+              minHeight: 270,
+            },
+        },
         '&[data-preview-device="mobile"] [data-workspace-presentation], &[data-flow-large-text="true"] [data-workspace-presentation]':
           {
             gridTemplateColumns: 'minmax(0, 1fr)',

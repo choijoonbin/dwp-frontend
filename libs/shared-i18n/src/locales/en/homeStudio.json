@@ -233,6 +233,50 @@
         "description": "Review priority work, calendar events, and response requests in one action-oriented flow."
       }
     },
+    "preview": {
+      "blindTestTitle": "Blind Header Test",
+      "blindTestDescription": "Classic's organization brief and Flow's urgent action canvas remain distinct without their headers.",
+      "axisIntegrity": "Preserves information architecture, expression width, and the order of all 18 shared apps",
+      "firstQuestion": "First question:",
+      "primaryAction": "Primary action:",
+      "sharedApps": "18 shared apps:",
+      "CLASSIC": {
+        "firstQuestion": "Organization knowledge and executive news",
+        "primaryAction": "Acknowledge notices and open handbooks",
+        "sharedApps": "Order preserved 100%"
+      },
+      "FLOW_V1": {
+        "firstQuestion": "Due work and meeting preparation",
+        "primaryAction": "Triage the priority queue and timeline",
+        "sharedApps": "Order preserved 100%"
+      },
+      "appsTitle": "My apps (18 approved assets)",
+      "appsSynced": "Shared order synchronized",
+      "classicTag": "Organization notice",
+      "classicMeta": "People team · due today at 18:00",
+      "classicHero": "Organization culture and onboarding guide published",
+      "classicAction": "Open the source guide",
+      "flowTag": "Due in 22 minutes",
+      "flowMeta": "Today's highest-priority action #1",
+      "flowHero": "Review the launch checkpoint meeting brief and final evidence",
+      "flowAction": "Review and open brief",
+      "news": "Organization news and executive brief (65%)",
+      "newsItem1": "Global hub flexible seating policy update",
+      "newsItem2": "AI transformation roadmap recording",
+      "handbook": "Organization support handbooks (35%)",
+      "handbookItem1": "Expense policy",
+      "handbookItem2": "Fleet booking",
+      "handbookItem3": "IT service desk",
+      "queue": "Priority queue (38%)",
+      "queueItem1": "[Approval] Purchase request",
+      "queueItem2": "[Work] Sprint reassignment",
+      "timeline": "Timeline (34%)",
+      "timelineItem1": "10:30 Launch checkpoint meeting",
+      "timelineItem2": "13:30 Focus block",
+      "requests": "My requests (28%)",
+      "requestsItem1": "5 unread messages",
+      "requestsItem2": "1 mention request"
+    },
     "sharedApps": {
       "title": "Shared order locked for {{count}} apps",
       "description": "Both modes use the same approved apps in the same order. Choosing a mode does not change app access or placement order.",

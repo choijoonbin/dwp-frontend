@@ -1,6 +1,7 @@
 {
   "toolbarLabel": "홈 구성 편집 도구",
   "addWidget": "위젯 추가",
+  "addShort": "추가",
   "presentationLabel": "홈 레이아웃",
   "presentations": {
     "balanced": "균형",
@@ -15,8 +16,11 @@
   "previewDesktop": "데스크톱 미리보기",
   "previewMobile": "모바일 미리보기",
   "changeCount": "변경 {{count}}건",
+  "draftSuffix": "(초안)",
   "cancel": "변경 취소",
+  "cancelShort": "취소",
   "done": "저장",
+  "doneWithEnglish": "저장 (Save)",
   "moveWidget": "{{widget}} 위젯 이동",
   "moveWidgetEarlier": "{{widget}} 위젯을 앞으로 이동",
   "moveWidgetLater": "{{widget}} 위젯을 뒤로 이동",

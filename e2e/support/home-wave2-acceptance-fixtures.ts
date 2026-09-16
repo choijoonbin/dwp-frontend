@@ -124,7 +124,7 @@ export function createHomeWave2NewsOverviewFixture(
           summary:
             '조직 포털 개편 방향, 단계별 적용 일정과 구성원이 미리 확인할 사항을 안내합니다.',
           publisherName: '디지털 워크플레이스 추진단',
-          coverImageUrl: '/media/communications/dwp-product-update.jpg',
+          coverImageUrl: '/assets/home/wave2/classic-canonical-hero.jpg',
           sourceLocale: 'ko',
           severity: 'WARNING',
           acknowledgementRequired: true,
@@ -138,6 +138,7 @@ export function createHomeWave2NewsOverviewFixture(
             summary:
               'Review the organization-wide rollout sequence, security responsibilities, support channels, and decisions that every distributed team needs before the next operating cycle begins.',
             publisherName: 'Enterprise Digital Workplace Transformation Office',
+            coverImageUrl: '/assets/home/wave2/classic-canonical-hero.jpg',
           }
         : {}),
     publishedAt: '2026-08-10T09:00:00Z',

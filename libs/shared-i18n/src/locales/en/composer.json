@@ -1,6 +1,7 @@
 {
   "toolbarLabel": "Home composition tools",
   "addWidget": "Add widget",
+  "addShort": "Add",
   "presentationLabel": "Home layout",
   "presentations": {
     "balanced": "Balanced",
@@ -15,8 +16,11 @@
   "previewDesktop": "Desktop preview",
   "previewMobile": "Mobile preview",
   "changeCount": "{{count}} changes",
+  "draftSuffix": "(draft)",
   "cancel": "Cancel changes",
+  "cancelShort": "Cancel",
   "done": "Save",
+  "doneWithEnglish": "Save",
   "moveWidget": "Move {{widget}} widget",
   "moveWidgetEarlier": "Move {{widget}} widget earlier",
   "moveWidgetLater": "Move {{widget}} widget later",
