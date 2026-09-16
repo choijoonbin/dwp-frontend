@@ -126,9 +126,10 @@ type FlowHomeProps = {
   onManageApp?: (app: HomeAppDefinition) => void;
   onRetryOverview: () => void;
   onRetryContributions: () => void;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
   /** Test/runtime adapter input. Omission keeps every future provider fail-closed. */
   futureWidgetStateByKey?: Readonly<Record<string, FlowFutureWidgetState>>;
+  ownerWidgetRegion?: ReactNode;
 };
 
 function contributionCount(items: HomeContributionModel['buckets']['action']): number {
@@ -191,6 +192,7 @@ export function FlowHome({
   onRetryContributions,
   onRecommendationFeedback,
   futureWidgetStateByKey,
+  ownerWidgetRegion,
 }: FlowHomeProps) {
   const { t } = useTranslation('home');
   const narrowViewport = availableWidth < 600;
@@ -604,6 +606,8 @@ export function FlowHome({
           }
         />
       ) : null}
+
+      {!editing && ownerWidgetRegion}
 
       {(editing || presentation !== 'expressive') && (
         <Box

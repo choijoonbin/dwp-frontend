@@ -37,6 +37,7 @@ import type {
   HomeAppGroup,
   LaunchpadLayout,
 } from '../../../components/workspace-composer/app-launchpad-model';
+import type { ReactNode } from 'react';
 
 const classicTypography = {
   caption: foundationTokens.home.typography.captionSize,
@@ -85,10 +86,11 @@ type ClassicHomeProps = {
   onLaunchApp: (app: HomeAppDefinition) => void;
   onManageApp?: (app: HomeAppDefinition) => void;
   onRetryOverview: () => void;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
   /** Deterministic source-state projection supplied by the evidence/runtime adapter. */
   organizationResourceState?: ClassicOrganizationResourceState;
   disabledAppIds?: readonly string[];
+  ownerWidgetRegion?: ReactNode;
 };
 
 export function resolveClassicCommunicationState({
@@ -344,6 +346,7 @@ export function ClassicHome({
   onRecommendationFeedback,
   organizationResourceState,
   disabledAppIds,
+  ownerWidgetRegion,
 }: ClassicHomeProps) {
   const { t } = useTranslation('home');
   const communicationFeed =
@@ -509,6 +512,8 @@ export function ClassicHome({
         )}
 
         {!editing && <ClassicOrganizationResources resourceState={organizationResourceState} />}
+
+        {!editing && ownerWidgetRegion}
 
         <Box
           data-testid="home-workspace-grid"

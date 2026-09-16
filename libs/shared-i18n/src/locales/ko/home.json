@@ -673,8 +673,8 @@
       "unsavedTitle": "홈 화면 변경을 취소할까요?",
       "unsavedDescription": "현재 홈 화면 초안이 아직 저장되지 않았습니다. 계속 편집하거나 변경을 취소할 수 있습니다.",
       "navigationDescription": "현재 홈 화면 초안이 아직 저장되지 않았습니다. 이 페이지를 나가면 변경 내용이 사라집니다.",
-    "keepEditing": "계속 편집",
-    "closeDialog": "충돌 대화상자 닫기",
+      "keepEditing": "계속 편집",
+      "closeDialog": "충돌 대화상자 닫기",
       "discardChanges": "변경 취소",
       "leaveHome": "홈 나가기",
       "sections": {
@@ -1291,6 +1291,63 @@
     "terms": "이용약관",
     "help": "헬프 데스크",
     "status": "시스템 상태"
+  },
+  "ownerWidgets": {
+    "regionLabel": "연결된 업무 인사이트",
+    "title": {
+      "approval": {
+        "focus-queue": "우선 결재함",
+        "my-requests": "내 결재 요청"
+      },
+      "meetings": {
+        "next-prep": "다음 회의 준비",
+        "followup-candidates": "회의 후속 업무 후보"
+      },
+      "notification": {
+        "app-badges": "앱 알림",
+        "response-queue": "응답이 필요한 알림"
+      },
+      "space": {
+        "change-feed": "Space 변경 소식",
+        "response-queue": "Space 요청"
+      },
+      "messaging": {
+        "response-queue": "답변이 필요한 메시지",
+        "change-feed": "최근 메시지 활동"
+      },
+      "hr": {
+        "edu": "필수 학습",
+        "team-pulse": "팀 현황"
+      }
+    },
+    "action": { "openSource": "원본 열기" },
+    "metric": {
+      "pending": "대기",
+      "dueToday": "오늘 마감",
+      "overdue": "기한 초과",
+      "inFlight": "진행 중",
+      "meetingsToday": "오늘 회의",
+      "meetingMinutes": "회의 시간",
+      "totalUnread": "읽지 않음",
+      "urgentUnread": "긴급",
+      "unreadSignals": "읽지 않은 변경",
+      "pendingRequests": "대기 요청",
+      "reviewQueue": "검토 필요",
+      "unreadConversations": "읽지 않은 대화",
+      "mentions": "멘션",
+      "requiredLearning": "필수 학습",
+      "activeGoals": "진행 목표",
+      "teamPending": "팀 대기",
+      "teamTimePending": "근태 요청",
+      "teamAbsencePending": "휴가 요청"
+    },
+    "meta": {
+      "attendees": "참석자 {{count}}명",
+      "unread": "읽지 않음 {{count}}건",
+      "actionable": "조치 필요 {{count}}건",
+      "urgent": "긴급 {{count}}건"
+    },
+    "empty": { "verified": "최신 상태를 확인했습니다" }
   },
   "widgetRuntime": {
     "unavailableLabel": "{{label}}을(를) 사용할 수 없음",

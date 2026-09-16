@@ -233,7 +233,7 @@ type HomeLayoutStudioWorkbenchProps = Readonly<{
   busy: boolean;
   feedbackBusy: boolean;
   onRetryOverview: () => void;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
   onSave: (widgets: HomeWidgetPreference[]) => void;
   onOpenHistory: () => void;
 }>;

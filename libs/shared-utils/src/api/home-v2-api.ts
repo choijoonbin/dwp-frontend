@@ -134,7 +134,15 @@ export type HomeV2ReadInput = Readonly<{
 }>;
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+const BADGE_VERSION_PATTERN = /^(?:0|[1-9]\d{0,39})$/u;
+const OFFSET_TIMESTAMP_PATTERN = /T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
 const HOME_MODES = new Set<HomeExperienceVariant>(['CLASSIC', 'FLOW_V1']);
+const HOME_APP_DOCK_GROUP_KEYS = [
+  'WORK_START',
+  'COLLABORATION',
+  'PEOPLE_SERVICES',
+  'SYSTEM_CONTROL',
+] as const;
 const HOME_DEVICES = new Set<HomeDeviceClass>([
   'DESKTOP_WIDE',
   'DESKTOP_STANDARD',
@@ -205,7 +213,9 @@ function count(value: unknown, path: string): number {
 function timestamp(value: unknown, path: string, nullable = false): string | null {
   const candidate = string(value, path, nullable);
   if (candidate === null) return null;
-  if (!candidate.includes('T') || !Number.isFinite(Date.parse(candidate))) invalid(path);
+  if (!OFFSET_TIMESTAMP_PATTERN.test(candidate) || !Number.isFinite(Date.parse(candidate))) {
+    invalid(path);
+  }
   return candidate;
 }
 
@@ -252,6 +262,9 @@ function parseLayout(value: unknown): HomePreferenceLayout<string> {
             ),
     };
   });
+  if (new Set(widgets.map((widget) => widget.widgetKey)).size !== widgets.length) {
+    invalid('data.view.composition.widgets');
+  }
   return {
     appLayout: layout.appLayout ?? null,
     presentation:
@@ -266,13 +279,17 @@ function parseDeviceOverlay(value: unknown): HomeDeviceLayoutOverlay | null {
   if (value === undefined || value === null) return null;
   const overlay = object(value, 'data.view.deviceOverlay');
   const sizes = object(overlay.widgetSizes, 'data.view.deviceOverlay.widgetSizes');
+  const widgetOrder = strings(overlay.widgetOrder, 'data.view.deviceOverlay.widgetOrder');
+  if (new Set(widgetOrder).size !== widgetOrder.length) {
+    invalid('data.view.deviceOverlay.widgetOrder');
+  }
   return {
     density: enumValue(
       overlay.density,
       new Set<HomeDeviceLayoutOverlay['density']>(['comfortable', 'compact']),
       'data.view.deviceOverlay.density'
     ),
-    widgetOrder: strings(overlay.widgetOrder, 'data.view.deviceOverlay.widgetOrder'),
+    widgetOrder,
     widgetSizes: Object.fromEntries(
       Object.entries(sizes).map(([key, value]) => [
         key,
@@ -357,7 +374,12 @@ function parseApp(value: unknown, path: string): HomeV2AppEntry {
       urgent: count(rawBadge.urgent, `${path}.badge.urgent`),
       version: string(rawBadge.version, `${path}.badge.version`)!,
     };
-    if (badge.urgent > badge.total || badgeState !== 'AVAILABLE') invalid(`${path}.badge`);
+    if (
+      badge.urgent > badge.total ||
+      badgeState !== 'AVAILABLE' ||
+      !BADGE_VERSION_PATTERN.test(badge.version)
+    )
+      invalid(`${path}.badge`);
   } else if (badgeState === 'AVAILABLE') {
     invalid(`${path}.badge`);
   }
@@ -383,10 +405,13 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
   const shell = object(data.shell, 'data.shell');
   const groupKeys = new Set<string>();
   const appKeys = new Set<string>();
-  const appDock = array(data.appDock, 'data.appDock').map((item, index) => {
+  const rawAppDock = array(data.appDock, 'data.appDock');
+  if (rawAppDock.length !== HOME_APP_DOCK_GROUP_KEYS.length) invalid('data.appDock');
+  const appDock = rawAppDock.map((item, index) => {
     const path = `data.appDock[${index}]`;
     const group = object(item, path);
     const groupKey = string(group.groupKey, `${path}.groupKey`)!;
+    if (groupKey !== HOME_APP_DOCK_GROUP_KEYS[index]) invalid(`${path}.groupKey`);
     if (groupKeys.has(groupKey)) invalid(`${path}.groupKey`);
     groupKeys.add(groupKey);
     return {
@@ -414,7 +439,11 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
     generatedAt: timestamp(data.generatedAt, 'data.generatedAt')!,
     mode,
     partial: boolean(data.partial, 'data.partial'),
-    registryMode: enumValue(data.registryMode, REGISTRY_MODES, 'data.registryMode'),
+    registryMode: (() => {
+      const registryMode = enumValue(data.registryMode, REGISTRY_MODES, 'data.registryMode');
+      if (registryMode !== 'SHADOW') invalid('data.registryMode');
+      return registryMode;
+    })(),
     schemaVersion: 2,
     shell: {
       announcements: array(shell.announcements, 'data.shell.announcements').map((item, index) => {
@@ -476,19 +505,31 @@ export function parseHomeV2ResponseMetadata(headers: Headers | undefined): HomeV
   ) {
     invalid('headers.Vary');
   }
+  const commandsEnabled = parseBooleanHeader(headers, 'X-DWP-Home-Commands-Enabled');
+  const registryAuthoritative = parseBooleanHeader(headers, 'X-DWP-Widget-Registry-Authoritative');
+  if (commandsEnabled) invalid('headers.X-DWP-Home-Commands-Enabled');
+  if (registryAuthoritative) invalid('headers.X-DWP-Widget-Registry-Authoritative');
   return {
     cacheControl,
-    commandsEnabled: parseBooleanHeader(headers, 'X-DWP-Home-Commands-Enabled'),
-    registryAuthoritative: parseBooleanHeader(headers, 'X-DWP-Widget-Registry-Authoritative'),
+    commandsEnabled,
+    registryAuthoritative,
     runtimeMode,
     vary,
   };
+}
+
+function assertRequestedHomeVariant(model: HomeV2ReadModel, input: HomeV2ReadInput): void {
+  if (model.view.deviceClass !== input.deviceClass) invalid('data.view.deviceClass');
+  if (input.mode && (model.mode !== input.mode || model.view.mode !== input.mode)) {
+    invalid('data.mode');
+  }
 }
 
 export async function getHomeV2(
   input: HomeV2ReadInput,
   previous?: ConditionalHttpSnapshot<HomeV2ReadModel>
 ): Promise<HomeV2ReadResult> {
+  if (previous) assertRequestedHomeVariant(previous.data, input);
   const query = new URLSearchParams({
     deviceClass: input.deviceClass,
     timeZone: input.timeZone,
@@ -503,6 +544,7 @@ export async function getHomeV2(
     ? previous?.data
     : parseHomeV2ReadModel(response.snapshot.data);
   if (!model) invalid('response.304');
+  assertRequestedHomeVariant(model, input);
   return {
     metadata: parseHomeV2ResponseMetadata(response.headers),
     notModified: response.notModified,

@@ -1,4 +1,6 @@
-import type { HomeDeviceClass, HomeExperience } from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+
+import type { HomeDeviceClass, HomeExperience, HomeOverview } from '@dwp-frontend/shared-utils';
 import { homeDeviceClassForAvailableWidth } from './home-available-width';
 
 type HomeCopyExperience = Pick<
@@ -85,4 +87,9 @@ export function resolveHomePageCopy({
     headline: localizedCopy?.headline || experience?.headline || fallbackHeadline,
     subheadline: localizedCopy?.subheadline || experience?.subheadline || fallbackSubheadline,
   };
+}
+
+export function resolveHomeWorkspaceUpdatedAt(overview?: HomeOverview): string {
+  const timestamp = overview?.work.data?.generatedAt || overview?.generatedAt;
+  return timestamp ? formatDate(new Date(timestamp), { hour: '2-digit', minute: '2-digit' }) : '-';
 }

@@ -12,13 +12,13 @@ import {
   resolveHomeWidgetRuntimeDecisions,
 } from './widget-registry-runtime';
 
-export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number) {
+export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number, enabled = true) {
   const readinessQuery = useQuery({
     queryKey: ['widget-registry', 'readiness', tenantId, userId],
     queryFn: getWidgetRegistryReadiness,
     staleTime: 60_000,
     retry: false,
-    enabled: tenantId != null && userId != null,
+    enabled: enabled && tenantId != null && userId != null,
   });
   const connection = useMemo(
     () =>
@@ -29,7 +29,7 @@ export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number)
   const effectiveCatalogQuery = useQuery({
     queryKey: homeWidgetRegistryEffectiveQueryKey(tenantId, userId, readiness),
     queryFn: () => getEffectiveWidgetCatalog('workspace-home'),
-    enabled: connection.queryEffectiveCatalog,
+    enabled: enabled && connection.queryEffectiveCatalog,
     staleTime: 0,
     gcTime: 0,
     retry: false,

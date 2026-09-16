@@ -105,7 +105,7 @@ type HomePersonalizationStudioProps = {
   widgetRuntimeDecisions: HomeWidgetRuntimeDecisions;
   feedbackBusy: boolean;
   onRetryOverview: () => void;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
   onClose: () => void;
   onExited?: () => void;
   onEditView: (view: HomeView) => void;

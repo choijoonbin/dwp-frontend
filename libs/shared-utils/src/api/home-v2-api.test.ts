@@ -45,7 +45,7 @@ function responseFixture(): Record<string, unknown> {
       },
       appDock: [
         {
-          groupKey: 'work',
+          groupKey: 'WORK_START',
           label: '업무 시작',
           apps: [
             {
@@ -54,10 +54,13 @@ function responseFixture(): Record<string, unknown> {
               iconKey: 'approvals',
               sourceRoute: '/approvals/home',
               badgeState: 'AVAILABLE',
-              badge: { total: 4, urgent: 1, version: 'counter-3' },
+              badge: { total: 4, urgent: 1, version: '3' },
             },
           ],
         },
+        { groupKey: 'COLLABORATION', label: '소통과 협업', apps: [] },
+        { groupKey: 'PEOPLE_SERVICES', label: '구성원과 서비스', apps: [] },
+        { groupKey: 'SYSTEM_CONTROL', label: '시스템과 통제', apps: [] },
       ],
       widgets: [
         {
@@ -84,7 +87,7 @@ function responseFixture(): Record<string, unknown> {
               commandKey: null,
               expectedResultVersion: null,
               kind: 'SOURCE_ROUTE',
-              labelKey: 'home.openApprovals',
+              labelKey: 'home.action.openSource',
               requiresConfirmation: false,
               sourceRoute: '/approvals/home',
             },
@@ -116,7 +119,7 @@ function responseHeaders(mode: 'ACTIVE' | 'SHADOW' = 'ACTIVE'): Headers {
     Vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision',
     'X-DWP-Home-Commands-Enabled': 'false',
     'X-DWP-Home-Runtime-Mode': mode,
-    'X-DWP-Widget-Registry-Authoritative': 'true',
+    'X-DWP-Widget-Registry-Authoritative': 'false',
   });
 }
 
@@ -148,8 +151,17 @@ describe('Home v2 read contract', () => {
       mode: 'CLASSIC',
       changeVersion: 'home-change-8',
       view: { deviceClass: 'DESKTOP_STANDARD', revision: 7 },
-      appDock: [{ apps: [{ appKey: 'dwp-approvals', badge: { total: 4, urgent: 1 } }] }],
       widgets: [{ definitionKey: 'approval.focus-queue', state: 'AVAILABLE' }],
+    });
+    expect(model.appDock.map((group) => group.groupKey)).toEqual([
+      'WORK_START',
+      'COLLABORATION',
+      'PEOPLE_SERVICES',
+      'SYSTEM_CONTROL',
+    ]);
+    expect(model.appDock[0].apps[0]).toMatchObject({
+      appKey: 'dwp-approvals',
+      badge: { total: 4, urgent: 1 },
     });
   });
 
@@ -157,9 +169,12 @@ describe('Home v2 read contract', () => {
     ['schema version', ['data', 'schemaVersion'], 1],
     ['mode mismatch', ['data', 'view', 'mode'], 'FLOW_V1'],
     ['unsafe badge count', ['data', 'appDock', 0, 'apps', 0, 'badge', 'urgent'], 5],
+    ['invalid badge version', ['data', 'appDock', 0, 'apps', 0, 'badge', 'version'], 'counter-3'],
     ['invalid timestamp', ['data', 'generatedAt'], 'today'],
+    ['timestamp without offset', ['data', 'generatedAt'], '2026-09-16T00:00:00'],
     ['invalid widget identifier', ['data', 'widgets', 0, 'instanceId'], 'not-a-uuid'],
     ['unknown registry mode', ['data', 'registryMode'], 'EXPERIMENTAL'],
+    ['premature authoritative registry', ['data', 'registryMode'], 'AUTHORITATIVE'],
     [
       'unknown device widget size',
       ['data', 'view', 'deviceOverlay', 'widgetSizes', 'approval.focus-queue'],
@@ -187,9 +202,28 @@ describe('Home v2 read contract', () => {
     const fixture = responseFixture();
     const data = fixture.data as Record<string, unknown>;
     const groups = data.appDock as Array<Record<string, unknown>>;
-    const duplicate = structuredClone(groups[0]);
-    duplicate.groupKey = 'connect';
-    groups.push(duplicate);
+    groups[1].apps = structuredClone(groups[0].apps);
+    expect(() => parseHomeV2ReadModel(fixture)).toThrow('Home v2 response is invalid');
+  });
+
+  it.each([
+    ['missing', (groups: unknown[]) => groups.pop()],
+    [
+      'reordered',
+      (groups: unknown[]) => {
+        [groups[1], groups[2]] = [groups[2], groups[1]];
+      },
+    ],
+    [
+      'unknown',
+      (groups: unknown[]) => {
+        (groups[2] as Record<string, unknown>).groupKey = 'UNKNOWN_GROUP';
+      },
+    ],
+  ])('rejects a %s canonical appDock group set', (_label, mutate) => {
+    const fixture = responseFixture();
+    const groups = (fixture.data as Record<string, unknown>).appDock as unknown[];
+    mutate(groups);
     expect(() => parseHomeV2ReadModel(fixture)).toThrow('Home v2 response is invalid');
   });
 
@@ -197,7 +231,7 @@ describe('Home v2 read contract', () => {
     expect(parseHomeV2ResponseMetadata(responseHeaders('SHADOW'))).toEqual({
       cacheControl: 'private, max-age=0, must-revalidate',
       commandsEnabled: false,
-      registryAuthoritative: true,
+      registryAuthoritative: false,
       runtimeMode: 'SHADOW',
       vary: 'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision',
     });
@@ -211,6 +245,18 @@ describe('Home v2 read contract', () => {
     const incompleteVary = responseHeaders();
     incompleteVary.set('Vary', 'Accept-Language, X-DWP-Tenant-ID');
     expect(() => parseHomeV2ResponseMetadata(incompleteVary)).toThrow('headers.Vary');
+
+    const commandsEnabled = responseHeaders();
+    commandsEnabled.set('X-DWP-Home-Commands-Enabled', 'true');
+    expect(() => parseHomeV2ResponseMetadata(commandsEnabled)).toThrow(
+      'headers.X-DWP-Home-Commands-Enabled'
+    );
+
+    const authoritativeRegistry = responseHeaders();
+    authoritativeRegistry.set('X-DWP-Widget-Registry-Authoritative', 'true');
+    expect(() => parseHomeV2ResponseMetadata(authoritativeRegistry)).toThrow(
+      'headers.X-DWP-Widget-Registry-Authoritative'
+    );
   });
 
   it('owns the conditional snapshot at the caller and sends the canonical query', async () => {
@@ -256,7 +302,7 @@ describe('Home v2 read contract', () => {
     });
 
     const result = await getHomeV2({
-      deviceClass: 'MOBILE_STANDARD',
+      deviceClass: 'DESKTOP_STANDARD',
       timeZone: 'Asia/Seoul',
     });
 
@@ -265,5 +311,41 @@ describe('Home v2 read contract', () => {
       etag: '"home-change-8"',
     });
     expect(result.metadata.runtimeMode).toBe('SHADOW');
+  });
+
+  it('rejects a fresh response for a different requested device or mode', async () => {
+    const getConditional = vi.spyOn(axiosInstance, 'getConditional').mockResolvedValue({
+      headers: responseHeaders(),
+      snapshot: { data: responseFixture(), etag: '"home-change-8"' },
+      status: 200,
+      notModified: false,
+    });
+
+    await expect(
+      getHomeV2({ deviceClass: 'MOBILE_STANDARD', timeZone: 'Asia/Seoul' })
+    ).rejects.toThrow('data.view.deviceClass');
+    await expect(
+      getHomeV2({ deviceClass: 'DESKTOP_STANDARD', mode: 'FLOW_V1', timeZone: 'Asia/Seoul' })
+    ).rejects.toThrow('data.mode');
+    expect(getConditional).toHaveBeenCalledTimes(2);
+  });
+
+  it('rejects a cross-variant previous snapshot before sending its ETag', async () => {
+    const previous = {
+      data: parseHomeV2ReadModel(responseFixture()),
+      etag: '"home-change-8"',
+    };
+    const getConditional = vi.spyOn(axiosInstance, 'getConditional');
+
+    await expect(
+      getHomeV2({ deviceClass: 'MOBILE_STANDARD', timeZone: 'Asia/Seoul' }, previous)
+    ).rejects.toThrow('data.view.deviceClass');
+    await expect(
+      getHomeV2(
+        { deviceClass: 'DESKTOP_STANDARD', mode: 'FLOW_V1', timeZone: 'Asia/Seoul' },
+        previous
+      )
+    ).rejects.toThrow('data.mode');
+    expect(getConditional).not.toHaveBeenCalled();
   });
 });

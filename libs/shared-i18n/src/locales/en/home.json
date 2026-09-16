@@ -673,8 +673,8 @@
       "unsavedTitle": "Discard your home changes?",
       "unsavedDescription": "Your current home draft has not been saved. You can keep editing or discard these changes.",
       "navigationDescription": "Your current home draft has not been saved. Leaving this page will discard these changes.",
-    "keepEditing": "Keep editing",
-    "closeDialog": "Close conflict dialog",
+      "keepEditing": "Keep editing",
+      "closeDialog": "Close conflict dialog",
       "discardChanges": "Discard changes",
       "leaveHome": "Leave home",
       "sections": {
@@ -1291,6 +1291,63 @@
       "retry": "Try again",
       "empty": "There is no recent activity"
     }
+  },
+  "ownerWidgets": {
+    "regionLabel": "Connected work insights",
+    "title": {
+      "approval": {
+        "focus-queue": "Approval focus queue",
+        "my-requests": "My approval requests"
+      },
+      "meetings": {
+        "next-prep": "Next meeting preparation",
+        "followup-candidates": "Meeting follow-up candidates"
+      },
+      "notification": {
+        "app-badges": "Application notifications",
+        "response-queue": "Responses needed"
+      },
+      "space": {
+        "change-feed": "Space changes",
+        "response-queue": "Space requests"
+      },
+      "messaging": {
+        "response-queue": "Messages needing a response",
+        "change-feed": "Recent message activity"
+      },
+      "hr": {
+        "edu": "Required learning",
+        "team-pulse": "Team pulse"
+      }
+    },
+    "action": { "openSource": "Open source" },
+    "metric": {
+      "pending": "Pending",
+      "dueToday": "Due today",
+      "overdue": "Overdue",
+      "inFlight": "In progress",
+      "meetingsToday": "Meetings today",
+      "meetingMinutes": "Meeting minutes",
+      "totalUnread": "Unread",
+      "urgentUnread": "Urgent",
+      "unreadSignals": "Unread changes",
+      "pendingRequests": "Pending requests",
+      "reviewQueue": "To review",
+      "unreadConversations": "Unread conversations",
+      "mentions": "Mentions",
+      "requiredLearning": "Required learning",
+      "activeGoals": "Active goals",
+      "teamPending": "Team pending",
+      "teamTimePending": "Time requests",
+      "teamAbsencePending": "Absence requests"
+    },
+    "meta": {
+      "attendees": "{{count}} attendees",
+      "unread": "{{count}} unread",
+      "actionable": "{{count}} actionable",
+      "urgent": "{{count}} urgent"
+    },
+    "empty": { "verified": "Checked and up to date" }
   },
   "widgetRuntime": {
     "unavailableLabel": "{{label}} is unavailable",

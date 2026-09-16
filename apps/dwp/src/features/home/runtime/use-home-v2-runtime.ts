@@ -94,16 +94,8 @@ export function useHomeV2Runtime({
   const queryClient = useQueryClient();
   const identityReady = enabled && tenantId != null && userId != null;
   const scopeKey = useMemo(
-    () =>
-      JSON.stringify([
-        tenantId ?? null,
-        userId ?? null,
-        accessFingerprint,
-        deviceClass,
-        mode ?? null,
-        timeZone,
-      ]),
-    [accessFingerprint, deviceClass, mode, tenantId, timeZone, userId]
+    () => JSON.stringify([accessFingerprint, deviceClass, mode ?? null, timeZone]),
+    [accessFingerprint, deviceClass, mode, timeZone]
   );
   const snapshotRef = useRef<ScopedSnapshot | null>(null);
   const activeScopeRef = useRef(scopeKey);
@@ -130,7 +122,10 @@ export function useHomeV2Runtime({
       const requestedScope = scopeKey;
       const previous =
         snapshotRef.current?.scopeKey === requestedScope ? snapshotRef.current.snapshot : undefined;
-      const result = await getHomeV2({ deviceClass, mode, signal, timeZone }, previous);
+      const result = await getHomeV2(
+        { contextScopeKey: requestedScope, deviceClass, mode, signal, timeZone },
+        previous
+      );
       signal.throwIfAborted();
       if (requestedScope !== activeScopeRef.current) {
         throw new DOMException('Home v2 scope changed', 'AbortError');
