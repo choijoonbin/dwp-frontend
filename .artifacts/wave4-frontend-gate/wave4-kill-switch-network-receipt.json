@@ -1,0 +1,48 @@
+{
+  "legacy": {
+    "home-overview": 0,
+    "home-experience": 0,
+    "workspace-apps": 0,
+    "notification-app-summary": 0,
+    "widget-registry": 0,
+    "home-preferences": 0,
+    "home-views": 0,
+    "home-widget-code-set": 0,
+    "work-hub-home": 0,
+    "approval-home-contribution": 0,
+    "hr-home-contribution": 0,
+    "services-home-contribution": 0,
+    "workplace-home-contribution": 0
+  },
+  "legacyTotal": 0,
+  "v2": [
+    {
+      "deviceClass": "DESKTOP_STANDARD",
+      "etag": null,
+      "forbiddenIdentityQueryKeys": [],
+      "ifNoneMatch": null,
+      "mode": "CLASSIC",
+      "ownerBindingCatalogRevisions": [],
+      "queryKeys": [
+        "deviceClass",
+        "timeZone"
+      ],
+      "runtimeMode": "NONE",
+      "status": 503
+    },
+    {
+      "deviceClass": "DESKTOP_STANDARD",
+      "etag": null,
+      "forbiddenIdentityQueryKeys": [],
+      "ifNoneMatch": null,
+      "mode": "CLASSIC",
+      "ownerBindingCatalogRevisions": [],
+      "queryKeys": [
+        "deviceClass",
+        "timeZone"
+      ],
+      "runtimeMode": "NONE",
+      "status": 503
+    }
+  ]
+}

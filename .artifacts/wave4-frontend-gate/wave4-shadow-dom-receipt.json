@@ -1,0 +1,26 @@
+{
+  "console": {
+    "maximumUpdateDepthOrPageErrors": []
+  },
+  "runtime": {
+    "data-home-assistant-rail": "header",
+    "data-home-widget-shadow-status": "INACTIVE",
+    "data-home-widget-shadow-mismatch-count": "0",
+    "data-home-widget-shadow-decision-revision": "none",
+    "data-home-runtime-path": "legacy",
+    "data-home-runtime-http-status": "200",
+    "data-home-runtime-not-modified": "false",
+    "data-home-runtime-refresh-failed": "false",
+    "data-home-runtime-partial": "true",
+    "data-home-runtime-unavailable-count": "2",
+    "data-home-runtime-widget-state-counts": "available:2,empty:1,partial:1,forbidden:1,unavailable:1,stale:1",
+    "data-home-legacy-fanout": "enabled",
+    "data-home-available-width-class": "desktop-standard",
+    "data-home-device-class": "DESKTOP_STANDARD",
+    "data-home-mode": "CLASSIC",
+    "data-home-personal-customization-enabled": "true",
+    "data-home-editor-state": "closed",
+    "data-home-persisted-source-state": "ready"
+  },
+  "owner": null
+}

@@ -1,0 +1,363 @@
+{
+  "schemaVersion": 1,
+  "gateId": "DWP-HOME-WAVE4-FRONTEND-RUNTIME-GATE",
+  "status": "PASS",
+  "sealedAt": "2026-09-16T18:51:09+09:00",
+  "scope": "Wave 4 frontend Runtime Broker, owner provider states, cache isolation, fail-closed routing, responsive and accessibility evidence",
+  "commits": {
+    "frontendProductionCode": "8fa76c35690a257117c02691cb01e8e7e8182246",
+    "frontendBrowserGateAndSealedHead": "cc822c473838fa37dc032bd20d32652d6773156d",
+    "backendRuntimeCode": "dd3410bb34067c7d742749ed38e39387e91e8947",
+    "backendEvidence": "20ec8520d1eeae061e208a55a51ad59eb718d82e",
+    "backendRuntimeCatalogRegression": "fdc3d52532ed752d96f5cc07fb91eb6cb5cbc7d4"
+  },
+  "runtimeSafety": {
+    "registryMode": "SHADOW",
+    "registryAuthoritative": false,
+    "commandsEnabled": false,
+    "productionReleaseReady": false,
+    "bindingCatalogRevision": "d9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643",
+    "activeBindings": {
+      "native": 7,
+      "owner": 12,
+      "total": 19
+    }
+  },
+  "environment": {
+    "node": "v24.19.0",
+    "yarn": "4.17.1",
+    "os": "macOS-26.6-arm64-arm-64bit",
+    "workdir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend"
+  },
+  "gates": {
+    "build": {
+      "status": "PASS",
+      "command": "PATH=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH corepack yarn build",
+      "commit": "cc822c473838fa37dc032bd20d32652d6773156d",
+      "exitCode": 0,
+      "checks": [
+        "package-manager policy",
+        "generated API contracts",
+        "authorization closure",
+        "application architecture",
+        "route composition",
+        "feature/API boundaries",
+        "relative import cycles",
+        "production reachability",
+        "internal exports",
+        "source-size budgets",
+        "design-system adoption",
+        "i18n/display dictionaries",
+        "ESLint",
+        "TypeScript",
+        "Vite production build",
+        "bundle budget"
+      ]
+    },
+    "unit": {
+      "status": "PASS",
+      "command": "PATH=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH corepack yarn vitest run --maxWorkers=4 --no-file-parallelism --reporter=default",
+      "productionCommit": "8fa76c35690a257117c02691cb01e8e7e8182246",
+      "browserGateFilesPresentDuringRun": true,
+      "sealedHeadAfterTrackingUnchangedBrowserGateFiles": "cc822c473838fa37dc032bd20d32652d6773156d",
+      "files": 734,
+      "tests": 6607,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timeouts": 0,
+      "durationSeconds": 886.15,
+      "executionMode": "maxWorkers=4; file parallelism disabled"
+    },
+    "browser": {
+      "status": "PASS",
+      "command": "PATH=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH corepack yarn playwright test --project=chromium --workers=1 --reporter=line e2e/home-wave4-runtime.spec.ts",
+      "commit": "cc822c473838fa37dc032bd20d32652d6773156d",
+      "browser": "Chromium",
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 28.7,
+      "completedAt": "2026-09-16T18:42:27+09:00",
+      "baseUrl": "http://localhost:4200",
+      "reuseExistingServer": false,
+      "serverWorkdir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend",
+      "serverLifecycle": {
+        "launcherPid": 65193,
+        "vitePid": 65209,
+        "workerPid": 65255,
+        "allExitedAfterRun": true
+      },
+      "artifactMtimeRange": {
+        "first": "2026-09-16T18:42:07.133142+09:00",
+        "last": "2026-09-16T18:42:27.378100+09:00"
+      },
+      "coverage": [
+        "ACTIVE 200 then conditional 304 and cache scope isolation",
+        "SHADOW legacy authority",
+        "ACTIVE to SHADOW rollback",
+        "cold broker kill switch fail closed",
+        "native renderer tuple drift fail closed",
+        "double-encoded traversal rejection",
+        "Classic desktop 1440",
+        "Flow desktop 1280 dark",
+        "Classic mobile 390",
+        "Flow mobile 320 at 200 percent text",
+        "keyboard focus, 44px touch targets, reduced motion, accessibility, no horizontal overflow"
+      ]
+    },
+    "staticAudit": {
+      "status": "PASS",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "jsonFilesParsed": 20,
+      "forbiddenIdentityQueryKeysObserved": 0,
+      "maximumUpdateDepthOrPageErrorsObserved": 0,
+      "ownerPayloadOrInternalSourceLeakMatches": 0
+    }
+  },
+  "sourceIntegrity": [
+    {
+      "path": "e2e/home-wave4-runtime.spec.ts",
+      "bytes": 26146,
+      "sha256": "591b7187c904259c59eec309be49ad8c947bd75dbcb7b2390542772466907d02"
+    },
+    {
+      "path": "e2e/support/home-wave4-runtime-fixtures.ts",
+      "bytes": 11992,
+      "sha256": "3a5a14720db5a3463915d45630b741a4bbe4ccfb249072f01341eff506d7d34f"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/widget-registry-runtime.ts",
+      "bytes": 17801,
+      "sha256": "435f143ed3ffca488e3f64474a5518d148f9fd38c702747b30a09d59b41849d8"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/owner-widgets/owner-widget-contracts.ts",
+      "bytes": 6260,
+      "sha256": "79afb83939895d0d8835b135048734162166689e1fe31fb7164bc8b59eeb3f00"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/owner-widgets/owner-widget-renderer.tsx",
+      "bytes": 14168,
+      "sha256": "eab17d55e3dca57c00d0396bc5ae8741eb32a35121c04db6dfabba3f7834c656"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/home-v2-legacy-adapter.ts",
+      "bytes": 16068,
+      "sha256": "0553f52611d6365c3b7dfa3e930133c84b694335159210a542deecc91e46d1bd"
+    }
+  ],
+  "runtimeArtifacts": [
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-active-dom-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1152,
+      "sha256": "a1648615764954b0d2bab58379f964de61d6d775a2166d6d5317820321fc55ec",
+      "modifiedAt": "2026-09-16T18:42:07.148037+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-active-network-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 2688,
+      "sha256": "dd39280ce63f873631f82c3b22c5a829e98177ace26bd307d4835f4077366e32",
+      "modifiedAt": "2026-09-16T18:42:07.133142+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-active-to-shadow-dom-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1009,
+      "sha256": "24c5f8b3203398130efccfa71349e1520e29eee9f79b9d3a0e20e086f027b10a",
+      "modifiedAt": "2026-09-16T18:42:10.972977+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-active-to-shadow-network-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1805,
+      "sha256": "0fa2411eaaed6357547b8245f0bfaebb9353e96e9045bb76840921594f43c5d9",
+      "modifiedAt": "2026-09-16T18:42:10.959653+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-d1440-dom.json",
+      "mediaType": "application/json",
+      "bytes": 1154,
+      "sha256": "5f615548dac40c19c4ee96d4a983a283e932e818ddaf66198ef5fd8c4e1c8de4",
+      "modifiedAt": "2026-09-16T18:42:18.447987+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-d1440-network.json",
+      "mediaType": "application/json",
+      "bytes": 1756,
+      "sha256": "54e1476d2667141db28bb3da65d43ce7cbbe0e02c9df4a5cba34721bf91910c1",
+      "modifiedAt": "2026-09-16T18:42:18.436795+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-d1440-owner-states.png",
+      "mediaType": "image/png",
+      "bytes": 116714,
+      "sha256": "063796597116e0b9db4023ddcc73848586034e7057c2ffbce55bb66b8cd38307",
+      "modifiedAt": "2026-09-16T18:42:18.434424+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-d1440.png",
+      "mediaType": "image/png",
+      "bytes": 145170,
+      "sha256": "45bd662ec3de296d1c24a521e014c7df64fcc2f850b35f73441cf596abd7c493",
+      "modifiedAt": "2026-09-16T18:42:18.361810+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-m390-dom.json",
+      "mediaType": "application/json",
+      "bytes": 1152,
+      "sha256": "a1648615764954b0d2bab58379f964de61d6d775a2166d6d5317820321fc55ec",
+      "modifiedAt": "2026-09-16T18:42:24.317343+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-m390-network.json",
+      "mediaType": "application/json",
+      "bytes": 1323,
+      "sha256": "cd134de8d6851e6a3c8556d9471e92f4653ba213a0880e5be1e41fc4b18f36d6",
+      "modifiedAt": "2026-09-16T18:42:24.306453+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-m390-owner-states.png",
+      "mediaType": "image/png",
+      "bytes": 106930,
+      "sha256": "8fbb7d6c514a2e90ee2f6ffd62dc97cbee9e2cfdab7a7e0cb6961c92eb320e79",
+      "modifiedAt": "2026-09-16T18:42:24.302956+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-classic-m390.png",
+      "mediaType": "image/png",
+      "bytes": 74584,
+      "sha256": "580d9f1f7ca538e3be51451e4d727bb5cc60622186f2a92906e7a650b825cf92",
+      "modifiedAt": "2026-09-16T18:42:24.239600+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-d1280-dark-dom.json",
+      "mediaType": "application/json",
+      "bytes": 1151,
+      "sha256": "16e54c4c1f0dae30dbc8de7d89c52624e1d6973fd3d4b26834457965c0442869",
+      "modifiedAt": "2026-09-16T18:42:21.757924+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-d1280-dark-network.json",
+      "mediaType": "application/json",
+      "bytes": 1327,
+      "sha256": "15c38e6c1b7d2cab432cd88ff865c871788751d2a00b2607c4d9b1ae14bbfde8",
+      "modifiedAt": "2026-09-16T18:42:21.746929+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-d1280-dark-owner-states.png",
+      "mediaType": "image/png",
+      "bytes": 111781,
+      "sha256": "3aa97eea771ea7dba74010a70db3a7d26d2fcf8f1ebc4dae0f2d95ac860ea7eb",
+      "modifiedAt": "2026-09-16T18:42:21.744023+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-d1280-dark.png",
+      "mediaType": "image/png",
+      "bytes": 326989,
+      "sha256": "54faf73c956c443f872df6a5d01b4577e8a096fa3642c197aeb18ed5643b13fc",
+      "modifiedAt": "2026-09-16T18:42:21.660987+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-m320-text-200-dom.json",
+      "mediaType": "application/json",
+      "bytes": 1147,
+      "sha256": "ef272a51039d24dc5c8d70a9053882016e9ff961398b8e48807471dadf01bd17",
+      "modifiedAt": "2026-09-16T18:42:27.378100+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-m320-text-200-network.json",
+      "mediaType": "application/json",
+      "bytes": 1319,
+      "sha256": "ed0b7980f84a183d09cd4acc2e459dbffc39bd99336aae8091d5d4068a293bbe",
+      "modifiedAt": "2026-09-16T18:42:27.365901+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-m320-text-200-owner-states.png",
+      "mediaType": "image/png",
+      "bytes": 215312,
+      "sha256": "d22db9630eeee5a0d7dcd58292cf92ce392cd9cecf8ad9d63a6c6e22425bdc9a",
+      "modifiedAt": "2026-09-16T18:42:27.363045+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-flow-m320-text-200.png",
+      "mediaType": "image/png",
+      "bytes": 48261,
+      "sha256": "4e7950f3850ba22dadb558c24a6dd103d82041bb9d7334837dfcd1c826ae76f8",
+      "modifiedAt": "2026-09-16T18:42:27.293341+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-kill-switch-dom-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1011,
+      "sha256": "1f98d3c7b7c5e87ba68401790ef2d8ddfa593ba054c8cdcda50e30b42da0b103",
+      "modifiedAt": "2026-09-16T18:42:12.520527+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-kill-switch-network-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1095,
+      "sha256": "7301b467cbc3a18c09d4c8ad380a321ced149161d94ef47bd5498af0ac1087ca",
+      "modifiedAt": "2026-09-16T18:42:12.504849+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-native-tuple-drift-dom-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1154,
+      "sha256": "5f615548dac40c19c4ee96d4a983a283e932e818ddaf66198ef5fd8c4e1c8de4",
+      "modifiedAt": "2026-09-16T18:42:14.190540+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-native-tuple-drift-network-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1327,
+      "sha256": "a27247f19e3f54be5416009da08460c30bd5cc968714d0956bfa55903783959b",
+      "modifiedAt": "2026-09-16T18:42:14.170593+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-shadow-dom-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1010,
+      "sha256": "718cb1deebb8b6e37eaf219bf9afe6c0023e2e325d5e47e2f708a5c1b4506d18",
+      "modifiedAt": "2026-09-16T18:42:09.098711+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-shadow-network-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1328,
+      "sha256": "adab130429e3ab9917822502dc0654bfbe09205405d30460f20d7e9ac235c5ba",
+      "modifiedAt": "2026-09-16T18:42:09.083137+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-unsafe-route-dom-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1011,
+      "sha256": "1f98d3c7b7c5e87ba68401790ef2d8ddfa593ba054c8cdcda50e30b42da0b103",
+      "modifiedAt": "2026-09-16T18:42:15.789287+09:00"
+    },
+    {
+      "path": ".artifacts/wave4-frontend-gate/wave4-unsafe-route-network-receipt.json",
+      "mediaType": "application/json",
+      "bytes": 1327,
+      "sha256": "a27247f19e3f54be5416009da08460c30bd5cc968714d0956bfa55903783959b",
+      "modifiedAt": "2026-09-16T18:42:15.775357+09:00"
+    }
+  ],
+  "runtimeArtifactCount": 28,
+  "limitations": [
+    "Registry authority remains SHADOW and non-authoritative.",
+    "Widget commands remain disabled.",
+    "No production canary or production telemetry was executed in Wave 4.",
+    "Wave 5 and Wave 6 implementation has not started."
+  ],
+  "nextState": {
+    "wave4": "COMPLETE",
+    "wave5": "READY_NOT_STARTED",
+    "wave6": "BLOCKED_BY_WAVE5_NOT_STARTED"
+  }
+}
