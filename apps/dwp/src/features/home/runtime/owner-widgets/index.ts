@@ -33,11 +33,27 @@ export type {
   OwnerWidgetPayloadMap,
   OwnerWidgetPayloadParseResult,
 } from './owner-widget-payload-types';
-export { normalizeOwnerWidget } from './owner-widget-view-model';
+export { normalizeOwnerWidget, normalizeOwnerWidgetEnvelope } from './owner-widget-view-model';
 export type {
   NormalizedOwnerWidget,
+  NormalizedOwnerWidgetEnvelope,
   NormalizeOwnerWidgetFailureCode,
+  NormalizeOwnerWidgetEnvelopeInput,
+  NormalizeOwnerWidgetEnvelopeResult,
   NormalizeOwnerWidgetInput,
   NormalizeOwnerWidgetResult,
   OwnerWidgetSourceAction,
 } from './owner-widget-view-model';
+export { OwnerWidgetRenderer } from './owner-widget-renderer';
+export type {
+  OwnerWidgetLabelKey,
+  OwnerWidgetLabelResolver,
+  OwnerWidgetRendererProps,
+  OwnerWidgetRendererVariant,
+} from './owner-widget-renderer';
+export { OwnerWidgetRuntimeBoundary } from './owner-widget-runtime-boundary';
+export type {
+  OwnerWidgetRuntimeBoundaryProps,
+  OwnerWidgetRuntimeRecord,
+  OwnerWidgetRuntimeState,
+} from './owner-widget-runtime-boundary';

@@ -53,6 +53,18 @@ export type NormalizeOwnerWidgetInput = OwnerWidgetBindingIdentity &
     locale?: string;
   }>;
 
+export type NormalizeOwnerWidgetEnvelopeInput = OwnerWidgetBindingIdentity &
+  Readonly<{
+    governanceSourceRoute: unknown;
+    actions: unknown;
+  }>;
+
+export type NormalizedOwnerWidgetEnvelope = Readonly<{
+  contract: OwnerWidgetContract;
+  sourceAction: OwnerWidgetSourceAction | null;
+  commandActions: readonly [];
+}>;
+
 export type NormalizeOwnerWidgetFailureCode =
   | 'UNSUPPORTED_BINDING'
   | 'SOURCE_ROUTE_MISMATCH'
@@ -62,6 +74,13 @@ export type NormalizeOwnerWidgetFailureCode =
 export type NormalizeOwnerWidgetResult =
   | Readonly<{ ok: true; value: NormalizedOwnerWidget }>
   | Readonly<{ ok: false; code: NormalizeOwnerWidgetFailureCode }>;
+
+export type NormalizeOwnerWidgetEnvelopeResult =
+  | Readonly<{ ok: true; value: NormalizedOwnerWidgetEnvelope }>
+  | Readonly<{
+      ok: false;
+      code: Exclude<NormalizeOwnerWidgetFailureCode, 'MALFORMED_PAYLOAD'>;
+    }>;
 
 function exactActionRecord(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
@@ -99,7 +118,9 @@ function parseSourceAction(
   };
 }
 
-export function normalizeOwnerWidget(input: NormalizeOwnerWidgetInput): NormalizeOwnerWidgetResult {
+export function normalizeOwnerWidgetEnvelope(
+  input: NormalizeOwnerWidgetEnvelopeInput
+): NormalizeOwnerWidgetEnvelopeResult {
   const contract = resolveOwnerWidgetContract(input);
   if (!contract) return { ok: false, code: 'UNSUPPORTED_BINDING' };
   if (!isCanonicalOwnerWidgetSourceRoute(contract, input.governanceSourceRoute)) {
@@ -111,6 +132,16 @@ export function normalizeOwnerWidget(input: NormalizeOwnerWidgetInput): Normaliz
   const sourceAction =
     input.actions.length === 0 ? null : parseSourceAction(contract, input.actions[0]);
   if (sourceAction === false) return { ok: false, code: 'ACTION_CONTRACT_MISMATCH' };
+  return {
+    ok: true,
+    value: { contract, sourceAction, commandActions: NO_COMMAND_ACTIONS },
+  };
+}
+
+export function normalizeOwnerWidget(input: NormalizeOwnerWidgetInput): NormalizeOwnerWidgetResult {
+  const envelope = normalizeOwnerWidgetEnvelope(input);
+  if (!envelope.ok) return envelope;
+  const { contract, sourceAction } = envelope.value;
 
   const parsed = parseOwnerWidgetPayload(contract.definitionKey, input.payload, input.locale);
   if (!parsed.ok) return parsed;
