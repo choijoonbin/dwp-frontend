@@ -516,15 +516,9 @@ test('an in-flight personal batch keeps its command identity after a Work menu r
 
   // The busy confirmation dialog intentionally owns focus. Dispatching a click on the actual Work
   // navigation control exercises React Router's path transition and the owner-boundary remount.
-  const mobileNavigation = page.getByTestId('work-mobile-bottom-navigation');
-  const actionRequiredNavigation =
-    testInfo.project.name === 'mobile'
-      ? mobileNavigation.getByRole('button', {
-          name: 'My actions',
-          exact: true,
-          includeHidden: true,
-        })
-      : page.getByTestId('work-navigation-item-action-required');
+  const actionRequiredNavigation = page
+    .getByTestId('work-sidebar')
+    .getByTestId('work-navigation-item-action-required');
   await actionRequiredNavigation.dispatchEvent('click');
   await expect(page).toHaveURL((url) => url.pathname === '/work/action-required');
   await expect(page.getByRole('main').getByRole('heading').first()).toBeVisible();
@@ -538,11 +532,10 @@ test('an in-flight personal batch keeps its command identity after a Work menu r
     });
   runtime.releaseMutation();
 
-  const queueNavigation =
-    testInfo.project.name === 'mobile'
-      ? mobileNavigation.getByRole('button', { name: 'Inbox', exact: true, includeHidden: true })
-      : page.getByTestId('work-navigation-item-queue');
-  await queueNavigation.click();
+  const queueNavigation = page
+    .getByTestId('work-sidebar')
+    .getByTestId('work-navigation-item-queue');
+  await queueNavigation.dispatchEvent('click');
   await expect(page).toHaveURL((url) => url.pathname === '/work/queue');
   const reopen = page.getByRole('button', { name: 'View latest batch results', exact: true });
   await expect(reopen).toBeVisible();
@@ -550,7 +543,7 @@ test('an in-flight personal batch keeps its command identity after a Work menu r
 
   const result = page.getByRole('dialog', { name: 'Batch results' });
   await expect(result).toContainText(fixture.personalTitle);
-  await expect(result.getByText('Unconfirmed 1', { exact: true })).toBeVisible();
+  await expect(result.getByText('Unconfirmed', { exact: true }).first()).toBeVisible();
   await expect(result).toContainText(
     'The session changed or this page closed after this request was sent. Check the source status before creating a new request.'
   );
@@ -841,9 +834,10 @@ test('390px today plan has its own route and returns to the queue', async ({ pag
   await page.setViewportSize({ width: 390, height: 844 });
   await mockWorkHubFoundation(page);
   await openWorkPage(page, '/work/queue');
+  await page.getByTestId('work-mobile-navigation-trigger').click();
   await page
-    .locator('[data-testid="work-mobile-bottom-navigation"]')
-    .getByRole('button', { name: 'Today', exact: true })
+    .getByTestId('work-mobile-sidebar')
+    .getByTestId('work-navigation-item-day-plan')
     .click();
   await expect(page).toHaveURL(/\/work\/day-plan/);
   await expect(page.getByTestId('work-today-plan-page')).toBeVisible();

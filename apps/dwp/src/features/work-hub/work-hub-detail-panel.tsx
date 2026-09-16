@@ -94,17 +94,28 @@ export function WorkHubDetailPanel({
   return (
     <Box
       component="article"
+      data-testid="work-hub-detail-panel"
       aria-labelledby={titleId}
       sx={{
         minWidth: 0,
         bgcolor: 'background.paper',
         minHeight: { xs: 'calc(100dvh - 150px)', lg: 560 },
+        '@media (min-width: 900px)': {
+          position: 'sticky',
+          top: 16,
+          maxHeight: 'calc(100dvh - 196px)',
+          minHeight: 560,
+          overflowY: 'auto',
+          overscrollBehavior: 'contain',
+          scrollbarGutter: 'stable',
+        },
+        '@media (forced-colors: active)': { outline: '1px solid CanvasText' },
       }}
     >
       <Box
         sx={{
           px: { xs: 1.5, md: 2.5 },
-          py: { xs: 1.5, md: 2 },
+          py: { xs: 1.5, md: 1.75 },
           borderBottom: 1,
           borderColor: 'divider',
         }}

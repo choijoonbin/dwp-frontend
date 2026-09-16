@@ -12,6 +12,8 @@ import {
   InlineFeedback,
 } from '@dwp-frontend/design-system';
 import {
+  ACCESS_REVIEW_REASON_MAX_LENGTH,
+  ACCESS_REVIEW_REASON_MIN_LENGTH,
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
   HttpError,
@@ -84,11 +86,105 @@ function validateAccessReviewDetail(
   if (
     detail.workItemRef !== expectedWorkItemRef ||
     !Number.isSafeInteger(detail.version) ||
-    detail.version < 0
+    detail.version < 0 ||
+    typeof detail.dueAt !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u.test(detail.dueAt) ||
+    !Number.isFinite(Date.parse(detail.dueAt)) ||
+    (detail.subjectOrganizationName != null &&
+      (typeof detail.subjectOrganizationName !== 'string' ||
+        detail.subjectOrganizationName.trim().length === 0)) ||
+    (detail.subjectWorkerNumber != null &&
+      (typeof detail.subjectWorkerNumber !== 'string' ||
+        detail.subjectWorkerNumber.trim().length === 0 ||
+        detail.subjectWorkerNumber.length > 100))
   ) {
     throw new HttpError('Access review detail response is invalid', 502);
   }
   return detail;
+}
+
+function AccessReviewProgress({
+  decision,
+  remediationState,
+}: {
+  decision: AccessReviewWorkDecision;
+  remediationState: Awaited<ReturnType<typeof getAccessReviewWorkDetail>>['remediationState'];
+}) {
+  const { t } = useTranslation('work');
+  const sourceApplied =
+    decision !== 'PENDING' &&
+    (remediationState === 'NOT_REQUIRED' || remediationState === 'APPLIED');
+  const completedThrough = decision === 'PENDING' ? 2 : sourceApplied ? 4 : 3;
+  const currentStep = decision === 'PENDING' ? 3 : 4;
+  const steps = ['queue', 'detail', 'decision', 'result'] as const;
+
+  return (
+    <Box
+      component="nav"
+      aria-label={t('workPage.accessReview.progress.label')}
+      sx={{ display: { xs: 'block', sm: 'none' }, mt: 1.5 }}
+    >
+      <Box
+        component="ol"
+        sx={{
+          m: 0,
+          p: 1.25,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          gap: 0.5,
+          listStyle: 'none',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+          bgcolor: 'background.paper',
+        }}
+      >
+        {steps.map((step, index) => {
+          const number = index + 1;
+          const completed = number <= completedThrough;
+          const current = number === currentStep;
+          return (
+            <Box
+              component="li"
+              key={step}
+              aria-current={current ? 'step' : undefined}
+              sx={{ minWidth: 0, textAlign: 'center' }}
+            >
+              <Box
+                aria-hidden="true"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  mx: 'auto',
+                  display: 'grid',
+                  placeItems: 'center',
+                  borderRadius: '50%',
+                  bgcolor: completed || current ? 'primary.main' : 'action.disabledBackground',
+                  color: completed || current ? 'primary.contrastText' : 'text.secondary',
+                  fontSize: 13,
+                  fontWeight: 'fontWeightBold',
+                }}
+              >
+                {completed ? <Check size={16} /> : number}
+              </Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  display: 'block',
+                  mt: 0.5,
+                  overflowWrap: 'anywhere',
+                  color: completed || current ? 'primary.main' : 'text.secondary',
+                  fontWeight: completed || current ? 'fontWeightBold' : 'fontWeightRegular',
+                }}
+              >
+                {t(`workPage.accessReview.progress.${step}`)}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
 }
 
 function governedRequest(
@@ -201,6 +297,7 @@ function AuthorizedAccessReviewWorkItem({
   const [reason, setReason] = useState('');
   const [preview, setPreview] = useState<DecisionPreview | null>(null);
   const [conflict, setConflict] = useState(false);
+  const [conflictedVersion, setConflictedVersion] = useState<number | null>(null);
   const [submissionError, setSubmissionError] = useState(false);
   const mounted = useRef(false);
   const ownerRef = useRef(operationOwner);
@@ -350,6 +447,7 @@ function AuthorizedAccessReviewWorkItem({
       setDecision(undefined);
       setPreview(null);
       setConflict(false);
+      setConflictedVersion(null);
       setSubmissionError(false);
       setReason('');
       toast.success(t('workPage.accessReview.decisionSaved'));
@@ -360,6 +458,7 @@ function AuthorizedAccessReviewWorkItem({
       if (state === 'stale') {
         setPreview(null);
         setConflict(true);
+        setConflictedVersion(run.confirmed.version);
         setSubmissionError(false);
         toast.error(t('workPage.accessReview.staleDescription'));
         void detail.refetch();
@@ -433,6 +532,8 @@ function AuthorizedAccessReviewWorkItem({
         />
       </Stack>
 
+      <AccessReviewProgress decision={record.decision} remediationState={record.remediationState} />
+
       <Box
         component="dl"
         sx={{
@@ -457,7 +558,20 @@ function AuthorizedAccessReviewWorkItem({
               {record.subjectEmail}
             </Typography>
           )}
+          {(record.subjectOrganizationName || record.subjectWorkerNumber) && (
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {[record.subjectOrganizationName, record.subjectWorkerNumber]
+                .filter((value): value is string => Boolean(value))
+                .join(' · ')}
+            </Typography>
+          )}
         </Box>
+        <Typography component="dt" variant="caption" color="text.secondary">
+          {t('workPage.accessReview.dueAt')}
+        </Typography>
+        <Typography component="dd" variant="body2">
+          {formatDate(record.dueAt, { dateStyle: 'medium', timeStyle: 'short' })}
+        </Typography>
         <Typography component="dt" variant="caption" color="text.secondary">
           {t('workPage.accessReview.role')}
         </Typography>
@@ -635,7 +749,7 @@ function AuthorizedAccessReviewWorkItem({
             label={t('workPage.accessReview.decisionReason')}
             supportingText={t('workHub.accessEvidence.reasonHelp', { count: reason.length })}
             value={reason}
-            inputProps={{ maxLength: 1000 }}
+            inputProps={{ maxLength: ACCESS_REVIEW_REASON_MAX_LENGTH }}
             onChange={(event) => setReason(event.target.value)}
             required
             disabled={!canDecide || decide.isPending}
@@ -643,10 +757,39 @@ function AuthorizedAccessReviewWorkItem({
           />
           {conflict && (
             <InlineFeedback severity="warning" sx={{ mt: 1.5 }}>
-              {t('workPage.accessReview.staleDescription')}{' '}
-              {t('workHub.accessEvidence.draftPreserved')}
+              {t('workPage.accessReview.conflictDraftPreserved', {
+                submittedVersion: conflictedVersion ?? record.version,
+                currentVersion: record.version,
+              })}
             </InlineFeedback>
           )}
+          <Box
+            sx={{
+              mt: 1.5,
+              p: 1.25,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+              bgcolor: 'action.hover',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle2">
+                {t('workPage.accessReview.concurrencyTitle')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('workPage.accessReview.concurrencyDescription')}
+              </Typography>
+            </Box>
+            <Chip
+              label={t('workPage.accessReview.revision', { version: record.version })}
+              size="small"
+              variant="outlined"
+              sx={{ flexShrink: 0 }}
+            />
+          </Box>
           <Box
             data-shell-auxiliary-avoidance="inline-end"
             sx={{
@@ -666,8 +809,8 @@ function AuthorizedAccessReviewWorkItem({
               intent={decision === 'REVOKE' ? 'danger' : 'primary'}
               disabled={
                 !decision ||
-                reason.trim().length < 10 ||
-                reason.length > 1000 ||
+                reason.trim().length < ACCESS_REVIEW_REASON_MIN_LENGTH ||
+                reason.length > ACCESS_REVIEW_REASON_MAX_LENGTH ||
                 !canDecide ||
                 decide.isPending ||
                 detail.isFetching
@@ -692,6 +835,7 @@ function AuthorizedAccessReviewWorkItem({
                   },
                 })
               }
+              aria-keyshortcuts="Enter"
             >
               {t('workHub.accessEvidence.preview')}
             </ActionButton>

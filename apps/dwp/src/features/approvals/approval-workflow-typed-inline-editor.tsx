@@ -157,17 +157,14 @@ export function ApprovalWorkflowTypedInlineEditor({
     const request = inspectorFocus.current;
     inspectorFocus.current = undefined;
     const frame = window.requestAnimationFrame(() => {
-      focusApprovalLabeledControl(
-        inspectorRef.current,
-        request.label,
-        'start',
-        request.occurrence
-      );
+      focusApprovalLabeledControl(inspectorRef.current, request.label, 'start', request.occurrence);
     });
     return () => window.cancelAnimationFrame(frame);
   }, [definitionOpen, panel, selectedStage.key]);
 
-  const metadataLabel = (field: ReturnType<typeof approvalWorkflowMetadataIssues>[number]['field']) =>
+  const metadataLabel = (
+    field: ReturnType<typeof approvalWorkflowMetadataIssues>[number]['field']
+  ) =>
     t(
       `admin.studio.${field === 'slaMinutes' ? 'workflowSlaMinutes' : field === 'ownerGroupRef' ? 'owner' : field}`
     );
@@ -202,12 +199,12 @@ export function ApprovalWorkflowTypedInlineEditor({
         setDefinitionOpen(true);
         inspectorFocus.current = { label: t('admin.studio.workflowSlaMinutes') };
       } else {
-        const stageMatch = /^stages\[(\d+)](?:\.(.*))?$/u.exec(path);
+        const stageMatch = /^stages\[(\d+)\](?:\.(.*))?$/u.exec(path);
         const stageIndex = stageMatch ? Number(stageMatch[1]) : 0;
         const field = stageMatch?.[2] ?? '';
         const stage = draft.typedDefinition.stages[stageIndex] ?? selectedStage;
         setSelectedKey(stage.key);
-        const conditionIndex = Number(/routeCondition\.all\[(\d+)]/u.exec(field)?.[1] ?? 0);
+        const conditionIndex = Number(/routeCondition\.all\[(\d+)\]/u.exec(field)?.[1] ?? 0);
         const label = field.startsWith('key')
           ? 'admin.studio.stepKey'
           : field.startsWith('name')

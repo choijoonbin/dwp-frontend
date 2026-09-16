@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bookmark,
+  CheckSquare2,
   MessageSquareReply,
   MoreHorizontal,
   Pencil,
@@ -47,10 +48,12 @@ type MessagingMessageRowProps = {
   onReply?: () => void;
   replyCount?: number;
   onSave?: () => void;
+  onTrackAsTask?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   compact?: boolean;
   receipt?: MessagingReadReceipt;
+  highlighted?: boolean;
 };
 
 export function MessagingMessageRow({
@@ -63,10 +66,12 @@ export function MessagingMessageRow({
   onReply,
   replyCount = 0,
   onSave,
+  onTrackAsTask,
   onEdit,
   onDelete,
   compact = false,
   receipt,
+  highlighted = false,
 }: MessagingMessageRowProps) {
   const { t, i18n } = useTranslation('messaging');
   const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
@@ -88,7 +93,30 @@ export function MessagingMessageRow({
 
   if (message.messageKind === 'SYSTEM') {
     return (
-      <Box component="article" aria-describedby={bodyId} sx={{ py: dense ? 0.5 : 0.8, px: 2 }}>
+      <Box
+        component="article"
+        aria-current={highlighted ? 'true' : undefined}
+        aria-describedby={bodyId}
+        data-message-target={highlighted ? 'true' : undefined}
+        data-msg-receipt-id={message.messageId}
+        tabIndex={-1}
+        sx={(theme) => ({
+          py: dense ? 0.5 : 0.8,
+          px: 2,
+          borderRadius: messagingVisualTokens.radius.control,
+          scrollMarginBlock: 80,
+          ...(highlighted
+            ? {
+                bgcolor: alpha(theme.palette.primary.main, 0.11),
+                boxShadow: `inset 3px 0 0 ${theme.palette.primary.main}`,
+              }
+            : {}),
+          '&:focus-visible': {
+            outline: `2px solid ${theme.palette.primary.main}`,
+            outlineOffset: 2,
+          },
+        })}
+      >
         <Typography
           id={bodyId}
           variant="caption"
@@ -107,6 +135,8 @@ export function MessagingMessageRow({
       component="article"
       aria-labelledby={titleId}
       aria-describedby={bodyId}
+      aria-current={highlighted ? 'true' : undefined}
+      data-message-target={highlighted ? 'true' : undefined}
       data-msg-receipt-id={message.messageId}
       tabIndex={-1}
       sx={(theme) => ({
@@ -118,10 +148,15 @@ export function MessagingMessageRow({
         pb: groupedWithNext ? 0 : dense ? 0.45 : 0.7,
         position: 'relative',
         borderRadius: messagingVisualTokens.radius.control,
-        transition: theme.transitions.create('background-color', {
+        scrollMarginBlock: 80,
+        bgcolor: highlighted ? alpha(theme.palette.primary.main, 0.11) : 'transparent',
+        boxShadow: highlighted ? `inset 3px 0 0 ${theme.palette.primary.main}` : 'none',
+        transition: theme.transitions.create(['background-color', 'box-shadow'], {
           duration: theme.transitions.duration.shortest,
         }),
-        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.028) },
+        '&:hover': {
+          bgcolor: alpha(theme.palette.primary.main, highlighted ? 0.15 : 0.028),
+        },
         '&:focus-visible': { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
         '& .dwp-message-actions': {
           opacity: { xs: 1, md: 0 },
@@ -423,6 +458,19 @@ export function MessagingMessageRow({
               <Bookmark size={16} />
             </ListItemIcon>
             {t('message.save')}
+          </MenuItem>
+        ) : null}
+        {onTrackAsTask ? (
+          <MenuItem
+            onClick={() => {
+              setActionAnchor(null);
+              onTrackAsTask();
+            }}
+          >
+            <ListItemIcon>
+              <CheckSquare2 size={16} />
+            </ListItemIcon>
+            {t('message.trackAsTask')}
           </MenuItem>
         ) : null}
         {mine && onEdit ? (

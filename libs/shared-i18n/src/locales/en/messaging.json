@@ -275,6 +275,13 @@
       "loading": "Loading earlier messages",
       "loadError": "Earlier messages could not be loaded. Try again."
     },
+    "deepLink": {
+      "loading": "Finding the linked message…",
+      "notFound": "The linked message is no longer available in this conversation.",
+      "unavailable": "The linked message could not be loaded. Try again.",
+      "retry": "Retry",
+      "dismiss": "Show conversation"
+    },
     "noMessagesTitle": "No messages yet",
     "noMessagesDescription": "Send the first message to start the work context.",
     "composerLabel": "Compose message",
@@ -424,6 +431,7 @@
     "replyCount": "{{count}} replies",
     "moreActions": "More message actions",
     "save": "Save for later",
+    "trackAsTask": "Track as personal task",
     "edit": "Edit message",
     "delete": "Delete message",
     "saveSuccess": "Message saved for later.",

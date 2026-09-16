@@ -31,7 +31,7 @@ async function standardDensity(control: Locator) {
 }
 for (const width of [390, 320]) {
   for (const locale of ['ko', 'en'] as const) {
-    test(`${width}px ${locale} exposes six Work views and restores the More focus`, async ({
+    test(`${width}px ${locale} exposes five app tabs and keeps six Work views in the drawer`, async ({
       page,
     }, info) => {
       await page.setViewportSize({ width, height: 844 });
@@ -41,44 +41,40 @@ for (const width of [390, 320]) {
       const nav = page.getByTestId('work-mobile-bottom-navigation');
       const labels =
         locale === 'ko'
-          ? ['통합업무함', '오늘 계획', '내 조치', '더보기']
-          : ['Inbox', 'Today', 'My actions', 'More'];
-      for (const [index, path] of ['queue', 'day-plan', 'action-required'].entries()) {
-        await nav.getByRole('button', { name: labels[index], exact: true }).click();
+          ? ['홈', '업무함', '캘린더', '알림', '프로필']
+          : ['Home', 'Work', 'Calendar', 'Notifications', 'Profile'];
+      await expect(nav.getByRole('button')).toHaveCount(5);
+      for (const label of labels) {
+        await expect(nav.getByRole('button', { name: label, exact: true })).toBeVisible();
+      }
+      await expect(nav.getByRole('button', { name: labels[1], exact: true })).toHaveAttribute(
+        'aria-current',
+        'page'
+      );
+
+      const trigger = page.getByTestId('work-mobile-navigation-trigger');
+      for (const path of [
+        'queue',
+        'day-plan',
+        'action-required',
+        'in-progress',
+        'awaiting-response',
+        'completed',
+      ]) {
+        await trigger.click();
+        const drawer = page.getByTestId('work-mobile-sidebar');
+        await expect(drawer).toBeVisible();
+        await drawer.getByTestId(`work-navigation-item-${path}`).click();
         await expect(page).toHaveURL(new RegExp(`/work/${path}(\\?|$)`));
         await ready(page);
-        await expect(nav.getByRole('button', { name: labels[index], exact: true })).toHaveAttribute(
-          'aria-current',
-          'page'
-        );
-      }
-      const more = nav.getByRole('button', { name: labels[3], exact: true });
-      for (const [path, label] of locale === 'ko'
-        ? [
-            ['in-progress', '진행 중'],
-            ['awaiting-response', '응답 대기'],
-            ['completed', '완료된 업무'],
-          ]
-        : [
-            ['in-progress', 'In progress'],
-            ['awaiting-response', 'Awaiting response'],
-            ['completed', 'Completed work'],
-          ]) {
-        await more.focus();
-        await page.keyboard.press('Enter');
-        const dialog = page.getByRole('dialog');
-        await expect(dialog).toBeVisible();
-        await dialog.getByRole('button', { name: label, exact: true }).click();
-        await expect(page).toHaveURL(new RegExp(`/work/${path}(\\?|$)`));
-        await expect(dialog).toBeHidden();
-        await expect(page.getByRole('heading', { level: 1 }).first()).toBeFocused();
         await noOverflow(page);
       }
-      await more.focus();
+
+      await trigger.focus();
       await page.keyboard.press('Enter');
       await page.keyboard.press('Escape');
-      await expect(page.getByRole('dialog')).toBeHidden();
-      await expect(more).toBeFocused();
+      await expect(page.getByTestId('work-mobile-sidebar')).toBeHidden();
+      await expect(trigger).toBeFocused();
       for (const button of await nav.getByRole('button').all()) {
         const box = await button.boundingBox();
         expect(box!.width).toBeGreaterThanOrEqual(44);
@@ -171,7 +167,9 @@ for (const width of [390, 320]) {
     await review.getByRole('button', { name: 'Complete selected', exact: true }).click();
 
     const result = page.getByRole('dialog', { name: 'Batch results', exact: true });
-    await expect(result).toContainText('Unconfirmed 1');
+    const receiptSummary = result.getByLabel('Batch receipt summary');
+    await expect(receiptSummary.getByText('Unconfirmed', { exact: true })).toBeVisible();
+    await expect(receiptSummary.locator('dd').nth(5)).toHaveText('1');
     await touchTarget(
       result.getByRole('button', {
         name: 'Recheck unconfirmed personal tasks',

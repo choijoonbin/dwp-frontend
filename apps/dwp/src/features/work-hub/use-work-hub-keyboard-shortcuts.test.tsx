@@ -190,5 +190,13 @@ describe('Work keyboard scope and browser-safe create alternative', () => {
       false
     );
     expect(commands.onCreate).toHaveBeenCalledOnce();
+    await act(async () =>
+      root.render(<WorkHubPageHeader {...props} view="day-plan" refreshing={false} />)
+    );
+    expect(host.querySelector('[aria-keyshortcuts]')).toBeNull();
+    expect(await key(document.body, { key: 'N', code: 'KeyN', altKey: true, shiftKey: true })).toBe(
+      true
+    );
+    expect(commands.onCreate).toHaveBeenCalledTimes(2);
   });
 });

@@ -4,12 +4,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   cancelCalendarEvent,
-  dwaionHandoffStrings,
-  dwaionHandoffText,
   getCalendarEvents,
   getCalendarPolicy,
   getCalendars,
-  parseDwaionHandoff,
   respondToCalendarEvent,
   trashCalendarEvent,
   updateCalendarEventPreference,
@@ -36,6 +33,7 @@ import { CalendarEventDialog } from './calendar-event-dialog';
 import { CalendarEventDrawer } from './calendar-components';
 import { CalendarCanvas } from './calendar-experience';
 import { CalendarInteractiveGrid, type CalendarRange } from './calendar-interactive-grid';
+import { CalendarMobileNavigation } from './calendar-mobile-navigation';
 import {
   calendarReadSourceData,
   calendarReadSourceState,
@@ -46,6 +44,9 @@ import { CalendarShareDialog } from './calendar-share-dialog';
 import { CalendarSourcePanel, CalendarSourcePicker } from './calendar-source-rail';
 import { CalendarScheduleChrome } from './calendar-schedule-chrome';
 import { CalendarCommandPaletteOverlay } from './calendar-workspace-overlays';
+import { persistWorkCalendarHandoffLink } from './calendar-work-handoff';
+import { useCalendarCreateHandoff } from './use-calendar-create-handoff';
+import { useCalendarSourceShortcut } from './use-calendar-source-shortcut';
 import {
   calendarCanChangeSelection,
   eventCapability,
@@ -74,15 +75,6 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 const CALENDAR_SURFACE_RADIUS = `${foundationTokens.radius.surface}px`;
-
-type CreateState = Readonly<{
-  start: string;
-  end?: string;
-  type: CalendarEventType;
-  title?: string;
-  attendeeEmails?: string[];
-  fromDwaion?: boolean;
-}>;
 
 function initialRange(): CalendarRange {
   const from = new Date();
@@ -131,11 +123,13 @@ function updateInput(
 
 export function CalendarSchedule() {
   const { t, i18n } = useTranslation('calendar');
-  const { hasPermission, permissions } = usePermissions();
+  const { hasPermission, permissions, isLoaded: permissionsLoaded } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const compact = useMediaQuery('(max-width:899.95px)', { noSsr: true });
-  const mobileSourcePicker = useMediaQuery('(max-width:599.95px)', { noSsr: true });
+  const mobile = useMediaQuery('(max-width:767.95px)', { noSsr: true });
+  const tablet = useMediaQuery('(min-width:768px) and (max-width:1279.95px)', { noSsr: true });
+  const compact = useMediaQuery('(max-width:1279.95px)', { noSsr: true });
+  const mobileSourcePicker = mobile;
   const desktopSources = useMediaQuery('(min-width:1280px)', { noSsr: true });
   const location = useLocation();
   const navigate = useNavigate();
@@ -143,7 +137,10 @@ export function CalendarSchedule() {
   const routeSearchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const [range, setRange] = useState<CalendarRange>(initialRange);
   const [viewState, setView] = useState<CalendarScheduleView>(() =>
-    calendarScheduleView(routeSearchParams.get('view'), compact ? 'agenda' : 'week')
+    calendarScheduleView(
+      routeSearchParams.get('view'),
+      mobile ? 'agenda' : tablet ? 'threeDay' : 'week'
+    )
   );
   const [navigateDateState, setNavigateDate] = useState(() =>
     calendarScheduleDate(routeSearchParams.get('date'))
@@ -154,31 +151,27 @@ export function CalendarSchedule() {
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
-  const [createState, setCreateState] = useState<CreateState | null>(null);
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
   const [sourcesCollapsed, setSourcesCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [sharingCalendar, setSharingCalendar] = useState<CalendarSummary | null>(null);
   const requestedEventId = routeSearchParams.get('event');
   const requestedReturnTarget = routeSearchParams.get('returnTo');
-  const returnTarget = authorizedCalendarWorkReturnTarget(requestedReturnTarget, permissions);
   const hasExplicitScheduleState =
     routeSearchParams.has('view') ||
     routeSearchParams.has('date') ||
     routeSearchParams.has('calendars');
-  const view = routeSearchParams.has('view')
+  const requestedView = routeSearchParams.has('view')
     ? calendarScheduleView(routeSearchParams.get('view'), viewState)
     : viewState;
+  const view =
+    mobile && requestedView !== 'day' && requestedView !== 'agenda' ? 'day' : requestedView;
   const navigateDate = routeSearchParams.has('date')
     ? calendarScheduleDate(routeSearchParams.get('date'), navigateDateState)
     : navigateDateState;
   const language = i18n.resolvedLanguage ?? i18n.language;
   const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
   const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
-  const dwaionHandoff = useMemo(
-    () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
-    [location.state]
-  );
 
   const eventsQuery = useQuery({
     queryKey: ['calendar', 'events', range.from, range.to],
@@ -236,6 +229,26 @@ export function CalendarSchedule() {
   const scheduleWritable = readState === 'READY';
   const canCreate = canCreateGranted && scheduleWritable;
   const canUpdate = canUpdateGranted && scheduleWritable;
+  const {
+    activeWorkHandoff: activeCreateWorkHandoff,
+    closeCreateState,
+    closeUnavailableCreateState,
+    createState,
+    handoffReturnTarget,
+    isAuthorized: isWorkHandoffAuthorized,
+    setCreateState,
+    workRecovery,
+  } = useCalendarCreateHandoff({
+    canCreate,
+    canCreateGranted,
+    scheduleWritable,
+    permissions,
+    permissionsLoaded,
+  });
+  const returnTarget = authorizedCalendarWorkReturnTarget(
+    handoffReturnTarget?.path ?? requestedReturnTarget,
+    permissions
+  );
   const selectedCalendars = useMemo(() => {
     if (!calendarsData) return [];
     const configured = routeSearchParams.has('calendars')
@@ -254,7 +267,10 @@ export function CalendarSchedule() {
   useEffect(() => {
     const requestedView = routeSearchParams.get('view');
     if (requestedView !== null) {
-      const nextView = calendarScheduleView(requestedView, compact ? 'agenda' : 'week');
+      const nextView = calendarScheduleView(
+        requestedView,
+        mobile ? 'agenda' : tablet ? 'threeDay' : 'week'
+      );
       setView((current) => (current === nextView ? current : nextView));
     }
 
@@ -278,39 +294,7 @@ export function CalendarSchedule() {
     setSelectedCalendars((current) =>
       sameCalendarSelection(current, nextCalendars) ? current : nextCalendars
     );
-  }, [calendarSelectionInitialized, calendarsData, compact, routeSearchParams]);
-
-  useEffect(() => {
-    const requestedType = routeSearchParams.get('create');
-    if (!requestedType && !dwaionHandoff) return;
-    if (canCreateGranted && !scheduleWritable) return;
-    if (canCreate) {
-      setCreateState({
-        start: dwaionHandoffText(dwaionHandoff, 'startsAt') ?? new Date().toISOString(),
-        end: dwaionHandoffText(dwaionHandoff, 'endsAt') ?? undefined,
-        type: requestedType === 'focus' ? 'FOCUS' : 'MEETING',
-        title: dwaionHandoffText(dwaionHandoff, 'title') ?? undefined,
-        attendeeEmails: dwaionHandoffStrings(dwaionHandoff, 'attendees'),
-        fromDwaion: Boolean(dwaionHandoff),
-      });
-    }
-    const next = new URLSearchParams(location.search);
-    next.delete('create');
-    const search = next.toString();
-    navigate(
-      { pathname: location.pathname, search: search ? `?${search}` : '' },
-      { replace: true, state: null }
-    );
-  }, [
-    canCreate,
-    canCreateGranted,
-    dwaionHandoff,
-    location.pathname,
-    location.search,
-    navigate,
-    routeSearchParams,
-    scheduleWritable,
-  ]);
+  }, [calendarSelectionInitialized, calendarsData, mobile, routeSearchParams, tablet]);
 
   useEffect(() => {
     if (!requestedEventId || !eventsData) return;
@@ -319,8 +303,12 @@ export function CalendarSchedule() {
   }, [eventsData, requestedEventId]);
 
   useEffect(() => {
-    if (scheduleWritable) return;
-    setCreateState(null);
+    // A reload starts with all authoritative sources in LOADING. Keep a verified Work-link
+    // receipt dormant until those sources settle; clearing it here would force a second Calendar
+    // POST even though the first event was already confirmed.
+    if (scheduleWritable || readState === 'LOADING') return;
+    if (authorityDenied) closeCreateState();
+    else closeUnavailableCreateState();
     setEditing(null);
     setCancelling(null);
     setTrashing(null);
@@ -329,7 +317,7 @@ export function CalendarSchedule() {
     setSourcePickerOpen(false);
     setSharingCalendar(null);
     setCommandPaletteOpen(false);
-  }, [authorityDenied, scheduleWritable]);
+  }, [authorityDenied, closeCreateState, closeUnavailableCreateState, readState, scheduleWritable]);
 
   useEffect(() => {
     const openCommands = (event: KeyboardEvent) => {
@@ -340,6 +328,12 @@ export function CalendarSchedule() {
     window.addEventListener('keydown', openCommands);
     return () => window.removeEventListener('keydown', openCommands);
   }, []);
+
+  useCalendarSourceShortcut(
+    desktopSources,
+    () => setSourcesCollapsed((current) => !current),
+    () => setSourcePickerOpen(true)
+  );
 
   const clearEventSelection = () => {
     setSelected(null);
@@ -474,6 +468,24 @@ export function CalendarSchedule() {
     },
     [calendarSelectionInitialized, navigateDate, selectedCalendars, syncScheduleState, view]
   );
+  useEffect(() => {
+    if (
+      !mobile ||
+      requestedView === 'day' ||
+      requestedView === 'agenda' ||
+      !calendarSelectionInitialized
+    ) {
+      return;
+    }
+    syncScheduleState({ view: 'day', date: navigateDate, calendarIds: selectedCalendars });
+  }, [
+    calendarSelectionInitialized,
+    mobile,
+    navigateDate,
+    requestedView,
+    selectedCalendars,
+    syncScheduleState,
+  ]);
   const selectDate = useCallback(
     (nextDate: Date) => {
       if (calendarScheduleDateValue(nextDate) === calendarScheduleDateValue(navigateDate)) return;
@@ -599,6 +611,14 @@ export function CalendarSchedule() {
       )?.calendarId ?? null,
     [calendarsData, selectedCalendars]
   );
+  const initialPersonalWritableCalendarId = useMemo(
+    () =>
+      calendarsData?.find(
+        (calendar) =>
+          calendar.type === 'PERSONAL' && calendar.capabilities?.canCreateEvents === true
+      )?.calendarId ?? null,
+    [calendarsData]
+  );
   const openNow = (type: CalendarEventType) => {
     if (!canCreate) return;
     const start = new Date();
@@ -626,11 +646,7 @@ export function CalendarSchedule() {
         onOpenSources={() => setSourcePickerOpen(true)}
         onApplySavedView={applySavedView}
         onReturn={() => {
-          const currentTarget = authorizedCalendarWorkReturnTarget(
-            requestedReturnTarget,
-            permissions
-          );
-          if (currentTarget) navigate(currentTarget);
+          if (returnTarget) navigate(returnTarget);
         }}
       />
 
@@ -713,7 +729,7 @@ export function CalendarSchedule() {
             sx={{
               display: 'grid',
               gridTemplateColumns:
-                desktopSources && !sourcesCollapsed ? '264px minmax(0, 1fr)' : 'minmax(0, 1fr)',
+                desktopSources && !sourcesCollapsed ? '16rem minmax(0, 1fr)' : 'minmax(0, 1fr)',
             }}
           >
             <Box
@@ -756,39 +772,56 @@ export function CalendarSchedule() {
                 </Alert>
               </Box>
             ) : (
-              <CalendarInteractiveGrid
-                events={events}
-                language={language}
-                compact={compact}
-                loading={eventsQuery.isLoading || calendarsQuery.isLoading}
-                view={view}
-                navigateDate={navigateDate}
-                weekStart={policyData?.weekStart ?? 1}
-                workingDayStart={policyData?.workingDayStart ?? '08:00'}
-                workingDayEnd={policyData?.workingDayEnd ?? '19:00'}
-                canCreate={canCreate}
-                interactionLocked={moveMutation.isPending}
-                canMove={canMove}
-                onRangeChange={(next) =>
-                  setRange((current) =>
-                    current.from === next.from && current.to === next.to ? current : next
-                  )
-                }
-                onCalendarStateChange={selectCalendarState}
-                onCreateRange={(start, end, _allDay) => {
-                  if (!canCreate) return;
-                  setCreateState({
-                    start: start.toISOString(),
-                    end: end.toISOString(),
-                    type: 'MEETING',
-                  });
+              <Box
+                sx={{
+                  minWidth: 0,
+                  pb: mobile ? 'calc(58px + env(safe-area-inset-bottom))' : 0,
                 }}
-                onOpenEvent={setSelected}
-                onMoveEvent={(event, change, revert) => {
-                  if (!canMove(event)) return revert();
-                  moveMutation.mutate({ event, change, revert });
-                }}
-              />
+              >
+                <CalendarInteractiveGrid
+                  events={events}
+                  language={language}
+                  compact={compact}
+                  mobile={mobile}
+                  loading={eventsQuery.isLoading || calendarsQuery.isLoading}
+                  view={view}
+                  navigateDate={navigateDate}
+                  weekStart={policyData?.weekStart ?? 1}
+                  workingDayStart={policyData?.workingDayStart ?? '08:00'}
+                  workingDayEnd={policyData?.workingDayEnd ?? '19:00'}
+                  canCreate={canCreate}
+                  interactionLocked={moveMutation.isPending}
+                  canMove={canMove}
+                  onRangeChange={(next) =>
+                    setRange((current) =>
+                      current.from === next.from && current.to === next.to ? current : next
+                    )
+                  }
+                  onCalendarStateChange={selectCalendarState}
+                  onCreateRange={(start, end, _allDay) => {
+                    if (!canCreate) return;
+                    setCreateState({
+                      start: start.toISOString(),
+                      end: end.toISOString(),
+                      type: 'MEETING',
+                    });
+                  }}
+                  onOpenEvent={setSelected}
+                  onMoveEvent={(event, change, revert) => {
+                    if (!canMove(event)) return revert();
+                    moveMutation.mutate({ event, change, revert });
+                  }}
+                />
+                {mobile && (
+                  <CalendarMobileNavigation
+                    view={view}
+                    canCreate={canCreate}
+                    onSelectView={(nextView) => selectCalendarState(nextView, navigateDate)}
+                    onOpenSources={() => setSourcePickerOpen(true)}
+                    onCreate={() => openNow('MEETING')}
+                  />
+                )}
+              </Box>
             )}
           </Box>
         )}
@@ -833,19 +866,67 @@ export function CalendarSchedule() {
         onClose={() => setSharingCalendar(null)}
       />
 
-      {canCreate && (
-        <CalendarEventDialog
-          open={Boolean(createState)}
-          initialStart={createState?.start}
-          initialEnd={createState?.end}
-          initialType={createState?.type}
-          initialTitle={createState?.title}
-          initialAttendeeEmails={createState?.attendeeEmails}
-          initialCalendarId={initialWritableCalendarId}
-          fromDwaion={createState?.fromDwaion}
-          onClose={() => setCreateState(null)}
-        />
-      )}
+      {(canCreate || Boolean(workRecovery)) &&
+        (!createState?.workHandoff || activeCreateWorkHandoff) && (
+          <CalendarEventDialog
+            open={Boolean(createState)}
+            initialStart={createState?.start}
+            initialEnd={createState?.end}
+            initialType={createState?.type}
+            initialTitle={createState?.title}
+            initialDescription={createState?.description}
+            initialAttendeeEmails={createState?.attendeeEmails}
+            initialCalendarId={
+              createState?.calendarId ??
+              (activeCreateWorkHandoff
+                ? initialPersonalWritableCalendarId
+                : initialWritableCalendarId)
+            }
+            initialTimeZone={createState?.timeZone}
+            initialVisibility={createState?.visibility}
+            initialImportance={createState?.importance}
+            fromDwaion={createState?.fromDwaion}
+            workHandoff={activeCreateWorkHandoff}
+            workRecovery={workRecovery}
+            onBeforeCreate={
+              activeCreateWorkHandoff
+                ? () => {
+                    if (!isWorkHandoffAuthorized(activeCreateWorkHandoff)) {
+                      throw new Error(t('event.workLinkSaveError'));
+                    }
+                  }
+                : undefined
+            }
+            onCreateReceipt={
+              activeCreateWorkHandoff
+                ? async (event, idempotencyKey) => {
+                    if (
+                      !hasPermission('APP.WORK', 'UPDATE') ||
+                      !isWorkHandoffAuthorized(activeCreateWorkHandoff)
+                    )
+                      throw new Error(t('event.workLinkSaveError'));
+                    await persistWorkCalendarHandoffLink(
+                      activeCreateWorkHandoff,
+                      event,
+                      idempotencyKey
+                    );
+                    await queryClient.invalidateQueries({
+                      queryKey: ['workspace', 'work-hub', 'schedule-links'],
+                    });
+                  }
+                : undefined
+            }
+            onClose={closeCreateState}
+            onReturnToWork={
+              activeCreateWorkHandoff && returnTarget
+                ? () => {
+                    closeCreateState();
+                    navigate(returnTarget);
+                  }
+                : undefined
+            }
+          />
+        )}
       {canUpdate && (
         <CalendarEventDialog
           open={Boolean(editing)}

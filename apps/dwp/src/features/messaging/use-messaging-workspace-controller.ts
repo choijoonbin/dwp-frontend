@@ -7,12 +7,14 @@ import {
   deleteMessagingMessage,
   getMessagingConversation,
   getMessagingConversations,
+  getMessagingMessage,
   getMessagingMessages,
   getMessagingThread,
   markMessagingConversationRead,
   removeMessagingReaction,
   saveMessagingMessage,
   updateMessagingMessage,
+  HttpError,
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -53,6 +55,11 @@ type MessagingDraftSnapshot = {
   body: string;
   mentions: MessagingMentionDraft[];
 };
+
+export type MessagingMessageTargetState =
+  'IDLE' | 'LOADING' | 'FOUND' | 'NOT_FOUND' | 'UNAVAILABLE';
+
+const CANONICAL_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u;
 
 export function useMessagingWorkspaceController(scope: MessagingScope) {
   const { t } = useTranslation('messaging');
@@ -108,6 +115,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   }, []);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('conversation');
+  const requestedMessageValue = params.get('message');
+  const requestedMessageId =
+    requestedMessageValue && CANONICAL_UUID.test(requestedMessageValue)
+      ? requestedMessageValue
+      : null;
   const mainAttachmentQueue = useMessagingAttachmentQueue(selectedId, selectedId);
   const threadAttachmentQueue = useMessagingAttachmentQueue(
     selectedId,
@@ -179,6 +191,14 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     enabled: Boolean(selectedId),
     staleTime: 8_000,
     retry: 1,
+  });
+  const exactMessageQuery = useQuery({
+    queryKey: ['messaging', 'message', selectedId, requestedMessageId],
+    queryFn: () => getMessagingMessage(selectedId!, requestedMessageId!),
+    enabled: Boolean(selectedId && requestedMessageId),
+    staleTime: 8_000,
+    retry: (failureCount, error) =>
+      !(error instanceof HttpError && [403, 404, 410].includes(error.status)) && failureCount < 1,
   });
   const threadQuery = useQuery({
     queryKey: ['messaging', 'thread', selectedId, threadRootId],
@@ -304,17 +324,38 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     [messageHistoryQuery.data?.pages]
   );
   const timelineMessages = useMemo(
-    () => mergeMessagingMessages(historyMessages, detail?.messages ?? []),
-    [detail?.messages, historyMessages]
+    () =>
+      mergeMessagingMessages(historyMessages, [
+        ...(detail?.messages ?? []),
+        ...(exactMessageQuery.data ? [exactMessageQuery.data] : []),
+      ]),
+    [detail?.messages, exactMessageQuery.data, historyMessages]
   );
+  const targetedMessage = requestedMessageId
+    ? timelineMessages.find((message) => message.messageId === requestedMessageId)
+    : undefined;
+  const messageTargetState: MessagingMessageTargetState = !requestedMessageValue
+    ? 'IDLE'
+    : !requestedMessageId
+      ? 'NOT_FOUND'
+      : targetedMessage
+        ? 'FOUND'
+        : exactMessageQuery.isPending || exactMessageQuery.isFetching
+          ? 'LOADING'
+          : exactMessageQuery.error instanceof HttpError &&
+              [403, 404, 410].includes(exactMessageQuery.error.status)
+            ? 'NOT_FOUND'
+            : exactMessageQuery.isError
+              ? 'UNAVAILABLE'
+              : 'NOT_FOUND';
   const rootMessages = useMemo(() => messagingRootMessages(timelineMessages), [timelineMessages]);
   const fallbackReplyCounts = useMemo(
-    () => messagingReplyCounts(detail?.messages ?? []),
-    [detail?.messages]
+    () => messagingReplyCounts(timelineMessages),
+    [timelineMessages]
   );
   const fallbackThread = useMemo(
-    () => messagingThread(detail?.messages ?? [], threadRootId),
-    [detail?.messages, threadRootId]
+    () => messagingThread(timelineMessages, threadRootId),
+    [threadRootId, timelineMessages]
   );
   const thread = threadQuery.data
     ? { root: threadQuery.data.root, replies: threadQuery.data.replies }
@@ -387,6 +428,12 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   }, [selectedId, setDraft, setDraftMentions, setThreadDraft, setThreadDraftMentions]);
 
   useEffect(() => {
+    const rootId = targetedMessage?.replyToMessageId;
+    if (!requestedMessageId || !rootId) return;
+    setThreadRootId((current) => (current === rootId ? current : rootId));
+  }, [requestedMessageId, targetedMessage?.replyToMessageId]);
+
+  useEffect(() => {
     const anchor = historyScrollAnchorRef.current;
     if (!anchor) return;
     historyScrollAnchorRef.current = null;
@@ -408,12 +455,13 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     if (!desktopSplitView || selectedId || !conversations.length) return;
     const next = new URLSearchParams(params);
     next.set('conversation', conversations[0]!.conversationId);
+    next.delete('message');
     setParams(next, { replace: true });
   }, [conversations, desktopSplitView, params, selectedId, setParams]);
 
   const latestMessage = detail?.messages.at(-1);
   useEffect(() => {
-    if (!selectedId || !latestMessage) return;
+    if (!selectedId || !latestMessage || requestedMessageId) return;
     const conversationChanged = timelineConversationRef.current !== selectedId;
     const messageChanged = latestMessageRef.current !== latestMessage.messageId;
     if (!messageChanged && !conversationChanged) return;
@@ -432,7 +480,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
       return;
     }
     setNewMessageCount((current) => current + 1);
-  }, [auth.user?.userId, latestMessage, selectedId]);
+  }, [auth.user?.userId, latestMessage, requestedMessageId, selectedId]);
 
   const lastMessageId = detail?.messages.at(-1)?.messageId;
   const markRead = markReadMutation.mutate;
@@ -491,6 +539,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     (conversationId: string) => {
       const next = new URLSearchParams(params);
       next.set('conversation', conversationId);
+      next.delete('message');
       setParams(next, { replace: true });
     },
     [params, setParams]
@@ -500,7 +549,16 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const clearSelection = () => {
     const next = new URLSearchParams(params);
     next.delete('conversation');
+    next.delete('message');
     setParams(next, { replace: true });
+  };
+  const clearMessageTarget = () => {
+    const next = new URLSearchParams(params);
+    next.delete('message');
+    setParams(next, { replace: true });
+  };
+  const retryMessageTarget = () => {
+    void Promise.all([detailQuery.refetch(), exactMessageQuery.refetch()]);
   };
   const clearMentionFilter = () => {
     const next = new URLSearchParams(params);
@@ -558,6 +616,9 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     mentionFilterActive: activeScope === 'MENTIONS',
     desktopSplitView,
     selectedId,
+    requestedMessageId,
+    messageTargetState,
+    targetedMessage,
     selectedConversation,
     search,
     setSearch,
@@ -611,6 +672,8 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     deleteMutation,
     selectConversation,
     clearSelection,
+    clearMessageTarget,
+    retryMessageTarget,
     clearMentionFilter,
     openConversation,
     send,

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   CalendarClock,
   CalendarDays,
@@ -22,11 +23,17 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha, lighten } from '@mui/material/styles';
 
-import type { CalendarEvent, CalendarEventType } from '@dwp-frontend/shared-utils';
+import {
+  usePermissions,
+  type CalendarEvent,
+  type CalendarEventType,
+} from '@dwp-frontend/shared-utils';
+import { parseWorkCalendarEventHandoffDescription } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 import type { LucideIcon } from 'lucide-react';
 
 import { CalendarSignal, type CalendarExperienceTone } from './calendar-experience';
@@ -261,7 +268,11 @@ export function CalendarEventDrawer({
   onRespond?: (response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') => void;
 }) {
   const { t, i18n } = useTranslation('calendar');
+  const { hasPermission } = usePermissions();
   if (!event) return null;
+  const workReference = hasPermission('APP.WORK', 'VIEW')
+    ? parseWorkCalendarEventHandoffDescription(event.description)
+    : null;
   const tone = CALENDAR_EVENT_TONES[event.type];
   const Icon = tone.icon;
   const language = i18n.resolvedLanguage ?? i18n.language;
@@ -285,7 +296,7 @@ export function CalendarEventDrawer({
           role: 'dialog',
           'aria-modal': true,
           'aria-labelledby': 'calendar-event-drawer-title',
-          sx: { width: { xs: 1, sm: 440 }, maxWidth: '100%' },
+          sx: { width: { xs: 1, sm: '20rem' }, maxWidth: '100%' },
         },
       }}
     >
@@ -398,9 +409,31 @@ export function CalendarEventDrawer({
                 <Typography variant="overline" color="text.secondary">
                   {t(event.type === 'MEETING' ? 'event.agendaLabel' : 'event.descriptionLabel')}
                 </Typography>
-                <Typography sx={{ mt: 0.5, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
-                  {event.description}
-                </Typography>
+                {workReference ? (
+                  <Stack spacing={0.75} sx={{ mt: 0.5 }}>
+                    <Typography sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                      {event.description.split('\n').slice(0, 2).join('\n')}
+                    </Typography>
+                    <Link
+                      component={RouterLink}
+                      to={workReference.sourceUrl}
+                      sx={{ overflowWrap: 'anywhere', width: 'fit-content' }}
+                    >
+                      {t('event.openWorkSource')}
+                    </Link>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ overflowWrap: 'anywhere' }}
+                    >
+                      {workReference.sourceUrl}
+                    </Typography>
+                  </Stack>
+                ) : (
+                  <Typography sx={{ mt: 0.5, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                    {event.description}
+                  </Typography>
+                )}
               </Box>
             )}
             <Divider />

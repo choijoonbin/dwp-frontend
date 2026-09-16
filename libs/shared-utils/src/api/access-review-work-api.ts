@@ -6,6 +6,9 @@ export type AccessReviewWorkDecision = 'PENDING' | 'APPROVE' | 'REVOKE';
 export type AccessReviewWorkRemediationState =
   'NOT_REQUIRED' | 'PENDING' | 'APPLIED' | 'MANUAL_REQUIRED';
 
+export const ACCESS_REVIEW_REASON_MIN_LENGTH = 10;
+export const ACCESS_REVIEW_REASON_MAX_LENGTH = 500;
+
 export type AccessReviewWorkDetail = {
   workItemRef: string;
   campaignName: string;
@@ -13,6 +16,8 @@ export type AccessReviewWorkDetail = {
   subjectUserId: number;
   subjectDisplayName: string;
   subjectEmail?: string | null;
+  subjectOrganizationName?: string | null;
+  subjectWorkerNumber?: string | null;
   roleId: number;
   roleCode: string;
   roleName: string;
@@ -57,6 +62,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function isValidDecisionRequest(request: DecideAccessReviewWorkRequest): boolean {
+  if (typeof request.reason !== 'string') return false;
+  const reason = request.reason.trim();
+  return (
+    (request.decision === 'APPROVE' || request.decision === 'REVOKE') &&
+    reason.length >= ACCESS_REVIEW_REASON_MIN_LENGTH &&
+    request.reason.length <= ACCESS_REVIEW_REASON_MAX_LENGTH &&
+    Number.isSafeInteger(request.version) &&
+    request.version >= 0 &&
+    request.version < Number.MAX_SAFE_INTEGER
+  );
+}
+
 export function isAccessReviewDecisionSource(
   value: unknown
 ): value is AccessReviewDecisionReceiptSource {
@@ -91,16 +109,12 @@ export function isExactAccessReviewDecisionReceipt(
   if (
     !isRecord(receipt) ||
     !isAccessReviewDecisionSource(reviewed) ||
-    (submitted.decision !== 'APPROVE' && submitted.decision !== 'REVOKE') ||
-    typeof submitted.reason !== 'string' ||
-    submitted.version !== reviewed.version ||
-    !Number.isSafeInteger(submitted.version) ||
-    submitted.version === Number.MAX_SAFE_INTEGER
+    !isValidDecisionRequest(submitted) ||
+    submitted.version !== reviewed.version
   ) {
     return false;
   }
   const expectedReason = submitted.reason.trim();
-  if (expectedReason.length < 10 || expectedReason.length > 1000) return false;
   const expectedRemediationState: AccessReviewWorkRemediationState =
     submitted.decision === 'APPROVE'
       ? 'NOT_REQUIRED'
@@ -143,6 +157,9 @@ export async function decideAccessReviewWork(
   request: DecideAccessReviewWorkRequest,
   signal?: AbortSignal
 ): Promise<AccessReviewWorkDetail> {
+  if (!isValidDecisionRequest(request)) {
+    throw new TypeError('Access review decision request is invalid');
+  }
   const response = await axiosInstance.put<
     ApiResponse<AccessReviewWorkDetail>,
     DecideAccessReviewWorkRequest

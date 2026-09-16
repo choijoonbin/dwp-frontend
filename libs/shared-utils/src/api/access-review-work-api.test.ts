@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import { setTenantId } from '../tenant-util';
 import {
+  ACCESS_REVIEW_REASON_MAX_LENGTH,
   ACCESS_REVIEW_WORK_ENDPOINT,
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
@@ -33,6 +34,8 @@ describe('access review Work API', () => {
       dueAt: '2026-09-09T00:00:00.000Z',
       subjectUserId: 7,
       subjectDisplayName: 'Reviewer',
+      subjectOrganizationName: 'Finance',
+      subjectWorkerNumber: 'EMP-88219',
       roleId: 9,
       roleCode: 'FINANCE_ADMIN',
       roleName: 'Finance admin',
@@ -77,6 +80,12 @@ describe('access review Work API', () => {
     ]) {
       expect(isExactAccessReviewDecisionReceipt(mismatch, reviewed, submitted)).toBe(false);
     }
+    expect(
+      isExactAccessReviewDecisionReceipt(receipt, reviewed, {
+        ...submitted,
+        reason: 'x'.repeat(ACCESS_REVIEW_REASON_MAX_LENGTH + 1),
+      })
+    ).toBe(false);
   });
 
   it('requires the decision-specific remediation state', () => {
@@ -217,6 +226,21 @@ describe('access review Work API', () => {
     expect(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body)).not.toContain('campaignId');
     expect(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body)).not.toContain('itemId');
     expect((fetchMock.mock.calls[1]?.[1] as RequestInit).signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('rejects a rationale beyond the 500 character owner contract before transport', async () => {
+    setTenantId('11');
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      decideAccessReviewWork('opaque-1', {
+        decision: 'APPROVE',
+        reason: 'x'.repeat(ACCESS_REVIEW_REASON_MAX_LENGTH + 1),
+        version: 7,
+      })
+    ).rejects.toThrow(TypeError);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('propagates caller cancellation through detail and decision network requests', async () => {

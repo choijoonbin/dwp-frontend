@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react';
+import { CalendarClock, Plus, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 import {
   ActionButton,
   ContentDialog,
@@ -12,13 +12,16 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { workHubStatusLabelKey } from './work-hub-presentation';
+import { workHubDisplayId, workHubStatusLabelKey } from './work-hub-presentation';
 import {
   filterWorkTodayPlanCandidates,
   type WorkTodayPlanCandidateFilters,
@@ -29,6 +32,8 @@ import type { WorkHubItem } from './work-hub-contracts';
 export function WorkTodayPlanCandidatePicker({
   candidates,
   context,
+  planCount,
+  availablePlanCount,
   remaining,
   disabled,
   headingId,
@@ -39,6 +44,8 @@ export function WorkTodayPlanCandidatePicker({
 }: {
   candidates: readonly WorkHubItem[];
   context: WorkTodayPlanDateContext;
+  planCount: number;
+  availablePlanCount: number;
   remaining: number;
   disabled: boolean;
   headingId: string;
@@ -50,6 +57,7 @@ export function WorkTodayPlanCandidatePicker({
   const { t } = useTranslation('work');
   const mobile = useMediaQuery('(max-width:899.95px)');
   const [open, setOpen] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [filters, setFilters] = useState<WorkTodayPlanCandidateFilters>({
     query: '',
@@ -58,6 +66,8 @@ export function WorkTodayPlanCandidatePicker({
   });
   const lastAdded = useRef<string | null>(null);
   const searchInput = useRef<HTMLInputElement>(null);
+  const planAvailabilityPercent =
+    planCount === 0 ? 0 : Math.round((availablePlanCount / planCount) * 100);
   const filtered = useMemo(
     () =>
       filterWorkTodayPlanCandidates(candidates, filters, context, (item) =>
@@ -69,55 +79,112 @@ export function WorkTodayPlanCandidatePicker({
   );
   // Selection is revalidated against the latest candidate receipt before draft insertion.
   const additions = candidates.filter((item) => selected.has(item.key));
+  const quickScope =
+    filters.status === 'actionable' && filters.due === 'all'
+      ? 'actionable'
+      : filters.due === 'has' && filters.status === 'all'
+        ? 'due'
+        : 'all';
+  const setQuickScope = (scope: 'all' | 'due' | 'actionable') => {
+    setFilters((current) => ({
+      ...current,
+      due: scope === 'due' ? 'has' : 'all',
+      status: scope === 'actionable' ? 'actionable' : 'all',
+    }));
+  };
   const close = () => {
     setOpen(false);
     setSelected(new Set());
   };
   const controls = (
-    <Stack gap={1.5} sx={{ mt: 1.5 }}>
+    <Stack gap={1.25} sx={{ mt: 1.25 }}>
       <Typography variant="caption" color="text.secondary">
         {t('workHub.todayPlan.candidateDateContext', context)}
       </Typography>
-      <FormField
-        inputRef={searchInput}
-        label={t('workHub.todayPlan.searchLabel')}
-        value={filters.query}
-        onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))}
-      />
-      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-        <SelectField
-          label={t('workHub.todayPlan.dueFilter')}
-          value={filters.due}
-          options={(['all', 'today', 'overdue', 'scheduled', 'none'] as const).map((value) => ({
-            value,
-            label: t(`workHub.todayPlan.dueFilters.${value}`),
-          }))}
-          onValueChange={(value) =>
-            setFilters((current) => ({
-              ...current,
-              due: value as WorkTodayPlanCandidateFilters['due'],
-            }))
-          }
+      <ToggleButtonGroup
+        exclusive
+        size="small"
+        value={quickScope}
+        onChange={(_event, value: 'all' | 'due' | 'actionable' | null) =>
+          value && setQuickScope(value)
+        }
+        aria-label={t('workHub.todayPlan.candidateFilter')}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3,minmax(0,1fr))',
+          p: 0.5,
+          bgcolor: 'var(--dwp-product-soft)',
+          borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+          '& .MuiToggleButton-root': {
+            border: 0,
+            borderRadius: (theme) => `${theme.shape.borderRadius}px !important`,
+            minHeight: 36,
+            px: 0.75,
+            whiteSpace: 'nowrap',
+          },
+        }}
+      >
+        {(['all', 'due', 'actionable'] as const).map((scope) => (
+          <ToggleButton key={scope} value={scope}>
+            {t(`workHub.todayPlan.candidateScopes.${scope}`)}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <Stack direction="row" gap={0.75} alignItems="center">
+        <FormField
+          inputRef={searchInput}
+          size="small"
+          label={t('workHub.todayPlan.searchLabel')}
+          value={filters.query}
+          onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))}
           sx={{ flex: 1, minWidth: 0 }}
         />
-        <SelectField
-          label={t('workHub.todayPlan.statusFilter')}
-          value={filters.status}
-          options={(['all', 'actionable', 'OPEN', 'IN_PROGRESS', 'WAITING'] as const).map(
-            (value) => ({
-              value,
-              label: t(`workHub.todayPlan.statusFilters.${value}`),
-            })
-          )}
-          onValueChange={(value) =>
-            setFilters((current) => ({
-              ...current,
-              status: value as WorkTodayPlanCandidateFilters['status'],
-            }))
-          }
-          sx={{ flex: 1, minWidth: 0 }}
-        />
+        <ActionButton
+          intent="quiet"
+          aria-expanded={advanced}
+          aria-label={t('workHub.filters.refine')}
+          onClick={() => setAdvanced((value) => !value)}
+          sx={{ minWidth: 44, minHeight: 44, p: 1 }}
+        >
+          <SlidersHorizontal size={18} aria-hidden="true" />
+        </ActionButton>
       </Stack>
+      {advanced && (
+        <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+          <SelectField
+            label={t('workHub.todayPlan.dueFilter')}
+            value={filters.due === 'has' ? 'all' : filters.due}
+            options={(['all', 'today', 'overdue', 'scheduled', 'none'] as const).map((value) => ({
+              value,
+              label: t(`workHub.todayPlan.dueFilters.${value}`),
+            }))}
+            onValueChange={(value) =>
+              setFilters((current) => ({
+                ...current,
+                due: value as WorkTodayPlanCandidateFilters['due'],
+              }))
+            }
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+          <SelectField
+            label={t('workHub.todayPlan.statusFilter')}
+            value={filters.status}
+            options={(['all', 'actionable', 'OPEN', 'IN_PROGRESS', 'WAITING'] as const).map(
+              (value) => ({
+                value,
+                label: t(`workHub.todayPlan.statusFilters.${value}`),
+              })
+            )}
+            onValueChange={(value) =>
+              setFilters((current) => ({
+                ...current,
+                status: value as WorkTodayPlanCandidateFilters['status'],
+              }))
+            }
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+        </Stack>
+      )}
       <Typography variant="caption" color="text.secondary" role="status">
         {t('workHub.todayPlan.candidateResultCount', { count: filtered.length })}
       </Typography>
@@ -131,8 +198,30 @@ export function WorkTodayPlanCandidatePicker({
               p: 1.5,
               bgcolor: 'var(--dwp-product-soft)',
               borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              border: 1,
+              borderColor: 'transparent',
+              '&:hover': { borderColor: 'divider' },
+              '@media (forced-colors: active)': { borderColor: 'CanvasText' },
             }}
           >
+            <Stack direction="row" gap={1} alignItems="center" justifyContent="space-between">
+              <Typography
+                variant="caption"
+                sx={{
+                  px: 0.75,
+                  py: 0.25,
+                  bgcolor: 'background.paper',
+                  borderRadius: 0.75,
+                  fontWeight: 'fontWeightBold',
+                }}
+              >
+                {workHubDisplayId(item) ??
+                  t(`workHub.sources.${item.reference.sourceSystem}`, {
+                    defaultValue: t('workHub.sources.OTHER'),
+                  })}
+              </Typography>
+              <Chip size="small" label={t(workHubStatusLabelKey(item))} />
+            </Stack>
             {mobile ? (
               <FormControlLabel
                 sx={{ m: 0, alignItems: 'flex-start', width: 1 }}
@@ -154,39 +243,53 @@ export function WorkTodayPlanCandidatePicker({
                   />
                 }
                 label={
-                  <Typography variant="body2" sx={{ py: 1, overflowWrap: 'anywhere' }}>
+                  <Typography
+                    variant="body2"
+                    fontWeight="fontWeightBold"
+                    sx={{ py: 1, overflowWrap: 'anywhere' }}
+                  >
                     {item.title}
                   </Typography>
                 }
               />
             ) : (
               <Typography
-                variant="body2"
+                variant="subtitle2"
                 fontWeight="fontWeightBold"
-                sx={{ overflowWrap: 'anywhere' }}
+                sx={{ mt: 1, overflowWrap: 'anywhere' }}
               >
                 {item.title}
               </Typography>
             )}
-            <Typography variant="caption" color="text.secondary">
-              {t(workHubStatusLabelKey(item))} ·{' '}
-              {item.dueAt
-                ? formatDate(item.dueAt, {
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
-                    timeZone: context.timeZone,
-                  })
-                : t('workHub.todayPlan.noDueDate')}{' '}
-              ·{' '}
-              {t(`workHub.sources.${item.reference.sourceSystem}`, {
-                defaultValue: t('workHub.sources.OTHER'),
-              })}
-            </Typography>
-            {!mobile && (
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+            <Stack
+              direction="row"
+              gap={1}
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ mt: 1 }}
+            >
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+              >
+                <CalendarClock size={14} aria-hidden="true" />
+                {item.dueAt
+                  ? formatDate(item.dueAt, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                      timeZone: context.timeZone,
+                    })
+                  : t('workHub.todayPlan.noDueDate')}{' '}
+                ·{' '}
+                {t(`workHub.sources.${item.reference.sourceSystem}`, {
+                  defaultValue: t('workHub.sources.OTHER'),
+                })}
+              </Typography>
+              {!mobile && (
                 <ActionButton
                   ref={registerCandidate(item.key)}
-                  intent="secondary"
+                  intent="primary"
                   startIcon={<Plus size={17} aria-hidden="true" />}
                   disabled={disabled || remaining <= 0}
                   sx={{ minHeight: 44 }}
@@ -194,8 +297,8 @@ export function WorkTodayPlanCandidatePicker({
                 >
                   {t('workHub.todayPlan.add')}
                 </ActionButton>
-              </Box>
-            )}
+              )}
+            </Stack>
           </Box>
         ))}
       </Stack>
@@ -213,32 +316,108 @@ export function WorkTodayPlanCandidatePicker({
 
   if (!mobile) {
     return (
-      <Paper
-        component="section"
-        variant="outlined"
-        aria-labelledby={headingId}
+      <Stack
+        component="aside"
+        data-testid="work-today-plan-candidates"
+        gap={1.5}
         sx={{
-          p: 2,
-          borderRadius: (theme) => `${theme.shape.borderRadius}px`,
           minWidth: 0,
           alignSelf: 'start',
+          position: 'sticky',
+          top: 16,
         }}
       >
-        <Typography
-          ref={registerEntry}
-          id={headingId}
-          component="h3"
-          variant="subtitle1"
-          tabIndex={-1}
+        <Paper
+          data-testid="work-today-plan-candidate-rail"
+          component="section"
+          variant="outlined"
+          aria-labelledby={headingId}
+          sx={{
+            p: 1.5,
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            minWidth: 0,
+            '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+          }}
         >
-          {t('workHub.todayPlan.candidateHeading')}
-        </Typography>
-        {controls}
-      </Paper>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+            <Typography
+              ref={registerEntry}
+              id={headingId}
+              component="h3"
+              variant="subtitle1"
+              tabIndex={-1}
+            >
+              {t('workHub.todayPlan.candidateHeading')}
+            </Typography>
+            <Chip
+              size="small"
+              label={t('workHub.todayPlan.candidateCount', { count: candidates.length })}
+            />
+          </Stack>
+          {controls}
+          <Stack direction="row" gap={0.75} alignItems="flex-start" sx={{ mt: 1.5 }}>
+            <ShieldCheck size={16} aria-hidden="true" />
+            <Typography variant="caption" color="text.secondary">
+              {t('workHub.todayPlan.candidatePrivacyNotice')}
+            </Typography>
+          </Stack>
+        </Paper>
+        <Paper
+          data-testid="work-today-plan-readiness"
+          component="section"
+          variant="outlined"
+          sx={{
+            p: 1.5,
+            bgcolor: 'var(--dwp-product-soft)',
+            borderColor: 'transparent',
+            '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+          }}
+        >
+          <Stack direction="row" alignItems="baseline" justifyContent="space-between" gap={1}>
+            <Typography variant="subtitle2">{t('workHub.todayPlan.readinessTitle')}</Typography>
+            <Typography variant="subtitle2" color="success.dark">
+              {t('workHub.todayPlan.readinessValue', { percent: planAvailabilityPercent })}
+            </Typography>
+          </Stack>
+          <Box
+            role="progressbar"
+            aria-label={t('workHub.todayPlan.readinessTitle')}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={planAvailabilityPercent}
+            sx={{
+              mt: 1,
+              height: 8,
+              overflow: 'hidden',
+              bgcolor: 'action.disabledBackground',
+              borderRadius: 999,
+            }}
+          >
+            <Box
+              sx={{
+                width: `${planAvailabilityPercent}%`,
+                height: 1,
+                bgcolor: 'success.dark',
+                transition: (theme) => theme.transitions.create('width'),
+                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (forced-colors: active)': { bgcolor: 'Highlight' },
+              }}
+            />
+          </Box>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            {planCount === 0
+              ? t('workHub.todayPlan.readinessEmpty')
+              : t('workHub.todayPlan.readinessDetail', {
+                  available: availablePlanCount,
+                  count: planCount,
+                })}
+          </Typography>
+        </Paper>
+      </Stack>
     );
   }
   return (
-    <Box>
+    <Box data-testid="work-today-plan-candidates">
       <ActionButton
         ref={registerEntry}
         intent="secondary"

@@ -169,7 +169,7 @@ export function buildDwpTheme({
             textTransform: 'none',
             transition: reduceMotion
               ? 'none'
-              : `background-color ${tokens.duration.fast}ms ease-out, border-color ${tokens.duration.fast}ms ease-out, transform ${tokens.duration.fast}ms ease-out`,
+              : `border-color ${tokens.duration.fast}ms ease-out, box-shadow ${tokens.duration.fast}ms ease-out, transform ${tokens.duration.fast}ms ease-out`,
             '&:not(.Mui-disabled):active': { transform: 'translateY(1px)' },
             '&.Mui-focusVisible, &:focus-visible': {
               outline: `3px solid ${highContrast ? primary : focusRing}`,

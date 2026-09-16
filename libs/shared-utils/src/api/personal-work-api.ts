@@ -8,6 +8,7 @@ import type {
   PersonalWorkTask,
   PersonalWorkTaskInput,
   PersonalWorkTimelineEvent,
+  PersonalWorkSource,
   WorkSourceReference,
 } from './personal-work-contracts';
 
@@ -57,6 +58,20 @@ export async function getPersonalWorkTask(
   return (
     await axiosInstance.get<ApiResponse<PersonalWorkTask>>(
       `${base}/personal-tasks/${encodeURIComponent(taskId)}`,
+      signal ? { signal } : undefined
+    )
+  ).data.data;
+}
+
+/** Reads current source metadata. The create command resolves this identity again. */
+export async function preflightPersonalWorkSource(
+  reference: WorkSourceReference,
+  signal?: AbortSignal
+): Promise<PersonalWorkSource> {
+  return (
+    await axiosInstance.post<ApiResponse<PersonalWorkSource>, WorkSourceReference>(
+      `${base}/personal-tasks/source-preflight`,
+      reference,
       signal ? { signal } : undefined
     )
   ).data.data;

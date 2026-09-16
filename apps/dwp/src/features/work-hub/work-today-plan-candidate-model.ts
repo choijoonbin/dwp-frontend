@@ -4,7 +4,7 @@ import type { WorkHubItem } from './work-hub-contracts';
 
 export type WorkTodayPlanCandidateFilters = {
   query: string;
-  due: 'all' | 'today' | 'overdue' | 'scheduled' | 'none';
+  due: 'all' | 'has' | 'today' | 'overdue' | 'scheduled' | 'none';
   status: 'all' | 'actionable' | 'OPEN' | 'IN_PROGRESS' | 'WAITING';
 };
 
@@ -28,6 +28,7 @@ export function filterWorkTodayPlanCandidates(
   return candidates.filter((item) => {
     const dueInstant = item.dueAt ? Date.parse(item.dueAt) : Number.NaN;
     const dueDate = item.dueAt ? resolveZonedDateKey(item.dueAt, context.timeZone) : null;
+    if (filters.due === 'has' && !dueDate) return false;
     if (filters.due === 'today' && !isWorkDueOnPlanDate(item, context)) return false;
     if (filters.due === 'overdue' && !(dueInstant < context.now)) return false;
     if (filters.due === 'scheduled' && !(dueDate && dueDate > context.date)) return false;

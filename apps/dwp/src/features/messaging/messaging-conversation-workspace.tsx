@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ContentDialog, GuidedEmptyState, PageCanvas } from '@dwp-frontend/design-system';
+import { isAppPermissionEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -18,6 +21,8 @@ import { MessagingSearchPalette } from './messaging-search-palette';
 import { MessagingThreadPanel } from './messaging-thread-panel';
 import { MessagingTimelinePane } from './messaging-timeline-pane';
 import { MessagingWorkspaceChrome } from './messaging-workspace-chrome';
+import { createWorkMessengerCaptureState } from '../../components/work-messenger-capture-state';
+import { useWorkHubOperationOwner } from '../../components/use-work-hub-operation-owner';
 import { messagingVisualTokens } from './messaging-visual-model';
 import { useMessagingWorkspaceController } from './use-messaging-workspace-controller';
 import {
@@ -28,7 +33,16 @@ import {
 import type { MessagingScope } from './messaging-workspace-types';
 
 export function MessagingConversationWorkspace({ scope }: { scope: MessagingScope }) {
+  const navigate = useNavigate();
+  const workOwner = useWorkHubOperationOwner();
+  const { permissions } = usePermissions();
+  const canTrackAsTask = Boolean(
+    workOwner &&
+    isAppPermissionEntitled('APP.WORK', 'VIEW', permissions) &&
+    isAppPermissionEntitled('APP.WORK', 'UPDATE', permissions)
+  );
   const wideContext = useMediaQuery('(min-width: 1280px)');
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [contextCollapsed, setContextCollapsed] = useState(false);
   const [contextDialogOpen, setContextDialogOpen] = useState(false);
   const workspace = useMessagingWorkspaceController(scope);
@@ -40,6 +54,8 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     mentionFilterActive,
     desktopSplitView,
     selectedId,
+    requestedMessageId,
+    messageTargetState,
     search,
     setSearch,
     searchRef,
@@ -92,6 +108,8 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     deleteMutation,
     selectConversation,
     clearSelection,
+    clearMessageTarget,
+    retryMessageTarget,
     clearMentionFilter,
     openConversation,
     send,
@@ -110,8 +128,50 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     conversationCreated,
     setThreadRootId,
   } = workspace;
+  const trackMessageAsTask = (message: { conversationId: string; messageId: string }) => {
+    if (!workOwner) return;
+    navigate(
+      { pathname: '/work/queue', search: '?compose=task' },
+      {
+        state: createWorkMessengerCaptureState(
+          workOwner,
+          message.conversationId,
+          message.messageId
+        ),
+      }
+    );
+  };
   useNotificationActiveContexts([
     selectedId ? notificationContextKeys.messagingConversation(selectedId) : null,
+  ]);
+
+  useEffect(() => {
+    if (messageTargetState !== 'FOUND' || !requestedMessageId) return;
+    let innerFrame = 0;
+    const outerFrame = requestAnimationFrame(() => {
+      innerFrame = requestAnimationFrame(() => {
+        const target = document.querySelector<HTMLElement>(
+          `[data-msg-receipt-id="${requestedMessageId}"]`
+        );
+        target?.scrollIntoView({
+          block: 'center',
+          inline: 'nearest',
+          behavior: reducedMotion ? 'auto' : 'smooth',
+        });
+        target?.focus({ preventScroll: true });
+      });
+    });
+    return () => {
+      cancelAnimationFrame(outerFrame);
+      cancelAnimationFrame(innerFrame);
+    };
+  }, [
+    messageTargetState,
+    reducedMotion,
+    requestedMessageId,
+    rootMessages.length,
+    thread?.replies.length,
+    threadQuery.isLoading,
   ]);
 
   const contextPanel = (
@@ -354,7 +414,14 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                     emptyDescription: t('conversation.noMessagesDescription'),
                     unread: t('conversation.unread'),
                     newMessages: t('conversation.newMessages', { count: newMessageCount }),
+                    targetLoading: t('conversation.deepLink.loading'),
+                    targetNotFound: t('conversation.deepLink.notFound'),
+                    targetUnavailable: t('conversation.deepLink.unavailable'),
+                    targetRetry: t('conversation.deepLink.retry'),
+                    targetDismiss: t('conversation.deepLink.dismiss'),
                   }}
+                  targetState={messageTargetState}
+                  highlightMessageId={messageTargetState === 'FOUND' ? requestedMessageId : null}
                   onScroll={handleTimelineScroll}
                   onLoadOlder={loadOlderMessages}
                   onJumpToLatest={jumpToLatest}
@@ -369,8 +436,11 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                   onReply={setThreadRootId}
                   onReact={toggleReaction}
                   onSave={saveMessage}
+                  onTrackAsTask={canTrackAsTask ? trackMessageAsTask : undefined}
                   onEdit={openEditMessage}
                   onDelete={setDeletingMessage}
+                  onRetryTarget={retryMessageTarget}
+                  onDismissTarget={clearMessageTarget}
                 />
               </>
             )}
@@ -417,8 +487,10 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                 onClose={() => setThreadRootId(null)}
                 onReact={toggleReaction}
                 onSave={saveMessage}
+                onTrackAsTask={canTrackAsTask ? trackMessageAsTask : undefined}
                 onEdit={openEditMessage}
                 onDelete={setDeletingMessage}
+                highlightMessageId={messageTargetState === 'FOUND' ? requestedMessageId : null}
                 loading={threadQuery.isLoading}
                 loadError={threadQuery.isError}
               />

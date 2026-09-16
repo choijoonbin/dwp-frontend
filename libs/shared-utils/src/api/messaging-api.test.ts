@@ -8,6 +8,7 @@ import {
   createMessagingConversation,
   deleteMessagingMessage,
   discardMessagingAttachment,
+  getMessagingMessage,
   getMessagingConversationMembers,
   getMessagingMessages,
   getMessagingThread,
@@ -207,6 +208,17 @@ describe('messaging API boundary', () => {
     ).resolves.toEqual(page);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/messaging/v1/conversations/conversation%201/messages?limit=50&beforeSequence=92'
+    );
+  });
+
+  it('loads one exact message so deep links can resolve roots and replies', async () => {
+    const message = { messageId: 'message/reply', conversationId: 'conversation 1', sequence: 42 };
+    const fetchMock = vi.fn().mockResolvedValueOnce(jsonResponse(message));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getMessagingMessage('conversation 1', 'message/reply')).resolves.toEqual(message);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/messaging/v1/conversations/conversation%201/messages/message%2Freply'
     );
   });
 

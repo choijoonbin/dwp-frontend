@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AccessReviewWorkItem } from './access-review-work-item';
+import { HttpError } from '@dwp-frontend/shared-utils';
 
 import type { AccessReviewWorkDetail } from '@dwp-frontend/shared-utils/api/access-review-work-api';
 import type { ReactNode } from 'react';
@@ -27,11 +28,15 @@ const state = vi.hoisted(() => ({
   toastSuccess: vi.fn(),
   toastError: vi.fn(),
   changeReason: null as null | ((event: { target: { value: string } }) => void),
+  reasonMaxLength: null as number | null,
   submitDialog: null as null | (() => void),
 }));
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, values?: Record<string, unknown>) =>
+      values ? `${key}:${JSON.stringify(values)}` : key,
+  }),
 }));
 vi.mock('@dwp-frontend/shared-i18n', () => ({ formatDate: (value: string) => value }));
 vi.mock('@mui/material/useMediaQuery', () => ({ default: () => false }));
@@ -116,11 +121,14 @@ vi.mock('@dwp-frontend/design-system', async () => {
     FormField: ({
       value,
       onChange,
+      inputProps,
     }: {
       value: string;
       onChange: (event: { target: { value: string } }) => void;
+      inputProps?: { maxLength?: number };
     }) => {
       state.changeReason = onChange;
+      state.reasonMaxLength = inputProps?.maxLength ?? null;
       return createElement('output', { 'data-reason': true }, value);
     },
     InlineFeedback: ({ children }: { children: ReactNode }) => createElement('div', null, children),
@@ -137,6 +145,8 @@ const detail: AccessReviewWorkDetail = {
   subjectUserId: 7,
   subjectDisplayName: 'Current owner subject',
   subjectEmail: 'subject@example.com',
+  subjectOrganizationName: 'Finance',
+  subjectWorkerNumber: 'EMP-88219',
   roleId: 8,
   roleCode: 'FINANCE_VIEWER',
   roleName: 'Finance viewer',
@@ -224,6 +234,7 @@ describe('mounted access review Work owner lifecycle', () => {
     };
     state.permissions = [{ resource: 'APP.WORK', action: 'VIEW' }];
     state.changeReason = null;
+    state.reasonMaxLength = null;
     state.submitDialog = null;
     commandsEnabled = true;
     preflight = vi.fn().mockResolvedValue(true);
@@ -287,6 +298,68 @@ describe('mounted access review Work owner lifecycle', () => {
 
     await waitFor(() => expect(host.textContent).toContain('workPage.accessReview.loadErrorTitle'));
     expect(host.textContent).not.toContain(detail.subjectDisplayName);
+  });
+
+  it('renders authoritative M1 evidence and enforces the 500 character draft limit', async () => {
+    state.getDetail.mockResolvedValue(detail);
+    await render();
+
+    await waitFor(() => expect(host.textContent).toContain(detail.subjectDisplayName));
+    expect(host.textContent).toContain(detail.dueAt);
+    expect(host.textContent).toContain('Finance · EMP-88219');
+    expect(host.textContent).toContain('workPage.accessReview.progress.queue');
+    expect(host.textContent).toContain('workPage.accessReview.progress.result');
+    expect(host.textContent).toContain('workPage.accessReview.revision:{"version":3}');
+    expect(state.reasonMaxLength).toBe(500);
+
+    await act(async () => button('workPage.accessReview.keep')?.click());
+    await act(async () => state.changeReason?.({ target: { value: 'x'.repeat(501) } }));
+    expect(button('workHub.accessEvidence.preview')?.disabled).toBe(true);
+  });
+
+  it('does not invent directory evidence when the owner contract omits it', async () => {
+    state.getDetail.mockResolvedValue({
+      ...detail,
+      subjectOrganizationName: null,
+      subjectWorkerNumber: null,
+    });
+    await render();
+
+    await waitFor(() => expect(host.textContent).toContain(detail.subjectDisplayName));
+    expect(host.textContent).not.toContain('EMP-88219');
+  });
+
+  it('fails closed when the owner returns a malformed authoritative due date', async () => {
+    state.getDetail.mockResolvedValue({ ...detail, dueAt: 'September 30' });
+    await render();
+
+    await waitFor(() => expect(host.textContent).toContain('workPage.accessReview.loadErrorTitle'));
+    expect(host.textContent).not.toContain(detail.subjectDisplayName);
+  });
+
+  it('preserves the decision draft and identifies both revisions after a 409', async () => {
+    const refreshed = { ...detail, version: 4 };
+    state.getDetail
+      .mockResolvedValueOnce(detail)
+      .mockResolvedValueOnce(detail)
+      .mockResolvedValue(refreshed);
+    state.decide.mockRejectedValue(new HttpError('stale', 409));
+
+    await render();
+    await waitFor(() => expect(button('workPage.accessReview.keep')).toBeDefined());
+    await act(async () => button('workPage.accessReview.keep')?.click());
+    const rationale = 'Access remains required for current duties.';
+    await act(async () => state.changeReason?.({ target: { value: rationale } }));
+    await act(async () => button('workHub.accessEvidence.preview')?.click());
+    await act(async () => state.submitDialog?.());
+
+    await waitFor(() =>
+      expect(host.textContent).toContain(
+        'workPage.accessReview.conflictDraftPreserved:{"submittedVersion":3,"currentVersion":4}'
+      )
+    );
+    expect(host.querySelector('[data-reason]')?.textContent).toBe(rationale);
+    expect(host.textContent).toContain('workPage.accessReview.revision:{"version":4}');
   });
 
   it.each<{ label: string; move: () => void }>([

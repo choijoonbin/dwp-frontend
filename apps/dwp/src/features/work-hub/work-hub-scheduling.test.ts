@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { CalendarEvent, CalendarSummary } from '@dwp-frontend/shared-utils/api/calendar-api';
 import type { WorkCalendarLink } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 import {
+  createWorkScheduleDraft,
+  createWorkScheduleHandoffState,
   exactCurrentWorkScheduleLink,
   executeWorkSchedule,
   isExactWorkScheduleCommandForItem,
@@ -9,8 +11,11 @@ import {
   loadWorkSchedules,
   prepareWorkSchedule,
   unlinkWorkSchedule,
+  workScheduleEventDescription,
+  workScheduleEventTitle,
   workScheduleLookupRange,
 } from './work-hub-scheduling';
+import { parseWorkCalendarEventHandoff } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 import { executeFreshWorkSchedule } from './work-hub-page-helpers';
 import type { WorkHubItem, WorkHubSnapshot } from './work-hub-contracts';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
@@ -31,15 +36,18 @@ const calendar = {
   capabilities: { canCreateEvents: true },
 } as CalendarSummary;
 const input = {
-  title: '검토 시간',
+  title: '집중: 검토 시간',
   startsAt: '2026-09-04T09:00:00+09:00',
-  endsAt: '2026-09-04T10:00:00+09:00',
+  endsAt: '2026-09-04T09:30:00+09:00',
   timeZone: 'Asia/Seoul',
 };
 const event = {
   eventId: 'b4cbdbdf-ff5a-4a95-8937-8360e6f2194e',
   calendarId: 'calendar-1',
   title: input.title,
+  description:
+    'DWP Work\nReference: PERSONAL_TASK:task-1:\n' +
+    'Source: /work/queue?work=PERSONAL_TASK%3Atask-1%3A',
   type: 'FOCUS',
   startsAt: input.startsAt,
   endsAt: input.endsAt,
@@ -88,6 +96,72 @@ function clients() {
 }
 
 describe('work time scheduling owner boundary', () => {
+  it('builds a 30-minute focus draft and a source-bound Calendar handoff', () => {
+    const titledItem = {
+      ...item,
+      title: '분기 보고서 마무리',
+      sourceRoute: '/approvals/requests/request-42',
+    } as WorkHubItem;
+    const now = new Date('2026-09-16T00:10:00.000Z');
+    const draft = createWorkScheduleDraft(
+      { title: `집중: ${titledItem.title}`, timeZone: 'Asia/Seoul' },
+      now
+    );
+    const state = createWorkScheduleHandoffState(
+      titledItem,
+      draft,
+      `/work/queue?work=${encodeURIComponent(titledItem.key)}`,
+      `sha256:${'a'.repeat(64)}`,
+      now
+    );
+
+    expect(draft).toEqual({
+      title: '집중: 분기 보고서 마무리',
+      startsAt: '2026-09-16T00:30:00.000Z',
+      endsAt: '2026-09-16T01:00:00.000Z',
+      timeZone: 'Asia/Seoul',
+    });
+    expect(parseWorkCalendarEventHandoff(state, now.getTime())).toMatchObject({
+      work: titledItem.reference,
+      ownerFingerprint: `sha256:${'a'.repeat(64)}`,
+      sourceUrl: `/work/queue?work=${encodeURIComponent(titledItem.key)}`,
+      returnTo: `/work/queue?work=${encodeURIComponent(titledItem.key)}`,
+      ...draft,
+    });
+    expect(workScheduleEventDescription(titledItem)).toBe(
+      'DWP Work\nReference: PERSONAL_TASK:task-1:\n' +
+        'Source: /work/queue?work=PERSONAL_TASK%3Atask-1%3A'
+    );
+  });
+
+  it('rounds in the reviewed time zone before creating a 30-minute instant range', () => {
+    const draft = createWorkScheduleDraft(
+      { title: 'Focus: regional review', timeZone: 'Asia/Kathmandu' },
+      new Date('2026-09-16T00:20:00.000Z')
+    );
+
+    // 00:20Z is 06:05 in Kathmandu, so the next local half-hour is 06:30 (00:45Z).
+    expect(draft).toEqual({
+      title: 'Focus: regional review',
+      timeZone: 'Asia/Kathmandu',
+      startsAt: '2026-09-16T00:45:00.000Z',
+      endsAt: '2026-09-16T01:15:00.000Z',
+    });
+  });
+
+  it('derives a deterministic 300-character Calendar title without splitting Unicode graphemes', () => {
+    const title = workScheduleEventTitle(`Focus: ${'가'.repeat(400)}👨‍👩‍👧‍👦`);
+    expect(title.length).toBeLessThanOrEqual(300);
+    expect(title.endsWith('…')).toBe(true);
+    expect(title.includes('\uFFFD')).toBe(false);
+    expect(
+      createWorkScheduleDraft(
+        { title: `Focus: ${'일'.repeat(500)}`, timeZone: 'Asia/Seoul' },
+        new Date('2026-09-16T00:20:00.000Z')
+      ).title.length
+    ).toBe(300);
+  });
+
   it('keeps event lookups inside the Calendar 370-day contract', () => {
     const range = workScheduleLookupRange('2026-09-04');
     expect(Date.parse(range.to) - Date.parse(range.from)).toBe(360 * 24 * 60 * 60_000);
@@ -108,8 +182,13 @@ describe('work time scheduling owner boundary', () => {
     const command = prepareWorkSchedule(item, calendar, input, linkId);
     expect(command.eventInput).toMatchObject({
       ...input,
+      description:
+        'DWP Work\nReference: PERSONAL_TASK:task-1:\n' +
+        'Source: /work/queue?work=PERSONAL_TASK%3Atask-1%3A',
       type: 'FOCUS',
       visibility: 'PRIVATE',
+      recurrence: 'NONE',
+      recurrenceInterval: 1,
       attendees: [],
       responseRequired: false,
       idempotencyKey: linkId,
@@ -316,6 +395,23 @@ describe('work time scheduling owner boundary', () => {
       sourceChanged: false,
     });
     expect(api.createCalendarEvent).toHaveBeenCalledTimes(1);
+    expect(api.createCalendarEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: '집중: 검토 시간',
+        description:
+          'DWP Work\nReference: PERSONAL_TASK:task-1:\n' +
+          'Source: /work/queue?work=PERSONAL_TASK%3Atask-1%3A',
+        startsAt: '2026-09-04T09:00:00+09:00',
+        endsAt: '2026-09-04T09:30:00+09:00',
+        type: 'FOCUS',
+        visibility: 'PRIVATE',
+        recurrence: 'NONE',
+        responseRequired: false,
+        attendees: [],
+        idempotencyKey: linkId,
+      }),
+      undefined
+    );
     expect(api.putWorkCalendarLink.mock.calls).toEqual([
       [linkId, { work: item.reference, eventId: event.eventId }, undefined],
       [linkId, { work: item.reference, eventId: event.eventId }, undefined],

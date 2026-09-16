@@ -59,7 +59,14 @@ type MessagingTimelinePaneProps = {
     emptyDescription: string;
     unread: string;
     newMessages: string;
+    targetLoading: string;
+    targetNotFound: string;
+    targetUnavailable: string;
+    targetRetry: string;
+    targetDismiss: string;
   };
+  targetState: 'IDLE' | 'LOADING' | 'FOUND' | 'NOT_FOUND' | 'UNAVAILABLE';
+  highlightMessageId?: string | null;
   onScroll: UIEventHandler<HTMLDivElement>;
   onLoadOlder: () => void;
   onJumpToLatest: () => void;
@@ -71,8 +78,11 @@ type MessagingTimelinePaneProps = {
   onReply: (messageId: string) => void;
   onReact: (messageId: string, emoji: string, remove: boolean) => void;
   onSave: (message: MessagingMessage) => void;
+  onTrackAsTask?: (message: MessagingMessage) => void;
   onEdit: (message: MessagingMessage) => void;
   onDelete: (message: MessagingMessage) => void;
+  onRetryTarget: () => void;
+  onDismissTarget: () => void;
 };
 
 export function MessagingTimelinePane({
@@ -95,6 +105,8 @@ export function MessagingTimelinePane({
   loadingOlder,
   olderLoadError,
   labels,
+  targetState,
+  highlightMessageId,
   onScroll,
   onLoadOlder,
   onJumpToLatest,
@@ -106,8 +118,11 @@ export function MessagingTimelinePane({
   onReply,
   onReact,
   onSave,
+  onTrackAsTask,
   onEdit,
   onDelete,
+  onRetryTarget,
+  onDismissTarget,
 }: MessagingTimelinePaneProps) {
   const { i18n } = useTranslation('messaging');
   const { preference: displayPreference } = useMessagingDisplayPreference(conversation);
@@ -135,6 +150,33 @@ export function MessagingTimelinePane({
           ...messagingTimelineSurfaceSx(displayPreference.effectiveTheme, theme),
         })}
       >
+        {targetState === 'LOADING' ? (
+          <Alert
+            severity="info"
+            icon={<CircularProgress size={18} color="inherit" aria-hidden="true" />}
+            sx={{ mb: 1.25 }}
+          >
+            {labels.targetLoading}
+          </Alert>
+        ) : targetState === 'NOT_FOUND' || targetState === 'UNAVAILABLE' ? (
+          <Alert severity={targetState === 'UNAVAILABLE' ? 'error' : 'warning'} sx={{ mb: 1.25 }}>
+            <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+              <Typography variant="body2">
+                {targetState === 'UNAVAILABLE' ? labels.targetUnavailable : labels.targetNotFound}
+              </Typography>
+              <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+                {targetState === 'UNAVAILABLE' ? (
+                  <ActionButton intent="secondary" size="small" onClick={onRetryTarget}>
+                    {labels.targetRetry}
+                  </ActionButton>
+                ) : null}
+                <ActionButton intent="quiet" size="small" onClick={onDismissTarget}>
+                  {labels.targetDismiss}
+                </ActionButton>
+              </Stack>
+            </Stack>
+          </Alert>
+        ) : null}
         {hasOlder ? (
           <Box sx={{ display: 'grid', placeItems: 'center', pb: 1.25 }}>
             <ActionButton
@@ -207,9 +249,11 @@ export function MessagingTimelinePane({
                 receipt={receipts.get(message.messageId)}
                 groupedWithPrevious={item.groupedWithPrevious}
                 groupedWithNext={item.groupedWithNext}
+                highlighted={message.messageId === highlightMessageId}
                 replyCount={message.replyCount ?? replyCounts.get(message.messageId) ?? 0}
                 onReply={() => onReply(message.messageId)}
                 onSave={() => onSave(message)}
+                onTrackAsTask={onTrackAsTask ? () => onTrackAsTask(message) : undefined}
                 onEdit={() => onEdit(message)}
                 onDelete={() => onDelete(message)}
                 onReact={(emoji) =>

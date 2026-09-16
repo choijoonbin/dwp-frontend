@@ -95,6 +95,61 @@ describe('calendar event editor model', () => {
     expect(calendarEventInput(draft, attendees).attendees[1]?.personPublicId).toBeNull();
   });
 
+  it('carries a Work reference description through a focus-event payload', () => {
+    const workReference = {
+      work: { sourceSystem: 'PERSONAL_TASK', sourceReference: 'task-42' },
+      sourceUrl: '/work/queue?work=PERSONAL_TASK%3Atask-42%3A',
+    };
+    const description =
+      'DWP Work\nReference: PERSONAL_TASK:task-42:\n' +
+      'Source: /work/queue?work=PERSONAL_TASK%3Atask-42%3A';
+    const title = `집중: ${'분'.repeat(296)}`;
+    const draft = calendarEventDraft(null, {
+      initialTitle: title,
+      initialDescription: description,
+      initialType: 'FOCUS',
+      initialVisibility: 'PRIVATE',
+      initialStart: '2026-09-16T00:30:00.000Z',
+      initialEnd: '2026-09-16T01:00:00.000Z',
+      fallbackTimeZone: 'Asia/Seoul',
+    });
+
+    expect(title).toHaveLength(300);
+    expect(
+      calendarEventInput(
+        {
+          ...draft,
+          description: 'tampered',
+          type: 'MEETING',
+          visibility: 'PUBLIC',
+          recurrence: 'WEEKLY',
+          recurrenceInterval: 4,
+          recurrenceUntil: '2027-01-01',
+          allDay: true,
+          responseRequired: true,
+          resourceId: 'room-1',
+        },
+        calendarEditorAttendees(EVENT, [], []),
+        { workReference }
+      )
+    ).toMatchObject({
+      title,
+      description,
+      type: 'FOCUS',
+      startsAt: '2026-09-16T00:30:00.000Z',
+      endsAt: '2026-09-16T01:00:00.000Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      visibility: 'PRIVATE',
+      recurrence: 'NONE',
+      recurrenceInterval: 1,
+      recurrenceUntil: null,
+      responseRequired: false,
+      attendees: [],
+      resourceId: null,
+    });
+  });
+
   it.each(['FOCUS', 'TASK', 'OUT_OF_OFFICE'] as const)(
     'removes meeting-only participants and room metadata from %s payloads',
     (type) => {

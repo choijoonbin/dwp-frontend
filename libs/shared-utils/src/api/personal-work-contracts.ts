@@ -16,6 +16,13 @@ export type PersonalWorkSource =
       sourceRoute: string;
       status: string;
       dueAt?: string | null;
+      channelName?: string | null;
+      senderName?: string | null;
+      receivedAt?: string | null;
+      excerpt?: string | null;
+      sourceMessageId?: string | null;
+      sourceVersion?: number | null;
+      sourceEditedAt?: string | null;
     }
   | {
       availability: 'REFERENCE_ONLY';
@@ -24,6 +31,13 @@ export type PersonalWorkSource =
       sourceRoute: null;
       status: null;
       dueAt: null;
+      channelName?: null;
+      senderName?: null;
+      receivedAt?: null;
+      excerpt?: null;
+      sourceMessageId?: null;
+      sourceVersion?: null;
+      sourceEditedAt?: null;
     }
   | {
       availability: 'UNAVAILABLE';
@@ -32,6 +46,13 @@ export type PersonalWorkSource =
       sourceRoute: null;
       status: null;
       dueAt: null;
+      channelName?: null;
+      senderName?: null;
+      receivedAt?: null;
+      excerpt?: null;
+      sourceMessageId?: null;
+      sourceVersion?: null;
+      sourceEditedAt?: null;
     };
 
 export type PersonalWorkChecklistItem = {

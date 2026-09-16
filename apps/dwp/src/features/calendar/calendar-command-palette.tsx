@@ -35,19 +35,20 @@ type CalendarCommandId =
 type CalendarCommand = Readonly<{
   id: CalendarCommandId;
   icon: LucideIcon;
+  shortcut: string;
   requiresCreate?: boolean;
 }>;
 
 const CALENDAR_COMMANDS: readonly CalendarCommand[] = [
-  { id: 'create-event', icon: CalendarPlus, requiresCreate: true },
-  { id: 'create-focus', icon: Focus, requiresCreate: true },
-  { id: 'create-task', icon: ListTodo, requiresCreate: true },
-  { id: 'create-out-of-office', icon: BriefcaseBusiness, requiresCreate: true },
-  { id: 'open-schedule', icon: CalendarDays },
-  { id: 'open-focus', icon: Focus },
-  { id: 'find-time', icon: UsersRound },
-  { id: 'open-invitations', icon: Inbox },
-  { id: 'open-insights', icon: BarChart3 },
+  { id: 'create-event', icon: CalendarPlus, shortcut: 'N', requiresCreate: true },
+  { id: 'create-focus', icon: Focus, shortcut: 'F', requiresCreate: true },
+  { id: 'create-task', icon: ListTodo, shortcut: 'T', requiresCreate: true },
+  { id: 'create-out-of-office', icon: BriefcaseBusiness, shortcut: 'O', requiresCreate: true },
+  { id: 'open-schedule', icon: CalendarDays, shortcut: 'G C' },
+  { id: 'open-focus', icon: Focus, shortcut: 'G F' },
+  { id: 'find-time', icon: UsersRound, shortcut: 'G A' },
+  { id: 'open-invitations', icon: Inbox, shortcut: 'G I' },
+  { id: 'open-insights', icon: BarChart3, shortcut: 'G S' },
 ];
 
 const COMMAND_PATHS: Partial<Record<CalendarCommandId, string>> = {
@@ -169,6 +170,7 @@ export function CalendarCommandPalette({
       label={t('command.open')}
       placeholder={t('command.placeholder')}
       query={query}
+      appearance="inverted"
       onQueryChange={setQuery}
       onClose={onClose}
     >
@@ -177,7 +179,23 @@ export function CalendarCommandPalette({
         role="listbox"
         aria-label={t('command.results')}
         disablePadding
-        sx={{ maxHeight: 420, overflowY: 'auto', py: 0.75 }}
+        sx={{
+          maxHeight: 420,
+          overflowY: 'auto',
+          py: 0.75,
+          color: '#F8FAFC',
+          '& .MuiListItemButton-root:hover, & .MuiListItemButton-root.Mui-selected': {
+            bgcolor: '#1E293B',
+          },
+          '& .MuiListItemButton-root.Mui-selected:hover': { bgcolor: '#1E293B' },
+          '@media (forced-colors: active)': {
+            color: 'CanvasText',
+            '& .MuiListItemButton-root:hover, & .MuiListItemButton-root.Mui-selected': {
+              backgroundColor: 'Highlight',
+              color: 'HighlightText',
+            },
+          },
+        }}
       >
         {commands.map((command, index) => {
           const Icon = command.icon;
@@ -200,11 +218,37 @@ export function CalendarCommandPalette({
                 primary={t(`command.items.${command.id}`)}
                 primaryTypographyProps={{ variant: 'body2', fontWeight: 'fontWeightBold' }}
               />
+              <Typography
+                component="kbd"
+                aria-hidden="true"
+                sx={{
+                  ml: 1,
+                  px: 0.75,
+                  py: 0.35,
+                  border: '1px solid #334155',
+                  borderRadius: COMPACT_RADIUS,
+                  bgcolor: '#1E293B',
+                  color: '#94A3B8',
+                  fontFamily: 'inherit',
+                  fontSize: 10,
+                  fontWeight: 600,
+                  lineHeight: '12px',
+                  letterSpacing: '0.05em',
+                  whiteSpace: 'nowrap',
+                  '@media (forced-colors: active)': {
+                    borderColor: 'CanvasText',
+                    backgroundColor: 'Canvas',
+                    color: 'CanvasText',
+                  },
+                }}
+              >
+                {command.shortcut}
+              </Typography>
             </ListItemButton>
           );
         })}
         {commands.length === 0 && (
-          <Typography color="text.secondary" variant="body2" sx={{ px: 2, py: 3 }}>
+          <Typography sx={{ color: '#94A3B8', px: 2, py: 3 }} variant="body2">
             {t('command.noResults')}
           </Typography>
         )}

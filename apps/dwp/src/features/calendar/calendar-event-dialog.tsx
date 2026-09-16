@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ArrowLeft,
   Building2,
   ChevronDown,
   Clock3,
@@ -46,6 +47,7 @@ import Typography from '@mui/material/Typography';
 
 import type {
   CalendarEvent,
+  CalendarEventImportance,
   CalendarEventType,
   IdempotentMutationIntent,
   PersonSummary,
@@ -56,10 +58,24 @@ import {
   calendarEventDraft,
   calendarEventInput,
   calendarSystemTimeZone,
+  protectWorkCalendarEventDraft,
   type CalendarEditorAttendee,
   type CalendarEventDraft,
 } from './calendar-event-editor-model';
 import { CalendarSchedulingAssistant } from './calendar-scheduling-assistant';
+import {
+  calendarWorkHandoffRecoveryReceipt,
+  clearCalendarWorkHandoffRecovery,
+  isExactWorkHandoffEventReceipt,
+  persistCalendarWorkHandoffRecovery,
+  type CalendarPendingWorkEventReceipt,
+  type CalendarWorkHandoffRecovery,
+} from './calendar-work-handoff';
+import {
+  parseWorkCalendarEventHandoffDescription,
+  workCalendarEventHandoffDescription,
+  type WorkCalendarEventHandoff,
+} from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 
 type CalendarEventDialogProps = {
   open: boolean;
@@ -68,13 +84,21 @@ type CalendarEventDialogProps = {
   initialEnd?: string | null;
   initialType?: CalendarEventType;
   initialTitle?: string | null;
+  initialDescription?: string | null;
+  initialVisibility?: CalendarEvent['visibility'];
   initialResourceId?: string | null;
   initialCalendarId?: string | null;
   initialTimeZone?: string | null;
+  initialImportance?: CalendarEventImportance;
   initialAttendees?: PersonSummary[];
   initialAttendeeEmails?: string[];
   fromDwaion?: boolean;
+  workHandoff?: WorkCalendarEventHandoff | null;
+  workRecovery?: CalendarWorkHandoffRecovery | null;
+  onBeforeCreate?: () => void | Promise<void>;
   onClose: () => void;
+  onReturnToWork?: () => void;
+  onCreateReceipt?: (event: CalendarEvent, idempotencyKey: string) => Promise<void>;
   onSaved?: (event: CalendarEvent) => void;
 };
 
@@ -100,99 +124,178 @@ export function CalendarEventDialog({
   initialEnd,
   initialType = 'MEETING',
   initialTitle,
+  initialDescription,
+  initialVisibility,
   initialResourceId,
   initialCalendarId,
   initialTimeZone,
+  initialImportance,
   initialAttendees = EMPTY_ATTENDEES,
   initialAttendeeEmails = EMPTY_EMAILS,
   fromDwaion = false,
+  workHandoff,
+  workRecovery,
+  onBeforeCreate,
   onClose,
+  onReturnToWork,
+  onCreateReceipt,
   onSaved,
 }: CalendarEventDialogProps) {
   const { t, i18n } = useTranslation('calendar');
   const eventTypeLabelId = useId();
   const { hasPermission } = usePermissions();
-  const canMutate = hasPermission('APP.CALENDAR', event ? 'UPDATE' : 'CREATE');
+  const initialRecoveryReceipt = calendarWorkHandoffRecoveryReceipt(workHandoff, workRecovery);
+  const recoveryMode = Boolean(initialRecoveryReceipt);
+  const canMutate = recoveryMode
+    ? hasPermission('APP.WORK', 'UPDATE')
+    : hasPermission('APP.CALENDAR', event ? 'UPDATE' : 'CREATE') &&
+      (!workHandoff || hasPermission('APP.WORK', 'UPDATE'));
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState<CalendarEventDraft>(() =>
-    calendarEventDraft(event, {
+  const workReference = useMemo(
+    () => workHandoff ?? parseWorkCalendarEventHandoffDescription(event?.description),
+    [event?.description, workHandoff]
+  );
+  const workDescription = useMemo(
+    () => (workReference ? workCalendarEventHandoffDescription(workReference) : null),
+    [workReference]
+  );
+  const workProtected = Boolean(workDescription);
+  const [form, setForm] = useState<CalendarEventDraft>(() => {
+    const draft = calendarEventDraft(event, {
       initialStart,
       initialEnd,
-      initialType,
+      initialType: workHandoff ? 'FOCUS' : initialType,
       initialTitle,
+      initialDescription: workDescription ?? initialDescription,
+      initialVisibility: workHandoff ? 'PRIVATE' : initialVisibility,
       initialResourceId,
       initialCalendarId,
       fallbackTimeZone: initialTimeZone ?? undefined,
-    })
-  );
+      initialImportance,
+    });
+    return workDescription ? protectWorkCalendarEventDraft(draft, workDescription) : draft;
+  });
   const [attendees, setAttendees] = useState<CalendarEditorAttendee[]>([]);
   const [validationVisible, setValidationVisible] = useState(false);
-  const [additionalOptionsOpen, setAdditionalOptionsOpen] = useState(Boolean(event));
-  const createIntent = useRef<IdempotentMutationIntent | null>(null);
+  const [additionalOptionsOpen, setAdditionalOptionsOpen] = useState(
+    Boolean(event || initialDescription)
+  );
+  const createIntent = useRef<IdempotentMutationIntent | null>(
+    initialRecoveryReceipt?.intent ?? null
+  );
+  const pendingWorkReceipt = useRef<CalendarPendingWorkEventReceipt | null>(initialRecoveryReceipt);
+  const [workReceiptLocked, setWorkReceiptLocked] = useState(recoveryMode);
 
   useEffect(() => {
     if (open && !canMutate) onClose();
   }, [canMutate, onClose, open]);
 
   useEffect(() => {
-    if (!open || event) createIntent.current = null;
+    if (!open || event) {
+      createIntent.current = null;
+      pendingWorkReceipt.current = null;
+      setWorkReceiptLocked(false);
+    }
   }, [event, open]);
 
   useEffect(() => {
+    const receipt = calendarWorkHandoffRecoveryReceipt(workHandoff, workRecovery);
+    if (!open || !receipt) return;
+    pendingWorkReceipt.current = receipt;
+    createIntent.current = pendingWorkReceipt.current.intent;
+    setWorkReceiptLocked(true);
+  }, [open, workHandoff, workRecovery]);
+
+  useEffect(() => {
     if (!open) return;
-    setForm(
-      calendarEventDraft(event, {
-        initialStart,
-        initialEnd,
-        initialType,
-        initialTitle,
-        initialResourceId,
-        initialCalendarId,
-        fallbackTimeZone: initialTimeZone ?? undefined,
-      })
+    const draft = calendarEventDraft(event, {
+      initialStart,
+      initialEnd,
+      initialType: workHandoff ? 'FOCUS' : initialType,
+      initialTitle,
+      initialDescription: workDescription ?? initialDescription,
+      initialVisibility: workHandoff ? 'PRIVATE' : initialVisibility,
+      initialResourceId,
+      initialCalendarId,
+      fallbackTimeZone: initialTimeZone ?? undefined,
+      initialImportance,
+    });
+    setForm(workDescription ? protectWorkCalendarEventDraft(draft, workDescription) : draft);
+    setAttendees(
+      workProtected ? [] : calendarEditorAttendees(event, initialAttendees, initialAttendeeEmails)
     );
-    setAttendees(calendarEditorAttendees(event, initialAttendees, initialAttendeeEmails));
     setValidationVisible(false);
-    setAdditionalOptionsOpen(Boolean(event));
+    setAdditionalOptionsOpen(Boolean(event || initialDescription));
   }, [
     event,
     initialAttendeeEmails,
     initialAttendees,
     initialEnd,
+    initialDescription,
     initialResourceId,
     initialCalendarId,
     initialStart,
     initialTitle,
+    initialVisibility,
     initialTimeZone,
+    initialImportance,
     initialType,
     open,
+    workDescription,
+    workHandoff,
+    workProtected,
   ]);
 
   const peopleQuery = useQuery({
     queryKey: ['calendar', 'people-options'],
     queryFn: () => listPeople({ size: 100, surface: 'directory' }),
-    enabled: open && canMutate && form.type === 'MEETING',
+    enabled: open && canMutate && form.type === 'MEETING' && !workProtected,
     staleTime: 5 * 60_000,
     retry: 1,
   });
   const calendarsQuery = useQuery({
     queryKey: ['calendar', 'calendars'],
     queryFn: ({ signal }) => getCalendars(signal),
-    enabled: open && canMutate,
+    enabled: open && canMutate && !recoveryMode,
     staleTime: 60_000,
     retry: 1,
   });
   const writableCalendars = useMemo(
     () =>
       (calendarsQuery.data ?? []).filter(
-        (calendar) => calendar.capabilities?.canCreateEvents === true
+        (calendar) =>
+          calendar.capabilities?.canCreateEvents === true &&
+          (!workHandoff || calendar.type === 'PERSONAL')
       ),
-    [calendarsQuery.data]
+    [calendarsQuery.data, workHandoff]
   );
+  const calendarOptions = useMemo(() => {
+    const options = writableCalendars.map((calendar) => ({
+      value: calendar.calendarId,
+      label: `${calendar.name} · ${t(`sources.kinds.${calendar.sourceKind ?? 'OWNED'}`)}`,
+    }));
+    if (
+      recoveryMode &&
+      workRecovery &&
+      !options.some((option) => option.value === workRecovery.event.calendarId)
+    ) {
+      options.unshift({
+        value: workRecovery.event.calendarId,
+        label: workRecovery.event.calendarName || workRecovery.event.calendarId,
+      });
+    }
+    return options;
+  }, [recoveryMode, t, workRecovery, writableCalendars]);
 
   useEffect(() => {
-    if (!open || event || form.calendarId || !writableCalendars.length) return;
+    if (
+      !open ||
+      event ||
+      !writableCalendars.length ||
+      writableCalendars.some((calendar) => calendar.calendarId === form.calendarId)
+    )
+      return;
     setForm((current) => ({ ...current, calendarId: writableCalendars[0]!.calendarId }));
   }, [event, form.calendarId, open, writableCalendars]);
   const resourceRangeValid = Boolean(
@@ -201,7 +304,7 @@ export function CalendarEventDialog({
   const resourcesQuery = useQuery({
     queryKey: ['calendar', 'resources', form.startsAt, form.endsAt],
     queryFn: () => getCalendarResources(form.startsAt, form.endsAt),
-    enabled: open && canMutate && form.type === 'MEETING' && resourceRangeValid,
+    enabled: open && canMutate && form.type === 'MEETING' && !workProtected && resourceRangeValid,
     staleTime: 15_000,
     retry: 1,
   });
@@ -248,13 +351,28 @@ export function CalendarEventDialog({
     !form.recurrenceUntil
   );
   const valid = Boolean(
-    form.title.trim() && form.calendarId && !rangeError && !resourceRecurrenceError
+    form.title.trim() &&
+    form.title.trim().length <= (workProtected ? 300 : 240) &&
+    form.calendarId &&
+    (event || writableCalendars.some((calendar) => calendar.calendarId === form.calendarId)) &&
+    !rangeError &&
+    !resourceRecurrenceError
   );
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!canMutate) throw new Error('Calendar mutation permission is required.');
-      const input = calendarEventInput(form, attendees);
+      const pending = pendingWorkReceipt.current;
+      if (pending) {
+        if (pending.handoffId !== workHandoff?.handoffId || !onCreateReceipt)
+          throw new Error(t('event.workLinkSaveError'));
+        await onCreateReceipt(pending.event, pending.intent.key);
+        clearCalendarWorkHandoffRecovery(pending.handoffId);
+        pendingWorkReceipt.current = null;
+        setWorkReceiptLocked(false);
+        return pending.event;
+      }
+      const input = calendarEventInput(form, attendees, { workReference });
       if (event) {
         const { calendarId: _calendarId, ...updateInput } = input;
         return updateCalendarEvent(event.eventId, {
@@ -262,12 +380,38 @@ export function CalendarEventDialog({
           version: event.version,
         });
       }
-      const intent = resolveIdempotentMutationIntent(createIntent.current, input);
-      createIntent.current = intent;
-      return createCalendarEvent({
+      const selectedCalendar = writableCalendars.find(
+        (calendar) => calendar.calendarId === input.calendarId
+      );
+      if (!selectedCalendar) throw new Error('A currently writable Calendar receipt is required.');
+      if (
+        workHandoff &&
+        (selectedCalendar.type !== 'PERSONAL' || !onBeforeCreate || !onCreateReceipt)
+      )
+        throw new Error(t('event.workLinkSaveError'));
+      const previousIntent = createIntent.current;
+      const intent = resolveIdempotentMutationIntent(previousIntent, input, () =>
+        !previousIntent && workHandoff ? workHandoff.handoffId : crypto.randomUUID()
+      );
+      const request = {
         ...input,
         idempotencyKey: intent.key,
-      });
+      };
+      await onBeforeCreate?.();
+      createIntent.current = intent;
+      const saved = await createCalendarEvent(request);
+      if (workHandoff) {
+        if (!isExactWorkHandoffEventReceipt(saved, request))
+          throw new Error(t('event.workLinkSaveError'));
+        pendingWorkReceipt.current = { handoffId: workHandoff.handoffId, intent, event: saved };
+        persistCalendarWorkHandoffRecovery(workHandoff, saved, request);
+        setWorkReceiptLocked(true);
+      }
+      await onCreateReceipt?.(saved, intent.key);
+      if (workHandoff) clearCalendarWorkHandoffRecovery(workHandoff.handoffId);
+      pendingWorkReceipt.current = null;
+      setWorkReceiptLocked(false);
+      return saved;
     },
     onSuccess: async (saved) => {
       await Promise.all([
@@ -276,18 +420,31 @@ export function CalendarEventDialog({
       ]);
       toast.success(t(event ? 'event.updated' : 'event.created'));
       createIntent.current = null;
+      pendingWorkReceipt.current = null;
+      setWorkReceiptLocked(false);
       onSaved?.(saved);
       onClose();
     },
-    onError: (error) => toast.error(message(error, t('event.saveError'))),
+    onError: (error) => {
+      // Work handoff failures stay actionable inside the open composer. A duplicate bottom toast
+      // can cover the retry/create action on a full-screen mobile dialog.
+      if (!workHandoff) toast.error(message(error, t('event.saveError')));
+    },
   });
 
   const submit = () => {
-    if (!canMutate || !valid) {
+    if (!canMutate || (!pendingWorkReceipt.current && !valid)) {
       setValidationVisible(true);
       return;
     }
     mutation.mutate();
+  };
+  const requestClose = () => {
+    if (pendingWorkReceipt.current) {
+      toast.error(t('event.workLinkRecoveryRequired'));
+      return;
+    }
+    onClose();
   };
 
   return (
@@ -296,18 +453,36 @@ export function CalendarEventDialog({
       title={t(event ? 'event.editTitle' : 'event.createTitle')}
       description={t(event ? 'event.editDescription' : 'event.createDescription')}
       cancelLabel={t('actions.cancel')}
-      submitLabel={t(event ? 'actions.save' : 'actions.create')}
+      submitLabel={
+        workReceiptLocked ? t('event.retryWorkLink') : t(event ? 'actions.save' : 'actions.create')
+      }
       submittingLabel={t('actions.saving')}
-      onClose={onClose}
+      onClose={requestClose}
       onSubmit={submit}
       busy={mutation.isPending}
       submitDisabled={!canMutate}
+      secondaryActions={
+        onReturnToWork ? (
+          <ActionButton
+            intent="quiet"
+            startIcon={<ArrowLeft size={17} />}
+            disabled={mutation.isPending || workReceiptLocked}
+            onClick={onReturnToWork}
+          >
+            {t('actions.returnToWork')}
+          </ActionButton>
+        ) : undefined
+      }
       maxWidth="lg"
       mobileFullScreen
     >
       <DwpDateTimeProvider locale={i18n.resolvedLanguage ?? i18n.language} timeZone={form.timeZone}>
         <Stack spacing={2.25}>
           {fromDwaion && <Alert severity="info">{t('event.dwaionDraftNotice')}</Alert>}
+          {workHandoff && <Alert severity="info">{t('event.workHandoffNotice')}</Alert>}
+          {workReceiptLocked && (
+            <Alert severity="warning">{t('event.workLinkRecoveryRequired')}</Alert>
+          )}
           {mutation.isError && (
             <Alert severity="error">{message(mutation.error, t('event.saveError'))}</Alert>
           )}
@@ -349,21 +524,24 @@ export function CalendarEventDialog({
             <Stack spacing={2.25} sx={{ minWidth: 0 }}>
               <SelectField
                 required
-                disabled={Boolean(event) || calendarsQuery.isError}
+                disabled={Boolean(event) || calendarsQuery.isError || workReceiptLocked}
                 label={t('event.calendarLabel')}
                 value={form.calendarId}
                 placeholder={t('event.calendarPlaceholder')}
-                options={writableCalendars.map((calendar) => ({
-                  value: calendar.calendarId,
-                  label: `${calendar.name} · ${t(`sources.kinds.${calendar.sourceKind ?? 'OWNED'}`)}`,
-                }))}
+                options={calendarOptions}
                 onValueChange={(value) =>
                   setForm((current) => ({ ...current, calendarId: String(value) }))
                 }
                 errorMessage={
                   validationVisible && !form.calendarId ? t('event.calendarRequired') : undefined
                 }
-                supportingText={event ? t('event.calendarLockedHint') : undefined}
+                supportingText={
+                  event
+                    ? t('event.calendarLockedHint')
+                    : workHandoff
+                      ? t('event.workCalendarOnlyHint')
+                      : undefined
+                }
               />
               <Box>
                 <Typography
@@ -378,6 +556,7 @@ export function CalendarEventDialog({
                 <ToggleButtonGroup
                   exclusive
                   fullWidth
+                  disabled={workProtected}
                   value={form.type}
                   onChange={(_, value: CalendarEventType | null) => {
                     if (!value) return;
@@ -416,15 +595,20 @@ export function CalendarEventDialog({
               <FormField
                 autoFocus
                 required
+                disabled={workReceiptLocked}
                 label={t('event.titleLabel')}
                 value={form.title}
                 onChange={(event) =>
                   setForm((current) => ({ ...current, title: event.target.value }))
                 }
                 errorMessage={
-                  validationVisible && !form.title.trim() ? t('event.titleRequired') : undefined
+                  validationVisible && !form.title.trim()
+                    ? t('event.titleRequired')
+                    : validationVisible && form.title.trim().length > (workProtected ? 300 : 240)
+                      ? t('event.titleTooLong', { max: workProtected ? 300 : 240 })
+                      : undefined
                 }
-                inputProps={{ maxLength: 240 }}
+                inputProps={{ maxLength: workProtected ? 300 : 240 }}
               />
               <Box
                 sx={{
@@ -435,6 +619,7 @@ export function CalendarEventDialog({
               >
                 <DateTimePickerField
                   required
+                  disabled={workReceiptLocked}
                   label={t('event.startLabel')}
                   value={form.startsAt}
                   onValueChange={(value) =>
@@ -443,6 +628,7 @@ export function CalendarEventDialog({
                 />
                 <DateTimePickerField
                   required
+                  disabled={workReceiptLocked}
                   label={t('event.endLabel')}
                   value={form.endsAt}
                   onValueChange={(value) =>
@@ -500,6 +686,7 @@ export function CalendarEventDialog({
                     <FormField
                       multiline
                       minRows={3}
+                      disabled={workProtected}
                       label={t(
                         form.type === 'MEETING' ? 'event.agendaLabel' : 'event.descriptionLabel'
                       )}
@@ -507,7 +694,13 @@ export function CalendarEventDialog({
                       onChange={(event) =>
                         setForm((current) => ({ ...current, description: event.target.value }))
                       }
-                      supportingText={form.type === 'MEETING' ? t('event.agendaHint') : undefined}
+                      supportingText={
+                        workProtected
+                          ? t('event.workMetadataLockedHint')
+                          : form.type === 'MEETING'
+                            ? t('event.agendaHint')
+                            : undefined
+                      }
                       inputProps={{ maxLength: 4000 }}
                     />
                     {form.type === 'MEETING' &&
@@ -625,6 +818,7 @@ export function CalendarEventDialog({
                       }}
                     >
                       <SelectField
+                        disabled={workProtected}
                         label={t('event.recurrenceLabel')}
                         value={form.recurrence}
                         options={(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
@@ -636,6 +830,7 @@ export function CalendarEventDialog({
                         }
                       />
                       <SelectField
+                        disabled={workProtected}
                         label={t('event.visibilityLabel')}
                         value={form.visibility}
                         options={(['DEFAULT', 'PUBLIC', 'PRIVATE', 'CONFIDENTIAL'] as const).map(
@@ -649,6 +844,7 @@ export function CalendarEventDialog({
                         }
                       />
                       <SelectField
+                        disabled={workReceiptLocked}
                         label={t('event.importanceLabel')}
                         value={form.importance}
                         options={(['LOW', 'NORMAL', 'HIGH'] as const).map((value) => ({
@@ -661,6 +857,7 @@ export function CalendarEventDialog({
                       />
                     </Box>
                     <SelectField
+                      disabled={workReceiptLocked}
                       label={t('event.timeZoneLabel')}
                       value={form.timeZone}
                       options={Array.from(
@@ -676,6 +873,7 @@ export function CalendarEventDialog({
                       control={
                         <Checkbox
                           checked={form.allDay}
+                          disabled={workProtected}
                           onChange={(event) =>
                             setForm((current) => ({ ...current, allDay: event.target.checked }))
                           }

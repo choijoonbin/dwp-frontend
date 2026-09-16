@@ -70,6 +70,13 @@ export async function mockWorkHubFoundation(
     loseFirstMutationResponse?: boolean;
     personalTitle?: string;
     nativeWorkspace?: boolean;
+    workspaceGeneratedAt?: string;
+    additionalPermissions?: Array<{
+      resourceType: string;
+      resourceKey: string;
+      permissionCode: string;
+      effect: 'ALLOW' | 'DENY';
+    }>;
   } = {}
 ) {
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: options.mode ?? 'light' });
@@ -128,6 +135,7 @@ export async function mockWorkHubFoundation(
               effect: 'ALLOW' as const,
             },
           ]),
+      ...(options.additionalPermissions ?? []),
     ],
   });
 
@@ -265,6 +273,8 @@ export async function mockWorkHubFoundation(
     subjectUserId: 88,
     subjectDisplayName: designKo ? '김현수' : 'Hyunsu Kim',
     subjectEmail: 'reviewer@example.test',
+    subjectOrganizationName: designKo ? '재경팀' : 'Finance',
+    subjectWorkerNumber: 'EMP-88219',
     roleId: 1,
     roleCode: 'ROLE_FINANCE_READ',
     roleName: designKo ? '재무 보고 및 전표 조회 권한' : 'Finance report access',
@@ -388,7 +398,7 @@ export async function mockWorkHubFoundation(
           completed: nativeWorkspace.status === 'COMPLETED' ? 1 : 0,
         },
         items,
-        generatedAt: new Date().toISOString(),
+        generatedAt: options.workspaceGeneratedAt ?? new Date().toISOString(),
       });
     }
     if (

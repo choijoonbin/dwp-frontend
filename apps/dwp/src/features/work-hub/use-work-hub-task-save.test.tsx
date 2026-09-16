@@ -63,6 +63,7 @@ const callbacks = {
   onPlanError: vi.fn(),
   onFeedback: vi.fn(),
   onCreated: vi.fn(),
+  onScheduleCreated: vi.fn(),
 };
 const controller = {
   capture: vi.fn(),
@@ -308,6 +309,68 @@ describe('Work task save lifecycle', () => {
     expect(callbacks.onTaskClosed).toHaveBeenCalledOnce();
   });
 
+  it('opens scheduling only with the exact created task from a fresh command-ready snapshot', async () => {
+    const created = personal({
+      ...input,
+      source: null,
+      sources: [],
+      checklist: [],
+      version: 0,
+    });
+    const ready = snapshot([personalWorkToHub(created, true)]);
+    controller.capture.mockResolvedValue(created);
+    preflight.mockResolvedValueOnce(snapshot()).mockResolvedValueOnce(ready);
+    await render();
+
+    await expect(
+      save(input, {
+        idempotencyKey: 'create-and-schedule',
+        addToTodayPlan: false,
+        scheduleAfterCreate: true,
+      })
+    ).resolves.toBeUndefined();
+
+    expect(controller.capture).toHaveBeenCalledOnce();
+    expect(callbacks.onTaskClosed).toHaveBeenCalledOnce();
+    expect(callbacks.onScheduleCreated).toHaveBeenCalledWith({
+      item: personalWorkToHub(created, true),
+      snapshot: ready,
+    });
+    expect(callbacks.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' })
+    );
+  });
+
+  it('reports a scheduling partial success without repeating the confirmed task POST', async () => {
+    const created = personal({
+      ...input,
+      source: null,
+      sources: [],
+      checklist: [],
+      version: 0,
+    });
+    controller.capture.mockResolvedValue(created);
+    preflight.mockResolvedValueOnce(snapshot()).mockResolvedValueOnce(null);
+    await render();
+
+    await expect(
+      save(input, {
+        idempotencyKey: 'create-schedule-unavailable',
+        addToTodayPlan: false,
+        scheduleAfterCreate: true,
+      })
+    ).resolves.toBeUndefined();
+
+    expect(controller.capture).toHaveBeenCalledOnce();
+    expect(callbacks.onScheduleCreated).not.toHaveBeenCalled();
+    expect(callbacks.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        severity: 'warning',
+        detail: expect.stringContaining('work:workHub.taskForm.scheduleOpenFailedDetail'),
+      })
+    );
+  });
+
   it.each([
     ['creation', false],
     ['edit', true],
@@ -510,7 +573,7 @@ describe('Work task save lifecycle', () => {
 
       await expect(
         save(input, { idempotencyKey: `create-${failure}`, addToTodayPlan: true })
-      ).rejects.toMatchObject({ status: 503 });
+      ).resolves.toBeUndefined();
       expect(controller.capture).toHaveBeenCalledOnce();
       expect(controller.addToPlan).not.toHaveBeenCalled();
       expect(controller.savePlan).not.toHaveBeenCalled();
@@ -541,7 +604,7 @@ describe('Work task save lifecycle', () => {
       await render();
       const result = save(input, { idempotencyKey: 'create-plan-follow-up', addToTodayPlan: true });
       if (failure === 'authority lost after plan load') {
-        await expect(result).rejects.toMatchObject({ status: 503 });
+        await expect(result).resolves.toBeUndefined();
         expect(controller.savePlan).not.toHaveBeenCalled();
         expect(controller.addToPlan).not.toHaveBeenCalled();
       } else {

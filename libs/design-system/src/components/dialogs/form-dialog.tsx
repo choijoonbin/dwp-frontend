@@ -28,6 +28,8 @@ export type FormDialogProps = {
   submitIntent?: ActionIntent;
   secondaryActions?: React.ReactNode;
   maxWidth?: DialogProps['maxWidth'];
+  /** Optional exact desktop paper width while retaining full-screen mobile behavior. */
+  desktopMaxWidth?: number | string;
   mobileFullScreen?: boolean;
   showCancel?: boolean;
   showSubmit?: boolean;
@@ -48,6 +50,7 @@ export function FormDialog({
   submitIntent = 'primary',
   secondaryActions,
   maxWidth = 'sm',
+  desktopMaxWidth,
   mobileFullScreen = false,
   showCancel = true,
   showSubmit = true,
@@ -120,6 +123,11 @@ export function FormDialog({
       fullWidth
       fullScreen={fullScreen}
       maxWidth={maxWidth}
+      slotProps={
+        desktopMaxWidth && !fullScreen
+          ? { paper: { sx: { maxWidth: desktopMaxWidth } } }
+          : undefined
+      }
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
       onClose={busy ? undefined : onClose}

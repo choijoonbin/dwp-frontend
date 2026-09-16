@@ -6,13 +6,22 @@ import {
   type CreateCalendarEventInput,
 } from '@dwp-frontend/shared-utils/api/calendar-api';
 import {
+  createWorkCalendarEventHandoff,
   getWorkCalendarLinks,
   putWorkCalendarLink,
   removeWorkCalendarLink,
+  workCalendarEventHandoffDescription,
+  workCalendarInternalPath,
+  type WorkCalendarEventHandoffState,
   type WorkCalendarLink,
 } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 import type { WorkSourceReference } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
-import { workHubReferenceKey, type WorkHubItem, type WorkHubSnapshot } from './work-hub-contracts';
+import {
+  workHubItemRoute,
+  workHubReferenceKey,
+  type WorkHubItem,
+  type WorkHubSnapshot,
+} from './work-hub-contracts';
 import {
   canUseWorkHubGenericAdjunct,
   isWorkHubItemCommandReady,
@@ -20,6 +29,14 @@ import {
 } from './work-hub-command-authority';
 import { resolveZonedClock } from '@dwp-frontend/shared-i18n';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils/http-error';
+import { Temporal } from 'temporal-polyfill';
+
+export type WorkScheduleDraftInput = {
+  startsAt: string;
+  endsAt: string;
+  timeZone: string;
+  title: string;
+};
 
 export type WorkScheduleCommand = {
   linkId: string;
@@ -68,6 +85,81 @@ export type WorkScheduleExecutionGuard = {
   signal?: AbortSignal;
   canContinue?: () => boolean;
 };
+
+export function workScheduleEventTitle(value: string): string {
+  const title = value.trim();
+  if (title.length <= 300) return title;
+  const segments = new Intl.Segmenter('und', { granularity: 'grapheme' }).segment(title);
+  let result = '';
+  for (const { segment } of segments) {
+    if (result.length + segment.length + 1 > 300) break;
+    result += segment;
+  }
+  return `${result}…`;
+}
+
+/** Work focus starts at the next half-hour and defaults to one 30-minute block. */
+export function createWorkScheduleDraft(
+  input: Pick<WorkScheduleDraftInput, 'title' | 'timeZone'>,
+  now = new Date()
+): WorkScheduleDraftInput {
+  const title = workScheduleEventTitle(input.title);
+  if (!title || title.length > 300 || !Number.isFinite(now.getTime()))
+    throw new Error('A reviewed schedule title and valid time are required.');
+  try {
+    const localNow = Temporal.Instant.from(now.toISOString()).toZonedDateTimeISO(input.timeZone);
+    const localStart = (
+      localNow.minute < 30
+        ? localNow.with({ minute: 30 })
+        : localNow.add({ hours: 1 }).with({ minute: 0 })
+    ).with({ second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 });
+    const starts = localStart.toInstant();
+    return {
+      startsAt: new Date(starts.epochMilliseconds).toISOString(),
+      endsAt: new Date(starts.add({ minutes: 30 }).epochMilliseconds).toISOString(),
+      timeZone: input.timeZone,
+      title,
+    };
+  } catch {
+    throw new Error('A valid schedule time zone is required.');
+  }
+}
+
+export function workScheduleSourceUrl(item: Pick<WorkHubItem, 'reference'>): string {
+  const route = workHubItemRoute(item.reference);
+  const canonical = workCalendarInternalPath(route, true);
+  if (!canonical) throw new Error('A canonical Work item link is required.');
+  return canonical;
+}
+
+export function workScheduleEventDescription(item: Pick<WorkHubItem, 'reference'>): string {
+  return workCalendarEventHandoffDescription({
+    work: item.reference,
+    sourceUrl: workScheduleSourceUrl(item),
+  });
+}
+
+/** Produces short-lived, validated state for the Calendar event composer. */
+export function createWorkScheduleHandoffState(
+  item: Pick<WorkHubItem, 'reference'>,
+  draft: WorkScheduleDraftInput,
+  returnTo: string,
+  ownerFingerprint: string,
+  now = new Date()
+): WorkCalendarEventHandoffState {
+  return {
+    workCalendarEventHandoff: createWorkCalendarEventHandoff(
+      {
+        ownerFingerprint,
+        work: item.reference,
+        sourceUrl: workScheduleSourceUrl(item),
+        returnTo,
+        ...draft,
+      },
+      now
+    ),
+  };
+}
 
 /** Keeps Calendar lookups within the server's 370-day range contract. */
 export function workScheduleLookupRange(date: string) {
@@ -188,6 +280,7 @@ export function isExactCalendarEventReceipt(
     uuid.test(event.eventId) &&
     event.calendarId === input.calendarId &&
     event.title === input.title &&
+    (event.description ?? null) === (input.description ?? null) &&
     event.type === input.type &&
     event.startsAt === input.startsAt &&
     event.endsAt === input.endsAt &&
@@ -261,12 +354,7 @@ export function exactCurrentWorkScheduleLink(
 export function prepareWorkSchedule(
   item: WorkHubItem,
   calendar: CalendarSummary,
-  input: {
-    startsAt: string;
-    endsAt: string;
-    timeZone: string;
-    title: string;
-  },
+  input: WorkScheduleDraftInput,
   linkId = crypto.randomUUID()
 ): WorkScheduleCommand {
   if (!canUseWorkHubGenericAdjunct(item, 'CALENDAR'))
@@ -293,6 +381,7 @@ export function prepareWorkSchedule(
     reviewedItemLifecycle: item.lifecycle,
     eventInput: {
       title,
+      description: workScheduleEventDescription(item),
       type: 'FOCUS',
       startsAt: input.startsAt,
       endsAt: input.endsAt,

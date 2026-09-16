@@ -79,7 +79,10 @@ test('mobile FormDialog actions keep 44px targets through busy and forced-colors
   await expect(scheduleDialog).toBeVisible();
   for (const action of [
     scheduleDialog.getByRole('button', { name: 'Cancel', exact: true }),
-    scheduleDialog.getByRole('button', { name: 'Create focus time', exact: true }),
+    scheduleDialog.getByRole('button', {
+      name: 'Reserve focus time in personal Calendar (Direct)',
+      exact: true,
+    }),
   ]) {
     const bounds = await action.boundingBox();
     expect(bounds?.width ?? 0).toBeGreaterThanOrEqual(44);

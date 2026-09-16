@@ -36,17 +36,25 @@ export function WorkHubPageHeader({
 }) {
   const { t } = useTranslation('work');
   const createHelpId = useId();
+  const showCreate = canCreate && view !== 'day-plan';
   useWorkHubKeyboardShortcuts({ onCreate: canCreate && !refreshing ? onCreate : undefined });
   return (
-    <Stack
-      direction={{ xs: 'column', md: 'row' }}
-      justifyContent="space-between"
-      gap={1.5}
-      alignItems={{ md: 'center' }}
-      sx={{ pb: 1.5 }}
+    <Box
+      data-testid="work-hub-page-header"
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: 'minmax(0, 1fr) auto',
+          md: 'minmax(0, 1fr) auto auto auto',
+        },
+        alignItems: 'center',
+        columnGap: 1,
+        rowGap: { xs: 0.75, md: 1 },
+        pb: { xs: 1, md: 1.5 },
+      }}
     >
-      <Box sx={{ minWidth: 0 }}>
-        <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+      <Box sx={{ minWidth: 0, gridColumn: 1, gridRow: 1 }}>
+        <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
           <Typography
             component="h1"
             variant="h4"
@@ -54,6 +62,7 @@ export function WorkHubPageHeader({
               fontWeight: 'fontWeightBold',
               fontSize: { xs: 'h5.fontSize', md: 'h4.fontSize' },
               letterSpacing: 'h4.letterSpacing',
+              '@media (max-width: 359.95px)': { fontSize: '1.125rem' },
             }}
           >
             {t(`work:workHub.viewTitles.${view}`)}
@@ -79,59 +88,80 @@ export function WorkHubPageHeader({
               : 'work:workHub.header.description'
           )}
         </Typography>
-        {canCreate && (
-          <Typography id={createHelpId} variant="caption" color="text.secondary" component="p">
+        {showCreate && (
+          <Typography
+            id={createHelpId}
+            variant="caption"
+            color="text.secondary"
+            component="p"
+            sx={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              p: 0,
+              m: -1,
+              overflow: 'hidden',
+              clip: 'rect(0 0 0 0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
+          >
             {t('workHub.keyboardShortcuts.createHelp')}
           </Typography>
         )}
       </Box>
-      <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-        <Box
+      <Box
+        sx={{
+          gridColumn: { xs: '1 / -1', md: 2 },
+          gridRow: { xs: 2, md: 1 },
+          minWidth: 0,
+          '& .MuiIconButton-root': { minWidth: 44, minHeight: 44 },
+        }}
+      >
+        <LiveStatus
+          state={freshness}
+          label={t(`work:workPage.freshness.${freshness}`)}
+          detail={
+            generatedAt
+              ? t('work:workPage.freshness.generatedAt', {
+                  date: formatDate(generatedAt, {
+                    dateStyle: 'short',
+                    timeStyle: 'short',
+                  }),
+                })
+              : t('work:workPage.freshness.unknown')
+          }
+          refreshLabel={t('work:workPage.retry')}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      </Box>
+      <ActionButton
+        intent="quiet"
+        startIcon={<DatabaseZap size={17} />}
+        onClick={onSources}
+        sx={{ display: { xs: 'none', md: 'inline-flex' }, gridColumn: 3, gridRow: 1 }}
+      >
+        {t('work:workHub.sourcesDialog.open')}
+      </ActionButton>
+      {showCreate && (
+        <ActionButton
+          intent="primary"
+          startIcon={<Plus size={17} />}
+          onClick={onCreate}
+          aria-keyshortcuts="Alt+Shift+N Meta+N Control+N"
+          aria-describedby={createHelpId}
           sx={{
-            '@media (max-width:899.95px)': {
-              '& .MuiIconButton-root': { minWidth: 44, minHeight: 44 },
-            },
+            minHeight: 44,
+            px: { xs: 1.25, sm: 2 },
+            gridColumn: { xs: 2, md: 4 },
+            gridRow: 1,
+            whiteSpace: 'nowrap',
           }}
         >
-          <LiveStatus
-            state={freshness}
-            label={t(`work:workPage.freshness.${freshness}`)}
-            detail={
-              generatedAt
-                ? t('work:workPage.freshness.generatedAt', {
-                    date: formatDate(generatedAt, {
-                      dateStyle: 'short',
-                      timeStyle: 'short',
-                    }),
-                  })
-                : t('work:workPage.freshness.unknown')
-            }
-            refreshLabel={t('work:workPage.retry')}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        </Box>
-        <ActionButton
-          intent="quiet"
-          startIcon={<DatabaseZap size={17} />}
-          onClick={onSources}
-          sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
-        >
-          {t('work:workHub.sourcesDialog.open')}
+          {t('work:workHub.actions.createTask')}
         </ActionButton>
-        {canCreate && (
-          <ActionButton
-            intent="primary"
-            startIcon={<Plus size={17} />}
-            onClick={onCreate}
-            aria-keyshortcuts="Alt+Shift+N Meta+N Control+N"
-            aria-describedby={createHelpId}
-            sx={{ '@media (max-width:899.95px)': { minHeight: 44 } }}
-          >
-            {t('work:workHub.actions.createTask')}
-          </ActionButton>
-        )}
-      </Stack>
-    </Stack>
+      )}
+    </Box>
   );
 }

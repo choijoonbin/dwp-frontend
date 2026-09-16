@@ -169,6 +169,29 @@ describe('Work Hub owner commands', () => {
       remediationState: 'NOT_REQUIRED',
     });
   });
+  it('rejects an access-review rationale above the Work five-hundred-character contract', async () => {
+    const detail = pendingAccessReview();
+    const decide = vi.fn();
+    const result = await executeWorkHubAction(
+      hubItem({
+        reference: { sourceSystem: 'IDENTITY_GOVERNANCE', sourceReference: KEY },
+        sourceStatus: 'PENDING',
+        version: detail.version,
+        actions: [{ kind: 'ACCESS_REVIEW_DECIDE', availability: 'DETAIL_REQUIRED' }],
+      }),
+      {
+        kind: 'ACCESS_REVIEW_DECIDE',
+        decision: 'APPROVE',
+        reason: 'a'.repeat(501),
+        expectedVersion: detail.version,
+        authorize: vi.fn().mockResolvedValue(true),
+      },
+      { ...workHubActionClients, decideAccessReviewWork: decide }
+    );
+
+    expect(result).toEqual({ state: 'FORBIDDEN', retryable: false });
+    expect(decide).not.toHaveBeenCalled();
+  });
   it.each([
     ['source reference', { workItemRef: 'different' }],
     ['subject identity', { subjectUserId: 8 }],

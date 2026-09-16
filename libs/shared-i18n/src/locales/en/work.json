@@ -2298,6 +2298,7 @@
       "completeTitle": "Complete the selected work?",
       "description": "Verify the latest versions, then update {{count}} eligible DWP work items together.",
       "selectedCount": "{{count}} selected",
+      "eligibleCount": "{{count}} eligible",
       "targetCount": "{{count}} to run",
       "excludedCount": "{{count}} excluded",
       "atomicNotice": "This batch runs in one source. Success is shown only when every returned receipt matches.",
@@ -2313,6 +2314,8 @@
         "unknown": "Result needs verification"
       },
       "reportTitle": "Batch results",
+      "resultSummary": "Batch receipt summary",
+      "noReceiptResults": "There are no preserved batch receipts. Result counts are not inferred.",
       "reportSummary": "Confirmed {{confirmed}} of {{total}} selected items. Review each result.",
       "executionNotice": "Personal tasks execute individually. Workspace work follows its atomic batch policy. Approval, access review and service decisions require their detail screen.",
       "retryUnconfirmed": "Recheck unconfirmed personal tasks",
@@ -2359,8 +2362,48 @@
       "cancel": "Cancel",
       "submitting": "Saving",
       "addToTodayPlan": "Add to today's plan",
+      "scheduleAfterCreate": "Schedule work time / Calendar link",
+      "scheduleAfterCreateDetail": "Save the task, verify the exact create result, then open Calendar scheduling.",
+      "scheduleAfterCreateAutomatic": "After the save is confirmed, verify the created task and open work-time setup automatically.",
+      "scheduleAfterCreateReady": "Auto-link ready",
+      "scheduleAfterCreateUnavailable": "Calendar creation access or the current work source cannot be verified, so scheduling cannot open immediately after saving.",
+      "scheduleAfterCreateUnavailableShort": "Link unavailable",
+      "scheduleOpenFailedDetail": "The task was saved, but Calendar scheduling could not be opened. Try again from the saved task.",
+      "quickFlow": {
+        "label": "Personal task creation progress",
+        "steps": {
+          "queue": "{{number}}. Empty queue",
+          "add": "{{number}}. Add",
+          "plan": "{{number}}. Plan",
+          "schedule": "{{number}}. Work time"
+        }
+      },
+      "quickCapture": {
+        "title": "Quick task capture (M2)",
+        "inputMode": "Input mode",
+        "placeholder": "For example, revise the quarterly close report",
+        "save": "Save task"
+      },
+      "entryMode": {
+        "label": "Personal task mode",
+        "new": "A. Create new task",
+        "source": "B. Track from source",
+        "edit": "C. Edit existing task"
+      },
+      "sourcePreflight": {
+        "loading": "Verifying current access to the original message…",
+        "denied": "The original message is no longer available to you. This task has not been created.",
+        "unavailable": "The original message could not be verified. This task has not been created.",
+        "retry": "Retry source check"
+      },
       "sourceLinked": "Linked source: {{source}}",
+      "capturedSourceAvailable": "Captured source · AVAILABLE",
       "sourceLinkedReferenceOnly": "A source item is linked to this task.",
+      "messageSource": "Messenger message",
+      "messageFrom": "From {{sender}}",
+      "messageId": "Message ID: {{id}}",
+      "messageVersion": "version {{version}}",
+      "openMessage": "Open original message",
       "sourceUnlinkPending": "Saving will remove the link to the source item.",
       "unlinkSource": "Remove source link",
       "unlinkSourceDescription": "The personal task will remain and the source item will not be deleted.",
@@ -2415,6 +2458,7 @@
       "moveDown": "Move {{title}} down",
       "remove": "Remove {{title}} from the plan",
       "candidateHeading": "Work to add",
+      "candidateCount": "{{count}} items",
       "searchLabel": "Search plan candidates",
       "add": "Add",
       "noSearchResults": "No candidates match your search.",
@@ -2455,6 +2499,14 @@
         "due": "With deadline",
         "actionable": "My action"
       },
+      "candidatePrivacyNotice": "Only work covered by your current access is shown.",
+      "focusSuggestionTitle": "Focus block suggestion",
+      "focusSuggestionDetail": "‘{{title}}’ has the earliest deadline: {{date}}.",
+      "scheduleSuggestion": "Place in Calendar",
+      "readinessTitle": "Execution readiness",
+      "readinessValue": "{{percent}}% accessible",
+      "readinessDetail": "The latest source is currently accessible for {{available}} of {{count}} planned items.",
+      "readinessEmpty": "Add work to the plan to check current source access.",
       "openWork": "Open work",
       "removeLabel": "Remove from plan"
     },
@@ -2462,6 +2514,24 @@
       "open": "Source status",
       "title": "Work source status",
       "description": "Review each source scope and its last successful response.",
+      "serviceCode": "WRK-R01",
+      "integratedTitle": "Source verification and batch results",
+      "integratedDescription": "Review the latest connected-source state together with durable receipts from executed batch actions.",
+      "tabs": {
+        "label": "Source verification and batch result views",
+        "sources": "Connected source status ({{count}})",
+        "results": "Batch result details ({{count}})"
+      },
+      "snapshotAt": "Snapshot {{date}}",
+      "snapshotUnavailable": "Snapshot time unavailable",
+      "completeness": {
+        "COMPLETE": "All permitted source responses verified",
+        "PARTIAL": "Only some source responses verified",
+        "UNAVAILABLE": "Source responses unavailable"
+      },
+      "sourcePanelTitle": "My connected work sources",
+      "sourcePanelDescription": "{{count}} sources in the current response",
+      "sourceList": "Latest response state by work source",
       "retry": "Refresh all sources",
       "retrying": "Refreshing sources",
       "receivedAt": "Response verified {{date}}",
@@ -2486,20 +2556,26 @@
       "openSource": "Open source app"
     },
     "schedule": {
+      "serviceCode": "WRK-C01",
+      "serviceName": "DWP Calendar Handoff Service",
       "title": "Schedule work time",
-      "description": "Create a Calendar event, then verify the work link as a separate result.",
-      "calendar": "Calendar",
+      "subtitle": "(reserve focus time)",
+      "description": "Reserve private focus time in your personal Calendar to complete the selected work.",
+      "calendar": "Personal Calendar destination",
       "chooseCalendar": "Choose a personal Calendar",
       "eventTitle": "Event title",
+      "defaultTitle": "Focus: {{title}}",
       "startsAt": "Starts",
       "endsAt": "Ends",
-      "timeZone": "Time zone: {{zone}}",
+      "timeZone": "{{zone}} time zone",
+      "reservationTime": "Reservation time ({{minutes}} min)",
+      "reservationTimeUnknown": "Reservation time",
       "invalidRange": "The end time must be later than the start time.",
-      "create": "Create focus time",
-      "creating": "Checking Calendar result",
+      "create": "Reserve focus time in personal Calendar (Direct)",
+      "creating": "Checking personal Calendar reservation",
       "retryLink": "Retry work link",
       "recheck": "Check the same request",
-      "openCalendar": "Create in Calendar",
+      "openCalendar": "Continue in Calendar (Handoff)",
       "calendarUnavailable": "Calendars could not be loaded. You can create the event in Calendar.",
       "noEditableCalendar": "There is no editable personal Calendar.",
       "failed": "The scheduling result could not be verified.",
@@ -2515,10 +2591,42 @@
         "workChanged": "This work changed or could not be refreshed. Review the current work before scheduling it.",
         "linkRemoved": "The work link was removed without changing the Calendar event."
       },
-      "selectedWork": "Work to schedule",
-      "independenceNotice": "Focus time creates a personal calendar event. The source deadline and approval state remain independent. Review calendar conflicts and edit the event in Calendar.",
+      "selectedWork": "Linked work",
+      "todayPlanPreserved": "Today plan stays unchanged",
+      "workContext": "{{source}} · due {{due}} · {{status}}",
+      "noDueDate": "none",
+      "independenceTitle": "Work and Calendar remain independent:",
+      "independenceNotice": "Reserving time does not complete the work or change its due date or today-plan state. Sensitive work content is not copied to Calendar; only identifying metadata is linked.",
       "titleLength": "{{count}} / 300 characters",
-      "privateScope": "Reserve a private focus block for yourself, without attendees or recurrence. Only the work reference is linked; its contents are not copied."
+      "availabilityNotice": "Availability is not checked here yet. Review any conflicts in Calendar before confirming.",
+      "referenceCandidate": "Reference only",
+      "privacyTitle": "Destination and privacy",
+      "personalCalendarConfirmed": "Personal Calendar confirmed",
+      "personalCalendarRequired": "Choose a personal Calendar",
+      "privateScope": "Create a private focus block for you only, without inviting a shared organization or team calendar and without attendees or recurrence.",
+      "privateReference": "A private metadata link to the original work item is added to the Calendar description.",
+      "readiness": {
+        "checking": {
+          "title": "Checking your Calendar and previous requests",
+          "description": "Current access and any unconfirmed reservation request are checked to prevent duplicates."
+        },
+        "preparing": {
+          "title": "Creating the event and linking the work",
+          "description": "Keep this window open while the Calendar result is confirmed."
+        },
+        "attention": {
+          "title": "Review required before reserving",
+          "description": "Review the Calendar access, previous request, or link status shown above."
+        },
+        "ready": {
+          "title": "Ready to create and safely link the event",
+          "description": "If linking fails after the event is created, the event is preserved and the same request can reconnect it."
+        },
+        "completed": {
+          "title": "Calendar processing complete",
+          "description": "The confirmed event and work-link result are preserved."
+        }
+      }
     },
     "scheduleLinks": {
       "title": "Scheduled work time",
@@ -2641,7 +2749,12 @@
       "partialCount": "{{count}}+"
     },
     "mobileNavigation": {
-      "label": "Work quick navigation",
+      "label": "Primary app quick navigation",
+      "home": "Home",
+      "work": "Work",
+      "calendar": "Calendar",
+      "notifications": "Notifications",
+      "profile": "Profile",
       "queue": "Inbox",
       "day-plan": "Today",
       "action-required": "My actions",
@@ -2661,7 +2774,7 @@
       "remediationNotice": "Review decisions and access changes are separate source operations. Check remediation status after recording a revocation decision.",
       "decisionSection": "Decision and rationale",
       "chooseDecision": "Choose whether to retain or revoke access",
-      "reasonHelp": "10–1,000 characters · {{count}} / 1,000",
+      "reasonHelp": "10–500 characters · {{count}} / 500",
       "draftPreserved": "Your rationale is preserved. Review the refreshed record before deciding again.",
       "preview": "Review decision before submitting",
       "remediation": {
@@ -2842,7 +2955,20 @@
       "authorizingDecision": "Checking decision permission",
       "loading": "Loading current access evidence",
       "subject": "Person",
+      "organization": "Organization · {{organization}}",
+      "dueAt": "Review due",
       "role": "Access under review",
+      "progress": {
+        "label": "Access review progress",
+        "queue": "Queue selection",
+        "detail": "Detail review",
+        "decision": "Decision submission",
+        "result": "Result application"
+      },
+      "concurrencyTitle": "Concurrent change and conflict handling",
+      "concurrencyDescription": "Current authorization and object version are rechecked immediately before submission.",
+      "revision": "REV-{{version}}",
+      "conflictDraftPreserved": "A 409 conflict occurred while submitting REV-{{submittedVersion}}. Current REV-{{currentVersion}} evidence was reloaded, and your decision and rationale were preserved.",
       "source": "Assignment source",
       "sourceTypes": {
         "DIRECT": "Direct assignment",

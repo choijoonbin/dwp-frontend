@@ -3,6 +3,7 @@ import type {
   AskDwpResponse,
 } from '@dwp-frontend/shared-utils/api/agent-runtime-api';
 import type { CalendarEvent } from '@dwp-frontend/shared-utils/api/calendar-api';
+import { resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
 import {
   askWorkHubAssist,
   isWorkHubAssistSourceSystem,
@@ -16,8 +17,10 @@ import type {
 } from './work-hub-contracts';
 import { isWorkHubItemCommandReady } from './work-hub-command-authority';
 import {
+  createWorkScheduleHandoffState,
   isFreshWorkScheduleCommand,
   type WorkScheduleCommand,
+  type WorkScheduleDraftInput,
   type WorkScheduleExecutionGuard,
   type WorkScheduleResult,
 } from './work-hub-scheduling';
@@ -46,6 +49,18 @@ export type WorkHubSelectionRequest = {
   item: string | null;
 };
 
+export function workHubSelectionRequest(searchParams: URLSearchParams) {
+  const selectionRequest: WorkHubSelectionRequest = {
+    work: searchParams.get('work'),
+    personalTaskId: searchParams.get('personalTaskId'),
+    item: searchParams.get('item'),
+  };
+  return {
+    selectionRequest,
+    requested: selectionRequest.work ?? selectionRequest.personalTaskId ?? selectionRequest.item,
+  };
+}
+
 /** New links require the canonical key; legacy parameters stay confined to their old owner. */
 export function selectedWorkFromRequest(
   items: readonly WorkHubItem[],
@@ -68,6 +83,26 @@ export function selectedWorkFromRequest(
 
 export function workHubCalendarRoute(date: string, returnTo: string) {
   return `/calendar/schedule?date=${date}&returnTo=${encodeURIComponent(returnTo)}`;
+}
+
+export function workHubCalendarComposerRoute(
+  date: string,
+  returnTo: string,
+  item: Pick<WorkHubItem, 'reference'>,
+  draft: WorkScheduleDraftInput,
+  ownerFingerprint: string,
+  now = new Date()
+) {
+  const scheduleDate = resolveZonedDateKey(draft.startsAt, draft.timeZone) ?? date;
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(scheduleDate))
+    throw new Error('A valid Calendar schedule date is required.');
+  const search = new URLSearchParams({ date: scheduleDate, create: 'focus' });
+  return {
+    // Work identity and its return target stay in validated router state. They must not
+    // leak into the Calendar address, logs, copied links, or referrer headers.
+    to: `/calendar/schedule?${search.toString()}`,
+    state: createWorkScheduleHandoffState(item, draft, returnTo, ownerFingerprint, now),
+  } as const;
 }
 
 export function uniqueWorkSourceSystems(items: readonly WorkHubItem[]) {

@@ -48,9 +48,13 @@ function orderedEntries(
 function formatExactDecimal(value: string, locale: ApprovalLocale) {
   const match = /^([+-]?)(\d+)(?:\.(\d+))?$/.exec(value);
   if (!match) return value;
-  const parts = new Intl.NumberFormat(locale).formatToParts(1000.1);
-  const group = parts.find(({ type }) => type === 'group')?.value ?? ',';
-  const decimal = parts.find(({ type }) => type === 'decimal')?.value ?? '.';
+  const separatorSample = formatNumber(
+    1000.1,
+    { useGrouping: true, minimumFractionDigits: 1, maximumFractionDigits: 1 },
+    locale
+  ).replace(/[+\-0-9]/g, '');
+  const group = separatorSample[0] ?? ',';
+  const decimal = separatorSample.at(-1) ?? '.';
   const integer = match[2].replace(/\B(?=(\d{3})+(?!\d))/g, group);
   return `${match[1]}${integer}${match[3] ? `${decimal}${match[3]}` : ''}`;
 }

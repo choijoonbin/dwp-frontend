@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleHelp } from 'lucide-react';
+import { Ban, CheckCircle2, CircleHelp, Clock3, ShieldAlert, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
@@ -26,6 +26,265 @@ import {
 } from './work-hub-batch-execution';
 
 export type WorkHubBatchOutcome = 'CONFIRMED' | 'UNKNOWN';
+
+export type WorkHubBatchReceiptSummary = {
+  selected: number;
+  eligible: number;
+  confirmed: number;
+  conflict: number;
+  forbidden: number;
+  unknown: number;
+  excluded: number;
+};
+
+/** The result header is derived only from the reviewed items and durable source receipts. */
+export function summarizeWorkHubBatchReceipts(
+  items: readonly WorkHubItem[],
+  receipts: readonly WorkHubBatchReceipt[]
+): WorkHubBatchReceiptSummary {
+  const count = (state: WorkHubBatchReceipt['state']) =>
+    receipts.filter((receipt) => receipt.state === state).length;
+  return {
+    selected: items.length,
+    eligible: receipts.filter((receipt) => receipt.reviewedCommand.kind !== null).length,
+    confirmed: count('CONFIRMED'),
+    conflict: count('CONFLICT'),
+    forbidden: count('FORBIDDEN'),
+    unknown: count('UNKNOWN'),
+    excluded: count('EXCLUDED'),
+  };
+}
+
+const receiptIcon = {
+  CONFIRMED: CheckCircle2,
+  CONFLICT: TriangleAlert,
+  FORBIDDEN: ShieldAlert,
+  UNKNOWN: Clock3,
+  EXCLUDED: Ban,
+} satisfies Record<WorkHubBatchReceipt['state'], typeof CheckCircle2>;
+
+const receiptColor = {
+  CONFIRMED: 'success.main',
+  CONFLICT: 'error.main',
+  FORBIDDEN: 'warning.main',
+  UNKNOWN: 'info.main',
+  EXCLUDED: 'text.secondary',
+} satisfies Record<WorkHubBatchReceipt['state'], string>;
+
+export function WorkHubBatchReportPanel({
+  items,
+  outcome,
+  busy,
+  receipts,
+  onRetryUnconfirmed,
+  onReviewItem,
+  reviewUnavailable = false,
+  compact = false,
+}: {
+  items: readonly WorkHubItem[];
+  outcome: WorkHubBatchOutcome;
+  busy: boolean;
+  receipts: readonly WorkHubBatchReceipt[];
+  onRetryUnconfirmed?: () => void;
+  onReviewItem?: (item: WorkHubItem) => void;
+  reviewUnavailable?: boolean;
+  compact?: boolean;
+}) {
+  const { t } = useTranslation(['work', 'common']);
+  const confirmed = outcome === 'CONFIRMED';
+  const summary = summarizeWorkHubBatchReceipts(items, receipts);
+  const itemsByKey = new Map(items.map((item) => [item.key, item]));
+
+  return (
+    <Stack gap={1.5} data-testid="work-hub-batch-report">
+      <InlineFeedback severity={confirmed ? 'success' : 'warning'}>
+        {t(`work:workHub.batch.${confirmed ? 'successDetail' : 'unknownDetail'}`, {
+          count: summary.confirmed,
+        })}
+      </InlineFeedback>
+      {reviewUnavailable && (
+        <InlineFeedback severity="warning">
+          {t('work:workHub.batch.reviewUnavailable')}
+        </InlineFeedback>
+      )}
+      <Box
+        component="dl"
+        aria-label={t('work:workHub.batch.resultSummary')}
+        sx={{
+          m: 0,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(7.5rem, 1fr))',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: 1.5,
+          overflow: 'hidden',
+          bgcolor: 'background.paper',
+          '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+        }}
+      >
+        {(
+          [
+            ['selected', 'selectedCount'],
+            ['eligible', 'eligibleCount'],
+            ['confirmed', 'receiptStates.CONFIRMED'],
+            ['conflict', 'receiptStates.CONFLICT'],
+            ['forbidden', 'receiptStates.FORBIDDEN'],
+            ['unknown', 'receiptStates.UNKNOWN'],
+            ['excluded', 'receiptStates.EXCLUDED'],
+          ] as const
+        ).map(([value, label]) => (
+          <Box
+            key={value}
+            sx={{
+              px: 1.25,
+              py: 1,
+              minWidth: 0,
+              borderRight: 1,
+              borderBottom: 1,
+              borderColor: 'divider',
+              '&:nth-of-type(2n)': { borderRight: { xs: 0, sm: 1 } },
+              '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+            }}
+          >
+            <Typography component="dd" variant="h6" sx={{ m: 0, lineHeight: 1.15 }}>
+              {summary[value]}
+            </Typography>
+            <Typography
+              component="dt"
+              variant="caption"
+              color="text.secondary"
+              sx={{ wordBreak: 'normal' }}
+            >
+              {t(`work:workHub.batch.${label}`, { count: summary[value] })}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+      {receipts.length === 0 && items.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">
+          {t('work:workHub.batch.noReceiptResults')}
+        </Typography>
+      ) : receipts.length === 0 ? (
+        <List dense disablePadding aria-label={t('work:workHub.batch.resultList')}>
+          {items.map((item) => (
+            <ListItem
+              key={item.key}
+              disableGutters
+              sx={{ alignItems: 'flex-start', gap: 1, px: 1, py: 1.25 }}
+            >
+              <ListItemIcon sx={{ minWidth: 28, mt: 0.25, color: 'info.main' }}>
+                <CircleHelp size={18} aria-hidden="true" />
+              </ListItemIcon>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <ListItemText
+                  sx={{ m: 0 }}
+                  primary={item.title}
+                  secondary={t('work:workHub.batch.results.unknown')}
+                />
+                {onReviewItem && (
+                  <ActionButton
+                    intent="quiet"
+                    disabled={busy}
+                    onClick={() => onReviewItem(item)}
+                    aria-label={t('work:workHub.batch.reviewItemLabel', { title: item.title })}
+                    sx={{ minHeight: 44, mt: 0.5 }}
+                  >
+                    {t('work:workHub.batch.reviewItem')}
+                  </ActionButton>
+                )}
+              </Box>
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <List
+          dense
+          disablePadding
+          aria-label={t('work:workHub.batch.resultList')}
+          sx={{
+            maxHeight: compact ? { xs: 'none', md: 430 } : 360,
+            overflowY: { xs: 'visible', md: compact ? 'auto' : 'visible' },
+            pr: { md: compact ? 0.5 : 0 },
+          }}
+        >
+          {receipts.map((receipt) => {
+            const item = itemsByKey.get(receipt.item.key) ?? receipt.item;
+            const Icon = receiptIcon[receipt.state] ?? CircleHelp;
+            return (
+              <ListItem
+                key={`${receipt.item.key}:${receipt.idempotencyKey}`}
+                disableGutters
+                sx={{
+                  alignItems: 'flex-start',
+                  gap: 1,
+                  px: 1,
+                  py: 1.25,
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  '&:last-child': { borderBottom: 0 },
+                  '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 28, mt: 0.25, color: receiptColor[receipt.state] }}>
+                  <Icon size={18} aria-hidden="true" />
+                </ListItemIcon>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <ListItemText
+                    sx={{ m: 0 }}
+                    primary={item.title}
+                    secondary={
+                      receipt.reason === 'CANCELLED'
+                        ? t(
+                            `work:workHub.batch.${receipt.state === 'UNKNOWN' ? 'cancelledUnknown' : 'cancelledBeforeSend'}`
+                          )
+                        : t(`work:workHub.batch.receiptHelp.${receipt.state}`)
+                    }
+                    slotProps={{
+                      primary: { sx: { overflowWrap: 'anywhere' } },
+                      secondary: { sx: { overflowWrap: 'anywhere' } },
+                    }}
+                  />
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(`work:workHub.batch.receiptStates.${receipt.state}`)}
+                    sx={{ mt: 0.75 }}
+                  />
+                  {onReviewItem && receipt.state !== 'CONFIRMED' && (
+                    <ActionButton
+                      intent="quiet"
+                      disabled={busy}
+                      onClick={() => onReviewItem(item)}
+                      aria-label={t('work:workHub.batch.reviewItemLabel', { title: item.title })}
+                      sx={{ minHeight: 44, mt: 0.5, ml: 0.5 }}
+                    >
+                      {t('work:workHub.batch.reviewItem')}
+                    </ActionButton>
+                  )}
+                </Box>
+              </ListItem>
+            );
+          })}
+        </List>
+      )}
+      {!confirmed && (
+        <Typography variant="caption" color="text.secondary">
+          {t('work:workHub.batch.noBlindRetry')}
+        </Typography>
+      )}
+      {onRetryUnconfirmed && receipts.some(canRetryWorkHubBatchReceipt) && (
+        <ActionButton
+          intent="secondary"
+          loading={busy}
+          onClick={onRetryUnconfirmed}
+          sx={{ alignSelf: 'flex-start', minHeight: 44 }}
+        >
+          {t('work:workHub.batch.retryUnconfirmed')}
+        </ActionButton>
+      )}
+    </Stack>
+  );
+}
 
 export function isConfirmedBatchResult(
   target: WorkHubBatchTarget,
@@ -135,7 +394,6 @@ export function WorkHubBatchDialog({
     );
   }
 
-  const confirmed = outcome === 'CONFIRMED';
   return (
     <ContentDialog
       open
@@ -148,16 +406,6 @@ export function WorkHubBatchDialog({
       }}
       footerContent={
         <Stack direction="row" gap={1} flexWrap="wrap">
-          {onRetryUnconfirmed && receipts.some(canRetryWorkHubBatchReceipt) && (
-            <ActionButton
-              intent="secondary"
-              loading={busy}
-              onClick={onRetryUnconfirmed}
-              sx={{ '@media (max-width:599.95px)': { minHeight: 44 } }}
-            >
-              {t('work:workHub.batch.retryUnconfirmed')}
-            </ActionButton>
-          )}
           <ActionButton
             autoFocus
             intent="primary"
@@ -170,76 +418,15 @@ export function WorkHubBatchDialog({
         </Stack>
       }
     >
-      <InlineFeedback severity={confirmed ? 'success' : 'warning'}>
-        {t(`work:workHub.batch.${confirmed ? 'successDetail' : 'unknownDetail'}`, {
-          count: items.length,
-        })}
-      </InlineFeedback>
-      {reviewUnavailable && (
-        <InlineFeedback severity="warning">
-          {t('work:workHub.batch.reviewUnavailable')}
-        </InlineFeedback>
-      )}
-      {receipts.length > 0 && (
-        <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 2 }}>
-          {(['CONFIRMED', 'CONFLICT', 'FORBIDDEN', 'UNKNOWN', 'EXCLUDED'] as const).map((state) => (
-            <Chip
-              key={state}
-              size="small"
-              label={`${t(`work:workHub.batch.receiptStates.${state}`)} ${receipts.filter((receipt) => receipt.state === state).length}`}
-            />
-          ))}
-        </Stack>
-      )}
-      <List aria-label={t('work:workHub.batch.resultList')} sx={{ mt: 1 }}>
-        {items.map((item) => {
-          const receipt = receipts.find((row) => row.item.key === item.key);
-          const success = receipt ? receipt.state === 'CONFIRMED' : confirmed;
-          return (
-            <ListItem key={item.key} disableGutters sx={{ alignItems: 'flex-start', gap: 1 }}>
-              <ListItemIcon sx={{ minWidth: 36, color: success ? 'success.main' : 'warning.main' }}>
-                {success ? (
-                  <CheckCircle2 size={18} aria-hidden="true" />
-                ) : (
-                  <CircleHelp size={18} aria-hidden="true" />
-                )}
-              </ListItemIcon>
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <ListItemText
-                  primary={item.title}
-                  secondary={
-                    receipt
-                      ? t(
-                          receipt.reason === 'CANCELLED'
-                            ? `work:workHub.batch.${receipt.state === 'UNKNOWN' ? 'cancelledUnknown' : 'cancelledBeforeSend'}`
-                            : `work:workHub.batch.receiptHelp.${receipt.state}`
-                        )
-                      : t(`work:workHub.batch.results.${confirmed ? 'confirmed' : 'unknown'}`)
-                  }
-                />
-                {onReviewItem && (
-                  <ActionButton
-                    intent="quiet"
-                    disabled={busy}
-                    onClick={() => onReviewItem(item)}
-                    aria-label={t('work:workHub.batch.reviewItemLabel', { title: item.title })}
-                    sx={{ minHeight: 44, mt: 0.5 }}
-                  >
-                    {t('work:workHub.batch.reviewItem')}
-                  </ActionButton>
-                )}
-              </Box>
-            </ListItem>
-          );
-        })}
-      </List>
-      {!confirmed && (
-        <Box sx={{ mt: 1 }}>
-          <Typography variant="caption" color="text.secondary">
-            {t('work:workHub.batch.noBlindRetry')}
-          </Typography>
-        </Box>
-      )}
+      <WorkHubBatchReportPanel
+        items={items}
+        outcome={outcome}
+        busy={busy}
+        receipts={receipts}
+        onRetryUnconfirmed={onRetryUnconfirmed}
+        onReviewItem={onReviewItem}
+        reviewUnavailable={reviewUnavailable}
+      />
     </ContentDialog>
   );
 }

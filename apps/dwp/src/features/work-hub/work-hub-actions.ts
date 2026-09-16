@@ -1,4 +1,6 @@
 import {
+  ACCESS_REVIEW_REASON_MAX_LENGTH,
+  ACCESS_REVIEW_REASON_MIN_LENGTH,
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
   isAccessReviewDecisionSource,
@@ -149,8 +151,8 @@ export async function executeWorkHubAction(
       if (
         item.reference.sourceSystem !== 'IDENTITY_GOVERNANCE' ||
         (command.decision !== 'APPROVE' && command.decision !== 'REVOKE') ||
-        command.reason.trim().length < 10 ||
-        command.reason.trim().length > 1000
+        command.reason.trim().length < ACCESS_REVIEW_REASON_MIN_LENGTH ||
+        command.reason.length > ACCESS_REVIEW_REASON_MAX_LENGTH
       )
         return denied();
       if (item.version !== command.expectedVersion) return conflict();

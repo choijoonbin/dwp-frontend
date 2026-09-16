@@ -80,7 +80,7 @@ describe('embedded Work AI panel', () => {
     document.body.replaceChildren();
   });
   it('keeps the result in the Work panel and applies only after an explicit draft action', async () => {
-    const apply = vi.fn();
+    const apply = vi.fn(() => true);
     const submit = vi.fn().mockResolvedValue(response);
     await render({ onDraftApply: apply, onSubmit: submit });
     await choosePromptAndSubmit();

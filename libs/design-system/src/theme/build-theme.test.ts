@@ -103,6 +103,13 @@ describe('buildDwpTheme', () => {
     );
   });
 
+  it('does not animate button backgrounds through inaccessible intermediate contrast states', () => {
+    const theme = buildDwpTheme(baseInput);
+    const root = theme.components?.MuiButton?.styleOverrides?.root as { transition?: string };
+
+    expect(root.transition).not.toContain('background-color');
+  });
+
   it('uses dark action text when a tenant chooses a light accent', () => {
     const theme = buildDwpTheme({ ...baseInput, accentColor: '#F4D35E' });
     const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as {

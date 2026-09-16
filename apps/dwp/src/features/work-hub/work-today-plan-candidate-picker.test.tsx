@@ -40,6 +40,8 @@ async function render(props: Partial<ComponentProps<typeof WorkTodayPlanCandidat
       timeZone: 'Asia/Seoul',
       now: Date.parse('2026-09-08T01:00:00Z'),
     },
+    planCount: 1,
+    availablePlanCount: 1,
     remaining: 100,
     disabled: false,
     headingId: 'candidates',

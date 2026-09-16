@@ -48,7 +48,18 @@ export function WorkHubSelectionToolbar({
       justifyContent="space-between"
       gap={1}
       alignItems="center"
-      sx={{ px: 2, py: 1.25, borderBottom: 1, borderColor: 'divider', flexWrap: 'wrap' }}
+      sx={{
+        px: { xs: 1, md: 1.5 },
+        py: { xs: 0.5, md: 0.75 },
+        mb: 0.75,
+        minHeight: 44,
+        bgcolor: 'background.paper',
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        flexWrap: 'wrap',
+        '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+      }}
     >
       <Typography variant="subtitle2">{t('workHub.queue.heading', { count })}</Typography>
       <ActionButton

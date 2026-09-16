@@ -63,8 +63,25 @@ vi.mock('@dwp-frontend/design-system', async () => {
       context.changeMessage = onChange;
       return element('output', { 'data-draft': true }, value);
     },
-    ConfirmDialog: ({ open, onConfirm }: { open: boolean; onConfirm: () => void }) =>
-      open ? element('button', { 'data-confirm': true, onClick: onConfirm }, 'Confirm') : null,
+    ConfirmDialog: ({
+      open,
+      onConfirm,
+      onClose,
+      title,
+    }: {
+      open: boolean;
+      onConfirm: () => void;
+      onClose: () => void;
+      title: string;
+    }) =>
+      open
+        ? element(
+            'div',
+            { 'data-confirm-dialog': title },
+            element('button', { 'data-confirm': true, onClick: onConfirm }, 'Confirm'),
+            element('button', { 'data-cancel': true, onClick: onClose }, 'Cancel')
+          )
+        : null,
   };
 });
 
@@ -89,13 +106,17 @@ function deferred<T>() {
   });
   return { promise, resolve };
 }
-async function render(nextDetail = detail) {
+async function render(
+  nextDetail = detail,
+  extra: Partial<Parameters<typeof ServiceInformationResponse>[0]> = {}
+) {
   await act(async () =>
     root.render(
       createElement(ServiceInformationResponse, {
         detail: nextDetail,
         onConfirmed: context.confirm,
         onRefresh: context.refresh,
+        ...extra,
       })
     )
   );
@@ -136,6 +157,48 @@ it('discards a private draft when access mode changes within the same actor and 
   context.accessMode = 'SUPPORT';
   await render();
   expect(host.querySelector('[data-draft]')?.textContent).toBe('');
+});
+
+it('requires explicit confirmation before an AI draft replaces a response in progress', async () => {
+  const onDraftApplied = vi.fn();
+  await render();
+  await write('Keep this response until I explicitly approve replacement.');
+  await render(detail, {
+    appliedDraft: { key: 'draft-1', expectedVersion: 3, message: draft },
+    onDraftApplied,
+  });
+  expect(host.querySelector('[data-draft]')?.textContent).toContain('Keep this response');
+  expect(host.querySelector('[data-confirm-dialog]')?.getAttribute('data-confirm-dialog')).toBe(
+    'workHub.sourceDetail.service.replaceDraftTitle'
+  );
+  expect(onDraftApplied).not.toHaveBeenCalled();
+
+  await act(async () =>
+    host
+      .querySelector<HTMLElement>('[data-confirm-dialog] [data-confirm]')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  );
+  expect(host.querySelector('[data-draft]')?.textContent).toBe(draft);
+  expect(onDraftApplied).toHaveBeenCalledTimes(1);
+});
+
+it('discards a pending AI replacement when a newer source version arrives', async () => {
+  const onDraftApplied = vi.fn();
+  await render();
+  await write('Keep this response because the source may change concurrently.');
+  await render(detail, {
+    appliedDraft: { key: 'draft-stale', expectedVersion: 3, message: draft },
+    onDraftApplied,
+  });
+  expect(host.querySelector('[data-confirm-dialog]')).not.toBeNull();
+
+  await render({ ...detail, request: { ...detail.request, version: 4 } } as ServiceRequestDetail, {
+    appliedDraft: { key: 'draft-stale', expectedVersion: 3, message: draft },
+    onDraftApplied,
+  });
+  expect(host.querySelector('[data-confirm-dialog]')).toBeNull();
+  expect(host.querySelector('[data-draft]')?.textContent).toContain('Keep this response');
+  expect(onDraftApplied).toHaveBeenCalledTimes(1);
 });
 it('does not revive an old preflight after a scope leaves and returns', async () => {
   const read = deferred<ServiceRequestDetail>();

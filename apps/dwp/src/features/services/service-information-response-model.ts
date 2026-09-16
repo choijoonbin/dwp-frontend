@@ -58,3 +58,23 @@ export function serviceResponseCanDispatch(
         current.request.status === 'AWAITING_REQUESTER'))
   );
 }
+
+/** Accept only the exact state transition and echoed field values for the reviewed command. */
+export function serviceResponseReceiptMatches(
+  receipt: ServiceRequestDetail,
+  requestId: string,
+  command: ServiceInformationResponseInput
+) {
+  const commandKeys = Object.keys(command.values).sort();
+  const receiptKeys = Object.keys(receipt.values).sort();
+  return (
+    receipt.request.requestId === requestId &&
+    receipt.request.status === 'IN_PROGRESS' &&
+    receipt.request.version === command.version + 1 &&
+    commandKeys.length === receiptKeys.length &&
+    commandKeys.every(
+      (key, index) =>
+        key === receiptKeys[index] && Object.is(command.values[key], receipt.values[key])
+    )
+  );
+}

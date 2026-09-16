@@ -47,7 +47,7 @@ export type WorkHubAssistPanelProps = {
     options: AskDwpOptions & { conversationId?: string }
   ) => Promise<AskDwpResponse>;
   onContinue?: (response: AskDwpResponse) => void | Promise<void>;
-  onDraftApply?: (draft: WorkHubAssistDraft) => void;
+  onDraftApply?: (draft: WorkHubAssistDraft) => boolean;
   onOpenSource?: (route: string) => void;
 };
 
@@ -523,8 +523,7 @@ export function WorkHubAssistPanel({
                 disabled={!applicableDraft || feedback === 'applied'}
                 startIcon={<Check size={17} />}
                 onClick={() => {
-                  if (applicableDraft) {
-                    onDraftApply?.(applicableDraft);
+                  if (applicableDraft && onDraftApply?.(applicableDraft)) {
                     setFeedback('applied');
                   }
                 }}

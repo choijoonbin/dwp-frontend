@@ -32,6 +32,8 @@ import { WorkHubSelectionToolbar } from '../features/work-hub/work-hub-selection
 import { WorkHubPageHeader } from '../features/work-hub/work-hub-page-header';
 import { useWorkHubTaskSave } from '../features/work-hub/use-work-hub-task-save';
 import { useWorkHubReturnHandoff } from '../features/work-hub/use-work-hub-return-handoff';
+import { useWorkHubCalendarHandoff } from '../features/work-hub/use-work-hub-calendar-handoff';
+import { useWorkHubServiceResponse } from './use-work-hub-service-response';
 import { WorkHubAssistPanel } from '../features/work-hub/work-hub-assist-dialog';
 import { selectedWorkConversationRoute } from '@dwp-frontend/shared-utils/api/agent-selected-work-api';
 import { WorkHubRecoveryDialogs } from '../features/work-hub/work-hub-recovery-dialogs';
@@ -40,6 +42,7 @@ import { WorkHubDetailPanel } from '../features/work-hub/work-hub-detail-panel';
 import { WorkHubFilterControls } from '../features/work-hub/work-hub-filter-controls';
 import { WorkHubList } from '../features/work-hub/work-hub-list';
 import { WorkHubNoSelection } from '../features/work-hub/work-hub-no-selection';
+import { WorkHubMobileEmptyCapture } from '../features/work-hub/work-hub-mobile-empty-capture';
 import {
   canExecuteWorkHubAction,
   canUnlinkWorkSchedule,
@@ -66,7 +69,7 @@ import {
   submitWorkHubAssist,
   uniqueWorkSourceSystems,
   verifiedWorkHubSnapshotFromRefetch,
-  workHubCalendarRoute,
+  workHubSelectionRequest,
   type WorkHubOperationFeedback,
 } from '../features/work-hub/work-hub-page-helpers';
 import { WorkHubScheduleLinks } from '../features/work-hub/work-hub-schedule-links';
@@ -76,6 +79,11 @@ import {
   WorkHubScheduleExecutionDialog,
   WorkHubTaskEditorDialog,
 } from '../features/work-hub/work-hub-page-dialogs';
+import {
+  useClearWorkTaskComposeIntent,
+  useWorkMessengerCapture,
+} from '../features/work-hub/use-work-messenger-capture';
+import { useWorkMobileQueueRestore } from '../features/work-hub/use-work-mobile-queue-restore';
 import { WorkTodayPlanPanel } from '../features/work-hub/work-today-plan-panel';
 import {
   WORK_HUB_VIEWS,
@@ -84,7 +92,6 @@ import {
   workHubViewFromPath,
 } from '../features/work-hub/work-hub-view-navigation';
 import type { WorkLayoutContext } from '../layouts/work-layout';
-
 import type { PersonalWorkTask } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 
 export default function WorkPage() {
@@ -104,6 +111,16 @@ export default function WorkPage() {
   const snapshot = query.data?.snapshot;
   const workCommandsReady = Boolean(snapshot && snapshot.completeness !== 'UNAVAILABLE');
   const canCreate = runtime.canUpdatePersonal && isWorkHubSourceCommandReady(snapshot, 'personal');
+  const messenger = useWorkMessengerCapture(
+    location.state,
+    owner,
+    now,
+    canCreate,
+    searchParams.get('compose') === 'task'
+  );
+  const messengerSource = messenger.source;
+  const canSchedule =
+    runtime.canUpdatePersonal && runtime.canCreateCalendarEvent && workCommandsReady;
   const filters = workHubFiltersForPath(location.pathname, searchParams);
   const view = workHubViewFromPath(location.pathname);
   const requestedSort = searchParams.get('sort');
@@ -111,14 +128,16 @@ export default function WorkPage() {
     ? requestedSort!
     : 'urgency';
   const density = searchParams.get('density') === 'comfortable' ? 'comfortable' : 'compact';
-  const selectionRequest = {
-    work: searchParams.get('work'),
-    personalTaskId: searchParams.get('personalTaskId'),
-    item: searchParams.get('item'),
-  };
-  const requested =
-    selectionRequest.work ?? selectionRequest.personalTaskId ?? selectionRequest.item;
-  const composeTaskRequested = searchParams.get('compose') === 'task';
+  const { selectionRequest, requested } = workHubSelectionRequest(searchParams);
+  const composeTaskRequested = messenger.composeTaskRequested;
+  const clearTaskComposeIntent = useClearWorkTaskComposeIntent({
+    envelope: messenger.envelope,
+    hash: location.hash,
+    navigate,
+    pathname: location.pathname,
+    searchParams,
+    state: location.state,
+  });
   const sourcePanelRequested = searchParams.get('panel') === 'sources';
   const today = resolveZonedDateKey(now, timeZone) ?? new Date(now).toISOString().slice(0, 10);
   const [checkedKeys, setCheckedKeys] = useState<Set<string>>(new Set());
@@ -143,13 +162,11 @@ export default function WorkPage() {
         ) ?? null)
       : null;
   const [assistItem, setAssistItem] = useState<WorkHubItem | null>(null);
-  const lastMobileSelection = useRef<string | null>(null);
-  const queueScroll = useRef<HTMLDivElement | null>(null);
-  const queueScrollTop = useRef(0);
+  const { lastMobileSelection, queueScroll, queueScrollTop, restoreQueueFocus } =
+    useWorkMobileQueueRestore({ mobile, requested });
   const selectionContext = `${location.pathname}|${filters.query}|${filters.sourceSystem ?? ''}|${filters.urgency ?? ''}|${filters.assignmentRole ?? ''}`;
   const previousSelectionContext = useRef(selectionContext);
   const planLoadOwner = useRef<typeof controller | null>(null);
-  const restoreQueueFocus = useRef(false);
   useEffect(() => {
     if (previousSelectionContext.current === selectionContext) return;
     previousSelectionContext.current = selectionContext;
@@ -158,7 +175,6 @@ export default function WorkPage() {
   useEffect(() => {
     if (snapshot) controller.adopt(snapshot);
   }, [controller, snapshot]);
-
   useEffect(() => {
     if (!snapshot) return;
     const currentKeys = new Set(snapshot.items.map((item) => item.key));
@@ -167,24 +183,6 @@ export default function WorkPage() {
       return next.size === current.size ? current : next;
     });
   }, [snapshot]);
-
-  useEffect(() => {
-    if (!mobile || requested || !restoreQueueFocus.current) return;
-    restoreQueueFocus.current = false;
-    const frame = requestAnimationFrame(() => {
-      if (queueScroll.current) queueScroll.current.scrollTop = queueScrollTop.current;
-      const focusKey = lastMobileSelection.current;
-      const row = [...document.querySelectorAll<HTMLElement>('[data-work-key]')].find(
-        (candidate) => candidate.dataset.workKey === focusKey
-      );
-      (
-        row?.querySelector<HTMLElement>('[data-work-open]') ??
-        document.querySelector<HTMLElement>('[data-work-open]')
-      )?.focus({ preventScroll: true });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [mobile, requested]);
-
   useEffect(() => {
     if (
       !snapshot ||
@@ -215,7 +213,6 @@ export default function WorkPage() {
       active = false;
     };
   }, [controller, snapshot, t, today]);
-
   const loadedPlan = controller.state().plan;
   const todayPlanReferences = useMemo(
     () => resolveDayPlanReferences(loadedPlan, planDraft),
@@ -271,6 +268,16 @@ export default function WorkPage() {
     }
   }, [composeTaskRequested]);
   useEffect(() => {
+    if (messenger.envelope && (!messenger.capture || !messenger.composeTaskRequested)) {
+      clearTaskComposeIntent();
+    }
+  }, [
+    clearTaskComposeIntent,
+    messenger.capture,
+    messenger.composeTaskRequested,
+    messenger.envelope,
+  ]);
+  useEffect(() => {
     setSourceDialogOpen(sourcePanelRequested);
   }, [sourcePanelRequested]);
   const explicitSelection = snapshot
@@ -286,6 +293,11 @@ export default function WorkPage() {
   const selectedItem =
     explicitSelection ??
     (!mobile && detailSelection.state === 'SELECTED' ? detailSelection.item : undefined);
+  const serviceResponse = useWorkHubServiceResponse({
+    owner,
+    item: selectedItem,
+    onConfirmed: () => void query.refetch(),
+  });
   const openActivity = useWorkHubActivityReturn(selectedItem, Boolean(snapshot), query.refetch);
   const showMobileDetail = mobile && Boolean(requested);
   const assistActive = Boolean(
@@ -303,15 +315,18 @@ export default function WorkPage() {
   );
   const partialCopy = snapshot ? workHubPartialCopy(snapshot) : null;
   const scheduleRange = useMemo(() => workScheduleLookupRange(today), [today]);
-  const openCalendar = () =>
-    navigate(workHubCalendarRoute(today, `${location.pathname}${location.search}`));
+  const { openCalendar, continueWorkInCalendar } = useWorkHubCalendarHandoff({
+    owner,
+    date: today,
+    now,
+    onFeedback: setFeedback,
+  });
   const openSource = useWorkHubReturnHandoff({
     itemKey: selectedItem?.key ?? null,
     ready: Boolean(snapshot),
     refetch: query.refetch,
   });
   const refreshWorkSnapshot = () => query.refetch().then(verifiedWorkHubSnapshotFromRefetch);
-
   const setFilters = (values: Record<string, string | null>) => {
     setCheckedKeys(new Set());
     if (values.scope) {
@@ -340,6 +355,7 @@ export default function WorkPage() {
   };
   const openItem = (item: WorkHubItem, focusToken?: string) => {
     setAssistItem(null);
+    serviceResponse.clear();
     lastMobileSelection.current = focusToken ?? null;
     queueScrollTop.current = queueScroll.current?.scrollTop ?? window.scrollY;
     controller.select(item.reference);
@@ -354,12 +370,12 @@ export default function WorkPage() {
   };
   const backToQueue = () => {
     restoreQueueFocus.current = true;
+    serviceResponse.clear();
     setSearchParams(
       mergeFilterSearchParams(searchParams, { work: null, item: null, personalTaskId: null }),
       { replace: true }
     );
   };
-
   const action = useWorkHubActions({
     owner,
     snapshot,
@@ -369,7 +385,6 @@ export default function WorkPage() {
     refresh: refreshWorkSnapshot,
     mutationCoordinator: taskSaveCoordinator,
   });
-
   const batch = useWorkHubBatch({
     snapshot,
     checkedKeys,
@@ -377,7 +392,6 @@ export default function WorkPage() {
     onFeedback: setFeedback,
     refresh: refreshWorkSnapshot,
   });
-
   const savePlan = useWorkHubPlanSave({
     owner,
     snapshot,
@@ -386,7 +400,6 @@ export default function WorkPage() {
     preflight: refreshWorkSnapshot,
     mutationCoordinator: taskSaveCoordinator,
   });
-
   const saveTask = useWorkHubTaskSave({
     controller,
     snapshot,
@@ -405,6 +418,11 @@ export default function WorkPage() {
     onFeedback: setFeedback,
     onCreated: () => {
       lastMobileSelection.current = null;
+    },
+    onScheduleCreated: ({ item, snapshot: scheduleSnapshot }) => {
+      if (!owner) return;
+      controller.adopt(scheduleSnapshot);
+      setScheduleSelection({ owner, item });
     },
   });
   useWorkHubCreatedTaskRecovery({
@@ -456,7 +474,6 @@ export default function WorkPage() {
       setPlanSaving(false);
     }
   };
-
   const freshness = workspaceWorkFreshness({
     generatedAt: query.data?.generatedAt,
     isFetching: query.isFetching,
@@ -466,8 +483,6 @@ export default function WorkPage() {
       snapshot?.completeness === 'UNAVAILABLE',
     now,
   });
-  const canSchedule =
-    runtime.canUpdatePersonal && runtime.canCreateCalendarEvent && workCommandsReady;
   const openSchedule = (item: WorkHubItem) => {
     if (
       owner &&
@@ -508,7 +523,6 @@ export default function WorkPage() {
       }}
     />
   );
-
   if (query.isLoading) {
     return (
       <PageCanvas topInset="compact">
@@ -532,9 +546,7 @@ export default function WorkPage() {
       </PageCanvas>
     );
   }
-
   const requestedUnavailable = Boolean(requested) && !explicitSelection;
-
   return (
     <PageCanvas topInset="compact">
       {header}
@@ -547,7 +559,6 @@ export default function WorkPage() {
         feedback={feedback}
         onDismissFeedback={() => setFeedback(null)}
       />
-
       <Box sx={{ mt: 1, display: showMobileDetail || planOpen || assistActive ? 'none' : 'block' }}>
         <WorkHubFilterControls
           filters={filters}
@@ -584,14 +595,24 @@ export default function WorkPage() {
           size="page"
         />
       ) : snapshot.items.length === 0 && !planOpen ? (
-        <GuidedEmptyState
-          kind="first-use"
-          title={t('work:workHub.empty.title')}
-          description={t('work:workHub.empty.description')}
-          actionLabel={canCreate ? t('work:workHub.actions.createTask') : undefined}
-          onAction={canCreate ? () => setTaskDialogOpen(true) : undefined}
-          size="page"
-        />
+        mobile ? (
+          <WorkHubMobileEmptyCapture
+            key={owner}
+            ownerKey={owner ?? ''}
+            canCreate={canCreate}
+            canScheduleAfterCreate={canSchedule}
+            onSubmit={saveTask}
+          />
+        ) : (
+          <GuidedEmptyState
+            kind="first-use"
+            title={t('work:workHub.empty.title')}
+            description={t('work:workHub.empty.description')}
+            actionLabel={canCreate ? t('work:workHub.actions.createTask') : undefined}
+            onAction={canCreate ? () => setTaskDialogOpen(true) : undefined}
+            size="page"
+          />
+        )
       ) : visibleItems.length === 0 && !planOpen ? (
         <GuidedEmptyState
           kind="no-results"
@@ -629,7 +650,7 @@ export default function WorkPage() {
                   : assistActive
                     ? 'minmax(0,1.4fr) minmax(300px,1fr)'
                     : requested
-                      ? 'minmax(280px, 0.75fr) minmax(0, 1.25fr)'
+                      ? 'minmax(340px, 5fr) minmax(0, 7fr)'
                       : 'minmax(0, 1.2fr) minmax(0, 1fr)',
             },
             minHeight: 560,
@@ -853,7 +874,13 @@ export default function WorkPage() {
                         onOpenSource={(route) => openSource(selectedItem, route, 'SOURCE')}
                       />
                     ) : (
-                      <WorkHubSourceOwnedDetail item={selectedItem} onSourceInvalid={backToQueue} />
+                      <>
+                        <WorkHubSourceOwnedDetail
+                          item={selectedItem}
+                          onSourceInvalid={backToQueue}
+                        />
+                        {serviceResponse.bridge}
+                      </>
                     )}
                     {runtime.canUseCalendar &&
                       canUseWorkHubGenericAdjunct(selectedItem, 'CALENDAR') && (
@@ -911,6 +938,7 @@ export default function WorkPage() {
                   });
                 }
               }}
+              onDraftApply={serviceResponse.applyDraft}
               onContinue={(response) => {
                 const route = selectedWorkConversationRoute(response);
                 if (route) navigate(route);
@@ -919,7 +947,6 @@ export default function WorkPage() {
           )}
         </Paper>
       )}
-
       <WorkHubRecoveryDialogs
         sourceOpen={sourceDialogOpen}
         snapshot={snapshot}
@@ -939,26 +966,31 @@ export default function WorkPage() {
         open={taskDialogOpen}
         task={editingTask}
         items={snapshot.items}
-        disabled={!canCreate}
+        disabled={!canCreate || messenger.sourcePending || messenger.sourceError}
+        canScheduleAfterCreate={canSchedule}
+        captureSource={messengerSource}
+        captureSourceState={messenger.sourceState}
+        onRetryCaptureSource={() => void messenger.retrySource()}
         onClose={() => {
           setTaskDialogOpen(false);
           setEditingTask(null);
-          setSearchParams(mergeFilterSearchParams(searchParams, { compose: null }), {
-            replace: true,
-          });
+          clearTaskComposeIntent();
         }}
         onSubmit={saveTask}
       />
       <WorkHubScheduleExecutionDialog
         item={scheduleItem}
         snapshot={snapshot}
+        plannedForToday={Boolean(
+          scheduleItem && dayPlanHasReference(loadedPlan, planDraft, scheduleItem.reference)
+        )}
         ownerFingerprint={owner}
         canSchedule={canSchedule}
         coordinator={scheduleCoordinator}
         controller={controller}
         refresh={() => query.refetch()}
         onClose={() => setScheduleSelection(null)}
-        onOpenCalendar={openCalendar}
+        onOpenCalendar={(draft) => scheduleItem && continueWorkInCalendar(scheduleItem, draft)}
         onInvalidateLinks={(queryKey) => queryClient.invalidateQueries({ queryKey })}
       />
     </PageCanvas>

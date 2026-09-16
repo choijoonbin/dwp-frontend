@@ -19,9 +19,15 @@ import {
 describe('calendar schedule state', () => {
   it('validates views and maps them to the calendar renderer contract', () => {
     expect(calendarScheduleView('month', 'week')).toBe('month');
+    expect(calendarScheduleView('threeDay', 'week')).toBe('threeDay');
+    expect(calendarScheduleView('fourDay', 'week')).toBe('fourDay');
     expect(calendarScheduleView('invalid', 'week')).toBe('week');
     expect(fullCalendarView('agenda')).toBe('listMonth');
+    expect(fullCalendarView('threeDay')).toBe('timeGridThreeDay');
+    expect(fullCalendarView('fourDay')).toBe('timeGridFourDay');
     expect(scheduleViewFromFullCalendar('timeGridDay')).toBe('day');
+    expect(scheduleViewFromFullCalendar('timeGridThreeDay')).toBe('threeDay');
+    expect(scheduleViewFromFullCalendar('timeGridFourDay')).toBe('fourDay');
   });
 
   it('round-trips a local calendar date without UTC day drift', () => {

@@ -7,7 +7,9 @@ import {
   shouldShowWorkAssignmentRoleFilter,
   submitWorkHubAssist,
   verifiedWorkHubSnapshotFromRefetch,
+  workHubCalendarComposerRoute,
 } from './work-hub-page-helpers';
+import { parseWorkCalendarEventHandoff } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 import type { WorkHubItem, WorkHubSnapshot } from './work-hub-contracts';
 import type { WorkScheduleCommand, WorkScheduleResult } from './work-hub-scheduling';
 
@@ -275,6 +277,43 @@ describe('selected work URL identity', () => {
         item: collision,
       })
     ).toBeUndefined();
+  });
+});
+
+describe('work Calendar composer navigation', () => {
+  it('keeps the work return URL and sensitive prefill metadata only in fresh router state', () => {
+    const now = new Date('2026-09-16T00:00:00.000Z');
+    const returnTo = `/work/queue?work=${encodeURIComponent(item.key)}#selected`;
+    const navigation = workHubCalendarComposerRoute(
+      '2026-09-16',
+      returnTo,
+      item,
+      {
+        title: '집중: Current work',
+        startsAt: '2026-09-16T09:00:00+09:00',
+        endsAt: '2026-09-16T09:30:00+09:00',
+        timeZone: 'Asia/Seoul',
+      },
+      `sha256:${'a'.repeat(64)}`,
+      now
+    );
+
+    const url = new URL(navigation.to, 'https://dwp.example');
+    expect(url.pathname).toBe('/calendar/schedule');
+    expect(url.searchParams.get('date')).toBe('2026-09-16');
+    expect(url.searchParams.get('create')).toBe('focus');
+    expect(url.searchParams.has('returnTo')).toBe(false);
+    expect(url.searchParams.has('title')).toBe(false);
+    expect(url.searchParams.has('work')).toBe(false);
+    expect(parseWorkCalendarEventHandoff(navigation.state, now.getTime())).toMatchObject({
+      work: item.reference,
+      ownerFingerprint: `sha256:${'a'.repeat(64)}`,
+      sourceUrl: `/work/queue?work=${encodeURIComponent(item.key)}`,
+      returnTo,
+      title: '집중: Current work',
+      startsAt: '2026-09-16T09:00:00+09:00',
+      endsAt: '2026-09-16T09:30:00+09:00',
+    });
   });
 });
 

@@ -76,9 +76,10 @@ export function WorkHubFilterControls({
   return (
     <Paper
       component="section"
+      data-testid="work-hub-filter-controls"
       aria-label={t('workHub.filters.label')}
       variant="outlined"
-      sx={{ p: 1.25, borderRadius: (theme) => `${theme.shape.borderRadius}px` }}
+      sx={{ p: { xs: 1, md: 1.25 }, borderRadius: (theme) => `${theme.shape.borderRadius}px` }}
     >
       <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
         <FormField
@@ -143,7 +144,10 @@ export function WorkHubFilterControls({
           startIcon={<SlidersHorizontal size={16} />}
           onClick={() => setExpanded((value) => !value)}
           aria-expanded={expanded}
-          sx={{ '@media (max-width:899.95px)': { minHeight: 44 } }}
+          sx={{
+            display: { xs: 'inline-flex', md: 'none' },
+            '@media (max-width:899.95px)': { minHeight: 44 },
+          }}
         >
           {t('workHub.filters.refine')}
           {activeFilters.length > 0 && ` (${activeFilters.length})`}
@@ -154,7 +158,13 @@ export function WorkHubFilterControls({
         gap={1}
         alignItems="center"
         flexWrap="wrap"
-        sx={{ mt: 1, display: expanded ? 'flex' : 'none' }}
+        sx={{
+          mt: 1,
+          display: { xs: expanded ? 'flex' : 'none', md: 'flex' },
+          pt: { md: 1 },
+          borderTop: { md: 1 },
+          borderColor: { md: 'divider' },
+        }}
       >
         <SelectField
           size="small"

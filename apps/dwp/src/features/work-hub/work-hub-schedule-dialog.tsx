@@ -1,26 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { CalendarDays, ExternalLink } from 'lucide-react';
-import {
-  ActionButton,
-  DateTimePickerField,
-  FormDialog,
-  FormField,
-  InlineFeedback,
-  SelectField,
-  useDateTimePolicy,
-} from '@dwp-frontend/design-system';
+import { useDateTimePolicy } from '@dwp-frontend/design-system';
 import {
   getCalendars,
   type CalendarEvent,
   type CalendarSummary,
 } from '@dwp-frontend/shared-utils/api/calendar-api';
-
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 
 import type { WorkHubItem } from './work-hub-contracts';
 import { canUseWorkHubGenericAdjunct, workHubCommandScope } from './work-hub-command-authority';
@@ -35,18 +21,15 @@ import {
   restoreWorkScheduleIntent,
 } from './work-hub-schedule-intent-storage';
 import {
+  createWorkScheduleDraft,
   isExactWorkScheduleCommandForItem,
   type WorkScheduleCommand,
+  type WorkScheduleDraftInput,
   type WorkScheduleExecutionGuard,
   type WorkScheduleResult,
 } from './work-hub-scheduling';
-
-function initialRange() {
-  const starts = new Date();
-  starts.setMinutes(starts.getMinutes() < 30 ? 30 : 60, 0, 0);
-  const ends = new Date(starts.getTime() + 60 * 60_000);
-  return { startsAt: starts.toISOString(), endsAt: ends.toISOString() };
-}
+import { WorkHubScheduleDialogFrame } from './work-hub-schedule-dialog-frame';
+import { WorkHubScheduleDialogContent } from './work-hub-schedule-dialog-content';
 
 export function resolveScheduleCalendarId(current: string, editable: readonly CalendarSummary[]) {
   return editable.some((calendar) => calendar.calendarId === current)
@@ -67,25 +50,26 @@ function isInvalidScheduleReceipt(result: WorkScheduleResult | null) {
 export function WorkHubScheduleDialog({
   open,
   item,
+  plannedForToday = false,
   ownerFingerprint,
   canSchedule,
   coordinator,
   onClose,
   onOpenCalendar,
+  reviewHandoff,
   prepare,
   execute,
 }: {
   open: boolean;
   item: WorkHubItem | null;
+  plannedForToday?: boolean;
   ownerFingerprint: string | null;
   canSchedule: boolean;
   coordinator?: WorkScheduleCoordinator;
   onClose: () => void;
-  onOpenCalendar: () => void;
-  prepare: (
-    calendar: CalendarSummary,
-    input: { startsAt: string; endsAt: string; timeZone: string; title: string }
-  ) => WorkScheduleCommand;
+  onOpenCalendar: (draft: WorkScheduleDraftInput) => void | Promise<void>;
+  reviewHandoff: (item: WorkHubItem, guard: WorkScheduleExecutionGuard) => Promise<boolean>;
+  prepare: (calendar: CalendarSummary, input: WorkScheduleDraftInput) => WorkScheduleCommand;
   execute: (
     command: WorkScheduleCommand,
     confirmedEvent?: CalendarEvent,
@@ -126,12 +110,21 @@ export function WorkHubScheduleDialog({
       ),
     [calendars.data]
   );
-  const range = useRef(initialRange());
+  const [bootstrapDraft] = useState(() =>
+    createWorkScheduleDraft({
+      title: t('work:workHub.schedule.defaultTitle', { title: item?.title ?? '' }),
+      timeZone: dateTimePolicy.timeZone,
+    })
+  );
+  const range = useRef({
+    startsAt: bootstrapDraft.startsAt,
+    endsAt: bootstrapDraft.endsAt,
+  });
   const activeOperation = useRef<ReturnType<WorkScheduleCoordinator['begin']>>(null);
   const activePreflight = useRef<AbortController | null>(null);
   const preflightGeneration = useRef(0);
   const [calendarId, setCalendarId] = useState('');
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(bootstrapDraft.title);
   const [startsAt, setStartsAt] = useState<string | null>(range.current.startsAt);
   const [endsAt, setEndsAt] = useState<string | null>(range.current.endsAt);
   const [busy, setBusy] = useState(false);
@@ -220,9 +213,12 @@ export function WorkHubScheduleDialog({
       setCoordinatorActive(active);
       return;
     }
-    const next = initialRange();
-    range.current = next;
-    setTitle(item.title.slice(0, 300));
+    const next = createWorkScheduleDraft({
+      title: t('work:workHub.schedule.defaultTitle', { title: item.title }),
+      timeZone: dateTimePolicy.timeZone,
+    });
+    range.current = { startsAt: next.startsAt, endsAt: next.endsAt };
+    setTitle(next.title);
     setStartsAt(next.startsAt);
     setEndsAt(next.endsAt);
     setResult(null);
@@ -231,7 +227,16 @@ export function WorkHubScheduleDialog({
     setError(null);
     setBusy(false);
     setCoordinatorActive(false);
-  }, [canSchedule, item, open, ownerFingerprint, scheduleStore, supported]);
+  }, [
+    canSchedule,
+    dateTimePolicy.timeZone,
+    item,
+    open,
+    ownerFingerprint,
+    scheduleStore,
+    supported,
+    t,
+  ]);
   useEffect(() => {
     if (!open || !item || !supported || !ownerFingerprint) return;
     return scheduleStore.subscribe(() => {
@@ -304,7 +309,8 @@ export function WorkHubScheduleDialog({
   const starts = startsAt ? Date.parse(startsAt) : Number.NaN;
   const ends = endsAt ? Date.parse(endsAt) : Number.NaN;
   const invalidRange = !Number.isFinite(starts) || !Number.isFinite(ends) || ends <= starts;
-  const invalid = !calendarId || !title.trim() || title.trim().length > 300 || invalidRange;
+  const handoffInvalid = !title.trim() || title.trim().length > 300 || invalidRange;
+  const invalid = !calendarId || handoffInvalid;
   const completed = result?.state === 'SCHEDULED' || result?.state === 'LINK_REMOVED';
   const retryable = canRetryScheduleResult(result);
   const invalidReceipt = isInvalidScheduleReceipt(result);
@@ -549,11 +555,92 @@ export function WorkHubScheduleDialog({
     setError(null);
   };
 
+  const durationMinutes =
+    Number.isFinite(starts) && Number.isFinite(ends) && ends > starts
+      ? Math.round((ends - starts) / 60_000)
+      : null;
+  const submitDisabled =
+    invalid ||
+    completed ||
+    Boolean(result && !retryable) ||
+    !canSchedule ||
+    !intentReady ||
+    coordinatorActive ||
+    calendars.isPending ||
+    !editable.length;
+  const showSubmit = !completed && (!result || retryable);
+  const readinessState = busy
+    ? 'preparing'
+    : calendars.isPending || !intentReady
+      ? 'checking'
+      : invalid ||
+          calendars.isError ||
+          !editable.length ||
+          Boolean(error) ||
+          Boolean(result && !completed)
+        ? 'attention'
+        : completed
+          ? 'completed'
+          : 'ready';
+
+  const handoff = async () => {
+    if (
+      handoffInvalid ||
+      busy ||
+      !startsAt ||
+      !endsAt ||
+      !canSchedule ||
+      !ownerFingerprint ||
+      scheduleStore.owner !== ownerFingerprint
+    )
+      return;
+    const submittedSelection = `${ownerFingerprint}:${workHubCommandScope(item)}`;
+    const preflightToken = ++preflightGeneration.current;
+    activePreflight.current?.abort();
+    const preflight = new AbortController();
+    activePreflight.current = preflight;
+    const preflightIsCurrent = () =>
+      mounted.current &&
+      !preflight.signal.aborted &&
+      preflightGeneration.current === preflightToken &&
+      currentSelection.current === submittedSelection &&
+      scheduleStore.owner === ownerFingerprint;
+    setBusy(true);
+    setError(null);
+    try {
+      const ready = await reviewHandoff(item, {
+        signal: preflight.signal,
+        canContinue: preflightIsCurrent,
+      });
+      if (!preflightIsCurrent()) return;
+      if (!ready) {
+        setError(t('work:workHub.schedule.results.workChanged'));
+        return;
+      }
+      await onOpenCalendar({
+        title: title.trim(),
+        startsAt,
+        endsAt,
+        timeZone: dateTimePolicy.timeZone,
+      });
+    } catch (handoffError) {
+      if (!(handoffError instanceof DOMException && handoffError.name === 'AbortError'))
+        setError(t('work:workHub.schedule.results.workChanged'));
+    } finally {
+      if (activePreflight.current === preflight) activePreflight.current = null;
+      if (preflightIsCurrent()) setBusy(false);
+    }
+  };
+
   return (
-    <FormDialog
+    <WorkHubScheduleDialogFrame
       open={open}
+      serviceCode={t('work:workHub.schedule.serviceCode')}
+      serviceName={t('work:workHub.schedule.serviceName')}
       title={t('work:workHub.schedule.title')}
+      subtitle={t('work:workHub.schedule.subtitle')}
       description={t('work:workHub.schedule.description')}
+      closeLabel={t('common:actions.close')}
       cancelLabel={result ? t('common:actions.close') : t('common:actions.cancel')}
       submitLabel={
         result?.state === 'LINK_PENDING'
@@ -563,175 +650,54 @@ export function WorkHubScheduleDialog({
             : t('work:workHub.schedule.create')
       }
       submittingLabel={t('work:workHub.schedule.creating')}
+      secondaryActionLabel={t('work:workHub.schedule.openCalendar')}
+      secondaryActionDisabled={handoffInvalid || busy || !canSchedule}
       busy={busy}
-      submitDisabled={
-        invalid ||
-        completed ||
-        Boolean(result && !retryable) ||
-        !canSchedule ||
-        !intentReady ||
-        coordinatorActive ||
-        calendars.isPending ||
-        !editable.length
-      }
-      showSubmit={!completed && (!result || retryable)}
+      submitDisabled={submitDisabled}
+      showSubmit={showSubmit}
       onClose={onClose}
       onSubmit={submit}
-      mobileFullScreen
-      secondaryActions={
-        <ActionButton
-          intent="quiet"
-          startIcon={<ExternalLink size={16} />}
-          onClick={onOpenCalendar}
-          disabled={busy}
-          sx={{ minHeight: 44 }}
-        >
-          {t('work:workHub.schedule.openCalendar')}
-        </ActionButton>
-      }
+      onSecondaryAction={() => void handoff()}
     >
-      <Stack gap={2}>
-        <Box
-          sx={{
-            p: 2,
-            bgcolor: 'action.hover',
-            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-            borderInlineStart: 3,
-            borderColor: 'primary.main',
-          }}
-        >
-          <Stack direction="row" gap={1} alignItems="center" sx={{ mb: 0.75 }}>
-            <CalendarDays size={18} />
-            <Typography variant="caption" color="text.secondary">
-              {t('work:workHub.schedule.selectedWork')}
-            </Typography>
-          </Stack>
-          <Typography variant="subtitle2">{item.title}</Typography>
-          <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
-            <Chip
-              size="small"
-              label={t(`work:workHub.sources.${item.reference.sourceSystem}`, {
-                defaultValue: t('work:workHub.sources.OTHER'),
-              })}
-            />
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t(`work:workHub.lifecycle.${item.lifecycle}`)}
-            />
-          </Stack>
-        </Box>
-        {calendars.isError && (
-          <InlineFeedback severity="warning">
-            {t('work:workHub.schedule.calendarUnavailable')}
-          </InlineFeedback>
-        )}
-        {!calendars.isPending && !calendars.isError && !editable.length && (
-          <InlineFeedback severity="info">
-            {t('work:workHub.schedule.noEditableCalendar')}
-          </InlineFeedback>
-        )}
-        {feedback && (
-          <InlineFeedback severity={feedback.severity}>
-            <Stack gap={1} alignItems="flex-start">
-              <span>
-                {invalidReceipt
-                  ? t('work:workHub.schedule.invalidReceiptNeedsReview')
-                  : t(`work:workHub.schedule.results.${feedback.key}`)}
-              </span>
-              {invalidReceipt && (
-                <ActionButton
-                  intent="quiet"
-                  size="small"
-                  disabled={discardingIntent}
-                  onClick={() => void discardBlockedIntent()}
-                  sx={{ minHeight: 44 }}
-                >
-                  {t('work:workHub.schedule.discardPreviousIntent')}
-                </ActionButton>
-              )}
-            </Stack>
-          </InlineFeedback>
-        )}
-        {error && (
-          <InlineFeedback severity="error">
-            <Stack gap={1} alignItems="flex-start">
-              <span>{error}</span>
-              {blockedIntentLinkId && (
-                <ActionButton
-                  intent="quiet"
-                  size="small"
-                  disabled={discardingIntent}
-                  onClick={() => void discardBlockedIntent()}
-                  sx={{ minHeight: 44 }}
-                >
-                  {t('work:workHub.schedule.discardPreviousIntent')}
-                </ActionButton>
-              )}
-            </Stack>
-          </InlineFeedback>
-        )}
-        <SelectField
-          label={t('work:workHub.schedule.calendar')}
-          value={calendarId}
-          onValueChange={(value) => {
-            setCalendarId(String(value));
-            setResult(null);
-          }}
-          options={editable.map((calendar) => ({
-            value: calendar.calendarId,
-            label: calendar.name,
-          }))}
-          disabled={calendars.isPending || busy || draftLocked}
-          placeholder={t('work:workHub.schedule.chooseCalendar')}
-        />
-        <FormField
-          label={t('work:workHub.schedule.eventTitle')}
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value);
-            setResult(null);
-          }}
-          inputProps={{ maxLength: 300 }}
-          supportingText={t('work:workHub.schedule.titleLength', { count: title.length })}
-          disabled={busy || draftLocked}
-        />
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <DateTimePickerField
-            label={t('work:workHub.schedule.startsAt')}
-            value={startsAt}
-            onValueChange={(value) => {
-              setStartsAt(value);
-              setResult(null);
-            }}
-            disabled={busy || draftLocked}
-          />
-          <DateTimePickerField
-            label={t('work:workHub.schedule.endsAt')}
-            value={endsAt}
-            onValueChange={(value) => {
-              setEndsAt(value);
-              setResult(null);
-            }}
-            errorMessage={invalidRange ? t('work:workHub.schedule.invalidRange') : undefined}
-            disabled={busy || draftLocked}
-          />
-        </Stack>
-        <Stack direction="row" gap={1} alignItems="center" color="text.secondary">
-          <CalendarDays size={16} aria-hidden="true" />
-          <Typography variant="caption">
-            {t('work:workHub.schedule.timeZone', {
-              zone: dateTimePolicy.timeZone,
-            })}
-          </Typography>
-        </Stack>
-        <InlineFeedback severity="info">
-          {t('work:workHub.schedule.independenceNotice')}
-        </InlineFeedback>
-        <Typography variant="caption" color="text.secondary">
-          {t('work:workHub.schedule.privateScope')}
-        </Typography>
-      </Stack>
-    </FormDialog>
+      <WorkHubScheduleDialogContent
+        item={item}
+        plannedForToday={plannedForToday}
+        calendarsError={calendars.isError}
+        calendarsPending={calendars.isPending}
+        editable={editable}
+        feedback={feedback}
+        invalidReceipt={invalidReceipt}
+        discardingIntent={discardingIntent}
+        onDiscardIntent={() => void discardBlockedIntent()}
+        error={error}
+        blockedIntent={Boolean(blockedIntentLinkId)}
+        calendarId={calendarId}
+        onCalendarChange={(nextCalendarId) => {
+          setCalendarId(nextCalendarId);
+          setResult(null);
+        }}
+        title={title}
+        onTitleChange={(nextTitle) => {
+          setTitle(nextTitle);
+          setResult(null);
+        }}
+        busy={busy}
+        draftLocked={draftLocked}
+        startsAt={startsAt}
+        onStartsAtChange={(value) => {
+          setStartsAt(value);
+          setResult(null);
+        }}
+        endsAt={endsAt}
+        onEndsAtChange={(value) => {
+          setEndsAt(value);
+          setResult(null);
+        }}
+        invalidRange={invalidRange}
+        durationMinutes={durationMinutes}
+        timeZone={dateTimePolicy.timeZone}
+        readinessState={readinessState}
+      />
+    </WorkHubScheduleDialogFrame>
   );
 }

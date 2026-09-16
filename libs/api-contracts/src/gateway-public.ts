@@ -5359,7 +5359,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["messaging_message"];
         put: operations["messaging_updateMessage"];
         post?: never;
         delete: operations["messaging_deleteMessage"];
@@ -13685,6 +13685,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/source-preflight": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_preflightSource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}": {
         parameters: {
             query?: never;
@@ -21282,6 +21298,12 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        auth_WorkDecisionRequest: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
         auth_WorkItemDetail: {
             accessSourceType?: string;
             /** Format: date-time */
@@ -21307,8 +21329,10 @@ export interface components {
             subjectEmail?: string;
             /** Format: date-time */
             subjectLastSignInAt?: string;
+            subjectOrganizationName?: string;
             /** Format: int64 */
             subjectUserId?: number;
+            subjectWorkerNumber?: string;
             /** Format: int64 */
             version?: number;
             /** Format: uuid */
@@ -29170,6 +29194,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponsePersonalWorkSourceLink: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PersonalWorkSourceLink"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponsePersonalWorkTask: {
             correlationId?: string;
             data?: components["schemas"]["platform_PersonalWorkTask"];
@@ -32857,10 +32891,20 @@ export interface components {
         };
         platform_PersonalWorkSourceLink: {
             availability?: string;
+            channelName?: string;
             /** Format: date-time */
             dueAt?: string;
+            excerpt?: string;
+            /** Format: date-time */
+            receivedAt?: string;
             reference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            senderName?: string;
+            /** Format: date-time */
+            sourceEditedAt?: string;
+            sourceMessageId?: string;
             sourceRoute?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
             status?: string;
             title?: string;
         };
@@ -45127,7 +45171,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["auth_DecisionRequest"];
+                "application/json": components["schemas"]["auth_WorkDecisionRequest"];
             };
         };
         responses: {
@@ -48752,6 +48796,29 @@ export interface operations {
                 "application/json": components["schemas"]["messaging_SendMessageRequest"];
             };
         };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMessageSummary"];
+                };
+            };
+        };
+    };
+    messaging_message: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
@@ -65375,6 +65442,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_preflightSource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkSourceReference"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkSourceLink"];
                 };
             };
         };

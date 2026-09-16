@@ -20,10 +20,10 @@ import type * as CalendarApi from '@dwp-frontend/shared-utils/api/calendar-api';
 import type * as DesignSystem from '@dwp-frontend/design-system';
 import type { CalendarEvent, CalendarSummary } from '@dwp-frontend/shared-utils/api/calendar-api';
 import type { WorkCalendarLink } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
-import type {
-  WorkScheduleCommand,
-  WorkScheduleExecutionGuard,
-  WorkScheduleResult,
+import {
+  type WorkScheduleCommand,
+  type WorkScheduleExecutionGuard,
+  type WorkScheduleResult,
 } from './work-hub-scheduling';
 import type { WorkHubItem } from './work-hub-contracts';
 import type { Root } from 'react-dom/client';
@@ -34,7 +34,17 @@ vi.mock('@dwp-frontend/shared-utils/api/calendar-api', async (importOriginal) =>
   getCalendars: (...args: unknown[]) => getCalendars(...args),
 }));
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) =>
+      key === 'work:workHub.schedule.defaultTitle'
+        ? `집중: ${String(options?.title ?? '')}`
+        : ((
+            {
+              'work:workHub.schedule.serviceCode': 'WRK-C01',
+              'work:workHub.schedule.serviceName': 'DWP Calendar Handoff Service',
+            } as Record<string, string>
+          )[key] ?? key),
+  }),
 }));
 vi.mock('@dwp-frontend/design-system', async (importOriginal) => ({
   ...(await importOriginal<typeof DesignSystem>()),
@@ -137,6 +147,7 @@ async function render(
           canSchedule
           onClose={vi.fn()}
           onOpenCalendar={vi.fn()}
+          reviewHandoff={async () => true}
           prepare={prepare}
           execute={execute}
         />
@@ -199,6 +210,7 @@ describe('WorkHubScheduleDialog', () => {
             canSchedule={false}
             onClose={vi.fn()}
             onOpenCalendar={vi.fn()}
+            reviewHandoff={async () => true}
             prepare={vi.fn(() => command)}
             execute={vi.fn()}
           />
@@ -223,6 +235,7 @@ describe('WorkHubScheduleDialog', () => {
           canSchedule
           onClose={vi.fn()}
           onOpenCalendar={vi.fn()}
+          reviewHandoff={async () => true}
           prepare={vi.fn(() => command)}
           execute={execute}
         />
@@ -275,14 +288,14 @@ describe('WorkHubScheduleDialog', () => {
     const changed = { ...first, title: 'A new reviewed work version', version: first.version + 1 };
     await act(async () => root.render(view(changed)));
     await settle();
-    expect(input(titleLabel).value).toBe(changed.title);
+    expect(input(titleLabel).value).toBe(`집중: ${changed.title}`);
     expect(input(startLabel).value).not.toBe(editedStart);
     expect(input(endLabel).value).not.toBe(editedEnd);
     await edit(titleLabel, editedTitle);
     await act(async () => root.render(view(changed, false)));
     await act(async () => root.render(view(changed)));
     await settle();
-    expect(input(titleLabel).value).toBe(changed.title);
+    expect(input(titleLabel).value).toBe(`집중: ${changed.title}`);
     expect(execute).not.toHaveBeenCalled();
   });
 
@@ -340,6 +353,7 @@ describe('WorkHubScheduleDialog', () => {
             coordinator={coordinator}
             onClose={vi.fn()}
             onOpenCalendar={vi.fn()}
+            reviewHandoff={async () => true}
             prepare={prepare}
             execute={execute}
           />
@@ -397,6 +411,7 @@ describe('WorkHubScheduleDialog', () => {
             coordinator={coordinator}
             onClose={vi.fn()}
             onOpenCalendar={vi.fn()}
+            reviewHandoff={async () => true}
             prepare={vi.fn(() => command)}
             execute={execute}
           />
@@ -557,6 +572,7 @@ describe('WorkHubScheduleDialog', () => {
         coordinator={coordinator}
         onClose={vi.fn()}
         onOpenCalendar={vi.fn()}
+        reviewHandoff={async () => true}
         prepare={vi.fn(() => command)}
         execute={execute}
       />
@@ -686,6 +702,7 @@ describe('WorkHubScheduleDialog', () => {
               canSchedule
               onClose={vi.fn()}
               onOpenCalendar={vi.fn()}
+              reviewHandoff={async () => true}
               prepare={prepare}
               execute={execute}
             />
@@ -748,6 +765,7 @@ describe('WorkHubScheduleDialog', () => {
               canSchedule
               onClose={vi.fn()}
               onOpenCalendar={vi.fn()}
+              reviewHandoff={async () => true}
               prepare={prepare}
               execute={execute}
             />
@@ -808,6 +826,7 @@ describe('WorkHubScheduleDialog', () => {
         coordinator={coordinator}
         onClose={vi.fn()}
         onOpenCalendar={vi.fn()}
+        reviewHandoff={async () => true}
         prepare={prepare}
         execute={execute}
       />
@@ -871,6 +890,7 @@ describe('WorkHubScheduleDialog', () => {
               canSchedule={canSchedule}
               onClose={vi.fn()}
               onOpenCalendar={vi.fn()}
+              reviewHandoff={async () => true}
               prepare={vi.fn(() => command)}
               execute={execute}
             />

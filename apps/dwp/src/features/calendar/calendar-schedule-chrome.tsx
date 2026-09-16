@@ -64,6 +64,7 @@ export function CalendarScheduleChrome({
       startIcon={sourcesCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
       aria-controls={sourcesAvailable ? 'calendar-source-panel' : undefined}
       aria-expanded={sourcesAvailable ? !sourcesCollapsed : undefined}
+      aria-keyshortcuts="Meta+B Control+B"
       disabled={!sourcesAvailable}
       onClick={onToggleSources}
     >
@@ -146,12 +147,14 @@ export function CalendarScheduleChrome({
           surfaceKey="calendar.schedule"
           currentConfiguration={savedViewConfiguration}
           selectedBuiltInViewId={hasExplicitScheduleState ? null : `builtin-${view}`}
-          builtInViews={(['week', 'month', 'agenda'] as const).map((savedView) => ({
-            id: `builtin-${savedView}`,
-            name: t(`schedule.views.${savedView}`),
-            configuration: { view: savedView },
-            isDefault: savedView === 'week',
-          }))}
+          builtInViews={(['day', 'threeDay', 'fourDay', 'week', 'month', 'agenda'] as const).map(
+            (savedView) => ({
+              id: `builtin-${savedView}`,
+              name: t(`schedule.views.${savedView}`),
+              configuration: { view: savedView },
+              isDefault: savedView === 'week',
+            })
+          )}
           onApply={onApplySavedView}
         />
         {canCreate && (

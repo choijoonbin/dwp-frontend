@@ -115,7 +115,9 @@ test('work operators review and complete a governed multi-item selection', async
   await expect(result).toContainText('The source confirmed 2 work item changes.');
   await expect(result).toContainText('Approve software access request');
   await expect(result).toContainText('Review customer briefing notes');
-  await expect(result.getByText('Confirmed 2', { exact: true })).toBeVisible();
+  const summary = result.getByLabel('Batch receipt summary');
+  await expect(summary.getByText('Confirmed', { exact: true })).toBeVisible();
+  await expect(summary.locator('dd').nth(2)).toHaveText('2');
   await expect(
     result.getByText('The source confirmed the update and new version.', { exact: true })
   ).toHaveCount(2);
@@ -148,7 +150,9 @@ test('work batch conflicts identify the changed version and clear stale selectio
   const result = page.getByRole('dialog', { name: 'Batch results', exact: true });
   await expect(result).toContainText('Refresh each source result before issuing a new command.');
   await expect(result).toContainText('Approve software access request');
-  await expect(result.getByText('Version conflict 1', { exact: true })).toBeVisible();
+  const summary = result.getByLabel('Batch receipt summary');
+  await expect(summary.getByText('Version conflict', { exact: true })).toBeVisible();
+  await expect(summary.locator('dd').nth(3)).toHaveText('1');
   await expect(result).toContainText(
     'Another update was applied first. Review the latest item before selecting it again.'
   );

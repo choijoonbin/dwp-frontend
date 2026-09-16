@@ -39,6 +39,7 @@ describe('today plan candidate date and state filters', () => {
   });
 
   it('separates overdue instants, later calendar dates, and explicit absence of a deadline', () => {
+    expect(filter({ due: 'has' })).toEqual(['prior', 'early', 'today', 'later']);
     expect(filter({ due: 'overdue' })).toEqual(['prior', 'early']);
     expect(filter({ due: 'scheduled' })).toEqual(['later']);
     expect(filter({ due: 'none' })).toEqual(['none']);

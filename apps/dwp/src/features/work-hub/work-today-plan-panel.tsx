@@ -5,9 +5,11 @@ import {
   ArrowRight,
   ArrowUp,
   CalendarClock,
+  CircleCheck,
   CirclePlay,
   ClipboardPlus,
   GripVertical,
+  Lightbulb,
   Save,
   Target,
   X,
@@ -140,6 +142,21 @@ export function WorkTodayPlanPanel({
     () => workTodayPlanCandidates(items, draft, plan),
     [items, draft, plan]
   );
+  const availablePlanCount = rows.filter((row) => row.item !== null).length;
+  const focusSuggestion = useMemo(
+    () =>
+      rows
+        .map((row) => row.item)
+        .filter(
+          (item): item is WorkHubItem =>
+            item !== null &&
+            !terminal.has(item.lifecycle) &&
+            typeof item.dueAt === 'string' &&
+            Number.isFinite(Date.parse(item.dueAt))
+        )
+        .sort((left, right) => Date.parse(left.dueAt!) - Date.parse(right.dueAt!))[0] ?? null,
+    [rows]
+  );
   const busy = pending || saving;
   const controlsDisabled = busy || disabled;
   const full = draft.length >= MAX_PLAN_ITEMS;
@@ -173,7 +190,7 @@ export function WorkTodayPlanPanel({
 
   return (
     <Box data-testid="work-today-plan-page">
-      <Stack spacing={{ xs: 1.5, md: 2.5 }}>
+      <Stack spacing={{ xs: 1.5, md: 2 }}>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           gap={2}
@@ -181,10 +198,7 @@ export function WorkTodayPlanPanel({
           alignItems={{ sm: 'center' }}
         >
           <Box>
-            <Typography component="h2" variant="h6" sx={{ display: { xs: 'none', md: 'block' } }}>
-              {t('workHub.todayPlan.title')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            <Typography variant="body2" color="text.secondary">
               {t('workHub.todayPlan.description', { date })}
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -208,7 +222,7 @@ export function WorkTodayPlanPanel({
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: 'repeat(2,minmax(0,1fr))', md: 'repeat(4,minmax(0,1fr))' },
-            gap: 1.5,
+            gap: { xs: 1, md: 1.5 },
           }}
         >
           {[
@@ -237,7 +251,7 @@ export function WorkTodayPlanPanel({
               key={key}
               variant="outlined"
               sx={{
-                p: { xs: 1.25, sm: 2 },
+                p: { xs: 1.25, sm: 1.75 },
                 display: 'flex',
                 gap: 1,
                 alignItems: 'center',
@@ -269,6 +283,29 @@ export function WorkTodayPlanPanel({
           ))}
         </Box>
 
+        <Paper
+          component="aside"
+          variant="outlined"
+          sx={{
+            p: 1.5,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 1,
+            bgcolor: 'var(--dwp-product-soft)',
+            borderColor: 'transparent',
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+          }}
+        >
+          <CircleCheck size={18} aria-hidden="true" />
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="subtitle2">{t('workHub.todayPlan.title')}</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              {t('workHub.todayPlan.independenceNotice')}
+            </Typography>
+          </Box>
+        </Paper>
+
         {(error || saveFailed) && (
           <InlineFeedback severity="error">
             {error || t('workHub.todayPlan.saveFailed')}
@@ -281,20 +318,34 @@ export function WorkTodayPlanPanel({
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0,1fr)', md: 'minmax(0,1.75fr) minmax(260px,1fr)' },
+            gridTemplateColumns: {
+              xs: 'minmax(0,1fr)',
+              md: 'minmax(0,1.85fr) minmax(280px,1fr)',
+            },
             gap: 2,
           }}
         >
-          <Box component="section" aria-labelledby={selectedHeadingId} sx={{ minWidth: 0 }}>
-            <Typography
-              ref={focus.selectedHeading}
-              id={selectedHeadingId}
-              component="h3"
-              variant="subtitle1"
-              tabIndex={-1}
-            >
-              {t('workHub.todayPlan.selectedHeading', { count: rows.length })}
-            </Typography>
+          <Box
+            component="section"
+            data-testid="work-today-plan-selected"
+            aria-labelledby={selectedHeadingId}
+            sx={{ minWidth: 0 }}
+          >
+            <Stack direction="row" alignItems="center" gap={1} sx={{ px: 0.5, minHeight: 32 }}>
+              <Box
+                aria-hidden="true"
+                sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'primary.main' }}
+              />
+              <Typography
+                ref={focus.selectedHeading}
+                id={selectedHeadingId}
+                component="h3"
+                variant="h6"
+                tabIndex={-1}
+              >
+                {t('workHub.todayPlan.selectedHeading', { count: rows.length })}
+              </Typography>
+            </Stack>
             {rows.length === 0 ? (
               <EmptyState
                 title={t('workHub.todayPlan.emptyTitle')}
@@ -328,30 +379,96 @@ export function WorkTodayPlanPanel({
                         dragIndex.current = null;
                       }}
                       sx={{
-                        p: 1.75,
-                        mb: 1.25,
+                        p: { xs: 1.25, md: 1.5 },
+                        mb: 1,
                         border: 1,
-                        borderInlineStart: 4,
+                        borderInlineStart: 5,
                         borderColor: 'divider',
                         borderInlineStartColor:
                           row.item?.waitingFor === 'ME' ? 'primary.main' : 'divider',
                         bgcolor: 'background.paper',
+                        boxShadow: 1,
                         borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                        transition: (theme) =>
+                          theme.transitions.create(['box-shadow', 'transform'], {
+                            duration: theme.transitions.duration.shortest,
+                          }),
+                        '&:hover': { boxShadow: 2, transform: 'translateY(-1px)' },
+                        '@media (prefers-reduced-motion: reduce)': {
+                          transition: 'none',
+                          '&:hover': { transform: 'none' },
+                        },
+                        '@media (forced-colors: active)': { borderColor: 'CanvasText' },
                       }}
                     >
                       <Box
                         sx={{
                           display: 'grid',
-                          gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
+                          gridTemplateColumns: {
+                            xs: 'minmax(0, 1fr)',
+                            sm: '48px minmax(0, 1fr) auto',
+                          },
                           alignItems: 'center',
-                          gap: 1.5,
+                          gap: { xs: 1, sm: 1.25 },
                         }}
                       >
+                        <Stack
+                          direction={{ xs: 'row', sm: 'column' }}
+                          alignItems="center"
+                          justifyContent={{ xs: 'flex-start', sm: 'center' }}
+                          gap={0.25}
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          <ActionButton
+                            intent="quiet"
+                            aria-label={t('workHub.todayPlan.moveUp', { title })}
+                            disabled={controlsDisabled || index === 0}
+                            sx={{
+                              minWidth: { xs: 44, md: 32 },
+                              minHeight: { xs: 44, md: 32 },
+                              p: 0.5,
+                            }}
+                            onClick={() => replace(moveDayPlanReference(draft, index, index - 1))}
+                          >
+                            <ArrowUp size={17} aria-hidden="true" />
+                          </ActionButton>
+                          <Box
+                            aria-hidden="true"
+                            sx={{
+                              minWidth: 32,
+                              height: 30,
+                              px: 0.5,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 0.25,
+                              bgcolor: 'var(--dwp-product-soft)',
+                              borderRadius: 0.75,
+                              color: 'text.primary',
+                              fontSize: 'caption.fontSize',
+                              fontWeight: 'fontWeightBold',
+                            }}
+                          >
+                            <GripVertical size={13} />
+                            {String(index + 1).padStart(2, '0')}
+                          </Box>
+                          <ActionButton
+                            intent="quiet"
+                            aria-label={t('workHub.todayPlan.moveDown', { title })}
+                            disabled={controlsDisabled || index === rows.length - 1}
+                            sx={{
+                              minWidth: { xs: 44, md: 32 },
+                              minHeight: { xs: 44, md: 32 },
+                              p: 0.5,
+                            }}
+                            onClick={() => replace(moveDayPlanReference(draft, index, index + 1))}
+                          >
+                            <ArrowDown size={17} aria-hidden="true" />
+                          </ActionButton>
+                        </Stack>
                         <Box sx={{ minWidth: 0 }}>
                           <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
-                            <GripVertical size={14} aria-hidden="true" />
                             <Typography variant="caption" color="text.secondary">
-                              {String(index + 1).padStart(2, '0')} ·{' '}
                               {row.item
                                 ? workHubDisplayId(row.item)
                                 : t('workHub.todayPlan.unavailableStatus')}
@@ -451,24 +568,6 @@ export function WorkTodayPlanPanel({
                             )}
                             <ActionButton
                               intent="quiet"
-                              aria-label={t('workHub.todayPlan.moveUp', { title })}
-                              disabled={controlsDisabled || index === 0}
-                              sx={{ minWidth: 44, minHeight: 44, p: 1 }}
-                              onClick={() => replace(moveDayPlanReference(draft, index, index - 1))}
-                            >
-                              <ArrowUp size={18} aria-hidden="true" />
-                            </ActionButton>
-                            <ActionButton
-                              intent="quiet"
-                              aria-label={t('workHub.todayPlan.moveDown', { title })}
-                              disabled={controlsDisabled || index === rows.length - 1}
-                              sx={{ minWidth: 44, minHeight: 44, p: 1 }}
-                              onClick={() => replace(moveDayPlanReference(draft, index, index + 1))}
-                            >
-                              <ArrowDown size={18} aria-hidden="true" />
-                            </ActionButton>
-                            <ActionButton
-                              intent="quiet"
                               aria-label={t('workHub.todayPlan.remove', { title })}
                               disabled={controlsDisabled}
                               sx={{ minWidth: 44, minHeight: 44, p: 1, color: 'error.main' }}
@@ -500,11 +599,75 @@ export function WorkTodayPlanPanel({
                 })}
               </Box>
             )}
+            {focusSuggestion && (
+              <Paper
+                data-testid="work-today-plan-focus-suggestion"
+                component="aside"
+                variant="outlined"
+                sx={{
+                  mt: 1.5,
+                  p: 1.5,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: 'auto minmax(0,1fr)', sm: 'auto minmax(0,1fr) auto' },
+                  gap: 1.25,
+                  alignItems: 'center',
+                  borderColor: 'transparent',
+                  bgcolor: 'var(--dwp-product-soft)',
+                  '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+                }}
+              >
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    display: 'grid',
+                    placeItems: 'center',
+                    color: 'success.dark',
+                    bgcolor: 'success.light',
+                    borderRadius: 1,
+                  }}
+                >
+                  <Lightbulb size={20} />
+                </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="subtitle2">
+                    {t('workHub.todayPlan.focusSuggestionTitle')}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+                    {t('workHub.todayPlan.focusSuggestionDetail', {
+                      title: focusSuggestion.title,
+                      date: formatDate(focusSuggestion.dueAt!, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      }),
+                    })}
+                  </Typography>
+                </Box>
+                {onSchedule && (
+                  <ActionButton
+                    intent="secondary"
+                    startIcon={<CalendarClock size={17} aria-hidden="true" />}
+                    disabled={controlsDisabled}
+                    onClick={() => onSchedule(focusSuggestion)}
+                    sx={{
+                      minHeight: 44,
+                      gridColumn: { xs: '1 / -1', sm: 'auto' },
+                      width: { xs: 1, sm: 'auto' },
+                    }}
+                  >
+                    {t('workHub.todayPlan.scheduleSuggestion')}
+                  </ActionButton>
+                )}
+              </Paper>
+            )}
           </Box>
 
           <WorkTodayPlanCandidatePicker
             candidates={candidates}
             context={dateContext}
+            planCount={rows.length}
+            availablePlanCount={availablePlanCount}
             remaining={MAX_PLAN_ITEMS - draft.length}
             disabled={controlsDisabled}
             headingId={candidatesHeadingId}

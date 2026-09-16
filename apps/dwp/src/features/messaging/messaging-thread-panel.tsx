@@ -43,8 +43,10 @@ export function MessagingThreadPanel({
   onClose,
   onReact,
   onSave,
+  onTrackAsTask,
   onEdit,
   onDelete,
+  highlightMessageId,
   loading = false,
   loadError = false,
 }: {
@@ -67,8 +69,10 @@ export function MessagingThreadPanel({
   onClose: () => void;
   onReact: (messageId: string, emoji: string, remove: boolean) => void;
   onSave: (message: MessagingThread['root']) => void;
+  onTrackAsTask?: (message: MessagingThread['root']) => void;
   onEdit: (message: MessagingThread['root']) => void;
   onDelete: (message: MessagingThread['root']) => void;
+  highlightMessageId?: string | null;
   loading?: boolean;
   loadError?: boolean;
 }) {
@@ -93,11 +97,12 @@ export function MessagingThreadPanel({
 
   useEffect(() => {
     if (!open || !thread) return;
+    if (highlightMessageId) return;
     if (!nearBottomRef.current) return;
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
     });
-  }, [open, thread?.replies.length, thread]);
+  }, [highlightMessageId, open, thread?.replies.length, thread]);
 
   if (!thread) return null;
 
@@ -161,6 +166,7 @@ export function MessagingThreadPanel({
           mine={thread.root.senderUserId === currentUserId}
           display={{ ...displayPreference, effectiveLayoutMode: 'COLLABORATIVE' }}
           compact
+          highlighted={thread.root.messageId === highlightMessageId}
           onReact={(emoji) =>
             onReact(
               thread.root.messageId,
@@ -169,6 +175,7 @@ export function MessagingThreadPanel({
             )
           }
           onSave={() => onSave(thread.root)}
+          onTrackAsTask={onTrackAsTask ? () => onTrackAsTask(thread.root) : undefined}
           onEdit={() => onEdit(thread.root)}
           onDelete={() => onDelete(thread.root)}
         />
@@ -194,6 +201,7 @@ export function MessagingThreadPanel({
               mine={reply.senderUserId === currentUserId}
               display={{ ...displayPreference, effectiveLayoutMode: 'COLLABORATIVE' }}
               compact
+              highlighted={reply.messageId === highlightMessageId}
               onReact={(emoji) =>
                 onReact(
                   reply.messageId,
@@ -202,6 +210,7 @@ export function MessagingThreadPanel({
                 )
               }
               onSave={() => onSave(reply)}
+              onTrackAsTask={onTrackAsTask ? () => onTrackAsTask(reply) : undefined}
               onEdit={() => onEdit(reply)}
               onDelete={() => onDelete(reply)}
             />

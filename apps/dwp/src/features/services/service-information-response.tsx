@@ -18,28 +18,60 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useContextualProductActionMutation } from '../../components/use-contextual-product-action-mutation';
 import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import {
   prepareServiceInformationResponse,
   serviceResponseCanDispatch,
+  serviceResponseReceiptMatches,
 } from './service-information-response-model';
 import { ServiceInformationResponseFields } from './service-information-response-fields';
 import type {
   ServiceInformationResponseInput,
   ServiceRequestDetail,
 } from '@dwp-frontend/shared-utils/api/service-center-api';
+import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
 
-export function ServiceInformationResponse({
-  detail,
-  onConfirmed,
-  onRefresh,
-}: {
+export type ServiceInformationResponseDraft = Readonly<{
+  key: string;
+  expectedVersion: number;
+  message: string;
+}>;
+
+type PendingDraftReplacement = Readonly<{
+  key: string;
+  expectedVersion: number;
+  message: string;
+}>;
+
+export type ServiceInformationResponseProps = {
   detail: ServiceRequestDetail;
   onConfirmed: (receipt: ServiceRequestDetail) => void;
   onRefresh: () => void;
-}) {
-  const { t } = useTranslation('services');
+  contextual?: boolean;
+  appliedDraft?: ServiceInformationResponseDraft | null;
+  onDraftApplied?: () => void;
+};
+
+type ServiceInformationResponseRuntime = Readonly<{
+  owner: string | null;
+  canRespond: boolean;
+  contextScopeKey?: string;
+  runResponse: <T>(
+    execute: (authority: ProductSurfaceGovernedMutationAuthority) => Promise<T>
+  ) => Promise<T>;
+}>;
+
+export function ServiceInformationResponse(props: ServiceInformationResponseProps) {
+  return props.contextual ? (
+    <ContextualServiceInformationResponse {...props} />
+  ) : (
+    <PageServiceInformationResponse {...props} />
+  );
+}
+
+function PageServiceInformationResponse(props: ServiceInformationResponseProps) {
   const { user, isAuthenticated } = useAuth();
   const { hasPermission } = usePermissions();
   const capability = useProductSurfaceCapabilityAccess();
@@ -54,14 +86,73 @@ export function ServiceInformationResponse({
     isAuthenticated && user
       ? `${user.identityPlane}:${user.tenantId}:${user.userId}:${scope.queryMeta.accessMode}:${scope.contextScopeKey ?? ''}`
       : null;
+  return (
+    <ServiceInformationResponseForm
+      {...props}
+      runtime={{
+        owner,
+        canRespond:
+          scope.ready &&
+          (capability.governed
+            ? capability.hasWritableCapability('services.request.respond')
+            : hasPermission('APP.EMPLOYEE_SERVICES', 'UPDATE')),
+        contextScopeKey: scope.contextScopeKey,
+        runResponse,
+      }}
+    />
+  );
+}
+
+function ContextualServiceInformationResponse(props: ServiceInformationResponseProps) {
+  const { user, isAuthenticated } = useAuth();
+  const { hasPermission } = usePermissions();
+  const action = useContextualProductActionMutation(
+    'route.services.work.request-information-response.action',
+    'services.request.respond',
+    'SELF'
+  );
+  const owner =
+    isAuthenticated && user
+      ? `${user.identityPlane}:${user.tenantId}:${user.userId}:${action.accessMode}:${action.contextKey}:${action.contextScopeKind}:${action.contextScopeKey ?? ''}`
+      : null;
+  return (
+    <ServiceInformationResponseForm
+      {...props}
+      runtime={{
+        owner,
+        canRespond:
+          action.ready &&
+          (action.governed
+            ? action.hasWritableCapability
+            : hasPermission('APP.EMPLOYEE_SERVICES', 'UPDATE')),
+        contextScopeKey: action.contextScopeKey,
+        runResponse: action.run,
+      }}
+    />
+  );
+}
+
+function ServiceInformationResponseForm({
+  detail,
+  onConfirmed,
+  onRefresh,
+  appliedDraft,
+  onDraftApplied,
+  runtime,
+}: ServiceInformationResponseProps & { runtime: ServiceInformationResponseRuntime }) {
+  const { t } = useTranslation(['services', 'work']);
+  const { owner, canRespond, contextScopeKey, runResponse } = runtime;
   const ownerRef = useRef(owner);
   ownerRef.current = owner;
   const mounted = useRef(false);
   const generation = useRef(0);
   const locked = useRef(false);
+  const appliedDraftKey = useRef<string | null>(null);
+  const responseAuthority = useRef(canRespond);
   const [base, setBase] = useState(detail);
   const [values, setValues] = useState(detail.values);
   const [message, setMessage] = useState('');
+  const [draftReplacement, setDraftReplacement] = useState<PendingDraftReplacement | null>(null);
   const [preview, setPreview] = useState<ServiceInformationResponseInput | null>(null);
   const [uncertain, setUncertain] = useState<ServiceInformationResponseInput | null>(null);
   const [busy, setBusy] = useState(false);
@@ -69,11 +160,6 @@ export function ServiceInformationResponse({
     null
   );
   const [latest, setLatest] = useState<ServiceRequestDetail | null>(null);
-  const canRespond =
-    scope.ready &&
-    (capability.governed
-      ? capability.hasWritableCapability('services.request.respond')
-      : hasPermission('APP.EMPLOYEE_SERVICES', 'UPDATE'));
   const latestDetail = latest && latest.request.version > detail.request.version ? latest : detail;
   const changed = latestDetail.request.version !== base.request.version;
   useEffect(() => {
@@ -82,12 +168,14 @@ export function ServiceInformationResponse({
     setBase(detail);
     setValues(detail.values);
     setMessage('');
+    setDraftReplacement(null);
     setPreview(null);
     setUncertain(null);
     setFeedback(null);
     setLatest(null);
     setBusy(false);
     locked.current = false;
+    appliedDraftKey.current = null;
     return () => {
       mounted.current = false;
       generation.current += 1;
@@ -95,6 +183,79 @@ export function ServiceInformationResponse({
     // Snapshot changes are reviewed explicitly; only identity changes discard private drafts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner, detail.request.requestId]);
+
+  useEffect(() => {
+    const wasAllowed = responseAuthority.current;
+    responseAuthority.current = canRespond;
+    if (!wasAllowed || canRespond) return;
+    generation.current += 1;
+    locked.current = false;
+    setValues(detail.values);
+    setMessage('');
+    setDraftReplacement(null);
+    setPreview(null);
+    setUncertain(null);
+    setLatest(null);
+    setFeedback(null);
+    setBusy(false);
+  }, [canRespond, detail.values]);
+
+  useEffect(() => {
+    if (
+      !canRespond ||
+      !appliedDraft ||
+      appliedDraft.key === appliedDraftKey.current ||
+      appliedDraft.key === draftReplacement?.key ||
+      appliedDraft.expectedVersion !== base.request.version ||
+      changed ||
+      base.request.status !== 'AWAITING_REQUESTER'
+    )
+      return;
+    const nextMessage = appliedDraft.message.trim().slice(0, 2000);
+    if (nextMessage.length < 10) return;
+    if (message.trim()) {
+      setDraftReplacement({
+        key: appliedDraft.key,
+        expectedVersion: appliedDraft.expectedVersion,
+        message: nextMessage,
+      });
+      return;
+    }
+    appliedDraftKey.current = appliedDraft.key;
+    setMessage(nextMessage);
+    setPreview(null);
+    onDraftApplied?.();
+  }, [
+    appliedDraft,
+    base.request.status,
+    base.request.version,
+    canRespond,
+    changed,
+    draftReplacement?.key,
+    message,
+    onDraftApplied,
+  ]);
+
+  useEffect(() => {
+    if (
+      !draftReplacement ||
+      (canRespond &&
+        !changed &&
+        draftReplacement.expectedVersion === base.request.version &&
+        base.request.status === 'AWAITING_REQUESTER')
+    )
+      return;
+    appliedDraftKey.current = draftReplacement.key;
+    setDraftReplacement(null);
+    onDraftApplied?.();
+  }, [
+    base.request.status,
+    base.request.version,
+    canRespond,
+    changed,
+    draftReplacement,
+    onDraftApplied,
+  ]);
 
   useEffect(() => {
     if (
@@ -121,7 +282,7 @@ export function ServiceInformationResponse({
       generation.current === submittingGeneration;
     let dispatched = false;
     try {
-      const current = await getMyServiceRequest(base.request.requestId, scope.contextScopeKey);
+      const current = await getMyServiceRequest(base.request.requestId, contextScopeKey);
       if (!isCurrent()) return;
       if (!serviceResponseCanDispatch(current, base.request.requestId, command, replay)) {
         setLatest(current);
@@ -137,10 +298,7 @@ export function ServiceInformationResponse({
         return respondToServiceInformationRequest(base.request.requestId, command, authority);
       });
       if (!isCurrent()) return;
-      if (
-        receipt.request.requestId !== base.request.requestId ||
-        receipt.request.version <= command.version
-      )
+      if (!serviceResponseReceiptMatches(receipt, base.request.requestId, command))
         throw new Error('Unconfirmed response receipt');
       setBase(receipt);
       setValues(receipt.values);
@@ -189,6 +347,7 @@ export function ServiceInformationResponse({
   return (
     <Box
       component="section"
+      data-testid="service-information-response"
       aria-labelledby="service-information-response-title"
       sx={{
         border: 1,
@@ -293,6 +452,41 @@ export function ServiceInformationResponse({
           )}
         </Stack>
       </Stack>
+      <ConfirmDialog
+        open={Boolean(draftReplacement)}
+        title={t('workHub.sourceDetail.service.replaceDraftTitle', { ns: 'work' })}
+        description={t('workHub.sourceDetail.service.replaceDraftDescription', { ns: 'work' })}
+        cancelLabel={t('informationResponse.back')}
+        confirmLabel={t('workHub.sourceDetail.service.replaceDraft', { ns: 'work' })}
+        onClose={() => {
+          if (draftReplacement) {
+            appliedDraftKey.current = draftReplacement.key;
+            onDraftApplied?.();
+          }
+          setDraftReplacement(null);
+        }}
+        onConfirm={() => {
+          if (draftReplacement) {
+            const current =
+              canRespond &&
+              !changed &&
+              draftReplacement.expectedVersion === base.request.version &&
+              base.request.status === 'AWAITING_REQUESTER';
+            appliedDraftKey.current = draftReplacement.key;
+            if (current) {
+              setMessage(draftReplacement.message);
+              setPreview(null);
+            }
+            onDraftApplied?.();
+          }
+          setDraftReplacement(null);
+        }}
+        details={
+          <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
+            {draftReplacement?.message}
+          </Typography>
+        }
+      />
       <ConfirmDialog
         open={Boolean(preview)}
         title={t('informationResponse.confirmTitle')}

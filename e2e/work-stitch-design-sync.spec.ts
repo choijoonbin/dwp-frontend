@@ -229,7 +229,7 @@ for (const variant of variants) {
         const navigation = page.getByTestId('work-mobile-bottom-navigation');
         await expect(navigation).toBeVisible();
         await expect(navigation.getByRole('button')).toHaveCount(5);
-        await expect(navigation.getByRole('button', { name: '더보기', exact: true })).toBeVisible();
+        await expect(navigation.getByRole('button', { name: '프로필', exact: true })).toBeVisible();
       }
       await capture(page, testInfo, '01-unified-queue');
 
@@ -244,18 +244,52 @@ for (const variant of variants) {
       await capture(page, testInfo, '07-today-plan');
 
       await page.goto(personalTaskRoute());
-      await page
+      const scheduleTrigger = page
         .getByRole('article')
-        .getByRole('button', { name: '수행 시간 잡기', exact: true })
-        .click();
-      const calendar = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
+        .getByRole('button', { name: '수행 시간 잡기', exact: true });
+      await scheduleTrigger.click();
+      let calendar = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
       await expect(calendar).toBeVisible();
+      await expect(calendar).toContainText('WRK-C01');
+      await expect(calendar).toContainText('DWP Calendar Handoff Service');
+      await expect(calendar).toContainText('(집중시간 예약)');
+      await expect(calendar).toContainText('연결 대상 업무');
+      await expect(calendar).toContainText(fixture.personalTitle);
+      await expect(calendar).toContainText('업무와 캘린더의 독립성:');
+      await expect(calendar).toContainText('캘린더 가용성 연동 전');
+      await expect(calendar).toContainText('등록 대상 및 개인정보 보호');
+      await expect(calendar).toContainText('업무함 원본 하이퍼링크');
+      await expect(calendar).toContainText('일정 생성 및 안전한 상호 링크 준비 완료');
       await expect(calendar.getByRole('textbox', { name: '일정 제목', exact: true })).toHaveValue(
-        fixture.personalTitle
+        `집중: ${fixture.personalTitle}`
       );
       await expect(
-        calendar.getByRole('button', { name: '집중 시간 만들기', exact: true })
+        calendar.getByRole('button', {
+          name: '개인 캘린더에 집중시간 예약 (Direct)',
+          exact: true,
+        })
       ).toBeEnabled();
+      await expect(
+        calendar.getByRole('button', {
+          name: '캘린더에서 이어서 작성 (Handoff)',
+          exact: true,
+        })
+      ).toBeEnabled();
+      const dialogBounds = await calendar.boundingBox();
+      expect(dialogBounds?.width ?? 0).toBeLessThanOrEqual(690);
+      if (variant.width < 600) expect(dialogBounds?.width).toBe(variant.width);
+      else
+        expect(dialogBounds?.width ?? 0).toBeGreaterThanOrEqual(Math.min(690, variant.width - 32));
+
+      const close = calendar.getByRole('button', { name: '닫기', exact: true });
+      await close.focus();
+      await expect(close).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(calendar).not.toBeVisible();
+      await expect(scheduleTrigger).toBeFocused();
+      await scheduleTrigger.click();
+      calendar = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
+      await expect(calendar).toBeVisible();
       expect(runtime.calendarCommands).toHaveLength(0);
       await capture(page, testInfo, '08-calendar-handoff');
 
@@ -293,21 +327,53 @@ for (const variant of variants) {
         await assistant.evaluate((element) => element.scrollIntoView({ block: 'start' }));
       if (variant.width >= 1200) await expectAssistActionsClearOfLauncher(page);
       await capture(page, testInfo, '11-selected-work-ai-assist', variant.width < 900);
+      const applyDraft = assistant.getByRole('button', {
+        name: '초안을 업무 폼에 적용',
+        exact: true,
+      });
+      await expect(applyDraft).toBeEnabled();
+      await applyDraft.click();
       await expect(
-        assistant.getByRole('button', { name: '초안을 업무 폼에 적용', exact: true })
-      ).toHaveCount(0);
+        page.getByRole('textbox', { name: '담당자에게 전달할 보완 답변', exact: true })
+      ).toHaveValue(draftAnswer);
+      await capture(page, testInfo, '11-selected-work-ai-draft-applied', true);
       await expect(
         service.getByRole('button', { name: '원본에서 확인', exact: true })
       ).toBeVisible();
-      expect(
-        runtime.sourceMutations,
-        'Read-only AI help must not submit a foreign source command'
-      ).toEqual([]);
+      expect(runtime.sourceMutations, 'Applying an AI draft must never submit it').toEqual([]);
+
+      await page
+        .getByRole('textbox', { name: '접속 대상 리소스 / 서버망', exact: true })
+        .fill('고객 지원 시스템 전용망');
+      await page
+        .getByRole('textbox', { name: '업무 목적', exact: true })
+        .fill('분기 고객 지원 프로젝트 수행');
+      await service.getByRole('button', { name: '보완 답변 검토', exact: true }).click();
+      const responsePreview = page.getByRole('dialog', {
+        name: '보완 답변을 제출할까요?',
+        exact: true,
+      });
+      await expect(responsePreview).toContainText(draftAnswer);
+      await responsePreview.getByRole('button', { name: '보완 답변 제출', exact: true }).click();
+      await expect(service).toContainText('보완 답변이 접수되었습니다.');
+      expect(runtime.sourceMutations).toHaveLength(1);
+      expect(runtime.sourceMutations[0]).toMatchObject({
+        path: expect.stringContaining('/information-response'),
+        body: {
+          message: draftAnswer,
+          values: {
+            network: '고객 지원 시스템 전용망',
+            purpose: '분기 고객 지원 프로젝트 수행',
+          },
+          version: 3,
+          idempotencyKey: expect.any(String),
+        },
+      });
     });
   });
 }
 
-test('six destinations retain their own URL and mobile More reaches the remaining states', async ({
+test('six destinations retain their own URL and the mobile drawer reaches every Work state', async ({
   page,
 }) => {
   await mockDesignJourneys(page);
@@ -320,15 +386,12 @@ test('six destinations retain their own URL and mobile More reaches the remainin
   }
   await page.setViewportSize({ width: 390, height: 844 });
   for (const [view, label] of destinations.slice(3)) {
-    await page
-      .getByTestId('work-mobile-bottom-navigation')
-      .getByRole('button', { name: '더보기', exact: true })
-      .click();
-    await page
-      .getByRole('dialog', { name: '업무 상태별 보기', exact: true })
-      .getByRole('button', { name: label, exact: true })
-      .click();
+    await page.getByTestId('work-mobile-navigation-trigger').click();
+    const drawer = page.getByTestId('work-mobile-sidebar');
+    await expect(drawer).toBeVisible();
+    await drawer.getByTestId(`work-navigation-item-${view}`).click();
     await expect(page).toHaveURL(`/work/${view}`);
+    await expect(page.getByRole('heading', { level: 1, name: label, exact: true })).toBeVisible();
   }
 });
 
@@ -428,7 +491,12 @@ test('10 Flow receives personal Work and today-plan contributions with canonical
   const response = page.getByRole('article');
   await expect(response).toContainText(fixture.serviceTitle);
   await expect(response.getByRole('button', { name: '원본에서 확인', exact: true })).toBeVisible();
-  await expect(response.getByRole('textbox')).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: '요청된 정보를 보완해 주세요', exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('textbox', { name: '담당자에게 전달할 보완 답변', exact: true })
+  ).toBeVisible();
   expect(runtime.sourceMutations).toHaveLength(0);
   await capture(page, testInfo, '10-service-response-entry');
 });
@@ -437,7 +505,7 @@ for (const appearance of [
   { name: 'dark', mode: 'dark' as const, highContrast: false },
   { name: 'high-contrast', mode: 'light' as const, highContrast: true },
 ]) {
-  test(`${appearance.name} mobile navigation and keyboard dialog return`, async ({
+  test(`${appearance.name} mobile navigation and keyboard drawer return`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -446,18 +514,22 @@ for (const appearance of [
       await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
     await page.goto('/work/queue');
     const navigation = page.getByTestId('work-mobile-bottom-navigation');
-    const more = navigation.getByRole('button', { name: '더보기', exact: true });
     await expect(
       page.getByRole('heading', { level: 1, name: '통합업무함', exact: true })
     ).toBeVisible();
-    await more.focus();
+    await expect(navigation.getByRole('button', { name: '업무함', exact: true })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    const trigger = page.getByTestId('work-mobile-navigation-trigger');
+    await trigger.focus();
     await page.keyboard.press('Enter');
-    const dialog = page.getByRole('dialog', { name: '업무 상태별 보기', exact: true });
-    await expect(dialog).toBeVisible();
-    await dialog.getByRole('button', { name: '진행 중', exact: true }).focus();
+    const drawer = page.getByTestId('work-mobile-sidebar');
+    await expect(drawer).toBeVisible();
+    await drawer.getByTestId('work-navigation-item-in-progress').focus();
     await page.keyboard.press('Escape');
-    await expect(dialog).not.toBeVisible();
-    await expect(more).toBeFocused();
+    await expect(drawer).not.toBeVisible();
+    await expect(trigger).toBeFocused();
     await capture(page, testInfo, `01-queue-${appearance.name}`);
     const results = await new AxeBuilder({ page })
       .include('#dwp-main-content')
@@ -470,6 +542,35 @@ for (const appearance of [
     });
     expect(
       results.violations.filter((violation) =>
+        ['serious', 'critical'].includes(violation.impact ?? '')
+      )
+    ).toEqual([]);
+
+    await page.goto(personalTaskRoute());
+    await page
+      .getByRole('article')
+      .getByRole('button', { name: '수행 시간 잡기', exact: true })
+      .click();
+    const scheduleDialog = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
+    await expect(scheduleDialog).toBeVisible();
+    await expect(scheduleDialog).toContainText('WRK-C01');
+    await expect(
+      scheduleDialog.getByRole('button', {
+        name: '개인 캘린더에 집중시간 예약 (Direct)',
+        exact: true,
+      })
+    ).toBeEnabled();
+    await capture(page, testInfo, `08-calendar-handoff-${appearance.name}`);
+    const scheduleResults = await new AxeBuilder({ page })
+      .include('[data-testid="work-schedule-dialog"]')
+      .withTags(['wcag2a', 'wcag2aa'])
+      .analyze();
+    await testInfo.attach(`calendar-accessibility-results-${appearance.name}`, {
+      body: JSON.stringify(scheduleResults.violations, null, 2),
+      contentType: 'application/json',
+    });
+    expect(
+      scheduleResults.violations.filter((violation) =>
         ['serious', 'critical'].includes(violation.impact ?? '')
       )
     ).toEqual([]);

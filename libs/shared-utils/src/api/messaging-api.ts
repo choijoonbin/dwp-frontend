@@ -421,6 +421,16 @@ export async function getMessagingMessages(input: {
   return response.data.data;
 }
 
+export async function getMessagingMessage(
+  conversationId: string,
+  messageId: string
+): Promise<MessagingMessage> {
+  const response = await axiosInstance.get<ApiResponse<MessagingMessage>>(
+    `/api/messaging/v1/conversations/${encodeURIComponent(conversationId)}/messages/${encodeURIComponent(messageId)}`
+  );
+  return response.data.data;
+}
+
 export async function createDirectMessagingConversation(
   targetUserId: number
 ): Promise<MessagingConversation> {

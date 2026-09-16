@@ -2,9 +2,16 @@ import { isAppReadEntitled } from '@dwp-frontend/shared-utils';
 
 import type { PermissionDTO, SavedViewConfiguration } from '@dwp-frontend/shared-utils';
 
-export type CalendarScheduleView = 'day' | 'week' | 'month' | 'agenda';
+export type CalendarScheduleView = 'day' | 'threeDay' | 'fourDay' | 'week' | 'month' | 'agenda';
 
-const SCHEDULE_VIEWS = new Set<CalendarScheduleView>(['day', 'week', 'month', 'agenda']);
+const SCHEDULE_VIEWS = new Set<CalendarScheduleView>([
+  'day',
+  'threeDay',
+  'fourDay',
+  'week',
+  'month',
+  'agenda',
+]);
 const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/u;
 const RETURN_TARGET_MAX_LENGTH = 2_048;
 
@@ -184,6 +191,8 @@ export function calendarScheduleStateFromSavedView(
 export function fullCalendarView(view: CalendarScheduleView): string {
   return {
     day: 'timeGridDay',
+    threeDay: 'timeGridThreeDay',
+    fourDay: 'timeGridFourDay',
     week: 'timeGridWeek',
     month: 'dayGridMonth',
     agenda: 'listMonth',
@@ -194,6 +203,8 @@ export function scheduleViewFromFullCalendar(value: string): CalendarScheduleVie
   return (
     ({
       timeGridDay: 'day',
+      timeGridThreeDay: 'threeDay',
+      timeGridFourDay: 'fourDay',
       timeGridWeek: 'week',
       dayGridMonth: 'month',
       listMonth: 'agenda',

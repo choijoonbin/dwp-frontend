@@ -31,6 +31,14 @@ function button(label: string) {
   return match!;
 }
 
+function entryMode(mode: 'new' | 'source' | 'edit') {
+  const match = document.querySelector<HTMLButtonElement>(
+    `[data-testid="work-task-entry-mode-${mode}"]`
+  );
+  expect(match).not.toBeNull();
+  return match!;
+}
+
 async function render(props: Partial<ComponentProps<typeof WorkTaskDialog>> = {}) {
   const defaults: ComponentProps<typeof WorkTaskDialog> = {
     open: true,
@@ -451,6 +459,55 @@ describe('WorkTaskDialog', () => {
     );
   });
 
+  it('maps ordinary creation to A and existing-task editing to C', async () => {
+    await render({ initialValue: undefined });
+    expect(entryMode('new').getAttribute('aria-pressed')).toBe('true');
+    expect(entryMode('source').disabled).toBe(true);
+    expect(entryMode('edit').disabled).toBe(true);
+
+    await render({
+      mode: 'edit',
+      initialValue: { title: 'Existing task', priority: 'NORMAL', version: 3 },
+    });
+    expect(entryMode('edit').getAttribute('aria-pressed')).toBe('true');
+    expect(entryMode('new').disabled).toBe(true);
+    expect(entryMode('source').disabled).toBe(true);
+  });
+
+  it('maps a verified source capture to B and switches A/B without leaking source identity', async () => {
+    const onSubmit = vi.fn().mockRejectedValue(new Error('unknown outcome'));
+    const sourceReference = {
+      sourceSystem: 'MESSAGING_MESSAGE',
+      sourceReference: 'private-conversation-id',
+      obligationKey: 'private-message-id',
+    };
+    await render({
+      sourcePreflightState: 'READY',
+      initialValue: { title: 'Follow up', sourceReference },
+      onSubmit,
+    });
+
+    expect(entryMode('source').getAttribute('aria-pressed')).toBe('true');
+    expect(entryMode('new').disabled).toBe(false);
+    expect(entryMode('source').disabled).toBe(false);
+    expect(document.body.textContent).not.toContain('private-conversation-id');
+    expect(document.body.textContent).not.toContain('private-message-id');
+
+    await act(async () => entryMode('new').click());
+    expect(entryMode('new').getAttribute('aria-pressed')).toBe('true');
+    await act(async () => button('workHub.taskForm.create.submit').click());
+    expect(onSubmit.mock.calls[0]?.[0]).not.toHaveProperty('sourceReference');
+    expect(onSubmit.mock.calls[0]?.[0]).not.toHaveProperty('clearSourceReference');
+
+    await act(async () => entryMode('source').click());
+    expect(entryMode('source').getAttribute('aria-pressed')).toBe('true');
+    await act(async () => button('workHub.taskForm.create.submit').click());
+    expect(onSubmit.mock.calls[1]?.[0]).toHaveProperty('sourceReference', sourceReference);
+    expect(onSubmit.mock.calls[1]?.[1].idempotencyKey).not.toBe(
+      onSubmit.mock.calls[0]?.[1].idempotencyKey
+    );
+  });
+
   it('submits the create-only today-plan intent outside the task payload', async () => {
     const onSubmit = vi.fn();
     await render({ onSubmit });
@@ -463,6 +520,43 @@ describe('WorkTaskDialog', () => {
       expect.not.objectContaining({ addToTodayPlan: expect.anything() }),
       expect.objectContaining({ addToTodayPlan: true, idempotencyKey: expect.any(String) })
     );
+  });
+
+  it('keeps the M2 four-step flow out of F01 and schedules after an eligible create', async () => {
+    const onSubmit = vi.fn();
+    await render({ onSubmit, canScheduleAfterCreate: true });
+
+    expect(
+      document.querySelector<HTMLOListElement>('ol[aria-label="workHub.taskForm.quickFlow.label"]')
+    ).toBeNull();
+    expect(entryMode('new').getAttribute('aria-pressed')).toBe('true');
+
+    expect(
+      document.querySelector('[role="status"][aria-label="workHub.taskForm.scheduleAfterCreate"]')
+        ?.textContent
+    ).toContain('workHub.taskForm.scheduleAfterCreateReady');
+    expect(
+      [...document.querySelectorAll('label')].some((label) =>
+        label.textContent?.includes('workHub.taskForm.scheduleAfterCreate')
+      )
+    ).toBe(false);
+    await act(async () => button('workHub.taskForm.create.submit').click());
+    await settle();
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.not.objectContaining({ scheduleAfterCreate: expect.anything() }),
+      expect.objectContaining({ scheduleAfterCreate: true, idempotencyKey: expect.any(String) })
+    );
+  });
+
+  it('keeps the read-only scheduling follow-up unavailable without verified Calendar access', async () => {
+    await render({ canScheduleAfterCreate: false });
+
+    const status = document.querySelector(
+      '[role="status"][aria-label="workHub.taskForm.scheduleAfterCreate"]'
+    );
+    expect(status?.textContent).toContain('workHub.taskForm.scheduleAfterCreateUnavailable');
+    expect(status?.textContent).toContain('workHub.taskForm.scheduleAfterCreateUnavailableShort');
   });
 
   it('normalizes whitespace while retaining optional values in the submit model', () => {

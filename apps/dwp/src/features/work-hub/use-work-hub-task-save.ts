@@ -19,6 +19,7 @@ import {
   isPersonalTaskReviewedReceipt,
 } from './work-hub-personal-save-receipt';
 import {
+  canUseWorkHubGenericAdjunct,
   isWorkHubItemCommandReady,
   isWorkHubSourceCommandReady,
 } from './work-hub-command-authority';
@@ -29,6 +30,11 @@ import type {
   WorkTaskCreateClaim,
   WorkTaskSaveCoordinator,
 } from './work-hub-task-save-coordinator';
+
+export type WorkTaskScheduleHandoff = Readonly<{
+  item: WorkHubItem;
+  snapshot: WorkHubSnapshot;
+}>;
 
 export function useWorkHubTaskSave({
   controller,
@@ -41,6 +47,7 @@ export function useWorkHubTaskSave({
   onPlanError,
   onFeedback,
   onCreated,
+  onScheduleCreated,
   taskSaveCoordinator,
   enabled,
   preflight,
@@ -55,6 +62,8 @@ export function useWorkHubTaskSave({
   onPlanError: (message: string | null) => void;
   onFeedback: (feedback: WorkHubOperationFeedback) => void;
   onCreated: (reference: WorkSourceReference) => void;
+  /** Opens scheduling only after the created task is present in an exact, command-ready snapshot. */
+  onScheduleCreated?: (handoff: WorkTaskScheduleHandoff) => void;
   taskSaveCoordinator?: WorkTaskSaveCoordinator;
   enabled: boolean;
   /** Returns a newly read aggregate snapshot before create or edit can dispatch. */
@@ -138,6 +147,8 @@ export function useWorkHubTaskSave({
       let createdReference: WorkHubItem['reference'] | null = null;
       let createdPlanIntent: { date: string; idempotencyKey: string } | null = null;
       let createdTask: PersonalWorkTask | null = null;
+      let scheduleHandoff: WorkTaskScheduleHandoff | null = null;
+      let scheduleHandoffFailed = false;
       if (editingTask) {
         if (version === undefined) throw new Error('version required');
         controller.adopt(commandSnapshot);
@@ -214,79 +225,121 @@ export function useWorkHubTaskSave({
         const planReference = createdReference;
         const planIntent = createdPlanIntent;
         const verifiedCreatedTask = createdTask;
-        await runWorkHubCreatePlanLane(
-          taskSaveCoordinator,
-          { signal: run.abort.signal, canContinue: isCurrent },
-          async () => {
-            const planSnapshot = await preflight();
-            assertCurrent();
-            if (!isWorkHubItemCommandReady(planSnapshot, personalWorkToHub(verifiedCreatedTask))) {
-              throw new HttpError('Created personal work is unavailable', 503);
-            }
-            await controller.loadPlan(planIntent.date, {
-              signal: run.abort.signal,
-              canContinue: isCurrent,
-            });
-            assertCurrent();
-            const submissionSnapshot = await preflight();
-            assertCurrent();
-            if (
-              !isWorkHubItemCommandReady(submissionSnapshot, personalWorkToHub(verifiedCreatedTask))
-            ) {
-              throw new HttpError('Created personal work is unavailable', 503);
-            }
-            if (
-              dayPlanHasReference(
-                controller.state().plan,
-                controller.state().planDraft,
-                planReference
-              )
-            ) {
-              onPlanDraftChange(controller.state().planDraft);
-              onPlanError(null);
-              return;
-            }
-            const next = controller.addToPlan(planReference);
-            onPlanDraftChange(next);
-            try {
-              const planResult = await controller.savePlan(
-                planIntent.date,
-                next,
-                planIntent.idempotencyKey,
-                { signal: run.abort.signal, canContinue: isCurrent }
-              );
+        try {
+          await runWorkHubCreatePlanLane(
+            taskSaveCoordinator,
+            { signal: run.abort.signal, canContinue: isCurrent },
+            async () => {
+              const planSnapshot = await preflight();
               assertCurrent();
-              if (planResult.state === 'SAVED') {
+              if (
+                !isWorkHubItemCommandReady(planSnapshot, personalWorkToHub(verifiedCreatedTask))
+              ) {
+                throw new HttpError('Created personal work is unavailable', 503);
+              }
+              await controller.loadPlan(planIntent.date, {
+                signal: run.abort.signal,
+                canContinue: isCurrent,
+              });
+              assertCurrent();
+              const submissionSnapshot = await preflight();
+              assertCurrent();
+              if (
+                !isWorkHubItemCommandReady(
+                  submissionSnapshot,
+                  personalWorkToHub(verifiedCreatedTask)
+                )
+              ) {
+                throw new HttpError('Created personal work is unavailable', 503);
+              }
+              if (
+                dayPlanHasReference(
+                  controller.state().plan,
+                  controller.state().planDraft,
+                  planReference
+                )
+              ) {
                 onPlanDraftChange(controller.state().planDraft);
                 onPlanError(null);
-              } else {
-                planSaveFailed = true;
-                onPlanDraftChange([...planResult.draft]);
-                onPlanError(
-                  t(
-                    `work:workHub.todayPlan.${
-                      planResult.state === 'CONFLICT' ? 'conflict' : 'saveFailed'
-                    }`
-                  )
-                );
+                return;
               }
-            } catch (error) {
-              assertCurrent();
-              planSaveFailed = true;
-              onPlanError(t('work:workHub.todayPlan.saveFailed'));
-              if (error instanceof HttpError) throw error;
+              const next = controller.addToPlan(planReference);
+              onPlanDraftChange(next);
+              try {
+                const planResult = await controller.savePlan(
+                  planIntent.date,
+                  next,
+                  planIntent.idempotencyKey,
+                  { signal: run.abort.signal, canContinue: isCurrent }
+                );
+                assertCurrent();
+                if (planResult.state === 'SAVED') {
+                  onPlanDraftChange(controller.state().planDraft);
+                  onPlanError(null);
+                } else {
+                  planSaveFailed = true;
+                  onPlanDraftChange([...planResult.draft]);
+                  onPlanError(
+                    t(
+                      `work:workHub.todayPlan.${
+                        planResult.state === 'CONFLICT' ? 'conflict' : 'saveFailed'
+                      }`
+                    )
+                  );
+                }
+              } catch (error) {
+                assertCurrent();
+                planSaveFailed = true;
+                onPlanError(t('work:workHub.todayPlan.saveFailed'));
+                if (error instanceof HttpError) throw error;
+              }
             }
+          );
+        } catch {
+          assertCurrent();
+          planSaveFailed = true;
+          onPlanError(t('work:workHub.todayPlan.saveFailed'));
+        }
+      }
+      if (createdReference && createdTask && context.scheduleAfterCreate) {
+        try {
+          const scheduleSnapshot = await preflight();
+          assertCurrent();
+          const reviewedCreated = personalWorkToHub(createdTask, true);
+          const exactCreated = scheduleSnapshot?.items.find(
+            (candidate) =>
+              candidate.sourceId === 'personal' &&
+              candidate.key === reviewedCreated.key &&
+              candidate.version === reviewedCreated.version
+          );
+          if (
+            !scheduleSnapshot ||
+            !exactCreated ||
+            !canUseWorkHubGenericAdjunct(exactCreated, 'CALENDAR') ||
+            !isWorkHubItemCommandReady(scheduleSnapshot, reviewedCreated)
+          ) {
+            scheduleHandoffFailed = true;
+          } else {
+            controller.adopt(scheduleSnapshot);
+            controller.select(exactCreated.reference);
+            scheduleHandoff = { item: exactCreated, snapshot: scheduleSnapshot };
           }
-        );
+        } catch {
+          assertCurrent();
+          scheduleHandoffFailed = true;
+        }
       }
       await queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] });
       assertCurrent();
+      if (scheduleHandoff) onScheduleCreated?.(scheduleHandoff);
+      const followUpWarnings = [
+        ...(planSaveFailed ? [t('work:workHub.todayPlan.saveFailed')] : []),
+        ...(scheduleHandoffFailed ? [t('work:workHub.taskForm.scheduleOpenFailedDetail')] : []),
+      ];
       onFeedback({
-        severity: planSaveFailed ? 'warning' : 'success',
+        severity: followUpWarnings.length > 0 ? 'warning' : 'success',
         title: t('work:workHub.taskForm.savedTitle'),
-        detail: planSaveFailed
-          ? `${t('work:workHub.taskForm.savedDetail')} ${t('work:workHub.todayPlan.saveFailed')}`
-          : t('work:workHub.taskForm.savedDetail'),
+        detail: [t('work:workHub.taskForm.savedDetail'), ...followUpWarnings].join(' '),
       });
       if (claimedCreate !== null) {
         if (planSaveFailed) taskSaveCoordinator?.releaseCreate(owner, claimedCreate);

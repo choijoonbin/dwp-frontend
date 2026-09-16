@@ -3,6 +3,7 @@ import {
   prepareServiceInformationResponse,
   serviceResponseCanDispatch,
   serviceResponseFieldValid,
+  serviceResponseReceiptMatches,
 } from './service-information-response-model';
 import type { ServiceRequestDetail } from '@dwp-frontend/shared-utils/api/service-center-api';
 
@@ -71,6 +72,34 @@ describe('Services owner information response', () => {
       )
     ).toBe(true);
     expect(serviceResponseCanDispatch(detail, 'other-request', command, true)).toBe(false);
+  });
+  it('accepts only the exact requester-response receipt', () => {
+    const command = prepareServiceInformationResponse(
+      detail,
+      message,
+      { purpose: 'Support' },
+      'command-1'
+    )!;
+    const receipt = {
+      ...detail,
+      request: { ...detail.request, status: 'IN_PROGRESS' as const, version: 4 },
+      values: { purpose: 'Support' },
+    };
+    expect(serviceResponseReceiptMatches(receipt, 'service-1', command)).toBe(true);
+    expect(
+      serviceResponseReceiptMatches(
+        { ...receipt, request: { ...receipt.request, status: 'AWAITING_REQUESTER' } },
+        'service-1',
+        command
+      )
+    ).toBe(false);
+    expect(
+      serviceResponseReceiptMatches(
+        { ...receipt, values: { purpose: 'Other' } },
+        'service-1',
+        command
+      )
+    ).toBe(false);
   });
   it('validates required boolean, finite numeric, and schema options', () => {
     const field = { key: 'field', labelKo: '항목', labelEn: 'Field', required: true };

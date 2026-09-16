@@ -9,20 +9,35 @@ export const RECEIPT_OWN_MESSAGE = '72000000-0000-0000-0000-000000000001';
 export const RECEIPT_OTHER_MESSAGE = '72000000-0000-0000-0000-000000000002';
 export const RECEIPT_REPLY = '72000000-0000-0000-0000-000000000003';
 
-export async function mockMessagingReceipts(page: Page, locale: 'en' | 'ko' = 'en') {
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
-    userId: 42,
-    personPublicId: 'person-mina',
-    locale,
-    displayName: locale === 'ko' ? '김민서' : 'Mina Kim',
-    email: 'mina.kim@sk.com',
-    permissions: ['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
-      resourceType: 'APP',
-      resourceKey: 'APP.MESSAGING',
-      permissionCode,
-      effect: 'ALLOW' as const,
-    })),
-  });
+export async function mockMessagingReceipts(
+  page: Page,
+  locale: 'en' | 'ko' = 'en',
+  additionalPermissions: Array<{
+    resourceType: string;
+    resourceKey: string;
+    permissionCode: string;
+    effect: 'ALLOW' | 'DENY';
+  }> = [],
+  configureShell = true
+) {
+  if (configureShell) {
+    await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+      userId: 42,
+      personPublicId: 'person-mina',
+      locale,
+      displayName: locale === 'ko' ? '김민서' : 'Mina Kim',
+      email: 'mina.kim@sk.com',
+      permissions: [
+        ...['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
+          resourceType: 'APP',
+          resourceKey: 'APP.MESSAGING',
+          permissionCode,
+          effect: 'ALLOW' as const,
+        })),
+        ...additionalPermissions,
+      ],
+    });
+  }
   const messages = [
     messagingMessage({
       messageId: RECEIPT_OWN_MESSAGE,
@@ -130,6 +145,14 @@ export async function mockMessagingReceipts(page: Page, locale: 'en' | 'ko' = 'e
         pinned: false,
         version: 1,
       });
+    const exactMessage = path.match(
+      /^\/api\/messaging\/v1\/conversations\/[^/]+\/messages\/([^/]+)$/u
+    );
+    if (exactMessage && method === 'GET') {
+      const messageId = decodeURIComponent(exactMessage[1]!);
+      const message = [...messages, reply].find((item) => item.messageId === messageId);
+      return message ? fulfill(message) : fulfill(null, 404);
+    }
     if (path.endsWith('/messages'))
       return fulfill({ items: messages, hasMore: false, nextBeforeSequence: null });
     if (path.endsWith('/replies'))

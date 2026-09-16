@@ -45,14 +45,19 @@ export function WorkHubRecoveryDialogs({
     pending: boolean;
     unavailable: boolean;
   } | null>(null);
+  const [batchExpanded, setBatchExpanded] = useState(false);
   const currentReview = review?.owner === owner ? review : null;
   useEffect(() => {
+    setBatchExpanded(false);
     mounted.current = true;
     return () => {
       mounted.current = false;
       activeRead.current = null;
     };
   }, [owner]);
+  useEffect(() => {
+    if (batch.target && batch.outcome) setBatchExpanded(true);
+  }, [batch.outcome, batch.target]);
   const reviewItem = async (item: WorkHubItem) => {
     if (!owner || activeRead.current || batch.pending) return;
     const run = {};
@@ -67,6 +72,8 @@ export function WorkHubRecoveryDialogs({
         return;
       }
       batch.close();
+      setBatchExpanded(false);
+      if (sourceOpen) onCloseSources();
       onOpenItem(current);
       setReview(null);
     } catch {
@@ -76,24 +83,42 @@ export function WorkHubRecoveryDialogs({
       if (activeRead.current === run) activeRead.current = null;
     }
   };
+  const integratedOpen = sourceOpen || batchExpanded;
+  const closeIntegrated = () => {
+    activeRead.current = null;
+    setReview(null);
+    setBatchExpanded(false);
+    if (sourceOpen) onCloseSources();
+    if (batch.target) batch.close();
+  };
   return (
     <>
       <WorkHubSourceStatusDialog
-        open={sourceOpen}
+        open={integratedOpen}
         sources={snapshot.sources}
-        onClose={onCloseSources}
+        snapshotReceivedAt={snapshot.receivedAt}
+        completeness={snapshot.completeness}
+        onClose={closeIntegrated}
         onRetry={() => void refresh()}
         onRetrySource={(sourceId) => void refreshSource(sourceId)}
-        retrying={retrying}
-        batchResultCount={batch.receipts.length}
+        retrying={retrying || batch.pending || Boolean(currentReview?.pending)}
+        batchItems={batch.reviewItems}
+        batchOutcome={batch.outcome}
+        batchReceipts={batch.receipts}
+        batchExpanded={batchExpanded}
+        reportFocused={batchExpanded}
         onOpenBatchResults={() => {
-          onCloseSources();
           setReview(null);
+          setBatchExpanded(true);
           batch.reopen();
+          if (sourceOpen) onCloseSources();
         }}
+        onRetryUnconfirmed={batch.retryUnconfirmed}
+        onReviewItem={(item) => void reviewItem(item)}
+        reviewUnavailable={currentReview?.unavailable}
       />
       <WorkHubBatchDialog
-        target={batch.target}
+        target={batch.outcome ? null : batch.target}
         selectedCount={batch.reviewItems.length}
         items={batch.reviewItems}
         outcome={batch.outcome}

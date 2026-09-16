@@ -1,4 +1,8 @@
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
+import {
+  workCalendarEventHandoffDescription,
+  type WorkCalendarEventHandoff,
+} from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 
 import type {
   CalendarAttendeeInput,
@@ -32,6 +36,26 @@ export type CalendarEventDraft = {
   calendarId: string;
 };
 
+export function protectWorkCalendarEventDraft(
+  draft: CalendarEventDraft,
+  description: string
+): CalendarEventDraft {
+  return {
+    ...draft,
+    description,
+    type: 'FOCUS',
+    allDay: false,
+    location: '',
+    conferenceUrl: '',
+    visibility: 'PRIVATE',
+    recurrence: 'NONE',
+    recurrenceInterval: 1,
+    recurrenceUntil: '',
+    responseRequired: false,
+    resourceId: '',
+  };
+}
+
 export type CalendarEditorAttendee = Pick<
   PersonSummary,
   'personId' | 'displayName' | 'workEmail'
@@ -59,9 +83,12 @@ export function calendarEventDraft(
     initialEnd?: string | null;
     initialType?: CalendarEventType;
     initialTitle?: string | null;
+    initialDescription?: string | null;
+    initialVisibility?: CalendarVisibility;
     initialResourceId?: string | null;
     initialCalendarId?: string | null;
     fallbackTimeZone?: string;
+    initialImportance?: CalendarEventImportance;
   }> = {}
 ): CalendarEventDraft {
   const initialType = options.initialType ?? 'MEETING';
@@ -71,15 +98,15 @@ export function calendarEventDraft(
     : new Date(start.getTime() + (initialType === 'FOCUS' ? 90 : 30) * 60_000);
   return {
     title: event?.title ?? options.initialTitle ?? '',
-    description: event?.description ?? '',
+    description: event?.description ?? options.initialDescription ?? '',
     type: event?.type ?? initialType,
     startsAt: event?.startsAt ?? start.toISOString(),
     endsAt: event?.endsAt ?? end.toISOString(),
     allDay: event?.allDay ?? false,
     location: event?.location ?? '',
     conferenceUrl: event?.conferenceUrl ?? '',
-    visibility: event?.visibility ?? 'DEFAULT',
-    importance: event?.importance ?? 'NORMAL',
+    visibility: event?.visibility ?? options.initialVisibility ?? 'DEFAULT',
+    importance: event?.importance ?? options.initialImportance ?? 'NORMAL',
     recurrence: event?.recurrence ?? 'NONE',
     recurrenceInterval: event?.recurrenceInterval ?? 1,
     recurrenceUntil: event?.recurrenceUntil ?? '',
@@ -134,24 +161,32 @@ function attendeeInput(attendees: readonly CalendarEditorAttendee[]): CalendarAt
 
 export function calendarEventInput(
   draft: CalendarEventDraft,
-  attendees: readonly CalendarEditorAttendee[]
+  attendees: readonly CalendarEditorAttendee[],
+  options: Readonly<{
+    workReference?: Pick<WorkCalendarEventHandoff, 'work' | 'sourceUrl'> | null;
+  }> = {}
 ): Omit<CreateCalendarEventInput, 'idempotencyKey'> {
-  const meeting = draft.type === 'MEETING';
+  const workDescription = options.workReference
+    ? workCalendarEventHandoffDescription(options.workReference)
+    : null;
+  const type = workDescription ? 'FOCUS' : draft.type;
+  const meeting = type === 'MEETING';
   return {
     title: draft.title.trim(),
-    description: draft.description.trim() || null,
-    type: draft.type,
+    description: workDescription ?? (draft.description.trim() || null),
+    type,
     startsAt: draft.startsAt,
     endsAt: draft.endsAt,
     timeZone: draft.timeZone,
-    allDay: draft.allDay,
+    allDay: workDescription ? false : draft.allDay,
     location: meeting ? draft.location.trim() || null : null,
     conferenceUrl: meeting ? draft.conferenceUrl.trim() || null : null,
-    visibility: draft.visibility,
+    visibility: workDescription ? 'PRIVATE' : draft.visibility,
     importance: draft.importance,
-    recurrence: draft.recurrence,
-    recurrenceInterval: draft.recurrenceInterval,
-    recurrenceUntil: draft.recurrence === 'NONE' ? null : draft.recurrenceUntil || null,
+    recurrence: workDescription ? 'NONE' : draft.recurrence,
+    recurrenceInterval: workDescription ? 1 : draft.recurrenceInterval,
+    recurrenceUntil:
+      workDescription || draft.recurrence === 'NONE' ? null : draft.recurrenceUntil || null,
     responseRequired: meeting && draft.responseRequired,
     attendees: meeting ? attendeeInput(attendees) : [],
     resourceId: meeting ? draft.resourceId || null : null,

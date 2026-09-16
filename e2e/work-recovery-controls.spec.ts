@@ -227,7 +227,9 @@ async function openConflictedBatch(page: Page) {
   const review = page.getByRole('dialog', { name: 'Start the selected work?', exact: true });
   await review.getByRole('button', { name: 'Start selected', exact: true }).click();
   const result = page.getByRole('dialog', { name: 'Batch results', exact: true });
-  await expect(result.getByText('Version conflict 1', { exact: true })).toBeVisible();
+  const summary = result.getByLabel('Batch receipt summary');
+  await expect(summary.getByText('Version conflict', { exact: true })).toBeVisible();
+  await expect(summary.locator('dd').nth(3)).toHaveText('1');
   return result;
 }
 

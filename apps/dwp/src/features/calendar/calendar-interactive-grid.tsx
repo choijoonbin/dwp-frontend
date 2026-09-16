@@ -44,6 +44,7 @@ type CalendarInteractiveGridProps = {
   events: readonly CalendarEvent[];
   language: string;
   compact: boolean;
+  mobile: boolean;
   loading: boolean;
   view: CalendarScheduleView;
   navigateDate?: Date;
@@ -118,6 +119,7 @@ export function CalendarInteractiveGrid({
   events,
   language,
   compact,
+  mobile,
   loading,
   view,
   navigateDate,
@@ -205,6 +207,7 @@ export function CalendarInteractiveGrid({
       aria-busy={loading || interactionLocked}
       sx={(theme) => ({
         minWidth: 0,
+        '--precision-calendar-primary': '#2563EB',
         '--fc-border-color': alpha(theme.palette.divider, 0.72),
         '--fc-page-bg-color': theme.palette.background.paper,
         '--fc-neutral-bg-color': theme.palette.action.hover,
@@ -212,7 +215,7 @@ export function CalendarInteractiveGrid({
           theme.palette.primary.main,
           theme.palette.mode === 'dark' ? 0.18 : 0.06
         ),
-        '--fc-now-indicator-color': theme.palette.error.main,
+        '--fc-now-indicator-color': 'var(--precision-calendar-primary)',
         '& .fc': { color: theme.palette.text.primary, fontFamily: theme.typography.fontFamily },
         '& .fc-header-toolbar': {
           gap: 1,
@@ -254,18 +257,54 @@ export function CalendarInteractiveGrid({
           fontWeight: 720,
           color: 'text.secondary',
         },
-        '& .fc-timegrid-slot': { height: '2.8rem' },
-        '& .fc-timegrid-slot-label-cushion': { color: 'text.secondary', fontSize: '0.72rem' },
-        '& .fc-event': {
-          borderRadius: `${theme.shape.borderRadius}px`,
+        '& .fc-timegrid-axis, & .fc-timegrid-slot-label, & .precision-calendar-slot-header': {
+          width: '3.5rem',
+          minWidth: '3.5rem',
+          maxWidth: '3.5rem',
+        },
+        '& .fc-timegrid-slot, & .precision-calendar-slot': {
+          height: '2rem',
+          minHeight: '2rem',
+        },
+        '& .fc-timegrid-slot-label-cushion, & .precision-calendar-slot-header': {
+          color: 'text.secondary',
+          fontSize: '0.6875rem',
+          fontVariantNumeric: 'tabular-nums',
+          fontFeatureSettings: '"tnum" 1',
+          letterSpacing: '0.04em',
+        },
+        '& .fc-timegrid-now-indicator-line, & .precision-calendar-now-line': {
+          borderTop: '1.5px solid var(--precision-calendar-primary)',
+        },
+        '& .fc-timegrid-now-indicator-arrow, & .precision-calendar-now-dot': {
+          width: 8,
+          height: 8,
+          marginTop: '-4px',
+          border: 0,
+          borderRadius: '50%',
+          bgcolor: 'var(--precision-calendar-primary)',
+        },
+        '& .fc-event, & .precision-calendar-event': {
+          borderRadius: '6px',
           bgcolor: 'transparent !important',
-          boxShadow: 'none',
+          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
           cursor: 'pointer',
-          transition: theme.transitions.create('filter', {
+          transition: theme.transitions.create(['filter', 'transform', 'box-shadow'], {
             duration: theme.transitions.duration.shorter,
           }),
         },
-        '& .fc-event:hover': { filter: 'saturate(1.08)' },
+        '& .fc-timegrid-event:hover, & .fc-daygrid-event:hover, & .fc-event-dragging, & .fc-event-resizing, & .precision-calendar-event-block:hover, & .precision-calendar-event-active':
+          {
+            filter: 'saturate(1.08)',
+            transform: 'scale(1.02)',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04)',
+            zIndex: 5,
+          },
+        '& .fc-timegrid-event .fc-event-resizer': { opacity: 0 },
+        '& .fc-timegrid-event:hover .fc-event-resizer, & .fc-timegrid-event:focus-within .fc-event-resizer':
+          {
+            opacity: 0.72,
+          },
         '& .fc-event:focus': {
           outline: `2px solid ${theme.palette.primary.main}`,
           outlineOffset: 1,
@@ -274,8 +313,9 @@ export function CalendarInteractiveGrid({
         '& .fc-list-event:hover td': { bgcolor: 'action.hover' },
         '& .fc-daygrid-day-number': { color: 'text.primary', p: 1, fontWeight: 650 },
         '& .fc-day-today .fc-daygrid-day-number': {
-          minWidth: 28,
-          height: 28,
+          minWidth: 24,
+          width: 24,
+          height: 24,
           display: 'grid',
           placeItems: 'center',
           m: 0.5,
@@ -291,12 +331,23 @@ export function CalendarInteractiveGrid({
           boxShadow: 'none',
         },
         '@media (prefers-reduced-motion: reduce)': {
-          '& .fc-event': { transition: 'none' },
+          '& .fc-event, & .precision-calendar-event': { transition: 'none !important' },
+          '& .fc-timegrid-event:hover, & .fc-daygrid-event:hover, & .fc-event-dragging, & .fc-event-resizing, & .precision-calendar-event-block:hover, & .precision-calendar-event-active':
+            {
+              transform: 'none',
+            },
         },
         '@media (forced-colors: active)': {
-          '& .fc-event': {
+          '& .fc-event, & .precision-calendar-event': {
             forcedColorAdjust: 'auto',
             border: '1px solid CanvasText !important',
+            boxShadow: 'none',
+          },
+          '& .fc-timegrid-now-indicator-line, & .precision-calendar-now-line': {
+            borderColor: 'Highlight',
+          },
+          '& .fc-timegrid-now-indicator-arrow, & .precision-calendar-now-dot': {
+            backgroundColor: 'Highlight',
           },
           '& .fc-event:focus': { outlineColor: 'Highlight' },
           '& [data-calendar-event-conflict="true"]': {
@@ -313,17 +364,57 @@ export function CalendarInteractiveGrid({
         plugins={[formaThemePlugin, dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         locale={language.startsWith('ko') ? koLocale : 'en'}
         initialView={fullCalendarView(view)}
+        views={{
+          timeGridThreeDay: {
+            type: 'timeGrid',
+            duration: { days: 3 },
+          },
+          timeGridFourDay: {
+            type: 'timeGrid',
+            duration: { days: 4 },
+          },
+        }}
+        buttons={{
+          timeGridDay: { text: t('schedule.views.day') },
+          timeGridThreeDay: { text: t('schedule.views.threeDay') },
+          timeGridFourDay: { text: t('schedule.views.fourDay') },
+          timeGridWeek: { text: t('schedule.views.week') },
+          dayGridMonth: { text: t('schedule.views.month') },
+          listMonth: { text: t('schedule.views.agenda') },
+        }}
         firstDay={weekStart}
         headerToolbar={
-          compact
+          mobile
             ? { start: 'prev,next today', center: 'title', end: 'timeGridDay,listMonth' }
-            : {
-                start: 'prev,next today',
-                center: 'title',
-                end: 'timeGridDay,timeGridWeek,dayGridMonth,listMonth',
-              }
+            : compact
+              ? {
+                  start: 'prev,next today',
+                  center: 'title',
+                  end: 'timeGridThreeDay,timeGridFourDay,timeGridWeek,listMonth',
+                }
+              : {
+                  start: 'prev,next today',
+                  center: 'title',
+                  end: 'timeGridDay,timeGridThreeDay,timeGridFourDay,timeGridWeek,dayGridMonth,listMonth',
+                }
         }
         events={inputs}
+        eventClass={(info) =>
+          [
+            'precision-calendar-event',
+            info.view.type.startsWith('list')
+              ? 'precision-calendar-event-list'
+              : 'precision-calendar-event-block',
+            info.isDragging || info.isResizing ? 'precision-calendar-event-active' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')
+        }
+        dayLaneClass="precision-calendar-day-lane"
+        slotLaneClass="precision-calendar-slot"
+        slotHeaderClass="precision-calendar-slot-header"
+        nowIndicatorLineClass="precision-calendar-now-line"
+        nowIndicatorDotClass="precision-calendar-now-dot"
         datesSet={(info: DatesSetInfo) => {
           const nextActiveView = scheduleViewFromFullCalendar(info.view.type);
           setActiveView((current) => (current === nextActiveView ? current : nextActiveView));
@@ -515,6 +606,7 @@ export function CalendarInteractiveGrid({
         scrollTime="08:00:00"
         slotDuration="00:30:00"
         snapDuration="00:15:00"
+        slotMinHeight={32}
         allDaySlot
         dayMaxEvents={4}
         eventMaxStack={4}

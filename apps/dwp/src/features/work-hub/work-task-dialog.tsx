@@ -1,12 +1,13 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckSquare2, Link2 } from 'lucide-react';
+import { CheckSquare2, ExternalLink, Link2, MessageSquareText } from 'lucide-react';
 import {
   ConfirmDialog,
   DateTimePickerField,
   FormDialog,
   FormField,
   InlineFeedback,
+  ActionButton,
   useDateTimePolicy,
 } from '@dwp-frontend/design-system';
 
@@ -20,6 +21,8 @@ import Typography from '@mui/material/Typography';
 
 import { WorkTaskChecklistEditor } from './work-task-checklist-editor';
 import { WorkTaskConflictReview } from './work-task-conflict-review';
+import { WorkTaskScheduleFollowUp } from './work-task-schedule-follow-up';
+import { WorkTaskEntryModeControl } from './work-task-entry-mode-control';
 import { WorkTaskSourceEditor, type WorkTaskSourceOption } from './work-task-source-editor';
 import { WorkSourceDetailSection } from './work-hub-source-detail-section';
 
@@ -30,6 +33,8 @@ import type {
   PersonalWorkSource,
   WorkSourceReference,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { openWorkHubSourceRoute } from './work-hub-actions';
 
 export type WorkTaskDialogMode = 'create' | 'edit';
 
@@ -43,6 +48,7 @@ export type WorkTaskDialogInitialValue = {
   checklist?: PersonalWorkChecklistItem[];
   sources?: PersonalWorkSource[];
   sourceReferences?: WorkSourceReference[];
+  source?: PersonalWorkSource | null;
 };
 
 export type WorkTaskDialogSubmission = PersonalWorkTaskInput & {
@@ -55,6 +61,8 @@ export type WorkTaskDialogSubmitContext = {
   idempotencyKey: string;
   /** Create-only UI intent. The task and today's plan remain separate writes. */
   addToTodayPlan: boolean;
+  /** Capability-gated create follow-up. Scheduling starts only after the exact receipt is verified. */
+  scheduleAfterCreate?: boolean;
 };
 
 export type WorkTaskDialogProps = {
@@ -64,7 +72,10 @@ export type WorkTaskDialogProps = {
   /** A user-safe label only. The opaque source reference is never rendered. */
   sourceLabel?: string | null;
   sourceOptions?: readonly WorkTaskSourceOption[];
+  sourcePreflightState?: 'NONE' | 'LOADING' | 'READY' | 'DENIED' | 'UNAVAILABLE';
+  canScheduleAfterCreate?: boolean;
   disabled?: boolean;
+  onRetrySource?: () => void;
   onClose: () => void;
   onSubmit: (
     value: WorkTaskDialogSubmission,
@@ -160,12 +171,15 @@ export function WorkTaskDialog({
   initialValue,
   sourceLabel,
   sourceOptions = [],
+  sourcePreflightState = 'NONE',
+  canScheduleAfterCreate = false,
   disabled = false,
+  onRetrySource,
   onClose,
   onSubmit,
   onSubmitted,
 }: WorkTaskDialogProps) {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
   const dateTimePolicy = useDateTimePolicy();
   const titleCountId = useId();
   const descriptionCountId = useId();
@@ -218,6 +232,12 @@ export function WorkTaskDialog({
     initialValue?.sources === undefined &&
     initialValue?.sourceReferences === undefined;
   const clearLinkedSource = sourceLinked && clearSourceReference;
+  const sourceIntent = mode === 'create' && (sourceLinked || sourcePreflightState !== 'NONE');
+  const entryMode =
+    mode === 'edit' ? 'edit' : sourceIntent && !clearLinkedSource ? 'source' : 'new';
+  const linkedSource =
+    sourceLinked && initialValue?.source?.availability === 'AVAILABLE' ? initialValue.source : null;
+  const locale = resolveSupportedLocale(i18n?.resolvedLanguage ?? i18n?.language ?? 'en');
   const validation = validateWorkTaskDraft(draft);
   const valid = Object.keys(validation).length === 0;
   const conflict = mode === 'edit' && initialValue?.version !== draftVersion;
@@ -275,6 +295,7 @@ export function WorkTaskDialog({
       await onSubmit(value, {
         idempotencyKey: intent.current.idempotencyKey,
         addToTodayPlan: mode === 'create' && addToTodayPlan,
+        scheduleAfterCreate: mode === 'create' && canScheduleAfterCreate,
       });
       onSubmitted?.(value);
     } catch {
@@ -307,6 +328,7 @@ export function WorkTaskDialog({
         submittingLabel={t('workHub.taskForm.submitting')}
         busy={submitting}
         submitDisabled={disabled || conflict}
+        desktopMaxWidth={640}
         mobileFullScreen
         onClose={requestClose}
         onSubmit={submit}
@@ -331,6 +353,41 @@ export function WorkTaskDialog({
             }
           }}
         >
+          <WorkTaskEntryModeControl
+            value={entryMode}
+            sourceIntent={sourceIntent}
+            disabled={submitting || disabled}
+            onChange={(nextMode) => {
+              if (!sourceLinked) return;
+              setClearSourceReference(nextMode === 'new');
+              setSubmitFailed(false);
+              intent.current = null;
+            }}
+          />
+          {mode === 'create' && sourcePreflightState === 'LOADING' ? (
+            <InlineFeedback severity="info">
+              {t('workHub.taskForm.sourcePreflight.loading')}
+            </InlineFeedback>
+          ) : null}
+          {mode === 'create' &&
+          (sourcePreflightState === 'DENIED' || sourcePreflightState === 'UNAVAILABLE') ? (
+            <InlineFeedback severity="error">
+              <Stack gap={1} alignItems="flex-start">
+                <Typography variant="body2">
+                  {t(
+                    `workHub.taskForm.sourcePreflight.${
+                      sourcePreflightState === 'DENIED' ? 'denied' : 'unavailable'
+                    }`
+                  )}
+                </Typography>
+                {onRetrySource ? (
+                  <ActionButton intent="quiet" size="small" onClick={onRetrySource}>
+                    {t('workHub.taskForm.sourcePreflight.retry')}
+                  </ActionButton>
+                ) : null}
+              </Stack>
+            </InlineFeedback>
+          ) : null}
           {conflict && initialValue && (
             <WorkTaskConflictReview
               latest={initialValue}
@@ -388,10 +445,72 @@ export function WorkTaskDialog({
               <InlineFeedback severity={clearLinkedSource ? 'warning' : 'info'}>
                 {clearLinkedSource
                   ? t('workHub.taskForm.sourceUnlinkPending')
-                  : sourceLabel
-                    ? t('workHub.taskForm.sourceLinked', { source: sourceLabel })
-                    : t('workHub.taskForm.sourceLinkedReferenceOnly')}
+                  : linkedSource?.sourceMessageId
+                    ? t('workHub.taskForm.capturedSourceAvailable')
+                    : sourceLabel
+                      ? t('workHub.taskForm.sourceLinked', { source: sourceLabel })
+                      : t('workHub.taskForm.sourceLinkedReferenceOnly')}
               </InlineFeedback>
+              {linkedSource ? (
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gap: 0.75,
+                    p: 1.5,
+                    bgcolor: 'background.paper',
+                    borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                    border: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Stack direction="row" gap={0.75} alignItems="center">
+                    <MessageSquareText size={16} aria-hidden="true" />
+                    <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
+                      {linkedSource.channelName || t('workHub.taskForm.messageSource')}
+                    </Typography>
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('workHub.taskForm.messageFrom', { sender: linkedSource.senderName })}
+                    {linkedSource.receivedAt
+                      ? ` · ${formatDate(linkedSource.receivedAt, { dateStyle: 'medium', timeStyle: 'short' }, locale)}`
+                      : ''}
+                  </Typography>
+                  {linkedSource.excerpt ? (
+                    <Typography
+                      variant="body2"
+                      sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+                    >
+                      {linkedSource.excerpt}
+                    </Typography>
+                  ) : null}
+                  {linkedSource.sourceMessageId ? (
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ overflowWrap: 'anywhere' }}
+                    >
+                      {t('workHub.taskForm.messageId', { id: linkedSource.sourceMessageId })}
+                      {linkedSource.sourceVersion !== null &&
+                      linkedSource.sourceVersion !== undefined
+                        ? ` · ${t('workHub.taskForm.messageVersion', { version: linkedSource.sourceVersion })}`
+                        : ''}
+                    </Typography>
+                  ) : null}
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    startIcon={<ExternalLink size={15} />}
+                    disabled={!linkedSource.sourceRoute}
+                    onClick={() => {
+                      if (linkedSource.sourceRoute)
+                        openWorkHubSourceRoute(linkedSource.sourceRoute);
+                    }}
+                    sx={{ justifySelf: 'start', minHeight: 44 }}
+                  >
+                    {t('workHub.taskForm.openMessage')}
+                  </ActionButton>
+                </Box>
+              ) : null}
               <Stack spacing={0.25}>
                 <FormControlLabel
                   control={
@@ -484,35 +603,41 @@ export function WorkTaskDialog({
             </ToggleButtonGroup>
           </Stack>
           {mode === 'create' && (
-            <Box
-              sx={{
-                p: 1.5,
-                bgcolor: 'action.selected',
-                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={addToTodayPlan}
-                    disabled={submitting || disabled}
-                    onChange={(event) => setAddToTodayPlan(event.target.checked)}
-                    sx={{ minWidth: 44, minHeight: 44 }}
-                  />
-                }
-                label={
-                  <Stack gap={0.5}>
-                    <Typography variant="subtitle2">
-                      {t('workHub.taskForm.addToTodayPlan')}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('workHub.todayPlan.independenceNotice')}
-                    </Typography>
-                  </Stack>
-                }
-                sx={{ alignItems: 'flex-start', m: 0 }}
-              />
-            </Box>
+            <Stack gap={1}>
+              <Box
+                sx={{
+                  p: 1.5,
+                  bgcolor: 'action.selected',
+                  borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                }}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={addToTodayPlan}
+                      disabled={submitting || disabled}
+                      onChange={(event) => {
+                        setAddToTodayPlan(event.target.checked);
+                        setSubmitFailed(false);
+                      }}
+                      sx={{ minWidth: 44, minHeight: 44 }}
+                    />
+                  }
+                  label={
+                    <Stack gap={0.5}>
+                      <Typography variant="subtitle2">
+                        {t('workHub.taskForm.addToTodayPlan')}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('workHub.todayPlan.independenceNotice')}
+                      </Typography>
+                    </Stack>
+                  }
+                  sx={{ alignItems: 'flex-start', m: 0 }}
+                />
+              </Box>
+              <WorkTaskScheduleFollowUp available={canScheduleAfterCreate} />
+            </Stack>
           )}
           <WorkSourceDetailSection title={t('workHub.checklist.title')} icon={CheckSquare2}>
             <WorkTaskChecklistEditor
