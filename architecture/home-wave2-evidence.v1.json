@@ -33,8 +33,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C01-D1440-BASE-chromium-darwin.png",
-      "visualEvidenceSha256": "3a71b26def6df294bbb0dd57af5c1827e15ec2f44740fb0f4048c0eaeebfaa0f",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "228b147adb336a17fd0801b568fd4e81d6124fd964ea77af79e6acccea53078b",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -80,8 +80,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C02-D1280-BASE-chromium-darwin.png",
-      "visualEvidenceSha256": "ff60beed9c4b3d2d283d7216654e5750ee64f0adc14c2d00dbdabbb732066491",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "9d45239fdcc26c48b3fca65cdacfece19cbdc0613fcd2e0f8c1f17d319605879",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -127,8 +127,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C03-M390-BASE-chromium-darwin.png",
-      "visualEvidenceSha256": "57f932c2981b2e8533c5142e60d494202ccae8686f583a344661249359aef990",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "ee9aac9118ae526b2119ef9f99e08805f0754c98892b6080304855acebcd3a12",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -174,8 +174,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C04-M320-BASE-chromium-darwin.png",
-      "visualEvidenceSha256": "02740325c93717d768eec0e799df999bd9b7099747f3eae38fb66754a08ef148",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "21bbe0aa25d928b3af8e23a3008d2b9a44d051a8087187f46b75ff5177dd6754",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -219,8 +219,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01-chromium-darwin.png",
-      "visualEvidenceSha256": "dd7c6b9cac53484024e2deb546397e34730d3bc6a8572ac1ad73d96fcab1d367",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "11f95d9b7ad567c697ef5e25e408199d190134fa4d4133604ee2817f1852a95b",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -265,8 +265,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C06-TEXT-200-D1440-r04-chromium-darwin.png",
-      "visualEvidenceSha256": "af08714099e6dc3e9023ef5fed04b8e849a08eae122eb120aeead335e8a7a980",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "7da8b0574c50c9b2e88b49654ae34a2bdc3269ab70ca78b82ffb10bd8f6759d7",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -311,8 +311,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C07-LONG-EN-D1280-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "a5c455b481a1c972c1fb2c25d0e0c25c1f4dedf1dfefd333018528fc74533c20",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "78e2c2deaaea3e1bfdb49c2539892c22f30613961a6e1fca17a6cfbcaa9aa8a4",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -356,8 +356,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C08-DARK-D1440-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "b0b34cb0cfe8c02eae106a57131f215b187d588b1e0d468c56b9a687eec38c44",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "4c3d7c635047ef8b3aa2bb03aafd0e32a6a96af5f158c545540957cf486a8d76",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -401,8 +401,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C09-HIGH-CONTRAST-D1440-r04-chromium-darwin.png",
-      "visualEvidenceSha256": "d5f919e800fa39f3bb0f2ba0a520fe2aeef1e9ad1365d0111691a3c1d241c3fb",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "ed805db467fc63e4c4af89c779b13633568e06f4bb70dd8e61fa464b1b76b289",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -445,7 +445,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -466,7 +466,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C10-D1440-EMPTY-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "36aa8bfa72395284297a9077315e65b8cec96de03c69bc36643de9182a15a7a1",
+      "visualEvidenceSha256": "112087b6f7f1dc81831d07b2a9badb0d90bfa46ea571b836f5f0016627a47b46",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -490,7 +490,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -511,7 +511,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C10-M390-EMPTY-r01-chromium-darwin.png",
-      "visualEvidenceSha256": "c078ccdc8f8d49031ea199b7c540dc19d449f36be4f6ee5463c5f17de01d3f4d",
+      "visualEvidenceSha256": "f9cdf50307336706ad192540417dd1e4a8559e954e6ed9015b66a090108c9705",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -535,7 +535,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -556,7 +556,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C11-D1440-PARTIAL-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "538cdb728874e4947522b37612da43a05743efbe1e364e999076b2b1f58cacd4",
+      "visualEvidenceSha256": "f768696e4f8094fba4f7c47e45c1c78b89cb24c3ead5f362599d540b825c2bfb",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -580,7 +580,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -601,7 +601,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C11-M390-PARTIAL-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "e8b0ffa020fc5710df6a3e811c0a84b90c3eb2a6b148ce0083ebd21a1f59a6c9",
+      "visualEvidenceSha256": "903028b3f8fea142e02947a749ee5d86ec99e242e3d00bc4e724bc8cbf3265e2",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -625,7 +625,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -646,7 +646,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C12-D1440-FORBIDDEN-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "6847032417e13cdbe8ae980c3a4e30ec04e3548c0fea5be70affa17d99928e7c",
+      "visualEvidenceSha256": "aa115b1fd917b867001086e6885195a0dbd2f5d8468d30b52e94b17acbfe81fe",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -670,7 +670,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -691,7 +691,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C12-M390-FORBIDDEN-r04-chromium-darwin.png",
-      "visualEvidenceSha256": "20df677db67ba3e1d3a0efedb7ed95aaf63ee4025ff93fadb62b310dd2d4ed47",
+      "visualEvidenceSha256": "b265e325ac58077aff25c5f04445d93d165c9f9f88c66470adddc122551ec4be",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -715,7 +715,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -736,7 +736,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C13-D1440-STALE-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "6b099b002f3d54ad532f015ba71e4a6622de9e5ff58bf067207903eefae4baf9",
+      "visualEvidenceSha256": "ce36d950283ebf821e9fe888ed099d50bf4bb1f4086c1bf70d4bc5ca24088e24",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -760,7 +760,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -781,7 +781,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C13-M390-STALE-r03-chromium-darwin.png",
-      "visualEvidenceSha256": "4357e2e665ee9edce8d350df827efc2a5f342e98f62aeade768cbe707d0c430c",
+      "visualEvidenceSha256": "77f295f895d8f7acdba2492e80d38b0aa4ddeaba980bb0490dc0c9b0b22fdc84",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -805,7 +805,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -826,7 +826,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-D1440-BACKGROUND-REFRESH-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "236be06bd2a56d8a9d3fa2013416796284c1889a60279aee8562adfcd6242821",
+      "visualEvidenceSha256": "c8bdd48315e624540cf02232613d53ac5031cadcd39653b7f1ff04ac8bd2eb50",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -850,7 +850,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -871,7 +871,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-D1440-INITIAL-LOADING-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "ab2aabecaff34c72b3cea3b99c69a34549895b68a66a92f8549128c5fcfe7e70",
+      "visualEvidenceSha256": "14ce51cbde83150d6e04f9338552404c29c6ff4f63a05e4004a428dcf74b9cd8",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -895,7 +895,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -916,7 +916,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-M390-BACKGROUND-REFRESH-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "d5aec678beafb72f2fbbeb3eac09dc313f7f8ebb6306e84a72f62719fbb94e98",
+      "visualEvidenceSha256": "73129db491d126b93fcb4dc6239cd078c6c328988e0c897f42320a9fe7f9ba9e",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -940,7 +940,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -961,7 +961,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C14-M390-INITIAL-LOADING-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "54ccfdd0b9c6dae104cc1509714ecfc761b886a3969cb1eaff4c2601fbb4c33d",
+      "visualEvidenceSha256": "d85897e73c91712a43a7865f2b83b5c3d1037a1b2cc9bdf1daff1aa1e3b3163a",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -985,7 +985,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1006,7 +1006,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-D1440-EDITOR-DIRTY-r01-chromium-darwin.png",
-      "visualEvidenceSha256": "3ca2e85b3858b755720991c580446936ae6b7b0b1067308b68b36e0991cf03ed",
+      "visualEvidenceSha256": "a0fbe19853eda6a9ddfe1e145f6b8abb8d6315225f3d25b18598b3f60e339b1f",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1015,7 +1015,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-D1440-EDITOR-DIRTY-r01-interaction-chromium-darwin.png",
-        "sha256": "e08c94c77cf7137a0935acd3320ba4eef87409d6a0a27dc5945f03cbd0b16168",
+        "sha256": "0593e6481033594b9e1ac22165841b88d10f25a4e6ee3359fde9ece20aae303f",
         "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
       }
     },
@@ -1035,7 +1035,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1056,7 +1056,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-M390-EDITOR-DIRTY-r01-chromium-darwin.png",
-      "visualEvidenceSha256": "815a4ab7f149b6d2b3e83a70b7aa89bef141c2dbac67f6646bbb73ccd160fec8",
+      "visualEvidenceSha256": "3451c7500cd380e2a7544d568cbb2e20ce95c88452044698a02d1e1f60b08e9d",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1065,7 +1065,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C15-M390-EDITOR-DIRTY-r01-interaction-chromium-darwin.png",
-        "sha256": "5fa3b0632824b66f2b2081638440585e4da8e41840931958433ec235befde7d3",
+        "sha256": "fc176f578f3aaf1b69852ab013840163d600518836251cdb7894432a3329b508",
         "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
       }
     },
@@ -1085,7 +1085,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1106,7 +1106,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-D1440-SAVE-CONFLICT-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "077749e76208a9d5424a2bfba77e25aa5e6327002f28b6ec36e3edbe6009bbd8",
+      "visualEvidenceSha256": "61ae907bd21be9b5b20ff23588ef489db89b767c89088d45f22b0691df6a2d13",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1115,7 +1115,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-D1440-SAVE-CONFLICT-r02-interaction-chromium-darwin.png",
-        "sha256": "7b314bb2d1032209c57e62d854515f9f540546b87954ff0fc9d3a7f6aac1d792",
+        "sha256": "80bab1fe3c647c5978a84ae665521f57b3a8cf6091dac53096888d397b6ef9a1",
         "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
       }
     },
@@ -1135,7 +1135,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1156,7 +1156,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-M390-SAVE-CONFLICT-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "7ef886965da0d1f919978a826113a50245e6b1091ffe59a1eac38a160e2627c9",
+      "visualEvidenceSha256": "58f530c25fe436efbdb402009699f15ce2a9baffbeb267894251f6a98238f810",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1165,7 +1165,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C16-M390-SAVE-CONFLICT-r02-interaction-chromium-darwin.png",
-        "sha256": "a2429f4d5b465bb1483342d20839148319735709e29bdb7bee25ccde27fb2c68",
+        "sha256": "e4c534b10b08af4503fe6f2302c3cd8bd08578cdbde78f38969b722667cb56cc",
         "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
       }
     },
@@ -1185,7 +1185,7 @@
         "G2",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1206,7 +1206,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C17-MODE-PRESET-chromium-darwin.png",
-      "visualEvidenceSha256": "e57f1f0baa1d388b6a9cc8a5085c42d63eeb88495cb420db46c019a888ecfec1",
+      "visualEvidenceSha256": "2e9d5464d08a9d4a0c3307b4fc06405572828ada2147f78cb39a1dc9687e0f84",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1215,7 +1215,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C17-MODE-PRESET-interaction-chromium-darwin.png",
-        "sha256": "d91e54b4933bf323a8e8b864732f0c93f3f9f1366573c367643b3bc3c3987f9f",
+        "sha256": "98dc75531582d3d2a2e35069cb914e42b9ecffb80479b94639316c45f8f717d3",
         "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
       }
     },
@@ -1235,7 +1235,7 @@
         "G2",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1256,7 +1256,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-chromium-darwin.png",
-      "visualEvidenceSha256": "15744631dc9d7f3af4aacaa6b4ad3ba118cb1acc2288faa09efcc5026fe6b9c0",
+      "visualEvidenceSha256": "7f5087a85230252f161b78cdc3ef559b6f6f6d72b6c0b5617e8ecac5a3dd16dc",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1265,7 +1265,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-interaction-chromium-darwin.png",
-        "sha256": "012cee5bb0c03d3382f3af6bc80bdfad1535e2dfd5e976f164ead54201ae74b2",
+        "sha256": "ff487525a7d56c51501c3a331b521da806f41d01481f3486f8e0a023ea2328b6",
         "purpose": "VIEWPORT_INTERACTION_AND_FOCUS_CONTRACT"
       }
     },
@@ -1285,7 +1285,7 @@
         "G3",
         "G4"
       ],
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1306,7 +1306,7 @@
         "evidence": "e2e/home-wave2-state-evidence.spec.ts"
       },
       "visualEvidence": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-CLASSIC-STATE-COMPONENT-SPEC-A-chromium-darwin.png",
-      "visualEvidenceSha256": "7367e00dedb0f1b1ec148386e49667f2dd2493a0fdcab2b4bd450767699fd238",
+      "visualEvidenceSha256": "918a37fa74c4d97ce362384d87fa5c793737231d3a2eb94842cf534abddec8b1",
       "acceptedSourceComparison": {
         "status": "PASS",
         "method": "HUMAN_PERCEPTUAL_AND_CONTRACT_REVIEW",
@@ -1333,8 +1333,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-BASE-DESKTOP-FINAL-chromium-darwin.png",
-      "visualEvidenceSha256": "d36ec59cc04161d7d2b254abc6b501757216a0c13b357d0f90243f6517a0c9d1",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "ab3702cb7c6d937df974475610379c8ee47ef3ffb0c32d503347b9f4e20654ca",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1380,8 +1380,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-BASE-MOBILE-FINAL-chromium-darwin.png",
-      "visualEvidenceSha256": "03fe2a5135167b800847824ee8bc85f478f8b4b1de529fa7ad68064822503215",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "2e4baacfd9efed7a5260ac6446c0694f02612e54a4b71351e3bdd32c39821be3",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1427,8 +1427,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-EDITOR-DESKTOP-chromium-darwin.png",
-      "visualEvidenceSha256": "2528fecf0c859d247631b715e980ae35f7107acc921e517f130cc52d84c66e84",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "19a9d3ed4a6d78f84d2e4689e0d7c6816df77ae89379653e5cc37048a3f18976",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1456,7 +1456,7 @@
       },
       "interactionEvidence": {
         "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-EDITOR-DESKTOP-interaction-chromium-darwin.png",
-        "sha256": "870a63f4c6448d2f1f9d9bc4bcdad01d648dfbc1f290eabb957f8842d3bb2d5b",
+        "sha256": "c959c6f3c22c7160fed1f845ccfe0e2c53e29b4d29d8be069204fbcbdb88f690",
         "purpose": "FIXED_PANEL_FOCUS_AND_SCROLL_CONTRACT"
       }
     },
@@ -1479,8 +1479,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-PERSONALIZED-DESKTOP-FINAL-chromium-darwin.png",
-      "visualEvidenceSha256": "9624c382bce66517770fad590e11fc8a82f76ad50e5df9ea9408d731787d31e9",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "4bc3232fae95e91337714191a1d19d164f4fa888b195a7ede456d64733adf4d2",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1526,8 +1526,8 @@
         "G4"
       ],
       "visualEvidence": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-FLOW-PERSONALIZED-MOBILE-FINAL-chromium-darwin.png",
-      "visualEvidenceSha256": "61604c1c2570c7aa375db8db15127e33623aec705ed8f61c2274631bd340614b",
-      "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+      "visualEvidenceSha256": "1d49bb06916da8d36b5296f878473e0d32e4ab09d85e43688f687d5e2978f778",
+      "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
       "browser": {
         "name": "Chromium",
         "version": "145.0.7632.6",
@@ -1618,7 +1618,7 @@
     }
   },
   "evidenceEnvironment": {
-    "implementationCommit": "6b5534f0132005dc84900711885e9086dd9db67c",
+    "implementationCommit": "56c78e1e7fc51cac40b381d0e5376efceaa65a68",
     "browser": {
       "name": "Chromium",
       "version": "145.0.7632.6",
@@ -1648,6 +1648,6 @@
       "e2e/home-wave2-state-evidence.spec.ts"
     ],
     "receipt": "architecture/home-wave2-playwright-junit.xml",
-    "receiptSha256": "22876e96657b014af8af23cc5f23af71043104a94db2805858af2714656cfc3d"
+    "receiptSha256": "888f4b5fe613581d3a0bdcd55c78fc2f7e459a9d92cee72c15b5520cce57e2ee"
   }
 }

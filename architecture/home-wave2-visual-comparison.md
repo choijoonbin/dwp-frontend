@@ -1,20 +1,20 @@
 # Home Wave 2 accepted-source comparison
 
-- Review date: 2026-09-15
+- Review date: 2026-09-16
 - Review method: human perceptual review plus executable layout and behavior assertions
 - Source of truth: `architecture/home-wave2-design-source-registry.v1.json` and its 33 accepted PNG hashes
 - Decision: pass with product-native adaptations
 
 ## Final integrated verification
 
-- Integrated implementation commit: `8fec0a742ed0378c325bac7bed7aaf24673f40c0`
+- Integrated implementation commit: `56c78e1e7fc51cac40b381d0e5376efceaa65a68`
 - Runtime: Node.js 24.19.0, Playwright 1.58.0, Chromium project, one worker, host
   timezone with no override
-- Combined acceptance result: two consecutive clean runs of 19/19 tests
+- Combined acceptance result: clean run of 19/19 tests
   (Wave 2 acceptance 7, Wave 2 state evidence 8, Wave 3 governance 4)
 - Wave 2 JUnit receipt: 15/15 tests, 0 failures, 0 skipped, 0 errors
-- Visual policy: `--update-snapshots=none`; SHA-256 comparison confirmed that no
-  canonical or interaction snapshot changed before, between, or after the final runs
+- Visual policy: the final acceptance run used `--update-snapshots=none`; the evidence
+  manifest binds all 33 canonical and 7 interaction PNGs to the implementation commit
 - Combined receipt: `architecture/home-wave123-playwright.json`
 - Wave 2 receipt: `architecture/home-wave2-playwright-junit.xml`
 
