@@ -116,10 +116,15 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
   },
 ] as const;
 
-// Sort ACTIVE bindings by rendererKey (before appending :manifestHash), then SHA-256 the lines.
-// Each manifest hash covers owner, source, authority, policy, preset and every other semantic field.
-export const HOME_NATIVE_BINDING_CATALOG_REVISION =
-  '656986e3056f42073ff5af2b6501d798d33ee2fabc615c8d602bd7f0edc20939';
+// Catalog-wide revision emitted by WidgetCatalogService after evaluating all 19
+// Wave 4 bindings (7 native and 12 owner definitions). The broker copies this
+// aggregate revision into every RuntimeDefinition envelope.
+export const HOME_WIDGET_BINDING_CATALOG_REVISION =
+  'd9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643';
+
+// Compatibility alias for native-renderer call sites. The backend signs every
+// runtime definition, including owner widgets, with the same catalog revision.
+export const HOME_NATIVE_BINDING_CATALOG_REVISION = HOME_WIDGET_BINDING_CATALOG_REVISION;
 
 const PUBLIC_REASON_CODES = new Set<WidgetPublicReasonCode>([
   'NOT_AVAILABLE',

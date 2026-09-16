@@ -193,7 +193,7 @@ describe('native renderer allowlist', () => {
     expect(new Set(fixtureBindings.map((binding) => binding.definitionKey)).size).toBe(7);
   });
 
-  it('pins the full semantic manifest hashes in the backend binding revision format', () => {
+  it('pins the seven native manifests independently of the full runtime catalog', () => {
     const sorted = [...NATIVE_HOME_WIDGET_BINDINGS]
       .sort((a, b) => a.rendererKey < b.rendererKey ? -1 : a.rendererKey > b.rendererKey ? 1 : 0);
     expect(sorted.map((binding) => binding.rendererKey)).toEqual([
@@ -202,8 +202,10 @@ describe('native renderer allowlist', () => {
     ]);
     const material = sorted
       .map((binding) => `${binding.rendererKey}:${binding.expectedManifestHash}`).join('\n');
-    expect(createHash('sha256').update(material).digest('hex'))
-      .toBe(HOME_NATIVE_BINDING_CATALOG_REVISION);
+    const nativeSubsetRevision = createHash('sha256').update(material).digest('hex');
+    expect(nativeSubsetRevision)
+      .toBe('656986e3056f42073ff5af2b6501d798d33ee2fabc615c8d602bd7f0edc20939');
+    expect(HOME_NATIVE_BINDING_CATALOG_REVISION).not.toBe(nativeSubsetRevision);
   });
 
   it('never accepts a renderer transport or executable location from registry data', () => {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createHash } from 'node:crypto';
 import {
   OWNER_WIDGET_CONTRACTS,
   OWNER_WIDGET_DEFINITION_KEYS,
@@ -6,6 +7,11 @@ import {
   isOwnerWidgetDefinitionKey,
   resolveOwnerWidgetContract,
 } from './owner-widget-contracts';
+import {
+  HOME_NATIVE_BINDING_CATALOG_REVISION,
+  HOME_WIDGET_BINDING_CATALOG_REVISION,
+  NATIVE_HOME_WIDGET_BINDINGS,
+} from '../widget-registry-runtime';
 
 const EXPECTED_TUPLES = [
   [
@@ -109,14 +115,36 @@ describe('Wave 4 owner widget contracts', () => {
     expect(new Set(OWNER_WIDGET_DEFINITION_KEYS).size).toBe(12);
   });
 
-  it('uses the signed manifest hash as the renderer binding revision', () => {
+  it('uses the backend catalog-wide renderer binding revision', () => {
     for (const value of OWNER_WIDGET_CONTRACTS) {
       expect(value.definitionVersion).toBe('1.0.0');
       expect(value.definitionManifestHash).toMatch(/^[a-f0-9]{64}$/u);
-      expect(value.rendererBindingRevision).toBe(value.definitionManifestHash);
+      expect(value.rendererBindingRevision).toBe(HOME_WIDGET_BINDING_CATALOG_REVISION);
+      expect(value.rendererBindingRevision).not.toBe(value.definitionManifestHash);
       expect(value.commandCapabilities).toEqual([]);
       expect(Object.isFrozen(value.commandCapabilities)).toBe(true);
     }
+    expect(HOME_NATIVE_BINDING_CATALOG_REVISION).toBe(HOME_WIDGET_BINDING_CATALOG_REVISION);
+    expect(NATIVE_HOME_WIDGET_BINDINGS).toHaveLength(7);
+    expect(OWNER_WIDGET_CONTRACTS).toHaveLength(12);
+    expect(NATIVE_HOME_WIDGET_BINDINGS.length + OWNER_WIDGET_CONTRACTS.length).toBe(19);
+
+    const bindingMaterial = [
+      ...NATIVE_HOME_WIDGET_BINDINGS.map((binding) => ({
+        manifestHash: binding.expectedManifestHash,
+        rendererKey: binding.rendererKey,
+      })),
+      ...OWNER_WIDGET_CONTRACTS.map((binding) => ({
+        manifestHash: binding.definitionManifestHash,
+        rendererKey: binding.rendererKey,
+      })),
+    ]
+      .sort((left, right) => left.rendererKey.localeCompare(right.rendererKey))
+      .map((binding) => `${binding.rendererKey}:${binding.manifestHash}`)
+      .join('\n');
+    expect(createHash('sha256').update(bindingMaterial).digest('hex')).toBe(
+      HOME_WIDGET_BINDING_CATALOG_REVISION
+    );
   });
 
   it('resolves only an exact five-field identity', () => {

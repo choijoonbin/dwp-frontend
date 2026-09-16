@@ -1,3 +1,5 @@
+import { HOME_WIDGET_BINDING_CATALOG_REVISION } from '../widget-registry-runtime';
+
 export const OWNER_WIDGET_DEFINITION_KEYS = [
   'approval.focus-queue',
   'approval.my-requests',
@@ -51,7 +53,7 @@ function contract(seed: ContractSeed): OwnerWidgetContract {
     definitionKey: seed.definitionKey,
     definitionVersion: '1.0.0',
     definitionManifestHash: seed.hash,
-    rendererBindingRevision: seed.hash,
+    rendererBindingRevision: HOME_WIDGET_BINDING_CATALOG_REVISION,
     rendererKey: seed.rendererKey,
     canonicalSourceRoute: seed.canonicalSourceRoute,
     surface: seed.surface ?? 'WIDGET',
@@ -62,9 +64,11 @@ function contract(seed: ContractSeed): OwnerWidgetContract {
 /**
  * Exact Wave 4 owner binding allowlist.
  *
- * Hashes and binding revisions are copied from the canonical backend fixture
- * `contracts/widget-registry/wave4-owner-widget-manifests.v1.json`. A runtime
- * widget must match every identity field before any payload parser is selected.
+ * Manifest hashes are copied from the canonical backend fixture
+ * `contracts/widget-registry/wave4-owner-widget-manifests.v1.json`. The binding
+ * revision is the catalog-wide revision emitted by WidgetCatalogService for
+ * every runtime definition. A runtime widget must match every identity field
+ * before any payload parser is selected.
  */
 export const OWNER_WIDGET_CONTRACTS = Object.freeze([
   contract({
