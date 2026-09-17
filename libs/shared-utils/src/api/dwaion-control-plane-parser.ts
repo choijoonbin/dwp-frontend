@@ -4,6 +4,8 @@ import type {
   DwaionConnectorsSnapshot,
   DwaionEvaluationSafetySnapshot,
   DwaionGovernedCommand,
+  DwaionGovernedCommandState,
+  DwaionGovernedCommandsSnapshot,
   DwaionIncidentsSnapshot,
   DwaionModelsRoutingSnapshot,
   DwaionOutcomesSnapshot,
@@ -15,6 +17,8 @@ const CAPABILITY_STATES = new Set(['AVAILABLE', 'PARTIAL', 'NOT_CONFIGURED', 'UN
 const HEALTH_STATES = new Set(['HEALTHY', 'DEGRADED', 'FAILED', 'UNKNOWN']);
 const PROVIDER_KINDS = new Set(['MANAGED', 'PRIVATE', 'ON_PREMISE']);
 const MODEL_LIFECYCLES = new Set(['ACTIVE', 'CANARY', 'PAUSED', 'RETIRED']);
+const CREDENTIAL_STATES = new Set(['BOUND', 'ROTATION_DUE', 'EXPIRED', 'MISSING']);
+const ROUTING_DECISIONS = new Set(['ROUTED', 'BLOCKED', 'REVIEW_REQUIRED']);
 const BUDGET_MODES = new Set(['WARN', 'THROTTLE', 'BLOCK']);
 const ROUTING_STATES = new Set(['ACTIVE', 'CANARY', 'PAUSED']);
 const CONNECTOR_SYNC_STATES = new Set(['IDLE', 'SYNCING', 'PARTIAL', 'FAILED', 'PAUSED']);
@@ -48,17 +52,30 @@ const COMMAND_STATES = new Set([
 const COMMAND_TRANSITIONS = new Set(['APPROVE', 'REJECT', 'CANCEL', 'RETRY', 'ROLLBACK']);
 const COMMAND_KINDS = new Set([
   'MODEL_ROUTING_UPDATE',
+  'MODEL_ROUTING_DRAFT_SAVE',
   'MODEL_ROUTE_SIMULATE',
   'MODEL_CANARY_START',
   'MODEL_ROLLBACK',
+  'PROVIDER_CIRCUIT_BREAK',
+  'MODEL_SMART_ISOLATE',
   'EMERGENCY_STOP',
   'EMERGENCY_RECOVERY',
+  'EMERGENCY_RECOVERY_SIMULATE',
+  'EMERGENCY_ISOLATION_ROLLBACK',
   'AGENT_PROMOTE',
+  'AGENT_DRAFT_SAVE',
   'AGENT_EVALUATE',
+  'AGENT_EVALUATION_CERT_SIGN',
   'AGENT_ROLLBACK',
   'AGENT_KILL_SWITCH',
   'CONNECTOR_CREATE',
+  'CONNECTOR_DRAFT_SAVE',
   'CONNECTOR_PROBE',
+  'CONNECTOR_OAUTH_REAUTHORIZE',
+  'CONNECTOR_PAUSE',
+  'CONNECTOR_QUARANTINE',
+  'CONNECTOR_DRIFT_HEAL',
+  'CONNECTOR_KILL_SWITCH',
   'CONNECTOR_SYNC',
   'CONNECTOR_REINDEX',
   'CONNECTOR_SECRET_ROTATE',
@@ -68,10 +85,25 @@ const COMMAND_KINDS = new Set([
   'DATASET_IMPORT',
   'DATASET_PII_DECIDE',
   'EVALUATION_COMPARE',
+  'EVALUATION_RUN',
+  'EVALUATION_RERUN',
+  'EVALUATION_REPORT_EXPORT',
+  'EVALUATION_GATE_APPROVE',
   'SAFETY_SIMULATE',
+  'SAFETY_GUARDRAIL_ENFORCE',
+  'SAFETY_CANARY_APPROVE',
   'DRIFT_EVIDENCE_ATTACH',
   'DRIFT_RAW_EVIDENCE_REQUEST',
   'INCIDENT_CONTAIN',
+  'INCIDENT_EMERGENCY_STOP',
+  'INCIDENT_WAR_ROOM_OPEN',
+  'INCIDENT_REPORT_EXPORT',
+  'INCIDENT_VALIDATION_RUN',
+  'INCIDENT_CONNECTOR_REAUTH',
+  'INCIDENT_SAFE_ROLLBACK',
+  'INCIDENT_RECOVERY_RESYNC',
+  'INCIDENT_SKIP_QUARANTINED',
+  'INCIDENT_ROUTINE_PAUSE',
   'RUN_QUARANTINE',
   'RUN_REPLAY',
   'RUN_COMPENSATE',
@@ -79,11 +111,14 @@ const COMMAND_KINDS = new Set([
   'INCIDENT_CLOSE',
   'BACKLOG_CREATE',
   'BACKLOG_UPDATE',
+  'BACKLOG_TICKET_OPEN',
+  'BACKLOG_RELEASE_LINK',
   'OUTCOME_EXPORT',
   'COST_SIMULATE',
   'TOKEN_BUDGET_UPDATE',
 ]);
 const SHA_256 = /^[a-f\d]{64}$/i;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function invalid(label: string): never {
   throw new HttpError(`DWAI-ON control-plane ${label} response is invalid.`, 502);
@@ -220,9 +255,11 @@ export function parseDwaionModelsRouting(value: unknown): DwaionModelsRoutingSna
   const providers = array(snapshot.providers, 'models-routing.providers');
   const models = array(snapshot.models, 'models-routing.models');
   const policies = array(snapshot.routingPolicies, 'models-routing.routingPolicies');
+  const rules = array(snapshot.routingRules, 'models-routing.routingRules');
   const providerIds = uniqueRecords(providers, 'providerId', 'providers');
   const modelIds = uniqueRecords(models, 'modelId', 'models');
   uniqueRecords(policies, 'policyId', 'routingPolicies');
+  const ruleIds = uniqueRecords(rules, 'ruleId', 'routingRules');
 
   providers.forEach((candidate, index) => {
     const label = `providers[${index}]`;
@@ -249,6 +286,16 @@ export function parseDwaionModelsRouting(value: unknown): DwaionModelsRoutingSna
     optionalPercentage(item.qualityScore, `${label}.qualityScore`);
     optionalNonNegative(item.costPerMillionInputTokens, `${label}.costPerMillionInputTokens`);
     optionalNonNegative(item.costPerMillionOutputTokens, `${label}.costPerMillionOutputTokens`);
+    const classifications = stringArray(
+      item.allowedDataClassifications,
+      `${label}.allowedDataClassifications`
+    );
+    if (classifications.length === 0) invalid(`${label}.allowedDataClassifications`);
+    uniqueStrings(classifications, `${label}.allowedDataClassifications`);
+    text(item.governancePolicy, `${label}.governancePolicy`);
+    text(item.region, `${label}.region`);
+    enumValue(item.credentialState, CREDENTIAL_STATES, `${label}.credentialState`);
+    text(item.credentialRef, `${label}.credentialRef`);
   });
   policies.forEach((candidate, index) => {
     const label = `routingPolicies[${index}]`;
@@ -269,6 +316,63 @@ export function parseDwaionModelsRouting(value: unknown): DwaionModelsRoutingSna
     enumValue(item.state, ROUTING_STATES, `${label}.state`);
     timestamp(item.updatedAt, `${label}.updatedAt`);
   });
+  rules.forEach((candidate, index) => {
+    const label = `routingRules[${index}]`;
+    const item = record(candidate, label);
+    text(item.name, `${label}.name`);
+    text(item.taskType, `${label}.taskType`);
+    const conditions = stringArray(item.conditions, `${label}.conditions`);
+    if (conditions.length === 0) invalid(`${label}.conditions`);
+    uniqueStrings(conditions, `${label}.conditions`);
+    const classifications = stringArray(
+      item.allowedDataClassifications,
+      `${label}.allowedDataClassifications`
+    );
+    if (classifications.length === 0) invalid(`${label}.allowedDataClassifications`);
+    uniqueStrings(classifications, `${label}.allowedDataClassifications`);
+    const primaryModelId = text(item.primaryModelId, `${label}.primaryModelId`);
+    if (!modelIds.has(primaryModelId)) invalid(`${label}.primaryModelId`);
+    const fallbacks = stringArray(item.fallbackModelIds, `${label}.fallbackModelIds`);
+    uniqueStrings(fallbacks, `${label}.fallbackModelIds`);
+    fallbacks.forEach((modelId) => {
+      if (!modelIds.has(modelId) || modelId === primaryModelId)
+        invalid(`${label}.fallbackModelIds`);
+    });
+    boolean(item.failClosed, `${label}.failClosed`);
+    positiveInteger(item.version, `${label}.version`);
+  });
+  if (snapshot.latestSimulation != null) {
+    const simulation = record(snapshot.latestSimulation, 'models-routing.latestSimulation');
+    text(simulation.simulationId, 'models-routing.latestSimulation.simulationId');
+    enumValue(simulation.decision, ROUTING_DECISIONS, 'models-routing.latestSimulation.decision');
+    const matchedRuleId = text(
+      simulation.matchedRuleId,
+      'models-routing.latestSimulation.matchedRuleId'
+    );
+    if (!ruleIds.has(matchedRuleId)) invalid('models-routing.latestSimulation.matchedRuleId');
+    if (simulation.targetModelId != null) {
+      const targetModelId = text(
+        simulation.targetModelId,
+        'models-routing.latestSimulation.targetModelId'
+      );
+      if (!modelIds.has(targetModelId)) invalid('models-routing.latestSimulation.targetModelId');
+    }
+    optionalNonNegative(simulation.estimatedCost, 'models-routing.latestSimulation.estimatedCost');
+    text(simulation.currency, 'models-routing.latestSimulation.currency');
+    optionalNonNegative(
+      simulation.estimatedLatencyMs,
+      'models-routing.latestSimulation.estimatedLatencyMs'
+    );
+    const fallbackIds = stringArray(
+      simulation.fallbackModelIds,
+      'models-routing.latestSimulation.fallbackModelIds'
+    );
+    uniqueStrings(fallbackIds, 'models-routing.latestSimulation.fallbackModelIds');
+    fallbackIds.forEach((modelId) => {
+      if (!modelIds.has(modelId)) invalid('models-routing.latestSimulation.fallbackModelIds');
+    });
+    timestamp(simulation.generatedAt, 'models-routing.latestSimulation.generatedAt');
+  }
   nonNegativeInteger(snapshot.pendingApprovalCount, 'models-routing.pendingApprovalCount');
   nonNegativeInteger(snapshot.activeCanaryCount, 'models-routing.activeCanaryCount');
   boolean(snapshot.emergencyStopActive, 'models-routing.emergencyStopActive');
@@ -461,7 +565,7 @@ export function parseDwaionOutcomes(value: unknown): DwaionOutcomesSnapshot {
 
 export function parseDwaionGovernedCommand(value: unknown): DwaionGovernedCommand {
   const command = record(value, 'command');
-  text(command.commandId, 'command.commandId');
+  if (!UUID.test(text(command.commandId, 'command.commandId'))) invalid('command.commandId');
   enumValue(command.kind, COMMAND_KINDS, 'command.kind');
   const state = enumValue(command.state, COMMAND_STATES, 'command.state');
   const target = record(command.target, 'command.target');
@@ -474,11 +578,30 @@ export function parseDwaionGovernedCommand(value: unknown): DwaionGovernedComman
     invalid('command.checkerUserId');
   }
   boolean(command.approvalRequired, 'command.approvalRequired');
+  const canApprove = boolean(command.canApprove, 'command.canApprove');
+  validateCommandReview(command.review, 'command.review');
   const transitions = stringArray(command.allowedTransitions, 'command.allowedTransitions');
   uniqueStrings(transitions, 'command.allowedTransitions');
   transitions.forEach((transition) =>
     enumValue(transition, COMMAND_TRANSITIONS, 'command.allowedTransitions')
   );
+  const allowedByState: Record<string, Set<string>> = {
+    AWAITING_APPROVAL: new Set(['APPROVE', 'REJECT', 'CANCEL']),
+    QUEUED: new Set(['CANCEL']),
+    RUNNING: new Set(['CANCEL']),
+    PARTIAL: new Set(['RETRY', 'ROLLBACK']),
+    SUCCEEDED: new Set(['ROLLBACK']),
+    FAILED: new Set(['RETRY', 'ROLLBACK']),
+    REJECTED: new Set(),
+    CANCELLED: new Set(),
+    ROLLED_BACK: new Set(),
+  };
+  if (transitions.some((transition) => !allowedByState[state]?.has(transition))) {
+    invalid('command.allowedTransitions.state');
+  }
+  if (canApprove !== (state === 'AWAITING_APPROVAL' && transitions.includes('APPROVE'))) {
+    invalid('command.canApprove');
+  }
   optionalText(command.transitionBlockReason, 'command.transitionBlockReason');
   optionalPercentage(command.progressPercent, 'command.progressPercent');
   timestamp(command.createdAt, 'command.createdAt');
@@ -511,7 +634,54 @@ export function parseDwaionGovernedCommand(value: unknown): DwaionGovernedComman
     text(decision.reason, 'command.decision.reason');
     stringArray(decision.evidenceRefs, 'command.decision.evidenceRefs');
     timestamp(decision.decidedAt, 'command.decision.decidedAt');
+    if (command.checkerUserId == null || decision.actorUserId !== command.checkerUserId) {
+      invalid('command.decision.actorUserId');
+    }
   }
   if (state === 'REJECTED' && decision?.decision !== 'REJECT') invalid('command.decision');
+  if (state === 'AWAITING_APPROVAL' && decision != null) invalid('command.decision.state');
+  if (decision?.decision === 'REJECT' && state !== 'REJECTED') invalid('command.decision.state');
   return command as DwaionGovernedCommand;
+}
+
+export function parseDwaionGovernedCommands(
+  value: unknown,
+  expectedState?: DwaionGovernedCommandState,
+  maxCount?: number
+): DwaionGovernedCommandsSnapshot {
+  const snapshot = record(value, 'commands');
+  timestamp(snapshot.generatedAt, 'commands.generatedAt');
+  const commands = array(snapshot.commands, 'commands.items');
+  if (maxCount != null && commands.length > maxCount) invalid('commands.items');
+  uniqueRecords(commands, 'commandId', 'commands.items');
+  commands.forEach((command) => {
+    const parsed = parseDwaionGovernedCommand(command);
+    if (expectedState && parsed.state !== expectedState) invalid('commands.items.state');
+  });
+  return snapshot as DwaionGovernedCommandsSnapshot;
+}
+
+function validateCommandReview(value: unknown, label: string): void {
+  const review = record(value, label);
+  text(review.reason, `${label}.reason`);
+  text(review.ticketRef, `${label}.ticketRef`);
+  const evidenceRefs = stringArray(review.evidenceRefs, `${label}.evidenceRefs`);
+  uniqueStrings(evidenceRefs, `${label}.evidenceRefs`);
+  const preflight = record(review.preflight, `${label}.preflight`);
+  const changes = array(preflight.changes, `${label}.preflight.changes`);
+  if (changes.length === 0) invalid(`${label}.preflight.changes`);
+  changes.forEach((candidate, index) => {
+    const changeLabel = `${label}.preflight.changes[${index}]`;
+    const change = record(candidate, changeLabel);
+    text(change.field, `${changeLabel}.field`);
+    text(change.before, `${changeLabel}.before`, true);
+    text(change.after, `${changeLabel}.after`, true);
+  });
+  const impactScopes = stringArray(preflight.impactScopes, `${label}.preflight.impactScopes`);
+  if (impactScopes.length === 0) invalid(`${label}.preflight.impactScopes`);
+  uniqueStrings(impactScopes, `${label}.preflight.impactScopes`);
+  text(preflight.recoveryPlan, `${label}.preflight.recoveryPlan`);
+  if (!SHA_256.test(text(preflight.recoveryPlanHash, `${label}.preflight.recoveryPlanHash`))) {
+    invalid(`${label}.preflight.recoveryPlanHash`);
+  }
 }

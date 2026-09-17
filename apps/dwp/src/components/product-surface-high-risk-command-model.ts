@@ -42,7 +42,8 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'EXPORT_DATASET'
     | 'EXPORT_REQUEST'
     | 'HCM_CONNECTOR'
-    | 'HCM_SYNC_RUN';
+    | 'HCM_SYNC_RUN'
+    | 'DWAI_ON_CONTROL_PLANE';
   targetId: string;
   expectedObjectVersion: number;
   payload: Readonly<Record<string, unknown>>;

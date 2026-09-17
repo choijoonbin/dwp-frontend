@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CheckCircle2, CircleStop, Play, RotateCcw, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { ActionButton, OperationalKpiStrip } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import { getDwaionIncidents, type DwaionIncidentSummary } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -12,6 +13,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+import {
+  DwaionCanonicalCommandActions,
+  type DwaionCanonicalCommandAction,
+} from './dwaion-canonical-command-actions';
 import {
   DwaionAdminQueryBoundary,
   DwaionAdminSection,
@@ -120,7 +125,7 @@ export function DwaionIncidentWorkbenchPanel() {
               }
             >
               <OperationalKpiStrip
-                ariaLabel="AI incident summary"
+                ariaLabel={copy.ui.incidents.summaryLabel}
                 items={[
                   {
                     key: 'open',
@@ -171,6 +176,7 @@ export function DwaionIncidentWorkbenchPanel() {
                       key={incident.incidentId}
                       incident={incident}
                       active={incident.incidentId === selected?.incidentId}
+                      runsLabel={copy.ui.common.runsUnit}
                       onSelect={() => setSelectedId(incident.incidentId)}
                     />
                   ))}
@@ -195,7 +201,9 @@ export function DwaionIncidentWorkbenchPanel() {
                           <Chip size="small" variant="outlined" label={selected.state} />
                         </Stack>
                         <Typography variant="caption" color="text.secondary">
-                          {selected.incidentId} · {selected.correlationId} · v{selected.version}
+                          {selected.incidentId} · {selected.correlationId}{' '}
+                          {copy.ui.common.versionSeparator}
+                          {selected.version}
                         </Typography>
                       </Box>
                       <Typography variant="body2" fontWeight={700}>
@@ -209,22 +217,34 @@ export function DwaionIncidentWorkbenchPanel() {
                         gap: 1,
                       }}
                     >
-                      <Fact label="Affected runs" value={String(selected.affectedRunCount)} />
                       <Fact
-                        label="Affected users"
+                        label={copy.ui.incidents.affectedRuns}
+                        value={String(selected.affectedRunCount)}
+                      />
+                      <Fact
+                        label={copy.ui.incidents.affectedUsers}
                         value={
                           selected.affectedUserCount == null
                             ? '—'
                             : String(selected.affectedUserCount)
                         }
                       />
-                      <Fact label="Owner" value={selected.ownerRef ?? 'Unassigned'} />
-                      <Fact label="Opened" value={new Date(selected.openedAt).toLocaleString()} />
+                      <Fact
+                        label={copy.ui.incidents.owner}
+                        value={selected.ownerRef ?? 'Unassigned'}
+                      />
+                      <Fact
+                        label={copy.ui.incidents.opened}
+                        value={formatDate(selected.openedAt, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        })}
+                      />
                     </Box>
                     <Divider />
                     <Box>
                       <Typography component="h4" variant="subtitle2">
-                        Immutable incident timeline
+                        {copy.ui.incidents.immutableTimeline}
                       </Typography>
                       <Stack divider={<Divider flexItem />} sx={{ mt: 0.75 }}>
                         {selected.timeline.map((event) => (
@@ -234,7 +254,10 @@ export function DwaionIncidentWorkbenchPanel() {
                                 {event.type}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                {new Date(event.occurredAt).toLocaleString()}
+                                {formatDate(event.occurredAt, {
+                                  dateStyle: 'medium',
+                                  timeStyle: 'short',
+                                })}
                               </Typography>
                             </Stack>
                             <Typography variant="body2">{event.summary}</Typography>
@@ -300,13 +323,23 @@ export function DwaionIncidentWorkbenchPanel() {
                       </ActionButton>
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                      Replay creates a new run. Compensation remains a separate audited domain
-                      action.
+                      {copy.ui.incidents.replayExplanation}
                     </Typography>
                   </Stack>
                 )}
               </Box>
             </DwaionAdminSection>
+            {selected && (
+              <DwaionCanonicalCommandActions
+                title={copy.ui.incidents.responseOperations}
+                description={copy.ui.incidents.responseOperationsDescription}
+                actions={incidentCanonicalActions(selected, copy.command.description)}
+                disabled={!commandsAvailable}
+                onRefresh={async () => {
+                  await query.refetch();
+                }}
+              />
+            )}
           </Stack>
         )}
       </DwaionAdminQueryBoundary>
@@ -335,10 +368,12 @@ export function DwaionIncidentWorkbenchPanel() {
 function IncidentRow({
   incident,
   active,
+  runsLabel,
   onSelect,
 }: {
   incident: DwaionIncidentSummary;
   active: boolean;
+  runsLabel: string;
   onSelect: () => void;
 }) {
   return (
@@ -361,7 +396,7 @@ function IncidentRow({
           <Chip size="small" color={severityColor(incident.severity)} label={incident.severity} />
         </Stack>
         <Typography variant="caption" color="text.secondary">
-          {incident.state} · {incident.affectedRunCount} runs
+          {incident.state} · {incident.affectedRunCount} {runsLabel}
         </Typography>
       </Box>
     </ButtonBase>
@@ -528,4 +563,124 @@ function operationImpacts(draft: DwaionIncidentOperationDraft) {
     return [draft.validationEvidence, draft.reQuarantineCriteria];
   }
   return [draft.ticketRef, draft.communicationsRef, draft.postmortemRef];
+}
+
+function incidentCanonicalActions(
+  incident: DwaionIncidentSummary,
+  description: string
+): DwaionCanonicalCommandAction[] {
+  const target = { type: 'AI_INCIDENT', id: incident.incidentId };
+  const common = {
+    description,
+    target,
+    expectedVersion: incident.version,
+    impacts: [
+      incident.scope,
+      `${incident.affectedRunCount} affected runs`,
+      `${incident.affectedUserCount ?? 'unknown'} affected users`,
+      `Correlation ${incident.correlationId}`,
+    ],
+    recoveryPlan:
+      'Preserve quarantine, restore the last verified route, validate a bounded canary, and re-quarantine on any failed check.',
+  };
+  const evidencePayload = {
+    incidentId: incident.incidentId,
+    correlationId: incident.correlationId,
+    ownerRef: incident.ownerRef,
+    scope: incident.scope,
+  };
+  return [
+    {
+      ...common,
+      label: 'Emergency kill',
+      title: 'Emergency stop affected AI traffic',
+      kind: 'INCIDENT_EMERGENCY_STOP',
+      changes: [{ label: 'Traffic', before: 'ACTIVE', after: 'STOP_PENDING' }],
+      payload: { ...evidencePayload, inFlightAction: 'PAUSE', fallback: 'LAST_VERIFIED_ROUTE' },
+      destructive: true,
+    },
+    {
+      ...common,
+      label: 'Open war room',
+      title: 'Open incident war room',
+      kind: 'INCIDENT_WAR_ROOM_OPEN',
+      changes: [{ label: 'War room', before: 'Not linked', after: 'CREATE_PENDING' }],
+      payload: {
+        ...evidencePayload,
+        participantScope: ['incident-owner', 'security', 'platform-operations'],
+        bindTimeline: true,
+      },
+    },
+    {
+      ...common,
+      label: 'Export incident report',
+      title: 'Export incident evidence report',
+      kind: 'INCIDENT_REPORT_EXPORT',
+      changes: [{ label: 'Report', before: 'Not generated', after: 'PDF_AND_JSONL_PENDING' }],
+      payload: { ...evidencePayload, formats: ['PDF', 'JSONL'], includeTimeline: true },
+    },
+    {
+      ...common,
+      label: 'Run validation',
+      title: 'Run incident recovery validation',
+      kind: 'INCIDENT_VALIDATION_RUN',
+      changes: [{ label: 'Validation', before: incident.state, after: 'VALIDATION_PENDING' }],
+      payload: {
+        ...evidencePayload,
+        checks: ['provider-health', 'route-policy', 'connector-acl', 'canary-threshold'],
+        canaryPercent: 5,
+        reQuarantineOnFailure: true,
+      },
+    },
+    {
+      ...common,
+      label: 'Connector reauth',
+      title: 'Reauthorize affected connector',
+      kind: 'INCIDENT_CONNECTOR_REAUTH',
+      changes: [{ label: 'Connector authorization', before: 'SUSPECT', after: 'REAUTH_PENDING' }],
+      payload: { ...evidencePayload, connectorScope: incident.scope, rotateSecret: true },
+    },
+    {
+      ...common,
+      label: 'Safe rollback',
+      title: 'Safely rollback incident scope',
+      kind: 'INCIDENT_SAFE_ROLLBACK',
+      changes: [{ label: 'Deployment', before: 'Current', after: 'LAST_VERIFIED_PENDING' }],
+      payload: {
+        ...evidencePayload,
+        rollbackTarget: 'LAST_VERIFIED',
+        preserveEvidence: true,
+        reQuarantineOnFailure: true,
+      },
+      destructive: true,
+    },
+    {
+      ...common,
+      label: 'Resync recovery data',
+      title: 'Resynchronize recovery data',
+      kind: 'INCIDENT_RECOVERY_RESYNC',
+      changes: [{ label: 'Recovery data', before: 'PARTIAL', after: 'RESYNC_PENDING' }],
+      payload: { ...evidencePayload, verifyChecksums: true, publishAfterValidation: true },
+    },
+    {
+      ...common,
+      label: 'Skip quarantined runs',
+      title: 'Skip quarantined incident runs',
+      kind: 'INCIDENT_SKIP_QUARANTINED',
+      changes: [{ label: 'Run selection', before: 'All affected', after: 'Exclude quarantined' }],
+      payload: {
+        ...evidencePayload,
+        runSelector: `incident:${incident.incidentId}:quarantined`,
+        preserveForReplay: true,
+      },
+    },
+    {
+      ...common,
+      label: 'Pause recovery routine',
+      title: 'Pause incident recovery routine',
+      kind: 'INCIDENT_ROUTINE_PAUSE',
+      changes: [{ label: 'Recovery routine', before: 'RUNNING', after: 'PAUSE_PENDING' }],
+      payload: { ...evidencePayload, pauseAtCheckpoint: true, preserveLease: true },
+    },
+  ];
 }

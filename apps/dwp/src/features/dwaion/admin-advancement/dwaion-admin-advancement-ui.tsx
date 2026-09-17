@@ -1,12 +1,12 @@
-import { AlertTriangle, CheckCircle2, CircleDashed, RefreshCw, Settings2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, CircleDashed } from 'lucide-react';
 import {
-  ActionButton,
   ErrorState,
   InlineFeedback,
   LiveStatus,
   LoadingState,
   foundationTokens,
 } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -140,7 +140,10 @@ export function DwaionFreshness({
     <LiveStatus
       state={fetching ? 'syncing' : 'live'}
       label={copy.live}
-      detail={`${copy.generatedAt} ${new Date(generatedAt).toLocaleString()}`}
+      detail={`${copy.generatedAt} ${formatDate(generatedAt, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      })}`}
       refreshLabel={copy.refresh}
       refreshing={fetching}
       onRefresh={onRefresh}
@@ -166,20 +169,4 @@ export function DwaionHealthChip({ health }: { health: DwaionOperationalHealth }
       <AlertTriangle size={14} />
     );
   return <Chip size="small" variant="outlined" color={color} icon={icon} label={health} />;
-}
-
-export function DwaionEmptyCapabilityAction({ onRetry }: { onRetry: () => void }) {
-  const copy = useDwaionAdminAdvancementCopy();
-  return (
-    <Stack alignItems="center" gap={1.5} sx={{ px: 3, py: 5, textAlign: 'center' }}>
-      <Settings2 size={28} color="currentColor" aria-hidden="true" />
-      <Typography variant="subtitle1">{copy.notConfigured}</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 520 }}>
-        {copy.unavailableDescription}
-      </Typography>
-      <ActionButton intent="secondary" startIcon={<RefreshCw size={16} />} onClick={onRetry}>
-        {copy.retry}
-      </ActionButton>
-    </Stack>
-  );
 }

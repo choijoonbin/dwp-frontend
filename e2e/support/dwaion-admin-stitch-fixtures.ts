@@ -13,6 +13,7 @@ import type {
   DwaionSafetyPolicy,
   RegistryEntry,
 } from '@dwp-frontend/shared-utils';
+import { mockDwaionAdminAdvancement } from './dwaion-admin-advancement-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './shell-session';
 
 export const ADMIN_STAMP = '2026-09-08T03:00:00Z';
@@ -904,5 +905,6 @@ export async function mockDwaionAdminStitch(page: Page, options: AdminFixtureOpt
       });
     }
   );
-  return { requests, state };
+  const advancement = await mockDwaionAdminAdvancement(page, requests);
+  return { requests, state, advancement };
 }

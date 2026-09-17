@@ -10,6 +10,7 @@ import {
   WandSparkles,
 } from 'lucide-react';
 import { ActionButton, FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import { getDwaionConnectors, type DwaionConnectorSummary } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -20,6 +21,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+import {
+  DwaionCanonicalCommandActions,
+  type DwaionCanonicalCommandAction,
+} from './dwaion-canonical-command-actions';
 import {
   DwaionAdminQueryBoundary,
   DwaionAdminSection,
@@ -239,7 +244,8 @@ export function DwaionConnectorOperationsPanel() {
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
                           {selected.ownerRef} · {selected.tenantScope} ·{' '}
-                          {selected.region ?? 'global'} · v{selected.version}
+                          {selected.region ?? 'global'} {copy.ui.common.versionSeparator}
+                          {selected.version}
                         </Typography>
                       </Box>
                       <DwaionHealthChip health={selected.health} />
@@ -251,19 +257,25 @@ export function DwaionConnectorOperationsPanel() {
                         gap: 1.25,
                       }}
                     >
-                      <Fact label="Sync" value={selected.syncState} />
+                      <Fact label={copy.ui.connectors.syncStatus} value={selected.syncState} />
                       <Fact
-                        label="ACL coverage"
+                        label={copy.ui.connectors.aclCoverage}
                         value={
                           selected.aclCoverage == null ? '—' : `${selected.aclCoverage.toFixed(2)}%`
                         }
                       />
-                      <Fact label="Repositories" value={String(selected.repositories.length)} />
                       <Fact
-                        label="Last sync"
+                        label={copy.ui.connectors.repositories}
+                        value={String(selected.repositories.length)}
+                      />
+                      <Fact
+                        label={copy.ui.connectors.lastSync}
                         value={
                           selected.lastSuccessfulSyncAt
-                            ? new Date(selected.lastSuccessfulSyncAt).toLocaleString()
+                            ? formatDate(selected.lastSuccessfulSyncAt, {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                              })
                             : '—'
                         }
                       />
@@ -334,6 +346,17 @@ export function DwaionConnectorOperationsPanel() {
                 )}
               </Box>
             </DwaionAdminSection>
+            {selected && (
+              <DwaionCanonicalCommandActions
+                title={copy.ui.connectors.lifecycleOperations}
+                description={copy.ui.connectors.lifecycleOperationsDescription}
+                actions={connectorCanonicalActions(selected, copy.command.description)}
+                disabled={!commandsAvailable}
+                onRefresh={async () => {
+                  await query.refetch();
+                }}
+              />
+            )}
           </Stack>
         )}
       </DwaionAdminQueryBoundary>
@@ -453,62 +476,62 @@ function ConnectorWizard({
       <Stack spacing={1.75}>
         <FormField
           required
-          label="Name"
+          label={copy.ui.connectors.name}
           value={value.name}
           onChange={(event) => onChange({ ...value, name: event.target.value })}
         />
         <FormField
           required
-          label="Provider type"
+          label={copy.ui.connectors.providerType}
           value={value.providerType}
           onChange={(event) => onChange({ ...value, providerType: event.target.value })}
         />
         <FormField
           required
-          label="Owner"
+          label={copy.ui.connectors.owner}
           value={value.ownerRef}
           onChange={(event) => onChange({ ...value, ownerRef: event.target.value })}
         />
         <FormField
           required
-          label="Tenant scope"
+          label={copy.ui.connectors.tenantScope}
           value={value.tenantScope}
           onChange={(event) => onChange({ ...value, tenantScope: event.target.value })}
         />
         <FormField
-          label="Region"
+          label={copy.ui.connectors.region}
           value={value.region}
           onChange={(event) => onChange({ ...value, region: event.target.value })}
         />
         <FormField
-          label="Include repositories"
+          label={copy.ui.connectors.includeRepositories}
           value={value.repositories}
           onChange={(event) => onChange({ ...value, repositories: event.target.value })}
         />
         <FormField
-          label="Exclude repositories"
+          label={copy.ui.connectors.excludeRepositories}
           value={value.excludedRepositories}
           onChange={(event) => onChange({ ...value, excludedRepositories: event.target.value })}
         />
         <FormField
-          label="Group mapping source"
+          label={copy.ui.connectors.groupMappingSource}
           value={value.groupMappingSource}
           onChange={(event) => onChange({ ...value, groupMappingSource: event.target.value })}
         />
         <FormField
           required
-          label="Secret reference"
+          label={copy.ui.connectors.secretReference}
           value={value.secretRef}
           onChange={(event) => onChange({ ...value, secretRef: event.target.value })}
         />
         <FormField
           type="number"
-          label="Retention days"
+          label={copy.ui.connectors.retentionDays}
           value={value.retentionDays}
           onChange={(event) => onChange({ ...value, retentionDays: event.target.value })}
         />
         <SelectField
-          label="Deletion policy"
+          label={copy.ui.connectors.deletionPolicy}
           value={value.deletionMode}
           options={(['SOFT_DELETE', 'PURGE_AFTER_RETENTION'] as const).map((mode) => ({
             value: mode,
@@ -627,4 +650,83 @@ function connectorOperationImpacts(draft: DwaionConnectorOperationDraft) {
   }
   if (draft.operation === 'CONNECTOR_REVOKE') return [draft.revokeAt, draft.inFlightPolicy];
   return [draft.retentionEvidenceRef, 'Indexed content and credentials'];
+}
+
+function connectorCanonicalActions(
+  connector: DwaionConnectorSummary,
+  description: string
+): DwaionCanonicalCommandAction[] {
+  const target = { type: 'CONNECTOR', id: connector.connectorId };
+  const common = {
+    description,
+    target,
+    expectedVersion: connector.version,
+    impacts: [connector.tenantScope, ...connector.repositories, 'ACL-derived retrieval results'],
+    recoveryPlan:
+      'Restore the last verified connector revision, rotate credentials, rerun ACL probes, and resume with a bounded sync.',
+  };
+  return [
+    {
+      ...common,
+      label: 'Save connector draft',
+      title: 'Save governed connector draft',
+      kind: 'CONNECTOR_DRAFT_SAVE',
+      changes: [{ label: 'Draft', before: `v${connector.version}`, after: 'New draft revision' }],
+      payload: { connectorId: connector.connectorId, basedOnVersion: connector.version },
+    },
+    {
+      ...common,
+      label: 'OAuth reauthorize',
+      title: 'Reauthorize connector OAuth grant',
+      kind: 'CONNECTOR_OAUTH_REAUTHORIZE',
+      changes: [
+        { label: 'OAuth grant', before: 'Current grant', after: 'REAUTHORIZATION_PENDING' },
+      ],
+      payload: { connectorId: connector.connectorId, providerType: connector.providerType },
+    },
+    {
+      ...common,
+      label: 'Quarantine',
+      title: 'Quarantine connector',
+      kind: 'CONNECTOR_QUARANTINE',
+      changes: [{ label: 'Serving state', before: connector.syncState, after: 'QUARANTINED' }],
+      payload: { connectorId: connector.connectorId, inFlightPolicy: 'DRAIN' },
+      destructive: true,
+    },
+    {
+      ...common,
+      label: 'Pause sync',
+      title: 'Pause connector synchronization',
+      kind: 'CONNECTOR_PAUSE',
+      changes: [{ label: 'Sync state', before: connector.syncState, after: 'PAUSE_PENDING' }],
+      payload: { connectorId: connector.connectorId, inFlightPolicy: 'DRAIN' },
+    },
+    {
+      ...common,
+      label: 'Heal ACL drift',
+      title: 'Heal connector ACL drift',
+      kind: 'CONNECTOR_DRIFT_HEAL',
+      changes: [
+        {
+          label: 'ACL coverage',
+          before: connector.aclCoverage == null ? 'Unknown' : `${connector.aclCoverage}%`,
+          after: 'RECONCILIATION_PENDING',
+        },
+      ],
+      payload: {
+        connectorId: connector.connectorId,
+        repositories: connector.repositories,
+        verifyBeforePublish: true,
+      },
+    },
+    {
+      ...common,
+      label: 'Connector kill switch',
+      title: 'Activate connector kill switch',
+      kind: 'CONNECTOR_KILL_SWITCH',
+      changes: [{ label: 'Connector state', before: connector.syncState, after: 'KILL_PENDING' }],
+      payload: { connectorId: connector.connectorId, revokeCredentials: true, stopServing: true },
+      destructive: true,
+    },
+  ];
 }

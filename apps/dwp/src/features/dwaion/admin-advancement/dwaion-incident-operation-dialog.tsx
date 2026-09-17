@@ -1,6 +1,8 @@
 import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
+import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+
 export type DwaionIncidentOperationDraft =
   | {
       operation: 'INCIDENT_CONTAIN';
@@ -54,12 +56,13 @@ export function DwaionIncidentOperationDialog({
   onSubmit: () => void;
   title: string;
 }) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   return (
     <FormDialog
       open
       title={title}
-      description="Record operation-specific scope, evidence, and recovery controls before the governed review."
+      description={copy.ui.incidents.operationDescription}
       cancelLabel="Cancel"
       submitLabel="Review operation"
       submitDisabled={!validDraft(value)}
@@ -67,14 +70,15 @@ export function DwaionIncidentOperationDialog({
       onClose={onClose}
       onSubmit={onSubmit}
     >
-      <Stack spacing={1.5}>{fields(value, onChange)}</Stack>
+      <Stack spacing={1.5}>{fields(value, onChange, copy.ui.incidents)}</Stack>
     </FormDialog>
   );
 }
 
 function fields(
   value: DwaionIncidentOperationDraft,
-  onChange: (value: DwaionIncidentOperationDraft | null) => void
+  onChange: (value: DwaionIncidentOperationDraft | null) => void,
+  copy: ReturnType<typeof useDwaionAdminAdvancementCopy>['ui']['incidents']
 ) {
   if (value.operation === 'INCIDENT_CONTAIN') {
     return (
@@ -83,18 +87,18 @@ function fields(
           required
           multiline
           minRows={2}
-          label="Isolation scope (route, agent, tool, connector)"
+          label={copy.isolationScope}
           value={value.isolationScopes}
           onChange={(event) => onChange({ ...value, isolationScopes: event.target.value })}
         />
         <FormField
           required
-          label="Verified fallback route"
+          label={copy.verifiedFallbackRoute}
           value={value.fallbackRoute}
           onChange={(event) => onChange({ ...value, fallbackRoute: event.target.value })}
         />
         <SelectField
-          label="In-flight handling"
+          label={copy.inFlightHandling}
           value={value.inFlightAction}
           options={(['PAUSE', 'CANCEL', 'COMPLETE_SAFE'] as const).map((item) => ({
             value: item,
@@ -104,10 +108,10 @@ function fields(
             inFlightAction && onChange({ ...value, inFlightAction })
           }
         />
-        <FormField label="Correlation ID" value={value.correlationId} disabled />
+        <FormField label={copy.correlationId} value={value.correlationId} disabled />
         <FormField
           required
-          label="Incident owner"
+          label={copy.owner}
           value={value.ownerRef}
           onChange={(event) => onChange({ ...value, ownerRef: event.target.value })}
         />
@@ -121,7 +125,7 @@ function fields(
           required
           multiline
           minRows={2}
-          label="Run IDs or governed selector"
+          label={copy.runIdsSelector}
           value={value.runIds}
           onChange={(event) => onChange({ ...value, runIds: event.target.value })}
         />
@@ -129,7 +133,7 @@ function fields(
           required
           multiline
           minRows={2}
-          label="Quarantine reason"
+          label={copy.quarantineReason}
           value={value.quarantineReason}
           onChange={(event) => onChange({ ...value, quarantineReason: event.target.value })}
         />
@@ -141,25 +145,25 @@ function fields(
       <>
         <FormField
           required
-          label="Source run IDs"
+          label={copy.sourceRunIds}
           value={value.sourceRunIds}
           onChange={(event) => onChange({ ...value, sourceRunIds: event.target.value })}
         />
         <FormField
           required
-          label="Verified checkpoint"
+          label={copy.verifiedCheckpoint}
           value={value.checkpointRef}
           onChange={(event) => onChange({ ...value, checkpointRef: event.target.value })}
         />
         <FormField
           required
-          label="Input reuse policy"
+          label={copy.inputReusePolicy}
           value={value.inputPolicy}
           onChange={(event) => onChange({ ...value, inputPolicy: event.target.value })}
         />
         <FormField
           required
-          label="Idempotency scope"
+          label={copy.idempotencyScope}
           value={value.idempotencyScope}
           onChange={(event) => onChange({ ...value, idempotencyScope: event.target.value })}
         />
@@ -171,13 +175,13 @@ function fields(
       <>
         <FormField
           required
-          label="Target run IDs"
+          label={copy.targetRunIds}
           value={value.targetRunIds}
           onChange={(event) => onChange({ ...value, targetRunIds: event.target.value })}
         />
         <FormField
           required
-          label="Domain action to compensate"
+          label={copy.domainAction}
           value={value.domainAction}
           onChange={(event) => onChange({ ...value, domainAction: event.target.value })}
         />
@@ -185,13 +189,13 @@ function fields(
           required
           multiline
           minRows={2}
-          label="Compensation policy"
+          label={copy.compensationPolicy}
           value={value.compensationPolicy}
           onChange={(event) => onChange({ ...value, compensationPolicy: event.target.value })}
         />
         <FormField
           required
-          label="Compensation owner"
+          label={copy.compensationOwner}
           value={value.ownerRef}
           onChange={(event) => onChange({ ...value, ownerRef: event.target.value })}
         />
@@ -205,21 +209,21 @@ function fields(
           required
           multiline
           minRows={3}
-          label="Validation evidence references"
+          label={copy.validationEvidence}
           value={value.validationEvidence}
           onChange={(event) => onChange({ ...value, validationEvidence: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Canary traffic percent"
+          label={copy.canaryTrafficPercent}
           value={value.canaryPercent}
           onChange={(event) => onChange({ ...value, canaryPercent: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Canary validation minutes"
+          label={copy.validationMinutes}
           value={value.canaryMinutes}
           onChange={(event) => onChange({ ...value, canaryMinutes: event.target.value })}
         />
@@ -227,7 +231,7 @@ function fields(
           required
           multiline
           minRows={2}
-          label="Automatic re-quarantine criteria"
+          label={copy.automaticRequarantineCriteria}
           value={value.reQuarantineCriteria}
           onChange={(event) => onChange({ ...value, reQuarantineCriteria: event.target.value })}
         />
@@ -237,7 +241,7 @@ function fields(
   return (
     <>
       <SelectField
-        label="False positive"
+        label={copy.falsePositive}
         value={value.falsePositive}
         options={[
           { value: 'NO', label: 'No' },
@@ -247,19 +251,19 @@ function fields(
       />
       <FormField
         required
-        label="Incident ticket"
+        label={copy.incidentTicket}
         value={value.ticketRef}
         onChange={(event) => onChange({ ...value, ticketRef: event.target.value })}
       />
       <FormField
         required
-        label="Communications evidence"
+        label={copy.communicationsEvidence}
         value={value.communicationsRef}
         onChange={(event) => onChange({ ...value, communicationsRef: event.target.value })}
       />
       <FormField
         required
-        label="Postmortem reference"
+        label={copy.postmortemReference}
         value={value.postmortemRef}
         onChange={(event) => onChange({ ...value, postmortemRef: event.target.value })}
       />
@@ -267,7 +271,7 @@ function fields(
         required
         multiline
         minRows={3}
-        label="Resolution summary"
+        label={copy.resolutionSummary}
         value={value.resolutionSummary}
         onChange={(event) => onChange({ ...value, resolutionSummary: event.target.value })}
       />

@@ -1,6 +1,8 @@
 import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
+import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+
 export type DwaionEmergencyOperationDraft =
   | {
       mode: 'STOP';
@@ -29,6 +31,7 @@ export function DwaionEmergencyOperationDialog({
   onClose: () => void;
   onSubmit: () => void;
 }) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   const valid = validDraft(value);
   return (
@@ -52,7 +55,7 @@ export function DwaionEmergencyOperationDialog({
           <>
             <FormField
               required
-              label="Affected route or Agent scope"
+              label={copy.ui.emergency.affectedScope}
               value={value.affectedScope}
               onChange={(event) => onChange({ ...value, affectedScope: event.target.value })}
             />
@@ -60,18 +63,18 @@ export function DwaionEmergencyOperationDialog({
               required
               multiline
               minRows={2}
-              label="Provider and model scope"
+              label={copy.ui.emergency.providerModelScope}
               value={value.providerModelScope}
               onChange={(event) => onChange({ ...value, providerModelScope: event.target.value })}
             />
             <FormField
               required
-              label="Verified fallback route"
+              label={copy.ui.emergency.verifiedFallbackRoute}
               value={value.fallbackRoute}
               onChange={(event) => onChange({ ...value, fallbackRoute: event.target.value })}
             />
             <SelectField
-              label="In-flight jobs"
+              label={copy.ui.emergency.inFlightJobs}
               value={value.inFlightPolicy}
               options={(['DRAIN', 'MIGRATE', 'CANCEL'] as const).map((policy) => ({
                 value: policy,
@@ -88,27 +91,27 @@ export function DwaionEmergencyOperationDialog({
               required
               multiline
               minRows={3}
-              label="Validation evidence references"
+              label={copy.ui.emergency.validationEvidence}
               value={value.validationEvidence}
               onChange={(event) => onChange({ ...value, validationEvidence: event.target.value })}
             />
             <FormField
               required
               type="number"
-              label="Canary traffic percent"
+              label={copy.ui.emergency.canaryTrafficPercent}
               value={value.canaryPercent}
               onChange={(event) => onChange({ ...value, canaryPercent: event.target.value })}
             />
             <FormField
               required
               type="number"
-              label="Validation minutes"
+              label={copy.ui.emergency.validationMinutes}
               value={value.canaryMinutes}
               onChange={(event) => onChange({ ...value, canaryMinutes: event.target.value })}
             />
             <FormField
               required
-              label="Failure threshold"
+              label={copy.ui.emergency.failureThreshold}
               value={value.failureThreshold}
               onChange={(event) => onChange({ ...value, failureThreshold: event.target.value })}
             />
@@ -116,7 +119,7 @@ export function DwaionEmergencyOperationDialog({
               required
               multiline
               minRows={2}
-              label="Automatic re-stop criteria"
+              label={copy.ui.emergency.automaticRestopCriteria}
               value={value.reStopCriteria}
               onChange={(event) => onChange({ ...value, reStopCriteria: event.target.value })}
             />

@@ -2,7 +2,11 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FileCheck2, FileUp, FlaskConical, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { ActionButton, OperationalKpiStrip } from '@dwp-frontend/design-system';
-import { getDwaionEvaluationSafety } from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import {
+  getDwaionEvaluationSafety,
+  type DwaionEvaluationSafetySnapshot,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -10,6 +14,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+import {
+  DwaionCanonicalCommandActions,
+  type DwaionCanonicalCommandAction,
+} from './dwaion-canonical-command-actions';
 import {
   DwaionAdminQueryBoundary,
   DwaionAdminSection,
@@ -147,7 +155,7 @@ export function DwaionEvaluationOperationsPanel() {
               }
             >
               <OperationalKpiStrip
-                ariaLabel="Evaluation and safety summary"
+                ariaLabel={copy.ui.evaluation.summaryLabel}
                 items={[
                   { key: 'datasets', label: 'Datasets', value: data.datasets.length },
                   {
@@ -238,7 +246,7 @@ export function DwaionEvaluationOperationsPanel() {
                       startIcon={<ShieldAlert size={16} />}
                       onClick={() =>
                         setIntent({
-                          title: 'Safety simulation',
+                          title: copy.ui.evaluation.safetySimulation,
                           description:
                             'Run adversarial and policy scenarios without changing production.',
                           kind: 'SAFETY_SIMULATE',
@@ -260,7 +268,7 @@ export function DwaionEvaluationOperationsPanel() {
                         })
                       }
                     >
-                      Safety simulation
+                      {copy.ui.evaluation.safetySimulation}
                     </ActionButton>
                   </Stack>
                   <Box
@@ -280,7 +288,10 @@ export function DwaionEvaluationOperationsPanel() {
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             {comparison.comparisonId} ·{' '}
-                            {new Date(comparison.createdAt).toLocaleString()}
+                            {formatDate(comparison.createdAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })}
                           </Typography>
                         </Box>
                         <Stack direction="row" gap={1} alignItems="center">
@@ -315,7 +326,7 @@ export function DwaionEvaluationOperationsPanel() {
                 </Stack>
                 <Stack spacing={2}>
                   <Typography component="h3" variant="subtitle1">
-                    Production drift & PII review
+                    {copy.ui.evaluation.productionDriftReview}
                   </Typography>
                   {data.driftSignals.map((signal) => (
                     <Box
@@ -341,17 +352,17 @@ export function DwaionEvaluationOperationsPanel() {
                       </Typography>
                       {signal.anonymizedSample && (
                         <Typography variant="body2" sx={{ mt: 0.75 }}>
-                          Anonymized sample · {signal.anonymizedSample}
+                          {copy.ui.evaluation.anonymizedSample} {signal.anonymizedSample}
                         </Typography>
                       )}
                       {signal.feedbackEvidenceRef && (
                         <Typography variant="caption" color="text.secondary" component="p">
-                          Feedback evidence · {signal.feedbackEvidenceRef}
+                          {copy.ui.evaluation.feedbackEvidence} {signal.feedbackEvidenceRef}
                         </Typography>
                       )}
                       {signal.rollbackRecommendation && (
                         <Typography variant="caption" color="warning.main" component="p">
-                          Recommendation · {signal.rollbackRecommendation}
+                          {copy.ui.evaluation.recommendation} {signal.rollbackRecommendation}
                         </Typography>
                       )}
                       <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 0.75 }}>
@@ -407,7 +418,7 @@ export function DwaionEvaluationOperationsPanel() {
                               })
                             }
                           >
-                            Request raw evidence
+                            {copy.ui.evaluation.requestRawEvidence}
                           </ActionButton>
                         )}
                       </Stack>
@@ -420,7 +431,8 @@ export function DwaionEvaluationOperationsPanel() {
                     >
                       <Typography variant="subtitle2">{dataset.name}</Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {dataset.piiState} · checksum {dataset.checksumSha256 ?? 'unavailable'}
+                        {dataset.piiState} {copy.ui.common.checksumSeparator}{' '}
+                        {dataset.checksumSha256 ?? 'unavailable'}
                       </Typography>
                       <ActionButton
                         intent="primary"
@@ -438,13 +450,22 @@ export function DwaionEvaluationOperationsPanel() {
                           })
                         }
                       >
-                        Review PII
+                        {copy.ui.evaluation.reviewPii}
                       </ActionButton>
                     </Box>
                   ))}
                 </Stack>
               </Box>
             </DwaionAdminSection>
+            <DwaionCanonicalCommandActions
+              title={copy.ui.evaluation.releaseGateOperations}
+              description={copy.ui.evaluation.releaseGateOperationsDescription}
+              actions={evaluationCanonicalActions(data, copy.command.description)}
+              disabled={!commandsAvailable || data.datasets.length === 0}
+              onRefresh={async () => {
+                await query.refetch();
+              }}
+            />
           </Stack>
         )}
       </DwaionAdminQueryBoundary>
@@ -488,4 +509,97 @@ function splitRefs(value: string) {
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function evaluationCanonicalActions(
+  data: DwaionEvaluationSafetySnapshot,
+  description: string
+): DwaionCanonicalCommandAction[] {
+  const dataset = data.datasets[0];
+  if (!dataset) return [];
+  const comparison = data.comparisons[0];
+  const target = { type: 'EVALUATION_DATASET', id: dataset.datasetId };
+  const common = {
+    description,
+    target,
+    expectedVersion: dataset.version,
+    impacts: [dataset.ownerRef, `${dataset.caseCount} evaluation cases`, 'Release gate evidence'],
+    recoveryPlan:
+      'Cancel queued evaluator work, quarantine invalid evidence, and retain the previous release-gate decision.',
+  };
+  return [
+    {
+      ...common,
+      label: 'New evaluation run',
+      title: 'Start evaluation run',
+      kind: 'EVALUATION_RUN',
+      changes: [{ label: 'Evaluation run', before: 'Not started', after: 'QUEUED' }],
+      payload: { datasetId: dataset.datasetId, datasetVersion: dataset.version, pinned: true },
+    },
+    {
+      ...common,
+      label: 'Rerun comparison',
+      title: 'Rerun pinned comparison',
+      kind: 'EVALUATION_RERUN',
+      target: {
+        type: 'EVALUATION_COMPARISON',
+        id: comparison?.comparisonId ?? dataset.datasetId,
+      },
+      changes: [
+        {
+          label: 'Comparison',
+          before: comparison?.state ?? 'Not created',
+          after: 'RERUN_QUEUED',
+        },
+      ],
+      payload: {
+        comparisonId: comparison?.comparisonId,
+        datasetId: dataset.datasetId,
+        preservePinnedVersions: true,
+      },
+    },
+    {
+      ...common,
+      label: 'Export evaluation report',
+      title: 'Export evaluation report',
+      kind: 'EVALUATION_REPORT_EXPORT',
+      changes: [{ label: 'Report receipt', before: 'Not generated', after: 'PDF_EXPORT_PENDING' }],
+      payload: { comparisonId: comparison?.comparisonId, format: 'PDF', includeEvidence: true },
+    },
+    {
+      ...common,
+      label: 'Submit gate evidence',
+      title: 'Submit release-gate evidence',
+      kind: 'EVALUATION_GATE_APPROVE',
+      changes: [
+        { label: 'Release gate', before: data.releaseGateState, after: 'APPROVAL_PENDING' },
+      ],
+      payload: {
+        comparisonId: comparison?.comparisonId,
+        datasetChecksum: dataset.checksumSha256,
+        decision: 'REQUEST_APPROVAL',
+      },
+    },
+    {
+      ...common,
+      label: 'Enforce emergency guardrail',
+      title: 'Enforce emergency safety guardrail',
+      kind: 'SAFETY_GUARDRAIL_ENFORCE',
+      target: { type: 'SAFETY_SCOPE', id: 'tenant' },
+      changes: [{ label: 'Guardrail', before: 'MONITORING', after: 'ENFORCEMENT_PENDING' }],
+      impacts: ['Tenant AI traffic', 'Blocked safety categories', 'In-flight agent runs'],
+      payload: { scope: 'tenant', inFlightPolicy: 'DRAIN', failClosed: true },
+      destructive: true,
+    },
+    {
+      ...common,
+      label: 'Approve safety canary',
+      title: 'Approve bounded safety canary',
+      kind: 'SAFETY_CANARY_APPROVE',
+      target: { type: 'SAFETY_SCOPE', id: 'tenant' },
+      changes: [{ label: 'Safety canary', before: '0%', after: '5% / 30 minutes' }],
+      impacts: ['5% tenant AI traffic', 'Automatic fail-closed thresholds'],
+      payload: { scope: 'tenant', trafficPercent: 5, durationMinutes: 30, autoStop: true },
+    },
+  ];
 }

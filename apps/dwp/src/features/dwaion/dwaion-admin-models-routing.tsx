@@ -1,6 +1,17 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { GitCompareArrows, OctagonX, Play, RotateCcw, Route, ShieldCheck } from 'lucide-react';
+import {
+  Download,
+  GitCompareArrows,
+  OctagonX,
+  Play,
+  Power,
+  RotateCcw,
+  Route,
+  Save,
+  ShieldCheck,
+  ShieldOff,
+} from 'lucide-react';
 import {
   ActionButton,
   FormField,
@@ -8,6 +19,7 @@ import {
   PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   getDwaionModelsRouting,
   type DwaionRoutingPolicySummary,
@@ -27,8 +39,8 @@ import {
   DwaionAdminSection,
   DwaionCapabilityNotice,
   DwaionFreshness,
-  DwaionHealthChip,
 } from './admin-advancement/dwaion-admin-advancement-ui';
+import { DwaionCanonicalCommandActions } from './admin-advancement/dwaion-canonical-command-actions';
 import {
   DwaionGovernedCommandDialog,
   type DwaionCommandIntent,
@@ -37,6 +49,8 @@ import {
   DwaionEmergencyOperationDialog,
   type DwaionEmergencyOperationDraft,
 } from './admin-advancement/dwaion-emergency-operation-dialog';
+import { DwaionPendingApprovalPanel } from './admin-advancement/dwaion-pending-approval-panel';
+import { DwaionModelRoutingRegistry } from './admin-advancement/dwaion-model-routing-registry';
 
 type PolicyDraft = {
   primaryModelId: string;
@@ -48,6 +62,24 @@ type PolicyDraft = {
   inFlightPolicy: 'DRAIN' | 'MIGRATE' | 'CANCEL';
 };
 
+type SimulationDraft = {
+  requesterRole: string;
+  agentId: string;
+  dataClassification: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+  estimatedTokens: string;
+  modality: 'TEXT' | 'IMAGE' | 'AUDIO';
+  constraints: string;
+};
+
+const INITIAL_SIMULATION: SimulationDraft = {
+  requesterRole: 'knowledge-worker',
+  agentId: 'dwaion-assistant',
+  dataClassification: 'INTERNAL',
+  estimatedTokens: '2400',
+  modality: 'TEXT',
+  constraints: 'p95 <= 1800ms, retain in tenant region, cost optimized',
+};
+
 export function DwaionAdminModelsRouting() {
   const copy = useDwaionAdminAdvancementCopy();
   const query = useQuery({
@@ -57,7 +89,7 @@ export function DwaionAdminModelsRouting() {
   });
   const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(null);
   const [draft, setDraft] = useState<PolicyDraft | null>(null);
-  const [simulationInput, setSimulationInput] = useState('');
+  const [simulation, setSimulation] = useState<SimulationDraft>(INITIAL_SIMULATION);
   const [intent, setIntent] = useState<DwaionCommandIntent | null>(null);
   const [emergencyDraft, setEmergencyDraft] = useState<DwaionEmergencyOperationDraft | null>(null);
   const data = query.data;
@@ -175,7 +207,10 @@ export function DwaionAdminModelsRouting() {
       recoveryPlan: recovering
         ? 'Automatically stop canary traffic and restore isolation when any validation threshold fails.'
         : 'Validate provider probes, restore the last verified route, and resume through a bounded canary approval.',
-      payload: emergencyDraft,
+      payload: {
+        ...emergencyDraft,
+        requireIndependentSecondFactor: recovering,
+      },
       destructive: !recovering,
     });
     setEmergencyDraft(null);
@@ -209,7 +244,7 @@ export function DwaionAdminModelsRouting() {
             <Stack spacing={2}>
               <DwaionCapabilityNotice capability={data.capability} />
               <OperationalKpiStrip
-                ariaLabel="AI control plane summary"
+                ariaLabel={copy.ui.models.summaryLabel}
                 items={[
                   {
                     key: 'providers',
@@ -242,7 +277,7 @@ export function DwaionAdminModelsRouting() {
                     detail:
                       data.monthlySpend == null || data.monthlyBudget == null
                         ? 'No verified cost data'
-                        : `${data.monthlySpend.toLocaleString()} / ${data.monthlyBudget.toLocaleString()}`,
+                        : `${formatNumber(data.monthlySpend)} / ${formatNumber(data.monthlyBudget)}`,
                     tone:
                       data.monthlySpend != null &&
                       data.monthlyBudget != null &&
@@ -252,6 +287,10 @@ export function DwaionAdminModelsRouting() {
                   },
                 ]}
               />
+
+              <DwaionPendingApprovalPanel onChanged={() => void query.refetch()} />
+
+              <DwaionModelRoutingRegistry data={data} />
 
               <Box
                 sx={{
@@ -265,48 +304,6 @@ export function DwaionAdminModelsRouting() {
                 }}
               >
                 <Stack spacing={2} sx={{ minWidth: 0 }}>
-                  <DwaionAdminSection title={copy.models.providers}>
-                    <Stack divider={<Divider flexItem />}>
-                      {data.providers.map((provider) => (
-                        <Stack
-                          key={provider.providerId}
-                          direction={{ xs: 'column', md: 'row' }}
-                          alignItems={{ xs: 'flex-start', md: 'center' }}
-                          justifyContent="space-between"
-                          gap={1.5}
-                          sx={{ px: 2, py: 1.5 }}
-                        >
-                          <Box sx={{ minWidth: 0 }}>
-                            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                              <Typography variant="subtitle2">{provider.name}</Typography>
-                              <DwaionHealthChip health={provider.health} />
-                            </Stack>
-                            <Typography variant="caption" color="text.secondary">
-                              {provider.kind} · {provider.region ?? 'global'} ·{' '}
-                              {provider.activeModelCount} models
-                            </Typography>
-                          </Box>
-                          <Stack direction="row" gap={2}>
-                            <Metric
-                              label="P95"
-                              value={
-                                provider.latencyP95Ms == null ? '—' : `${provider.latencyP95Ms}ms`
-                              }
-                            />
-                            <Metric
-                              label="Success"
-                              value={
-                                provider.successRate == null
-                                  ? '—'
-                                  : `${provider.successRate.toFixed(2)}%`
-                              }
-                            />
-                          </Stack>
-                        </Stack>
-                      ))}
-                    </Stack>
-                  </DwaionAdminSection>
-
                   <DwaionAdminSection title={copy.models.policies}>
                     <Stack divider={<Divider flexItem />}>
                       {data.routingPolicies.map((policy) => {
@@ -355,7 +352,7 @@ export function DwaionAdminModelsRouting() {
                     >
                       <Stack spacing={1.75} sx={{ p: 2 }}>
                         <SelectField
-                          label="Primary model"
+                          label={copy.ui.models.primaryModel}
                           value={activeDraft.primaryModelId}
                           options={data.models.map((model) => ({
                             value: model.modelId,
@@ -366,7 +363,7 @@ export function DwaionAdminModelsRouting() {
                           }
                         />
                         <SelectField
-                          label="Fallback model"
+                          label={copy.ui.models.fallbackModel}
                           value={activeDraft.fallbackModelId}
                           options={[
                             { value: '', label: 'None' },
@@ -380,7 +377,7 @@ export function DwaionAdminModelsRouting() {
                           }
                         />
                         <SelectField
-                          label="Budget action"
+                          label={copy.ui.models.budgetAction}
                           value={activeDraft.budgetMode}
                           options={(['WARN', 'THROTTLE', 'BLOCK'] as const).map((value) => ({
                             value,
@@ -392,14 +389,14 @@ export function DwaionAdminModelsRouting() {
                         />
                         <FormField
                           type="number"
-                          label="Daily budget"
+                          label={copy.ui.models.dailyBudget}
                           value={activeDraft.dailyBudget}
                           onChange={(event) =>
                             setDraft({ ...activeDraft, dailyBudget: event.target.value })
                           }
                         />
                         <FormField
-                          label="Modalities"
+                          label={copy.ui.models.modalities}
                           supportingText="Comma-separated verified modalities"
                           value={activeDraft.modalities}
                           onChange={(event) =>
@@ -407,7 +404,7 @@ export function DwaionAdminModelsRouting() {
                           }
                         />
                         <FormField
-                          label="Agent scope"
+                          label={copy.ui.models.agentScope}
                           supportingText="Comma-separated Agent IDs or governed selectors"
                           value={activeDraft.agentScopes}
                           onChange={(event) =>
@@ -415,7 +412,7 @@ export function DwaionAdminModelsRouting() {
                           }
                         />
                         <SelectField
-                          label="In-flight jobs"
+                          label={copy.ui.models.inFlightJobs}
                           value={activeDraft.inFlightPolicy}
                           options={(['DRAIN', 'MIGRATE', 'CANCEL'] as const).map((value) => ({
                             value,
@@ -457,17 +454,77 @@ export function DwaionAdminModelsRouting() {
 
                   <DwaionAdminSection title={copy.models.simulator}>
                     <Stack spacing={1.5} sx={{ p: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2,minmax(0,1fr))' },
+                          gap: 1.25,
+                        }}
+                      >
+                        <FormField
+                          label={copy.ui.models.requesterRole}
+                          value={simulation.requesterRole}
+                          onChange={(event) =>
+                            setSimulation({ ...simulation, requesterRole: event.target.value })
+                          }
+                        />
+                        <FormField
+                          label={copy.ui.models.agentId}
+                          value={simulation.agentId}
+                          onChange={(event) =>
+                            setSimulation({ ...simulation, agentId: event.target.value })
+                          }
+                        />
+                        <SelectField
+                          label={copy.ui.models.dataClassification}
+                          value={simulation.dataClassification}
+                          options={(
+                            ['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'] as const
+                          ).map((value) => ({ value, label: value }))}
+                          onValueChange={(value) =>
+                            value && setSimulation({ ...simulation, dataClassification: value })
+                          }
+                        />
+                        <SelectField
+                          label={copy.ui.models.modality}
+                          value={simulation.modality}
+                          options={(['TEXT', 'IMAGE', 'AUDIO'] as const).map((value) => ({
+                            value,
+                            label: value,
+                          }))}
+                          onValueChange={(value) =>
+                            value && setSimulation({ ...simulation, modality: value })
+                          }
+                        />
+                        <FormField
+                          type="number"
+                          label={copy.ui.models.estimatedTokens}
+                          value={simulation.estimatedTokens}
+                          onChange={(event) =>
+                            setSimulation({ ...simulation, estimatedTokens: event.target.value })
+                          }
+                        />
+                      </Box>
                       <FormField
                         multiline
                         minRows={3}
-                        label="Workload and constraints"
-                        value={simulationInput}
-                        onChange={(event) => setSimulationInput(event.target.value)}
+                        label={copy.ui.models.workloadConstraints}
+                        value={simulation.constraints}
+                        onChange={(event) =>
+                          setSimulation({ ...simulation, constraints: event.target.value })
+                        }
                       />
                       <ActionButton
                         intent="secondary"
                         startIcon={<GitCompareArrows size={16} />}
-                        disabled={!commandsAvailable || simulationInput.trim().length < 5}
+                        disabled={
+                          !commandsAvailable ||
+                          !simulation.requesterRole.trim() ||
+                          !simulation.agentId.trim() ||
+                          !Number.isFinite(Number(simulation.estimatedTokens)) ||
+                          Number(simulation.estimatedTokens) <= 0 ||
+                          simulation.constraints.trim().length < 5
+                        }
                         onClick={() =>
                           setIntent({
                             title: copy.models.simulator,
@@ -482,16 +539,53 @@ export function DwaionAdminModelsRouting() {
                             impacts: ['No production traffic or policy is changed'],
                             recoveryPlan:
                               'No recovery is required because the simulation is side-effect free.',
-                            payload: { workload: simulationInput.trim() },
+                            payload: {
+                              ...simulation,
+                              estimatedTokens: Number(simulation.estimatedTokens),
+                            },
                           })
                         }
                       >
                         {copy.models.simulator}
                       </ActionButton>
+                      {data.latestSimulation && (
+                        <Box
+                          aria-label={copy.ui.models.latestSimulationResult}
+                          sx={{
+                            border: 1,
+                            borderColor: 'divider',
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            p: 1.5,
+                          }}
+                        >
+                          <Stack direction="row" justifyContent="space-between" gap={1}>
+                            <Typography variant="subtitle2">
+                              {data.latestSimulation.decision}
+                            </Typography>
+                            <Chip size="small" label={data.latestSimulation.matchedRuleId} />
+                          </Stack>
+                          <Typography variant="body2" sx={{ mt: 0.75 }}>
+                            {copy.ui.models.targetPrefix}{' '}
+                            {data.latestSimulation.targetModelId ?? 'Fail closed'}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {data.latestSimulation.estimatedCost == null
+                              ? 'Cost —'
+                              : `${data.latestSimulation.estimatedCost.toFixed(4)} ${data.latestSimulation.currency}`}{' '}
+                            ·{' '}
+                            {data.latestSimulation.estimatedLatencyMs == null
+                              ? 'Latency —'
+                              : data.latestSimulation.estimatedLatencyMs}
+                            {copy.ui.models.latencyFallbackSeparator}{' '}
+                            {data.latestSimulation.fallbackModelIds.join(' → ') || 'none'}
+                          </Typography>
+                        </Box>
+                      )}
                     </Stack>
                   </DwaionAdminSection>
 
-                  <DwaionAdminSection title="Emergency control">
+                  <DwaionAdminSection title={copy.ui.models.emergencyControl}>
                     <Stack spacing={1.25} sx={{ p: 2 }}>
                       <Typography variant="body2" color="text.secondary">
                         {data.emergencyStopActive
@@ -537,6 +631,138 @@ export function DwaionAdminModelsRouting() {
                   </DwaionAdminSection>
                 </Stack>
               </Box>
+
+              {selectedPolicy && (
+                <DwaionCanonicalCommandActions
+                  title={copy.ui.models.controlOperations}
+                  description={copy.ui.models.controlOperationsDescription}
+                  disabled={!commandsAvailable}
+                  onRefresh={async () => {
+                    await query.refetch();
+                  }}
+                  actions={[
+                    {
+                      label: 'Save routing draft',
+                      icon: <Save size={16} />,
+                      title: 'Save routing policy draft',
+                      description: copy.command.description,
+                      kind: 'MODEL_ROUTING_DRAFT_SAVE',
+                      target: { type: 'ROUTING_POLICY', id: selectedPolicy.policyId },
+                      expectedVersion: selectedPolicy.version,
+                      changes: [
+                        {
+                          label: 'Draft',
+                          before: `v${selectedPolicy.version}`,
+                          after: 'New governed draft',
+                        },
+                      ],
+                      impacts: [selectedPolicy.scope, 'No production traffic until approved'],
+                      recoveryPlan:
+                        'Discard the draft and retain the currently active policy revision.',
+                      payload: { policyId: selectedPolicy.policyId, draft: activeDraft },
+                    },
+                    {
+                      label: 'Open provider circuit',
+                      icon: <Power size={16} />,
+                      title: 'Open provider circuit',
+                      description: copy.command.description,
+                      kind: 'PROVIDER_CIRCUIT_BREAK',
+                      target: {
+                        type: 'PROVIDER',
+                        id: data.providers[0]?.providerId ?? 'unconfigured',
+                      },
+                      expectedVersion: selectedPolicy.version,
+                      changes: [{ label: 'Circuit', before: 'CLOSED', after: 'OPEN_PENDING' }],
+                      impacts: [
+                        selectedPolicy.scope,
+                        'In-flight requests migrate to verified fallback',
+                      ],
+                      recoveryPlan:
+                        'Close the circuit after provider probes pass and restore traffic by canary.',
+                      payload: {
+                        providerId: data.providers[0]?.providerId,
+                        inFlightPolicy: 'MIGRATE',
+                      },
+                      destructive: true,
+                    },
+                    {
+                      label: 'Smart isolate model',
+                      icon: <ShieldOff size={16} />,
+                      title: 'Smart isolate model',
+                      description: copy.command.description,
+                      kind: 'MODEL_SMART_ISOLATE',
+                      target: { type: 'MODEL', id: selectedPolicy.primaryModelId },
+                      expectedVersion: selectedPolicy.version,
+                      changes: [
+                        { label: 'Serving state', before: 'ACTIVE', after: 'ISOLATED_PENDING' },
+                      ],
+                      impacts: [selectedPolicy.scope, 'Fallback and queued workload routing'],
+                      recoveryPlan:
+                        'Restore the model only after probes, policy checks, and canary validation pass.',
+                      payload: {
+                        modelId: selectedPolicy.primaryModelId,
+                        fallbackModelIds: selectedPolicy.fallbackModelIds,
+                      },
+                      destructive: true,
+                    },
+                    {
+                      label: 'Recovery dry-run',
+                      icon: <Play size={16} />,
+                      title: 'Simulate emergency recovery',
+                      description: copy.command.description,
+                      kind: 'EMERGENCY_RECOVERY_SIMULATE',
+                      target: { type: 'ROUTING_SCOPE', id: selectedPolicy.scope },
+                      expectedVersion: selectedPolicy.version,
+                      changes: [
+                        { label: 'Traffic', before: 'Current state', after: 'Dry-run only' },
+                      ],
+                      impacts: ['No production traffic changes', selectedPolicy.scope],
+                      recoveryPlan: 'No recovery is required for a side-effect-free simulation.',
+                      payload: { policyId: selectedPolicy.policyId, canaryPercent: 5 },
+                    },
+                    {
+                      label: 'Rollback isolation',
+                      icon: <RotateCcw size={16} />,
+                      title: 'Rollback emergency isolation',
+                      description: copy.command.description,
+                      kind: 'EMERGENCY_ISOLATION_ROLLBACK',
+                      target: { type: 'ROUTING_SCOPE', id: selectedPolicy.scope },
+                      expectedVersion: selectedPolicy.version,
+                      changes: [
+                        { label: 'Isolation', before: 'ACTIVE', after: 'ROLLBACK_PENDING' },
+                      ],
+                      impacts: [
+                        selectedPolicy.scope,
+                        'Previously isolated provider and model routes',
+                      ],
+                      recoveryPlan:
+                        'Re-apply isolation automatically if any canary threshold fails.',
+                      payload: { policyId: selectedPolicy.policyId, validationRequired: true },
+                      destructive: true,
+                    },
+                    {
+                      label: 'Export incident JSONL',
+                      icon: <Download size={16} />,
+                      title: 'Export control-plane incident evidence',
+                      description: copy.command.description,
+                      kind: 'INCIDENT_REPORT_EXPORT',
+                      target: { type: 'ROUTING_SCOPE', id: selectedPolicy.scope },
+                      expectedVersion: selectedPolicy.version,
+                      changes: [
+                        {
+                          label: 'Evidence export',
+                          before: 'Not generated',
+                          after: 'JSONL_PENDING',
+                        },
+                      ],
+                      impacts: ['Immutable command and worker receipt evidence only'],
+                      recoveryPlan:
+                        'Revoke the generated download receipt if export validation fails.',
+                      payload: { format: 'JSONL', policyId: selectedPolicy.policyId },
+                    },
+                  ]}
+                />
+              )}
             </Stack>
           )}
         </DwaionAdminQueryBoundary>
@@ -592,17 +818,4 @@ function validPolicyDraft(draft: PolicyDraft) {
   if (!draft.dailyBudget) return true;
   const budget = Number(draft.dailyBudget);
   return Number.isFinite(budget) && budget > 0;
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Box sx={{ textAlign: 'right' }}>
-      <Typography variant="caption" color="text.secondary">
-        {label}
-      </Typography>
-      <Typography variant="body2" fontWeight={700} sx={{ fontVariantNumeric: 'tabular-nums' }}>
-        {value}
-      </Typography>
-    </Box>
-  );
 }

@@ -9,8 +9,14 @@ import {
   retryDwaionGovernedCommand,
   rollbackDwaionGovernedCommand,
   type DwaionGovernedCommand,
-  type DwaionGovernedCommandKind,
+  type DwaionGovernedCommandRequest,
 } from '@dwp-frontend/shared-utils';
+
+import {
+  ProductSurfaceHighRiskCommandDialog,
+  productSurfaceHighRiskCommand,
+  useProductSurfaceHighRiskCommand,
+} from '../../../components/product-surface-high-risk-command';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -28,30 +34,23 @@ import {
   DwaionCommandActions,
   DwaionCommandLifecycle,
   DwaionCommandReview,
+  DwaionStoredCommandReview,
+  type DwaionCommandIntent,
   type DwaionCommandTransition,
 } from './dwaion-governed-command-presentation';
 import { useDwaionControlPlaneAuthority } from './use-dwaion-control-plane-authority';
 
-export type DwaionCommandIntent = {
-  title: string;
-  description: string;
-  kind: DwaionGovernedCommandKind;
-  target: { type: string; id: string };
-  expectedVersion: number;
-  changes: Array<{ label: string; before: string; after: string }>;
-  impacts: string[];
-  recoveryPlan: string;
-  payload?: Record<string, unknown>;
-  destructive?: boolean;
-};
+export type { DwaionCommandIntent } from './dwaion-governed-command-presentation';
 
 export function DwaionGovernedCommandDialog({
   intent,
+  initialCommand,
   onClose,
   onCompleted,
   onReconcile,
 }: {
   intent: DwaionCommandIntent | null;
+  initialCommand?: DwaionGovernedCommand | null;
   onClose: () => void;
   onCompleted?: (command: DwaionGovernedCommand) => void | Promise<void>;
   onReconcile?: () => void | Promise<void>;
@@ -61,13 +60,36 @@ export function DwaionGovernedCommandDialog({
   const [reason, setReason] = useState('');
   const [ticketRef, setTicketRef] = useState('');
   const [evidence, setEvidence] = useState('');
+  const [transitionEvidence, setTransitionEvidence] = useState('');
   const [impactAcknowledged, setImpactAcknowledged] = useState(false);
-  const [command, setCommand] = useState<DwaionGovernedCommand | null>(null);
+  const [command, setCommand] = useState<DwaionGovernedCommand | null>(initialCommand ?? null);
   const [transitionReason, setTransitionReason] = useState('');
   const [createCommandId, setCreateCommandId] = useState<string | null>(null);
   const transitionAttemptIds = useRef(new Map<DwaionCommandTransition, string>());
+  const recoveryStepUp = useProductSurfaceHighRiskCommand({
+    operation: 'DWAION_EMERGENCY_RECOVERY',
+    execute: (descriptor, execution) => {
+      if (execution.mode !== 'SECURE') {
+        throw new Error('DWAI-ON emergency recovery requires secure step-up authority.');
+      }
+      return createDwaionGovernedCommand(
+        descriptor.payload as DwaionGovernedCommandRequest,
+        execution
+      );
+    },
+    onSuccess: (next) => {
+      setCommand(next);
+      setTransitionReason('');
+    },
+    onConflict: onReconcile,
+  });
 
   useEffect(() => {
+    if (initialCommand) {
+      setCommand(initialCommand);
+      setCreateCommandId(null);
+      return;
+    }
     if (intent) {
       setCreateCommandId((current) => current ?? crypto.randomUUID());
       return;
@@ -75,12 +97,13 @@ export function DwaionGovernedCommandDialog({
     setReason('');
     setTicketRef('');
     setEvidence('');
+    setTransitionEvidence('');
     setImpactAcknowledged(false);
     setCommand(null);
     setTransitionReason('');
     setCreateCommandId(null);
     transitionAttemptIds.current.clear();
-  }, [intent]);
+  }, [initialCommand, intent]);
 
   const evidenceRefs = useMemo(
     () =>
@@ -89,6 +112,14 @@ export function DwaionGovernedCommandDialog({
         .map((item) => item.trim())
         .filter(Boolean),
     [evidence]
+  );
+  const transitionEvidenceRefs = useMemo(
+    () =>
+      transitionEvidence
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean),
+    [transitionEvidence]
   );
 
   const commandQuery = useQuery({
@@ -113,36 +144,49 @@ export function DwaionGovernedCommandDialog({
     mutationFn: async () => {
       if (!intent) throw new Error('Command intent is missing.');
       const recoveryPlanHash = await sha256Hex(intent.recoveryPlan);
-      return authority.execute((secure) =>
-        createDwaionGovernedCommand(
-          {
-            commandId: createCommandId!,
-            kind: intent.kind,
-            target: intent.target,
-            expectedVersion: intent.expectedVersion,
-            reason: reason.trim(),
-            ticketRef: ticketRef.trim(),
-            evidenceRefs,
-            impactAcknowledged: true,
-            preflight: {
-              changes: intent.changes.map((change) => ({
-                field: change.label,
-                before: change.before,
-                after: change.after,
-              })),
-              impactScopes: intent.impacts,
-              recoveryPlan: intent.recoveryPlan,
-              recoveryPlanHash,
-            },
-            payload: intent.payload ?? {},
-          },
-          secure
-        )
-      );
+      const request: DwaionGovernedCommandRequest = {
+        commandId: createCommandId!,
+        kind: intent.kind,
+        target: intent.target,
+        expectedVersion: intent.expectedVersion,
+        reason: reason.trim(),
+        ticketRef: ticketRef.trim(),
+        evidenceRefs,
+        impactAcknowledged: true,
+        preflight: {
+          changes: intent.changes.map((change) => ({
+            field: change.label,
+            before: change.before,
+            after: change.after,
+          })),
+          impactScopes: intent.impacts,
+          recoveryPlan: intent.recoveryPlan,
+          recoveryPlanHash,
+        },
+        payload: intent.payload ?? {},
+      };
+      if (intent.kind === 'EMERGENCY_RECOVERY') {
+        await recoveryStepUp.begin(
+          productSurfaceHighRiskCommand({
+            operation: 'DWAION_EMERGENCY_RECOVERY',
+            commandMethod: 'POST',
+            commandPath: '/api/agent/v1/admin/control-plane/commands',
+            targetType: 'DWAI_ON_CONTROL_PLANE',
+            targetId: intent.target.id,
+            expectedObjectVersion: intent.expectedVersion,
+            payload: request,
+            idempotencyKey: createCommandId!,
+          })
+        );
+        return null;
+      }
+      return authority.execute((secure) => createDwaionGovernedCommand(request, secure));
     },
     onSuccess: (next) => {
-      setCommand(next);
-      setTransitionReason('');
+      if (next) {
+        setCommand(next);
+        setTransitionReason('');
+      }
     },
   });
 
@@ -164,7 +208,7 @@ export function DwaionGovernedCommandDialog({
               decision: transition === 'approve' ? 'APPROVE' : 'REJECT',
               expectedVersion,
               reason: transitionReason.trim(),
-              evidenceRefs,
+              evidenceRefs: transitionEvidenceRefs,
             },
             secure
           );
@@ -172,7 +216,12 @@ export function DwaionGovernedCommandDialog({
         if (transition === 'cancel') {
           return cancelDwaionGovernedCommand(
             command.commandId,
-            { commandId: transitionCommandId!, expectedVersion, reason: transitionReason.trim() },
+            {
+              commandId: transitionCommandId!,
+              expectedVersion,
+              reason: transitionReason.trim(),
+              evidenceRefs: transitionEvidenceRefs,
+            },
             secure
           );
         }
@@ -180,7 +229,7 @@ export function DwaionGovernedCommandDialog({
           commandId: transitionCommandId!,
           expectedVersion,
           reason: transitionReason.trim(),
-          evidenceRefs,
+          evidenceRefs: transitionEvidenceRefs,
         };
         return transition === 'retry'
           ? retryDwaionGovernedCommand(command.commandId, request, secure)
@@ -191,157 +240,181 @@ export function DwaionGovernedCommandDialog({
       transitionAttemptIds.current.clear();
       setCommand(next);
       setTransitionReason('');
+      setTransitionEvidence('');
     },
   });
 
-  const busy = createMutation.isPending || transitionMutation.isPending;
+  const busy =
+    createMutation.isPending || transitionMutation.isPending || recoveryStepUp.controller.busy;
+  const visibleCommand = command;
+  const needsTransitionEvidence = Boolean(visibleCommand?.allowedTransitions.length);
   const createDisabled =
     !authority.available ||
     !createCommandId ||
     reason.trim().length < 10 ||
     ticketRef.trim().length < 3 ||
     !impactAcknowledged;
-  const transitionDisabled = !authority.available || transitionReason.trim().length < 10;
-  const visibleCommand = commandQuery.data ?? command;
+  const transitionDisabled =
+    !authority.available ||
+    transitionReason.trim().length < 10 ||
+    (needsTransitionEvidence && transitionEvidenceRefs.length === 0);
 
   return (
-    <Dialog
-      open={Boolean(intent)}
-      fullWidth
-      maxWidth="md"
-      aria-labelledby="dwaion-command-dialog-title"
-      onClose={busy ? undefined : onClose}
-      data-testid="dwaion-governed-command-dialog"
-    >
-      <DialogTitle id="dwaion-command-dialog-title">
-        {intent?.title ?? copy.command.title}
-      </DialogTitle>
-      <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
-        {!command ? (
-          <Stack spacing={2.25}>
-            <Typography variant="body2" color="text.secondary">
-              {intent?.description ?? copy.command.description}
-            </Typography>
-            {!authority.available && !authority.loading && (
-              <InlineFeedback severity="error">{copy.command.authorityUnavailable}</InlineFeedback>
-            )}
-            <DwaionCommandReview intent={intent} />
-            <FormField
-              required
-              multiline
-              minRows={3}
-              label={copy.command.reason}
-              supportingText={copy.command.reasonHelp}
-              value={reason}
-              onChange={(event) => setReason(event.target.value)}
-            />
-            <FormField
-              required
-              label={copy.command.ticket}
-              value={ticketRef}
-              onChange={(event) => setTicketRef(event.target.value)}
-            />
-            <FormField
-              label={copy.command.evidence}
-              supportingText={copy.command.evidenceHelp}
-              value={evidence}
-              onChange={(event) => setEvidence(event.target.value)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={impactAcknowledged}
-                  onChange={(event) => setImpactAcknowledged(event.target.checked)}
+    <>
+      <Dialog
+        open={Boolean(intent || initialCommand)}
+        fullWidth
+        maxWidth="md"
+        aria-labelledby="dwaion-command-dialog-title"
+        onClose={busy ? undefined : onClose}
+        data-testid="dwaion-governed-command-dialog"
+      >
+        <DialogTitle id="dwaion-command-dialog-title">
+          {intent?.title ?? (initialCommand ? copy.command.reviewExisting : copy.command.title)}
+        </DialogTitle>
+        <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
+          {!command ? (
+            <Stack spacing={2.25}>
+              <Typography variant="body2" color="text.secondary">
+                {intent?.description ?? copy.command.description}
+              </Typography>
+              {!authority.available && !authority.loading && (
+                <InlineFeedback severity="error">
+                  {copy.command.authorityUnavailable}
+                </InlineFeedback>
+              )}
+              <DwaionCommandReview intent={intent} />
+              <FormField
+                required
+                multiline
+                minRows={3}
+                label={copy.command.reason}
+                supportingText={copy.command.reasonHelp}
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+              />
+              <FormField
+                required
+                label={copy.command.ticket}
+                value={ticketRef}
+                onChange={(event) => setTicketRef(event.target.value)}
+              />
+              <FormField
+                label={copy.command.evidence}
+                supportingText={copy.command.evidenceHelp}
+                value={evidence}
+                onChange={(event) => setEvidence(event.target.value)}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={impactAcknowledged}
+                    onChange={(event) => setImpactAcknowledged(event.target.checked)}
+                  />
+                }
+                label={copy.command.acknowledgement}
+              />
+              {createMutation.isError && (
+                <Alert severity="error">
+                  {isConflictError(createMutation.error)
+                    ? copy.command.conflict
+                    : copy.command.failed}
+                  {isConflictError(createMutation.error) && onReconcile && (
+                    <Box sx={{ mt: 1 }}>
+                      <ActionButton
+                        intent="secondary"
+                        onClick={() =>
+                          void Promise.resolve(onReconcile())
+                            .then(() => {
+                              createMutation.reset();
+                              setCreateCommandId(crypto.randomUUID());
+                              onClose();
+                            })
+                            .catch(() => undefined)
+                        }
+                      >
+                        {copy.command.reconcile}
+                      </ActionButton>
+                    </Box>
+                  )}
+                </Alert>
+              )}
+            </Stack>
+          ) : (
+            <Stack spacing={2}>
+              {!authority.available && !authority.loading && (
+                <InlineFeedback severity="error">
+                  {copy.command.authorityUnavailable}
+                </InlineFeedback>
+              )}
+              <DwaionStoredCommandReview command={visibleCommand!} />
+              <DwaionCommandLifecycle
+                command={visibleCommand!}
+                transitionReason={transitionReason}
+                onTransitionReason={setTransitionReason}
+                refreshing={commandQuery.isFetching}
+                onRefresh={() => void commandQuery.refetch()}
+              />
+              {needsTransitionEvidence && (
+                <FormField
+                  required
+                  label={copy.command.transitionEvidence}
+                  supportingText={copy.command.evidenceHelp}
+                  value={transitionEvidence}
+                  onChange={(event) => setTransitionEvidence(event.target.value)}
                 />
-              }
-              label={copy.command.acknowledgement}
-            />
-            {createMutation.isError && (
-              <Alert severity="error">
-                {isConflictError(createMutation.error)
-                  ? copy.command.conflict
-                  : copy.command.failed}
-                {isConflictError(createMutation.error) && onReconcile && (
-                  <Box sx={{ mt: 1 }}>
-                    <ActionButton
-                      intent="secondary"
-                      onClick={() =>
-                        void Promise.resolve(onReconcile())
-                          .then(() => {
-                            createMutation.reset();
-                            setCreateCommandId(crypto.randomUUID());
-                            onClose();
-                          })
-                          .catch(() => undefined)
-                      }
-                    >
-                      {copy.command.reconcile}
-                    </ActionButton>
-                  </Box>
-                )}
-              </Alert>
-            )}
-          </Stack>
-        ) : (
-          <Stack spacing={2}>
-            <DwaionCommandLifecycle
-              command={visibleCommand!}
-              transitionReason={transitionReason}
-              onTransitionReason={setTransitionReason}
-              refreshing={commandQuery.isFetching}
-              onRefresh={() => void commandQuery.refetch()}
-            />
-            {commandQuery.isError && (
-              <Alert severity="error">{copy.command.statusFailed}</Alert>
-            )}
-            {transitionMutation.isError && (
-              <Alert severity="error">
-                {isConflictError(transitionMutation.error)
-                  ? copy.command.transitionConflict
-                  : copy.command.failed}
-                {isConflictError(transitionMutation.error) && (
-                  <Box sx={{ mt: 1 }}>
-                    <ActionButton
-                      intent="secondary"
-                      onClick={() => {
-                        transitionMutation.reset();
-                        transitionAttemptIds.current.clear();
-                        void commandQuery.refetch();
-                      }}
-                    >
-                      {copy.command.refreshStatus}
-                    </ActionButton>
-                  </Box>
-                )}
-              </Alert>
-            )}
-          </Stack>
-        )}
-      </DialogContent>
-      <DialogActions sx={{ p: 2, gap: 1, flexWrap: 'wrap' }}>
-        <ActionButton intent="quiet" disabled={busy} onClick={onClose}>
-          {copy.command.cancel}
-        </ActionButton>
-        {!command ? (
-          <ActionButton
-            intent={intent?.destructive ? 'danger' : 'primary'}
-            loading={createMutation.isPending}
-            loadingLabel={copy.command.submitting}
-            disabled={createDisabled}
-            onClick={() => createMutation.mutate()}
-          >
-            {copy.command.submit}
+              )}
+              {commandQuery.isError && <Alert severity="error">{copy.command.statusFailed}</Alert>}
+              {transitionMutation.isError && (
+                <Alert severity="error">
+                  {isConflictError(transitionMutation.error)
+                    ? copy.command.transitionConflict
+                    : copy.command.failed}
+                  {isConflictError(transitionMutation.error) && (
+                    <Box sx={{ mt: 1 }}>
+                      <ActionButton
+                        intent="secondary"
+                        onClick={() => {
+                          transitionMutation.reset();
+                          transitionAttemptIds.current.clear();
+                          void commandQuery.refetch();
+                        }}
+                      >
+                        {copy.command.refreshStatus}
+                      </ActionButton>
+                    </Box>
+                  )}
+                </Alert>
+              )}
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 2, gap: 1, flexWrap: 'wrap' }}>
+          <ActionButton intent="quiet" disabled={busy} onClick={onClose}>
+            {copy.command.cancel}
           </ActionButton>
-        ) : (
-          <DwaionCommandActions
-            command={visibleCommand!}
-            busy={busy}
-            disabled={transitionDisabled}
-            onTransition={(transition) => transitionMutation.mutate(transition)}
-          />
-        )}
-      </DialogActions>
-    </Dialog>
+          {!command ? (
+            <ActionButton
+              intent={intent?.destructive ? 'danger' : 'primary'}
+              loading={createMutation.isPending}
+              loadingLabel={copy.command.submitting}
+              disabled={createDisabled}
+              onClick={() => createMutation.mutate()}
+            >
+              {copy.command.submit}
+            </ActionButton>
+          ) : (
+            <DwaionCommandActions
+              command={visibleCommand!}
+              busy={busy}
+              disabled={transitionDisabled}
+              onTransition={(transition) => transitionMutation.mutate(transition)}
+            />
+          )}
+        </DialogActions>
+      </Dialog>
+      <ProductSurfaceHighRiskCommandDialog controller={recoveryStepUp.controller} />
+    </>
   );
 }
 

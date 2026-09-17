@@ -1,6 +1,8 @@
 import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
+import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+
 export type DwaionCostSimulationDraft = {
   workloadVolume: string;
   averageInputTokens: string;
@@ -47,6 +49,7 @@ export function DwaionCostSimulationDialog({
   onClose,
   onSubmit,
 }: DialogProps<DwaionCostSimulationDraft>) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   const valid =
     positiveNumber(value.workloadVolume) &&
@@ -65,8 +68,8 @@ export function DwaionCostSimulationDialog({
   return (
     <FormDialog
       open
-      title="Cost simulation"
-      description="Estimate a workload against a pinned route without changing production budgets."
+      title={copy.ui.outcomes.costSimulation}
+      description={copy.ui.outcomes.costSimulationDescription}
       cancelLabel="Cancel"
       submitLabel="Review simulation"
       submitDisabled={!valid}
@@ -78,54 +81,54 @@ export function DwaionCostSimulationDialog({
         <FormField
           required
           type="number"
-          label="Workload volume"
+          label={copy.ui.outcomes.workloadVolume}
           value={value.workloadVolume}
           onChange={(event) => onChange({ ...value, workloadVolume: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Average input tokens"
+          label={copy.ui.outcomes.averageInputTokens}
           value={value.averageInputTokens}
           onChange={(event) => onChange({ ...value, averageInputTokens: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Average output tokens"
+          label={copy.ui.outcomes.averageOutputTokens}
           value={value.averageOutputTokens}
           onChange={(event) => onChange({ ...value, averageOutputTokens: event.target.value })}
         />
         <FormField
           required
-          label="Current route"
+          label={copy.ui.outcomes.currentRoute}
           value={value.currentRoute}
           onChange={(event) => onChange({ ...value, currentRoute: event.target.value })}
         />
         <FormField
           required
-          label="Candidate route"
+          label={copy.ui.outcomes.candidateRoute}
           value={value.candidateRoute}
           onChange={(event) => onChange({ ...value, candidateRoute: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Quality floor (%)"
+          label={copy.ui.outcomes.qualityFloor}
           value={value.qualityFloor}
           onChange={(event) => onChange({ ...value, qualityFloor: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Latency limit (ms)"
+          label={copy.ui.outcomes.latencyLimit}
           value={value.latencyLimitMs}
           onChange={(event) => onChange({ ...value, latencyLimitMs: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Cost limit"
+          label={copy.ui.outcomes.costLimit}
           value={value.costLimit}
           onChange={(event) => onChange({ ...value, costLimit: event.target.value })}
         />
@@ -133,7 +136,7 @@ export function DwaionCostSimulationDialog({
           required
           multiline
           minRows={2}
-          label="Expected effect"
+          label={copy.ui.outcomes.expectedEffect}
           value={value.expectedEffect}
           onChange={(event) => onChange({ ...value, expectedEffect: event.target.value })}
         />
@@ -141,7 +144,7 @@ export function DwaionCostSimulationDialog({
           required
           multiline
           minRows={2}
-          label="Risks and assumptions"
+          label={copy.ui.outcomes.risksAssumptions}
           value={value.risks}
           onChange={(event) => onChange({ ...value, risks: event.target.value })}
         />
@@ -156,6 +159,7 @@ export function DwaionBacklogDialog({
   onClose,
   onSubmit,
 }: DialogProps<DwaionBacklogDraft>) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   const valid = Boolean(
     value.title.trim() &&
@@ -167,8 +171,8 @@ export function DwaionBacklogDialog({
   return (
     <FormDialog
       open
-      title="Improvement backlog"
-      description="Tie the change to measured evidence, a target, an owner, and a release."
+      title={copy.ui.outcomes.improvementBacklog}
+      description={copy.ui.outcomes.improvementBacklogDescription}
       cancelLabel="Cancel"
       submitLabel="Review change"
       submitDisabled={!valid}
@@ -179,18 +183,18 @@ export function DwaionBacklogDialog({
       <Stack spacing={1.5}>
         <FormField
           required
-          label="Title"
+          label={copy.ui.outcomes.title}
           value={value.title}
           onChange={(event) => onChange({ ...value, title: event.target.value })}
         />
         <FormField
           required
-          label="Owner team"
+          label={copy.ui.outcomes.ownerTeam}
           value={value.ownerTeam}
           onChange={(event) => onChange({ ...value, ownerTeam: event.target.value })}
         />
         <SelectField
-          label="Priority"
+          label={copy.ui.outcomes.priority}
           value={value.priority}
           options={(['P0', 'P1', 'P2', 'P3'] as const).map((priority) => ({
             value: priority,
@@ -200,12 +204,12 @@ export function DwaionBacklogDialog({
         />
         <FormField
           required
-          label="Metric evidence"
+          label={copy.ui.outcomes.metricEvidence}
           value={value.metricEvidence}
           onChange={(event) => onChange({ ...value, metricEvidence: event.target.value })}
         />
         <SelectField
-          label="State"
+          label={copy.ui.outcomes.state}
           value={value.state}
           options={(['PROPOSED', 'APPROVED', 'IN_PROGRESS', 'DONE'] as const).map((state) => ({
             value: state,
@@ -215,18 +219,18 @@ export function DwaionBacklogDialog({
         />
         <FormField
           required
-          label="Problem cluster"
+          label={copy.ui.outcomes.problemCluster}
           value={value.problemCluster}
           onChange={(event) => onChange({ ...value, problemCluster: event.target.value })}
         />
         <FormField
           required
-          label="Target value"
+          label={copy.ui.outcomes.targetValue}
           value={value.targetValue}
           onChange={(event) => onChange({ ...value, targetValue: event.target.value })}
         />
         <FormField
-          label="Linked release"
+          label={copy.ui.outcomes.linkedRelease}
           value={value.linkedRelease}
           onChange={(event) => onChange({ ...value, linkedRelease: event.target.value })}
         />
@@ -241,12 +245,13 @@ export function DwaionBudgetDialog({
   onClose,
   onSubmit,
 }: DialogProps<DwaionBudgetDraft>) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   return (
     <FormDialog
       open
-      title="Token budget policy"
-      description="Review the scope, limit, enforcement mode, and recovery impact before approval."
+      title={copy.ui.outcomes.tokenBudgetPolicy}
+      description={copy.ui.outcomes.tokenBudgetDescription}
       cancelLabel="Cancel"
       submitLabel="Review change"
       submitDisabled={!positiveNumber(value.budgetTokens)}
@@ -255,16 +260,16 @@ export function DwaionBudgetDialog({
       onSubmit={onSubmit}
     >
       <Stack spacing={1.5}>
-        <FormField label="Scope" value={value.scope} disabled />
+        <FormField label={copy.ui.outcomes.scope} value={value.scope} disabled />
         <FormField
           required
           type="number"
-          label="Budget tokens"
+          label={copy.ui.outcomes.budgetTokens}
           value={value.budgetTokens}
           onChange={(event) => onChange({ ...value, budgetTokens: event.target.value })}
         />
         <SelectField
-          label="Enforcement"
+          label={copy.ui.outcomes.enforcement}
           value={value.policyMode}
           options={(['WARN', 'THROTTLE', 'BLOCK'] as const).map((mode) => ({
             value: mode,

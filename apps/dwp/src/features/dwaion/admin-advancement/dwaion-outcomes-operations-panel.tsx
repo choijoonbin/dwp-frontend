@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Calculator, Download, Gauge, Pencil, Plus } from 'lucide-react';
 import { ActionButton, FormField, OperationalKpiStrip } from '@dwp-frontend/design-system';
-import { getDwaionOutcomes, type DwaionOutcomeMetric } from '@dwp-frontend/shared-utils';
+import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import {
+  getDwaionOutcomes,
+  type DwaionImprovementBacklogItem,
+  type DwaionOutcomeMetric,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -12,6 +17,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+import {
+  DwaionCanonicalCommandActions,
+  type DwaionCanonicalCommandAction,
+} from './dwaion-canonical-command-actions';
 import {
   DwaionAdminQueryBoundary,
   DwaionAdminSection,
@@ -221,7 +230,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
             >
               <Box
                 component="form"
-                aria-label="Outcome drill-down scope"
+                aria-label={copy.ui.outcomes.drillDownScope}
                 onSubmit={(event) => {
                   event.preventDefault();
                   setScope({
@@ -239,33 +248,39 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                 }}
               >
                 <FormField
-                  label="Organization"
+                  label={copy.ui.outcomes.organization}
                   value={scopeDraft.organization}
                   onChange={(event) =>
                     setScopeDraft({ ...scopeDraft, organization: event.target.value })
                   }
                 />
                 <FormField
-                  label="Work type"
+                  label={copy.ui.outcomes.workType}
                   value={scopeDraft.workType}
                   onChange={(event) =>
                     setScopeDraft({ ...scopeDraft, workType: event.target.value })
                   }
                 />
                 <ActionButton type="submit" intent="secondary">
-                  Apply scope
+                  {copy.ui.outcomes.applyScope}
                 </ActionButton>
               </Box>
               <OperationalKpiStrip
-                ariaLabel="Outcome quality and cost summary"
+                ariaLabel={copy.ui.outcomes.summaryLabel}
                 items={data.metrics.slice(0, 5).map((metric) => ({
                   key: metric.metricKey,
                   label: metric.label,
                   value: metricValue(metric, data.currency),
                   detail:
                     metric.denominator == null
-                      ? `Denominator unavailable · ${new Date(metric.freshnessAt).toLocaleString()}`
-                      : `n=${metric.denominator} · ${new Date(metric.freshnessAt).toLocaleString()}`,
+                      ? `Denominator unavailable · ${formatDate(metric.freshnessAt, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        })}`
+                      : `${copy.ui.common.sampleSizePrefix}${metric.denominator} · ${formatDate(
+                          metric.freshnessAt,
+                          { dateStyle: 'medium', timeStyle: 'short' }
+                        )}`,
                   tone:
                     metric.unit === 'PERCENT' && (metric.value ?? 0) >= 90 ? 'success' : 'neutral',
                 }))}
@@ -344,7 +359,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
               >
                 <Stack spacing={2}>
                   <Typography component="h3" variant="subtitle1">
-                    Cohorts and denominators
+                    {copy.ui.outcomes.cohortsDenominators}
                   </Typography>
                   <Box
                     sx={{ border: 1, borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}
@@ -358,7 +373,8 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                         <Stack direction="row" justifyContent="space-between" gap={1}>
                           <Typography variant="subtitle2">{cohort.label}</Typography>
                           <Typography variant="caption" color="text.secondary">
-                            n={cohort.completedWorkCount}
+                            {copy.ui.common.sampleSizePrefix}
+                            {cohort.completedWorkCount}
                           </Typography>
                         </Stack>
                         <Stack direction="row" gap={1} flexWrap="wrap">
@@ -374,7 +390,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           <Chip
                             size="small"
                             variant="outlined"
-                            label={`Cost ${cohort.costPerCompletedWork?.toLocaleString() ?? '—'} ${data.currency}`}
+                            label={`Cost ${cohort.costPerCompletedWork == null ? '—' : formatNumber(cohort.costPerCompletedWork)} ${data.currency}`}
                           />
                         </Stack>
                       </Stack>
@@ -382,7 +398,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                   </Box>
 
                   <Typography component="h3" variant="subtitle1">
-                    Improvement backlog
+                    {copy.ui.outcomes.improvementBacklog}
                   </Typography>
                   <Stack divider={<Divider flexItem />}>
                     {data.backlog.map((item) => (
@@ -400,7 +416,8 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           </Stack>
                           <Typography variant="caption" color="text.secondary">
                             {item.ownerTeam} · {item.problemCluster} · {item.metricEvidence} ·{' '}
-                            {item.state} · v{item.version}
+                            {item.state} {copy.ui.common.versionSeparator}
+                            {item.version}
                           </Typography>
                         </Box>
                         <ActionButton
@@ -431,7 +448,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
 
                 <Stack spacing={1.5}>
                   <Typography component="h3" variant="subtitle1">
-                    Token budgets
+                    {copy.ui.outcomes.tokenBudgets}
                   </Typography>
                   {data.tokenBudgets.map((item) => {
                     const usage = Math.min((item.consumedTokens / item.budgetTokens) * 100, 100);
@@ -452,8 +469,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           variant="body2"
                           sx={{ mt: 1, fontVariantNumeric: 'tabular-nums' }}
                         >
-                          {item.consumedTokens.toLocaleString()} /{' '}
-                          {item.budgetTokens.toLocaleString()}
+                          {formatNumber(item.consumedTokens)} / {formatNumber(item.budgetTokens)}
                         </Typography>
                         <LinearProgress
                           variant="determinate"
@@ -463,7 +479,9 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           sx={{ mt: 0.75, height: 7, borderRadius: 999 }}
                         />
                         <Typography variant="caption" color="text.secondary">
-                          Projected {item.projectedTokens?.toLocaleString() ?? '—'} · v
+                          {copy.ui.common.projected}{' '}
+                          {item.projectedTokens == null ? '—' : formatNumber(item.projectedTokens)}{' '}
+                          {copy.ui.common.versionSeparator}
                           {item.version}
                         </Typography>
                         <ActionButton
@@ -487,6 +505,17 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                 </Stack>
               </Box>
             </DwaionAdminSection>
+            {data.backlog[0] && (
+              <DwaionCanonicalCommandActions
+                title={copy.ui.outcomes.deliveryOperations}
+                description={copy.ui.outcomes.deliveryOperationsDescription}
+                actions={backlogCanonicalActions(data.backlog[0], copy.command.description)}
+                disabled={!commandsAvailable}
+                onRefresh={async () => {
+                  await query.refetch();
+                }}
+              />
+            )}
           </Stack>
         )}
       </DwaionAdminQueryBoundary>
@@ -527,10 +556,72 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
 function metricValue(metric: DwaionOutcomeMetric, currency: string) {
   if (metric.value == null) return '—';
   if (metric.unit === 'PERCENT') return `${metric.value.toFixed(1)}%`;
-  if (metric.unit === 'MILLISECONDS') return `${metric.value.toLocaleString()}ms`;
-  if (metric.unit === 'CURRENCY') return `${metric.value.toLocaleString()} ${currency}`;
-  if (metric.unit === 'TOKENS') return `${metric.value.toLocaleString()} tokens`;
-  return metric.value.toLocaleString();
+  if (metric.unit === 'MILLISECONDS') return `${formatNumber(metric.value)}ms`;
+  if (metric.unit === 'CURRENCY') return `${formatNumber(metric.value)} ${currency}`;
+  if (metric.unit === 'TOKENS') return `${formatNumber(metric.value)} tokens`;
+  return formatNumber(metric.value);
+}
+
+function backlogCanonicalActions(
+  item: DwaionImprovementBacklogItem,
+  description: string
+): DwaionCanonicalCommandAction[] {
+  const common = {
+    description,
+    target: { type: 'IMPROVEMENT_BACKLOG', id: item.itemId },
+    expectedVersion: item.version,
+    impacts: [item.ownerTeam, item.metricEvidence, item.problemCluster],
+    recoveryPlan:
+      'Restore the prior backlog revision and remove the external link while preserving metric evidence and command history.',
+  };
+  return [
+    {
+      ...common,
+      label: 'Open delivery ticket',
+      title: 'Open backlog delivery ticket',
+      kind: 'BACKLOG_TICKET_OPEN',
+      changes: [{ label: 'Delivery ticket', before: 'Not linked', after: 'CREATE_PENDING' }],
+      payload: {
+        itemId: item.itemId,
+        title: item.title,
+        ownerTeam: item.ownerTeam,
+        priority: item.priority,
+        metricEvidence: item.metricEvidence,
+        targetValue: item.targetValue,
+      },
+    },
+    {
+      ...common,
+      label: 'Link release',
+      title: 'Link improvement to release',
+      kind: 'BACKLOG_RELEASE_LINK',
+      changes: [
+        {
+          label: 'Linked release',
+          before: item.linkedRelease ?? 'None',
+          after: item.linkedRelease ?? 'Release selection pending',
+        },
+      ],
+      payload: {
+        itemId: item.itemId,
+        linkedRelease: item.linkedRelease,
+        requireReleaseEvidence: true,
+      },
+    },
+    {
+      ...common,
+      label: 'Review pending improvement',
+      title: 'Review improvement backlog evidence',
+      kind: 'BACKLOG_UPDATE',
+      changes: [{ label: 'Review state', before: item.state, after: 'APPROVAL_PENDING' }],
+      payload: {
+        itemId: item.itemId,
+        requestedState: 'APPROVED',
+        metricEvidence: item.metricEvidence,
+        linkedRelease: item.linkedRelease,
+      },
+    },
+  ];
 }
 
 function percentage(value: number | null | undefined) {

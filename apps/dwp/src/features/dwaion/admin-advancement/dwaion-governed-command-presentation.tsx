@@ -5,7 +5,7 @@ import {
   InlineFeedback,
   foundationTokens,
 } from '@dwp-frontend/design-system';
-import type { DwaionGovernedCommand } from '@dwp-frontend/shared-utils';
+import type { DwaionGovernedCommand, DwaionGovernedCommandKind } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -16,12 +16,72 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
-import type { DwaionCommandIntent } from './dwaion-governed-command-dialog';
+
+export type DwaionCommandIntent = {
+  title: string;
+  description: string;
+  kind: DwaionGovernedCommandKind;
+  target: { type: string; id: string };
+  expectedVersion: number;
+  changes: Array<{ label: string; before: string; after: string }>;
+  impacts: string[];
+  recoveryPlan: string;
+  payload?: Record<string, unknown>;
+  destructive?: boolean;
+};
 
 export type DwaionCommandTransition = 'approve' | 'reject' | 'cancel' | 'retry' | 'rollback';
 
 export function DwaionCommandReview({ intent }: { intent: DwaionCommandIntent | null }) {
   if (!intent) return null;
+  return <CommandReviewDetails changes={intent.changes} impacts={intent.impacts} />;
+}
+
+export function DwaionStoredCommandReview({ command }: { command: DwaionGovernedCommand }) {
+  const copy = useDwaionAdminAdvancementCopy();
+  return (
+    <Stack spacing={2}>
+      <Stack spacing={0.5}>
+        <Typography component="h3" variant="subtitle2">
+          {copy.ui.command.submittedReviewRecord}
+        </Typography>
+        <Typography variant="body2">{command.review.reason}</Typography>
+        <Typography variant="caption" color="text.secondary">
+          {command.review.ticketRef}
+          {command.review.evidenceRefs.length > 0
+            ? ` · ${command.review.evidenceRefs.join(' · ')}`
+            : ''}
+        </Typography>
+      </Stack>
+      <CommandReviewDetails
+        changes={command.review.preflight.changes.map((change) => ({
+          label: change.field,
+          before: change.before,
+          after: change.after,
+        }))}
+        impacts={command.review.preflight.impactScopes}
+      />
+      <Box>
+        <Typography variant="subtitle2">{copy.ui.command.recoveryPlan}</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          {command.review.preflight.recoveryPlan}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+          {copy.ui.common.checksumPrefix} · {command.review.preflight.recoveryPlanHash}
+        </Typography>
+      </Box>
+      <Divider />
+    </Stack>
+  );
+}
+
+function CommandReviewDetails({
+  changes,
+  impacts,
+}: {
+  changes: Array<{ label: string; before: string; after: string }>;
+  impacts: string[];
+}) {
   return (
     <Stack spacing={2}>
       <Box
@@ -32,7 +92,7 @@ export function DwaionCommandReview({ intent }: { intent: DwaionCommandIntent | 
           overflow: 'hidden',
         }}
       >
-        {intent.changes.map((change, index) => (
+        {changes.map((change, index) => (
           <Box
             key={`${change.label}-${index}`}
             sx={{
@@ -58,7 +118,7 @@ export function DwaionCommandReview({ intent }: { intent: DwaionCommandIntent | 
         ))}
       </Box>
       <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
-        {intent.impacts.map((impact) => (
+        {impacts.map((impact) => (
           <Typography component="li" variant="body2" key={impact} sx={{ mb: 0.5 }}>
             {impact}
           </Typography>
@@ -165,7 +225,7 @@ export function DwaionCommandLifecycle({
             </Typography>
             {command.receipt.domainReceiptRef && (
               <Typography variant="caption" color="text.secondary">
-                Domain receipt · {command.receipt.domainReceiptRef}
+                {copy.ui.command.domainReceipt} {command.receipt.domainReceiptRef}
               </Typography>
             )}
           </Stack>
@@ -177,15 +237,15 @@ export function DwaionCommandLifecycle({
       </Box>
       {(active || command.state === 'FAILED' || command.state === 'SUCCEEDED') &&
         command.allowedTransitions.length > 0 && (
-        <FormField
-          required
-          multiline
-          minRows={2}
-          label={copy.command.transitionReason}
-          value={transitionReason}
-          onChange={(event) => onTransitionReason(event.target.value)}
-        />
-      )}
+          <FormField
+            required
+            multiline
+            minRows={2}
+            label={copy.command.transitionReason}
+            value={transitionReason}
+            onChange={(event) => onTransitionReason(event.target.value)}
+          />
+        )}
     </Stack>
   );
 }
@@ -203,7 +263,7 @@ export function DwaionCommandActions({
 }) {
   const copy = useDwaionAdminAdvancementCopy();
   if (command.state === 'AWAITING_APPROVAL') {
-    const canApprove = command.allowedTransitions.includes('APPROVE');
+    const canApprove = command.canApprove && command.allowedTransitions.includes('APPROVE');
     const canReject = command.allowedTransitions.includes('REJECT');
     const canCancel = command.allowedTransitions.includes('CANCEL');
     if (!canApprove && !canReject && !canCancel) return null;

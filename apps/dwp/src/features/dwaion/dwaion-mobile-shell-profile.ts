@@ -4,8 +4,8 @@ export type DwaionMobileHeaderProfile =
   | {
       kind: 'brand';
       destinations: readonly DwaionMobileDestination[];
-      showMore: true;
-      showNavigation: true;
+      showMore: boolean;
+      showNavigation: boolean;
     }
   | {
       kind: 'screen';
@@ -32,6 +32,13 @@ const BRAND_PROFILE: DwaionMobileHeaderProfile = {
   destinations: ['home', 'new', 'conversations', 'proposals'],
   showMore: true,
   showNavigation: true,
+};
+
+const ADMIN_PROFILE: DwaionMobileHeaderProfile = {
+  kind: 'brand',
+  destinations: [],
+  showMore: false,
+  showNavigation: false,
 };
 
 const SCREEN_PROFILES: ReadonlyArray<{
@@ -106,5 +113,6 @@ export function resolveDwaionMobileHeaderProfile(
   pathname: string,
   search = ''
 ): DwaionMobileHeaderProfile {
+  if (/^\/dwaion\/admin(?:\/|$)/.test(pathname)) return ADMIN_PROFILE;
   return SCREEN_PROFILES.find(({ matches }) => matches(pathname, search))?.profile ?? BRAND_PROFILE;
 }

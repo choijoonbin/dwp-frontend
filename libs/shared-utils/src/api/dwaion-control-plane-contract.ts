@@ -40,6 +40,35 @@ export type DwaionModelSummary = {
   qualityScore?: number | null;
   costPerMillionInputTokens?: number | null;
   costPerMillionOutputTokens?: number | null;
+  allowedDataClassifications: string[];
+  governancePolicy: string;
+  region: string;
+  credentialState: 'BOUND' | 'ROTATION_DUE' | 'EXPIRED' | 'MISSING';
+  credentialRef: string;
+};
+
+export type DwaionRoutingRuleSummary = {
+  ruleId: string;
+  name: string;
+  taskType: string;
+  conditions: string[];
+  allowedDataClassifications: string[];
+  primaryModelId: string;
+  fallbackModelIds: string[];
+  failClosed: boolean;
+  version: number;
+};
+
+export type DwaionRoutingSimulationResult = {
+  simulationId: string;
+  decision: 'ROUTED' | 'BLOCKED' | 'REVIEW_REQUIRED';
+  matchedRuleId: string;
+  targetModelId?: string | null;
+  estimatedCost?: number | null;
+  currency: string;
+  estimatedLatencyMs?: number | null;
+  fallbackModelIds: string[];
+  generatedAt: string;
 };
 
 export type DwaionRoutingPolicySummary = {
@@ -61,6 +90,8 @@ export type DwaionModelsRoutingSnapshot = {
   providers: DwaionProviderSummary[];
   models: DwaionModelSummary[];
   routingPolicies: DwaionRoutingPolicySummary[];
+  routingRules: DwaionRoutingRuleSummary[];
+  latestSimulation?: DwaionRoutingSimulationResult | null;
   pendingApprovalCount: number;
   activeCanaryCount: number;
   emergencyStopActive: boolean;
@@ -226,17 +257,30 @@ export type DwaionOutcomesSnapshot = {
 
 export type DwaionGovernedCommandKind =
   | 'MODEL_ROUTING_UPDATE'
+  | 'MODEL_ROUTING_DRAFT_SAVE'
   | 'MODEL_ROUTE_SIMULATE'
   | 'MODEL_CANARY_START'
   | 'MODEL_ROLLBACK'
+  | 'PROVIDER_CIRCUIT_BREAK'
+  | 'MODEL_SMART_ISOLATE'
   | 'EMERGENCY_STOP'
   | 'EMERGENCY_RECOVERY'
+  | 'EMERGENCY_RECOVERY_SIMULATE'
+  | 'EMERGENCY_ISOLATION_ROLLBACK'
   | 'AGENT_PROMOTE'
+  | 'AGENT_DRAFT_SAVE'
   | 'AGENT_EVALUATE'
+  | 'AGENT_EVALUATION_CERT_SIGN'
   | 'AGENT_ROLLBACK'
   | 'AGENT_KILL_SWITCH'
   | 'CONNECTOR_CREATE'
+  | 'CONNECTOR_DRAFT_SAVE'
   | 'CONNECTOR_PROBE'
+  | 'CONNECTOR_OAUTH_REAUTHORIZE'
+  | 'CONNECTOR_PAUSE'
+  | 'CONNECTOR_QUARANTINE'
+  | 'CONNECTOR_DRIFT_HEAL'
+  | 'CONNECTOR_KILL_SWITCH'
   | 'CONNECTOR_SYNC'
   | 'CONNECTOR_REINDEX'
   | 'CONNECTOR_SECRET_ROTATE'
@@ -246,10 +290,25 @@ export type DwaionGovernedCommandKind =
   | 'DATASET_IMPORT'
   | 'DATASET_PII_DECIDE'
   | 'EVALUATION_COMPARE'
+  | 'EVALUATION_RUN'
+  | 'EVALUATION_RERUN'
+  | 'EVALUATION_REPORT_EXPORT'
+  | 'EVALUATION_GATE_APPROVE'
   | 'SAFETY_SIMULATE'
+  | 'SAFETY_GUARDRAIL_ENFORCE'
+  | 'SAFETY_CANARY_APPROVE'
   | 'DRIFT_EVIDENCE_ATTACH'
   | 'DRIFT_RAW_EVIDENCE_REQUEST'
   | 'INCIDENT_CONTAIN'
+  | 'INCIDENT_EMERGENCY_STOP'
+  | 'INCIDENT_WAR_ROOM_OPEN'
+  | 'INCIDENT_REPORT_EXPORT'
+  | 'INCIDENT_VALIDATION_RUN'
+  | 'INCIDENT_CONNECTOR_REAUTH'
+  | 'INCIDENT_SAFE_ROLLBACK'
+  | 'INCIDENT_RECOVERY_RESYNC'
+  | 'INCIDENT_SKIP_QUARANTINED'
+  | 'INCIDENT_ROUTINE_PAUSE'
   | 'RUN_QUARANTINE'
   | 'RUN_REPLAY'
   | 'RUN_COMPENSATE'
@@ -257,6 +316,8 @@ export type DwaionGovernedCommandKind =
   | 'INCIDENT_CLOSE'
   | 'BACKLOG_CREATE'
   | 'BACKLOG_UPDATE'
+  | 'BACKLOG_TICKET_OPEN'
+  | 'BACKLOG_RELEASE_LINK'
   | 'OUTCOME_EXPORT'
   | 'COST_SIMULATE'
   | 'TOKEN_BUDGET_UPDATE';
@@ -274,9 +335,16 @@ export type DwaionGovernedCommandRequest = {
     changes: Array<{ field: string; before: string; after: string }>;
     impactScopes: string[];
     recoveryPlan: string;
-    recoveryPlanHash?: string;
+    recoveryPlanHash: string;
   };
   payload: Record<string, unknown>;
+};
+
+export type DwaionGovernedCommandReview = {
+  reason: string;
+  ticketRef: string;
+  evidenceRefs: string[];
+  preflight: DwaionGovernedCommandRequest['preflight'];
 };
 
 export type DwaionGovernedCommandReceipt = {
@@ -297,6 +365,8 @@ export type DwaionGovernedCommand = {
   makerUserId?: string | null;
   checkerUserId?: string | null;
   approvalRequired: boolean;
+  canApprove: boolean;
+  review: DwaionGovernedCommandReview;
   allowedTransitions: Array<'APPROVE' | 'REJECT' | 'CANCEL' | 'RETRY' | 'ROLLBACK'>;
   transitionBlockReason?: string | null;
   progressPercent?: number | null;
@@ -314,6 +384,11 @@ export type DwaionGovernedCommand = {
   } | null;
 };
 
+export type DwaionGovernedCommandsSnapshot = {
+  generatedAt: string;
+  commands: DwaionGovernedCommand[];
+};
+
 export type DwaionGovernedCommandDecisionRequest = {
   commandId: string;
   decision: 'APPROVE' | 'REJECT';
@@ -326,8 +401,7 @@ export type DwaionGovernedCommandTransitionRequest = {
   commandId: string;
   expectedVersion: number;
   reason: string;
+  evidenceRefs: string[];
 };
 
-export type DwaionGovernedCommandRestartRequest = DwaionGovernedCommandTransitionRequest & {
-  evidenceRefs?: string[];
-};
+export type DwaionGovernedCommandRestartRequest = DwaionGovernedCommandTransitionRequest;

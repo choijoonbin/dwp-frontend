@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
+import { resolveDwaionMobileHeaderProfile } from './dwaion-mobile-shell-profile';
 import { DWAION_PRODUCT_MANIFEST } from './dwaion-navigation';
 
 describe('DWAI-ON product manifest', () => {
@@ -70,5 +71,19 @@ describe('DWAI-ON product manifest', () => {
       { resourceKey: 'APP.DWAION_MEMORY', permissionCode: 'VIEW' },
       { resourceKey: 'APP.DWAION_PRIVACY', permissionCode: 'VIEW' },
     ]);
+  });
+
+  it('uses the compact header menu without a redundant fixed footer on admin routes', () => {
+    expect(resolveDwaionMobileHeaderProfile('/dwaion/admin/models')).toMatchObject({
+      kind: 'brand',
+      destinations: [],
+      showMore: false,
+      showNavigation: false,
+    });
+    expect(resolveDwaionMobileHeaderProfile('/dwaion/home')).toMatchObject({
+      kind: 'brand',
+      showMore: true,
+      showNavigation: true,
+    });
   });
 });

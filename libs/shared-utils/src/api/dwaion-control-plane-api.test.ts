@@ -5,6 +5,7 @@ import {
   createDwaionGovernedCommand,
   decideDwaionGovernedCommand,
   getDwaionGovernedCommand,
+  getDwaionGovernedCommands,
   getDwaionModelsRouting,
   getDwaionOutcomes,
 } from './dwaion-control-plane-api';
@@ -12,6 +13,7 @@ import {
   parseDwaionConnectors,
   parseDwaionEvaluationSafety,
   parseDwaionGovernedCommand,
+  parseDwaionGovernedCommands,
   parseDwaionIncidents,
   parseDwaionModelsRouting,
   parseDwaionOutcomes,
@@ -41,6 +43,8 @@ const modelsRouting = {
   providers: [],
   models: [],
   routingPolicies: [],
+  routingRules: [],
+  latestSimulation: null,
   pendingApprovalCount: 0,
   activeCanaryCount: 0,
   emergencyStopActive: false,
@@ -48,12 +52,24 @@ const modelsRouting = {
   monthlyBudget: null,
 };
 const command = {
-  commandId: 'command-42',
+  commandId: '64e0998c-987b-4974-9490-ef1383f10dc7',
   kind: 'EMERGENCY_STOP',
   state: 'AWAITING_APPROVAL',
   target: { type: 'ROUTING_SCOPE', id: 'tenant' },
   expectedVersion: 7,
   approvalRequired: true,
+  canApprove: true,
+  review: {
+    reason: 'Stop unsafe traffic while incident INC-42 is investigated.',
+    ticketRef: 'INC-42',
+    evidenceRefs: ['audit:event:42'],
+    preflight: {
+      changes: [{ field: 'route', before: 'primary', after: 'safe-mode' }],
+      impactScopes: ['tenant'],
+      recoveryPlan: 'Restore the last verified routing policy and validate health probes.',
+      recoveryPlanHash: 'a'.repeat(64),
+    },
+  },
   allowedTransitions: ['APPROVE', 'REJECT'],
   progressPercent: null,
   createdAt: '2026-09-17T00:00:00Z',
@@ -110,6 +126,22 @@ describe('DWAI-ON control-plane API', () => {
     );
   });
 
+  it('lists checker work through a bounded, fail-closed command queue', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ generatedAt: '2026-09-17T00:00:00Z', commands: [command] })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getDwaionGovernedCommands({ state: 'AWAITING_APPROVAL', limit: 250 });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/agent/v1/admin/control-plane/commands?state=AWAITING_APPROVAL&limit=100',
+      expect.any(Object)
+    );
+  });
+
   it('binds command execution to the trusted product-surface scope and revision', async () => {
     const fetchMock = vi
       .fn()
@@ -131,6 +163,7 @@ describe('DWAI-ON control-plane API', () => {
           changes: [{ field: 'route', before: 'primary', after: 'safe-mode' }],
           impactScopes: ['tenant'],
           recoveryPlan: 'Restore the last verified routing policy and validate health probes.',
+          recoveryPlanHash: 'a'.repeat(64),
         },
         payload: { fallback: 'SAFE_MODE' },
       },
@@ -149,11 +182,66 @@ describe('DWAI-ON control-plane API', () => {
     );
   });
 
+  it('requires a command-bound step-up proof for emergency recovery and sends every precondition', async () => {
+    const request = {
+      commandId: 'b091d33a-97f4-4a89-974d-d6e4281a9aef',
+      kind: 'EMERGENCY_RECOVERY' as const,
+      target: { type: 'ROUTING_SCOPE', id: 'tenant' },
+      expectedVersion: 7,
+      reason: 'Recover through the independently reviewed bounded canary.',
+      ticketRef: 'INC-42',
+      evidenceRefs: ['validation:run:42'],
+      impactAcknowledged: true as const,
+      preflight: {
+        changes: [{ field: 'traffic', before: 'stopped', after: 'canary-5-percent' }],
+        impactScopes: ['tenant'],
+        recoveryPlan: 'Stop canary traffic and restore isolation if any threshold fails.',
+        recoveryPlanHash: 'b'.repeat(64),
+      },
+      payload: { canaryPercent: 5, requireIndependentSecondFactor: true },
+    };
+
+    await expect(createDwaionGovernedCommand(request, AUTHORITY)).rejects.toThrowError(
+      'Product surface governed HIGH-risk mutation authority is incomplete.'
+    );
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(response({ ...command, kind: 'EMERGENCY_RECOVERY' }));
+    vi.stubGlobal('fetch', fetchMock);
+    await createDwaionGovernedCommand(request, {
+      ...AUTHORITY,
+      objectVersion: 7,
+      idempotencyKey: request.commandId,
+      stepUp: {
+        challenge: 'signed-command-bound-recovery-proof',
+        challengeId: 'e42bfb43-d1a5-4caf-8742-017e159f64de',
+        decisionRevision: AUTHORITY.expectedDecisionRevision,
+        expiresAt: '2026-09-18T00:00:00Z',
+      },
+    });
+
+    const headers = new Headers(fetchMock.mock.calls[1]?.[1]?.headers);
+    expect(headers.get('X-DWP-Step-Up-Challenge')).toBe('signed-command-bound-recovery-proof');
+    expect(headers.get('X-DWP-Expected-Object-Version')).toBe('7');
+    expect(headers.get('Idempotency-Key')).toBe(request.commandId);
+    expect(headers.get('X-DWP-Expected-Decision-Revision')).toBe('dwaion-admin-r42');
+  });
+
   it('sends a checker decision through the governed command lifecycle endpoint', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(response({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
-      .mockResolvedValueOnce(response({ ...command, state: 'QUEUED', version: 2 }));
+      .mockResolvedValueOnce(
+        response({
+          ...command,
+          state: 'QUEUED',
+          canApprove: false,
+          allowedTransitions: ['CANCEL'],
+          version: 2,
+        })
+      );
     vi.stubGlobal('fetch', fetchMock);
 
     await decideDwaionGovernedCommand(
@@ -209,6 +297,11 @@ describe('DWAI-ON control-plane API', () => {
       qualityScore: 92,
       costPerMillionInputTokens: 1.5,
       costPerMillionOutputTokens: 2.5,
+      allowedDataClassifications: ['TIER_1'],
+      governancePolicy: 'No training; DLP masking required',
+      region: 'ap-northeast-2',
+      credentialState: 'BOUND',
+      credentialRef: 'kms:key:1',
     };
     const policy = {
       policyId: 'policy-1',
@@ -492,6 +585,30 @@ describe('DWAI-ON control-plane API', () => {
     expect(() => parseDwaionGovernedCommand({ ...command, progressPercent: 101 })).toThrowError(
       expect.objectContaining({ status: 502 })
     );
+    expect(() =>
+      parseDwaionGovernedCommand({
+        ...command,
+        review: {
+          ...command.review,
+          preflight: { ...command.review.preflight, recoveryPlanHash: 'not-sha256' },
+        },
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionGovernedCommands({
+        generatedAt: '2026-09-17T00:00:00Z',
+        commands: [command, command],
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionGovernedCommands(
+        {
+          generatedAt: '2026-09-17T00:00:00Z',
+          commands: [{ ...command, state: 'QUEUED' }],
+        },
+        'AWAITING_APPROVAL'
+      )
+    ).toThrowError(expect.objectContaining({ status: 502 }));
     expect(() =>
       parseDwaionGovernedCommand({
         ...command,

@@ -1,6 +1,8 @@
 import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
+import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+
 export type DwaionDatasetDraft = {
   name: string;
   ownerRef: string;
@@ -45,6 +47,7 @@ export function DwaionDatasetDialog({
   onClose,
   onSubmit,
 }: DialogProps<DwaionDatasetDraft>) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   const checksumValid = SHA_256.test(value.checksumSha256.trim());
   const valid = Boolean(
@@ -57,8 +60,8 @@ export function DwaionDatasetDialog({
   return (
     <FormDialog
       open
-      title="Dataset import"
-      description="Register immutable source metadata and schema mapping before PII review."
+      title={copy.ui.evaluation.datasetImport}
+      description={copy.ui.evaluation.datasetImportDescription}
       cancelLabel="Cancel"
       submitLabel="Review import"
       submitDisabled={!valid}
@@ -69,18 +72,18 @@ export function DwaionDatasetDialog({
       <Stack spacing={1.5}>
         <FormField
           required
-          label="Name"
+          label={copy.ui.evaluation.name}
           value={value.name}
           onChange={(event) => onChange({ ...value, name: event.target.value })}
         />
         <FormField
           required
-          label="Owner"
+          label={copy.ui.evaluation.owner}
           value={value.ownerRef}
           onChange={(event) => onChange({ ...value, ownerRef: event.target.value })}
         />
         <SelectField
-          label="Format"
+          label={copy.ui.evaluation.format}
           value={value.format}
           options={(['CSV', 'JSON'] as const).map((format) => ({ value: format, label: format }))}
           onValueChange={(format) => format && onChange({ ...value, format })}
@@ -92,7 +95,7 @@ export function DwaionDatasetDialog({
               ? 'Enter exactly 64 hexadecimal characters.'
               : undefined
           }
-          label="SHA-256 checksum"
+          label={copy.ui.evaluation.checksum}
           value={value.checksumSha256}
           onChange={(event) => onChange({ ...value, checksumSha256: event.target.value })}
         />
@@ -100,7 +103,7 @@ export function DwaionDatasetDialog({
           required
           multiline
           minRows={2}
-          label="Schema mapping"
+          label={copy.ui.evaluation.schemaMapping}
           value={value.schemaMapping}
           onChange={(event) => onChange({ ...value, schemaMapping: event.target.value })}
         />
@@ -108,7 +111,7 @@ export function DwaionDatasetDialog({
           required
           multiline
           minRows={2}
-          label="PII handling"
+          label={copy.ui.evaluation.piiHandling}
           value={value.piiHandling}
           onChange={(event) => onChange({ ...value, piiHandling: event.target.value })}
         />
@@ -124,13 +127,14 @@ export function DwaionComparisonDialog({
   onClose,
   onSubmit,
 }: DialogProps<DwaionComparisonDraft> & { datasets: Array<{ datasetId: string; name: string }> }) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   const valid = Object.values(value).every((item) => item.trim());
   return (
     <FormDialog
       open
-      title="Pinned comparison"
-      description="Pin every model, prompt, policy, tool, and evaluator version for reproducible evidence."
+      title={copy.ui.evaluation.pinnedComparison}
+      description={copy.ui.evaluation.pinnedComparisonDescription}
       cancelLabel="Cancel"
       submitLabel="Review comparison"
       submitDisabled={!valid}
@@ -140,7 +144,7 @@ export function DwaionComparisonDialog({
     >
       <Stack spacing={1.5}>
         <SelectField
-          label="Dataset"
+          label={copy.ui.evaluation.dataset}
           value={value.datasetId}
           options={datasets.map((item) => ({ value: item.datasetId, label: item.name }))}
           onValueChange={(datasetId) => datasetId && onChange({ ...value, datasetId })}
@@ -174,13 +178,14 @@ export function DwaionPiiDecisionDialog({
   onClose,
   onSubmit,
 }: DialogProps<DwaionPiiDecisionDraft>) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   const valid = Boolean(value.evidenceRefs.trim() && value.reviewerNote.trim());
   return (
     <FormDialog
       open
       title={`PII review · ${value.name}`}
-      description="Record the independent decision and evidence before changing dataset eligibility."
+      description={copy.ui.evaluation.eligibilityReviewDescription}
       cancelLabel="Cancel"
       submitLabel="Review decision"
       submitDisabled={!valid}
@@ -190,7 +195,7 @@ export function DwaionPiiDecisionDialog({
     >
       <Stack spacing={1.5}>
         <SelectField
-          label="Decision"
+          label={copy.ui.evaluation.decision}
           value={value.decision}
           options={[
             { value: 'PASS', label: 'Approve for evaluation' },
@@ -200,7 +205,7 @@ export function DwaionPiiDecisionDialog({
         />
         <FormField
           required
-          label="Evidence references"
+          label={copy.ui.evaluation.evidenceReferences}
           value={value.evidenceRefs}
           onChange={(event) => onChange({ ...value, evidenceRefs: event.target.value })}
         />
@@ -208,7 +213,7 @@ export function DwaionPiiDecisionDialog({
           required
           multiline
           minRows={3}
-          label="Reviewer note"
+          label={copy.ui.evaluation.reviewerNote}
           value={value.reviewerNote}
           onChange={(event) => onChange({ ...value, reviewerNote: event.target.value })}
         />

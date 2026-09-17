@@ -1,6 +1,8 @@
 import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
+import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+
 export type DwaionConnectorOperationDraft =
   | { operation: 'CONNECTOR_PROBE'; repositoryScope: string; principalSamples: string }
   | {
@@ -42,12 +44,13 @@ export function DwaionConnectorOperationDialog({
   onClose: () => void;
   onSubmit: () => void;
 }) {
+  const copy = useDwaionAdminAdvancementCopy();
   if (!value) return null;
   return (
     <FormDialog
       open
       title={title}
-      description="Confirm the exact connector scope and recovery inputs before governed review."
+      description={copy.ui.connectors.operationDescription}
       cancelLabel="Cancel"
       submitLabel="Review operation"
       submitDisabled={!validDraft(value, connectorName)}
@@ -55,7 +58,9 @@ export function DwaionConnectorOperationDialog({
       onClose={onClose}
       onSubmit={onSubmit}
     >
-      <Stack spacing={1.5}>{operationFields(value, connectorName, onChange)}</Stack>
+      <Stack spacing={1.5}>
+        {operationFields(value, connectorName, onChange, copy.ui.connectors)}
+      </Stack>
     </FormDialog>
   );
 }
@@ -63,14 +68,15 @@ export function DwaionConnectorOperationDialog({
 function operationFields(
   value: DwaionConnectorOperationDraft,
   connectorName: string,
-  onChange: (value: DwaionConnectorOperationDraft | null) => void
+  onChange: (value: DwaionConnectorOperationDraft | null) => void,
+  copy: ReturnType<typeof useDwaionAdminAdvancementCopy>['ui']['connectors']
 ) {
   if (value.operation === 'CONNECTOR_PROBE') {
     return (
       <>
         <FormField
           required
-          label="Repository scope"
+          label={copy.repositoryScope}
           value={value.repositoryScope}
           onChange={(event) => onChange({ ...value, repositoryScope: event.target.value })}
         />
@@ -78,7 +84,7 @@ function operationFields(
           required
           multiline
           minRows={2}
-          label="Principal samples"
+          label={copy.principalSamples}
           value={value.principalSamples}
           onChange={(event) => onChange({ ...value, principalSamples: event.target.value })}
         />
@@ -90,12 +96,12 @@ function operationFields(
       <>
         <FormField
           required
-          label="Repository scope"
+          label={copy.repositoryScope}
           value={value.repositoryScope}
           onChange={(event) => onChange({ ...value, repositoryScope: event.target.value })}
         />
         <SelectField
-          label="Sync mode"
+          label={copy.syncMode}
           value={value.mode}
           options={(['INCREMENTAL', 'FULL'] as const).map((mode) => ({ value: mode, label: mode }))}
           onValueChange={(mode) => mode && onChange({ ...value, mode })}
@@ -108,12 +114,12 @@ function operationFields(
       <>
         <FormField
           required
-          label="Repository scope"
+          label={copy.repositoryScope}
           value={value.repositoryScope}
           onChange={(event) => onChange({ ...value, repositoryScope: event.target.value })}
         />
         <SelectField
-          label="Stale index handling"
+          label={copy.staleIndexHandling}
           value={value.staleIndexPolicy}
           options={(['KEEP_UNTIL_VERIFIED', 'PURGE_AFTER_SWAP'] as const).map((policy) => ({
             value: policy,
@@ -131,14 +137,14 @@ function operationFields(
       <>
         <FormField
           required
-          label="New secret reference"
+          label={copy.newSecretReference}
           value={value.newSecretRef}
           onChange={(event) => onChange({ ...value, newSecretRef: event.target.value })}
         />
         <FormField
           required
           type="number"
-          label="Credential overlap minutes"
+          label={copy.credentialOverlapMinutes}
           value={value.overlapMinutes}
           onChange={(event) => onChange({ ...value, overlapMinutes: event.target.value })}
         />
@@ -150,19 +156,19 @@ function operationFields(
       <>
         <FormField
           required
-          label="Reduced tenant scope"
+          label={copy.reducedTenantScope}
           value={value.newTenantScope}
           onChange={(event) => onChange({ ...value, newTenantScope: event.target.value })}
         />
         <FormField
           required
-          label="Excluded repositories"
+          label={copy.excludedRepositories}
           value={value.excludedRepositories}
           onChange={(event) => onChange({ ...value, excludedRepositories: event.target.value })}
         />
         <FormField
           required
-          label="Group mapping source"
+          label={copy.groupMappingSource}
           value={value.groupMappingSource}
           onChange={(event) => onChange({ ...value, groupMappingSource: event.target.value })}
         />
@@ -173,7 +179,7 @@ function operationFields(
     return (
       <>
         <SelectField
-          label="In-flight sync"
+          label={copy.inFlightSync}
           value={value.inFlightPolicy}
           options={(['DRAIN', 'CANCEL'] as const).map((policy) => ({
             value: policy,
@@ -185,7 +191,7 @@ function operationFields(
         />
         <FormField
           required
-          label="Revoke at (ISO timestamp)"
+          label={copy.revokeAt}
           value={value.revokeAt}
           onChange={(event) => onChange({ ...value, revokeAt: event.target.value })}
         />
@@ -202,7 +208,7 @@ function operationFields(
       />
       <FormField
         required
-        label="Retention or legal-hold evidence"
+        label={copy.retentionEvidence}
         value={value.retentionEvidenceRef}
         onChange={(event) => onChange({ ...value, retentionEvidenceRef: event.target.value })}
       />

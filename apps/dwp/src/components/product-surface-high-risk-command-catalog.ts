@@ -32,6 +32,7 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_INTEGRATION_EXECUTE'
   | 'HCM_INTEGRATION_RETRY'
   | 'HCM_INTEGRATION_RECONCILE'
+  | 'DWAION_EMERGENCY_RECOVERY'
   | ApprovalRelease15HighRiskOperation;
 
 export type ProductSurfaceHighRiskCommandCatalogEntry = Readonly<{
@@ -220,5 +221,11 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
       routeContractKey: 'route.hcm.management.integration-execute.action',
+    },
+    {
+      operation: 'DWAION_EMERGENCY_RECOVERY',
+      productKey: 'dwaion',
+      surfaceKey: 'dwaion.management',
+      routeContractKey: 'route.dwaion.management.control-plane-command.action',
     },
   ];

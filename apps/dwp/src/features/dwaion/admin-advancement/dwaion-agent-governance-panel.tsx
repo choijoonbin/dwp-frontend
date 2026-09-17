@@ -1,5 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Ban, FlaskConical, Rocket, RotateCcw, ShieldCheck } from 'lucide-react';
+import {
+  Ban,
+  FileSignature,
+  FlaskConical,
+  Rocket,
+  RotateCcw,
+  Save,
+  ShieldCheck,
+} from 'lucide-react';
 import { ActionButton, FormField, SelectField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -32,6 +40,14 @@ type AgentDraft = {
   memoryPolicy: 'DISABLED' | 'SESSION' | 'SCOPED';
 };
 
+type AgentCommandKind =
+  | 'AGENT_DRAFT_SAVE'
+  | 'AGENT_EVALUATE'
+  | 'AGENT_EVALUATION_CERT_SIGN'
+  | 'AGENT_PROMOTE'
+  | 'AGENT_ROLLBACK'
+  | 'AGENT_KILL_SWITCH';
+
 const EMPTY_DRAFT: AgentDraft = {
   allowedWork: '',
   prohibitedWork: '',
@@ -63,19 +79,10 @@ export function DwaionAgentGovernancePanel({
   );
   const activeDraft = selected ? (draft ?? agentDraft(selected)) : EMPTY_DRAFT;
 
-  const open = (
-    kind: 'AGENT_PROMOTE' | 'AGENT_EVALUATE' | 'AGENT_ROLLBACK' | 'AGENT_KILL_SWITCH'
-  ) => {
+  const open = (kind: AgentCommandKind) => {
     if (!selected) return;
     setIntent({
-      title:
-        kind === 'AGENT_PROMOTE'
-          ? copy.agents.promote
-          : kind === 'AGENT_EVALUATE'
-            ? 'Sandbox evaluation'
-            : kind === 'AGENT_ROLLBACK'
-              ? copy.agents.rollback
-              : copy.agents.kill,
+      title: agentCommandTitle(kind, copy),
       description: copy.command.description,
       kind,
       target: { type: 'AGENT_REVISION', id: `${selected.entryKey}:${selected.revision}` },
@@ -156,7 +163,7 @@ export function DwaionAgentGovernancePanel({
                         {agent.name}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        rev {agent.revision} · {agent.lifecycleState}
+                        {copy.ui.common.revisionPrefix} {agent.revision} · {agent.lifecycleState}
                       </Typography>
                     </Box>
                   </ButtonBase>
@@ -175,14 +182,14 @@ export function DwaionAgentGovernancePanel({
               <FormField
                 multiline
                 minRows={2}
-                label="Allowed work"
+                label={copy.ui.agents.allowedWork}
                 value={activeDraft.allowedWork}
                 onChange={(event) => setDraft({ ...activeDraft, allowedWork: event.target.value })}
               />
               <FormField
                 multiline
                 minRows={2}
-                label="Prohibited work"
+                label={copy.ui.agents.prohibitedWork}
                 value={activeDraft.prohibitedWork}
                 onChange={(event) =>
                   setDraft({ ...activeDraft, prohibitedWork: event.target.value })
@@ -191,7 +198,7 @@ export function DwaionAgentGovernancePanel({
               <FormField
                 multiline
                 minRows={2}
-                label="Semantic version diff"
+                label={copy.ui.agents.semanticVersionDiff}
                 value={activeDraft.semanticDiff}
                 onChange={(event) => setDraft({ ...activeDraft, semanticDiff: event.target.value })}
               />
@@ -203,28 +210,28 @@ export function DwaionAgentGovernancePanel({
                 }}
               >
                 <FormField
-                  label="Input schema"
+                  label={copy.ui.agents.inputSchema}
                   value={activeDraft.inputSchema}
                   onChange={(event) =>
                     setDraft({ ...activeDraft, inputSchema: event.target.value })
                   }
                 />
                 <FormField
-                  label="Output schema"
+                  label={copy.ui.agents.outputSchema}
                   value={activeDraft.outputSchema}
                   onChange={(event) =>
                     setDraft({ ...activeDraft, outputSchema: event.target.value })
                   }
                 />
                 <FormField
-                  label="Source bindings"
+                  label={copy.ui.agents.sourceBindings}
                   value={activeDraft.sourceBindings}
                   onChange={(event) =>
                     setDraft({ ...activeDraft, sourceBindings: event.target.value })
                   }
                 />
                 <FormField
-                  label="Tool bindings"
+                  label={copy.ui.agents.toolBindings}
                   value={activeDraft.toolBindings}
                   onChange={(event) =>
                     setDraft({ ...activeDraft, toolBindings: event.target.value })
@@ -244,15 +251,15 @@ export function DwaionAgentGovernancePanel({
             >
               <Stack direction="row" gap={1} alignItems="center">
                 <FlaskConical size={17} aria-hidden="true" />
-                <Typography variant="subtitle2">Pinned rollout contract</Typography>
+                <Typography variant="subtitle2">{copy.ui.agents.pinnedRolloutContract}</Typography>
               </Stack>
               <FormField
-                label="Model route"
+                label={copy.ui.agents.modelRoute}
                 value={activeDraft.modelRoute}
                 onChange={(event) => setDraft({ ...activeDraft, modelRoute: event.target.value })}
               />
               <SelectField
-                label="Memory policy"
+                label={copy.ui.agents.memoryPolicy}
                 value={activeDraft.memoryPolicy}
                 options={(['DISABLED', 'SESSION', 'SCOPED'] as const).map((value) => ({
                   value,
@@ -265,7 +272,7 @@ export function DwaionAgentGovernancePanel({
               <FormField
                 multiline
                 minRows={2}
-                label="Pinned evaluation evidence"
+                label={copy.ui.agents.pinnedEvaluationEvidence}
                 value={activeDraft.evaluationEvidence}
                 onChange={(event) =>
                   setDraft({ ...activeDraft, evaluationEvidence: event.target.value })
@@ -273,7 +280,7 @@ export function DwaionAgentGovernancePanel({
               />
               <FormField
                 type="number"
-                label="Canary traffic percent"
+                label={copy.ui.agents.canaryTrafficPercent}
                 value={activeDraft.rolloutPercent}
                 onChange={(event) =>
                   setDraft({ ...activeDraft, rolloutPercent: event.target.value })
@@ -282,10 +289,25 @@ export function DwaionAgentGovernancePanel({
               <Divider />
               <ActionButton
                 intent="secondary"
+                startIcon={<Save size={16} />}
+                onClick={() => open('AGENT_DRAFT_SAVE')}
+              >
+                {copy.ui.agents.saveGovernedDraft}
+              </ActionButton>
+              <ActionButton
+                intent="secondary"
                 startIcon={<FlaskConical size={16} />}
                 onClick={() => open('AGENT_EVALUATE')}
               >
-                Sandbox evaluation
+                {copy.ui.agents.sandboxEvaluation}
+              </ActionButton>
+              <ActionButton
+                intent="secondary"
+                startIcon={<FileSignature size={16} />}
+                disabled={!activeDraft.evaluationEvidence.trim()}
+                onClick={() => open('AGENT_EVALUATION_CERT_SIGN')}
+              >
+                {copy.ui.agents.signEvaluationCertificate}
               </ActionButton>
               <ActionButton
                 intent="primary"
@@ -312,7 +334,7 @@ export function DwaionAgentGovernancePanel({
               <Stack direction="row" gap={0.75} alignItems="center">
                 <ShieldCheck size={15} aria-hidden="true" />
                 <Typography variant="caption" color="text.secondary">
-                  expectedVersion · UUID · Maker-Checker · receipt
+                  {copy.ui.agents.governanceEvidenceSummary}
                 </Typography>
               </Stack>
             </Stack>
@@ -346,13 +368,25 @@ function agentDraft(agent: RegistryEntry): AgentDraft {
   };
 }
 
-function commandAfter(
-  kind: 'AGENT_PROMOTE' | 'AGENT_EVALUATE' | 'AGENT_ROLLBACK' | 'AGENT_KILL_SWITCH'
-) {
+function commandAfter(kind: AgentCommandKind) {
+  if (kind === 'AGENT_DRAFT_SAVE') return 'DRAFT_SAVED';
+  if (kind === 'AGENT_EVALUATION_CERT_SIGN') return 'CERTIFICATE_SIGNING_PENDING';
   if (kind === 'AGENT_PROMOTE') return 'CANARY_PENDING';
   if (kind === 'AGENT_EVALUATE') return 'SANDBOX_EVALUATION_PENDING';
   if (kind === 'AGENT_ROLLBACK') return 'ROLLBACK_PENDING';
   return 'KILL_PENDING';
+}
+
+function agentCommandTitle(
+  kind: AgentCommandKind,
+  copy: ReturnType<typeof useDwaionAdminAdvancementCopy>
+) {
+  if (kind === 'AGENT_DRAFT_SAVE') return 'Save governed agent draft';
+  if (kind === 'AGENT_EVALUATION_CERT_SIGN') return 'Sign evaluation certificate';
+  if (kind === 'AGENT_PROMOTE') return copy.agents.promote;
+  if (kind === 'AGENT_EVALUATE') return copy.ui.agents.sandboxEvaluation;
+  if (kind === 'AGENT_ROLLBACK') return copy.agents.rollback;
+  return copy.agents.kill;
 }
 
 function promotionReady(draft: AgentDraft) {

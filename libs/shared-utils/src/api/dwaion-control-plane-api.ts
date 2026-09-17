@@ -2,12 +2,14 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 import {
   productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
   type ProductSurfaceSecureMutationAuthority,
 } from './product-surface-governed-mutation';
 import {
   parseDwaionConnectors,
   parseDwaionEvaluationSafety,
   parseDwaionGovernedCommand,
+  parseDwaionGovernedCommands,
   parseDwaionIncidents,
   parseDwaionModelsRouting,
   parseDwaionOutcomes,
@@ -20,6 +22,7 @@ import type {
   DwaionGovernedCommandRequest,
   DwaionGovernedCommandRestartRequest,
   DwaionGovernedCommandTransitionRequest,
+  DwaionGovernedCommandsSnapshot,
   DwaionIncidentsSnapshot,
   DwaionModelsRoutingSnapshot,
   DwaionOutcomesSnapshot,
@@ -73,10 +76,14 @@ export async function createDwaionGovernedCommand(
   request: DwaionGovernedCommandRequest,
   authority: ProductSurfaceSecureMutationAuthority
 ): Promise<DwaionGovernedCommand> {
+  const mutationConfig =
+    request.kind === 'EMERGENCY_RECOVERY'
+      ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
+      : productSurfaceGovernedMutationConfig(authority);
   const response = await axiosInstance.post<
     ApiResponse<DwaionGovernedCommand>,
     DwaionGovernedCommandRequest
-  >(`${BASE_PATH}/commands`, request, productSurfaceGovernedMutationConfig(authority));
+  >(`${BASE_PATH}/commands`, request, mutationConfig);
   return parseDwaionGovernedCommand(response.data.data);
 }
 
@@ -85,6 +92,22 @@ export async function getDwaionGovernedCommand(commandId: string): Promise<Dwaio
     `${BASE_PATH}/commands/${encodeURIComponent(commandId)}`
   );
   return parseDwaionGovernedCommand(response.data.data);
+}
+
+export async function getDwaionGovernedCommands(filters?: {
+  state?: DwaionGovernedCommand['state'];
+  limit?: number;
+}): Promise<DwaionGovernedCommandsSnapshot> {
+  const search = new URLSearchParams();
+  if (filters?.state) search.set('state', filters.state);
+  const limit =
+    filters?.limit == null ? undefined : Math.max(1, Math.min(100, Math.trunc(filters.limit)));
+  if (limit != null) search.set('limit', String(limit));
+  const suffix = search.size > 0 ? `?${search.toString()}` : '';
+  const response = await axiosInstance.get<ApiResponse<DwaionGovernedCommandsSnapshot>>(
+    `${BASE_PATH}/commands${suffix}`
+  );
+  return parseDwaionGovernedCommands(response.data.data, filters?.state, limit);
 }
 
 export async function decideDwaionGovernedCommand(
