@@ -1,9 +1,18 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, Download, Eye, LockKeyhole, RefreshCw, RotateCcw } from 'lucide-react';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  Clock3,
+  Download,
+  Eye,
+  LockKeyhole,
+  RefreshCw,
+  RotateCcw,
+  ShieldCheck,
+} from 'lucide-react';
+import { ActionButton, InlineFeedback, SelectField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -31,6 +40,15 @@ import type {
   MailDeliveryAuditPage,
   MailDeliveryRecoveryEvidence,
 } from './mail-admin-operations-model';
+import type { MailDeliveryAuditFilters } from './mail-delivery-audit-filters';
+
+type RecoveryReviewItem = MailDeliveryRecoveryEvidence &
+  Partial<
+    Pick<
+      MailDeliveryAuditPage['items'][number],
+      'safeResourceRef' | 'stage' | 'accountName' | 'providerType' | 'cancelCapability'
+    >
+  >;
 
 const DELIVERY_STAGE_LABELS: Readonly<Record<string, readonly [string, string]>> = {
   RECEIVED: ['received', 'Request received'],
@@ -88,29 +106,45 @@ export function DeliveryAuditSurface({
   page,
   auditExport,
   evidence,
+  filters,
   canReadAudit,
-  canRecover,
+  canRevealAudit,
+  canReconcile,
+  canRetry,
+  canCancel,
   canExport,
   now,
   busyAction,
   onReconcile,
   onRetry,
   onCancel,
+  onFiltersChange,
   onExport,
+  onApproveExport,
+  onRefreshExport,
+  onDownloadExport,
 }: {
   overview: MailAdminOverview;
   page?: MailDeliveryAuditPage;
   auditExport?: MailAuditExport;
   evidence?: readonly MailDeliveryRecoveryEvidence[];
+  filters?: MailDeliveryAuditFilters;
   canReadAudit: boolean;
-  canRecover: boolean;
+  canRevealAudit: boolean;
+  canReconcile: boolean;
+  canRetry: boolean;
+  canCancel: boolean;
   canExport: boolean;
   now: number;
   busyAction?: string | null;
   onReconcile?: (deliveryId: string) => void;
   onRetry?: (deliveryId: string) => void;
   onCancel?: (deliveryId: string) => void;
+  onFiltersChange?: (filters: MailDeliveryAuditFilters) => void;
   onExport?: () => void;
+  onApproveExport?: (exportId: string) => void;
+  onRefreshExport?: (exportId: string) => void;
+  onDownloadExport?: (exportId: string) => void;
 }) {
   const { t } = useTranslation('mail');
   const translatedLabel = (
@@ -146,27 +180,67 @@ export function DeliveryAuditSurface({
       : t('admin.operationsWorkspace.a06.retryEvidenceReady', {
           defaultValue: 'Retry safety evidence is current.',
         });
-  const [filter, setFilter] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const authorizedPage = canReadAudit ? page : undefined;
-  const authorizedEvidence = canReadAudit ? evidence : undefined;
+  const [pendingRecovery, setPendingRecovery] = useState<{
+    action: 'retry' | 'cancel';
+    item: RecoveryReviewItem;
+  } | null>(null);
+  const canViewRecoveryQueue = canReadAudit || canReconcile || canRetry || canCancel;
+  const authorizedPage = canViewRecoveryQueue ? page : undefined;
+  const authorizedEvidence = canViewRecoveryQueue ? evidence : undefined;
   const items = authorizedPage?.items ?? [];
-  const visible = items.filter(
-    (item) =>
-      !filter ||
-      `${item.safeResourceRef} ${item.correlationId} ${item.state}`
-        .toLowerCase()
-        .includes(filter.toLowerCase())
+  const pendingRecoveryCurrentItem: RecoveryReviewItem | null = pendingRecovery
+    ? authorizedPage
+      ? (authorizedPage.items.find((item) => item.deliveryId === pendingRecovery.item.deliveryId) ??
+        null)
+      : (authorizedEvidence?.find((item) => item.deliveryId === pendingRecovery.item.deliveryId) ??
+        null)
+    : null;
+  const pendingRecoveryItem = pendingRecoveryCurrentItem ?? pendingRecovery?.item ?? null;
+  const pendingRecoveryEnabled = Boolean(
+    pendingRecovery &&
+    pendingRecoveryCurrentItem &&
+    (pendingRecovery.action === 'retry'
+      ? canRetry &&
+        getMailDeliveryRecoveryAvailability(pendingRecoveryCurrentItem, now).retryEnabled &&
+        onRetry
+      : canCancel && canCancelMailDelivery(pendingRecoveryCurrentItem) && onCancel)
   );
+  const activeFilters: MailDeliveryAuditFilters = filters ?? {
+    page: authorizedPage?.page ?? 0,
+    pageSize: authorizedPage?.pageSize ?? 50,
+  };
+  const setFilter = (updates: Partial<MailDeliveryAuditFilters>, resetPage = true) =>
+    onFiltersChange?.({
+      ...activeFilters,
+      ...updates,
+      page: resetPage ? 0 : (updates.page ?? activeFilters.page),
+    });
+  const filterChips = [
+    canRevealAudit && activeFilters.query ? ['query', activeFilters.query] : null,
+    canRevealAudit && activeFilters.accountId ? ['accountId', activeFilters.accountId] : null,
+    canRevealAudit && activeFilters.provider
+      ? ['provider', providerLabel(activeFilters.provider)]
+      : null,
+    activeFilters.command ? ['command', commandLabel(activeFilters.command)] : null,
+    activeFilters.state ? ['state', stageLabel(activeFilters.state)] : null,
+    activeFilters.dateFrom ? ['dateFrom', activeFilters.dateFrom] : null,
+    activeFilters.dateTo ? ['dateTo', activeFilters.dateTo] : null,
+  ].filter((item): item is [string, string] => Boolean(item));
   const selected = items.find((item) => item.deliveryId === selectedId);
+  const auditExportExpiresAt = auditExport ? Date.parse(auditExport.expiresAt) : Number.NaN;
+  const auditExportExpired = Boolean(
+    auditExport && (!Number.isFinite(auditExportExpiresAt) || auditExportExpiresAt <= now)
+  );
+  const pendingRecoveryIsCancel = pendingRecovery?.action === 'cancel';
   return (
     <Stack spacing={2.5}>
       {!authorizedPage ? (
         <InlineFeedback severity="warning">
-          {canReadAudit
+          {canViewRecoveryQueue
             ? t('admin.operationsWorkspace.a06.aggregateOnly', {
                 defaultValue:
-                  'Message-level command, provider, and audit evidence could not be loaded. Recovery actions remain evidence-gated.',
+                  'The redacted recovery queue could not be loaded. Recovery actions remain evidence-gated.',
               })
             : t('admin.operationsWorkspace.a06.auditReadRequired', {
                 defaultValue:
@@ -191,56 +265,254 @@ export function DeliveryAuditSurface({
         }
       >
         {canExport && auditExport ? (
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={1.25}
-            alignItems={{ xs: 'stretch', sm: 'center' }}
-            sx={{ p: 2 }}
-          >
-            <Download size={17} />
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="body2" fontWeight="fontWeightBold">
-                {t('admin.operationsWorkspace.a06.exportReady', {
-                  defaultValue: 'Delivery evidence export',
-                })}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t('admin.operationsWorkspace.a06.exportExpiry', {
-                  defaultValue: 'Available until {{time}}',
-                  time: auditExport.expiresAt ?? '',
-                })}
-              </Typography>
-            </Box>
-            <StateChip label={auditExport.state} />
-            {auditExport.state === 'READY' && auditExport.downloadUrl ? (
-              <ActionButton
-                component="a"
-                href={auditExport.downloadUrl}
-                intent="primary"
-                size="small"
+          <Stack spacing={1.25} sx={{ p: 2 }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1.25}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+            >
+              <ShieldCheck size={17} />
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="fontWeightBold">
+                  {t('admin.operationsWorkspace.a06.exportReady', {
+                    defaultValue: 'Delivery evidence export',
+                  })}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {auditExport.exportId} · {auditExport.distinctApproverCount}/
+                  {auditExport.requiredApprovals}{' '}
+                  {t('admin.operationsWorkspace.a06.approvals', { defaultValue: 'approvals' })}
+                </Typography>
+              </Box>
+              <StateChip label={auditExport.approvalState} />
+              <StateChip label={auditExport.state} />
+            </Stack>
+            {canRevealAudit ? (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ overflowWrap: 'anywhere' }}
               >
-                {t('admin.operationsWorkspace.a06.download', { defaultValue: 'Download' })}
-              </ActionButton>
+                {t('admin.operationsWorkspace.a06.exportSnapshot', {
+                  defaultValue: 'Filter snapshot: {{filters}}',
+                  filters: JSON.stringify(auditExport.filters),
+                })}
+              </Typography>
+            ) : (
+              <Typography variant="caption" color="text.secondary">
+                {t('admin.operationsWorkspace.a06.sensitiveMetadataRestricted', {
+                  defaultValue: 'Sensitive audit metadata requires reveal permission.',
+                })}
+              </Typography>
+            )}
+            {canRevealAudit ? (
+              <>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ overflowWrap: 'anywhere' }}
+                >
+                  {t('admin.operationsWorkspace.a06.exportWatermarkExpiry', {
+                    defaultValue: 'Watermark {{watermark}} · expires {{time}}',
+                    watermark: auditExport.watermark,
+                    time: auditExport.expiresAt,
+                  })}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ overflowWrap: 'anywhere' }}
+                >
+                  {t('admin.operationsWorkspace.a06.exportPayloadEvidence', {
+                    defaultValue:
+                      '{{count}} items{{truncated}} · snapshot {{cutoff}} · payload {{hash}}',
+                    count: auditExport.itemCount,
+                    truncated: auditExport.truncated ? ' (truncated)' : '',
+                    cutoff: auditExport.snapshotCutoff,
+                    hash: auditExport.payloadSha256,
+                  })}
+                </Typography>
+              </>
             ) : null}
+            {auditExportExpired ? (
+              <InlineFeedback severity="warning">
+                {t('admin.operationsWorkspace.a06.exportExpired', {
+                  defaultValue:
+                    'This export expired. Refresh or create a new evidence export before downloading.',
+                })}
+              </InlineFeedback>
+            ) : null}
+            {auditExport.approvals.map((approval) => (
+              <Typography key={approval.approvalId} variant="caption" color="text.secondary">
+                {t('admin.operationsWorkspace.a06.exportApprovalEvidence', {
+                  defaultValue: 'Approved by user {{userId}} at {{time}}',
+                  userId: approval.approverUserId,
+                  time: approval.decidedAt,
+                })}
+              </Typography>
+            ))}
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} justifyContent="flex-end">
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<RefreshCw size={15} />}
+                disabled={!onRefreshExport}
+                onClick={() => onRefreshExport?.(auditExport.exportId)}
+              >
+                {t('actions.refresh')}
+              </ActionButton>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                loading={busyAction === 'approve-audit-export'}
+                disabled={!onApproveExport || auditExport.approvalState === 'APPROVED'}
+                onClick={() => onApproveExport?.(auditExport.exportId)}
+              >
+                {t('admin.operationsWorkspace.a06.approveExport', {
+                  defaultValue: 'Approve export',
+                })}
+              </ActionButton>
+              {auditExport.approvalState === 'APPROVED' &&
+              auditExport.state === 'READY' &&
+              auditExport.downloadUrl ? (
+                <ActionButton
+                  intent="primary"
+                  size="small"
+                  startIcon={<Download size={15} />}
+                  loading={busyAction === 'download-audit-export'}
+                  disabled={!onDownloadExport || auditExportExpired}
+                  onClick={() => onDownloadExport?.(auditExport.exportId)}
+                >
+                  {t('admin.operationsWorkspace.a06.download', { defaultValue: 'Download' })}
+                </ActionButton>
+              ) : null}
+            </Stack>
           </Stack>
         ) : null}
         {canExport && auditExport ? <Divider /> : null}
-        <Box sx={{ p: 2 }}>
-          <TextField
-            fullWidth
-            size="small"
-            label={t('admin.operationsWorkspace.a06.filter', {
-              defaultValue: 'Filter safe reference, correlation ID, or state',
-            })}
-            value={filter}
-            onChange={(event) => setFilter(event.target.value)}
-          />
-        </Box>
+        <Stack spacing={1.25} sx={{ p: 2 }}>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+            {canRevealAudit ? (
+              <>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label={t('admin.operationsWorkspace.a06.filter', {
+                    defaultValue: 'Safe reference or correlation ID',
+                  })}
+                  value={activeFilters.query ?? ''}
+                  onChange={(event) => setFilter({ query: event.target.value || undefined })}
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  label={t('admin.operationsWorkspace.a06.account', {
+                    defaultValue: 'Account ID',
+                  })}
+                  value={activeFilters.accountId ?? ''}
+                  onChange={(event) => setFilter({ accountId: event.target.value || undefined })}
+                />
+                <SelectField<string>
+                  size="small"
+                  label={t('admin.operationsWorkspace.a06.provider', { defaultValue: 'Provider' })}
+                  value={activeFilters.provider ?? ''}
+                  options={[
+                    {
+                      value: '',
+                      label: t('admin.operationsWorkspace.a06.allProviders', {
+                        defaultValue: 'All providers',
+                      }),
+                    },
+                    ...overview.providerCatalog.map((provider) => ({
+                      value: provider.providerType,
+                      label: provider.name,
+                    })),
+                  ]}
+                  onValueChange={(provider) => setFilter({ provider: provider || undefined })}
+                />
+              </>
+            ) : null}
+            <SelectField<string>
+              size="small"
+              label={t('admin.operationsWorkspace.a06.stateFilter', { defaultValue: 'State' })}
+              value={activeFilters.state ?? ''}
+              options={[
+                {
+                  value: '',
+                  label: t('admin.operationsWorkspace.a06.allStates', {
+                    defaultValue: 'All states',
+                  }),
+                },
+                ...[
+                  'QUEUED',
+                  'ACCEPTED_BY_PROVIDER',
+                  'DELIVERED_CONFIRMED',
+                  'BOUNCED',
+                  'FAILED',
+                  'UNKNOWN',
+                ].map((state) => ({
+                  value: state,
+                  label: stageLabel(state),
+                })),
+              ]}
+              onValueChange={(state) => setFilter({ state: state || undefined })}
+            />
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            <SelectField<string>
+              size="small"
+              label={t('admin.operationsWorkspace.a06.command', { defaultValue: 'Command' })}
+              value={activeFilters.command ?? ''}
+              options={[
+                {
+                  value: '',
+                  label: t('admin.operationsWorkspace.a06.allCommands', {
+                    defaultValue: 'All commands',
+                  }),
+                },
+                { value: 'SEND', label: commandLabel('SEND') },
+              ]}
+              onValueChange={(command) =>
+                setFilter({ command: command === 'SEND' ? 'SEND' : undefined })
+              }
+            />
+            <TextField
+              size="small"
+              type="date"
+              label={t('admin.operationsWorkspace.a06.dateFrom', { defaultValue: 'From date' })}
+              slotProps={{ inputLabel: { shrink: true } }}
+              value={activeFilters.dateFrom ?? ''}
+              onChange={(event) => setFilter({ dateFrom: event.target.value || undefined })}
+            />
+            <TextField
+              size="small"
+              type="date"
+              label={t('admin.operationsWorkspace.a06.dateTo', { defaultValue: 'To date' })}
+              slotProps={{ inputLabel: { shrink: true } }}
+              value={activeFilters.dateTo ?? ''}
+              onChange={(event) => setFilter({ dateTo: event.target.value || undefined })}
+            />
+          </Stack>
+          {filterChips.length ? (
+            <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+              {filterChips.map(([key, label]) => (
+                <Chip key={key} size="small" variant="outlined" label={label} />
+              ))}
+              <ActionButton
+                size="small"
+                intent="quiet"
+                onClick={() => onFiltersChange?.({ page: 0, pageSize: activeFilters.pageSize })}
+              >
+                {t('admin.operationsWorkspace.a06.clearFilters', { defaultValue: 'Clear filters' })}
+              </ActionButton>
+            </Stack>
+          ) : null}
+        </Stack>
         <Divider />
         {authorizedPage ? (
           <>
-            {visible.length ? (
-              visible.map((item, index) => {
+            {items.length ? (
+              items.map((item, index) => {
                 const availability = getMailDeliveryRecoveryAvailability(item, now);
                 const cancelEnabled = canCancelMailDelivery(item);
                 return (
@@ -257,16 +529,20 @@ export function DeliveryAuditSurface({
                             {item.safeResourceRef}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {commandLabel(item.commandType)} · {item.accountName} ·{' '}
-                            {providerLabel(item.providerType)}
+                            {commandLabel(item.commandType)}
+                            {canRevealAudit
+                              ? ` · ${item.accountName} · ${providerLabel(item.providerType)}`
+                              : ''}
                           </Typography>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{ display: 'block', overflowWrap: 'anywhere' }}
-                          >
-                            {item.correlationId}
-                          </Typography>
+                          {canRevealAudit ? (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ display: 'block', overflowWrap: 'anywhere' }}
+                            >
+                              {item.correlationId}
+                            </Typography>
+                          ) : null}
                         </Box>
                         <StateChip label={item.stage} displayLabel={stageLabel(item.stage)} />
                         <Typography variant="caption">
@@ -298,7 +574,7 @@ export function DeliveryAuditSurface({
                           intent="secondary"
                           size="small"
                           loading={busyAction === `reconcile:${item.deliveryId}`}
-                          disabled={!canRecover || !availability.reconcileEnabled || !onReconcile}
+                          disabled={!canReconcile || !availability.reconcileEnabled || !onReconcile}
                           startIcon={<RefreshCw size={15} />}
                           onClick={() => onReconcile?.(item.deliveryId)}
                         >
@@ -310,9 +586,9 @@ export function DeliveryAuditSurface({
                           intent="primary"
                           size="small"
                           loading={busyAction === `retry:${item.deliveryId}`}
-                          disabled={!canRecover || !availability.retryEnabled || !onRetry}
+                          disabled={!canRetry || !availability.retryEnabled || !onRetry}
                           startIcon={<RotateCcw size={15} />}
-                          onClick={() => onRetry?.(item.deliveryId)}
+                          onClick={() => setPendingRecovery({ action: 'retry', item })}
                         >
                           {t('delivery.retry')}
                         </ActionButton>
@@ -320,8 +596,8 @@ export function DeliveryAuditSurface({
                           intent="danger"
                           size="small"
                           loading={busyAction === `cancel:${item.deliveryId}`}
-                          disabled={!canRecover || !cancelEnabled || !onCancel}
-                          onClick={() => onCancel?.(item.deliveryId)}
+                          disabled={!canCancel || !cancelEnabled || !onCancel}
+                          onClick={() => setPendingRecovery({ action: 'cancel', item })}
                         >
                           {t('actions.cancel')}
                         </ActionButton>
@@ -339,6 +615,48 @@ export function DeliveryAuditSurface({
                 </Typography>
               </Box>
             )}
+            <Divider />
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+              justifyContent="space-between"
+              sx={{ p: 2 }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                {t('admin.operationsWorkspace.a06.pagination', {
+                  defaultValue: '{{from}}–{{to}} of {{total}} records',
+                  from:
+                    authorizedPage.page * authorizedPage.pageSize + (authorizedPage.total ? 1 : 0),
+                  to: Math.min(
+                    (authorizedPage.page + 1) * authorizedPage.pageSize,
+                    authorizedPage.total
+                  ),
+                  total: authorizedPage.total,
+                })}
+              </Typography>
+              <Stack direction="row" spacing={1}>
+                <ActionButton
+                  size="small"
+                  intent="secondary"
+                  disabled={!onFiltersChange || authorizedPage.page <= 0}
+                  onClick={() => setFilter({ page: Math.max(0, authorizedPage.page - 1) }, false)}
+                >
+                  {t('admin.operationsWorkspace.a06.previous', { defaultValue: 'Previous' })}
+                </ActionButton>
+                <ActionButton
+                  size="small"
+                  intent="secondary"
+                  disabled={
+                    !onFiltersChange ||
+                    (authorizedPage.page + 1) * authorizedPage.pageSize >= authorizedPage.total
+                  }
+                  onClick={() => setFilter({ page: authorizedPage.page + 1 }, false)}
+                >
+                  {t('admin.operationsWorkspace.a06.next', { defaultValue: 'Next' })}
+                </ActionButton>
+              </Stack>
+            </Stack>
           </>
         ) : authorizedEvidence?.length ? (
           authorizedEvidence.map((item, index) => {
@@ -363,7 +681,7 @@ export function DeliveryAuditSurface({
                   </Typography>
                   <ActionButton
                     intent="secondary"
-                    disabled={!canRecover || !availability.reconcileEnabled || !onReconcile}
+                    disabled={!canReconcile || !availability.reconcileEnabled || !onReconcile}
                     onClick={() => onReconcile?.(item.deliveryId)}
                   >
                     {t('admin.operationsWorkspace.a06.reconcile', {
@@ -372,8 +690,8 @@ export function DeliveryAuditSurface({
                   </ActionButton>
                   <ActionButton
                     intent="primary"
-                    disabled={!canRecover || !availability.retryEnabled || !onRetry}
-                    onClick={() => onRetry?.(item.deliveryId)}
+                    disabled={!canRetry || !availability.retryEnabled || !onRetry}
+                    onClick={() => setPendingRecovery({ action: 'retry', item })}
                   >
                     {t('delivery.retry')}
                   </ActionButton>
@@ -429,11 +747,12 @@ export function DeliveryAuditSurface({
                   <Clock3 size={17} />
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="body2" fontWeight="fontWeightBold">
-                      {stageLabel(event.stage)} · {sourceLabel(event.source)}
+                      {stageLabel(event.stage)}
+                      {canRevealAudit ? ` · ${sourceLabel(event.source)}` : ''}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       <FormattedTime value={event.at} />
-                      {event.code
+                      {canRevealAudit && event.code
                         ? ` · ${t('admin.operationsWorkspace.a06.providerDetail', {
                             defaultValue:
                               'Additional provider detail is available in the evidence export.',
@@ -451,6 +770,135 @@ export function DeliveryAuditSurface({
         <DialogActions>
           <ActionButton intent="primary" onClick={() => setSelectedId(null)}>
             {t('actions.close', { defaultValue: 'Close' })}
+          </ActionButton>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={Boolean(pendingRecovery)}
+        onClose={() => setPendingRecovery(null)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>
+          {t(
+            pendingRecoveryIsCancel
+              ? 'admin.operationsWorkspace.a06.cancelReviewTitle'
+              : 'admin.operationsWorkspace.a06.retryReviewTitle',
+            {
+              defaultValue: pendingRecoveryIsCancel
+                ? 'Review delivery cancellation'
+                : 'Review delivery retry',
+            }
+          )}
+        </DialogTitle>
+        <DialogContent>
+          {pendingRecovery && pendingRecoveryItem ? (
+            <Stack spacing={1.5} sx={{ pt: 0.5 }}>
+              <InlineFeedback severity="warning">
+                {t('admin.operationsWorkspace.a06.recoveryReviewWarning', {
+                  defaultValue:
+                    'This changes the current delivery command. Confirm the scope, current evidence, and duplicate risk before continuing.',
+                })}
+              </InlineFeedback>
+              {!pendingRecoveryCurrentItem ? (
+                <InlineFeedback severity="warning">
+                  {t('admin.operationsWorkspace.a06.recoveryEvidenceChanged', {
+                    defaultValue:
+                      'Current recovery evidence is no longer available. Close this review, refresh, and review the action again.',
+                  })}
+                </InlineFeedback>
+              ) : null}
+              <Facts
+                items={[
+                  {
+                    label: t('admin.operationsWorkspace.a06.reviewScope', {
+                      defaultValue: 'Delivery scope',
+                    }),
+                    value:
+                      pendingRecoveryItem.safeResourceRef ??
+                      t('admin.operationsWorkspace.a06.deliveryRecord', {
+                        defaultValue: 'Delivery record',
+                      }),
+                  },
+                  {
+                    label: t('admin.operationsWorkspace.a06.reviewState', {
+                      defaultValue: 'Current state',
+                    }),
+                    value: stageLabel(pendingRecoveryItem.stage ?? pendingRecoveryItem.state),
+                  },
+                  {
+                    label: t('admin.operationsWorkspace.a06.reviewEligibility', {
+                      defaultValue: 'Retry eligibility',
+                    }),
+                    value: pendingRecoveryItem.retryEligibility,
+                  },
+                  {
+                    label: t('admin.operationsWorkspace.a06.reviewDuplicateRisk', {
+                      defaultValue: 'Duplicate risk evidence',
+                    }),
+                    value: `${pendingRecoveryItem.providerDisposition} · ${pendingRecoveryItem.idempotencyState}`,
+                  },
+                  {
+                    label: t('admin.operationsWorkspace.a06.reviewAccess', {
+                      defaultValue: 'Current action access',
+                    }),
+                    value:
+                      pendingRecovery.action === 'retry'
+                        ? canRetry
+                          ? 'RETRY_GRANTED'
+                          : 'UNAVAILABLE'
+                        : canCancel
+                          ? 'CANCEL_GRANTED'
+                          : 'UNAVAILABLE',
+                  },
+                  {
+                    label: t('admin.operationsWorkspace.a06.reviewEvidence', {
+                      defaultValue: 'Current recovery evidence',
+                    }),
+                    value: blockerLabel(
+                      getMailDeliveryRecoveryAvailability(pendingRecoveryItem, now).blockedReason
+                    ),
+                  },
+                ]}
+              />
+              {canRevealAudit &&
+              pendingRecoveryItem.accountName &&
+              pendingRecoveryItem.providerType ? (
+                <Typography variant="caption" color="text.secondary">
+                  {pendingRecoveryItem.accountName} ·{' '}
+                  {providerLabel(pendingRecoveryItem.providerType)}
+                </Typography>
+              ) : null}
+            </Stack>
+          ) : null}
+        </DialogContent>
+        <DialogActions sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' }, gap: 1 }}>
+          <ActionButton intent="quiet" onClick={() => setPendingRecovery(null)}>
+            {t('actions.cancel')}
+          </ActionButton>
+          <ActionButton
+            intent={pendingRecoveryIsCancel ? 'danger' : 'primary'}
+            loading={Boolean(
+              pendingRecovery &&
+              busyAction === `${pendingRecovery.action}:${pendingRecoveryItem?.deliveryId}`
+            )}
+            disabled={!pendingRecoveryEnabled}
+            onClick={() => {
+              if (!pendingRecovery || !pendingRecoveryCurrentItem || !pendingRecoveryEnabled)
+                return;
+              if (pendingRecovery.action === 'retry')
+                onRetry?.(pendingRecoveryCurrentItem.deliveryId);
+              else onCancel?.(pendingRecoveryCurrentItem.deliveryId);
+              setPendingRecovery(null);
+            }}
+          >
+            {pendingRecoveryIsCancel
+              ? t('admin.operationsWorkspace.a06.confirmCancel', {
+                  defaultValue: 'Confirm cancellation',
+                })
+              : t('admin.operationsWorkspace.a06.confirmRetry', {
+                  defaultValue: 'Confirm retry',
+                })}
           </ActionButton>
         </DialogActions>
       </Dialog>

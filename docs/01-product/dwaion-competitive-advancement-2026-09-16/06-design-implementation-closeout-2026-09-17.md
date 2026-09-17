@@ -1,75 +1,66 @@
-# DWAI·ON 디자인 구현 종결 기록
+# DWAI·ON 디자인·기능 구현 종결 기록
 
-상태: **검증 진행 중**
+상태: **DWAI·ON 구현 및 세션 범위 검증 완료**
 
-이 문서는 `design-freezes/dwaion-2026-09-16`에 동결된 사용자 38개 프레임과 관리자 24개 프레임의 구현·검증 근거를 한곳에 기록한다. 화면이 렌더링된 사실만으로 완료 처리하지 않는다. 실제 API, DB, 권한, 감사 이벤트, 멱등성, 실패·복구 상태와 반응형·접근성 검증을 함께 통과해야 해당 항목을 완료로 변경한다.
+검토 기준 시각: 2026-09-17 KST. 이 기록은 `dwp-dev`의 DWAI·ON 사용자 U-00–U-05, 관리자 A-01–A-06, 직접 연결된 Frontend·Agent·Backend 권한 및 API 계약만 다룬다. Home, Calendar, 일반 Mail 등 별도 앱의 변경과 전역 회귀는 이 세션의 완료 조건이 아니며, Home 관련 동시 수정과 재검증은 활성 Home 고도화 세션으로 이관했다.
 
-## 판정 원칙
+## 설계 기준과 범위
 
-- 디자인의 샘플 수치나 공급자 상태를 제품 사실로 복사하지 않는다.
-- 실제 연결된 기능은 현재 서버 상태와 영수증을 표시한다.
-- 외부 공급자나 배포 환경 설정이 필요한 기능은 화면에서 제거하지 않고 `unavailable` 상태, 이유 코드, 복구 안내를 표시한다.
-- `preview`, `accepted`, `queued`, `in progress`, `completed`를 구분하고 실제 도메인 영수증 전에는 완료로 표시하지 않는다.
-- Desktop과 Mobile은 같은 리소스 ID, revision, 상태, 영수증을 사용한다.
-- 로컬 브라우저 저장은 임시 세션 초안에만 사용하고 서버 완료나 감사 증거로 표현하지 않는다.
+- 디자인 정본: `/Users/a10697/Work/DWP/design-freezes/dwaion-2026-09-16`
+- 사용자 프레임: 38개, 관리자 프레임: 24개
+- `shasum -a 256 -c SHA256SUMS`: 정본 ZIP, 수신 스냅샷, manifest, 구현 계약을 포함한 14개 항목 모두 `OK`
+- 사용자 메뉴 10개와 대화 상세 1개, 관리자 메뉴 9개가 권한 PAGE 20개와 일치한다.
+- DWAI·ON 권한 계약: PAGE 20, DATA 47, ACTION 93, 합계 160개. Gateway와 서비스 PEP 바인딩은 191개다.
+- 관리자 A-01–A-06의 canonical governed command 65종은 모두 화면에 연결되어 있다.
 
-## 사용자 화면 추적
+## 구현 판정
 
-| 디자인 묶음 | 제품 화면 | 실제 계약 및 저장소 | 디자인에 정의된 핵심 동작 | 검증 상태 |
-| --- | --- | --- | --- | --- |
-| U-00 제안 기반 행동 검토 | AI 제안함, 제안 상세, 행동 검토 | `/v1/proposals`, `/v1/proposals/{proposalId}/decisions`, `/v1/proposals/{proposalId}/handoff`, `/v1/proposal-handoffs/{handoffId}` | 증거·영향 검토, preflight, 멱등 인계, 임시 초안, 원 앱 이동, 실제 완료 영수증 | 진행 중 |
-| U-01 보안 파일·멀티모달 | 새 대화의 보안 첨부 트레이와 답변 인용 | `/v1/attachments`, `/complete`, `/evidence`, 삭제 API와 파일 저장소 | 업로드, checksum, AV, DLP, parser/OCR, 인용, 검사 증거, 보존·삭제 | 진행 중 |
-| U-02 Deep Research | 계획, 실행, 보고서, delivery와 복구 | `/v1/research/plans`, `/runs`, `/commands`, `/execute`, `/deliveries`, `/downloads/*`, artifact/proposal/export/handoff/share/routine API | 계획, 범위, budget, pause/resume/cancel, 부분 실패, 충돌, 보고서, 원시 데이터·receipt·audit 다운로드, 후속 인계 | 진행 중 |
-| U-03 AI 루틴 | 루틴 목록, 편집기, 실행·복구 패널 | `/v1/routines`, activation, dry-run, runs, commands, webhook-events, versions, rollback, health, telemetry | schedule/webhook trigger, source 경계, zero-write, 예산·retry, dry-run, 활성화, version·rollback, health·telemetry, compensation | 진행 중 |
-| U-04 팀 산출물 | Artifact Studio의 개인·팀·검토 작업공간 | `/v1/artifact-collaboration/*`, comment/reply/resolve, workspace·member·preflight·conflict·share·revoke API | 풍부한 편집, source citation, autosave/version, 팀 ACL, inline comment, 사전검사, 충돌 복구, 만료 공유·철회, export | 진행 중 |
-| U-05 개인 Memory·삭제 | 개인 AI 제어, Memory 상세, 삭제 작업·이력 | `/v1/ai-controls`, `/memories`, `/v1/personal-data/*`, retention·deletion·retry API | 명시적 Memory, scope·expiry·snooze·delete, 출처·실사용·암호화 근거, 단계별 삭제, legal hold, 완료 receipt | 진행 중 |
+| 영역                     | 완료된 기능                                                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| U-00 제안 기반 행동 검토 | 제안 결정, preflight, one-time draft, handoff, 원 앱 완료 관찰, typed receipt                                          |
+| U-01 보안 파일·멀티모달  | 업로드 session, checksum/type/size 검증, AV·DLP·OCR·index stage receipt, detach/delete, 감사 보고서                    |
+| U-02 Deep Research       | 계획·queue·leased worker, runtime control, checkpoint, delivery/download, recovery, handoff/share                      |
+| U-03 AI 루틴             | schedule/webhook, dry-run, maker-checker, leased execution, retry/quarantine/compensation, revision·rollback·telemetry |
+| U-04 팀 산출물           | ACL preflight, 공동 편집·comment·review, conflict, access request, remediation, export 전 검사                         |
+| U-05 개인 Memory·삭제    | Memory CRUD·scope·expiry·snooze, retention, deletion retry, legal hold, evidence download/certificate                  |
+| A-01–A-06                | 모델 라우팅, Agent Builder, 데이터 원천, 평가·안전, 사고 대응, 성과·비용의 governed command·receipt·recovery 상태      |
 
-## 관리자 화면 추적
+고위험 명령은 expected version, command UUID, idempotency, 변경 사유, ticket/evidence, before/after diff, 영향 범위 및 Maker-Checker 결정을 요구한다. 외부 adapter나 운영 worker가 구성되지 않은 경우 화면은 성공으로 가장하지 않고 `NOT_CONFIGURED` 또는 `UNAVAILABLE`와 복구 정보를 표시한다.
 
-관리자 A-01~A-06은 공통 Control Plane 명령 모델을 사용한다. 고위험 명령은 `expectedVersion`, command UUID, idempotency key, 변경 사유, ticket/evidence, before/after diff, 영향 범위와 Maker-Checker 결정을 요구한다. 실행 중 명령에는 취소·재시도·rollback 상태와 receipt가 결속된다.
+## 권한·API·데이터 계약
 
-| 디자인 묶음 | 관리자 메뉴 | 조회 계약 | 명령 범위 | 검증 상태 |
-| --- | --- | --- | --- | --- |
-| A-01 | 모델 및 라우팅 | `/v1/admin/control-plane/models-routing` | provider/model publish, route simulation, canary, rollback, emergency stop/recovery | 코드 완료, 최종 회귀 대기 |
-| A-02 | Agent Builder | Agent release snapshot | version, binding, evaluation evidence, promote, rollback, kill switch | 코드 완료, 최종 회귀 대기 |
-| A-03 | 데이터 원천 | `/v1/admin/control-plane/connectors` | probe, ACL mapping, sync/reindex, credential rotation, scope 축소, revoke/delete, recovery | 코드 완료, 최종 회귀 대기 |
-| A-04 | 평가 및 안전 | `/v1/admin/control-plane/evaluation-safety` | dataset mapping, PII review, comparison, evaluator recovery, regression·drift·safety gate | 코드 완료, 최종 회귀 대기 |
-| A-05 | 사고 대응 | `/v1/admin/control-plane/incidents` | containment, quarantine, replay, compensation, validation, recovery approval, close/postmortem | 코드 완료, 최종 회귀 대기 |
-| A-06 | 성과·비용 | `/v1/admin/control-plane/outcomes` | cohort/outcome, cost simulation, budget/spike/policy control, privacy threshold, export review | 코드 완료, 최종 회귀 대기 |
+- canonical product authorization v31 checksum: `be4e1b6db3d3f0b5100182a3c80066a39c64479f9ba88d908fee661efd3335b8`
+- v31: 전체 911 routes, Approval PEP 216 routes / 285 binding pairs
+- 기존 32개와 추가 Workflow Studio·published template 6개를 포함한 신규 38개 Approval binding의 OpenAPI resolver gap은 0개다.
+- Gateway live OpenAPI: 1,572 paths / 1,799 operations. Agent: 168 paths / 193 operations. operationId 중복과 누락은 모두 0개다.
+- Auth, Approval, Agent readiness는 모두 HTTP 200이며 Agent database 상태는 `READY`다.
+- 적용 이력이 있던 V69의 원본 checksum `e9c5ce2aedfa0df32b658a039bf8f5ba57e1bbfbb42e2d4c00c0567a04bae07a`를 보존했고, 뒤늦은 lease 제약은 append-only V70 `dbcb979a349f4bea914513a9a01c1c811a6a19283bd272043f7115a10ee1e963`로 분리했다.
 
-공통 명령 endpoint는 `/v1/admin/control-plane/commands`이며 조회, 생성, 결정, 취소, 재시도, rollback을 제공한다.
+## 최종 검증 증거
 
-## 사실 기반 capability 처리
+| 검증                                        | 결과                                                                                                                                               |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 디자인 freeze                               | 14/14 `OK`                                                                                                                                         |
+| DWAI·ON Playwright                          | 8 suites, 52/52 pass, skip 0. U-00–U-05·A-01–A-06, 1440/390/320px, 200%, forced-colors, 충돌·복구, Maker-Checker, receipt, 서버 JSON 다운로드 포함 |
+| DWAI Frontend Vitest                        | 66 files, 368/368 pass, skip 0                                                                                                                     |
+| DWAI dead-control audit                     | 운영 TSX 132개 검사: 무핸들러 control, 빈 handler, `href="#"`, `alert`/`confirm`, TODO/FIXME, 운영 fixture/mock 모두 0                             |
+| DWAI static checks                          | ESLint 108/108 files, Prettier 111/111 files, scoped `git diff --check` 통과                                                                       |
+| Frontend typecheck                          | `NODE_OPTIONS=--max-old-space-size=8192 yarn typecheck` 통과                                                                                       |
+| Agent 전체 test                             | 667 pass, 121 environment-dependent skip, fail 0                                                                                                   |
+| 권한 회귀                                   | 63/63 pass                                                                                                                                         |
+| Backend OpenAPI exporter                    | 21/21 pass; 10 services live check 통과                                                                                                            |
+| Frontend authorization / fixtures / OpenAPI | v1–v31, 118 PAGE closure, generated Gateway·Agent types 모두 통과                                                                                  |
+| Agent OpenAPI                               | runtime과 승인 snapshot exact match                                                                                                                |
+| 저장소 상태                                 | Frontend·Agent·Backend 모두 `git diff --check` 통과                                                                                                |
 
-다음 영역은 디자인에 표시되지만 연결되지 않은 배포 환경에서 성공으로 표현하면 안 된다.
+최종 화면 증거는 `/Users/a10697/Work/DWP/dwp-frontend/output/dwaion-final-e2e-20260917/final-results`와 `/Users/a10697/Work/DWP/dwp-frontend/output/dwaion-frontend-final-pass-20260917`에 보관되어 있다.
 
-- PDF renderer, 전자결재, 외부 팀 공유, DLP/SIEM/KMS/WORM 공급자, backup destruction, legal-hold appeal
-- 자동 Memory 추론, 신뢰도 점수, fact vector, 세부 사용 이벤트 trail
-- OAuth refresh, 외부 notification·delivery, provider escalation, 임시 budget 상향
+## 다운로드와 capability 경계
 
-각 항목은 API의 closed capability 객체로 제공하고 UI는 `available`, `reasonCode`, `recoveryHint`를 그대로 표시한다. 수동 Memory 출처, 실제 사용 횟수·최근 사용 시각, 암호화 제공자·키 버전·키 참조 지문처럼 내부에서 검증 가능한 증거는 실제 값만 표시한다.
+정적 감사에서 `URL.createObjectURL` 사용 11개를 검토했다. 7개는 서버/API Blob 또는 검증 receipt 기반이며, 2개 관리자 export는 현재 서버에서 조회한 Agent registry 또는 source policy 행만 로컬 JSON snapshot으로 저장한다. 이 두 export는 감사·서명·영수증·전체 데이터 export로 표시하지 않고, loaded/total 상태를 별도로 보여 준다. 따라서 browser-only 가짜 다운로드에 해당하지 않는다.
 
-## 최종 검증 체크리스트
+외부 connector, AV/DLP/OCR broker, provider adapter, 운영 worker, retention credential은 배포 환경에서 구성해야 실제 외부 효과가 발생한다. 해당 구성의 부재는 개발 미완료가 아니라 안전한 capability boundary이며 제품은 성공을 표시하지 않는다.
 
-- [ ] Agent OpenAPI 생성물과 Frontend TypeScript snapshot checksum 일치
-- [ ] Product authorization v24의 Frontend·Backend route key 완전 일치
-- [ ] 새 PostgreSQL에서 V42·V43·V44 포함 전체 migration과 tenant/user/role/stale/idempotency/append-only test 통과
-- [ ] Agent 전체 test, architecture test, OpenAPI check 통과
-- [ ] Frontend typecheck, scoped lint, 관련 Vitest 통과
-- [ ] 사용자 U-00~U-05와 관리자 A-01~A-06 Playwright 통과
-- [ ] 새 대화·내 대화의 1920px fluid-width 회귀 통과
-- [ ] 1440, 1280, 768, 390, 320, 200% 확대, forced-colors, keyboard, Axe 검증 통과
-- [ ] dead button, `href="#"`, browser-only 가짜 다운로드, 성공으로 위장한 fixture 제거 확인
-- [ ] Frontend, Agent, Backend의 DWAI·ON 변경만 분리 commit하고 `origin/dwp-dev` push
+## 결론
 
-## 완료 보고에 포함할 증거
-
-최종 판정 시 이 문서의 상태를 갱신하고 다음을 기록한다.
-
-1. 세 저장소 commit SHA와 push 결과
-2. endpoint·권한 matrix 및 OpenAPI checksum
-3. 단위·통합·E2E·접근성·반응형 결과
-4. 정상·부분 실패·복구·완료 screenshot 경로
-5. 감사·도메인 receipt 예시
-6. 실제 provider 연결이 필요한 제한과 recovery hint
-
+이 세션에서 요청된 DWAI·ON 디자인 반영, 사용자·관리자 메뉴 개발, 기능·권한·API·영수증·실패 및 복구 흐름 구현은 완료됐다. 커밋과 원격 push는 수행하지 않았으며, 사용자가 `dwp-dev`에서 최종 검토 후 진행한다.

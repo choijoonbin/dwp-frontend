@@ -5,11 +5,13 @@ import { ActionButton, FormDialog, FormField, SelectField } from '@dwp-frontend/
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import type {
   MailActionProposal,
+  MailAccount,
   MailProposalStatus,
   MailProposalType,
 } from '@dwp-frontend/shared-utils';
@@ -17,6 +19,11 @@ import type {
 export type MailProposalFilters = Readonly<{
   status?: MailProposalStatus;
   type?: MailProposalType;
+  accountId?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page: number;
+  pageSize: number;
 }>;
 
 type EditablePayloadValue = boolean | number | string | string[];
@@ -40,11 +47,21 @@ const TYPES: readonly MailProposalType[] = [
 export function mailProposalFiltersFromSearch(params: URLSearchParams): MailProposalFilters {
   const status = params.get('status');
   const type = params.get('type');
+  const page = Number(params.get('page') ?? 0);
+  const pageSize = Number(params.get('pageSize') ?? 20);
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/u;
+  const dateFrom = params.get('dateFrom');
+  const dateTo = params.get('dateTo');
   return {
     ...(STATUSES.includes(status as MailProposalStatus)
       ? { status: status as MailProposalStatus }
       : {}),
     ...(TYPES.includes(type as MailProposalType) ? { type: type as MailProposalType } : {}),
+    ...(params.get('accountId') ? { accountId: params.get('accountId')! } : {}),
+    ...(dateFrom && datePattern.test(dateFrom) ? { dateFrom } : {}),
+    ...(dateTo && datePattern.test(dateTo) ? { dateTo } : {}),
+    page: Number.isInteger(page) && page >= 0 ? page : 0,
+    pageSize: Number.isInteger(pageSize) && pageSize > 0 && pageSize <= 100 ? pageSize : 20,
   };
 }
 
@@ -57,57 +74,148 @@ export function updateMailProposalFilterSearch(
   else next.delete('status');
   if (filters.type) next.set('type', filters.type);
   else next.delete('type');
-  next.delete('proposalId');
+  if (filters.accountId) next.set('accountId', filters.accountId);
+  else next.delete('accountId');
+  if (filters.dateFrom) next.set('dateFrom', filters.dateFrom);
+  else next.delete('dateFrom');
+  if (filters.dateTo) next.set('dateTo', filters.dateTo);
+  else next.delete('dateTo');
+  if (filters.page > 0) next.set('page', String(filters.page));
+  else next.delete('page');
+  if (filters.pageSize !== 20) next.set('pageSize', String(filters.pageSize));
+  else next.delete('pageSize');
   return next;
 }
 
 export function MailProposalFilterControls({
   value,
+  accounts,
   disabled = false,
   onChange,
 }: {
   value: MailProposalFilters;
+  accounts: readonly MailAccount[];
   disabled?: boolean;
   onChange: (filters: MailProposalFilters) => void;
 }) {
   const { t } = useTranslation('mail');
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 2 }}>
-      <SelectField<string>
-        size="small"
-        label={t('proposal.filters.status', { defaultValue: 'Status' })}
-        value={value.status ?? ''}
-        disabled={disabled}
-        options={[
-          { value: '', label: t('proposal.filters.allStatuses', { defaultValue: 'All statuses' }) },
-          ...STATUSES.map((status) => ({
-            value: status,
-            label: t(`proposal.status.${status}`, { defaultValue: status }),
-          })),
-        ]}
-        onValueChange={(status) =>
-          onChange({ ...value, status: (status || undefined) as MailProposalStatus | undefined })
-        }
-      />
-      <SelectField<string>
-        size="small"
-        label={t('proposal.filters.type', { defaultValue: 'Action type' })}
-        value={value.type ?? ''}
-        disabled={disabled}
-        options={[
-          {
-            value: '',
-            label: t('proposal.filters.allTypes', { defaultValue: 'All action types' }),
-          },
-          ...TYPES.map((type) => ({
-            value: type,
-            label: t(`proposal.typeFilter.${type}`, { defaultValue: type }),
-          })),
-        ]}
-        onValueChange={(type) =>
-          onChange({ ...value, type: (type || undefined) as MailProposalType | undefined })
-        }
-      />
+    <Stack spacing={1} sx={{ mt: 2 }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+        <SelectField<string>
+          size="small"
+          label={t('proposal.filters.status', { defaultValue: 'Status' })}
+          value={value.status ?? ''}
+          disabled={disabled}
+          options={[
+            {
+              value: '',
+              label: t('proposal.filters.allStatuses', { defaultValue: 'All statuses' }),
+            },
+            ...STATUSES.map((status) => ({
+              value: status,
+              label: t(`proposal.status.${status}`, { defaultValue: status }),
+            })),
+          ]}
+          onValueChange={(status) =>
+            onChange({
+              ...value,
+              page: 0,
+              status: (status || undefined) as MailProposalStatus | undefined,
+            })
+          }
+        />
+        <SelectField<string>
+          size="small"
+          label={t('proposal.filters.type', { defaultValue: 'Action type' })}
+          value={value.type ?? ''}
+          disabled={disabled}
+          options={[
+            {
+              value: '',
+              label: t('proposal.filters.allTypes', { defaultValue: 'All action types' }),
+            },
+            ...TYPES.map((type) => ({
+              value: type,
+              label: t(`proposal.typeFilter.${type}`, { defaultValue: type }),
+            })),
+          ]}
+          onValueChange={(type) =>
+            onChange({
+              ...value,
+              page: 0,
+              type: (type || undefined) as MailProposalType | undefined,
+            })
+          }
+        />
+        <SelectField<string>
+          size="small"
+          label={t('proposal.filters.account', { defaultValue: 'Source account' })}
+          value={value.accountId ?? ''}
+          disabled={disabled}
+          options={[
+            {
+              value: '',
+              label: t('proposal.filters.allAccounts', { defaultValue: 'All accounts' }),
+            },
+            ...accounts.map((account) => ({
+              value: account.accountId,
+              label: `${account.displayName} · ${account.emailAddress}`,
+            })),
+          ]}
+          onValueChange={(accountId) =>
+            onChange({ ...value, page: 0, accountId: accountId || undefined })
+          }
+        />
+        <FormField
+          size="small"
+          type="date"
+          label={t('proposal.filters.dateFrom', { defaultValue: 'From date' })}
+          value={value.dateFrom ?? ''}
+          disabled={disabled}
+          onChange={(event) =>
+            onChange({ ...value, page: 0, dateFrom: event.target.value || undefined })
+          }
+        />
+        <FormField
+          size="small"
+          type="date"
+          label={t('proposal.filters.dateTo', { defaultValue: 'To date' })}
+          value={value.dateTo ?? ''}
+          disabled={disabled}
+          onChange={(event) =>
+            onChange({ ...value, page: 0, dateTo: event.target.value || undefined })
+          }
+        />
+      </Stack>
+      {(value.status || value.type || value.accountId || value.dateFrom || value.dateTo) && (
+        <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+          {value.status && <Chip size="small" label={t(`proposal.status.${value.status}`)} />}
+          {value.type && <Chip size="small" label={t(`proposal.typeFilter.${value.type}`)} />}
+          {value.accountId && (
+            <Chip
+              size="small"
+              label={
+                accounts.find((account) => account.accountId === value.accountId)?.displayName ??
+                value.accountId
+              }
+            />
+          )}
+          {value.dateFrom && (
+            <Chip size="small" label={`${t('proposal.filters.dateFrom')}: ${value.dateFrom}`} />
+          )}
+          {value.dateTo && (
+            <Chip size="small" label={`${t('proposal.filters.dateTo')}: ${value.dateTo}`} />
+          )}
+          <ActionButton
+            intent="quiet"
+            size="small"
+            onClick={() => onChange({ page: 0, pageSize: value.pageSize })}
+          >
+            {t('proposal.filters.clear', { defaultValue: 'Clear filters' })}
+          </ActionButton>
+        </Stack>
+      )}
     </Stack>
   );
 }

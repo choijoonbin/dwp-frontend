@@ -29,7 +29,7 @@ function contributionCount(
 }
 
 /**
- * Independent MZ / AI Stage renderer. It shares only approved primitives (the 18-app dock and
+ * Independent AI Stage renderer. It shares only approved primitives (the 18-app dock and
  * owner-widget mesh) with Flow; mode identity, first viewport, persistence, and runtime selection
  * remain MZ_V1. This keeps the personalized design assets while avoiding a Flow presentation
  * preset masquerading as a third mode.
@@ -207,7 +207,13 @@ export function MzHome({
             onStart={onStartMzIntent}
           />
           {requiredNoticeVisible && (
-            <Box data-mz-required-rail>
+            <Box
+              data-mz-required-rail
+              sx={{
+                '& [data-flow-section="required-notice"]': { color: 'common.white' },
+                '& [data-flow-required-cta]': { color: 'common.white' },
+              }}
+            >
               <FlowRequiredNotice
                 overview={overview}
                 editing={editing}

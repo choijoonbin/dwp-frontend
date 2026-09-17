@@ -4,6 +4,10 @@ import type { ApiResponse } from '../types';
 
 // Mail administration completion contracts
 
+function mailAdminElevatedHeaders() {
+  return { 'X-DWP-Active-Access-Mode': 'ELEVATED' };
+}
+
 export type MailAdminSourceEvidence = {
   sourceId: 'OVERVIEW' | 'COMMAND' | 'OUTBOX' | 'PROVIDER' | 'AUDIT' | 'EVENT';
   state: 'CURRENT' | 'STALE' | 'UNAVAILABLE' | 'PARTIAL';
@@ -94,6 +98,21 @@ export type MailSharedInboxAccess = {
   providerState: 'APPLIED' | 'PARTIAL' | 'PENDING' | 'UNAVAILABLE';
   members: MailSharedInboxAccessMember[];
   impact?: MailSharedInboxAccessImpact | null;
+};
+
+export type MailSharedInboxMemberCandidate = {
+  userId: number;
+  displayName: string;
+  department?: string | null;
+  email?: string | null;
+};
+
+export type MailSharedInboxMemberRevokePreview = MailSharedInboxAccessImpact & {
+  previewId: string;
+  fingerprint: string;
+  memberVersion: number;
+  generatedAt: string;
+  expiresAt: string;
 };
 
 export type MailSharedInboxMemberMutationInput = {
@@ -187,8 +206,15 @@ export type MailPurgePreview = {
   eligibleCount: number;
   partialSources: string[];
   generatedAt: string;
+  before: string;
   expiresAt: string;
   policyVersion: number;
+  distinctApproverCount: number;
+  resourceCounts: Record<'THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS', number>;
+  heldResourceCounts: Record<'THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS', number>;
+  exclusionReasonCounts: Record<'LEGAL_HOLD' | 'IMMUTABLE_EVIDENCE', number>;
+  resourceTypes: Array<'THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS'>;
+  scope: Record<string, unknown>;
 };
 
 export type MailPurgeApproval = {
@@ -197,6 +223,58 @@ export type MailPurgeApproval = {
   distinctApproverCount: number;
   policyVersion: number;
   approvedAt: string;
+};
+
+export type MailLegalHoldReleaseImpactCounts = Record<
+  'THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS',
+  number
+>;
+
+export type MailLegalHoldReleasePreview = {
+  releasePreviewId: string;
+  holdId: string;
+  requesterUserId: number;
+  holdVersion: number;
+  policyVersion: number;
+  holdScope: Record<string, unknown>;
+  retentionBoundary: string;
+  fingerprint: string;
+  impact: {
+    affectedResourceCounts: MailLegalHoldReleaseImpactCounts;
+    currentlyHeldResourceCounts: MailLegalHoldReleaseImpactCounts;
+    purgeSafeAfterReleaseResourceCounts: MailLegalHoldReleaseImpactCounts;
+    stillProtectedAfterReleaseResourceCounts: MailLegalHoldReleaseImpactCounts;
+    providerCapabilityRequiredResourceCounts: MailLegalHoldReleaseImpactCounts;
+  };
+  state: 'AWAITING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'EXPIRED' | 'RELEASED';
+  distinctApproverCount: number;
+  approvals: MailLegalHoldReleaseApproval[];
+  generatedAt: string;
+  expiresAt: string;
+};
+
+export type MailLegalHoldReleaseApproval = {
+  approvalId: string;
+  releasePreviewId: string;
+  approverUserId: number;
+  decision: 'APPROVE' | 'REJECT';
+  holdVersion: number;
+  policyVersion: number;
+  decidedAt: string;
+};
+
+export type MailLegalHoldReleaseExecution = {
+  executionId: string;
+  releasePreviewId: string;
+  holdId: string;
+  requesterUserId: number;
+  approvedByUserId: number;
+  executedByUserId: number;
+  policyVersion: number;
+  fingerprint: string;
+  hold: MailLegalHold;
+  executedAt: string;
+  replayed: boolean;
 };
 
 export type MailDeliveryAuditItem = {
@@ -245,12 +323,38 @@ export type MailDeliveryAuditPage = {
   generatedAt: string;
 };
 
-export type MailDeliveryAuditExport = {
+export type MailEvidenceExportApproval = {
+  approvalId: string;
+  approverUserId: number;
+  decision: 'APPROVED';
+  decidedAt: string;
+};
+
+export type MailEvidenceExportApprovalState = 'PENDING_APPROVAL' | 'APPROVED';
+
+export type MailEvidenceExportBase = {
   exportId: string;
-  state: 'ACCEPTED' | 'RUNNING' | 'READY' | 'FAILED';
-  expiresAt?: string | null;
-  watermark?: string | null;
-  downloadUrl?: string | null;
+  state: 'PENDING_APPROVAL' | 'ACCEPTED' | 'RUNNING' | 'READY' | 'FAILED';
+  approvalState: MailEvidenceExportApprovalState;
+  requiredApprovals: number;
+  distinctApproverCount: number;
+  approvals: MailEvidenceExportApproval[];
+  expiresAt: string;
+  watermark: string;
+  payloadSha256: string;
+  snapshotCutoff: string;
+  downloadUrl: string | null;
+};
+
+export type MailDeliveryAuditExport = MailEvidenceExportBase & {
+  filters: Record<string, unknown>;
+  itemCount: number;
+  truncated: boolean;
+};
+
+export type MailRetentionEvidenceExport = MailEvidenceExportBase & {
+  policyVersion: number;
+  scope: Record<string, unknown>;
 };
 
 export type MailOrganizationWritingAssetKind = 'TEMPLATE' | 'SIGNATURE';
@@ -388,7 +492,8 @@ async function runMailConnectionOperation(
     MailConnectionOperationInput
   >(
     `/api/platform/v1/admin/mail/connections/${encodeURIComponent(connectionId)}/${operation}`,
-    input
+    input,
+    operation === 'test-send' ? { headers: mailAdminElevatedHeaders() } : undefined
   );
   return response.data.data;
 }
@@ -417,6 +522,19 @@ export async function getMailSharedInboxAccess(
   return response.data.data;
 }
 
+export async function getMailSharedInboxMemberCandidates(
+  query: string,
+  limit = 20,
+  signal?: AbortSignal
+): Promise<MailSharedInboxMemberCandidate[]> {
+  const search = new URLSearchParams({ query: query.trim(), limit: String(limit) });
+  const response = await axiosInstance.get<ApiResponse<MailSharedInboxMemberCandidate[]>>(
+    `/api/platform/v1/admin/mail/shared-inboxes/member-candidates?${search.toString()}`,
+    { signal }
+  );
+  return response.data.data;
+}
+
 export async function addMailSharedInboxMember(
   sharedInboxId: string,
   input: MailSharedInboxMemberMutationInput
@@ -426,7 +544,8 @@ export async function addMailSharedInboxMember(
     MailSharedInboxMemberMutationInput
   >(
     `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -441,7 +560,8 @@ export async function updateMailSharedInboxMember(
     MailSharedInboxMemberMutationInput
   >(
     `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members/${encodeURIComponent(memberId)}`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -449,14 +569,35 @@ export async function updateMailSharedInboxMember(
 export async function removeMailSharedInboxMember(
   sharedInboxId: string,
   memberId: string,
-  input: Pick<
-    MailSharedInboxMemberMutationInput,
-    'impactAcknowledged' | 'idempotencyKey' | 'version'
-  >
+  input: {
+    previewId: string;
+    fingerprint: string;
+    impactAcknowledged: boolean;
+    idempotencyKey: string;
+    version: number;
+  }
 ): Promise<MailSharedInboxAccess> {
   const response = await axiosInstance.post<ApiResponse<MailSharedInboxAccess>, typeof input>(
     `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members/${encodeURIComponent(memberId)}/revoke`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
+  );
+  return response.data.data;
+}
+
+export async function previewMailSharedInboxMemberRevoke(
+  sharedInboxId: string,
+  memberId: string,
+  memberVersion: number
+): Promise<MailSharedInboxMemberRevokePreview> {
+  const input = { memberVersion };
+  const response = await axiosInstance.post<
+    ApiResponse<MailSharedInboxMemberRevokePreview>,
+    typeof input
+  >(
+    `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members/${encodeURIComponent(memberId)}/revoke-preview`,
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -480,7 +621,8 @@ export async function createMailLegalHold(
 ): Promise<MailLegalHold> {
   const response = await axiosInstance.post<ApiResponse<MailLegalHold>, MailLegalHoldMutationInput>(
     '/api/platform/v1/admin/mail/retention/holds',
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -491,18 +633,70 @@ export async function updateMailLegalHold(
 ): Promise<MailLegalHold> {
   const response = await axiosInstance.put<ApiResponse<MailLegalHold>, MailLegalHoldMutationInput>(
     `/api/platform/v1/admin/mail/retention/holds/${encodeURIComponent(holdId)}`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
 
-export async function releaseMailLegalHold(
+export async function previewMailLegalHoldRelease(
   holdId: string,
-  input: { idempotencyKey: string; version: number }
-): Promise<MailLegalHold> {
-  const response = await axiosInstance.post<ApiResponse<MailLegalHold>, typeof input>(
-    `/api/platform/v1/admin/mail/retention/holds/${encodeURIComponent(holdId)}/release`,
-    input
+  input: { idempotencyKey: string; holdVersion: number; policyVersion: number }
+): Promise<MailLegalHoldReleasePreview> {
+  const response = await axiosInstance.post<ApiResponse<MailLegalHoldReleasePreview>, typeof input>(
+    `/api/platform/v1/admin/mail/retention/holds/${encodeURIComponent(holdId)}/release-previews`,
+    input,
+    { headers: mailAdminElevatedHeaders() }
+  );
+  return response.data.data;
+}
+
+export async function getMailLegalHoldReleasePreview(
+  releasePreviewId: string
+): Promise<MailLegalHoldReleasePreview> {
+  const response = await axiosInstance.get<ApiResponse<MailLegalHoldReleasePreview>>(
+    `/api/platform/v1/admin/mail/retention/hold-release-previews/${encodeURIComponent(releasePreviewId)}`
+  );
+  return response.data.data;
+}
+
+export async function approveMailLegalHoldRelease(
+  releasePreviewId: string,
+  input: {
+    decision: 'APPROVE' | 'REJECT';
+    idempotencyKey: string;
+    fingerprint: string;
+    holdVersion: number;
+    policyVersion: number;
+  }
+): Promise<MailLegalHoldReleaseApproval> {
+  const response = await axiosInstance.post<
+    ApiResponse<MailLegalHoldReleaseApproval>,
+    typeof input
+  >(
+    `/api/platform/v1/admin/mail/retention/hold-release-previews/${encodeURIComponent(releasePreviewId)}/approvals`,
+    input,
+    { headers: mailAdminElevatedHeaders() }
+  );
+  return response.data.data;
+}
+
+export async function executeMailLegalHoldRelease(
+  releasePreviewId: string,
+  input: {
+    idempotencyKey: string;
+    fingerprint: string;
+    holdVersion: number;
+    policyVersion: number;
+  }
+): Promise<MailLegalHoldReleaseExecution> {
+  const response = await axiosInstance.post<
+    ApiResponse<MailLegalHoldReleaseExecution>,
+    typeof input
+  >(
+    `/api/platform/v1/admin/mail/retention/hold-release-previews/${encodeURIComponent(releasePreviewId)}/execute`,
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -521,13 +715,28 @@ export async function previewMailPurge(input: {
   return response.data.data;
 }
 
+export async function getMailActivePurgePreviews(): Promise<MailPurgePreview[]> {
+  const response = await axiosInstance.get<ApiResponse<MailPurgePreview[]>>(
+    '/api/platform/v1/admin/mail/retention/purge-previews'
+  );
+  return response.data.data;
+}
+
+export async function getMailPurgePreview(candidateSnapshotId: string): Promise<MailPurgePreview> {
+  const response = await axiosInstance.get<ApiResponse<MailPurgePreview>>(
+    `/api/platform/v1/admin/mail/retention/purge-previews/${encodeURIComponent(candidateSnapshotId)}`
+  );
+  return response.data.data;
+}
+
 export async function approveMailPurge(
   candidateSnapshotId: string,
   input: { decision: 'APPROVE'; idempotencyKey: string; policyVersion: number }
 ): Promise<MailPurgeApproval> {
   const response = await axiosInstance.post<ApiResponse<MailPurgeApproval>, typeof input>(
     `/api/platform/v1/admin/mail/retention/purges/${encodeURIComponent(candidateSnapshotId)}/approvals`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -538,7 +747,8 @@ export async function executeMailPurge(
 ): Promise<MailPurgeJob> {
   const response = await axiosInstance.post<ApiResponse<MailPurgeJob>, typeof input>(
     `/api/platform/v1/admin/mail/retention/purges/${encodeURIComponent(candidateSnapshotId)}/execute`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -553,13 +763,25 @@ export async function getMailPurgeJob(jobId: string): Promise<MailPurgeJob> {
 export async function getMailDeliveryAudit(input: {
   page?: number;
   pageSize?: number;
+  query?: string;
   correlationId?: string;
+  accountId?: string;
+  provider?: string;
+  command?: 'SEND';
+  dateFrom?: string;
+  dateTo?: string;
   state?: string;
 }): Promise<MailDeliveryAuditPage> {
   const search = new URLSearchParams();
   search.set('page', String(input.page ?? 0));
   search.set('pageSize', String(input.pageSize ?? 50));
-  if (input.correlationId) search.set('correlationId', input.correlationId);
+  if (input.query || input.correlationId)
+    search.set('correlationId', input.query ?? input.correlationId!);
+  if (input.accountId) search.set('accountId', input.accountId);
+  if (input.provider) search.set('provider', input.provider);
+  if (input.command) search.set('command', input.command);
+  if (input.dateFrom) search.set('dateFrom', input.dateFrom);
+  if (input.dateTo) search.set('dateTo', input.dateTo);
   if (input.state) search.set('state', input.state);
   const response = await axiosInstance.get<ApiResponse<MailDeliveryAuditPage>>(
     `/api/platform/v1/admin/mail/delivery-audit?${search.toString()}`
@@ -574,7 +796,8 @@ async function runMailDeliveryAdminAction(
 ): Promise<MailDeliveryAuditItem> {
   const response = await axiosInstance.post<ApiResponse<MailDeliveryAuditItem>, typeof input>(
     `/api/platform/v1/admin/mail/delivery-audit/${encodeURIComponent(deliveryId)}/${action}`,
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
 }
@@ -607,7 +830,86 @@ export async function createMailDeliveryAuditExport(input: {
 }): Promise<MailDeliveryAuditExport> {
   const response = await axiosInstance.post<ApiResponse<MailDeliveryAuditExport>, typeof input>(
     '/api/platform/v1/admin/mail/delivery-audit/exports',
-    input
+    input,
+    { headers: mailAdminElevatedHeaders() }
   );
   return response.data.data;
+}
+
+export async function getMailDeliveryAuditExport(
+  exportId: string
+): Promise<MailDeliveryAuditExport> {
+  const response = await axiosInstance.get<ApiResponse<MailDeliveryAuditExport>>(
+    `/api/platform/v1/admin/mail/delivery-audit/exports/${encodeURIComponent(exportId)}`
+  );
+  return response.data.data;
+}
+
+export async function approveMailDeliveryAuditExport(
+  exportId: string,
+  input: { decision: 'APPROVE'; idempotencyKey: string }
+): Promise<MailDeliveryAuditExport> {
+  const response = await axiosInstance.post<ApiResponse<MailDeliveryAuditExport>, typeof input>(
+    `/api/platform/v1/admin/mail/delivery-audit/exports/${encodeURIComponent(exportId)}/approvals`,
+    input,
+    { headers: mailAdminElevatedHeaders() }
+  );
+  return response.data.data;
+}
+
+export async function createMailRetentionEvidenceExport(input: {
+  scope: Record<string, unknown>;
+  purpose: string;
+  policyVersion: number;
+  idempotencyKey: string;
+}): Promise<MailRetentionEvidenceExport> {
+  const response = await axiosInstance.post<ApiResponse<MailRetentionEvidenceExport>, typeof input>(
+    '/api/platform/v1/admin/mail/retention/evidence-exports',
+    input,
+    { headers: mailAdminElevatedHeaders() }
+  );
+  return response.data.data;
+}
+
+export async function getMailRetentionEvidenceExport(
+  exportId: string
+): Promise<MailRetentionEvidenceExport> {
+  const response = await axiosInstance.get<ApiResponse<MailRetentionEvidenceExport>>(
+    `/api/platform/v1/admin/mail/retention/evidence-exports/${encodeURIComponent(exportId)}`
+  );
+  return response.data.data;
+}
+
+export async function approveMailRetentionEvidenceExport(
+  exportId: string,
+  input: { decision: 'APPROVE'; idempotencyKey: string }
+): Promise<MailRetentionEvidenceExport> {
+  const response = await axiosInstance.post<ApiResponse<MailRetentionEvidenceExport>, typeof input>(
+    `/api/platform/v1/admin/mail/retention/evidence-exports/${encodeURIComponent(exportId)}/approvals`,
+    input,
+    { headers: mailAdminElevatedHeaders() }
+  );
+  return response.data.data;
+}
+
+export async function downloadMailDeliveryAuditExport(exportId: string): Promise<Blob> {
+  const response = await axiosInstance.get<Blob>(
+    `/api/platform/v1/admin/mail/delivery-audit/exports/${encodeURIComponent(exportId)}/download`,
+    {
+      responseType: 'blob',
+      headers: { ...mailAdminElevatedHeaders(), Accept: 'application/json' },
+    }
+  );
+  return response.data;
+}
+
+export async function downloadMailRetentionEvidenceExport(exportId: string): Promise<Blob> {
+  const response = await axiosInstance.get<Blob>(
+    `/api/platform/v1/admin/mail/retention/evidence-exports/${encodeURIComponent(exportId)}/download`,
+    {
+      responseType: 'blob',
+      headers: { ...mailAdminElevatedHeaders(), Accept: 'application/json' },
+    }
+  );
+  return response.data;
 }

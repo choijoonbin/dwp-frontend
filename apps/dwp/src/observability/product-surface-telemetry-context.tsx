@@ -12,6 +12,8 @@ import type { ProductSurfaceAttemptId } from './product-surface-telemetry';
 
 export const PRODUCT_SURFACE_TELEMETRY_CONSENT_KEY =
   'dwp:privacy:product-surface-telemetry-consent:v1';
+export const PRODUCT_SURFACE_TELEMETRY_CONSENT_EVENT =
+  'dwp:privacy:product-surface-telemetry-consent-change';
 
 export type ProductSurfaceTimedAttempt = Readonly<{
   attemptId: ProductSurfaceAttemptId;
@@ -126,6 +128,21 @@ export function readProductSurfaceTelemetryConsent(storage: Pick<Storage, 'getIt
     return storage.getItem(PRODUCT_SURFACE_TELEMETRY_CONSENT_KEY) === 'granted';
   } catch {
     return false;
+  }
+}
+
+export function writeProductSurfaceTelemetryConsent(
+  storage: Pick<Storage, 'setItem' | 'removeItem'>,
+  granted: boolean
+): void {
+  try {
+    if (granted) storage.setItem(PRODUCT_SURFACE_TELEMETRY_CONSENT_KEY, 'granted');
+    else storage.removeItem(PRODUCT_SURFACE_TELEMETRY_CONSENT_KEY);
+    if (typeof window !== 'undefined' && storage === window.localStorage) {
+      window.dispatchEvent(new Event(PRODUCT_SURFACE_TELEMETRY_CONSENT_EVENT));
+    }
+  } catch {
+    // Privacy preferences fail closed when browser storage is unavailable.
   }
 }
 

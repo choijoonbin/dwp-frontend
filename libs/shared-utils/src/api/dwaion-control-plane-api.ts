@@ -14,7 +14,9 @@ import {
   parseDwaionModelsRouting,
   parseDwaionOutcomes,
 } from './dwaion-control-plane-parser';
+import { parseDwaionCommandCapabilities } from './dwaion-command-capability-parser';
 import type {
+  DwaionAdminCommandCapabilitiesSnapshot,
   DwaionConnectorsSnapshot,
   DwaionEvaluationSafetySnapshot,
   DwaionGovernedCommand,
@@ -29,6 +31,13 @@ import type {
 } from './dwaion-control-plane-contract';
 
 const BASE_PATH = '/api/agent/v1/admin/control-plane';
+
+export async function getDwaionCommandCapabilities(): Promise<DwaionAdminCommandCapabilitiesSnapshot> {
+  const response = await axiosInstance.get<ApiResponse<DwaionAdminCommandCapabilitiesSnapshot>>(
+    `${BASE_PATH}/command-capabilities`
+  );
+  return parseDwaionCommandCapabilities(response.data.data);
+}
 
 export async function getDwaionModelsRouting(): Promise<DwaionModelsRoutingSnapshot> {
   const response = await axiosInstance.get<ApiResponse<DwaionModelsRoutingSnapshot>>(

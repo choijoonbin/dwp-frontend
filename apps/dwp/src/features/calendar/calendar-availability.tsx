@@ -34,7 +34,7 @@ import { CalendarPageHeading, calendarDate, calendarTime } from './calendar-comp
 import { CalendarCanvas, CalendarSectionHeader } from './calendar-experience';
 import {
   CALENDAR_AVAILABILITY_ATTENDEE_LIMIT,
-  calendarSchedulingEvaluationIsUsable,
+  calendarSchedulingEvaluationState,
 } from './calendar-scheduling-assistant-model';
 
 import type { CalendarAvailabilitySlot, PersonSummary } from '@dwp-frontend/shared-utils';
@@ -60,6 +60,85 @@ function isoRange(value: DateRangeValue) {
   const to = new Date(`${value.end}T00:00:00`);
   to.setDate(to.getDate() + 1);
   return { from: from.toISOString(), to: to.toISOString() };
+}
+
+function AvailabilityProgress({ step }: Readonly<{ step: 1 | 2 | 3 }>) {
+  const { t } = useTranslation('calendar');
+  return (
+    <Box
+      component="ol"
+      aria-label={t('availability.progressLabel')}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+        gap: 0,
+        p: 0,
+        m: '0 0 20px',
+        listStyle: 'none',
+      }}
+    >
+      {([1, 2, 3] as const).map((value) => {
+        const complete = value < step;
+        const current = value === step;
+        return (
+          <Stack
+            component="li"
+            key={value}
+            spacing={0.75}
+            alignItems="center"
+            aria-current={current ? 'step' : undefined}
+            sx={{ position: 'relative', minWidth: 0 }}
+          >
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 32,
+                height: 32,
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: '50%',
+                border: 2,
+                borderColor: current || complete ? 'primary.main' : 'divider',
+                bgcolor: current || complete ? 'primary.main' : 'background.paper',
+                color: current || complete ? 'primary.contrastText' : 'text.secondary',
+                fontWeight: 700,
+                zIndex: 1,
+                '&::before':
+                  value === 1
+                    ? undefined
+                    : {
+                        content: '""',
+                        position: 'absolute',
+                        top: 15,
+                        right: '50%',
+                        width: '100%',
+                        height: 2,
+                        bgcolor: complete ? 'primary.main' : 'divider',
+                        zIndex: -1,
+                      },
+                '@media (forced-colors: active)': {
+                  borderColor: current || complete ? 'Highlight' : 'CanvasText',
+                  backgroundColor: current || complete ? 'Highlight' : 'Canvas',
+                  color: current || complete ? 'HighlightText' : 'CanvasText',
+                },
+              }}
+            >
+              {complete ? '✓' : value}
+            </Box>
+            <Typography
+              variant="caption"
+              fontWeight={current ? 700 : 500}
+              color={current ? 'text.primary' : 'text.secondary'}
+              textAlign="center"
+              sx={{ lineHeight: 1.25 }}
+            >
+              {t(`availability.steps.${value}`)}
+            </Typography>
+          </Stack>
+        );
+      })}
+    </Box>
+  );
 }
 
 export function CalendarAvailability() {
@@ -126,8 +205,10 @@ export function CalendarAvailability() {
     },
   });
   const resetAvailability = availability.reset;
-  const evaluationUsable = calendarSchedulingEvaluationIsUsable(availability.data);
-  const result = evaluationUsable ? availability.data?.availability : undefined;
+  const evaluationState = calendarSchedulingEvaluationState(availability.data);
+  const evaluationVisible = evaluationState === 'COMPLETE' || evaluationState === 'PARTIAL';
+  const evaluationPartial = evaluationState === 'PARTIAL';
+  const result = evaluationVisible ? availability.data?.availability : undefined;
   const participantLoadMax = Math.max(
     1,
     ...(result?.participants.map((participant) => participant.busyMinutes) ?? [])
@@ -204,6 +285,8 @@ export function CalendarAvailability() {
           ) : undefined
         }
       />
+
+      <AvailabilityProgress step={selectedSlot ? 3 : result ? 2 : 1} />
 
       <Box
         component="section"
@@ -360,7 +443,7 @@ export function CalendarAvailability() {
           <Skeleton variant="rounded" height={300} />
           <Skeleton variant="rounded" height={420} />
         </Box>
-      ) : availability.data && !evaluationUsable ? (
+      ) : availability.data && !evaluationVisible ? (
         <Alert
           severity="warning"
           sx={{ mt: 2 }}
@@ -374,220 +457,254 @@ export function CalendarAvailability() {
           {t('schedulingAssistant.incompleteResults')}
         </Alert>
       ) : result ? (
-        <Box
-          sx={{
-            mt: 3,
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: '320px minmax(0, 1fr)' },
-            gap: 2,
-          }}
-        >
+        <>
+          {evaluationPartial ? (
+            <Alert
+              severity="warning"
+              sx={{ mt: 2 }}
+              role="status"
+              action={
+                <ActionButton intent="quiet" size="small" onClick={() => availability.mutate()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              <Typography variant="body2" fontWeight={700}>
+                {t('availability.partialTitle')}
+              </Typography>
+              <Typography variant="body2">
+                {t('availability.partialDescription', {
+                  sources:
+                    availability.data?.sources
+                      .filter((source) => source.status !== 'HEALTHY')
+                      .map((source) => source.sourceType)
+                      .join(', ') || t('availability.unknownSource'),
+                })}
+              </Typography>
+            </Alert>
+          ) : null}
           <Box
-            component="section"
             sx={{
-              bgcolor: 'background.paper',
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              overflow: 'hidden',
+              mt: 3,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', lg: '320px minmax(0, 1fr)' },
+              gap: 2,
             }}
           >
-            <CalendarSectionHeader
-              icon={UsersRound}
-              title={t('availability.participants')}
-              description={t('availability.participantsDescription')}
-              meta={
-                <Typography variant="caption" color="text.secondary" role="status">
-                  {t('schedulingAssistant.freshness', {
-                    time: calendarTime(result.generatedAt, language),
-                  })}
-                </Typography>
-              }
-            />
-            <Divider />
-            <Stack divider={<Divider flexItem />}>
-              {result.participants.map((participant, index) => {
-                const person = participantById.get(participant.personPublicId);
-                return (
-                  <Stack
-                    key={participant.personPublicId}
-                    direction="row"
-                    spacing={1.25}
-                    alignItems="center"
-                    sx={{ p: 1.75 }}
-                  >
-                    <Avatar
-                      sx={{
-                        width: 34,
-                        height: 34,
-                        bgcolor: index === 0 && !person ? 'primary.main' : 'action.selected',
-                        color: index === 0 && !person ? 'primary.contrastText' : 'text.primary',
-                        fontSize: 13,
-                      }}
+            <Box
+              component="section"
+              sx={{
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 1,
+                overflow: 'hidden',
+              }}
+            >
+              <CalendarSectionHeader
+                icon={UsersRound}
+                title={t('availability.participants')}
+                description={t('availability.participantsDescription')}
+                meta={
+                  <Typography variant="caption" color="text.secondary" role="status">
+                    {t('schedulingAssistant.freshness', {
+                      time: calendarTime(result.generatedAt, language),
+                    })}
+                  </Typography>
+                }
+              />
+              <Divider />
+              <Stack divider={<Divider flexItem />}>
+                {result.participants.map((participant, index) => {
+                  const person = participantById.get(participant.personPublicId);
+                  return (
+                    <Stack
+                      key={participant.personPublicId}
+                      direction="row"
+                      spacing={1.25}
+                      alignItems="center"
+                      sx={{ p: 1.75 }}
                     >
-                      {person?.displayName.slice(0, 1) ?? t('availability.meShort')}
-                    </Avatar>
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={600} noWrap>
-                        {person?.displayName ?? t('availability.me')}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('availability.busyMinutes', { count: participant.busyMinutes })}
-                      </Typography>
+                      <Avatar
+                        sx={{
+                          width: 34,
+                          height: 34,
+                          bgcolor: index === 0 && !person ? 'primary.main' : 'action.selected',
+                          color: index === 0 && !person ? 'primary.contrastText' : 'text.primary',
+                          fontSize: 13,
+                        }}
+                      >
+                        {person?.displayName.slice(0, 1) ?? t('availability.meShort')}
+                      </Avatar>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="body2" fontWeight={600} noWrap>
+                          {person?.displayName ?? t('availability.me')}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('availability.busyMinutes', { count: participant.busyMinutes })}
+                        </Typography>
+                        <Box
+                          role="meter"
+                          aria-valuemin={0}
+                          aria-valuemax={participantLoadMax}
+                          aria-valuenow={participant.busyMinutes}
+                          aria-label={t('availability.busyMinutes', {
+                            count: participant.busyMinutes,
+                          })}
+                          sx={(theme) => ({
+                            mt: 0.65,
+                            height: 5,
+                            borderRadius: 999,
+                            bgcolor: alpha(theme.palette.text.secondary, 0.1),
+                            overflow: 'hidden',
+                          })}
+                        >
+                          <Box
+                            aria-hidden="true"
+                            sx={{
+                              width: `${(participant.busyMinutes * 100) / participantLoadMax}%`,
+                              height: 1,
+                              borderRadius: 999,
+                              bgcolor: 'primary.main',
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    </Stack>
+                  );
+                })}
+              </Stack>
+            </Box>
+
+            <Box
+              component="section"
+              sx={{
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 1,
+                overflow: 'hidden',
+              }}
+            >
+              <CalendarSectionHeader
+                icon={CalendarCheck2}
+                title={t('availability.suggestions')}
+                description={t('availability.suggestionsDescription')}
+              />
+              <Divider />
+              {result.suggestions.length ? (
+                <Box
+                  component="ol"
+                  sx={{
+                    p: 0,
+                    m: 0,
+                    listStyle: 'none',
+                  }}
+                >
+                  {result.suggestions.map((slot, index) => (
+                    <Box
+                      component="li"
+                      key={slot.startsAt}
+                      sx={{ borderBottom: 1, borderColor: 'divider' }}
+                    >
                       <Box
-                        role="meter"
-                        aria-valuemin={0}
-                        aria-valuemax={participantLoadMax}
-                        aria-valuenow={participant.busyMinutes}
-                        aria-label={t('availability.busyMinutes', {
-                          count: participant.busyMinutes,
-                        })}
+                        component={canCreate && !evaluationPartial ? 'button' : 'div'}
+                        type={canCreate && !evaluationPartial ? 'button' : undefined}
+                        onClick={
+                          canCreate && !evaluationPartial ? () => setSelectedSlot(slot) : undefined
+                        }
                         sx={(theme) => ({
-                          mt: 0.65,
-                          height: 5,
-                          borderRadius: 999,
-                          bgcolor: alpha(theme.palette.text.secondary, 0.1),
-                          overflow: 'hidden',
+                          width: 1,
+                          minHeight: 92,
+                          display: 'grid',
+                          gridTemplateColumns: '36px minmax(0, 1fr) auto',
+                          gap: 1.25,
+                          alignItems: 'center',
+                          px: { xs: 1.75, sm: 2.25 },
+                          py: 1.5,
+                          border: 0,
+                          bgcolor: 'transparent',
+                          color: 'text.primary',
+                          textAlign: 'left',
+                          cursor: canCreate && !evaluationPartial ? 'pointer' : 'default',
+                          transition: theme.transitions.create('background-color'),
+                          '&:hover':
+                            canCreate && !evaluationPartial
+                              ? {
+                                  bgcolor: alpha(
+                                    theme.palette.success.main,
+                                    theme.palette.mode === 'dark' ? 0.12 : 0.045
+                                  ),
+                                }
+                              : undefined,
+                          '&:focus-visible': {
+                            outline: '2px solid',
+                            outlineColor: 'primary.main',
+                            outlineOffset: -2,
+                          },
+                          '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
                         })}
                       >
                         <Box
                           aria-hidden="true"
-                          sx={{
-                            width: `${(participant.busyMinutes * 100) / participantLoadMax}%`,
-                            height: 1,
-                            borderRadius: 999,
-                            bgcolor: 'primary.main',
-                          }}
+                          sx={(theme) => ({
+                            width: 32,
+                            height: 32,
+                            display: 'grid',
+                            placeItems: 'center',
+                            borderRadius: '50%',
+                            bgcolor: alpha(theme.palette.success.main, 0.12),
+                            color: 'success.dark',
+                            fontSize: 13,
+                            fontWeight: 700,
+                          })}
+                        >
+                          {index + 1}
+                        </Box>
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography fontWeight={600}>
+                            {calendarDate(slot.startsAt, language)}
+                          </Typography>
+                          <Stack
+                            direction="row"
+                            spacing={0.75}
+                            alignItems="center"
+                            color="text.secondary"
+                          >
+                            <Clock3 size={15} />
+                            <Typography variant="body2">
+                              {calendarTime(slot.startsAt, language)} –{' '}
+                              {calendarTime(slot.endsAt, language)}
+                            </Typography>
+                          </Stack>
+                          <Typography variant="caption" color="text.secondary">
+                            {slot.reason}
+                          </Typography>
+                        </Box>
+                        <Chip
+                          size="small"
+                          color={evaluationPartial ? 'warning' : 'success'}
+                          variant="outlined"
+                          label={
+                            evaluationPartial
+                              ? t('availability.reviewOnly')
+                              : t('availability.verifiedCandidate')
+                          }
                         />
                       </Box>
                     </Box>
-                  </Stack>
-                );
-              })}
-            </Stack>
+                  ))}
+                </Box>
+              ) : (
+                <GuidedEmptyState
+                  kind="no-results"
+                  title={t('availability.noSlots')}
+                  description={t('availability.noSlotsDescription')}
+                />
+              )}
+            </Box>
           </Box>
-
-          <Box
-            component="section"
-            sx={{
-              bgcolor: 'background.paper',
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              overflow: 'hidden',
-            }}
-          >
-            <CalendarSectionHeader
-              icon={CalendarCheck2}
-              title={t('availability.suggestions')}
-              description={t('availability.suggestionsDescription')}
-            />
-            <Divider />
-            {result.suggestions.length ? (
-              <Box
-                component="ol"
-                sx={{
-                  p: 0,
-                  m: 0,
-                  listStyle: 'none',
-                }}
-              >
-                {result.suggestions.map((slot, index) => (
-                  <Box
-                    component="li"
-                    key={slot.startsAt}
-                    sx={{ borderBottom: 1, borderColor: 'divider' }}
-                  >
-                    <Box
-                      component={canCreate ? 'button' : 'div'}
-                      type={canCreate ? 'button' : undefined}
-                      onClick={canCreate ? () => setSelectedSlot(slot) : undefined}
-                      sx={(theme) => ({
-                        width: 1,
-                        minHeight: 92,
-                        display: 'grid',
-                        gridTemplateColumns: '36px minmax(0, 1fr) auto',
-                        gap: 1.25,
-                        alignItems: 'center',
-                        px: { xs: 1.75, sm: 2.25 },
-                        py: 1.5,
-                        border: 0,
-                        bgcolor: 'transparent',
-                        color: 'text.primary',
-                        textAlign: 'left',
-                        cursor: canCreate ? 'pointer' : 'default',
-                        transition: theme.transitions.create('background-color'),
-                        '&:hover': canCreate
-                          ? {
-                              bgcolor: alpha(
-                                theme.palette.success.main,
-                                theme.palette.mode === 'dark' ? 0.12 : 0.045
-                              ),
-                            }
-                          : undefined,
-                        '&:focus-visible': {
-                          outline: '2px solid',
-                          outlineColor: 'primary.main',
-                          outlineOffset: -2,
-                        },
-                        '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
-                      })}
-                    >
-                      <Box
-                        aria-hidden="true"
-                        sx={(theme) => ({
-                          width: 32,
-                          height: 32,
-                          display: 'grid',
-                          placeItems: 'center',
-                          borderRadius: '50%',
-                          bgcolor: alpha(theme.palette.success.main, 0.12),
-                          color: 'success.dark',
-                          fontSize: 13,
-                          fontWeight: 700,
-                        })}
-                      >
-                        {index + 1}
-                      </Box>
-                      <Box sx={{ minWidth: 0 }}>
-                        <Typography fontWeight={600}>
-                          {calendarDate(slot.startsAt, language)}
-                        </Typography>
-                        <Stack
-                          direction="row"
-                          spacing={0.75}
-                          alignItems="center"
-                          color="text.secondary"
-                        >
-                          <Clock3 size={15} />
-                          <Typography variant="body2">
-                            {calendarTime(slot.startsAt, language)} –{' '}
-                            {calendarTime(slot.endsAt, language)}
-                          </Typography>
-                        </Stack>
-                        <Typography variant="caption" color="text.secondary">
-                          {slot.reason}
-                        </Typography>
-                      </Box>
-                      <Chip
-                        size="small"
-                        color="success"
-                        variant="outlined"
-                        label={`${slot.score}%`}
-                      />
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-            ) : (
-              <GuidedEmptyState
-                kind="no-results"
-                title={t('availability.noSlots')}
-                description={t('availability.noSlotsDescription')}
-              />
-            )}
-          </Box>
-        </Box>
+        </>
       ) : (
         <Box
           sx={{

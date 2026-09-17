@@ -68,7 +68,6 @@ export function HomePageView({
   homeDataRetry,
   homeExperience,
   homeHeadline,
-  homeModePreset,
   homeNativeRuntimeState,
   homeOverview,
   homeOverviewHardFailed,
@@ -315,7 +314,7 @@ export function HomePageView({
       {editorActive && personalCustomizationEnabled && (
         <WorkspaceComposerToolbar
           placement="floating"
-          widePresentation={editorFlowHomeEnabled}
+          widePresentation
           presentation={draftPresentation}
           busy={customizationBusy}
           addLabel={t(
@@ -367,6 +366,12 @@ export function HomePageView({
             composerEnabled={composerEnabled}
             modeKey={effectiveHomeStudioContractScope.modeKey}
             modeScopedViews={effectiveHomeStudioContractScope.modeScopedViews}
+            preferenceStore={effectiveHomeStudioContractScope.preferenceStore}
+            legacyPreference={
+              effectiveHomeStudioContractScope.preferenceStore === 'LEGACY'
+                ? homePreferenceQuery.data
+                : undefined
+            }
             fourDeviceLayoutsSupported={effectiveHomeStudioContractScope.fourDeviceLayoutsSupported}
             tenantId={auth.user?.tenantId}
             userId={auth.user?.userId}
@@ -382,20 +387,6 @@ export function HomePageView({
             onRecommendationFeedback={recommendationAction.dismiss}
             onClose={closeHomeStudio}
             onExited={restoreHomeStudioEntryFocus}
-            modePreset={
-              homeModePreset ??
-              (wave2Evidence.modePreset
-                ? {
-                    ...wave2Evidence.modePreset,
-                    allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
-                    defaultMode: wave2Evidence.modePreset.currentMode,
-                    sharedAppOrder: entitledApps.map((app) => ({
-                      id: app.id,
-                      label: app.name,
-                    })),
-                  }
-                : undefined)
-            }
             onEditView={(view) => {
               markHomeStudioEditStarted();
               beginEditing(view);

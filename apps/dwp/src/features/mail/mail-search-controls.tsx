@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, PenLine, Save, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { Bookmark, ListFilter, PenLine, Save, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createMailSavedView,
   deleteMailSavedView,
   getMailHome,
+  getMailOrganization,
   getMailSavedViews,
   updateMailSavedView,
   useToast,
@@ -26,16 +27,22 @@ import Typography from '@mui/material/Typography';
 
 import type { MailSavedView, MailSearchCriteria } from '@dwp-frontend/shared-utils';
 
+import { useMailUserPermissions } from './use-mail-user-permissions';
+import { mailSearchRuleSeed } from './mail-search-rule-handoff';
+
 type SearchUpdate = (updates: Record<string, string | null>) => void;
 
 export function MailSearchControls({
   criteria,
   onUpdate,
+  onCreateRule,
 }: {
   criteria: MailSearchCriteria;
   onUpdate: SearchUpdate;
+  onCreateRule: () => void;
 }) {
   const { t } = useTranslation('mail');
+  const { canCreate, canUpdate } = useMailUserPermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [advancedOpen, setAdvancedOpen] = useState(() => hasAdvancedCriteria(criteria));
@@ -55,15 +62,25 @@ export function MailSearchControls({
     staleTime: 30_000,
     retry: 1,
   });
+  const organization = useQuery({
+    queryKey: ['mail', 'organization'],
+    queryFn: getMailOrganization,
+    staleTime: 30_000,
+    retry: 1,
+  });
   const create = useMutation({
-    mutationFn: () =>
-      editingView
-        ? updateMailSavedView(
-            editingView.savedViewId,
-            { name: viewName.trim(), criteria: editingView.criteria },
-            editingView.version
-          )
-        : createMailSavedView({ name: viewName.trim(), criteria }),
+    mutationFn: () => {
+      if (editingView) {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+        return updateMailSavedView(
+          editingView.savedViewId,
+          { name: viewName.trim(), criteria: editingView.criteria },
+          editingView.version
+        );
+      }
+      if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
+      return createMailSavedView({ name: viewName.trim(), criteria });
+    },
     onSuccess: async () => {
       setSaveOpen(false);
       setEditingView(null);
@@ -74,7 +91,10 @@ export function MailSearchControls({
     onError: () => toast.error(t('secondary.savedViews.saveError')),
   });
   const remove = useMutation({
-    mutationFn: (view: MailSavedView) => deleteMailSavedView(view.savedViewId, view.version),
+    mutationFn: (view: MailSavedView) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return deleteMailSavedView(view.savedViewId, view.version);
+    },
     onSuccess: async () => {
       setDeleting(null);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'saved-views'] });
@@ -102,11 +122,23 @@ export function MailSearchControls({
           ? { key: 'dateTo', label: `${t('secondary.search.dateTo')}: ${criteria.dateTo}` }
           : null,
         criteria.unread ? { key: 'unread', label: t('secondary.search.unreadOnly') } : null,
+        criteria.needsReply
+          ? { key: 'needsReply', label: t('secondary.search.needsReplyOnly') }
+          : null,
         criteria.hasAttachment
           ? { key: 'hasAttachment', label: t('secondary.search.attachmentOnly') }
           : null,
+        criteria.folderId
+          ? {
+              key: 'folderId',
+              label: `${t('secondary.search.folder')}: ${folderLabel(
+                organization.data?.folders ?? [],
+                criteria.folderId
+              )}`,
+            }
+          : null,
       ].filter(Boolean) as Array<{ key: string; label: string }>,
-    [criteria, home.data?.accounts, t]
+    [criteria, home.data?.accounts, organization.data?.folders, t]
   );
 
   useEffect(() => {
@@ -125,7 +157,9 @@ export function MailSearchControls({
       dateFrom: null,
       dateTo: null,
       unread: null,
+      needsReply: null,
       hasAttachment: null,
+      folderId: null,
       state: null,
       lane: null,
       ...next,
@@ -147,10 +181,18 @@ export function MailSearchControls({
         <ActionButton
           intent="secondary"
           startIcon={<Save size={16} />}
-          disabled={!criteria.query?.trim() && !hasAdvancedCriteria(criteria)}
+          disabled={!canCreate || (!criteria.query?.trim() && !hasAdvancedCriteria(criteria))}
           onClick={() => setSaveOpen(true)}
         >
           {t('secondary.savedViews.saveCurrent')}
+        </ActionButton>
+        <ActionButton
+          intent="secondary"
+          startIcon={<ListFilter size={16} />}
+          disabled={!canCreate || !mailSearchRuleSeed(criteria)}
+          onClick={onCreateRule}
+        >
+          {t('secondary.search.createRule', { defaultValue: 'Create rule from search' })}
         </ActionButton>
         {views.data?.map((view) => (
           <Stack key={view.savedViewId} direction="row" spacing={0.25} alignItems="center">
@@ -159,12 +201,13 @@ export function MailSearchControls({
               label={view.name}
               variant="outlined"
               onClick={() => applyView(view)}
-              onDelete={() => setDeleting(view)}
+              onDelete={canUpdate ? () => setDeleting(view) : undefined}
               deleteIcon={<Trash2 size={14} />}
             />
             <ActionButton
               intent="quiet"
               size="small"
+              disabled={!canUpdate}
               aria-label={t('secondary.savedViews.rename', { name: view.name })}
               onClick={() => {
                 setEditingView(view);
@@ -199,7 +242,9 @@ export function MailSearchControls({
                 dateFrom: null,
                 dateTo: null,
                 unread: null,
+                needsReply: null,
                 hasAttachment: null,
+                folderId: null,
               })
             }
           >
@@ -289,6 +334,16 @@ export function MailSearchControls({
           />
           <SelectField
             size="small"
+            label={t('secondary.search.replyState')}
+            value={criteria.needsReply === true ? 'true' : ''}
+            options={[
+              { value: '', label: t('secondary.search.allReplyStates') },
+              { value: 'true', label: t('secondary.search.needsReplyOnly') },
+            ]}
+            onValueChange={(value) => onUpdate({ needsReply: value || null })}
+          />
+          <SelectField
+            size="small"
             label={t('secondary.search.attachment')}
             value={criteria.hasAttachment === true ? 'true' : ''}
             options={[
@@ -296,6 +351,19 @@ export function MailSearchControls({
               { value: 'true', label: t('secondary.search.attachmentOnly') },
             ]}
             onValueChange={(value) => onUpdate({ hasAttachment: value || null })}
+          />
+          <SelectField
+            size="small"
+            label={t('secondary.search.folder')}
+            value={criteria.folderId ?? ''}
+            options={[
+              { value: '', label: t('secondary.search.allFolders') },
+              ...(organization.data?.folders ?? []).map((folder) => ({
+                value: folder.folderId,
+                label: folder.displayName,
+              })),
+            ]}
+            onValueChange={(value) => onUpdate({ folderId: value || null })}
           />
         </Box>
       </Collapse>
@@ -350,7 +418,7 @@ export function MailSearchControls({
   );
 }
 
-function hasAdvancedCriteria(criteria: MailSearchCriteria) {
+export function hasAdvancedCriteria(criteria: MailSearchCriteria) {
   return Boolean(
     criteria.accountId ||
     criteria.scope ||
@@ -359,17 +427,23 @@ function hasAdvancedCriteria(criteria: MailSearchCriteria) {
     criteria.dateFrom ||
     criteria.dateTo ||
     criteria.unread ||
-    criteria.hasAttachment
+    criteria.needsReply ||
+    criteria.hasAttachment ||
+    criteria.folderId
   );
 }
 
-function criteriaToParams(criteria: MailSearchCriteria): Record<string, string | null> {
+export function criteriaToParams(criteria: MailSearchCriteria): Record<string, string | null> {
   return Object.fromEntries(
     Object.entries(criteria).map(([key, value]) => [
       key,
       value == null || value === false ? null : String(value),
     ])
   );
+}
+
+function folderLabel(folders: Array<{ folderId: string; displayName: string }>, folderId: string) {
+  return folders.find((folder) => folder.folderId === folderId)?.displayName ?? folderId;
 }
 
 function accountLabel(

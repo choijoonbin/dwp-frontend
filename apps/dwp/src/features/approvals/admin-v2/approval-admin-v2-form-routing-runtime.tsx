@@ -34,11 +34,15 @@ import {
   getApprovalTemplateWorkspaceDetail,
 } from '@dwp-frontend/shared-utils/api/approval-admin-v2-template-api';
 
-import Stack from '@mui/material/Stack';
-
-import { AdminV2ViewTabs } from './admin-v2-foundation';
 import { ApprovalWorkflowStudio } from '../approval-workflow-studio';
 import { approvalAdminV2Copy } from './approval-admin-v2-copy';
+import {
+  adminV2RequestOptions as requestOptions,
+  AdminWorkspaceTabs,
+  EMPTY_ADMIN_V2_STATUS as EMPTY_STATUS,
+  retryAdminV2Source as retry,
+  selectedAdminV2Id as selectedId,
+} from './approval-admin-v2-form-routing-shared';
 import { DelegationGovernanceWorkspace } from './delegation-governance-workspace';
 import {
   ApprovalAdminV2RuntimeLayer,
@@ -78,43 +82,6 @@ import type { FormStudioV3FieldDraft } from './form-studio-v3-editor-model';
 import type { AdminV2Status } from './admin-v2-types';
 import type { ApproverRoutingView } from './approver-routing-workspace';
 import type { FormStudioV3View } from './form-studio-v3-workspace';
-
-const EMPTY_STATUS: AdminV2Status = { label: 'UNAVAILABLE', tone: 'neutral' };
-
-function selectedId<T extends { id: string }>(items: readonly T[], selected: string | null) {
-  return items.some((item) => item.id === selected) ? selected : (items[0]?.id ?? null);
-}
-
-function retry(source: { refetch: () => unknown }) {
-  return () => void source.refetch();
-}
-
-function requestOptions(source: { requestScope: { contextScopeKey?: string } }) {
-  return source.requestScope.contextScopeKey
-    ? { contextScopeKey: source.requestScope.contextScopeKey }
-    : {};
-}
-
-function AdminWorkspaceTabs<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-  children,
-}: {
-  label: string;
-  value: T;
-  options: readonly { value: T; label: string }[];
-  onChange: (value: T) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <Stack gap={2.5}>
-      <AdminV2ViewTabs label={label} value={value} options={options} onChange={onChange} />
-      {children}
-    </Stack>
-  );
-}
 
 function TemplateLibraryRuntime() {
   const { t, i18n } = useTranslation('approvals');

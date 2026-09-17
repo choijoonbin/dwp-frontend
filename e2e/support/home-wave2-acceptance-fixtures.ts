@@ -476,6 +476,22 @@ export async function routeHomeWave2Flow(
     }
     return fulfillSuccess(route, [flowView(presentation)]);
   });
+  await page.route('**/api/platform/v1/home-preferences', (route) =>
+    fulfillSuccess(route, {
+      schemaVersion: 5,
+      surfaceKey: 'workspace-home',
+      customized: true,
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      enabledModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      disabledModeReasons: {},
+      defaultMode: 'CLASSIC',
+      currentMode: 'FLOW_V1',
+      warnings: [],
+      layout: flowLayout(presentation),
+      version: 3,
+      updatedAt: HOME_WAVE2_FIXED_NOW.toISOString(),
+    })
+  );
   if (studio) {
     await page.route('**/api/platform/v1/home-templates**', (route) => fulfillSuccess(route, []));
   }

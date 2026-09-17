@@ -34,11 +34,11 @@ import type { RouteObject } from 'react-router-dom';
 
 const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
   approvals: 20,
-  calendar: 10,
+  calendar: 11,
   communications: 6,
   dwaion: 19,
   hcm: 25,
-  mail: 23,
+  mail: 24,
   meetings: 10,
   messaging: 8,
   notifications: 9,
@@ -104,7 +104,7 @@ function routeBySurfaceId(
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 12 business apps and exactly the governed 175 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 177 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -119,7 +119,7 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(175);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(177);
   });
 
   it('binds promoted Workplace menus to their explicit PAGE authority source', () => {
@@ -326,8 +326,8 @@ describe('all-product surface expansion', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(65);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(69);
+    expect(menuContracts).toHaveLength(67);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -461,7 +461,7 @@ describe('all-product surface expansion', () => {
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(175);
+    ).toHaveLength(177);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined

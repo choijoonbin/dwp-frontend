@@ -10,7 +10,7 @@
     "mode": {
       "CLASSIC": "클래식 모드",
       "FLOW_V1": "플로우 모드",
-      "MZ_V1": "MZ / AI Stage 모드"
+      "MZ_V1": "AI Stage 모드"
     }
   },
   "labels": {
@@ -138,7 +138,22 @@
     "saving": "변경 사항 저장 중",
     "saved": "{{time}} 저장됨",
     "justNow": "방금",
-    "saveStateError": "변경 사항이 저장되지 않음"
+    "saveStateError": "변경 사항이 저장되지 않음",
+    "undo": "마지막 저장 되돌리기",
+    "conflict": {
+      "title": "유지할 변경 사항 선택",
+      "description": "편집하는 동안 다른 세션에서 같은 설정이 변경되었습니다. 변경 사항을 자동으로 덮어쓰지 않도록 각 값을 비교한 뒤 저장하세요.",
+      "status": "충돌 검토 대기 중",
+      "previousValue": "이전 값: {{value}}",
+      "fieldChoice": "{{field}}에 유지할 값",
+      "keepMine": "내 변경 유지 — {{value}}",
+      "useLatest": "최신 값 사용 — {{value}}",
+      "useLatestAll": "충돌 항목은 모두 최신 값 사용",
+      "saveChoices": "선택한 값 저장",
+      "valueEnabled": "켜짐",
+      "valueDisabled": "꺼짐",
+      "valueMissing": "설정되지 않음"
+    }
   },
   "preview": {
     "live": "실시간 미리보기",
@@ -163,17 +178,20 @@
     }
   },
   "profile": {
-    "title": "프로필",
-    "description": "워크스페이스 전반에서 사용하는 신원 정보와 접근 컨텍스트를 확인합니다.",
+    "title": "프로필 및 계정",
+    "description": "워크스페이스 신원 정보와 연결된 앱 권한 및 데이터 제공 동의를 관리합니다.",
     "loading": "프로필 불러오는 중",
     "loadError": "프로필을 불러오지 못했습니다.",
     "retry": "다시 시도",
+    "valueUnavailable": "현재 인증 응답에서 제공되지 않음",
     "identity": {
       "title": "신원 상세",
       "description": "각 값의 기준 시스템을 표시합니다. 조직에서 관리하는 신원 필드는 여기에서 수정할 수 없습니다."
     },
     "fields": {
       "name": "이름",
+      "department": "소속 부서",
+      "employeeId": "사원번호",
       "jobTitle": "직책",
       "email": "이메일",
       "tenant": "조직",
@@ -186,11 +204,109 @@
       "tenant": "테넌트 원장",
       "authIdentity": "인증 / 아이덴티티 디렉터리",
       "providerIdentity": "프로바이더 ID 서비스",
-      "access": "접근 정책"
+      "access": "접근 정책",
+      "notProvided": "인증 소유 계약 미제공"
     },
     "governance": {
       "title": "프로필 데이터는 조직에서 관리합니다",
       "description": "이름, 직책, 이메일, 조직 및 역할 변경은 기준 인력 또는 ID 시스템에서 수행해야 합니다. 프로필 가시성은 테넌트 디렉터리 권한을 따르며 소유 서비스에서 감사됩니다."
+    },
+    "connections": {
+      "title": "연결된 업무 앱 및 데이터 권한",
+      "description": "테넌트에서 승인한 업무 앱의 실제 OAuth 연결 상태와 부여 범위를 확인하고 관리합니다.",
+      "count": "{{count}}개 연결",
+      "refresh": "상태 새로고침",
+      "loading": "연결된 앱 불러오는 중",
+      "unavailable": "연결 앱 소유 서비스에 접근할 수 없습니다. 이 상태에서는 연결 정보나 권한을 추정하지 않습니다.",
+      "providerBoundary": "프로바이더 신원에서는 고객 테넌트의 개인 앱 연결을 조회하지 않습니다.",
+      "empty": "테넌트에서 사용할 수 있도록 구성된 업무 앱 연결이 없습니다.",
+      "scopes": "권한 범위: {{scopes}}",
+      "noScopes": "부여된 범위 없음",
+      "lastSync": "마지막 성공 동기화: {{date}}",
+      "neverSynced": "성공한 동기화 기록 없음",
+      "actionRequired": "조치 필요: {{code}}",
+      "transferBoundary": "이 화면은 생산성 연결 소유 서비스가 제공하는 메일·캘린더 동기화 상태만 표시합니다. 모든 제품의 계정 데이터 전송 현황을 합산하는 소유 계약과 API는 현재 없습니다.",
+      "sync": "지금 동기화",
+      "connect": "연결",
+      "reauthorize": "권한 갱신",
+      "disconnect": "연결 해제",
+      "states": {
+        "NOT_CONNECTED": "연결 안 됨",
+        "CONNECTED": "정상 연결",
+        "REAUTHORIZATION_REQUIRED": "권한 갱신 필요",
+        "REVOKED": "연결 해제됨"
+      },
+      "disconnectDialog": {
+        "title": "업무 앱 연결 해제",
+        "description": "{{app}}의 위임 토큰과 동기화 커서를 폐기합니다. 다시 사용하려면 OAuth 승인이 필요합니다."
+      },
+      "toasts": {
+        "authorizationFailed": "앱 승인 절차를 시작하지 못했습니다.",
+        "syncStarted": "허용된 데이터의 동기화를 시작했습니다.",
+        "syncPartial": "{{started}}개 데이터 유형의 동기화를 시작했으며 {{failed}}개는 시작하지 못했습니다.",
+        "syncFailed": "동기화를 시작하지 못했습니다.",
+        "disconnected": "앱 연결을 해제하고 위임 자격 증명을 폐기했습니다.",
+        "disconnectFailed": "앱 연결을 해제하지 못했습니다."
+      }
+    },
+    "privacy": {
+      "title": "개인정보 및 데이터 동의",
+      "description": "필수 보안 처리, 선택적 동의, 개인정보 요청 접수 상태를 구분해 관리합니다.",
+      "loading": "개인정보 설정 불러오는 중",
+      "loadError": "개인정보 동의 또는 요청 원장을 불러오지 못했습니다.",
+      "providerBoundary": "프로바이더 신원에서는 고객 테넌트의 사용자 개인정보 원장을 조회하거나 변경하지 않습니다.",
+      "required": {
+        "title": "인증 및 보안 감사 기록",
+        "description": "접속과 보안 작업 기록은 조직의 보안 및 준법 정책에 따라 수집됩니다. 이 처리는 선택적 동의로 표시하지 않습니다.",
+        "badge": "조직 필수"
+      },
+      "telemetry": {
+        "title": "제품 사용성 분석 동의",
+        "description": "제품 화면 이동과 작업 완료 여부를 개인정보 최소화 이벤트로 수집하도록 허용합니다.",
+        "recorded": "사용자 동의 원장 기록: {{date}}",
+        "notRecorded": "아직 서버 동의 원장에 선택이 기록되지 않았습니다.",
+        "saved": "제품 사용성 분석 동의를 기록했습니다.",
+        "saveError": "동의 원장에 저장하지 못해 현재 선택을 변경하지 않았습니다."
+      },
+      "requests": {
+        "types": {
+          "DATA_EXPORT": {
+            "title": "내 데이터 사본 요청",
+            "description": "내부 요청을 접수합니다. 여러 소유 서비스의 데이터 수집, 파일 생성 및 다운로드 제공은 아직 연결되지 않았습니다.",
+            "action": "내보내기 요청"
+          },
+          "ACCOUNT_DELETION": {
+            "title": "개인 데이터 삭제 요청",
+            "description": "삭제 검토 요청을 내부 원장에 접수합니다. 계정 또는 외부 소유 데이터는 이 작업으로 즉시 삭제되지 않습니다.",
+            "action": "삭제 검토 요청"
+          }
+        },
+        "states": {
+          "RECEIVED": "내부 접수",
+          "CANCELLED": "취소됨"
+        },
+        "createdAt": "접수 시각: {{date}}",
+        "cancel": "요청 취소",
+        "received": "개인정보 요청을 내부 검토 원장에 접수했습니다.",
+        "cancelled": "개인정보 요청을 취소했습니다.",
+        "error": "개인정보 요청을 처리하지 못했습니다.",
+        "deleteDialog": {
+          "title": "개인 데이터 삭제 검토를 요청할까요?",
+          "description": "이 작업은 삭제 요청을 내부 원장에 접수합니다. 계정 비활성화나 데이터 삭제가 바로 실행되지는 않습니다.",
+          "cancel": "돌아가기",
+          "confirm": "검토 요청",
+          "confirming": "접수 중"
+        }
+      },
+      "history": {
+        "title": "제품 분석 동의 이력",
+        "empty": "기록된 선택이 없습니다.",
+        "states": {
+          "GRANTED": "동의함",
+          "WITHDRAWN": "동의 철회"
+        }
+      },
+      "ownerBoundary": "이 화면은 동의와 요청 접수 원장을 직접 관리합니다. 데이터 수집, 아카이브 생성, 계정 삭제와 완료 통지는 각 소유 서비스의 실행 연동 전까지 완료로 표시하지 않습니다."
     },
     "provider": {
       "description": "글로벌 운영에 사용하는 프로바이더 신원과 제어 영역 접근 컨텍스트를 확인합니다.",
@@ -263,6 +379,8 @@
       "ssoConfigured": "구성된 공급자",
       "ssoNotConfigured": "구성되지 않음",
       "ssoDetail": "이 테넌트에 {{protocol}} ID 공급자가 활성화되어 있습니다.",
+      "idpLoading": "ID 공급자 세부 정보를 확인하고 있습니다.",
+      "idpNotObserved": "정책상 SSO가 활성화되어 있지만 ID 공급자 소유 서비스가 공급자 세부 정보를 반환하지 않았습니다.",
       "ssoNotConfiguredDetail": "테넌트 관리자가 기업 ID 공급자를 구성하고 검증해야 합니다.",
       "idpUnavailable": "ID 공급자의 준비 상태를 확인하지 못했습니다.",
       "mfa": "다중 인증 정책",
@@ -433,6 +551,56 @@
     "description": "내 계정, 보안, 화면과 업무 환경 설정을 검색하고 관리합니다.",
     "providerDescription": "프로바이더 운영자 계정에 허용된 개인 환경과 보안 설정을 관리합니다.",
     "providerBoundary": "고객 테넌트의 홈, 알림 및 조직 관리값은 이 계정 설정에 표시되지 않습니다.",
+    "status": {
+      "title": "현재 설정 상태",
+      "description": "인증 세션과 개인 환경설정 소유 서비스에서 확인한 현재 상태입니다.",
+      "loading": "확인 중",
+      "unavailable": "확인 불가",
+      "preferenceUpdated": "환경설정 갱신 {{date}}",
+      "identity": {
+        "title": "신원 컨텍스트",
+        "provider": "DWP 프로바이더 제어 영역",
+        "unavailable": "신원 정보 없음"
+      },
+      "sessions": {
+        "title": "활성 세션",
+        "count": "{{count}}개 세션",
+        "description": "보안 소유 서비스가 반환한 브라우저 및 기기 세션입니다.",
+        "error": "세션 소유 서비스에서 현재 값을 받지 못했습니다."
+      },
+      "experience": {
+        "title": "화면 환경",
+        "value": "{{mode}} · {{density}}",
+        "description": "현재 적용 중인 색상 모드와 작업 밀도입니다."
+      },
+      "managed": {
+        "title": "조직 관리 정책",
+        "count": "{{count}}개 관리 항목",
+        "description": "개인 환경설정 응답에 포함된 테넌트 관리 규칙입니다.",
+        "providerLocal": "프로바이더 로컬 설정",
+        "providerDescription": "고객 테넌트 관리 정책을 혼합하지 않는 프로바이더 신원 전용 값입니다."
+      }
+    },
+    "observations": {
+      "label": "보안 권장 과업 및 최근 설정 관측 범위",
+      "security": {
+        "title": "보안 확인 과업",
+        "sessionReview": "현재 세션 외 {{count}}개 세션이 있습니다. 내가 사용한 기기인지 보안 화면에서 확인하세요.",
+        "unavailable": "계정 전반의 보안 권장 과업을 판정하는 소유 서비스는 연결되어 있지 않습니다.",
+        "boundary": "여기서는 인증 서비스가 제공한 세션 수만 근거로 사용하며 보안 점수나 위험을 추정하지 않습니다.",
+        "open": "세션 및 보안 확인"
+      },
+      "recent": {
+        "title": "최근 설정 활동",
+        "loading": "최근 활동을 불러오는 중입니다.",
+        "loadError": "최근 설정 활동을 불러오지 못했습니다. 활동을 추정하지 않습니다.",
+        "empty": "아직 기록된 설정 활동이 없습니다.",
+        "types": {
+          "VIEW": "열람",
+          "CHANGE": "변경"
+        }
+      }
+    },
     "availableCount": "현재 범위 {{count}}개",
     "searchLabel": "개인 설정 검색",
     "searchPlaceholder": "보안, 언어, 알림 등 검색",
@@ -458,6 +626,13 @@
       "home": "홈 앱 위젯",
       "notifications": "알림 채널 집중 시간 조용한 시간",
       "managed": "조직 정책 예외 적용값"
+    },
+    "favorites": {
+      "add": "즐겨찾기에 추가",
+      "remove": "즐겨찾기에서 제거",
+      "addNamed": "{{name}} 즐겨찾기에 추가",
+      "removeNamed": "{{name}} 즐겨찾기에서 제거",
+      "saveError": "즐겨찾기를 저장하지 못했습니다. 새로고침 후 다시 시도하세요."
     }
   },
   "shell": {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, UsersRound } from 'lucide-react';
 import { ActionButton, FormDialog, FormField } from '@dwp-frontend/design-system';
@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import type {
+  MailAccount,
   MailClassification,
   MailContact,
   MailContactGroup,
@@ -201,14 +202,30 @@ export function MailGroupMembersDialog({
   open,
   group,
   contacts,
+  loading = false,
+  error = false,
+  total,
+  page,
+  pageSize,
   busy,
+  onQueryChange,
+  onPageChange,
+  onRetry,
   onClose,
   onSubmit,
 }: {
   open: boolean;
   group: MailContactGroup | null;
   contacts: MailContact[];
+  loading?: boolean;
+  error?: boolean;
+  total: number;
+  page: number;
+  pageSize: number;
   busy: boolean;
+  onQueryChange: (query: string) => void;
+  onPageChange: (page: number) => void;
+  onRetry: () => void;
   onClose: () => void;
   onSubmit: (contactIds: string[]) => void;
 }) {
@@ -220,15 +237,8 @@ export function MailGroupMembersDialog({
     setQuery('');
     setSelected(group?.members.map((member) => member.contactId) ?? []);
   }, [group, open]);
-  const visible = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return contacts;
-    return contacts.filter((contact) =>
-      [contact.displayName, contact.emailAddress, contact.organizationName]
-        .filter(Boolean)
-        .some((value) => value?.toLowerCase().includes(normalized))
-    );
-  }, [contacts, query]);
+  const hasPrevious = page > 0;
+  const hasNext = (page + 1) * pageSize < total;
   return (
     <FormDialog
       open={open}
@@ -250,7 +260,10 @@ export function MailGroupMembersDialog({
         fullWidth
         value={query}
         label={t('addressBook.searchContacts')}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          onQueryChange(event.target.value);
+        }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -264,36 +277,87 @@ export function MailGroupMembersDialog({
         aria-label={t('addressBook.members.available')}
         sx={{ mt: 1.5, maxHeight: 360, overflowY: 'auto', borderTop: 1, borderColor: 'divider' }}
       >
-        {visible.map((contact) => {
-          const checked = selected.includes(contact.contactId);
-          return (
-            <Box
-              component="label"
-              key={contact.contactId}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                py: 0.75,
-                borderBottom: 1,
-                borderColor: 'divider',
-                cursor: 'pointer',
-              }}
-            >
-              <Checkbox
-                checked={checked}
-                onChange={() =>
-                  setSelected((current) =>
-                    checked
-                      ? current.filter((id) => id !== contact.contactId)
-                      : [...current, contact.contactId]
-                  )
-                }
-              />
-              <ListItemText primary={contact.displayName} secondary={contact.emailAddress} />
-            </Box>
-          );
-        })}
+        {loading ? (
+          <Typography role="status" variant="body2" color="text.secondary" sx={{ py: 2 }}>
+            {t('common:labels.loading')}
+          </Typography>
+        ) : error ? (
+          <Alert
+            severity="error"
+            action={
+              <ActionButton intent="quiet" size="small" onClick={onRetry}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
+            {t('addressBook.loadError')}
+          </Alert>
+        ) : (
+          contacts.map((contact) => {
+            const checked = selected.includes(contact.contactId);
+            return (
+              <Box
+                component="label"
+                key={contact.contactId}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  py: 0.75,
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  cursor: 'pointer',
+                }}
+              >
+                <Checkbox
+                  checked={checked}
+                  onChange={() =>
+                    setSelected((current) =>
+                      checked
+                        ? current.filter((id) => id !== contact.contactId)
+                        : [...current, contact.contactId]
+                    )
+                  }
+                />
+                <ListItemText primary={contact.displayName} secondary={contact.emailAddress} />
+              </Box>
+            );
+          })
+        )}
       </Box>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1}
+        alignItems={{ sm: 'center' }}
+        justifyContent="space-between"
+        sx={{ mt: 1.5 }}
+      >
+        <Typography variant="caption" color="text.secondary">
+          {t('addressBook.pagination.summary', {
+            defaultValue: '{{from}}–{{to}} of {{total}} contacts',
+            from: total ? page * pageSize + 1 : 0,
+            to: Math.min((page + 1) * pageSize, total),
+            total,
+          })}
+        </Typography>
+        <Stack direction="row" spacing={1}>
+          <ActionButton
+            intent="secondary"
+            size="small"
+            disabled={loading || !hasPrevious}
+            onClick={() => onPageChange(page - 1)}
+          >
+            {t('addressBook.pagination.previous', { defaultValue: 'Previous' })}
+          </ActionButton>
+          <ActionButton
+            intent="secondary"
+            size="small"
+            disabled={loading || !hasNext}
+            onClick={() => onPageChange(page + 1)}
+          >
+            {t('addressBook.pagination.next', { defaultValue: 'Next' })}
+          </ActionButton>
+        </Stack>
+      </Stack>
     </FormDialog>
   );
 }
@@ -307,7 +371,16 @@ type MailGroupMessageSnapshot = {
     idempotencyKey: string;
     groupVersion: number;
     recipientMode: 'BCC' | 'TO';
+    accountId: string;
   };
+};
+
+export type MailGroupSenderAccount = Pick<
+  MailAccount,
+  'accountId' | 'displayName' | 'emailAddress' | 'connectionState' | 'synchronizationState'
+> & {
+  ready: boolean;
+  supportsBcc: boolean;
 };
 
 export type MailGroupMessageAttempt = MailGroupMessageSnapshot & {
@@ -324,6 +397,8 @@ export function MailGroupMessageDialog({
   rejected = false,
   conflict = false,
   refreshFailed = false,
+  senderAccounts,
+  defaultSenderAccountId,
   attempt,
   onAttempt,
   onReviewLatest,
@@ -337,6 +412,8 @@ export function MailGroupMessageDialog({
   rejected?: boolean;
   conflict?: boolean;
   refreshFailed?: boolean;
+  senderAccounts: MailGroupSenderAccount[];
+  defaultSenderAccountId: string;
   attempt: MailGroupMessageAttempt | null;
   onAttempt: (attempt: MailGroupMessageAttempt) => void;
   onReviewLatest: () => void;
@@ -347,28 +424,36 @@ export function MailGroupMessageDialog({
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [classification, setClassification] = useState<MailClassification>('INTERNAL');
+  const [recipientMode, setRecipientMode] = useState<'TO' | 'BCC'>('TO');
+  const [accountId, setAccountId] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   useEffect(() => {
     if (!open || !group) return;
     setSubject(attempt?.input.subject ?? '');
     setBody(attempt?.input.body ?? '');
     setClassification(attempt?.input.classification ?? 'INTERNAL');
+    setRecipientMode(attempt?.input.recipientMode ?? 'TO');
+    setAccountId(attempt?.input.accountId ?? defaultSenderAccountId);
     setConfirmed(Boolean(attempt) && !attempt?.reviewRequired);
-  }, [open, group, attempt]);
+  }, [open, group, attempt, defaultSenderAccountId]);
   const reviewedGroup = attempt?.group ?? group;
   const locked = busy || Boolean(attempt && !attempt.reviewRequired);
+  const selectedSender = senderAccounts.find((account) => account.accountId === accountId);
+  const supportsBcc = selectedSender?.supportsBcc === true;
   const groupDeliveryPolicy = mailGroupDeliveryPolicy(
     reviewedGroup?.members.length ?? 0,
-    attempt?.reviewRequired ? 'TO' : (attempt?.input.recipientMode ?? 'TO')
+    recipientMode,
+    supportsBcc
   );
   const { recipientLimitExceeded, unsupportedPrivateMode: unsupportedPrivateAttempt } =
     groupDeliveryPolicy;
   const valid = Boolean(
     groupDeliveryPolicy.canSend &&
-      mailGroupAttemptCanSubmit(attempt) &&
-      subject.trim() &&
-      body.trim() &&
-      confirmed
+    mailGroupAttemptCanSubmit(attempt) &&
+    subject.trim() &&
+    body.trim() &&
+    selectedSender?.ready &&
+    confirmed
   );
   return (
     <FormDialog
@@ -394,7 +479,8 @@ export function MailGroupMessageDialog({
               subject: subject.trim(),
               body: body.trim(),
               classification,
-              recipientMode: 'TO' as const,
+              recipientMode,
+              accountId,
               groupVersion: reviewedGroup!.version,
             },
             reviewRequired: false,
@@ -403,7 +489,12 @@ export function MailGroupMessageDialog({
           onAttempt(reviewedAttempt);
           onSubmit(reviewedAttempt.input);
         } else if (attempt) {
-          if (attempt.input.recipientMode !== 'TO') return;
+          if (
+            !selectedSender?.ready ||
+            !mailGroupDeliveryPolicy(reviewedGroup?.members.length ?? 0, recipientMode, supportsBcc)
+              .canSend
+          )
+            return;
           onAttempt({ ...attempt, reviewRequired: false, snapshotStale: false });
           onSubmit(attempt.input);
         } else if (group && valid) {
@@ -413,7 +504,8 @@ export function MailGroupMessageDialog({
               subject,
               body,
               classification,
-              recipientMode: 'TO' as const,
+              recipientMode,
+              accountId,
               groupVersion: group.version,
               idempotencyKey: crypto.randomUUID(),
             },
@@ -435,12 +527,78 @@ export function MailGroupMessageDialog({
             {t('addressBook.send.recipients', { count: reviewedGroup?.members.length ?? 0 })}
           </Typography>
         </Stack>
+        <FormControl disabled={locked} required>
+          <InputLabel id="mail-group-sender-account-label">
+            {t('addressBook.send.senderAccount')}
+          </InputLabel>
+          <Select
+            labelId="mail-group-sender-account-label"
+            label={t('addressBook.send.senderAccount')}
+            value={accountId}
+            onChange={(event) => {
+              setAccountId(event.target.value);
+              setConfirmed(false);
+            }}
+          >
+            {senderAccounts.map((account) => (
+              <MenuItem key={account.accountId} value={account.accountId} disabled={!account.ready}>
+                {t('addressBook.send.senderOption', {
+                  name: account.displayName,
+                  email: account.emailAddress,
+                  state: account.ready
+                    ? t('addressBook.send.senderReady')
+                    : t('addressBook.send.senderUnavailable'),
+                })}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {selectedSender ? (
+          <Typography variant="caption" color={selectedSender.ready ? 'text.secondary' : 'error'}>
+            {t('addressBook.send.senderReview', {
+              name: selectedSender.displayName,
+              email: selectedSender.emailAddress,
+              state: selectedSender.ready
+                ? t('addressBook.send.senderReady')
+                : t('addressBook.send.senderUnavailable'),
+            })}
+          </Typography>
+        ) : (
+          <Alert severity="error">{t('addressBook.send.noSenderAccount')}</Alert>
+        )}
+        <FormControl disabled={locked}>
+          <InputLabel id="mail-group-recipient-mode-label">
+            {t('addressBook.send.recipientMode')}
+          </InputLabel>
+          <Select
+            labelId="mail-group-recipient-mode-label"
+            label={t('addressBook.send.recipientMode')}
+            value={recipientMode}
+            onChange={(event) => {
+              setRecipientMode(event.target.value as 'TO' | 'BCC');
+              setConfirmed(false);
+            }}
+          >
+            <MenuItem value="TO">{t('addressBook.send.mode.TO')}</MenuItem>
+            <MenuItem value="BCC" disabled={!supportsBcc}>
+              {t('addressBook.send.mode.BCC')}
+            </MenuItem>
+          </Select>
+        </FormControl>
         <Alert severity={recipientLimitExceeded ? 'error' : 'warning'}>
           <Typography variant="body2" fontWeight={750}>
-            {t('addressBook.send.recipientVisibilityTitle')}
+            {t(
+              recipientMode === 'BCC'
+                ? 'addressBook.send.privateVisibilityTitle'
+                : 'addressBook.send.recipientVisibilityTitle'
+            )}
           </Typography>
           <Typography variant="body2">
-            {t('addressBook.send.recipientVisibilityDescription')}
+            {t(
+              recipientMode === 'BCC'
+                ? 'addressBook.send.privateVisibilityDescription'
+                : 'addressBook.send.recipientVisibilityDescription'
+            )}
           </Typography>
           <Typography variant="body2" sx={{ mt: 0.5 }}>
             {t(
@@ -451,6 +609,11 @@ export function MailGroupMessageDialog({
             )}
           </Typography>
         </Alert>
+        {!supportsBcc && recipientMode !== 'BCC' && (
+          <Typography variant="caption" color="text.secondary">
+            {t('addressBook.send.privateModeUnsupportedProvider')}
+          </Typography>
+        )}
         {unsupportedPrivateAttempt && (
           <Alert
             severity="error"
@@ -485,7 +648,11 @@ export function MailGroupMessageDialog({
               onChange={(event) => setConfirmed(event.target.checked)}
             />
           }
-          label={t('addressBook.send.confirmRecipients')}
+          label={t(
+            recipientMode === 'BCC'
+              ? 'addressBook.send.confirmPrivateRecipients'
+              : 'addressBook.send.confirmRecipients'
+          )}
         />
         {(retryFailed || (attempt && !attempt.reviewRequired)) && !busy && (
           <Typography role="alert" variant="body2" color="warning.main">
@@ -518,6 +685,7 @@ export function MailGroupMessageDialog({
                       snapshotStale: true,
                     };
                     onAttempt(originalAttempt);
+                    onSubmit(originalAttempt.input);
                   }}
                 >
                   {t('addressBook.send.checkOriginal')}

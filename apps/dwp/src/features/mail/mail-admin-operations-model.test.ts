@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildMailConnectionReadiness,
+  buildMailLegalHoldScope,
   buildMailOperationalExceptions,
   buildMailPurgeGateEvidence,
   canCancelMailDelivery,
@@ -9,6 +10,7 @@ import {
   enabledSharedInboxPermissions,
   getMailDeliveryRecoveryAvailability,
   getMailPurgeAvailability,
+  mailLegalHoldScopeEditor,
   resolveMailAdminFreshness,
   sharedInboxPermissionInputIsValid,
   sourceEvidenceState,
@@ -17,6 +19,47 @@ import {
 import type { MailAdminOverview, MailConnection } from '@dwp-frontend/shared-utils';
 
 const NOW = Date.parse('2026-09-16T06:00:00.000Z');
+const PURGE_SNAPSHOT_RESOURCES = {
+  resourceCounts: { THREADS: 12, MESSAGES: 24, ATTACHMENTS: 3, DRAFTS: 2 },
+  heldResourceCounts: { THREADS: 0, MESSAGES: 0, ATTACHMENTS: 0, DRAFTS: 0 },
+  exclusionReasonCounts: { LEGAL_HOLD: 0, IMMUTABLE_EVIDENCE: 0 },
+  resourceTypes: ['THREADS', 'MESSAGES', 'ATTACHMENTS', 'DRAFTS'] as const,
+  scope: { tenant: true },
+};
+
+describe('mail legal hold scope contract', () => {
+  it('builds only allowlisted structured tenant, account, and thread scopes', () => {
+    expect(buildMailLegalHoldScope('TENANT', '', ['MESSAGES'])).toEqual({
+      tenant: true,
+      resourceTypes: ['MESSAGES'],
+    });
+    expect(
+      buildMailLegalHoldScope(
+        'ACCOUNT',
+        '10000000-0000-4000-8000-000000000001, 10000000-0000-4000-8000-000000000002',
+        []
+      )
+    ).toEqual({
+      accountIds: ['10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002'],
+    });
+    expect(buildMailLegalHoldScope('THREAD', 'not-a-uuid', [])).toBeNull();
+  });
+
+  it('fails closed when the server returns a redacted or unsupported scope', () => {
+    expect(mailLegalHoldScopeEditor({ reference: 'redacted-case' }).editable).toBe(false);
+    expect(
+      mailLegalHoldScopeEditor({
+        threadId: '10000000-0000-4000-8000-000000000003',
+        resourceTypes: ['THREADS'],
+      })
+    ).toMatchObject({
+      editable: true,
+      mode: 'THREAD',
+      ids: '10000000-0000-4000-8000-000000000003',
+      resourceTypes: ['THREADS'],
+    });
+  });
+});
 
 function connection(input: Partial<MailConnection> = {}): MailConnection {
   return {
@@ -361,6 +404,7 @@ describe('mail purge safety', () => {
         holds: [],
         purgeJobs: [],
         candidate: {
+          ...PURGE_SNAPSHOT_RESOURCES,
           candidateSnapshotId: 'snapshot-7',
           fingerprint: 'sha256:abc',
           totalCandidates: 12,
@@ -368,12 +412,14 @@ describe('mail purge safety', () => {
           eligibleCount: 12,
           partialSources: [],
           generatedAt: '2026-09-16T05:59:00.000Z',
+          before: '2026-09-01T00:00:00.000Z',
           expiresAt: '2026-09-16T06:09:00.000Z',
           policyVersion: 7,
           distinctApproverCount: 2,
         },
       },
-      true
+      true,
+      Date.parse('2026-09-16T06:00:00.000Z')
     );
 
     expect(evidence).toEqual({
@@ -383,8 +429,27 @@ describe('mail purge safety', () => {
       policyVersion: 7,
       distinctApproverCount: 2,
       authorizationCurrent: true,
+      candidateCurrent: true,
     });
     expect(getMailPurgeAvailability(evidence).executeEnabled).toBe(true);
+  });
+
+  it('blocks execution after the immutable candidate snapshot expires', () => {
+    expect(
+      getMailPurgeAvailability({
+        purgeApiAvailable: true,
+        legalHoldState: 'CLEAR',
+        candidateSnapshotId: 'snapshot-42',
+        policyVersion: 7,
+        distinctApproverCount: 2,
+        authorizationCurrent: true,
+        candidateCurrent: false,
+      })
+    ).toEqual({
+      previewEnabled: true,
+      executeEnabled: false,
+      blockers: ['CANDIDATE_EXPIRED'],
+    });
   });
 });
 

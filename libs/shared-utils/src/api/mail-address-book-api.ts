@@ -58,6 +58,7 @@ export type MailGroupSendReceipt = {
   groupVersion: number;
   recipientMode: 'TO' | 'BCC';
   recipientCount: number;
+  accountId: string;
   threadId: string;
   acceptedAt: string;
   state: 'ACCEPTED' | 'DELIVERED' | 'FAILED' | 'UNKNOWN' | 'CANCELLED';
@@ -164,6 +165,7 @@ export async function sendMailContactGroupMessage(
     body: string;
     classification: MailClassification;
     recipientMode: 'TO' | 'BCC';
+    accountId: string;
     idempotencyKey: string;
     groupVersion: number;
   }

@@ -47,6 +47,7 @@ import { MailDailyFlow } from './mail-home-journey';
 import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
 import { mailUsesCompactDensity, useMailRuntimePreferences } from './mail-runtime-preferences';
 import { useMailProposalHandoff } from './use-mail-proposal-handoff';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type { ReactNode } from 'react';
 import type {
@@ -73,6 +74,7 @@ export function MailHome() {
   const [proposalsExpanded, setProposalsExpanded] = useState(false);
   const runtimePreferences = useMailRuntimePreferences();
   const proposalHandoff = useMailProposalHandoff();
+  const { canCreate, canUpdate, canDecide } = useMailUserPermissions();
   const query = useQuery({
     queryKey: ['mail', 'home', requestedAccountId],
     queryFn: () => getMailHome({ accountId: requestedAccountId ?? undefined }),
@@ -98,7 +100,10 @@ export function MailHome() {
     }: {
       proposal: MailActionProposal;
       decision: 'ACCEPT' | 'DISMISS';
-    }) => decideMailProposal(proposal.proposalId, decision, proposal.version),
+    }) => {
+      if (!canDecide) throw new Error('Mail proposal decision permission is required.');
+      return decideMailProposal(proposal.proposalId, decision, proposal.version);
+    },
     onSuccess: async (proposal, variables) => {
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
       setProposalToAccept(null);
@@ -175,6 +180,7 @@ export function MailHome() {
             <ActionButton
               intent="primary"
               startIcon={<MailPlus size={17} />}
+              disabled={!canCreate}
               onClick={() => navigateInScope('/mail/inbox?compose=open')}
             >
               {t('actions.compose')}
@@ -182,6 +188,15 @@ export function MailHome() {
           </Stack>
         }
       />
+
+      {!canCreate && !canUpdate && !canDecide ? (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue:
+              'You have read-only mail access. Draft, send, and proposal actions are unavailable.',
+          })}
+        </Alert>
+      ) : null}
 
       {data?.accounts.length ? (
         <SelectField<string>
@@ -389,9 +404,11 @@ export function MailHome() {
                       <MailProposalCard
                         key={proposal.proposalId}
                         proposal={proposal}
-                        busy={proposalMutation.isPending || proposalHandoff.isPending}
-                        onAccept={() => setProposalToAccept(proposal)}
-                        onDismiss={() => proposalMutation.mutate({ proposal, decision: 'DISMISS' })}
+                        busy={!canDecide || proposalMutation.isPending || proposalHandoff.isPending}
+                        onAccept={() => canDecide && setProposalToAccept(proposal)}
+                        onDismiss={() =>
+                          canDecide && proposalMutation.mutate({ proposal, decision: 'DISMISS' })
+                        }
                       />
                     ))}
                     {hiddenProposalCount > 0 && (
@@ -441,7 +458,7 @@ export function MailHome() {
         busy={proposalMutation.isPending || proposalHandoff.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {
-          if (proposalToAccept) {
+          if (proposalToAccept && canDecide) {
             proposalMutation.mutate({ proposal: proposalToAccept, decision: 'ACCEPT' });
           }
         }}

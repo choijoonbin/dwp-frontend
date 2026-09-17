@@ -47,6 +47,10 @@ const IMPORTANCE: MailImportance[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
 
 type FolderForm = MailFolderInput;
 type RuleForm = MailRuleInput;
+export type MailRuleDialogSeed = {
+  accountId?: string;
+  conditions: MailRuleCondition[];
+};
 
 const emptyCondition = (): MailRuleCondition => ({
   field: 'SENDER',
@@ -201,6 +205,7 @@ export function MailFolderDialog({
 export function MailRuleDialog({
   open,
   rule,
+  seed,
   accounts,
   folders,
   busy,
@@ -209,6 +214,7 @@ export function MailRuleDialog({
 }: {
   open: boolean;
   rule: MailRule | null;
+  seed?: MailRuleDialogSeed | null;
   accounts: MailAccount[];
   folders: MailFolder[];
   busy: boolean;
@@ -219,6 +225,9 @@ export function MailRuleDialog({
   const defaultAccount =
     accounts.find((item) => item.defaultAccount && item.accountKind === 'PERSONAL') ??
     accounts.find((item) => item.accountKind === 'PERSONAL');
+  const seededAccount = accounts.find(
+    (item) => item.accountId === seed?.accountId && item.accountKind === 'PERSONAL'
+  );
   const [form, setForm] = useState<RuleForm>({
     accountId: '',
     displayName: '',
@@ -246,18 +255,20 @@ export function MailRuleDialog({
             enabled: rule.enabled,
           }
         : {
-            accountId: defaultAccount?.accountId ?? '',
-            displayName: '',
+            accountId: seededAccount?.accountId ?? defaultAccount?.accountId ?? '',
+            displayName: seed
+              ? t('organization.rule.fromSearchName', { defaultValue: 'Rule from mail search' })
+              : '',
             priority: 100,
             matchMode: 'ALL',
-            conditions: [emptyCondition()],
+            conditions: seed?.conditions.length ? seed.conditions : [emptyCondition()],
             actions: [emptyAction()],
             stopProcessing: true,
             enabled: true,
           }
     );
     setValidationVisible(false);
-  }, [defaultAccount?.accountId, open, rule]);
+  }, [defaultAccount?.accountId, open, rule, seed, seededAccount?.accountId, t]);
 
   const valid = Boolean(
     form.accountId &&

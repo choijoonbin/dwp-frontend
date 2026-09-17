@@ -178,6 +178,8 @@ describe('HomeModePresetComparison', () => {
     });
 
     const mz = container.querySelector<HTMLElement>('[data-mode-choice="MZ_V1"]');
+    expect(mz?.textContent).toContain(ko.modePreset.options.MZ_V1.title);
+    expect(ko.modePreset.options.MZ_V1.title).toBe('AI Stage');
     expect(mz?.querySelector('input')?.hasAttribute('disabled')).toBe(true);
     expect(mz?.querySelector('[data-mode-policy-unavailable]')?.textContent).toBe(
       ko.modePreset.rolloutUnavailable

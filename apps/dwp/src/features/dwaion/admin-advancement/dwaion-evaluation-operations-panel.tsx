@@ -1,12 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FileCheck2, FileUp, FlaskConical, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { ActionButton, OperationalKpiStrip } from '@dwp-frontend/design-system';
+import { OperationalKpiStrip } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import {
-  getDwaionEvaluationSafety,
-  type DwaionEvaluationSafetySnapshot,
-} from '@dwp-frontend/shared-utils';
+import { getDwaionEvaluationSafety } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -14,10 +11,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
-import {
-  DwaionCanonicalCommandActions,
-  type DwaionCanonicalCommandAction,
-} from './dwaion-canonical-command-actions';
+import { DwaionCanonicalCommandActions } from './dwaion-canonical-command-actions';
+import { evaluationCanonicalActions } from './dwaion-evaluation-canonical-actions';
 import {
   DwaionAdminQueryBoundary,
   DwaionAdminSection,
@@ -36,6 +31,7 @@ import {
   type DwaionDatasetDraft,
   type DwaionPiiDecisionDraft,
 } from './dwaion-evaluation-dialogs';
+import { DwaionCommandCapabilityButton } from './dwaion-command-capability-button';
 
 export function DwaionEvaluationOperationsPanel() {
   const copy = useDwaionAdminAdvancementCopy();
@@ -49,12 +45,15 @@ export function DwaionEvaluationOperationsPanel() {
   const [comparisonDraft, setComparisonDraft] = useState<DwaionComparisonDraft | null>(null);
   const [piiDraft, setPiiDraft] = useState<DwaionPiiDecisionDraft | null>(null);
   const data = query.data;
-  const commandsAvailable = data?.capability.status === 'AVAILABLE' && data.capability.configured;
   const pendingPii = useMemo(
     () =>
       data?.datasets.filter(
         (dataset) => dataset.piiState === 'PENDING' || dataset.piiState === 'REVIEW'
       ) ?? [],
+    [data?.datasets]
+  );
+  const eligibleDatasets = useMemo(
+    () => data?.datasets.filter((dataset) => dataset.piiState === 'PASS') ?? [],
     [data?.datasets]
   );
 
@@ -85,6 +84,7 @@ export function DwaionEvaluationOperationsPanel() {
   const submitComparison = () => {
     if (!comparisonDraft) return;
     const dataset = data?.datasets.find((item) => item.datasetId === comparisonDraft.datasetId);
+    if (!dataset || dataset.piiState !== 'PASS') return;
     setIntent({
       title: copy.evaluation.compare,
       description: copy.command.description,
@@ -205,8 +205,8 @@ export function DwaionEvaluationOperationsPanel() {
               >
                 <Stack spacing={2}>
                   <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-                    <ActionButton
-                      disabled={!commandsAvailable}
+                    <DwaionCommandCapabilityButton
+                      commandKind="DATASET_IMPORT"
                       intent="primary"
                       startIcon={<FileUp size={16} />}
                       onClick={() =>
@@ -221,14 +221,15 @@ export function DwaionEvaluationOperationsPanel() {
                       }
                     >
                       {copy.evaluation.importDataset}
-                    </ActionButton>
-                    <ActionButton
+                    </DwaionCommandCapabilityButton>
+                    <DwaionCommandCapabilityButton
+                      commandKind="EVALUATION_COMPARE"
                       intent="secondary"
                       startIcon={<FlaskConical size={16} />}
-                      disabled={!commandsAvailable || !data.datasets.length}
+                      disabled={!eligibleDatasets.length}
                       onClick={() =>
                         setComparisonDraft({
-                          datasetId: data.datasets[0]?.datasetId ?? '',
+                          datasetId: eligibleDatasets[0]?.datasetId ?? '',
                           baseline: '',
                           candidate: '',
                           promptVersion: '',
@@ -239,10 +240,10 @@ export function DwaionEvaluationOperationsPanel() {
                       }
                     >
                       {copy.evaluation.compare}
-                    </ActionButton>
-                    <ActionButton
+                    </DwaionCommandCapabilityButton>
+                    <DwaionCommandCapabilityButton
+                      commandKind="SAFETY_SIMULATE"
                       intent="secondary"
-                      disabled={!commandsAvailable}
                       startIcon={<ShieldAlert size={16} />}
                       onClick={() =>
                         setIntent({
@@ -269,7 +270,7 @@ export function DwaionEvaluationOperationsPanel() {
                       }
                     >
                       {copy.ui.evaluation.safetySimulation}
-                    </ActionButton>
+                    </DwaionCommandCapabilityButton>
                   </Stack>
                   <Box
                     sx={{ border: 1, borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}
@@ -366,9 +367,9 @@ export function DwaionEvaluationOperationsPanel() {
                         </Typography>
                       )}
                       <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 0.75 }}>
-                        <ActionButton
+                        <DwaionCommandCapabilityButton
+                          commandKind="DRIFT_EVIDENCE_ATTACH"
                           intent="quiet"
-                          disabled={!commandsAvailable}
                           startIcon={<FileCheck2 size={15} />}
                           onClick={() =>
                             setIntent({
@@ -392,11 +393,11 @@ export function DwaionEvaluationOperationsPanel() {
                           }
                         >
                           {copy.evaluation.attachEvidence}
-                        </ActionButton>
+                        </DwaionCommandCapabilityButton>
                         {!signal.approvedRawAccess && (
-                          <ActionButton
+                          <DwaionCommandCapabilityButton
+                            commandKind="DRIFT_RAW_EVIDENCE_REQUEST"
                             intent="quiet"
-                            disabled={!commandsAvailable}
                             onClick={() =>
                               setIntent({
                                 title: 'Request approved raw evidence',
@@ -419,7 +420,7 @@ export function DwaionEvaluationOperationsPanel() {
                             }
                           >
                             {copy.ui.evaluation.requestRawEvidence}
-                          </ActionButton>
+                          </DwaionCommandCapabilityButton>
                         )}
                       </Stack>
                     </Box>
@@ -434,9 +435,9 @@ export function DwaionEvaluationOperationsPanel() {
                         {dataset.piiState} {copy.ui.common.checksumSeparator}{' '}
                         {dataset.checksumSha256 ?? 'unavailable'}
                       </Typography>
-                      <ActionButton
+                      <DwaionCommandCapabilityButton
+                        commandKind="DATASET_PII_DECIDE"
                         intent="primary"
-                        disabled={!commandsAvailable}
                         startIcon={<ShieldCheck size={15} />}
                         onClick={() =>
                           setPiiDraft({
@@ -451,7 +452,7 @@ export function DwaionEvaluationOperationsPanel() {
                         }
                       >
                         {copy.ui.evaluation.reviewPii}
-                      </ActionButton>
+                      </DwaionCommandCapabilityButton>
                     </Box>
                   ))}
                 </Stack>
@@ -461,7 +462,7 @@ export function DwaionEvaluationOperationsPanel() {
               title={copy.ui.evaluation.releaseGateOperations}
               description={copy.ui.evaluation.releaseGateOperationsDescription}
               actions={evaluationCanonicalActions(data, copy.command.description)}
-              disabled={!commandsAvailable || data.datasets.length === 0}
+              disabled={!data.datasets.some((dataset) => dataset.piiState === 'PASS')}
               onRefresh={async () => {
                 await query.refetch();
               }}
@@ -477,7 +478,7 @@ export function DwaionEvaluationOperationsPanel() {
         onSubmit={submitDataset}
       />
       <DwaionComparisonDialog
-        datasets={data?.datasets ?? []}
+        datasets={eligibleDatasets}
         value={comparisonDraft}
         onChange={setComparisonDraft}
         onClose={() => setComparisonDraft(null)}
@@ -509,97 +510,4 @@ function splitRefs(value: string) {
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
-}
-
-function evaluationCanonicalActions(
-  data: DwaionEvaluationSafetySnapshot,
-  description: string
-): DwaionCanonicalCommandAction[] {
-  const dataset = data.datasets[0];
-  if (!dataset) return [];
-  const comparison = data.comparisons[0];
-  const target = { type: 'EVALUATION_DATASET', id: dataset.datasetId };
-  const common = {
-    description,
-    target,
-    expectedVersion: dataset.version,
-    impacts: [dataset.ownerRef, `${dataset.caseCount} evaluation cases`, 'Release gate evidence'],
-    recoveryPlan:
-      'Cancel queued evaluator work, quarantine invalid evidence, and retain the previous release-gate decision.',
-  };
-  return [
-    {
-      ...common,
-      label: 'New evaluation run',
-      title: 'Start evaluation run',
-      kind: 'EVALUATION_RUN',
-      changes: [{ label: 'Evaluation run', before: 'Not started', after: 'QUEUED' }],
-      payload: { datasetId: dataset.datasetId, datasetVersion: dataset.version, pinned: true },
-    },
-    {
-      ...common,
-      label: 'Rerun comparison',
-      title: 'Rerun pinned comparison',
-      kind: 'EVALUATION_RERUN',
-      target: {
-        type: 'EVALUATION_COMPARISON',
-        id: comparison?.comparisonId ?? dataset.datasetId,
-      },
-      changes: [
-        {
-          label: 'Comparison',
-          before: comparison?.state ?? 'Not created',
-          after: 'RERUN_QUEUED',
-        },
-      ],
-      payload: {
-        comparisonId: comparison?.comparisonId,
-        datasetId: dataset.datasetId,
-        preservePinnedVersions: true,
-      },
-    },
-    {
-      ...common,
-      label: 'Export evaluation report',
-      title: 'Export evaluation report',
-      kind: 'EVALUATION_REPORT_EXPORT',
-      changes: [{ label: 'Report receipt', before: 'Not generated', after: 'PDF_EXPORT_PENDING' }],
-      payload: { comparisonId: comparison?.comparisonId, format: 'PDF', includeEvidence: true },
-    },
-    {
-      ...common,
-      label: 'Submit gate evidence',
-      title: 'Submit release-gate evidence',
-      kind: 'EVALUATION_GATE_APPROVE',
-      changes: [
-        { label: 'Release gate', before: data.releaseGateState, after: 'APPROVAL_PENDING' },
-      ],
-      payload: {
-        comparisonId: comparison?.comparisonId,
-        datasetChecksum: dataset.checksumSha256,
-        decision: 'REQUEST_APPROVAL',
-      },
-    },
-    {
-      ...common,
-      label: 'Enforce emergency guardrail',
-      title: 'Enforce emergency safety guardrail',
-      kind: 'SAFETY_GUARDRAIL_ENFORCE',
-      target: { type: 'SAFETY_SCOPE', id: 'tenant' },
-      changes: [{ label: 'Guardrail', before: 'MONITORING', after: 'ENFORCEMENT_PENDING' }],
-      impacts: ['Tenant AI traffic', 'Blocked safety categories', 'In-flight agent runs'],
-      payload: { scope: 'tenant', inFlightPolicy: 'DRAIN', failClosed: true },
-      destructive: true,
-    },
-    {
-      ...common,
-      label: 'Approve safety canary',
-      title: 'Approve bounded safety canary',
-      kind: 'SAFETY_CANARY_APPROVE',
-      target: { type: 'SAFETY_SCOPE', id: 'tenant' },
-      changes: [{ label: 'Safety canary', before: '0%', after: '5% / 30 minutes' }],
-      impacts: ['5% tenant AI traffic', 'Automatic fail-closed thresholds'],
-      payload: { scope: 'tenant', trafficPercent: 5, durationMinutes: 30, autoStop: true },
-    },
-  ];
 }

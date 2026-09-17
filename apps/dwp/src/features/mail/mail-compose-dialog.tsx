@@ -47,7 +47,12 @@ import type {
   IdempotentMutationIntent,
   MailProposalMutationBinding,
 } from '@dwp-frontend/shared-utils';
-import type { MailComposeOptions, MailSignature, MailTemplate } from '@dwp-frontend/shared-utils';
+import type {
+  MailClassification,
+  MailComposeOptions,
+  MailSignature,
+  MailTemplate,
+} from '@dwp-frontend/shared-utils';
 import type { MailDraftFields } from './use-mail-draft-autosave';
 
 type DraftSendPayload = Readonly<{
@@ -56,6 +61,8 @@ type DraftSendPayload = Readonly<{
   toEmail: string;
   subject: string;
   body: string;
+  classification: MailClassification;
+  externalRecipientConfirmed: boolean;
   deliveryMode: 'SEND';
   composeOptions?: MailComposeOptions;
   base: MailDraftFields;
@@ -69,6 +76,10 @@ function isDraftFields(value: unknown): value is MailDraftFields {
     (candidate.toName === undefined || typeof candidate.toName === 'string') &&
     typeof candidate.subject === 'string' &&
     typeof candidate.body === 'string' &&
+    (candidate.classification === undefined ||
+      ['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'].includes(
+        candidate.classification as string
+      )) &&
     (candidate.composeOptions === undefined || isMailComposeOptions(candidate.composeOptions))
   );
 }
@@ -82,6 +93,10 @@ function isDraftSendPayload(value: unknown): value is DraftSendPayload {
     typeof candidate.toEmail === 'string' &&
     typeof candidate.subject === 'string' &&
     typeof candidate.body === 'string' &&
+    ['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'].includes(
+      candidate.classification as string
+    ) &&
+    typeof candidate.externalRecipientConfirmed === 'boolean' &&
     candidate.deliveryMode === 'SEND' &&
     isDraftFields(candidate.base)
   );
@@ -99,11 +114,15 @@ function restoreDraftSend(owner: string) {
 
 type MailComposeDialogProps = {
   open: boolean;
+  canSave?: boolean;
+  canSend?: boolean;
+  initialAccountId?: string;
   initialToEmail?: string;
   initialSubject?: string;
   initialBody?: string;
   fromDwaion?: boolean;
   proposalBinding?: MailProposalMutationBinding;
+  dwaionProposalBinding?: import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding | null;
   submissionBlocked?: boolean;
   handoffNotice?: React.ReactNode;
   onClose: () => void;
@@ -118,16 +137,16 @@ export function MailComposeDialog(props: MailComposeDialogProps) {
   const custodyOwner = mailSendCustodyOwner(auth.user);
   return (
     <MailComposeDialogSession
-      key={`${custodyOwner}:${props.open ? 'open' : 'closed'}`}
+      key={`${custodyOwner}:${props.initialAccountId ?? 'default'}:${props.open ? 'open' : 'closed'}`}
       {...props}
       custodyOwner={custodyOwner}
     />
   );
 }
 
-function emptyComposeOptions(toEmail = ''): MailComposeOptions {
+function emptyComposeOptions(toEmail = '', accountId?: string): MailComposeOptions {
   return {
-    accountId: null,
+    accountId: accountId ?? null,
     recipients: toEmail.trim() ? [{ type: 'TO', name: null, email: toEmail.trim() }] : [],
     bodyFormat: 'TEXT',
     attachmentIds: [],
@@ -158,11 +177,15 @@ function applySignature(
 
 function MailComposeDialogSession({
   open,
+  canSave = true,
+  canSend = true,
+  initialAccountId,
   initialToEmail = '',
   initialSubject = '',
   initialBody = '',
   fromDwaion = false,
   proposalBinding,
+  dwaionProposalBinding,
   submissionBlocked = false,
   handoffNotice,
   onClose,
@@ -185,15 +208,22 @@ function MailComposeDialogSession({
   const [body, setBody] = useState(
     restoredConflict?.local.body ?? restoredSend?.attempt.payload.body ?? initialBody
   );
+  const [classification, setClassification] = useState<MailClassification>(
+    restoredConflict?.local.classification ??
+      restoredSend?.attempt.payload.classification ??
+      'INTERNAL'
+  );
   const [composeOptions, setComposeOptions] = useState<MailComposeOptions>(
     restoredConflict?.local.composeOptions ??
       restoredSend?.attempt.payload.composeOptions ??
-      emptyComposeOptions(initialToEmail)
+      emptyComposeOptions(initialToEmail, initialAccountId)
   );
   const [sending, setSending] = useState(false);
   const [ownerCompletionPending, setOwnerCompletionPending] = useState(false);
   const [attachmentsReady, setAttachmentsReady] = useState(true);
   const [personalizationReviewPending, setPersonalizationReviewPending] = useState(false);
+  const [externalRecipients, setExternalRecipients] = useState(Boolean(initialToEmail.trim()));
+  const [externalConfirmationOpen, setExternalConfirmationOpen] = useState(false);
   const [sendResolutionPending, setSendResolutionPending] = useState(Boolean(restoredSend));
   const [sendRejected, setSendRejected] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -213,10 +243,11 @@ function MailComposeDialogSession({
   );
   const activeSendScopeRef = useRef<string | null>(restoredSend?.scope ?? null);
   const ownerDraftCompletionKeyRef = useRef<string | null>(null);
-  const fields = { toEmail, subject, body, composeOptions };
+  const fields = { toEmail, subject, body, classification, composeOptions };
   const autosave = useMailDraftAutosave({
     enabled:
       open &&
+      canSave &&
       !submissionBlocked &&
       !sending &&
       !sendResolutionPending &&
@@ -226,6 +257,7 @@ function MailComposeDialogSession({
     initialThreadId: restoredSend?.attempt.payload.threadId,
     initialVersion: restoredSend?.attempt.payload.version,
     initiallySaved: Boolean(restoredSend),
+    dwaionProposalBinding,
     onSaved: async (detail) => {
       if (reviewedLocalPendingSave) {
         clearMailDraftConflict(custodyOwner, detail.thread.threadId);
@@ -281,7 +313,7 @@ function MailComposeDialogSession({
     if (!reviewedLocalPendingSave || !autosave.identity) return;
     const pending = readMailDraftConflict(custodyOwner, autosave.identity.threadId);
     if (!pending) return;
-    const local = { toEmail, subject, body, composeOptions };
+    const local = { toEmail, subject, body, classification, composeOptions };
     if (mailDraftSnapshot(local) === mailDraftSnapshot(autosave.savedFields)) {
       clearMailDraftConflict(custodyOwner, autosave.identity.threadId);
       setReviewedLocalPendingSave(false);
@@ -295,6 +327,7 @@ function MailComposeDialogSession({
     autosave.identity,
     autosave.savedFields,
     body,
+    classification,
     custodyOwner,
     reviewedLocalPendingSave,
     subject,
@@ -303,7 +336,8 @@ function MailComposeDialogSession({
   ]);
 
   const sendMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: (externalRecipientConfirmed: boolean) => {
+      if (!canSend) throw new Error('Mail send permission is required.');
       const draft = autosave.identity;
       if (!draft) throw new Error('The draft must be saved before it can be sent.');
       const scope = activeSendScopeRef.current ?? mailDraftSendScope(custodyOwner, draft.threadId);
@@ -314,6 +348,8 @@ function MailComposeDialogSession({
           toEmail: toEmail.trim(),
           subject: subject.trim(),
           body: body.trim(),
+          classification,
+          externalRecipientConfirmed,
           deliveryMode: 'SEND',
           composeOptions,
           threadId: draft.threadId,
@@ -334,6 +370,8 @@ function MailComposeDialogSession({
           toEmail: payload.toEmail,
           subject: payload.subject,
           body: payload.body,
+          classification: payload.classification,
+          externalRecipientConfirmed: payload.externalRecipientConfirmed,
           composeOptions: payload.composeOptions,
           deliveryMode: payload.deliveryMode,
           idempotencyKey: sendIdentity.key,
@@ -372,6 +410,7 @@ function MailComposeDialogSession({
             toEmail: attempt.payload.toEmail,
             subject: attempt.payload.subject,
             body: attempt.payload.body,
+            classification: attempt.payload.classification,
             composeOptions: attempt.payload.composeOptions,
           };
           const conflict = {
@@ -405,6 +444,7 @@ function MailComposeDialogSession({
     setToEmail(selected.toEmail);
     setSubject(selected.subject);
     setBody(selected.body);
+    setClassification(selected.classification ?? 'INTERNAL');
     setComposeOptions(selected.composeOptions ?? emptyComposeOptions(selected.toEmail));
     autosave.adoptServerVersion(conflictServerDetail, serverFields, selected);
     if (selection === 'SERVER' || mailDraftSnapshot(selected) === mailDraftSnapshot(serverFields)) {
@@ -434,6 +474,8 @@ function MailComposeDialogSession({
               toName: saved.toName,
               subject: saved.subject,
               body: saved.body,
+              classification: saved.classification ?? 'INTERNAL',
+              externalRecipientConfirmed: false,
               composeOptions: saved.composeOptions,
               deliveryMode: 'DRAFT',
               idempotencyKey: ownerDraftCompletionKeyRef.current,
@@ -507,6 +549,7 @@ function MailComposeDialogSession({
         }
         busy={sending || sendMutation.isPending || ownerCompletionPending}
         submitDisabled={
+          !canSend ||
           !autosave.canSend ||
           ownerCompletionPending ||
           submissionBlocked ||
@@ -522,14 +565,19 @@ function MailComposeDialogSession({
         onClose={requestClose}
         onSubmit={() => {
           autosave.cancelScheduledSave();
+          if (externalRecipients) {
+            setExternalConfirmationOpen(true);
+            return;
+          }
           setSending(true);
-          sendMutation.mutate();
+          sendMutation.mutate(false);
         }}
         secondaryActions={
           <ActionButton
             intent="quiet"
             startIcon={<Save size={16} />}
             disabled={
+              !canSave ||
               !autosave.canSave ||
               ownerCompletionPending ||
               submissionBlocked ||
@@ -547,6 +595,19 @@ function MailComposeDialogSession({
       >
         <Stack spacing={2}>
           {handoffNotice}
+          {!canSave ? (
+            <Alert severity="info">
+              {t('permissions.readOnly', {
+                defaultValue: 'You have read-only mail access. Draft changes are unavailable.',
+              })}
+            </Alert>
+          ) : !canSend ? (
+            <Alert severity="info">
+              {t('permissions.draftOnly', {
+                defaultValue: 'You can edit and save this draft, but sending requires permission.',
+              })}
+            </Alert>
+          ) : null}
           {fromDwaion && <Alert severity="info">{t('compose.dwaionDraftNotice')}</Alert>}
           {closeWhenSaved && <Alert severity="info">{t('draft.autosave.closing')}</Alert>}
           {sendResolutionPending && (
@@ -564,11 +625,14 @@ function MailComposeDialogSession({
               onKeepLocal={() => resolveConflict('LOCAL')}
             />
           )}
-          <MailDraftSaveStatus status={autosave.status} onRetry={() => void autosave.saveNow()} />
+          <MailDraftSaveStatus
+            status={autosave.status}
+            onRetry={canSave ? () => void autosave.saveNow() : undefined}
+          />
           <MailComposeOptionsFields
             toEmail={toEmail}
             options={composeOptions}
-            disabled={closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
+            disabled={!canSave || closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
             hasBody={Boolean(body.trim())}
             onToEmailChange={(value) => {
               setSendRejected(false);
@@ -580,13 +644,19 @@ function MailComposeDialogSession({
             }}
             onAttachmentReadyChange={setAttachmentsReady}
             onPersonalizationReviewChange={setPersonalizationReviewPending}
+            classification={classification}
+            onClassificationChange={(value) => {
+              setSendRejected(false);
+              setClassification(value);
+            }}
+            onExternalRecipientChange={setExternalRecipients}
             onInsertTemplate={(template) => applyTemplate(template, setSubject, setBody)}
             onInsertSignature={(signature) => applySignature(signature, setBody)}
           />
           <FormField
             label={t('compose.subject')}
             value={subject}
-            disabled={closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
+            disabled={!canSave || closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
             inputProps={{ maxLength: 500 }}
             onChange={(event) => {
               setSendRejected(false);
@@ -596,7 +666,7 @@ function MailComposeDialogSession({
           <MailMessageBodyField
             format={composeOptions.bodyFormat}
             value={body}
-            disabled={closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
+            disabled={!canSave || closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
             minRows={10}
             onChange={(value) => {
               setSendRejected(false);
@@ -605,6 +675,21 @@ function MailComposeDialogSession({
           />
         </Stack>
       </FormDialog>
+      <ConfirmDialog
+        open={externalConfirmationOpen}
+        title={t('compose.externalConfirmTitle')}
+        description={t('compose.externalConfirmDescription')}
+        cancelLabel={t('actions.cancel')}
+        confirmLabel={t('compose.externalConfirmAction')}
+        busy={sending || sendMutation.isPending}
+        onClose={() => setExternalConfirmationOpen(false)}
+        onConfirm={() => {
+          setExternalConfirmationOpen(false);
+          autosave.cancelScheduledSave();
+          setSending(true);
+          sendMutation.mutate(true);
+        }}
+      />
       <ConfirmDialog
         open={discardOpen}
         title={t('draft.discard.title')}

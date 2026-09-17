@@ -46,6 +46,8 @@ const queuedRun = {
   notificationState: 'NOT_REQUIRED',
   safeErrorCode: null,
   recoveryHint: null,
+  recoveryAction: null,
+  recoveryCommandId: null,
   compensationRequired: false,
   receipt: null,
   createdAt: '2026-09-17T01:00:00Z',
@@ -80,6 +82,8 @@ const completedRun = {
     notificationState: 'DELIVERED',
     authorizationDecisionRevision: 14,
     authorizedSources: ['WORK_ITEM'],
+    recoveryAction: null,
+    recoveryCommandId: null,
     completedAt: '2026-09-17T01:00:08Z',
   },
   updatedAt: '2026-09-17T01:00:08Z',
@@ -100,7 +104,7 @@ describe('DWAI.ON routine execution API', () => {
     vi.unstubAllGlobals();
   });
 
-  it('fails closed unless every advanced provider action has explicit capability evidence', () => {
+  it('requires explicit capability evidence and accepts configured advanced actions', () => {
     const unavailable = {
       available: false,
       configured: false,
@@ -190,12 +194,18 @@ describe('DWAI.ON routine execution API', () => {
     expect(() =>
       parseDwaionRoutineCapabilities({ ...capabilities, providerRollback: undefined })
     ).toThrowError(expect.objectContaining({ status: 502 }));
-    expect(() =>
+    expect(
       parseDwaionRoutineCapabilities({
         ...capabilities,
-        oauthReauthorization: { ...unavailable, available: true },
-      })
-    ).toThrowError(expect.objectContaining({ status: 502 }));
+        oauthReauthorization: {
+          ...unavailable,
+          available: true,
+          configured: true,
+          reasonCode: null,
+          recoveryHint: null,
+        },
+      }).oauthReauthorization.available
+    ).toBe(true);
   });
 
   it('accepts a completed run only with a bound zero-write authorization receipt', () => {
@@ -214,6 +224,12 @@ describe('DWAI.ON routine execution API', () => {
       parseDwaionRoutineRun({
         ...completedRun,
         receipt: { ...completedRun.receipt, authorizedSources: ['UNVERIFIED_SOURCE'] },
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionRoutineRun({
+        ...completedRun,
+        receipt: { ...completedRun.receipt, evidenceCount: 2 },
       })
     ).toThrowError(expect.objectContaining({ status: 502 }));
   });
@@ -278,6 +294,54 @@ describe('DWAI.ON routine execution API', () => {
       `/api/agent/v1/routines/${ROUTINE_ID}/runs/${RUN_ID}/commands`,
       expect.objectContaining({
         body: expect.stringContaining(`"commandId":"${RUN_COMMAND_ID}"`),
+      })
+    );
+  });
+
+  it('binds a quarantine recovery command to the queued run and terminal receipt', async () => {
+    const queuedRecoveryRun = {
+      ...queuedRun,
+      version: 6,
+      recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE',
+      recoveryCommandId: RUN_COMMAND_ID,
+    } as const;
+    const completedRecoveryRun = {
+      ...completedRun,
+      version: 7,
+      recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE',
+      recoveryCommandId: RUN_COMMAND_ID,
+      receipt: {
+        ...completedRun.receipt,
+        recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE',
+        recoveryCommandId: RUN_COMMAND_ID,
+      },
+    } as const;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ data: { token: 'csrf', headerName: 'X-XSRF-TOKEN' } }))
+      .mockResolvedValueOnce(response({ success: true, data: queuedRecoveryRun }))
+      .mockResolvedValueOnce(response({ success: true, data: [completedRecoveryRun] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      commandDwaionRoutineRun(ROUTINE_ID, RUN_ID, {
+        commandId: RUN_COMMAND_ID,
+        expectedRevision: 5,
+        reasonCode: 'USER_CONFIRMED_SKIP_QUARANTINED',
+        changeReason: 'Continue only with provider-verified non-quarantined items.',
+        action: 'SKIP_QUARANTINED_AND_CONTINUE',
+      })
+    ).resolves.toMatchObject({
+      state: 'QUEUED',
+      recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE',
+      recoveryCommandId: RUN_COMMAND_ID,
+    });
+    await expect(getDwaionRoutineRuns(ROUTINE_ID)).resolves.toEqual([completedRecoveryRun]);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      `/api/agent/v1/routines/${ROUTINE_ID}/runs/${RUN_ID}/commands`,
+      expect.objectContaining({
+        body: expect.stringContaining('"action":"SKIP_QUARANTINED_AND_CONTINUE"'),
       })
     );
   });

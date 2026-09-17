@@ -54,6 +54,7 @@ import {
   MAIL_WRITING_ASSET_VARIABLES,
   mailWritingAssetVariableToken,
 } from './mail-writing-asset-content';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   MailSignature,
@@ -86,6 +87,7 @@ const EMPTY_SIGNATURE: MailSignatureInput = {
 
 export function MailWritingAssetsWorkspace() {
   const { t, i18n } = useTranslation('mail');
+  const { isLoaded, canCreate, canUpdate } = useMailUserPermissions();
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -109,9 +111,16 @@ export function MailWritingAssetsWorkspace() {
   });
   const save = useMutation({
     mutationFn: async (input: MailTemplateInput | MailSignatureInput) => {
-      if (editing === 'template') return createMailTemplate(input as MailTemplateInput);
-      if (editing === 'signature') return createMailSignature(input as MailSignatureInput);
+      if (editing === 'template') {
+        if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
+        return createMailTemplate(input as MailTemplateInput);
+      }
+      if (editing === 'signature') {
+        if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
+        return createMailSignature(input as MailSignatureInput);
+      }
       if (editing?.kind === 'template') {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
         return updateMailTemplate(
           editing.value.templateId,
           input as MailTemplateInput,
@@ -119,6 +128,7 @@ export function MailWritingAssetsWorkspace() {
         );
       }
       if (editing?.kind === 'signature') {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
         return updateMailSignature(
           editing.value.signatureId,
           input as MailSignatureInput,
@@ -143,10 +153,12 @@ export function MailWritingAssetsWorkspace() {
     },
   });
   const archive = useMutation({
-    mutationFn: (asset: WritingAsset) =>
-      asset.kind === 'template'
+    mutationFn: (asset: WritingAsset) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return asset.kind === 'template'
         ? archiveMailTemplate(asset.value.templateId, asset.value.version)
-        : archiveMailSignature(asset.value.signatureId, asset.value.version),
+        : archiveMailSignature(asset.value.signatureId, asset.value.version);
+    },
     onSuccess: async () => {
       setArchiving(null);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'writing-assets'] });
@@ -227,6 +239,7 @@ export function MailWritingAssetsWorkspace() {
         <ActionButton
           intent="primary"
           startIcon={<Plus size={16} />}
+          disabled={!canCreate}
           onClick={() => {
             setSaveConflict(false);
             setEditing(tab === 'templates' ? 'template' : 'signature');
@@ -247,6 +260,15 @@ export function MailWritingAssetsWorkspace() {
           label={t('secondary.templates.showArchived')}
         />
       </Stack>
+
+      {isLoaded && !canCreate && !canUpdate && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue:
+              'You have read-only access. Template and signature changes are unavailable.',
+          })}
+        </Alert>
+      )}
 
       {assets.isLoading ? (
         <Stack spacing={1}>
@@ -388,7 +410,7 @@ export function MailWritingAssetsWorkspace() {
                       <ActionButton
                         intent="quiet"
                         startIcon={<PenLine size={15} />}
-                        disabled={accountRemoved}
+                        disabled={!canUpdate || accountRemoved}
                         onClick={() => {
                           setSaveConflict(false);
                           setEditing(asset);
@@ -399,6 +421,7 @@ export function MailWritingAssetsWorkspace() {
                       <ActionButton
                         intent="quiet"
                         startIcon={<Archive size={15} />}
+                        disabled={!canUpdate}
                         onClick={() => setArchiving(asset)}
                       >
                         {t('secondary.templates.archive')}
@@ -420,14 +443,20 @@ export function MailWritingAssetsWorkspace() {
           }
           description={t('secondary.templates.emptyDescription')}
           actionLabel={
-            tab === 'templates'
-              ? t('secondary.templates.newTemplate')
-              : t('secondary.templates.newSignature')
+            canCreate
+              ? tab === 'templates'
+                ? t('secondary.templates.newTemplate')
+                : t('secondary.templates.newSignature')
+              : undefined
           }
-          onAction={() => {
-            setSaveConflict(false);
-            setEditing(tab === 'templates' ? 'template' : 'signature');
-          }}
+          onAction={
+            canCreate
+              ? () => {
+                  setSaveConflict(false);
+                  setEditing(tab === 'templates' ? 'template' : 'signature');
+                }
+              : undefined
+          }
         />
       )}
 
@@ -616,7 +645,11 @@ function WritingAssetDialog({
             }}
           />
           <Typography variant="caption" color="text.secondary">
-            {t('secondary.templates.variablesHelp')}
+            {t('secondary.templates.variablesHelp', {
+              displayName: '{{displayName}}',
+              department: '{{department}}',
+              recipientName: '{{recipientName}}',
+            })}
           </Typography>
           <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
             {MAIL_WRITING_ASSET_VARIABLES.map((variable) => (

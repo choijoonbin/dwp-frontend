@@ -20,6 +20,8 @@ import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type { DwaionRoutine, DwaionRoutineDryRunReceipt } from './dwaion-routine-model';
 import type {
   DwaionRoutineExecutionRun,
+  DwaionRoutineAdvancedCommand,
+  DwaionRoutineAdvancedPayload,
   DwaionRoutineHealth,
   DwaionRoutineRollbackReceipt,
   DwaionRoutineRunCommand,
@@ -40,6 +42,7 @@ export function DwaionRoutineInspector({
   versions = [],
   health,
   rollbackReceipt,
+  advancedCommand,
   evidenceLoading = false,
   evidenceError = false,
   busy = false,
@@ -54,6 +57,7 @@ export function DwaionRoutineInspector({
   onRunCommand,
   onRollbackVersion,
   onDownloadTelemetry,
+  onAdvancedCommand,
   onRetryRuntime,
   copy = DWAION_ROUTINE_COPY_KO,
   formatTimestamp = (value) => value,
@@ -70,6 +74,7 @@ export function DwaionRoutineInspector({
   versions?: readonly DwaionRoutineVersionSnapshot[];
   health?: DwaionRoutineHealth;
   rollbackReceipt?: DwaionRoutineRollbackReceipt | null;
+  advancedCommand?: DwaionRoutineAdvancedCommand | null;
   evidenceLoading?: boolean;
   evidenceError?: boolean;
   busy?: boolean;
@@ -88,6 +93,7 @@ export function DwaionRoutineInspector({
   ) => void;
   onRollbackVersion: (routine: DwaionRoutine, version: DwaionRoutineVersionSnapshot) => void;
   onDownloadTelemetry: (routine: DwaionRoutine) => void;
+  onAdvancedCommand: (routine: DwaionRoutine, payload: DwaionRoutineAdvancedPayload) => void;
   onRetryRuntime: () => void;
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
@@ -236,6 +242,7 @@ export function DwaionRoutineInspector({
           versions={versions}
           health={health}
           rollbackReceipt={rollbackReceipt}
+          advancedCommand={advancedCommand}
           evidenceLoading={evidenceLoading}
           evidenceError={evidenceError}
           busy={busy}
@@ -247,6 +254,7 @@ export function DwaionRoutineInspector({
           onRunCommand={(run, action) => onRunCommand(routine, run, action)}
           onRollbackVersion={(version) => onRollbackVersion(routine, version)}
           onDownloadTelemetry={() => onDownloadTelemetry(routine)}
+          onAdvancedCommand={(payload) => onAdvancedCommand(routine, payload)}
           onRetry={onRetryRuntime}
         />
 

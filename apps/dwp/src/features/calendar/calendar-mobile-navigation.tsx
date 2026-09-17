@@ -75,6 +75,7 @@ export function CalendarMobileNavigation({
         <BottomNavigationAction
           value="create"
           label={t('actions.newEvent')}
+          aria-label={`${t('actions.newEvent')} — ${t('schedule.mobileNavigation')}`}
           icon={<CalendarPlus size={19} />}
           disabled={!canCreate}
         />

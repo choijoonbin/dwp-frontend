@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   mailForwardDraft,
+  mailExternalLinkDetails,
   mailMessageRecipients,
   mailRemoteImageCount,
   sanitizeMailHtml,
@@ -39,6 +40,19 @@ describe('mail message presentation', () => {
     const loaded = sanitizeMailHtml(html, true);
     expect(loaded).toContain('src="https://tracking.example/pixel.gif"');
     expect(loaded).toContain('referrerpolicy="no-referrer"');
+  });
+
+  it('marks safe web links for an explicit external-navigation review', () => {
+    const sanitized = sanitizeMailHtml(
+      '<a href="https://docs.example.com/path?q=1" target="_blank">Review docs</a>'
+    );
+    expect(sanitized).toContain('data-mail-external-link="https://docs.example.com/path?q=1"');
+    expect(sanitized).not.toContain('target="_blank"');
+    expect(mailExternalLinkDetails('https://docs.example.com/path')).toEqual({
+      url: 'https://docs.example.com/path',
+      domain: 'docs.example.com',
+    });
+    expect(mailExternalLinkDetails('mailto:owner@example.com')).toBeNull();
   });
 
   it('builds a forward draft without carrying active HTML', () => {

@@ -8,6 +8,7 @@ import {
   UserRound,
 } from 'lucide-react';
 import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
+import type { PersonalSettingKey } from '@dwp-frontend/shared-utils';
 
 import type { LucideIcon } from 'lucide-react';
 
@@ -23,7 +24,7 @@ export const settingsSections = [
 export type SettingsSection = (typeof settingsSections)[number];
 
 export type AccountNavigationItem = {
-  key: string;
+  key: PersonalSettingKey;
   path: string;
   icon: LucideIcon;
 };
@@ -101,4 +102,14 @@ export function getAccountNavigationGroups(providerAccount: boolean): AccountNav
 
 export function isSettingsSection(value: string | undefined): value is SettingsSection {
   return settingsSections.includes(value as SettingsSection);
+}
+
+export function resolvePersonalSettingKey(pathname: string): PersonalSettingKey | null {
+  const groups = accountNavigationGroups.flatMap((group) => group.items);
+  const item = groups.find(
+    (candidate) =>
+      pathname === candidate.path ||
+      (candidate.path === '/account/settings/home' && pathname.startsWith(`${candidate.path}/`))
+  );
+  return item?.key ?? null;
 }

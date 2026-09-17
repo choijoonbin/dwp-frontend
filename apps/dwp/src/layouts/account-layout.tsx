@@ -1,7 +1,9 @@
 import { CloudCog, Home } from 'lucide-react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { recordPersonalSettingView } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -15,7 +17,10 @@ import Tooltip from '@mui/material/Tooltip';
 
 import { DesktopNavigationHeader } from '../components/desktop-navigation-header';
 import { ShellHeader } from '../components/shell-header';
-import { getAccountNavigationGroups } from '../features/account/settings-navigation';
+import {
+  getAccountNavigationGroups,
+  resolvePersonalSettingKey,
+} from '../features/account/settings-navigation';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import { useDesktopNavigation } from '../features/shell/desktop-navigation';
@@ -139,6 +144,7 @@ export function AccountLayout() {
   } = useDesktopNavigation(shell);
   const accountName = auth.user?.displayName || t('shell.accountFallback');
   const providerAccount = isProviderIdentity(auth.user);
+  const { pathname } = useLocation();
   const returnDestination = providerAccount ? '/provider' : '/';
   const accountContext = providerAccount
     ? auth.user?.email || t('profile.provider.realmValue')
@@ -146,6 +152,13 @@ export function AccountLayout() {
       auth.user?.tenantName ||
       auth.user?.tenantCode ||
       t('shell.personalSettings');
+
+  useEffect(() => {
+    if (providerAccount) return;
+    const settingKey = resolvePersonalSettingKey(pathname);
+    if (!settingKey) return;
+    void recordPersonalSettingView(settingKey).catch(() => undefined);
+  }, [pathname, providerAccount]);
 
   const navigationContent = (
     compactNavigation: boolean,

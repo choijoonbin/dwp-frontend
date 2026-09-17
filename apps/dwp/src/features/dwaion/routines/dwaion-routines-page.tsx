@@ -31,19 +31,30 @@ import {
 } from '@dwp-frontend/design-system';
 
 import { DWAION_ROUTINE_COPY_KO } from './dwaion-routine-copy';
+import { DwaionRoutineApprovalQueue } from './dwaion-routine-approval-queue';
+import { DwaionRoutineConflictWorkbench } from './dwaion-routine-conflict-workbench';
 import { DwaionRoutineInspector } from './dwaion-routine-inspector';
 import { DwaionRoutineList } from './dwaion-routine-list';
 import { routineConsentComplete } from './dwaion-routine-model';
-import { DwaionCapabilityActions } from '../dwaion-capability-actions';
 
 import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type {
+  DwaionRoutineConflictFailure,
+  DwaionRoutineConflictReceipt,
+  DwaionRoutineConflictSnapshot,
+  DwaionRoutineRecoveryStrategy,
+} from './dwaion-routine-conflict-workbench';
+import type {
   DwaionRoutine,
+  DwaionRoutineMergeSelections,
   DwaionRoutineDryRunReceipt,
   DwaionRoutineViewState,
 } from './dwaion-routine-model';
 import type {
   DwaionRoutineExecutionRun,
+  DwaionRoutineAdvancedCommand,
+  DwaionRoutineAdvancedDecisionInput,
+  DwaionRoutineAdvancedPayload,
   DwaionRoutineHealth,
   DwaionRoutineRollbackReceipt,
   DwaionRoutineRunCommand,
@@ -57,6 +68,10 @@ export function DwaionRoutinesPage({
   selectedId,
   partialError,
   commandError,
+  conflictSnapshot = null,
+  conflictReceipt = null,
+  conflictFailure = null,
+  conflictBusy = false,
   dryRunReceipt,
   runtimeCapabilities,
   runtimeCapabilitiesError,
@@ -66,12 +81,20 @@ export function DwaionRoutinesPage({
   versions = [],
   health,
   rollbackReceipt,
+  advancedCommand,
+  approvalQueue = [],
+  approvalQueueLoading,
+  approvalQueueError,
   evidenceLoading,
   evidenceError,
   busy = false,
   canManage = true,
+  canApprove = false,
   canCreate = canManage,
   onRetry,
+  onResolveConflict,
+  onReloadConflict,
+  onDismissConflict,
   onCreate,
   onSelect,
   onCloseSelection,
@@ -84,6 +107,9 @@ export function DwaionRoutinesPage({
   onRunCommand,
   onRollbackVersion,
   onDownloadTelemetry,
+  onAdvancedCommand,
+  onRetryApprovals,
+  onDecideApproval,
   onRetryRuntime,
   copy = DWAION_ROUTINE_COPY_KO,
   formatTimestamp,
@@ -92,7 +118,11 @@ export function DwaionRoutinesPage({
   routines: readonly DwaionRoutine[];
   selectedId?: string;
   partialError?: string;
-  commandError?: 'REVISION_CONFLICT' | 'COMMAND_FAILED';
+  commandError?: 'REVISION_CONFLICT' | 'COMMAND_FAILED' | 'RECOVERY_REJECTED';
+  conflictSnapshot?: DwaionRoutineConflictSnapshot | null;
+  conflictReceipt?: DwaionRoutineConflictReceipt | null;
+  conflictFailure?: DwaionRoutineConflictFailure | null;
+  conflictBusy?: boolean;
   dryRunReceipt?: DwaionRoutineDryRunReceipt | null;
   runtimeCapabilities?: DwaionRoutineRuntimeCapabilities;
   runtimeCapabilitiesError?: boolean;
@@ -102,12 +132,23 @@ export function DwaionRoutinesPage({
   versions?: readonly DwaionRoutineVersionSnapshot[];
   health?: DwaionRoutineHealth;
   rollbackReceipt?: DwaionRoutineRollbackReceipt | null;
+  advancedCommand?: DwaionRoutineAdvancedCommand | null;
+  approvalQueue?: readonly DwaionRoutineAdvancedCommand[];
+  approvalQueueLoading?: boolean;
+  approvalQueueError?: boolean;
   evidenceLoading?: boolean;
   evidenceError?: boolean;
   busy?: boolean;
   canManage?: boolean;
+  canApprove?: boolean;
   canCreate?: boolean;
   onRetry: () => void;
+  onResolveConflict: (
+    strategy: DwaionRoutineRecoveryStrategy,
+    selections: DwaionRoutineMergeSelections
+  ) => void;
+  onReloadConflict: () => void;
+  onDismissConflict: () => void;
   onCreate: () => void;
   onSelect: (routine: DwaionRoutine) => void;
   onCloseSelection: () => void;
@@ -124,6 +165,12 @@ export function DwaionRoutinesPage({
   ) => void;
   onRollbackVersion: (routine: DwaionRoutine, version: DwaionRoutineVersionSnapshot) => void;
   onDownloadTelemetry: (routine: DwaionRoutine) => void;
+  onAdvancedCommand: (routine: DwaionRoutine, payload: DwaionRoutineAdvancedPayload) => void;
+  onRetryApprovals: () => void;
+  onDecideApproval: (
+    command: DwaionRoutineAdvancedCommand,
+    input: DwaionRoutineAdvancedDecisionInput
+  ) => Promise<void>;
   onRetryRuntime: () => void;
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
@@ -280,51 +327,43 @@ export function DwaionRoutinesPage({
             </ActionButton>
           </Stack>
         ) : null}
-        {commandError === 'REVISION_CONFLICT' ? (
-          <Stack
-            role="alert"
-            gap={1}
-            sx={{ p: 2, border: 1, borderColor: 'warning.main', bgcolor: 'background.paper' }}
-          >
-            <Typography component="h2" variant="subtitle1" color="warning.main">
-              {copy.conflictTitle}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {copy.conflictDescription}
-            </Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75}>
-              <ActionButton intent="primary" onClick={onRetry}>
-                {copy.discardAndRefresh}
-              </ActionButton>
-              <ActionButton intent="secondary" onClick={focusServerEvidence} disabled={!selected}>
-                {copy.snapshotRollback}
-              </ActionButton>
-            </Stack>
-            <DwaionCapabilityActions
-              title={copy.conflictTitle}
-              description={copy.conflictStrategyUnavailable}
-              actions={[
-                {
-                  key: 'fork-version',
-                  label: copy.forkVersion,
-                  capability: 'routine.version-fork',
-                  available: false,
-                  reason: copy.conflictStrategyUnavailable,
-                },
-                {
-                  key: 'semantic-merge',
-                  label: copy.semanticMerge,
-                  capability: 'routine.semantic-merge',
-                  available: false,
-                  reason: copy.conflictStrategyUnavailable,
-                },
-              ]}
-            />
-          </Stack>
-        ) : commandError ? (
+        {commandError === 'REVISION_CONFLICT' && !conflictSnapshot ? (
+          <Typography role="alert" variant="body2" color="warning.main">
+            {copy.conflictFetchFailed}
+          </Typography>
+        ) : commandError === 'COMMAND_FAILED' ? (
           <Typography role="alert" variant="body2" color="error.main">
             {copy.commandFailed}
           </Typography>
+        ) : commandError === 'RECOVERY_REJECTED' ? (
+          <Typography role="alert" variant="body2" color="warning.main">
+            {copy.skipQuarantinedRejected}
+          </Typography>
+        ) : null}
+
+        <DwaionRoutineConflictWorkbench
+          conflict={conflictSnapshot}
+          receipt={conflictReceipt}
+          failure={conflictFailure}
+          busy={conflictBusy}
+          copy={copy}
+          formatTimestamp={formatTimestamp}
+          onResolve={onResolveConflict}
+          onReload={onReloadConflict}
+          onDismiss={onDismissConflict}
+        />
+
+        {state === 'ready' && canApprove ? (
+          <DwaionRoutineApprovalQueue
+            commands={approvalQueue}
+            loading={approvalQueueLoading}
+            error={approvalQueueError}
+            busy={busy}
+            copy={copy}
+            formatTimestamp={formatTimestamp}
+            onRetry={onRetryApprovals}
+            onDecide={onDecideApproval}
+          />
         ) : null}
 
         {state === 'ready' && routines.length > 0 ? (
@@ -514,6 +553,7 @@ export function DwaionRoutinesPage({
                       versions={versions}
                       health={health}
                       rollbackReceipt={rollbackReceipt}
+                      advancedCommand={advancedCommand}
                       evidenceLoading={evidenceLoading}
                       evidenceError={evidenceError}
                       busy={busy}
@@ -528,6 +568,7 @@ export function DwaionRoutinesPage({
                       onRunCommand={onRunCommand}
                       onRollbackVersion={onRollbackVersion}
                       onDownloadTelemetry={onDownloadTelemetry}
+                      onAdvancedCommand={onAdvancedCommand}
                       onRetryRuntime={onRetryRuntime}
                       copy={copy}
                       formatTimestamp={formatTimestamp}
@@ -571,6 +612,7 @@ export function DwaionRoutinesPage({
           versions={versions}
           health={health}
           rollbackReceipt={rollbackReceipt}
+          advancedCommand={advancedCommand}
           evidenceLoading={evidenceLoading}
           evidenceError={evidenceError}
           busy={busy}
@@ -588,6 +630,7 @@ export function DwaionRoutinesPage({
           onRunCommand={onRunCommand}
           onRollbackVersion={onRollbackVersion}
           onDownloadTelemetry={onDownloadTelemetry}
+          onAdvancedCommand={onAdvancedCommand}
           onRetryRuntime={onRetryRuntime}
           copy={copy}
           formatTimestamp={formatTimestamp}

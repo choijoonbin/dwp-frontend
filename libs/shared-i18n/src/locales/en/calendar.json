@@ -16,17 +16,18 @@
         "plan": "Plan",
         "coordinate": "Coordinate",
         "insights": "Analyze",
-        "utility": "Utilities",
+        "utility": "Settings and recovery",
         "admin": "Operations"
       }
     },
     "items": {
       "calendar": {
         "home": { "label": "Today" },
-        "schedule": { "label": "Schedule" },
+        "schedule": { "label": "Calendar" },
         "focus": { "label": "Focus plan" },
         "invitations": { "label": "Invitations" },
-        "availability": { "label": "Find availability" },
+        "availability": { "label": "Find time" },
+        "settings": { "label": "Calendar settings" },
         "trash": { "label": "Trash" },
         "insights": { "label": "Time insights" },
         "admin-overview": { "label": "Operations overview" },
@@ -81,6 +82,7 @@
   },
   "units": {
     "hour": "h",
+    "day": "day",
     "minute": "m",
     "minutes_one": "{{count}} minute",
     "minutes_other": "{{count}} minutes"
@@ -218,6 +220,10 @@
     "dayLoadLabel": "{{date}}, {{value}}% utilized, {{meetings}} meeting minutes, {{focus}} focus minutes"
   },
   "event": {
+    "authorityRevoked": "Calendar access changed. Sensitive draft data was cleared and the editor was closed.",
+    "versionConflict": "This event changed elsewhere first. Your input remains in this editor. Keep reviewing it or reload the current server event.",
+    "conflictKeepEditing": "Keep reviewing my draft",
+    "conflictReload": "Reload current event",
     "createTitle": "Create a new event",
     "createDescription": "Connect people, time, and place in one step.",
     "dwaionDraftNotice": "This is a review draft handed off by DWAI·ON. Check the date, time, attendees, and content before saving it yourself.",
@@ -233,6 +239,7 @@
     "created": "Event created.",
     "updated": "Event updated.",
     "saveError": "The event could not be saved.",
+    "settingsDefaultsUnavailable": "Your Calendar defaults could not be loaded, so safe system defaults are being used.",
     "calendarsLoadError": "Writable calendars could not be loaded. Creating an event remains unavailable until this is resolved.",
     "peopleLoadError": "Company people could not be loaded. You can continue without attendees or retry.",
     "responseSaved": "Attendance response saved.",
@@ -326,6 +333,14 @@
       "MONTHLY_other": "Every {{count}} months"
     },
     "recurrenceUntilLabel": "Repeat until",
+    "recurrenceEditScopeLabel": "Apply changes to",
+    "recurrenceEditScopes": {
+      "THIS_OCCURRENCE": "This occurrence",
+      "SERIES": "Entire series"
+    },
+    "occurrenceFieldsHint": "For this occurrence, you can change its title, time, description, location, visibility, and importance. Attendees and recurrence stay owned by the series.",
+    "seriesFieldsHint": "Apply changes to the entire recurring series, including its recurrence and attendees.",
+    "occurrenceResourceSeriesOnly": "A recurring event with a room, desk, or equipment booking must be changed as a series to preserve reservation integrity.",
     "resourceRecurrenceUntilRequired": "Recurring resource bookings require an end date.",
     "visibilityLabel": "Visibility",
     "visibility": {
@@ -369,7 +384,8 @@
     "invalidRange": "Choose a valid start and end time before checking availability.",
     "loadError": "Attendee availability could not be checked.",
     "staleResults": "The time or attendee list changed. Check again for current recommendations.",
-    "incompleteResults": "Some calendar sources are incomplete or stale, so no time is presented as available. Refresh the affected connection and check again.",
+    "incompleteResults": "No current calendar source can support a candidate. Refresh the affected connection and check again.",
+    "partialResults": "{{sources}} could not be verified. Candidates from healthy sources remain visible for comparison, but cannot be applied until the missing schedule is checked.",
     "timeApplied": "The recommended time was applied. Room availability has been refreshed.",
     "suggestedTimes": "Best times",
     "freshness": "Checked {{time}}",
@@ -464,6 +480,8 @@
     "listDescription_one": "{{count}} invitation in range",
     "listDescription_other": "{{count}} invitations in range",
     "rangeHint": "Past 7 days through the next 90 days",
+    "findAlternative": "Find another time",
+    "findAlternativeFor": "Find another time for {{title}}",
     "filterLabel": "Filter invitations by response status",
     "filters": {
       "ALL": "All",
@@ -494,10 +512,21 @@
     "toLabel": "Search through",
     "durationLabel": "Duration",
     "find": "Find available time",
+    "progressLabel": "Find time progress",
+    "steps": {
+      "1": "Set constraints",
+      "2": "Compare candidates",
+      "3": "Confirm event"
+    },
     "privacy": "Other people's event titles are never retrieved; only busy status is calculated.",
     "rangeRequired": "Select a date range to search.",
     "rangeError": "The end date cannot precede the start date.",
     "loadError": "Available time could not be found.",
+    "partialTitle": "Results exclude an unavailable calendar source",
+    "partialDescription": "{{sources}} could not be verified. Candidates and freshness from healthy sources remain visible, but cannot be confirmed until the missing schedule is checked.",
+    "unknownSource": "Unverified source",
+    "reviewOnly": "Review only",
+    "verifiedCandidate": "Verified",
     "participants": "Participant load",
     "participantsDescription": "Time already protected in the selected period.",
     "me": "You",
@@ -554,12 +583,33 @@
     "title": "My time insights",
     "description": "Look beyond meeting volume to focus capacity and conflicts in your real weekly flow.",
     "protectFocus": "Protect focus time",
+    "loading": "Calculating time insights",
     "loadError": "Time insights could not be loaded.",
+    "authorityError": "Time insight access could not be verified.",
+    "period": {
+      "label": "Analysis period",
+      "option": "Analyze the last {{weeks}} weeks",
+      "short": "{{weeks}} weeks",
+      "caption": "Last {{weeks}} weeks",
+      "range": "{{start}} – {{end}}"
+    },
+    "overview": {
+      "title": "See time quality and boundaries together",
+      "focusQuality": "Protected focus quality"
+    },
+    "comparison": {
+      "same": "Same as the previous period",
+      "more": "{{value}}{{unit}} more than the previous period",
+      "less": "{{value}}{{unit}} less than the previous period"
+    },
     "metrics": {
       "meetingTime": "Meeting time",
       "meetingShare": "{{value}}% of protected time",
       "focusTime": "Focus time",
+      "protectedFocus": "Protected focus",
       "focusTarget": "Against weekly goal",
+      "noMeetingDays": "Meeting-free workdays",
+      "afterHours": "Outside working hours",
       "overloadDays": "Overloaded days",
       "overloadDescription": "Above 100% meeting threshold",
       "conflicts": "Schedule conflicts",
@@ -572,8 +622,19 @@
     "meetingMinutes_other": "{{count}}m meetings",
     "focusMinutes_one": "{{count}}m focus",
     "focusMinutes_other": "{{count}}m focus",
+    "trend": {
+      "title": "Weekly time flow",
+      "description": "Compare meetings, protected focus, and outside-hours work on one basis across {{weeks}} weeks.",
+      "weekSummary": "{{meeting}}m meetings · {{focus}}m focus",
+      "accessibleWeek": "{{date}}, {{meeting}} minutes of meetings, {{focus}} minutes of protected focus, {{afterHours}} minutes outside working hours",
+      "legend": {
+        "meeting": "Meetings",
+        "focus": "Protected focus",
+        "afterHours": "Outside hours"
+      }
+    },
     "recommendations": "Suggestions for this week",
-    "recommendationsDescription": "Explainable recommendations calculated from your own schedule",
+    "recommendationsDescription": "Each suggestion includes real schedule evidence and a next action.",
     "focusLabel": "Focus",
     "focusProtected": "Your weekly focus goal is protected",
     "focusGap_one": "Protect {{count}} more minute of focus",
@@ -587,8 +648,25 @@
     "meetingHeavy": "This week is meeting-heavy",
     "meetingBalanced": "Meeting and focus time are well balanced",
     "meetingAction": "Consolidate overlapping purposes and prefer 25 or 50 minute meetings.",
+    "recommendation": {
+      "focusProtected": "Your focus blocks are being protected consistently",
+      "focusAtRisk": "Protected focus quality is {{value}}%",
+      "focusEvidence": "{{protected}} of {{total}} focus minutes stayed conflict-free for at least 45 minutes.",
+      "boundaryLabel": "Work boundary",
+      "afterHours": "{{value}} minutes fall outside working hours",
+      "boundaryHealthy": "Your working-hour boundary is healthy",
+      "boundaryEvidence": "Calculated against your configured {{start}}–{{end}} working hours.",
+      "fragmentationLabel": "Schedule density",
+      "fragmentation": "{{days}} fragmented days · {{conflicts}} conflicts",
+      "fragmentationEvidence": "Uses days with at least three meeting blocks and actual overlapping events."
+    },
+    "empty": {
+      "title": "There is no schedule to analyze in the last {{weeks}} weeks",
+      "description": "Add events and focus blocks to compare meeting patterns, work boundaries, and focus quality."
+    },
     "privateHint": "These insights are private to you; administrators receive aggregate signals only.",
-    "updatedAt": "Last calculated {{time}}"
+    "updatedAt": "Last calculated {{time}}",
+    "lastVerifiedAt": "Last verified {{time}} · read only"
   },
   "sources": {
     "title": "Calendars",
@@ -645,7 +723,9 @@
     "elevatedAccessDescription": "{{name}} will receive ‘{{access}}’ access. This can allow event changes or sharing administration.",
     "confirmElevatedAccess": "Grant access",
     "share": "Share",
-    "currentPeople": "People with access",
+    "currentPeople": "People and groups with access",
+    "groupAccess": "Organization group",
+    "groupManagedHint": "Group membership and access level are managed by your organization. You can remove this calendar grant here.",
     "loadError": "The sharing list could not be loaded.",
     "saved": "Calendar access updated.",
     "saveError": "Calendar access could not be updated.",
@@ -679,6 +759,166 @@
       }
     }
   },
+  "settings": {
+    "eyebrow": "Calendar / Personal environment",
+    "title": "Calendar settings",
+    "description": "Adjust how time and calendars appear for you, and review inherited organization scheduling policy in one place.",
+    "personal": "Personal setting",
+    "inherited": "Organization policy · Read only",
+    "availableElsewhere": "Connected",
+    "notAvailable": "Not available yet",
+    "productivity": "Productivity preference",
+    "save": "Save settings",
+    "discard": "Discard changes",
+    "reset": "Reset defaults",
+    "resetting": "Resetting",
+    "resetTitle": "Reset personal Calendar settings?",
+    "resetDescription": "Organization policy and system defaults will be applied again. Calendar sharing and delegation will not change.",
+    "resetDone": "Personal Calendar settings were reset to their defaults.",
+    "resetError": "Personal Calendar settings could not be reset.",
+    "loadError": "Calendar settings could not be loaded. Check your access and connection, then try again.",
+    "saved": "Calendar settings saved.",
+    "saveError": "Calendar settings changed elsewhere or could not be saved. Review the latest values.",
+    "governanceNotice": "Only personal settings can be changed. Organization-managed values remain locked, while sharing and delegation are governed and audited separately.",
+    "policySummary": "Event length {{min}}–{{max}} minutes · book up to {{days}} days ahead",
+    "preferenceLoadError": "Personal display settings could not be loaded. Organization policy and calendar sources remain available.",
+    "policyUnavailable": "Organization calendar policy could not be loaded. Personal settings remain editable.",
+    "saveState": {
+      "ready": "No unsaved changes",
+      "dirty": "You have unsaved changes",
+      "saving": "Saving personal settings",
+      "saved": "Personal settings saved",
+      "error": "Personal settings could not be saved"
+    },
+    "working": {
+      "title": "Working hours and time zone",
+      "description": "Set your working days, hours, Calendar time zone, and week start. Locked values follow organization policy.",
+      "days": "Working days",
+      "start": "Work starts",
+      "end": "Work ends",
+      "timeZone": "Display time zone",
+      "systemTimeZone": "Use device time zone",
+      "weekStart": "Calendar week starts on",
+      "weekStarts": {
+        "locale": "Language and region default",
+        "monday": "Monday",
+        "sunday": "Sunday"
+      },
+      "hours": "Organization working hours",
+      "focusTarget": "Weekly focus target"
+    },
+    "days": {
+      "MONDAY": "Mon",
+      "TUESDAY": "Tue",
+      "WEDNESDAY": "Wed",
+      "THURSDAY": "Thu",
+      "FRIDAY": "Fri",
+      "SATURDAY": "Sat",
+      "SUNDAY": "Sun"
+    },
+    "daysLong": {
+      "MONDAY": "Monday",
+      "TUESDAY": "Tuesday",
+      "WEDNESDAY": "Wednesday",
+      "THURSDAY": "Thursday",
+      "FRIDAY": "Friday",
+      "SATURDAY": "Saturday",
+      "SUNDAY": "Sunday"
+    },
+    "defaults": {
+      "title": "Scheduling defaults and transition time",
+      "description": "Set the default duration, speedy ending, transition buffer, visibility, and reminder for new events.",
+      "duration": "Default event length",
+      "buffer": "Default transition buffer",
+      "speedy": "Speedy meetings",
+      "speedyHint": "End 30-minute meetings at 25 minutes and 60-minute meetings at 50 minutes.",
+      "visibility": "Default visibility",
+      "reminder": "Default reminder",
+      "before": "{{count}} minutes before",
+      "none": "Off",
+      "visibilityOptions": {
+        "FREE_BUSY": "Show free/busy only",
+        "DETAILS": "Show event details",
+        "PRIVATE": "Private by default"
+      },
+      "durationRange": "Allowed event length (minutes)",
+      "horizon": "Maximum advance booking",
+      "days_one": "Up to {{count}} day ahead",
+      "days_other": "Up to {{count}} days ahead"
+    },
+    "sources": {
+      "title": "My calendar sources",
+      "description": "Control visibility and favorites for company, personal, and shared calendars. Sharing access remains separately governed per calendar.",
+      "summary": "{{total}} total · {{selected}} visible · {{shared}} shared",
+      "loadError": "Calendar sources could not be loaded.",
+      "empty": "No calendars are available.",
+      "favoriteFor": "Toggle favorite for {{name}}",
+      "visibleFor": "Show {{name}} calendar",
+      "updated": "Calendar source settings saved.",
+      "updateError": "Calendar source settings could not be saved.",
+      "manageHint": "Manage detailed sharing access and color from the source panel in Calendar.",
+      "openCalendar": "Manage in Calendar"
+    },
+    "notifications": {
+      "title": "Notification environment",
+      "description": "Calendar delivery channels and interruption rules are managed together in Notifications.",
+      "ownerHint": "Calendar provides notification timing; Notifications owns channel delivery and receipt state.",
+      "open": "Open notification settings"
+    },
+    "delegation": {
+      "title": "Delegated scheduling",
+      "description": "Assign a delegate and limit the allowed actions and validity period explicitly.",
+      "guardrail": "Calendar sharing and delegation are separate authorities. Delegation applies only to the selected actions and period, and every grant or revocation is audited.",
+      "add": "Assign delegate",
+      "dialogTitle": "Assign a new delegate",
+      "dialogDescription": "Choose a person, allowed actions, and start and end times. Access to private event details is never included automatically.",
+      "auditWarning": "Delegation permits someone to act on your behalf. Select the minimum scope and shortest practical validity period.",
+      "person": "Delegate",
+      "personHint": "Search for a person by name or organization.",
+      "peopleLoadError": "Delegate candidates could not be loaded.",
+      "scopes": "Allowed delegated actions",
+      "validFrom": "Delegation starts",
+      "validUntil": "Delegation ends",
+      "invalidValidity": "The end time must be later than the start time.",
+      "create": "Start delegation",
+      "created": "Delegated authority assigned.",
+      "createError": "Delegated authority could not be assigned. Check for overlapping periods and access.",
+      "loadError": "Delegated authority could not be loaded.",
+      "emptyTitle": "No delegates are assigned",
+      "emptyDescription": "Assign a delegate only when needed, with a minimal scope and bounded validity period.",
+      "unknownPerson": "Person details restricted",
+      "revoke": "Revoke delegation",
+      "revoking": "Revoking",
+      "revokeTitle": "Revoke delegated authority?",
+      "revokeDescription": "Future delegated actions will be blocked immediately. Existing audit history is retained.",
+      "revokeFor": "Revoke delegated authority for {{name}}",
+      "revoked": "Delegated authority revoked.",
+      "revokeError": "Delegated authority could not be revoked. Review the latest state.",
+      "status": {
+        "SCHEDULED": "Scheduled",
+        "ACTIVE": "Active",
+        "EXPIRED": "Expired",
+        "REVOKED": "Revoked"
+      },
+      "scope": {
+        "RESPOND": {
+          "label": "Respond to invitations",
+          "description": "Accept, tentatively accept, or decline invitations sent to you.",
+          "short": "Respond"
+        },
+        "EDIT_SCHEDULE": {
+          "label": "Edit schedule",
+          "description": "Change the time and details of existing events.",
+          "short": "Edit"
+        },
+        "CREATE": {
+          "label": "Create events",
+          "description": "Create new events in your Calendar.",
+          "short": "Create"
+        }
+      }
+    }
+  },
   "trash": {
     "eyebrow": "Calendar / Retention",
     "title": "Trash",
@@ -703,8 +943,38 @@
     "restoring": "Restoring",
     "restoreUnavailable": "Restore unavailable",
     "restoreTitle": "Restore this event?",
-    "restoreDescription": "‘{{title}}’ will return to its original calendar.",
+    "restoreDescription": "‘{{title}}’ will return to its original calendar. Prior room, desk, and equipment bookings will be checked against current access and availability.",
     "restored": "The event was restored.",
+    "restoreReceiptTitle": "‘{{title}}’ was restored",
+    "restoreReceiptDescription": "The event returned to {{calendar}}.",
+    "restoreOutcomes": {
+      "EVENT_AND_RESOURCES_RESTORED": "The event and its prior resource bookings were restored to {{calendar}}.",
+      "EVENT_AND_RESOURCES_PARTIALLY_RESTORED": "The event returned to {{calendar}}; some resources still need review.",
+      "EVENT_AND_RESOURCE_REBOOK_REQUESTED": "The event returned to {{calendar}} and a resource approval request was submitted.",
+      "EVENT_ONLY_RESOURCE_REBOOK_REQUIRED": "The event returned to {{calendar}}. The resource requires an explicit rebooking.",
+      "EVENT_ONLY_RESOURCE_CONFLICT": "The event returned to {{calendar}}, but its prior resource now has a time conflict.",
+      "EVENT_ONLY_RESOURCE_ACCESS_REVOKED": "The event returned to {{calendar}}, but you no longer have access to the prior resource.",
+      "EVENT_ONLY_RESOURCE_UNAVAILABLE": "The event returned to {{calendar}}, but the prior resource is unavailable.",
+      "EVENT_ONLY_NO_PRIOR_RESOURCE": "The event returned to {{calendar}}. It had no prior resource booking."
+    },
+    "restoreReasons": {
+      "RESOURCE_REBOOKED": "The resource booking is linked to the restored event again.",
+      "RESOURCE_APPROVAL_REQUIRED": "The resource is awaiting administrator approval.",
+      "ADDITIONAL_RESOURCES_REQUIRE_REBOOK": "Rebook each remaining resource separately.",
+      "EXPLICIT_REBOOK_REQUIRED": "Availability has been verified. You can rebook below.",
+      "RESOURCE_TIME_CONFLICT": "Another booking now occupies this time, so it was not restored.",
+      "RESOURCE_ACCESS_REVOKED": "Your current access does not allow this resource to be rebooked.",
+      "RESOURCE_NOT_AVAILABLE": "The resource is under maintenance or no longer active.",
+      "RESOURCE_POLICY_BLOCKED": "Working hours, capacity, or advance-booking policy is not satisfied.",
+      "EVENT_TIME_IS_PAST": "A resource cannot be rebooked for a past event.",
+      "NO_PRIOR_RESOURCE": "There is no prior resource booking to restore."
+    },
+    "resourceResultLabel": "Resource booking {{index}}",
+    "resourceRebook": "Rebook resource",
+    "resourceRebooking": "Rebooking",
+    "resourceRebookSaved": "The resource booking result was applied.",
+    "resourceRebookError": "The resource could not be rebooked. You can retry the same request safely.",
+    "openSchedule": "Review in Calendar",
     "restoreError": "The event could not be restored.",
     "emptyTitle": "Trash is empty",
     "emptyDescription": "Events moved to trash will appear here during their retention window."

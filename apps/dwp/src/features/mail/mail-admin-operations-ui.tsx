@@ -45,6 +45,7 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
         onOpenSettings={props.onOpenSharedInboxSettings}
         onAdd={props.onAddSharedMember}
         onUpdate={props.onUpdateSharedMember}
+        onPreviewRevoke={props.onPreviewSharedMemberRevoke}
         onRemove={props.onRemoveSharedMember}
       />
     );
@@ -62,17 +63,28 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
       <RetentionSurface
         overview={props.overview}
         retention={props.retention}
+        retentionExport={props.retentionExport}
         fallbackEvidence={props.purgeEvidence}
         canManageHolds={props.canManageHolds ?? fallback}
+        canPreviewPurge={props.canPreviewPurge ?? fallback}
         canAuthorizePurge={props.canAuthorizePurge ?? fallback}
         canExecutePurge={props.canExecutePurge ?? fallback}
+        canExport={props.canExportAudit ?? fallback}
+        now={now}
         busyAction={props.busyAction}
         onCreateHold={props.onCreateLegalHold}
         onUpdateHold={props.onUpdateLegalHold}
-        onReleaseHold={props.onReleaseLegalHold}
+        onPreviewHoldRelease={props.onPreviewLegalHoldRelease}
+        onApproveHoldRelease={props.onApproveLegalHoldRelease}
+        onExecuteHoldRelease={props.onExecuteLegalHoldRelease}
         onPreview={props.onPreviewPurge}
+        onSelectCandidate={props.onSelectPurgeCandidate}
         onApprove={props.onApprovePurge}
         onExecute={props.onExecutePurge}
+        onExport={props.onExportRetentionEvidence}
+        onApproveExport={props.onApproveRetentionEvidenceExport}
+        onRefreshExport={props.onRefreshRetentionEvidenceExport}
+        onDownloadExport={props.onDownloadRetentionEvidenceExport}
       />
     );
   return (
@@ -81,15 +93,23 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
       page={props.deliveryAudit}
       auditExport={props.auditExport}
       evidence={props.deliveryEvidence}
+      filters={props.deliveryAuditFilters}
       canReadAudit={props.canReadAudit ?? fallback}
-      canRecover={props.canRecoverDeliveries ?? fallback}
+      canRevealAudit={props.canRevealAudit ?? fallback}
+      canReconcile={props.canReconcileDeliveries ?? props.canRecoverDeliveries ?? fallback}
+      canRetry={props.canRetryDeliveries ?? props.canRecoverDeliveries ?? fallback}
+      canCancel={props.canCancelDeliveries ?? props.canRecoverDeliveries ?? fallback}
       canExport={props.canExportAudit ?? fallback}
       now={now}
       busyAction={props.busyAction}
       onReconcile={props.onReconcileDelivery}
       onRetry={props.onRetryDelivery}
       onCancel={props.onCancelDelivery}
+      onFiltersChange={props.onDeliveryAuditFiltersChange}
       onExport={props.onExportDeliveryAudit}
+      onApproveExport={props.onApproveDeliveryAuditExport}
+      onRefreshExport={props.onRefreshDeliveryAuditExport}
+      onDownloadExport={props.onDownloadDeliveryAuditExport}
     />
   );
 }

@@ -1,7 +1,7 @@
-export type MailSharedAssignmentFilter = 'ALL' | 'MINE' | 'UNASSIGNED';
+export type MailSharedAssignmentFilter = 'ALL' | 'MINE' | 'UNASSIGNED' | 'OVERDUE';
 
 export function mailSharedAssignmentFilter(value: string | null): MailSharedAssignmentFilter {
-  return value === 'MINE' || value === 'UNASSIGNED' ? value : 'ALL';
+  return value === 'MINE' || value === 'UNASSIGNED' || value === 'OVERDUE' ? value : 'ALL';
 }
 
 export function updateMailSharedFilters(
@@ -9,7 +9,11 @@ export function updateMailSharedFilters(
   updates: { assignment?: MailSharedAssignmentFilter; sharedInboxId?: string | null }
 ) {
   const next = new URLSearchParams(params);
-  if (updates.assignment === 'MINE' || updates.assignment === 'UNASSIGNED') {
+  if (
+    updates.assignment === 'MINE' ||
+    updates.assignment === 'UNASSIGNED' ||
+    updates.assignment === 'OVERDUE'
+  ) {
     next.set('assignment', updates.assignment);
   } else if ('assignment' in updates) next.delete('assignment');
   if (updates.sharedInboxId) next.set('sharedInboxId', updates.sharedInboxId);

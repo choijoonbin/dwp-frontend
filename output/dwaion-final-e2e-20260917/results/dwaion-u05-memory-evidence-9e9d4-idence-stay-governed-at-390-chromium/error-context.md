@@ -1,0 +1,475 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic "Open DWAI·ON navigation" [ref=e6]:
+        - button "Open DWAI·ON navigation" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+      - generic [ref=e9]: DWP
+      - generic [ref=e10]: DWAI·ON
+      - generic "0 actionable notifications, 0 total unread" [ref=e12]:
+        - button "0 actionable notifications, 0 total unread" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic: "0"
+      - 'button "Account: Mina Kim, Tenant administrator" [ref=e18] [cursor=pointer]':
+        - generic [ref=e19]: M
+        - img [ref=e20]
+    - main [ref=e22]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - text: Personal AI governance
+            - heading "My AI controls" [level=1] [ref=e27]
+            - paragraph [ref=e28]: Manage the information boundaries DWAI·ON may reference, explicit preferences, and retention or deletion requests in one place.
+            - generic [ref=e29]:
+              - generic [ref=e31]: Server policy response received
+              - generic [ref=e33]: Saved preferences · 1
+              - generic [ref=e35]: Deletion execution unavailable
+          - button "Recheck access and policy" [ref=e36] [cursor=pointer]:
+            - img [ref=e38]
+            - text: Recheck access and policy
+        - navigation "Personal AI control sections" [ref=e43]:
+          - link "1. Work signal access" [ref=e44] [cursor=pointer]:
+            - /url: "#dwaion-controls-sources"
+          - link "2. Explicit memories" [ref=e45] [cursor=pointer]:
+            - /url: "#dwaion-controls-memories"
+          - link "3. Clean up data" [ref=e46] [cursor=pointer]:
+            - /url: "#dwaion-controls-cleanup"
+          - link "4. Compliance" [ref=e47] [cursor=pointer]:
+            - /url: "#dwaion-controls-compliance"
+          - generic [ref=e49]: Server policy response received
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - region "Work signal analysis scope" [ref=e53]:
+              - generic [ref=e54]:
+                - img [ref=e55]
+                - generic [ref=e58]:
+                  - heading "Work signal analysis scope" [level=2] [ref=e59]
+                  - paragraph [ref=e60]: Choose each source independently. Effective sources expose reference identifiers only to routine dry runs.
+              - generic [ref=e61]:
+                - generic [ref=e63]:
+                  - generic [ref=e64]:
+                    - img [ref=e66]
+                    - generic [ref=e70]:
+                      - generic [ref=e71]:
+                        - paragraph [ref=e72]: Work items
+                        - generic [ref=e74]: Effective
+                      - generic [ref=e75]: Identifiers and status visible to the current account
+                      - generic [ref=e76]: No raw content copy · Personal routine validation only
+                  - 'switch "Work items: On" [checked] [ref=e79] [cursor=pointer]'
+                - generic [ref=e82]:
+                  - separator [ref=e83]
+                  - generic [ref=e84]:
+                    - generic [ref=e85]:
+                      - img [ref=e87]
+                      - generic [ref=e91]:
+                        - generic [ref=e92]:
+                          - paragraph [ref=e93]: Mail
+                          - generic [ref=e95]: Effective
+                        - generic [ref=e96]: Mail identifiers and metadata visible to the current account
+                        - generic [ref=e97]: No raw content copy · Personal routine validation only
+                    - 'switch "Mail: On" [checked] [ref=e100] [cursor=pointer]'
+                - generic [ref=e103]:
+                  - separator [ref=e104]
+                  - generic [ref=e105]:
+                    - generic [ref=e106]:
+                      - img [ref=e108]
+                      - generic [ref=e110]:
+                        - generic [ref=e111]:
+                          - paragraph [ref=e112]: Calendar
+                          - generic [ref=e114]: Unavailable
+                        - generic [ref=e115]: Unavailable
+                        - generic [ref=e116]: No raw content copy · Personal routine validation only
+                    - generic [ref=e117]:
+                      - generic:
+                        - 'switch "Calendar: Off" [disabled]'
+            - region "Explicit memory storage" [ref=e120]:
+              - generic [ref=e122]:
+                - img [ref=e124]
+                - generic [ref=e136]:
+                  - generic [ref=e137]:
+                    - heading "Explicit memory storage" [level=2] [ref=e138]
+                    - generic [ref=e140]: Answer personalization on
+                  - paragraph [ref=e141]: Only preferences you enter are encrypted and stored. Conversations are not inferred and credentials are never stored.
+              - separator [ref=e142]
+              - generic [ref=e143]:
+                - generic [ref=e144]:
+                  - generic [ref=e145]:
+                    - generic [ref=e146]:
+                      - heading "Store preferences" [level=6] [ref=e147]
+                      - generic [ref=e149]: "On"
+                    - paragraph [ref=e150]: Encrypt preferences you enter so you can review, edit, or delete them at any time.
+                  - 'switch "Store preferences: On" [checked] [ref=e153] [cursor=pointer]'
+                - generic [ref=e156]:
+                  - generic [ref=e157]:
+                    - generic [ref=e158]:
+                      - heading "Apply preferences to answers" [level=6] [ref=e159]
+                      - generic [ref=e161]: "On"
+                    - paragraph [ref=e162]: Send active preferences to answer generation for presentation only. They cannot change facts, access, or policy.
+                  - 'switch "Apply preferences to answers: On" [checked] [ref=e165] [cursor=pointer]'
+            - region "Preferences I saved" [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - img [ref=e172]
+                  - generic [ref=e180]:
+                    - heading "Preferences I saved" [level=2] [ref=e181]
+                    - paragraph [ref=e182]: Store response format, length, tone, or working style only. Account, payment, and regulated identifiers are rejected.
+                - button "Add preference" [ref=e183] [cursor=pointer]:
+                  - img [ref=e185]
+                  - text: Add preference
+              - alert [ref=e186]:
+                - img [ref=e188]
+                - generic [ref=e190]: Do not enter passwords, tokens, government IDs, bank, or card numbers.
+              - generic [ref=e192]:
+                - tablist "Memory categories" [ref=e193]:
+                  - tab "All 1" [selected] [ref=e194] [cursor=pointer]
+                  - tab "Manual 1" [ref=e195] [cursor=pointer]
+                  - tab "AI approved 0" [ref=e196] [cursor=pointer]
+                  - tab "Expiring 1" [ref=e197] [cursor=pointer]
+                - generic [ref=e198]:
+                  - region "Preferences I saved" [ref=e199]:
+                    - 'button "View details: Tone" [pressed] [ref=e200] [cursor=pointer]':
+                      - generic [ref=e201]:
+                        - generic [ref=e202]: 22222222-2222-4222-8222-222222222222
+                        - generic [ref=e204]: Active
+                      - heading "Tone" [level=6] [ref=e205]
+                      - paragraph [ref=e206]: Use a concise, direct tone.
+                      - generic [ref=e207]: Entered explicitly by you · Sep 4, 2026, 9:00 AM
+                  - article "Tone" [ref=e208]:
+                    - generic [ref=e209]:
+                      - generic [ref=e210]:
+                        - text: Selected memory details and evidence
+                        - heading "Tone" [level=3] [ref=e211]
+                      - generic [ref=e212]:
+                        - generic [ref=e214]: Entered explicitly by you
+                        - generic [ref=e216]: Active
+                    - paragraph [ref=e217]: Use a concise, direct tone.
+                    - generic [ref=e218]:
+                      - heading "Provenance and change evidence" [level=4] [ref=e219]
+                      - generic [ref=e220]:
+                        - generic [ref=e221]:
+                          - term [ref=e222]: Origin
+                          - definition [ref=e223]: MANUAL
+                        - generic [ref=e224]:
+                          - term [ref=e225]: Source type
+                          - definition [ref=e226]: USER_EXPLICIT_ENTRY
+                        - generic [ref=e227]:
+                          - term [ref=e228]: Memory ID
+                          - definition [ref=e229]: 22222222-2222-4222-8222-222222222222
+                        - generic [ref=e230]:
+                          - term [ref=e231]: Created
+                          - definition [ref=e232]: Sep 1, 2026, 9:00 AM
+                        - generic [ref=e233]:
+                          - term [ref=e234]: Last changed
+                          - definition [ref=e235]: Sep 4, 2026, 9:00 AM
+                        - generic [ref=e236]:
+                          - term [ref=e237]: Server revision
+                          - definition [ref=e238]: r2
+                        - generic [ref=e239]:
+                          - term [ref=e240]: Expires
+                          - definition [ref=e241]: Oct 14, 2026, 9:00 AM
+                      - generic [ref=e242]: Application scope
+                      - generic [ref=e243]:
+                        - generic [ref=e245]: Ask AI
+                        - generic [ref=e247]: Deep Research
+                        - generic [ref=e249]: AI proposals
+                    - generic [ref=e250]:
+                      - button "Edit preference" [ref=e251] [cursor=pointer]:
+                        - img [ref=e253]
+                        - text: Edit preference
+                      - button "Pause memory" [ref=e256] [cursor=pointer]:
+                        - img [ref=e258]
+                        - text: Pause memory
+                      - button "Narrow application scope" [ref=e260] [cursor=pointer]:
+                        - img [ref=e262]
+                        - text: Narrow application scope
+                      - button "Reset expiry" [ref=e264] [cursor=pointer]:
+                        - img [ref=e266]
+                        - text: Reset expiry
+                      - button "Delete preference" [ref=e270] [cursor=pointer]:
+                        - img [ref=e272]
+                        - text: Delete preference
+                    - separator [ref=e275]
+                    - heading "Advanced memory evidence" [level=4] [ref=e276]
+                    - paragraph [ref=e277]: Only server-verified data is shown. Missing metrics are never estimated.
+                    - generic [ref=e278]:
+                      - generic [ref=e279]:
+                        - generic [ref=e280]:
+                          - img [ref=e282]
+                          - heading "Verified fact vectors and confidence" [level=5] [ref=e286]
+                        - generic [ref=e287]:
+                          - generic [ref=e288]:
+                            - generic [ref=e290]: Verified data unavailable
+                            - generic [ref=e291]: The current governed memory contract does not provide this evidence.
+                          - generic [ref=e292]:
+                            - generic [ref=e294]: Verified data unavailable
+                            - generic [ref=e295]: The current governed memory contract does not provide this evidence.
+                      - generic [ref=e296]:
+                        - generic [ref=e297]:
+                          - img [ref=e299]
+                          - heading "Usage trail and metrics" [level=5] [ref=e301]
+                        - generic [ref=e302]:
+                          - generic [ref=e303]:
+                            - generic [ref=e304]:
+                              - term [ref=e305]: Application count
+                              - definition [ref=e306]: "9"
+                            - generic [ref=e307]:
+                              - term [ref=e308]: Last applied
+                              - definition [ref=e309]: Sep 4, 2026, 10:30 AM
+                          - generic [ref=e310]:
+                            - generic [ref=e312]: Verified data unavailable
+                            - generic [ref=e313]: The current governed memory contract does not provide this evidence.
+                      - generic [ref=e314]:
+                        - generic [ref=e315]:
+                          - img [ref=e317]
+                          - heading "KMS and security-key binding" [level=5] [ref=e319]
+                        - generic [ref=e321]:
+                          - generic [ref=e322]:
+                            - term [ref=e323]: Encryption provider
+                            - definition [ref=e324]: AWS_KMS
+                          - generic [ref=e325]:
+                            - term [ref=e326]: Key version
+                            - definition [ref=e327]: v7
+                          - generic [ref=e328]:
+                            - term [ref=e329]: Key reference fingerprint
+                            - definition [ref=e330]: 4e8201a4c301
+            - region "Data deletion and cleanup" [ref=e332]:
+              - generic [ref=e333]:
+                - generic [ref=e334]:
+                  - img [ref=e336]
+                  - generic [ref=e341]:
+                    - heading "Data deletion and cleanup" [level=2] [ref=e342]
+                    - paragraph [ref=e343]: The proposal inbox is hidden immediately; other personal data starts a server deletion job.
+                - button "Clean up data" [ref=e344] [cursor=pointer]:
+                  - img [ref=e346]
+                  - text: Clean up data
+              - alert [ref=e349]:
+                - img [ref=e351]
+                - generic [ref=e353]: Source work, mail, calendar data, and required audit metadata are retained.
+              - generic [ref=e354]:
+                - generic [ref=e356]: This release accepts deletion requests only. It does not claim execution is complete.
+                - generic [ref=e358]: Completion claim unavailable
+            - region "Personal data deletion history" [ref=e359]:
+              - generic [ref=e360]:
+                - generic [ref=e361]:
+                  - generic [ref=e362]:
+                    - img [ref=e363]
+                    - heading "Personal data deletion history" [level=2] [ref=e366]
+                  - paragraph [ref=e367]: Review live deletion jobs, per-domain state, and sealed physical-deletion receipts.
+                - button "Refresh history" [ref=e368] [cursor=pointer]:
+                  - img [ref=e370]
+                  - text: Refresh history
+              - generic [ref=e375]:
+                - generic [ref=e376]:
+                  - generic [ref=e377]:
+                    - generic [ref=e378]:
+                      - img [ref=e379]
+                      - generic [ref=e381]:
+                        - heading "66666666-6666-4666-8666-666666666678" [level=6] [ref=e382]
+                        - generic [ref=e383]: Sep 14, 2026, 1:35 PM · Attempt 1
+                    - generic [ref=e386]: Blocked by legal hold
+                  - generic [ref=e389]: Personal memory · Legal hold
+                  - region "Five deletion stages" [ref=e390]:
+                    - heading "Five deletion stages" [level=6] [ref=e391]
+                    - generic [ref=e392]:
+                      - generic [ref=e393]:
+                        - generic [ref=e394]: 1. Request accepted
+                        - generic [ref=e396]: Completed
+                        - generic [ref=e397]: REQUEST_ACCEPTED · deletion:request_accepted
+                      - generic [ref=e398]:
+                        - generic [ref=e399]: 2. Targets scheduled
+                        - generic [ref=e401]: Completed
+                        - generic [ref=e402]: TARGETS_SCHEDULED · deletion:targets_scheduled
+                      - generic [ref=e403]:
+                        - generic [ref=e404]: 3. Active-store disposition
+                        - generic [ref=e406]: Blocked
+                        - generic [ref=e407]: LEGAL_HOLD_ACTIVE · deletion:active_store_disposition
+                      - generic [ref=e408]:
+                        - generic [ref=e409]: 4. Backup boundary
+                        - generic [ref=e411]: Blocked
+                        - generic [ref=e412]: LEGAL_HOLD_BOUNDARY_RECORDED · deletion:backup_boundary
+                      - generic [ref=e413]:
+                        - generic [ref=e414]: 5. Receipt finalization
+                        - generic [ref=e416]: Blocked
+                        - generic [ref=e417]: LEGAL_HOLD_RECEIPT_FINALIZED · deletion:receipt_finalization
+                  - generic [ref=e419]:
+                    - generic [ref=e420]:
+                      - paragraph [ref=e421]: Personal memory
+                      - generic [ref=e422]: Legal hold
+                    - text: LEGAL_HOLD_ACTIVE
+                    - generic [ref=e423]:
+                      - generic [ref=e424]: Legal-hold authority
+                      - generic [ref=e425]: Authority reference LEGAL-2026-0914-001
+                      - generic [ref=e426]: DPO subject dpo@company.com
+                      - generic [ref=e427]: Hold reason LEGAL_HOLD_ACTIVE
+                      - generic [ref=e428]: Effective Sep 14, 2026, 1:30 PM
+                  - generic [ref=e429]: Completed Sep 14, 2026, 1:36 PM
+                - generic [ref=e430]:
+                  - generic [ref=e431]:
+                    - generic [ref=e432]:
+                      - img [ref=e433]
+                      - generic [ref=e435]:
+                        - heading "66666666-6666-4666-8666-666666666679" [level=6] [ref=e436]
+                        - generic [ref=e437]: Sep 14, 2026, 1:30 PM · Attempt 2
+                    - generic [ref=e438]:
+                      - generic [ref=e440]: Partially completed
+                      - button "Retry failed targets" [ref=e441] [cursor=pointer]
+                  - generic [ref=e442]:
+                    - generic [ref=e444]: Personal memory
+                    - generic [ref=e446]: Artifacts
+                  - region "Five deletion stages" [ref=e447]:
+                    - heading "Five deletion stages" [level=6] [ref=e448]
+                    - generic [ref=e449]:
+                      - generic [ref=e450]:
+                        - generic [ref=e451]: 1. Request accepted
+                        - generic [ref=e453]: Completed
+                        - generic [ref=e454]: REQUEST_ACCEPTED · deletion:request_accepted
+                      - generic [ref=e455]:
+                        - generic [ref=e456]: 2. Targets scheduled
+                        - generic [ref=e458]: Completed
+                        - generic [ref=e459]: TARGETS_SCHEDULED · deletion:targets_scheduled
+                      - generic [ref=e460]:
+                        - generic [ref=e461]: 3. Active-store disposition
+                        - generic [ref=e463]: Partial
+                        - generic [ref=e464]: ACTIVE_STORE_DISPOSITION_PARTIAL · deletion:active_store_disposition
+                      - generic [ref=e465]:
+                        - generic [ref=e466]: 4. Backup boundary
+                        - generic [ref=e468]: Partial
+                        - generic [ref=e469]: BACKUP_BOUNDARY_PARTIAL · deletion:backup_boundary
+                      - generic [ref=e470]:
+                        - generic [ref=e471]: 5. Receipt finalization
+                        - generic [ref=e473]: Partial
+                        - generic [ref=e474]: PARTIAL_RECEIPT_FINALIZED · deletion:receipt_finalization
+                  - generic [ref=e475]:
+                    - generic [ref=e476]:
+                      - generic [ref=e477]:
+                        - paragraph [ref=e478]: Personal memory
+                        - generic [ref=e479]: Completed
+                      - generic [ref=e480]:
+                        - generic [ref=e481]: Disposition receipt · 66666666-6666-4666-8666-666666666680
+                        - generic [ref=e482]: SHA-256 6666666666666666666666666666666666666666666666666666666666666666
+                        - generic [ref=e483]: Rows purged 2
+                        - generic [ref=e484]: Method PHYSICAL_ROW_PURGE_OF_ENCRYPTED_RECORDS
+                        - generic [ref=e485]: Scope AGENT_ACTIVE_POSTGRES_DOMAIN_ONLY
+                        - generic [ref=e486]: Backup state EXTERNAL_RETENTION_BOUNDARY
+                    - generic [ref=e487]:
+                      - generic [ref=e488]:
+                        - paragraph [ref=e489]: Artifacts
+                        - generic [ref=e490]: Failed
+                      - text: ARTIFACT_PURGE_RETRYABLE
+                  - generic [ref=e491]: Completed Sep 14, 2026, 1:34 PM
+              - region "Destruction evidence and audit integration" [ref=e493]:
+                - generic [ref=e494]:
+                  - img [ref=e495]
+                  - heading "Destruction evidence and audit integration" [level=6] [ref=e499]
+                - generic [ref=e500]: Exports the current server deletion-history response as a JSON snapshot. An official certificate is available only through a separate server contract.
+                - generic [ref=e501]:
+                  - generic [ref=e502]:
+                    - button "Export current backup-disposition snapshot (JSON)" [disabled]
+                    - generic [ref=e503]: deletion.disposition.backup-state · Ask an administrator to configure this governed data action.
+                  - generic [ref=e504]:
+                    - button "Export current legal-hold state snapshot (JSON)" [ref=e505] [cursor=pointer]
+                    - generic [ref=e506]: deletion.legal-hold-evidence · This is a snapshot of the current server deletion-history response, not an official certificate.
+                  - generic [ref=e507]:
+                    - button "Download official destruction certificate PDF" [disabled]
+                    - generic [ref=e508]: browser.print · Ask an administrator to configure this governed data action.
+                  - generic [ref=e509]:
+                    - button "Export current server deletion-history snapshot (JSON)" [ref=e510] [cursor=pointer]
+                    - generic [ref=e511]: deletion.history · This is a snapshot of the current server deletion-history response, not an official certificate.
+                  - generic [ref=e512]:
+                    - button "Request SRE security support" [disabled]
+                    - generic [ref=e513]: deletion.provider.sre-support · Ask an administrator to configure this governed data action.
+                  - generic [ref=e514]:
+                    - button "Request legal-hold explanation" [disabled]
+                    - generic [ref=e515]: deletion.provider.legal-hold-explanation · Ask an administrator to configure this governed data action.
+                  - generic [ref=e516]:
+                    - button "Synchronize SIEM audit log" [disabled]
+                    - generic [ref=e517]: deletion.provider.siem-sync · Ask an administrator to configure this governed data action.
+          - generic [ref=e518]:
+            - region "Security boundary evidence" [ref=e519]:
+              - generic [ref=e520]:
+                - img [ref=e521]
+                - generic [ref=e525]:
+                  - heading "Security boundary evidence" [level=2] [ref=e526]
+                  - text: Personal AI safety boundaries confirmed by the current API contract.
+              - generic [ref=e527]:
+                - generic [ref=e528]:
+                  - term [ref=e529]: Conversation inference
+                  - definition [ref=e530]:
+                    - img [ref=e531]
+                    - generic [ref=e534]: Blocked
+                - generic [ref=e535]:
+                  - term [ref=e536]: Sensitive memories
+                  - definition [ref=e537]:
+                    - img [ref=e538]
+                    - generic [ref=e541]: Blocked
+                - generic [ref=e542]:
+                  - term [ref=e543]: Credential storage
+                  - definition [ref=e544]:
+                    - img [ref=e545]
+                    - generic [ref=e548]: Blocked
+                - generic [ref=e549]:
+                  - term [ref=e550]: Team-shared memory
+                  - definition [ref=e551]:
+                    - img [ref=e552]
+                    - generic [ref=e555]: Blocked
+                - generic [ref=e556]:
+                  - term [ref=e557]: External action without approval
+                  - definition [ref=e558]:
+                    - img [ref=e559]
+                    - generic [ref=e562]: Blocked
+              - generic [ref=e563]: A personal audit-event list API is not available.
+            - region "Retention boundaries" [ref=e564]:
+              - generic [ref=e565]:
+                - img [ref=e566]
+                - heading "Retention boundaries" [level=2] [ref=e569]
+              - generic [ref=e570]:
+                - generic [ref=e571]:
+                  - term [ref=e572]: Personal AI routines
+                  - definition [ref=e573]:
+                    - generic [ref=e574]: Retain 90 days · deletion grace 7 days
+                    - generic [ref=e576]: No legal hold
+                - generic [ref=e577]:
+                  - term [ref=e578]: Explicit memories
+                  - definition [ref=e579]:
+                    - generic [ref=e580]: Retain 90 days · deletion grace 7 days
+                    - generic [ref=e582]: No legal hold
+                - generic [ref=e583]:
+                  - term [ref=e584]: Artifacts and versions
+                  - definition [ref=e585]:
+                    - generic [ref=e586]: Retain 90 days · deletion grace 7 days
+                    - generic [ref=e588]: No legal hold
+                - generic [ref=e589]:
+                  - term [ref=e590]: Export requests
+                  - definition [ref=e591]:
+                    - generic [ref=e592]: Retain 90 days · deletion grace 7 days
+                    - generic [ref=e594]: No legal hold
+              - status [ref=e595]:
+                - img [ref=e597]
+                - generic [ref=e599]: Source work, mail, calendar data, and required audit metadata are retained.
+    - navigation "DWAI·ON quick navigation" [ref=e600]:
+      - link "Home" [ref=e601] [cursor=pointer]:
+        - /url: /dwaion/home
+        - img [ref=e602]
+        - generic [ref=e605]: Home
+      - link "New" [ref=e606] [cursor=pointer]:
+        - /url: /dwaion/new
+        - img [ref=e607]
+        - generic [ref=e609]: New
+      - link "Conversations" [ref=e610] [cursor=pointer]:
+        - /url: /dwaion/conversations
+        - img [ref=e611]
+        - generic [ref=e615]: Conversations
+      - link "Proposals" [ref=e616] [cursor=pointer]:
+        - /url: /dwaion/proposals
+        - img [ref=e617]
+        - generic [ref=e620]: Proposals
+      - button "More" [ref=e621] [cursor=pointer]:
+        - img [ref=e622]
+        - generic [ref=e623]: More
+```

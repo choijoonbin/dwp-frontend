@@ -5,6 +5,7 @@ import {
   createDwaionSecureAttachment,
   createDwaionProposalHandoff,
   createDwaionResearchDelivery,
+  deleteDwaionSecureAttachment,
   downloadDwaionResearchRun,
   executeDwaionResearchRun,
   secureAttachmentUploadUrl,
@@ -12,6 +13,7 @@ import {
 import {
   parseDwaionAttachmentEvidence,
   parseDwaionResearchCapabilities,
+  parseDwaionResearchDelivery,
   parseDwaionResearchPlan,
   parseDwaionResearchRun,
   parseDwaionSecureAttachment,
@@ -158,7 +160,17 @@ describe('DWAI.ON user advancement contract', () => {
         'cacheFallback',
       ].map((key) => [key, unavailableCapability()])
     );
+    const delivery = {
+      artifact: capability(),
+      proposal: unavailableCapability(),
+      export: capability(),
+      handoff: unavailableCapability(),
+      share: unavailableCapability(),
+      routine: unavailableCapability(),
+    };
+    Object.assign(capabilities, { delivery });
     expect(parseDwaionResearchCapabilities(capabilities).pdfExport.available).toBe(false);
+    expect(parseDwaionResearchCapabilities(capabilities).delivery.artifact.available).toBe(true);
     expect(() =>
       parseDwaionResearchCapabilities({ ...capabilities, cacheFallback: undefined })
     ).toThrowError(expect.objectContaining({ status: 502 }));
@@ -166,9 +178,49 @@ describe('DWAI.ON user advancement contract', () => {
       parseDwaionResearchCapabilities({ ...capabilities, rawExport: capability() }).rawExport
         .available
     ).toBe(true);
+    expect(
+      parseDwaionResearchCapabilities({
+        ...capabilities,
+        fork: capability(),
+        pdfExport: capability(),
+      })
+    ).toMatchObject({ fork: { available: true }, pdfExport: { available: true } });
     expect(() =>
-      parseDwaionResearchCapabilities({ ...capabilities, fork: capability() })
+      parseDwaionResearchCapabilities({
+        ...capabilities,
+        delivery: { ...delivery, routine: undefined },
+      })
     ).toThrowError(expect.objectContaining({ status: 502 }));
+  });
+
+  it('rejects completed downstream delivery without a target-system receipt', () => {
+    const completed = {
+      deliveryId: ID3,
+      runId: ID,
+      deliveryType: 'HANDOFF',
+      state: 'COMPLETED',
+      receiptId: ID2,
+      receipt: null,
+      safeErrorCode: null,
+      recoveryHint: null,
+      createdAt: '2026-09-17T00:00:00Z',
+      updatedAt: '2026-09-17T00:01:00Z',
+      completedAt: '2026-09-17T00:01:00Z',
+    };
+
+    expect(() => parseDwaionResearchDelivery(completed)).toThrowError(
+      expect.objectContaining({ status: 502 })
+    );
+    expect(
+      parseDwaionResearchDelivery({
+        ...completed,
+        receipt: {
+          targetPath: `/approvals/requests/${ID}`,
+          resultSha256: SHA,
+          providerReceiptId: 'approval-receipt-1',
+        },
+      })
+    ).toMatchObject({ state: 'COMPLETED', receiptId: ID2 });
   });
 
   it('downloads only non-empty server-produced research artifacts', async () => {
@@ -248,6 +300,31 @@ describe('DWAI.ON user advancement contract', () => {
 
   it('accepts canonical attachment states and rejects lifecycle contradictions', () => {
     expect(parseDwaionSecureAttachment(attachment()).state).toBe('UPLOADING');
+    expect(
+      parseDwaionSecureAttachment({
+        ...attachment(),
+        capabilities: {
+          ...attachment().capabilities,
+          signedAuditReport: capability(),
+          detachAll: capability(),
+        },
+      }).capabilities
+    ).toMatchObject({ signedAuditReport: { available: true }, detachAll: { available: true } });
+    expect(
+      parseDwaionSecureAttachment({
+        ...attachment(),
+        revision: 2,
+        state: 'DELETION_PENDING',
+        uploadTicket: null,
+        deletionAttemptCount: 2,
+        deletionLastErrorCode: 'ATTACHMENT_PROVIDER_UNAVAILABLE',
+        deletionReceiptId: null,
+      })
+    ).toMatchObject({
+      state: 'DELETION_PENDING',
+      deletionAttemptCount: 2,
+      deletionLastErrorCode: 'ATTACHMENT_PROVIDER_UNAVAILABLE',
+    });
     expect(() => parseDwaionSecureAttachment({ ...attachment(), state: 'READY' })).toThrowError(
       expect.objectContaining({ status: 502 })
     );
@@ -257,6 +334,25 @@ describe('DWAI.ON user advancement contract', () => {
         state: 'DELETED',
         uploadTicket: null,
         deletedAt: null,
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionSecureAttachment({
+        ...attachment(),
+        revision: 2,
+        state: 'DELETED',
+        uploadTicket: null,
+        deletedAt: '2026-09-17T00:02:00Z',
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionSecureAttachment({
+        ...attachment(),
+        revision: 2,
+        state: 'DELETED',
+        uploadTicket: null,
+        deletedAt: '2026-09-17T00:02:00Z',
+        deletionReceiptId: '   ',
       })
     ).toThrowError(expect.objectContaining({ status: 502 }));
     expect(() =>
@@ -344,6 +440,38 @@ describe('DWAI.ON user advancement contract', () => {
     );
     expect(() => secureAttachmentUploadUrl('https://user:secret@example.test/upload')).toThrowError(
       expect.objectContaining({ status: 502 })
+    );
+  });
+
+  it('uses the Agent DELETE attachment contract with its governed command body', async () => {
+    const deleted = {
+      ...attachment(),
+      revision: 2,
+      state: 'DELETED',
+      uploadTicket: null,
+      updatedAt: '2026-09-17T00:02:00Z',
+      deletedAt: '2026-09-17T00:02:00Z',
+      deletionAttemptCount: 1,
+      deletionLastErrorCode: null,
+      deletionReceiptId: 'provider-deletion-receipt-1',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(response(deleted));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(deleteDwaionSecureAttachment(ID, 1, ID2)).resolves.toMatchObject({
+      attachmentId: ID,
+      state: 'DELETED',
+    });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      `/api/agent/v1/attachments/${ID}`,
+      expect.objectContaining({
+        method: 'DELETE',
+        body: expect.stringContaining(`"commandId":"${ID2}"`),
+      })
     );
   });
 
@@ -436,5 +564,54 @@ describe('DWAI.ON user advancement contract', () => {
     expect(bodies.every((body) => body.commandId === ID2 && body.idempotencyKey === ID3)).toBe(
       true
     );
+  });
+
+  it('sends reviewed handoff and share targets to the governed provider request', async () => {
+    const delivery = {
+      deliveryId: ID3,
+      runId: ID,
+      deliveryType: 'HANDOFF',
+      state: 'QUEUED',
+      receiptId: null,
+      createdAt: '2026-09-17T00:00:00Z',
+      updatedAt: '2026-09-17T00:00:00Z',
+      completedAt: null,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(response(delivery))
+      .mockResolvedValueOnce(response({ ...delivery, deliveryType: 'SHARE' }));
+    vi.stubGlobal('fetch', fetchMock);
+    const attempt = { commandId: ID2, idempotencyKey: ID3 };
+
+    await createDwaionResearchDelivery(ID, 3, 'HANDOFF', attempt, {
+      locale: 'ko-KR',
+      approvalTarget: 'finance-approvers',
+      requestTitle: '시장 조사 결과 검토',
+      requestReason: '검증된 결과를 결재 요청으로 인계합니다.',
+      requestMetadata: { source: 'DEEP_RESEARCH', researchRunId: ID },
+    });
+    await createDwaionResearchDelivery(ID, 3, 'SHARE', attempt, {
+      locale: 'ko-KR',
+      recipientIds: ['member-2'],
+      teamId: 'strategy-team',
+      permission: 'COMMENT',
+      expiresAt: '2099-09-24T00:00:00Z',
+    });
+
+    const handoffBody = JSON.parse(String(fetchMock.mock.calls[1]![1]?.body));
+    const shareBody = JSON.parse(String(fetchMock.mock.calls[2]![1]?.body));
+    expect(handoffBody.parameters).toMatchObject({
+      approvalTarget: 'finance-approvers',
+      requestMetadata: { source: 'DEEP_RESEARCH', researchRunId: ID },
+    });
+    expect(shareBody.parameters).toEqual({
+      locale: 'ko-KR',
+      recipientIds: ['member-2'],
+      teamId: 'strategy-team',
+      permission: 'COMMENT',
+      expiresAt: '2099-09-24T00:00:00Z',
+    });
   });
 });

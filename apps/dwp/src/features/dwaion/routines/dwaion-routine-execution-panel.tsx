@@ -11,6 +11,7 @@ import {
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -23,7 +24,10 @@ import {
 
 import type {
   DwaionRoutineExecutionRun,
+  DwaionRoutineAdvancedCommand,
+  DwaionRoutineAdvancedPayload,
   DwaionRoutineHealth,
+  DwaionRoutineProviderCapability,
   DwaionRoutineRollbackReceipt,
   DwaionRoutineRunCommand,
   DwaionRoutineRuntimeCapabilities,
@@ -50,6 +54,7 @@ export function DwaionRoutineExecutionPanel({
   versions = [],
   health,
   rollbackReceipt,
+  advancedCommand,
   evidenceLoading = false,
   evidenceError = false,
   busy,
@@ -61,6 +66,7 @@ export function DwaionRoutineExecutionPanel({
   onRunCommand,
   onRollbackVersion,
   onDownloadTelemetry,
+  onAdvancedCommand,
   onRetry,
 }: {
   routine: DwaionRoutine;
@@ -72,6 +78,7 @@ export function DwaionRoutineExecutionPanel({
   versions?: readonly DwaionRoutineVersionSnapshot[];
   health?: DwaionRoutineHealth;
   rollbackReceipt?: DwaionRoutineRollbackReceipt | null;
+  advancedCommand?: DwaionRoutineAdvancedCommand | null;
   evidenceLoading?: boolean;
   evidenceError?: boolean;
   busy: boolean;
@@ -83,6 +90,7 @@ export function DwaionRoutineExecutionPanel({
   onRunCommand: (run: DwaionRoutineExecutionRun, action: DwaionRoutineRunCommand['action']) => void;
   onRollbackVersion: (version: DwaionRoutineVersionSnapshot) => void;
   onDownloadTelemetry: () => void;
+  onAdvancedCommand: (payload: DwaionRoutineAdvancedPayload) => void;
   onRetry: () => void;
 }) {
   const [pending, setPending] = useState<PendingOperation | null>(null);
@@ -95,9 +103,26 @@ export function DwaionRoutineExecutionPanel({
     capabilities.backgroundExecutionAvailable
   );
   const confirmCopy = operationCopy(pending, copy);
+  const printableRun = selectPrintableRoutineRun(runs);
 
   return (
     <Box component="section" aria-labelledby="routine-execution-title">
+      <GlobalStyles
+        styles={{
+          '@media print': {
+            'body *': { visibility: 'hidden !important' },
+            '.routine-print-report, .routine-print-report *': {
+              visibility: 'visible !important',
+            },
+            '.routine-print-report': {
+              display: 'block !important',
+              position: 'absolute',
+              inset: '0 auto auto 0',
+              width: '100%',
+            },
+          },
+        }}
+      />
       <Stack direction="row" alignItems="center" gap={0.75}>
         <History size={17} aria-hidden="true" />
         <Typography id="routine-execution-title" component="h3" variant="subtitle2">
@@ -164,6 +189,7 @@ export function DwaionRoutineExecutionPanel({
       {runs[0] ? (
         <DwaionRoutineRunWorkbench
           run={runs[0]}
+          capabilities={capabilities}
           busy={busy}
           canManage={canManage}
           copy={copy}
@@ -227,8 +253,40 @@ export function DwaionRoutineExecutionPanel({
         <DwaionCapabilityActions
           title={copy.advancedRuntimeTitle}
           description={copy.advancedRuntimeDescription}
-          actions={routineProviderActions(capabilities, copy)}
+          actions={routineProviderActions(
+            routine,
+            runs,
+            printableRun,
+            advancedCommand,
+            capabilities,
+            copy,
+            canManage && !busy,
+            onAdvancedCommand
+          )}
         />
+        {advancedCommand?.routineId === routine.routineId ? (
+          <InlineFeedback
+            severity={
+              advancedCommand.state === 'FAILED'
+                ? 'error'
+                : advancedCommand.state === 'PARTIAL'
+                  ? 'warning'
+                  : advancedCommand.state === 'SUCCEEDED'
+                    ? 'success'
+                    : 'info'
+            }
+            sx={{ mt: 1 }}
+          >
+            <Typography variant="body2" fontWeight="fontWeightBold">
+              {advancedCommand.kind} · {advancedCommand.state}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+              {advancedCommand.problem?.detail ??
+                advancedCommand.receipt?.providerReceiptId ??
+                advancedCommand.commandId}
+            </Typography>
+          </InlineFeedback>
+        ) : null}
       </Box>
 
       <ConfirmDialog
@@ -253,45 +311,221 @@ export function DwaionRoutineExecutionPanel({
           setPending(null);
         }}
       />
+      {printableRun ? (
+        <RoutineRunPrintReport
+          routine={routine}
+          run={printableRun}
+          copy={copy}
+          formatTimestamp={formatTimestamp}
+        />
+      ) : null}
     </Box>
   );
 }
 
 function routineProviderActions(
+  routine: DwaionRoutine,
+  runs: readonly DwaionRoutineExecutionRun[],
+  reportRun: DwaionRoutineExecutionRun | null,
+  advancedCommand: DwaionRoutineAdvancedCommand | null | undefined,
   capabilities: DwaionRoutineRuntimeCapabilities | undefined,
-  copy: DwaionRoutineCopy
+  copy: DwaionRoutineCopy,
+  enabled: boolean,
+  onAdvancedCommand: (payload: DwaionRoutineAdvancedPayload) => void
 ) {
   const providerReason = capabilities?.recoveryHint ?? copy.runtimeActionUnavailable;
+  const source = routine.sourceKeys.find(
+    (value): value is 'WORK_ITEM' | 'MAIL' | 'CALENDAR' =>
+      value === 'WORK_ITEM' || value === 'MAIL' || value === 'CALENDAR'
+  );
+  const latestRun = runs[0];
+  const rollbackRun = runs.find((run) => Boolean(run.receipt?.providerReceiptId));
+  const enginePayload =
+    advancedCommand?.kind === 'AGENT_ENGINE_SWITCH' &&
+    advancedCommand.state === 'SUCCEEDED' &&
+    advancedCommand.receipt?.providerOutcome.appliedPayload.kind === 'AGENT_ENGINE_SWITCH'
+      ? advancedCommand.receipt.providerOutcome.appliedPayload
+      : null;
+  const activeEngineOverride =
+    enginePayload?.action === 'APPLY' && Date.parse(enginePayload.expiresAt) > Date.now();
+  const action = (
+    key: string,
+    label: string,
+    capability: DwaionRoutineProviderCapability | undefined,
+    payload: () => DwaionRoutineAdvancedPayload,
+    prerequisite = true
+  ) => ({
+    key,
+    label,
+    capability: `routine.provider.${key}`,
+    reason:
+      capability?.recoveryHint ??
+      capability?.reasonCode ??
+      (capability?.available && capability.configured ? copy.runtimeEvidenceReady : providerReason),
+    available: Boolean(enabled && prerequisite && capability?.available && capability.configured),
+    onClick: () => onAdvancedCommand(payload()),
+  });
   return [
     {
       key: 'print',
       label: copy.printReport,
       capability: 'browser.print',
-      reason: copy.runtimeEvidenceReady,
-      available: true,
-      onClick: () => window.print(),
+      reason: reportRun?.receipt
+        ? `${copy.runtimeEvidenceReady} · ${reportRun.receipt.receiptId}`
+        : copy.runReceiptPending,
+      available: Boolean(reportRun?.receipt),
+      onClick: () => {
+        if (!reportRun?.receipt) return;
+        const previousTitle = document.title;
+        document.title = `${routine.title} · ${reportRun.routineRunId} · ${reportRun.receipt.receiptId}`;
+        window.addEventListener(
+          'afterprint',
+          () => {
+            document.title = previousTitle;
+          },
+          { once: true }
+        );
+        window.print();
+      },
     },
-    ...(
-      [
-        ['skip-quarantined', copy.skipQuarantined, capabilities?.automaticQuarantine],
-        ['oauth', copy.oauthReauthorize, capabilities?.oauthReauthorization],
-        ['temporary-limit', copy.temporaryLimit, capabilities?.temporaryBudgetIncrease],
-        ['escalate', copy.escalate, capabilities?.operatorEscalation],
-        ['provider-rollback', copy.compensateRun, capabilities?.providerRollback],
-      ] as const
-    ).map(([key, label, capability]) => ({
-      key,
-      label,
-      capability: `routine.provider.${key}`,
-      reason:
-        capability?.recoveryHint ??
-        capability?.reasonCode ??
-        (capability?.available && capability.configured
-          ? copy.runtimeActionUnavailable
-          : providerReason),
-      available: false,
+    action('worm', copy.wormDelivery, capabilities?.wormDelivery, () => ({
+      kind: 'WORM_EVIDENCE_DELIVERY',
+      evidenceScope: 'FULL_AUDIT',
+      retentionDays: 1825,
+      legalHold: false,
     })),
+    action(
+      'oauth',
+      copy.oauthReauthorize,
+      capabilities?.oauthReauthorization,
+      () => ({
+        kind: 'OAUTH_REAUTHORIZATION',
+        source: source ?? 'WORK_ITEM',
+        connectionReference: `routine-source:${source ?? 'WORK_ITEM'}`,
+      }),
+      Boolean(source)
+    ),
+    action('temporary-limit', copy.temporaryLimit, capabilities?.temporaryBudgetIncrease, () => ({
+      kind: 'TEMPORARY_BUDGET_INCREASE',
+      additionalRuns: 1,
+      additionalTokensPerRun: 10_000,
+      additionalMinutesPerRun: 15,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    })),
+    action(
+      'engine-rollback',
+      copy.engineRollback,
+      capabilities?.agentSwitching,
+      () => ({ kind: 'AGENT_ENGINE_SWITCH', action: 'ROLLBACK' }),
+      activeEngineOverride
+    ),
+    action('escalate', copy.escalate, capabilities?.operatorEscalation, () => ({
+      kind: 'OPERATOR_ESCALATION',
+      severity: 'P2',
+      summary: `Operator review requested for routine ${routine.title}.`,
+      routineRunId: latestRun?.routineRunId ?? null,
+    })),
+    action(
+      'provider-rollback',
+      copy.compensateRun,
+      capabilities?.providerRollback,
+      () => ({
+        kind: 'PROVIDER_ROLLBACK',
+        routineRunId: rollbackRun?.routineRunId ?? '',
+        providerReceiptId: rollbackRun?.receipt?.providerReceiptId ?? '',
+      }),
+      Boolean(rollbackRun?.receipt?.providerReceiptId)
+    ),
   ];
+}
+
+export function selectPrintableRoutineRun(
+  runs: readonly DwaionRoutineExecutionRun[]
+): DwaionRoutineExecutionRun | null {
+  return (
+    runs.find(
+      (run) =>
+        (run.state === 'COMPLETED' || run.state === 'COMPENSATED') &&
+        run.receipt?.routineRunId === run.routineRunId &&
+        run.receipt.terminalState === run.state
+    ) ?? null
+  );
+}
+
+function RoutineRunPrintReport({
+  routine,
+  run,
+  copy,
+  formatTimestamp,
+}: {
+  routine: DwaionRoutine;
+  run: DwaionRoutineExecutionRun;
+  copy: DwaionRoutineCopy;
+  formatTimestamp: (value: string) => string;
+}) {
+  const receipt = run.receipt;
+  if (!receipt) return null;
+  const metrics = [
+    [copy.printEvidenceCount, run.evidenceCount],
+    [copy.printProposalsCreated, run.proposalsCreated],
+    [copy.printApprovalActions, run.approvalGatedActionsCreated],
+    [copy.printTokensUsed, run.tokensUsed],
+    [copy.printElapsed, `${run.elapsedMs} ms`],
+  ] as const;
+  return (
+    <Box
+      className="routine-print-report"
+      data-run-id={run.routineRunId}
+      data-receipt-id={receipt.receiptId}
+      sx={{ display: 'none', color: '#111', bgcolor: '#fff', p: 4 }}
+    >
+      <Typography component="h1" variant="h4">
+        {copy.printReportTitle}
+      </Typography>
+      <Typography component="p" variant="h6" sx={{ mt: 1 }}>
+        {routine.title}
+      </Typography>
+      <Stack component="dl" spacing={1.25} sx={{ mt: 3, m: 0 }}>
+        <PrintFact label={copy.printRunId} value={run.routineRunId} />
+        <PrintFact label={copy.printReceiptId} value={receipt.receiptId} />
+        <PrintFact label={copy.printResultDigest} value={receipt.resultSha256} />
+        <PrintFact label={copy.printTerminalState} value={run.state} />
+        <PrintFact label={copy.printCompletedAt} value={formatTimestamp(receipt.completedAt)} />
+      </Stack>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gap: 2,
+          mt: 3,
+        }}
+      >
+        {metrics.map(([label, value]) => (
+          <Box key={label} sx={{ border: '1px solid #d1d5db', borderRadius: 1, p: 1.5 }}>
+            <Typography variant="caption" component="p">
+              {label}
+            </Typography>
+            <Typography variant="h6" component="p">
+              {value}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+function PrintFact({ label, value }: { label: string; value: string }) {
+  return (
+    <Box sx={{ display: 'grid', gridTemplateColumns: '10rem minmax(0, 1fr)', gap: 2 }}>
+      <Typography component="dt" variant="body2" fontWeight="fontWeightBold">
+        {label}
+      </Typography>
+      <Typography component="dd" variant="body2" sx={{ m: 0, overflowWrap: 'anywhere' }}>
+        {value}
+      </Typography>
+    </Box>
+  );
 }
 
 function RunItem({
@@ -314,7 +548,8 @@ function RunItem({
   const running = ['QUEUED', 'CLAIMED', 'RUNNING', 'RETRY_SCHEDULED'].includes(run.state);
   const retryable = ['PARTIAL', 'FAILED'].includes(run.state);
   const compensatable =
-    ['PARTIAL', 'COMPLETED', 'FAILED'].includes(run.state) && Boolean(run.receipt);
+    (run.state === 'PARTIAL' && run.compensationRequired) ||
+    (run.state === 'COMPLETED' && Boolean(run.receipt));
   return (
     <Box component="li" sx={{ p: 1.25, bgcolor: 'action.hover', borderRadius: 1.5 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
@@ -363,6 +598,21 @@ function RunItem({
           <Typography variant="caption" color="text.secondary" display="block">
             {copy.authorizedSources}: {run.receipt.authorizedSources.join(' · ')}
           </Typography>
+          {run.receipt.recoveryAction ? (
+            <Typography variant="caption" color="text.secondary" display="block">
+              {copy.recoveryAction}: {run.receipt.recoveryAction}
+            </Typography>
+          ) : null}
+          {run.receipt.recoveryCommandId ? (
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              display="block"
+              sx={{ overflowWrap: 'anywhere' }}
+            >
+              {copy.recoveryCommandId}: {run.receipt.recoveryCommandId}
+            </Typography>
+          ) : null}
         </Box>
       ) : null}
       {showActions && (running || retryable || compensatable) ? (
@@ -393,7 +643,7 @@ function RunItem({
               disabled={busy || !canManage}
               onClick={() => onCommand('COMPENSATE')}
             >
-              {copy.compensateRun}
+              {run.state === 'PARTIAL' ? copy.safeCancelRollback : copy.compensateRun}
             </ActionButton>
           ) : null}
         </Stack>
@@ -422,14 +672,23 @@ function operationCopy(pending: PendingOperation | null, copy: DwaionRoutineCopy
     return { title: copy.runNow, description: copy.executionBudgetHelp, confirm: copy.runNow };
   }
   const label =
-    pending.action === 'RETRY'
-      ? copy.retryRun
-      : pending.action === 'CANCEL'
-        ? copy.cancelRun
-        : copy.compensateRun;
+    pending.action === 'SKIP_QUARANTINED_AND_CONTINUE'
+      ? copy.skipQuarantined
+      : pending.action === 'RETRY'
+        ? copy.retryRun
+        : pending.action === 'CANCEL'
+          ? copy.cancelRun
+          : pending.run.state === 'PARTIAL'
+            ? copy.safeCancelRollback
+            : copy.compensateRun;
   return {
     title: label,
-    description: pending.action === 'COMPENSATE' ? copy.compensationEnabled : copy.recoveryPolicy,
+    description:
+      pending.action === 'SKIP_QUARANTINED_AND_CONTINUE'
+        ? copy.skipQuarantinedDescription
+        : pending.action === 'COMPENSATE'
+          ? copy.compensationEnabled
+          : copy.recoveryPolicy,
     confirm: label,
   };
 }

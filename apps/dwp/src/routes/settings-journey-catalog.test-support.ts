@@ -1,3 +1,5 @@
+import { ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES } from '../features/admin/admin-home-studio-route-contract';
+
 export type SettingsJourneyId =
   | 'S01'
   | 'S02'
@@ -27,10 +29,13 @@ export type SettingsJourney = {
 
 export const SETTINGS_INVENTORY_EXPECTATIONS = {
   accountLeaves: 8,
+  tenantVisibleLeaves: 22,
   tenantLeaves: 24,
   providerLeaves: 10,
   appManagementAreas: 12,
 } as const;
+
+export { ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES };
 
 export const SETTINGS_LANDING_ROUTES = ['/account/settings', '/admin', '/provider'] as const;
 
@@ -50,8 +55,10 @@ export const APP_MANAGEMENT_ENTRY_ROUTES = [
 ] as const;
 
 /**
- * Accepted Stitch journeys mapped to canonical DWP owners. A journey may span several routes;
- * this catalog is not a replacement navigation tree and must not grant access by itself.
+ * Stitch journeys mapped to canonical DWP owners for route inventory only. A journey may span
+ * several routes. Presence here proves neither design/content acceptance nor functional coverage;
+ * those require rendered journey assertions against the screen-specific acceptance contract.
+ * This catalog is not a replacement navigation tree and must not grant access by itself.
  */
 export const SETTINGS_JOURNEY_CATALOG: readonly SettingsJourney[] = [
   {
@@ -96,8 +103,13 @@ export const SETTINGS_JOURNEY_CATALOG: readonly SettingsJourney[] = [
   },
   {
     id: 'S11',
-    plane: 'provider',
-    routes: ['/provider/code-contracts', '/admin/experience/preference-exceptions'],
+    plane: 'cross-plane',
+    routes: [
+      '/provider/feature-rollouts',
+      '/provider/code-contracts',
+      '/admin/experience/preference-exceptions',
+      '/account/settings/managed',
+    ],
   },
   {
     id: 'S12',

@@ -43,6 +43,8 @@ import {
   resolvePresetAssignmentActions,
   type AppGovernanceActor,
 } from './app-governance-authority';
+import { AppPresetAssignmentProgress } from './app-preset-assignment-progress';
+import { selectPresetAssignmentForInspection } from './app-preset-assignment-progress-model';
 
 export { resolvePresetAssignmentActions } from './app-governance-authority';
 
@@ -93,6 +95,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
   const canRequest = canRequestGovernedAssignment(actor);
   const presets = data.presetCatalog ?? [];
   const assignments = data.presetAssignments ?? [];
+  const inspectedAssignment = selectPresetAssignmentForInspection(assignments);
   const reviews = data.presetReviews ?? [];
   const requestablePresets = presets.filter(
     (preset) =>
@@ -142,6 +145,8 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
           </ActionButton>
         )}
       </Stack>
+
+      {inspectedAssignment && <AppPresetAssignmentProgress assignment={inspectedAssignment} />}
 
       {assignments.length > 0 ? (
         <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1 }}>

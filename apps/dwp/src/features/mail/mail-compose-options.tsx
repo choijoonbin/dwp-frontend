@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography';
 
 import type {
   MailAttachment,
+  MailClassification,
   MailComposeOptions,
   MailRecipient,
   MailSignature,
@@ -49,6 +50,9 @@ export function MailComposeOptionsFields({
   onChange,
   onAttachmentReadyChange,
   onPersonalizationReviewChange,
+  classification,
+  onClassificationChange,
+  onExternalRecipientChange,
   onInsertTemplate,
   onInsertSignature,
 }: {
@@ -61,6 +65,9 @@ export function MailComposeOptionsFields({
   onChange: (value: MailComposeOptions) => void;
   onAttachmentReadyChange: (ready: boolean) => void;
   onPersonalizationReviewChange: (pending: boolean) => void;
+  classification: MailClassification;
+  onClassificationChange: (classification: MailClassification) => void;
+  onExternalRecipientChange: (external: boolean) => void;
   onInsertTemplate: (template: MailTemplate) => void;
   onInsertSignature: (signature: MailSignature) => void;
 }) {
@@ -88,9 +95,24 @@ export function MailComposeOptionsFields({
     staleTime: 30_000,
     retry: 1,
   });
+  const activeAccounts =
+    context.data?.accounts.filter((account) => account.connectionState === 'ACTIVE') ?? [];
+  const configuredAccountId = options.accountId ?? context.data?.preferences.defaultAccountId ?? '';
+  const displayedAccountId = activeAccounts.some(
+    (account) => account.accountId === configuredAccountId
+  )
+    ? configuredAccountId
+    : '';
+  const displayedAccount = activeAccounts.find(
+    (account) => account.accountId === displayedAccountId
+  );
+  const capabilities = mailComposeCapabilitiesForAccount(
+    context.data?.accountCapabilities,
+    displayedAccountId
+  );
   const upload = useMutation({
     mutationFn: (file: File) => {
-      if (context.data?.capabilities.attachments !== true) {
+      if (capabilities?.attachments !== true) {
         throw new Error('Mail attachment security scanning is unavailable.');
       }
       return uploadMailAttachment(file);
@@ -131,16 +153,17 @@ export function MailComposeOptionsFields({
     const ready =
       !upload.isPending &&
       attachments.every((attachment) => attachment.scanState === 'READY') &&
-      (attachments.length === 0 || context.data?.capabilities.attachments === true);
+      (attachments.length === 0 || capabilities?.attachments === true);
     if (attachmentReadyRef.current === ready) return;
     attachmentReadyRef.current = ready;
     onAttachmentReadyChange(ready);
-  }, [
-    attachments,
-    context.data?.capabilities.attachments,
-    onAttachmentReadyChange,
-    upload.isPending,
-  ]);
+  }, [attachments, capabilities?.attachments, onAttachmentReadyChange, upload.isPending]);
+
+  useEffect(() => {
+    onExternalRecipientChange(
+      mailComposeHasExternalRecipients(options.recipients, displayedAccount?.emailAddress)
+    );
+  }, [displayedAccount?.emailAddress, onExternalRecipientChange, options.recipients]);
 
   useEffect(() => {
     if (!context.data || defaultsAppliedRef.current) return;
@@ -231,15 +254,6 @@ export function MailComposeOptionsFields({
     if (hasBody) setInsertRequest(request);
     else performInsert(request);
   };
-  const capabilities = context.data?.capabilities;
-  const activeAccounts =
-    context.data?.accounts.filter((account) => account.connectionState === 'ACTIVE') ?? [];
-  const configuredAccountId = options.accountId ?? context.data?.preferences.defaultAccountId ?? '';
-  const displayedAccountId = activeAccounts.some(
-    (account) => account.accountId === configuredAccountId
-  )
-    ? configuredAccountId
-    : '';
   const availableTemplates = (context.data?.templates ?? []).filter(
     (item) => item.active !== false && mailWritingAssetAppliesToAccount(item, displayedAccountId)
   );
@@ -365,7 +379,11 @@ export function MailComposeOptionsFields({
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, minmax(0, 1fr))',
+            lg: 'repeat(4, minmax(0, 1fr))',
+          },
           gap: 1.5,
         }}
       >
@@ -380,6 +398,16 @@ export function MailComposeOptionsFields({
           onValueChange={(value) =>
             value && commitOptions({ ...optionsRef.current, bodyFormat: value })
           }
+        />
+        <SelectField
+          label={t('compose.classification')}
+          value={classification}
+          options={(['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'] as const).map((value) => ({
+            value,
+            label: t(`classification.${value}`),
+          }))}
+          disabled={disabled}
+          onValueChange={(value) => value && onClassificationChange(value)}
         />
         <SelectField
           label={t('compose.template')}
@@ -608,6 +636,25 @@ export function mailComposeOptionsCanSend(
     (!options.scheduledAt || new Date(options.scheduledAt).getTime() > Date.now()) &&
     attachments.every((item) => item.scanState === 'READY')
   );
+}
+
+export function mailComposeHasExternalRecipients(
+  recipients: readonly MailRecipient[],
+  senderEmail: string | null | undefined
+) {
+  if (!recipients.length) return false;
+  const senderDomain = senderEmail?.trim().toLocaleLowerCase().split('@')[1];
+  if (!senderDomain) return true;
+  return recipients.some(
+    (recipient) => recipient.email.trim().toLocaleLowerCase().split('@')[1] !== senderDomain
+  );
+}
+
+export function mailComposeCapabilitiesForAccount<T>(
+  accountCapabilities: Readonly<Record<string, T>> | null | undefined,
+  accountId: string | null | undefined
+) {
+  return accountId ? accountCapabilities?.[accountId] : undefined;
 }
 
 function parseRecipients(value: string, type: MailRecipient['type']): MailRecipient[] {

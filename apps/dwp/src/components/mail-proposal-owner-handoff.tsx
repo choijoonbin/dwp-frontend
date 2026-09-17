@@ -113,6 +113,10 @@ function waitForNextPoll() {
   return new Promise<void>((resolve) => window.setTimeout(resolve, TERMINAL_POLL_INTERVAL_MS));
 }
 
+export function mailProposalHandoffIsPending(status: MailProposalHandoff['status']) {
+  return status === 'ACCEPTED' || status === 'EXECUTING' || status === 'UNKNOWN';
+}
+
 export function useMailProposalOwnerHandoff(owner: MailProposalOwner) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -185,7 +189,7 @@ export function useMailProposalOwnerHandoff(owner: MailProposalOwner) {
     setCompletionReadError(false);
     try {
       const refreshed = await refreshHandoff();
-      return refreshed.status !== 'ACCEPTED' && returnToActionCenter();
+      return !mailProposalHandoffIsPending(refreshed.status) && returnToActionCenter();
     } catch {
       setCompletionReadError(true);
       return false;
@@ -198,7 +202,7 @@ export function useMailProposalOwnerHandoff(owner: MailProposalOwner) {
     for (let attempt = 0; attempt < TERMINAL_POLL_ATTEMPTS; attempt += 1) {
       try {
         const refreshed = await refreshHandoff();
-        if (refreshed.status !== 'ACCEPTED') return returnToActionCenter();
+        if (!mailProposalHandoffIsPending(refreshed.status)) return returnToActionCenter();
       } catch {
         setCompletionReadError(true);
         return false;
@@ -232,7 +236,11 @@ export function useMailProposalOwnerHandoff(owner: MailProposalOwner) {
         setCompletionReadError(false);
         try {
           const refreshed = await refreshHandoff();
-          if (refreshed.status !== 'ACCEPTED') return returnToActionCenter();
+          if (!mailProposalHandoffIsPending(refreshed.status)) return returnToActionCenter();
+          if (refreshed.status === 'EXECUTING' || refreshed.status === 'UNKNOWN') {
+            setCompletionProposalId(context?.proposalId ?? null);
+            return false;
+          }
         } catch {
           // The recovery notice provides a read-only status retry. Never repeat an
           // owner mutation after an ambiguous cancellation response.
@@ -288,7 +296,9 @@ export function MailProposalOwnerHandoffNotice({ handoff }: { handoff: OwnerHand
       </Alert>
     );
   }
-  const terminal = !handoff.active;
+  const reconciling =
+    handoff.handoff.status === 'EXECUTING' || handoff.handoff.status === 'UNKNOWN';
+  const terminal = !handoff.active && !reconciling;
   return (
     <Alert
       severity={terminal ? (handoff.handoff.status === 'EXECUTED' ? 'success' : 'info') : 'info'}
@@ -297,7 +307,7 @@ export function MailProposalOwnerHandoffNotice({ handoff }: { handoff: OwnerHand
           <ActionButton intent="quiet" size="small" onClick={handoff.returnToActionCenter}>
             {t('proposal.owner.return')}
           </ActionButton>
-        ) : handoff.completionStarted ? (
+        ) : handoff.completionStarted || reconciling ? (
           <ActionButton
             intent="quiet"
             size="small"
@@ -323,7 +333,7 @@ export function MailProposalOwnerHandoffNotice({ handoff }: { handoff: OwnerHand
           {t(
             terminal
               ? `proposal.handoff.status.${handoff.handoff.status}`
-              : handoff.completionStarted
+              : handoff.completionStarted || reconciling
                 ? 'proposal.owner.pending'
                 : 'proposal.owner.review'
           )}

@@ -24,6 +24,132 @@
     "searchHelp": "Results include only settings allowed by your current role and delegated scope.",
     "emptyTitle": "No company settings match",
     "emptyDescription": "Use fewer words or ask the responsible administrator to verify your access.",
+    "overview": {
+      "partialFailure": "One or more owning systems could not be read. Unobserved values are not inferred as operational state.",
+      "unavailable": "Unavailable",
+      "notConfigured": "Not configured",
+      "openDetail": "Manage details",
+      "priority": {
+        "title": "Priority tasks",
+        "description": "Only work reported by the Auth, SCIM, app access, and audit policy owners appears here.",
+        "count": "{{count}} need action",
+        "unavailableCount": "Task status unavailable",
+        "unavailableTitle": "Pending work could not be confirmed",
+        "unavailableDescription": "One or more owning systems could not be read. Retry before treating the absence of reported tasks as an all-clear result.",
+        "emptyTitle": "No pending work is currently reported",
+        "emptyDescription": "The owning systems available to your role report no approval, activation, or recovery work."
+      },
+      "tasks": {
+        "count": "{{count}}",
+        "openOwner": "Continue in owning workspace",
+        "SSO_CONFIGURATION": {
+          "title": "Review enterprise SSO configuration",
+          "description": "The Auth owner reports that SSO is disabled or that the identity provider connection is incomplete."
+        },
+        "SCIM_CONFIGURATION": {
+          "title": "Configure SCIM provisioning",
+          "description": "No active SCIM connector exists. Create one with a purpose, owner, operation scope, and expiry."
+        },
+        "SCIM_ATTENTION": {
+          "title": "SCIM credentials need attention",
+          "description": "The owning system reports an expiring, expired, or attention state for a connector."
+        },
+        "APP_APPROVAL": {
+          "title": "Independent app access review is pending",
+          "description": "These are real app governance requests whose requester, approver, and activator flow is incomplete."
+        },
+        "POLICY_REVIEW": {
+          "title": "Audit policy changes need review",
+          "description": "Real audit policy revisions are in draft, review, or approved and waiting to publish."
+        }
+      },
+      "profile": {
+        "title": "Organization and authentication profile",
+        "description": "Canonical owner values and boundaries that cannot be observed are shown separately."
+      },
+      "branding": {
+        "title": "Tenant branding",
+        "revision": "Published version v{{version}}",
+        "organization": "Organization name",
+        "accent": "Accent color"
+      },
+      "authentication": {
+        "title": "Authentication and provisioning",
+        "provider": "Active IdP",
+        "mfa": "MFA policy",
+        "required": "Required",
+        "optional": "Optional",
+        "scimLabel": "SCIM",
+        "sso": {
+          "ENABLED": "SSO active",
+          "INCOMPLETE": "SSO connection incomplete",
+          "DISABLED": "SSO disabled",
+          "UNAVAILABLE": "SSO state unavailable"
+        },
+        "scim": {
+          "READY": "{{count}} active connectors",
+          "ATTENTION": "Action required",
+          "NOT_CONFIGURED": "Not configured",
+          "UNAVAILABLE": "State unavailable"
+        }
+      },
+      "organization": {
+        "title": "Organization and domains",
+        "domainOwner": "Provider authority",
+        "identities": "Identities in scope",
+        "identityCount": "{{count}} people",
+        "domainVerification": "Domain ownership",
+        "notObserved": "Tenant read contract unavailable"
+      },
+      "recent": {
+        "title": "Recent governance changes",
+        "description": "Author, timestamp, and lifecycle come from real audit policy revisions.",
+        "open": "Open policy history",
+        "actor": "{{actor}} · {{date}}",
+        "empty": "No audit policy revisions are recorded."
+      }
+    },
+    "authPolicyWorkflow": {
+      "title": "Authentication policy change control",
+      "description": "Draft, independently review, approve, and publish the tenant authentication policy with version and impact evidence.",
+      "boundary": "Impact is estimated from active identities in the internal Auth directory. External IdP population and login connectivity are excluded until their owners provide evidence.",
+      "create": "Create policy draft",
+      "empty": "No authentication policy changes are recorded.",
+      "error": "Authentication policy changes could not be loaded.",
+      "saved": "Authentication policy workflow updated.",
+      "submit": "Submit for review",
+      "approve": "Approve",
+      "reject": "Reject",
+      "publish": "Publish",
+      "decisionReason": "Independent review reason",
+      "impact": "{{confidence}} impact · {{count}} identities",
+      "coverage": "Coverage: {{coverage}}",
+      "meta": "Requester {{requester}} · {{date}} · version {{version}}",
+      "states": {
+        "DRAFT": "Draft",
+        "IN_REVIEW": "In review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "PUBLISHED": "Published",
+        "SUPERSEDED": "Superseded"
+      },
+      "decision": {
+        "APPROVE": "Approve authentication policy change",
+        "REJECT": "Reject authentication policy change"
+      },
+      "draft": {
+        "title": "Create authentication policy draft",
+        "description": "The server validates enabled login methods and the selected IdP again before publishing.",
+        "create": "Create draft",
+        "warning": "Publishing can change how every tenant identity signs in. A different administrator must approve the draft.",
+        "local": "Allow local login",
+        "sso": "Allow SSO login",
+        "mfa": "Require MFA by policy",
+        "defaultLogin": "Default login method",
+        "provider": "Enabled identity provider",
+        "justification": "Change justification"
+      }
+    },
     "controlLoop": {
       "title": "Application and operations",
       "description": "Distinguish a saved setting from its applied and observed result in the owning workspace.",
@@ -707,6 +833,12 @@
     "mfaDisabled": "MFA off",
     "additionalRoles": "{{count}} more roles",
     "inheritedCount": "{{count}} inherited",
+    "projection": {
+      "coverage": "Unified internal snapshot {{snapshot}} observed {{observedAt}} across {{owners}} Auth owners.",
+      "exclusions": "Explicit exclusions: {{exclusions}}",
+      "unavailable": "The unified internal access snapshot is unavailable. The individual identity owner remains visible, but app and pending-approval coverage is unconfirmed.",
+      "appPresetCount": "{{count}} app · {{pending}} pending"
+    },
     "roleFamilies": {
       "WORKSPACE": "Baseline access",
       "PEOPLE": "People operations",
@@ -901,9 +1033,9 @@
       "defaultTitle": "Organization default mode",
       "classic": "Classic Home",
       "flow": "Flow Home",
-      "mz": "MZ / AI Stage",
+      "mz": "AI Stage",
       "flowNotice": "Publish Flow Home only for an approved rollout cohort. The server kill switch can still return everyone to Classic Home without changing saved preferences.",
-      "mzNotice": "MZ is an independent, mode-scoped AI Stage. Intent handoff remains review-only and each owner product enforces its own action authority."
+      "mzNotice": "AI Stage is an independent, mode-scoped work experience. Intent handoff remains review-only and each owner product enforces its own action authority."
     },
     "personal": {
       "title": "Allow member home personalization",
@@ -2489,6 +2621,14 @@
         "reason": "Decision or change reason",
         "incidentCase": "Linked audit case ID (optional)",
         "incidentCaseHint": "Use an existing investigation case UUID when this change responds to an incident.",
+        "diffTitle": "Policy before and after comparison",
+        "diffField": "Policy field",
+        "diffBefore": "Current value",
+        "diffAfter": "Proposed value",
+        "impactUnavailable": "{{count}} policy fields are affected. Exact or estimated user and data population impact is not supplied by the owner and remains unconfirmed.",
+        "approvalRequested": "Review requested by {{actor}} · {{date}}",
+        "approvalPending": "Independent approval pending",
+        "approvalDecided": "Decision by {{actor}} · {{date}}",
         "fields": {
           "standardRetentionDays": "Standard retention",
           "extendedRetentionDays": "Extended retention",
@@ -3236,6 +3376,28 @@
       "emergencyTitle": "Emergency access register",
       "emergencyDescription": "An emergency principal must be pre-registered and in review before it can request activation."
     },
+    "verification": {
+      "title": "Record recovery-account verification",
+      "description": "Record the independent recovery check for {{name}}.",
+      "boundary": "This records an internal operator attestation or completed recovery drill. It does not claim that an external IdP login was tested.",
+      "status": "Recovery verification",
+      "action": "Verify",
+      "submit": "Record verification",
+      "method": "Verification method",
+      "evidence": "Evidence reference",
+      "evidenceHelp": "Reference an internal drill, ticket, or controlled attestation. Do not enter credentials.",
+      "nextDue": "Next verification due",
+      "saved": "Recovery-account verification recorded.",
+      "methods": {
+        "OPERATOR_ATTESTED": "Independent operator attestation",
+        "RECOVERY_DRILL_COMPLETED": "Recovery drill completed"
+      },
+      "states": {
+        "NOT_VERIFIED": "Not verified",
+        "VERIFIED": "Verified",
+        "OVERDUE": "Verification overdue"
+      }
+    },
     "toasts": {
       "policyUpdated": "Privileged role activation policy updated.",
       "eligibilityCreated": "Time-bound role eligibility granted.",
@@ -3252,6 +3414,45 @@
     "loadError": "The catalog could not be loaded. Refresh and try again.",
     "search": "Search assets, references, or owners",
     "allKinds": "All asset types",
+    "applications": {
+      "title": "Application lifecycle catalog",
+      "description": "Review each application against the owner records that are actually available to this tenant and the current administrator.",
+      "contractBoundary": "Installation and workforce assignment are not exposed by a tenant owner read contract. They remain unconfirmed here instead of being inferred from registry or administrator records.",
+      "partialFailure": "One or more owner records are unavailable. Unavailable evidence is kept separate from a confirmed negative state.",
+      "search": "Search applications or resource keys",
+      "emptyTitle": "No applications match this view",
+      "emptyDescription": "Change the search or verify that the registry owner has published application records.",
+      "openManagement": "Open management workspace",
+      "observation": {
+        "OBSERVED": "Observed",
+        "NOT_OBSERVED": "Not observed",
+        "UNAVAILABLE": "Owner unavailable"
+      },
+      "management": {
+        "OBSERVED": "Management access confirmed",
+        "NOT_OBSERVED": "Management access not observed",
+        "UNAVAILABLE": "Management access unconfirmed"
+      },
+      "stages": {
+        "registry": "Application registry",
+        "tenantBoundary": "Tenant admin boundary",
+        "entitlement": "Current actor entitlement",
+        "installation": "Tenant installation",
+        "workforceAssignment": "Workforce assignment",
+        "runnable": "Current actor runnable surface"
+      },
+      "details": {
+        "registry": "{{lifecycle}} · {{scope}} · revision {{revision}}",
+        "boundaryCount_one": "{{count}} governed admin scope",
+        "boundaryCount_other": "{{count}} governed admin scopes",
+        "accessSources": "Authority source: {{sources}}",
+        "surfaceCount_one": "{{count}} work surface",
+        "surfaceCount_other": "{{count}} work surfaces",
+        "ownerContractUnavailable": "No tenant owner read contract",
+        "adminAssignments": "Admin responsibility evidence: {{active}} active · {{pending}} pending",
+        "adminAssignmentsUnavailable": "Admin responsibility owner record unavailable"
+      }
+    },
     "metrics": {
       "assets": "Governed assets",
       "assetsDetail": "Tenant and product scope",
@@ -3266,6 +3467,7 @@
     },
     "views": {
       "label": "Catalog view",
+      "applications": "Applications",
       "graph": "Relationship graph",
       "inventory": "Asset inventory",
       "assurance": "Assurance"
@@ -3673,6 +3875,38 @@
       "reviewTable": "Permission-only administrator review queue",
       "emptyTitle": "No app administrator presets assigned",
       "emptyDescription": "Choose a product-specific least-privilege duty and an explicit end time instead of a broad administrator role.",
+      "progress": {
+        "title": "Governed change progress",
+        "description": "Inspect the highest-priority preset change using the recorded requester, approver, and activator evidence.",
+        "target": "Target principal",
+        "package": "Preset package",
+        "scope": "Application scope",
+        "channel": "Request channel",
+        "validTo": "Valid until",
+        "reviewDue": "Review due",
+        "duties": "Specialist duties",
+        "noDuties": "No duty records",
+        "justification": "Business justification",
+        "decisionReason": "Approval decision reason",
+        "activationReason": "Activation reason",
+        "actorId": "Actor #{{id}}",
+        "actorNotRecorded": "Actor identity not recorded",
+        "roles": {
+          "REQUESTER": "Requester",
+          "APPROVER": "Independent approver",
+          "ACTIVATOR": "Independent activator"
+        },
+        "stageStates": {
+          "RECORDED": "Recorded",
+          "PENDING": "Pending",
+          "NOT_RECORDED": "Not recorded"
+        },
+        "separation": {
+          "COMPLETE": "Requester, approver, and activator are distinct, and the approver and activator are independent of the user target.",
+          "PENDING": "Separation remains pending until every required lifecycle actor is recorded and approval and activation are independent of the target.",
+          "VIOLATION": "The recorded identifiers reuse an actor across separated duties or the user target. Review this assignment before further action."
+        }
+      },
       "columns": {
         "preset": "Administration duty",
         "duties": "Specialist duties",
@@ -4851,6 +5085,10 @@
       "scope": "Scope",
       "budgetTokens": "Budget tokens",
       "enforcement": "Enforcement",
+      "enforcementActive": "Active enforcement",
+      "enforcementStaged": "Staged only",
+      "enforcementDisabledWarning": "ASK runtime enforcement is disabled. BLOCK and THROTTLE are stored policies and do not currently stop requests.",
+      "enforcementDisabledRecovery": "After release approval, set DWP_AI_RUNTIME_CONTROL_ENFORCEMENT_ENABLED=true in the runtime deployment and restart the service.",
       "drillDownScope": "Outcome drill-down scope",
       "organization": "Organization",
       "workType": "Work type",

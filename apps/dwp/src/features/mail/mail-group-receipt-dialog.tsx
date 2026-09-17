@@ -8,12 +8,17 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { MailContactGroup, MailGroupSendReceipt } from '@dwp-frontend/shared-utils';
+import type {
+  MailAccount,
+  MailContactGroup,
+  MailGroupSendReceipt,
+} from '@dwp-frontend/shared-utils';
 
 export function MailGroupReceiptDialog({
   group,
   receipts,
   latestReceipt,
+  accounts,
   loading,
   error,
   onClose,
@@ -21,6 +26,7 @@ export function MailGroupReceiptDialog({
   group: MailContactGroup | null;
   receipts: MailGroupSendReceipt[];
   latestReceipt: MailGroupSendReceipt | null;
+  accounts: MailAccount[];
   loading: boolean;
   error: boolean;
   onClose: () => void;
@@ -75,9 +81,7 @@ export function MailGroupReceiptDialog({
                   <Chip
                     size="small"
                     variant="outlined"
-                    label={t(`addressBook.receipts.state.${receipt.state}`, {
-                      defaultValue: receipt.state,
-                    })}
+                    label={t(`addressBook.receipts.state.${receipt.state}`)}
                   />
                   <Chip
                     size="small"
@@ -90,6 +94,13 @@ export function MailGroupReceiptDialog({
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {t('addressBook.receipts.groupVersion', { version: receipt.groupVersion })}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {t('addressBook.receipts.senderAccount', {
+                    account:
+                      accounts.find((account) => account.accountId === receipt.accountId)
+                        ?.emailAddress ?? receipt.accountId,
+                  })}
                 </Typography>
               </Box>
               <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>

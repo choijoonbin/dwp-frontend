@@ -231,7 +231,7 @@ export function CalendarCommandPalette({
                   borderColor: foundationTokens.color.neutral[700],
                   borderRadius: COMPACT_RADIUS,
                   bgcolor: foundationTokens.color.neutral[800],
-                  color: foundationTokens.color.neutral[300],
+                  color: foundationTokens.color.neutral[200],
                   fontFamily: 'inherit',
                   fontSize: theme.typography.pxToRem(10),
                   fontWeight: theme.typography.fontWeightMedium,

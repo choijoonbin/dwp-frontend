@@ -25,7 +25,7 @@ export const HOME_LOADING_LARGE_TEXT_ROOT_PX = 24;
 export const HOME_PRESENTATION_MAX_WIDTH = {
   focused: 1280,
   balanced: 1808,
-  expressive: 1808,
+  expressive: 2560,
 } as const satisfies Record<HomePresentation, number>;
 
 export const HOME_REFERENCE_GRID_PLACEMENTS = {

@@ -1,7 +1,6 @@
 import type { AgentComponents } from '@dwp-frontend/api-contracts';
 
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
-import type { DwaionPersonalRoutine } from './agent-routine-api';
 
 type AgentSchemas = AgentComponents['schemas'];
 
@@ -35,6 +34,21 @@ export type DwaionRoutineExecutionPolicyDefinition = {
   retryPolicy: DwaionRoutineRetryPolicy;
   notificationPolicy: DwaionRoutineNotificationPolicy;
   compensationPolicy: DwaionRoutineCompensationPolicy;
+};
+
+export type DwaionRoutineDefinition = Omit<AgentSchemas['RoutineDefinition'], 'cadence'> &
+  DwaionRoutineExecutionPolicyDefinition & {
+    cadence: 'DAILY' | 'WEEKDAYS' | 'WEEKLY' | 'MONTHLY' | null;
+    monthDay?: number | null;
+  };
+
+export type DwaionPersonalRoutine = Omit<
+  AgentSchemas['PersonalRoutine'],
+  'definition' | 'executionMode' | 'lifecycleState'
+> & {
+  definition: DwaionRoutineDefinition;
+  lifecycleState: 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
+  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED' | 'WEBHOOK';
 };
 
 export type DwaionRoutineRuntimeCapabilities = {
@@ -71,7 +85,7 @@ export type DwaionRoutineRuntimeCapabilities = {
   providerRollback: DwaionRoutineProviderCapability;
   executionProviderState: string;
   recoveryHint: string | null;
-  supportedCadences: Array<'DAILY' | 'WEEKDAYS' | 'WEEKLY'>;
+  supportedCadences: Array<'DAILY' | 'WEEKDAYS' | 'WEEKLY' | 'MONTHLY'>;
   consentScopes: Array<'SOURCE_ACCESS' | 'ANALYSIS' | 'PROPOSAL_DELIVERY'>;
 };
 
@@ -112,6 +126,8 @@ export type DwaionRoutineExecutionReceipt = {
   notificationState: DwaionRoutineNotificationState;
   authorizationDecisionRevision: number;
   authorizedSources: DwaionRoutineSource[];
+  recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE' | null;
+  recoveryCommandId: string | null;
   completedAt: string;
 };
 
@@ -136,6 +152,8 @@ export type DwaionRoutineExecutionRun = {
   notificationState: DwaionRoutineNotificationState;
   safeErrorCode: string | null;
   recoveryHint: string | null;
+  recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE' | null;
+  recoveryCommandId: string | null;
   compensationRequired: boolean;
   receipt: DwaionRoutineExecutionReceipt | null;
   createdAt: string;
@@ -156,7 +174,7 @@ export type DwaionRoutineActivationCommand = DwaionRoutineHighRiskCommand & {
 };
 
 export type DwaionRoutineRunCommand = DwaionRoutineHighRiskCommand & {
-  action: 'RETRY' | 'CANCEL' | 'COMPENSATE';
+  action: 'RETRY' | 'CANCEL' | 'COMPENSATE' | 'SKIP_QUARANTINED_AND_CONTINUE';
 };
 
 export type DwaionRoutineWebhookCommand = DwaionRoutineHighRiskCommand & {

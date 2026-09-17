@@ -14,7 +14,7 @@ import {
   MailOperationsAdminWorkspace,
   MailRetentionAdminWorkspace,
   MailSharedAccessAdminWorkspace,
-} from '../features/mail/mail-admin-operations-workspace';
+} from '../features/mail/mail-admin-operations-workspace-surfaces';
 import { MailHome } from '../features/mail/mail-home';
 import { MailInbox } from '../features/mail/mail-inbox';
 import { MailAdminWritingAssetsWorkspace } from '../features/mail/mail-admin-writing-assets-workspace';

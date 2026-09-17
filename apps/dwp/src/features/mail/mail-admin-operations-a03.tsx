@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useDeferredValue, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Trash2, UserRoundPlus, UsersRound } from 'lucide-react';
+import { Search, Trash2, UserRoundPlus, UsersRound } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { getMailSharedInboxMemberCandidates } from '@dwp-frontend/shared-utils';
 import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -13,6 +15,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
+import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
@@ -27,6 +30,7 @@ import type {
   MailSharedInboxAccess,
   MailSharedInboxMember,
   MailSharedInboxMemberInput,
+  MailSharedInboxMemberRevokePreview,
   MailSharedInboxPermissionSet,
 } from './mail-admin-operations-model';
 import type { MailAdminOperationsContentProps } from './mail-admin-operations-ui-shared';
@@ -39,7 +43,7 @@ const EMPTY_PERMISSIONS: MailSharedInboxPermissionSet = {
   manage: false,
 };
 
-function MemberEditor({
+export function MailSharedInboxMemberEditor({
   open,
   access,
   member,
@@ -55,16 +59,27 @@ function MemberEditor({
   onSave: (input: MailSharedInboxMemberInput) => void;
 }) {
   const { t } = useTranslation('mail');
-  const [userId, setUserId] = useState(member?.userId ? String(member.userId) : '');
-  const [displayName, setDisplayName] = useState(member?.displayName ?? '');
+  const [peopleQuery, setPeopleQuery] = useState('');
+  const deferredPeopleQuery = useDeferredValue(peopleQuery.trim());
+  const [selectedCandidate, setSelectedCandidate] = useState<
+    Awaited<ReturnType<typeof getMailSharedInboxMemberCandidates>>[number] | null
+  >(null);
   const [expiresAt, setExpiresAt] = useState(member?.expiresAt?.slice(0, 10) ?? '');
   const [permissions, setPermissions] = useState<MailSharedInboxPermissionSet>(
     member?.permissions ?? EMPTY_PERMISSIONS
   );
   const [acknowledged, setAcknowledged] = useState(false);
+  const candidates = useQuery({
+    queryKey: ['mail', 'admin', 'shared-inbox-member-candidates', deferredPeopleQuery],
+    queryFn: ({ signal }) => getMailSharedInboxMemberCandidates(deferredPeopleQuery, 20, signal),
+    enabled: open && !member && deferredPeopleQuery.length >= 2,
+    staleTime: 15_000,
+    retry: false,
+  });
+  const selectedUser = member ?? selectedCandidate;
   const input: MailSharedInboxMemberInput = {
-    userId: Number(userId),
-    displayName,
+    userId: selectedUser?.userId ?? Number.NaN,
+    displayName: selectedUser?.displayName ?? '',
     permissions,
     expiresAt: expiresAt ? `${expiresAt}T23:59:59.999Z` : null,
     impactAcknowledged: acknowledged,
@@ -81,18 +96,121 @@ function MemberEditor({
       </DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
-          <TextField
-            label={t('admin.operationsWorkspace.a03.userId', { defaultValue: 'User ID' })}
-            type="number"
-            disabled={Boolean(member)}
-            value={userId}
-            onChange={(event) => setUserId(event.target.value)}
-          />
-          <TextField
-            label={t('admin.operationsWorkspace.a03.memberName', { defaultValue: 'Display name' })}
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-          />
+          {member ? (
+            <Box sx={{ p: 1.5, border: 1, borderColor: 'divider' }}>
+              <Typography variant="body2" fontWeight="fontWeightBold">
+                {member.displayName}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('admin.operationsWorkspace.a03.memberIdentity', {
+                  defaultValue: '{{department}} · User {{userId}}',
+                  department:
+                    member.department ??
+                    t('admin.operationsWorkspace.a03.noDepartment', {
+                      defaultValue: 'Department unavailable',
+                    }),
+                  userId: member.userId,
+                })}
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <TextField
+                autoFocus
+                label={t('admin.operationsWorkspace.a03.searchPeople', {
+                  defaultValue: 'Search people in this tenant',
+                })}
+                value={peopleQuery}
+                helperText={t('admin.operationsWorkspace.a03.searchPeopleHelp', {
+                  defaultValue: 'Enter at least two characters, then select one verified person.',
+                })}
+                onChange={(event) => {
+                  setPeopleQuery(event.target.value);
+                  setSelectedCandidate(null);
+                }}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search size={17} aria-hidden />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+              {candidates.isFetching ? (
+                <InlineFeedback severity="info">
+                  {t('admin.operationsWorkspace.a03.searchingPeople', {
+                    defaultValue: 'Searching the tenant directory…',
+                  })}
+                </InlineFeedback>
+              ) : candidates.isError ? (
+                <InlineFeedback severity="warning">
+                  {t('admin.operationsWorkspace.a03.peopleUnavailable', {
+                    defaultValue:
+                      'Verified people could not be loaded. Member changes remain blocked.',
+                  })}
+                </InlineFeedback>
+              ) : deferredPeopleQuery.length >= 2 && !candidates.data?.length ? (
+                <InlineFeedback severity="info">
+                  {t('admin.operationsWorkspace.a03.noPeople', {
+                    defaultValue: 'No active people matched in this tenant.',
+                  })}
+                </InlineFeedback>
+              ) : null}
+              {candidates.data?.length ? (
+                <Stack
+                  role="listbox"
+                  aria-label={t('admin.operationsWorkspace.a03.peopleResults', {
+                    defaultValue: 'Verified people',
+                  })}
+                  spacing={0.5}
+                >
+                  {candidates.data.map((candidate) => {
+                    const duplicate = access?.members.some(
+                      (existing) =>
+                        existing.userId === candidate.userId && existing.state !== 'REVOKED'
+                    );
+                    const selected = selectedCandidate?.userId === candidate.userId;
+                    return (
+                      <Box
+                        component="button"
+                        type="button"
+                        role="option"
+                        aria-selected={selected}
+                        disabled={duplicate}
+                        key={candidate.userId}
+                        onClick={() => setSelectedCandidate(candidate)}
+                        sx={{
+                          p: 1.25,
+                          border: 1,
+                          borderColor: selected ? 'primary.main' : 'divider',
+                          bgcolor: selected ? 'action.selected' : 'background.paper',
+                          color: 'text.primary',
+                          textAlign: 'left',
+                          cursor: duplicate ? 'not-allowed' : 'pointer',
+                          opacity: duplicate ? 0.6 : 1,
+                        }}
+                      >
+                        <Typography variant="body2" fontWeight="fontWeightBold">
+                          {candidate.displayName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {[candidate.department, candidate.email].filter(Boolean).join(' · ') ||
+                            `User ${candidate.userId}`}
+                          {duplicate
+                            ? ` · ${t('admin.operationsWorkspace.a03.alreadyMember', {
+                                defaultValue: 'Already a member',
+                              })}`
+                            : ''}
+                        </Typography>
+                      </Box>
+                    );
+                  })}
+                </Stack>
+              ) : null}
+            </>
+          )}
           <TextField
             label={t('admin.operationsWorkspace.a03.expiresAt', { defaultValue: 'Access expiry' })}
             type="date"
@@ -158,6 +276,7 @@ export function SharedAccessSurface({
   onOpenSettings,
   onAdd,
   onUpdate,
+  onPreviewRevoke,
   onRemove,
 }: {
   overview: MailAdminOverview;
@@ -167,6 +286,7 @@ export function SharedAccessSurface({
   onOpenSettings?: () => void;
   onAdd?: MailAdminOperationsContentProps['onAddSharedMember'];
   onUpdate?: MailAdminOperationsContentProps['onUpdateSharedMember'];
+  onPreviewRevoke?: MailAdminOperationsContentProps['onPreviewSharedMemberRevoke'];
   onRemove?: MailAdminOperationsContentProps['onRemoveSharedMember'];
 }) {
   const { t } = useTranslation('mail');
@@ -178,6 +298,63 @@ export function SharedAccessSurface({
     access: MailSharedInboxAccess;
     member: MailSharedInboxMember;
   } | null>(null);
+  const [revokeAcknowledged, setRevokeAcknowledged] = useState(false);
+  const [revokePreview, setRevokePreview] = useState<MailSharedInboxMemberRevokePreview | null>(
+    null
+  );
+  const [revokePreviewLoading, setRevokePreviewLoading] = useState(false);
+  const [revokePreviewError, setRevokePreviewError] = useState(false);
+  const [revokePreviewAttempt, setRevokePreviewAttempt] = useState(0);
+  useEffect(() => {
+    if (!revokeTarget || !onPreviewRevoke) {
+      setRevokePreview(null);
+      setRevokePreviewLoading(false);
+      setRevokePreviewError(Boolean(revokeTarget));
+      return;
+    }
+    let cancelled = false;
+    setRevokePreview(null);
+    setRevokePreviewError(false);
+    setRevokePreviewLoading(true);
+    void onPreviewRevoke(revokeTarget.access.sharedInboxId, revokeTarget.member)
+      .then((preview) => {
+        if (!cancelled) setRevokePreview(preview);
+      })
+      .catch(() => {
+        if (!cancelled) setRevokePreviewError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setRevokePreviewLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [onPreviewRevoke, revokePreviewAttempt, revokeTarget]);
+  useEffect(() => {
+    if (!revokeTarget || !access) return;
+    const latestAccess = access.find(
+      (item) => item.sharedInboxId === revokeTarget.access.sharedInboxId
+    );
+    const latestMember = latestAccess?.members.find(
+      (item) => item.memberId === revokeTarget.member.memberId
+    );
+    if (!latestAccess || !latestMember || latestMember.state === 'REVOKED') {
+      setRevokeTarget(null);
+      setRevokeAcknowledged(false);
+      return;
+    }
+    if (latestMember.version !== revokeTarget.member.version) {
+      setRevokeTarget({ access: latestAccess, member: latestMember });
+      setRevokeAcknowledged(false);
+    }
+  }, [access, revokeTarget]);
+  const revokeHasImpact = Boolean(
+    revokePreview &&
+    (revokePreview.activeAssignments > 0 ||
+      revokePreview.openDrafts > 0 ||
+      revokePreview.pendingCommands > 0 ||
+      revokePreview.providerRevocationRequired)
+  );
   return (
     <Stack spacing={2.5}>
       {!access ? (
@@ -298,7 +475,10 @@ export function SharedAccessSurface({
                         loading={busyAction === `remove-member:${member.memberId}`}
                         disabled={!canManage || member.state === 'REVOKED' || !onRemove}
                         startIcon={<Trash2 size={15} />}
-                        onClick={() => setRevokeTarget({ access: inboxAccess, member })}
+                        onClick={() => {
+                          setRevokeAcknowledged(false);
+                          setRevokeTarget({ access: inboxAccess, member });
+                        }}
                       >
                         {t('admin.operationsWorkspace.a03.revoke', { defaultValue: 'Revoke' })}
                       </ActionButton>
@@ -322,7 +502,7 @@ export function SharedAccessSurface({
         <InlineFeedback severity="info">{t('admin.shared.emptyTitle')}</InlineFeedback>
       ) : null}
       {editor ? (
-        <MemberEditor
+        <MailSharedInboxMemberEditor
           key={`${editor.access.sharedInboxId}:${editor.member?.memberId ?? 'new'}`}
           open
           access={editor.access}
@@ -338,7 +518,10 @@ export function SharedAccessSurface({
       ) : null}
       <Dialog
         open={Boolean(revokeTarget)}
-        onClose={() => setRevokeTarget(null)}
+        onClose={() => {
+          setRevokeTarget(null);
+          setRevokeAcknowledged(false);
+        }}
         fullWidth
         maxWidth="sm"
       >
@@ -352,41 +535,93 @@ export function SharedAccessSurface({
                 'Review active assignments, open drafts, pending commands, and provider revocation before removing access.',
             })}
           </Typography>
-          {revokeTarget?.access.impact ? (
-            <Facts
-              items={[
-                {
-                  label: 'Active assignments',
-                  value: revokeTarget.access.impact.activeAssignments,
-                },
-                { label: 'Open drafts', value: revokeTarget.access.impact.openDrafts },
-                { label: 'Pending commands', value: revokeTarget.access.impact.pendingCommands },
-              ]}
-            />
-          ) : (
+          {revokePreviewLoading ? (
+            <InlineFeedback severity="info">
+              {t('admin.operationsWorkspace.a03.loadingRevokePreview', {
+                defaultValue: 'Loading the current member-specific impact…',
+              })}
+            </InlineFeedback>
+          ) : revokePreviewError || !revokePreview ? (
             <InlineFeedback severity="warning">
               {t('admin.operationsWorkspace.a03.impactUnavailable', {
                 defaultValue:
-                  'Detailed impact counts are unavailable. Provider revocation may complete separately.',
+                  'Current member-specific impact could not be verified. Revocation remains blocked.',
               })}
             </InlineFeedback>
+          ) : (
+            <Stack spacing={1.25}>
+              <Facts
+                items={[
+                  {
+                    label: 'Active assignments',
+                    value: revokePreview.activeAssignments,
+                  },
+                  { label: 'Open drafts', value: revokePreview.openDrafts },
+                  { label: 'Pending commands', value: revokePreview.pendingCommands },
+                  {
+                    label: 'Provider revocation',
+                    value: revokePreview.providerRevocationRequired ? 'Required' : 'Not required',
+                  },
+                ]}
+              />
+              <Typography variant="caption" color="text.secondary">
+                {t('admin.operationsWorkspace.a03.previewExpiry', {
+                  defaultValue: 'This impact preview expires at {{time}}.',
+                  time: revokePreview.expiresAt,
+                })}
+              </Typography>
+              {revokeHasImpact ? (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={revokeAcknowledged}
+                      onChange={(event) => setRevokeAcknowledged(event.target.checked)}
+                    />
+                  }
+                  label={t('admin.operationsWorkspace.a03.acknowledgeRevokeImpact', {
+                    defaultValue: 'I reviewed this member-specific impact.',
+                  })}
+                />
+              ) : null}
+            </Stack>
           )}
         </DialogContent>
         <DialogActions>
-          <ActionButton intent="quiet" onClick={() => setRevokeTarget(null)}>
+          <ActionButton
+            intent="quiet"
+            onClick={() => {
+              setRevokeTarget(null);
+              setRevokeAcknowledged(false);
+            }}
+          >
             {t('actions.cancel')}
           </ActionButton>
           <ActionButton
             intent="danger"
-            disabled={!revokeTarget || !onRemove}
-            onClick={() => {
-              if (!revokeTarget) return;
-              onRemove?.(
+            loading={Boolean(
+              revokeTarget && busyAction === `remove-member:${revokeTarget.member.memberId}`
+            )}
+            disabled={
+              !revokeTarget ||
+              !onRemove ||
+              !revokePreview ||
+              revokePreviewLoading ||
+              (revokeHasImpact && !revokeAcknowledged)
+            }
+            onClick={async () => {
+              if (!revokeTarget || !revokePreview || !onRemove) return;
+              const completed = await onRemove(
                 revokeTarget.access.sharedInboxId,
                 revokeTarget.member,
-                revokeTarget.member.version
+                revokePreview,
+                revokeAcknowledged
               );
+              if (completed === false) {
+                setRevokePreviewAttempt((attempt) => attempt + 1);
+                return;
+              }
               setRevokeTarget(null);
+              setRevokeAcknowledged(false);
             }}
           >
             {t('admin.operationsWorkspace.a03.confirmRevoke', {

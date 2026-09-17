@@ -4,6 +4,29 @@ import type { PermissionDTO, SavedViewConfiguration } from '@dwp-frontend/shared
 
 export type CalendarScheduleView = 'day' | 'threeDay' | 'fourDay' | 'week' | 'month' | 'agenda';
 
+export function calendarScheduleInitialRange(now = new Date()) {
+  const from = new Date(now);
+  from.setHours(0, 0, 0, 0);
+  from.setDate(from.getDate() - ((from.getDay() || 7) - 1));
+  const to = new Date(from);
+  to.setDate(to.getDate() + 7);
+  return { from: from.toISOString(), to: to.toISOString() };
+}
+
+export function sameCalendarSelection(
+  left: readonly string[],
+  right: readonly string[]
+): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+export function calendarScheduleAuthorizedEvent<T extends { eventId: string }>(
+  event: T | null,
+  authoritativeEventIds: ReadonlySet<string>
+): T | null {
+  return event && authoritativeEventIds.has(event.eventId) ? event : null;
+}
+
 const SCHEDULE_VIEWS = new Set<CalendarScheduleView>([
   'day',
   'threeDay',

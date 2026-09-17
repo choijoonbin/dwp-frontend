@@ -169,6 +169,10 @@
     "menu": {
       "settings": "계정 설정",
       "settingsDescription": "프로필, 환경설정 및 보안",
+      "sessions": "세션 모니터",
+      "sessionsDescription": "활성 세션 {{count}}개",
+      "sessionsLoading": "활성 세션 확인 중",
+      "sessionsUnavailable": "세션 상태 확인 불가",
       "administration": "관리 콘솔",
       "administrationDescription": "사용자, 정책 및 시스템 관리",
       "supportAdministrationDescription": "{{tenant}} 승인 범위 지원",

@@ -316,7 +316,7 @@ export function HomeLayout() {
             compact={false}
             collapsible={false}
             controlsId="home-mobile-navigation"
-            label={mode === 'CLASSIC' ? 'Classic' : mode === 'FLOW_V1' ? 'Flow' : 'MZ / AI Stage'}
+            label={mode === 'CLASSIC' ? 'Classic' : mode === 'FLOW_V1' ? 'Flow' : 'AI Stage'}
             onDismiss={mobileNavigation.dismiss}
             onToggle={() => undefined}
           />

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
   AlertTriangle,
+  AppWindow,
   ArrowRight,
   Boxes,
   GitBranch,
@@ -21,11 +22,13 @@ import {
   declareCatalogRelation,
   dispositionCatalogFinding,
   evaluateCatalogAssurance,
+  getAppGovernanceDashboard,
   getCatalogAssurance,
   getCatalogGraph,
   getCatalogImpact,
   getCatalogOverview,
   retireCatalogRelation,
+  useProductSurfaceAuthority,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -53,6 +56,9 @@ import Typography from '@mui/material/Typography';
 import { CatalogGraphView } from './catalog-graph';
 import { AssuranceWorkspace, FindingDispositionDialog } from './catalog-assurance-workspace';
 import { CatalogMetric } from './catalog-metric';
+import { ApplicationLifecycleCatalog } from './application-lifecycle-catalog';
+import { buildAppLifecycleCatalog } from './app-catalog-lifecycle-model';
+import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-point-catalog';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -66,7 +72,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { FindingDecision } from './catalog-assurance-workspace';
 
-type View = 'graph' | 'inventory' | 'assurance';
+type View = 'applications' | 'graph' | 'inventory' | 'assurance';
 
 const KINDS: Array<CatalogEntityKind | 'ALL'> = [
   'ALL',
@@ -283,9 +289,12 @@ export function CatalogExplorer() {
   const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const surfaceAuthority = useProductSurfaceAuthority();
   const [view, setViewState] = useState<View>(() => {
     const requested = searchParams.get('view');
-    return requested === 'inventory' || requested === 'assurance' ? requested : 'graph';
+    return requested === 'graph' || requested === 'inventory' || requested === 'assurance'
+      ? requested
+      : 'applications';
   });
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
@@ -307,6 +316,7 @@ export function CatalogExplorer() {
   const graphQuery = useQuery({
     queryKey: ['admin', 'catalog', 'graph', selectedRef, depth],
     queryFn: () => getCatalogGraph(selectedRef, depth),
+    enabled: view === 'graph',
   });
   const impactQuery = useQuery({
     queryKey: ['admin', 'catalog', 'impact', selectedRef, operation],
@@ -316,6 +326,12 @@ export function CatalogExplorer() {
   const assuranceQuery = useQuery({
     queryKey: ['admin', 'catalog', 'assurance'],
     queryFn: getCatalogAssurance,
+    enabled: view === 'assurance',
+  });
+  const appGovernanceQuery = useQuery({
+    queryKey: ['admin', 'app-governance'],
+    queryFn: getAppGovernanceDashboard,
+    enabled: view === 'applications',
   });
 
   const updateLocationState = (nextView: View, findingId?: string | null) => {
@@ -323,7 +339,7 @@ export function CatalogExplorer() {
     setSearchParams(
       (current) => {
         const next = new URLSearchParams(current);
-        if (nextView === 'graph') next.delete('view');
+        if (nextView === 'applications') next.delete('view');
         else next.set('view', nextView);
         if (findingId) next.set('finding', findingId);
         else next.delete('finding');
@@ -341,6 +357,40 @@ export function CatalogExplorer() {
   };
 
   const entities = useMemo(() => overviewQuery.data?.entities ?? [], [overviewQuery.data]);
+  const applicationItems = useMemo(
+    () =>
+      buildAppLifecycleCatalog({
+        catalogEntities: entities,
+        catalogStatus: overviewQuery.isError
+          ? 'unavailable'
+          : overviewQuery.data
+            ? 'ready'
+            : 'loading',
+        manifests: GOVERNED_PRODUCT_ENTRY_CATALOG,
+        governance: appGovernanceQuery.data,
+        governanceStatus: appGovernanceQuery.isError
+          ? 'unavailable'
+          : appGovernanceQuery.data
+            ? 'ready'
+            : 'loading',
+        authority: surfaceAuthority.snapshot?.envelope,
+        authorityStatus:
+          surfaceAuthority.status === 'ready'
+            ? 'ready'
+            : surfaceAuthority.status === 'loading'
+              ? 'loading'
+              : 'unavailable',
+      }),
+    [
+      appGovernanceQuery.data,
+      appGovernanceQuery.isError,
+      entities,
+      overviewQuery.data,
+      overviewQuery.isError,
+      surfaceAuthority.snapshot?.envelope,
+      surfaceAuthority.status,
+    ]
+  );
   const selected = entities.find((entity) => entity.ref === selectedRef) ?? null;
   const filteredEntities = useMemo(() => {
     const normalized = deferredQuery.trim().toLowerCase();
@@ -364,7 +414,12 @@ export function CatalogExplorer() {
   );
 
   const refresh = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['admin', 'catalog'] });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['admin', 'catalog'] }),
+      view === 'applications'
+        ? queryClient.invalidateQueries({ queryKey: ['admin', 'app-governance'] })
+        : Promise.resolve(),
+    ]);
   };
 
   const evaluateAssurance = async () => {
@@ -483,48 +538,53 @@ export function CatalogExplorer() {
     [display, t]
   );
 
-  if (overviewQuery.isError || graphQuery.isError) {
+  if (
+    (view !== 'applications' && overviewQuery.isError) ||
+    (view === 'graph' && graphQuery.isError)
+  ) {
     return <Alert severity="error">{t('catalog.loadError')}</Alert>;
   }
 
   const overview = overviewQuery.data;
   return (
     <Box>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(5, minmax(0, 1fr))' },
-          borderTop: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
-        }}
-      >
-        <CatalogMetric
-          label={t('catalog.metrics.assets')}
-          value={overview?.entityCount ?? 0}
-          detail={t('catalog.metrics.assetsDetail')}
-        />
-        <CatalogMetric
-          label={t('catalog.metrics.relations')}
-          value={overview?.relationCount ?? 0}
-          detail={t('catalog.metrics.relationsDetail')}
-        />
-        <CatalogMetric
-          label={t('catalog.metrics.declared')}
-          value={overview?.declaredRelationCount ?? 0}
-          detail={t('catalog.metrics.declaredDetail')}
-        />
-        <CatalogMetric
-          label={t('catalog.metrics.critical')}
-          value={overview?.criticalRelationCount ?? 0}
-          detail={t('catalog.metrics.criticalDetail')}
-        />
-        <CatalogMetric
-          label={t('catalog.metrics.orphans')}
-          value={overview?.orphanCount ?? 0}
-          detail={t('catalog.metrics.orphansDetail')}
-        />
-      </Box>
+      {view !== 'applications' && (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(5, minmax(0, 1fr))' },
+            borderTop: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <CatalogMetric
+            label={t('catalog.metrics.assets')}
+            value={overview?.entityCount ?? 0}
+            detail={t('catalog.metrics.assetsDetail')}
+          />
+          <CatalogMetric
+            label={t('catalog.metrics.relations')}
+            value={overview?.relationCount ?? 0}
+            detail={t('catalog.metrics.relationsDetail')}
+          />
+          <CatalogMetric
+            label={t('catalog.metrics.declared')}
+            value={overview?.declaredRelationCount ?? 0}
+            detail={t('catalog.metrics.declaredDetail')}
+          />
+          <CatalogMetric
+            label={t('catalog.metrics.critical')}
+            value={overview?.criticalRelationCount ?? 0}
+            detail={t('catalog.metrics.criticalDetail')}
+          />
+          <CatalogMetric
+            label={t('catalog.metrics.orphans')}
+            value={overview?.orphanCount ?? 0}
+            detail={t('catalog.metrics.orphansDetail')}
+          />
+        </Box>
+      )}
 
       <Stack
         direction={{ xs: 'column', md: 'row' }}
@@ -537,7 +597,15 @@ export function CatalogExplorer() {
           value={view}
           onChange={(_, value: View) => setView(value)}
           aria-label={t('catalog.views.label')}
+          variant="scrollable"
+          allowScrollButtonsMobile
         >
+          <Tab
+            value="applications"
+            icon={<AppWindow size={17} />}
+            iconPosition="start"
+            label={t('catalog.views.applications')}
+          />
           <Tab
             value="graph"
             icon={<GitBranch size={17} />}
@@ -568,6 +636,17 @@ export function CatalogExplorer() {
           </ActionIconButton>
         </Stack>
       </Stack>
+
+      {view === 'applications' && (
+        <ApplicationLifecycleCatalog
+          items={applicationItems}
+          partialFailure={
+            overviewQuery.isError ||
+            appGovernanceQuery.isError ||
+            surfaceAuthority.status === 'authority-unavailable'
+          }
+        />
+      )}
 
       {view === 'inventory' && (
         <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>

@@ -225,6 +225,23 @@ describe('approval version-owned form workspace API', () => {
     fetch.mockImplementation(() => Promise.resolve(response({ ...data, toVersionId: formId })));
     await expect(getApprovalFormWorkspaceDiff(formId, versionId, draftId)).rejects.toThrow();
   });
+  it('combines the immutable review projection with its governed review request', async () => {
+    const { reviewRequest, ...projection } = review;
+    const fetch = vi.fn().mockImplementation((url: string) =>
+      Promise.resolve(
+        response(
+          url.endsWith('/publish-review-request') ? { request: reviewRequest } : projection
+        )
+      )
+    );
+    vi.stubGlobal('fetch', fetch);
+
+    await expect(getApprovalFormWorkspacePublishReview(formId)).resolves.toEqual(review);
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+      expect.stringContaining('/publish-review'),
+      expect.stringContaining('/publish-review-request'),
+    ]);
+  });
   it('does not elevate an incomplete checker source', async () => {
     vi.stubGlobal('fetch', fetchFor({ ...review, makerUserId: null }));
     await expect(getApprovalFormWorkspacePublishReview(formId)).rejects.toThrow();

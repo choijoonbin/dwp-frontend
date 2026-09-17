@@ -66,16 +66,19 @@ describe('home personalization store capabilities', () => {
       modeKey: 'FLOW_V1',
       modeScopedViews: true,
       fourDeviceLayoutsSupported: true,
+      preferenceStore: 'VIEWS',
     });
     const whileOpen = freezeHomeStudioContractScope(opened, {
       modeKey: 'CLASSIC',
       modeScopedViews: false,
       fourDeviceLayoutsSupported: false,
+      preferenceStore: 'LEGACY',
     });
     const reopened = freezeHomeStudioContractScope(null, {
       modeKey: 'CLASSIC',
       modeScopedViews: false,
       fourDeviceLayoutsSupported: false,
+      preferenceStore: 'LEGACY',
     });
 
     expect(whileOpen).toBe(opened);
@@ -86,6 +89,7 @@ describe('home personalization store capabilities', () => {
       modeKey: 'CLASSIC',
       modeScopedViews: false,
       fourDeviceLayoutsSupported: false,
+      preferenceStore: 'LEGACY',
     });
   });
 

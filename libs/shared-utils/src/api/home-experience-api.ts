@@ -1,8 +1,12 @@
 import { axiosInstance } from '../axios-instance';
 import { resolveBrowserMediaUrl } from './browser-media-url';
+import { HOME_EXPERIENCE_VARIANTS } from './home-shared-contract';
 
 import type { ApiResponse } from '../types';
-import type { HomeWidgetHeight } from './home-preference-api';
+import type { HomeExperienceVariant, HomeWidgetHeight } from './home-shared-contract';
+
+export { HOME_EXPERIENCE_VARIANTS } from './home-shared-contract';
+export type { HomeExperienceVariant } from './home-shared-contract';
 
 export type HomeBackgroundPosition = 'LEFT' | 'CENTER' | 'RIGHT';
 export type HomeContentAlignment = 'LEFT' | 'CENTER' | 'RIGHT';
@@ -35,8 +39,6 @@ export type HomeLaunchpadConfiguration = {
 export type HomePersonalZoneKey = 'workspace-tools';
 export type HomeGovernedZoneKey = 'announcements';
 export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
-export const HOME_EXPERIENCE_VARIANTS = ['CLASSIC', 'FLOW_V1', 'MZ_V1'] as const;
-export type HomeExperienceVariant = (typeof HOME_EXPERIENCE_VARIANTS)[number];
 export type HomePreferenceStore = 'LEGACY' | 'VIEWS';
 export const HOME_COMPOSITION_DEVICE_CLASSES = [
   'DESKTOP_WIDE',

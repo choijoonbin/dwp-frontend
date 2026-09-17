@@ -33,6 +33,12 @@ function artifact() {
     publishedVersionNumber: null,
     content: { title: 'Customer briefing', body: '# Verified notes', format: 'MARKDOWN' },
     sources: [],
+    authorSubjectId: 'author@company.com',
+    metadata: {
+      tags: ['customer'],
+      projectKey: 'CUSTOMER-Q3',
+      reviewSlaDueAt: '2026-09-20T03:00:00Z',
+    },
     capabilities: {
       collaborativeEditingAvailable: false,
       deterministicPreflightAvailable: true,

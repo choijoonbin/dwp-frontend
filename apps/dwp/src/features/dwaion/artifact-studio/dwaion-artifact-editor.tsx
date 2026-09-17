@@ -50,6 +50,7 @@ export function DwaionArtifactEditor({
   publishBusy = false,
   exportBusy = false,
   onDraftChange,
+  onMetadataChange,
   onOpenVersions,
   onRunPreflight,
   onPublish,
@@ -70,6 +71,11 @@ export function DwaionArtifactEditor({
     artifactId: string,
     expectedRevision: number,
     content: { title: string; body: string }
+  ) => void;
+  onMetadataChange: (
+    artifactId: string,
+    expectedRevision: number,
+    metadata: Pick<DwaionArtifactDocument, 'tags' | 'projectKey' | 'reviewSlaDueAt'>
   ) => void;
   onOpenVersions: () => void;
   onRunPreflight: (artifact: DwaionArtifactDocument) => void;
@@ -353,6 +359,66 @@ export function DwaionArtifactEditor({
             })
           }
         />
+        <Box component="section" aria-label={copy.metadataTitle}>
+          <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
+            {copy.metadataTitle}
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'minmax(0, 1.2fr) minmax(0, .8fr) minmax(0, 1fr)',
+              },
+              gap: 1,
+            }}
+          >
+            <FormField
+              label={copy.metadataTags}
+              value={artifact.tags.join(', ')}
+              supportingText={copy.metadataTagsHelp}
+              disabled={!canEdit}
+              onChange={(event) =>
+                onMetadataChange(artifact.artifactId, artifact.revision, {
+                  tags: event.target.value
+                    .split(',')
+                    .map((tag) => tag.trim())
+                    .filter(Boolean)
+                    .slice(0, 20),
+                  projectKey: artifact.projectKey,
+                  reviewSlaDueAt: artifact.reviewSlaDueAt,
+                })
+              }
+            />
+            <FormField
+              label={copy.metadataProject}
+              value={artifact.projectKey ?? ''}
+              disabled={!canEdit}
+              onChange={(event) =>
+                onMetadataChange(artifact.artifactId, artifact.revision, {
+                  tags: artifact.tags,
+                  projectKey: event.target.value.trim() || null,
+                  reviewSlaDueAt: artifact.reviewSlaDueAt,
+                })
+              }
+            />
+            <FormField
+              type="datetime-local"
+              label={copy.metadataReviewSla}
+              value={toLocalDateTime(artifact.reviewSlaDueAt)}
+              disabled={!canEdit}
+              onChange={(event) =>
+                onMetadataChange(artifact.artifactId, artifact.revision, {
+                  tags: artifact.tags,
+                  projectKey: artifact.projectKey,
+                  reviewSlaDueAt: event.target.value
+                    ? new Date(event.target.value).toISOString()
+                    : null,
+                })
+              }
+            />
+          </Box>
+        </Box>
         <Stack direction="row" gap={0.5} role="tablist" aria-label={copy.editorLabel}>
           <ActionButton
             role="tab"
@@ -373,76 +439,78 @@ export function DwaionArtifactEditor({
             {copy.editorModePreview}
           </ActionButton>
         </Stack>
-        {editorMode === 'EDIT' ? <Box
-          role="toolbar"
-          aria-label={copy.editorToolbarLabel}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 0.5,
-            p: 0.75,
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1.5,
-            bgcolor: 'background.default',
-          }}
-        >
-          {(
-            [
-              ['HEADING_ONE', copy.formatHeadingOne, <Heading1 key="h1" size={17} />],
-              ['HEADING_TWO', copy.formatHeadingTwo, <Heading2 key="h2" size={17} />],
-              ['BOLD', copy.formatBold, <Bold key="bold" size={17} />],
-              ['BULLET_LIST', copy.formatList, <List key="list" size={17} />],
-              ['TABLE', copy.formatTable, <Table2 key="table" size={17} />],
-            ] as const
-          ).map(([command, label, icon]) => (
+        {editorMode === 'EDIT' ? (
+          <Box
+            role="toolbar"
+            aria-label={copy.editorToolbarLabel}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 0.5,
+              p: 0.75,
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1.5,
+              bgcolor: 'background.default',
+            }}
+          >
+            {(
+              [
+                ['HEADING_ONE', copy.formatHeadingOne, <Heading1 key="h1" size={17} />],
+                ['HEADING_TWO', copy.formatHeadingTwo, <Heading2 key="h2" size={17} />],
+                ['BOLD', copy.formatBold, <Bold key="bold" size={17} />],
+                ['BULLET_LIST', copy.formatList, <List key="list" size={17} />],
+                ['TABLE', copy.formatTable, <Table2 key="table" size={17} />],
+              ] as const
+            ).map(([command, label, icon]) => (
+              <ActionButton
+                key={command}
+                intent="quiet"
+                size="small"
+                aria-label={label}
+                title={label}
+                disabled={!canEdit}
+                onClick={() => applyEditorCommand(command)}
+                sx={{ minWidth: 44, minHeight: 44, px: 1 }}
+              >
+                {icon}
+                <Box component="span" sx={{ display: { xs: 'none', lg: 'inline' }, ml: 0.5 }}>
+                  {label}
+                </Box>
+              </ActionButton>
+            ))}
             <ActionButton
-              key={command}
               intent="quiet"
               size="small"
-              aria-label={label}
-              title={label}
-              disabled={!canEdit}
-              onClick={() => applyEditorCommand(command)}
-              sx={{ minWidth: 44, minHeight: 44, px: 1 }}
+              startIcon={<BookmarkPlus size={17} aria-hidden="true" />}
+              disabled={!canEdit || artifact.sources.length === 0}
+              title={artifact.sources.length === 0 ? copy.citationUnavailable : copy.insertCitation}
+              onClick={(event) => setCitationAnchor(event.currentTarget)}
+              sx={{ minHeight: 44 }}
             >
-              {icon}
-              <Box component="span" sx={{ display: { xs: 'none', lg: 'inline' }, ml: 0.5 }}>
-                {label}
-              </Box>
+              {copy.insertCitation}
             </ActionButton>
-          ))}
-          <ActionButton
-            intent="quiet"
-            size="small"
-            startIcon={<BookmarkPlus size={17} aria-hidden="true" />}
-            disabled={!canEdit || artifact.sources.length === 0}
-            title={artifact.sources.length === 0 ? copy.citationUnavailable : copy.insertCitation}
-            onClick={(event) => setCitationAnchor(event.currentTarget)}
-            sx={{ minHeight: 44 }}
-          >
-            {copy.insertCitation}
-          </ActionButton>
-          <Menu
-            anchorEl={citationAnchor}
-            open={Boolean(citationAnchor)}
-            onClose={() => setCitationAnchor(null)}
-          >
-            {artifact.sources.map((source) => (
-              <MenuItem
-                key={`${source.sourceType}:${source.reference}`}
-                onClick={() => {
-                  setCitationAnchor(null);
-                  applyEditorCommand('CITATION', source);
-                }}
-                sx={{ minHeight: 44, maxWidth: { xs: 300, sm: 480 }, overflowWrap: 'anywhere' }}
-              >
-                {source.sourceType} {copy.separator} {source.reference}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Box> : null}
+            <Menu
+              anchorEl={citationAnchor}
+              open={Boolean(citationAnchor)}
+              onClose={() => setCitationAnchor(null)}
+            >
+              {artifact.sources.map((source) => (
+                <MenuItem
+                  key={`${source.sourceType}:${source.reference}`}
+                  onClick={() => {
+                    setCitationAnchor(null);
+                    applyEditorCommand('CITATION', source);
+                  }}
+                  sx={{ minHeight: 44, maxWidth: { xs: 300, sm: 480 }, overflowWrap: 'anywhere' }}
+                >
+                  {source.sourceType} {copy.separator} {source.reference}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        ) : null}
         {editorMode === 'EDIT' ? (
           <FormField
             label={copy.editorLabel}
@@ -464,14 +532,30 @@ export function DwaionArtifactEditor({
           <Box
             role="tabpanel"
             aria-label={copy.editorModePreview}
-            sx={{ minHeight: 260, p: { xs: 1.5, md: 2 }, border: 1, borderColor: 'divider', borderRadius: 1.5 }}
+            sx={{
+              minHeight: 260,
+              p: { xs: 1.5, md: 2 },
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1.5,
+            }}
           >
-            <DwaionResearchReport markdown={artifact.body} locale={copy === DWAION_ARTIFACT_COPY_KO ? 'ko' : 'en'} />
+            <DwaionResearchReport
+              markdown={artifact.body}
+              locale={copy === DWAION_ARTIFACT_COPY_KO ? 'ko' : 'en'}
+            />
           </Box>
         )}
       </Stack>
     </Box>
   );
+}
+
+function toLocalDateTime(value: string | null): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 }
 
 function StructureCard({

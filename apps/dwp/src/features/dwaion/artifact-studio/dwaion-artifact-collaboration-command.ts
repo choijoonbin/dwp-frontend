@@ -57,6 +57,9 @@ export function collaborationReason(
     | 'resubmit'
     | 'commentResolution'
     | 'reviewDecision'
+    | 'automaticMasking'
+    | 'syntheticReplacement'
+    | 'reviewNotification'
 ) {
   const reasons = {
     ko: {
@@ -69,6 +72,10 @@ export function collaborationReason(
       resubmit: '사용자가 최신 권한 사전검사, 팀 작업공간 생성, 만료형 내부 공유를 확인했습니다.',
       commentResolution: '사용자가 댓글 내용과 답글을 검토하고 해결 처리를 확인했습니다.',
       reviewDecision: '할당된 검토자가 4대 거버넌스 게이트와 문서 내용을 확인했습니다.',
+      automaticMasking: '사용자가 탐지된 개인·금융 식별자의 결정적 마스킹을 확인했습니다.',
+      syntheticReplacement:
+        '사용자가 탐지된 개인·금융 식별자를 합성 자리표시자로 교체하는 작업을 확인했습니다.',
+      reviewNotification: '사용자가 현재 대기 중인 검토 단계의 재알림 전송을 확인했습니다.',
     },
     en: {
       workspace: 'The user confirmed the team workspace and authorization scope.',
@@ -81,7 +88,14 @@ export function collaborationReason(
       resubmit:
         'The user confirmed the renewed authorization preflight, team workspace, and expiring internal share.',
       commentResolution: 'The user reviewed the comment thread and confirmed its resolution.',
-      reviewDecision: 'The assigned reviewer verified the four governance gates and document content.',
+      reviewDecision:
+        'The assigned reviewer verified the four governance gates and document content.',
+      automaticMasking:
+        'The user confirmed deterministic masking of detected personal and financial identifiers.',
+      syntheticReplacement:
+        'The user confirmed replacement of detected identifiers with synthetic placeholders.',
+      reviewNotification:
+        'The user confirmed redelivery of the current pending review notification.',
     },
   } as const;
   return reasons[locale][action];

@@ -1,239 +1,35 @@
-import type { Page, Route } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import type { DwaionTeamArtifactComment } from '@dwp-frontend/shared-utils';
 
-export const DWAION_PERSONAL_PERMISSIONS = [
-  ...permissionSet('APP.DWAION_ROUTINES', ['VIEW', 'MANAGE']),
-  ...permissionSet('APP.DWAION_MEMORY', ['VIEW', 'MANAGE']),
-  ...permissionSet('APP.DWAION_PRIVACY', ['VIEW', 'MANAGE']),
-  ...permissionSet('APP.DWAION_ARTIFACTS', ['VIEW', 'CREATE', 'UPDATE', 'PUBLISH', 'EXPORT']),
-];
-
-const ROUTINE_ID = '11111111-1111-4111-8111-111111111111';
-const MEMORY_ID = '22222222-2222-4222-8222-222222222222';
-const ARTIFACT_ID = '33333333-3333-4333-8333-333333333333';
-const PREFLIGHT_ID = '44444444-4444-4444-8444-444444444444';
-const ROUTINE_RUN_ID = '55555555-5555-4555-8555-555555555556';
-const TEAM_ID = '77777777-7777-4777-8777-777777777777';
-const WORKSPACE_ID = '88888888-8888-4888-8888-888888888888';
-const SHARE_ID = '99999999-9999-4999-8999-999999999999';
-const COMMENT_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
-const REPLY_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
-
-const controls = {
-  memoryState: 'ENABLED',
-  revision: 3,
-  memoryEnabled: true,
-  memoryEffective: true,
-  explicitMemoryStorageAvailable: true,
-  runtimeApplicationState: 'ENABLED',
-  runtimeApplicationEnabled: true,
-  runtimeApplicationAvailable: true,
-  automaticMemoryInference: false,
-  sensitiveMemoryAllowed: false,
-  backgroundCredentialStorage: false,
-  teamMemoryAvailable: false,
-  externalActionWithoutApproval: false,
-  evidenceCapabilities: {
-    manualProvenance: availableMemoryEvidenceCapability(),
-    aiDerivedMemory: unavailableMemoryEvidenceCapability('AI_DERIVED_MEMORY_DISABLED'),
-    confidenceScoring: unavailableMemoryEvidenceCapability('CONFIDENCE_SCORING_UNAVAILABLE'),
-    factVector: unavailableMemoryEvidenceCapability('FACT_VECTOR_UNAVAILABLE'),
-    usageMetrics: availableMemoryEvidenceCapability(),
-    usageTrail: unavailableMemoryEvidenceCapability('MEMORY_USAGE_TRAIL_UNAVAILABLE'),
-    kmsBinding: availableMemoryEvidenceCapability(),
-  },
-  sourcePreferences: [
-    sourcePreference('WORK_ITEM', 6, true),
-    sourcePreference('MAIL', 4, true),
-    sourcePreference('CALENDAR', 2, false),
-  ],
-  updatedAt: '2026-09-04T00:00:00Z',
-};
-
-const routine = {
-  routineId: ROUTINE_ID,
-  lifecycleState: 'DRAFT',
-  consentState: 'ENABLED',
-  executionMode: 'DRY_RUN_ONLY',
-  revision: 7,
-  definition: {
-    name: 'Morning priority review',
-    objective: 'Validate due work and calendar boundaries before I begin.',
-    triggerType: 'SCHEDULED',
-    cadence: 'WEEKDAYS',
-    localTime: '09:00:00',
-    timeZone: 'Asia/Seoul',
-    webhookEventType: null,
-    webhookEndpointReference: null,
-    locale: 'en',
-    activeFrom: '2026-09-01',
-    activeUntil: null,
-    quietHoursStart: '20:00:00',
-    quietHoursEnd: '08:00:00',
-    weekDays: [],
-    sources: ['WORK_ITEM', 'MAIL'],
-    budget: {
-      maximumRunsPerMonth: 22,
-      maximumTokensPerRun: 25_000,
-      maximumMinutesPerRun: 20,
-    },
-    retryPolicy: {
-      maximumAttempts: 3,
-      initialBackoffSeconds: 30,
-      backoffMultiplier: 2,
-    },
-    notificationPolicy: {
-      notifyOnPartial: true,
-      notifyOnFailure: true,
-      notifyOnRecovery: true,
-    },
-    compensationPolicy: {
-      enabled: true,
-      strategy: 'REVOKE_PENDING_HANDOFFS',
-    },
-  },
-  consents: {
-    sourceAccess: 'ENABLED',
-    analysis: 'ENABLED',
-    proposalDelivery: 'ENABLED',
-  },
-  schedulingAvailable: false,
-  nextRunAt: null,
-  capabilities: {
-    schedulingAvailable: false,
-    activationAvailable: false,
-    backgroundExecutionAvailable: false,
-    dryRunAvailable: true,
-    proposalDeliveryAvailable: false,
-    externalWriteAvailable: false,
-    webhookTriggerAvailable: true,
-    agentKernelBinding: availableRoutineCapability(),
-    whitelistedSourceBinding: availableRoutineCapability(),
-    blockedSourcePolicy: availableRoutineCapability(),
-    zeroWritePolicy: availableRoutineCapability(),
-    semanticVersionDiff: availableRoutineCapability(),
-    runtimeBudgetRetry: availableRoutineCapability(),
-    automaticQuarantine: availableRoutineCapability(),
-    changeApproval: unavailableRoutineCapability('CHANGE_APPROVAL_NOT_CONFIGURED'),
-    agentSwitching: unavailableRoutineCapability('AGENT_SWITCHING_NOT_CONFIGURED'),
-    wormDelivery: unavailableRoutineCapability('WORM_DELIVERY_NOT_CONFIGURED'),
-    oauthReauthorization: unavailableRoutineCapability('OAUTH_REAUTHORIZATION_NOT_CONFIGURED'),
-    temporaryBudgetIncrease: unavailableRoutineCapability('BUDGET_INCREASE_NOT_CONFIGURED'),
-    operatorEscalation: unavailableRoutineCapability('OPERATOR_ESCALATION_NOT_CONFIGURED'),
-    providerRollback: unavailableRoutineCapability('PROVIDER_ROLLBACK_NOT_CONFIGURED'),
-    notificationDeliveryAvailable: false,
-    pauseResumeAvailable: true,
-    lifecycleMode: 'DRAFT_PREVIEW_ONLY',
-  },
-  createdAt: '2026-09-01T00:00:00Z',
-  updatedAt: '2026-09-04T00:00:00Z',
-};
-
-function unavailableRoutineCapability(reasonCode: string) {
-  return {
-    available: false,
-    configured: false,
-    reasonCode,
-    recoveryHint: 'Ask an administrator to configure this governed runtime operation.',
-  };
-}
-
-function availableMemoryEvidenceCapability() {
-  return { available: true, configured: true, reasonCode: null, recoveryHint: null };
-}
-
-function unavailableMemoryEvidenceCapability(reasonCode: string) {
-  return {
-    available: false,
-    configured: false,
-    reasonCode,
-    recoveryHint: 'The current governed memory contract does not provide this evidence.',
-  };
-}
-
-function availableRoutineCapability() {
-  return { available: true, configured: true, reasonCode: null, recoveryHint: null };
-}
-
-const routineVisualVariants = [
+import {
+  ARTIFACT_ID,
+  artifactCollaborationCapabilities,
+  artifactComment,
+  artifactVersion,
+  artifactWorkspace,
+  availablePersonalDataCapability,
+  baseArtifact,
+  completedDeletionJob,
+  completedDeletionTarget,
+  controls,
+  deletionStages,
+  MEMORY_ID,
+  preflight,
+  REPLY_ID,
   routine,
-  {
-    ...routine,
-    routineId: '11111111-1111-4111-8111-111111111112',
-    revision: 4,
-    definition: {
-      ...routine.definition,
-      name: 'Weekly stakeholder preparation',
-      objective: 'Validate the approved work references for the weekly review.',
-      cadence: 'WEEKLY',
-      localTime: '14:00:00',
-      weekDays: [3],
-      sources: ['WORK_ITEM'],
-    },
-  },
-  {
-    ...routine,
-    routineId: '11111111-1111-4111-8111-111111111113',
-    revision: 9,
-    definition: {
-      ...routine.definition,
-      name: 'Finance close exception monitor',
-      objective: 'Reconfirm access before validating finance-close exception references.',
-      cadence: 'DAILY',
-      localTime: '08:30:00',
-      sources: ['WORK_ITEM', 'MAIL'],
-    },
-    consentState: 'RECONSENT_REQUIRED',
-    consents: { ...routine.consents, sourceAccess: 'RECONSENT_REQUIRED' },
-  },
-  {
-    ...routine,
-    routineId: '11111111-1111-4111-8111-111111111114',
-    revision: 3,
-    lifecycleState: 'PAUSED',
-    definition: {
-      ...routine.definition,
-      name: 'Friday status draft validation',
-      objective: 'Preview references for the weekly status draft without generating a proposal.',
-      cadence: 'WEEKLY',
-      localTime: '17:00:00',
-      weekDays: [5],
-      sources: ['WORK_ITEM'],
-    },
-  },
-] as const;
+  routineHealth,
+  routineRun,
+  routineRuntimeCapabilities,
+  routineTelemetryEvent,
+  routineVersions,
+  routineVisualVariants,
+  ROUTINE_ID,
+  ROUTINE_RUN_ID,
+  success,
+  unavailablePersonalDataCapability,
+} from './dwaion-personal-intelligence-data';
 
-const baseArtifact = {
-  artifactId: ARTIFACT_ID,
-  artifactType: 'WORK_PLAN',
-  state: 'DRAFT',
-  revision: 4,
-  draftRevision: 2,
-  currentVersionNumber: 2,
-  publishedVersionNumber: null,
-  content: {
-    title: 'Launch readiness plan',
-    body: 'Review access boundaries, evidence, and deployment readiness.',
-    format: 'MARKDOWN',
-  },
-  sources: [{ sourceType: 'WORK_ITEM', reference: 'WK-1042' }],
-  capabilities: {
-    immutableVersionsAvailable: true,
-    versionRestoreAvailable: false,
-    collaborativeEditingAvailable: false,
-    deterministicPreflightAvailable: true,
-    enterpriseDlpConnectorAvailable: false,
-    sourceVerificationAvailable: false,
-    sourceFreshnessAvailable: false,
-    personalPublishStateAvailable: true,
-    recipientSharingAvailable: false,
-    externalSharingAvailable: false,
-    exportRequestAvailable: true,
-    exportExecutionAvailable: false,
-  },
-  createdAt: '2026-09-01T00:00:00Z',
-  updatedAt: '2026-09-04T00:00:00Z',
-};
+export { DWAION_PERSONAL_PERMISSIONS } from './dwaion-personal-intelligence-data';
 
 export type PersonalIntelligenceProbe = {
   artifactAutosaves: number;
@@ -278,6 +74,7 @@ export async function mockDwaionPersonalIntelligence(
       : {}),
   };
   let controlsState = structuredClone(controls);
+  let collaborationWorkspace = artifactWorkspace(options.locale ?? 'en');
   let memoryState = {
     memoryId: MEMORY_ID,
     kind: 'TONE',
@@ -330,6 +127,9 @@ export async function mockDwaionPersonalIntelligence(
     const path = new URL(route.request().url()).pathname;
     if (route.request().method() === 'GET' && path.endsWith('/routines/capabilities')) {
       return success(route, routineRuntimeCapabilities());
+    }
+    if (route.request().method() === 'GET' && path.endsWith('/advanced-commands')) {
+      return success(route, []);
     }
     if (route.request().method() === 'GET' && path === '/api/agent/v1/routines') {
       return success(route, routinePayloads);
@@ -445,6 +245,47 @@ export async function mockDwaionPersonalIntelligence(
   await page.route('**/api/agent/v1/personal-data/**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/deletions/evidence/receipt-index.json')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'Cache-Control': 'no-store' },
+        body: JSON.stringify({
+          schemaVersion: 1,
+          generatedAt: '2026-09-17T03:00:00Z',
+          deletionJobs: [
+            {
+              deletionJobId: '66666666-6666-4666-8666-666666666666',
+              state: 'COMPLETED',
+              receiptFingerprint: '6'.repeat(64),
+            },
+          ],
+        }),
+      });
+    }
+    if (
+      request.method() === 'GET' &&
+      path.endsWith('/deletions/66666666-6666-4666-8666-666666666678/evidence/legal-hold.json')
+    ) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'Cache-Control': 'no-store' },
+        body: JSON.stringify({
+          schemaVersion: 1,
+          deletionJobId: '66666666-6666-4666-8666-666666666678',
+          generatedAt: '2026-09-17T03:00:00Z',
+          legalHolds: [
+            {
+              holdId: '15151515-1515-4515-8515-151515151515',
+              authorityReference: 'LEGAL-2026-0914-001',
+              dpoSubjectId: 'dpo@company.com',
+              state: 'ACTIVE',
+            },
+          ],
+        }),
+      });
+    }
     if (path.endsWith('/capabilities')) {
       return success(route, {
         supportedDeletionDomains: ['ROUTINE', 'MEMORY', 'ARTIFACT', 'ARTIFACT_EXPORT'],
@@ -492,12 +333,15 @@ export async function mockDwaionPersonalIntelligence(
         deletionExecutionAvailable: options.deletionExecutionAvailable ?? false,
         blockedDomains: [],
         attemptCount: 1,
+        stages: deletionStages(options.deletionExecutionAvailable ? 'RUNNING' : 'REQUESTED'),
+        legalHolds: [],
         targets: body.domains.map((domain) => ({
           domain,
           state: options.deletionExecutionAvailable ? 'RUNNING' : 'REQUESTED',
           affectedCount: null,
           safeErrorCode: null,
           disposition: null,
+          legalHoldEvidence: null,
         })),
       });
     }
@@ -520,6 +364,8 @@ export async function mockDwaionPersonalIntelligence(
         deletionExecutionAvailable: true,
         blockedDomains: [],
         attemptCount: 1,
+        stages: deletionStages(completed ? 'COMPLETED' : 'RUNNING'),
+        legalHolds: [],
         targets: [
           completed
             ? completedDeletionTarget('MEMORY')
@@ -529,6 +375,7 @@ export async function mockDwaionPersonalIntelligence(
                 affectedCount: null,
                 safeErrorCode: null,
                 disposition: null,
+                legalHoldEvidence: null,
               },
         ],
       });
@@ -561,6 +408,7 @@ export async function mockDwaionPersonalIntelligence(
       const body = request.postDataJSON() as {
         content: typeof baseArtifact.content;
         sources: typeof baseArtifact.sources;
+        metadata: typeof baseArtifact.metadata;
       };
       probe.artifactAutosaves += 1;
       probe.lastArtifactBody = body.content.body;
@@ -570,6 +418,7 @@ export async function mockDwaionPersonalIntelligence(
         draftRevision: artifact.draftRevision + 1,
         content: body.content,
         sources: body.sources,
+        metadata: body.metadata,
         updatedAt: '2026-09-04T01:00:00Z',
       };
       return success(route, artifact);
@@ -584,7 +433,32 @@ export async function mockDwaionPersonalIntelligence(
       return success(route, artifactCollaborationCapabilities());
     }
     if (request.method() === 'GET' && path.endsWith(`/${ARTIFACT_ID}/workspace`)) {
-      return success(route, artifactWorkspace());
+      return success(route, collaborationWorkspace);
+    }
+    const reviewDecisionMatch = path.match(
+      new RegExp(`/${ARTIFACT_ID}/workspace/review-stages/([^/]+)/decision$`, 'u')
+    );
+    if (request.method() === 'POST' && reviewDecisionMatch) {
+      const stageId = reviewDecisionMatch[1]!;
+      const body = request.postDataJSON() as { decision: 'APPROVE' | 'REJECT' };
+      collaborationWorkspace = {
+        ...collaborationWorkspace,
+        revision: collaborationWorkspace.revision + 1,
+        reviewStages: collaborationWorkspace.reviewStages.map((stage) =>
+          stage.stageId === stageId
+            ? {
+                ...stage,
+                state: body.decision === 'APPROVE' ? ('APPROVED' as const) : ('REJECTED' as const),
+                revision: stage.revision + 1,
+                evidenceFingerprint: 'a'.repeat(64),
+                decidedBySubjectId: '1',
+                decidedAt: '2026-09-17T03:01:00Z',
+              }
+            : stage
+        ),
+        updatedAt: '2026-09-17T03:01:00Z',
+      };
+      return success(route, collaborationWorkspace);
     }
     if (path.endsWith(`/${ARTIFACT_ID}/workspace/comments`)) {
       if (request.method() === 'GET') return success(route, artifactComments);
@@ -673,352 +547,407 @@ export async function mockDwaionPersonalIntelligence(
   return probe;
 }
 
-function unavailablePersonalDataCapability(reasonCode: string) {
-  return {
-    available: false,
-    configured: false,
-    reasonCode,
-    recoveryHint: 'Ask an administrator to configure this governed data action.',
+export type DwaionRoutineConflictProbe = {
+  writes: Array<{
+    method: string;
+    path: string;
+    expectedRevision: number | null;
+    commandId: string | null;
+  }>;
+  routines: () => readonly Record<string, unknown>[];
+};
+
+type RoutineFixture = typeof routine;
+type RoutineVersionFixture = ReturnType<typeof routineVersions>[number];
+type RoutineMutationBody = {
+  expectedRevision?: unknown;
+  commandId?: unknown;
+  definition?: unknown;
+  scope?: unknown;
+  consentState?: unknown;
+};
+
+export async function mockDwaionRoutineConflictRuntime(
+  page: Page,
+  options: {
+    locale?: 'en' | 'ko';
+    failConsentAttempt?: number;
+  } = {}
+): Promise<DwaionRoutineConflictProbe> {
+  const locale = options.locale ?? 'ko';
+  const writes: DwaionRoutineConflictProbe['writes'] = [];
+  const original: RoutineFixture = structuredClone(routine);
+  if (locale === 'ko') {
+    original.definition.name = '아침 우선순위 검토';
+    original.definition.objective = '업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다.';
+    original.definition.locale = 'ko';
+  }
+  const routines = new Map<string, RoutineFixture>([[ROUTINE_ID, original]]);
+  const ledgers = new Map<string, RoutineVersionFixture[]>([
+    [ROUTINE_ID, structuredClone(routineVersions(original))],
+  ]);
+  let conflictArmed = true;
+  let consentAttempts = 0;
+  let forkSequence = 0;
+
+  const recordVersion = (current: RoutineFixture, commandId: string, commandType: string) => {
+    const entry: RoutineVersionFixture = {
+      commandId,
+      commandType,
+      revision: current.revision,
+      snapshot: structuredClone(current),
+      createdAt: current.updatedAt,
+      integrityFingerprint: Number(current.revision).toString(16).slice(-1).repeat(64),
+      rollbackTargetRevision: null,
+      rollbackTargetFingerprint: null,
+    };
+    ledgers.set(
+      current.routineId,
+      [entry, ...(ledgers.get(current.routineId) ?? [])].sort(
+        (left, right) => Number(right.revision) - Number(left.revision)
+      )
+    );
   };
+
+  await page.route('**/api/agent/v1/routines**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    const method = request.method();
+    if (method === 'GET' && path.endsWith('/routines/capabilities')) {
+      return success(route, routineRuntimeCapabilities());
+    }
+    if (method === 'GET' && path.endsWith('/advanced-commands')) {
+      return success(route, []);
+    }
+    if (method === 'GET' && path === '/api/agent/v1/routines') {
+      return success(route, [...routines.values()]);
+    }
+
+    const segments = path.split('/').filter(Boolean);
+    const routineIndex = segments.indexOf('routines');
+    const routineId = routineIndex >= 0 ? segments[routineIndex + 1] : undefined;
+    const suffix = routineIndex >= 0 ? segments.slice(routineIndex + 2) : [];
+    if (method === 'GET' && routineId && suffix.length === 0) {
+      const current = routines.get(routineId);
+      return current
+        ? success(route, current)
+        : route.fulfill({ status: 404, json: { detail: 'Routine not found.' } });
+    }
+    if (method === 'GET' && routineId && suffix.join('/') === 'versions') {
+      return success(route, ledgers.get(routineId) ?? []);
+    }
+    if (method === 'GET' && routineId && suffix.join('/') === 'runs') {
+      return success(route, []);
+    }
+    if (method === 'GET' && routineId && suffix.join('/') === 'health') {
+      const current = routines.get(routineId);
+      if (!current) return route.fulfill({ status: 404, json: { detail: 'Routine not found.' } });
+      const allConsentsEnabled = Object.values(current.consents).every(
+        (state) => state === 'ENABLED'
+      );
+      return success(route, {
+        routineId,
+        routineRevision: current.revision,
+        state: allConsentsEnabled ? 'HEALTHY' : 'BLOCKED',
+        workerAvailable: true,
+        scheduleCurrent: true,
+        allConsentsEnabled,
+        latestRunId: null,
+        latestRunState: null,
+        latestRunAt: null,
+        recoveryHints: allConsentsEnabled ? [] : ['Complete the governed consent chain.'],
+        checkedAt: '2026-09-17T03:04:00Z',
+      });
+    }
+
+    const body = (request.postDataJSON() ?? {}) as RoutineMutationBody;
+    const expectedRevision =
+      typeof body.expectedRevision === 'number' && Number.isInteger(body.expectedRevision)
+        ? body.expectedRevision
+        : null;
+    const commandId =
+      typeof body.commandId === 'string' ? body.commandId : 'fefefefe-fefe-4efe-8efe-fefefefefefe';
+    if (method === 'PUT' && routineId && suffix.length === 0) {
+      writes.push({
+        method,
+        path,
+        expectedRevision,
+        commandId,
+      });
+      const current = routines.get(routineId);
+      if (!current) return route.fulfill({ status: 404, json: { detail: 'Routine not found.' } });
+      if (conflictArmed && routineId === ROUTINE_ID) {
+        conflictArmed = false;
+        const serverLatest = {
+          ...current,
+          revision: current.revision + 1,
+          definition: {
+            ...current.definition,
+            name:
+              locale === 'ko'
+                ? '아침 우선순위 검토 · 서버 정본'
+                : 'Morning priority review · server canonical',
+            localTime: '09:30:00',
+            budget: { ...current.definition.budget, maximumRunsPerMonth: 24 },
+          },
+          updatedAt: '2026-09-17T03:01:00Z',
+        };
+        routines.set(routineId, serverLatest);
+        recordVersion(serverLatest, 'abababab-abab-4bab-8bab-abababababab', 'REMOTE_UPDATE');
+        return route.fulfill({ status: 409, json: { detail: 'Revision conflict.' } });
+      }
+      if (expectedRevision !== current.revision) {
+        return route.fulfill({ status: 409, json: { detail: 'Revision conflict.' } });
+      }
+      const updated = {
+        ...current,
+        revision: current.revision + 1,
+        definition: structuredClone(body.definition) as RoutineFixture['definition'],
+        updatedAt: '2026-09-17T03:02:00Z',
+      };
+      routines.set(routineId, updated);
+      recordVersion(updated, commandId, 'UPDATE');
+      return success(route, updated);
+    }
+    if (method === 'POST' && path === '/api/agent/v1/routines') {
+      writes.push({
+        method,
+        path,
+        expectedRevision,
+        commandId,
+      });
+      forkSequence += 1;
+      const newRoutineId = `eeeeeeee-eeee-4eee-8eee-${String(forkSequence).padStart(12, '0')}`;
+      const created = {
+        ...structuredClone(original),
+        routineId: newRoutineId,
+        lifecycleState: 'DRAFT',
+        consentState: 'UNSET',
+        executionMode: 'DRY_RUN_ONLY',
+        revision: 1,
+        definition: structuredClone(body.definition) as RoutineFixture['definition'],
+        consents: {
+          sourceAccess: 'UNSET',
+          analysis: 'UNSET',
+          proposalDelivery: 'UNSET',
+        },
+        createdAt: '2026-09-17T03:02:00Z',
+        updatedAt: '2026-09-17T03:02:00Z',
+      };
+      routines.set(newRoutineId, created);
+      ledgers.set(newRoutineId, []);
+      recordVersion(created, commandId, 'CREATE');
+      return success(route, created);
+    }
+    if (method === 'POST' && routineId && suffix.join('/') === 'consent') {
+      consentAttempts += 1;
+      writes.push({
+        method,
+        path,
+        expectedRevision,
+        commandId,
+      });
+      const current = routines.get(routineId);
+      if (!current) return route.fulfill({ status: 404, json: { detail: 'Routine not found.' } });
+      if (expectedRevision !== current.revision) {
+        return route.fulfill({ status: 409, json: { detail: 'Revision conflict.' } });
+      }
+      if (options.failConsentAttempt === consentAttempts) {
+        return route.fulfill({ status: 409, json: { detail: 'Consent revision conflict.' } });
+      }
+      const consentField: keyof RoutineFixture['consents'] =
+        body.scope === 'SOURCE_ACCESS'
+          ? 'sourceAccess'
+          : body.scope === 'ANALYSIS'
+            ? 'analysis'
+            : 'proposalDelivery';
+      const updated = {
+        ...current,
+        revision: current.revision + 1,
+        consentState: body.consentState === 'ENABLED' ? current.consentState : 'UNSET',
+        consents: {
+          ...current.consents,
+          [consentField]:
+            body.consentState === 'ENABLED' || body.consentState === 'DISABLED'
+              ? body.consentState
+              : 'UNSET',
+        },
+        updatedAt: '2026-09-17T03:03:00Z',
+      };
+      updated.consentState = Object.values(updated.consents).every((state) => state === 'ENABLED')
+        ? 'ENABLED'
+        : 'UNSET';
+      routines.set(routineId, updated);
+      recordVersion(updated, commandId, 'CONSENT');
+      return success(route, updated);
+    }
+    return route.fulfill({
+      status: 501,
+      json: { detail: `Routine conflict fixture does not handle ${method} ${path}.` },
+    });
+  });
+
+  return { writes, routines: () => [...routines.values()].map((item) => structuredClone(item)) };
 }
 
-function availablePersonalDataCapability() {
-  return { available: true, configured: true, reasonCode: null, recoveryHint: null };
-}
+export type DwaionRoutineRecoveryProbe = {
+  commands: Array<{
+    action: string | null;
+    commandId: string | null;
+    expectedRevision: number | null;
+  }>;
+};
 
-function routineRuntimeCapabilities() {
-  return {
-    lifecycleMode: 'GOVERNED_RUNTIME',
-    activationAvailable: true,
-    schedulingAvailable: true,
-    backgroundExecutionAvailable: true,
-    dryRunAvailable: true,
-    pauseResumeAvailable: true,
-    oneTimeScheduleAvailable: true,
-    activeWindowPreviewAvailable: true,
-    quietHoursPreviewAvailable: true,
-    quietHoursDeliveryEnforcementAvailable: true,
-    holidayPolicyAvailable: true,
-    costBudgetAvailable: true,
-    runtimeBudgetAvailable: true,
-    notificationDeliveryAvailable: true,
-    proposalDeliveryAvailable: true,
-    externalWriteAvailable: false,
-    webhookTriggerAvailable: true,
-    agentKernelBinding: availableRoutineCapability(),
-    whitelistedSourceBinding: availableRoutineCapability(),
-    blockedSourcePolicy: availableRoutineCapability(),
-    zeroWritePolicy: availableRoutineCapability(),
-    semanticVersionDiff: availableRoutineCapability(),
-    runtimeBudgetRetry: availableRoutineCapability(),
-    automaticQuarantine: availableRoutineCapability(),
-    changeApproval: unavailableRoutineCapability('CHANGE_APPROVAL_NOT_CONFIGURED'),
-    agentSwitching: unavailableRoutineCapability('AGENT_SWITCHING_NOT_CONFIGURED'),
-    wormDelivery: unavailableRoutineCapability('WORM_DELIVERY_NOT_CONFIGURED'),
-    oauthReauthorization: unavailableRoutineCapability('OAUTH_REAUTHORIZATION_NOT_CONFIGURED'),
-    temporaryBudgetIncrease: unavailableRoutineCapability('BUDGET_INCREASE_NOT_CONFIGURED'),
-    operatorEscalation: unavailableRoutineCapability('OPERATOR_ESCALATION_NOT_CONFIGURED'),
-    providerRollback: unavailableRoutineCapability('PROVIDER_ROLLBACK_NOT_CONFIGURED'),
-    executionProviderState: 'AVAILABLE',
-    recoveryHint: null,
-    supportedCadences: ['DAILY', 'WEEKDAYS', 'WEEKLY'],
-    consentScopes: ['SOURCE_ACCESS', 'ANALYSIS', 'PROPOSAL_DELIVERY'],
-  };
-}
-
-function routineRun() {
-  return {
-    routineRunId: ROUTINE_RUN_ID,
-    routineId: ROUTINE_ID,
-    routineRevision: routine.revision,
-    trigger: 'MANUAL',
-    state: 'COMPLETED',
-    version: 4,
-    attemptCount: 1,
-    maximumAttempts: 3,
-    scheduledFor: '2026-09-04T00:00:00Z',
-    nextAttemptAt: null,
-    startedAt: '2026-09-04T00:00:01Z',
-    completedAt: '2026-09-04T00:00:05Z',
-    evidenceCount: 3,
+export async function mockDwaionRoutineRecoveryRuntime(
+  page: Page,
+  options: { locale?: 'en' | 'ko'; rejectFirstCommand?: boolean } = {}
+): Promise<DwaionRoutineRecoveryProbe> {
+  const locale = options.locale ?? 'ko';
+  const commands: DwaionRoutineRecoveryProbe['commands'] = [];
+  const recoveryRoutine: RoutineFixture = structuredClone(routine);
+  if (locale === 'ko') {
+    recoveryRoutine.definition.name = '아침 우선순위 검토';
+    recoveryRoutine.definition.objective =
+      '업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다.';
+    recoveryRoutine.definition.locale = 'ko';
+  }
+  const partialRun = {
+    ...routineRun(),
+    state: 'PARTIAL',
+    version: 5,
+    completedAt: '2026-09-17T04:01:00Z',
+    evidenceCount: 4,
     proposalsCreated: 1,
     approvalGatedActionsCreated: 1,
-    tokensUsed: 1840,
-    elapsedMs: 4000,
-    notificationState: 'DELIVERED',
-    safeErrorCode: null,
-    recoveryHint: null,
-    compensationRequired: false,
-    receipt: {
-      receiptId: '55555555-5555-4555-8555-555555555557',
-      routineRunId: ROUTINE_RUN_ID,
-      routineId: ROUTINE_ID,
-      routineRevision: routine.revision,
-      terminalState: 'COMPLETED',
-      providerReceiptId: 'provider-routine-0904',
-      resultSha256: '5'.repeat(64),
-      evidenceCount: 3,
-      proposalsCreated: 1,
-      approvalGatedActionsCreated: 1,
-      externalWritesPerformed: 0,
-      notificationState: 'DELIVERED',
-      authorizationDecisionRevision: 11,
-      authorizedSources: ['WORK_ITEM', 'MAIL'],
-      completedAt: '2026-09-04T00:00:05Z',
-    },
-    createdAt: '2026-09-04T00:00:00Z',
-    updatedAt: '2026-09-04T00:00:05Z',
-  };
-}
-
-function routineVersions(current: (typeof routineVisualVariants)[number]) {
-  return [
-    {
-      commandId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
-      commandType: 'UPDATE',
-      revision: current.revision,
-      snapshot: current,
-      createdAt: current.updatedAt,
-      integrityFingerprint: 'c'.repeat(64),
-      rollbackTargetRevision: null,
-      rollbackTargetFingerprint: null,
-    },
-    {
-      commandId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
-      commandType: 'CREATE',
-      revision: 1,
-      snapshot: { ...current, revision: 1, updatedAt: current.createdAt },
-      createdAt: current.createdAt,
-      integrityFingerprint: 'd'.repeat(64),
-      rollbackTargetRevision: null,
-      rollbackTargetFingerprint: null,
-    },
-  ];
-}
-
-function routineHealth() {
-  return {
-    routineId: ROUTINE_ID,
-    routineRevision: routine.revision,
-    state: 'HEALTHY',
-    workerAvailable: true,
-    scheduleCurrent: true,
-    allConsentsEnabled: true,
-    latestRunId: ROUTINE_RUN_ID,
-    latestRunState: 'COMPLETED',
-    latestRunAt: '2026-09-04T00:00:05Z',
-    recoveryHints: [],
-    checkedAt: '2026-09-04T00:01:00Z',
-  };
-}
-
-function routineTelemetryEvent() {
-  return {
-    source: 'EXECUTION',
-    eventId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
-    routineRunId: ROUTINE_RUN_ID,
-    eventType: 'RUN_COMPLETED',
-    previousState: 'RUNNING',
-    currentState: 'COMPLETED',
-    version: 4,
-    occurredAt: '2026-09-04T00:00:05Z',
-    integrityFingerprint: 'e'.repeat(64),
-  };
-}
-
-function artifactCollaborationCapabilities() {
-  return {
-    teamWorkspaceAvailable: true,
-    aclPreflightAvailable: true,
-    accessRequestAvailable: true,
-    collaborationAvailable: true,
-    conflictResolutionAvailable: true,
-    internalSharingAvailable: true,
-    externalSharingAvailable: false,
-    shareExpiryAvailable: true,
-    shareRevocationAvailable: true,
-    inlineComments: {
-      available: true,
-      configured: true,
-      reasonCode: null,
-      recoveryHint: null,
-    },
-    automaticMasking: unavailableRoutineCapability('AUTOMATIC_MASKING_NOT_CONFIGURED'),
-    syntheticReplacement: unavailableRoutineCapability('SYNTHETIC_REPLACEMENT_NOT_CONFIGURED'),
-    reviewNotification: unavailableRoutineCapability('REVIEW_NOTIFICATION_NOT_CONFIGURED'),
-    reviewRejection: unavailableRoutineCapability('REVIEW_REJECTION_NOT_CONFIGURED'),
-    providerState: 'AVAILABLE',
-    recoveryHint: null,
-  };
-}
-
-function artifactWorkspace() {
-  return {
-    workspaceId: WORKSPACE_ID,
-    artifactId: ARTIFACT_ID,
-    teamId: TEAM_ID,
-    state: 'ACTIVE',
-    revision: 3,
-    content: baseArtifact.content,
-    contentSha256: '8'.repeat(64),
-    members: [
-      {
-        subjectId: 'mina.kim@company.com',
-        role: 'OWNER',
-        allowed: true,
-        deniedSourceCount: 0,
-        reasonCode: null,
-      },
-      {
-        subjectId: 'reviewer@company.com',
-        role: 'REVIEWER',
-        allowed: true,
-        deniedSourceCount: 0,
-        reasonCode: null,
-      },
-    ],
-    openConflict: null,
-    shares: [
-      {
-        shareId: SHARE_ID,
-        workspaceId: WORKSPACE_ID,
-        state: 'ACTIVE',
-        permission: 'COMMENT',
-        memberCount: 2,
-        expiresAt: '2026-09-05T00:00:00Z',
-        revokedAt: null,
-        receiptId: '99999999-9999-4999-8999-999999999998',
-        receiptSha256: '9'.repeat(64),
-        revocationReceiptId: null,
-        revocationReceiptSha256: null,
-        createdAt: '2026-09-04T00:00:00Z',
-      },
-    ],
-    createdAt: '2026-09-04T00:00:00Z',
-    updatedAt: '2026-09-04T00:00:05Z',
-  };
-}
-
-function artifactComment(locale: 'en' | 'ko'): DwaionTeamArtifactComment {
-  return {
-    commentId: COMMENT_ID,
-    workspaceId: WORKSPACE_ID,
-    artifactId: ARTIFACT_ID,
-    authorSubjectId: 'reviewer@company.com',
-    authorDisplayName: locale === 'ko' ? '김민아' : 'Mina Kim',
-    body:
+    tokensUsed: 2240,
+    elapsedMs: 6100,
+    notificationState: 'FAILED',
+    safeErrorCode: 'PROVIDER_ITEM_QUARANTINED',
+    recoveryHint:
       locale === 'ko'
-        ? '환율 스트레스 테스트의 기준 시점을 다시 확인해 주세요.'
-        : 'Please reconfirm the baseline date for the exchange-rate stress test.',
-    anchor: locale === 'ko' ? '3. 환율 민감도 분석' : '3. Exchange-rate sensitivity',
-    state: 'OPEN',
-    revision: 2,
-    replies: [],
-    createdAt: '2026-09-04T01:30:00Z',
-    updatedAt: '2026-09-04T01:30:00Z',
-    resolvedAt: null,
+        ? '격리 증거를 확인한 뒤 검증된 항목만 계속 처리하거나 안전 취소 및 롤백하세요.'
+        : 'Review quarantine evidence, then continue with verified items or cancel and roll back safely.',
+    recoveryAction: null,
+    recoveryCommandId: null,
+    compensationRequired: true,
+    receipt: null,
+    updatedAt: '2026-09-17T04:01:00Z',
   };
-}
+  let currentRun: Record<string, unknown> = partialRun;
 
-function completedDeletionJob() {
-  return {
-    deletionJobId: '66666666-6666-4666-8666-666666666667',
-    state: 'COMPLETED',
-    domains: ['MEMORY'],
-    requestedAt: '2026-09-04T00:05:00Z',
-    completedAt: '2026-09-04T00:06:00Z',
-    deletionPerformed: true,
-    deletionExecutionAvailable: true,
-    blockedDomains: [],
-    attemptCount: 1,
-    targets: [completedDeletionTarget('MEMORY')],
-  };
-}
+  await page.route('**/api/agent/v1/routines**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    const method = request.method();
+    if (method === 'GET' && path.endsWith('/routines/capabilities')) {
+      return success(route, routineRuntimeCapabilities());
+    }
+    if (method === 'GET' && path.endsWith('/advanced-commands')) {
+      return success(route, []);
+    }
+    if (method === 'GET' && path === '/api/agent/v1/routines') {
+      return success(route, [recoveryRoutine]);
+    }
+    if (method === 'GET' && path === `/api/agent/v1/routines/${ROUTINE_ID}`) {
+      return success(route, recoveryRoutine);
+    }
+    if (method === 'GET' && path === `/api/agent/v1/routines/${ROUTINE_ID}/runs`) {
+      if (currentRun.state === 'QUEUED') {
+        const recoveryCommandId = String(currentRun.recoveryCommandId);
+        currentRun = {
+          ...currentRun,
+          state: 'COMPLETED',
+          version: 7,
+          completedAt: '2026-09-17T04:02:05Z',
+          evidenceCount: 4,
+          proposalsCreated: 2,
+          approvalGatedActionsCreated: 1,
+          tokensUsed: 2630,
+          elapsedMs: 8800,
+          notificationState: 'DELIVERED',
+          compensationRequired: false,
+          receipt: {
+            receiptId: '56565656-5656-4656-8656-565656565656',
+            routineRunId: ROUTINE_RUN_ID,
+            routineId: ROUTINE_ID,
+            routineRevision: recoveryRoutine.revision,
+            terminalState: 'COMPLETED',
+            providerReceiptId: 'provider-routine-recovery-0917',
+            resultSha256: '6'.repeat(64),
+            evidenceCount: 4,
+            proposalsCreated: 2,
+            approvalGatedActionsCreated: 1,
+            externalWritesPerformed: 0,
+            notificationState: 'DELIVERED',
+            authorizationDecisionRevision: 12,
+            authorizedSources: ['WORK_ITEM', 'MAIL'],
+            recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE',
+            recoveryCommandId,
+            completedAt: '2026-09-17T04:02:05Z',
+          },
+          updatedAt: '2026-09-17T04:02:05Z',
+        };
+      }
+      return success(route, [currentRun]);
+    }
+    if (method === 'GET' && path === `/api/agent/v1/routines/${ROUTINE_ID}/versions`) {
+      return success(route, routineVersions(recoveryRoutine));
+    }
+    if (method === 'GET' && path === `/api/agent/v1/routines/${ROUTINE_ID}/health`) {
+      return success(route, {
+        ...routineHealth(),
+        state: currentRun.state === 'PARTIAL' ? 'DEGRADED' : 'HEALTHY',
+        latestRunState: currentRun.state,
+        latestRunAt: currentRun.updatedAt,
+        recoveryHints:
+          currentRun.state === 'PARTIAL'
+            ? ['Review provider quarantine evidence before choosing a recovery action.']
+            : [],
+        checkedAt: '2026-09-17T04:02:06Z',
+      });
+    }
+    if (
+      method === 'POST' &&
+      path === `/api/agent/v1/routines/${ROUTINE_ID}/runs/${ROUTINE_RUN_ID}/commands`
+    ) {
+      const body = (request.postDataJSON() ?? {}) as Record<string, unknown>;
+      const command = {
+        action: typeof body.action === 'string' ? body.action : null,
+        commandId: typeof body.commandId === 'string' ? body.commandId : null,
+        expectedRevision: typeof body.expectedRevision === 'number' ? body.expectedRevision : null,
+      };
+      commands.push(command);
+      if (options.rejectFirstCommand && commands.length === 1) {
+        return route.fulfill({
+          status: 409,
+          json: {
+            detail: 'Verified provider receipt envelope changed. Refresh and retry recovery.',
+          },
+        });
+      }
+      if (
+        command.action !== 'SKIP_QUARANTINED_AND_CONTINUE' ||
+        command.expectedRevision !== 5 ||
+        !command.commandId
+      ) {
+        return route.fulfill({ status: 409, json: { detail: 'Recovery command is stale.' } });
+      }
+      currentRun = {
+        ...partialRun,
+        state: 'QUEUED',
+        version: 6,
+        completedAt: null,
+        safeErrorCode: null,
+        recoveryHint: null,
+        recoveryAction: 'SKIP_QUARANTINED_AND_CONTINUE',
+        recoveryCommandId: command.commandId,
+        compensationRequired: false,
+        updatedAt: '2026-09-17T04:02:00Z',
+      };
+      return success(route, currentRun);
+    }
+    return route.fallback();
+  });
 
-function completedDeletionTarget(domain: string) {
-  return {
-    domain,
-    state: 'COMPLETED',
-    affectedCount: 2,
-    safeErrorCode: null,
-    disposition: {
-      dispositionId: '66666666-6666-4666-8666-666666666668',
-      domain,
-      generation: 1,
-      purgedRowCount: 2,
-      purgedTableCounts: { ai_personal_memories: 2 },
-      dispositionScope: 'AGENT_ACTIVE_POSTGRES_DOMAIN_ONLY',
-      dispositionMethod: 'PHYSICAL_ROW_PURGE_OF_ENCRYPTED_RECORDS',
-      activeStoreEnvelopesDestroyed: true,
-      sourceSystemDataAffected: false,
-      backupDispositionState: 'EXTERNAL_RETENTION_BOUNDARY',
-      receiptFingerprint: '6'.repeat(64),
-      completedAt: '2026-09-04T00:06:00Z',
-    },
-  };
-}
-
-function permissionSet(resourceKey: string, codes: readonly string[]) {
-  return codes.map((permissionCode) => ({
-    resourceType: 'APP',
-    resourceKey,
-    permissionCode,
-    effect: 'ALLOW' as const,
-  }));
-}
-
-function sourcePreference(sourceKey: string, revision: number, available: boolean) {
-  return {
-    sourceKey,
-    available,
-    enabled: available,
-    effective: available,
-    revision,
-    effectScope: 'PERSONAL_ROUTINE_DRY_RUN_ONLY',
-    retention: 'REFERENCE_ONLY_NO_RAW_COPY',
-    proactiveAnalysisIntegrationAvailable: false,
-    updatedAt: '2026-09-04T00:00:00Z',
-  };
-}
-
-function artifactVersion(versionNumber: number, body = `Governed version ${versionNumber}`) {
-  return {
-    artifactId: ARTIFACT_ID,
-    versionNumber,
-    contentFingerprint: String(versionNumber).repeat(64),
-    sourceCount: 1,
-    immutable: true,
-    createdAt: `2026-09-0${versionNumber}T00:00:00Z`,
-    content: { title: baseArtifact.content.title, body, format: 'MARKDOWN' },
-    sourceEvidence: [
-      {
-        source: baseArtifact.sources[0],
-        verificationState: 'UNVERIFIED',
-        freshness: 'UNKNOWN',
-        verifiedAt: null,
-      },
-    ],
-  };
-}
-
-function preflight(artifactRevision: number) {
-  return {
-    preflightId: PREFLIGHT_ID,
-    artifactId: ARTIFACT_ID,
-    artifactRevision,
-    versionNumber: 2,
-    policyKey: 'DWP_DETERMINISTIC_DLP_V1',
-    policyVersion: 1,
-    outcome: 'PASS',
-    findings: [],
-    evaluatedAt: '2026-09-04T00:00:00Z',
-    expiresAt: '2026-09-04T00:15:00Z',
-    current: true,
-    publishAllowed: true,
-    exportAllowed: true,
-  };
-}
-
-function success(route: Route, data: unknown, status = 200) {
-  return route.fulfill({ status, json: { success: true, status: 'SUCCESS', data } });
+  return { commands };
 }

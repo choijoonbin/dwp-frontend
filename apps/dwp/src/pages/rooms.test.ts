@@ -10,6 +10,7 @@ const roomsViews = [
   'workplace-admin-locations',
   'workplace-admin-governance',
   'workplace-admin-facilities',
+  'workplace-exception-console',
   'workplace-admin-overview',
   'workplace-admin-policy',
   'workplace-unified-reservations',

@@ -16,6 +16,7 @@ import {
   Send,
   SunMoon,
   Type,
+  Undo2,
   X,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -237,6 +238,17 @@ export default function SettingsPage() {
         state={personalPreference.saveState}
         lastSavedAt={personalPreference.lastSavedAt}
       />
+      {personalPreference.canUndo && (
+        <ActionButton
+          intent="quiet"
+          size="small"
+          startIcon={<Undo2 size={16} />}
+          disabled={personalPreference.isSaving}
+          onClick={personalPreference.undo}
+        >
+          {t('personalPreferences.undo')}
+        </ActionButton>
+      )}
       <ActionButton
         intent="secondary"
         startIcon={<RotateCcw size={17} />}
@@ -400,7 +412,20 @@ export default function SettingsPage() {
           title={t('sections.language.title')}
           description={t('sections.language.description')}
           action={
-            <AutoSaveStatus state={languageRegionSaveState} lastSavedAt={languageRegionSavedAt} />
+            <Stack direction="row" alignItems="center" gap={1.5} flexWrap="wrap">
+              <AutoSaveStatus state={languageRegionSaveState} lastSavedAt={languageRegionSavedAt} />
+              {personalPreference.canUndo && (
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  startIcon={<Undo2 size={16} />}
+                  disabled={personalPreference.isSaving}
+                  onClick={personalPreference.undo}
+                >
+                  {t('personalPreferences.undo')}
+                </ActionButton>
+              )}
+            </Stack>
           }
         />
         <PreferenceGroup

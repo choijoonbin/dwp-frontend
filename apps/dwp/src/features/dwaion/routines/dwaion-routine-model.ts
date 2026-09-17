@@ -9,7 +9,7 @@ export type DwaionRoutineConsent = {
 };
 
 export type DwaionRoutineSchedule = {
-  cadence: 'DAILY' | 'WEEKDAYS' | 'WEEKLY';
+  cadence: 'DAILY' | 'WEEKDAYS' | 'WEEKLY' | 'MONTHLY';
   localTime: string;
   timeZone: string;
   activeFrom: string | null;
@@ -17,6 +17,7 @@ export type DwaionRoutineSchedule = {
   quietHoursStart: string | null;
   quietHoursEnd: string | null;
   weekDays: readonly number[];
+  monthDay?: number | null;
 };
 
 export type DwaionRoutine = {
@@ -134,6 +135,7 @@ export function createEmptyRoutineDraft(timeZone: string): DwaionRoutineDraft {
       quietHoursStart: null,
       quietHoursEnd: null,
       weekDays: [],
+      monthDay: null,
     },
     consentKeys: [],
     budget: {
@@ -222,6 +224,13 @@ export function routineDraftErrors(draft: DwaionRoutineDraft): readonly string[]
   }
   if (
     draft.triggerType === 'SCHEDULED' &&
+    draft.schedule.cadence === 'MONTHLY' &&
+    (!draft.schedule.monthDay || draft.schedule.monthDay < 1 || draft.schedule.monthDay > 28)
+  ) {
+    errors.push('MONTH_DAY_REQUIRED');
+  }
+  if (
+    draft.triggerType === 'SCHEDULED' &&
     Boolean(draft.schedule.quietHoursStart) !== Boolean(draft.schedule.quietHoursEnd)
   ) {
     errors.push('QUIET_HOURS_INCOMPLETE');
@@ -261,6 +270,26 @@ export function routineDryRunIsCurrent(
 export type DwaionRoutineChangeKey =
   'IDENTITY' | 'TRIGGER' | 'SOURCES' | 'DELIVERY_AND_CONSENT' | 'BUDGET_AND_RECOVERY';
 
+export type DwaionRoutineMergeSide = 'LOCAL' | 'SERVER';
+
+export type DwaionRoutineMergeSelections = Record<DwaionRoutineChangeKey, DwaionRoutineMergeSide>;
+
+export type DwaionRoutineConflictGroup = {
+  key: DwaionRoutineChangeKey;
+  localChanged: boolean;
+  serverChanged: boolean;
+  valuesMatch: boolean;
+  status: 'UNCHANGED' | 'LOCAL_ONLY' | 'SERVER_ONLY' | 'SAME_CHANGE' | 'CONFLICT';
+};
+
+export const DWAION_ROUTINE_CHANGE_KEYS: readonly DwaionRoutineChangeKey[] = [
+  'IDENTITY',
+  'TRIGGER',
+  'SOURCES',
+  'DELIVERY_AND_CONSENT',
+  'BUDGET_AND_RECOVERY',
+];
+
 export function routineDraftChangeKeys(
   saved: DwaionRoutineDraft | null,
   draft: DwaionRoutineDraft
@@ -288,6 +317,113 @@ export function routineDraftChangeKeys(
   if (!same([saved.budget, saved.retryPolicy], [draft.budget, draft.retryPolicy]))
     changes.push('BUDGET_AND_RECOVERY');
   return changes;
+}
+
+export function routineConflictGroups(
+  base: DwaionRoutineDraft,
+  local: DwaionRoutineDraft,
+  server: DwaionRoutineDraft
+): DwaionRoutineConflictGroup[] {
+  const localChanges = new Set(routineDraftChangeKeys(base, local));
+  const serverChanges = new Set(routineDraftChangeKeys(base, server));
+  return DWAION_ROUTINE_CHANGE_KEYS.map((key) => {
+    const localChanged = localChanges.has(key);
+    const serverChanged = serverChanges.has(key);
+    const valuesMatch = routineDraftGroupSame(key, local, server);
+    const status =
+      !localChanged && !serverChanged
+        ? 'UNCHANGED'
+        : localChanged && !serverChanged
+          ? 'LOCAL_ONLY'
+          : !localChanged && serverChanged
+            ? 'SERVER_ONLY'
+            : valuesMatch
+              ? 'SAME_CHANGE'
+              : 'CONFLICT';
+    return { key, localChanged, serverChanged, valuesMatch, status };
+  });
+}
+
+export function defaultRoutineMergeSelections(
+  base: DwaionRoutineDraft,
+  local: DwaionRoutineDraft,
+  server: DwaionRoutineDraft
+): DwaionRoutineMergeSelections {
+  return Object.fromEntries(
+    routineConflictGroups(base, local, server).map((group) => [
+      group.key,
+      group.localChanged && group.status !== 'SAME_CHANGE' ? 'LOCAL' : 'SERVER',
+    ])
+  ) as DwaionRoutineMergeSelections;
+}
+
+export function mergeRoutineDraft(
+  local: DwaionRoutineDraft,
+  server: DwaionRoutineDraft,
+  selections: DwaionRoutineMergeSelections
+): DwaionRoutineDraft {
+  const merged = cloneRoutineDraft(server);
+  for (const key of DWAION_ROUTINE_CHANGE_KEYS) {
+    if (selections[key] !== 'LOCAL') continue;
+    if (key === 'IDENTITY') {
+      merged.title = local.title;
+      merged.description = local.description;
+    } else if (key === 'TRIGGER') {
+      merged.triggerType = local.triggerType;
+      merged.webhookEventType = local.webhookEventType;
+      merged.webhookEndpointReference = local.webhookEndpointReference;
+      merged.schedule = { ...local.schedule, weekDays: [...local.schedule.weekDays] };
+    } else if (key === 'SOURCES') {
+      merged.sourceKeys = [...local.sourceKeys];
+    } else if (key === 'DELIVERY_AND_CONSENT') {
+      merged.consentKeys = [...local.consentKeys];
+      merged.notificationPolicy = { ...local.notificationPolicy };
+      merged.compensationPolicy = { ...local.compensationPolicy };
+    } else {
+      merged.budget = { ...local.budget };
+      merged.retryPolicy = { ...local.retryPolicy };
+    }
+  }
+  return merged;
+}
+
+export function cloneRoutineDraft(draft: DwaionRoutineDraft): DwaionRoutineDraft {
+  return {
+    ...draft,
+    sourceKeys: [...draft.sourceKeys],
+    consentKeys: [...draft.consentKeys],
+    schedule: { ...draft.schedule, weekDays: [...draft.schedule.weekDays] },
+    budget: { ...draft.budget },
+    retryPolicy: { ...draft.retryPolicy },
+    notificationPolicy: { ...draft.notificationPolicy },
+    compensationPolicy: { ...draft.compensationPolicy },
+  };
+}
+
+function routineDraftGroupSame(
+  key: DwaionRoutineChangeKey,
+  left: DwaionRoutineDraft,
+  right: DwaionRoutineDraft
+): boolean {
+  if (key === 'IDENTITY') {
+    return same([left.title, left.description], [right.title, right.description]);
+  }
+  if (key === 'TRIGGER') {
+    return same(
+      [left.triggerType, left.webhookEventType, left.webhookEndpointReference, left.schedule],
+      [right.triggerType, right.webhookEventType, right.webhookEndpointReference, right.schedule]
+    );
+  }
+  if (key === 'SOURCES') {
+    return same([...left.sourceKeys].sort(), [...right.sourceKeys].sort());
+  }
+  if (key === 'DELIVERY_AND_CONSENT') {
+    return same(
+      [[...left.consentKeys].sort(), left.notificationPolicy, left.compensationPolicy],
+      [[...right.consentKeys].sort(), right.notificationPolicy, right.compensationPolicy]
+    );
+  }
+  return same([left.budget, left.retryPolicy], [right.budget, right.retryPolicy]);
 }
 
 function same(left: unknown, right: unknown): boolean {

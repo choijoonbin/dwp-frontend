@@ -13,10 +13,13 @@ import {
   changeDwaionRoutineConsent,
   changeDwaionRoutineLifecycle,
   commandDwaionRoutineRun,
+  createDwaionRoutineAdvancedCommand,
   createDwaionRoutine,
   downloadDwaionRoutineTelemetry,
   dryRunDwaionRoutine,
   getDwaionPersonalAiControls,
+  getDwaionRoutine,
+  getDwaionRoutineAdvancedCommands,
   getDwaionRoutineRuntimeCapabilities,
   getDwaionRoutineRuns,
   getDwaionRoutineHealth,
@@ -32,25 +35,45 @@ import {
   usePermissions,
   useToast,
   type DwaionPersonalRoutine,
-  type DwaionRoutineDefinition,
-  type DwaionRoutineDryRunReceipt as ApiDryRunReceipt,
   type DwaionRoutineLifecycleAction,
   type DwaionRoutineExecutionRun,
+  type DwaionRoutineAdvancedCommand,
+  type DwaionRoutineAdvancedPayload,
   type DwaionRoutineRunCommand,
   type DwaionRoutineRollbackReceipt,
   type DwaionRoutineVersionSnapshot,
 } from '@dwp-frontend/shared-utils';
 
 import { DWAION_ROUTINE_COPY_EN, DWAION_ROUTINE_COPY_KO } from './routines/dwaion-routine-copy';
+import type {
+  DwaionRoutineConflictFailure,
+  DwaionRoutineConflictReceipt,
+  DwaionRoutineConflictSnapshot,
+  DwaionRoutineRecoveryStrategy,
+} from './routines/dwaion-routine-conflict-workbench';
 import { DwaionRoutineEditorDialog } from './routines/dwaion-routine-editor-dialog';
-import { createEmptyRoutineDraft } from './routines/dwaion-routine-model';
+import {
+  RoutineConflictRecoveryError,
+  routineRunCommandReason,
+  toRoutineDefinition,
+  toRoutineDraft,
+  toRoutineDryRunReceipt,
+  toRoutineView,
+} from './routines/dwaion-routine-adapter';
+import {
+  cloneRoutineDraft,
+  createEmptyRoutineDraft,
+  mergeRoutineDraft,
+} from './routines/dwaion-routine-model';
 import { DwaionRoutinesPage } from './routines/dwaion-routines-page';
+import { useDwaionRoutineApprovalQueue } from './routines/use-dwaion-routine-approval-queue';
 
 import type { DwaionRoutineSourceOption } from './routines/dwaion-routine-editor-dialog';
 import type {
   DwaionRoutine,
   DwaionRoutineDraft,
   DwaionRoutineDryRunReceipt,
+  DwaionRoutineMergeSelections,
 } from './routines/dwaion-routine-model';
 import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
@@ -85,11 +108,20 @@ export function DwaionRoutines() {
   const governVersionRollback = useDwaionGovernedMutation(
     'route.dwaion.work.routine-version-rollback.action'
   );
+  const governAdvanced = useDwaionGovernedMutation('route.dwaion.work.routine-advanced.action');
   const identity = `${user?.tenantId ?? ''}:${user?.userId ?? ''}`;
   const canView = isAuthenticated && isLoaded && hasPermission('APP.DWAION_ROUTINES', 'VIEW');
   const canManage = canView && hasPermission('APP.DWAION_ROUTINES', 'MANAGE');
+  const canApprove = isAuthenticated && isLoaded && hasPermission('APP.DWAION_ROUTINES', 'APPROVE');
   const canReadControls = isAuthenticated && isLoaded && hasPermission('APP.DWAION_MEMORY', 'VIEW');
   const currentTimeZone = resolveSystemTimeZone('UTC');
+  const approvalQueue = useDwaionRoutineApprovalQueue({
+    enabled: canApprove,
+    identity,
+    approvedMessage: copy.approvalQueue.approved,
+    rejectedMessage: copy.approvalQueue.rejected,
+    failedMessage: copy.commandFailed,
+  });
 
   const routinesQuery = useQuery({
     queryKey: [...ROUTINES_KEY, identity],
@@ -108,7 +140,10 @@ export function DwaionRoutines() {
     meta: { accessSensitive: true },
   });
 
-  const routines = useMemo(() => (routinesQuery.data ?? []).map(toRoutine), [routinesQuery.data]);
+  const routines = useMemo(
+    () => (routinesQuery.data ?? []).map(toRoutineView),
+    [routinesQuery.data]
+  );
   const [selectedId, setSelectedId] = useState<string | null | undefined>(undefined);
   const effectiveSelectedId =
     selectedId === null
@@ -137,6 +172,14 @@ export function DwaionRoutines() {
         : false,
     meta: { accessSensitive: true },
   });
+  const advancedCommandsQuery = useQuery({
+    queryKey: ['dwaion', 'routine-advanced-commands', identity, effectiveSelectedId],
+    queryFn: ({ signal }) => getDwaionRoutineAdvancedCommands(effectiveSelectedId!, signal),
+    enabled: canView && Boolean(effectiveSelectedId),
+    staleTime: 15_000,
+    retry: retryGovernedQuery,
+    meta: { accessSensitive: true },
+  });
   const versionsQuery = useQuery({
     queryKey: ['dwaion', 'routine-versions', identity, effectiveSelectedId],
     queryFn: ({ signal }) => getDwaionRoutineVersions(effectiveSelectedId!, signal),
@@ -159,9 +202,19 @@ export function DwaionRoutines() {
   );
   const [dryRunReceipt, setDryRunReceipt] = useState<DwaionRoutineDryRunReceipt | null>(null);
   const [rollbackReceipt, setRollbackReceipt] = useState<DwaionRoutineRollbackReceipt | null>(null);
+  const [advancedCommand, setAdvancedCommand] = useState<DwaionRoutineAdvancedCommand | null>(null);
+  const visibleAdvancedCommand =
+    advancedCommand?.routineId === effectiveSelectedId
+      ? advancedCommand
+      : (advancedCommandsQuery.data?.[0] ?? null);
   const [commandError, setCommandError] = useState<
-    'REVISION_CONFLICT' | 'COMMAND_FAILED' | undefined
+    'REVISION_CONFLICT' | 'COMMAND_FAILED' | 'RECOVERY_REJECTED' | undefined
   >();
+  const [conflictSnapshot, setConflictSnapshot] = useState<DwaionRoutineConflictSnapshot | null>(
+    null
+  );
+  const [conflictReceipt, setConflictReceipt] = useState<DwaionRoutineConflictReceipt | null>(null);
+  const [conflictFailure, setConflictFailure] = useState<DwaionRoutineConflictFailure | null>(null);
   const commandIds = useRef(new Map<string, string>());
   const webhookEventIds = useRef(new Map<string, string>());
   const webhookOccurredAt = useRef(new Map<string, string>());
@@ -176,12 +229,12 @@ export function DwaionRoutines() {
             updateDwaionRoutine(
               existing.routineId,
               existing.revision,
-              toDefinition(input.draft, locale),
+              toRoutineDefinition(input.draft, locale),
               authority
             )
           )
         : await governCreate((authority) =>
-            createDwaionRoutine(toDefinition(input.draft, locale), authority)
+            createDwaionRoutine(toRoutineDefinition(input.draft, locale), authority)
           );
 
       for (const key of CONSENT_KEYS) {
@@ -207,7 +260,12 @@ export function DwaionRoutines() {
       await queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
       toast.success(copy.saved);
     },
-    onError: handleCommandError,
+    onError: (error, input) => {
+      const baseRoutine = input.routineId
+        ? routines.find((routine) => routine.routineId === input.routineId)
+        : undefined;
+      handleCommandError(error, baseRoutine, input.draft);
+    },
   });
   const lifecycleMutation = useMutation({
     mutationFn: (input: {
@@ -229,7 +287,11 @@ export function DwaionRoutines() {
       await queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
       toast.success(copy.lifecycleSaved);
     },
-    onError: handleCommandError,
+    onError: (error, input) =>
+      handleCommandError(
+        error,
+        routines.find((routine) => routine.routineId === input.routineId)
+      ),
   });
   const dryRunMutation = useMutation({
     mutationFn: (input: { routineId: string; expectedRevision: number }) =>
@@ -237,11 +299,15 @@ export function DwaionRoutines() {
         dryRunDwaionRoutine(input.routineId, input.expectedRevision, authority)
       ),
     onSuccess: (receipt) => {
-      setDryRunReceipt(toDryRunReceipt(receipt));
+      setDryRunReceipt(toRoutineDryRunReceipt(receipt));
       setCommandError(undefined);
       toast.success(copy.validationComplete);
     },
-    onError: handleCommandError,
+    onError: (error, input) =>
+      handleCommandError(
+        error,
+        routines.find((routine) => routine.routineId === input.routineId)
+      ),
   });
   const archiveMutation = useMutation({
     mutationFn: (input: { routineId: string; expectedRevision: number }) =>
@@ -254,7 +320,11 @@ export function DwaionRoutines() {
       await queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
       toast.success(copy.archived);
     },
-    onError: handleCommandError,
+    onError: (error, input) =>
+      handleCommandError(
+        error,
+        routines.find((routine) => routine.routineId === input.routineId)
+      ),
   });
   const activationMutation = useMutation({
     mutationFn: (input: { routine: DwaionRoutine; action: 'ACTIVATE' | 'DEACTIVATE' }) => {
@@ -288,7 +358,7 @@ export function DwaionRoutines() {
       await queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
       toast.success(input.action === 'ACTIVATE' ? copy.activated : copy.deactivated);
     },
-    onError: handleCommandError,
+    onError: (error, input) => handleCommandError(error, input.routine),
   });
   const triggerRunMutation = useMutation({
     mutationFn: (routine: DwaionRoutine) => {
@@ -345,7 +415,7 @@ export function DwaionRoutines() {
       setCommandError(undefined);
       toast.success(copy.runTriggered);
     },
-    onError: handleCommandError,
+    onError: (error, routine) => handleCommandError(error, routine),
   });
   const runCommandMutation = useMutation({
     mutationFn: (input: {
@@ -356,7 +426,7 @@ export function DwaionRoutines() {
       const key = `run:${input.run.routineRunId}:${input.run.version}:${input.action}`;
       const commandId = commandIds.current.get(key) ?? newDwaionRoutineCommandId();
       commandIds.current.set(key, commandId);
-      const reason = routineCommandReason(input.action, locale);
+      const reason = routineRunCommandReason(input.action, locale);
       return governRunCommand((authority) =>
         commandDwaionRoutineRun(input.routine.routineId, input.run.routineRunId, {
           commandId,
@@ -380,7 +450,19 @@ export function DwaionRoutines() {
       setCommandError(undefined);
       toast.success(copy.runCommandSaved);
     },
-    onError: handleCommandError,
+    onError: (error, input) => {
+      if (
+        input.action === 'SKIP_QUARANTINED_AND_CONTINUE' &&
+        error instanceof HttpError &&
+        error.status === 409
+      ) {
+        setCommandError('RECOVERY_REJECTED');
+        void Promise.all([runsQuery.refetch(), capabilitiesQuery.refetch()]);
+        toast.error(copy.skipQuarantinedRejected);
+        return;
+      }
+      handleCommandError(error, input.routine);
+    },
   });
   const rollbackMutation = useMutation({
     mutationFn: (input: { routine: DwaionRoutine; version: DwaionRoutineVersionSnapshot }) => {
@@ -414,7 +496,130 @@ export function DwaionRoutines() {
       ]);
       toast.success(copy.rollbackComplete);
     },
-    onError: handleCommandError,
+    onError: (error, input) => handleCommandError(error, input.routine),
+  });
+  const conflictRecoveryMutation = useMutation({
+    mutationFn: async (input: {
+      strategy: DwaionRoutineRecoveryStrategy;
+      selections: DwaionRoutineMergeSelections;
+    }) => {
+      const snapshot = conflictSnapshot;
+      if (!snapshot?.serverRoutine || !snapshot.serverDraft) {
+        throw new RoutineConflictRecoveryError(copy.conflictFetchFailed, null);
+      }
+
+      let current: DwaionPersonalRoutine | null = null;
+      let targetRoutineId = snapshot.routineId;
+      try {
+        if (input.strategy === 'FORK') {
+          current = await governCreate((authority) =>
+            createDwaionRoutine(toRoutineDefinition(snapshot.localDraft, locale), authority)
+          );
+          targetRoutineId = current.routineId;
+          current = await applyDraftConsents(current, snapshot.localDraft);
+        } else if (input.strategy === 'SERVER') {
+          current = await getDwaionRoutine(snapshot.routineId);
+        } else {
+          const latest = await getDwaionRoutine(snapshot.routineId);
+          if (latest.revision !== snapshot.serverRoutine.revision) {
+            throw new RoutineConflictRecoveryError(copy.revisionConflict, toRoutineView(latest));
+          }
+          const mergedDraft = mergeRoutineDraft(
+            snapshot.localDraft,
+            snapshot.serverDraft,
+            input.selections
+          );
+          current = await governUpdate((authority) =>
+            updateDwaionRoutine(
+              latest.routineId,
+              latest.revision,
+              toRoutineDefinition(mergedDraft, locale),
+              authority
+            )
+          );
+          current = await applyDraftConsents(current, mergedDraft);
+        }
+
+        const versions = await getDwaionRoutineVersions(current.routineId);
+        const ledgerEntry = versions.find((version) => version.revision === current!.revision);
+        if (!ledgerEntry) {
+          throw new RoutineConflictRecoveryError(
+            copy.conflictRecoveryFailed,
+            toRoutineView(current)
+          );
+        }
+        return {
+          strategy: input.strategy,
+          current,
+          receipt: {
+            strategy: input.strategy,
+            routineId: current.routineId,
+            revision: ledgerEntry.revision,
+            commandId: ledgerEntry.commandId,
+            integrityFingerprint: ledgerEntry.integrityFingerprint,
+            createdAt: ledgerEntry.createdAt,
+          } satisfies DwaionRoutineConflictReceipt,
+        };
+      } catch (error) {
+        if (error instanceof RoutineConflictRecoveryError) throw error;
+        let serverRoutine: DwaionRoutine | null = current ? toRoutineView(current) : null;
+        try {
+          serverRoutine = toRoutineView(await getDwaionRoutine(targetRoutineId));
+        } catch {
+          // The last verified mutation response remains the best available partial state.
+        }
+        throw new RoutineConflictRecoveryError(
+          error instanceof HttpError && error.status === 409
+            ? copy.revisionConflict
+            : copy.commandFailed,
+          serverRoutine
+        );
+      }
+    },
+    onSuccess: async ({ strategy, current, receipt }) => {
+      replaceRoutineCache(current);
+      setConflictSnapshot(null);
+      setConflictFailure(null);
+      setConflictReceipt(receipt);
+      setCommandError(undefined);
+      setSelectedId(current.routineId);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ROUTINES_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'routine-versions'] }),
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'routine-health'] }),
+      ]);
+      toast.success(
+        strategy === 'FORK'
+          ? copy.conflictForkComplete
+          : strategy === 'SERVER'
+            ? copy.conflictServerComplete
+            : copy.conflictMergeComplete
+      );
+    },
+    onError: (error) => {
+      const recoveryError =
+        error instanceof RoutineConflictRecoveryError
+          ? error
+          : new RoutineConflictRecoveryError(copy.commandFailed, null);
+      setConflictFailure({
+        message: recoveryError.message,
+        serverRoutine: recoveryError.serverRoutine,
+      });
+      if (recoveryError.serverRoutine) {
+        setConflictSnapshot((current) =>
+          current && current.routineId === recoveryError.serverRoutine?.routineId
+            ? {
+                ...current,
+                serverRoutine: recoveryError.serverRoutine,
+                serverDraft: toRoutineDraft(recoveryError.serverRoutine),
+                loading: false,
+                loadError: false,
+              }
+            : current
+        );
+      }
+      toast.error(copy.conflictRecoveryFailed);
+    },
   });
   const telemetryMutation = useMutation({
     mutationFn: (routine: DwaionRoutine) => downloadDwaionRoutineTelemetry(routine.routineId),
@@ -424,15 +629,147 @@ export function DwaionRoutines() {
     },
     onError: () => toast.error(copy.telemetryFailed),
   });
+  const advancedMutation = useMutation({
+    mutationFn: (input: { routine: DwaionRoutine; payload: DwaionRoutineAdvancedPayload }) => {
+      const key = `advanced:${input.routine.routineId}:${input.routine.revision}:${JSON.stringify(input.payload)}`;
+      const commandId = commandIds.current.get(key) ?? newDwaionRoutineCommandId();
+      commandIds.current.set(key, commandId);
+      return governAdvanced((authority) =>
+        createDwaionRoutineAdvancedCommand(
+          input.routine.routineId,
+          input.routine.revision,
+          commandId,
+          input.payload,
+          authority
+        )
+      );
+    },
+    onSuccess: async (command, input) => {
+      commandIds.current.delete(
+        `advanced:${input.routine.routineId}:${input.routine.revision}:${JSON.stringify(input.payload)}`
+      );
+      setAdvancedCommand(command);
+      setCommandError(command.state === 'FAILED' ? 'COMMAND_FAILED' : undefined);
+      if (input.payload.kind === 'CHANGE_APPROVAL') setEditorOpen(false);
+      if (command.state === 'FAILED' || command.state === 'PARTIAL') {
+        toast.error(command.problem?.detail ?? copy.commandFailed);
+      } else {
+        toast.success(copy.runCommandSaved);
+      }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ROUTINES_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'routine-advanced-commands'] }),
+      ]);
+    },
+    onError: (error, input) => handleCommandError(error, input.routine),
+  });
 
-  function handleCommandError(error: Error) {
+  async function applyDraftConsents(
+    startingRoutine: DwaionPersonalRoutine,
+    targetDraft: DwaionRoutineDraft
+  ): Promise<DwaionPersonalRoutine> {
+    let current = startingRoutine;
+    for (const key of CONSENT_KEYS) {
+      const desired = targetDraft.consentKeys.includes(key) ? 'ENABLED' : 'DISABLED';
+      if (routineConsentValue(current, key) === desired) continue;
+      current = await governConsent((authority) =>
+        changeDwaionRoutineConsent(current.routineId, current.revision, key, desired, authority)
+      );
+    }
+    return current;
+  }
+
+  function replaceRoutineCache(routine: DwaionPersonalRoutine) {
+    queryClient.setQueryData<DwaionPersonalRoutine[]>([...ROUTINES_KEY, identity], (current) => {
+      const existing = current ?? [];
+      return existing.some((item) => item.routineId === routine.routineId)
+        ? existing.map((item) => (item.routineId === routine.routineId ? routine : item))
+        : [routine, ...existing];
+    });
+  }
+
+  async function loadConflictServer(baseRoutine: DwaionRoutine, localDraft: DwaionRoutineDraft) {
+    const preservedBase = cloneRoutineDraft(toRoutineDraft(baseRoutine));
+    const preservedLocal = cloneRoutineDraft(localDraft);
+    setConflictReceipt(null);
+    setConflictFailure(null);
+    setConflictSnapshot({
+      routineId: baseRoutine.routineId,
+      baseRevision: baseRoutine.revision,
+      baseDraft: preservedBase,
+      localDraft: preservedLocal,
+      serverRoutine: null,
+      serverDraft: null,
+      loading: true,
+      loadError: false,
+    });
+    try {
+      const latestApiRoutine = await getDwaionRoutine(baseRoutine.routineId);
+      const latestRoutine = toRoutineView(latestApiRoutine);
+      replaceRoutineCache(latestApiRoutine);
+      setConflictSnapshot({
+        routineId: baseRoutine.routineId,
+        baseRevision: baseRoutine.revision,
+        baseDraft: preservedBase,
+        localDraft: preservedLocal,
+        serverRoutine: latestRoutine,
+        serverDraft: cloneRoutineDraft(toRoutineDraft(latestRoutine)),
+        loading: false,
+        loadError: false,
+      });
+    } catch {
+      setConflictSnapshot((current) =>
+        current?.routineId === baseRoutine.routineId
+          ? { ...current, loading: false, loadError: true }
+          : current
+      );
+    }
+  }
+
+  function reloadConflictServer() {
+    const current = conflictSnapshot;
+    if (!current) return;
+    setConflictFailure(null);
+    setConflictSnapshot({ ...current, loading: true, loadError: false });
+    void getDwaionRoutine(current.routineId)
+      .then((latestApiRoutine) => {
+        const latestRoutine = toRoutineView(latestApiRoutine);
+        replaceRoutineCache(latestApiRoutine);
+        setConflictSnapshot((snapshot) =>
+          snapshot?.routineId === current.routineId
+            ? {
+                ...snapshot,
+                serverRoutine: latestRoutine,
+                serverDraft: cloneRoutineDraft(toRoutineDraft(latestRoutine)),
+                loading: false,
+                loadError: false,
+              }
+            : snapshot
+        );
+      })
+      .catch(() => {
+        setConflictSnapshot((snapshot) =>
+          snapshot?.routineId === current.routineId
+            ? { ...snapshot, loading: false, loadError: true }
+            : snapshot
+        );
+      });
+  }
+
+  function handleCommandError(
+    error: Error,
+    baseRoutine?: DwaionRoutine,
+    localDraft?: DwaionRoutineDraft
+  ) {
     const conflict = error instanceof HttpError && error.status === 409;
     if (conflict) {
       setEditorOpen(false);
       setEditingId(null);
+      const target = baseRoutine ?? routines.find((routine) => routine.routineId === selectedId);
+      if (target) void loadConflictServer(target, localDraft ?? toRoutineDraft(target));
     }
     setCommandError(conflict ? 'REVISION_CONFLICT' : 'COMMAND_FAILED');
-    void queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
+    if (!conflict) void queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
     toast.error(conflict ? copy.revisionConflict : copy.commandFailed);
   }
 
@@ -458,7 +795,10 @@ export function DwaionRoutines() {
     triggerRunMutation.isPending ||
     runCommandMutation.isPending ||
     rollbackMutation.isPending ||
-    telemetryMutation.isPending;
+    conflictRecoveryMutation.isPending ||
+    telemetryMutation.isPending ||
+    advancedMutation.isPending ||
+    approvalQueue.pending;
   const canConfigure = canManage && controlsQuery.isSuccess;
   const accessDenied =
     !canView ||
@@ -480,7 +820,7 @@ export function DwaionRoutines() {
   };
   const openEdit = (routine: DwaionRoutine) => {
     setEditingId(routine.routineId);
-    setDraft(toDraft(routine));
+    setDraft(toRoutineDraft(routine));
     setEditorOpen(true);
   };
   const editingRoutine = editingId
@@ -495,6 +835,10 @@ export function DwaionRoutines() {
         selectedId={effectiveSelectedId}
         partialError={controlsQuery.isError ? copy.partial : undefined}
         commandError={commandError}
+        conflictSnapshot={conflictSnapshot}
+        conflictReceipt={conflictReceipt}
+        conflictFailure={conflictFailure}
+        conflictBusy={conflictRecoveryMutation.isPending}
         dryRunReceipt={dryRunReceipt}
         runtimeCapabilities={capabilitiesQuery.data}
         runtimeCapabilitiesError={capabilitiesQuery.isError}
@@ -504,12 +848,17 @@ export function DwaionRoutines() {
         versions={versionsQuery.data ?? []}
         health={healthQuery.data}
         rollbackReceipt={rollbackReceipt}
+        advancedCommand={visibleAdvancedCommand}
+        approvalQueue={approvalQueue.commands}
+        approvalQueueLoading={approvalQueue.loading}
+        approvalQueueError={approvalQueue.error}
         evidenceLoading={
           Boolean(effectiveSelectedId) && (versionsQuery.isPending || healthQuery.isPending)
         }
         evidenceError={versionsQuery.isError || healthQuery.isError}
         busy={busy}
         canManage={canManage}
+        canApprove={canApprove}
         canCreate={canConfigure}
         onRetry={() =>
           void Promise.all([
@@ -517,10 +866,21 @@ export function DwaionRoutines() {
             controlsQuery.refetch(),
             capabilitiesQuery.refetch(),
             runsQuery.refetch(),
+            advancedCommandsQuery.refetch(),
             versionsQuery.refetch(),
             healthQuery.refetch(),
+            canApprove ? approvalQueue.retry() : Promise.resolve(),
           ])
         }
+        onResolveConflict={(strategy, selections) =>
+          conflictRecoveryMutation.mutate({ strategy, selections })
+        }
+        onReloadConflict={reloadConflictServer}
+        onDismissConflict={() => {
+          setConflictSnapshot(null);
+          setConflictFailure(null);
+          setCommandError(undefined);
+        }}
         onCreate={openCreate}
         onSelect={(routine) => setSelectedId(routine.routineId)}
         onCloseSelection={() => setSelectedId(null)}
@@ -539,10 +899,14 @@ export function DwaionRoutines() {
         onRunCommand={(routine, run, action) => runCommandMutation.mutate({ routine, run, action })}
         onRollbackVersion={(routine, version) => rollbackMutation.mutate({ routine, version })}
         onDownloadTelemetry={(routine) => telemetryMutation.mutate(routine)}
+        onAdvancedCommand={(routine, payload) => advancedMutation.mutate({ routine, payload })}
+        onRetryApprovals={() => void approvalQueue.retry()}
+        onDecideApproval={approvalQueue.decide}
         onRetryRuntime={() =>
           void Promise.all([
             capabilitiesQuery.refetch(),
             runsQuery.refetch(),
+            advancedCommandsQuery.refetch(),
             versionsQuery.refetch(),
             healthQuery.refetch(),
           ])
@@ -555,12 +919,13 @@ export function DwaionRoutines() {
       <DwaionRoutineEditorDialog
         open={editorOpen}
         draft={draft}
-        savedDraft={editingRoutine ? toDraft(editingRoutine) : null}
+        savedDraft={editingRoutine ? toRoutineDraft(editingRoutine) : null}
         sourceOptions={sourceOptions}
         timeZoneOptions={[...new Set([currentTimeZone, 'UTC'])]}
         capabilities={capabilitiesQuery.data}
         busy={saveMutation.isPending}
         dryRunBusy={dryRunMutation.isPending}
+        advancedBusy={advancedMutation.isPending}
         onDraftChange={setDraft}
         onClose={() => setEditorOpen(false)}
         onSubmit={(nextDraft) =>
@@ -578,6 +943,33 @@ export function DwaionRoutines() {
                 })
             : undefined
         }
+        onRequestChangeApproval={
+          editingRoutine
+            ? (nextDraft) =>
+                advancedMutation.mutate({
+                  routine: editingRoutine,
+                  payload: {
+                    kind: 'CHANGE_APPROVAL',
+                    definition: toRoutineDefinition(nextDraft, locale),
+                  },
+                })
+            : undefined
+        }
+        onRequestEngineSwitch={
+          editingRoutine
+            ? () =>
+                advancedMutation.mutate({
+                  routine: editingRoutine,
+                  payload: {
+                    kind: 'AGENT_ENGINE_SWITCH',
+                    action: 'APPLY',
+                    agentId: 'dwaion-personal-routine-agent',
+                    engineId: 'dwp-agent-kernel-v1',
+                    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                  },
+                })
+            : undefined
+        }
         copy={copy}
       />
     </>
@@ -590,141 +982,10 @@ function retryGovernedQuery(failureCount: number, error: Error): boolean {
   );
 }
 
-function toDefinition(draft: DwaionRoutineDraft, locale: 'ko' | 'en'): DwaionRoutineDefinition {
-  return {
-    name: draft.title.trim(),
-    objective: draft.description.trim(),
-    triggerType: draft.triggerType,
-    cadence: draft.triggerType === 'SCHEDULED' ? draft.schedule.cadence : null,
-    localTime: draft.triggerType === 'SCHEDULED' ? draft.schedule.localTime : null,
-    timeZone: draft.triggerType === 'SCHEDULED' ? draft.schedule.timeZone : null,
-    webhookEventType: draft.triggerType === 'WEBHOOK' ? draft.webhookEventType.trim() : null,
-    webhookEndpointReference:
-      draft.triggerType === 'WEBHOOK' && draft.webhookEndpointReference.trim()
-        ? draft.webhookEndpointReference.trim()
-        : null,
-    locale,
-    activeFrom: draft.triggerType === 'SCHEDULED' ? draft.schedule.activeFrom : null,
-    activeUntil: draft.triggerType === 'SCHEDULED' ? draft.schedule.activeUntil : null,
-    quietHoursStart: draft.triggerType === 'SCHEDULED' ? draft.schedule.quietHoursStart : null,
-    quietHoursEnd: draft.triggerType === 'SCHEDULED' ? draft.schedule.quietHoursEnd : null,
-    weekDays: draft.triggerType === 'SCHEDULED' ? [...draft.schedule.weekDays] : [],
-    sources: [...draft.sourceKeys] as DwaionRoutineDefinition['sources'],
-    budget: { ...draft.budget },
-    retryPolicy: { ...draft.retryPolicy },
-    notificationPolicy: { ...draft.notificationPolicy },
-    compensationPolicy: { ...draft.compensationPolicy },
-  };
-}
-
-function toRoutine(routine: DwaionPersonalRoutine): DwaionRoutine {
-  return {
-    routineId: routine.routineId,
-    title: routine.definition.name,
-    description: routine.definition.objective,
-    status: routine.lifecycleState,
-    revision: routine.revision,
-    executionMode: routine.executionMode,
-    triggerType: routine.definition.triggerType,
-    webhookEventType: routine.definition.webhookEventType ?? null,
-    webhookEndpointReference: routine.definition.webhookEndpointReference ?? null,
-    sourceKeys: routine.definition.sources,
-    schedule: {
-      cadence: routine.definition.cadence ?? 'WEEKDAYS',
-      localTime: routine.definition.localTime ?? '09:00',
-      timeZone: routine.definition.timeZone ?? 'UTC',
-      activeFrom: routine.definition.activeFrom ?? null,
-      activeUntil: routine.definition.activeUntil ?? null,
-      quietHoursStart: routine.definition.quietHoursStart ?? null,
-      quietHoursEnd: routine.definition.quietHoursEnd ?? null,
-      weekDays: routine.definition.weekDays ?? [],
-    },
-    consents: [
-      { key: 'SOURCE_ACCESS', state: routine.consents.sourceAccess },
-      { key: 'ANALYSIS', state: routine.consents.analysis },
-      { key: 'PROPOSAL_DELIVERY', state: routine.consents.proposalDelivery },
-    ],
-    schedulingAvailable: routine.schedulingAvailable,
-    backgroundExecutionAvailable: routine.capabilities?.backgroundExecutionAvailable ?? false,
-    notificationDeliveryAvailable: routine.capabilities?.notificationDeliveryAvailable ?? false,
-    dryRunAvailable: routine.capabilities?.dryRunAvailable ?? false,
-    proposalDeliveryAvailable: routine.capabilities?.proposalDeliveryAvailable ?? false,
-    activationAvailable: routine.capabilities?.activationAvailable ?? false,
-    nextRunAt: routine.nextRunAt ?? null,
-    budget: { ...routine.definition.budget },
-    retryPolicy: { ...routine.definition.retryPolicy },
-    notificationPolicy: { ...routine.definition.notificationPolicy },
-    compensationPolicy: { ...routine.definition.compensationPolicy },
-  };
-}
-
-function toDraft(routine: DwaionRoutine): DwaionRoutineDraft {
-  return {
-    title: routine.title,
-    description: routine.description,
-    triggerType: routine.triggerType,
-    webhookEventType: routine.webhookEventType ?? '',
-    webhookEndpointReference: routine.webhookEndpointReference ?? '',
-    sourceKeys: routine.sourceKeys,
-    schedule: routine.schedule,
-    consentKeys: routine.consents
-      .filter((consent) => consent.state === 'ENABLED')
-      .map((consent) => consent.key),
-    budget: { ...routine.budget },
-    retryPolicy: { ...routine.retryPolicy },
-    notificationPolicy: { ...routine.notificationPolicy },
-    compensationPolicy: { ...routine.compensationPolicy },
-  };
-}
-
 function routineConsentValue(routine: DwaionPersonalRoutine, key: (typeof CONSENT_KEYS)[number]) {
   if (key === 'SOURCE_ACCESS') return routine.consents.sourceAccess;
   if (key === 'ANALYSIS') return routine.consents.analysis;
   return routine.consents.proposalDelivery;
-}
-
-function toDryRunReceipt(receipt: ApiDryRunReceipt): DwaionRoutineDryRunReceipt {
-  return {
-    routineRunId: receipt.routineRunId,
-    routineId: receipt.routineId,
-    routineRevision: receipt.routineRevision,
-    evaluatedAt: receipt.evaluatedAt,
-    outcome: 'VALIDATED',
-    evidenceCount: receipt.evidenceCount,
-    evidenceScope: 'AUTHORIZED_SOURCE_BINDING',
-    businessEvidenceCount: receipt.businessEvidenceCount,
-    proposalsCreated: receipt.proposalsCreated,
-    externalWritesPerformed: 0,
-    validatedSources: receipt.validatedSources,
-    previewNextRunAt: receipt.previewNextRunAt ?? null,
-    schedulingAvailable: false,
-  };
-}
-
-function routineCommandReason(action: DwaionRoutineRunCommand['action'], locale: 'ko' | 'en') {
-  if (action === 'RETRY')
-    return {
-      reasonCode: 'USER_CONFIRMED_RETRY',
-      changeReason:
-        locale === 'ko'
-          ? '사용자가 실패 원인과 재시도 예산을 검토하고 실행 재시도를 요청했습니다.'
-          : 'The user reviewed the failure and retry budget and requested another attempt.',
-    };
-  if (action === 'CANCEL')
-    return {
-      reasonCode: 'USER_CONFIRMED_SAFE_CANCEL',
-      changeReason:
-        locale === 'ko'
-          ? '사용자가 진행 상태를 검토하고 실행을 안전하게 취소했습니다.'
-          : 'The user reviewed progress and safely cancelled the execution.',
-    };
-  return {
-    reasonCode: 'USER_CONFIRMED_COMPENSATION',
-    changeReason:
-      locale === 'ko'
-        ? '사용자가 완료 영수증과 영향 범위를 검토하고 보상 처리를 요청했습니다.'
-        : 'The user reviewed the receipt and impact and requested compensation.',
-  };
 }
 
 function downloadBlob(blob: Blob, filename: string) {

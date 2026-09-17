@@ -5,10 +5,7 @@ import {
   expectMinimumTouchTargets,
   expectNoSeriousAccessibilityViolations,
 } from './support/accessibility';
-import {
-  CANONICAL_HOME_APP_IDS_BY_GROUP,
-  routeCanonicalHomeWorkspaceApps,
-} from './support/home-launchpad-contract-fixture';
+import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
 import {
   HOME_WAVE2_FIXED_NOW,
   remockHomeWave2ClassicSession,
@@ -17,223 +14,32 @@ import {
   routeHomeWave2NewsOverview,
   routeHomeWave2WidgetCatalog,
 } from './support/home-wave2-acceptance-fixtures';
-import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
+import {
+  FULL_PRODUCT_PERMISSIONS,
+  fulfillSuccess,
+  mockShellSession,
+} from './support/shell-session';
 import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
+import {
+  CLASSIC_HOME_KO_APP_LABELS,
+  CLASSIC_HOME_MOBILE_NAVIGATION,
+  expectCanonicalClassicLaunchpad,
+  expectCanonicalFlowLaunchpad,
+  expectFlowWideComposition,
+  expectHomeMobileNavigation,
+  expectNoDocumentOrNestedScroll,
+  expectNoLaunchpadDecorationCrossTileOverlap,
+  expectNoLaunchpadLabelClipping,
+  expectSingleVisibleGlobalSearchTrigger,
+  FLOW_HOME_MOBILE_NAVIGATION,
+  stabilizeHomeWave2Visual,
+} from './support/home-wave2-layout-assertions';
 
-import type { Locator, Page } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 
 const FIXED_NOW = HOME_WAVE2_FIXED_NOW;
 test.setTimeout(120_000);
-
-const CLASSIC_MOBILE_NAVIGATION = [
-  { label: '개요', route: '/' },
-  { label: '좌석', route: '/workplace/explore?type=DESK' },
-  { label: '회의실', route: '/workplace/rooms' },
-  { label: '구성원', route: '/hr' },
-  { label: '업무 현황', route: '/activity' },
-] as const;
-
-const FLOW_MOBILE_NAVIGATION = [
-  { label: '오늘', route: '/' },
-  { label: '일정', route: '/calendar' },
-  { label: '스페이스', route: '/spaces' },
-  { label: '할 일', route: '/work' },
-  { label: '업무 현황', route: '/activity' },
-] as const;
-
-const CLASSIC_KO_APP_LABELS = [
-  '업무',
-  'DWAI·ON 워크스페이스',
-  '활동',
-  '전자결재',
-  '알림 센터',
-  '소식',
-  '캘린더',
-  '메일',
-  'Space',
-  '근무 공간',
-  '메신저',
-  '화상회의',
-  '서비스 센터',
-  '인사',
-  '지식',
-  '비즈니스 ERP',
-  '레거시 업무',
-  '관리',
-] as const;
-
-async function stabilizeVisual(page: Page) {
-  await page.waitForLoadState('networkidle');
-  await page.evaluate(async () => {
-    document.querySelectorAll('vite-plugin-checker-error-overlay').forEach((node) => node.remove());
-    const auxiliaryStyle = document.createElement('style');
-    auxiliaryStyle.dataset.wave2VisualStability = 'true';
-    auxiliaryStyle.textContent =
-      '[data-testid="dwaion-launcher"] { visibility: hidden !important; }';
-    document.head.append(auxiliaryStyle);
-    const auxiliaryLauncher = document.querySelector<HTMLElement>(
-      '[data-testid="dwaion-launcher"]'
-    );
-    if (auxiliaryLauncher) auxiliaryLauncher.style.visibility = 'hidden';
-    await document.fonts.ready;
-    await Promise.all(
-      Array.from(document.images).map(
-        (image) =>
-          image.complete ||
-          new Promise<void>((resolve) => {
-            image.addEventListener('load', () => resolve(), { once: true });
-            image.addEventListener('error', () => resolve(), { once: true });
-          })
-      )
-    );
-  });
-}
-
-async function expectNoDocumentOrNestedScroll(root: Locator) {
-  const geometry = await root.evaluate((node) => {
-    const viewportWidth = document.documentElement.clientWidth;
-    const rootBounds = node.getBoundingClientRect();
-    const nestedScrollOwners = Array.from(
-      node.querySelectorAll<HTMLElement>(
-        '[data-workspace-widget-content], [data-launchpad-group-target], [data-flow-section]'
-      )
-    )
-      .filter((element) => {
-        const style = getComputedStyle(element);
-        return (
-          (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
-          element.scrollHeight > element.clientHeight + 1
-        );
-      })
-      .map(
-        (element) =>
-          element.getAttribute('data-workspace-widget') ??
-          element.getAttribute('data-launchpad-group-target') ??
-          element.getAttribute('data-flow-section') ??
-          element.tagName
-      );
-    return {
-      viewportWidth,
-      documentWidth: document.documentElement.scrollWidth,
-      rootLeft: rootBounds.left,
-      rootRight: rootBounds.right,
-      nestedScrollOwners,
-    };
-  });
-  expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewportWidth + 1);
-  expect(geometry.rootLeft).toBeGreaterThanOrEqual(-1);
-  expect(geometry.rootRight).toBeLessThanOrEqual(geometry.viewportWidth + 1);
-  expect(geometry.nestedScrollOwners).toEqual([]);
-}
-
-async function expectCanonicalClassicLaunchpad(root: Locator) {
-  const actual = await root.locator('[data-launchpad-group-target]').evaluateAll((groups) =>
-    groups.map((group) => ({
-      groupKey: group.getAttribute('data-launchpad-group-target'),
-      appIds: Array.from(group.querySelectorAll<HTMLElement>('[data-launchpad-item]')).map(
-        (item) => item.dataset.launchpadItem
-      ),
-    }))
-  );
-  expect(actual).toEqual(CANONICAL_HOME_APP_IDS_BY_GROUP);
-  expect(actual.flatMap((group) => group.appIds)).toHaveLength(18);
-
-  const clippedItems = await root.locator('[data-launchpad-group-target]').evaluateAll((groups) =>
-    groups.flatMap((group) => {
-      const groupBounds = group.getBoundingClientRect();
-      return Array.from(group.querySelectorAll<HTMLElement>('[data-launchpad-item]'))
-        .filter((item) => {
-          const bounds = item.getBoundingClientRect();
-          return bounds.top < groupBounds.top - 1 || bounds.bottom > groupBounds.bottom + 1;
-        })
-        .map((item) => item.dataset.launchpadItem);
-    })
-  );
-  expect(clippedItems).toEqual([]);
-}
-
-async function expectNoLaunchpadLabelClipping(root: Locator) {
-  const clippedLabels = await root.locator('[data-launchpad-item-label]').evaluateAll((labels) =>
-    labels
-      .filter(
-        (label) =>
-          label.scrollWidth > label.clientWidth + 1 || label.scrollHeight > label.clientHeight + 1
-      )
-      .map((label) => ({
-        label: label.textContent?.replace(/\s+/gu, ' ').trim(),
-        clientWidth: label.clientWidth,
-        scrollWidth: label.scrollWidth,
-        clientHeight: label.clientHeight,
-        scrollHeight: label.scrollHeight,
-        fontSize: getComputedStyle(label).fontSize,
-      }))
-  );
-  expect(clippedLabels).toEqual([]);
-}
-
-async function expectCanonicalFlowLaunchpad(root: Locator) {
-  const actual = await root.locator('[data-flow-dock-group]').evaluateAll((groups) =>
-    groups.map((group) => ({
-      groupKey: group.getAttribute('data-flow-dock-group'),
-      appIds: Array.from(group.querySelectorAll<HTMLElement>('[data-flow-dock-item]')).map(
-        (item) => item.dataset.flowDockItem
-      ),
-    }))
-  );
-  expect(actual).toEqual(CANONICAL_HOME_APP_IDS_BY_GROUP);
-  expect(actual.flatMap((group) => group.appIds)).toHaveLength(18);
-}
-
-async function expectMobileNavigation(
-  navigation: Locator,
-  expected: readonly { label: string; route: string }[],
-  mode: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1'
-) {
-  const actual = await navigation.locator('a').evaluateAll((items) =>
-    items.map((item) => {
-      const url = new URL((item as HTMLAnchorElement).href);
-      return {
-        label: item.textContent?.replace(/\s+/gu, ' ').trim(),
-        route: `${url.pathname}${url.search}`,
-        mode: item.getAttribute('data-home-mobile-navigation-mode'),
-      };
-    })
-  );
-  expect(actual).toEqual(expected.map((item) => ({ ...item, mode })));
-}
-
-async function expectSingleVisibleGlobalSearchTrigger(page: Page) {
-  const searchSurface = page.locator('[data-shell-global-action="search"]');
-  await expect(searchSurface).toBeVisible();
-  await expect(searchSurface.getByRole('button')).toHaveCount(1);
-}
-
-async function expectFlowWideComposition(root: Locator) {
-  const stage = root.getByTestId('flow-home-personal-sections');
-  await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
-  await expect(stage).toHaveAttribute('data-flow-wide-composition', '38-34-28');
-  const geometry = await stage.evaluate((node) => {
-    const presentation = node.querySelector<HTMLElement>('[data-workspace-presentation]');
-    const itemWidth = (key: string) =>
-      node.querySelector<HTMLElement>(`[data-workspace-widget="${key}"]`)?.getBoundingClientRect()
-        .width ?? 0;
-    const width = presentation?.getBoundingClientRect().width ?? 0;
-    return {
-      computedColumns: presentation
-        ? getComputedStyle(presentation).gridTemplateColumns.split(' ').length
-        : 0,
-      ratios: [
-        itemWidth('action-queue') / width,
-        itemWidth('today') / width,
-        itemWidth('response-hub') / width,
-      ],
-    };
-  });
-  expect(geometry.computedColumns).toBe(100);
-  expect(geometry.ratios[0]).toBeCloseTo(0.38, 1);
-  expect(geometry.ratios[1]).toBeCloseTo(0.34, 1);
-  expect(geometry.ratios[2]).toBeCloseTo(0.28, 1);
-}
 
 test.beforeEach(async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wave 2 canonical evidence uses Chromium.');
@@ -266,7 +72,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       fixtureId: 'WAVE2_C01-D1440-BASE',
       width: 1440,
       height: 900,
-      widthClass: 'desktop-standard',
+      widthClass: 'desktop-wide',
     },
     {
       id: 'C02-D1280-BASE',
@@ -321,7 +127,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       await expect(mobileNavigation).toBeVisible();
       const mobileTargets = mobileNavigation.locator('a');
       await expect(mobileTargets).toHaveCount(5);
-      await expectMobileNavigation(mobileNavigation, CLASSIC_MOBILE_NAVIGATION, 'CLASSIC');
+      await expectHomeMobileNavigation(mobileNavigation, CLASSIC_HOME_MOBILE_NAVIGATION, 'CLASSIC');
       const targetSizes = await mobileTargets.evaluateAll((targets) =>
         targets.map((target) => {
           const bounds = target.getBoundingClientRect();
@@ -408,7 +214,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       });
     }
 
-    await stabilizeVisual(page);
+    await stabilizeHomeWave2Visual(page);
     await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
     await expect(page).toHaveScreenshot(`home-wave2-${item.id}.png`, {
       animations: 'disabled',
@@ -433,6 +239,12 @@ test('HomeLayout keeps the root Home sidebar-free and exposes navigation from th
   await expect
     .poll(async () => Number(await root.getAttribute('data-classic-home-available-width')))
     .toBe(1440);
+  await expect(root).toHaveAttribute('data-home-presentation', 'balanced');
+  await expect(root).toHaveAttribute('data-classic-home-max-width', '1808');
+  await expect(root.locator('[data-classic-mode-selector]')).toHaveCount(0);
+  await expect
+    .poll(async () => Math.round((await page.getByTestId('home-hero').boundingBox())?.width ?? 0))
+    .toBe(1440);
   await expectNoDocumentOrNestedScroll(root);
 
   const navigationTrigger = page.getByTestId('home-mobile-navigation-trigger');
@@ -449,6 +261,174 @@ test('HomeLayout keeps the root Home sidebar-free and exposes navigation from th
   await expectNoDocumentOrNestedScroll(root);
 });
 
+test('Classic launchpad keeps group panels equal at the approved shell-width breakpoints', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+  const root = page.getByTestId('classic-home');
+  const groupGeometry = () =>
+    root.locator('[data-launchpad-group-grid]').evaluate((grid) => {
+      const panels = Array.from(grid.children).map((panel) => {
+        const bounds = panel.getBoundingClientRect();
+        return { top: Math.round(bounds.top), width: bounds.width };
+      });
+      const rowWidths = panels.reduce<Record<string, number[]>>((rows, panel) => {
+        (rows[String(panel.top)] ??= []).push(panel.width);
+        return rows;
+      }, {});
+      return {
+        columns: getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+        equalWithinRows: Object.values(rowWidths).every(
+          (widths) => Math.max(...widths) - Math.min(...widths) <= 2
+        ),
+        noHorizontalOverflow: Array.from(
+          grid.querySelectorAll<HTMLElement>('[data-launchpad-group-target]')
+        ).every((group) => group.scrollWidth <= group.clientWidth + 1),
+      };
+    });
+  const cases = [
+    { width: 519, columns: 1 },
+    { width: 520, columns: 2 },
+    { width: 899, columns: 2 },
+    { width: 900, columns: 4 },
+    { width: 1439, columns: 4 },
+    { width: 1760, columns: 4 },
+  ] as const;
+
+  for (const item of cases) {
+    await page.setViewportSize({ width: item.width, height: 1000 });
+    await expect
+      .poll(() => groupGeometry())
+      .toEqual({
+        columns: item.columns,
+        equalWithinRows: true,
+        noHorizontalOverflow: true,
+      });
+    await expect
+      .poll(async () => Math.round((await root.boundingBox())?.width ?? 0))
+      .toBe(item.width);
+  }
+});
+
+test('Classic layout controls change the actual focused and wide reading canvas', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await mockApprovalProductSurfaceAuthority(page, {
+    surfaceUi: true,
+    generatedAt: FIXED_NOW.toISOString(),
+    revalidateAt: new Date(FIXED_NOW.getTime() + 60_000).toISOString(),
+  });
+  await page.route('**/api/notifications/v1/summary/by-app**', (route) =>
+    fulfillSuccess(route, {
+      partial: false,
+      unavailableSources: [],
+      apps: [
+        {
+          appKey: 'approvals',
+          totalUnread: 7,
+          actionableUnread: 1,
+          urgentUnread: 0,
+          lastActivityAt: FIXED_NOW.toISOString(),
+        },
+      ],
+      changeVersion: '12',
+      counterVersion: '12',
+      generatedAt: FIXED_NOW.toISOString(),
+    })
+  );
+  await page.goto('/');
+
+  const root = page.getByTestId('classic-home');
+  const hero = page.getByTestId('home-hero');
+  const body = page.getByTestId('classic-home-body');
+  const width = async (locator: Locator) => Math.round((await locator.boundingBox())?.width ?? 0);
+  const shellGeometry = async (locator: Locator) =>
+    locator.evaluate((node) => {
+      const style = getComputedStyle(node);
+      const paddingInline =
+        Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight);
+      return {
+        borderBoxWidth: Math.round(node.getBoundingClientRect().width),
+        boxSizing: style.boxSizing,
+        contentWidth: Math.round(node.clientWidth - paddingInline),
+        maxWidth: style.maxWidth,
+        paddingInline: Math.round(paddingInline),
+      };
+    });
+  const expectReadingCanvasGeometry = async (
+    outerWidth: number,
+    gutter: number,
+    maxWidth: number
+  ) => {
+    await expect.poll(() => width(root)).toBe(outerWidth);
+    await expect
+      .poll(() => shellGeometry(hero))
+      .toEqual({
+        borderBoxWidth: outerWidth,
+        boxSizing: 'border-box',
+        contentWidth: outerWidth - gutter * 2,
+        maxWidth: `${maxWidth}px`,
+        paddingInline: gutter * 2,
+      });
+    await expect
+      .poll(() => shellGeometry(body))
+      .toEqual({
+        borderBoxWidth: outerWidth,
+        boxSizing: 'border-box',
+        contentWidth: outerWidth - gutter * 2,
+        maxWidth: `${maxWidth}px`,
+        paddingInline: gutter * 2,
+      });
+  };
+  const launchpadGroupWidths = () =>
+    root
+      .locator('[data-launchpad-group-grid] > section')
+      .evaluateAll((groups) =>
+        groups.map((group) => Math.round(group.getBoundingClientRect().width))
+      );
+  const expectEqualLaunchpadGroupWidths = async () => {
+    await expect
+      .poll(async () => {
+        const widths = await launchpadGroupWidths();
+        return Math.max(...widths) - Math.min(...widths);
+      })
+      .toBeLessThanOrEqual(2);
+  };
+
+  await expect(root).toHaveAttribute('data-home-presentation', 'balanced');
+  await expectReadingCanvasGeometry(1808, 24, 1808);
+  await expectEqualLaunchpadGroupWidths();
+  await expectNoLaunchpadDecorationCrossTileOverlap(root, 'balanced');
+
+  await root.locator('[data-home-edit-trigger]').click();
+  let toolbar = page.locator('[data-workspace-composer-placement="floating"]');
+  await expect(toolbar).toBeVisible();
+
+  await toolbar.getByRole('button', { name: '집중', exact: true }).click();
+  await expect(root).toHaveAttribute('data-home-presentation', 'focused');
+  await expect(root).toHaveAttribute('data-classic-home-max-width', '1280');
+  await expectReadingCanvasGeometry(1280, 24, 1280);
+  await expectEqualLaunchpadGroupWidths();
+  await toolbar.locator('[data-composer-control="save"]').click();
+  await expect(toolbar).toHaveCount(0);
+  await expectNoLaunchpadDecorationCrossTileOverlap(root, 'focused');
+
+  await root.locator('[data-home-edit-trigger]').click();
+  toolbar = page.locator('[data-workspace-composer-placement="floating"]');
+  await expect(toolbar).toBeVisible();
+  await toolbar.getByRole('button', { name: '와이드', exact: true }).click();
+  await expect(root).toHaveAttribute('data-home-presentation', 'expressive');
+  await expect(root).toHaveAttribute('data-classic-home-max-width', '2560');
+  await expectReadingCanvasGeometry(1920, 20, 2560);
+  await expectEqualLaunchpadGroupWidths();
+  await toolbar.locator('[data-composer-control="save"]').click();
+  await expect(toolbar).toHaveCount(0);
+  await expectNoLaunchpadDecorationCrossTileOverlap(root, 'expressive');
+  await expectNoDocumentOrNestedScroll(root);
+});
+
 test('Flow base and personalized compositions keep personal-action IA and all approved apps', async ({
   page,
 }) => {
@@ -459,6 +439,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       width: 1920,
       height: 1080,
       presentation: 'balanced',
+      expectedRootWidth: 1808,
     },
     {
       id: 'FLOW-BASE-MOBILE-FINAL',
@@ -466,6 +447,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       width: 390,
       height: 844,
       presentation: 'balanced',
+      expectedRootWidth: 390,
     },
     {
       id: 'FLOW-PERSONALIZED-DESKTOP-FINAL',
@@ -473,6 +455,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       width: 1920,
       height: 1080,
       presentation: 'expressive',
+      expectedRootWidth: 1920,
     },
     {
       id: 'FLOW-PERSONALIZED-MOBILE-FINAL',
@@ -480,6 +463,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       width: 390,
       height: 844,
       presentation: 'expressive',
+      expectedRootWidth: 390,
     },
   ] as const;
 
@@ -515,12 +499,14 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
           Math.round((await page.getByTestId('personal-home-main').boundingBox())?.width ?? 0)
         )
         .toBe(item.width);
-      await expect.poll(async () => Math.round((await root.boundingBox())?.width ?? 0)).toBe(1808);
+      await expect
+        .poll(async () => Math.round((await root.boundingBox())?.width ?? 0))
+        .toBe(item.expectedRootWidth);
     } else {
       const mobileNavigation = page.getByTestId('home-mobile-bottom-navigation');
       await expect(mobileNavigation).toBeVisible();
       await expect(mobileNavigation.locator('a')).toHaveCount(5);
-      await expectMobileNavigation(mobileNavigation, FLOW_MOBILE_NAVIGATION, 'FLOW_V1');
+      await expectHomeMobileNavigation(mobileNavigation, FLOW_HOME_MOBILE_NAVIGATION, 'FLOW_V1');
       const touchReport: Record<string, unknown> = {
         navigation: await expectMinimumTouchTargets(
           mobileNavigation.locator('a'),
@@ -672,7 +658,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       }
     }
     await expectNoDocumentOrNestedScroll(root);
-    await stabilizeVisual(page);
+    await stabilizeHomeWave2Visual(page);
     await expectNoSeriousAccessibilityViolations(page, '[data-testid="flow-home"]');
     await expect(page).toHaveScreenshot(`home-wave2-${item.id}.png`, {
       animations: 'disabled',
@@ -724,6 +710,9 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
 
   const dialog = page.getByRole('dialog', { name: '나만의 업무 홈' });
   await expect(dialog).toBeVisible();
+  const layoutTab = dialog.getByRole('tab', { name: '레이아웃 스튜디오', exact: true });
+  await layoutTab.click();
+  await expect(layoutTab).toHaveAttribute('aria-selected', 'true');
   const panel = dialog.locator('[data-home-editor-scroll-scope="active-panel"]');
   await expect(panel).toHaveAttribute(
     'data-home-editor-focus-contract',
@@ -793,7 +782,7 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
   await expect(workbench.locator('[data-home-studio-dirty="true"]').first()).toBeVisible();
   await page.keyboard.press('Control+z');
   await expect(workbench.locator('[data-home-studio-dirty="false"]').first()).toBeVisible();
-  await stabilizeVisual(page);
+  await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[role="dialog"]');
   await expect(page).toHaveScreenshot('home-wave2-FLOW-EDITOR-DESKTOP.png', {
     animations: 'disabled',
@@ -874,7 +863,7 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
   await expect(compactNavigationTrigger).toBeFocused();
   await expectCanonicalClassicLaunchpad(root);
   await expectNoDocumentOrNestedScroll(root);
-  await stabilizeVisual(page);
+  await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01.png', {
     animations: 'disabled',
@@ -908,7 +897,7 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
       };
     })
   );
-  expect(appMeaning.map(({ visibleText }) => visibleText)).toEqual(CLASSIC_KO_APP_LABELS);
+  expect(appMeaning.map(({ visibleText }) => visibleText)).toEqual(CLASSIC_HOME_KO_APP_LABELS);
   expect(
     appMeaning.filter(({ horizontalClip, verticalClip }) => horizontalClip || verticalClip)
   ).toEqual([]);
@@ -918,7 +907,7 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
       groups.map((group) => getComputedStyle(group).gridTemplateColumns.split(' ').length)
     );
   expect(largeTextGroupColumns.every((count) => count <= 2)).toBe(true);
-  await stabilizeVisual(page);
+  await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C06-TEXT-200-D1440-r04.png', {
     animations: 'disabled',
@@ -953,7 +942,7 @@ test('long English content wraps without clipping or deleting its accessible mea
   await expectCanonicalClassicLaunchpad(root);
   await expectNoLaunchpadLabelClipping(root);
   await expectNoDocumentOrNestedScroll(root);
-  await stabilizeVisual(page);
+  await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C07-LONG-EN-D1280-r02.png', {
     animations: 'disabled',
@@ -983,7 +972,7 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
   let root = page.getByTestId('classic-home');
   await expect(root).toBeVisible();
   await expectNoDocumentOrNestedScroll(root);
-  await stabilizeVisual(page);
+  await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C08-DARK-D1440-r02.png', {
     animations: 'disabled',
@@ -1005,7 +994,7 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
   await expect(root).toBeVisible();
   await page.keyboard.press('Tab');
   await expect(page.locator(':focus')).toBeVisible();
-  await stabilizeVisual(page);
+  await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
   await expect(page).toHaveScreenshot('home-wave2-C09-HIGH-CONTRAST-D1440-r04.png', {
     animations: 'disabled',

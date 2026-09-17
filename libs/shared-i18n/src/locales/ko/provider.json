@@ -206,6 +206,7 @@
   },
   "featureRollouts": {
     "contextLabel": "기능 롤아웃 운영 경계",
+    "distributionBoundary": "이 화면은 타입이 지정된 기능 설정 리비전과 단계별 노출만 관리합니다. 연결된 배포 정본 소유자가 없으므로 애플리케이션 바이너리·패키지·데이터베이스 스키마를 여기서 배포할 수 없습니다.",
     "context": {
       "registry": "설정 원장",
       "flagCount": "플래그 {{count}}개",
@@ -1221,6 +1222,7 @@
     "adoption": {
       "title": "제품 권한 도입 현황",
       "description": "활성 테넌트 중 각 제품 권한이 할당된 범위입니다.",
+      "meteringBoundary": "여기에는 할당된 제품 권한만 표시됩니다. 정본 계량 소스가 연결되기 전에는 실측 사용량·비용·예산을 제공할 수 없으며 할당 수치로 추정하지 않습니다.",
       "progress": "{{name}} 제품 권한 도입률"
     },
     "columns": {

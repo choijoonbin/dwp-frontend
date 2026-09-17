@@ -21,6 +21,7 @@ export type CalendarView =
   | 'trash'
   | 'availability'
   | 'insights'
+  | 'settings'
   | 'admin-overview'
   | 'admin-company-calendars'
   | 'admin-policies';
@@ -88,6 +89,12 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
   {
     id: 'utility',
     items: [
+      {
+        section: 'utility',
+        view: 'settings',
+        path: '/calendar/settings',
+        icon: Settings2,
+      },
       {
         section: 'utility',
         view: 'trash',

@@ -1,25 +1,37 @@
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   addMailSharedInboxMember,
+  approveMailDeliveryAuditExport,
+  approveMailLegalHoldRelease,
   approveMailPurge,
+  approveMailRetentionEvidenceExport,
   cancelMailDeliveryAdmin,
   createMailDeliveryAuditExport,
   createMailLegalHold,
+  createMailRetentionEvidenceExport,
+  downloadMailDeliveryAuditExport,
+  downloadMailRetentionEvidenceExport,
   executeMailPurge,
+  executeMailLegalHoldRelease,
+  getMailActivePurgePreviews,
   getMailAdminOperations,
-  getMailAdminOverview,
   getMailDeliveryAudit,
+  getMailDeliveryAuditExport,
+  getMailLegalHoldReleasePreview,
   getMailPolicyGovernance,
+  getMailPurgePreview,
   getMailRetention,
+  getMailRetentionEvidenceExport,
   getMailSharedInboxAccess,
   HttpError,
   previewMailPurge,
+  previewMailLegalHoldRelease,
+  previewMailSharedInboxMemberRevoke,
   reconcileMailDeliveryAdmin,
-  releaseMailLegalHold,
   removeMailSharedInboxMember,
   retryMailDeliveryAdmin,
   runMailConnectionDiagnostic,
@@ -38,156 +50,34 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
 import { MailPageHeading } from './mail-components';
+import {
+  mailAdminEvidenceExportFileName,
+  saveMailAttachmentBlob,
+} from './mail-attachment-download';
+import {
+  mailDeliveryAuditFiltersFromSearch,
+  updateMailDeliveryAuditFilterSearch,
+} from './mail-delivery-audit-filters';
 import { MailAdminOperationsContent } from './mail-admin-operations-ui';
+import { MAIL_PURGE_RESOURCE_TYPES } from './mail-admin-operations-model';
+import {
+  useMailAdminWorkspaceOverview,
+  useSurfaceHeading,
+} from './mail-admin-operations-workspace-config';
 
-import type { MailAdminOverview } from '@dwp-frontend/shared-utils';
+import type { MailLegalHoldReleasePreview } from '@dwp-frontend/shared-utils';
 import type {
   MailAdminOperationalException,
-  MailAdminOperationsSnapshot,
-  MailAdminSurface,
   MailAuditExport,
   MailConnectionOperation,
-  MailDeliveryAuditPage,
-  MailDeliveryRecoveryEvidence,
-  MailLegalHoldInput,
-  MailPolicyGovernance,
   MailPurgeCandidateSnapshot,
-  MailPurgeGateEvidence,
+  MailRetentionExport,
   MailRetentionSnapshot,
   MailSharedInboxAccess,
-  MailSharedInboxMember,
-  MailSharedInboxMemberInput,
 } from './mail-admin-operations-model';
+import type { MailAdminOperationsWorkspaceProps } from './mail-admin-operations-workspace-config';
 
-export type MailAdminOperationsWorkspaceProps = {
-  surface: MailAdminSurface;
-  overview?: MailAdminOverview;
-  canManage?: boolean;
-  canManageConnections?: boolean;
-  canManageSharedInboxes?: boolean;
-  canManagePolicy?: boolean;
-  canManageHolds?: boolean;
-  canAuthorizePurge?: boolean;
-  canExecutePurge?: boolean;
-  canReadAudit?: boolean;
-  canRecoverDeliveries?: boolean;
-  canExportAudit?: boolean;
-  now?: number;
-  operations?: MailAdminOperationsSnapshot;
-  connectionOperations?: readonly MailConnectionOperation[];
-  sharedAccess?: readonly MailSharedInboxAccess[];
-  policyGovernance?: MailPolicyGovernance;
-  retention?: MailRetentionSnapshot;
-  deliveryAudit?: MailDeliveryAuditPage;
-  auditExport?: MailAuditExport;
-  deliveryEvidence?: readonly MailDeliveryRecoveryEvidence[];
-  purgeEvidence?: MailPurgeGateEvidence;
-  onRefresh?: () => void | Promise<unknown>;
-  onOpenConnectionSettings?: () => void;
-  onOpenSharedInboxSettings?: () => void;
-  onOpenPolicySettings?: () => void;
-  onOpenException?: (exception: MailAdminOperationalException) => void;
-  onRunConnectionDiagnostic?: (connectionId: string) => void;
-  onStartConnectionSync?: (connectionId: string) => void;
-  onSendConnectionTest?: (connectionId: string, recipient: string) => void;
-  onAddSharedMember?: (sharedInboxId: string, input: MailSharedInboxMemberInput) => void;
-  onUpdateSharedMember?: (
-    sharedInboxId: string,
-    memberId: string,
-    input: MailSharedInboxMemberInput
-  ) => void;
-  onRemoveSharedMember?: (
-    sharedInboxId: string,
-    member: MailSharedInboxMember,
-    memberVersion: number
-  ) => void;
-  onCreateLegalHold?: (input: MailLegalHoldInput) => void;
-  onUpdateLegalHold?: (holdId: string, input: MailLegalHoldInput) => void;
-  onReleaseLegalHold?: (holdId: string, version: number) => void;
-  onPreviewPurge?: () => void;
-  onApprovePurge?: (candidate: MailPurgeCandidateSnapshot) => void;
-  onExecutePurge?: (candidate: MailPurgeCandidateSnapshot) => void;
-  onReconcileDelivery?: (deliveryId: string) => void;
-  onRetryDelivery?: (deliveryId: string) => void;
-  onCancelDelivery?: (deliveryId: string) => void;
-  onExportDeliveryAudit?: () => void;
-};
-
-function useMailAdminWorkspaceOverview(injectedOverview?: MailAdminOverview) {
-  return useQuery({
-    queryKey: ['mail', 'admin'],
-    queryFn: getMailAdminOverview,
-    staleTime: 30_000,
-    retry: 1,
-    enabled: !injectedOverview,
-  });
-}
-
-function useSurfaceHeading(surface: MailAdminSurface) {
-  const { t } = useTranslation('mail');
-  if (surface === 'operations') {
-    return {
-      eyebrow: t('admin.overview.eyebrow'),
-      title: t('admin.overview.title'),
-      description: t('admin.operationsWorkspace.a01.pageDescription', {
-        defaultValue:
-          'Review reported exceptions and customer impact before opening infrastructure details.',
-      }),
-    };
-  }
-  if (surface === 'connections') {
-    return {
-      eyebrow: t('admin.connections.eyebrow'),
-      title: t('admin.connections.title'),
-      description: t('admin.operationsWorkspace.a02.pageDescription', {
-        defaultValue:
-          'Separate reported provider state from confirmed connection, sign-in, and synchronization readiness.',
-      }),
-    };
-  }
-  if (surface === 'shared-access') {
-    return {
-      eyebrow: t('admin.shared.eyebrow'),
-      title: t('admin.operationsWorkspace.a03.title', { defaultValue: 'Shared inbox access' }),
-      description: t('admin.operationsWorkspace.a03.pageDescription', {
-        defaultValue:
-          'Review workload and access information without treating a member role as permission for every action.',
-      }),
-    };
-  }
-  if (surface === 'governance') {
-    return {
-      eyebrow: t('admin.policies.eyebrow'),
-      title: t('admin.policies.title'),
-      description: t('admin.operationsWorkspace.a04.pageDescription', {
-        defaultValue:
-          'Keep saved settings, effective values, and enforcement evidence visibly separate.',
-      }),
-    };
-  }
-  if (surface === 'retention') {
-    return {
-      eyebrow: t('admin.operationsWorkspace.a05.eyebrow', { defaultValue: 'Retention governance' }),
-      title: t('admin.operationsWorkspace.a05.title', {
-        defaultValue: 'Retention, legal hold, and purge',
-      }),
-      description: t('admin.operationsWorkspace.a05.pageDescription', {
-        defaultValue:
-          'Protect held content and require a current candidate snapshot, separate approvals, and verification before purge.',
-      }),
-    };
-  }
-  return {
-    eyebrow: t('admin.operationsWorkspace.a06.eyebrow', { defaultValue: 'Delivery assurance' }),
-    title: t('admin.operationsWorkspace.a06.title', {
-      defaultValue: 'Delivery audit and recovery',
-    }),
-    description: t('admin.operationsWorkspace.a06.pageDescription', {
-      defaultValue:
-        'Reconcile unknown outcomes before retry and preserve command, provider, and audit evidence.',
-    }),
-  };
-}
+export type { MailAdminOperationsWorkspaceProps } from './mail-admin-operations-workspace-config';
 
 export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspaceProps) {
   const { surface } = props;
@@ -215,6 +105,10 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
   const canManageHolds =
     props.canManageHolds ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'HOLD_MANAGE');
+  const canPreviewPurge =
+    props.canPreviewPurge ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'PURGE_PREVIEW');
   const canAuthorizePurge =
     props.canAuthorizePurge ??
     legacyPermissionOverride ??
@@ -225,24 +119,45 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     hasPermission('ADMIN.MAIL', 'PURGE_EXECUTE');
   const canReadAudit =
     props.canReadAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'AUDIT_READ');
+  const canRevealAudit =
+    props.canRevealAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'AUDIT_REVEAL');
+  const legacyDeliveryRecovery = props.canRecoverDeliveries ?? legacyPermissionOverride;
+  const canReconcileDeliveries =
+    props.canReconcileDeliveries ??
+    legacyDeliveryRecovery ??
+    hasPermission('ADMIN.MAIL', 'DELIVERY_RECONCILE');
+  const canRetryDeliveries =
+    props.canRetryDeliveries ??
+    legacyDeliveryRecovery ??
+    hasPermission('ADMIN.MAIL', 'DELIVERY_RETRY');
+  const canCancelDeliveries =
+    props.canCancelDeliveries ??
+    legacyDeliveryRecovery ??
+    hasPermission('ADMIN.MAIL', 'DELIVERY_CANCEL');
   const canRecoverDeliveries =
     props.canRecoverDeliveries ??
     legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'RECOVERY');
+    (canReconcileDeliveries || canRetryDeliveries || canCancelDeliveries);
   const canExportAudit =
-    props.canExportAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'EXPORT');
+    props.canExportAudit ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'EVIDENCE_EXPORT');
   const canRunAnyMutation =
     canManageConnections ||
     canManageSharedInboxes ||
     canManagePolicy ||
     canManageHolds ||
+    canPreviewPurge ||
     canAuthorizePurge ||
     canExecutePurge ||
-    canRecoverDeliveries ||
+    canReconcileDeliveries ||
+    canRetryDeliveries ||
+    canCancelDeliveries ||
     canExportAudit;
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [connectionOperations, setConnectionOperations] = useState<MailConnectionOperation[]>([]);
   const [purgeCandidate, setPurgeCandidate] = useState<MailPurgeCandidateSnapshot | null>(null);
+  const [retentionExport, setRetentionExport] = useState<MailRetentionExport | null>(null);
   const [auditExport, setAuditExport] = useState<MailAuditExport | null>(null);
   const idempotencyKeys = useRef(new Map<string, string>());
   const idempotencyKeyFor = (scope: string) => {
@@ -274,12 +189,40 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     staleTime: 10_000,
     retry: 1,
   });
-  const correlationId = new URLSearchParams(location.search).get('correlationId') ?? undefined;
+  const purgePreviewsQuery = useQuery({
+    queryKey: ['mail', 'admin', 'retention', 'purge-previews'],
+    queryFn: getMailActivePurgePreviews,
+    enabled: surface === 'retention' && canPreviewPurge && !props.retention,
+    staleTime: 0,
+    retry: 1,
+  });
+  const deliveryAuditFilters = mailDeliveryAuditFiltersFromSearch(
+    new URLSearchParams(location.search)
+  );
   const deliveryAuditQuery = useQuery({
-    queryKey: ['mail', 'admin', 'delivery-audit', correlationId ?? 'all'],
-    queryFn: () => getMailDeliveryAudit({ page: 0, pageSize: 50, correlationId }),
-    enabled: surface === 'delivery-audit' && canReadAudit && !props.deliveryAudit,
+    queryKey: ['mail', 'admin', 'delivery-audit', deliveryAuditFilters],
+    queryFn: () => getMailDeliveryAudit(deliveryAuditFilters),
+    enabled:
+      surface === 'delivery-audit' &&
+      (canReadAudit || canRecoverDeliveries) &&
+      !props.deliveryAudit,
     staleTime: 10_000,
+    retry: 1,
+  });
+  const retentionExportId = props.retentionExport?.exportId ?? retentionExport?.exportId;
+  const retentionExportQuery = useQuery({
+    queryKey: ['mail', 'admin', 'retention', 'evidence-export', retentionExportId],
+    queryFn: () => getMailRetentionEvidenceExport(retentionExportId!),
+    enabled: surface === 'retention' && canExportAudit && Boolean(retentionExportId),
+    staleTime: 0,
+    retry: 1,
+  });
+  const auditExportId = props.auditExport?.exportId ?? auditExport?.exportId;
+  const auditExportQuery = useQuery({
+    queryKey: ['mail', 'admin', 'delivery-audit', 'export', auditExportId],
+    queryFn: () => getMailDeliveryAuditExport(auditExportId!),
+    enabled: surface === 'delivery-audit' && canExportAudit && Boolean(auditExportId),
+    staleTime: 0,
     retry: 1,
   });
   const sharedAccessQueries = useQueries({
@@ -306,8 +249,8 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     action: () => Promise<unknown>,
     after?: () => void | Promise<unknown>,
     idempotencyScope = key
-  ) => {
-    if (busyAction) return;
+  ): Promise<boolean> => {
+    if (busyAction) return false;
     setBusyAction(key);
     let commandAccepted = false;
     try {
@@ -320,13 +263,13 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
           defaultValue: 'The command response was received and the evidence was refreshed.',
         })
       );
+      return true;
     } catch (error) {
       if (!commandAccepted && error instanceof HttpError && error.status === 409) {
         idempotencyKeys.current.delete(idempotencyScope);
-        if (surface === 'retention') setPurgeCandidate(null);
         await refresh();
         toast.error(t('admin.conflict'));
-        return;
+        return false;
       }
       toast.error(
         t('admin.operationsWorkspace.actionFailed', {
@@ -334,6 +277,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
             'The command did not complete. Review the current evidence before retrying.',
         })
       );
+      return false;
     } finally {
       setBusyAction(null);
     }
@@ -347,8 +291,15 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     await query.refetch();
     if (surface === 'operations') await operationsQuery.refetch();
     if (surface === 'governance') await policyGovernanceQuery.refetch();
-    if (surface === 'retention') await retentionQuery.refetch();
-    if (surface === 'delivery-audit') await deliveryAuditQuery.refetch();
+    if (surface === 'retention') {
+      await retentionQuery.refetch();
+      if (canPreviewPurge) await purgePreviewsQuery.refetch();
+      if (retentionExportId) await retentionExportQuery.refetch();
+    }
+    if (surface === 'delivery-audit') {
+      await deliveryAuditQuery.refetch();
+      if (auditExportId) await auditExportQuery.refetch();
+    }
     if (surface === 'shared-access') {
       await Promise.all(sharedAccessQueries.map((accessQuery) => accessQuery.refetch()));
     }
@@ -358,7 +309,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     if (props.onOpenException) return props.onOpenException(exception);
     if (exception.nextAction === 'OPEN_CONNECTION') navigate('/mail/admin/connections');
     else if (exception.nextAction === 'OPEN_DELIVERY') {
-      if (!canReadAudit) {
+      if (!canReadAudit && !canRecoverDeliveries) {
         toast.error(
           t('admin.operationsWorkspace.auditReadRequired', {
             defaultValue: 'Delivery audit access is required to open this evidence.',
@@ -366,9 +317,10 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
         );
         return;
       }
-      const correlation = exception.correlationId
-        ? `?correlationId=${encodeURIComponent(exception.correlationId)}`
-        : '';
+      const correlation =
+        canRevealAudit && exception.correlationId
+          ? `?correlationId=${encodeURIComponent(exception.correlationId)}`
+          : '';
       navigate(`/mail/admin/delivery-audit${correlation}`);
     } else if (exception.nextAction === 'REFRESH_SOURCE') void refresh();
     else
@@ -404,30 +356,58 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     queryClient.invalidateQueries({ queryKey: ['mail', 'admin', 'shared-access', sharedInboxId] });
   const refetchRetention = () =>
     queryClient.invalidateQueries({ queryKey: ['mail', 'admin', 'retention'] });
+  const refreshPurgeSources = async () => {
+    await refetchRetention();
+    if (canPreviewPurge) await purgePreviewsQuery.refetch();
+  };
   const refetchDeliveryAudit = () =>
     queryClient.invalidateQueries({ queryKey: ['mail', 'admin', 'delivery-audit'] });
 
   const operations = props.operations ?? operationsQuery.data;
   const policyGovernance = props.policyGovernance ?? policyGovernanceQuery.data;
   const retentionSource = props.retention ?? retentionQuery.data;
+  const projectedRetention = retentionSource as MailRetentionSnapshot | undefined;
+  const purgeCandidates = useMemo(
+    () => projectedRetention?.candidates ?? purgePreviewsQuery.data ?? [],
+    [projectedRetention?.candidates, purgePreviewsQuery.data]
+  );
+  useEffect(() => {
+    if (surface !== 'retention') return;
+    setPurgeCandidate((current) => {
+      if (current) {
+        return (
+          purgeCandidates.find(
+            (candidate) => candidate.candidateSnapshotId === current.candidateSnapshotId
+          ) ?? current
+        );
+      }
+      return purgeCandidates[0] ?? null;
+    });
+  }, [purgeCandidates, surface]);
   const retention = retentionSource
     ? ({
         ...retentionSource,
-        candidate: props.retention?.candidate ?? purgeCandidate,
-        purgeJobs: canAuthorizePurge ? retentionSource.purgeJobs : [],
+        candidate: projectedRetention?.candidate ?? purgeCandidate,
+        candidates: purgeCandidates,
+        purgeJobs: canExecutePurge ? retentionSource.purgeJobs : [],
       } as MailRetentionSnapshot)
     : undefined;
   const deliveryAudit = props.deliveryAudit ?? deliveryAuditQuery.data;
+  const currentRetentionExport =
+    props.retentionExport ?? retentionExportQuery.data ?? retentionExport ?? undefined;
+  const currentAuditExport = props.auditExport ?? auditExportQuery.data ?? auditExport ?? undefined;
   const detailError =
     operationsQuery.isError ||
     policyGovernanceQuery.isError ||
     retentionQuery.isError ||
+    purgePreviewsQuery.isError ||
     deliveryAuditQuery.isError ||
     sharedAccessQueries.some((accessQuery) => accessQuery.isError);
   const detailLoading =
     operationsQuery.isLoading ||
     policyGovernanceQuery.isLoading ||
     retentionQuery.isLoading ||
+    purgePreviewsQuery.isLoading ||
     deliveryAuditQuery.isLoading ||
     sharedAccessQueries.some((accessQuery) => accessQuery.isLoading);
 
@@ -479,10 +459,15 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
             canManageSharedInboxes={canManageSharedInboxes}
             canManagePolicy={canManagePolicy}
             canManageHolds={canManageHolds}
+            canPreviewPurge={canPreviewPurge}
             canAuthorizePurge={canAuthorizePurge}
             canExecutePurge={canExecutePurge}
             canReadAudit={canReadAudit}
+            canRevealAudit={canRevealAudit}
             canRecoverDeliveries={canRecoverDeliveries}
+            canReconcileDeliveries={canReconcileDeliveries}
+            canRetryDeliveries={canRetryDeliveries}
+            canCancelDeliveries={canCancelDeliveries}
             canExportAudit={canExportAudit}
             now={props.now}
             operations={operations}
@@ -490,11 +475,13 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
             sharedAccess={sharedAccess}
             policyGovernance={policyGovernance}
             retention={retention}
-            deliveryAudit={canReadAudit ? deliveryAudit : undefined}
-            auditExport={
-              canExportAudit ? (props.auditExport ?? auditExport ?? undefined) : undefined
+            retentionExport={canExportAudit ? currentRetentionExport : undefined}
+            deliveryAudit={canReadAudit || canRecoverDeliveries ? deliveryAudit : undefined}
+            auditExport={canExportAudit ? currentAuditExport : undefined}
+            deliveryEvidence={
+              canReadAudit || canRecoverDeliveries ? props.deliveryEvidence : undefined
             }
-            deliveryEvidence={canReadAudit ? props.deliveryEvidence : undefined}
+            deliveryAuditFilters={deliveryAuditFilters}
             purgeEvidence={props.purgeEvidence}
             busyAction={busyAction}
             onOpenConnectionSettings={props.onOpenConnectionSettings}
@@ -584,21 +571,28 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
             }
             onRemoveSharedMember={
               props.onRemoveSharedMember ??
-              ((sharedInboxId, member, memberVersion) => {
+              ((sharedInboxId, member, preview, impactAcknowledged) => {
                 const actionKey = `remove-member:${member.memberId}`;
-                const actionScope = `${actionKey}:${memberVersion}`;
-                void runAction(
+                const actionScope = `${actionKey}:${preview.fingerprint}`;
+                return runAction(
                   actionKey,
                   () =>
                     removeMailSharedInboxMember(sharedInboxId, member.memberId, {
-                      impactAcknowledged: true,
+                      previewId: preview.previewId,
+                      fingerprint: preview.fingerprint,
+                      impactAcknowledged,
                       idempotencyKey: idempotencyKeyFor(actionScope),
-                      version: memberVersion,
+                      version: preview.memberVersion,
                     }),
                   () => refetchSharedAccess(sharedInboxId),
                   actionScope
                 );
               })
+            }
+            onPreviewSharedMemberRevoke={
+              props.onPreviewSharedMemberRevoke ??
+              ((sharedInboxId, member) =>
+                previewMailSharedInboxMemberRevoke(sharedInboxId, member.memberId, member.version))
             }
             onCreateLegalHold={
               props.onCreateLegalHold ??
@@ -609,7 +603,6 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                   () =>
                     createMailLegalHold({
                       ...input,
-                      scope: { reference: input.scope },
                       startsAt: new Date(props.now ?? Date.now()).toISOString(),
                       idempotencyKey: idempotencyKeyFor(actionScope),
                     }),
@@ -628,7 +621,6 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                   () =>
                     updateMailLegalHold(holdId, {
                       ...input,
-                      scope: { reference: input.scope },
                       startsAt: input.startsAt ?? new Date(props.now ?? Date.now()).toISOString(),
                       idempotencyKey: idempotencyKeyFor(actionScope),
                     }),
@@ -637,17 +629,65 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                 );
               })
             }
-            onReleaseLegalHold={
-              props.onReleaseLegalHold ??
-              ((holdId, version) => {
-                const actionKey = `release-hold:${holdId}`;
-                const actionScope = `${actionKey}:${version}`;
-                void runAction(
+            onPreviewLegalHoldRelease={
+              props.onPreviewLegalHoldRelease ??
+              (async (hold) => {
+                if (!retention) return null;
+                const actionKey = `preview-release-hold:${hold.holdId}`;
+                const actionScope = `${actionKey}:${hold.version}:${retention.policyVersion}`;
+                let preview: MailLegalHoldReleasePreview | null = null;
+                const completed = await runAction(
+                  actionKey,
+                  async () => {
+                    preview = await previewMailLegalHoldRelease(hold.holdId, {
+                      idempotencyKey: idempotencyKeyFor(actionScope),
+                      holdVersion: hold.version,
+                      policyVersion: retention.policyVersion,
+                    });
+                  },
+                  undefined,
+                  actionScope
+                );
+                return completed ? preview : null;
+              })
+            }
+            onApproveLegalHoldRelease={
+              props.onApproveLegalHoldRelease ??
+              (async (preview) => {
+                const actionKey = `approve-release-hold:${preview.releasePreviewId}`;
+                const actionScope = `${actionKey}:${preview.fingerprint}:${preview.distinctApproverCount}`;
+                let refreshed: MailLegalHoldReleasePreview | null = null;
+                const completed = await runAction(
+                  actionKey,
+                  async () => {
+                    await approveMailLegalHoldRelease(preview.releasePreviewId, {
+                      decision: 'APPROVE',
+                      idempotencyKey: idempotencyKeyFor(actionScope),
+                      fingerprint: preview.fingerprint,
+                      holdVersion: preview.holdVersion,
+                      policyVersion: preview.policyVersion,
+                    });
+                    refreshed = await getMailLegalHoldReleasePreview(preview.releasePreviewId);
+                  },
+                  undefined,
+                  actionScope
+                );
+                return completed ? refreshed : null;
+              })
+            }
+            onExecuteLegalHoldRelease={
+              props.onExecuteLegalHoldRelease ??
+              (async (preview) => {
+                const actionKey = `execute-release-hold:${preview.releasePreviewId}`;
+                const actionScope = `${actionKey}:${preview.fingerprint}`;
+                return runAction(
                   actionKey,
                   () =>
-                    releaseMailLegalHold(holdId, {
+                    executeMailLegalHoldRelease(preview.releasePreviewId, {
                       idempotencyKey: idempotencyKeyFor(actionScope),
-                      version,
+                      fingerprint: preview.fingerprint,
+                      holdVersion: preview.holdVersion,
+                      policyVersion: preview.policyVersion,
                     }),
                   refetchRetention,
                   actionScope
@@ -656,27 +696,31 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
             }
             onPreviewPurge={
               props.onPreviewPurge ??
-              (() => {
+              ((input) => {
                 if (!retention) return;
-                const actionScope = `preview-purge:${retention.policyVersion}`;
+                const request = input ?? {
+                  scope: { tenant: true },
+                  resourceTypes: [...MAIL_PURGE_RESOURCE_TYPES],
+                  before: new Date(props.now ?? Date.now()).toISOString(),
+                };
+                const actionScope = `preview-purge:${retention.policyVersion}:${JSON.stringify(request)}`;
                 void runAction(
                   'preview-purge',
                   async () => {
                     const preview = await previewMailPurge({
-                      scope: { tenant: true },
-                      resourceTypes: retention.resourcePolicies.map(
-                        (policy) => policy.resourceType
-                      ),
-                      before: new Date(props.now ?? Date.now()).toISOString(),
+                      ...request,
                       idempotencyKey: idempotencyKeyFor(actionScope),
                       policyVersion: retention.policyVersion,
                     });
-                    setPurgeCandidate({ ...preview, distinctApproverCount: 0 });
+                    setPurgeCandidate(preview);
                   },
-                  refetchRetention,
+                  refreshPurgeSources,
                   actionScope
                 );
               })
+            }
+            onSelectPurgeCandidate={
+              props.onSelectPurgeCandidate ?? ((candidate) => setPurgeCandidate(candidate))
             }
             onApprovePurge={
               props.onApprovePurge ??
@@ -685,18 +729,17 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                 void runAction(
                   'approve-purge',
                   async () => {
-                    const approval = await approveMailPurge(candidate.candidateSnapshotId, {
+                    await approveMailPurge(candidate.candidateSnapshotId, {
                       decision: 'APPROVE',
                       idempotencyKey: idempotencyKeyFor(actionScope),
                       policyVersion: candidate.policyVersion,
                     });
-                    setPurgeCandidate((current) =>
-                      current?.candidateSnapshotId === candidate.candidateSnapshotId
-                        ? { ...current, distinctApproverCount: approval.distinctApproverCount }
-                        : current
-                    );
                   },
-                  refetchRetention,
+                  async () => {
+                    const authoritative = await getMailPurgePreview(candidate.candidateSnapshotId);
+                    setPurgeCandidate(authoritative);
+                    await refreshPurgeSources();
+                  },
                   actionScope
                 );
               })
@@ -715,9 +758,86 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                     });
                     setPurgeCandidate(null);
                   },
-                  refetchRetention,
+                  refreshPurgeSources,
                   actionScope
                 );
+              })
+            }
+            onExportRetentionEvidence={
+              props.onExportRetentionEvidence ??
+              (() => {
+                if (!retention) return;
+                const actionScope = `export-retention:${retention.policyVersion}:${retention.generatedAt}`;
+                void runAction(
+                  'export-retention',
+                  async () => {
+                    const result = await createMailRetentionEvidenceExport({
+                      scope: {
+                        tenant: true,
+                        resourceTypes: retention.resourcePolicies.map(
+                          (policy) => policy.resourceType
+                        ),
+                      },
+                      purpose: 'Retention policy and legal hold evidence review',
+                      policyVersion: retention.policyVersion,
+                      idempotencyKey: idempotencyKeyFor(actionScope),
+                    });
+                    setRetentionExport(result);
+                  },
+                  undefined,
+                  actionScope
+                );
+              })
+            }
+            onApproveRetentionEvidenceExport={
+              props.onApproveRetentionEvidenceExport ??
+              ((exportId) => {
+                const actionScope = `approve-retention-export:${exportId}:${currentRetentionExport?.distinctApproverCount ?? 0}`;
+                void runAction(
+                  'approve-retention-export',
+                  async () => {
+                    const result = await approveMailRetentionEvidenceExport(exportId, {
+                      decision: 'APPROVE',
+                      idempotencyKey: idempotencyKeyFor(actionScope),
+                    });
+                    setRetentionExport(result);
+                  },
+                  async () => {
+                    setRetentionExport(await getMailRetentionEvidenceExport(exportId));
+                  },
+                  actionScope
+                );
+              })
+            }
+            onRefreshRetentionEvidenceExport={
+              props.onRefreshRetentionEvidenceExport ??
+              ((exportId) => {
+                void getMailRetentionEvidenceExport(exportId)
+                  .then(setRetentionExport)
+                  .catch(() => toast.error(t('admin.loadError')));
+              })
+            }
+            onDownloadRetentionEvidenceExport={
+              props.onDownloadRetentionEvidenceExport ??
+              ((exportId) => {
+                void runAction('download-retention-export', async () => {
+                  const latest = await getMailRetentionEvidenceExport(exportId);
+                  setRetentionExport(latest);
+                  if (
+                    latest.approvalState !== 'APPROVED' ||
+                    latest.state !== 'READY' ||
+                    !latest.downloadUrl ||
+                    !Number.isFinite(Date.parse(latest.expiresAt)) ||
+                    Date.parse(latest.expiresAt) <= (props.now ?? Date.now())
+                  ) {
+                    throw new Error('Retention export is not currently downloadable');
+                  }
+                  const blob = await downloadMailRetentionEvidenceExport(exportId);
+                  saveMailAttachmentBlob(
+                    blob,
+                    mailAdminEvidenceExportFileName('RETENTION', exportId)
+                  );
+                });
               })
             }
             onReconcileDelivery={
@@ -783,15 +903,22 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                 );
               })
             }
+            onDeliveryAuditFiltersChange={(filters) => {
+              const next = updateMailDeliveryAuditFilterSearch(
+                new URLSearchParams(location.search),
+                filters
+              );
+              navigate({ pathname: location.pathname, search: next.toString() }, { replace: true });
+            }}
             onExportDeliveryAudit={
               props.onExportDeliveryAudit ??
               (() => {
-                const actionScope = `export-audit:${correlationId ?? 'all'}`;
+                const actionScope = `export-audit:${JSON.stringify(deliveryAuditFilters)}`;
                 void runAction(
                   'export-audit',
                   async () => {
                     const result = await createMailDeliveryAuditExport({
-                      filters: { correlationId },
+                      filters: deliveryAuditFilters,
                       purpose: 'Delivery incident investigation',
                       idempotencyKey: idempotencyKeyFor(actionScope),
                     });
@@ -802,35 +929,60 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
                 );
               })
             }
+            onApproveDeliveryAuditExport={
+              props.onApproveDeliveryAuditExport ??
+              ((exportId) => {
+                const actionScope = `approve-audit-export:${exportId}:${currentAuditExport?.distinctApproverCount ?? 0}`;
+                void runAction(
+                  'approve-audit-export',
+                  async () => {
+                    const result = await approveMailDeliveryAuditExport(exportId, {
+                      decision: 'APPROVE',
+                      idempotencyKey: idempotencyKeyFor(actionScope),
+                    });
+                    setAuditExport(result);
+                  },
+                  async () => {
+                    setAuditExport(await getMailDeliveryAuditExport(exportId));
+                  },
+                  actionScope
+                );
+              })
+            }
+            onRefreshDeliveryAuditExport={
+              props.onRefreshDeliveryAuditExport ??
+              ((exportId) => {
+                void getMailDeliveryAuditExport(exportId)
+                  .then(setAuditExport)
+                  .catch(() => toast.error(t('admin.loadError')));
+              })
+            }
+            onDownloadDeliveryAuditExport={
+              props.onDownloadDeliveryAuditExport ??
+              ((exportId) => {
+                void runAction('download-audit-export', async () => {
+                  const latest = await getMailDeliveryAuditExport(exportId);
+                  setAuditExport(latest);
+                  if (
+                    latest.approvalState !== 'APPROVED' ||
+                    latest.state !== 'READY' ||
+                    !latest.downloadUrl ||
+                    !Number.isFinite(Date.parse(latest.expiresAt)) ||
+                    Date.parse(latest.expiresAt) <= (props.now ?? Date.now())
+                  ) {
+                    throw new Error('Delivery audit export is not currently downloadable');
+                  }
+                  const blob = await downloadMailDeliveryAuditExport(exportId);
+                  saveMailAttachmentBlob(
+                    blob,
+                    mailAdminEvidenceExportFileName('DELIVERY_AUDIT', exportId)
+                  );
+                });
+              })
+            }
           />
         </Box>
       ) : null}
     </PageCanvas>
   );
-}
-
-type SurfaceWorkspaceProps = Omit<MailAdminOperationsWorkspaceProps, 'surface'>;
-
-export function MailOperationsAdminWorkspace(props: SurfaceWorkspaceProps) {
-  return <MailAdminOperationsWorkspace {...props} surface="operations" />;
-}
-
-export function MailConnectionsAdminWorkspace(props: SurfaceWorkspaceProps) {
-  return <MailAdminOperationsWorkspace {...props} surface="connections" />;
-}
-
-export function MailSharedAccessAdminWorkspace(props: SurfaceWorkspaceProps) {
-  return <MailAdminOperationsWorkspace {...props} surface="shared-access" />;
-}
-
-export function MailGovernanceAdminWorkspace(props: SurfaceWorkspaceProps) {
-  return <MailAdminOperationsWorkspace {...props} surface="governance" />;
-}
-
-export function MailRetentionAdminWorkspace(props: SurfaceWorkspaceProps) {
-  return <MailAdminOperationsWorkspace {...props} surface="retention" />;
-}
-
-export function MailDeliveryAuditAdminWorkspace(props: SurfaceWorkspaceProps) {
-  return <MailAdminOperationsWorkspace {...props} surface="delivery-audit" />;
 }

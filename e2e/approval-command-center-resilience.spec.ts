@@ -1,65 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
-import { expect, test, type Page, type Route } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-import { mockShellSession } from './support/shell-session';
 import { approvalTaskSearchPage } from './support/approval-search-fixtures';
-import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
-import {
-  APPROVAL_HOME_FIXTURE,
-  APPROVAL_MEMBER_PERMISSIONS,
-} from './support/approval-command-center-fixtures';
+import { APPROVAL_HOME_FIXTURE } from './support/approval-command-center-fixtures';
 import { APPROVAL_TASK_DETAIL_FIXTURE } from './support/product-area-fixtures';
 import { approvalDocumentTools } from './support/approval-request-document-fixtures';
 import { openApprovalQueueSidebar as openQueueSidebar } from './support/approval-sidebar';
+import {
+  fulfillApprovalSuccess as success,
+  prepareApprovalCommandCenter as prepare,
+} from './support/approval-command-center-resilience-setup';
 
 test.use({ timezoneId: 'Asia/Seoul' });
-
-function success(route: Route, data: unknown) {
-  return route.fulfill({
-    contentType: 'application/json',
-    body: JSON.stringify({ status: 'SUCCESS', data }),
-  });
-}
-
-async function prepare(page: Page, dark = false) {
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
-    locale: 'ko',
-    displayName: '이서연',
-    permissions: APPROVAL_MEMBER_PERMISSIONS,
-    appearance: {
-      mode: dark ? 'dark' : 'light',
-      density: 'standard',
-      highContrast: false,
-      reduceMotion: true,
-    },
-  });
-  await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
-  await page.route('**/api/approvals/v1/home', (route) => success(route, APPROVAL_HOME_FIXTURE));
-  await page.route(
-    (url) => url.pathname === '/api/approvals/v1/tasks' && url.searchParams.get('view') === 'INBOX',
-    (route) => success(route, APPROVAL_HOME_FIXTURE.focusQueue)
-  );
-  await page.route('**/api/approvals/v1/tasks/search?*', async (route) =>
-    success(
-      route,
-      approvalTaskSearchPage(
-        new URL(route.request().url()),
-        APPROVAL_HOME_FIXTURE.focusQueue,
-        await page.evaluate(() => Date.now())
-      )
-    )
-  );
-  await page.route(
-    (url) => /^\/api\/approvals\/v1\/tasks\/approval-task-[12]$/u.test(url.pathname),
-    (route) => {
-      const task = APPROVAL_HOME_FIXTURE.focusQueue.find((item) =>
-        route.request().url().endsWith(item.taskId)
-      );
-      return success(route, { ...APPROVAL_TASK_DETAIL_FIXTURE, task, canDecide: true });
-    }
-  );
-}
 
 for (const outcome of ['fresh', 'revoked', 'new-version'] as const) {
   test(`문서 식별자 복사는 최신 상세 ${outcome} 권한과 버전에 결속된다`, async ({ page }) => {
@@ -152,10 +105,7 @@ test('내 완료함은 서버 106건의 마지막 페이지·검색을 조회하
     }
   );
   await page.route(
-    (url) =>
-      /^\/api\/approvals\/v1\/tasks\/[0-9a-f-]{36}\/document-tools$/u.test(
-        url.pathname
-      ),
+    (url) => /^\/api\/approvals\/v1\/tasks\/[0-9a-f-]{36}\/document-tools$/u.test(url.pathname),
     (route) => {
       const taskId = new URL(route.request().url()).pathname.split('/').at(-2) ?? '';
       const task = tasks.find((candidate) => candidate.taskId === taskId);

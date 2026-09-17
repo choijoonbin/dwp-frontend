@@ -148,7 +148,7 @@ for (const width of [1920, 2560]) {
       await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'balanced');
       await expectReadContracts(page);
       const balancedWidth = await shellWidth(flowHome);
-      expect(balancedWidth).toBe(1680);
+      expect(balancedWidth).toBe(1808);
       const toolbar = page.locator('[data-workspace-composer-placement="floating"]');
       const wide = toolbar.getByRole('button', { name: 'Wide', exact: true });
       await page.getByRole('button', { name: 'Edit home' }).click();

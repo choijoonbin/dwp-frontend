@@ -1,0 +1,378 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Operations
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Operations
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e37]: Operations overview
+              - listitem [ref=e38]:
+                - link "Models & routing" [ref=e39] [cursor=pointer]:
+                  - /url: /dwaion/admin/models
+                  - img [ref=e41]
+                  - paragraph [ref=e46]: Models & routing
+              - listitem [ref=e47]:
+                - link "Agent and publishing management" [ref=e48] [cursor=pointer]:
+                  - /url: /dwaion/admin/agents
+                  - img [ref=e50]
+                  - paragraph [ref=e54]: Agent and publishing management
+              - listitem [ref=e55]:
+                - link "Data sources and connectors" [ref=e56] [cursor=pointer]:
+                  - /url: /dwaion/admin/sources
+                  - img [ref=e58]
+                  - paragraph [ref=e64]: Data sources and connectors
+              - listitem [ref=e65]:
+                - link "Actions and execution access" [ref=e66] [cursor=pointer]:
+                  - /url: /dwaion/admin/actions
+                  - img [ref=e68]
+                  - paragraph [ref=e73]: Actions and execution access
+              - listitem [ref=e74]:
+                - link "Policy and safety controls" [ref=e75] [cursor=pointer]:
+                  - /url: /dwaion/admin/safety
+                  - img [ref=e77]
+                  - paragraph [ref=e80]: Policy and safety controls
+              - listitem [ref=e81]:
+                - link "Response quality and evaluation" [ref=e82] [cursor=pointer]:
+                  - /url: /dwaion/admin/evaluation
+                  - img [ref=e84]
+                  - paragraph [ref=e87]: Response quality and evaluation
+              - listitem [ref=e88]:
+                - link "Operational readiness review" [ref=e89] [cursor=pointer]:
+                  - /url: /dwaion/admin/gates
+                  - img [ref=e91]
+                  - paragraph [ref=e95]: Operational readiness review
+              - listitem [ref=e96]:
+                - link "Data retention and audit" [ref=e97] [cursor=pointer]:
+                  - /url: /dwaion/admin/audit
+                  - img [ref=e99]
+                  - paragraph [ref=e103]: Data retention and audit
+        - link "Return to work" [ref=e105] [cursor=pointer]:
+          - /url: /dwaion/home
+          - img [ref=e107]
+          - text: Return to work
+    - banner [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - img [ref=e113]
+          - generic "DWAI·ON management" [ref=e117]
+        - navigation "App area switcher" [ref=e120]:
+          - generic [ref=e121]: Management mode
+          - 'link "Return to work: DWAI·ON" [ref=e123] [cursor=pointer]':
+            - /url: /dwaion/home
+            - img [ref=e125]
+            - generic [ref=e127]: Return to work
+        - generic [ref=e128]:
+          - button "Search DWP" [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+            - paragraph [ref=e134]: Search DWP
+            - generic [ref=e135]: ⌘K
+          - generic [ref=e136]:
+            - button "Enter full screen" [ref=e137] [cursor=pointer]:
+              - img [ref=e138]
+            - generic "0 actionable notifications, 0 total unread" [ref=e144]:
+              - button "0 actionable notifications, 0 total unread" [ref=e145] [cursor=pointer]:
+                - generic [ref=e146]:
+                  - img [ref=e147]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e151] [cursor=pointer]':
+            - generic [ref=e152]: T
+            - img [ref=e153]
+    - main [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]: DWAI·ON governance
+            - heading "Response quality and evaluation" [level=1] [ref=e160]
+            - paragraph [ref=e161]: Review source grounding, expected terms and configuration for each evaluation run.
+          - generic [ref=e163]:
+            - button "Dataset import" [ref=e164] [cursor=pointer]:
+              - img [ref=e166]
+              - text: Dataset import
+            - button "Create evaluation set" [ref=e170] [cursor=pointer]:
+              - img [ref=e172]
+              - text: Create evaluation set
+            - button "Run evaluation" [ref=e173] [cursor=pointer]:
+              - img [ref=e175]
+              - text: Run evaluation
+        - status [ref=e177]:
+          - img [ref=e179]
+          - generic [ref=e181]: Evaluation prompts and expectations are encrypted at rest. Run an active set to inspect its rule-check results. Results check source grounding and expected terms only; they do not measure AI accuracy.
+        - region "Loaded evaluation contract summary" [ref=e182]:
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]:
+                - generic [ref=e187]: Loaded sets
+                - paragraph [ref=e188]: "6"
+              - img [ref=e190]
+            - generic [ref=e194]: Sets returned by this API request
+          - generic [ref=e196]:
+            - generic [ref=e197]:
+              - generic [ref=e198]:
+                - generic [ref=e199]: Active sets
+                - paragraph [ref=e200]: "5"
+              - img [ref=e202]
+            - generic [ref=e205]: Eligible for a new evaluation run
+          - generic [ref=e207]:
+            - generic [ref=e208]:
+              - generic [ref=e209]:
+                - generic [ref=e210]: Registered cases
+                - paragraph [ref=e211]: "13"
+              - img [ref=e213]
+            - generic [ref=e216]: Cases across the loaded set summaries
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - generic [ref=e220]:
+                - generic [ref=e221]: Latest run completed
+                - paragraph [ref=e222]: "4"
+              - img [ref=e224]
+            - generic [ref=e226]: Loaded sets whose latest recorded run completed
+        - alert [ref=e227]:
+          - img [ref=e229]
+          - generic [ref=e231]: Evaluation evidence is accepted only when dataset checksums and model, prompt, policy, tool, and evaluator versions are pinned. Missing measurements stay explicitly unavailable.
+        - generic [ref=e232]:
+          - generic [ref=e233]:
+            - generic [ref=e234]:
+              - heading "Evaluation sets and recorded runs" [level=2] [ref=e235]
+              - text: 6 sets returned by the evaluation API
+            - generic [ref=e237]: Rule-check contract
+          - generic [ref=e238]:
+            - grid "DWAI·ON evaluation sets" [ref=e242]:
+              - row "Evaluation set State Cases Latest run" [ref=e243]:
+                - columnheader "Evaluation set" [ref=e244] [cursor=pointer]:
+                  - generic [ref=e246]: Evaluation set
+                  - generic [ref=e247]:
+                    - img
+                - columnheader "State" [ref=e248] [cursor=pointer]:
+                  - generic [ref=e250]: State
+                  - generic [ref=e251]:
+                    - img
+                - columnheader "Cases" [ref=e252] [cursor=pointer]:
+                  - generic [ref=e254]: Cases
+                  - generic [ref=e255]:
+                    - img
+                - columnheader "Latest run" [ref=e256] [cursor=pointer]:
+                  - generic [ref=e258]: Latest run
+                  - generic [ref=e259]:
+                    - img
+              - rowgroup [ref=e260]:
+                - row "Safe calendar handoff checks Active 2 Completed" [ref=e261] [cursor=pointer]:
+                  - gridcell "Safe calendar handoff checks" [ref=e262]
+                  - gridcell "Active" [ref=e263]:
+                    - generic [ref=e265]: Active
+                  - gridcell "2" [ref=e266]
+                  - gridcell "Completed" [ref=e267]
+                - row "Approval evidence boundary checks Active 3 Completed" [ref=e268] [cursor=pointer]:
+                  - gridcell "Approval evidence boundary checks" [ref=e269]
+                  - gridcell "Active" [ref=e270]:
+                    - generic [ref=e272]: Active
+                  - gridcell "3" [ref=e273]
+                  - gridcell "Completed" [ref=e274]
+                - row "Restricted source refusal checks Active 2 Configuration required" [ref=e275] [cursor=pointer]:
+                  - gridcell "Restricted source refusal checks" [ref=e276]
+                  - gridcell "Active" [ref=e277]:
+                    - generic [ref=e279]: Active
+                  - gridcell "2" [ref=e280]
+                  - gridcell "Configuration required" [ref=e281]
+                - row "Citation evidence checks Active 1 Completed" [ref=e282] [cursor=pointer]:
+                  - gridcell "Citation evidence checks" [ref=e283]
+                  - gridcell "Active" [ref=e284]:
+                    - generic [ref=e286]: Active
+                  - gridcell "1" [ref=e287]
+                  - gridcell "Completed" [ref=e288]
+                - row "Identity governance decision checks Active 2 Completed" [ref=e289] [cursor=pointer]:
+                  - gridcell "Identity governance decision checks" [ref=e290]
+                  - gridcell "Active" [ref=e291]:
+                    - generic [ref=e293]: Active
+                  - gridcell "2" [ref=e294]
+                  - gridcell "Completed" [ref=e295]
+                - row "Employee service handoff checks Draft 3 —" [ref=e296] [cursor=pointer]:
+                  - gridcell "Employee service handoff checks" [ref=e297]
+                  - gridcell "Draft" [ref=e298]:
+                    - generic [ref=e300]: Draft
+                  - gridcell "3" [ref=e301]
+                  - gridcell "—" [ref=e302]
+            - region "Selected evaluation set details" [ref=e304]:
+              - generic [ref=e305]:
+                - generic [ref=e306]:
+                  - generic [ref=e307]:
+                    - generic [ref=e308]:
+                      - heading "Safe calendar handoff checks" [level=3] [ref=e309]
+                      - paragraph [ref=e310]: Synthetic fixture cases verify evidence and expected terms; they do not measure AI accuracy.
+                    - button "Add evaluation case" [ref=e311] [cursor=pointer]:
+                      - img [ref=e313]
+                      - text: Add evaluation case
+                  - generic [ref=e314]:
+                    - generic [ref=e316]: ACTIVE
+                    - generic [ref=e318]: Locale en
+                    - generic [ref=e320]: Version 3
+                    - generic [ref=e322]: Sep 8, 2026, 12:00 PM
+                - region "Evaluation cases" [ref=e323]:
+                  - heading "Evaluation cases" [level=4] [ref=e324]
+                  - text: Prompts, expected terms, and allowed source scopes registered for this set.
+                  - generic [ref=e325]:
+                    - generic [ref=e327]:
+                      - generic [ref=e328]:
+                        - generic [ref=e329]:
+                          - paragraph [ref=e330]: Meeting evidence
+                          - paragraph [ref=e331]: Find permitted calendar evidence for a synthetic meeting.
+                        - generic [ref=e333]: 2 expected terms
+                      - generic [ref=e336]: CALENDAR
+                    - generic [ref=e337]:
+                      - separator [ref=e338]
+                      - generic [ref=e339]:
+                        - generic [ref=e340]:
+                          - generic [ref=e341]:
+                            - paragraph [ref=e342]: Restricted calendar
+                            - paragraph [ref=e343]: Explain the policy boundary for restricted calendar entries.
+                          - generic [ref=e345]: 2 expected terms
+                        - generic [ref=e348]: CALENDAR
+                - region "Evaluation run history" [ref=e349]:
+                  - generic [ref=e350]:
+                    - generic [ref=e351]:
+                      - generic [ref=e352]:
+                        - img [ref=e353]
+                        - heading "Evaluation run history" [level=3] [ref=e357]
+                      - text: Inspect each run’s rule checks, source grounding and observed results.
+                    - button "Export results" [ref=e358] [cursor=pointer]:
+                      - img [ref=e360]
+                      - text: Export results
+                  - generic [ref=e363]:
+                    - button "Sep 8, 2026, 12:00 PM evaluation-fixture-model 1 / 2" [pressed] [ref=e366] [cursor=pointer]:
+                      - generic [ref=e367]:
+                        - paragraph [ref=e368]: Sep 8, 2026, 12:00 PM
+                        - text: evaluation-fixture-model
+                      - generic [ref=e370]: 1 / 2
+                    - generic [ref=e372]:
+                      - generic [ref=e374]:
+                        - img [ref=e375]
+                        - heading "Latest run result" [level=4] [ref=e377]
+                        - generic [ref=e379]: COMPLETED
+                      - generic [ref=e380]:
+                        - generic [ref=e382]: 1 passed
+                        - generic [ref=e384]: 1 failed
+                        - generic [ref=e386]: 0 configuration required
+                      - paragraph [ref=e387]: "Limited rule checks: 1 / 2 cases passed."
+                      - paragraph [ref=e388]: "Quality comparison unavailable: dataset, model, policy and evaluation-rule version equivalence is not provided by this API."
+                      - generic [ref=e389]:
+                        - generic [ref=e391]:
+                          - generic [ref=e392]:
+                            - paragraph [ref=e393]: Meeting evidence
+                            - generic [ref=e394]: 2 / 2 expected terms · source grounding present · GROUNDED · 800 ms
+                          - generic [ref=e396]: Passed
+                        - generic [ref=e397]:
+                          - separator [ref=e398]
+                          - generic [ref=e399]:
+                            - generic [ref=e400]:
+                              - paragraph [ref=e401]: Restricted calendar
+                              - generic [ref=e402]: 1 / 2 expected terms · source grounding present · EXPECTED_TERMS_MISSING · 900 ms
+                            - generic [ref=e404]: Failed
+                - region "Evaluation-set lifecycle" [ref=e405]:
+                  - heading "Evaluation-set lifecycle" [level=4] [ref=e406]
+                  - text: Lifecycle changes require a reason and the current set version. Retiring a set prevents new runs; it does not delete recorded results.
+                  - generic [ref=e407]:
+                    - generic: Change reason
+                    - generic [ref=e408]:
+                      - textbox "Change reason" [ref=e409]
+                      - group:
+                        - generic: Change reason
+                  - button "Retire set" [disabled]:
+                    - generic:
+                      - img
+                    - text: Retire set
+        - region "Continuous evaluation & production monitoring" [ref=e412]:
+          - generic [ref=e413]:
+            - generic [ref=e414]:
+              - heading "Continuous evaluation & production monitoring" [level=2] [ref=e415]
+              - paragraph [ref=e416]: Connect datasets, PII review, pinned comparisons, and production drift to release-gate evidence.
+            - status [ref=e418]:
+              - generic [ref=e420]:
+                - generic [ref=e421]: Live operational data
+                - generic [ref=e422]: Generated Sep 8, 2026, 12:00 PM
+              - generic "Refresh" [ref=e423]:
+                - button "Refresh" [ref=e424] [cursor=pointer]:
+                  - img [ref=e425]
+          - generic [ref=e430]:
+            - region "Evaluation and safety summary" [ref=e431]:
+              - generic [ref=e433]:
+                - paragraph [ref=e434]: "1"
+                - paragraph [ref=e435]: Datasets
+              - generic [ref=e437]:
+                - paragraph [ref=e438]: "1"
+                - paragraph [ref=e439]: PII review
+              - generic [ref=e441]:
+                - paragraph [ref=e442]: "2"
+                - paragraph [ref=e443]: Regressions
+              - generic [ref=e445]:
+                - paragraph [ref=e446]: "1"
+                - paragraph [ref=e447]: Production drift
+              - generic [ref=e449]:
+                - paragraph [ref=e450]: REVIEW
+                - paragraph [ref=e451]: Release gate
+            - generic [ref=e452]:
+              - generic [ref=e453]:
+                - generic [ref=e454]:
+                  - button "Import dataset" [ref=e456] [cursor=pointer]:
+                    - img [ref=e458]
+                    - text: Import dataset
+                  - generic [ref=e462]:
+                    - button "Run comparison" [disabled]:
+                      - generic:
+                        - img
+                      - text: Run comparison
+                  - button "Safety simulation" [ref=e464] [cursor=pointer]:
+                    - img [ref=e466]
+                    - text: Safety simulation
+                - generic [ref=e469]:
+                  - generic [ref=e470]:
+                    - heading "model-v3 → model-v4" [level=6] [ref=e471]
+                    - generic [ref=e472]: comparison-release-42 · Sep 8, 2026, 12:00 PM
+                  - generic [ref=e473]:
+                    - generic [ref=e475]: COMPLETED
+                    - generic [ref=e477]: 98.60%
+                    - generic [ref=e479]: Regression 2
+                    - generic [ref=e481]: Evaluator failures 1
+              - generic [ref=e482]:
+                - heading "Production drift & PII review" [level=3] [ref=e483]
+                - generic [ref=e484]:
+                  - generic [ref=e485]:
+                    - heading "Task completion drift" [level=6] [ref=e486]
+                    - generic [ref=e488]: WARNING
+                  - generic [ref=e489]: agent:research · 2.1 / 1.5
+                  - paragraph [ref=e490]: Anonymized sample · Research completion fell below the verified baseline.
+                  - paragraph [ref=e491]: Feedback evidence · feedback:cluster:42
+                  - paragraph [ref=e492]: Recommendation · Hold canary promotion until the regression is resolved.
+                  - generic [ref=e493]:
+                    - button "Attach gate evidence" [ref=e495] [cursor=pointer]:
+                      - img [ref=e497]
+                      - text: Attach gate evidence
+                    - button "Request raw evidence" [ref=e502] [cursor=pointer]
+                - generic [ref=e503]:
+                  - heading "Enterprise release evidence" [level=6] [ref=e504]
+                  - generic [ref=e505]: REVIEW · checksum aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                  - button "Review PII" [ref=e507] [cursor=pointer]:
+                    - img [ref=e509]
+                    - text: Review PII
+```

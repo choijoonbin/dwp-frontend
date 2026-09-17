@@ -1,23 +1,23 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.14
+- 상태: Governed ledger v1.15
 - 기준일: 2026-09-17
 - 기준 Frontend Commit: `7e87ba2174b8f4de6ef69ff91f183191df61359b` + 본 공통 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `5b463f7e320ec585f453dad99fa0660d095496fc6327fe022b080554e147effc`
+- Ledger SHA-256: `8d7039d77ce0cc183c11003c9a621547d0bc07a8060daa49a545f3eb2839821c`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **225개 전부**를 분류한다. Detail Route, Query View,
+이 표는 현재 Runtime의 정적 Menu Route **227개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 225개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
-Surface`는 12개 업무 앱 173개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
-52개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
+전체 227개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+Surface`는 12개 업무 앱 177개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
+50개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
 Route Key가 필요할 때는 점을 `__`로 치환한 가역 Token만 사용하며 별도 수기 Token Mapping은
@@ -50,16 +50,21 @@ Workplace와 Calendar의 권위·상세·변경 명령은 분리한 채 하나�
 변경 단위에서 Mail의 검색·후속 조치·전달 상태·작업·템플릿·보존 정책·전달 감사 7개 화면도 정식
 메뉴로 등록했다. 이 20개는 모두 기존 Product Surface와 정확한 PAGE 권한 계약에 귀속된다.
 
+같은 최종 반영에서 DWAI·ON 모델 라우팅, Calendar 설정, Workplace 예외 복구, Mail 작성 자산을
+각 제품 Surface의 정식 메뉴로 등록했다. Tenant Admin의 홈 경험·구성·앱 설정 세 항목은 하나의
+`/admin/experience/home` 스튜디오로 통합하여 중복 Sidebar 두 개를 제거했다. 기존 세부 경로는
+호환 Redirect로 유지하므로 기능은 통합 스튜디오에서 계속 접근할 수 있다.
+
 | 목표 Plane          |    수량 | 의미                                     |
 | ------------------- | ------: | ---------------------------------------- |
-| `work`              |     103 | 개인·참여 업무 100 + 관계 기반 팀 업무 3 |
-| `management`        |      80 | 제품 운영 40 + 제품 설정 40              |
-| `tenant-governance` |      24 | 회사 공통 운영 8 + 회사 공통 설정 16     |
+| `work`              |     104 | 개인·참여 업무 101 + 관계 기반 팀 업무 3 |
+| `management`        |      83 | 제품 운영 41 + 제품 설정 42              |
+| `tenant-governance` |      22 | 회사 공통 운영 8 + 회사 공통 설정 14     |
 | `provider-control`  |      10 | Provider 운영 6 + Provider 설정·통제 4   |
 | `account`           |       8 | 개인 계정·선호                           |
-| **합계**            | **225** |                                          |
+| **합계**            | **227** |                                          |
 
-Task 기준 합계는 `work 108`, `team 3`, `operations 54`, `administration 60`이다. Account의
+Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 60`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -81,10 +86,10 @@ Task 기준 합계는 `work 108`, `team 3`, `operations 54`, `administration 60`
 | `W0.5`   |             12 | Communications·Services Technical Canary                           |
 | `W1a`    |             20 | Approvals 대표 Pilot                                               |
 | `W1b`    |             25 | HCM 대표 Pilot                                                     |
-| `W2`     |             35 | DWAI·ON, Notifications, Spaces                                     |
-| `W3`     |             81 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
-| `Keep`   |             52 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
-| **합계** |        **225** |                                                                    |
+| `W2`     |             36 | DWAI·ON, Notifications, Spaces                                     |
+| `W3`     |             84 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
+| `Keep`   |             50 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
+| **합계** |        **227** |                                                                    |
 
 ## 2. Workspace, Work와 Activity — 10
 
@@ -101,7 +106,7 @@ Task 기준 합계는 `work 108`, `team 3`, `operations 54`, `administration 60`
 | `activity.home`          | 홈 › 활동 홈                  | `/activity/home`          | W/W        | `activity.work` | P: `APP.ACTIVITY`      | Keep |
 | `activity.timeline`      | 활동 모니터링 › 활동 타임라인 | `/activity/timeline`      | W/W        | `activity.work` | P: `APP.ACTIVITY`      | Keep |
 
-## 3. DWAI·ON — 18 (기존 `W2`, 확장 `W3`)
+## 3. DWAI·ON — 19 (기존 `W2`, 확장 `W3`)
 
 Parent는 현재 `APP.ASK`다. Management Child가 Parent App Guard와 결합된 구조를 분리한다.
 
@@ -118,6 +123,7 @@ Parent는 현재 `APP.ASK`다. Management Child가 Parent App Guard와 결합된
 | `dwaion.personal-controls` | 확장 › 개인 AI 제어          | `/dwaion/personal-controls` | W/W        | `dwaion.work`       | I: `APP.DWAION_MEMORY:VIEW` 또는 `APP.DWAION_PRIVACY:VIEW`; P: `dwaion.work-access.v1` | Work Nav; W3 ACTIVE Menu; DRAFT PAGE |
 | `dwaion.artifacts`         | 확장 › 결과물 스튜디오       | `/dwaion/artifacts`         | W/W        | `dwaion.work`       | I: `APP.DWAION_ARTIFACTS:VIEW`; P: `dwaion.work-access.v1`                             | Work Nav; W3 ACTIVE Menu; DRAFT PAGE |
 | `dwaion.admin-overview`    | 운영 › 운영 현황             | `/dwaion/admin/overview`    | M/O        | `dwaion.management` | I: `ADMIN.DWAION_OPERATIONS:VIEW+`                                                     | Management Nav                       |
+| `dwaion.admin-models`      | 운영 › 모델 라우팅           | `/dwaion/admin/models`      | M/A        | `dwaion.management` | I: `ADMIN.DWAION_OPERATIONS:VIEW+`                                                     | Management Nav; Canonical PAGE       |
 | `dwaion.admin-agents`      | 운영 › 에이전트 및 게시 관리 | `/dwaion/admin/agents`      | M/A        | `dwaion.management` | I: `ADMIN.DWAION_AGENTS:VIEW+`                                                         | Management Nav                       |
 | `dwaion.admin-sources`     | 운영 › 데이터 소스와 커넥터  | `/dwaion/admin/sources`     | M/A        | `dwaion.management` | I: `ADMIN.DWAION_SOURCES:VIEW+`                                                        | Management Nav                       |
 | `dwaion.admin-actions`     | 운영 › 액션과 실행 권한      | `/dwaion/admin/actions`     | M/A        | `dwaion.management` | I: `ADMIN.DWAION_ACTIONS:VIEW+`                                                        | Management Nav                       |
@@ -173,7 +179,7 @@ Notifications는 Runtime 관점의 논리 Product로 고정한다. 물리 배포
 수 있으나 W2에서 `architecture/frontend-apps.json`에 Product Surface·Route Ownership을
 명시한다.
 
-## 7. Calendar — 10 (`W3`)
+## 7. Calendar — 11 (`W3`)
 
 Parent는 `APP.CALENDAR`다.
 
@@ -184,13 +190,14 @@ Parent는 `APP.CALENDAR`다.
 | `calendar.focus`                   | 계획 › 집중 계획           | `/calendar/focus`                   | W/W        | `calendar.work`       | P: App                    | Work Nav                     |
 | `calendar.invitations`             | 협업과 예약 › 초대 및 응답 | `/calendar/invitations`             | W/W        | `calendar.work`       | P: App                    | Work Nav                     |
 | `calendar.availability`            | 협업과 예약 › 가용 시간    | `/calendar/availability`            | W/W        | `calendar.work`       | P: App                    | Work Nav                     |
+| `calendar.settings`                | 유틸리티 › 일정 설정       | `/calendar/settings`                | W/W        | `calendar.work`       | P: App                    | Work Nav; DRAFT PAGE         |
 | `calendar.trash`                   | 협업과 예약 › 휴지통       | `/calendar/trash`                   | W/W        | `calendar.work`       | P: App                    | Work Nav                     |
 | `calendar.insights`                | 분석 › 시간 인사이트       | `/calendar/insights`                | W/W        | `calendar.work`       | P: App                    | Work Nav                     |
 | `calendar.admin-overview`          | 운영 관리 › 운영 현황      | `/calendar/admin/overview`          | M/O        | `calendar.management` | I: `ADMIN.CALENDAR:VIEW+` | Management Nav; Guard 정합화 |
 | `calendar.admin-company-calendars` | 운영 관리 › 회사 캘린더    | `/calendar/admin/company-calendars` | M/O        | `calendar.management` | I: `ADMIN.CALENDAR:VIEW+` | Management Nav; Guard 정합화 |
 | `calendar.admin-policies`          | 운영 관리 › 일정 정책      | `/calendar/admin/policies`          | M/A        | `calendar.management` | I: `ADMIN.CALENDAR:VIEW+` | Management Nav; Guard 정합화 |
 
-## 8. Workplace/Rooms — 27 (`W3`)
+## 8. Workplace/Rooms — 28 (`W3`)
 
 현재 Parent는 `APP.WORKPLACE` 하나이고 일부 항목은 `APP.ROOMS` 또는 `ADMIN.ROOMS`를 추가로
 요구한다. Surface Guard에서 두 App Boundary를 독립 판정한다.
@@ -208,6 +215,7 @@ Parent는 `APP.CALENDAR`다.
 | `rooms.admin-overview`             | 근무공간 관리 › 운영 현황        | `/workplace/admin/overview`             | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
 | `rooms.admin-safety`               | 근무공간 관리 › 안전 운영        | `/workplace/admin/safety`               | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
 | `rooms.admin-operations`           | 근무공간 관리 › 예약 운영·감사   | `/workplace/admin/operations`           | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
+| `rooms.admin-exceptions`           | 근무공간 관리 › 예외 복구        | `/workplace/admin/exceptions`           | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
 | `rooms.admin-devices`              | 근무공간 관리 › 장치 운영        | `/workplace/admin/devices`              | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
 | `rooms.admin-space-planning`       | 근무공간 관리 › 공간 계획        | `/workplace/admin/space-planning`       | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
 | `rooms.admin-assistant-governance` | 근무공간 관리 › 도우미 거버넌스  | `/workplace/admin/assistant-governance` | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
@@ -225,7 +233,7 @@ Parent는 `APP.CALENDAR`다.
 | `rooms.admin-room-operations`      | 회의실 관리 › 회의 승인 운영     | `/workplace/admin/meeting-operations`   | M/O        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
 | `rooms.admin-room-policy`          | 회의실 관리 › 회의 예약 정책     | `/workplace/admin/meeting-policy`       | M/A        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
 
-## 9. Mail — 23 (`W3`)
+## 9. Mail — 24 (`W3`)
 
 Parent는 `APP.MAIL`이다.
 
@@ -251,6 +259,7 @@ Parent는 `APP.MAIL`이다.
 | `mail.admin-overview`       | 메일 운영 › 운영 현황       | `/mail/admin/overview`       | M/O        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 | `mail.admin-connections`    | 메일 운영 › 메일 연결       | `/mail/admin/connections`    | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 | `mail.admin-shared-inboxes` | 메일 운영 › 공유함 운영     | `/mail/admin/shared-inboxes` | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
+| `mail.admin-writing-assets` | 메일 운영 › 작성 자산       | `/mail/admin/writing-assets` | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; DRAFT PAGE        |
 | `mail.admin-policies`       | 메일 운영 › 보안 및 AI 정책 | `/mail/admin/policies`       | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 | `mail.admin-retention`      | 메일 운영 › 보존 정책       | `/mail/admin/retention`      | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Canonical PAGE    |
 | `mail.admin-delivery-audit` | 메일 운영 › 전달 감사       | `/mail/admin/delivery-audit` | M/O        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Canonical PAGE    |
@@ -385,17 +394,16 @@ HCM Direct Route와 People Service의 광범위 GET Prefix 때문에 Personal·O
 Gateway Exact Capability Mapping을 선행한다. `hcm.organization-design`에는 전용 Granular
 Capability와 API Predicate를 추가한다.
 
-## 15. Tenant Admin Hub — 24 (`Keep`)
+## 15. Tenant Admin Hub — 22 (`Keep`)
 
 모든 행의 Plane은 `tenant-governance`, 목표 Shell은 `/admin`이다. 제품 운영 Route를 이 Hub로
-되돌리지 않는다. 24개 행의 `navigationContextId`는 모두 `tenant.admin`이다.
+되돌리지 않는다. 22개 행의 `navigationContextId`는 모두 `tenant.admin`이다. 홈 경험의 모드,
+구성 정책, 앱 Dock은 `/admin/experience/home` 내부 섹션으로 통합되며 Sidebar 메뉴 수에는 한 번만 센다.
 
 | Menu ID                       | 현재 그룹 › 메뉴                   | Path                                      | Plane/Task | 현재 조건 요약                                                                  | 결정                                                           |
 | ----------------------------- | ---------------------------------- | ----------------------------------------- | ---------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `admin.branding`              | 사용자 경험 › 브랜딩               | `/admin/experience/branding`              | TG/A       | Full Tenant Admin; S config                                                     | Keep                                                           |
-| `admin.home-experience`       | 사용자 경험 › 홈 화면 설정         | `/admin/experience/home-experience`       | TG/A       | Full Tenant Admin; S config                                                     | Keep                                                           |
-| `admin.home-composition`      | 사용자 경험 › 홈 구성 정책         | `/admin/experience/home-composition`      | TG/A       | Full Tenant Admin; S config                                                     | Keep                                                           |
-| `admin.home-apps`             | 사용자 경험 › 홈 앱 구성           | `/admin/experience/home-apps`             | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.home-experience`       | 사용자 경험 › 홈 경험 스튜디오     | `/admin/experience/home`                  | TG/A       | `ADMIN.HOME_EXPERIENCE:VIEW`; S config                                          | Keep; 세부 설정 통합                                           |
 | `admin.preference-exceptions` | 사용자 경험 › 설정 예외 검토       | `/admin/experience/preference-exceptions` | TG/O       | Full Tenant Admin                                                               | Keep                                                           |
 | `admin.localization`          | 사용자 경험 › 다국어 스튜디오      | `/admin/experience/localization`          | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
 | `admin.access`                | ID 및 접근 권한 › 접근 제어        | `/admin/identity/access`                  | TG/A       | `ADMIN.IDENTITY_DIRECTORY:VIEW`                                                 | Keep                                                           |
@@ -492,12 +500,12 @@ Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Su
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 225개이고 중복이 없다.
-2. Plane 합계는 `103 + 80 + 24 + 10 + 8 = 225`이다.
-3. Task 합계는 `108 + 3 + 54 + 60 = 225`이다.
-4. `management` 80개가 Work Sidebar에 나타나지 않는다.
-5. 12개 주요 업무 앱의 Work·Team 93개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 225개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 173개는 정확히 한
+1. 정적 Menu ID와 Path는 각각 227개이고 중복이 없다.
+2. Plane 합계는 `104 + 83 + 22 + 10 + 8 = 227`이다.
+3. Task 합계는 `109 + 3 + 55 + 60 = 227`이다.
+4. `management` 83개가 Work Sidebar에 나타나지 않는다.
+5. 12개 주요 업무 앱의 Work·Team 104개가 Product Management Sidebar에 나타나지 않는다.
+6. 전체 227개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 177개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

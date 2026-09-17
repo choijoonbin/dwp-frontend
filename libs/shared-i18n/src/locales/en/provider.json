@@ -206,6 +206,7 @@
   },
   "featureRollouts": {
     "contextLabel": "Feature rollout operating boundary",
+    "distributionBoundary": "This surface manages typed feature-configuration revisions and staged exposure only. Application binaries, packages, and database schemas cannot be distributed here because no authoritative distribution owner is connected.",
     "context": {
       "registry": "Configuration registry",
       "flagCount": "{{count}} flags",
@@ -1221,6 +1222,7 @@
     "adoption": {
       "title": "Entitlement adoption",
       "description": "The share of active tenants assigned to each product entitlement.",
+      "meteringBoundary": "These values show assigned product entitlements only. Measured usage, cost, and budget are unavailable until an authoritative metering source is connected; they are not estimated from assignments.",
       "progress": "{{name}} entitlement adoption"
     },
     "columns": {

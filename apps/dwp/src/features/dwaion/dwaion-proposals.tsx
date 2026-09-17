@@ -20,9 +20,11 @@ import {
   clearDwaionProposalInbox,
   createDwaionProposalHandoff,
   decideDwaionProposal,
+  getDwaionProposalHandoffDraft,
   getDwaionProposalAnalysisPreference,
   getDwaionProposalHandoff,
   getDwaionProposals,
+  saveDwaionProposalHandoffDraft,
   updateDwaionProposalAnalysisPreference,
   useToast,
   newDwaionCommandAttempt,
@@ -58,7 +60,11 @@ import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-
 import { DwaionProposalActionReview } from './dwaion-proposal-action-review';
 import { createDwaionProposalTargetState } from './dwaion-proposal-handoff-navigation';
 
-import type { DwaionCommandAttempt, DwaionProposalHandoff } from '@dwp-frontend/shared-utils';
+import type {
+  DwaionCommandAttempt,
+  DwaionProposalHandoff,
+  DwaionProposalHandoffDraft,
+} from '@dwp-frontend/shared-utils';
 
 const PAGE_SIZE = 50;
 const ANALYSIS_PREFERENCE_QUERY_KEY = ['dwaion', 'proposal-analysis-preference'] as const;
@@ -75,6 +81,9 @@ export function DwaionProposals() {
   );
   const governClear = useDwaionGovernedMutation('route.dwaion.work.proposal-clear.action');
   const governHandoff = useDwaionGovernedMutation('route.dwaion.work.proposal-handoff.action');
+  const governHandoffDraft = useDwaionGovernedMutation(
+    'route.dwaion.work.proposal-handoff-draft.action'
+  );
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedView = searchParams.get('view');
@@ -95,6 +104,7 @@ export function DwaionProposals() {
   const [proposalHandoff, setProposalHandoff] = useState<DwaionProposalHandoff | null>(null);
   const [handoffUiError, setHandoffUiError] = useState(false);
   const handoffAttempts = useRef(new Map<string, DwaionCommandAttempt>());
+  const handoffDraftAttempts = useRef(new Map<string, DwaionCommandAttempt>());
   const persistedHandoff = useQuery({
     queryKey: ['dwaion', 'proposal-handoff', selected?.proposalId],
     queryFn: ({ signal }) => getDwaionProposalHandoff(selected!.proposalId, signal),
@@ -106,6 +116,13 @@ export function DwaionProposals() {
         ? 2_500
         : false;
     },
+  });
+  const persistedHandoffDraft = useQuery<DwaionProposalHandoffDraft | null>({
+    queryKey: ['dwaion', 'proposal-handoff-draft', proposalHandoff?.handoffId],
+    queryFn: ({ signal }) => getDwaionProposalHandoffDraft(proposalHandoff!.handoffId, signal),
+    enabled:
+      Boolean(proposalHandoff?.handoffId) && proposalHandoff?.proposalId === selected?.proposalId,
+    retry: false,
   });
   const analysisPreference = useQuery({
     queryKey: ANALYSIS_PREFERENCE_QUERY_KEY,
@@ -186,6 +203,34 @@ export function DwaionProposals() {
       setHandoffUiError(true);
       toast.error(t('dwaionProposals.feedback.error'));
     },
+  });
+  const handoffDraftMutation = useMutation({
+    mutationFn: async ({
+      proposal,
+      handoff,
+    }: {
+      proposal: DwaionProposal;
+      handoff: DwaionProposalHandoff;
+    }) => {
+      const attemptKey = `${handoff.handoffId}:${handoff.version}`;
+      const attempt = handoffDraftAttempts.current.get(attemptKey) ?? newDwaionCommandAttempt();
+      handoffDraftAttempts.current.set(attemptKey, attempt);
+      const result = await governHandoffDraft((authority) =>
+        saveDwaionProposalHandoffDraft(
+          handoff.handoffId,
+          handoff.version,
+          proposal.content.actionInputs ?? {},
+          attempt.commandId,
+          authority
+        )
+      );
+      handoffDraftAttempts.current.delete(attemptKey);
+      return result;
+    },
+    onSuccess: (draft) => {
+      queryClient.setQueryData(['dwaion', 'proposal-handoff-draft', draft.handoffId], draft);
+    },
+    onError: () => toast.error(t('dwaionProposals.feedback.error')),
   });
   const decision = useMutation({
     mutationFn: ({
@@ -331,11 +376,18 @@ export function DwaionProposals() {
         <DwaionProposalActionReview
           proposal={selected}
           handoff={proposalHandoff}
+          draft={persistedHandoffDraft.data ?? null}
           idempotencyKey={attempt?.idempotencyKey ?? proposalHandoff.handoffId}
           locale={locale}
-          busy={handoffMutation.isPending}
+          busy={handoffMutation.isPending || handoffDraftMutation.isPending}
           error={handoffUiError}
+          draftLoading={persistedHandoffDraft.isLoading}
+          draftError={persistedHandoffDraft.isError || handoffDraftMutation.isError}
           onRetry={() => handoffMutation.mutate(selected)}
+          onRetryDraft={() => void persistedHandoffDraft.refetch()}
+          onSaveDraft={() =>
+            handoffDraftMutation.mutate({ proposal: selected, handoff: proposalHandoff })
+          }
           onBack={() => setProposalHandoff(null)}
           onOpenTarget={() => {
             void createDwaionProposalTargetState(selected, proposalHandoff)

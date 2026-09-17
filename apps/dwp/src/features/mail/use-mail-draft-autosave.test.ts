@@ -221,7 +221,14 @@ describe('mail draft autosave', () => {
 
   it('accepts partial draft content while retaining full send validation', () => {
     const subjectOnly = { toEmail: '', subject: 'Planning note', body: '' };
-    expect(mailDraftPayload(subjectOnly)).toEqual({ subject: 'Planning note' });
+    expect(mailDraftPayload(subjectOnly)).toEqual({
+      toEmail: undefined,
+      toName: undefined,
+      subject: 'Planning note',
+      body: undefined,
+      classification: 'INTERNAL',
+      externalRecipientConfirmed: false,
+    });
     expect(mailDraftHasContent(subjectOnly)).toBe(true);
     expect(mailDraftCanSend(subjectOnly)).toBe(false);
     expect(
@@ -231,5 +238,37 @@ describe('mail draft autosave', () => {
         body: 'Ready to send',
       })
     ).toBe(true);
+  });
+
+  it('preserves account and HTML options when subject and body are empty', async () => {
+    const fields: MailDraftFields = {
+      toEmail: '',
+      subject: '',
+      body: '',
+      composeOptions: {
+        accountId: 'account-2',
+        recipients: [],
+        bodyFormat: 'HTML',
+        attachmentIds: [],
+        scheduledAt: null,
+        timeZone: null,
+        templateId: null,
+        signatureId: null,
+      },
+    };
+    expect(mailDraftHasContent(fields)).toBe(true);
+    expect(mailDraftPayload(fields)).toMatchObject({ composeOptions: fields.composeOptions });
+
+    createMailDraft.mockResolvedValue(detail('draft-options-only', 1));
+    await act(async () => root.render(strictHarness({ fields })));
+    await act(async () => vi.advanceTimersByTimeAsync(1_750));
+
+    expect(createMailDraft).toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: undefined,
+        body: undefined,
+        composeOptions: fields.composeOptions,
+      })
+    );
   });
 });

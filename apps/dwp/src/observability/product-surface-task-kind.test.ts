@@ -22,6 +22,7 @@ const BACKEND_TASK_ALLOWLIST = {
   'hcm.operations': ['OPERATIONS'],
   'hcm.personal': ['WORK'],
   'hcm.team': ['REVIEW', 'WORK'],
+  'mail.management': ['ADMINISTRATION', 'OPERATIONS'],
   'mail.work': ['WORK'],
   'meetings.work': ['WORK'],
   'messaging.work': ['WORK'],
@@ -76,6 +77,21 @@ describe('governed mutation telemetry task classification', () => {
 
     expect(
       resolveProductSurfaceTaskKind({
+        productKey: 'mail',
+        surfaceKey: 'mail.management',
+        routeContractKey: 'route.admin.mail.connection-diagnostics.action',
+      })
+    ).toBe('OPERATIONS');
+    expect(
+      resolveProductSurfaceTaskKind({
+        productKey: 'mail',
+        surfaceKey: 'mail.management',
+        routeContractKey: 'route.admin.mail.connection-update.action',
+      })
+    ).toBe('ADMINISTRATION');
+
+    expect(
+      resolveProductSurfaceTaskKind({
         productKey: 'workplace',
         surfaceKey: 'workplace.management',
         routeContractKey: 'route.workplace.management.connector-replay-preview.action',
@@ -116,5 +132,12 @@ describe('governed mutation telemetry task classification', () => {
         routeContractKey: 'route.services.work.request-create.action',
       })
     ).toThrow(/Invalid/);
+    expect(() =>
+      resolveProductSurfaceTaskKind({
+        productKey: 'mail',
+        surfaceKey: 'mail.management',
+        routeContractKey: 'route.admin.mail.unknown.action',
+      })
+    ).toThrow(/Unclassified/);
   });
 });

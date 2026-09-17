@@ -67,6 +67,7 @@ export function DwaionArtifactStudio({
   onCreate,
   onSelect,
   onDraftChange,
+  onMetadataChange,
   onLoadVersion,
   onRunPreflight,
   onPublish,
@@ -107,6 +108,11 @@ export function DwaionArtifactStudio({
     artifactId: string,
     expectedRevision: number,
     content: { title: string; body: string }
+  ) => void;
+  onMetadataChange: (
+    artifactId: string,
+    expectedRevision: number,
+    metadata: Pick<DwaionArtifactDocument, 'tags' | 'projectKey' | 'reviewSlaDueAt'>
   ) => void;
   onLoadVersion: (versionNumber: number) => Promise<DwaionArtifactVersion>;
   onRunPreflight: (artifact: DwaionArtifactDocument) => void;
@@ -397,6 +403,7 @@ export function DwaionArtifactStudio({
                     publishBusy={publishBusy}
                     exportBusy={exportBusy}
                     onDraftChange={onDraftChange}
+                    onMetadataChange={onMetadataChange}
                     onOpenVersions={() => setVersionsOpen(true)}
                     onRunPreflight={onRunPreflight}
                     onPublish={onPublish}

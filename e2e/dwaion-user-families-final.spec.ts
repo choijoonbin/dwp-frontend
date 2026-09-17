@@ -2,25 +2,27 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page, type Route } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
   DWAION_PERSONAL_PERMISSIONS,
   mockDwaionPersonalIntelligence,
+  mockDwaionRoutineConflictRuntime,
+  mockDwaionRoutineRecoveryRuntime,
 } from './support/dwaion-personal-intelligence-fixtures';
+import {
+  ATTACHMENT_CONVERSATION_ID,
+  ATTACHMENT_FILES,
+  ATTACHMENT_IDS,
+  mockAttachmentRuntime,
+  mockResearchRuntime,
+  PLAN_ID,
+  RECEIPT_ID,
+  RUN_ID,
+} from './support/dwaion-user-families-runtime-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
-const OUTPUT = join(process.cwd(), 'output', 'dwaion-user-advancement-final');
-const PLAN_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1';
-const RUN_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2';
-const RECEIPT_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3';
-const DELIVERY_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa4';
-const ATTACHMENT_CONVERSATION_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbba0';
-const ATTACHMENT_IDS = [
-  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1',
-  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2',
-  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb3',
-] as const;
+const OUTPUT = join(process.cwd(), 'output', 'dwaion-frontend-final-pass-20260917');
 const browserRuntimeFailures = new WeakMap<Page, string[]>();
 
 test.beforeAll(() => mkdirSync(OUTPUT, { recursive: true }));
@@ -124,38 +126,60 @@ for (const width of [1440, 390] as const) {
 
     const deleteRequest = page.waitForRequest(
       (request) =>
-        request.method() === 'POST' &&
-        new URL(request.url()).pathname.endsWith(`/${ATTACHMENT_IDS[0]}/delete`)
+        request.method() === 'DELETE' &&
+        new URL(request.url()).pathname.endsWith(`/${ATTACHMENT_IDS[0]}`)
     );
     await page.getByRole('button', { name: '첨부 영구 삭제', exact: true }).first().click();
-    await deleteRequest;
+    const firstDelete = await deleteRequest;
+    await expect(page.getByText(/저장소 삭제 확인 대기 · 시도 1회/)).toBeVisible();
+    const retryDeleteRequest = page.waitForRequest(
+      (request) =>
+        request.method() === 'DELETE' &&
+        new URL(request.url()).pathname.endsWith(`/${ATTACHMENT_IDS[0]}`)
+    );
+    await page.getByRole('button', { name: '첨부 영구 삭제 다시 시도', exact: true }).click();
+    const retriedDelete = await retryDeleteRequest;
+    const firstDeleteBody = firstDelete.postDataJSON() as {
+      commandId: string;
+      expectedRevision: number;
+    };
+    expect(retriedDelete.postDataJSON()).toMatchObject(firstDeleteBody);
+    expect(firstDeleteBody.expectedRevision).toBe(3);
     await expect(page.getByText('infra-architecture-v3.4.pdf', { exact: true })).toHaveCount(0);
   });
 
   test(`U02 deep research result, receipts, and capability recovery are responsive at ${width}px`, async ({
     page,
   }) => {
-    await prepare(page, width);
-    await mockResearchRuntime(page);
+    await prepare(page, width, false, 'ko');
+    await mockResearchRuntime(page, 'ko');
     await page.goto(`/dwaion/new?mode=research&researchPlan=${PLAN_ID}&researchRun=${RUN_ID}`);
     await expect(page.getByTestId('dwaion-deep-research-run')).toBeVisible();
     await expect(page.getByText(RECEIPT_ID, { exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Copy receipt ID' }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: '영수증 ID 복사' }).first()).toBeVisible();
     const receiptBoundary = page.getByTestId('dwaion-receipt-contract-boundary');
     await expect(receiptBoundary).toBeVisible();
-    await expect(receiptBoundary).toContainText('Unavailable');
-    await page.getByRole('button', { name: 'View report full screen' }).click();
-    const reportDialog = page.getByRole('dialog', { name: 'Verified report' });
+    await expect(receiptBoundary).toContainText('미제공');
+    await page.getByRole('button', { name: '보고서 전체 화면' }).click();
+    const reportDialog = page.getByRole('dialog', { name: '검증 완료 보고서' });
     await expect(reportDialog).toBeVisible();
-    await expect(reportDialog.getByRole('table', { name: 'Research report data' })).toBeVisible();
-    await expect(reportDialog).toContainText('Governed recommendation');
-    await expect(reportDialog).toContainText('Decision guardrails');
+    await expect(reportDialog.getByRole('table', { name: '리서치 보고서 데이터' })).toBeVisible();
+    await expect(reportDialog).toContainText('거버넌스 기반 권고안');
+    await expect(reportDialog).toContainText('의사결정 가드레일');
     await captureViewport(page, `U02-deep-research-report-${width}.png`);
-    await reportDialog.getByRole('button', { name: 'Close full screen' }).click();
+    await reportDialog.getByRole('button', { name: '전체 화면 닫기' }).click();
     await verifySurface(page, '[data-testid="dwaion-deep-research-run"]');
     await captureViewport(page, `U02-deep-research-viewport-${width}.png`);
     await capture(page, `U02-deep-research-${width}.png`);
-    await exerciseResearchDownloads(page);
+    await expect(page.getByRole('button', { name: '산출물로 저장' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: '파일 내보내기' })).toBeEnabled();
+    for (const label of ['AI 제안 생성', '업무 앱으로 인계', '팀에 공유', '정기 루틴 등록']) {
+      await expect(page.getByRole('button', { name: label })).toBeDisabled();
+    }
+    await expect(
+      page.getByText('관리자에게 검증형 리서치 공급자 설정을 요청해 주세요.').first()
+    ).toBeVisible();
+    await exerciseResearchDownloads(page, 'ko');
   });
 
   for (const surface of [
@@ -204,11 +228,15 @@ for (const width of [1440, 390] as const) {
         await expect(runWorkbench).toContainText('사용 토큰');
         await expect(runWorkbench).toContainText('실행 지연');
         await expect(runWorkbench).toContainText('멱등성 증거');
+        await expect(runWorkbench).toContainText('자동 격리 보증 증거');
+        await expect(runWorkbench).toContainText('구성됨');
         await expect(
           page.getByRole('button', { name: '로그 원본 다운로드 (JSONL)' })
         ).toBeVisible();
+        await expect(
+          page.getByRole('button', { name: '격리 건 제외 후 계속 (Skip & Continue)' })
+        ).toHaveCount(0);
         for (const label of [
-          '격리 건 제외 후 계속 (Skip & Continue)',
           'OAuth 재인증 토큰 갱신',
           '임시 한도 증액 요청',
           '담당자에게 긴급 전달 (Escalate)',
@@ -280,19 +308,7 @@ for (const width of [1440, 390] as const) {
 for (const width of [1440, 390] as const) {
   test(`U03 revision conflict recovery is explicit at ${width}px`, async ({ page }) => {
     await prepare(page, width, true, 'ko');
-    await page.route(/\/api\/agent\/v1\/routines\/[0-9a-f-]+$/u, async (route) => {
-      if (route.request().method() !== 'PUT') return route.fallback();
-      return route.fulfill({
-        status: 409,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          status: 'CONFLICT',
-          success: false,
-          message: 'REVISION_CONFLICT',
-          data: null,
-        }),
-      });
-    });
+    const conflictRuntime = await mockDwaionRoutineConflictRuntime(page, { locale: 'ko' });
     await page.goto('/dwaion/routines');
     await expect(
       page.getByRole('heading', {
@@ -320,11 +336,15 @@ for (const width of [1440, 390] as const) {
       name: '활성화 파이프라인 중단: 원격 리비전 충돌',
       level: 2,
     });
+    const workbench = page.getByTestId('dwaion-routine-conflict-workbench');
     await expect(conflictHeading).toBeVisible();
-    await expect(page.getByRole('button', { name: '서버 최신본 적용' })).toBeVisible();
-    await expect(page.getByRole('button', { name: '스냅샷 롤백 보기' })).toBeVisible();
-    await expect(page.getByRole('button', { name: '새 버전으로 분기 저장' })).toBeDisabled();
-    await expect(page.getByRole('button', { name: '필드별 선택적 병합' })).toBeDisabled();
+    await expect(workbench.getByText('아침 우선순위 검토 v8', { exact: true })).toBeVisible();
+    await expect(
+      workbench.getByText('아침 우선순위 검토 · 서버 정본', { exact: true }).first()
+    ).toBeVisible();
+    await expect(page.getByRole('radio', { name: /새 버전으로 분기 저장/ })).toBeEnabled();
+    await expect(page.getByRole('radio', { name: /서버 최신본 적용/ })).toBeEnabled();
+    await expect(page.getByRole('radio', { name: /필드별 선택적 병합/ })).toBeEnabled();
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const main = document.getElementById('dwp-main-content');
@@ -334,8 +354,168 @@ for (const width of [1440, 390] as const) {
     await page.mouse.move(0, 0);
     await verifySurface(page, '#dwp-main-content');
     await captureViewport(page, `U03-activation-conflict-${width}.png`);
+
+    if (width === 390) {
+      await page.getByRole('radio', { name: /필드별 선택적 병합/ }).click();
+      const identityGroup = page.locator('fieldset').filter({ hasText: '이름·목적' });
+      await identityGroup.getByRole('radio', { name: '로컬 초안 사용' }).click();
+      const triggerGroup = page.locator('fieldset').filter({ hasText: '트리거·실행 시점' });
+      await triggerGroup.getByRole('radio', { name: '서버 최신본 사용' }).click();
+    }
+    await page.getByRole('button', { name: '선택한 전략으로 충돌 해결 및 저장' }).click();
+    const receipt = page.getByTestId('dwaion-routine-conflict-receipt');
+    await expect(receipt).toBeVisible();
+    await expect(receipt).toContainText(width === 390 ? '필드별 선택 병합' : '새 루틴 분기 생성');
+    await expect(receipt).toContainText('명령 ID');
+    await expect(receipt).toContainText('무결성 지문');
+    expect(
+      conflictRuntime.writes.some((write) =>
+        width === 390
+          ? write.method === 'PUT' && write.expectedRevision === 8
+          : write.method === 'POST' && write.path === '/api/agent/v1/routines'
+      )
+    ).toBe(true);
+    await verifySurface(page, '#dwp-main-content');
+    await capture(page, `U03-conflict-receipt-${width}.png`);
   });
 }
+
+test('U03 applies the latest server version with keyboard controls and English copy', async ({
+  page,
+}) => {
+  await prepare(page, 1440, true, 'en');
+  const conflictRuntime = await mockDwaionRoutineConflictRuntime(page, { locale: 'en' });
+  await page.goto('/dwaion/routines');
+  await page.getByRole('button', { name: 'Edit settings' }).click();
+  const editor = page.getByRole('dialog', { name: 'My AI routine editor' });
+  await editor.getByLabel('Routine name').fill('Morning priority review v8');
+  await editor.getByRole('button', { name: 'Save draft' }).click();
+  const workbench = page.getByTestId('dwaion-routine-conflict-workbench');
+  await expect(workbench).toContainText('Conflict recovery workbench');
+  const serverStrategy = page.getByRole('radio', { name: /Apply latest server version/ });
+  await serverStrategy.focus();
+  await page.keyboard.press('Space');
+  await expect(serverStrategy).toBeChecked();
+  const resolve = page.getByRole('button', {
+    name: 'Resolve and save with selected strategy',
+  });
+  await resolve.focus();
+  await page.keyboard.press('Enter');
+  const receipt = page.getByTestId('dwaion-routine-conflict-receipt');
+  await expect(receipt).toContainText('Apply latest server version');
+  expect(conflictRuntime.writes).toHaveLength(1);
+  await verifySurface(page, '#dwp-main-content');
+});
+
+test('U03 reports a partial fork failure with the current server revision', async ({ page }) => {
+  await prepare(page, 390, true, 'en');
+  await mockDwaionRoutineConflictRuntime(page, { locale: 'en', failConsentAttempt: 2 });
+  await page.goto('/dwaion/routines');
+  await page
+    .getByRole('button', { name: /Morning priority review/ })
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Edit settings' }).click();
+  const editor = page.getByRole('dialog', { name: 'My AI routine editor' });
+  await editor.getByLabel('Routine name').fill('Morning priority review partial fork');
+  await editor.getByRole('button', { name: 'Save draft' }).click();
+  await page.getByRole('button', { name: 'Close detail' }).click();
+  await page.getByRole('button', { name: 'Resolve and save with selected strategy' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Conflict recovery could not be completed.' })
+  ).toBeVisible();
+  await expect(
+    page.getByText('Some commands were applied, so the server state was reloaded.')
+  ).toBeVisible();
+  await expect(page.getByText(/Revision 2/)).toBeVisible();
+  await expect(page.getByTestId('dwaion-routine-conflict-receipt')).toHaveCount(0);
+  await verifySurface(page, '#dwp-main-content');
+});
+
+for (const width of [1440, 390] as const) {
+  test(`U03 skips quarantined items with a server-bound receipt at ${width}px`, async ({
+    page,
+  }) => {
+    await prepare(page, width, true, 'ko');
+    const recovery = await mockDwaionRoutineRecoveryRuntime(page, { locale: 'ko' });
+    await page.goto('/dwaion/routines');
+    if (width === 390) {
+      await page
+        .getByRole('button', { name: /아침 우선순위 검토/ })
+        .first()
+        .click();
+    }
+    const workbench = page.getByTestId('dwaion-routine-run-workbench');
+    await expect(workbench).toContainText('PARTIAL');
+    await expect(workbench).toContainText('자동 격리 보증 증거');
+    await expect(workbench).toContainText('PROVIDER_ITEM_QUARANTINED');
+    await expect(
+      workbench.getByRole('button', { name: '격리 건 제외 후 계속 (Skip & Continue)' })
+    ).toBeEnabled();
+    await expect(
+      workbench.getByRole('button', { name: '즉시 안전 취소 및 롤백 (Safe Cancel)' })
+    ).toBeEnabled();
+    await workbench.scrollIntoViewIfNeeded();
+    await verifySurface(page, '#dwp-main-content');
+    await captureViewport(page, `U03-run-recovery-${width}.png`);
+
+    await workbench.getByRole('button', { name: '격리 건 제외 후 계속 (Skip & Continue)' }).click();
+    const dialog = page.getByRole('dialog', {
+      name: '격리 건 제외 후 계속 (Skip & Continue)',
+    });
+    await expect(dialog).toContainText(
+      '격리된 실패 항목은 보존하고 검증을 통과한 결과만 계속 처리합니다.'
+    );
+    await dialog.getByRole('button', { name: '격리 건 제외 후 계속 (Skip & Continue)' }).click();
+
+    const receipt = page.getByTestId('dwaion-routine-recovery-receipt');
+    await expect(receipt).toBeVisible({ timeout: 8_000 });
+    await expect(receipt).toContainText('SKIP_QUARANTINED_AND_CONTINUE');
+    await expect(receipt).toContainText('복구 명령 ID');
+    expect(recovery.commands).toHaveLength(1);
+    expect(recovery.commands[0]).toMatchObject({
+      action: 'SKIP_QUARANTINED_AND_CONTINUE',
+      expectedRevision: 5,
+    });
+    await verifySurface(page, '#dwp-main-content');
+    await captureViewport(page, `U03-run-recovery-completed-${width}.png`);
+  });
+}
+
+test('U03 preserves the recovery command identity after a provider-evidence 409', async ({
+  page,
+}) => {
+  await prepare(page, 390, true, 'en');
+  const recovery = await mockDwaionRoutineRecoveryRuntime(page, {
+    locale: 'en',
+    rejectFirstCommand: true,
+  });
+  await page.goto('/dwaion/routines');
+  await page
+    .getByRole('button', { name: /Morning priority review/ })
+    .first()
+    .click();
+  const skip = page.getByRole('button', { name: 'Skip quarantined items and continue' });
+  await skip.focus();
+  await page.keyboard.press('Enter');
+  let dialog = page.getByRole('dialog', { name: 'Skip quarantined items and continue' });
+  await dialog.getByRole('button', { name: 'Skip quarantined items and continue' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page
+      .getByText('Provider quarantine evidence changed, so the recovery command was rejected.')
+      .first()
+  ).toBeVisible();
+  await expect(skip).toBeEnabled();
+
+  await skip.click();
+  dialog = page.getByRole('dialog', { name: 'Skip quarantined items and continue' });
+  await dialog.getByRole('button', { name: 'Skip quarantined items and continue' }).click();
+  await expect(page.getByTestId('dwaion-routine-recovery-receipt')).toBeVisible({ timeout: 8_000 });
+  expect(recovery.commands).toHaveLength(2);
+  expect(recovery.commands[0]?.commandId).toBe(recovery.commands[1]?.commandId);
+  await verifySurface(page, '#dwp-main-content');
+});
 
 for (const view of [
   { name: '1280', width: 1280, height: 900 },
@@ -360,6 +540,65 @@ for (const view of [
     await capture(page, `representative-U04-${view.name}.png`);
   });
 }
+
+test('U01 governed detach and signed audit report return server receipts', async ({ page }) => {
+  await prepare(page, 1440, false, 'ko');
+  const probe = await mockAttachmentRuntime(page, { advancedActions: true });
+  await page.goto('/dwaion/new');
+  await page.locator('input[type="file"]').setInputFiles({
+    name: ATTACHMENT_FILES[0].name,
+    mimeType: ATTACHMENT_FILES[0].mediaType,
+    buffer: Buffer.from('DWAI.ON governed architecture evidence'),
+  });
+  await expect(page.getByText(ATTACHMENT_FILES[0].name, { exact: true })).toBeVisible();
+  await page
+    .getByRole('textbox', { name: '업무 질문', exact: true })
+    .fill('첨부 근거를 검증해 주세요.');
+  await page.getByRole('button', { name: '질문 보내기', exact: true }).click();
+  await expect(page).toHaveURL(`/dwaion/conversations/${ATTACHMENT_CONVERSATION_ID}`);
+
+  const auditButton = page.getByRole('button', {
+    name: '서명 보안 검증 리포트 발급',
+    exact: true,
+  });
+  await expect(auditButton).toBeEnabled();
+  await auditButton.click();
+  await expect(page.getByText(/서명 보고서 영수증/u)).toBeVisible();
+  await expect.poll(() => probe.auditRequests).toHaveLength(1);
+  expect(probe.auditRequests[0]).toMatchObject({
+    attachments: [{ attachmentId: ATTACHMENT_IDS[0], expectedRevision: 3 }],
+  });
+
+  const detachButton = page.getByRole('button', { name: '전체 첨부 해제', exact: true });
+  await expect(detachButton).toBeEnabled();
+  await detachButton.click();
+  await expect(page.getByText(/첨부 해제 영수증/u)).toBeVisible();
+  await expect.poll(() => probe.detachRequests).toHaveLength(1);
+  expect(probe.detachRequests[0]).toMatchObject({
+    attachments: [{ attachmentId: ATTACHMENT_IDS[0], expectedRevision: 3 }],
+  });
+});
+
+test('U02 governed recovery displays the immutable fork receipt', async ({ page }) => {
+  await prepare(page, 1440, false, 'en');
+  const probe = await mockResearchRuntime(page, 'en', { recoveryAvailable: true });
+  await page.goto(`/dwaion/new?mode=research&researchPlan=${PLAN_ID}&researchRun=${RUN_ID}`);
+
+  const button = page.getByRole('button', { name: 'Save as a new fork', exact: true });
+  await expect(button).toBeEnabled();
+  await button.click();
+  await expect(
+    page
+      .getByRole('status')
+      .filter({ hasText: 'SAVE_AS_FORK · 71717171-7171-4171-8171-717171717171' })
+  ).toBeVisible();
+  await expect.poll(() => probe.recoveryRequests).toHaveLength(1);
+  expect(probe.recoveryRequests[0]).toMatchObject({
+    expectedVersion: 5,
+    action: 'SAVE_AS_FORK',
+    localDefinition: null,
+  });
+});
 
 async function prepare(page: Page, width: number, personal = false, locale: 'en' | 'ko' = 'en') {
   await page.setViewportSize({ width, height: width >= 900 ? 1000 : 844 });
@@ -400,6 +639,9 @@ async function prepareSession(page: Page, personal: boolean, locale: 'en' | 'ko'
   });
   await page.route('**/api/platform/v1/workspace/work-items**', (route) =>
     route.fulfill({ json: { success: true, data: [] } })
+  );
+  await page.route('**/api/platform/v1/observability/web-vitals', (route) =>
+    route.fulfill({ status: 202, json: { success: true } })
   );
   if (personal) await mockDwaionPersonalIntelligence(page, { locale });
 }
@@ -469,11 +711,11 @@ async function exerciseMemoryScopeAndExpiry(page: Page, width: number) {
   expect((await expiryRequest).postDataJSON()).toMatchObject({ expiresAt: null });
 }
 
-async function exerciseResearchDownloads(page: Page) {
+async function exerciseResearchDownloads(page: Page, locale: 'en' | 'ko' = 'en') {
   for (const [label, kind] of [
-    ['Extract raw dataset (JSON)', 'raw'],
-    ['Download receipt', 'receipt'],
-    ['Open execution audit ledger', 'audit'],
+    [locale === 'ko' ? '원시 데이터셋 추출 (JSON)' : 'Extract raw dataset (JSON)', 'raw'],
+    [locale === 'ko' ? '영수증 다운로드' : 'Download receipt', 'receipt'],
+    [locale === 'ko' ? '실행 원장 감사기록' : 'Open execution audit ledger', 'audit'],
   ] as const) {
     const request = page.waitForRequest((candidate) =>
       new URL(candidate.url()).pathname.endsWith(`/runs/${RUN_ID}/downloads/${kind}`)
@@ -481,369 +723,4 @@ async function exerciseResearchDownloads(page: Page) {
     await page.getByRole('button', { name: label }).click();
     await request;
   }
-}
-
-async function mockAttachmentRuntime(page: Page) {
-  const digestByAttachmentId = new Map<string, string>();
-  await page.route('**/api/agent/v1/attachments**', async (route) => {
-    const request = route.request();
-    const path = new URL(request.url()).pathname;
-    if (request.method() === 'POST' && path.endsWith('/attachments')) {
-      const body = request.postDataJSON() as { sourceSha256: string; fileName: string };
-      const value = attachment(body.fileName, body.sourceSha256);
-      digestByAttachmentId.set(value.attachmentId, body.sourceSha256);
-      return success(route, value);
-    }
-    if (request.method() === 'GET' && path.endsWith('/evidence')) {
-      const attachmentId = path.split('/').at(-2) ?? '';
-      const index = ATTACHMENT_IDS.indexOf(attachmentId as (typeof ATTACHMENT_IDS)[number]);
-      if (index < 0)
-        return route.fulfill({ status: 404, json: { detail: 'Attachment evidence not found.' } });
-      const file = ATTACHMENT_FILES[index];
-      const value = attachment(
-        file.name,
-        digestByAttachmentId.get(attachmentId) ?? String(index + 1).repeat(64)
-      );
-      return success(route, {
-        attachmentId: value.attachmentId,
-        sourceSha256: value.sourceSha256,
-        stages: value.stages,
-        citations: value.citations,
-        inspectionLog: [
-          {
-            eventId: ATTACHMENT_EVENT_IDS[index],
-            eventType: 'ATTACHMENT_SCAN_COMPLETED',
-            previousState: 'SCANNING',
-            currentState: 'READY',
-            revision: 3,
-            safeErrorCode: null,
-            occurredAt: '2026-09-17T02:58:00Z',
-          },
-        ],
-        maskingHistory: [],
-        ocrEvidence: value.citations,
-      });
-    }
-    if (request.method() === 'POST' && path.endsWith('/delete')) {
-      const attachmentId = path.split('/').at(-2) ?? '';
-      const index = ATTACHMENT_IDS.indexOf(attachmentId as (typeof ATTACHMENT_IDS)[number]);
-      if (index < 0)
-        return route.fulfill({ status: 404, json: { detail: 'Attachment not found.' } });
-      const file = ATTACHMENT_FILES[index];
-      return success(route, {
-        ...attachment(
-          file.name,
-          digestByAttachmentId.get(attachmentId) ?? String(index + 1).repeat(64)
-        ),
-        revision: 4,
-        state: 'DELETED',
-        updatedAt: '2026-09-17T03:00:00Z',
-        deletedAt: '2026-09-17T03:00:00Z',
-      });
-    }
-    return route.fulfill({ status: 501, json: { detail: 'Attachment command is not mocked.' } });
-  });
-
-  await page.route('**/api/agent/v1/ask/stream', (route) => {
-    const request = route.request().postDataJSON() as { requestId?: string };
-    const response = attachmentAnswer(request.requestId ?? 'request-attachment-review');
-    return route.fulfill({
-      status: 200,
-      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-      body: `event: result\ndata: ${JSON.stringify({ data: response })}\n\n`,
-    });
-  });
-}
-
-const ATTACHMENT_FILES = [
-  {
-    name: 'infra-architecture-v3.4.pdf',
-    mediaType: 'application/pdf',
-    sizeBytes: 14_200_000,
-    locator: 'page:4',
-    label: '프라이빗 멀티 존 아키텍처 근거',
-  },
-  {
-    name: 'q3-budget-simulation-draft.xlsx',
-    mediaType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    sizeBytes: 4_800_000,
-    locator: 'sheet:Q3 Summary!C12:F24',
-    label: '3분기 예산 대조 근거',
-  },
-  {
-    name: 'cluster-topology-diagram.png',
-    mediaType: 'image/png',
-    sizeBytes: 8_100_000,
-    locator: 'image:block-12',
-    label: '게이트웨이 토폴로지 근거',
-  },
-] as const;
-
-const ATTACHMENT_EVENT_IDS = [
-  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbc1',
-  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbc2',
-  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbc3',
-] as const;
-
-const ATTACHMENT_ALLOWED_MEDIA_TYPES = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'text/csv',
-  'image/png',
-  'image/jpeg',
-  'text/plain',
-] as const;
-
-function attachment(fileName: string, sourceSha256: string) {
-  const index = Math.max(
-    0,
-    ATTACHMENT_FILES.findIndex((file) => file.name === fileName)
-  );
-  const file = ATTACHMENT_FILES[index];
-  const capability = {
-    available: true,
-    configured: true,
-    reasonCode: null,
-    recoveryHint: null,
-  };
-  const unavailable = {
-    available: false,
-    configured: false,
-    reasonCode: 'PROVIDER_NOT_CONFIGURED',
-    recoveryHint: '관리자가 해당 보안 증거 제공자를 구성하고 검증해야 합니다.',
-  };
-  const observedAt = '2026-09-17T02:58:00Z';
-  return {
-    attachmentId: ATTACHMENT_IDS[index],
-    conversationId: null,
-    fileName,
-    mediaType: file.mediaType,
-    sizeBytes: file.sizeBytes,
-    sourceSha256,
-    revision: 3,
-    state: 'READY',
-    stages: [
-      ['UPLOAD', 'PASSED'],
-      ['AV', 'PASSED'],
-      ['DLP', 'PASSED'],
-      ['PARSER', 'PASSED'],
-      ['OCR', 'PASSED'],
-      ['INDEX', 'PASSED'],
-    ].map(([key, state]) => ({
-      key,
-      state,
-      providerCode: `${key}_OK`,
-      observedAt,
-      safeErrorCode: null,
-      recoveryHint: null,
-    })),
-    citations: [
-      {
-        citationId: `attachment-${index + 1}-evidence-1`,
-        locator: file.locator,
-        label: file.label,
-        contentSha256: String(index + 4).repeat(64),
-      },
-    ],
-    retentionExpiresAt: '2026-09-18T03:00:00Z',
-    capabilities: {
-      upload: capability,
-      antivirus: capability,
-      dlp: capability,
-      parser: capability,
-      ocr: capability,
-      index: capability,
-      deletion: capability,
-      detachAll: unavailable,
-      inspectionLog: capability,
-      maskingHistory: unavailable,
-      ocrViewer: capability,
-      signedAuditReport: unavailable,
-      maximumFileBytes: 104_857_600,
-      allowedMediaTypes: ATTACHMENT_ALLOWED_MEDIA_TYPES,
-    },
-    uploadTicket: null,
-    createdAt: '2026-09-17T02:57:00Z',
-    updatedAt: observedAt,
-    deletedAt: null,
-  };
-}
-
-function attachmentAnswer(requestId: string) {
-  return {
-    runId: 'run-attachment-review-20260917',
-    auditId: 'AUD-ATTACHMENT-REVIEW-20260917',
-    requestId,
-    correlationId: 'correlation-attachment-review-20260917',
-    conversationId: ATTACHMENT_CONVERSATION_ID,
-    userMessageId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbd1',
-    assistantMessageId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbd2',
-    state: 'COMPLETED',
-    answer:
-      '1. 인프라 및 보안 검토\n아키텍처는 프라이빗 멀티 존 엔드포인트를 사용합니다. 토폴로지 근거에서는 게이트웨이 인그레스가 통제된 네트워크 경계 안에 있음을 확인했습니다.\n\n2. 예산 대조 분석\n검증된 워크북은 14.8% 증가를 나타내며 인용된 셀 범위가 검토 근거입니다.\n\n3. 근거 경계\n이 답변은 필수 보안 검사와 색인을 완료한 첨부 인용 3건만 사용했습니다.',
-    confidence: 'HIGH',
-    citations: ATTACHMENT_FILES.map((file, index) => ({
-      sourceId: `src-0${index + 1}`,
-      sourceType: 'ATTACHMENT',
-      title: `${file.name}: ${file.label}`,
-      sourceSystem: 'DWAI_ON_ATTACHMENT',
-      route: null,
-      occurredAt: '2026-09-17T02:58:00Z',
-      excerpt: null,
-    })),
-    sourceCount: 3,
-    policy: {
-      outcome: 'ALLOW',
-      riskTier: 'L1',
-      code: 'READ_ONLY_GROUNDED_ANSWER',
-      explanation: '검증된 세션 범위에서 읽기 전용 첨부 근거만 사용했습니다.',
-      modelAllowed: true,
-      mutationAllowed: false,
-    },
-    modelRoute: {
-      state: 'COMPLETED',
-      provider: 'OPENAI',
-      model: 'gpt-test-2026-09-01',
-      inputTokens: 1_112,
-      outputTokens: 186,
-      totalTokens: 1_298,
-      latencyMs: 1_840,
-    },
-    agentRegistry: {
-      entryKey: 'DWP_ASSISTANT',
-      revision: 4,
-      artifactVersion: 'ask-runtime-v4',
-      riskTier: 'MEDIUM',
-      resolution: 'ACTIVE',
-    },
-    statusCode: 'ANSWER_GROUNDED',
-    completedAt: '2026-09-17T02:59:00Z',
-  };
-}
-
-async function mockResearchRuntime(page: Page) {
-  const providerUnavailable = {
-    available: false,
-    configured: false,
-    reasonCode: 'PROVIDER_NOT_CONFIGURED',
-    recoveryHint: 'Ask an administrator to configure this governed research operation.',
-  };
-  const available = {
-    available: true,
-    configured: true,
-    reasonCode: null,
-    recoveryHint: null,
-  };
-  await page.route('**/api/agent/v1/research/**', (route) => {
-    const path = new URL(route.request().url()).pathname;
-    if (path.endsWith('/research/capabilities')) {
-      return success(route, {
-        rawExport: available,
-        pdfExport: providerUnavailable,
-        receiptDownload: available,
-        auditDownload: available,
-        fork: providerUnavailable,
-        merge: providerUnavailable,
-        keepLocal: providerUnavailable,
-        sensitivityRecalculation: providerUnavailable,
-        cacheFallback: providerUnavailable,
-      });
-    }
-    if (path.endsWith(`/plans/${PLAN_ID}`)) return success(route, researchPlan());
-    if (path.endsWith(`/runs/${RUN_ID}/downloads/raw`)) {
-      return route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify(researchRun().result),
-      });
-    }
-    if (path.endsWith(`/runs/${RUN_ID}/downloads/receipt`)) {
-      return route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify({ receiptId: RECEIPT_ID, state: 'COMPLETED' }),
-      });
-    }
-    if (path.endsWith(`/runs/${RUN_ID}/downloads/audit`)) {
-      return route.fulfill({
-        contentType: 'application/x-ndjson',
-        body: `${JSON.stringify({ eventType: 'DOWNLOAD', runId: RUN_ID })}\n`,
-      });
-    }
-    if (path.endsWith(`/runs/${RUN_ID}/deliveries`)) {
-      return success(route, [
-        {
-          deliveryId: DELIVERY_ID,
-          runId: RUN_ID,
-          deliveryType: 'ARTIFACT',
-          state: 'COMPLETED',
-          receiptId: RECEIPT_ID,
-          createdAt: '2026-09-17T02:59:00Z',
-          updatedAt: '2026-09-17T02:59:30Z',
-          completedAt: '2026-09-17T02:59:30Z',
-        },
-      ]);
-    }
-    if (path.endsWith(`/runs/${RUN_ID}`)) return success(route, researchRun());
-    return route.fulfill({ status: 501, json: { detail: 'Research command is not mocked.' } });
-  });
-}
-
-function researchPlan() {
-  return {
-    planId: PLAN_ID,
-    state: 'READY',
-    revision: 2,
-    definition: {
-      goal: 'Compare governed infrastructure options with verified evidence.',
-      question: 'Which option offers the best verified value within policy?',
-      successCriteria: ['Verify at least three governed sources'],
-      deliverableTypes: ['REPORT', 'COMPARISON'],
-      sourcePolicies: [{ sourceKey: 'WORK_ITEM', allowed: true, scope: 'Current user work scope' }],
-      requireAllAllowedSources: true,
-      budget: { maximumMinutes: 45, maximumSources: 30, maximumTokens: 50_000 },
-    },
-    createdAt: '2026-09-17T02:45:00Z',
-    updatedAt: '2026-09-17T02:46:00Z',
-  };
-}
-
-function researchRun() {
-  return {
-    runId: RUN_ID,
-    planId: PLAN_ID,
-    planRevision: 2,
-    state: 'COMPLETED',
-    version: 5,
-    progress: {
-      completedSteps: 4,
-      totalSteps: 4,
-      discoveredSources: 4,
-      verifiedCitations: 3,
-      failedSources: [],
-      recoveryHint: null,
-    },
-    result: {
-      reportMarkdown:
-        '## Governed recommendation\n\n**Option B** provides the best verified value while keeping every source inside the approved work scope.\n\n### Verified comparison\n\n| Option | Monthly cost | Availability | Policy result |\n| --- | ---: | ---: | --- |\n| Option A | $128,400 | 99.95% | Review |\n| Option B | $116,200 | 99.99% | Approved |\n| Option C | $109,800 | 99.90% | Blocked |\n\n### Decision reasons\n\n- Option B is supported by three verified citations.\n- The estimate stays below the approved budget ceiling.\n- No unapproved external source or write action was used.\n\n### Decision guardrails\n\n> Revalidate source permission and scenario sensitivity before any production handoff.\n\nThe completion receipt binds this recommendation to the immutable run and citation set.',
-      citations: [
-        {
-          citationId: 'work-item-1042',
-          locator: 'work-item:1042',
-          label: 'Approved infrastructure comparison',
-          contentSha256: '3'.repeat(64),
-        },
-      ],
-      resultSha256: '4'.repeat(64),
-    },
-    receiptId: RECEIPT_ID,
-    safeErrorCode: null,
-    startedAt: '2026-09-17T02:47:00Z',
-    createdAt: '2026-09-17T02:46:30Z',
-    updatedAt: '2026-09-17T02:59:00Z',
-    completedAt: '2026-09-17T02:59:00Z',
-  };
-}
-
-function success(route: Route, data: unknown) {
-  return route.fulfill({ json: { success: true, status: 'SUCCESS', message: 'OK', data } });
 }

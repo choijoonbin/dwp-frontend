@@ -14,6 +14,7 @@ import {
   useToast,
   listIdentityRoles,
   listIdentityUsers,
+  getTenantAccessProjection,
   replaceIdentityUserRoles,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -28,6 +29,7 @@ import {
   EnterpriseDataGrid,
   FormDialog,
   FormField,
+  InlineFeedback,
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
 
@@ -547,7 +549,17 @@ export function AccessManager() {
     queryKey: ['admin', 'identity-roles'],
     queryFn: listIdentityRoles,
   });
+  const projectionQuery = useQuery({
+    queryKey: ['admin', 'tenant-settings', 'access-projection', deferredQuery],
+    queryFn: ({ signal }) => getTenantAccessProjection(deferredQuery, 0, 100, signal),
+    retry: false,
+  });
   const users = useMemo(() => usersQuery.data?.content ?? [], [usersQuery.data]);
+  const projectedByUser = useMemo(
+    () =>
+      new Map((projectionQuery.data?.principals ?? []).map((principal) => [principal.userId, principal])),
+    [projectionQuery.data]
+  );
   const roles = rolesQuery.data ?? [];
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const accessSignals = useMemo(() => {
@@ -660,8 +672,11 @@ export function AccessManager() {
           const inherited = (row.effectiveAccess ?? []).filter(
             (assignment) => assignment.sourceType === 'GROUP'
           ).length;
+          const projected = projectedByUser.get(row.userId);
+          const appPresets =
+            projected?.grants.filter((grant) => grant.entitlementType === 'APP_PRESET').length ?? 0;
           return (
-            <Stack direction="row" alignItems="center" gap={0.5}>
+            <Stack direction="row" alignItems="center" gap={0.5} flexWrap="wrap">
               <Typography variant="body2">
                 {row.effectiveAccess?.length ?? row.roles.length}
               </Typography>
@@ -671,6 +686,17 @@ export function AccessManager() {
                   color="info"
                   variant="outlined"
                   label={t('access.inheritedCount', { count: inherited })}
+                />
+              )}
+              {appPresets > 0 && (
+                <Chip
+                  size="small"
+                  color={projected?.pendingApprovalCount ? 'warning' : 'info'}
+                  variant="outlined"
+                  label={t('access.projection.appPresetCount', {
+                    count: appPresets,
+                    pending: projected?.pendingApprovalCount ?? 0,
+                  })}
                 />
               )}
             </Stack>
@@ -721,7 +747,7 @@ export function AccessManager() {
         ),
       },
     ],
-    [editButton, locale, t]
+    [editButton, locale, projectedByUser, t]
   );
 
   if (usersQuery.isLoading || rolesQuery.isLoading) {
@@ -774,7 +800,13 @@ export function AccessManager() {
             <Tooltip title={t('access.actions.refresh')}>
               <IconButton
                 aria-label={t('access.actions.refresh')}
-                onClick={() => void Promise.all([usersQuery.refetch(), rolesQuery.refetch()])}
+                onClick={() =>
+                  void Promise.all([
+                    usersQuery.refetch(),
+                    rolesQuery.refetch(),
+                    projectionQuery.refetch(),
+                  ])
+                }
               >
                 <RefreshCw size={18} strokeWidth={1.8} />
               </IconButton>
@@ -814,6 +846,28 @@ export function AccessManager() {
             },
           ]}
         />
+
+        {projectionQuery.data && (
+          <InlineFeedback severity="info" sx={{ mx: 2, my: 1.5 }}>
+            {t('access.projection.coverage', {
+              owners: projectionQuery.data.coverage.includedOwners.length,
+              snapshot: projectionQuery.data.snapshotId.slice(0, 12),
+              observedAt: formatDateTime(
+                projectionQuery.data.observedAt,
+                locale,
+                t('access.inspector.notAvailable')
+              ),
+            })}{' '}
+            {t('access.projection.exclusions', {
+              exclusions: projectionQuery.data.coverage.exclusions.join(', '),
+            })}
+          </InlineFeedback>
+        )}
+        {projectionQuery.isError && (
+          <InlineFeedback severity="warning" sx={{ mx: 2, my: 1.5 }}>
+            {t('access.projection.unavailable')}
+          </InlineFeedback>
+        )}
 
         {desktop && (
           <Box>

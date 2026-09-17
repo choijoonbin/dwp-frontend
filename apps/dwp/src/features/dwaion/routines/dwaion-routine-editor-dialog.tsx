@@ -43,10 +43,13 @@ export function DwaionRoutineEditorDialog({
   capabilities,
   busy = false,
   dryRunBusy = false,
+  advancedBusy = false,
   onDraftChange,
   onClose,
   onSubmit,
   onDryRun,
+  onRequestChangeApproval,
+  onRequestEngineSwitch,
   copy = DWAION_ROUTINE_COPY_KO,
 }: {
   open: boolean;
@@ -57,10 +60,13 @@ export function DwaionRoutineEditorDialog({
   capabilities?: DwaionRoutineRuntimeCapabilities;
   busy?: boolean;
   dryRunBusy?: boolean;
+  advancedBusy?: boolean;
   onDraftChange: (draft: DwaionRoutineDraft) => void;
   onClose: () => void;
   onSubmit: (draft: DwaionRoutineDraft) => void | Promise<void>;
   onDryRun?: () => void;
+  onRequestChangeApproval?: (draft: DwaionRoutineDraft) => void;
+  onRequestEngineSwitch?: () => void;
   copy?: DwaionRoutineCopy;
 }) {
   const errors = useMemo(() => routineDraftErrors(draft), [draft]);
@@ -142,7 +148,7 @@ export function DwaionRoutineEditorDialog({
               <SelectField
                 label={copy.cadenceLabel}
                 value={draft.schedule.cadence}
-                options={(['DAILY', 'WEEKDAYS', 'WEEKLY'] as const).map((value) => ({
+                options={(['DAILY', 'WEEKDAYS', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
                   value,
                   label: copy.cadence[value],
                 }))}
@@ -151,6 +157,7 @@ export function DwaionRoutineEditorDialog({
                     updateSchedule({
                       cadence: value,
                       weekDays: value === 'WEEKLY' ? draft.schedule.weekDays : [],
+                      monthDay: value === 'MONTHLY' ? (draft.schedule.monthDay ?? 1) : null,
                     });
                   }
                 }}
@@ -248,6 +255,21 @@ export function DwaionRoutineEditorDialog({
               </Typography>
             ) : null}
           </Box>
+        ) : null}
+
+        {draft.triggerType === 'SCHEDULED' && draft.schedule.cadence === 'MONTHLY' ? (
+          <SelectField
+            label={copy.monthDay}
+            value={String(draft.schedule.monthDay ?? 1)}
+            options={Array.from({ length: 28 }, (_, index) => ({
+              value: String(index + 1),
+              label: String(index + 1),
+            }))}
+            errorMessage={errors.includes('MONTH_DAY_REQUIRED') ? copy.monthDayRequired : undefined}
+            onValueChange={(value) =>
+              updateSchedule({ monthDay: value ? Number.parseInt(value, 10) : null })
+            }
+          />
         ) : null}
 
         {draft.triggerType === 'SCHEDULED' ? (
@@ -678,8 +700,17 @@ export function DwaionRoutineEditorDialog({
               reason:
                 capabilities?.changeApproval.recoveryHint ??
                 capabilities?.changeApproval.reasonCode ??
-                copy.runtimeActionUnavailable,
-              available: false,
+                copy.capabilityReady,
+              available: Boolean(
+                onRequestChangeApproval &&
+                capabilities?.changeApproval.available &&
+                capabilities.changeApproval.configured &&
+                dirty &&
+                errors.length === 0 &&
+                !busy &&
+                !advancedBusy
+              ),
+              onClick: onRequestChangeApproval ? () => onRequestChangeApproval(draft) : undefined,
             },
             {
               key: 'engine-switch',
@@ -688,8 +719,15 @@ export function DwaionRoutineEditorDialog({
               reason:
                 capabilities?.agentSwitching.recoveryHint ??
                 capabilities?.agentSwitching.reasonCode ??
-                copy.runtimeActionUnavailable,
-              available: false,
+                copy.capabilityReady,
+              available: Boolean(
+                onRequestEngineSwitch &&
+                capabilities?.agentSwitching.available &&
+                capabilities.agentSwitching.configured &&
+                !busy &&
+                !advancedBusy
+              ),
+              onClick: onRequestEngineSwitch,
             },
           ]}
         />

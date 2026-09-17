@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 
-import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { mockCalendarShellSession as mockShellSession } from './support/calendar-shell-session';
+import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 
 async function openSchedule(
   page: Page,
@@ -60,17 +61,23 @@ test('precision calendar keeps documented desktop geometry, ranges, and command 
     const slot = root.querySelector<HTMLElement>('.precision-calendar-slot');
     const axis = root.querySelector<HTMLElement>('.precision-calendar-slot-header');
     const nowLine = root.querySelector<HTMLElement>('.precision-calendar-now-line');
+    const tokenProbe = document.createElement('span');
+    tokenProbe.style.color = 'var(--precision-calendar-primary)';
+    root.append(tokenProbe);
+    const semanticNowColor = getComputedStyle(tokenProbe).color;
+    tokenProbe.remove();
     return {
       slotHeight: slot?.getBoundingClientRect().height ?? 0,
       axisWidth: axis?.getBoundingClientRect().width ?? 0,
       nowColor: nowLine ? getComputedStyle(nowLine).borderTopColor : '',
+      semanticNowColor,
     };
   });
   expect(geometry.slotHeight).toBeGreaterThanOrEqual(31);
   expect(geometry.slotHeight).toBeLessThanOrEqual(34);
   expect(geometry.axisWidth).toBeGreaterThanOrEqual(54);
   expect(geometry.axisWidth).toBeLessThanOrEqual(58);
-  expect(geometry.nowColor).toBe('rgb(37, 99, 235)');
+  expect(geometry.nowColor).toBe(geometry.semanticNowColor);
 
   const scheduleEvent = calendar.getByRole('button', {
     name: /Digital workplace operating review/u,
@@ -125,6 +132,13 @@ test('precision calendar exposes the mobile day and agenda navigation at 390 and
   );
   const navigation = page.getByTestId('calendar-mobile-navigation');
   await expect(navigation).toBeVisible();
+  await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(1);
+  await expect(
+    navigation.getByRole('button', {
+      name: 'New event — Calendar view and actions',
+      exact: true,
+    })
+  ).toBeVisible();
   await expect(page).toHaveURL(/view=day/u);
   await expect(page.locator('.precision-calendar-day-lane')).toHaveCount(1);
   await expect(navigation.getByRole('button', { name: 'Day', exact: true })).toBeVisible();

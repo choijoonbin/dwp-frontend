@@ -36,6 +36,17 @@ export type CalendarEventDraft = {
   calendarId: string;
 };
 
+export const EMPTY_CALENDAR_EDITOR_PEOPLE: PersonSummary[] = [];
+export const EMPTY_CALENDAR_EDITOR_EMAILS: string[] = [];
+export const CALENDAR_EDITOR_COMMON_TIME_ZONES = [
+  'Asia/Seoul',
+  'Asia/Tokyo',
+  'Asia/Singapore',
+  'Europe/London',
+  'America/New_York',
+  'UTC',
+] as const;
+
 export function protectWorkCalendarEventDraft(
   draft: CalendarEventDraft,
   description: string

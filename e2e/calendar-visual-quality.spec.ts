@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { mockCalendarShellSession as mockShellSession } from './support/calendar-shell-session';
+import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 import { CALENDAR_EVENT_FIXTURE, CALENDAR_HOME_FIXTURE } from './support/product-area-fixtures';
 
 const CALENDAR_SURFACES = [
@@ -12,6 +13,7 @@ const CALENDAR_SURFACES = [
   { id: 'availability', path: '/calendar/availability' },
   { id: 'insights', path: '/calendar/insights' },
   { id: 'trash', path: '/calendar/trash' },
+  { id: 'settings', path: '/calendar/settings' },
   { id: 'admin-overview', path: '/calendar/admin/overview' },
   { id: 'admin-company-calendars', path: '/calendar/admin/company-calendars' },
   { id: 'admin-policies', path: '/calendar/admin/policies' },
@@ -21,6 +23,7 @@ const CALENDAR_FORCED_COLOR_SURFACES = [
   { id: 'home', path: '/calendar/home' },
   { id: 'schedule', path: '/calendar/schedule' },
   { id: 'insights', path: '/calendar/insights' },
+  { id: 'settings', path: '/calendar/settings' },
   { id: 'admin-overview', path: '/calendar/admin/overview' },
   { id: 'admin-company-calendars', path: '/calendar/admin/company-calendars' },
 ] as const;

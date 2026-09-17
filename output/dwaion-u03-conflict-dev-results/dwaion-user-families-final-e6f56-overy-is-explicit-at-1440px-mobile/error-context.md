@@ -1,0 +1,464 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 시작
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON 메뉴" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 시작
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "DWAI·ON 홈" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: DWAI·ON 홈
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: 대화
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "새 대화" [ref=e43] [cursor=pointer]:
+                  - /url: /dwaion/new
+                  - img [ref=e45]
+                  - paragraph [ref=e48]: 새 대화
+              - listitem [ref=e49]:
+                - link "내 대화" [ref=e50] [cursor=pointer]:
+                  - /url: /dwaion/conversations
+                  - img [ref=e52]
+                  - paragraph [ref=e57]: 내 대화
+          - generic [ref=e58]:
+            - paragraph [ref=e59]: 실행
+            - list [ref=e60]:
+              - listitem [ref=e61]:
+                - link "AI 실행 이력" [ref=e62] [cursor=pointer]:
+                  - /url: /dwaion/activity
+                  - img [ref=e64]
+                  - paragraph [ref=e67]: AI 실행 이력
+          - generic [ref=e68]:
+            - paragraph [ref=e69]: 제안
+            - list [ref=e70]:
+              - listitem [ref=e71]:
+                - link "AI 제안함" [ref=e72] [cursor=pointer]:
+                  - /url: /dwaion/proposals
+                  - img [ref=e74]
+                  - paragraph [ref=e78]: AI 제안함
+          - generic [ref=e79]:
+            - paragraph [ref=e80]: 탐색
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "전문 에이전트" [ref=e83] [cursor=pointer]:
+                  - /url: /dwaion/agents
+                  - img [ref=e85]
+                  - paragraph [ref=e89]: 전문 에이전트
+              - listitem [ref=e90]:
+                - link "업무 실행 및 연결" [ref=e91] [cursor=pointer]:
+                  - /url: /dwaion/actions
+                  - img [ref=e93]
+                  - paragraph [ref=e98]: 업무 실행 및 연결
+          - generic [ref=e99]:
+            - paragraph [ref=e100]: 확장 및 산출물
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - link "내 AI 루틴" [ref=e103] [cursor=pointer]:
+                  - /url: /dwaion/routines
+                  - img [ref=e105]
+                  - paragraph [ref=e109]: 내 AI 루틴
+              - listitem [ref=e110]:
+                - link "개인 AI 제어" [ref=e111] [cursor=pointer]:
+                  - /url: /dwaion/personal-controls
+                  - img [ref=e113]
+                  - paragraph [ref=e115]: 개인 AI 제어
+              - listitem [ref=e116]:
+                - link "결과물 스튜디오" [ref=e117] [cursor=pointer]:
+                  - /url: /dwaion/artifacts
+                  - img [ref=e119]
+                  - paragraph [ref=e122]: 결과물 스튜디오
+        - link "앱 목록으로 돌아가기" [ref=e124] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e126]
+          - text: 앱 목록으로 돌아가기
+    - banner [ref=e128]:
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - img [ref=e132]
+          - generic "DWAI·ON" [ref=e136]
+        - navigation "앱 영역 전환" [ref=e139]:
+          - 'link "앱 관리: DWAI·ON" [ref=e141] [cursor=pointer]':
+            - /url: /dwaion/admin/overview
+            - img [ref=e143]
+            - generic [ref=e146]: 앱 관리
+        - generic [ref=e147]:
+          - button "DWP 검색" [ref=e149] [cursor=pointer]:
+            - img [ref=e150]
+            - paragraph [ref=e153]: DWP 검색
+            - generic [ref=e154]: ⌘K
+          - generic "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e157]:
+            - button "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e158] [cursor=pointer]:
+              - generic [ref=e159]:
+                - img [ref=e160]
+                - generic: "0"
+          - 'button "계정: Mina Kim, Tenant administrator" [ref=e164] [cursor=pointer]':
+            - generic [ref=e165]: M
+            - img [ref=e166]
+    - main [ref=e168]:
+      - generic [ref=e170]:
+        - generic [ref=e171]:
+          - generic [ref=e172]:
+            - text: 승인형 개인 AI 확장
+            - 'heading "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [level=1] [ref=e173]'
+            - paragraph [ref=e174]: 허용한 출처와 시간을 정의하고 드라이런, 예약 실행, 실패 복구와 완료 영수증을 한곳에서 관리합니다.
+          - generic [ref=e175]:
+            - button "버전 변경 이력(Audit Log)" [ref=e176] [cursor=pointer]:
+              - img [ref=e178]
+              - text: 버전 변경 이력(Audit Log)
+            - button "전체 건전성 진단" [ref=e182] [cursor=pointer]:
+              - img [ref=e184]
+              - text: 전체 건전성 진단
+            - button "새 루틴 생성" [ref=e186] [cursor=pointer]:
+              - img [ref=e188]
+              - text: 새 루틴 생성
+        - generic [ref=e189]:
+          - alert [ref=e190]:
+            - generic [ref=e192]:
+              - img [ref=e194]
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - generic [ref=e199]: HTTP 409 CONFLICT
+                  - generic [ref=e201]: 정책 차단
+                  - generic [ref=e203]: 안전 모드 활성화됨
+                - 'heading "활성화 파이프라인 중단: 원격 리비전 충돌" [level=2] [ref=e204]'
+                - paragraph [ref=e205]: 서버 최신본과 현재 편집본이 다릅니다. 서버 원본을 다시 불러오거나 저장된 스냅샷에서 새 리비전으로 롤백하세요.
+                - generic [ref=e206]: "루틴 ID: 11111111-1111-4111-8111-111111111111 · 편집 시작본 리비전 7"
+          - generic [ref=e207]:
+            - generic [ref=e209]:
+              - heading "리비전 대조 분석" [level=3] [ref=e210]
+              - paragraph [ref=e211]: 서버 최신본과 보존된 로컬 작업을 3-way 비교했습니다. 적용할 복구 전략을 선택하세요.
+              - generic [ref=e212]:
+                - generic [ref=e213]:
+                  - generic [ref=e214]:
+                    - heading "내 로컬 초안" [level=6] [ref=e215]
+                    - generic [ref=e217]: 리비전 7
+                  - paragraph [ref=e218]: 아침 우선순위 검토 v8
+                  - generic [ref=e219]: SCHEDULED · WORK_ITEM, MAIL
+                - generic [ref=e220]:
+                  - generic [ref=e221]:
+                    - heading "서버 최신본" [level=6] [ref=e222]
+                    - generic [ref=e224]: 리비전 8
+                  - paragraph [ref=e225]: 아침 우선순위 검토 · 서버 정본
+                  - generic [ref=e226]: SCHEDULED · WORK_ITEM, MAIL
+            - generic [ref=e227]:
+              - generic [ref=e228]:
+                - img [ref=e229]
+                - heading "충돌 복구 워크벤치" [level=3] [ref=e233]
+                - generic [ref=e235]: 3-Way Diff
+              - paragraph [ref=e236]: 충돌 해결 전략 선택
+              - radiogroup [ref=e237]:
+                - generic [ref=e238] [cursor=pointer]:
+                  - generic [ref=e239]:
+                    - radio "새 버전으로 분기 저장 권장 서버 최신본은 유지하고 보존된 로컬 초안을 실제 새 루틴으로 생성한 뒤 필요한 동의를 설정합니다." [checked] [ref=e240]
+                    - generic [ref=e241]:
+                      - img [ref=e242]
+                      - img [ref=e244]
+                  - generic [ref=e247]:
+                    - generic [ref=e248]:
+                      - heading "새 버전으로 분기 저장" [level=6] [ref=e249]
+                      - generic [ref=e251]: 권장
+                    - generic [ref=e252]: 서버 최신본은 유지하고 보존된 로컬 초안을 실제 새 루틴으로 생성한 뒤 필요한 동의를 설정합니다.
+                - generic [ref=e253] [cursor=pointer]:
+                  - generic [ref=e254]:
+                    - radio "서버 최신본 적용 로컬 변경을 적용하지 않고 서버 최신본으로 동기화합니다. 서버 데이터에는 쓰기를 수행하지 않습니다." [ref=e255]
+                    - img [ref=e257]
+                  - generic [ref=e260]:
+                    - heading "서버 최신본 적용" [level=6] [ref=e262]
+                    - generic [ref=e263]: 로컬 변경을 적용하지 않고 서버 최신본으로 동기화합니다. 서버 데이터에는 쓰기를 수행하지 않습니다.
+                - generic [ref=e264] [cursor=pointer]:
+                  - generic [ref=e265]:
+                    - radio "필드별 선택적 병합 다섯 변경 그룹마다 로컬 또는 서버 값을 선택하고 서버 최신 리비전에 새 업데이트를 저장합니다." [ref=e266]
+                    - img [ref=e268]
+                  - generic [ref=e271]:
+                    - heading "필드별 선택적 병합" [level=6] [ref=e273]
+                    - generic [ref=e274]: 다섯 변경 그룹마다 로컬 또는 서버 값을 선택하고 서버 최신 리비전에 새 업데이트를 저장합니다.
+              - generic [ref=e275]:
+                - button "선택한 전략으로 충돌 해결 및 저장" [ref=e276] [cursor=pointer]:
+                  - img [ref=e278]
+                  - text: 선택한 전략으로 충돌 해결 및 저장
+                - button "편집 취소 및 현재 서버본 유지" [ref=e281] [cursor=pointer]
+        - 'region "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [ref=e282]':
+          - generic [ref=e284]:
+            - paragraph [ref=e285]: "1"
+            - paragraph [ref=e286]: 등록한 루틴
+            - text: 내 개인 루틴
+          - generic [ref=e288]:
+            - paragraph [ref=e289]: "1"
+            - paragraph [ref=e290]: 검증 준비
+            - text: 동의 완료 초안
+          - generic [ref=e292]:
+            - paragraph [ref=e293]: "0"
+            - paragraph [ref=e294]: 재확인 필요
+            - text: 동의 또는 상태 확인
+          - generic [ref=e296]:
+            - paragraph [ref=e297]: "0"
+            - paragraph [ref=e298]: 일시 중지
+            - text: 드라이런 중지
+        - generic [ref=e299]:
+          - generic [ref=e300]:
+            - generic [ref=e302]:
+              - img [ref=e304]
+              - searchbox "루틴 검색" [ref=e307]
+              - group
+            - group "루틴 상태 필터" [ref=e308]:
+              - button "전체 1" [pressed] [ref=e309] [cursor=pointer]
+              - button "스케줄 1" [ref=e310] [cursor=pointer]
+              - button "이벤트 0" [ref=e311] [cursor=pointer]
+              - button "검증 준비 1" [ref=e312] [cursor=pointer]
+              - button "재확인 필요 0" [ref=e313] [cursor=pointer]
+              - button "일시 중지 0" [ref=e314] [cursor=pointer]
+            - generic [ref=e316]:
+              - img [ref=e317]
+              - generic [ref=e322]: 기준 타임존 · Asia/Seoul
+          - generic [ref=e323]:
+            - 'region "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [ref=e324]':
+              - button "선택됨 리비전 8 검증 준비 아침 우선순위 검토 · 서버 정본 업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다. 실행 일정 평일 · 09:30 허용한 정보 출처 업무 항목 · 메일 실행 계약 검증 전용" [pressed] [ref=e326] [cursor=pointer]:
+                - generic [ref=e327]:
+                  - generic [ref=e328]:
+                    - generic [ref=e329]:
+                      - generic [ref=e331]: 선택됨
+                      - generic [ref=e333]: 리비전 8
+                      - generic [ref=e335]: 검증 준비
+                    - heading "아침 우선순위 검토 · 서버 정본" [level=6] [ref=e336]
+                  - img [ref=e338]
+                - paragraph [ref=e340]: 업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다.
+                - separator [ref=e341]
+                - generic [ref=e342]:
+                  - generic [ref=e343]:
+                    - img [ref=e345]
+                    - generic [ref=e348]:
+                      - generic [ref=e349]: 실행 일정
+                      - text: 평일 · 09:30
+                  - generic [ref=e350]:
+                    - img [ref=e352]
+                    - generic [ref=e356]:
+                      - generic [ref=e357]: 허용한 정보 출처
+                      - text: 업무 항목 · 메일
+                  - generic [ref=e358]:
+                    - img [ref=e360]
+                    - generic [ref=e363]:
+                      - generic [ref=e364]: 실행 계약
+                      - text: 검증 전용
+            - complementary "아침 우선순위 검토 · 서버 정본" [ref=e366]:
+              - generic [ref=e367]:
+                - generic [ref=e368]:
+                  - heading "아침 우선순위 검토 · 서버 정본" [level=2] [ref=e369]
+                  - paragraph [ref=e370]: 검증 준비 · 리비전 8
+                - generic "상세 닫기" [ref=e372]:
+                  - button "상세 닫기" [ref=e373] [cursor=pointer]:
+                    - img [ref=e374]
+              - generic [ref=e379]: 검증 전용
+              - generic [ref=e381]:
+                - region "6단계 안전 검증 및 동의 체인" [ref=e382]:
+                  - generic [ref=e383]:
+                    - img [ref=e384]
+                    - heading "6단계 안전 검증 및 동의 체인" [level=3] [ref=e387]
+                  - list [ref=e388]:
+                    - listitem [ref=e389]:
+                      - generic [ref=e390]: "1"
+                      - generic [ref=e391]:
+                        - heading "명확한 목적 정의" [level=6] [ref=e392]
+                        - text: 업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다.
+                    - listitem [ref=e393]:
+                      - generic [ref=e394]: "2"
+                      - generic [ref=e395]:
+                        - heading "참조 범위 격리" [level=6] [ref=e396]
+                        - text: 업무 항목 · 메일
+                    - listitem [ref=e397]:
+                      - generic [ref=e398]: "3"
+                      - generic [ref=e399]:
+                        - heading "실행 스케줄 및 정책" [level=6] [ref=e400]
+                        - text: 평일 · 09:30 · Asia/Seoul. 저장된 시간은 다음 시각 미리보기에만 사용됩니다.
+                    - listitem [ref=e401]:
+                      - generic [ref=e402]: "4"
+                      - generic [ref=e403]:
+                        - heading "결과물 안전 격리" [level=6] [ref=e404]
+                        - text: 제안 생성·전달 API가 연결되지 않아 결과물을 생성하지 않습니다.
+                    - listitem [ref=e405]:
+                      - generic [ref=e406]: "5"
+                      - generic [ref=e407]:
+                        - heading "안전 한도 및 오류 대책" [level=6] [ref=e408]
+                        - text: "월 최대 실행 횟수: 24 · 실행당 최대 토큰: 25000 · 실행당 최대 시간(분): 20"
+                    - listitem [ref=e409]:
+                      - generic [ref=e410]: "6"
+                      - generic [ref=e411]:
+                        - heading "사용자 명시 동의" [level=6] [ref=e412]
+                        - text: 세 동의 범위가 모두 활성화되었습니다.
+                        - generic [ref=e413]:
+                          - generic [ref=e415]: 출처 조회 동의 · 동의함
+                          - generic [ref=e417]: AI 분석 동의 · 동의함
+                          - generic [ref=e419]: 제안함 전달 동의 · 동의함
+                - region "사전 시뮬레이션 진단 (Dry-run)" [ref=e420]:
+                  - generic [ref=e421]:
+                    - generic [ref=e422]:
+                      - generic [ref=e423]:
+                        - img [ref=e424]
+                        - heading "사전 시뮬레이션 진단 (Dry-run)" [level=3] [ref=e426]
+                      - text: 저장된 정의와 서버 영수증을 분리해 5단계 안전 파이프라인을 검토합니다.
+                    - generic [ref=e428]: 최근 영수증 미제공
+                  - list [ref=e429]:
+                    - listitem [ref=e430]:
+                      - generic [ref=e431]: "1"
+                      - generic [ref=e432]:
+                        - paragraph [ref=e433]: 업무 목적 결속
+                        - text: 업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다.
+                    - listitem [ref=e434]:
+                      - generic [ref=e435]: "2"
+                      - generic [ref=e436]:
+                        - paragraph [ref=e437]: 허용 출처 경계
+                        - text: WORK_ITEM · MAIL
+                    - listitem [ref=e438]:
+                      - generic [ref=e439]: "3"
+                      - generic [ref=e440]:
+                        - paragraph [ref=e441]: 트리거·타임존 검증
+                        - text: 평일 · 09:30:00 · Asia/Seoul
+                    - listitem [ref=e442]:
+                      - generic [ref=e443]: "4"
+                      - generic [ref=e444]:
+                        - paragraph [ref=e445]: Zero-Write 가드
+                        - text: 정책 capability는 구성됐지만 외부 쓰기 0건은 개별 Dry-run 영수증으로 확정합니다.
+                    - listitem [ref=e446]:
+                      - generic [ref=e447]: "5"
+                      - generic [ref=e448]:
+                        - paragraph [ref=e449]: 제안·전달 격리
+                        - text: 저장된 최근 Dry-run 영수증 조회 API가 아직 제공되지 않습니다. 새 미리 점검을 실행하면 현재 세션에서 실제 영수증을 표시합니다.
+                  - status [ref=e450]:
+                    - img [ref=e452]
+                    - generic [ref=e454]: 저장된 최근 Dry-run 영수증 조회 API가 아직 제공되지 않습니다. 새 미리 점검을 실행하면 현재 세션에서 실제 영수증을 표시합니다.
+                  - generic [ref=e455]:
+                    - generic [ref=e456]:
+                      - img [ref=e457]
+                      - heading "현재 Dry-run 계약의 증거 경계" [level=4] [ref=e460]
+                    - generic [ref=e461]:
+                      - generic [ref=e462]:
+                        - paragraph [ref=e463]: 비용 예측
+                        - generic [ref=e465]: 미구성
+                        - generic [ref=e466]: 현재 Dry-run 영수증은 비용 예측치를 반환하지 않습니다.
+                      - generic [ref=e467]:
+                        - paragraph [ref=e468]: 지연 예측
+                        - generic [ref=e470]: 미구성
+                        - generic [ref=e471]: 현재 Dry-run 영수증은 시뮬레이션 지연을 반환하지 않습니다.
+                      - generic [ref=e472]:
+                        - paragraph [ref=e473]: 멱등성 증거
+                        - generic [ref=e475]: 미구성
+                        - generic [ref=e476]: 현재 Dry-run 조회 계약은 commandId 또는 멱등성 토큰을 노출하지 않습니다.
+                - region "최근 실제 실행" [ref=e477]:
+                  - generic [ref=e478]:
+                    - img [ref=e479]
+                    - heading "최근 실제 실행" [level=3] [ref=e483]
+                    - generic [ref=e485]: 검증 준비
+                  - generic [ref=e486]:
+                    - button "루틴 활성화" [ref=e487] [cursor=pointer]:
+                      - img [ref=e489]
+                      - text: 루틴 활성화
+                    - button "지금 실행" [disabled]:
+                      - generic:
+                        - img
+                      - text: 지금 실행
+                  - paragraph [ref=e491]: 아직 실제 실행 기록이 없습니다.
+                  - region "서버 버전·건전성·감사 증거" [ref=e492]:
+                    - generic [ref=e493]:
+                      - img [ref=e494]
+                      - heading "서버 버전·건전성·감사 증거" [level=3] [ref=e497]
+                    - generic [ref=e498]: 변경 원장, 현재 건전성, 롤백 영수증과 원본 텔레메트리를 서버 기록으로 확인합니다.
+                    - generic [ref=e499]:
+                      - generic [ref=e500]:
+                        - generic [ref=e501]:
+                          - img [ref=e502]
+                          - heading "전체 건전성 진단" [level=6] [ref=e504]
+                          - generic [ref=e506]: 정상
+                        - generic [ref=e507]:
+                          - generic [ref=e509]: "실행 워커: 구성됨"
+                          - generic [ref=e511]: "트리거 최신 상태: 최신"
+                          - generic [ref=e513]: "동의 체인: 최신"
+                        - generic [ref=e514]: 2026. 9. 17. 오후 12:04
+                      - generic [ref=e515]:
+                        - generic [ref=e516]:
+                          - img [ref=e517]
+                          - heading "버전 변경 이력" [level=6] [ref=e522]
+                        - list [ref=e523]:
+                          - listitem [ref=e524]:
+                            - generic [ref=e525]:
+                              - generic [ref=e526]:
+                                - paragraph [ref=e527]: 리비전 7 · UPDATE
+                                - generic [ref=e528]: 2026. 9. 4. 오전 9:00 · cccccccccccc…
+                              - button "이 리비전으로 롤백" [ref=e529] [cursor=pointer]:
+                                - img [ref=e531]
+                                - text: 이 리비전으로 롤백
+                          - listitem [ref=e534]:
+                            - generic [ref=e535]:
+                              - generic [ref=e536]:
+                                - paragraph [ref=e537]: 리비전 1 · CREATE
+                                - generic [ref=e538]: 2026. 9. 1. 오전 9:00 · dddddddddddd…
+                              - button "이 리비전으로 롤백" [ref=e539] [cursor=pointer]:
+                                - img [ref=e541]
+                                - text: 이 리비전으로 롤백
+                      - button "로그 원본 다운로드 (JSONL)" [ref=e544] [cursor=pointer]:
+                        - img [ref=e546]
+                        - text: 로그 원본 다운로드 (JSONL)
+                  - region "실행 진단과 복구 도구" [ref=e550]:
+                    - generic [ref=e551]:
+                      - img [ref=e552]
+                      - heading "실행 진단과 복구 도구" [level=6] [ref=e556]
+                    - generic [ref=e557]: 실제 실행 기록과 런타임 공급자 상태에 따라 사용 가능 여부가 결정됩니다.
+                    - generic [ref=e558]:
+                      - generic [ref=e559]:
+                        - button "실행 리포트 인쇄" [ref=e560] [cursor=pointer]
+                        - generic [ref=e561]: browser.print · 현재 서버 실행 기록과 capability 응답을 사용합니다.
+                      - generic [ref=e562]:
+                        - button "격리 건 제외 후 계속 (Skip & Continue)" [disabled]
+                        - generic [ref=e563]: routine.provider.skip-quarantined · 런타임 공급자가 이 복구 작업을 제공하지 않습니다.
+                      - generic [ref=e564]:
+                        - button "OAuth 재인증 토큰 갱신" [disabled]
+                        - generic [ref=e565]: routine.provider.oauth · Ask an administrator to configure this governed runtime operation.
+                      - generic [ref=e566]:
+                        - button "임시 한도 증액 요청" [disabled]
+                        - generic [ref=e567]: routine.provider.temporary-limit · Ask an administrator to configure this governed runtime operation.
+                      - generic [ref=e568]:
+                        - button "담당자에게 긴급 전달 (Escalate)" [disabled]
+                        - generic [ref=e569]: routine.provider.escalate · Ask an administrator to configure this governed runtime operation.
+                      - generic [ref=e570]:
+                        - button "보상 처리 시작" [disabled]
+                        - generic [ref=e571]: routine.provider.provider-rollback · Ask an administrator to configure this governed runtime operation.
+                - generic [ref=e572]:
+                  - button "미리 점검" [ref=e573] [cursor=pointer]:
+                    - img [ref=e575]
+                    - text: 미리 점검
+                  - generic [ref=e577]:
+                    - button "설정 편집" [active] [ref=e578] [cursor=pointer]:
+                      - img [ref=e580]
+                      - text: 설정 편집
+                    - button "일시 중지" [ref=e583] [cursor=pointer]:
+                      - img [ref=e585]
+                      - text: 일시 중지
+                    - button "보관" [ref=e587] [cursor=pointer]:
+                      - img [ref=e589]
+                      - text: 보관
+  - alert [ref=e592]:
+    - img [ref=e594]
+    - generic [ref=e596]: 다른 곳에서 설정이 변경되었습니다. 최신 내용을 다시 불러와 주세요.
+    - button "Close" [ref=e598] [cursor=pointer]:
+      - img [ref=e599]
+```

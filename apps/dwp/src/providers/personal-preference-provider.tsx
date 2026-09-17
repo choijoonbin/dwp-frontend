@@ -33,10 +33,18 @@ import {
   type PersonalPreferenceView,
   type ProviderLocalPreferenceState,
 } from './provider-local-preference-model';
+import {
+  buildPersonalPreferenceUndoPatch,
+  findPersonalPreferenceConflicts,
+  resolvePersonalPreferenceConflictPatch,
+  type PersonalPreferenceConflict,
+  type PersonalPreferenceConflictChoice,
+} from './personal-preference-conflict';
+import { PersonalPreferenceConflictDialog } from './personal-preference-conflict-dialog';
 
 import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
 
-export type PersonalPreferenceSaveState = 'idle' | 'saving' | 'saved' | 'error';
+export type PersonalPreferenceSaveState = 'idle' | 'saving' | 'saved' | 'conflict' | 'error';
 
 type PersonalPreferenceContextValue = {
   preference: PersonalPreferenceView | null;
@@ -45,9 +53,18 @@ type PersonalPreferenceContextValue = {
   loadFailed: boolean;
   saveState: PersonalPreferenceSaveState;
   lastSavedAt: string | null;
+  canUndo: boolean;
   update: (patch: PersonalPreferencePatch) => void;
+  undo: () => void;
   reset: () => void;
   retry: () => void;
+};
+
+type PendingPreferenceConflict = {
+  base: PersonalPreference;
+  remote: PersonalPreference;
+  patch: PersonalPreferencePatch;
+  conflicts: PersonalPreferenceConflict[];
 };
 
 const PersonalPreferenceContext = createContext<PersonalPreferenceContextValue | null>(null);
@@ -278,6 +295,14 @@ function optimisticPreference(
   };
 }
 
+function restorablePreferencePatch(values: PersonalPreferenceValues): PersonalPreferencePatch {
+  return {
+    appearance: { ...values.appearance },
+    accessibility: { ...values.accessibility },
+    regional: { ...values.regional },
+  };
+}
+
 export function PersonalPreferenceProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const providerAccount = isProviderIdentity(auth.user);
@@ -290,11 +315,19 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   const appliedIdentity = useRef<string | null>(null);
   const serverPreference = useRef<PersonalPreference | null>(null);
   const queuedPatch = useRef<PersonalPreferencePatch | null>(null);
+  const undoPatch = useRef<PersonalPreferencePatch | null>(null);
+  const suppressNextUndoCheckpoint = useRef(false);
+  const conflictReviewRef = useRef<PendingPreferenceConflict | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inFlight = useRef(false);
   const mounted = useRef(true);
   const [saveState, setSaveState] = useState<PersonalPreferenceSaveState>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
+  const [conflictReview, setConflictReview] = useState<PendingPreferenceConflict | null>(null);
+  const [conflictChoices, setConflictChoices] = useState<
+    Record<string, PersonalPreferenceConflictChoice>
+  >({});
   const [providerPreference, setProviderPreference] = useState<PersonalPreferenceView | null>(null);
   const identity = auth.user
     ? providerAccount
@@ -333,11 +366,12 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       saveTimer.current = null;
     }
 
-    const patch = queuedPatch.current;
+    let patch = queuedPatch.current;
     queuedPatch.current = null;
     inFlight.current = true;
     if (mounted.current) setSaveState('saving');
-    let base = serverPreference.current;
+    const base = serverPreference.current;
+    let appliedBase = base;
 
     try {
       let saved: PersonalPreference;
@@ -345,29 +379,59 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
         saved = await patchPersonalPreference(patch, base.version);
       } catch (error) {
         if (!(error instanceof HttpError) || error.status !== 409) throw error;
-        base = normalizePreference(await getPersonalPreference(), appearanceDefaults);
-        saved = await patchPersonalPreference(patch, base.version);
+        const remote = normalizePreference(await getPersonalPreference(), appearanceDefaults);
+        if (queuedPatch.current) {
+          patch = mergeQueuedPatch(patch, queuedPatch.current);
+          queuedPatch.current = null;
+        }
+        const conflicts = findPersonalPreferenceConflicts(
+          base.preferences,
+          remote.preferences,
+          patch
+        );
+        if (conflicts.length > 0) {
+          const pending = { base, remote, patch, conflicts };
+          serverPreference.current = remote;
+          conflictReviewRef.current = pending;
+          applyPreference(optimisticPreference(remote, patch, appearanceDefaults));
+          if (mounted.current) {
+            setConflictChoices(
+              Object.fromEntries(conflicts.map((item) => [item.path, 'local' as const]))
+            );
+            setConflictReview(pending);
+            setSaveState('conflict');
+          }
+          return;
+        }
+        appliedBase = remote;
+        saved = await patchPersonalPreference(patch, remote.version);
       }
 
       const normalized = normalizePreference(saved, appearanceDefaults);
       serverPreference.current = normalized;
+      undoPatch.current = suppressNextUndoCheckpoint.current
+        ? null
+        : buildPersonalPreferenceUndoPatch(appliedBase.preferences, patch);
+      suppressNextUndoCheckpoint.current = false;
       const local = queuedPatch.current
         ? optimisticPreference(normalized, queuedPatch.current, appearanceDefaults)
         : normalized;
       applyPreference(local);
       if (mounted.current) {
+        setCanUndo(Boolean(undoPatch.current));
         setLastSavedAt(normalized.updatedAt ?? new Date().toISOString());
         setSaveState(queuedPatch.current ? 'saving' : 'saved');
       }
       void queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] });
     } catch {
+      suppressNextUndoCheckpoint.current = false;
       queuedPatch.current = null;
-      applyPreference(base);
+      applyPreference(appliedBase);
       if (mounted.current) setSaveState('error');
       toast.error(t('personalPreferences.saveError'));
     } finally {
       inFlight.current = false;
-      if (queuedPatch.current && mounted.current) {
+      if (queuedPatch.current && !conflictReviewRef.current && mounted.current) {
         saveTimer.current = setTimeout(() => void flushQueue(), 0);
       }
     }
@@ -377,6 +441,34 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => void flushQueue(), SAVE_DEBOUNCE_MS);
   }, [flushQueue]);
+
+  const resolveConflict = useCallback(
+    (choices: Readonly<Record<string, PersonalPreferenceConflictChoice>>) => {
+      const pending = conflictReviewRef.current;
+      if (!pending) return;
+      const resolvedPatch = resolvePersonalPreferenceConflictPatch(pending.patch, choices);
+      conflictReviewRef.current = null;
+      setConflictReview(null);
+      setConflictChoices({});
+      serverPreference.current = pending.remote;
+      undoPatch.current = null;
+      setCanUndo(false);
+
+      if (!resolvedPatch) {
+        suppressNextUndoCheckpoint.current = false;
+        applyPreference(pending.remote);
+        setLastSavedAt(pending.remote.updatedAt ?? null);
+        setSaveState('saved');
+        return;
+      }
+
+      queuedPatch.current = resolvedPatch;
+      applyPreference(optimisticPreference(pending.remote, resolvedPatch, appearanceDefaults));
+      setSaveState('saving');
+      scheduleSave();
+    },
+    [appearanceDefaults, applyPreference, scheduleSave]
+  );
 
   useEffect(() => {
     mounted.current = true;
@@ -391,7 +483,12 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       appliedIdentity.current = null;
       serverPreference.current = null;
       queuedPatch.current = null;
+      undoPatch.current = null;
+      suppressNextUndoCheckpoint.current = false;
+      conflictReviewRef.current = null;
       setProviderPreference(null);
+      setCanUndo(false);
+      setConflictReview(null);
       setSaveState('idle');
       return;
     }
@@ -399,6 +496,11 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       appliedIdentity.current = identity;
       serverPreference.current = null;
       queuedPatch.current = null;
+      undoPatch.current = null;
+      suppressNextUndoCheckpoint.current = false;
+      conflictReviewRef.current = null;
+      setCanUndo(false);
+      setConflictReview(null);
       if (saveTimer.current) {
         clearTimeout(saveTimer.current);
         saveTimer.current = null;
@@ -452,6 +554,10 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       if (providerAccount) {
         if (!identity || !providerPreference) return;
         const updatedAt = new Date().toISOString();
+        undoPatch.current = suppressNextUndoCheckpoint.current
+          ? null
+          : buildPersonalPreferenceUndoPatch(providerPreference.preferences, patch);
+        suppressNextUndoCheckpoint.current = false;
         const next = updateProviderLocalPreference(
           identity,
           providerPreference,
@@ -462,12 +568,15 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
         setProviderPreference(next);
         replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
         applyDocumentPreferences(next.preferences, false);
+        setCanUndo(Boolean(undoPatch.current));
         setLastSavedAt(updatedAt);
         setSaveState('saved');
         return;
       }
       const current = queryClient.getQueryData<PersonalPreference>(queryKey);
       if (!current || preferenceQuery.isError) return;
+      undoPatch.current = null;
+      setCanUndo(false);
       queuedPatch.current = mergeQueuedPatch(queuedPatch.current, patch);
       applyPreference(optimisticPreference(current, patch, appearanceDefaults));
       setSaveState('saving');
@@ -487,9 +596,19 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     ]
   );
 
+  const undo = useCallback(() => {
+    const reverse = undoPatch.current;
+    if (!reverse || inFlight.current || queuedPatch.current || conflictReviewRef.current) return;
+    undoPatch.current = null;
+    suppressNextUndoCheckpoint.current = true;
+    setCanUndo(false);
+    update(reverse);
+  }, [update]);
+
   const reset = useCallback(async () => {
     if (providerAccount) {
-      if (!identity) return;
+      if (!identity || !providerPreference) return;
+      undoPatch.current = restorablePreferencePatch(providerPreference.preferences);
       const next = createProviderLocalPreference(undefined, appearanceDefaults);
       window.localStorage.removeItem(providerPreferenceStorageKey(identity));
       if (legacyProviderIdentity) {
@@ -498,8 +617,9 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       setProviderPreference(next);
       replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
       applyDocumentPreferences(next.preferences, false);
+      setCanUndo(true);
       setLastSavedAt(null);
-      setSaveState('idle');
+      setSaveState('saved');
       return;
     }
     if (!serverPreference.current || inFlight.current || queuedPatch.current) return;
@@ -512,11 +632,13 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
         appearanceDefaults
       );
       serverPreference.current = next;
+      undoPatch.current = restorablePreferencePatch(previous.preferences);
       applyPreference(
         queuedPatch.current
           ? optimisticPreference(next, queuedPatch.current, appearanceDefaults)
           : next
       );
+      setCanUndo(true);
       setLastSavedAt(new Date().toISOString());
       setSaveState(queuedPatch.current ? 'saving' : 'saved');
     } catch {
@@ -533,6 +655,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     identity,
     legacyProviderIdentity,
     providerAccount,
+    providerPreference,
     replaceAppearancePreference,
     scheduleSave,
     t,
@@ -550,15 +673,18 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       isLoading: providerAccount
         ? Boolean(identity) && !providerPreference
         : preferenceQuery.isPending,
-      isSaving: saveState === 'saving',
+      isSaving: saveState === 'saving' || saveState === 'conflict',
       loadFailed: providerAccount ? false : preferenceQuery.isError,
       saveState,
       lastSavedAt,
+      canUndo,
       update,
+      undo,
       reset: () => void reset(),
       retry,
     }),
     [
+      canUndo,
       lastSavedAt,
       identity,
       preferenceQuery.data,
@@ -569,6 +695,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       reset,
       retry,
       saveState,
+      undo,
       update,
     ]
   );
@@ -576,6 +703,14 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   return (
     <PersonalPreferenceContext.Provider value={value}>
       {children}
+      <PersonalPreferenceConflictDialog
+        conflict={conflictReview}
+        choices={conflictChoices}
+        onChoice={(path, choice) =>
+          setConflictChoices((current) => ({ ...current, [path]: choice }))
+        }
+        onResolve={resolveConflict}
+      />
     </PersonalPreferenceContext.Provider>
   );
 }

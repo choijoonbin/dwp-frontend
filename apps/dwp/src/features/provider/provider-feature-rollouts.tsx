@@ -816,6 +816,7 @@ export function ProviderFeatureRollouts() {
           ) : undefined
         }
       />
+      <Alert severity="info">{t('featureRollouts.distributionBoundary')}</Alert>
       <Box
         sx={{
           display: 'grid',

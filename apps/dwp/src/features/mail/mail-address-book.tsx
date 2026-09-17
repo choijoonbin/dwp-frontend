@@ -1,17 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  ContactRound,
-  History,
-  MailPlus,
-  Pencil,
-  Plus,
-  Search,
-  Trash2,
-  UserPlus,
-  UsersRound,
-} from 'lucide-react';
+import { ContactRound, Search, UserPlus, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   archiveMailContact,
@@ -19,6 +9,7 @@ import {
   createMailContact,
   createMailContactGroup,
   getMailAddressBook,
+  getMailComposeContext,
   getMailGroupSendHistory,
   HttpError,
   listPeople,
@@ -32,19 +23,15 @@ import {
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
-  ActionIconButton,
   ErrorState,
   FormField,
   LoadingState,
   ConfirmDialog,
-  GuidedEmptyState,
   PageCanvas,
-  foundationTokens,
 } from '@dwp-frontend/design-system';
 
-import Avatar from '@mui/material/Avatar';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
@@ -59,8 +46,13 @@ import {
   MailGroupMessageDialog,
 } from './mail-address-book-dialogs';
 import { MailAddressBookContactWorkspace } from './mail-address-book-contact-workspace';
+import { AddressBookPagination, DirectoryList, GroupList } from './mail-address-book-lists';
 import { MailGroupReceiptDialog } from './mail-group-receipt-dialog';
 import { MailPageHeading } from './mail-components';
+import {
+  mailAccountFeatureIsReady,
+  mailAccountReadinessIsReady,
+} from './mail-account-capability-presentation';
 import { mailComposeNavigationState } from './mail-compose-navigation';
 import {
   clearMailSendAttempt,
@@ -71,8 +63,10 @@ import {
   readMailSendAttempt,
   rememberMailSendAttempt,
 } from './mail-send-attempt';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type { MailGroupMessageAttempt } from './mail-address-book-dialogs';
+import type { MailGroupSenderAccount } from './mail-address-book-dialogs';
 
 import type {
   MailContact,
@@ -82,12 +76,16 @@ import type {
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
-const COMPACT_RADIUS = `${foundationTokens.radius.compact}px`;
+const CONTACT_PAGE_SIZE = 50;
+
+function requestedPage(value: string | null) {
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : 0;
+}
 
 type ArchiveTarget =
   { kind: 'contact'; value: MailContact } | { kind: 'group'; value: MailContactGroup };
 
-const AVATAR_TONES = ['success.dark', 'info.dark', 'error.dark', 'warning.dark'] as const;
 const MAIL_CLASSIFICATIONS = new Set(['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED']);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -104,6 +102,7 @@ function isMailGroupMessageAttempt(value: unknown): value is MailGroupMessageAtt
     typeof value.input.classification === 'string' &&
     MAIL_CLASSIFICATIONS.has(value.input.classification) &&
     (value.input.recipientMode === 'TO' || value.input.recipientMode === 'BCC') &&
+    typeof value.input.accountId === 'string' &&
     typeof value.input.idempotencyKey === 'string' &&
     Number.isInteger(value.input.groupVersion) &&
     (value.reviewRequired === undefined || typeof value.reviewRequired === 'boolean') &&
@@ -139,18 +138,6 @@ function persistGroupSendAttempt(owner: string, attempt: MailGroupMessageAttempt
   });
 }
 
-function initials(value: string) {
-  const words = value.trim().split(/\s+/u);
-  return words.length > 1
-    ? `${words[0]?.[0] ?? ''}${words.at(-1)?.[0] ?? ''}`.toUpperCase()
-    : value.slice(0, 2).toUpperCase();
-}
-
-function toneFor(value: string) {
-  const index = [...value].reduce((sum, character) => sum + character.codePointAt(0)!, 0);
-  return AVATAR_TONES[index % AVATAR_TONES.length];
-}
-
 function directorySeed(person: PersonSummary): MailContactInput | null {
   if (!person.workEmail) return null;
   return {
@@ -165,6 +152,7 @@ function directorySeed(person: PersonSummary): MailContactInput | null {
 
 export function MailAddressBook() {
   const { t } = useTranslation('mail');
+  const { isLoaded, canCreate, canUpdate, canSend } = useMailUserPermissions();
   const auth = useAuth();
   const custodyOwner = mailSendCustodyOwner(auth.user);
   const hasCustodyOwner = Boolean(auth.user);
@@ -174,14 +162,20 @@ export function MailAddressBook() {
   const [params, setParams] = useSearchParams();
   const tab = params.get('view') === 'groups' ? 1 : params.get('view') === 'directory' ? 2 : 0;
   const selectedContactId = params.get('contact');
-  const [search, setSearch] = useState('');
+  const contactPage = requestedPage(params.get('page'));
+  const [search, setSearch] = useState(() => params.get('q') ?? '');
   const deferredSearch = useDeferredValue(search);
+  const [directoryPage, setDirectoryPage] = useState(0);
+  const [directoryCursors, setDirectoryCursors] = useState<Array<string | undefined>>([undefined]);
   const [contactDialog, setContactDialog] = useState<{
     contact?: MailContact | null;
     seed?: MailContactInput | null;
   } | null>(null);
   const [groupDialog, setGroupDialog] = useState<MailContactGroup | null | undefined>(undefined);
   const [membersGroup, setMembersGroup] = useState<MailContactGroup | null>(null);
+  const [memberSearch, setMemberSearch] = useState('');
+  const deferredMemberSearch = useDeferredValue(memberSearch);
+  const [memberPage, setMemberPage] = useState(0);
   const [sendGroup, setSendGroup] = useState<MailContactGroup | null>(null);
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [receiptGroup, setReceiptGroup] = useState<MailContactGroup | null>(null);
@@ -194,16 +188,45 @@ export function MailAddressBook() {
   }, [custodyOwner, hasCustodyOwner]);
 
   const addressBookQuery = useQuery({
-    queryKey: ['mail', 'address-book', tab === 0 ? deferredSearch.trim() : ''],
-    queryFn: () => getMailAddressBook({ query: tab === 0 ? deferredSearch : '', pageSize: 100 }),
+    queryKey: [
+      'mail',
+      'address-book',
+      tab === 0 ? deferredSearch.trim() : '',
+      tab === 0 ? contactPage : 0,
+    ],
+    queryFn: () =>
+      getMailAddressBook({
+        query: tab === 0 ? deferredSearch : '',
+        page: tab === 0 ? contactPage : 0,
+        pageSize: CONTACT_PAGE_SIZE,
+      }),
     staleTime: 20_000,
   });
+  const memberContactsQuery = useQuery({
+    queryKey: ['mail', 'address-book', 'member-picker', deferredMemberSearch.trim(), memberPage],
+    queryFn: () =>
+      getMailAddressBook({
+        query: deferredMemberSearch,
+        page: memberPage,
+        pageSize: CONTACT_PAGE_SIZE,
+      }),
+    enabled: Boolean(membersGroup),
+    staleTime: 20_000,
+    retry: 1,
+  });
   const directoryQuery = useQuery({
-    queryKey: ['mail', 'address-book', 'directory', deferredSearch.trim()],
+    queryKey: [
+      'mail',
+      'address-book',
+      'directory',
+      deferredSearch.trim(),
+      directoryCursors[directoryPage] ?? null,
+    ],
     queryFn: ({ signal }) =>
       listPeople({
         query: deferredSearch.trim(),
         status: 'ACTIVE',
+        cursor: directoryCursors[directoryPage],
         size: 30,
         surface: 'directory',
         signal,
@@ -218,6 +241,12 @@ export function MailAddressBook() {
     staleTime: 10_000,
     retry: 1,
   });
+  const composeContextQuery = useQuery({
+    queryKey: ['mail', 'compose-context'],
+    queryFn: getMailComposeContext,
+    staleTime: 30_000,
+    retry: 1,
+  });
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ['mail', 'address-book'] });
@@ -229,10 +258,14 @@ export function MailAddressBook() {
     }: {
       contact?: MailContact | null;
       input: MailContactInput;
-    }) =>
-      contact
-        ? updateMailContact(contact.contactId, { ...input, version: contact.version })
-        : createMailContact({ ...input, idempotencyKey: crypto.randomUUID() }),
+    }) => {
+      if (contact) {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+        return updateMailContact(contact.contactId, { ...input, version: contact.version });
+      }
+      if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
+      return createMailContact({ ...input, idempotencyKey: crypto.randomUUID() });
+    },
     onSuccess: async () => {
       setContactDialog(null);
       await refresh();
@@ -247,25 +280,35 @@ export function MailAddressBook() {
     }: {
       group?: MailContactGroup | null;
       input: { displayName: string; description: string };
-    }) =>
-      group
-        ? updateMailContactGroup(group.groupId, { ...input, version: group.version })
-        : createMailContactGroup({ ...input, idempotencyKey: crypto.randomUUID() }),
+    }) => {
+      if (group) {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+        return updateMailContactGroup(group.groupId, { ...input, version: group.version });
+      }
+      if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
+      return createMailContactGroup({ ...input, idempotencyKey: crypto.randomUUID() });
+    },
     onSuccess: async (group, variables) => {
       setGroupDialog(undefined);
       await refresh();
       toast.success(t('addressBook.group.saved'));
-      if (!variables.group) setMembersGroup(group);
+      if (!variables.group) {
+        setMemberSearch('');
+        setMemberPage(0);
+        setMembersGroup(group);
+      }
     },
     onError: () => toast.error(t('addressBook.saveError')),
   });
   const membersMutation = useMutation({
-    mutationFn: ({ group, contactIds }: { group: MailContactGroup; contactIds: string[] }) =>
-      replaceMailContactGroupMembers(group.groupId, {
+    mutationFn: ({ group, contactIds }: { group: MailContactGroup; contactIds: string[] }) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return replaceMailContactGroupMembers(group.groupId, {
         contactIds,
         idempotencyKey: crypto.randomUUID(),
         version: group.version,
-      }),
+      });
+    },
     onSuccess: async () => {
       setMembersGroup(null);
       await refresh();
@@ -275,6 +318,7 @@ export function MailAddressBook() {
   });
   const archiveMutation = useMutation({
     mutationFn: async (target: ArchiveTarget) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
       if (target.kind === 'contact') {
         await archiveMailContact(target.value.contactId, target.value.version);
       } else {
@@ -303,7 +347,10 @@ export function MailAddressBook() {
     }: {
       group: MailContactGroup;
       input: Parameters<typeof sendMailContactGroupMessage>[1];
-    }) => sendMailContactGroupMessage(group.groupId, input),
+    }) => {
+      if (!canSend) throw new Error('APP.MAIL:SEND is required');
+      return sendMailContactGroupMessage(group.groupId, input);
+    },
     onSuccess: async (result, { group }) => {
       clearMailSendAttempt(mailGroupSendScope(custodyOwner, group.groupId));
       setSendDialogOpen(false);
@@ -328,9 +375,7 @@ export function MailAddressBook() {
       const conflict = error instanceof HttpError && error.status === 409;
       const nextAttempt = {
         ...attempt,
-        input: conflict
-          ? attempt.input
-          : { ...attempt.input, idempotencyKey: crypto.randomUUID() },
+        input: conflict ? attempt.input : { ...attempt.input, idempotencyKey: crypto.randomUUID() },
         original: attempt.original ?? attempt,
         reviewRequired: true,
         snapshotStale: conflict,
@@ -385,6 +430,26 @@ export function MailAddressBook() {
     archiveMutation.isPending ||
     sendMutation.isPending ||
     reviewRecipientsMutation.isPending;
+  const groupSenderAccounts: MailGroupSenderAccount[] =
+    composeContextQuery.data?.accounts.map((account) => {
+      const capabilities = composeContextQuery.data?.accountCapabilities[account.accountId];
+      const readiness =
+        composeContextQuery.data?.accountReadiness?.[account.accountId] ?? account.readiness;
+      return {
+        ...account,
+        ready:
+          mailAccountReadinessIsReady(readiness) &&
+          mailAccountFeatureIsReady(readiness, 'SEND') &&
+          Boolean(capabilities),
+        supportsBcc: capabilities?.bcc === true,
+      };
+    }) ?? [];
+  const preferredGroupSender =
+    groupSenderAccounts.find(
+      (account) =>
+        account.accountId === composeContextQuery.data?.preferences.defaultAccountId &&
+        account.ready
+    ) ?? groupSenderAccounts.find((account) => account.ready);
 
   return (
     <PageCanvas>
@@ -397,6 +462,7 @@ export function MailAddressBook() {
             <ActionButton
               intent="quiet"
               startIcon={<UserPlus size={17} />}
+              disabled={!canCreate}
               onClick={() => setContactDialog({ contact: null })}
             >
               {t('addressBook.contact.new')}
@@ -404,6 +470,7 @@ export function MailAddressBook() {
             <ActionButton
               intent="primary"
               startIcon={<UsersRound size={17} />}
+              disabled={!canCreate}
               onClick={() => setGroupDialog(null)}
             >
               {t('addressBook.group.new')}
@@ -411,6 +478,14 @@ export function MailAddressBook() {
           </Stack>
         }
       />
+
+      {isLoaded && !canCreate && !canUpdate && !canSend && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue: 'You have read-only access. Contact and group changes are unavailable.',
+          })}
+        </Alert>
+      )}
 
       {addressBookQuery.isError && (
         <ErrorState
@@ -477,7 +552,20 @@ export function MailAddressBook() {
               fullWidth
               value={search}
               label={tab === 2 ? t('addressBook.searchDirectory') : t('addressBook.search')}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+                setSearch(value);
+                setDirectoryPage(0);
+                setDirectoryCursors([undefined]);
+                const next = new URLSearchParams(params);
+                if (value.trim()) next.set('q', value);
+                else next.delete('q');
+                if (tab === 0 && params.has('page')) {
+                  next.delete('page');
+                  next.delete('contact');
+                }
+                setParams(next, { replace: true });
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -495,8 +583,12 @@ export function MailAddressBook() {
                 if (view) next.set('view', view);
                 else next.delete('view');
                 next.delete('contact');
+                next.delete('page');
+                next.delete('q');
                 setParams(next, { replace: true });
                 setSearch('');
+                setDirectoryPage(0);
+                setDirectoryCursors([undefined]);
               }}
               aria-label={t('addressBook.tabsLabel')}
               variant="scrollable"
@@ -522,38 +614,62 @@ export function MailAddressBook() {
           </Box>
 
           {tab === 0 && (
-            <MailAddressBookContactWorkspace
-              contacts={addressBook.contacts.items}
-              selectedId={selectedContactId}
-              onSelect={(contact) => {
-                const next = new URLSearchParams(params);
-                next.set('contact', contact.contactId);
-                setParams(next);
-              }}
-              onBack={() => {
-                const next = new URLSearchParams(params);
-                next.delete('contact');
-                setParams(next, { replace: true });
-              }}
-              onCompose={(contact) => {
-                const next = new URLSearchParams(params);
-                next.set('contact', contact.contactId);
-                navigate('/mail/inbox?compose=open', {
-                  state: mailComposeNavigationState(
-                    { toEmail: contact.emailAddress },
-                    `/mail/contacts?${next.toString()}`
-                  ),
-                });
-              }}
-              onEdit={(contact) => setContactDialog({ contact })}
-              onArchive={(contact) => setArchiveTarget({ kind: 'contact', value: contact })}
-            />
+            <Stack spacing={1.5}>
+              <MailAddressBookContactWorkspace
+                contacts={addressBook.contacts.items}
+                selectedId={selectedContactId}
+                canCompose={canCreate}
+                canEdit={canUpdate}
+                canArchive={canUpdate}
+                onSelect={(contact) => {
+                  const next = new URLSearchParams(params);
+                  next.set('contact', contact.contactId);
+                  setParams(next);
+                }}
+                onBack={() => {
+                  const next = new URLSearchParams(params);
+                  next.delete('contact');
+                  setParams(next, { replace: true });
+                }}
+                onCompose={(contact) => {
+                  const next = new URLSearchParams(params);
+                  next.set('contact', contact.contactId);
+                  navigate('/mail/inbox?compose=open', {
+                    state: mailComposeNavigationState(
+                      { toEmail: contact.emailAddress },
+                      `/mail/contacts?${next.toString()}`
+                    ),
+                  });
+                }}
+                onEdit={(contact) => setContactDialog({ contact })}
+                onArchive={(contact) => setArchiveTarget({ kind: 'contact', value: contact })}
+              />
+              <AddressBookPagination
+                page={addressBook.contacts.page}
+                pageSize={addressBook.contacts.pageSize}
+                total={addressBook.contacts.total}
+                loading={addressBookQuery.isFetching}
+                onPageChange={(page) => {
+                  const next = new URLSearchParams(params);
+                  if (page > 0) next.set('page', String(page));
+                  else next.delete('page');
+                  next.delete('contact');
+                  setParams(next);
+                }}
+              />
+            </Stack>
           )}
           {tab === 1 && (
             <GroupList
               groups={filteredGroups}
+              canUpdate={canUpdate}
+              canSend={canSend}
               onEdit={(group) => setGroupDialog(group)}
-              onMembers={setMembersGroup}
+              onMembers={(group) => {
+                setMemberSearch('');
+                setMemberPage(0);
+                setMembersGroup(group);
+              }}
               onSend={(group) => {
                 setSendGroup(group);
                 setSendDialogOpen(true);
@@ -573,10 +689,34 @@ export function MailAddressBook() {
               people={directoryQuery.data?.items ?? []}
               loading={directoryQuery.isFetching}
               error={directoryQuery.isError}
+              page={directoryPage}
+              hasMore={directoryQuery.data?.hasMore === true}
               existingEmails={existingEmails}
+              canAdd={canCreate}
               onAdd={(person) => {
                 const seed = directorySeed(person);
                 if (seed) setContactDialog({ contact: null, seed });
+              }}
+              onViewProfile={(person) => {
+                navigate(`/hr/directory?person=${encodeURIComponent(person.personId)}`);
+              }}
+              onCompose={(person) => {
+                if (!person.workEmail) return;
+                const returnTo = `/mail/contacts${params.size ? `?${params.toString()}` : ''}`;
+                navigate('/mail/inbox?compose=open', {
+                  state: mailComposeNavigationState({ toEmail: person.workEmail }, returnTo),
+                });
+              }}
+              onPrevious={() => setDirectoryPage((current) => Math.max(0, current - 1))}
+              onNext={() => {
+                const nextCursor = directoryQuery.data?.nextCursor ?? undefined;
+                if (!nextCursor) return;
+                setDirectoryCursors((current) => {
+                  const next = current.slice(0, directoryPage + 1);
+                  next[directoryPage + 1] = nextCursor;
+                  return next;
+                });
+                setDirectoryPage((current) => current + 1);
               }}
             />
           )}
@@ -601,8 +741,19 @@ export function MailAddressBook() {
       <MailGroupMembersDialog
         open={Boolean(membersGroup)}
         group={membersGroup}
-        contacts={addressBook?.contacts.items ?? []}
+        contacts={memberContactsQuery.data?.contacts.items ?? []}
+        loading={memberContactsQuery.isFetching}
+        error={memberContactsQuery.isError}
+        total={memberContactsQuery.data?.contacts.total ?? 0}
+        page={memberContactsQuery.data?.contacts.page ?? memberPage}
+        pageSize={memberContactsQuery.data?.contacts.pageSize ?? CONTACT_PAGE_SIZE}
         busy={membersMutation.isPending}
+        onQueryChange={(query) => {
+          setMemberSearch(query);
+          setMemberPage(0);
+        }}
+        onPageChange={setMemberPage}
+        onRetry={() => void memberContactsQuery.refetch()}
         onClose={() => setMembersGroup(null)}
         onSubmit={(contactIds) => {
           if (membersGroup) membersMutation.mutate({ group: membersGroup, contactIds });
@@ -622,6 +773,8 @@ export function MailAddressBook() {
         }
         conflict={sendMutation.error instanceof HttpError && sendMutation.error.status === 409}
         refreshFailed={reviewRecipientsMutation.isError}
+        senderAccounts={groupSenderAccounts}
+        defaultSenderAccountId={preferredGroupSender?.accountId ?? ''}
         attempt={sendGroup ? (sendAttempts[sendGroup.groupId] ?? null) : null}
         onAttempt={(attempt) => {
           persistGroupSendAttempt(custodyOwner, attempt);
@@ -644,6 +797,7 @@ export function MailAddressBook() {
         group={receiptGroup}
         receipts={receiptHistoryQuery.data ?? []}
         latestReceipt={latestReceipt}
+        accounts={composeContextQuery.data?.accounts ?? []}
         loading={receiptHistoryQuery.isLoading}
         error={receiptHistoryQuery.isError}
         onClose={() => {
@@ -670,234 +824,5 @@ export function MailAddressBook() {
         {anyBusy ? t('addressBook.updating') : ''}
       </Box>
     </PageCanvas>
-  );
-}
-
-function GroupList({
-  groups,
-  onEdit,
-  onMembers,
-  onSend,
-  onHistory,
-  onArchive,
-}: {
-  groups: MailContactGroup[];
-  onEdit: (group: MailContactGroup) => void;
-  onMembers: (group: MailContactGroup) => void;
-  onSend: (group: MailContactGroup) => void;
-  onHistory: (group: MailContactGroup) => void;
-  onArchive: (group: MailContactGroup) => void;
-}) {
-  const { t } = useTranslation('mail');
-  if (!groups.length) {
-    return (
-      <GuidedEmptyState
-        kind="empty"
-        title={t('addressBook.group.emptyTitle')}
-        description={t('addressBook.group.emptyDescription')}
-      />
-    );
-  }
-  return (
-    <Box
-      component="section"
-      aria-label={t('addressBook.group.listTitle')}
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, minmax(0, 1fr))' },
-        gap: 1.5,
-      }}
-    >
-      {groups.map((group) => (
-        <Box
-          key={group.groupId}
-          sx={{
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: COMPACT_RADIUS,
-            bgcolor: 'background.paper',
-            p: 2,
-          }}
-        >
-          <Stack direction="row" spacing={1.25} alignItems="flex-start">
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                display: 'grid',
-                placeItems: 'center',
-                borderRadius: COMPACT_RADIUS,
-                bgcolor: 'var(--dwp-product-soft)',
-                color: 'var(--dwp-product-accent)',
-                flexShrink: 0,
-              }}
-            >
-              <UsersRound size={20} />
-            </Box>
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Typography fontWeight="fontWeightBold">{group.displayName}</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35, minHeight: 40 }}>
-                {group.description || t('addressBook.group.noDescription')}
-              </Typography>
-              <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
-                <Chip
-                  size="small"
-                  label={t('addressBook.group.memberCount', { count: group.members.length })}
-                />
-                {group.members.slice(0, 2).map((member) => (
-                  <Chip
-                    key={member.contactId}
-                    size="small"
-                    variant="outlined"
-                    label={member.displayName}
-                  />
-                ))}
-              </Stack>
-            </Box>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={0.75}
-            flexWrap="wrap"
-            useFlexGap
-            justifyContent="flex-end"
-            sx={{ mt: 2 }}
-          >
-            <ActionButton
-              intent="quiet"
-              size="small"
-              onClick={() => onEdit(group)}
-              startIcon={<Pencil size={15} />}
-            >
-              {t('addressBook.group.edit')}
-            </ActionButton>
-            <ActionButton
-              intent="quiet"
-              size="small"
-              onClick={() => onMembers(group)}
-              startIcon={<Plus size={15} />}
-            >
-              {t('addressBook.group.members')}
-            </ActionButton>
-            <ActionButton
-              intent="quiet"
-              size="small"
-              onClick={() => onHistory(group)}
-              startIcon={<History size={15} />}
-            >
-              {t('addressBook.group.history')}
-            </ActionButton>
-            <ActionButton
-              intent="primary"
-              size="small"
-              onClick={() => onSend(group)}
-              startIcon={<MailPlus size={15} />}
-              disabled={!group.members.length}
-            >
-              {t('addressBook.group.send')}
-            </ActionButton>
-            <ActionIconButton
-              size="small"
-              label={t('addressBook.archive')}
-              onClick={() => onArchive(group)}
-            >
-              <Trash2 size={16} />
-            </ActionIconButton>
-          </Stack>
-        </Box>
-      ))}
-    </Box>
-  );
-}
-
-function DirectoryList({
-  query,
-  people,
-  loading,
-  error,
-  existingEmails,
-  onAdd,
-}: {
-  query: string;
-  people: PersonSummary[];
-  loading: boolean;
-  error: boolean;
-  existingEmails: Set<string>;
-  onAdd: (person: PersonSummary) => void;
-}) {
-  const { t } = useTranslation('mail');
-  if (query.trim().length < 2) {
-    return (
-      <GuidedEmptyState
-        kind="first-use"
-        title={t('addressBook.directory.startTitle')}
-        description={t('addressBook.directory.startDescription')}
-      />
-    );
-  }
-  if (loading) return <LoadingState size="compact" label={t('addressBook.directory.loading')} />;
-  if (error) return <ErrorState size="compact" title={t('addressBook.directory.error')} />;
-  if (!people.length) {
-    return (
-      <GuidedEmptyState
-        kind="no-results"
-        title={t('addressBook.directory.emptyTitle')}
-        description={t('addressBook.directory.emptyDescription')}
-      />
-    );
-  }
-  return (
-    <Box
-      component="section"
-      aria-label={t('addressBook.directory.title')}
-      sx={{ borderTop: 1, borderColor: 'divider' }}
-    >
-      {people.map((person) => {
-        const saved = Boolean(person.workEmail && existingEmails.has(person.workEmail));
-        return (
-          <Box
-            key={person.personId}
-            sx={{
-              py: 1.25,
-              display: 'grid',
-              gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-              alignItems: 'center',
-              gap: 1.5,
-              borderBottom: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <Avatar
-              sx={{
-                bgcolor: toneFor(person.displayName),
-                width: 40,
-                height: 40,
-                fontSize: 'caption.fontSize',
-              }}
-            >
-              {initials(person.displayName)}
-            </Avatar>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography fontWeight="fontWeightBold">{person.displayName}</Typography>
-              <Typography variant="body2" noWrap>
-                {person.workEmail ?? t('addressBook.directory.noEmail')}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" noWrap>
-                {[person.organizationName, person.businessTitle].filter(Boolean).join(' · ')}
-              </Typography>
-            </Box>
-            <ActionButton
-              intent={saved ? 'quiet' : 'primary'}
-              size="small"
-              disabled={!person.workEmail || saved}
-              startIcon={<UserPlus size={15} />}
-              onClick={() => onAdd(person)}
-            >
-              {saved ? t('addressBook.directory.saved') : t('addressBook.directory.add')}
-            </ActionButton>
-          </Box>
-        );
-      })}
-    </Box>
   );
 }

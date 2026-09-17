@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, Forward, ImageOff, RotateCcw } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { downloadMailMessageAttachment, useToast } from '@dwp-frontend/shared-utils';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, ConfirmDialog } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
@@ -12,12 +13,14 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { mailRelativeTime } from './mail-components';
+import { mailDeliveryPresentation } from './mail-secondary-workspace-model';
 import {
   formatMailAttachmentSize,
   mailMessageAttachments,
   saveMailAttachmentBlob,
 } from './mail-attachment-download';
 import {
+  mailExternalLinkDetails,
   mailMessageRecipients,
   mailRemoteImageCount,
   sanitizeMailHtml,
@@ -32,6 +35,7 @@ export function MailThreadMessageCard({
   language,
   remoteImagePolicy,
   remoteImagesManuallyAllowed,
+  canForward,
   onLoadRemoteImages,
   onForward,
 }: {
@@ -40,11 +44,13 @@ export function MailThreadMessageCard({
   language: string;
   remoteImagePolicy: MailPreferences['remoteImages'];
   remoteImagesManuallyAllowed: boolean;
+  canForward: boolean;
   onLoadRemoteImages: () => void;
   onForward: () => void;
 }) {
   const { t } = useTranslation('mail');
   const toast = useToast();
+  const [externalLink, setExternalLink] = useState<{ url: string; domain: string } | null>(null);
   const outgoing = message.direction === 'OUTBOUND' || message.direction === 'DRAFT';
   const recipients = mailMessageRecipients(message);
   const attachments = mailMessageAttachments(message.attachments);
@@ -62,6 +68,7 @@ export function MailThreadMessageCard({
     onSuccess: ({ attachment, blob }) => saveMailAttachmentBlob(blob, attachment.fileName),
     onError: () => toast.error(t('thread.attachmentDownloadError')),
   });
+  const delivery = mailDeliveryPresentation(message.deliveryState);
   return (
     <Box
       sx={{
@@ -130,6 +137,19 @@ export function MailThreadMessageCard({
       {message.bodyFormat === 'HTML' ? (
         <Box
           className="dwp-mail-message-html"
+          onClickCapture={(event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            const anchor = target.closest<HTMLAnchorElement>('a[data-mail-external-link]');
+            if (!anchor) return;
+            const details = mailExternalLinkDetails(
+              anchor.getAttribute('data-mail-external-link') ?? anchor.href
+            );
+            if (!details) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setExternalLink(details);
+          }}
           sx={{
             mt: 1.5,
             lineHeight: 1.75,
@@ -196,15 +216,16 @@ export function MailThreadMessageCard({
           <Chip
             size="small"
             variant="outlined"
-            color={
-              message.deliveryState === 'FAILED'
-                ? 'error'
-                : message.deliveryState === 'SENT'
-                  ? 'success'
-                  : 'default'
-            }
-            label={t(`delivery.state.${message.deliveryState}`)}
+            color={delivery.severity}
+            label={t(delivery.labelKey, { defaultValue: delivery.labelFallback })}
           />
+          {message.deliveryState === 'SENT' && (
+            <Typography variant="caption" color="text.secondary">
+              {t('secondary.delivery.recipientDeliveryUnconfirmed', {
+                defaultValue: 'Recipient delivery has not been confirmed.',
+              })}
+            </Typography>
+          )}
           {message.deliveryState === 'FAILED' && (
             <Stack spacing={0.35} alignItems="flex-end">
               <ActionButton
@@ -232,12 +253,30 @@ export function MailThreadMessageCard({
             intent="quiet"
             size="small"
             startIcon={<Forward size={14} />}
+            disabled={!canForward}
             onClick={onForward}
           >
             {t('thread.forward')}
           </ActionButton>
         </Stack>
       )}
+      <ConfirmDialog
+        open={Boolean(externalLink)}
+        title={t('thread.externalLink.title')}
+        description={t('thread.externalLink.description', {
+          domain: externalLink?.domain ?? '',
+          url: externalLink?.url ?? '',
+        })}
+        cancelLabel={t('actions.cancel')}
+        confirmLabel={t('thread.externalLink.open')}
+        onClose={() => setExternalLink(null)}
+        onConfirm={() => {
+          if (!externalLink) return;
+          const opened = window.open(externalLink.url, '_blank', 'noopener,noreferrer');
+          if (opened) opened.opener = null;
+          setExternalLink(null);
+        }}
+      />
     </Box>
   );
 }

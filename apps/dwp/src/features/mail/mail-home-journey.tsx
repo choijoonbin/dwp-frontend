@@ -42,13 +42,13 @@ export function MailDailyFlow({
       key: 'unread',
       value: metrics.unread,
       icon: Inbox,
-      path: '/mail/inbox',
+      path: '/mail/inbox?unread=true',
     },
     {
       key: 'urgent',
       value: metrics.urgent,
       icon: CircleAlert,
-      path: '/mail/inbox?lane=PRIORITY',
+      path: '/mail/inbox?importance=URGENT',
     },
     {
       key: 'needsReply',
@@ -66,13 +66,13 @@ export function MailDailyFlow({
       key: 'assistant',
       value: metrics.activeProposals,
       icon: Sparkles,
-      path: '/mail/home#mail-assistant-title',
+      path: '/mail/actions?status=PROPOSED',
     },
   ] as const;
   const attention = metrics.urgent + metrics.needsReply;
   const attentionPath = metrics.needsReply
     ? '/mail/inbox?lane=NEEDS_REPLY'
-    : '/mail/inbox?lane=PRIORITY';
+    : '/mail/inbox?importance=URGENT';
   const unhealthyAccounts = accounts.filter(
     (account) => account.connectionState !== 'ACTIVE' || account.synchronizationState === 'DEGRADED'
   ).length;

@@ -13,7 +13,7 @@ export function MailDraftSaveStatus({
   onRetry,
 }: {
   status: MailDraftSaveStatus;
-  onRetry: () => void;
+  onRetry?: () => void;
 }) {
   const { t } = useTranslation('mail');
 
@@ -42,7 +42,7 @@ export function MailDraftSaveStatus({
     <Alert
       severity={status === 'CONFLICT' ? 'warning' : 'error'}
       action={
-        status === 'ERROR' ? (
+        status === 'ERROR' && onRetry ? (
           <ActionButton intent="quiet" onClick={onRetry}>
             {t('draft.autosave.retry')}
           </ActionButton>

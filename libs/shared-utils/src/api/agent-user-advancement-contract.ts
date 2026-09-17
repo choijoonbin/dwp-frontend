@@ -48,6 +48,9 @@ export type DwaionAttachmentEvidenceEvent = {
 export type DwaionAttachmentEvidence = {
   attachmentId: string;
   sourceSha256: string;
+  deletionAttemptCount: number;
+  deletionLastErrorCode: string | null;
+  deletionReceiptId: string | null;
   stages: DwaionAttachmentStage[];
   citations: DwaionAttachmentCitation[];
   inspectionLog: DwaionAttachmentEvidenceEvent[];
@@ -82,9 +85,19 @@ export type DwaionResearchCapabilities = {
   keepLocal: DwaionWorkflowCapability;
   sensitivityRecalculation: DwaionWorkflowCapability;
   cacheFallback: DwaionWorkflowCapability;
+  delivery: DwaionResearchDeliveryCapabilities;
 };
 
-export type DwaionResearchDownloadKind = 'raw' | 'receipt' | 'audit';
+export type DwaionResearchDeliveryCapabilities = {
+  artifact: DwaionWorkflowCapability;
+  proposal: DwaionWorkflowCapability;
+  export: DwaionWorkflowCapability;
+  handoff: DwaionWorkflowCapability;
+  share: DwaionWorkflowCapability;
+  routine: DwaionWorkflowCapability;
+};
+
+export type DwaionResearchDownloadKind = 'raw' | 'receipt' | 'audit' | 'pdf';
 
 export type DwaionAttachmentUploadTicket = {
   method: 'PUT';
@@ -110,6 +123,9 @@ export type DwaionSecureAttachment = {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  deletionAttemptCount: number;
+  deletionLastErrorCode: string | null;
+  deletionReceiptId: string | null;
 };
 
 export type DwaionResearchPlanState = 'DRAFT' | 'READY' | 'ARCHIVED';
@@ -203,6 +219,9 @@ export type DwaionResearchDelivery = {
   deliveryType: DwaionResearchDeliveryType;
   state: DwaionResearchDeliveryState;
   receiptId: string | null;
+  receipt: Record<string, unknown> | null;
+  safeErrorCode: string | null;
+  recoveryHint: string | null;
   createdAt: string;
   updatedAt: string;
   completedAt: string | null;

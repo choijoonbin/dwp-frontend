@@ -1,5 +1,5 @@
 import { API_URL, DWAION_ATTACHMENT_UPLOAD_ORIGINS } from '../env';
-import { axiosInstance } from '../axios-instance';
+import { axiosInstance, putExternalBinary } from '../axios-instance';
 import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
@@ -117,8 +117,8 @@ export async function deleteDwaionSecureAttachment(
   authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionSecureAttachment> {
   assertAgentRevision(expectedRevision, 'Attachment revision', 1);
-  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
-    `${ATTACHMENT_BASE}/${encodeId(attachmentId)}/delete`,
+  const response = await axiosInstance.deleteWithBody<ApiResponse<unknown>, object>(
+    `${ATTACHMENT_BASE}/${encodeId(attachmentId)}`,
     {
       commandId: checkedUuid(commandId, 'Attachment delete command'),
       expectedRevision,
@@ -222,7 +222,12 @@ export async function downloadDwaionResearchRun(
   kind: DwaionResearchDownloadKind
 ): Promise<Blob> {
   assertAgentUuid(runId, 'Research run identifier');
-  const accept = kind === 'audit' ? 'application/x-ndjson' : 'application/json';
+  const accept =
+    kind === 'audit'
+      ? 'application/x-ndjson'
+      : kind === 'pdf'
+        ? 'application/pdf'
+        : 'application/json';
   const response = await axiosInstance.get<Blob>(
     `${RESEARCH_BASE}/runs/${encodeId(runId)}/downloads/${kind}`,
     { responseType: 'blob', headers: { Accept: accept } }
@@ -376,14 +381,7 @@ async function uploadAttachment(
 ): Promise<{ sizeBytes: number; sha256: string }> {
   const target = secureAttachmentUploadUrl(uploadUrl);
   options.onUploadProgress?.(0, file.size);
-  const response = await fetch(target, {
-    method: 'PUT',
-    body: file,
-    signal: options.signal,
-    credentials: target.origin === pageOrigin() ? 'same-origin' : 'omit',
-    redirect: 'error',
-    referrerPolicy: 'no-referrer',
-  });
+  const response = await putExternalBinary(target, file, pageOrigin(), options.signal);
   if (!response.ok) throw new HttpError('Secure attachment upload failed.', response.status);
   const observedSize = response.headers.get('X-DWP-Observed-Size');
   const observedSha256 = response.headers.get('X-DWP-Observed-SHA256');

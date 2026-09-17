@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   Building2,
   BriefcaseBusiness,
@@ -9,11 +10,13 @@ import {
   CloudCog,
   LogOut,
   Mail,
+  MonitorSmartphone,
   Settings2,
   ShieldCheck,
 } from 'lucide-react';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { getAuthSessions } from '@dwp-frontend/shared-utils';
 import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
 import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
@@ -91,6 +94,7 @@ export function AccountMenu({
   const buttonId = useId();
   const panelId = useId();
   const settingsDescriptionId = useId();
+  const sessionsDescriptionId = useId();
   const administrationDescriptionId = useId();
   const providerDescriptionId = useId();
   const displayName = auth.user?.displayName || t('account.fallbackName');
@@ -124,6 +128,15 @@ export function AccountMenu({
   const identityCollapseQuery = collapseIdentityEarly
     ? '@container dwp-shell-header (max-width: 1250px)'
     : '@container dwp-shell-header (max-width: 62.5rem)';
+  const sessionsQuery = useQuery({
+    queryKey: ['auth', 'sessions'],
+    queryFn: async () => {
+      const response = await getAuthSessions();
+      return Array.isArray(response.data) ? response.data : [];
+    },
+    enabled: Boolean(anchor),
+    retry: false,
+  });
 
   // MUI's Popover listens for viewport resize, but not for anchor movement caused by
   // ModalManager scrollbar compensation. Track the small trigger rect only while open.
@@ -423,6 +436,48 @@ export function AccountMenu({
               <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
             </MenuItem>
           )}
+          <MenuItem
+            aria-label={t('account.menu.sessions')}
+            aria-describedby={sessionsDescriptionId}
+            onClick={() => goTo('/account/security')}
+            sx={{ mx: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
+          >
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                flex: '0 0 auto',
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: 1,
+                color: 'text.secondary',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <MonitorSmartphone {...menuIconProps} />
+            </Box>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography variant="body2" fontWeight={600} noWrap>
+                {t('account.menu.sessions')}
+              </Typography>
+              <Typography
+                id={sessionsDescriptionId}
+                variant="caption"
+                color={sessionsQuery.isError ? 'warning.main' : 'text.secondary'}
+                noWrap
+                sx={{ display: 'block' }}
+              >
+                {sessionsQuery.isError
+                  ? t('account.menu.sessionsUnavailable')
+                  : sessionsQuery.isPending
+                    ? t('account.menu.sessionsLoading')
+                    : t('account.menu.sessionsDescription', {
+                        count: sessionsQuery.data.length,
+                      })}
+              </Typography>
+            </Box>
+            <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
+          </MenuItem>
           {isAdmin && (
             <MenuItem
               aria-label={t('account.menu.administration')}

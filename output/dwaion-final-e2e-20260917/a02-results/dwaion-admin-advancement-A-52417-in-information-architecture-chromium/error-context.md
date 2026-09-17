@@ -1,0 +1,394 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Operations
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Operations
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e37]: Operations overview
+              - listitem [ref=e38]:
+                - link "Models & routing" [ref=e39] [cursor=pointer]:
+                  - /url: /dwaion/admin/models
+                  - img [ref=e41]
+                  - paragraph [ref=e46]: Models & routing
+              - listitem [ref=e47]:
+                - link "Agent and publishing management" [ref=e48] [cursor=pointer]:
+                  - /url: /dwaion/admin/agents
+                  - img [ref=e50]
+                  - paragraph [ref=e54]: Agent and publishing management
+              - listitem [ref=e55]:
+                - link "Data sources and connectors" [ref=e56] [cursor=pointer]:
+                  - /url: /dwaion/admin/sources
+                  - img [ref=e58]
+                  - paragraph [ref=e64]: Data sources and connectors
+              - listitem [ref=e65]:
+                - link "Actions and execution access" [ref=e66] [cursor=pointer]:
+                  - /url: /dwaion/admin/actions
+                  - img [ref=e68]
+                  - paragraph [ref=e73]: Actions and execution access
+              - listitem [ref=e74]:
+                - link "Policy and safety controls" [ref=e75] [cursor=pointer]:
+                  - /url: /dwaion/admin/safety
+                  - img [ref=e77]
+                  - paragraph [ref=e80]: Policy and safety controls
+              - listitem [ref=e81]:
+                - link "Response quality and evaluation" [ref=e82] [cursor=pointer]:
+                  - /url: /dwaion/admin/evaluation
+                  - img [ref=e84]
+                  - paragraph [ref=e87]: Response quality and evaluation
+              - listitem [ref=e88]:
+                - link "Operational readiness review" [ref=e89] [cursor=pointer]:
+                  - /url: /dwaion/admin/gates
+                  - img [ref=e91]
+                  - paragraph [ref=e95]: Operational readiness review
+              - listitem [ref=e96]:
+                - link "Data retention and audit" [ref=e97] [cursor=pointer]:
+                  - /url: /dwaion/admin/audit
+                  - img [ref=e99]
+                  - paragraph [ref=e103]: Data retention and audit
+        - link "Return to work" [ref=e105] [cursor=pointer]:
+          - /url: /dwaion/home
+          - img [ref=e107]
+          - text: Return to work
+    - banner [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - img [ref=e113]
+          - generic "DWAI·ON management" [ref=e117]
+        - navigation "App area switcher" [ref=e120]:
+          - generic [ref=e121]: Management mode
+          - 'link "Return to work: DWAI·ON" [ref=e123] [cursor=pointer]':
+            - /url: /dwaion/home
+            - img [ref=e125]
+            - generic [ref=e127]: Return to work
+        - generic [ref=e128]:
+          - button "Search DWP" [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+            - paragraph [ref=e134]: Search DWP
+            - generic [ref=e135]: ⌘K
+          - generic [ref=e136]:
+            - button "Enter full screen" [ref=e137] [cursor=pointer]:
+              - img [ref=e138]
+            - generic "0 actionable notifications, 0 total unread" [ref=e144]:
+              - button "0 actionable notifications, 0 total unread" [ref=e145] [cursor=pointer]:
+                - generic [ref=e146]:
+                  - img [ref=e147]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e151] [cursor=pointer]':
+            - generic [ref=e152]: T
+            - img [ref=e153]
+    - main [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]: Operations governance · A01
+            - heading "DWAI·ON operations overview" [level=1] [ref=e160]
+            - paragraph [ref=e161]: Review recent execution quality, policy decisions, and adoption signals as tenant aggregates without conversation content.
+          - generic [ref=e163]:
+            - img [ref=e164]
+            - generic [ref=e167]: Tenant aggregate
+        - region "Operations reporting scope" [ref=e168]:
+          - generic [ref=e169]:
+            - generic [ref=e170]: Reporting period
+            - generic [ref=e171]:
+              - combobox "Reporting period Last 30 days" [ref=e172] [cursor=pointer]: Last 30 days
+              - textbox: "30"
+              - img
+              - group:
+                - generic: Reporting period
+          - generic [ref=e173]:
+            - generic [ref=e174]: Latest server snapshot
+            - paragraph [ref=e175]: Snapshot generated Sep 8, 2026, 12:00 PM
+          - button "Refresh overview" [ref=e176] [cursor=pointer]
+        - alert [ref=e177]:
+          - img [ref=e179]
+          - generic [ref=e181]: This reporting window contains 2 execution failures and 4 configuration-required results. Review them separately from policy stops before diagnosing an outage.
+        - region "DWAI·ON operations summary" [ref=e182]:
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]:
+                - generic [ref=e187]: Total runs
+                - paragraph [ref=e188]: "24"
+              - img [ref=e190]
+            - generic [ref=e192]: 18 / 24 runs completed · 2 failed
+            - meter "Total runs" [ref=e194]
+          - generic [ref=e197]:
+            - generic [ref=e198]:
+              - generic [ref=e199]:
+                - generic [ref=e200]: Policy denials
+                - paragraph [ref=e201]: "2"
+              - img [ref=e203]
+            - generic [ref=e205]: 4 review handoffs · 2 execution failures
+          - generic [ref=e207]:
+            - generic [ref=e208]:
+              - generic [ref=e209]:
+                - generic [ref=e210]: Active users
+                - paragraph [ref=e211]: "6"
+              - img [ref=e213]
+            - generic [ref=e217]: 9 active conversations within retention
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - generic [ref=e221]:
+                - generic [ref=e222]: User feedback
+                - paragraph [ref=e223]: 78%
+              - img [ref=e225]
+            - generic [ref=e227]: 7 helpful · 2 needs improvement
+            - meter "User feedback" [ref=e229]
+        - generic [ref=e231]:
+          - generic [ref=e232]:
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - generic [ref=e235]:
+                  - heading "Operational signals and outcomes" [level=2] [ref=e236]
+                  - paragraph [ref=e237]: Compare execution, policy, answer, and cost signals from the same server snapshot.
+                - generic [ref=e239]: Last 30 days
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - img [ref=e243]
+                  - generic [ref=e245]:
+                    - heading "Run processing" [level=6] [ref=e246]
+                    - paragraph [ref=e247]: 18 / 24 runs completed · 2 failed
+                  - generic [ref=e248]:
+                    - generic [ref=e250]: 75% complete
+                    - generic [ref=e252]: 850 ms average
+                - generic [ref=e253]:
+                  - img [ref=e255]
+                  - generic [ref=e258]:
+                    - heading "Policy decisions" [level=6] [ref=e259]
+                    - paragraph [ref=e260]: Read allowance, review handoff, and denial outcomes
+                  - generic [ref=e261]:
+                    - generic [ref=e263]: 18 allowed
+                    - generic [ref=e265]: 4 review handoffs
+                    - generic [ref=e267]: 2 denied
+                - generic [ref=e268]:
+                  - img [ref=e270]
+                  - generic [ref=e273]:
+                    - heading "Answer quality state" [level=6] [ref=e274]
+                    - paragraph [ref=e275]: Grounded responses and safe stop signals
+                  - generic [ref=e276]:
+                    - generic [ref=e278]: 15 grounded
+                    - generic [ref=e280]: 3 abstained
+                    - generic [ref=e282]: 4 configuration required
+                - generic [ref=e283]:
+                  - img [ref=e285]
+                  - generic [ref=e288]:
+                    - heading "Runtime efficiency" [level=6] [ref=e289]
+                    - paragraph [ref=e290]: Aggregate performance for the recent period
+                  - generic [ref=e291]:
+                    - generic [ref=e293]: 850 ms average
+                    - generic [ref=e295]: 6,200 tokens
+            - generic [ref=e296]:
+              - generic [ref=e298]:
+                - heading "Observability limits" [level=2] [ref=e299]
+                - paragraph [ref=e300]: The operations API does not provide these values, so this screen does not infer their status or success rate.
+              - generic [ref=e301]:
+                - generic [ref=e302]:
+                  - paragraph [ref=e303]: Per-agent runtime connectivity
+                  - generic [ref=e304]: Not provided by this API
+                - generic [ref=e305]:
+                  - paragraph [ref=e306]: Per-connector latency and sync
+                  - generic [ref=e307]: Not provided by this API
+                - generic [ref=e308]:
+                  - paragraph [ref=e309]: Operational anomaly feed
+                  - generic [ref=e310]: Not provided by this API
+                - generic [ref=e311]:
+                  - paragraph [ref=e312]: Recent administrator audit events
+                  - generic [ref=e313]: Not provided by this API
+          - generic [ref=e314]:
+            - generic [ref=e315]:
+              - generic [ref=e317]:
+                - heading "Management shortcuts" [level=2] [ref=e318]
+                - paragraph [ref=e319]: Only management screens covered by the current VIEW permissions are shown.
+              - navigation "Investigate in a management screen" [ref=e321]:
+                - link "Agent and publishing management" [ref=e323] [cursor=pointer]:
+                  - /url: /dwaion/admin/agents
+                  - img [ref=e324]
+                  - paragraph [ref=e327]: Agent and publishing management
+                  - img [ref=e328]
+                - generic [ref=e330]:
+                  - separator [ref=e331]
+                  - link "Data sources and connectors" [ref=e332] [cursor=pointer]:
+                    - /url: /dwaion/admin/sources
+                    - img [ref=e333]
+                    - paragraph [ref=e338]: Data sources and connectors
+                    - img [ref=e339]
+                - generic [ref=e341]:
+                  - separator [ref=e342]
+                  - link "Actions and execution access" [ref=e343] [cursor=pointer]:
+                    - /url: /dwaion/admin/actions
+                    - img [ref=e344]
+                    - paragraph [ref=e348]: Actions and execution access
+                    - img [ref=e349]
+                - generic [ref=e351]:
+                  - separator [ref=e352]
+                  - link "Policy and safety controls" [ref=e353] [cursor=pointer]:
+                    - /url: /dwaion/admin/safety
+                    - img [ref=e354]
+                    - paragraph [ref=e356]: Policy and safety controls
+                    - img [ref=e357]
+                - generic [ref=e359]:
+                  - separator [ref=e360]
+                  - link "Response quality and evaluation" [ref=e361] [cursor=pointer]:
+                    - /url: /dwaion/admin/evaluation
+                    - img [ref=e362]
+                    - paragraph [ref=e364]: Response quality and evaluation
+                    - img [ref=e365]
+                - generic [ref=e367]:
+                  - separator [ref=e368]
+                  - link "Operational readiness review" [ref=e369] [cursor=pointer]:
+                    - /url: /dwaion/admin/gates
+                    - img [ref=e370]
+                    - paragraph [ref=e373]: Operational readiness review
+                    - img [ref=e374]
+                - generic [ref=e376]:
+                  - separator [ref=e377]
+                  - link "Data retention and audit" [ref=e378] [cursor=pointer]:
+                    - /url: /dwaion/admin/audit
+                    - img [ref=e379]
+                    - paragraph [ref=e384]: Data retention and audit
+                    - img [ref=e385]
+            - generic [ref=e387]:
+              - generic [ref=e388]:
+                - generic [ref=e389]:
+                  - heading "Retention policy state" [level=2] [ref=e390]
+                  - paragraph [ref=e391]: The current tenant policy included in the operations response.
+                - generic [ref=e393]: Policy version 6
+              - generic [ref=e394]:
+                - generic [ref=e395]:
+                  - paragraph [ref=e396]: Retention period
+                  - generic [ref=e397]: 180 days
+                - generic [ref=e398]:
+                  - paragraph [ref=e399]: Legal hold
+                  - generic [ref=e400]: Not applied
+        - generic [ref=e402]:
+          - region "AI incident workbench" [ref=e403]:
+            - generic [ref=e404]:
+              - generic [ref=e405]:
+                - heading "AI incident workbench" [level=2] [ref=e406]
+                - paragraph [ref=e407]: Assess impact, contain, quarantine, replay, compensate, validate, approve recovery, and close.
+              - status [ref=e409]:
+                - generic [ref=e411]:
+                  - generic [ref=e412]: Live operational data
+                  - generic [ref=e413]: Generated Sep 8, 2026, 12:00 PM
+                - generic "Refresh" [ref=e414]:
+                  - button "Refresh" [ref=e415] [cursor=pointer]:
+                    - img [ref=e416]
+            - generic [ref=e421]:
+              - region "AI incident summary" [ref=e422]:
+                - generic [ref=e424]:
+                  - paragraph [ref=e425]: "1"
+                  - paragraph [ref=e426]: Open incidents
+                - generic [ref=e428]:
+                  - paragraph [ref=e429]: "18"
+                  - paragraph [ref=e430]: Affected runs
+                - generic [ref=e432]:
+                  - paragraph [ref=e433]: "18"
+                  - paragraph [ref=e434]: Quarantined runs
+                - generic [ref=e436]:
+                  - paragraph [ref=e437]: "1"
+                  - paragraph [ref=e438]: Recovery approvals
+              - generic [ref=e439]:
+                - button "External route error spike SEV2 CONTAINED · 18 runs" [pressed] [ref=e441] [cursor=pointer]:
+                  - generic [ref=e442]:
+                    - generic [ref=e443]:
+                      - heading "External route error spike" [level=6] [ref=e444]
+                      - generic [ref=e446]: SEV2
+                    - generic [ref=e447]: CONTAINED · 18 runs
+                - generic [ref=e448]:
+                  - generic [ref=e449]:
+                    - generic [ref=e450]:
+                      - generic [ref=e451]:
+                        - heading "External route error spike" [level=3] [ref=e452]
+                        - generic [ref=e454]: SEV2
+                        - generic [ref=e456]: CONTAINED
+                      - generic [ref=e457]: incident-ai-42 · corr-ai-incident-42 · v5
+                    - paragraph [ref=e458]: route:external-primary
+                  - generic [ref=e459]:
+                    - generic [ref=e460]:
+                      - text: Affected runs
+                      - paragraph [ref=e461]: "18"
+                    - generic [ref=e462]:
+                      - text: Affected users
+                      - paragraph [ref=e463]: "7"
+                    - generic [ref=e464]:
+                      - text: Incident owner
+                      - paragraph [ref=e465]: team:ai-operations
+                    - generic [ref=e466]:
+                      - text: Opened
+                      - paragraph [ref=e467]: Sep 8, 2026, 11:40 AM
+                  - separator [ref=e468]
+                  - generic [ref=e469]:
+                    - heading "Immutable incident timeline" [level=4] [ref=e470]
+                    - generic [ref=e472]:
+                      - generic [ref=e473]:
+                        - paragraph [ref=e474]: CONTAINMENT_COMPLETED
+                        - generic [ref=e475]: Sep 8, 2026, 12:00 PM
+                      - paragraph [ref=e476]: External traffic moved to the verified private fallback.
+                      - generic [ref=e477]: operator:fixture · audit:event:42
+                  - separator [ref=e478]
+                  - generic [ref=e479]:
+                    - button "Contain" [ref=e481] [cursor=pointer]:
+                      - img [ref=e483]
+                      - text: Contain
+                    - button "Quarantine run" [ref=e486] [cursor=pointer]:
+                      - img [ref=e488]
+                      - text: Quarantine run
+                    - button "Replay" [ref=e492] [cursor=pointer]:
+                      - img [ref=e494]
+                      - text: Replay
+                    - button "Compensate" [ref=e497] [cursor=pointer]:
+                      - img [ref=e499]
+                      - text: Compensate
+                    - button "Approve recovery" [ref=e503] [cursor=pointer]:
+                      - img [ref=e505]
+                      - text: Approve recovery
+                    - button "Close incident" [ref=e509] [cursor=pointer]:
+                      - img [ref=e511]
+                      - text: Close incident
+                  - generic [ref=e514]: Replay creates a new run. Compensation remains a separate audited domain action.
+          - region "Incident response operations" [ref=e515]:
+            - generic [ref=e517]:
+              - heading "Incident response operations" [level=2] [ref=e518]
+              - paragraph [ref=e519]: Emergency stop, evidence, validation, connector recovery, and rollback commands remain bound to this incident and correlation ID.
+            - generic [ref=e522]:
+              - button "Emergency kill" [ref=e524] [cursor=pointer]
+              - button "Open war room" [ref=e526] [cursor=pointer]
+              - button "Export incident report" [ref=e528] [cursor=pointer]
+              - button "Run validation" [ref=e530] [cursor=pointer]
+              - button "Connector reauth" [ref=e532] [cursor=pointer]
+              - button "Safe rollback" [ref=e534] [cursor=pointer]
+              - button "Resync recovery data" [ref=e536] [cursor=pointer]
+              - button "Skip quarantined runs" [ref=e538] [cursor=pointer]
+              - button "Pause recovery routine" [ref=e540] [cursor=pointer]
+        - alert [ref=e542]:
+          - img [ref=e544]
+          - heading "Operational data is unavailable" [level=2] [ref=e546]
+          - paragraph [ref=e547]: The management API is not connected or is unavailable for this scope. Check the connection and authority, then retry.
+          - button "Retry" [ref=e549] [cursor=pointer]
+        - status [ref=e550]:
+          - img [ref=e552]
+          - generic [ref=e554]: Operations metrics provide only tenant-level minimum aggregates. Questions, answers, conversation titles, and personal identifiers are never queried or decrypted.
+```

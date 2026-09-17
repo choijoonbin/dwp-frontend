@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  defaultRoutineMergeSelections,
   createEmptyRoutineDraft,
+  mergeRoutineDraft,
   routineCommandState,
+  routineConflictGroups,
   routineConsentComplete,
   routineDraftErrors,
   routineDraftChangeKeys,
@@ -197,4 +200,74 @@ describe('DWAI personal routine governance model', () => {
       })
     ).toEqual(['TRIGGER', 'SOURCES']);
   });
+
+  it('classifies all five three-way merge groups without hiding concurrent edits', () => {
+    const base = routineDraft();
+    const local: DwaionRoutineDraft = {
+      ...base,
+      title: 'Local title',
+      sourceKeys: ['WORK_ITEM', 'MAIL'],
+      budget: { ...base.budget, maximumRunsPerMonth: 40 },
+    };
+    const server: DwaionRoutineDraft = {
+      ...base,
+      title: 'Server title',
+      schedule: { ...base.schedule, localTime: '10:00:00' },
+      budget: { ...base.budget, maximumRunsPerMonth: 24 },
+    };
+
+    expect(routineConflictGroups(base, local, server)).toEqual([
+      expect.objectContaining({ key: 'IDENTITY', status: 'CONFLICT' }),
+      expect.objectContaining({ key: 'TRIGGER', status: 'SERVER_ONLY' }),
+      expect.objectContaining({ key: 'SOURCES', status: 'LOCAL_ONLY' }),
+      expect.objectContaining({ key: 'DELIVERY_AND_CONSENT', status: 'UNCHANGED' }),
+      expect.objectContaining({ key: 'BUDGET_AND_RECOVERY', status: 'CONFLICT' }),
+    ]);
+  });
+
+  it('merges each governed group from the explicitly selected side', () => {
+    const base = routineDraft();
+    const local: DwaionRoutineDraft = {
+      ...base,
+      title: 'Local title',
+      sourceKeys: ['WORK_ITEM', 'MAIL'],
+      consentKeys: ['SOURCE_ACCESS', 'ANALYSIS'],
+      budget: { ...base.budget, maximumTokensPerRun: 64_000 },
+    };
+    const server: DwaionRoutineDraft = {
+      ...base,
+      title: 'Server title',
+      schedule: { ...base.schedule, localTime: '10:30:00' },
+      sourceKeys: ['CALENDAR'],
+      notificationPolicy: { ...base.notificationPolicy, notifyOnPartial: false },
+      budget: { ...base.budget, maximumTokensPerRun: 8_000 },
+    };
+    const selections = {
+      ...defaultRoutineMergeSelections(base, local, server),
+      IDENTITY: 'LOCAL',
+      TRIGGER: 'SERVER',
+      SOURCES: 'LOCAL',
+      DELIVERY_AND_CONSENT: 'SERVER',
+      BUDGET_AND_RECOVERY: 'LOCAL',
+    } as const;
+
+    expect(mergeRoutineDraft(local, server, selections)).toMatchObject({
+      title: 'Local title',
+      schedule: { localTime: '10:30:00' },
+      sourceKeys: ['WORK_ITEM', 'MAIL'],
+      consentKeys: base.consentKeys,
+      notificationPolicy: { notifyOnPartial: false },
+      budget: { maximumTokensPerRun: 64_000 },
+    });
+  });
 });
+
+function routineDraft(): DwaionRoutineDraft {
+  return {
+    ...createEmptyRoutineDraft('Asia/Seoul'),
+    title: 'Morning review',
+    description: 'Review due work',
+    sourceKeys: ['WORK_ITEM'],
+    consentKeys: ['SOURCE_ACCESS', 'ANALYSIS', 'PROPOSAL_DELIVERY'],
+  };
+}

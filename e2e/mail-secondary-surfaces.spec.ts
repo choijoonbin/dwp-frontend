@@ -3,6 +3,7 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import {
   detail,
   fulfill,
+  mailOrganization,
   MEMBER_PERMISSIONS,
   mockMailMember,
   thread,
@@ -57,6 +58,16 @@ test('secondary mail workspaces expose honest capabilities and reflow without ov
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await expect(page).toHaveURL(/\/mail\/search\?query=renewal(?:\+|%20)evidence$/u);
   await expect(page.getByRole('heading', { name: 'No messages matched' })).toBeVisible();
+  await page.getByRole('button', { name: 'Create rule from search' }).click();
+  await expect(page).toHaveURL(
+    /\/mail\/organization\?section=rules&create=from-search&ruleSubject=renewal(?:\+|%20)evidence/u
+  );
+  const seededRule = page.getByRole('dialog', { name: 'Create a mail organization rule' });
+  await expect(seededRule).toBeVisible();
+  await expect(seededRule.getByLabel('Rule name')).toHaveValue('Rule from mail search');
+  await expect(seededRule.getByLabel('Value').first()).toHaveValue('renewal evidence');
+  await seededRule.getByRole('button', { name: 'Cancel' }).click();
+  await page.goto('/mail/search?query=renewal%20evidence');
   await expectHonestResponsiveSurface(page);
   await attachScreenshot(page, testInfo, 'search');
 
@@ -105,12 +116,51 @@ test('secondary mail workspaces expose honest capabilities and reflow without ov
 
   await page.goto('/mail/accounts');
   await expect(page.getByRole('heading', { name: 'My accounts and preferences' })).toBeVisible();
+  await expect(page.getByText('Provider authorization evidence')).toBeVisible();
+  await expect(page.getByText('Provider consent')).toBeVisible();
+  await expect(page.getByText('Access token')).toBeVisible();
+  await expect(page.getByText('Feature readiness evidence')).toBeVisible();
+  await expect(
+    page.getByText('Last successful operation: 2026-09-17T04:55:00Z · scope SEND')
+  ).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Reading and writing' })).toBeVisible();
   await page.getByRole('tab', { name: 'Shortcuts' }).click();
   await expect(page.getByText('Enable mail keyboard shortcuts')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
   await expectHonestResponsiveSurface(page);
   await attachScreenshot(page, testInfo, 'accounts-preferences');
+});
+
+test('search, follow-up, and delivery pagination preserve the server page in the URL', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  await mockSecondaryMailApis(page, { pagedThreads: true, pagedDeliveries: true });
+
+  await page.goto('/mail/search?query=pageable');
+  await expect(page.getByText('Search result page 1', { exact: true })).toBeVisible();
+  await expect(page.getByText('1–50 of 101 messages')).toBeVisible();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page).toHaveURL(/\/mail\/search\?query=pageable&page=1$/u);
+  await expect(page.getByText('Search result page 2', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Previous' }).click();
+  await expect(page).toHaveURL(/\/mail\/search\?query=pageable$/u);
+
+  await page.goto('/mail/follow-up');
+  await expect(page.getByText('Reply page 1', { exact: true })).toBeVisible();
+  await expect(page.getByText('1–50 of 101 messages')).toBeVisible();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page).toHaveURL(/\/mail\/follow-up\?bucket=reply&page=1$/u);
+  await expect(page.getByText('Reply page 2', { exact: true })).toBeVisible();
+
+  await page.goto('/mail/delivery?bucket=attention');
+  await expect(page.getByText('Delivery page 1', { exact: true })).toBeVisible();
+  await expect(page.getByText('1–30 of 61 deliveries')).toBeVisible();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page).toHaveURL(/\/mail\/delivery\?bucket=attention&page=1$/u);
+  await expect(page.getByText('Delivery page 2', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Previous' }).click();
+  await expect(page).toHaveURL(/\/mail\/delivery\?bucket=attention$/u);
 });
 
 test('action center restores the returned proposal and reports the owner result', async ({
@@ -146,37 +196,70 @@ test('action center restores the returned proposal and reports the owner result'
 test('retention and delivery recovery remain blocked without required evidence', async ({
   page,
 }, testInfo) => {
-  await setScenarioViewport(page, testInfo);
+  test.setTimeout(120_000);
   await mockMailAdministrator(page);
+  for (const scenario of responsiveAuditScenarios(testInfo)) {
+    await applyResponsiveAuditScenario(page, scenario);
+    await page.goto('/mail/admin/retention');
+    if (scenario.zoom) await applyTwoHundredPercentTextZoom(page);
+    await expect(
+      page.getByRole('heading', { name: 'Retention, legal hold, and purge' })
+    ).toBeVisible();
+    await expect(page.getByText(/Destructive actions remain blocked\./u)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Preview purge impact' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Execute purge' })).toBeDisabled();
+    await expect(
+      page.getByText('Effective legal holds', { exact: true }).locator('..')
+    ).toContainText('Unavailable');
+    await expect(page.getByText('Purge candidates', { exact: true }).locator('..')).toContainText(
+      'Unavailable'
+    );
+    await expectHonestResponsiveSurface(page);
+    await attachScreenshot(page, testInfo, `admin-retention-${scenario.name}`);
 
-  await page.goto('/mail/admin/retention');
-  await expect(
-    page.getByRole('heading', { name: 'Retention, legal hold, and purge' })
-  ).toBeVisible();
-  await expect(page.getByText(/Destructive actions remain blocked\./u)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Preview purge impact' })).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'Execute purge' })).toBeDisabled();
-  await expect(
-    page.getByText('Effective legal holds', { exact: true }).locator('..')
-  ).toContainText('Unavailable');
-  await expect(page.getByText('Purge candidates', { exact: true }).locator('..')).toContainText(
-    'Unavailable'
-  );
-  await expectHonestResponsiveSurface(page);
-  await attachScreenshot(page, testInfo, 'admin-retention');
+    await page.goto('/mail/admin/delivery-audit');
+    if (scenario.zoom) await applyTwoHundredPercentTextZoom(page);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Delivery audit and recovery' })
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Message-level outcome and duplicate-safety evidence are required/u)
+    ).toBeVisible();
+    await expect(page.getByText('No message-level recovery evidence is available.')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Reconcile outcome' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Retry delivery' })).toBeDisabled();
+    await expectHonestResponsiveSurface(page);
+    await attachScreenshot(page, testInfo, `admin-delivery-audit-${scenario.name}`);
+  }
+});
 
-  await page.goto('/mail/admin/delivery-audit');
-  await expect(
-    page.getByRole('heading', { level: 1, name: 'Delivery audit and recovery' })
-  ).toBeVisible();
-  await expect(
-    page.getByText(/Message-level outcome and duplicate-safety evidence are required/u)
-  ).toBeVisible();
-  await expect(page.getByText('No message-level recovery evidence is available.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Reconcile outcome' })).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'Retry delivery' })).toBeDisabled();
-  await expectHonestResponsiveSurface(page);
-  await attachScreenshot(page, testInfo, 'admin-delivery-audit');
+test('shared inbox People picker keeps verified member actions visible across reflow', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(120_000);
+  await mockMailAdministrator(page, { sharedInbox: true });
+  for (const scenario of responsiveAuditScenarios(testInfo)) {
+    await applyResponsiveAuditScenario(page, scenario);
+    await page.goto('/mail/admin/shared-inboxes');
+    if (scenario.zoom) await applyTwoHundredPercentTextZoom(page);
+    await expect(page.getByRole('heading', { name: 'Shared inbox access' })).toBeVisible();
+    await page.getByRole('button', { name: 'Add member' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Add member' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByLabel('Search people in this tenant').fill('Mina');
+    const candidate = dialog.getByRole('option', { name: /Mina Verified/u });
+    await expect(candidate).toBeVisible();
+    await candidate.click();
+    await dialog
+      .getByRole('checkbox', {
+        name: /I reviewed assignment, draft, pending command, and provider revocation impact/u,
+      })
+      .check();
+    await expect(dialog.getByRole('button', { name: 'Save' })).toBeEnabled();
+    await expectHonestResponsiveSurface(page);
+    await attachScreenshot(page, testInfo, `admin-shared-access-${scenario.name}`);
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
+  }
 });
 
 async function mockSecondaryMailApis(
@@ -184,6 +267,8 @@ async function mockSecondaryMailApis(
   options?: {
     proposalStatus?: string;
     handoff?: Record<string, unknown>;
+    pagedThreads?: boolean;
+    pagedDeliveries?: boolean;
   }
 ) {
   await page.route('**/api/platform/v1/mail/proposals**', (route) => {
@@ -191,11 +276,17 @@ async function mockSecondaryMailApis(
     if (url.pathname.endsWith(`/proposals/${actionProposal.proposalId}/handoff`)) {
       return fulfill(route, options?.handoff ?? {});
     }
-    return fulfill(route, [
-      { ...actionProposal, status: options?.proposalStatus ?? actionProposal.status },
-    ]);
+    return fulfill(route, {
+      items: [{ ...actionProposal, status: options?.proposalStatus ?? actionProposal.status }],
+      total: 1,
+      page: Number(url.searchParams.get('page') ?? 0),
+      pageSize: Number(url.searchParams.get('pageSize') ?? 20),
+    });
   });
   await page.route('**/api/platform/v1/mail/saved-views', (route) => fulfill(route, []));
+  await page.route('**/api/platform/v1/mail/organization', (route) =>
+    fulfill(route, mailOrganization())
+  );
   await page.route('**/api/platform/v1/mail/follow-ups**', (route) => fulfill(route, []));
   await page.route('**/api/platform/v1/mail/writing-assets', (route) =>
     fulfill(route, { templates: [], signatures: [] })
@@ -217,12 +308,13 @@ async function mockSecondaryMailApis(
   );
   await page.route('**/api/platform/v1/mail/deliveries**', (route) => {
     const url = new URL(route.request().url());
+    const pageNumber = Number(url.searchParams.get('page') ?? 0);
     const deliveryId = 'delivery-81';
     const summary = {
       deliveryId,
       receiptId: 'receipt-81',
       threadId: sentThread.threadId,
-      subject: sentThread.subject,
+      subject: options?.pagedDeliveries ? `Delivery page ${pageNumber + 1}` : sentThread.subject,
       recipientSummary: 'customer@example.com',
       accountName: 'DWP Mail',
       kind: 'PERSONAL',
@@ -247,7 +339,10 @@ async function mockSecondaryMailApis(
     }
     return fulfill(route, {
       items: url.searchParams.get('bucket') === 'ATTENTION' ? [summary] : [],
-      total: url.searchParams.get('bucket') === 'ATTENTION' ? 1 : 0,
+      total:
+        url.searchParams.get('bucket') === 'ATTENTION' ? (options?.pagedDeliveries ? 61 : 1) : 0,
+      page: pageNumber,
+      pageSize: Number(url.searchParams.get('pageSize') ?? 30),
       generatedAt: '2026-09-17T01:01:00Z',
     });
   });
@@ -256,12 +351,37 @@ async function mockSecondaryMailApis(
     if (url.pathname.endsWith(`/threads/${sentThread.threadId}`)) {
       return fulfill(route, detail(sentThread, 'FAILED'));
     }
+    if (options?.pagedThreads) {
+      const pageNumber = Number(url.searchParams.get('page') ?? 0);
+      const pageThread = thread(
+        pageNumber === 0
+          ? '40000000-0000-0000-0000-000000000091'
+          : '40000000-0000-0000-0000-000000000092',
+        {
+          subject:
+            url.searchParams.get('lane') === 'NEEDS_REPLY'
+              ? `Reply page ${pageNumber + 1}`
+              : `Search result page ${pageNumber + 1}`,
+        }
+      );
+      if (
+        url.searchParams.get('query') === 'pageable' ||
+        url.searchParams.get('lane') === 'NEEDS_REPLY'
+      ) {
+        return fulfill(route, {
+          items: [pageThread],
+          total: 101,
+          page: pageNumber,
+          pageSize: Number(url.searchParams.get('pageSize') ?? 50),
+        });
+      }
+    }
     const items = url.searchParams.get('folder') === 'SENT' ? [sentThread] : [];
     return fulfill(route, { items, total: items.length, page: 0, pageSize: 50 });
   });
   await page.route('**/api/platform/v1/mail/home', (route) =>
     fulfill(route, {
-      accounts: [],
+      accounts: mailOrganization().accounts,
       metrics: {
         unread: 0,
         urgent: 0,
@@ -278,7 +398,7 @@ async function mockSecondaryMailApis(
   );
 }
 
-async function mockMailAdministrator(page: Page) {
+async function mockMailAdministrator(page: Page, options: { sharedInbox?: boolean } = {}) {
   await mockShellSession(page, ['WORKSPACE_MEMBER', 'MAIL_ADMIN'], {
     locale: 'en',
     displayName: 'Mail Admin',
@@ -295,11 +415,14 @@ async function mockMailAdministrator(page: Page) {
         'SHARED_INBOX_MANAGE',
         'POLICY_MANAGE',
         'HOLD_MANAGE',
+        'PURGE_PREVIEW',
         'PURGE_AUTHORIZE',
         'PURGE_EXECUTE',
         'AUDIT_READ',
-        'RECOVERY',
-        'EXPORT',
+        'DELIVERY_RECONCILE',
+        'DELIVERY_RETRY',
+        'DELIVERY_CANCEL',
+        'EVIDENCE_EXPORT',
       ].map((permissionCode) => ({
         resourceType: 'ADMIN',
         resourceKey: 'ADMIN.MAIL',
@@ -330,11 +453,81 @@ async function mockMailAdministrator(page: Page) {
         version: 3,
       },
       connections: [],
-      sharedInboxes: [],
+      sharedInboxes: options.sharedInbox
+        ? [
+            {
+              sharedInboxId: '20000000-0000-0000-0000-000000000001',
+              inboxKey: 'people-help',
+              displayName: 'People Help',
+              address: 'people-help@example.com',
+              purpose: 'Employee support',
+              serviceTargetMinutes: 240,
+              lifecycleState: 'ACTIVE',
+              openCount: 4,
+              overdueCount: 0,
+              version: 2,
+            },
+          ]
+        : [],
       providerCatalog: [],
       generatedAt: new Date().toISOString(),
     })
   );
+  if (options.sharedInbox) {
+    await page.route('**/api/platform/v1/admin/mail/shared-inboxes/**', (route) => {
+      const path = new URL(route.request().url()).pathname;
+      if (path.endsWith('/member-candidates')) {
+        return fulfill(route, [
+          {
+            userId: 42,
+            displayName: 'Mina Verified',
+            department: 'Digital Workplace',
+            email: 'mina.verified@example.com',
+          },
+        ]);
+      }
+      if (path.endsWith('/members') && route.request().method() === 'GET') {
+        return fulfill(route, {
+          sharedInboxId: '20000000-0000-0000-0000-000000000001',
+          version: 2,
+          providerState: 'APPLIED',
+          members: [],
+        });
+      }
+      return route.fallback();
+    });
+  }
+}
+
+type ResponsiveAuditScenario = Readonly<{
+  name: string;
+  width: number;
+  height: number;
+  zoom?: boolean;
+}>;
+
+function responsiveAuditScenarios(testInfo: TestInfo): ResponsiveAuditScenario[] {
+  return testInfo.project.name === 'mobile'
+    ? [
+        { name: '390', width: 390, height: 844 },
+        { name: '320', width: 320, height: 844 },
+      ]
+    : [
+        { name: '1440', width: 1440, height: 900 },
+        { name: '1280', width: 1280, height: 900 },
+        { name: '1280-200-percent', width: 1280, height: 1024, zoom: true },
+      ];
+}
+
+async function applyResponsiveAuditScenario(page: Page, scenario: ResponsiveAuditScenario) {
+  await page.setViewportSize({ width: scenario.width, height: scenario.height });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+}
+
+async function applyTwoHundredPercentTextZoom(page: Page) {
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
 }
 
 async function setScenarioViewport(page: Page, testInfo: TestInfo) {

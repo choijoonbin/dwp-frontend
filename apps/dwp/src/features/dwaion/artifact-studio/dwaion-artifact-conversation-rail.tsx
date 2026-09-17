@@ -112,9 +112,9 @@ export function DwaionArtifactConversationRail({
       else if (artifact.projectKey) groups.PROJECTS.push(artifact);
       else groups.RECENT.push(artifact);
     });
-    return (Object.keys(groups) as ArtifactGroup[]).filter((key) => groups[key].length).map(
-      (key) => ({ key, artifacts: groups[key] })
-    );
+    return (Object.keys(groups) as ArtifactGroup[])
+      .filter((key) => groups[key].length)
+      .map((key) => ({ key, artifacts: groups[key] }));
   }, [visibleArtifacts]);
   const unavailableReason =
     tab === 'TEAM' && !navigationCapabilities?.teamWorkspaceAvailable
@@ -288,95 +288,98 @@ export function DwaionArtifactConversationRail({
               {group.artifacts.map((artifact, index) => (
                 <Box key={artifact.artifactId}>
                   {index > 0 ? <Divider /> : null}
-              <Box
-                component="button"
-                type="button"
-                aria-pressed={artifact.artifactId === selectedId}
-                onClick={() => onSelect(artifact)}
-                sx={{
-                  width: '100%',
-                  minHeight: 64,
-                  display: 'grid',
-                  gridTemplateColumns: '32px minmax(0, 1fr)',
-                  alignItems: 'start',
-                  gap: 1,
-                  border: 0,
-                  px: 1,
-                  py: 1.25,
-                  bgcolor:
-                    artifact.artifactId === selectedId ? 'var(--dwp-product-soft)' : 'transparent',
-                  color: 'text.primary',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  '&:hover': { bgcolor: 'action.hover' },
-                  '&:focus-visible': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: -2,
-                  },
-                  '@media (forced-colors: active)': {
-                    border: artifact.artifactId === selectedId ? '1px solid Highlight' : 0,
-                  },
-                }}
-              >
-                <FileText size={18} aria-hidden="true" />
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography
-                    variant="body2"
-                    fontWeight="fontWeightBold"
-                    sx={{ overflowWrap: 'anywhere' }}
+                  <Box
+                    component="button"
+                    type="button"
+                    aria-pressed={artifact.artifactId === selectedId}
+                    onClick={() => onSelect(artifact)}
+                    sx={{
+                      width: '100%',
+                      minHeight: 64,
+                      display: 'grid',
+                      gridTemplateColumns: '32px minmax(0, 1fr)',
+                      alignItems: 'start',
+                      gap: 1,
+                      border: 0,
+                      px: 1,
+                      py: 1.25,
+                      bgcolor:
+                        artifact.artifactId === selectedId
+                          ? 'var(--dwp-product-soft)'
+                          : 'transparent',
+                      color: 'text.primary',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' },
+                      '&:focus-visible': {
+                        outline: '2px solid',
+                        outlineColor: 'primary.main',
+                        outlineOffset: -2,
+                      },
+                      '@media (forced-colors: active)': {
+                        border: artifact.artifactId === selectedId ? '1px solid Highlight' : 0,
+                      },
+                    }}
                   >
-                    {artifact.title}
-                  </Typography>
-                  <Stack
-                    direction="row"
-                    gap={0.5}
-                    alignItems="center"
-                    flexWrap="wrap"
-                    sx={{ mt: 0.5 }}
-                  >
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      label={copy.artifactTypes[artifact.artifactType]}
-                    />
-                    <Chip
-                      size="small"
-                      color={artifact.state === 'PUBLISHED' ? 'success' : 'default'}
-                      variant="outlined"
-                      label={copy.artifactStates[artifact.state]}
-                    />
-                    {artifact.projectKey ? (
-                      <Chip size="small" variant="outlined" label={artifact.projectKey} />
-                    ) : null}
-                    {artifact.tags.slice(0, 2).map((tag) => (
-                      <Chip size="small" variant="outlined" label={`#${tag}`} key={tag} />
-                    ))}
-                    <Chip
-                      size="small"
-                      color={
-                        artifact.reviewSlaDueAt && Date.parse(artifact.reviewSlaDueAt) < Date.now()
-                          ? 'warning'
-                          : 'default'
-                      }
-                      variant="outlined"
-                      label={
-                        artifact.reviewSlaDueAt
-                          ? `${
-                              Date.parse(artifact.reviewSlaDueAt) < Date.now()
-                                ? copy.artifactSla.overdue
-                                : copy.artifactSla.due
-                            } ${formatTimestamp(artifact.reviewSlaDueAt)}`
-                          : copy.artifactSla.none
-                      }
-                    />
-                    <Typography variant="caption" color="text.secondary">
-                      {copy.revisionPrefix}
-                      {artifact.revision} {copy.separator} {formatTimestamp(artifact.updatedAt)}
-                    </Typography>
-                  </Stack>
-                </Box>
-              </Box>
+                    <FileText size={18} aria-hidden="true" />
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        variant="body2"
+                        fontWeight="fontWeightBold"
+                        sx={{ overflowWrap: 'anywhere' }}
+                      >
+                        {artifact.title}
+                      </Typography>
+                      <Stack
+                        direction="row"
+                        gap={0.5}
+                        alignItems="center"
+                        flexWrap="wrap"
+                        sx={{ mt: 0.5 }}
+                      >
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label={copy.artifactTypes[artifact.artifactType]}
+                        />
+                        <Chip
+                          size="small"
+                          color={artifact.state === 'PUBLISHED' ? 'success' : 'default'}
+                          variant="outlined"
+                          label={copy.artifactStates[artifact.state]}
+                        />
+                        {artifact.projectKey ? (
+                          <Chip size="small" variant="outlined" label={artifact.projectKey} />
+                        ) : null}
+                        {artifact.tags.slice(0, 2).map((tag) => (
+                          <Chip size="small" variant="outlined" label={`#${tag}`} key={tag} />
+                        ))}
+                        <Chip
+                          size="small"
+                          color={
+                            artifact.reviewSlaDueAt &&
+                            Date.parse(artifact.reviewSlaDueAt) < Date.now()
+                              ? 'warning'
+                              : 'default'
+                          }
+                          variant="outlined"
+                          label={
+                            artifact.reviewSlaDueAt
+                              ? `${
+                                  Date.parse(artifact.reviewSlaDueAt) < Date.now()
+                                    ? copy.artifactSla.overdue
+                                    : copy.artifactSla.due
+                                } ${formatTimestamp(artifact.reviewSlaDueAt)}`
+                              : copy.artifactSla.none
+                          }
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          {copy.revisionPrefix}
+                          {artifact.revision} {copy.separator} {formatTimestamp(artifact.updatedAt)}
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  </Box>
                 </Box>
               ))}
             </Fragment>
@@ -388,14 +391,11 @@ export function DwaionArtifactConversationRail({
 }
 
 function unique(values: readonly (string | null)[]): string[] {
-  return [...new Set(values.filter((value): value is string => Boolean(value)))].sort((left, right) =>
-    left.localeCompare(right)
+  return [...new Set(values.filter((value): value is string => Boolean(value)))].sort(
+    (left, right) => left.localeCompare(right)
   );
 }
 
 function filterOptions(values: readonly string[], allLabel: string) {
-  return [
-    { value: 'ALL', label: allLabel },
-    ...values.map((value) => ({ value, label: value })),
-  ];
+  return [{ value: 'ALL', label: allLabel }, ...values.map((value) => ({ value, label: value }))];
 }

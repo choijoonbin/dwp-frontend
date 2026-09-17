@@ -26,7 +26,8 @@
     "deviceSummary_other": "{{count}} device layouts are synchronized for the active home.",
     "modes": {
       "CLASSIC": "Classic",
-      "FLOW_V1": "Flow"
+      "FLOW_V1": "Flow",
+      "MZ_V1": "AI Stage"
     }
   },
   "common": {
@@ -234,7 +235,7 @@
   },
   "modePreset": {
     "title": "Choose a Home mode",
-    "description": "Compare how Classic, Flow, and MZ / AI Stage organize information. Changing modes preserves the order and access rights of all 18 approved shared apps.",
+    "description": "Compare how Classic, Flow, and AI Stage organize information. Changing modes preserves the order and access rights of all 18 approved shared apps.",
     "groupLabel": "Home mode",
     "current": "Currently applied",
     "selected": "Selected",
@@ -254,13 +255,13 @@
         "description": "Review priority work, calendar events, and response requests in one action-oriented flow."
       },
       "MZ_V1": {
-        "title": "MZ / AI Stage",
+        "title": "AI Stage",
         "description": "Turn an explicit intent into grounded evidence and a reviewable plan before handing actions to their owner products."
       }
     },
     "preview": {
       "blindTestTitle": "Blind Header Test",
-      "blindTestDescription": "Classic's organization brief, Flow's urgent action canvas, and MZ's grounded AI Stage remain distinct without their headers.",
+      "blindTestDescription": "Classic's organization brief, Flow's urgent action canvas, and grounded AI Stage remain distinct without their headers.",
       "axisIntegrity": "Preserves information architecture, expression width, and the order of all 18 shared apps",
       "firstQuestion": "First question:",
       "primaryAction": "Primary action:",

@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   TriangleAlert,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { ActionButton, InlineFeedback, foundationTokens } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
@@ -21,26 +20,40 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { DwaionProposal, DwaionProposalHandoff } from '@dwp-frontend/shared-utils';
+import type {
+  DwaionProposal,
+  DwaionProposalHandoff,
+  DwaionProposalHandoffDraft,
+} from '@dwp-frontend/shared-utils';
 
 export function DwaionProposalActionReview({
   proposal,
   handoff,
+  draft,
   idempotencyKey,
   locale,
   busy,
   error,
+  draftLoading,
+  draftError,
   onRetry,
+  onRetryDraft,
+  onSaveDraft,
   onBack,
   onOpenTarget,
 }: {
   proposal: DwaionProposal;
   handoff: DwaionProposalHandoff;
+  draft: DwaionProposalHandoffDraft | null;
   idempotencyKey: string;
   locale: 'ko' | 'en';
   busy: boolean;
   error: boolean;
+  draftLoading: boolean;
+  draftError: boolean;
   onRetry: () => void;
+  onRetryDraft: () => void;
+  onSaveDraft: () => void;
   onBack: () => void;
   onOpenTarget: () => void;
 }) {
@@ -49,50 +62,14 @@ export function DwaionProposalActionReview({
   const inputs = Object.entries(proposal.content.actionInputs ?? {});
   const completed = handoff.state === 'COMPLETED';
   const failed = ['FAILED', 'CANCELLED'].includes(handoff.state);
-  const ownerCompletionSupported = handoff.actionKey === 'APPROVAL.REQUEST.CREATE';
+  const ownerCompletionSupported = [
+    'CALENDAR.EVENT.CREATE',
+    'MAIL.DRAFT.CREATE',
+    'SERVICE.REQUEST.CREATE',
+    'APPROVAL.REQUEST.CREATE',
+  ].includes(handoff.actionKey);
   const immutableBinding =
     handoff.proposalId === proposal.proposalId && handoff.actionKey === proposal.actionKey;
-  const [draftState, setDraftState] = useState<'IDLE' | 'SAVED' | 'ERROR'>('IDLE');
-  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(proposalDraftKey(proposal.proposalId));
-      if (!stored) return;
-      const parsed = JSON.parse(stored) as Record<string, unknown>;
-      if (parsed.proposalId !== proposal.proposalId || parsed.handoffId !== handoff.handoffId)
-        return;
-      setDraftSavedAt(typeof parsed.savedAt === 'string' ? parsed.savedAt : null);
-      setDraftState('SAVED');
-    } catch {
-      setDraftState('ERROR');
-    }
-  }, [handoff.handoffId, proposal.proposalId]);
-
-  const saveTemporaryDraft = () => {
-    try {
-      const savedAt = new Date().toISOString();
-      sessionStorage.setItem(
-        proposalDraftKey(proposal.proposalId),
-        JSON.stringify({
-          version: 1,
-          proposalId: proposal.proposalId,
-          handoffId: handoff.handoffId,
-          actionKey: handoff.actionKey,
-          targetRoute: handoff.targetRoute,
-          reviewedInputs: proposal.content.actionInputs ?? {},
-          evidence: evidence.map((item) => ({
-            sourceType: item.sourceType,
-            referenceId: item.referenceId,
-          })),
-          savedAt,
-        })
-      );
-      setDraftSavedAt(savedAt);
-      setDraftState('SAVED');
-    } catch {
-      setDraftState('ERROR');
-    }
-  };
 
   return (
     <Stack gap={2} data-testid="dwaion-proposal-action-review">
@@ -501,19 +478,19 @@ export function DwaionProposalActionReview({
               intent="secondary"
               fullWidth
               startIcon={<Save size={16} />}
-              disabled={busy}
-              onClick={saveTemporaryDraft}
+              disabled={busy || draftLoading || failed || completed}
+              onClick={onSaveDraft}
               sx={{ mt: 1, minHeight: 44 }}
             >
-              {draftState === 'SAVED'
+              {draft
                 ? ko
-                  ? '임시 초안 갱신'
-                  : 'Update temporary draft'
+                  ? '서버 초안 갱신'
+                  : 'Update server draft'
                 : ko
-                  ? '초안 임시 보관'
-                  : 'Save temporary draft'}
+                  ? '서버에 초안 보관'
+                  : 'Save draft to server'}
             </ActionButton>
-            {draftState === 'SAVED' && draftSavedAt ? (
+            {draft ? (
               <Typography
                 role="status"
                 variant="caption"
@@ -521,15 +498,38 @@ export function DwaionProposalActionReview({
                 display="block"
                 sx={{ mt: 0.75 }}
               >
-                {ko ? '이 브라우저 세션에 보관됨' : 'Saved for this browser session'} ·{' '}
-                {formatDate(draftSavedAt, { dateStyle: 'medium', timeStyle: 'short' }, locale)}
+                {[
+                  ko ? '암호화된 서버 초안 저장' : 'Encrypted server draft saved',
+                  `v${draft.revision}`,
+                  formatDate(draft.savedAt, { dateStyle: 'medium', timeStyle: 'short' }, locale),
+                  `SHA-256 ${shortIdentifier(draft.contentSha256)}`,
+                ].join(' · ')}
               </Typography>
             ) : null}
-            {draftState === 'ERROR' ? (
-              <InlineFeedback severity="warning" sx={{ mt: 1 }}>
+            {draftLoading ? (
+              <Typography
+                role="status"
+                variant="caption"
+                color="text.secondary"
+                display="block"
+                sx={{ mt: 0.75 }}
+              >
+                {ko ? '서버 초안 확인 중…' : 'Checking the server draft…'}
+              </Typography>
+            ) : null}
+            {draftError ? (
+              <InlineFeedback
+                severity="warning"
+                sx={{ mt: 1 }}
+                action={
+                  <ActionButton intent="quiet" onClick={onRetryDraft} sx={{ minHeight: 44 }}>
+                    {ko ? '상태 다시 확인' : 'Check again'}
+                  </ActionButton>
+                }
+              >
                 {ko
-                  ? '브라우저 임시 저장소를 사용할 수 없어 초안을 보관하지 못했습니다.'
-                  : 'The browser session store is unavailable, so the draft was not saved.'}
+                  ? '서버가 초안 저장을 확인하지 못했습니다. 성공으로 표시하지 않았으며 같은 명령 ID로 안전하게 다시 저장할 수 있습니다.'
+                  : 'The server did not confirm the draft save. It was not marked successful and can be retried safely with the same command ID.'}
               </InlineFeedback>
             ) : null}
             <ActionButton
@@ -645,10 +645,6 @@ export function DwaionProposalActionReview({
       </Box>
     </Stack>
   );
-}
-
-function proposalDraftKey(proposalId: string) {
-  return `dwaion:proposal-action-draft:${proposalId}`;
 }
 
 function shortIdentifier(value: string) {

@@ -48,6 +48,7 @@ export type DwaionAttachmentSelection = {
   attachments: DwaionSecureAttachment[];
   canSubmit: boolean;
   hasFiles: boolean;
+  hasReceipt: boolean;
 };
 
 export function DwaionSecureAttachmentTray({
@@ -81,8 +82,17 @@ export function DwaionSecureAttachmentTray({
       attachments: state.attachments,
       canSubmit: state.canSubmit,
       hasFiles: state.hasFiles,
+      hasReceipt: Boolean(state.detachReceipt || state.auditReceipt),
     });
-  }, [onSelectionChange, state.attachments, state.canSubmit, state.hasFiles, state.readyIds]);
+  }, [
+    onSelectionChange,
+    state.attachments,
+    state.auditReceipt,
+    state.canSubmit,
+    state.detachReceipt,
+    state.hasFiles,
+    state.readyIds,
+  ]);
 
   const openPicker = () => {
     if (!disabled) input.current?.click();
@@ -155,7 +165,17 @@ export function DwaionSecureAttachmentTray({
         </ActionButton>
       </Stack>
 
-      <Collapse in={state.hasFiles || Boolean(state.selectionError || state.operationError)}>
+      <Collapse
+        in={
+          state.hasFiles ||
+          Boolean(
+            state.selectionError ||
+            state.operationError ||
+            state.detachReceipt ||
+            state.auditReceipt
+          )
+        }
+      >
         <Stack gap={0.75} sx={{ mt: 1 }}>
           {state.selectionError ? (
             <InlineFeedback severity="warning" onClose={state.clearError} closeLabel={copy.dismiss}>
@@ -177,7 +197,21 @@ export function DwaionSecureAttachmentTray({
                 ? copy.uploadFailed
                 : state.operationError === 'DELETE'
                   ? copy.deleteFailed
-                  : copy.waiting}
+                  : state.operationError === 'DETACH'
+                    ? copy.detachFailed
+                    : state.operationError === 'AUDIT'
+                      ? copy.auditFailed
+                      : copy.waiting}
+            </InlineFeedback>
+          ) : null}
+          {state.detachReceipt ? (
+            <InlineFeedback severity="success">
+              {copy.detachConfirmed(state.detachReceipt.receiptId)}
+            </InlineFeedback>
+          ) : null}
+          {state.auditReceipt ? (
+            <InlineFeedback severity="success">
+              {`${copy.auditConfirmed(state.auditReceipt.reportId)} · SHA-256 ${state.auditReceipt.contentSha256}`}
             </InlineFeedback>
           ) : null}
           {expanded && state.attachments.length ? (
@@ -191,6 +225,7 @@ export function DwaionSecureAttachmentTray({
               key={attachment.attachmentId}
               attachment={attachment}
               disabled={disabled}
+              deleting={state.deletingIds.includes(attachment.attachmentId)}
               onRemove={() => void state.remove(attachment)}
               copy={copy}
               locale={locale}
@@ -209,9 +244,9 @@ export function DwaionSecureAttachmentTray({
                 startIcon={<Trash2 size={16} aria-hidden="true" />}
                 disabled={
                   disabled ||
+                  state.deletingIds.length > 0 ||
                   state.attachments.some(
                     (item) =>
-                      item.state === 'DELETION_PENDING' ||
                       !item.capabilities.deletion.available ||
                       !item.capabilities.deletion.configured
                   )
@@ -229,10 +264,15 @@ export function DwaionSecureAttachmentTray({
                     key: 'detach-all',
                     label: copy.detachAll,
                     capability: 'attachment.detach',
-                    reason: actionCapabilities.detachAll.reason,
+                    reason: conversationId
+                      ? actionCapabilities.detachAll.reason
+                      : copy.conversationRequired,
                     available:
-                      actionCapabilities.detachAll.available && !state.uploadingNames.length,
-                    onClick: state.detachAll,
+                      Boolean(conversationId) &&
+                      actionCapabilities.detachAll.available &&
+                      !state.uploadingNames.length &&
+                      !state.actionBusy,
+                    onClick: () => void state.detachAll(),
                   },
                   {
                     key: 'inspection-log',
@@ -272,8 +312,14 @@ export function DwaionSecureAttachmentTray({
                     key: 'audit-report',
                     label: copy.auditReport,
                     capability: 'attachment.capabilities.signedAuditReport',
-                    reason: actionCapabilities.signedAuditReport.reason,
-                    available: actionCapabilities.signedAuditReport.available,
+                    reason: conversationId
+                      ? actionCapabilities.signedAuditReport.reason
+                      : copy.conversationRequired,
+                    available:
+                      Boolean(conversationId) &&
+                      actionCapabilities.signedAuditReport.available &&
+                      !state.actionBusy,
+                    onClick: () => void state.issueAuditReport(),
                   },
                 ]}
               />
@@ -344,12 +390,14 @@ function AttachmentUploadingRow({ name, label }: { name: string; label: string }
 function AttachmentRow({
   attachment,
   disabled,
+  deleting,
   onRemove,
   copy,
   locale,
 }: {
   attachment: DwaionSecureAttachment;
   disabled: boolean;
+  deleting: boolean;
   onRemove: () => void;
   copy: ReturnType<typeof secureAttachmentCopy>;
   locale: 'ko' | 'en';
@@ -425,12 +473,20 @@ function AttachmentRow({
               locale
             )}
           </Typography>
+          {attachment.state === 'DELETION_PENDING' ? (
+            <Typography role="status" variant="caption" color="warning.main">
+              {copy.deletionPending(
+                attachment.deletionAttemptCount,
+                attachment.deletionLastErrorCode
+              )}
+            </Typography>
+          ) : null}
         </Box>
         <ActionIconButton
-          label={copy.remove}
-          tooltip={copy.remove}
+          label={attachment.state === 'DELETION_PENDING' ? copy.retryDeletion : copy.remove}
+          tooltip={attachment.state === 'DELETION_PENDING' ? copy.retryDeletion : copy.remove}
           intent="danger"
-          disabled={disabled || attachment.state === 'DELETION_PENDING'}
+          disabled={disabled || deleting}
           onClick={onRemove}
           sx={{ width: 40, height: 40, flex: '0 0 auto' }}
         >

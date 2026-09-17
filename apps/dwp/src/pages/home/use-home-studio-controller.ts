@@ -10,6 +10,7 @@ import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 import {
   freezeHomeStudioContractScope,
   resolveActiveHomeViewScope,
+  type HomePreferenceStore,
   type HomeStudioContractScope,
 } from '../../features/home/runtime/home-store-capabilities';
 import { useHomeRolloutOverlayGuard } from '../../features/home/runtime/use-home-editor-safety';
@@ -18,6 +19,7 @@ type UseHomeStudioControllerOptions = {
   homeModeKey: HomeExperienceVariant;
   modeScopedHomeViewsSupported: boolean;
   fourDeviceLayoutsSupported: boolean;
+  preferenceStore: HomePreferenceStore;
   editSession: HomeEditSession | null;
   homeV2Active: boolean;
   galleryOpen: boolean;
@@ -33,6 +35,7 @@ export function useHomeStudioController({
   homeModeKey,
   modeScopedHomeViewsSupported,
   fourDeviceLayoutsSupported,
+  preferenceStore,
   editSession,
   homeV2Active,
   galleryOpen,
@@ -57,8 +60,14 @@ export function useHomeStudioController({
       modeKey: editingHomeViewScope.modeKey,
       modeScopedViews: editingHomeViewScope.modeScoped,
       fourDeviceLayoutsSupported,
+      preferenceStore,
     }),
-    [editingHomeViewScope.modeKey, editingHomeViewScope.modeScoped, fourDeviceLayoutsSupported]
+    [
+      editingHomeViewScope.modeKey,
+      editingHomeViewScope.modeScoped,
+      fourDeviceLayoutsSupported,
+      preferenceStore,
+    ]
   );
   const effectiveHomeStudioContractScope = studioContractScope ?? liveHomeStudioContractScope;
   const openHomeStudio = useCallback(() => {

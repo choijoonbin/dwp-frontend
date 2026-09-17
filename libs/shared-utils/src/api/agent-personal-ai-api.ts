@@ -559,9 +559,6 @@ function isPersonalDataCapabilities(value: unknown): value is DwaionPersonalData
     typeof value.deletionCompletionClaimAvailable === 'boolean' &&
     PERSONAL_DATA_PROVIDER_CAPABILITY_KEYS.every((key) =>
       isPersonalDataProviderCapability(value[key])
-    ) &&
-    PERSONAL_DATA_UNBOUND_CAPABILITY_KEYS.every(
-      (key) => isAgentRecord(value[key]) && value[key].available === false
     )
   );
 }
@@ -581,7 +578,7 @@ function isPersonalDataProviderCapability(value: unknown) {
 
 function isDeletionJob(value: unknown): value is DwaionDeletionJob {
   if (!isAgentRecord(value)) return false;
-  const { blockedDomains, deletionJobId, domains, state, targets } = value;
+  const { blockedDomains, deletionJobId, domains, legalHolds, stages, state, targets } = value;
   if (
     typeof deletionJobId !== 'string' ||
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(
@@ -602,14 +599,23 @@ function isDeletionJob(value: unknown): value is DwaionDeletionJob {
     !Array.isArray(targets) ||
     targets.length > 4 ||
     !targets.every(isDeletionTarget) ||
-    new Set(targets.map((target) => target.domain)).size !== targets.length
+    new Set(targets.map((target) => target.domain)).size !== targets.length ||
+    !Array.isArray(stages) ||
+    stages.length !== DELETION_STAGE_KEYS.length ||
+    !stages.every(isDeletionStage) ||
+    stages.some((stage, index) => stage.key !== DELETION_STAGE_KEYS[index]) ||
+    !Array.isArray(legalHolds) ||
+    legalHolds.length > 4 ||
+    !legalHolds.every(isLegalHoldEvidence) ||
+    new Set(legalHolds.map((hold) => hold.domain)).size !== legalHolds.length
   )
     return false;
   const terminal = ['PARTIAL', 'COMPLETED', 'BLOCKED_LEGAL_HOLD', 'FAILED'].includes(state);
   return (
     terminal === (value.completedAt !== null) &&
     (state === 'COMPLETED') === value.deletionPerformed &&
-    targets.every((target) => domains.includes(target.domain))
+    targets.every((target) => domains.includes(target.domain)) &&
+    legalHolds.every((hold) => blockedDomains.includes(hold.domain))
   );
 }
 
@@ -624,9 +630,64 @@ function isDeletionTarget(value: unknown): boolean {
     (value.safeErrorCode === null ||
       (typeof value.safeErrorCode === 'string' && SAFE_ERROR_CODE.test(value.safeErrorCode))) &&
     (disposition === null || isDisposition(disposition)) &&
+    (value.legalHoldEvidence === null || isLegalHoldEvidence(value.legalHoldEvidence)) &&
+    (value.state === 'BLOCKED_LEGAL_HOLD') === (value.legalHoldEvidence !== null) &&
     (value.state === 'COMPLETED') === (disposition !== null) &&
     (disposition === null || disposition.domain === value.domain)
   );
+}
+
+function isDeletionStage(value: unknown): boolean {
+  return (
+    isAgentRecord(value) &&
+    DELETION_STAGE_KEY_SET.has(String(value.key)) &&
+    DELETION_STAGE_STATES.has(String(value.state)) &&
+    typeof value.detailCode === 'string' &&
+    SAFE_ERROR_CODE.test(value.detailCode) &&
+    (value.observedAt === null || isAgentDate(value.observedAt)) &&
+    (value.evidenceReference === null ||
+      (typeof value.evidenceReference === 'string' && value.evidenceReference.length <= 240)) &&
+    (value.evidenceFingerprint === null ||
+      (typeof value.evidenceFingerprint === 'string' &&
+        /^[0-9a-f]{64}$/u.test(value.evidenceFingerprint)))
+  );
+}
+
+function isLegalHoldEvidence(value: unknown): boolean {
+  if (
+    !isAgentRecord(value) ||
+    typeof value.available !== 'boolean' ||
+    !DELETION_DOMAINS.has(String(value.domain)) ||
+    typeof value.reasonCode !== 'string' ||
+    !SAFE_ERROR_CODE.test(value.reasonCode) ||
+    !(
+      value.holdId === null ||
+      (typeof value.holdId === 'string' &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(
+          value.holdId
+        ))
+    ) ||
+    !(value.state === null || ['ACTIVE', 'RELEASED'].includes(String(value.state))) ||
+    !(
+      value.authorityReference === null ||
+      (typeof value.authorityReference === 'string' && value.authorityReference.length > 0)
+    ) ||
+    !(
+      value.dpoSubjectId === null ||
+      (typeof value.dpoSubjectId === 'string' && value.dpoSubjectId.length > 0)
+    ) ||
+    !(value.effectiveAt === null || isAgentDate(value.effectiveAt)) ||
+    !(value.expiresAt === null || isAgentDate(value.expiresAt))
+  )
+    return false;
+  const complete = [
+    value.holdId,
+    value.state,
+    value.authorityReference,
+    value.dpoSubjectId,
+    value.effectiveAt,
+  ].every((item) => item !== null);
+  return value.available === complete;
 }
 
 function isDisposition(value: unknown): value is Record<string, unknown> {
@@ -688,18 +749,28 @@ const DELETION_TARGET_STATES = new Set([
   'BLOCKED_LEGAL_HOLD',
   'FAILED',
 ]);
+const DELETION_STAGE_KEYS = [
+  'REQUEST_ACCEPTED',
+  'TARGETS_SCHEDULED',
+  'ACTIVE_STORE_DISPOSITION',
+  'BACKUP_BOUNDARY',
+  'RECEIPT_FINALIZATION',
+] as const;
+const DELETION_STAGE_KEY_SET = new Set<string>(DELETION_STAGE_KEYS);
+const DELETION_STAGE_STATES = new Set([
+  'PENDING',
+  'RUNNING',
+  'COMPLETED',
+  'PARTIAL',
+  'BLOCKED',
+  'FAILED',
+  'UNAVAILABLE',
+]);
 const SAFE_ERROR_CODE = /^[A-Z][A-Z0-9_.-]{1,127}$/u;
 const PERSONAL_DATA_PROVIDER_CAPABILITY_KEYS = [
   'backupDestructionLog',
   'sreSupport',
   'legalHoldEvidence',
-  'legalHoldAppeal',
-  'signedCertificate',
-  'siemSync',
-] as const;
-const PERSONAL_DATA_UNBOUND_CAPABILITY_KEYS = [
-  'backupDestructionLog',
-  'sreSupport',
   'legalHoldAppeal',
   'signedCertificate',
   'siemSync',

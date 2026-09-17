@@ -31,6 +31,10 @@ export const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
   },
+  settings: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
+  },
 });
 
 export const CALENDAR_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGATION, {

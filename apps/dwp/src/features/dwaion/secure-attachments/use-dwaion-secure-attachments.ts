@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   createDwaionSecureAttachment,
+  createDwaionAttachmentAuditReport,
+  detachDwaionConversationAttachments,
   deleteDwaionSecureAttachment,
+  downloadDwaionAttachmentAuditReport,
   getDwaionSecureAttachment,
+  newDwaionCommandAttempt,
+  type DwaionAttachmentAuditReportReceipt,
+  type DwaionAttachmentDetachReceipt,
   type DwaionSecureAttachment,
 } from '@dwp-frontend/shared-utils';
 
@@ -27,16 +33,23 @@ export function useDwaionSecureAttachments(
 ) {
   const governCreate = useDwaionGovernedMutation('route.dwaion.work.attachment-create.action');
   const governDelete = useDwaionGovernedMutation('route.dwaion.work.attachment-delete.action');
+  const governDetach = useDwaionGovernedMutation('route.dwaion.work.attachment-detach.action');
+  const governAudit = useDwaionGovernedMutation('route.dwaion.work.attachment-audit-report.action');
   const [attachments, setAttachments] = useState<DwaionSecureAttachment[]>(() => [
     ...initialAttachments,
   ]);
   const [uploads, setUploads] = useState<PendingUpload[]>([]);
   const [uploadingNames, setUploadingNames] = useState<string[]>([]);
   const [selectionError, setSelectionError] = useState<DwaionAttachmentSelectionError | null>(null);
-  const [operationError, setOperationError] = useState<'UPLOAD' | 'DELETE' | 'REFRESH' | null>(
-    null
-  );
-  const deleteCommands = useRef(new Map<string, string>());
+  const [operationError, setOperationError] = useState<
+    'UPLOAD' | 'DELETE' | 'REFRESH' | 'DETACH' | 'AUDIT' | null
+  >(null);
+  const [deletingIds, setDeletingIds] = useState<string[]>([]);
+  const [actionBusy, setActionBusy] = useState<'DETACH' | 'AUDIT' | null>(null);
+  const [detachReceipt, setDetachReceipt] = useState<DwaionAttachmentDetachReceipt | null>(null);
+  const [auditReceipt, setAuditReceipt] = useState<DwaionAttachmentAuditReportReceipt | null>(null);
+  const deleteCommands = useRef(new Map<string, { commandId: string; expectedRevision: number }>());
+  const actionCommands = useRef(new Map<string, { commandId: string; idempotencyKey: string }>());
 
   const runUpload = useCallback(
     async (pending: PendingUpload) => {
@@ -89,45 +102,117 @@ export function useDwaionSecureAttachments(
     uploads.forEach((item) => void runUpload(item));
   }, [runUpload, uploads]);
 
-  const detachAll = useCallback(() => {
-    if (uploads.length || uploadingNames.length) return;
-    setAttachments([]);
-    setSelectionError(null);
+  const detachAll = useCallback(async () => {
+    if (!conversationId || uploads.length || uploadingNames.length || !attachments.length) return;
+    const selection = attachments.map((item) => ({
+      attachmentId: item.attachmentId,
+      expectedRevision: item.revision,
+    }));
+    const key = `detach:${conversationId}:${selection
+      .map((item) => `${item.attachmentId}:${item.expectedRevision}`)
+      .join(',')}`;
+    const attempt = actionCommands.current.get(key) ?? newDwaionCommandAttempt();
+    actionCommands.current.set(key, attempt);
+    setActionBusy('DETACH');
     setOperationError(null);
-  }, [uploadingNames.length, uploads.length]);
+    try {
+      const receipt = await governDetach((authority) =>
+        detachDwaionConversationAttachments(conversationId, selection, attempt, authority)
+      );
+      actionCommands.current.delete(key);
+      setDetachReceipt(receipt);
+      setAttachments([]);
+      setSelectionError(null);
+    } catch {
+      setOperationError('DETACH');
+    } finally {
+      setActionBusy(null);
+    }
+  }, [attachments, conversationId, governDetach, uploadingNames.length, uploads.length]);
+
+  const issueAuditReport = useCallback(async () => {
+    if (!conversationId || !attachments.length) return;
+    const selection = attachments.map((item) => ({
+      attachmentId: item.attachmentId,
+      expectedRevision: item.revision,
+    }));
+    const sameReceipt =
+      auditReceipt &&
+      auditReceipt.conversationId === conversationId &&
+      auditReceipt.attachmentIds.length === selection.length &&
+      auditReceipt.attachmentIds.every((id) => selection.some((item) => item.attachmentId === id));
+    const key = `audit:${conversationId}:${selection
+      .map((item) => `${item.attachmentId}:${item.expectedRevision}`)
+      .join(',')}`;
+    const attempt = actionCommands.current.get(key) ?? newDwaionCommandAttempt();
+    actionCommands.current.set(key, attempt);
+    setActionBusy('AUDIT');
+    setOperationError(null);
+    try {
+      const receipt =
+        sameReceipt && auditReceipt
+          ? auditReceipt
+          : await governAudit((authority) =>
+              createDwaionAttachmentAuditReport(conversationId, selection, attempt, authority)
+            );
+      if (!sameReceipt) {
+        actionCommands.current.delete(key);
+        setAuditReceipt(receipt);
+      }
+      const blob = await downloadDwaionAttachmentAuditReport(receipt.reportId);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `dwaion-attachment-audit-${receipt.reportId}.pdf`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setOperationError('AUDIT');
+    } finally {
+      setActionBusy(null);
+    }
+  }, [attachments, auditReceipt, conversationId, governAudit]);
 
   const remove = useCallback(
     async (attachment: DwaionSecureAttachment) => {
-      let commandId = deleteCommands.current.get(attachment.attachmentId);
-      if (!commandId) {
-        commandId = globalThis.crypto.randomUUID();
-        deleteCommands.current.set(attachment.attachmentId, commandId);
+      let attempt = deleteCommands.current.get(attachment.attachmentId);
+      if (!attempt) {
+        attempt = {
+          commandId: globalThis.crypto.randomUUID(),
+          expectedRevision: attachment.revision,
+        };
+        deleteCommands.current.set(attachment.attachmentId, attempt);
       }
       setOperationError(null);
+      setDeletingIds((current) =>
+        current.includes(attachment.attachmentId) ? current : [...current, attachment.attachmentId]
+      );
       try {
         const deleted = await governDelete((authority) =>
           deleteDwaionSecureAttachment(
             attachment.attachmentId,
-            attachment.revision,
-            commandId!,
+            attempt!.expectedRevision,
+            attempt!.commandId,
             authority
           )
         );
         setAttachments((current) =>
           current.map((item) => (item.attachmentId === deleted.attachmentId ? deleted : item))
         );
-        deleteCommands.current.delete(attachment.attachmentId);
+        if (deleted.state === 'DELETED') deleteCommands.current.delete(attachment.attachmentId);
       } catch {
         setOperationError('DELETE');
+      } finally {
+        setDeletingIds((current) =>
+          current.filter((attachmentId) => attachmentId !== attachment.attachmentId)
+        );
       }
     },
     [governDelete]
   );
 
   const removeAll = useCallback(async () => {
-    for (const attachment of attachments.filter(
-      (item) => item.state !== 'DELETED' && item.state !== 'DELETION_PENDING'
-    )) {
+    for (const attachment of attachments.filter((item) => item.state !== 'DELETED')) {
       await remove(attachment);
     }
   }, [attachments, remove]);
@@ -174,11 +259,16 @@ export function useDwaionSecureAttachments(
     uploadingNames,
     selectionError,
     operationError,
+    deletingIds,
+    actionBusy,
+    detachReceipt,
+    auditReceipt,
     hasFiles: visible.length > 0 || uploads.length > 0,
     canSubmit: dwaionAttachmentSelectionCanSubmit(visible, uploadingNames.length > 0),
     addFiles,
     retryUploads,
     detachAll,
+    issueAuditReport,
     remove,
     removeAll,
     clearError: () => {

@@ -16,7 +16,7 @@ describe('Home loading layout policy', () => {
   it.each([
     ['focused', 1280],
     ['balanced', 1808],
-    ['expressive', 1808],
+    ['expressive', 2560],
   ] as const)(
     'preserves the distinct %s width limit at every viewport',
     (presentation, maxWidth) => {

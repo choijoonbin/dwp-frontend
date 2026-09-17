@@ -4,10 +4,12 @@ import {
   dwaionHandoffStrings,
   dwaionHandoffText,
   parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
   type CalendarEvent,
   type CalendarEventImportance,
   type CalendarEventType,
   type PermissionDTO,
+  type DwaionProposalHandoffBinding,
 } from '@dwp-frontend/shared-utils';
 import {
   workCalendarEventHandoffDescription,
@@ -38,6 +40,7 @@ export type CalendarCreateState = Readonly<{
   importance?: CalendarEventImportance;
   attendeeEmails?: string[];
   fromDwaion?: boolean;
+  dwaionProposalBinding?: DwaionProposalHandoffBinding;
   workHandoff?: WorkCalendarEventHandoff;
 }>;
 
@@ -97,6 +100,10 @@ export function useCalendarCreateHandoff({
     : null;
   const dwaionHandoff = useMemo(
     () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
+    [location.state]
+  );
+  const dwaionProposalBinding = useMemo(
+    () => parseDwaionProposalHandoffBinding(location.state),
     [location.state]
   );
   const routeWorkHandoff = useMemo(
@@ -222,6 +229,10 @@ export function useCalendarCreateHandoff({
         visibility: currentWorkHandoff ? 'PRIVATE' : undefined,
         attendeeEmails: currentWorkHandoff ? [] : dwaionHandoffStrings(dwaionHandoff, 'attendees'),
         fromDwaion: Boolean(dwaionHandoff),
+        dwaionProposalBinding:
+          dwaionProposalBinding?.actionKey === 'CALENDAR.EVENT.CREATE'
+            ? dwaionProposalBinding
+            : undefined,
         workHandoff: currentWorkHandoff ?? undefined,
       });
     }
@@ -235,6 +246,7 @@ export function useCalendarCreateHandoff({
     canCreate,
     canCreateGranted,
     dwaionHandoff,
+    dwaionProposalBinding,
     location.pathname,
     location.search,
     location.state,

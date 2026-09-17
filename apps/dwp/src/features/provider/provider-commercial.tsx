@@ -518,6 +518,9 @@ export function ProviderCommercial() {
           title={t('commercial.adoption.title')}
           description={t('commercial.adoption.description')}
         />
+        <Alert severity="info" sx={{ mt: 1.25 }}>
+          {t('commercial.adoption.meteringBoundary')}
+        </Alert>
         <Stack
           divider={<Divider flexItem />}
           sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}

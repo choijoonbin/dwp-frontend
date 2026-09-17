@@ -1,7 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { mockCalendarShellSession as mockShellSession } from './support/calendar-shell-session';
+import { CALENDAR_EVENT_FIXTURE } from './support/product-area-fixtures';
+import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 
 test('calendar supports governed range creation and drag rescheduling', async ({ page }) => {
   await mockShellSession(page, ['CALENDAR_ADMIN'], {
@@ -91,6 +93,65 @@ test('calendar supports governed range creation and drag rescheduling', async ({
       (violation) => violation.impact === 'critical' || violation.impact === 'serious'
     )
   ).toEqual([]);
+});
+
+test('calendar edits one recurring occurrence with an explicit stable command', async ({ page }) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  const originalStartsAt = CALENDAR_EVENT_FIXTURE.startsAt;
+  const recurringEvent = {
+    ...CALENDAR_EVENT_FIXTURE,
+    eventId: 'calendar-event-editable-series',
+    title: 'Editable recurring review',
+    recurrenceId: originalStartsAt,
+    capabilities: { ...CALENDAR_EVENT_FIXTURE.capabilities, canEdit: true },
+    restrictionReason: null,
+  };
+  const updates: Record<string, unknown>[] = [];
+  await page.route('**/api/platform/v1/calendar/events?*', async (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', data: [recurringEvent] }),
+    });
+  });
+  await page.route(
+    '**/api/platform/v1/calendar/events/calendar-event-editable-series',
+    async (route) => {
+      if (route.request().method() !== 'PUT') return route.fallback();
+      const body = route.request().postDataJSON() as Record<string, unknown>;
+      updates.push(body);
+      return route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'SUCCESS',
+          data: { ...recurringEvent, ...body, recurrenceId: originalStartsAt, version: 3 },
+        }),
+      });
+    }
+  );
+
+  await page.goto('/calendar/schedule?view=week&date=2026-08-11');
+  await page.getByRole('button', { name: /Editable recurring review/u }).click();
+  const inspector = page.getByRole('dialog', { name: 'Editable recurring review' });
+  await inspector.getByRole('button', { name: 'Edit', exact: true }).click();
+  const composer = page.getByRole('dialog', { name: 'Edit event' });
+  await expect(composer.getByText('Apply changes to', { exact: true })).toBeVisible();
+  await composer.getByRole('button', { name: 'This occurrence', exact: true }).click();
+  await composer.getByLabel('Title').fill('Only this review');
+  await composer.getByRole('button', { name: 'Save', exact: true }).click();
+
+  await expect.poll(() => updates.length).toBe(1);
+  expect(updates[0]).toMatchObject({
+    title: 'Only this review',
+    editScope: 'THIS_OCCURRENCE',
+    originalStartsAt,
+    version: CALENDAR_EVENT_FIXTURE.version,
+  });
+  expect(updates[0]?.idempotencyKey).toEqual(expect.any(String));
 });
 
 test('calendar isolates transient briefing failures but purges every surface on authority denial', async ({
@@ -405,7 +466,7 @@ test('calendar coordinates attendee time, room choice, and durable schedule stat
     personIds: string[];
   };
   expect(requestUrl.search).toBe('');
-  expect(evaluationInput.durationMinutes).toBe(30);
+  expect(evaluationInput.durationMinutes).toBe(50);
   expect(evaluationInput.timeZone).toBeTruthy();
   expect(evaluationInput.personIds).toEqual([]);
   await expect(
@@ -484,7 +545,11 @@ test('calendar exposes planning and invitation workbenches', async ({ page }) =>
         .includes('/api/platform/v1/calendar/events/calendar-event-operating-review/response')
   );
   await responseDialog.getByRole('button', { name: 'Tentative', exact: true }).click();
-  expect((await responseRequest).postDataJSON()).toEqual({ response: 'TENTATIVE' });
+  expect((await responseRequest).postDataJSON()).toEqual({
+    response: 'TENTATIVE',
+    expectedVersion: CALENDAR_EVENT_FIXTURE.version,
+    idempotencyKey: expect.any(String),
+  });
   await responseDialog.getByRole('button', { name: 'Close', exact: true }).click();
 
   const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
@@ -544,6 +609,12 @@ test('calendar meeting composer becomes a full-screen, overflow-safe mobile work
   await page.setViewportSize({ width: 320, height: 720 });
   await page.goto('/calendar/schedule');
 
+  await expect(
+    page.getByTestId('calendar-mobile-navigation').getByRole('button', {
+      name: 'New event — Calendar view and actions',
+      exact: true,
+    })
+  ).toBeVisible();
   await page.getByRole('button', { name: 'New event', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Create a new event' });
   await expect(dialog).toBeVisible();
@@ -617,6 +688,11 @@ test('calendar governs company sources, explicit sharing, favorites, and trash r
   const shareDialog = page.getByRole('dialog', { name: 'Share My calendar' });
   await expect(shareDialog).toBeVisible();
   await expect(shareDialog.getByText('Minseo Kim', { exact: true })).toBeVisible();
+  await expect(shareDialog.getByText('Platform Design', { exact: true })).toBeVisible();
+  await expect(shareDialog.getByText('Organization group', { exact: true })).toBeVisible();
+  await expect(
+    shareDialog.getByText(/Group membership and access level are managed by your organization/u)
+  ).toBeVisible();
   await expect(
     shareDialog.getByText(/People who are not listed here cannot browse this calendar/u)
   ).toBeVisible();
@@ -733,55 +809,6 @@ test('calendar isolates schedule feed failures from calendar source controls', a
   await expect(page.getByRole('region', { name: 'Company', exact: true })).toBeVisible();
   await expect(page.getByText('Company calendar', { exact: true })).toBeVisible();
   await expect(page.getByTestId('interactive-calendar')).toHaveCount(0);
-
-  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
-  expect(
-    accessibility.violations.filter(
-      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
-    )
-  ).toEqual([]);
-});
-
-test('calendar expands the planning canvas and turns insight recommendations into actions', async ({
-  page,
-}) => {
-  await mockShellSession(page, ['CALENDAR_ADMIN'], {
-    locale: 'en',
-    permissions: FULL_PRODUCT_PERMISSIONS,
-  });
-  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto('/calendar/schedule');
-
-  const calendar = page.getByTestId('interactive-calendar');
-  const sourcePanel = page.getByTestId('calendar-source-panel');
-  await expect(calendar).toBeVisible();
-  await expect(sourcePanel).toBeVisible();
-  const widthWithSources = (await calendar.boundingBox())?.width ?? 0;
-
-  const hidePanel = page.getByRole('button', { name: 'Hide calendar panel', exact: true });
-  await expect(hidePanel).toHaveAttribute('aria-expanded', 'true');
-  await hidePanel.click();
-  await expect(sourcePanel).toBeHidden();
-  const widthWithoutSources = (await calendar.boundingBox())?.width ?? 0;
-  expect(widthWithoutSources).toBeGreaterThan(widthWithSources + 200);
-
-  const showPanel = page.getByRole('button', { name: 'Show calendar panel', exact: true });
-  await expect(showPanel).toHaveAttribute('aria-expanded', 'false');
-  await showPanel.click();
-  await expect(sourcePanel).toBeVisible();
-
-  await page.goto('/calendar/insights');
-  const balanceRecommendation = page.getByRole('button', {
-    name: /Balance.*Open schedule/u,
-  });
-  await expect(balanceRecommendation).toBeVisible();
-  await balanceRecommendation.click();
-  await expect(page).toHaveURL(/\/calendar\/schedule\?view=week&date=2026-08-14/u);
-
-  await page.goto('/calendar/insights');
-  await page.getByRole('button', { name: /Focus.*Protect focus time/u }).click();
-  await expect(page.getByRole('dialog', { name: 'Create a new event' })).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
   expect(

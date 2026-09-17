@@ -9,7 +9,7 @@ import {
   Unplug,
   WandSparkles,
 } from 'lucide-react';
-import { ActionButton, FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
+import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { getDwaionConnectors, type DwaionConnectorSummary } from '@dwp-frontend/shared-utils';
 
@@ -40,6 +40,8 @@ import {
   DwaionConnectorOperationDialog,
   type DwaionConnectorOperationDraft,
 } from './dwaion-connector-operation-dialog';
+import { DwaionCommandCapabilityButton } from './dwaion-command-capability-button';
+import { useDwaionCommandCapabilities } from './use-dwaion-command-capabilities';
 
 type ConnectorDraft = {
   name: string;
@@ -89,9 +91,8 @@ export function DwaionConnectorOperationsPanel() {
   const [intent, setIntent] = useState<DwaionCommandIntent | null>(null);
   const [wizard, setWizard] = useState<ConnectorDraft | null>(null);
   const [operationDraft, setOperationDraft] = useState<DwaionConnectorOperationDraft | null>(null);
+  const { available: commandAvailable } = useDwaionCommandCapabilities();
   const connectors = useMemo(() => query.data?.connectors ?? [], [query.data?.connectors]);
-  const commandsAvailable =
-    query.data?.capability.status === 'AVAILABLE' && query.data.capability.configured;
   const selected = useMemo(
     () => connectors.find((connector) => connector.connectorId === selectedId) ?? connectors[0],
     [connectors, selectedId]
@@ -99,11 +100,11 @@ export function DwaionConnectorOperationsPanel() {
 
   useEffect(() => {
     const openWizard = () => {
-      if (commandsAvailable) setWizard({ ...EMPTY_DRAFT });
+      if (commandAvailable('CONNECTOR_CREATE')) setWizard({ ...EMPTY_DRAFT });
     };
     window.addEventListener('dwaion:open-connector-wizard', openWizard);
     return () => window.removeEventListener('dwaion:open-connector-wizard', openWizard);
-  }, [commandsAvailable]);
+  }, [commandAvailable]);
 
   const openOperation = (operation: ConnectorOperation) => {
     if (!selected) return;
@@ -194,14 +195,14 @@ export function DwaionConnectorOperationsPanel() {
                     fetching={query.isFetching}
                     onRefresh={() => void query.refetch()}
                   />
-                  <ActionButton
-                    disabled={!commandsAvailable}
+                  <DwaionCommandCapabilityButton
+                    commandKind="CONNECTOR_CREATE"
                     intent="primary"
                     startIcon={<Link2 size={16} />}
                     onClick={() => setWizard({ ...EMPTY_DRAFT })}
                   >
                     {copy.connectors.create}
-                  </ActionButton>
+                  </DwaionCommandCapabilityButton>
                 </Stack>
               }
             >
@@ -282,61 +283,61 @@ export function DwaionConnectorOperationsPanel() {
                     </Box>
                     <Divider />
                     <Stack direction="row" gap={1} flexWrap="wrap">
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_PROBE"
                         intent="secondary"
                         startIcon={<SearchCheck size={16} />}
                         onClick={() => openOperation('CONNECTOR_PROBE')}
                       >
                         {copy.connectors.probe}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_SYNC"
                         intent="secondary"
                         startIcon={<RefreshCw size={16} />}
                         onClick={() => openOperation('CONNECTOR_SYNC')}
                       >
                         {copy.connectors.sync}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_REINDEX"
                         intent="secondary"
                         startIcon={<WandSparkles size={16} />}
                         onClick={() => openOperation('CONNECTOR_REINDEX')}
                       >
                         {copy.connectors.reindex}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_SECRET_ROTATE"
                         intent="secondary"
                         startIcon={<KeyRound size={16} />}
                         onClick={() => openOperation('CONNECTOR_SECRET_ROTATE')}
                       >
                         {copy.connectors.rotate}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_SCOPE_REDUCE"
                         intent="danger"
                         onClick={() => openOperation('CONNECTOR_SCOPE_REDUCE')}
                       >
                         {copy.connectors.reduce}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_REVOKE"
                         intent="danger"
                         startIcon={<Unplug size={16} />}
                         onClick={() => openOperation('CONNECTOR_REVOKE')}
                       >
                         {copy.connectors.revoke}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="CONNECTOR_DELETE"
                         intent="danger"
                         startIcon={<Trash2 size={16} />}
                         onClick={() => openOperation('CONNECTOR_DELETE')}
                       >
                         {copy.connectors.delete}
-                      </ActionButton>
+                      </DwaionCommandCapabilityButton>
                     </Stack>
                   </Stack>
                 ) : (
@@ -351,7 +352,7 @@ export function DwaionConnectorOperationsPanel() {
                 title={copy.ui.connectors.lifecycleOperations}
                 description={copy.ui.connectors.lifecycleOperationsDescription}
                 actions={connectorCanonicalActions(selected, copy.command.description)}
-                disabled={!commandsAvailable}
+                disabled={false}
                 onRefresh={async () => {
                   await query.refetch();
                 }}

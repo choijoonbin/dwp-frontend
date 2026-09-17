@@ -1,6 +1,88 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { detail, fulfill, mailAddressBook, mockMailMember, thread } from './support/mail-fixtures';
+import {
+  detail,
+  fulfill,
+  mailAddressBook,
+  mailOrganization,
+  mockMailMember,
+  thread,
+} from './support/mail-fixtures';
+
+test('company directory pages by server cursor and preserves profile and compose handoffs', async ({
+  page,
+}) => {
+  await mockMailMember(page, [
+    {
+      resourceType: 'APP',
+      resourceKey: 'APP.HCM',
+      permissionCode: 'VIEW',
+      effect: 'ALLOW',
+    },
+    {
+      resourceType: 'APP',
+      resourceKey: 'APP.PEOPLE_DIRECTORY',
+      permissionCode: 'VIEW',
+      effect: 'ALLOW',
+    },
+  ]);
+  const cursors: Array<string | null> = [];
+  await page.route('**/api/platform/v1/mail/address-book**', (route) =>
+    fulfill(route, mailAddressBook([], []))
+  );
+  await page.route('**/api/people/v1/people**', (route) => {
+    const cursor = new URL(route.request().url()).searchParams.get('cursor');
+    cursors.push(cursor);
+    const secondPage = cursor === 'people-page-2';
+    return fulfill(route, {
+      items: [
+        {
+          personId: secondPage ? 'person-second' : 'person-first',
+          personPublicId: secondPage ? 'person-second' : 'person-first',
+          displayName: secondPage ? 'Mina Second Page' : 'Mina First Page',
+          workEmail: secondPage ? 'mina.second@example.com' : 'mina.first@example.com',
+          organizationName: 'Enterprise Sales',
+          businessTitle: 'Account director',
+          status: 'ACTIVE',
+        },
+      ],
+      nextCursor: secondPage ? null : 'people-page-2',
+      hasMore: !secondPage,
+      asOf: '2026-09-17',
+    });
+  });
+  await page.route('**/api/platform/v1/mail/organization', (route) =>
+    fulfill(route, mailOrganization())
+  );
+  await page.route('**/api/platform/v1/mail/threads**', (route) =>
+    fulfill(route, { items: [], total: 0, page: 0, pageSize: 30 })
+  );
+
+  await page.goto('/mail/contacts?view=directory&q=Mina');
+  await expect(page.getByText('Mina First Page')).toBeVisible();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page.getByText('Mina Second Page')).toBeVisible();
+  expect(cursors).toContain('people-page-2');
+  await page.getByRole('button', { name: 'Previous' }).click();
+  await expect(page.getByText('Mina First Page')).toBeVisible();
+
+  await page.getByRole('button', { name: 'View source profile' }).click();
+  await expect(page).toHaveURL(/\/hr\/directory\?person=person-first$/u);
+  await page.goBack();
+  await expect(page.getByText('Mina First Page')).toBeVisible();
+  await page.getByRole('button', { name: 'Write message' }).click();
+
+  await expect(page).toHaveURL(/\/mail\/inbox\?compose=open$/u);
+  const compose = page.getByRole('dialog', { name: 'New message' });
+  await expect(compose).toBeVisible();
+  await expect(compose.getByLabel('Recipient email')).toHaveValue('mina.first@example.com');
+  await compose.getByRole('button', { name: 'Cancel' }).click();
+  const discard = page.getByRole('alertdialog', { name: 'Discard unsaved changes?' });
+  if (await discard.isVisible()) {
+    await discard.getByRole('button', { name: 'Discard changes' }).click();
+  }
+  await expect(page).toHaveURL('/mail/contacts?view=directory&q=Mina');
+});
 
 for (const recovery of [
   'none',
@@ -148,6 +230,7 @@ for (const recovery of [
             groupVersion: Number(input.groupVersion),
             recipientMode: input.recipientMode,
             recipientCount: 1,
+            accountId: input.accountId,
             threadId: sentThread.thread.threadId,
             acceptedAt: '2026-09-03T03:03:00Z',
             state: 'ACCEPTED',
@@ -281,6 +364,7 @@ for (const recovery of [
       body: 'Please review the decision package.',
       classification: 'INTERNAL',
       recipientMode: recovery === 'none' ? 'BCC' : 'TO',
+      accountId: '10000000-0000-0000-0000-000000000001',
       groupVersion: 1,
     });
     expect(sends[0]?.idempotencyKey).toEqual(expect.any(String));

@@ -5,7 +5,9 @@ import { productSurfaceGovernedMutationConfig } from './product-surface-governed
 import type { ApprovalMutationExecution } from './approval-governed-mutation';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 import type { ApiResponse } from '../types';
-import type { HomeExperienceVariant } from './home-experience-api';
+import type { HomeExperienceVariant, HomeWidgetHeight } from './home-shared-contract';
+
+export type { HomeWidgetHeight } from './home-shared-contract';
 
 export type HomeWidgetKey =
   | 'command-rail'
@@ -20,8 +22,6 @@ export const APPROVAL_HOME_SURFACE_KEY = 'approval-home' as const;
 export const HCM_HOME_SURFACE_KEY = 'hcm-home' as const;
 export type HomePresentation = 'balanced' | 'expressive' | 'focused';
 export type HomeWidgetSize = 'fifth' | 'quarter' | 'compact' | 'medium' | 'large' | 'full';
-export type HomeWidgetHeight = 'short' | 'standard' | 'tall' | 'expanded';
-
 export type PersonalHomeWidgetPreference<WidgetKey extends string = string> = {
   widgetKey: WidgetKey;
   visible: boolean;
@@ -79,14 +79,18 @@ export async function getHomePreference(): Promise<HomePreference> {
   return response.data.data;
 }
 
-export async function updateHomePreference(
-  layout: HomePreferenceLayout,
+export async function updateHomePreference<WidgetKey extends string = HomeWidgetKey>(
+  layout: HomePreferenceLayout<WidgetKey>,
   version: number,
   currentMode?: HomeExperienceVariant
-): Promise<HomePreference> {
+): Promise<HomePreference<WidgetKey>> {
   const response = await axiosInstance.put<
-    ApiResponse<HomePreference>,
-    { layout: HomePreferenceLayout; version: number; currentMode?: HomeExperienceVariant }
+    ApiResponse<HomePreference<WidgetKey>>,
+    {
+      layout: HomePreferenceLayout<WidgetKey>;
+      version: number;
+      currentMode?: HomeExperienceVariant;
+    }
   >('/api/platform/v1/home-preferences', {
     layout,
     version,

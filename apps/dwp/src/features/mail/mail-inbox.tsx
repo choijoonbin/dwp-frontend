@@ -20,6 +20,7 @@ import {
   getMailThreads,
   getMailOrganization,
   parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
   snoozeMailThread,
   useAuth,
   useToast,
@@ -57,23 +58,26 @@ import { MailComposeDialog } from './mail-compose-dialog';
 import { MailPageHeading, MailThreadListItem } from './mail-components';
 import { isMailShortcutTargetInteractive } from './mail-keyboard';
 import { MailLifecycleUndo, type MailLifecycleUndoState } from './mail-lifecycle-undo';
+import { mailInboxFirstAutoSelection } from './mail-inbox-selection';
 import { mailSendCustodyOwner } from './mail-send-attempt';
 import { mailSharedAssignmentFilter, updateMailSharedFilters } from './mail-shared-filter';
 import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadDetailPane } from './mail-thread-detail';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 import {
   mailKeyboardShortcutsEnabled,
   mailUsesCompactDensity,
   useMailRuntimePreferences,
 } from './mail-runtime-preferences';
 
-import type { MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
+import type { MailImportance, MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
 
 type MailboxMode = 'inbox' | 'sent' | 'drafts' | 'archive' | 'spam' | 'trash' | 'custom' | 'shared';
 type MailQuickCommand = Extract<MailCommand, 'mark-read' | 'star' | 'archive'>;
 
 const LANES: readonly MailTriageLane[] = ['PRIORITY', 'NEEDS_REPLY', 'ASSIGNED', 'UPDATES'];
 const PAGE_SIZE = 30;
+const IMPORTANCE_FILTERS: readonly MailImportance[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
 
 function requestedPage(value: string | null) {
   const parsed = Number(value);
@@ -83,6 +87,12 @@ function requestedPage(value: string | null) {
 function resolveLane(value: string | null, mode: MailboxMode): MailTriageLane | null {
   if (value && LANES.includes(value as MailTriageLane)) return value as MailTriageLane;
   return mode === 'shared' ? null : 'PRIORITY';
+}
+
+function resolveImportance(value: string | null): MailImportance | undefined {
+  return IMPORTANCE_FILTERS.includes(value as MailImportance)
+    ? (value as MailImportance)
+    : undefined;
 }
 
 export function MailInbox({ mode }: { mode: MailboxMode }) {
@@ -96,7 +106,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const lane = resolveLane(params.get('lane'), mode);
+  const unreadOnly = params.get('unread') === 'true';
+  const importance = resolveImportance(params.get('importance'));
+  const hasSignalFilter = unreadOnly || Boolean(importance);
+  const lane = hasSignalFilter ? null : resolveLane(params.get('lane'), mode);
   const requestedAccountId = params.get('accountId');
   const requestedSharedInboxId = params.get('sharedInboxId');
   const sharedAssignment = mailSharedAssignmentFilter(params.get('assignment'));
@@ -113,6 +126,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const runtimePreferences = useMailRuntimePreferences();
   const proposalOwnerHandoff = useMailProposalOwnerHandoff('MAIL');
+  const { canCreate, canUpdate, canSend } = useMailUserPermissions();
   const proposalDomainCompletedRef = useRef(false);
   const proposalReturnStartedRef = useRef(false);
   const selectedId = params.get('thread');
@@ -122,9 +136,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const [dwaionHandoffState, setDwaionHandoffState] = useState(() => ({
     owner: custodyOwner,
     handoff: parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE'),
+    binding: parseDwaionProposalHandoffBinding(location.state),
   }));
   const dwaionHandoff =
     dwaionHandoffState.owner === custodyOwner ? dwaionHandoffState.handoff : null;
+  const dwaionProposalBinding =
+    dwaionHandoffState.owner === custodyOwner &&
+    dwaionHandoffState.binding?.actionKey === 'MAIL.DRAFT.CREATE'
+      ? dwaionHandoffState.binding
+      : null;
   const [composeNavigationState, setComposeNavigationState] = useState(() => ({
     owner: custodyOwner,
     ...parseMailComposeNavigationState(location.state),
@@ -186,6 +206,8 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
       'threads',
       mode,
       activeLane,
+      importance,
+      unreadOnly,
       state,
       requestedFolderId,
       accountScope,
@@ -197,6 +219,8 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     queryFn: () =>
       getMailThreads({
         lane: activeLane ?? undefined,
+        importance,
+        unread: unreadOnly || undefined,
         state,
         folder,
         folderId: mode === 'custom' ? (requestedFolderId ?? undefined) : undefined,
@@ -217,6 +241,8 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const contextKey = [
     mode,
     activeLane,
+    importance,
+    unreadOnly,
     state,
     requestedFolderId,
     accountScope,
@@ -229,6 +255,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const previousContextRef = useRef(contextKey);
   const quickMutation = useMutation({
     mutationFn: async ({ command, thread }: { command: MailQuickCommand; thread: MailThread }) => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
       if (command === 'archive') {
         return {
           command,
@@ -252,6 +279,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   });
   const snoozeMutation = useMutation({
     mutationFn: (until: string) => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
       if (!snoozeTarget) throw new Error('Mail snooze target is required.');
       return snoozeMailThread(snoozeTarget.threadId, until, snoozeTarget.version);
     },
@@ -267,13 +295,17 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   useEffect(() => {
     const nextHandoff = parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE');
     if (nextHandoff) {
-      setDwaionHandoffState({ owner: custodyOwnerRef.current, handoff: nextHandoff });
+      setDwaionHandoffState({
+        owner: custodyOwnerRef.current,
+        handoff: nextHandoff,
+        binding: parseDwaionProposalHandoffBinding(location.state),
+      });
     }
     const composeState = parseMailComposeNavigationState(location.state);
     if (composeState.seed || composeState.returnTo) {
       setComposeNavigationState({ owner: custodyOwnerRef.current, ...composeState });
     }
-  }, [location.state]);
+  }, [custodyOwner, location.state]);
 
   useEffect(() => {
     const options = scopeOptionsQuery.data;
@@ -342,10 +374,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   }, [customFolders, mode, params, requestedFolderId, setParams]);
 
   useEffect(() => {
-    if (!desktopSplitView || query.isFetching || !query.data?.items.length) return;
-    if (selectedId && query.data.items.some((item) => item.threadId === selectedId)) return;
+    const firstThreadId = mailInboxFirstAutoSelection({
+      desktopSplitView,
+      fetching: query.isFetching,
+      selectedId,
+      threadIds: query.data?.items.map((item) => item.threadId) ?? [],
+    });
+    if (!firstThreadId) return;
     const next = new URLSearchParams(params);
-    next.set('thread', query.data.items[0]!.threadId);
+    next.set('thread', firstThreadId);
     setParams(next, { replace: true });
   }, [desktopSplitView, params, query.data?.items, query.isFetching, selectedId, setParams]);
 
@@ -391,9 +428,11 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
         event.preventDefault();
         searchRef.current?.focus();
       } else if (event.key.toLowerCase() === 'c') {
+        if (!canCreate) return;
         event.preventDefault();
         openCompose();
       } else if (event.key.toLowerCase() === 'e' && selectedThread) {
+        if (!canUpdate) return;
         event.preventDefault();
         quickMutation.mutate({ command: 'archive', thread: selectedThread });
       }
@@ -403,6 +442,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   });
 
   const openCompose = () => {
+    if (!canCreate) return;
     const next = new URLSearchParams(params);
     next.set('compose', 'open');
     setParams(next, { replace: true });
@@ -419,7 +459,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
       void proposalOwnerHandoff.cancelAndReturn();
       return;
     }
-    setDwaionHandoffState({ owner: custodyOwnerRef.current, handoff: null });
+    setDwaionHandoffState({ owner: custodyOwnerRef.current, handoff: null, binding: null });
     const returnTo = composeNavigation.returnTo;
     setComposeNavigationState({ owner: custodyOwnerRef.current, seed: null, returnTo: null });
     if (returnTo) {
@@ -471,10 +511,11 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     if (command === 'show-priority') return selectLane('PRIORITY');
     if (command === 'show-needs-reply') return selectLane('NEEDS_REPLY');
     if (command === 'snooze') {
+      if (!canUpdate) return;
       if (selectedThread) setSnoozeTarget(selectedThread);
       return;
     }
-    if (selectedThread) quickMutation.mutate({ command, thread: selectedThread });
+    if (selectedThread && canUpdate) quickMutation.mutate({ command, thread: selectedThread });
   };
   const empty = useMemo(
     () => ({
@@ -496,12 +537,26 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
             <ActionIconButton label={t('command.open')} onClick={() => setCommandOpen(true)}>
               <Command size={18} />
             </ActionIconButton>
-            <ActionButton intent="primary" startIcon={<MailPlus size={17} />} onClick={openCompose}>
+            <ActionButton
+              intent="primary"
+              startIcon={<MailPlus size={17} />}
+              disabled={!canCreate}
+              onClick={openCompose}
+            >
               {t('actions.compose')}
             </ActionButton>
           </Stack>
         }
       />
+
+      {!canCreate && !canUpdate ? (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue:
+              'You have read-only mail access. Draft and message update actions are unavailable.',
+          })}
+        </Alert>
+      ) : null}
 
       {!composeOpen && <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />}
 
@@ -586,10 +641,12 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                   size="small"
                   label={t('mailbox.shared.assignmentFilter')}
                   value={sharedAssignment}
-                  options={(['ALL', 'MINE', 'UNASSIGNED'] as const).map((assignment) => ({
-                    value: assignment,
-                    label: t(`mailbox.shared.assignment.${assignment}`),
-                  }))}
+                  options={(['ALL', 'MINE', 'UNASSIGNED', 'OVERDUE'] as const).map(
+                    (assignment) => ({
+                      value: assignment,
+                      label: t(`mailbox.shared.assignment.${assignment}`),
+                    })
+                  )}
                   onValueChange={(assignment) =>
                     setParams(
                       updateMailSharedFilters(params, {
@@ -764,7 +821,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
       </Box>
 
       <MailComposeDialog
-        open={composeOpen}
+        open={composeOpen && canCreate}
+        canSave={canCreate}
+        canSend={canSend}
+        initialAccountId={accountScope ?? undefined}
         initialToEmail={
           composeNavigation.seed?.toEmail ?? dwaionHandoffStrings(dwaionHandoff, 'to')[0]
         }
@@ -777,6 +837,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           composeNavigation.seed?.body ?? dwaionHandoffText(dwaionHandoff, 'body') ?? undefined
         }
         fromDwaion={Boolean(dwaionHandoff)}
+        dwaionProposalBinding={dwaionProposalBinding}
         proposalBinding={proposalOwnerHandoff.binding}
         submissionBlocked={proposalOwnerHandoff.blocksSubmission}
         handoffNotice={<MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />}
@@ -799,6 +860,8 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
       <MailCommandPalette
         open={commandOpen}
         hasSelectedThread={Boolean(selectedThread)}
+        canCompose={canCreate}
+        canUpdate={canUpdate}
         onClose={() => setCommandOpen(false)}
         onCommand={runCommand}
       />

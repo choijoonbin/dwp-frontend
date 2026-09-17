@@ -6,6 +6,7 @@ import {
   calendarMeetingDurationMinutes,
   calendarSchedulingFingerprint,
   calendarSchedulingEvaluationIsUsable,
+  calendarSchedulingEvaluationState,
   calendarSchedulingParticipants,
   rankCalendarRooms,
 } from './calendar-scheduling-assistant-model';
@@ -131,6 +132,35 @@ describe('calendar scheduling assistant model', () => {
         Date.parse('2026-08-27T01:00:10Z')
       )
     ).toBe(false);
+    expect(
+      calendarSchedulingEvaluationState(
+        {
+          ...evaluation,
+          completeness: 'PARTIAL',
+          sources: [
+            evaluation.sources[0],
+            {
+              sourceType: 'EXTERNAL',
+              status: 'DEGRADED',
+              lastSuccessfulSyncAt: '2026-08-26T01:00:00Z',
+            },
+          ],
+        },
+        Date.parse('2026-08-27T01:00:10Z')
+      )
+    ).toBe('PARTIAL');
+    expect(
+      calendarSchedulingEvaluationState(
+        {
+          ...evaluation,
+          sources: [{ ...evaluation.sources[0], status: 'UNAVAILABLE' }],
+        },
+        Date.parse('2026-08-27T01:00:10Z')
+      )
+    ).toBe('UNAVAILABLE');
+    expect(calendarSchedulingEvaluationState(evaluation, Date.parse(evaluation.validUntil))).toBe(
+      'STALE'
+    );
   });
 
   it('ranks only available rooms that fit and favors instant confirmation with low excess capacity', () => {

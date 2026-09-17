@@ -16,6 +16,8 @@ import Typography from '@mui/material/Typography';
 
 import type { MailAccount, MailRuleBackfillResult } from '@dwp-frontend/shared-utils';
 
+import { useMailUserPermissions } from './use-mail-user-permissions';
+
 type BackfillAttempt = {
   accountId: string;
   previewFingerprint: string;
@@ -32,6 +34,7 @@ export function MailRuleBackfillPanel({
   onCompleted: () => void | Promise<void>;
 }) {
   const { t } = useTranslation('mail');
+  const { isLoaded, canUpdate } = useMailUserPermissions();
   const personalAccounts = useMemo(
     () =>
       accounts.filter(
@@ -43,6 +46,9 @@ export function MailRuleBackfillPanel({
   const [continuationToken, setContinuationToken] = useState<string | null>(null);
   const [attempt, setAttempt] = useState<BackfillAttempt | null>(null);
   const [result, setResult] = useState<MailRuleBackfillResult | null>(null);
+  const [completedPreviewFingerprint, setCompletedPreviewFingerprint] = useState<string | null>(
+    null
+  );
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
@@ -53,17 +59,12 @@ export function MailRuleBackfillPanel({
     setContinuationToken(null);
     setAttempt(null);
     setResult(null);
+    setCompletedPreviewFingerprint(null);
     setConfirmOpen(false);
   }, [accountId, personalAccounts]);
 
   const preview = useQuery({
-    queryKey: [
-      'mail',
-      'organization',
-      'rule-backfill-preview',
-      accountId,
-      continuationToken,
-    ],
+    queryKey: ['mail', 'organization', 'rule-backfill-preview', accountId, continuationToken],
     queryFn: () => getMailRuleBackfillPreview(accountId, continuationToken),
     enabled: Boolean(accountId),
     retry: false,
@@ -71,16 +72,19 @@ export function MailRuleBackfillPanel({
     refetchOnWindowFocus: false,
   });
   const mutation = useMutation({
-    mutationFn: (command: BackfillAttempt) =>
-      runMailRuleBackfill(command.accountId, {
+    mutationFn: (command: BackfillAttempt) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return runMailRuleBackfill(command.accountId, {
         requestId: command.requestId,
         previewFingerprint: command.previewFingerprint,
         continuationToken: command.continuationToken,
-      }),
+      });
+    },
     onSuccess: async (nextResult, command) => {
       setConfirmOpen(false);
       setAttempt(null);
       setResult(nextResult);
+      setCompletedPreviewFingerprint(command.previewFingerprint);
       if (command.nextContinuationToken) {
         setContinuationToken(command.nextContinuationToken);
       }
@@ -95,6 +99,7 @@ export function MailRuleBackfillPanel({
     setContinuationToken(null);
     setAttempt(null);
     setResult(null);
+    setCompletedPreviewFingerprint(null);
     setConfirmOpen(false);
     mutation.reset();
   };
@@ -102,10 +107,12 @@ export function MailRuleBackfillPanel({
     if (!accountId || mutation.isPending) return;
     setAttempt(null);
     setResult(null);
+    setCompletedPreviewFingerprint(null);
     mutation.reset();
     await preview.refetch();
   };
   const runBackfill = () => {
+    if (!canUpdate) return;
     const currentPreview = preview.data;
     if (!currentPreview || preview.isFetching || mutation.isPending) return;
     const command =
@@ -132,9 +139,12 @@ export function MailRuleBackfillPanel({
   const retryable = mutation.isError && !rejected;
   const canRun =
     Boolean(preview.data) &&
+    canUpdate &&
     !preview.isFetching &&
     !mutation.isPending &&
     !rejected &&
+    (!preview.data?.truncated || Boolean(preview.data.nextContinuationToken)) &&
+    preview.data?.previewFingerprint !== completedPreviewFingerprint &&
     (preview.data?.plannedApplicationCount ?? 0) > 0;
 
   return (
@@ -164,6 +174,14 @@ export function MailRuleBackfillPanel({
             {t('organization.backfill.description')}
           </Typography>
         </Box>
+
+        {isLoaded && !canUpdate && (
+          <Alert severity="info">
+            {t('permissions.readOnly', {
+              defaultValue: 'You have read-only access. Rule backfill is unavailable.',
+            })}
+          </Alert>
+        )}
 
         {!personalAccounts.length ? (
           <Alert severity="info">{t('organization.backfill.noPersonalAccount')}</Alert>
@@ -233,7 +251,13 @@ export function MailRuleBackfillPanel({
                   />
                 </Box>
                 {preview.data.truncated && (
-                  <Alert severity="warning">{t('organization.backfill.truncated')}</Alert>
+                  <Alert severity={preview.data.nextContinuationToken ? 'warning' : 'error'}>
+                    {t(
+                      preview.data.nextContinuationToken
+                        ? 'organization.backfill.truncated'
+                        : 'organization.backfill.truncatedUnavailable'
+                    )}
+                  </Alert>
                 )}
                 {continuationToken && (
                   <Alert
@@ -246,6 +270,7 @@ export function MailRuleBackfillPanel({
                           setContinuationToken(null);
                           setAttempt(null);
                           setResult(null);
+                          setCompletedPreviewFingerprint(null);
                           mutation.reset();
                         }}
                       >
@@ -283,7 +308,7 @@ export function MailRuleBackfillPanel({
 
             <Stack direction="row" spacing={1} justifyContent="flex-end" useFlexGap flexWrap="wrap">
               {retryable && attempt && (
-                <ActionButton intent="secondary" onClick={runBackfill}>
+                <ActionButton intent="secondary" disabled={!canUpdate} onClick={runBackfill}>
                   {t('organization.backfill.retryCommand')}
                 </ActionButton>
               )}
@@ -301,6 +326,7 @@ export function MailRuleBackfillPanel({
                       setContinuationToken(preview.data!.nextContinuationToken!);
                       setAttempt(null);
                       setResult(null);
+                      setCompletedPreviewFingerprint(null);
                       mutation.reset();
                     }}
                   >

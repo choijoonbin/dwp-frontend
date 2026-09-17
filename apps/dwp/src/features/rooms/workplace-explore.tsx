@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Accessibility, Building2, Layers3, MapPinned } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Temporal } from 'temporal-polyfill';
-import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { getRoomsPolicy, getWorkplaceExplore, useAuth, useToast } from '@dwp-frontend/shared-utils';
 import { ActionButton, EmptyState, PageCanvas } from '@dwp-frontend/design-system';
 
@@ -34,6 +32,12 @@ import {
 } from './workplace-discovery-model';
 import { workplaceHomeSourceState } from './workplace-home-source-state';
 import {
+  initialWorkplaceTimeZone,
+  positiveWorkplaceNumber,
+  workplaceExploreDate,
+  workplaceExploreTime,
+} from './workplace-explore-defaults';
+import {
   parseWorkplaceFindUrl,
   updateWorkplaceFindUrl,
   type WorkplaceFindUrlPatch,
@@ -62,37 +66,6 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { WorkplaceResourceAvailability } from './workplace-floor-plan';
 
-function dateOnly(value = new Date()) {
-  const year = value.getFullYear();
-  const month = String(value.getMonth() + 1).padStart(2, '0');
-  const day = String(value.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function defaultTime() {
-  const now = new Date();
-  const minutes = now.getMinutes() < 30 ? 30 : 0;
-  const hour = now.getHours() + (minutes === 0 ? 1 : 0);
-  return `${String(Math.min(hour, 19)).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-}
-
-function positiveNumber(value: string | null, fallback: number) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-}
-
-function initialSiteTimeZone(value: string | null) {
-  if (value) {
-    try {
-      Temporal.Now.instant().toZonedDateTimeISO(value);
-      return value;
-    } catch {
-      // The authoritative site response replaces malformed URL hints.
-    }
-  }
-  return resolveSystemTimeZone('UTC');
-}
-
 export function WorkplaceExplore({
   defaultView = 'list',
 }: { defaultView?: WorkplaceDiscoveryView } = {}) {
@@ -105,7 +78,10 @@ export function WorkplaceExplore({
   const wide = useMediaQuery(theme.breakpoints.up('lg'));
   const [searchParams, setSearchParams] = useSearchParams();
   const parsedUrl = useMemo(() => parseWorkplaceFindUrl(searchParams), [searchParams]);
-  const defaults = useMemo(() => ({ date: dateOnly(), time: defaultTime() }), []);
+  const defaults = useMemo(
+    () => ({ date: workplaceExploreDate(), time: workplaceExploreTime() }),
+    []
+  );
   const [urlWasNormalized, setUrlWasNormalized] = useState(false);
   const [bookingResource, setBookingResource] = useState<WorkplaceResource | null>(null);
   const [room, setRoom] = useState<CalendarResource | null>(null);
@@ -114,7 +90,7 @@ export function WorkplaceExplore({
     data: WorkplaceExploreResponse;
   } | null>(null);
   const [siteTimeZone, setSiteTimeZone] = useState(() =>
-    initialSiteTimeZone(parsedUrl.state.timeZone)
+    initialWorkplaceTimeZone(parsedUrl.state.timeZone)
   );
   const explicitDateRef = useRef(Boolean(parsedUrl.state.date));
   const explicitTimeRef = useRef(Boolean(parsedUrl.state.start));
@@ -140,7 +116,7 @@ export function WorkplaceExplore({
 
   const date = parsedUrl.state.date ?? defaults.date;
   const time = parsedUrl.state.start ?? defaults.time;
-  const duration = positiveNumber(
+  const duration = positiveWorkplaceNumber(
     parsedUrl.state.duration === null ? null : String(parsedUrl.state.duration),
     60
   );

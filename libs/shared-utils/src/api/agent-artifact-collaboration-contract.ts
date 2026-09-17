@@ -16,26 +16,15 @@ export type DwaionTeamArtifactShareState = 'ACTIVE' | 'EXPIRED' | 'REVOKED';
 export type DwaionTeamArtifactSharePermission = 'VIEW' | 'COMMENT' | 'EDIT';
 export type DwaionTeamArtifactAccessRequestState = 'PENDING' | 'APPROVED' | 'DENIED' | 'EXPIRED';
 export type DwaionTeamArtifactCommentState = 'OPEN' | 'RESOLVED';
-export type DwaionTeamArtifactReviewStageKey =
-  | 'AUTHOR'
-  | 'PRIMARY_REVIEW'
-  | 'FINAL_APPROVAL';
+export type DwaionTeamArtifactReviewStageKey = 'AUTHOR' | 'PRIMARY_REVIEW' | 'FINAL_APPROVAL';
 export type DwaionTeamArtifactReviewStageState =
-  | 'PENDING'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'UNAVAILABLE';
+  'PENDING' | 'APPROVED' | 'REJECTED' | 'UNAVAILABLE';
 export type DwaionTeamArtifactReviewDecision = 'APPROVE' | 'REJECT';
+export type DwaionTeamArtifactRemediationAction =
+  'AUTOMATIC_MASKING' | 'SYNTHETIC_REPLACEMENT' | 'REVIEW_NOTIFICATION';
 export type DwaionTeamArtifactGovernanceGateKey =
-  | 'DLP'
-  | 'CITATION'
-  | 'RECIPIENT_ACL'
-  | 'IMMUTABLE_VERSION';
-export type DwaionTeamArtifactGovernanceGateState =
-  | 'PASS'
-  | 'REVIEW'
-  | 'BLOCKED'
-  | 'UNAVAILABLE';
+  'DLP' | 'CITATION' | 'RECIPIENT_ACL' | 'IMMUTABLE_VERSION';
+export type DwaionTeamArtifactGovernanceGateState = 'PASS' | 'REVIEW' | 'BLOCKED' | 'UNAVAILABLE';
 
 export type DwaionTeamArtifactMemberRequest = {
   subjectId: string;
@@ -221,6 +210,31 @@ export type DwaionArtifactCollaborationCommand = {
 
 export type DwaionArtifactCollaborationHighRiskCommand = DwaionArtifactCollaborationCommand & {
   changeReason: string;
+};
+
+export type ExecuteDwaionTeamArtifactRemediationInput =
+  DwaionArtifactCollaborationHighRiskCommand & {
+    action: DwaionTeamArtifactRemediationAction;
+    stageId: string | null;
+  };
+
+export type DwaionTeamArtifactRemediationReceipt = {
+  receiptId: string;
+  commandId: string;
+  artifactId: string;
+  action: DwaionTeamArtifactRemediationAction;
+  state: 'SUCCEEDED';
+  artifactRevision: number;
+  workspaceRevision: number | null;
+  affectedCount: number;
+  providerReceiptId: string | null;
+  sourceContentFingerprint: string | null;
+  findingManifestSha256: string | null;
+  resultContentSha256: string | null;
+  remediatedCodes: string[];
+  residualFindingCount: number | null;
+  resultSha256: string;
+  completedAt: string;
 };
 
 export type DecideDwaionTeamArtifactReviewStageInput =

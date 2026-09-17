@@ -153,11 +153,7 @@ export function DwaionArtifacts() {
       expectedRevision: number,
       content: { title: string; body: string },
       sources: DwaionArtifactDocument['sources'],
-      metadata?: {
-        tags: string[];
-        projectKey: string | null;
-        reviewSlaDueAt: string | null;
-      }
+      metadata?: Pick<DwaionArtifactDocument, 'tags' | 'projectKey' | 'reviewSlaDueAt'>
     ) => {
       const current = queryClient.getQueryData<DwaionGovernedArtifact>([
         ...ARTIFACTS_KEY,
@@ -172,7 +168,9 @@ export function DwaionArtifacts() {
           { ...content, format: 'MARKDOWN' },
           [...sources],
           authority,
-          metadata ?? current?.metadata ?? { tags: [], projectKey: null, reviewSlaDueAt: null }
+          metadata
+            ? { ...metadata, tags: [...metadata.tags] }
+            : (current?.metadata ?? { tags: [], projectKey: null, reviewSlaDueAt: null })
         )
       );
       const rejected = ['detail', 'versions', 'preflight'].some((scope) =>
@@ -436,6 +434,7 @@ export function DwaionArtifacts() {
         setExportReceipt(null);
       }}
       onDraftChange={autosave.update}
+      onMetadataChange={autosave.updateMetadata}
       onLoadVersion={async (versionNumber) => {
         if (!effectiveSelectedId) throw new Error('Artifact is not selected.');
         try {
@@ -468,12 +467,13 @@ export function DwaionArtifacts() {
             preflight={collaboration.preflight}
             latestShare={collaboration.latestShare}
             accessRequest={collaboration.accessRequest}
+            remediationReceipt={collaboration.remediationReceipt}
             loading={collaboration.loading}
             busy={collaboration.busy || collaborationDraftMutation.isPending}
             error={collaboration.error}
             canEdit={canEdit && selectionAvailable}
             canPublish={canPublish && selectionAvailable}
-            currentSubjectId={user?.userId ?? null}
+            currentSubjectId={user?.userId == null ? null : String(user.userId)}
             locale={locale}
             onRetry={collaboration.retry}
             onRunPreflight={collaboration.runPreflight}
@@ -490,6 +490,7 @@ export function DwaionArtifacts() {
             }
             onSavePrivateDraft={() => collaborationDraftMutation.mutateAsync({})}
             onResubmit={collaboration.resubmit}
+            onRemediate={collaboration.remediate}
           />
         ) : null
       }
@@ -544,6 +545,11 @@ function retryGovernedQuery(failureCount: number, error: Error): boolean {
 }
 
 function toSummary(artifact: DwaionGovernedArtifact) {
+  const metadata = artifact.metadata ?? {
+    tags: [],
+    projectKey: null,
+    reviewSlaDueAt: null,
+  };
   return {
     artifactId: artifact.artifactId,
     title: artifact.content.title,
@@ -554,9 +560,9 @@ function toSummary(artifact: DwaionGovernedArtifact) {
     currentVersionNumber: artifact.currentVersionNumber,
     publishedVersionNumber: artifact.publishedVersionNumber ?? null,
     authorSubjectId: artifact.authorSubjectId ?? null,
-    tags: artifact.metadata.tags,
-    projectKey: artifact.metadata.projectKey ?? null,
-    reviewSlaDueAt: artifact.metadata.reviewSlaDueAt ?? null,
+    tags: metadata.tags ?? [],
+    projectKey: metadata.projectKey ?? null,
+    reviewSlaDueAt: metadata.reviewSlaDueAt ?? null,
     updatedAt: artifact.updatedAt,
     capabilities: toCapabilities(artifact),
   } as const;

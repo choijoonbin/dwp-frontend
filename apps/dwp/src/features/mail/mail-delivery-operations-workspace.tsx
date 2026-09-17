@@ -39,6 +39,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { MailPageHeading, mailRelativeTime } from './mail-components';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   MailDeliveryBucket,
@@ -52,6 +53,12 @@ const DELIVERY_BUCKETS: MailDeliveryBucket[] = [
   'COMPLETED',
   'ATTENTION',
 ];
+const DELIVERY_PAGE_SIZE = 30;
+
+function requestedPage(value: string | null) {
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : 0;
+}
 
 export function MailDeliveryOperationsWorkspace() {
   const { t } = useTranslation('mail');
@@ -61,9 +68,11 @@ export function MailDeliveryOperationsWorkspace() {
     ? (requestedBucket as MailDeliveryBucket)
     : 'SCHEDULED';
   const selectedId = params.get('deliveryId');
+  const page = requestedPage(params.get('page'));
   const query = useQuery({
-    queryKey: ['mail', 'deliveries', bucket],
-    queryFn: () => getMailDeliveries({ bucket }),
+    queryKey: ['mail', 'deliveries', bucket, page],
+    queryFn: () => getMailDeliveries({ bucket, page, pageSize: DELIVERY_PAGE_SIZE }),
+    placeholderData: (previous) => previous,
     staleTime: 10_000,
     retry: 1,
   });
@@ -74,10 +83,15 @@ export function MailDeliveryOperationsWorkspace() {
     staleTime: 10_000,
     retry: 1,
   });
-  const setLocation = (nextBucket: MailDeliveryBucket, deliveryId?: string | null) => {
+  const setLocation = (
+    nextBucket: MailDeliveryBucket,
+    deliveryId?: string | null,
+    nextPage = 0
+  ) => {
     const next = new URLSearchParams();
     next.set('bucket', nextBucket.toLowerCase());
     if (deliveryId) next.set('deliveryId', deliveryId);
+    if (nextPage > 0) next.set('page', String(nextPage));
     setParams(next);
   };
 
@@ -124,7 +138,12 @@ export function MailDeliveryOperationsWorkspace() {
           selectedId={selectedId}
           hiddenOnMobile={Boolean(selectedId)}
           onRetry={() => void query.refetch()}
-          onSelect={(deliveryId) => setLocation(bucket, deliveryId)}
+          page={query.data?.page ?? page}
+          pageSize={query.data?.pageSize ?? DELIVERY_PAGE_SIZE}
+          total={query.data?.total ?? 0}
+          fetching={query.isFetching}
+          onPageChange={(nextPage) => setLocation(bucket, null, nextPage)}
+          onSelect={(deliveryId) => setLocation(bucket, deliveryId, page)}
         />
         <Box
           sx={{
@@ -138,7 +157,7 @@ export function MailDeliveryOperationsWorkspace() {
             receipt={detail.data}
             loading={detail.isLoading}
             error={detail.isError}
-            onBack={() => setLocation(bucket)}
+            onBack={() => setLocation(bucket, null, page)}
             onRetryLoad={() => void detail.refetch()}
           />
         </Box>
@@ -153,7 +172,12 @@ function DeliveryList({
   error,
   selectedId,
   hiddenOnMobile,
+  page,
+  pageSize,
+  total,
+  fetching,
   onRetry,
+  onPageChange,
   onSelect,
 }: {
   items: MailDeliverySummary[];
@@ -161,7 +185,12 @@ function DeliveryList({
   error: boolean;
   selectedId: string | null;
   hiddenOnMobile: boolean;
+  page: number;
+  pageSize: number;
+  total: number;
+  fetching: boolean;
   onRetry: () => void;
+  onPageChange: (page: number) => void;
   onSelect: (deliveryId: string) => void;
 }) {
   const { t, i18n } = useTranslation('mail');
@@ -258,6 +287,41 @@ function DeliveryList({
           </Box>
         </Box>
       ))}
+      <Divider />
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1}
+        alignItems={{ sm: 'center' }}
+        justifyContent="space-between"
+        sx={{ p: 1.5 }}
+      >
+        <Typography variant="caption" color="text.secondary">
+          {t('secondary.delivery.pagination', {
+            defaultValue: '{{from}}–{{to}} of {{total}} deliveries',
+            from: total ? page * pageSize + 1 : 0,
+            to: Math.min((page + 1) * pageSize, total),
+            total,
+          })}
+        </Typography>
+        <Stack direction="row" spacing={1}>
+          <ActionButton
+            intent="secondary"
+            size="small"
+            disabled={fetching || page <= 0}
+            onClick={() => onPageChange(Math.max(0, page - 1))}
+          >
+            {t('secondary.delivery.previous', { defaultValue: 'Previous' })}
+          </ActionButton>
+          <ActionButton
+            intent="secondary"
+            size="small"
+            disabled={fetching || (page + 1) * pageSize >= total}
+            onClick={() => onPageChange(page + 1)}
+          >
+            {t('secondary.delivery.next', { defaultValue: 'Next' })}
+          </ActionButton>
+        </Stack>
+      </Stack>
     </Box>
   );
 }
@@ -276,6 +340,7 @@ function DeliveryReceiptInspector({
   onRetryLoad: () => void;
 }) {
   const { t, i18n } = useTranslation('mail');
+  const { isLoaded, canUpdate, canSend } = useMailUserPermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
@@ -291,12 +356,14 @@ function DeliveryReceiptInspector({
     await queryClient.invalidateQueries({ queryKey: ['mail', 'delivery', receipt?.deliveryId] });
   };
   const reschedule = useMutation({
-    mutationFn: () =>
-      rescheduleMailDelivery(receipt!.deliveryId, {
+    mutationFn: () => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return rescheduleMailDelivery(receipt!.deliveryId, {
         scheduledAt: new Date(scheduledAt).toISOString(),
         timeZone: resolveSystemTimeZone('UTC'),
         version: receipt!.version,
-      }),
+      });
+    },
     onSuccess: async () => {
       setRescheduleOpen(false);
       await refresh();
@@ -305,7 +372,10 @@ function DeliveryReceiptInspector({
     onError: () => toast.error(t('secondary.delivery.commandError')),
   });
   const cancel = useMutation({
-    mutationFn: () => cancelMailDelivery(receipt!.deliveryId, { version: receipt!.version }),
+    mutationFn: () => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return cancelMailDelivery(receipt!.deliveryId, { version: receipt!.version });
+    },
     onSuccess: async () => {
       setCancelOpen(false);
       await refresh();
@@ -314,7 +384,10 @@ function DeliveryReceiptInspector({
     onError: () => toast.error(t('secondary.delivery.commandError')),
   });
   const reconcile = useMutation({
-    mutationFn: () => reconcileMailDelivery(receipt!.deliveryId, { version: receipt!.version }),
+    mutationFn: () => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return reconcileMailDelivery(receipt!.deliveryId, { version: receipt!.version });
+    },
     onSuccess: async () => {
       await refresh();
       toast.success(t('secondary.delivery.reconcileStarted'));
@@ -322,7 +395,10 @@ function DeliveryReceiptInspector({
     onError: () => toast.error(t('secondary.delivery.commandError')),
   });
   const retry = useMutation({
-    mutationFn: () => retryMailDeliveryReceipt(receipt!.deliveryId, { version: receipt!.version }),
+    mutationFn: () => {
+      if (!canSend) throw new Error('APP.MAIL:SEND is required');
+      return retryMailDeliveryReceipt(receipt!.deliveryId, { version: receipt!.version });
+    },
     onSuccess: async () => {
       setRetryOpen(false);
       await refresh();
@@ -390,6 +466,13 @@ function DeliveryReceiptInspector({
           {t('secondary.delivery.unknownGuidance')}
         </Alert>
       )}
+      {isLoaded && !canUpdate && !canSend && (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue: 'You have read-only access. Delivery commands are unavailable.',
+          })}
+        </Alert>
+      )}
       <Box component="section" sx={{ mt: 2 }}>
         <Typography component="h3" variant="subtitle2" fontWeight={800}>
           {t('secondary.delivery.recipients')}
@@ -447,6 +530,7 @@ function DeliveryReceiptInspector({
           <ActionButton
             intent="secondary"
             startIcon={<CalendarClock size={16} />}
+            disabled={!canUpdate}
             onClick={() => setRescheduleOpen(true)}
           >
             {t('secondary.delivery.reschedule')}
@@ -456,6 +540,7 @@ function DeliveryReceiptInspector({
           <ActionButton
             intent="secondary"
             startIcon={<XCircle size={16} />}
+            disabled={!canUpdate}
             onClick={() => setCancelOpen(true)}
           >
             {t('secondary.delivery.cancel')}
@@ -466,6 +551,7 @@ function DeliveryReceiptInspector({
             intent="primary"
             startIcon={<SearchCheck size={16} />}
             loading={reconcile.isPending}
+            disabled={!canUpdate}
             onClick={() => reconcile.mutate()}
           >
             {t('secondary.delivery.reconcile')}
@@ -475,6 +561,7 @@ function DeliveryReceiptInspector({
           <ActionButton
             intent="primary"
             startIcon={<RefreshCw size={16} />}
+            disabled={!canSend}
             onClick={() => setRetryOpen(true)}
           >
             {t('delivery.retry')}

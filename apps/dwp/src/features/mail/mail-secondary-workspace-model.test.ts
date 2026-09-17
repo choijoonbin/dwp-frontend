@@ -25,7 +25,8 @@ describe('mail secondary workspace model', () => {
     expect(mailDeliveryPresentation('SENT')).toMatchObject({
       confirmedDelivered: false,
       retryAllowed: false,
-      severity: 'success',
+      severity: 'info',
+      labelFallback: 'Accepted by provider',
     });
     expect(mailDeliveryPresentation('FAILED').retryAllowed).toBe(false);
   });

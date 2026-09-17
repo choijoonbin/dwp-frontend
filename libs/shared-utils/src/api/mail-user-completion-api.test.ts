@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { axiosInstance } from '../axios-instance';
-import { downloadMailMessageAttachment, updateAdvancedMailDraft } from './mail-user-completion-api';
+import {
+  createAdvancedMailDraft,
+  downloadMailMessageAttachment,
+  updateAdvancedMailDraft,
+} from './mail-user-completion-api';
 
 describe('mail message attachment API', () => {
   afterEach(() => vi.restoreAllMocks());
@@ -30,6 +34,8 @@ describe('mail message attachment API', () => {
       deliveryMode: 'DRAFT' as const,
       idempotencyKey: '70000000-0000-4000-8000-000000000001',
       version: 2,
+      classification: 'INTERNAL' as const,
+      externalRecipientConfirmed: false,
     };
     await updateAdvancedMailDraft('thread-1', input, {
       proposalId: '50000000-0000-4000-8000-000000000003',
@@ -41,6 +47,34 @@ describe('mail message attachment API', () => {
         'X-DWP-Mail-Proposal-ID': '50000000-0000-4000-8000-000000000003',
         'X-DWP-Mail-Command-ID': '60000000-0000-4000-8000-000000000003',
         'X-DWP-Mail-Proposal-Version': '4',
+      },
+    });
+  });
+
+  it('binds a reviewed DWAI.ON proposal to the created Mail draft', async () => {
+    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({
+      data: { data: { thread: { threadId: 'thread-1', version: 0 } } },
+    });
+    const input = {
+      subject: 'Reviewed draft',
+      body: 'Reviewed body',
+      classification: 'INTERNAL' as const,
+      externalRecipientConfirmed: false,
+      idempotencyKey: '70000000-0000-4000-8000-000000000011',
+    };
+    await createAdvancedMailDraft(input, {
+      version: 1,
+      handoffId: '70000000-0000-4000-8000-000000000012',
+      proposalId: '70000000-0000-4000-8000-000000000013',
+      actionKey: 'MAIL.DRAFT.CREATE',
+      handoffVersion: 2,
+    });
+    expect(post).toHaveBeenCalledWith('/api/platform/v1/mail/drafts', input, {
+      headers: {
+        'X-DWP-DWAI-ON-Handoff-ID': '70000000-0000-4000-8000-000000000012',
+        'X-DWP-DWAI-ON-Proposal-ID': '70000000-0000-4000-8000-000000000013',
+        'X-DWP-DWAI-ON-Action-Key': 'MAIL.DRAFT.CREATE',
+        'X-DWP-DWAI-ON-Handoff-Version': '2',
       },
     });
   });

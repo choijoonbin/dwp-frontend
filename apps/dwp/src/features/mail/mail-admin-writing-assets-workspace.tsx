@@ -669,7 +669,11 @@ function OrganizationWritingAssetDialog({
           />
         </Box>
         <Typography variant="caption" color="text.secondary">
-          {t('secondary.templates.variablesHelp')}
+          {t('secondary.templates.variablesHelp', {
+            displayName: '{{displayName}}',
+            department: '{{department}}',
+            recipientName: '{{recipientName}}',
+          })}
         </Typography>
         {editor?.kind === 'SIGNATURE' && (
           <Stack>

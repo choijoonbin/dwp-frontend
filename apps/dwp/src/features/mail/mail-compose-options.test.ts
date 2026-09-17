@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { mailComposeOptionsCanSend } from './mail-compose-options';
+import {
+  mailComposeCapabilitiesForAccount,
+  mailComposeHasExternalRecipients,
+  mailComposeOptionsCanSend,
+} from './mail-compose-options';
 
 import type { MailComposeOptions } from '@dwp-frontend/shared-utils';
 
@@ -44,5 +48,29 @@ describe('mail compose capability gates', () => {
         },
       ])
     ).toBe(false);
+  });
+
+  it('switches capability gates with the displayed From account', () => {
+    const accountCapabilities = {
+      'account-1': { attachments: false },
+      'account-2': { attachments: true },
+    };
+    expect(mailComposeCapabilitiesForAccount(accountCapabilities, 'account-1')).toEqual({
+      attachments: false,
+    });
+    expect(mailComposeCapabilitiesForAccount(accountCapabilities, 'account-2')).toEqual({
+      attachments: true,
+    });
+    expect(mailComposeCapabilitiesForAccount(accountCapabilities, 'missing')).toBeUndefined();
+  });
+
+  it('requires review when any recipient is outside the selected sender domain', () => {
+    expect(mailComposeHasExternalRecipients(options.recipients, 'sender@example.com')).toBe(false);
+    expect(
+      mailComposeHasExternalRecipients(
+        [...options.recipients, { type: 'CC', name: null, email: 'partner@outside.test' }],
+        'sender@example.com'
+      )
+    ).toBe(true);
   });
 });

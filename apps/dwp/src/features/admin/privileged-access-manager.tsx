@@ -27,6 +27,7 @@ import {
   revokePrivilegedAccessRequest,
   revokePrivilegedRoleEligibility,
   updatePrivilegedAccessPolicy,
+  verifyEmergencyAccessPrincipal,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { useRoleDisplay } from '@dwp-frontend/shared-i18n';
@@ -61,6 +62,7 @@ import {
   PolicyDialog,
   PrivilegedAccessDecisionDialog as DecisionDialog,
 } from './privileged-access-dialogs';
+import { RecoveryAccountVerificationDialog } from './recovery-account-verification-dialog';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -117,6 +119,8 @@ export function PrivilegedAccessManager() {
     decision: Decision;
   } | null>(null);
   const [boundaryDialog, setBoundaryDialog] = useState<'emergency' | 'delegation' | null>(null);
+  const [recoveryVerification, setRecoveryVerification] =
+    useState<EmergencyAccessPrincipal | null>(null);
 
   const policies = useQuery({
     queryKey: ['admin', 'privileged-access', 'policies'],
@@ -610,6 +614,21 @@ export function PrivilegedAccessManager() {
                     valueFormatter: (value) => displayDate(value),
                   },
                   {
+                    field: 'verificationStatus',
+                    headerName: t('privilegedAccess.verification.status'),
+                    width: 170,
+                    renderCell: ({ row }) => (
+                      <Chip
+                        size="small"
+                        color={row.verificationStatus === 'VERIFIED' ? 'success' : 'warning'}
+                        variant="outlined"
+                        label={t(
+                          `privilegedAccess.verification.states.${row.verificationStatus}`
+                        )}
+                      />
+                    ),
+                  },
+                  {
                     field: 'lifecycleState',
                     headerName: t('roleGovernance.columns.status'),
                     width: 120,
@@ -621,6 +640,24 @@ export function PrivilegedAccessManager() {
                         label={t(`privilegedAccess.states.${row.lifecycleState}`)}
                       />
                     ),
+                  },
+                  {
+                    field: 'actions',
+                    type: 'actions',
+                    width: 130,
+                    getActions: ({ row }) =>
+                      row.lifecycleState === 'ACTIVE'
+                        ? [
+                            <ActionButton
+                              key="verify"
+                              size="small"
+                              intent="quiet"
+                              onClick={() => setRecoveryVerification(row)}
+                            >
+                              {t('privilegedAccess.verification.action')}
+                            </ActionButton>,
+                          ]
+                        : [],
                   },
                 ]}
                 getRowId={(row) => row.emergencyPrincipalId}
@@ -713,6 +750,20 @@ export function PrivilegedAccessManager() {
             );
           }
           if (saved) setBoundaryDialog(null);
+        }}
+      />
+      <RecoveryAccountVerificationDialog
+        key={`recovery-verification-${recoveryVerification?.emergencyPrincipalId ?? 'closed'}`}
+        principal={recoveryVerification}
+        busy={busy}
+        onClose={() => setRecoveryVerification(null)}
+        onSubmit={async (request) => {
+          if (!recoveryVerification) return;
+          const saved = await run(
+            () => verifyEmergencyAccessPrincipal(recoveryVerification, request),
+            t('privilegedAccess.verification.saved')
+          );
+          if (saved) setRecoveryVerification(null);
         }}
       />
     </Box>

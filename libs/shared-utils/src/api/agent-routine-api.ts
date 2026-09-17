@@ -17,21 +17,16 @@ import {
 } from './product-surface-governed-mutation';
 import type {
   DwaionRoutineActivationCommand,
-  DwaionRoutineExecutionPolicyDefinition,
+  DwaionPersonalRoutine,
+  DwaionRoutineDefinition,
 } from './agent-routine-execution-contract';
 
 type AgentSchemas = AgentComponents['schemas'];
 
-export type DwaionRoutineDefinition = AgentSchemas['RoutineDefinition'] &
-  DwaionRoutineExecutionPolicyDefinition;
-export type DwaionPersonalRoutine = Omit<
-  AgentSchemas['PersonalRoutine'],
-  'definition' | 'executionMode' | 'lifecycleState'
-> & {
-  definition: DwaionRoutineDefinition;
-  lifecycleState: 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
-  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED' | 'WEBHOOK';
-};
+export type {
+  DwaionPersonalRoutine,
+  DwaionRoutineDefinition,
+} from './agent-routine-execution-contract';
 export type DwaionRoutineDryRunReceipt = AgentSchemas['RoutineDryRunReceipt'];
 export type DwaionRoutineConsentScope = AgentSchemas['RoutineConsentScope'];
 export type DwaionRoutineConsentState = AgentSchemas['RoutineConsentState'];
@@ -65,7 +60,7 @@ export async function createDwaionRoutine(
   definition: DwaionRoutineDefinition,
   authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
-  const body: AgentSchemas['CreateRoutineRequest'] = {
+  const body = {
     ...newAgentCommand(0, 'USER_CREATE'),
     definition,
   };
@@ -78,7 +73,7 @@ export async function updateDwaionRoutine(
   definition: DwaionRoutineDefinition,
   authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
 ): Promise<DwaionPersonalRoutine> {
-  const body: AgentSchemas['UpdateRoutineRequest'] = {
+  const body = {
     ...newAgentCommand(expectedRevision, 'USER_UPDATE'),
     definition,
   };
@@ -233,8 +228,7 @@ export function isDwaionPersonalRoutine(value: unknown): value is DwaionPersonal
     typeof value.definition.name === 'string' &&
     typeof value.definition.objective === 'string' &&
     Array.isArray(value.definition.sources) &&
-    isRoutineDefinition(value.definition) &&
-    isRoutineExecutionPolicy(value.definition) &&
+    isDwaionRoutineDefinition(value.definition) &&
     typeof capabilities.backgroundExecutionAvailable === 'boolean' &&
     typeof capabilities.dryRunAvailable === 'boolean' &&
     typeof capabilities.notificationDeliveryAvailable === 'boolean' &&
@@ -246,12 +240,26 @@ export function isDwaionPersonalRoutine(value: unknown): value is DwaionPersonal
   );
 }
 
-function isRoutineDefinition(value: Record<string, unknown>): boolean {
+export function isDwaionRoutineDefinition(value: unknown): value is DwaionRoutineDefinition {
+  if (
+    !isAgentRecord(value) ||
+    typeof value.name !== 'string' ||
+    typeof value.objective !== 'string' ||
+    !Array.isArray(value.sources) ||
+    !value.sources.every((source) => ['WORK_ITEM', 'MAIL', 'CALENDAR'].includes(String(source))) ||
+    !isRoutineExecutionPolicy(value)
+  ) {
+    return false;
+  }
   const triggerType = value.triggerType;
   if (!['SCHEDULED', 'WEBHOOK'].includes(String(triggerType))) return false;
   if (triggerType === 'SCHEDULED') {
     return (
-      ['DAILY', 'WEEKDAYS', 'WEEKLY'].includes(String(value.cadence)) &&
+      ['DAILY', 'WEEKDAYS', 'WEEKLY', 'MONTHLY'].includes(String(value.cadence)) &&
+      (value.cadence !== 'MONTHLY' ||
+        (Number.isInteger(value.monthDay) &&
+          Number(value.monthDay) >= 1 &&
+          Number(value.monthDay) <= 28)) &&
       typeof value.localTime === 'string' &&
       typeof value.timeZone === 'string' &&
       value.timeZone.trim().length > 0 &&

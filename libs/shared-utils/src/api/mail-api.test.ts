@@ -5,8 +5,11 @@ import {
   approveMailPurge,
   createMailDeliveryAuditExport,
   executeMailPurge,
+  getMailActivePurgePreviews,
   getMailAdminOperations,
   getMailDeliveryAudit,
+  getMailPurgePreview,
+  previewMailSharedInboxMemberRevoke,
   previewMailPurge,
   removeMailSharedInboxMember,
   runMailConnectionDiagnostic,
@@ -22,6 +25,7 @@ import {
   getMailProposals,
   getMailRuleBackfillPreview,
   getMailThreads,
+  parseMailAccountReadinessEvidence,
   previewMailLifecycle,
   reorderMailRules,
   replyToMailThread,
@@ -45,6 +49,55 @@ describe('mail organization API boundary', () => {
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();
+  });
+
+  it('parses account authorization and feature evidence while failing missing evidence closed', () => {
+    const parsed = parseMailAccountReadinessEvidence({
+      state: 'READY',
+      source: 'CONNECTOR_RUNTIME',
+      observedAt: '2026-09-17T05:00:00Z',
+      errorCode: null,
+      credentialConfigured: true,
+      lastSuccessfulSyncAt: '2026-09-17T04:55:00Z',
+      lastSuccessfulSyncScope: 'INBOX',
+      action: 'NONE',
+      consentEvidence: {
+        state: 'VERIFIED',
+        source: 'CONNECTOR_RUNTIME',
+        observedAt: '2026-09-17T05:00:00Z',
+        expiresAt: '2026-09-18T05:00:00Z',
+        errorCode: null,
+        action: 'NONE',
+      },
+      tokenEvidence: {
+        state: 'UNKNOWN',
+        source: 'NO_OAUTH_ATTESTATION',
+        observedAt: '2026-09-17T05:00:00Z',
+        expiresAt: null,
+        errorCode: 'TOKEN_NOT_ATTESTED',
+        action: 'ACTIVATE_EXTERNALLY',
+      },
+      featureReadiness: {
+        SEND: {
+          state: 'UNAVAILABLE',
+          source: 'NO_OAUTH_ATTESTATION',
+          observedAt: '2026-09-17T05:00:00Z',
+          errorCode: 'OAUTH_REQUIRED',
+          lastSuccessfulAt: null,
+          lastSuccessfulScope: null,
+          action: 'ACTIVATE_EXTERNALLY',
+        },
+        FUTURE_FEATURE: { state: 'READY' },
+      },
+    });
+
+    expect(parsed).toMatchObject({
+      tokenEvidence: { state: 'UNKNOWN', source: 'NO_OAUTH_ATTESTATION' },
+      featureReadiness: { SEND: { state: 'UNAVAILABLE', action: 'ACTIVATE_EXTERNALLY' } },
+    });
+    expect(parsed?.featureReadiness).not.toHaveProperty('BCC');
+    expect(parsed?.featureReadiness).not.toHaveProperty('FUTURE_FEATURE');
+    expect(parseMailAccountReadinessEvidence(null)).toBeNull();
   });
 
   it('queries a custom folder by opaque folder id without putting message data in the URL', async () => {
@@ -169,13 +222,41 @@ describe('mail organization API boundary', () => {
     expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual(input);
   });
 
+  it('keeps a backfill continuation opaque while requesting the next bounded preview', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        accountId: 'account/personal-1',
+        continuationToken: 'opaque_token-1',
+        nextContinuationToken: null,
+        previewFingerprint: 'a'.repeat(64),
+        enabledRuleCount: 1,
+        scannedCount: 1,
+        matchedThreadCount: 0,
+        plannedApplicationCount: 0,
+        truncated: false,
+        generatedAt: '2026-09-17T00:00:00Z',
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getMailRuleBackfillPreview('account/personal-1', 'opaque_token-1');
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/mail/organization/accounts/account%2Fpersonal-1/rules/backfill-preview?continuationToken=opaque_token-1'
+    );
+  });
+
   it('uses the additive partial-draft endpoints without weakening the send contract', async () => {
     const createInput = {
       subject: 'Subject-only draft',
+      classification: 'INTERNAL' as const,
+      externalRecipientConfirmed: false,
       idempotencyKey: '4fbe6fef-343c-43eb-a739-17d8ed78b8f4',
     };
     const saveInput = {
       body: 'Body added later',
+      classification: 'CONFIDENTIAL' as const,
+      externalRecipientConfirmed: false,
       idempotencyKey: '5eb905b4-7f6a-4ac8-91b0-7728ccdbd768',
       version: 3,
     };
@@ -220,11 +301,13 @@ describe('mail collaboration API boundary', () => {
       accountId: 'account/1',
       sharedInboxId: 'shared/1',
       assignment: 'UNASSIGNED',
+      unread: true,
+      importance: 'URGENT',
     });
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/platform/v1/mail/home?accountId=account%2F1');
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      '/api/platform/v1/mail/threads?accountId=account%2F1&sharedInboxId=shared%2F1&assignment=UNASSIGNED&page=0&pageSize=30'
+      '/api/platform/v1/mail/threads?importance=URGENT&unread=true&accountId=account%2F1&sharedInboxId=shared%2F1&assignment=UNASSIGNED&page=0&pageSize=30'
     );
   });
 
@@ -263,19 +346,27 @@ describe('mail collaboration API boundary', () => {
   it('filters and updates governed proposals without putting payload data in the URL', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(jsonResponse({ items: [], total: 0, page: 2, pageSize: 25 }))
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
       .mockResolvedValueOnce(jsonResponse({ proposalId: 'proposal-1' }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await getMailProposals({ status: 'PROPOSED', type: 'CREATE_TASK' });
+    await getMailProposals({
+      status: 'PROPOSED',
+      type: 'CREATE_TASK',
+      accountId: 'account-1',
+      dateFrom: '2026-09-01',
+      dateTo: '2026-09-17',
+      page: 2,
+      pageSize: 25,
+    });
     await updateMailProposal('proposal/1', {
       proposedPayload: { title: 'Review launch', requiresConfirmation: true },
       version: 3,
     });
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      '/api/platform/v1/mail/proposals?status=PROPOSED&type=CREATE_TASK'
+      '/api/platform/v1/mail/proposals?status=PROPOSED&type=CREATE_TASK&accountId=account-1&dateFrom=2026-09-01&dateTo=2026-09-17&page=2&pageSize=25'
     );
     expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/platform/v1/mail/proposals/proposal%2F1');
   });
@@ -339,11 +430,21 @@ describe('mail administration API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await getMailAdminOperations();
-    await getMailDeliveryAudit({ page: 0, pageSize: 50, correlationId: 'corr/42' });
+    await getMailDeliveryAudit({
+      page: 1,
+      pageSize: 50,
+      query: 'corr/42',
+      accountId: 'account-1',
+      provider: 'GOOGLE_GMAIL',
+      command: 'SEND',
+      dateFrom: '2026-09-01',
+      dateTo: '2026-09-17',
+      state: 'UNKNOWN',
+    });
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/platform/v1/admin/mail/operations');
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      '/api/platform/v1/admin/mail/delivery-audit?page=0&pageSize=50&correlationId=corr%2F42'
+      '/api/platform/v1/admin/mail/delivery-audit?page=1&pageSize=50&correlationId=corr%2F42&accountId=account-1&provider=GOOGLE_GMAIL&command=SEND&dateFrom=2026-09-01&dateTo=2026-09-17&state=UNKNOWN'
     );
   });
 
@@ -424,6 +525,8 @@ describe('mail administration API boundary', () => {
 
   it('revokes shared access with an explicit impact acknowledgement in the request body', async () => {
     const input = {
+      previewId: 'preview-1',
+      fingerprint: 'a'.repeat(64),
       impactAcknowledged: true,
       idempotencyKey: '5eb905b4-7f6a-4ac8-91b0-7728ccdbd768',
       version: 3,
@@ -443,10 +546,39 @@ describe('mail administration API boundary', () => {
     expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(input);
   });
 
+  it('loads a member-specific revoke preview before revocation', async () => {
+    const preview = {
+      previewId: 'preview-1',
+      fingerprint: 'b'.repeat(64),
+      activeAssignments: 2,
+      openDrafts: 1,
+      pendingCommands: 0,
+      providerRevocationRequired: true,
+      memberVersion: 7,
+      generatedAt: '2026-09-17T09:00:00Z',
+      expiresAt: '2026-09-17T09:05:00Z',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(preview));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(previewMailSharedInboxMemberRevoke('inbox/1', 'member/2', 7)).resolves.toEqual(
+      preview
+    );
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/admin/mail/shared-inboxes/inbox%2F1/members/member%2F2/revoke-preview'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
+      memberVersion: 7,
+    });
+  });
+
   it('preserves the candidate fingerprint and policy version through purge approval and execution', async () => {
     const previewInput = {
       scope: { tenant: true },
-      resourceTypes: ['MESSAGE'],
+      resourceTypes: ['THREADS', 'MESSAGES', 'ATTACHMENTS', 'DRAFTS'],
       before: '2026-09-16T06:00:00.000Z',
       idempotencyKey: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
       policyVersion: 9,
@@ -486,8 +618,33 @@ describe('mail administration API boundary', () => {
       '/api/platform/v1/admin/mail/retention/purges/candidate%2F1/execute',
       '/api/platform/v1/admin/mail/delivery-audit/exports',
     ]);
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(
+      previewInput
+    );
     expect(JSON.parse(String((fetchMock.mock.calls[3]?.[1] as RequestInit).body))).toEqual(
       executionInput
     );
+  });
+
+  it('loads active purge candidates and an authoritative candidate detail for another approver', async () => {
+    const active = [{ candidateSnapshotId: 'candidate-1', distinctApproverCount: 1 }];
+    const detail = {
+      candidateSnapshotId: 'candidate/1',
+      distinctApproverCount: 2,
+      fingerprint: 'd'.repeat(64),
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(active))
+      .mockResolvedValueOnce(jsonResponse(detail));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getMailActivePurgePreviews()).resolves.toEqual(active);
+    await expect(getMailPurgePreview('candidate/1')).resolves.toEqual(detail);
+
+    expect(fetchMock.mock.calls.map((call) => call[0])).toEqual([
+      '/api/platform/v1/admin/mail/retention/purge-previews',
+      '/api/platform/v1/admin/mail/retention/purge-previews/candidate%2F1',
+    ]);
   });
 });

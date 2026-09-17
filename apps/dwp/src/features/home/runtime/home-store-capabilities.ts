@@ -10,6 +10,7 @@ export type HomeStudioContractScope = Readonly<{
   modeKey: HomeExperienceVariant;
   modeScopedViews: boolean;
   fourDeviceLayoutsSupported: boolean;
+  preferenceStore: HomePreferenceStore;
 }>;
 
 /**

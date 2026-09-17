@@ -5,14 +5,15 @@ import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
 import {
+  ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES,
   APP_MANAGEMENT_ENTRY_ROUTES,
   SETTINGS_INVENTORY_EXPECTATIONS,
   SETTINGS_JOURNEY_CATALOG,
   SETTINGS_LANDING_ROUTES,
   settingsJourney,
-} from './settings-journey-catalog';
+} from './settings-journey-catalog.test-support';
 
-describe('accepted settings journey catalog', () => {
+describe('settings journey route inventory', () => {
   it('maps S01-S19 exactly once', () => {
     expect(SETTINGS_JOURNEY_CATALOG.map(({ id }) => id)).toEqual(
       Array.from({ length: 19 }, (_, index) => `S${String(index + 1).padStart(2, '0')}`)
@@ -22,12 +23,20 @@ describe('accepted settings journey catalog', () => {
   });
 
   it('locks the canonical personal, tenant, provider, and app-management inventory', () => {
+    const tenantVisiblePaths = ADMIN_NAVIGATION.flatMap(({ items }) =>
+      items.map(({ path }) => path)
+    );
+    const tenantInventoryPaths = [
+      ...tenantVisiblePaths,
+      ...ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES,
+    ];
+
     expect(accountNavigationGroups.flatMap(({ items }) => items)).toHaveLength(
       SETTINGS_INVENTORY_EXPECTATIONS.accountLeaves
     );
-    expect(ADMIN_NAVIGATION.flatMap(({ items }) => items)).toHaveLength(
-      SETTINGS_INVENTORY_EXPECTATIONS.tenantLeaves
-    );
+    expect(tenantVisiblePaths).toHaveLength(SETTINGS_INVENTORY_EXPECTATIONS.tenantVisibleLeaves);
+    expect(tenantInventoryPaths).toHaveLength(SETTINGS_INVENTORY_EXPECTATIONS.tenantLeaves);
+    expect(new Set(tenantInventoryPaths).size).toBe(tenantInventoryPaths.length);
     expect(PROVIDER_NAVIGATION.flatMap(({ items }) => items)).toHaveLength(
       SETTINGS_INVENTORY_EXPECTATIONS.providerLeaves
     );
@@ -36,7 +45,7 @@ describe('accepted settings journey catalog', () => {
     );
   });
 
-  it('resolves every leaf and app-management entry through the governed menu ledger', () => {
+  it('resolves every visible leaf and app-management entry through the governed menu ledger', () => {
     const governedPaths = new Set<string>(PRODUCT_MENU_ROUTES.map(({ path }) => path));
     const landingPaths = new Set<string>(SETTINGS_LANDING_ROUTES);
     const expectedPaths = [
@@ -50,6 +59,24 @@ describe('accepted settings journey catalog', () => {
       SETTINGS_JOURNEY_CATALOG.flatMap(({ routes }) => routes).filter(
         (path) => !governedPaths.has(path) && !landingPaths.has(path)
       )
+    ).toEqual([]);
+  });
+
+  it('retains the two consolidated Home Studio capabilities without duplicating sidebar items', () => {
+    const governedPaths = new Set<string>(PRODUCT_MENU_ROUTES.map(({ path }) => path));
+    const visibleAdminPaths = new Set(
+      ADMIN_NAVIGATION.flatMap(({ items }) => items.map(({ path }) => path))
+    );
+
+    expect(ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES).toEqual([
+      '/admin/experience/home-composition',
+      '/admin/experience/home-apps',
+    ]);
+    expect(
+      ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES.filter((path) => visibleAdminPaths.has(path))
+    ).toEqual([]);
+    expect(
+      ADMIN_HOME_STUDIO_RETAINED_INVENTORY_ROUTES.filter((path) => governedPaths.has(path))
     ).toEqual([]);
   });
 });

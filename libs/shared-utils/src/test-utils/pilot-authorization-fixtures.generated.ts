@@ -55,7 +55,13 @@ export type PilotAuthorizationTestCase = Readonly<{
       | 22
       | 23
       | 24
-      | 25;
+      | 25
+      | 26
+      | 27
+      | 28
+      | 29
+      | 30
+      | 31;
     sha256: string;
   }>;
   activeAccessMode?: 'NORMAL' | 'PROVIDER_SUPPORT';
@@ -95,7 +101,7 @@ export type PilotAuthorizationFixtureBundle = Readonly<{
     authority: 'INFORMATIONAL_ONLY';
     bundleKey: 'product-surfaces';
     indexSha256: string;
-    latestAliasVersion: 25;
+    latestAliasVersion: 31;
     versions: readonly Readonly<{
       bundleKey: 'product-surfaces';
       version:
@@ -123,7 +129,13 @@ export type PilotAuthorizationFixtureBundle = Readonly<{
         | 22
         | 23
         | 24
-        | 25;
+        | 25
+        | 26
+        | 27
+        | 28
+        | 29
+        | 30
+        | 31;
       sha256: string;
     }>[];
   }>;
@@ -1626,7 +1638,7 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
   ],
   fixedClock: '2026-08-21T09:00:00Z',
   fixtureBundleKey: 'pilot-fixtures.v1',
-  fixtureChecksum: '396bf87ce96e0c2da3d249aa347b82ca7ff53c490d443c56341fc160606c22bb',
+  fixtureChecksum: 'c61e6d75b6d6e8142ce25234df76efffc226ae062fefc747c72def0a0887ad5e',
   fixtureChecksumAlgorithm: 'SHA-256',
   negativeCases: [
     {
@@ -1864,8 +1876,8 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
   registryLineage: {
     authority: 'INFORMATIONAL_ONLY',
     bundleKey: 'product-surfaces',
-    indexSha256: 'c96dbfae756bb413ef79ae7e4589993fcf3cbb331fca3703a6b6fd806611b39f',
-    latestAliasVersion: 25,
+    indexSha256: '1eaba46a2b6f61c8b6d0f0d174d0ff5551c8bd85b2e05e0ea4b7449de2325907',
+    latestAliasVersion: 31,
     versions: [
       {
         bundleKey: 'product-surfaces',
@@ -1991,6 +2003,36 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
         bundleKey: 'product-surfaces',
         sha256: '805fa41852b1679d3c7c473d650020f481ace0c2a7910271872d935c223287c1',
         version: 25,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: 'b0e355e169233abef1cbcbc39672ec9a66feaa602b8cf8ab6fe4e8b3b97cd278',
+        version: 26,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: 'f88e17c65ef95f8a9e1879b48eb093db40eda18b5fc3e077bce9b8abdfe44f6f',
+        version: 27,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: '7e807a353f281a9e0bc6d9d33074c5b1806946d21399bc541682bbf6dcab6f90',
+        version: 28,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: 'aac6b6dfc94b4f4ea2956862ff1aa73ccd3459b29548fb20b3cbc26ae29cdbd8',
+        version: 29,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: '7c437bd768225db7dfe1c2491bcdb6ff256a2376946bab6a4ba4a62a7f31ce80',
+        version: 30,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: 'be4e1b6db3d3f0b5100182a3c80066a39c64479f9ba88d908fee661efd3335b8',
+        version: 31,
       },
     ],
   },

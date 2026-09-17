@@ -142,6 +142,9 @@ export type DwaionEvaluationComparisonSummary = {
   passRate?: number | null;
   regressionCount?: number | null;
   evaluatorFailureCount?: number | null;
+  datasetId?: string | null;
+  datasetVersion?: number | null;
+  resultVersion?: number | null;
   createdAt: string;
 };
 
@@ -235,10 +238,11 @@ export type DwaionImprovementBacklogItem = {
 export type DwaionTokenBudgetSummary = {
   scope: string;
   consumedTokens: number;
-  budgetTokens: number;
+  budgetTokens: number | null;
   projectedTokens?: number | null;
   spikeDetected: boolean;
   policyMode: 'WARN' | 'THROTTLE' | 'BLOCK';
+  enforcementActivationState: 'ENABLED' | 'DISABLED';
   version: number;
 };
 
@@ -321,6 +325,22 @@ export type DwaionGovernedCommandKind =
   | 'OUTCOME_EXPORT'
   | 'COST_SIMULATE'
   | 'TOKEN_BUDGET_UPDATE';
+
+export type DwaionAdminCommandCapability = {
+  kind: DwaionGovernedCommandKind;
+  family: 'A01' | 'A02' | 'A03' | 'A04' | 'A05' | 'A06';
+  executionMode: 'INTERNAL' | 'EXTERNAL_ADAPTER';
+  status: DwaionCapabilityStatus;
+  configured: boolean;
+  reason?: string | null;
+  recoveryHint?: string | null;
+};
+
+export type DwaionAdminCommandCapabilitiesSnapshot = {
+  generatedAt: string;
+  workerAvailable: boolean;
+  commands: DwaionAdminCommandCapability[];
+};
 
 export type DwaionGovernedCommandRequest = {
   commandId: string;

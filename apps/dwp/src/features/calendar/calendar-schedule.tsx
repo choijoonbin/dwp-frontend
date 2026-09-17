@@ -17,7 +17,6 @@ import {
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
-  ConfirmDialog,
   foundationTokens,
   LiveStatus,
   OperationalContextBar,
@@ -34,7 +33,6 @@ import {
   useMailProposalOwnerHandoff,
 } from '../../components/mail-proposal-owner-handoff';
 import { CalendarEventDialog } from './calendar-event-dialog';
-import { CalendarEventDrawer } from './calendar-components';
 import { CalendarCanvas } from './calendar-experience';
 import { CalendarInteractiveGrid, type CalendarRange } from './calendar-interactive-grid';
 import { CalendarMobileNavigation } from './calendar-mobile-navigation';
@@ -47,6 +45,13 @@ import {
 import { CalendarShareDialog } from './calendar-share-dialog';
 import { CalendarSourcePanel, CalendarSourcePicker } from './calendar-source-rail';
 import { CalendarScheduleChrome } from './calendar-schedule-chrome';
+import { CalendarScheduleEventOverlays } from './calendar-schedule-event-overlays';
+import { calendarScheduleMoveInput } from './calendar-schedule-event-move';
+import {
+  completeCalendarResponseIntent,
+  prepareCalendarResponseCommand,
+  type CalendarResponseIntent,
+} from './calendar-response-intent';
 import { CalendarCommandPaletteOverlay } from './calendar-workspace-overlays';
 import { persistWorkCalendarHandoffLink } from './calendar-work-handoff';
 import { useCalendarCreateHandoff } from './use-calendar-create-handoff';
@@ -58,15 +63,18 @@ import {
 } from './calendar-source-model';
 import {
   authorizedCalendarWorkReturnTarget,
+  calendarScheduleAuthorizedEvent,
   calendarScheduleCalendarIds,
   calendarScheduleDate,
   calendarScheduleDateValue,
+  calendarScheduleInitialRange,
   calendarInternalPath,
   calendarScheduleSavedConfiguration,
   calendarScheduleSearchParams,
   calendarScheduleStateFromSavedView,
   calendarScheduleView,
   isCalendarCommandShortcut,
+  sameCalendarSelection,
   type CalendarScheduleView,
 } from './calendar-schedule-state';
 
@@ -75,55 +83,9 @@ import type {
   CalendarEventType,
   CalendarResponseStatus,
   CalendarSummary,
-  UpdateCalendarEventInput,
 } from '@dwp-frontend/shared-utils';
 
 const CALENDAR_SURFACE_RADIUS = `${foundationTokens.radius.surface}px`;
-
-function initialRange(): CalendarRange {
-  const from = new Date();
-  from.setHours(0, 0, 0, 0);
-  from.setDate(from.getDate() - ((from.getDay() || 7) - 1));
-  const to = new Date(from);
-  to.setDate(to.getDate() + 7);
-  return { from: from.toISOString(), to: to.toISOString() };
-}
-
-function sameCalendarSelection(left: readonly string[], right: readonly string[]): boolean {
-  return left.length === right.length && left.every((value, index) => value === right[index]);
-}
-
-function updateInput(
-  event: CalendarEvent,
-  change: Readonly<{ startsAt: string; endsAt: string; allDay: boolean }>
-): UpdateCalendarEventInput {
-  return {
-    title: event.title,
-    description: event.description ?? null,
-    type: event.type,
-    startsAt: change.startsAt,
-    endsAt: change.endsAt,
-    timeZone: event.timeZone,
-    allDay: change.allDay,
-    location: event.location ?? null,
-    conferenceUrl: event.conferenceUrl ?? null,
-    visibility: event.visibility,
-    recurrence: event.recurrence,
-    recurrenceInterval: event.recurrenceInterval,
-    recurrenceUntil: event.recurrenceUntil ?? null,
-    responseRequired: event.responseRequired,
-    attendees: event.attendees.map((attendee) => ({
-      userId: attendee.userId ?? null,
-      personPublicId: attendee.personPublicId ?? null,
-      email: attendee.email,
-      name: attendee.name,
-      type: attendee.type,
-    })),
-    resourceId: event.resource?.resourceId ?? null,
-    importance: event.importance ?? 'NORMAL',
-    version: event.version,
-  };
-}
 
 export function CalendarSchedule() {
   const { t, i18n } = useTranslation('calendar');
@@ -142,7 +104,7 @@ export function CalendarSchedule() {
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
   const routeSearchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const [range, setRange] = useState<CalendarRange>(initialRange);
+  const [range, setRange] = useState<CalendarRange>(calendarScheduleInitialRange);
   const [viewState, setView] = useState<CalendarScheduleView>(() =>
     calendarScheduleView(
       routeSearchParams.get('view'),
@@ -158,6 +120,7 @@ export function CalendarSchedule() {
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
+  const responseIntentRef = useRef<CalendarResponseIntent | null>(null);
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
   const [sourcesCollapsed, setSourcesCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -311,6 +274,15 @@ export function CalendarSchedule() {
   }, [eventsData, requestedEventId]);
 
   useEffect(() => {
+    if (eventsState !== 'READY' || !eventsQuery.data) return;
+    const authorizedIds = new Set(eventsQuery.data.map((event) => event.eventId));
+    setSelected((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
+    setEditing((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
+    setCancelling((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
+    setTrashing((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
+  }, [eventsQuery.data, eventsState]);
+
+  useEffect(() => {
     // A reload starts with all authoritative sources in LOADING. Keep a verified Work-link
     // receipt dormant until those sources settle; clearing it here would force a second Calendar
     // POST even though the first event was already confirmed.
@@ -355,11 +327,19 @@ export function CalendarSchedule() {
     mutationFn: ({
       eventId,
       response,
+      expectedVersion,
+      idempotencyKey,
     }: {
       eventId: string;
       response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>;
-    }) => respondToCalendarEvent(eventId, response),
-    onSuccess: async (event) => {
+      expectedVersion: number;
+      idempotencyKey: string;
+    }) => respondToCalendarEvent(eventId, response, expectedVersion, idempotencyKey),
+    onSuccess: async (event, command) => {
+      responseIntentRef.current = completeCalendarResponseIntent(
+        responseIntentRef.current,
+        command.idempotencyKey
+      );
       setSelected(event);
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('event.responseSaved'));
@@ -417,7 +397,7 @@ export function CalendarSchedule() {
       event: CalendarEvent;
       change: Readonly<{ startsAt: string; endsAt: string; allDay: boolean }>;
       revert: () => void;
-    }) => updateCalendarEvent(event.eventId, updateInput(event, change)),
+    }) => updateCalendarEvent(event.eventId, calendarScheduleMoveInput(event, change)),
     onSuccess: async (saved) => {
       setSelected((current) => (current?.eventId === saved.eventId ? saved : current));
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
@@ -634,8 +614,11 @@ export function CalendarSchedule() {
     start.setMinutes(start.getMinutes() < 30 ? 30 : 60);
     setCreateState({ start: start.toISOString(), type });
   };
-  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') =>
-    respondMutation.mutate({ eventId: event.eventId, response });
+  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') => {
+    const prepared = prepareCalendarResponseCommand(responseIntentRef.current, event, response);
+    responseIntentRef.current = prepared.intent;
+    respondMutation.mutate(prepared.command);
+  };
   return (
     <CalendarCanvas archetype="temporal">
       <CalendarScheduleChrome
@@ -712,6 +695,12 @@ export function CalendarSchedule() {
           '@media (forced-colors: active)': {
             borderColor: 'CanvasText',
             boxShadow: 'none',
+            '& [role="tab"][aria-selected="true"]': {
+              forcedColorAdjust: 'none',
+              backgroundColor: 'Highlight !important',
+              borderColor: 'Highlight !important',
+              color: 'HighlightText !important',
+            },
           },
         })}
       >
@@ -896,6 +885,7 @@ export function CalendarSchedule() {
             initialVisibility={createState?.visibility}
             initialImportance={createState?.importance}
             fromDwaion={createState?.fromDwaion}
+            dwaionProposalBinding={createState?.dwaionProposalBinding}
             proposalBinding={proposalOwnerHandoff.binding}
             submissionBlocked={proposalOwnerHandoff.blocksSubmission}
             workHandoff={activeCreateWorkHandoff}
@@ -961,65 +951,42 @@ export function CalendarSchedule() {
             }
           />
         )}
-      {canUpdate && (
-        <CalendarEventDialog
-          open={Boolean(editing)}
-          event={editing}
-          onClose={() => setEditing(null)}
-          onSaved={setSelected}
-        />
-      )}
-      <CalendarEventDrawer
-        event={selected}
-        open={Boolean(selected)}
-        canEdit={Boolean(selected && canManage(selected))}
-        canDelete={Boolean(selected && canDelete(selected))}
-        canStar={Boolean(selected && canUpdate && eventCapability(selected, 'canStar'))}
-        starBusy={preferenceMutation.isPending}
-        onClose={clearEventSelection}
-        onEdit={
-          canUpdate
-            ? () => {
-                setEditing(selected);
-                clearEventSelection();
-              }
-            : undefined
-        }
-        onCancel={() => selected && canDelete(selected) && setCancelling(selected)}
-        onTrash={() => selected && canDelete(selected) && setTrashing(selected)}
-        onToggleStar={() => selected && preferenceMutation.mutate(selected)}
-        onRespond={
-          selected && canUpdate && eventCapability(selected, 'canRespond')
-            ? (response) => respond(selected, response)
-            : undefined
-        }
-      />
-      <ConfirmDialog
-        open={canUpdate && Boolean(cancelling)}
-        title={t('event.cancelTitle')}
-        description={t('event.cancelDescription', { title: cancelling?.title })}
-        cancelLabel={t('actions.close')}
-        confirmLabel={t('event.cancelEvent')}
-        confirmingLabel={t('event.cancelling')}
-        intent="danger"
-        busy={cancelMutation.isPending}
-        onClose={() => setCancelling(null)}
-        onConfirm={() => {
-          if (canUpdate && cancelling) cancelMutation.mutate(cancelling);
+      <CalendarScheduleEventOverlays
+        state={{ selected, editing, cancelling, trashing }}
+        capabilities={{
+          canUpdate,
+          canEditSelected: Boolean(selected && canManage(selected)),
+          canDeleteSelected: Boolean(selected && canDelete(selected)),
+          canStarSelected: Boolean(selected && canUpdate && eventCapability(selected, 'canStar')),
+          canRespondSelected: Boolean(
+            selected && canUpdate && eventCapability(selected, 'canRespond')
+          ),
         }}
-      />
-      <ConfirmDialog
-        open={Boolean(trashing)}
-        title={t('event.trashTitle')}
-        description={t('event.trashDescription', { title: trashing?.title })}
-        cancelLabel={t('actions.close')}
-        confirmLabel={t('event.moveToTrash')}
-        confirmingLabel={t('event.trashing')}
-        intent="danger"
-        busy={trashMutation.isPending}
-        onClose={() => setTrashing(null)}
-        onConfirm={() => {
-          if (trashing && canDelete(trashing)) trashMutation.mutate(trashing);
+        busy={{
+          starring: preferenceMutation.isPending,
+          cancelling: cancelMutation.isPending,
+          trashing: trashMutation.isPending,
+        }}
+        actions={{
+          closeSelected: clearEventSelection,
+          editSelected: () => {
+            setEditing(selected);
+            clearEventSelection();
+          },
+          cancelSelected: () => selected && canDelete(selected) && setCancelling(selected),
+          trashSelected: () => selected && canDelete(selected) && setTrashing(selected),
+          toggleSelectedStar: () => selected && preferenceMutation.mutate(selected),
+          respondToSelected: (response) => selected && respond(selected, response),
+          closeEditing: () => setEditing(null),
+          saveEditing: setSelected,
+          closeCancelling: () => setCancelling(null),
+          confirmCancelling: () => {
+            if (canUpdate && cancelling) cancelMutation.mutate(cancelling);
+          },
+          closeTrashing: () => setTrashing(null),
+          confirmTrashing: () => {
+            if (trashing && canDelete(trashing)) trashMutation.mutate(trashing);
+          },
         }}
       />
     </CalendarCanvas>

@@ -66,6 +66,11 @@ type QuarantinedEditor = Readonly<{
   priority: ApprovalPriority;
   payloadValues: Record<string, unknown>;
 }>;
+type DwaionProposalBindingContext = Readonly<{
+  binding: NonNullable<ReturnType<typeof parseDwaionProposalHandoffBinding>>;
+  sessionKey: string;
+  requestId?: string;
+}>;
 
 function accessDenied(error: unknown) {
   return error instanceof HttpError && [401, 403, 404].includes(error.status);
@@ -153,8 +158,12 @@ export function useApprovalRequestComposer() {
     () => parseDwaionProposalHandoffBinding(location.state),
     [location.state]
   );
-  const [dwaionProposalHandoff, setDwaionProposalHandoff] =
-    useState(incomingDwaionProposalHandoff);
+  const [dwaionProposalContext, setDwaionProposalContext] =
+    useState<DwaionProposalBindingContext | undefined>(() =>
+      incomingDwaionProposalHandoff
+        ? { binding: incomingDwaionProposalHandoff, sessionKey }
+        : undefined
+    );
   const currentDraftDetail =
     draftId &&
     !draft.isError &&
@@ -244,6 +253,17 @@ export function useApprovalRequestComposer() {
   }, [sessionKey]);
 
   useEffect(() => {
+    setDwaionProposalContext((current) => {
+      if (incomingDwaionProposalHandoff) {
+        return { binding: incomingDwaionProposalHandoff, sessionKey };
+      }
+      if (current?.sessionKey === sessionKey) return current;
+      if (draftId && current?.requestId === draftId) return { ...current, sessionKey };
+      return undefined;
+    });
+  }, [draftId, incomingDwaionProposalHandoff, sessionKey]);
+
+  useEffect(() => {
     if (
       !draftId ||
       !draft.data ||
@@ -280,12 +300,6 @@ export function useApprovalRequestComposer() {
     storedEvaluation.compiled,
     schemaBindingReady,
   ]);
-
-  useEffect(() => {
-    if (incomingDwaionProposalHandoff) {
-      setDwaionProposalHandoff(incomingDwaionProposalHandoff);
-    }
-  }, [incomingDwaionProposalHandoff]);
 
   useEffect(() => {
     if (draftId || !dwaionHandoff) return;
@@ -370,7 +384,7 @@ export function useApprovalRequestComposer() {
     contextScopeKey: requestScope.contextScopeKey,
     isCurrent: () => sessionRef.current === sessionKey && commandScope.isCurrent(binding),
     canWrite: userSource.isReady,
-    dwaionProposalHandoff: dwaionProposalHandoff ?? undefined,
+    dwaionProposalHandoff: dwaionProposalContext?.binding,
   });
   const autosaveRecovery = ['CONFLICT', 'DENIED', 'UNAVAILABLE', 'UNKNOWN', 'ERROR'].includes(
     autosave.status
@@ -380,6 +394,11 @@ export function useApprovalRequestComposer() {
   useEffect(() => {
     if (!autosave.receipt) return;
     const { requestId, version } = autosave.receipt;
+    setDwaionProposalContext((current) =>
+      current && (!current.requestId || current.requestId === requestId)
+        ? { ...current, requestId }
+        : current
+    );
     setSourceDraft((previous) =>
       previous?.requestId === requestId && previous.version === version
         ? previous
@@ -552,6 +571,11 @@ export function useApprovalRequestComposer() {
       )
         throw new HttpError('Approval request context is not current.', 409);
       const persisted = await autosave.flush();
+      setDwaionProposalContext((current) =>
+        current && (!current.requestId || current.requestId === persisted.requestId)
+          ? { ...current, requestId: persisted.requestId }
+          : current
+      );
       await userSource.waitForOwner(
         persisted.requestId,
         persisted.version,

@@ -32,12 +32,14 @@ export function ServiceRequestDialog({
   draft,
   initialSummary = '',
   fromDwaion = false,
+  dwaionProposalBinding,
   onClose,
 }: {
   service: ServiceCatalogItem | null;
   draft?: ServiceRequestDetail | null;
   initialSummary?: string;
   fromDwaion?: boolean;
+  dwaionProposalBinding?: import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding | null;
   onClose: () => void;
 }) {
   const { t, i18n } = useTranslation('services');
@@ -101,7 +103,8 @@ export function ServiceRequestDialog({
             idempotencyKey: crypto.randomUUID(),
             submit,
           },
-          authority
+          authority,
+          dwaionProposalBinding
         )
       );
     },

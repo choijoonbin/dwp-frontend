@@ -12,6 +12,7 @@ const calendarViews = [
   'calendar-availability',
   'calendar-trash',
   'calendar-insights',
+  'calendar-settings',
   'calendar-admin',
   'calendar-admin-company-calendars',
   'calendar-admin-policies',

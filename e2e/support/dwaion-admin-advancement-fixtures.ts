@@ -1,6 +1,8 @@
 import type { Page, Route } from '@playwright/test';
 import type { DwaionGovernedCommand } from '@dwp-frontend/shared-utils';
 
+import { DWAION_GOVERNED_COMMAND_KINDS } from '../../libs/shared-utils/src/api/dwaion-control-plane-parser';
+
 const STAMP = '2026-09-08T03:00:00Z';
 const CAPABILITY = { status: 'AVAILABLE', configured: true } as const;
 
@@ -198,7 +200,7 @@ export const ADMIN_EVALUATION_SAFETY = {
       version: 3,
       ownerRef: 'team:ai-safety',
       caseCount: 2_400,
-      piiState: 'REVIEW',
+      piiState: 'PASS',
       checksumSha256: 'a'.repeat(64),
       updatedAt: STAMP,
     },
@@ -325,6 +327,7 @@ export const ADMIN_OUTCOMES = {
       projectedTokens: 1_080_000,
       spikeDetected: true,
       policyMode: 'THROTTLE',
+      enforcementActivationState: 'ENABLED',
       version: 4,
     },
   ],
@@ -343,6 +346,21 @@ export async function mockDwaionAdminAdvancement(page: Page, requests: RequestRe
     requests.push({ path, method: request.method(), search: url.search, body });
     const success = (data: unknown) => route.fulfill({ json: { success: true, data } });
 
+    if (path.endsWith('/command-capabilities')) {
+      return success({
+        generatedAt: STAMP,
+        workerAvailable: true,
+        commands: [...DWAION_GOVERNED_COMMAND_KINDS].map((kind) => ({
+          kind,
+          family: 'A01',
+          executionMode: 'INTERNAL',
+          status: 'AVAILABLE',
+          configured: true,
+          reason: null,
+          recoveryHint: null,
+        })),
+      });
+    }
     if (path.endsWith('/models-routing')) return success(ADMIN_MODELS_ROUTING);
     if (path.endsWith('/connectors')) return success(ADMIN_CONNECTORS);
     if (path.endsWith('/evaluation-safety')) return success(ADMIN_EVALUATION_SAFETY);

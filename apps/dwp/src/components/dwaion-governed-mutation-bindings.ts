@@ -181,6 +181,18 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.attachment-delete.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.attachment-detach.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.attachment-detach.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.attachment-audit-report.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.attachment-audit-report.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.artifact-autosave.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -221,6 +233,18 @@ export const DWAION_MUTATION_BINDINGS = {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.artifact-collaboration-resolve.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-review-decision.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-review-decision.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-remediation.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-remediation.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.artifact-collaboration-share.action': {
@@ -343,6 +367,12 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.personal-deletion-retry.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.personal-deletion-evidence.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.personal-deletion-evidence.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.proposal-analyze.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -365,6 +395,12 @@ export const DWAION_MUTATION_BINDINGS = {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.proposal-handoff.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.proposal-handoff-draft.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.proposal-handoff-draft.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.proposal-preferences-update.action': {
@@ -419,6 +455,12 @@ export const DWAION_MUTATION_BINDINGS = {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.research-output.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.research-recovery.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-recovery.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.routine-archive.action': {
@@ -479,6 +521,18 @@ export const DWAION_MUTATION_BINDINGS = {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.routine-version-rollback.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-advanced.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-advanced.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-advanced-approval.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-advanced-approval.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.routine-webhook-trigger.action': {

@@ -1,20 +1,12 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowLeft,
-  Building2,
-  ChevronDown,
-  Clock3,
-  Focus,
-  ListTodo,
-  SlidersHorizontal,
-  UsersRound,
-} from 'lucide-react';
+import { ArrowLeft, Clock3, Focus, ListTodo, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createCalendarEvent,
   getCalendars,
   getCalendarResources,
+  getCalendarSettings,
   listPeople,
   resolveIdempotentMutationIntent,
   updateCalendarEvent,
@@ -23,8 +15,6 @@ import {
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
-  AutocompleteMultiField,
-  DatePickerField,
   DateTimePickerField,
   DwpDateTimeProvider,
   FormDialog,
@@ -34,12 +24,6 @@ import {
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -48,22 +32,33 @@ import Typography from '@mui/material/Typography';
 import type {
   CalendarEvent,
   CalendarEventImportance,
+  CalendarRecurrenceEditScope,
+  CalendarResource,
+  CalendarSettings,
   CalendarEventType,
   IdempotentMutationIntent,
+  DwaionProposalHandoffBinding,
   MailProposalMutationBinding,
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
 import {
+  EMPTY_CALENDAR_EDITOR_EMAILS,
+  EMPTY_CALENDAR_EDITOR_PEOPLE,
   calendarEditorAttendees,
   calendarEventDraft,
   calendarEventInput,
-  calendarSystemTimeZone,
   protectWorkCalendarEventDraft,
   type CalendarEditorAttendee,
   type CalendarEventDraft,
 } from './calendar-event-editor-model';
 import { CalendarSchedulingAssistant } from './calendar-scheduling-assistant';
+import { CalendarEventDialogDetails } from './calendar-event-dialog-details';
+import {
+  CalendarEventDialogStatus,
+  calendarEventSaveErrorMessage,
+  calendarEventSaveFailureKind,
+} from './calendar-event-dialog-status';
 import {
   calendarWorkHandoffRecoveryReceipt,
   clearCalendarWorkHandoffRecovery,
@@ -95,6 +90,7 @@ type CalendarEventDialogProps = {
   initialAttendeeEmails?: string[];
   fromDwaion?: boolean;
   proposalBinding?: MailProposalMutationBinding;
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null;
   submissionBlocked?: boolean;
   workHandoff?: WorkCalendarEventHandoff | null;
   workRecovery?: CalendarWorkHandoffRecovery | null;
@@ -105,19 +101,39 @@ type CalendarEventDialogProps = {
   onSaved?: (event: CalendarEvent) => void;
 };
 
-const EMPTY_ATTENDEES: PersonSummary[] = [];
-const EMPTY_EMAILS: string[] = [];
-const COMMON_TIME_ZONES = [
-  'Asia/Seoul',
-  'Asia/Tokyo',
-  'Asia/Singapore',
-  'Europe/London',
-  'America/New_York',
-  'UTC',
-] as const;
+const EMPTY_CALENDAR_RESOURCES: CalendarResource[] = [];
 
-function message(error: unknown, fallback: string) {
-  return error instanceof Error ? error.message : fallback;
+function creationDraftWithSettings(
+  draft: CalendarEventDraft,
+  settings: CalendarSettings | undefined,
+  explicit: Readonly<{
+    end: boolean;
+    timeZone: boolean;
+    visibility: boolean;
+  }>
+) {
+  if (!settings) return draft;
+  const startsAt = new Date(draft.startsAt);
+  const speedyMinutes =
+    settings.speedyMeetingMode === 'FIVE_TEN'
+      ? settings.defaultEventMinutes >= 60
+        ? 10
+        : 5
+      : 0;
+  const durationMinutes = Math.max(5, settings.defaultEventMinutes - speedyMinutes);
+  return {
+    ...draft,
+    endsAt:
+      explicit.end || Number.isNaN(startsAt.getTime())
+        ? draft.endsAt
+        : new Date(startsAt.getTime() + durationMinutes * 60_000).toISOString(),
+    timeZone: explicit.timeZone ? draft.timeZone : settings.timeZone,
+    visibility: explicit.visibility
+      ? draft.visibility
+      : settings.defaultVisibility === 'PRIVATE'
+        ? ('PRIVATE' as const)
+        : ('DEFAULT' as const),
+  };
 }
 
 export function CalendarEventDialog({
@@ -133,10 +149,11 @@ export function CalendarEventDialog({
   initialCalendarId,
   initialTimeZone,
   initialImportance,
-  initialAttendees = EMPTY_ATTENDEES,
-  initialAttendeeEmails = EMPTY_EMAILS,
+  initialAttendees = EMPTY_CALENDAR_EDITOR_PEOPLE,
+  initialAttendeeEmails = EMPTY_CALENDAR_EDITOR_EMAILS,
   fromDwaion = false,
   proposalBinding,
+  dwaionProposalBinding,
   submissionBlocked = false,
   workHandoff,
   workRecovery,
@@ -157,6 +174,13 @@ export function CalendarEventDialog({
       (!workHandoff || hasPermission('APP.WORK', 'UPDATE'));
   const toast = useToast();
   const queryClient = useQueryClient();
+  const settingsQuery = useQuery({
+    queryKey: ['calendar', 'settings'],
+    queryFn: ({ signal }) => getCalendarSettings(signal),
+    enabled: open && canMutate && !event && !recoveryMode,
+    staleTime: 60_000,
+    retry: 1,
+  });
   const workReference = useMemo(
     () => workHandoff ?? parseWorkCalendarEventHandoffDescription(event?.description),
     [event?.description, workHandoff]
@@ -167,7 +191,7 @@ export function CalendarEventDialog({
   );
   const workProtected = Boolean(workDescription);
   const [form, setForm] = useState<CalendarEventDraft>(() => {
-    const draft = calendarEventDraft(event, {
+    const draft = creationDraftWithSettings(calendarEventDraft(event, {
       initialStart,
       initialEnd,
       initialType: workHandoff ? 'FOCUS' : initialType,
@@ -178,6 +202,10 @@ export function CalendarEventDialog({
       initialCalendarId,
       fallbackTimeZone: initialTimeZone ?? undefined,
       initialImportance,
+    }), event ? undefined : settingsQuery.data, {
+      end: Boolean(initialEnd),
+      timeZone: Boolean(initialTimeZone),
+      visibility: Boolean(initialVisibility || workHandoff),
     });
     return workDescription ? protectWorkCalendarEventDraft(draft, workDescription) : draft;
   });
@@ -186,15 +214,29 @@ export function CalendarEventDialog({
   const [additionalOptionsOpen, setAdditionalOptionsOpen] = useState(
     Boolean(event || initialDescription)
   );
+  const [versionConflict, setVersionConflict] = useState(false);
+  const [editScope, setEditScope] = useState<CalendarRecurrenceEditScope>('SERIES');
+  const authorityNoticeShown = useRef(false);
   const createIntent = useRef<IdempotentMutationIntent | null>(
     initialRecoveryReceipt?.intent ?? null
   );
+  const occurrenceIntent = useRef<IdempotentMutationIntent | null>(null);
   const pendingWorkReceipt = useRef<CalendarPendingWorkEventReceipt | null>(initialRecoveryReceipt);
   const [workReceiptLocked, setWorkReceiptLocked] = useState(recoveryMode);
 
   useEffect(() => {
-    if (open && !canMutate) onClose();
-  }, [canMutate, onClose, open]);
+    if (!open) {
+      authorityNoticeShown.current = false;
+      return;
+    }
+    if (canMutate || authorityNoticeShown.current) return;
+    authorityNoticeShown.current = true;
+    setForm((current) => calendarEventDraft(null, { fallbackTimeZone: current.timeZone }));
+    setAttendees([]);
+    queryClient.removeQueries({ queryKey: ['calendar'] });
+    toast.error(t('event.authorityRevoked'));
+    onClose();
+  }, [canMutate, onClose, open, queryClient, t, toast]);
 
   useEffect(() => {
     if (!open || event) {
@@ -214,7 +256,7 @@ export function CalendarEventDialog({
 
   useEffect(() => {
     if (!open) return;
-    const draft = calendarEventDraft(event, {
+    const draft = creationDraftWithSettings(calendarEventDraft(event, {
       initialStart,
       initialEnd,
       initialType: workHandoff ? 'FOCUS' : initialType,
@@ -225,12 +267,19 @@ export function CalendarEventDialog({
       initialCalendarId,
       fallbackTimeZone: initialTimeZone ?? undefined,
       initialImportance,
+    }), event ? undefined : settingsQuery.data, {
+      end: Boolean(initialEnd),
+      timeZone: Boolean(initialTimeZone),
+      visibility: Boolean(initialVisibility || workHandoff),
     });
     setForm(workDescription ? protectWorkCalendarEventDraft(draft, workDescription) : draft);
     setAttendees(
       workProtected ? [] : calendarEditorAttendees(event, initialAttendees, initialAttendeeEmails)
     );
     setValidationVisible(false);
+    setVersionConflict(false);
+    setEditScope('SERIES');
+    occurrenceIntent.current = null;
     setAdditionalOptionsOpen(Boolean(event || initialDescription));
   }, [
     event,
@@ -247,6 +296,7 @@ export function CalendarEventDialog({
     initialImportance,
     initialType,
     open,
+    settingsQuery.data,
     workDescription,
     workHandoff,
     workProtected,
@@ -313,6 +363,11 @@ export function CalendarEventDialog({
     staleTime: 15_000,
     retry: 1,
   });
+  const resources = resourcesQuery.data ?? EMPTY_CALENDAR_RESOURCES;
+  const recurringEvent = event?.recurrence && event.recurrence !== 'NONE' ? event : null;
+  const occurrenceOnly = Boolean(
+    recurringEvent && editScope === 'THIS_OCCURRENCE'
+  );
 
   const typeOptions = useMemo(
     () =>
@@ -336,16 +391,26 @@ export function CalendarEventDialog({
         })),
     [peopleQuery.data?.items]
   );
-  const replaceAttendees = (
-    type: CalendarEditorAttendee['type'],
-    values: readonly CalendarEditorAttendee[]
-  ) => {
-    const selectedIds = new Set(values.map((person) => person.personId));
-    setAttendees((current) => [
-      ...current.filter((person) => person.type !== type && !selectedIds.has(person.personId)),
-      ...values.map((person) => ({ ...person, type })),
-    ]);
-  };
+  const patchForm = useCallback((patch: Partial<CalendarEventDraft>) => {
+    setForm((current) => ({ ...current, ...patch }));
+  }, []);
+  const changeResource = useCallback((resourceId: string, resourceName?: string) => {
+    setForm((current) => ({
+      ...current,
+      resourceId,
+      location: resourceName ?? current.location,
+    }));
+  }, []);
+  const replaceAttendees = useCallback(
+    (type: CalendarEditorAttendee['type'], values: readonly CalendarEditorAttendee[]) => {
+      const selectedIds = new Set(values.map((person) => person.personId));
+      setAttendees((current) => [
+        ...current.filter((person) => person.type !== type && !selectedIds.has(person.personId)),
+        ...values.map((person) => ({ ...person, type })),
+      ]);
+    },
+    []
+  );
   const start = new Date(form.startsAt);
   const end = new Date(form.endsAt);
   const rangeError = !form.startsAt || !form.endsAt || end <= start;
@@ -380,9 +445,28 @@ export function CalendarEventDialog({
       const input = calendarEventInput(form, attendees, { workReference });
       if (event) {
         const { calendarId: _calendarId, ...updateInput } = input;
+        if (occurrenceOnly) {
+          const occurrenceCommand = {
+            ...updateInput,
+            version: event.version,
+            editScope: 'THIS_OCCURRENCE' as const,
+            originalStartsAt: event.recurrenceId ?? event.startsAt,
+          };
+          const intent = resolveIdempotentMutationIntent(
+            occurrenceIntent.current,
+            occurrenceCommand,
+            () => crypto.randomUUID()
+          );
+          occurrenceIntent.current = intent;
+          return updateCalendarEvent(event.eventId, {
+            ...occurrenceCommand,
+            idempotencyKey: intent.key,
+          });
+        }
         return updateCalendarEvent(event.eventId, {
           ...updateInput,
           version: event.version,
+          editScope: 'SERIES',
         });
       }
       const selectedCalendar = writableCalendars.find(
@@ -404,7 +488,12 @@ export function CalendarEventDialog({
       };
       await onBeforeCreate?.();
       createIntent.current = intent;
-      const saved = await createCalendarEvent(request, undefined, proposalBinding);
+      const saved = await createCalendarEvent(
+        request,
+        undefined,
+        proposalBinding,
+        dwaionProposalBinding
+      );
       if (workHandoff) {
         if (!isExactWorkHandoffEventReceipt(saved, request))
           throw new Error(t('event.workLinkSaveError'));
@@ -424,16 +513,31 @@ export function CalendarEventDialog({
         queryClient.invalidateQueries({ queryKey: ['workspace', 'apps'] }),
       ]);
       toast.success(t(event ? 'event.updated' : 'event.created'));
+      setVersionConflict(false);
       createIntent.current = null;
+      occurrenceIntent.current = null;
       pendingWorkReceipt.current = null;
       setWorkReceiptLocked(false);
       onSaved?.(saved);
       onClose();
     },
     onError: (error) => {
+      const failure = calendarEventSaveFailureKind(error);
+      if (failure === 'AUTHORITY_REVOKED') {
+        setForm((current) => calendarEventDraft(null, { fallbackTimeZone: current.timeZone }));
+        setAttendees([]);
+        queryClient.removeQueries({ queryKey: ['calendar'] });
+        toast.error(t('event.authorityRevoked'));
+        onClose();
+        return;
+      }
+      if (failure === 'VERSION_CONFLICT') {
+        setVersionConflict(true);
+        return;
+      }
       // Work handoff failures stay actionable inside the open composer. A duplicate bottom toast
       // can cover the retry/create action on a full-screen mobile dialog.
-      if (!workHandoff) toast.error(message(error, t('event.saveError')));
+      if (!workHandoff) toast.error(calendarEventSaveErrorMessage(error, t('event.saveError')));
     },
   });
 
@@ -454,7 +558,11 @@ export function CalendarEventDialog({
 
   return (
     <FormDialog
-      open={open && canMutate}
+      open={
+        open &&
+        canMutate &&
+        Boolean(event || recoveryMode || settingsQuery.isFetched || settingsQuery.isError)
+      }
       title={t(event ? 'event.editTitle' : 'event.createTitle')}
       description={t(event ? 'event.editDescription' : 'event.createDescription')}
       cancelLabel={t('actions.cancel')}
@@ -483,46 +591,85 @@ export function CalendarEventDialog({
     >
       <DwpDateTimeProvider locale={i18n.resolvedLanguage ?? i18n.language} timeZone={form.timeZone}>
         <Stack spacing={2.25}>
-          {fromDwaion && (
-            <InlineFeedback severity="info">{t('event.dwaionDraftNotice')}</InlineFeedback>
-          )}
-          {workHandoff && (
-            <InlineFeedback severity="info">{t('event.workHandoffNotice')}</InlineFeedback>
-          )}
-          {workReceiptLocked && (
+          <CalendarEventDialogStatus
+            fromDwaion={fromDwaion}
+            workHandoff={Boolean(workHandoff)}
+            workReceiptLocked={workReceiptLocked}
+            saveError={
+              mutation.isError && !versionConflict
+                ? calendarEventSaveErrorMessage(mutation.error, t('event.saveError'))
+                : null
+            }
+            versionConflict={versionConflict}
+            calendarsError={calendarsQuery.isError}
+            peopleError={peopleQuery.isError}
+            onKeepDraft={() => setVersionConflict(false)}
+            onReloadCurrent={() => {
+              queryClient.removeQueries({ queryKey: ['calendar'] });
+              void queryClient.invalidateQueries({ queryKey: ['calendar'] });
+              onClose();
+            }}
+            onRetryCalendars={() => void calendarsQuery.refetch()}
+            onRetryPeople={() => void peopleQuery.refetch()}
+          />
+          {!event && settingsQuery.isError ? (
             <InlineFeedback severity="warning">
-              {t('event.workLinkRecoveryRequired')}
+              {t('event.settingsDefaultsUnavailable')}
             </InlineFeedback>
-          )}
-          {mutation.isError && (
-            <InlineFeedback severity="error">
-              {message(mutation.error, t('event.saveError'))}
-            </InlineFeedback>
-          )}
-          {calendarsQuery.isError && (
-            <InlineFeedback
-              severity="error"
-              action={
-                <ActionButton intent="quiet" size="small" onClick={() => calendarsQuery.refetch()}>
-                  {t('actions.retry')}
-                </ActionButton>
-              }
-            >
-              {t('event.calendarsLoadError')}
-            </InlineFeedback>
-          )}
-          {peopleQuery.isError && (
-            <InlineFeedback
-              severity="warning"
-              action={
-                <ActionButton intent="quiet" size="small" onClick={() => peopleQuery.refetch()}>
-                  {t('actions.retry')}
-                </ActionButton>
-              }
-            >
-              {t('event.peopleLoadError')}
-            </InlineFeedback>
-          )}
+          ) : null}
+          {recurringEvent ? (
+            <Box>
+              <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                {t('event.recurrenceEditScopeLabel')}
+              </Typography>
+              <ToggleButtonGroup
+                exclusive
+                fullWidth
+                size="small"
+                value={editScope}
+                onChange={(_, value: CalendarRecurrenceEditScope | null) => {
+                  if (!value) return;
+                  setEditScope(value);
+                  occurrenceIntent.current = null;
+                  if (value === 'THIS_OCCURRENCE') {
+                    setForm((current) => ({
+                      ...current,
+                      type: recurringEvent.type,
+                      timeZone: recurringEvent.timeZone,
+                      recurrence: recurringEvent.recurrence,
+                      recurrenceInterval: recurringEvent.recurrenceInterval,
+                      recurrenceUntil: recurringEvent.recurrenceUntil ?? '',
+                      responseRequired: recurringEvent.responseRequired,
+                      resourceId: recurringEvent.resource?.resourceId ?? '',
+                    }));
+                    setAttendees(
+                      calendarEditorAttendees(
+                        recurringEvent,
+                        EMPTY_CALENDAR_EDITOR_PEOPLE,
+                        EMPTY_CALENDAR_EDITOR_EMAILS
+                      )
+                    );
+                  }
+                }}
+                aria-label={t('event.recurrenceEditScopeLabel')}
+                sx={{ mt: 0.75 }}
+              >
+                <ToggleButton value="THIS_OCCURRENCE" disabled={Boolean(recurringEvent.resource)}>
+                  {t('event.recurrenceEditScopes.THIS_OCCURRENCE')}
+                </ToggleButton>
+                <ToggleButton value="SERIES">
+                  {t('event.recurrenceEditScopes.SERIES')}
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.75, display: 'block' }}>
+                {recurringEvent.resource
+                  ? t('event.occurrenceResourceSeriesOnly')
+                  : occurrenceOnly
+                    ? t('event.occurrenceFieldsHint')
+                    : t('event.seriesFieldsHint')}
+              </Typography>
+            </Box>
+          ) : null}
           <Box
             sx={{
               display: 'grid',
@@ -569,7 +716,7 @@ export function CalendarEventDialog({
                 <ToggleButtonGroup
                   exclusive
                   fullWidth
-                  disabled={workProtected}
+                  disabled={workProtected || occurrenceOnly}
                   value={form.type}
                   onChange={(_, value: CalendarEventType | null) => {
                     if (!value) return;
@@ -650,299 +797,24 @@ export function CalendarEventDialog({
                   errorMessage={validationVisible && rangeError ? t('event.rangeError') : undefined}
                 />
               </Box>
-              <Accordion
+              <CalendarEventDialogDetails
                 expanded={additionalOptionsOpen}
-                onChange={(_, expanded) => setAdditionalOptionsOpen(expanded)}
-                disableGutters
-                elevation={0}
-                sx={{
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: '8px !important',
-                  overflow: 'hidden',
-                  '&::before': { display: 'none' },
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ChevronDown size={18} />}
-                  sx={{
-                    minHeight: 64,
-                    px: 2,
-                    '& .MuiAccordionSummary-content': { my: 1.25 },
-                  }}
-                >
-                  <Stack direction="row" spacing={1.25} alignItems="center">
-                    <Box
-                      aria-hidden="true"
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        display: 'grid',
-                        placeItems: 'center',
-                        borderRadius: 0.75,
-                        bgcolor: 'action.hover',
-                        color: 'primary.main',
-                      }}
-                    >
-                      <SlidersHorizontal size={16} />
-                    </Box>
-                    <Box>
-                      <Typography fontWeight={600}>{t('event.additionalOptions')}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('event.additionalOptionsDescription')}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </AccordionSummary>
-                <AccordionDetails sx={{ px: 2, pt: 0.75, pb: 2 }}>
-                  <Stack spacing={2.25}>
-                    <FormField
-                      multiline
-                      minRows={3}
-                      disabled={workProtected}
-                      label={t(
-                        form.type === 'MEETING' ? 'event.agendaLabel' : 'event.descriptionLabel'
-                      )}
-                      value={form.description}
-                      onChange={(event) =>
-                        setForm((current) => ({ ...current, description: event.target.value }))
-                      }
-                      supportingText={
-                        workProtected
-                          ? t('event.workMetadataLockedHint')
-                          : form.type === 'MEETING'
-                            ? t('event.agendaHint')
-                            : undefined
-                      }
-                      inputProps={{ maxLength: 4000 }}
-                    />
-                    {form.type === 'MEETING' &&
-                      (['REQUIRED', 'OPTIONAL'] as const).map((attendeeType) => {
-                        const selectedForType = attendees.filter(
-                          (person) => person.type === attendeeType
-                        );
-                        return (
-                          <AutocompleteMultiField
-                            key={attendeeType}
-                            multiple
-                            options={attendeeOptions.map((person) => ({
-                              ...person,
-                              type: attendeeType,
-                            }))}
-                            value={selectedForType}
-                            onChange={(_, value) => replaceAttendees(attendeeType, value)}
-                            loading={peopleQuery.isLoading}
-                            getOptionLabel={(person) =>
-                              `${person.displayName} · ${person.workEmail ?? ''}`
-                            }
-                            isOptionEqualToValue={(option, value) =>
-                              option.personId === value.personId
-                            }
-                            renderTags={(values, getTagProps) =>
-                              values.map((person, index) => (
-                                <Chip
-                                  {...getTagProps({ index })}
-                                  key={person.personId}
-                                  size="small"
-                                  label={person.displayName}
-                                />
-                              ))
-                            }
-                            label={t(
-                              attendeeType === 'REQUIRED'
-                                ? 'event.requiredAttendeesLabel'
-                                : 'event.optionalAttendeesLabel'
-                            )}
-                            textFieldProps={{
-                              placeholder: selectedForType.length
-                                ? undefined
-                                : t(
-                                    attendeeType === 'REQUIRED'
-                                      ? 'event.requiredAttendeesPlaceholder'
-                                      : 'event.optionalAttendeesPlaceholder'
-                                  ),
-                            }}
-                          />
-                        );
-                      })}
-                    {form.type === 'MEETING' ? (
-                      <>
-                        <Box
-                          sx={{
-                            display: 'grid',
-                            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                            gap: 2,
-                          }}
-                        >
-                          <FormField
-                            label={t('event.locationLabel')}
-                            value={form.location}
-                            onChange={(event) =>
-                              setForm((current) => ({ ...current, location: event.target.value }))
-                            }
-                            inputProps={{ maxLength: 240 }}
-                          />
-                          <SelectField
-                            label={t('event.resourceLabel')}
-                            value={form.resourceId}
-                            options={[
-                              { value: '', label: t('event.noResource') },
-                              ...(resourcesQuery.data ?? []).map((resource) => ({
-                                value: resource.resourceId,
-                                label: `${resource.name} · ${resource.capacity}${t('resources.peopleUnit')}`,
-                                disabled:
-                                  resource.state !== 'AVAILABLE' ||
-                                  (!resource.available &&
-                                    resource.resourceId !== event?.resource?.resourceId),
-                              })),
-                            ]}
-                            onValueChange={(value) => {
-                              const resource = resourcesQuery.data?.find(
-                                (item) => item.resourceId === value
-                              );
-                              setForm((current) => ({
-                                ...current,
-                                resourceId: String(value),
-                                location: resource?.name ?? current.location,
-                              }));
-                            }}
-                            InputProps={{ startAdornment: <Building2 size={17} /> }}
-                          />
-                        </Box>
-                        <FormField
-                          label={t('event.conferenceLabel')}
-                          value={form.conferenceUrl}
-                          onChange={(event) =>
-                            setForm((current) => ({
-                              ...current,
-                              conferenceUrl: event.target.value,
-                            }))
-                          }
-                          placeholder={t('event.conferencePlaceholder')}
-                          inputProps={{ maxLength: 1000 }}
-                        />
-                      </>
-                    ) : null}
-                    <Box
-                      sx={{
-                        display: 'grid',
-                        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                        gap: 2,
-                      }}
-                    >
-                      <SelectField
-                        disabled={workProtected}
-                        label={t('event.recurrenceLabel')}
-                        value={form.recurrence}
-                        options={(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
-                          value,
-                          label: t(`event.recurrence.${value}`),
-                        }))}
-                        onValueChange={(value) =>
-                          value && setForm((current) => ({ ...current, recurrence: value }))
-                        }
-                      />
-                      <SelectField
-                        disabled={workProtected}
-                        label={t('event.visibilityLabel')}
-                        value={form.visibility}
-                        options={(['DEFAULT', 'PUBLIC', 'PRIVATE', 'CONFIDENTIAL'] as const).map(
-                          (value) => ({
-                            value,
-                            label: t(`event.visibility.${value}`),
-                          })
-                        )}
-                        onValueChange={(value) =>
-                          value && setForm((current) => ({ ...current, visibility: value }))
-                        }
-                      />
-                      <SelectField
-                        disabled={workReceiptLocked}
-                        label={t('event.importanceLabel')}
-                        value={form.importance}
-                        options={(['LOW', 'NORMAL', 'HIGH'] as const).map((value) => ({
-                          value,
-                          label: t(`event.importance.${value}`),
-                        }))}
-                        onValueChange={(value) =>
-                          value && setForm((current) => ({ ...current, importance: value }))
-                        }
-                      />
-                    </Box>
-                    <SelectField
-                      disabled={workReceiptLocked}
-                      label={t('event.timeZoneLabel')}
-                      value={form.timeZone}
-                      options={Array.from(
-                        new Set([form.timeZone, calendarSystemTimeZone(), ...COMMON_TIME_ZONES])
-                      ).map((timeZone) => ({ value: timeZone, label: timeZone }))}
-                      onValueChange={(timeZone) =>
-                        timeZone &&
-                        setForm((current) => ({ ...current, timeZone: String(timeZone) }))
-                      }
-                      supportingText={t('event.timeZoneHint')}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={form.allDay}
-                          disabled={workProtected}
-                          onChange={(event) =>
-                            setForm((current) => ({ ...current, allDay: event.target.checked }))
-                          }
-                        />
-                      }
-                      label={t('event.allDay')}
-                    />
-                    {form.recurrence !== 'NONE' && (
-                      <SelectField<number>
-                        label={t('event.recurrenceIntervalLabel')}
-                        value={form.recurrenceInterval}
-                        options={[1, 2, 3, 4].map((value) => ({
-                          value,
-                          label: t(`event.recurrenceIntervals.${form.recurrence}`, {
-                            count: value,
-                          }),
-                        }))}
-                        onValueChange={(value) =>
-                          value &&
-                          setForm((current) => ({ ...current, recurrenceInterval: Number(value) }))
-                        }
-                      />
-                    )}
-                    {form.recurrence !== 'NONE' && (
-                      <DatePickerField
-                        label={t('event.recurrenceUntilLabel')}
-                        value={form.recurrenceUntil}
-                        onValueChange={(value) =>
-                          setForm((current) => ({ ...current, recurrenceUntil: value ?? '' }))
-                        }
-                        errorMessage={
-                          validationVisible && resourceRecurrenceError
-                            ? t('event.resourceRecurrenceUntilRequired')
-                            : undefined
-                        }
-                      />
-                    )}
-                    {form.type === 'MEETING' ? (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={form.responseRequired}
-                            onChange={(event) =>
-                              setForm((current) => ({
-                                ...current,
-                                responseRequired: event.target.checked,
-                              }))
-                            }
-                          />
-                        }
-                        label={t('event.responseRequired')}
-                      />
-                    ) : null}
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>
+                form={form}
+                attendees={attendees}
+                attendeeOptions={attendeeOptions}
+                resources={resources}
+                peopleLoading={peopleQuery.isLoading}
+                workProtected={workProtected}
+                workReceiptLocked={workReceiptLocked}
+                occurrenceOnly={occurrenceOnly}
+                validationVisible={validationVisible}
+                resourceRecurrenceError={resourceRecurrenceError}
+                eventResourceId={event?.resource?.resourceId}
+                onExpandedChange={setAdditionalOptionsOpen}
+                onFormPatch={patchForm}
+                onResourceChange={changeResource}
+                onReplaceAttendees={replaceAttendees}
+              />
             </Stack>
             {form.type === 'MEETING' && (
               <Box
@@ -962,7 +834,7 @@ export function CalendarEventDialog({
                       startsAt={form.startsAt}
                       endsAt={form.endsAt}
                       attendees={attendees}
-                      resources={resourcesQuery.data ?? []}
+                      resources={resources}
                       resourcesLoading={resourcesQuery.isLoading || resourcesQuery.isFetching}
                       resourcesError={resourcesQuery.isError}
                       selectedResourceId={form.resourceId}

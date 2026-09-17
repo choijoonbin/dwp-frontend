@@ -47,12 +47,17 @@ import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
 import { colorValue, MailFolderDialog, MailRuleDialog } from './mail-organization-dialogs';
+import {
+  clearMailSearchRuleHandoffParams,
+  mailRuleSeedFromSearchParams,
+} from './mail-search-rule-handoff';
 import { MailRuleBackfillPanel } from './mail-rule-backfill-panel';
 import {
   mailRuleMoveAvailability,
   mailRuleOrderAfterMove,
   type MailRuleMoveDirection,
 } from './mail-rule-order';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   MailFolder,
@@ -67,19 +72,27 @@ type PendingArchive = { kind: 'folder'; item: MailFolder } | { kind: 'rule'; ite
 
 export function MailOrganization() {
   const { t } = useTranslation('mail');
+  const { isLoaded, canCreate, canUpdate } = useMailUserPermissions();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
   const tab: OrganizationTab = params.get('section') === 'rules' ? 'rules' : 'folders';
+  const searchRuleSeed = useMemo(() => mailRuleSeedFromSearchParams(params), [params]);
   const selectTab = (nextTab: OrganizationTab) => {
-    const next = new URLSearchParams(params);
+    const next = clearMailSearchRuleHandoffParams(params);
     if (nextTab === 'rules') next.set('section', 'rules');
     else next.delete('section');
     setParams(next, { replace: true });
   };
   const [folderEditor, setFolderEditor] = useState<MailFolder | 'new' | null>(null);
-  const [ruleEditor, setRuleEditor] = useState<MailRule | 'new' | null>(null);
+  const [ruleEditor, setRuleEditor] = useState<MailRule | 'new' | null>(() =>
+    searchRuleSeed ? 'new' : null
+  );
+  const closeRuleEditor = () => {
+    setRuleEditor(null);
+    if (searchRuleSeed) setParams(clearMailSearchRuleHandoffParams(params), { replace: true });
+  };
   const [pendingArchive, setPendingArchive] = useState<PendingArchive | null>(null);
   const query = useQuery({
     queryKey: ['mail', 'organization'],
@@ -91,6 +104,7 @@ export function MailOrganization() {
   const folderMutation = useMutation({
     mutationFn: async (form: MailFolderInput) => {
       if (folderEditor && folderEditor !== 'new') {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
         return updateMailFolder(folderEditor.folderId, {
           parentFolderId: form.parentFolderId,
           displayName: form.displayName,
@@ -98,6 +112,7 @@ export function MailOrganization() {
           version: folderEditor.version,
         });
       }
+      if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
       return createMailFolder(form);
     },
     onSuccess: async () => {
@@ -111,6 +126,7 @@ export function MailOrganization() {
   const ruleMutation = useMutation({
     mutationFn: async ({ form, rule }: { form: MailRuleInput; rule: MailRule | null }) => {
       if (rule) {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
         return updateMailRule(rule.ruleId, {
           displayName: form.displayName,
           priority: form.priority,
@@ -122,10 +138,11 @@ export function MailOrganization() {
           version: rule.version,
         });
       }
+      if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
       return createMailRule(form);
     },
     onSuccess: async () => {
-      setRuleEditor(null);
+      closeRuleEditor();
       selectTab('rules');
       await refresh();
       toast.success(t('organization.rule.saved'));
@@ -134,6 +151,7 @@ export function MailOrganization() {
   });
   const archiveMutation = useMutation({
     mutationFn: async (target: PendingArchive) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
       if (target.kind === 'folder') {
         await archiveMailFolder(target.item.folderId, target.item.version);
       } else {
@@ -149,6 +167,7 @@ export function MailOrganization() {
   });
   const reorderMutation = useMutation({
     mutationFn: ({ ruleId, direction }: { ruleId: string; direction: MailRuleMoveDirection }) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
       const rules = query.data?.rules ?? [];
       const order = mailRuleOrderAfterMove(rules, ruleId, direction);
       if (!order) throw new Error('The rule cannot move in that direction.');
@@ -197,6 +216,7 @@ export function MailOrganization() {
             <ActionButton
               intent="secondary"
               startIcon={<FolderPlus size={16} />}
+              disabled={!canCreate}
               onClick={() => setFolderEditor('new')}
             >
               {t('organization.folder.new')}
@@ -204,6 +224,7 @@ export function MailOrganization() {
             <ActionButton
               intent="primary"
               startIcon={<Plus size={16} />}
+              disabled={!canCreate}
               onClick={() => setRuleEditor('new')}
             >
               {t('organization.rule.new')}
@@ -211,6 +232,14 @@ export function MailOrganization() {
           </Stack>
         }
       />
+
+      {isLoaded && !canCreate && !canUpdate && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue: 'You have read-only access. Folder and rule changes are unavailable.',
+          })}
+        </Alert>
+      )}
 
       {query.isError && (
         <Alert
@@ -313,6 +342,7 @@ export function MailOrganization() {
             {tab === 'folders' ? (
               <FolderList
                 folders={folderRows}
+                canUpdate={canUpdate}
                 onOpen={(folder) =>
                   navigate(`/mail/folders?folderId=${encodeURIComponent(folder.folderId)}`)
                 }
@@ -325,6 +355,7 @@ export function MailOrganization() {
                 <RuleList
                   rules={data.rules}
                   folders={data.folders}
+                  canUpdate={canUpdate}
                   busy={ruleMutation.isPending}
                   reorderBusy={reorderMutation.isPending}
                   onEdit={setRuleEditor}
@@ -367,10 +398,11 @@ export function MailOrganization() {
       <MailRuleDialog
         open={Boolean(ruleEditor)}
         rule={ruleEditor && ruleEditor !== 'new' ? ruleEditor : null}
+        seed={ruleEditor === 'new' ? searchRuleSeed : null}
         accounts={data?.accounts ?? []}
         folders={data?.folders ?? []}
         busy={ruleMutation.isPending}
-        onClose={() => setRuleEditor(null)}
+        onClose={closeRuleEditor}
         onSave={(form) =>
           ruleMutation.mutate({
             form,
@@ -528,11 +560,13 @@ function PulseValue({ label, value, detail }: { label: string; value: number; de
 
 function FolderList({
   folders,
+  canUpdate,
   onOpen,
   onEdit,
   onArchive,
 }: {
   folders: Array<{ folder: MailFolder; depth: number }>;
+  canUpdate: boolean;
   onOpen: (folder: MailFolder) => void;
   onEdit: (folder: MailFolder) => void;
   onArchive: (folder: MailFolder) => void;
@@ -602,10 +636,18 @@ function FolderList({
             <ActionIconButton label={t('organization.folder.open')} onClick={() => onOpen(folder)}>
               <ArrowRight size={17} />
             </ActionIconButton>
-            <ActionIconButton label={t('organization.edit')} onClick={() => onEdit(folder)}>
+            <ActionIconButton
+              label={t('organization.edit')}
+              disabled={!canUpdate}
+              onClick={() => onEdit(folder)}
+            >
               <Pencil size={16} />
             </ActionIconButton>
-            <ActionIconButton label={t('organization.archive')} onClick={() => onArchive(folder)}>
+            <ActionIconButton
+              label={t('organization.archive')}
+              disabled={!canUpdate}
+              onClick={() => onArchive(folder)}
+            >
               <Archive size={16} />
             </ActionIconButton>
           </Stack>
@@ -618,6 +660,7 @@ function FolderList({
 function RuleList({
   rules,
   folders,
+  canUpdate,
   busy,
   reorderBusy,
   onEdit,
@@ -627,6 +670,7 @@ function RuleList({
 }: {
   rules: MailRule[];
   folders: MailFolder[];
+  canUpdate: boolean;
   busy: boolean;
   reorderBusy: boolean;
   onEdit: (rule: MailRule) => void;
@@ -706,14 +750,14 @@ function RuleList({
             <Stack direction="row" spacing={0.25} justifyContent="flex-end" alignItems="center">
               <ActionIconButton
                 label={t('organization.rule.moveUp', { name: rule.displayName })}
-                disabled={!move.up || reorderBusy}
+                disabled={!canUpdate || !move.up || reorderBusy}
                 onClick={() => onMove(rule, 'UP')}
               >
                 <ArrowUp size={15} />
               </ActionIconButton>
               <ActionIconButton
                 label={t('organization.rule.moveDown', { name: rule.displayName })}
-                disabled={!move.down || reorderBusy}
+                disabled={!canUpdate || !move.down || reorderBusy}
                 onClick={() => onMove(rule, 'DOWN')}
               >
                 <ArrowDown size={15} />
@@ -721,7 +765,7 @@ function RuleList({
               <Switch
                 size="small"
                 checked={rule.enabled}
-                disabled={busy}
+                disabled={!canUpdate || busy}
                 slotProps={{
                   input: {
                     'aria-label': `${rule.displayName}: ${t('organization.rule.enabled')}`,
@@ -729,10 +773,18 @@ function RuleList({
                 }}
                 onChange={(_event, enabled) => onToggle(rule, enabled)}
               />
-              <ActionIconButton label={t('organization.edit')} onClick={() => onEdit(rule)}>
+              <ActionIconButton
+                label={t('organization.edit')}
+                disabled={!canUpdate}
+                onClick={() => onEdit(rule)}
+              >
                 <Pencil size={16} />
               </ActionIconButton>
-              <ActionIconButton label={t('organization.archive')} onClick={() => onArchive(rule)}>
+              <ActionIconButton
+                label={t('organization.archive')}
+                disabled={!canUpdate}
+                onClick={() => onArchive(rule)}
+              >
                 <Trash2 size={16} />
               </ActionIconButton>
             </Stack>

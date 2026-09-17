@@ -14,6 +14,26 @@ export type ProductivityResourceKind = 'MAIL' | 'CALENDAR';
 export type ProductivitySyncMode = 'INITIAL' | 'DELTA' | 'RESET';
 export type ProductivitySyncRunState = 'RUNNING' | 'SUCCEEDED' | 'PARTIAL' | 'FAILED' | 'BLOCKED';
 
+export type WorkspaceProductivityConnection = {
+  connectorId: string;
+  connectorKey: string;
+  displayName: string;
+  providerType: ProductivityProviderType;
+  lifecycleState: ProductivityConnectorLifecycle;
+  healthState: ProductivityConnectorHealth;
+  consentState: ProductivityConsentState;
+  requestedScopes: string[];
+  grantedScopes: string[];
+  lastSuccessfulSyncAt?: string | null;
+  actionRequiredCode?: string | null;
+};
+
+export type WorkspaceProductivityAuthorizationStart = {
+  transactionId: string;
+  authorizationUrl: string;
+  expiresAt: string;
+};
+
 export type ProductivityConnector = {
   connectorId: string;
   connectorKey: string;
@@ -53,6 +73,11 @@ export type ProductivitySyncRun = {
   retryAfterAt?: string | null;
   safeErrorCode?: string | null;
   correlationId?: string | null;
+};
+
+export type ProductivitySyncDispatchResult = {
+  startedKinds: ProductivityResourceKind[];
+  failedKinds: ProductivityResourceKind[];
 };
 
 export type ProductivitySubject = {
@@ -101,6 +126,73 @@ export type ProductivityConfigurationCheck = {
 };
 
 const BASE = '/api/platform/v1/admin/integrations/productivity';
+const WORKSPACE_BASE = '/api/platform/v1/workspace/productivity';
+
+export async function listWorkspaceProductivityConnections(): Promise<
+  WorkspaceProductivityConnection[]
+> {
+  const response = await axiosInstance.get<ApiResponse<WorkspaceProductivityConnection[]>>(
+    `${WORKSPACE_BASE}/connections`
+  );
+  return response.data.data;
+}
+
+export async function beginWorkspaceProductivityAuthorization(
+  connectorId: string
+): Promise<WorkspaceProductivityAuthorizationStart> {
+  const response = await axiosInstance.post<ApiResponse<WorkspaceProductivityAuthorizationStart>>(
+    `${WORKSPACE_BASE}/connections/${encodeURIComponent(connectorId)}/authorization`,
+    {}
+  );
+  return response.data.data;
+}
+
+export async function syncWorkspaceProductivityConnection(
+  connectorId: string,
+  resourceKind: ProductivityResourceKind,
+  reset = false
+): Promise<ProductivitySyncRun> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProductivitySyncRun>,
+    { resourceKind: ProductivityResourceKind; reset: boolean }
+  >(`${WORKSPACE_BASE}/connections/${encodeURIComponent(connectorId)}/sync`, {
+    resourceKind,
+    reset,
+  });
+  return response.data.data;
+}
+
+export async function syncWorkspaceProductivityResources(
+  connectorId: string,
+  resourceKinds: readonly ProductivityResourceKind[]
+): Promise<ProductivitySyncDispatchResult> {
+  const settled = await Promise.allSettled(
+    resourceKinds.map((resourceKind) =>
+      syncWorkspaceProductivityConnection(connectorId, resourceKind)
+    )
+  );
+  const result = settled.reduce<ProductivitySyncDispatchResult>(
+    (summary, outcome, index) => {
+      const resourceKind = resourceKinds[index];
+      if (!resourceKind) return summary;
+      if (outcome.status === 'fulfilled') summary.startedKinds.push(resourceKind);
+      else summary.failedKinds.push(resourceKind);
+      return summary;
+    },
+    { startedKinds: [], failedKinds: [] }
+  );
+  if (result.startedKinds.length === 0) throw new Error('ALL_SYNC_COMMANDS_FAILED');
+  return result;
+}
+
+export async function disconnectWorkspaceProductivityConnection(
+  connectorId: string
+): Promise<WorkspaceProductivityConnection> {
+  const response = await axiosInstance.delete<ApiResponse<WorkspaceProductivityConnection>>(
+    `${WORKSPACE_BASE}/connections/${encodeURIComponent(connectorId)}`
+  );
+  return response.data.data;
+}
 
 export async function getProductivityOverview(): Promise<ProductivityOverview> {
   const response = await axiosInstance.get<ApiResponse<ProductivityOverview>>(`${BASE}/overview`);

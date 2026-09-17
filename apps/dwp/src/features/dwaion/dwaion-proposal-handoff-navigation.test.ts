@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  parseDwaionHandoff,
-  parseDwaionProposalHandoffBinding,
-} from '@dwp-frontend/shared-utils';
+import { parseDwaionHandoff, parseDwaionProposalHandoffBinding } from '@dwp-frontend/shared-utils';
 
 import { createDwaionProposalTargetState } from './dwaion-proposal-handoff-navigation';
 
@@ -85,6 +82,44 @@ describe('DWAI.ON proposal handoff navigation', () => {
       handoffVersion: 1,
     });
   });
+
+  it.each([
+    [
+      'CALENDAR.EVENT.CREATE',
+      '/calendar',
+      { title: 'Governed event', startsAt: '2026-09-18T00:00:00Z' },
+    ],
+    ['MAIL.DRAFT.CREATE', '/mail', { subject: 'Governed draft', body: 'Reviewed body' }],
+    [
+      'SERVICE.REQUEST.CREATE',
+      '/services',
+      { serviceCategory: 'IT', requestSummary: 'Governed service request' },
+    ],
+    [
+      'APPROVAL.REQUEST.CREATE',
+      '/approvals/requests/new',
+      { formType: 'CAPEX', title: 'Governed approval' },
+    ],
+  ] as const)(
+    'creates an exact owner binding for %s',
+    async (actionKey, targetRoute, actionInputs) => {
+      const source = proposal();
+      const target = handoff();
+      source.actionKey = actionKey;
+      source.content.actionInputs = actionInputs;
+      target.actionKey = actionKey;
+      target.targetRoute = targetRoute;
+
+      const state = await createDwaionProposalTargetState(source, target);
+
+      expect(parseDwaionProposalHandoffBinding(state)).toMatchObject({
+        handoffId: HANDOFF_ID,
+        proposalId: PROPOSAL_ID,
+        actionKey,
+        handoffVersion: 1,
+      });
+    }
+  );
 
   it('fails closed instead of forwarding unsupported nested input values', async () => {
     const candidate = proposal();

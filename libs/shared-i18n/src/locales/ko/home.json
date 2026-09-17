@@ -40,7 +40,7 @@
   },
   "mz": {
     "stage": {
-      "eyebrow": "MZ / AI Stage",
+      "eyebrow": "AI Stage",
       "title": "지금 어떤 결과를 만들고 싶으신가요?",
       "description": "필요한 결과를 설명하면 DWAI·ON의 근거 기반 작업 공간으로 안전하게 이어집니다. 근거를 확인하고 계획을 편집한 뒤 담당 앱의 실행을 직접 검토할 수 있습니다.",
       "intentLabel": "업무 의도",
@@ -154,7 +154,7 @@
     },
     "scope": {
       "title": "근거 범위",
-      "description": "MZ는 현재 사용자에게 허용된 원천과 앱만 사용합니다. 접근할 수 없는 데이터는 0건으로 표시하지 않습니다.",
+      "description": "AI Stage는 현재 사용자에게 허용된 원천과 앱만 사용합니다. 접근할 수 없는 데이터는 0건으로 표시하지 않습니다.",
       "helpTitle": "검토 및 제어",
       "helpDescription": "인계를 시작하기 전에 개인 AI 제어, 원천 경계, 보존된 작업을 확인하세요.",
       "openControls": "AI 제어 열기"

@@ -96,6 +96,16 @@ function safeLink(value: string) {
   return /^(?:https?:|mailto:)/iu.test(value);
 }
 
+export function mailExternalLinkDetails(value: string) {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+    return { url: url.toString(), domain: url.hostname };
+  } catch {
+    return null;
+  }
+}
+
 function safeImage(value: string) {
   return /^(?:https?:|data:image\/(?:gif|jpe?g|png|webp);base64,)/iu.test(value);
 }
@@ -126,8 +136,9 @@ export function sanitizeMailHtml(html: string, loadRemoteImages = false) {
       const href = element.getAttribute('href') ?? '';
       if (!safeLink(href)) element.removeAttribute('href');
       else {
-        element.target = '_blank';
         element.rel = 'noopener noreferrer nofollow';
+        const external = mailExternalLinkDetails(href);
+        if (external) element.setAttribute('data-mail-external-link', external.url);
       }
     }
     if (element instanceof HTMLImageElement) {

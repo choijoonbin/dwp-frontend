@@ -1,0 +1,187 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic "DWAI·ON 메뉴 열기" [ref=e6]:
+        - button "DWAI·ON 메뉴 열기" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+      - generic [ref=e9]: DWP
+      - generic [ref=e10]: DWAI·ON
+      - generic "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e12]:
+        - button "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic: "0"
+      - 'button "계정: Mina Kim, Tenant administrator" [ref=e18] [cursor=pointer]':
+        - generic [ref=e19]: M
+        - img [ref=e20]
+    - main [ref=e22]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - text: 승인형 개인 AI 확장
+            - 'heading "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [level=1] [ref=e27]'
+            - paragraph [ref=e28]: 허용한 출처와 시간을 정의하고 드라이런, 예약 실행, 실패 복구와 완료 영수증을 한곳에서 관리합니다.
+          - generic [ref=e29]:
+            - button "버전 변경 이력(Audit Log)" [disabled]:
+              - generic:
+                - img
+              - text: 버전 변경 이력(Audit Log)
+            - button "전체 건전성 진단" [disabled]:
+              - generic:
+                - img
+              - text: 전체 건전성 진단
+            - button "새 루틴 생성" [ref=e30] [cursor=pointer]:
+              - img [ref=e32]
+              - text: 새 루틴 생성
+        - generic [ref=e33]:
+          - alert [ref=e34]:
+            - generic [ref=e36]:
+              - img [ref=e38]
+              - generic [ref=e40]:
+                - generic [ref=e41]:
+                  - generic [ref=e43]: HTTP 409 CONFLICT
+                  - generic [ref=e45]: 정책 차단
+                  - generic [ref=e47]: 안전 모드 활성화됨
+                - 'heading "활성화 파이프라인 중단: 원격 리비전 충돌" [level=2] [ref=e48]'
+                - paragraph [ref=e49]: 서버 최신본과 현재 편집본이 다릅니다. 서버 원본을 다시 불러오거나 저장된 스냅샷에서 새 리비전으로 롤백하세요.
+                - generic [ref=e50]: "루틴 ID: 11111111-1111-4111-8111-111111111111 · 편집 시작본 리비전 7"
+          - generic [ref=e51]:
+            - generic [ref=e53]:
+              - heading "리비전 대조 분석" [level=3] [ref=e54]
+              - paragraph [ref=e55]: 서버 최신본과 보존된 로컬 작업을 3-way 비교했습니다. 적용할 복구 전략을 선택하세요.
+              - generic [ref=e56]:
+                - generic [ref=e57]:
+                  - generic [ref=e58]:
+                    - heading "내 로컬 초안" [level=6] [ref=e59]
+                    - generic [ref=e61]: 리비전 7
+                  - paragraph [ref=e62]: 아침 우선순위 검토 v8
+                  - generic [ref=e63]: SCHEDULED · WORK_ITEM, MAIL
+                - generic [ref=e64]:
+                  - generic [ref=e65]:
+                    - heading "서버 최신본" [level=6] [ref=e66]
+                    - generic [ref=e68]: 리비전 8
+                  - paragraph [ref=e69]: 아침 우선순위 검토 · 서버 정본
+                  - generic [ref=e70]: SCHEDULED · WORK_ITEM, MAIL
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - heading "충돌 복구 워크벤치" [level=3] [ref=e77]
+                - generic [ref=e79]: 3-Way Diff
+              - paragraph [ref=e80]: 충돌 해결 전략 선택
+              - radiogroup [ref=e81]:
+                - generic [ref=e82] [cursor=pointer]:
+                  - generic [ref=e83]:
+                    - radio "새 버전으로 분기 저장 권장 서버 최신본은 유지하고 보존된 로컬 초안을 실제 새 루틴으로 생성한 뒤 필요한 동의를 설정합니다." [checked] [ref=e84]
+                    - generic [ref=e85]:
+                      - img [ref=e86]
+                      - img [ref=e88]
+                  - generic [ref=e91]:
+                    - generic [ref=e92]:
+                      - heading "새 버전으로 분기 저장" [level=6] [ref=e93]
+                      - generic [ref=e95]: 권장
+                    - generic [ref=e96]: 서버 최신본은 유지하고 보존된 로컬 초안을 실제 새 루틴으로 생성한 뒤 필요한 동의를 설정합니다.
+                - generic [ref=e97] [cursor=pointer]:
+                  - generic [ref=e98]:
+                    - radio "서버 최신본 적용 로컬 변경을 적용하지 않고 서버 최신본으로 동기화합니다. 서버 데이터에는 쓰기를 수행하지 않습니다." [ref=e99]
+                    - img [ref=e101]
+                  - generic [ref=e104]:
+                    - heading "서버 최신본 적용" [level=6] [ref=e106]
+                    - generic [ref=e107]: 로컬 변경을 적용하지 않고 서버 최신본으로 동기화합니다. 서버 데이터에는 쓰기를 수행하지 않습니다.
+                - generic [ref=e108] [cursor=pointer]:
+                  - generic [ref=e109]:
+                    - radio "필드별 선택적 병합 다섯 변경 그룹마다 로컬 또는 서버 값을 선택하고 서버 최신 리비전에 새 업데이트를 저장합니다." [ref=e110]
+                    - img [ref=e112]
+                  - generic [ref=e115]:
+                    - heading "필드별 선택적 병합" [level=6] [ref=e117]
+                    - generic [ref=e118]: 다섯 변경 그룹마다 로컬 또는 서버 값을 선택하고 서버 최신 리비전에 새 업데이트를 저장합니다.
+              - generic [ref=e119]:
+                - button "선택한 전략으로 충돌 해결 및 저장" [ref=e120] [cursor=pointer]:
+                  - img [ref=e122]
+                  - text: 선택한 전략으로 충돌 해결 및 저장
+                - button "편집 취소 및 현재 서버본 유지" [ref=e125] [cursor=pointer]
+        - 'region "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [ref=e126]':
+          - generic [ref=e128]:
+            - paragraph [ref=e129]: "1"
+            - paragraph [ref=e130]: 등록한 루틴
+            - text: 내 개인 루틴
+          - generic [ref=e132]:
+            - paragraph [ref=e133]: "1"
+            - paragraph [ref=e134]: 검증 준비
+            - text: 동의 완료 초안
+          - generic [ref=e136]:
+            - paragraph [ref=e137]: "0"
+            - paragraph [ref=e138]: 재확인 필요
+            - text: 동의 또는 상태 확인
+          - generic [ref=e140]:
+            - paragraph [ref=e141]: "0"
+            - paragraph [ref=e142]: 일시 중지
+            - text: 드라이런 중지
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e146]:
+              - img [ref=e148]
+              - searchbox "루틴 검색" [ref=e151]
+              - group
+            - group "루틴 상태 필터" [ref=e152]:
+              - button "전체 1" [pressed] [ref=e153] [cursor=pointer]
+              - button "스케줄 1" [ref=e154] [cursor=pointer]
+              - button "이벤트 0" [ref=e155] [cursor=pointer]
+              - button "검증 준비 1" [ref=e156] [cursor=pointer]
+              - button "재확인 필요 0" [ref=e157] [cursor=pointer]
+              - button "일시 중지 0" [ref=e158] [cursor=pointer]
+            - generic [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e166]: 기준 타임존 · Asia/Seoul
+          - 'region "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [ref=e168]':
+            - button "리비전 8 검증 준비 아침 우선순위 검토 · 서버 정본 업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다. 실행 일정 평일 · 09:30 허용한 정보 출처 업무 항목 · 메일 실행 계약 검증 전용" [active] [ref=e170] [cursor=pointer]:
+              - generic [ref=e171]:
+                - generic [ref=e172]:
+                  - generic [ref=e173]:
+                    - generic [ref=e175]: 리비전 8
+                    - generic [ref=e177]: 검증 준비
+                  - heading "아침 우선순위 검토 · 서버 정본" [level=6] [ref=e178]
+                - img [ref=e180]
+              - paragraph [ref=e182]: 업무를 시작하기 전 마감 업무와 일정 참조 범위를 검증합니다.
+              - separator [ref=e183]
+              - generic [ref=e184]:
+                - generic [ref=e185]:
+                  - img [ref=e187]
+                  - generic [ref=e190]:
+                    - generic [ref=e191]: 실행 일정
+                    - text: 평일 · 09:30
+                - generic [ref=e192]:
+                  - img [ref=e194]
+                  - generic [ref=e198]:
+                    - generic [ref=e199]: 허용한 정보 출처
+                    - text: 업무 항목 · 메일
+                - generic [ref=e200]:
+                  - img [ref=e202]
+                  - generic [ref=e205]:
+                    - generic [ref=e206]: 실행 계약
+                    - text: 검증 전용
+    - navigation "DWAI·ON 빠른 탐색" [ref=e207]:
+      - link "홈" [ref=e208] [cursor=pointer]:
+        - /url: /dwaion/home
+        - img [ref=e209]
+        - generic [ref=e212]: 홈
+      - link "새 대화" [ref=e213] [cursor=pointer]:
+        - /url: /dwaion/new
+        - img [ref=e214]
+        - generic [ref=e216]: 새 대화
+      - link "내 대화" [ref=e217] [cursor=pointer]:
+        - /url: /dwaion/conversations
+        - img [ref=e218]
+        - generic [ref=e222]: 내 대화
+      - link "제안함" [ref=e223] [cursor=pointer]:
+        - /url: /dwaion/proposals
+        - img [ref=e224]
+        - generic [ref=e227]: 제안함
+      - button "더보기" [ref=e228] [cursor=pointer]:
+        - img [ref=e229]
+        - generic [ref=e230]: 더보기
+```

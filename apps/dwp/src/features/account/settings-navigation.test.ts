@@ -4,12 +4,20 @@ import {
   ACCOUNT_SETTINGS_HOME_PATH,
   getAccountNavigationGroups,
   isAccountSettingsSectionAvailable,
+  resolvePersonalSettingKey,
   resolveProviderAccountRouteDecision,
 } from './settings-navigation';
 
 describe('provider account settings navigation', () => {
   it('keeps the settings entry on the searchable settings home', () => {
     expect(ACCOUNT_SETTINGS_HOME_PATH).toBe('/account/settings');
+  });
+
+  it('maps account routes to the server-owned activity key', () => {
+    expect(resolvePersonalSettingKey('/account/profile')).toBe('profile');
+    expect(resolvePersonalSettingKey('/account/settings/home/layout')).toBe('home');
+    expect(resolvePersonalSettingKey('/account/settings')).toBeNull();
+    expect(resolvePersonalSettingKey('/provider')).toBeNull();
   });
 
   it('keeps only identity and provider-safe personal preferences for provider identities', () => {

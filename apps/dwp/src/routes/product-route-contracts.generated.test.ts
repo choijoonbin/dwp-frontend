@@ -110,9 +110,9 @@ describe('generated product route authorization contracts', () => {
       latestAuthorizationBundle.routes.filter((route) => route.routeKind !== 'PAGE').length
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(69);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(187);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(187);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(189);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(189);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

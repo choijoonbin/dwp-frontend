@@ -194,15 +194,29 @@ export function GovernanceReview({
                 <Typography variant="subtitle2">{text.reviewStages[stage.stageKey]}</Typography>
                 <Chip
                   size="small"
-                  color={stage.state === 'APPROVED' ? 'success' : stage.state === 'REJECTED' ? 'error' : 'default'}
+                  color={
+                    stage.state === 'APPROVED'
+                      ? 'success'
+                      : stage.state === 'REJECTED'
+                        ? 'error'
+                        : 'default'
+                  }
                   label={text.reviewStates[stage.state]}
                 />
               </Stack>
-              <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-                {stage.assigneeSubjectId ?? '—'} · r{stage.revision}
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ overflowWrap: 'anywhere' }}
+              >
+                {`${stage.assigneeSubjectId ?? '—'} · r${stage.revision}`}
               </Typography>
               {stage.evidenceFingerprint ? (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', overflowWrap: 'anywhere' }}
+                >
                   {text.evidenceFingerprint}: {stage.evidenceFingerprint}
                 </Typography>
               ) : null}
@@ -211,7 +225,9 @@ export function GovernanceReview({
                   <ActionButton
                     intent="primary"
                     disabled={busy}
-                    onClick={() => void onDecide({ stage, decision: 'APPROVE' }).catch(() => undefined)}
+                    onClick={() =>
+                      void onDecide({ stage, decision: 'APPROVE' }).catch(() => undefined)
+                    }
                     sx={{ minHeight: 44 }}
                   >
                     {text.approveReview}
@@ -219,7 +235,9 @@ export function GovernanceReview({
                   <ActionButton
                     intent="danger"
                     disabled={busy}
-                    onClick={() => void onDecide({ stage, decision: 'REJECT' }).catch(() => undefined)}
+                    onClick={() =>
+                      void onDecide({ stage, decision: 'REJECT' }).catch(() => undefined)
+                    }
                     sx={{ minHeight: 44 }}
                   >
                     {text.rejectReview}
@@ -253,16 +271,30 @@ export function GovernanceReview({
                 </Typography>
                 <Chip
                   size="small"
-                  color={gate.state === 'PASS' ? 'success' : gate.state === 'BLOCKED' ? 'error' : 'warning'}
+                  color={
+                    gate.state === 'PASS'
+                      ? 'success'
+                      : gate.state === 'BLOCKED'
+                        ? 'error'
+                        : 'warning'
+                  }
                   label={text.governanceStates[gate.state]}
                 />
               </Stack>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', overflowWrap: 'anywhere' }}
+              >
                 {gate.detailCode}
                 {gate.evidenceReference ? ` · ${gate.evidenceReference}` : ''}
               </Typography>
               {gate.evidenceFingerprint ? (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', overflowWrap: 'anywhere' }}
+                >
                   {gate.evidenceFingerprint}
                 </Typography>
               ) : null}
@@ -270,7 +302,17 @@ export function GovernanceReview({
           ))}
         </Box>
       </Box>
-      <Alert severity={workspace.signatureEvidence.capability.available ? 'success' : 'info'}>
+      <Alert
+        severity={workspace.signatureEvidence.capability.available ? 'success' : 'info'}
+        sx={{
+          minWidth: 0,
+          '& .MuiAlert-message': {
+            minWidth: 0,
+            overflow: 'visible',
+            overflowWrap: 'anywhere',
+          },
+        }}
+      >
         <Typography variant="subtitle2">{text.wormEvidenceTitle}</Typography>
         {workspace.signatureEvidence.capability.available ? (
           <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
@@ -279,7 +321,7 @@ export function GovernanceReview({
             {workspace.signatureEvidence.signedAt}
           </Typography>
         ) : (
-          <Typography variant="caption">
+          <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
             {workspace.signatureEvidence.capability.reasonCode} ·{' '}
             {workspace.signatureEvidence.capability.recoveryHint ?? text.wormEvidenceUnavailable}
           </Typography>

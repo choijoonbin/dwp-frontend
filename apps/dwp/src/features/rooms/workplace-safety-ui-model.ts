@@ -108,7 +108,3 @@ export function workplaceSafetyActivationBlocked(preview: WorkplaceSafetyActivat
     )
   );
 }
-
-export function workplaceSafetyResponseTotal(incident: WorkplaceSafetyIncident) {
-  return incident.responses.safe + incident.responses.needsHelp + incident.responses.noResponse;
-}

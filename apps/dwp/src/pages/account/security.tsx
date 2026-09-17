@@ -302,11 +302,15 @@ export default function SecurityPage() {
               detail={
                 idpQuery.isError
                   ? t('security.posture.idpUnavailable')
-                  : ssoConfigured
-                    ? t('security.posture.ssoDetail', {
-                        protocol: idpQuery.data?.providerType ?? 'OIDC',
-                      })
-                    : t('security.posture.ssoNotConfiguredDetail')
+                  : idpQuery.isLoading
+                    ? t('security.posture.idpLoading')
+                    : idpQuery.data
+                      ? t('security.posture.ssoDetail', {
+                          protocol: idpQuery.data.providerType,
+                        })
+                      : ssoConfigured
+                        ? t('security.posture.idpNotObserved')
+                        : t('security.posture.ssoNotConfiguredDetail')
               }
               state={ssoConfigured && idpQuery.data ? 'healthy' : 'managed'}
             />
@@ -319,7 +323,7 @@ export default function SecurityPage() {
                   : t('security.posture.mfaNotRequired')
               }
               detail={t('security.posture.mfaDetail')}
-              state={policyQuery.data.requireMfa ? 'healthy' : 'managed'}
+              state="managed"
             />
           </Stack>
         ) : null}

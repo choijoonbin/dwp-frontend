@@ -41,6 +41,8 @@ import Typography from '@mui/material/Typography';
 
 import type { MailFollowUp, MailFollowUpInput } from '@dwp-frontend/shared-utils';
 
+import { useMailUserPermissions } from './use-mail-user-permissions';
+
 export function MailFollowUpTracker({
   suggestedThreadId,
   onOpenThread,
@@ -49,6 +51,7 @@ export function MailFollowUpTracker({
   onOpenThread: (threadId: string) => void;
 }) {
   const { t, i18n } = useTranslation('mail');
+  const { isLoaded, canCreate, canUpdate } = useMailUserPermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<MailFollowUp | 'create' | null>(null);
@@ -62,10 +65,14 @@ export function MailFollowUpTracker({
   const save = useMutation({
     mutationFn: (input: MailFollowUpInput) => {
       if (editing === 'create') {
+        if (!canCreate) throw new Error('APP.MAIL:CREATE is required');
         if (!suggestedThreadId) throw new Error('Select a mail thread first.');
         return createMailFollowUp(suggestedThreadId, input);
       }
-      if (editing) return updateMailFollowUp(editing.followUpId, input, editing.version);
+      if (editing) {
+        if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+        return updateMailFollowUp(editing.followUpId, input, editing.version);
+      }
       throw new Error('Follow-up editor is not open.');
     },
     onSuccess: async () => {
@@ -76,8 +83,10 @@ export function MailFollowUpTracker({
     onError: () => toast.error(t('secondary.followUp.trackingSaveError')),
   });
   const cancel = useMutation({
-    mutationFn: (followUp: MailFollowUp) =>
-      deleteMailFollowUp(followUp.followUpId, followUp.version),
+    mutationFn: (followUp: MailFollowUp) => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
+      return deleteMailFollowUp(followUp.followUpId, followUp.version);
+    },
     onSuccess: async () => {
       setCancelling(null);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'follow-ups'] });
@@ -109,13 +118,20 @@ export function MailFollowUpTracker({
           <ActionButton
             intent="primary"
             startIcon={<Plus size={16} />}
-            disabled={!suggestedThreadId}
+            disabled={!canCreate || !suggestedThreadId}
             onClick={() => setEditing('create')}
           >
             {t('secondary.followUp.addTracking')}
           </ActionButton>
         </Stack>
       </Stack>
+      {isLoaded && !canCreate && !canUpdate && (
+        <Alert severity="info" sx={{ mt: 1.5 }}>
+          {t('permissions.readOnly', {
+            defaultValue: 'You have read-only access. Follow-up changes are unavailable.',
+          })}
+        </Alert>
+      )}
       {!suggestedThreadId && (
         <Alert severity="info" sx={{ mt: 1.5 }}>
           {t('secondary.followUp.selectBeforeTracking')}
@@ -201,6 +217,7 @@ export function MailFollowUpTracker({
                       <ActionButton
                         intent="quiet"
                         startIcon={<PenLine size={15} />}
+                        disabled={!canUpdate}
                         onClick={() => setEditing(followUp)}
                       >
                         {t('secondary.followUp.changeTracking')}
@@ -208,6 +225,7 @@ export function MailFollowUpTracker({
                       <ActionButton
                         intent="quiet"
                         startIcon={<XCircle size={15} />}
+                        disabled={!canUpdate}
                         onClick={() => setCancelling(followUp)}
                       >
                         {t('secondary.followUp.cancelTracking')}

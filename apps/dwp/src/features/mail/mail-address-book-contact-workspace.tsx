@@ -26,6 +26,9 @@ function toneFor(value: string) {
 export function MailAddressBookContactWorkspace({
   contacts,
   selectedId,
+  canCompose,
+  canEdit,
+  canArchive,
   onSelect,
   onBack,
   onCompose,
@@ -34,6 +37,9 @@ export function MailAddressBookContactWorkspace({
 }: {
   contacts: MailContact[];
   selectedId: string | null;
+  canCompose: boolean;
+  canEdit: boolean;
+  canArchive: boolean;
   onSelect: (contact: MailContact) => void;
   onBack: () => void;
   onCompose: (contact: MailContact) => void;
@@ -149,7 +155,11 @@ export function MailAddressBookContactWorkspace({
                 )}
               </Box>
             </Box>
-            <ActionIconButton label={t('addressBook.contact.edit')} onClick={() => onEdit(contact)}>
+            <ActionIconButton
+              label={t('addressBook.contact.edit')}
+              disabled={!canEdit}
+              onClick={() => onEdit(contact)}
+            >
               <Pencil size={17} />
             </ActionIconButton>
           </Box>
@@ -166,6 +176,9 @@ export function MailAddressBookContactWorkspace({
         {selected ? (
           <ContactDetail
             contact={selected}
+            canCompose={canCompose}
+            canEdit={canEdit}
+            canArchive={canArchive}
             onBack={onBack}
             onCompose={() => onCompose(selected)}
             onEdit={() => onEdit(selected)}
@@ -185,12 +198,18 @@ export function MailAddressBookContactWorkspace({
 
 function ContactDetail({
   contact,
+  canCompose,
+  canEdit,
+  canArchive,
   onBack,
   onCompose,
   onEdit,
   onArchive,
 }: {
   contact: MailContact;
+  canCompose: boolean;
+  canEdit: boolean;
+  canArchive: boolean;
   onBack: () => void;
   onCompose: () => void;
   onEdit: () => void;
@@ -237,13 +256,28 @@ function ContactDetail({
         ))}
       </Box>
       <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 3 }}>
-        <ActionButton intent="primary" startIcon={<MailPlus size={16} />} onClick={onCompose}>
+        <ActionButton
+          intent="primary"
+          startIcon={<MailPlus size={16} />}
+          disabled={!canCompose}
+          onClick={onCompose}
+        >
           {t('addressBook.contact.compose')}
         </ActionButton>
-        <ActionButton intent="secondary" startIcon={<Pencil size={16} />} onClick={onEdit}>
+        <ActionButton
+          intent="secondary"
+          startIcon={<Pencil size={16} />}
+          disabled={!canEdit}
+          onClick={onEdit}
+        >
           {t('addressBook.contact.edit')}
         </ActionButton>
-        <ActionButton intent="quiet" startIcon={<Trash2 size={16} />} onClick={onArchive}>
+        <ActionButton
+          intent="quiet"
+          startIcon={<Trash2 size={16} />}
+          disabled={!canArchive}
+          onClick={onArchive}
+        >
           {t('addressBook.archive')}
         </ActionButton>
       </Stack>

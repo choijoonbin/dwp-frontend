@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { HOME_PRESENTATION_MAX_WIDTH } from '../../../components/home-loading-layout-policy';
 import { WorkspaceWidgetCanvas } from '../../../components/workspace-composer/workspace-widget-canvas';
 import { AppLaunchpad } from '../app-launchpad';
 import { HomeDayRail } from '../home-day-rail';
@@ -373,13 +374,19 @@ export function ClassicHome({
       data-home-scroll-contract="single-document"
       data-home-presentation={presentation}
       data-classic-home-available-width={Math.round(availableWidth)}
+      data-classic-home-max-width={HOME_PRESENTATION_MAX_WIDTH[presentation]}
       sx={{
+        '--classic-shell-width': `${HOME_PRESENTATION_MAX_WIDTH[presentation]}px`,
+        '--classic-shell-gutter': presentation === 'expressive' ? '20px' : '24px',
         width: 1,
+        maxWidth: 'var(--classic-shell-width)',
+        mx: 'auto',
         minWidth: 0,
+        containerType: 'inline-size',
+        containerName: 'classic-home-shell',
         bgcolor: 'var(--home-canvas)',
         pb: { xs: 1, md: 2 },
         '& [data-launchpad-group-target]': {
-          gridTemplateColumns: 'repeat(5, minmax(0, 1fr)) !important',
           '--launchpad-tile-height': '84px',
           gridAutoRows: 'var(--launchpad-tile-height) !important',
           height: 'auto !important',
@@ -390,10 +397,7 @@ export function ClassicHome({
           overscrollBehaviorY: 'auto !important',
           scrollbarGutter: 'auto !important',
         },
-        '& [data-launchpad-group-grid]': {
-          gridTemplateColumns: 'minmax(0, 1fr) !important',
-          gap: '10px !important',
-        },
+        '& [data-launchpad-group-grid]': { gap: '10px !important' },
         '& [data-launchpad-group-grid] > section': {
           minHeight: 'auto !important',
           px: '10px !important',
@@ -409,28 +413,12 @@ export function ClassicHome({
           minHeight: '28px',
           flexShrink: '0 !important',
         },
-        '& [data-launchpad-group-grid] > section:nth-of-type(3) [data-launchpad-group-target]': {
-          gridTemplateColumns: 'repeat(2, minmax(0, 1fr)) !important',
-        },
-        '& [data-launchpad-group-grid] > section:nth-of-type(4) [data-launchpad-group-target]': {
-          gridTemplateColumns: 'repeat(4, minmax(0, 1fr)) !important',
-        },
-        '@container dwp-home-workspace (min-width: 900px)': {
+        '@container classic-home-shell (min-width: 900px)': {
           '& [data-launchpad-group-target]': {
             '--launchpad-tile-height': '76px',
           },
           '& [data-launchpad-group-grid]': {
-            gridTemplateColumns: 'repeat(12, minmax(0, 1fr)) !important',
             gap: '16px !important',
-          },
-          '& [data-launchpad-group-grid] > section:nth-of-type(1)': { gridColumn: 'span 3' },
-          '& [data-launchpad-group-grid] > section:nth-of-type(2)': { gridColumn: 'span 4' },
-          '& [data-launchpad-group-grid] > section:nth-of-type(3)': { gridColumn: 'span 2' },
-          '& [data-launchpad-group-grid] > section:nth-of-type(4)': { gridColumn: 'span 3' },
-        },
-        '@container dwp-home-workspace (min-width: 1100px)': {
-          '& [data-launchpad-group-grid]': {
-            gridTemplateColumns: 'repeat(12, minmax(0, 1fr)) !important',
           },
         },
         '@media (forced-colors: active)': {
@@ -487,11 +475,12 @@ export function ClassicHome({
         personalizationBusy={personalizationLoading || customizationBusy}
       />
       <Box
+        data-testid="classic-home-body"
         sx={{
           width: 1,
-          maxWidth: 1192,
+          maxWidth: 'var(--classic-shell-width)',
           mx: 'auto',
-          px: { xs: 1.5, sm: 2, md: 3 },
+          px: { xs: 1.5, sm: 2, md: 'var(--classic-shell-gutter)' },
           py: { xs: 1.5, md: 2.5 },
         }}
       >

@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, RefreshCw, Search } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   decideMailProposal,
   getMailFollowUps,
+  getMailHome,
   getMailProposalHandoff,
   getMailProposals,
   getMailThreads,
@@ -49,6 +50,7 @@ import {
   updateMailProposalFilterSearch,
 } from './mail-proposal-workspace-controls';
 import { MailSearchControls } from './mail-search-controls';
+import { mailSearchRuleHandoffParams } from './mail-search-rule-handoff';
 import { mailUsesCompactDensity, useMailRuntimePreferences } from './mail-runtime-preferences';
 import {
   MailAccountsPreferencesWorkspace,
@@ -57,10 +59,12 @@ import {
 import { MailThreadDetailPane } from './mail-thread-detail';
 import { getMailSecondaryView } from './mail-secondary-workspace-model';
 import { useMailProposalHandoff } from './use-mail-proposal-handoff';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type { TFunction } from 'i18next';
 import type {
   MailActionProposal,
+  MailActionProposalPage,
   MailSearchCriteria,
   MailThreadPage,
   MailTriageLane,
@@ -78,6 +82,11 @@ type ThreadListState = {
 
 function translated(t: TFunction, key: string, fallback: string) {
   return t(key, { defaultValue: fallback });
+}
+
+function requestedPage(value: string | null) {
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : 0;
 }
 
 export function MailSecondaryWorkspace({ view }: { view: MailSecondaryView }) {
@@ -108,6 +117,7 @@ export function MailSecondaryWorkspace({ view }: { view: MailSecondaryView }) {
 function MailSearchWorkspace() {
   const { t } = useTranslation('mail');
   const descriptor = getMailSecondaryView('search');
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [draftQuery, setDraftQuery] = useState(() => searchParams.get('query') ?? '');
   const queryText = searchParams.get('query')?.trim() ?? '';
@@ -125,19 +135,24 @@ function MailSearchWorkspace() {
     dateFrom: searchParams.get('dateFrom') || undefined,
     dateTo: searchParams.get('dateTo') || undefined,
     unread: searchParams.get('unread') === 'true' || undefined,
+    needsReply: searchParams.get('needsReply') === 'true' || undefined,
     hasAttachment: searchParams.get('hasAttachment') === 'true' || undefined,
+    folderId: searchParams.get('folderId') || undefined,
     state: workflowState ?? undefined,
     lane: lane ?? undefined,
   };
   const hasCriteria = Object.values(criteria).some((value) => value !== undefined && value !== '');
   const selectedId = searchParams.get('threadId');
+  const page = requestedPage(searchParams.get('page'));
   const query = useQuery({
-    queryKey: ['mail', 'secondary', 'search', criteria],
+    queryKey: ['mail', 'secondary', 'search', criteria, page],
     queryFn: () =>
       searchMailThreads({
         ...criteria,
+        page,
         pageSize: 50,
       }),
+    placeholderData: (previous) => previous,
     enabled: hasCriteria,
     staleTime: 20_000,
     retry: 1,
@@ -151,6 +166,7 @@ function MailSearchWorkspace() {
         else next.delete(key);
       }
       if (!('threadId' in updates)) next.delete('threadId');
+      if (!('threadId' in updates) && !('page' in updates)) next.delete('page');
       return next;
     });
   };
@@ -224,7 +240,14 @@ function MailSearchWorkspace() {
         />
       </Stack>
 
-      <MailSearchControls criteria={criteria} onUpdate={updateSearch} />
+      <MailSearchControls
+        criteria={criteria}
+        onUpdate={updateSearch}
+        onCreateRule={() => {
+          const next = mailSearchRuleHandoffParams(criteria);
+          if (next) navigate(`/mail/organization?${next.toString()}`);
+        }}
+      />
 
       {!hasCriteria ? (
         <GuidedEmptyState
@@ -246,6 +269,17 @@ function MailSearchWorkspace() {
             'secondary.search.emptyDescription',
             'Try a different phrase or remove a filter.'
           )}
+          pagination={
+            query.data
+              ? {
+                  page: query.data.page,
+                  pageSize: query.data.pageSize,
+                  total: query.data.total,
+                  onPageChange: (nextPage) =>
+                    updateSearch({ page: nextPage > 0 ? String(nextPage) : null }),
+                }
+              : undefined
+          }
           onSelect={(threadId) => updateSearch({ threadId })}
           onBack={() => updateSearch({ threadId: null })}
         />
@@ -262,15 +296,18 @@ function MailFollowUpWorkspace() {
   const bucket =
     requestedBucket === 'snoozed' || requestedBucket === 'waiting' ? requestedBucket : 'reply';
   const selectedId = searchParams.get('threadId');
+  const page = requestedPage(searchParams.get('page'));
   const needsReply = useQuery({
-    queryKey: ['mail', 'secondary', 'follow-up', 'reply'],
-    queryFn: () => getMailThreads({ lane: 'NEEDS_REPLY', state: 'OPEN', pageSize: 50 }),
+    queryKey: ['mail', 'secondary', 'follow-up', 'reply', page],
+    queryFn: () => getMailThreads({ lane: 'NEEDS_REPLY', state: 'OPEN', page, pageSize: 50 }),
+    placeholderData: (previous) => previous,
     staleTime: 20_000,
     retry: 1,
   });
   const snoozed = useQuery({
-    queryKey: ['mail', 'secondary', 'follow-up', 'snoozed'],
-    queryFn: () => getMailThreads({ state: 'SNOOZED', pageSize: 50 }),
+    queryKey: ['mail', 'secondary', 'follow-up', 'snoozed', page],
+    queryFn: () => getMailThreads({ state: 'SNOOZED', page, pageSize: 50 }),
+    placeholderData: (previous) => previous,
     staleTime: 20_000,
     retry: 1,
   });
@@ -281,12 +318,14 @@ function MailFollowUpWorkspace() {
     retry: 1,
   });
   const activeQuery = bucket === 'reply' ? needsReply : snoozed;
-  const setLocation = (nextBucket: string, threadId?: string | null) => {
+  const setLocation = (nextBucket: string, threadId?: string | null, nextPage = 0) => {
     setSearchParams((current) => {
       const next = new URLSearchParams(current);
       next.set('bucket', nextBucket);
       if (threadId) next.set('threadId', threadId);
       else next.delete('threadId');
+      if (nextPage > 0) next.set('page', String(nextPage));
+      else next.delete('page');
       return next;
     });
   };
@@ -341,8 +380,18 @@ function MailFollowUpWorkspace() {
             'secondary.followUp.emptyDescription',
             'Messages will appear here when a reply is needed or a reminder becomes active.'
           )}
-          onSelect={(threadId) => setLocation(bucket, threadId)}
-          onBack={() => setLocation(bucket)}
+          pagination={
+            activeQuery.data
+              ? {
+                  page: activeQuery.data.page,
+                  pageSize: activeQuery.data.pageSize,
+                  total: activeQuery.data.total,
+                  onPageChange: (nextPage) => setLocation(bucket, null, nextPage),
+                }
+              : undefined
+          }
+          onSelect={(threadId) => setLocation(bucket, threadId, page)}
+          onBack={() => setLocation(bucket, null, page)}
         />
       )}
     </PageCanvas>
@@ -401,6 +450,13 @@ function MailActionCenterWorkspace() {
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const [proposalToEdit, setProposalToEdit] = useState<MailActionProposal | null>(null);
   const proposalHandoff = useMailProposalHandoff();
+  const { canUpdate, canDecide } = useMailUserPermissions();
+  const homeQuery = useQuery({
+    queryKey: ['mail', 'home', 'proposal-filters'],
+    queryFn: () => getMailHome(),
+    staleTime: 60_000,
+    retry: 1,
+  });
   const query = useQuery({
     queryKey: ['mail', 'proposals', filters],
     queryFn: () => getMailProposals(filters),
@@ -425,7 +481,10 @@ function MailActionCenterWorkspace() {
     }: {
       proposal: MailActionProposal;
       decision: 'ACCEPT' | 'DISMISS';
-    }) => decideMailProposal(proposal.proposalId, decision, proposal.version),
+    }) => {
+      if (!canDecide) throw new Error('Mail proposal decision permission is required.');
+      return decideMailProposal(proposal.proposalId, decision, proposal.version);
+    },
     onSuccess: async (proposal, variables) => {
       setProposalToAccept(null);
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
@@ -453,15 +512,24 @@ function MailActionCenterWorkspace() {
     }: {
       proposal: MailActionProposal;
       proposedPayload: Record<string, unknown>;
-    }) =>
-      updateMailProposal(proposal.proposalId, {
+    }) => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
+      return updateMailProposal(proposal.proposalId, {
         proposedPayload,
         version: proposal.version,
-      }),
+      });
+    },
     onSuccess: async (proposal) => {
       setProposalToEdit(null);
-      queryClient.setQueryData<MailActionProposal[]>(['mail', 'proposals', filters], (current) =>
-        current?.map((item) => (item.proposalId === proposal.proposalId ? proposal : item))
+      queryClient.setQueryData<MailActionProposalPage>(['mail', 'proposals', filters], (current) =>
+        current
+          ? {
+              ...current,
+              items: current.items.map((item) =>
+                item.proposalId === proposal.proposalId ? proposal : item
+              ),
+            }
+          : current
       );
       await queryClient.invalidateQueries({ queryKey: ['mail', 'proposals'] });
       toast.success(t('proposal.payloadEditor.saved', { defaultValue: 'Proposal details saved.' }));
@@ -481,7 +549,7 @@ function MailActionCenterWorkspace() {
     if (
       !returnedProposalId ||
       requestedFocus !== `mail-proposal-${returnedProposalId}` ||
-      !query.data?.some((proposal) => proposal.proposalId === returnedProposalId)
+      !query.data?.items.some((proposal) => proposal.proposalId === returnedProposalId)
     ) {
       return;
     }
@@ -512,6 +580,14 @@ function MailActionCenterWorkspace() {
           'Accepting a proposal opens the responsible app for final review. It does not complete the action here.'
         )}
       </Alert>
+      {!canUpdate && !canDecide ? (
+        <Alert severity="info" sx={{ mt: 1.5 }}>
+          {t('permissions.readOnly', {
+            defaultValue:
+              'You have read-only mail access. Editing and proposal decisions are unavailable.',
+          })}
+        </Alert>
+      ) : null}
       {returnedProposalId && (
         <MailProposalHandoffStatus
           handoff={verifiedReturnedHandoff}
@@ -524,6 +600,7 @@ function MailActionCenterWorkspace() {
       )}
       <MailProposalFilterControls
         value={filters}
+        accounts={homeQuery.data?.accounts ?? []}
         disabled={query.isFetching}
         onChange={(value) => setSearchParams(updateMailProposalFilterSearch(searchParams, value))}
       />
@@ -536,9 +613,9 @@ function MailActionCenterWorkspace() {
         <Alert severity="error" sx={{ mt: 2 }}>
           {t('home.loadError')}
         </Alert>
-      ) : query.data?.length ? (
+      ) : query.data?.items.length ? (
         <Stack spacing={1.25} sx={{ mt: 2 }}>
-          {query.data.map((proposal) => (
+          {query.data.items.map((proposal) => (
             <Stack
               key={proposal.proposalId}
               id={`mail-proposal-${proposal.proposalId}`}
@@ -557,10 +634,13 @@ function MailActionCenterWorkspace() {
               <MailProposalCard
                 proposal={proposal}
                 busy={
-                  mutation.isPending || proposalHandoff.isPending || proposal.status !== 'PROPOSED'
+                  !canDecide ||
+                  mutation.isPending ||
+                  proposalHandoff.isPending ||
+                  proposal.status !== 'PROPOSED'
                 }
-                onAccept={() => setProposalToAccept(proposal)}
-                onDismiss={() => mutation.mutate({ proposal, decision: 'DISMISS' })}
+                onAccept={() => canDecide && setProposalToAccept(proposal)}
+                onDismiss={() => canDecide && mutation.mutate({ proposal, decision: 'DISMISS' })}
               />
               {proposal.status === 'ACCEPTED' && (
                 <ActionButton
@@ -574,11 +654,64 @@ function MailActionCenterWorkspace() {
               )}
               <MailProposalEditButton
                 proposal={proposal}
-                disabled={mutation.isPending || proposalHandoff.isPending || update.isPending}
+                disabled={
+                  !canUpdate || mutation.isPending || proposalHandoff.isPending || update.isPending
+                }
                 onEdit={setProposalToEdit}
               />
             </Stack>
           ))}
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1}
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+            justifyContent="space-between"
+            sx={{ pt: 1 }}
+          >
+            <Typography variant="caption" color="text.secondary">
+              {t('proposal.pagination.summary', {
+                defaultValue: '{{from}}–{{to}} of {{total}} proposals',
+                from: query.data.page * query.data.pageSize + 1,
+                to: Math.min((query.data.page + 1) * query.data.pageSize, query.data.total),
+                total: query.data.total,
+              })}
+            </Typography>
+            <Stack direction="row" spacing={1}>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                disabled={query.isFetching || query.data.page <= 0}
+                onClick={() =>
+                  setSearchParams(
+                    updateMailProposalFilterSearch(searchParams, {
+                      ...filters,
+                      page: Math.max(0, query.data.page - 1),
+                    })
+                  )
+                }
+              >
+                {t('proposal.pagination.previous', { defaultValue: 'Previous' })}
+              </ActionButton>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                disabled={
+                  query.isFetching ||
+                  (query.data.page + 1) * query.data.pageSize >= query.data.total
+                }
+                onClick={() =>
+                  setSearchParams(
+                    updateMailProposalFilterSearch(searchParams, {
+                      ...filters,
+                      page: query.data.page + 1,
+                    })
+                  )
+                }
+              >
+                {t('proposal.pagination.next', { defaultValue: 'Next' })}
+              </ActionButton>
+            </Stack>
+          </Stack>
         </Stack>
       ) : (
         <GuidedEmptyState
@@ -592,7 +725,7 @@ function MailActionCenterWorkspace() {
         busy={mutation.isPending || proposalHandoff.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {
-          if (proposalToAccept) {
+          if (proposalToAccept && canDecide) {
             mutation.mutate({ proposal: proposalToAccept, decision: 'ACCEPT' });
           }
         }}
@@ -618,6 +751,7 @@ function MailListDetailWorkspace({
   selectedId,
   emptyTitle,
   emptyDescription,
+  pagination,
   onSelect,
   onBack,
 }: {
@@ -625,6 +759,7 @@ function MailListDetailWorkspace({
   selectedId: string | null;
   emptyTitle: string;
   emptyDescription: string;
+  pagination?: ThreadPagination;
   onSelect: (threadId: string) => void;
   onBack: () => void;
 }) {
@@ -645,6 +780,7 @@ function MailListDetailWorkspace({
         emptyTitle={emptyTitle}
         emptyDescription={emptyDescription}
         hiddenOnMobile={Boolean(selectedId)}
+        pagination={pagination}
         onSelect={onSelect}
       />
       <Box
@@ -667,6 +803,7 @@ function ThreadListPanel({
   emptyTitle,
   emptyDescription,
   hiddenOnMobile,
+  pagination,
   onSelect,
 }: {
   query: ThreadListState;
@@ -674,6 +811,7 @@ function ThreadListPanel({
   emptyTitle: string;
   emptyDescription: string;
   hiddenOnMobile: boolean;
+  pagination?: ThreadPagination;
   onSelect: (threadId: string) => void;
 }) {
   const { t } = useTranslation('mail');
@@ -714,19 +852,77 @@ function ThreadListPanel({
           </Alert>
         </Box>
       ) : query.data?.items.length ? (
-        query.data.items.map((thread) => (
-          <MailThreadListItem
-            key={thread.threadId}
-            thread={thread}
-            selected={thread.threadId === selectedId}
-            compact={mailUsesCompactDensity(runtimePreferences.data)}
-            onSelect={() => onSelect(thread.threadId)}
-          />
-        ))
+        <>
+          {query.data.items.map((thread) => (
+            <MailThreadListItem
+              key={thread.threadId}
+              thread={thread}
+              selected={thread.threadId === selectedId}
+              compact={mailUsesCompactDensity(runtimePreferences.data)}
+              onSelect={() => onSelect(thread.threadId)}
+            />
+          ))}
+          {pagination ? (
+            <ThreadPaginationControls {...pagination} fetching={query.isFetching} />
+          ) : null}
+        </>
       ) : (
         <GuidedEmptyState kind="empty" title={emptyTitle} description={emptyDescription} />
       )}
     </Box>
+  );
+}
+
+type ThreadPagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number) => void;
+};
+
+function ThreadPaginationControls({
+  page,
+  pageSize,
+  total,
+  fetching,
+  onPageChange,
+}: ThreadPagination & { fetching: boolean }) {
+  const { t } = useTranslation('mail');
+  return (
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      spacing={1}
+      alignItems={{ sm: 'center' }}
+      justifyContent="space-between"
+      sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}
+    >
+      <Typography variant="caption" color="text.secondary">
+        {t('secondary.pagination.summary', {
+          defaultValue: '{{from}}–{{to}} of {{total}} messages',
+          from: total ? page * pageSize + 1 : 0,
+          to: Math.min((page + 1) * pageSize, total),
+          total,
+        })}
+      </Typography>
+      <Stack direction="row" spacing={1}>
+        <ActionButton
+          intent="secondary"
+          size="small"
+          disabled={fetching || page <= 0}
+          onClick={() => onPageChange(Math.max(0, page - 1))}
+        >
+          {t('secondary.pagination.previous', { defaultValue: 'Previous' })}
+        </ActionButton>
+        <ActionButton
+          intent="secondary"
+          size="small"
+          disabled={fetching || (page + 1) * pageSize >= total}
+          onClick={() => onPageChange(page + 1)}
+        >
+          {t('secondary.pagination.next', { defaultValue: 'Next' })}
+        </ActionButton>
+      </Stack>
+    </Stack>
   );
 }
 

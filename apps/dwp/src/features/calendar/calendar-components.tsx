@@ -108,6 +108,19 @@ export function CalendarPageHeading({
         pb: compact ? { xs: 1.5, md: 1.75 } : { xs: 2.25, md: 2.75 },
         borderBottom: 1,
         borderColor: (theme) => alpha(theme.palette.divider, 0.72),
+        '@media (forced-colors: active)': {
+          borderColor: 'CanvasText',
+          '& h1': {
+            forcedColorAdjust: 'none',
+            color: 'CanvasText !important',
+          },
+          '& kbd': {
+            forcedColorAdjust: 'none',
+            backgroundColor: 'Canvas !important',
+            borderColor: 'CanvasText !important',
+            color: 'CanvasText !important',
+          },
+        },
       }}
     >
       <Stack

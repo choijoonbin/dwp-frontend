@@ -14,6 +14,7 @@ import {
   getDwaionResearchPlan,
   getDwaionResearchRun,
   newDwaionCommandAttempt,
+  recoverDwaionResearchRun,
   startDwaionResearchRun,
   updateDwaionResearchPlan,
   type DwaionCommandAttempt,
@@ -24,6 +25,8 @@ import {
   type DwaionResearchDownloadKind,
   type DwaionResearchPlan,
   type DwaionResearchRun,
+  type DwaionResearchRecoveryAction,
+  type DwaionResearchRecoveryReceipt,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -34,6 +37,7 @@ import { deepResearchCopy } from './dwaion-deep-research-copy';
 import {
   createDwaionResearchDraft,
   dwaionResearchDefinition,
+  dwaionResearchDeliveryCapabilityKey,
   dwaionResearchDraftFromDefinition,
   dwaionResearchRunNeedsPolling,
   validateDwaionResearchDraft,
@@ -41,6 +45,7 @@ import {
 } from './dwaion-deep-research-model';
 import { DwaionDeepResearchPlanner } from './dwaion-deep-research-planner';
 import { DwaionDeepResearchRun } from './dwaion-deep-research-run';
+import type { DwaionResearchDeliveryParameters } from './dwaion-research-delivery-dialog';
 
 const DELIVERY_TERMINAL = new Set(['COMPLETED', 'FAILED', 'CANCELLED']);
 
@@ -58,13 +63,19 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
   const [run, setRun] = useState<DwaionResearchRun | null>(null);
   const [capabilities, setCapabilities] = useState<DwaionResearchCapabilities | null>(null);
   const [deliveries, setDeliveries] = useState<DwaionResearchDelivery[]>([]);
+  const [recoveryReceipt, setRecoveryReceipt] = useState<DwaionResearchRecoveryReceipt | null>(
+    null
+  );
   const [loading, setLoading] = useState(Boolean(planId || runId));
   const [busy, setBusy] = useState<string | null>(null);
   const [operationError, setOperationError] = useState(false);
   const saveCommandId = useRef<string | null>(null);
   const startAttempt = useRef<DwaionCommandAttempt | null>(null);
   const commandIds = useRef(new Map<string, string>());
-  const deliveryAttempts = useRef(new Map<DwaionResearchDeliveryType, DwaionCommandAttempt>());
+  const deliveryAttempts = useRef(
+    new Map<DwaionResearchDeliveryType, { attempt: DwaionCommandAttempt; fingerprint: string }>()
+  );
+  const recoveryAttempts = useRef(new Map<DwaionResearchRecoveryAction, DwaionCommandAttempt>());
   const governPlanCreate = useDwaionGovernedMutation(
     'route.dwaion.work.research-plan-create.action'
   );
@@ -79,6 +90,7 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
     'route.dwaion.work.research-run-command.action'
   );
   const governOutput = useDwaionGovernedMutation('route.dwaion.work.research-output.action');
+  const governRecovery = useDwaionGovernedMutation('route.dwaion.work.research-recovery.action');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -285,15 +297,30 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
     }
   };
 
-  const deliver = async (type: DwaionResearchDeliveryType) => {
-    if (!run || run.state !== 'COMPLETED') return;
-    const attempt = deliveryAttempts.current.get(type) ?? newDwaionCommandAttempt();
-    deliveryAttempts.current.set(type, attempt);
+  const deliver = async (
+    type: DwaionResearchDeliveryType,
+    parameters: DwaionResearchDeliveryParameters = {}
+  ) => {
+    const capability = capabilities?.delivery[dwaionResearchDeliveryCapabilityKey(type)];
+    if (!run || run.state !== 'COMPLETED' || !capability?.available) return;
+    const providerParameters = { ...parameters, locale };
+    const fingerprint = JSON.stringify(providerParameters);
+    const previous = deliveryAttempts.current.get(type);
+    const attempt =
+      previous?.fingerprint === fingerprint ? previous.attempt : newDwaionCommandAttempt();
+    deliveryAttempts.current.set(type, { attempt, fingerprint });
     setBusy(`DELIVER_${type}`);
     setOperationError(false);
     try {
       const delivery = await governOutput((authority) =>
-        createDwaionResearchDelivery(run.runId, run.version, type, attempt, { locale }, authority)
+        createDwaionResearchDelivery(
+          run.runId,
+          run.version,
+          type,
+          attempt,
+          providerParameters,
+          authority
+        )
       );
       deliveryAttempts.current.delete(type);
       setDeliveries((current) => [
@@ -316,9 +343,41 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `dwaion-research-${kind}-${run.runId}.${kind === 'audit' ? 'jsonl' : 'json'}`;
+      const extension = kind === 'audit' ? 'jsonl' : kind === 'pdf' ? 'pdf' : 'json';
+      anchor.download = `dwaion-research-${kind}-${run.runId}.${extension}`;
       anchor.click();
       URL.revokeObjectURL(url);
+    } catch {
+      setOperationError(true);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const recover = async (action: DwaionResearchRecoveryAction) => {
+    if (!run) return;
+    const attempt = recoveryAttempts.current.get(action) ?? newDwaionCommandAttempt();
+    recoveryAttempts.current.set(action, attempt);
+    setBusy(`RECOVER_${action}`);
+    setOperationError(false);
+    try {
+      const needsDefinition = action === 'PULL_AND_MERGE' || action === 'KEEP_LOCAL';
+      const sourcePlan = needsDefinition
+        ? (plan ?? (await getDwaionResearchPlan(run.planId)))
+        : null;
+      const receipt = await governRecovery((authority) =>
+        recoverDwaionResearchRun(
+          run.runId,
+          run.version,
+          action,
+          attempt,
+          sourcePlan?.definition,
+          authority
+        )
+      );
+      recoveryAttempts.current.delete(action);
+      setRecoveryReceipt(receipt);
+      if (action === 'USE_CACHE_FALLBACK') await refreshRun();
     } catch {
       setOperationError(true);
     } finally {
@@ -340,13 +399,15 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
         run={run}
         capabilities={capabilities}
         deliveries={deliveries}
+        recoveryReceipt={recoveryReceipt}
         busy={busy}
         operationError={operationError}
         onRefresh={() => void refreshRun()}
         onExecute={() => void executeQueued()}
         onCommand={(action, source) => void command(action, source)}
-        onDeliver={(type) => void deliver(type)}
+        onDeliver={(type, parameters) => void deliver(type, parameters)}
         onDownload={(kind) => void download(kind)}
+        onRecovery={(action) => void recover(action)}
         onExit={onExit}
       />
     );

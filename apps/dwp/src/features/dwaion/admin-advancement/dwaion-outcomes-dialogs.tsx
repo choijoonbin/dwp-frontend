@@ -2,6 +2,7 @@ import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system'
 import Stack from '@mui/material/Stack';
 
 import { useDwaionAdminAdvancementCopy } from './dwaion-admin-advancement-copy';
+import { DwaionTokenBudgetActivationNotice } from './dwaion-token-budget-activation';
 
 export type DwaionCostSimulationDraft = {
   workloadVolume: string;
@@ -33,6 +34,7 @@ export type DwaionBudgetDraft = {
   scope: string;
   budgetTokens: string;
   policyMode: 'WARN' | 'THROTTLE' | 'BLOCK';
+  enforcementActivationState: 'ENABLED' | 'DISABLED';
   version: number;
 };
 
@@ -260,6 +262,11 @@ export function DwaionBudgetDialog({
       onSubmit={onSubmit}
     >
       <Stack spacing={1.5}>
+        <DwaionTokenBudgetActivationNotice
+          activationState={value.enforcementActivationState}
+          warning={copy.ui.outcomes.enforcementDisabledWarning}
+          recovery={copy.ui.outcomes.enforcementDisabledRecovery}
+        />
         <FormField label={copy.ui.outcomes.scope} value={value.scope} disabled />
         <FormField
           required

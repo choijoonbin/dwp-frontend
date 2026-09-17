@@ -1,6 +1,11 @@
 import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
-import { assertAgentRevision, assertAgentUuid } from './agent-governed-api';
+import {
+  assertAgentRevision,
+  assertAgentUuid,
+  isAgentDate,
+  isAgentRecord,
+} from './agent-governed-api';
 import {
   parseDwaionTeamArtifactCapabilities,
   parseDwaionTeamArtifactAccessRequest,
@@ -21,6 +26,7 @@ import type {
   DwaionArtifactCollaborationCommand,
   DwaionArtifactCollaborationHighRiskCommand,
   DecideDwaionTeamArtifactReviewStageInput,
+  ExecuteDwaionTeamArtifactRemediationInput,
   DwaionTeamArtifactConflictResolution,
   DwaionTeamArtifactComment,
   DwaionTeamArtifactAccessRequest,
@@ -29,6 +35,7 @@ import type {
   DwaionTeamArtifactShare,
   DwaionTeamArtifactSharePermission,
   DwaionTeamArtifactWorkspace,
+  DwaionTeamArtifactRemediationReceipt,
   RunDwaionTeamArtifactPreflightInput,
 } from './agent-artifact-collaboration-contract';
 import type { DwaionArtifactDraftContent } from './agent-artifact-api';
@@ -161,6 +168,29 @@ export async function decideDwaionTeamArtifactReviewStage(
   const workspace = parseDwaionTeamArtifactWorkspace(response.data.data);
   assertBinding(workspace.artifactId === artifactId, 'review decision');
   return workspace;
+}
+
+export async function executeDwaionTeamArtifactRemediation(
+  artifactId: string,
+  input: ExecuteDwaionTeamArtifactRemediationInput
+): Promise<DwaionTeamArtifactRemediationReceipt> {
+  validateCommand(input, true);
+  const requiresStage = input.action === 'REVIEW_NOTIFICATION';
+  if (requiresStage !== (input.stageId !== null)) {
+    throw new TypeError('Only review notification requires a review stage.');
+  }
+  if (input.stageId) assertAgentUuid(input.stageId, 'Artifact review stage identifier');
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${artifactPath(artifactId)}/remediation-actions`,
+    {
+      ...commandBody(input),
+      changeReason: input.changeReason.trim(),
+      action: input.action,
+      stageId: input.stageId,
+    },
+    highRiskConfig(input)
+  );
+  return parseRemediationReceipt(response.data.data, artifactId, input.commandId, input.action);
 }
 
 export async function runDwaionTeamArtifactPreflight(
@@ -357,6 +387,91 @@ async function mutateWorkspace(
   const workspace = parseDwaionTeamArtifactWorkspace(response.data.data);
   assertBinding(workspace.artifactId === artifactId, 'workspace');
   return workspace;
+}
+
+function parseRemediationReceipt(
+  value: unknown,
+  artifactId: string,
+  commandId: string,
+  action: ExecuteDwaionTeamArtifactRemediationInput['action']
+): DwaionTeamArtifactRemediationReceipt {
+  if (
+    !isAgentRecord(value) ||
+    typeof value.receiptId !== 'string' ||
+    typeof value.commandId !== 'string' ||
+    typeof value.artifactId !== 'string' ||
+    value.commandId !== commandId ||
+    value.artifactId !== artifactId ||
+    value.action !== action ||
+    value.state !== 'SUCCEEDED' ||
+    !Number.isSafeInteger(value.artifactRevision) ||
+    Number(value.artifactRevision) < 1 ||
+    !(
+      value.workspaceRevision === null ||
+      (Number.isSafeInteger(value.workspaceRevision) && Number(value.workspaceRevision) >= 1)
+    ) ||
+    !Number.isSafeInteger(value.affectedCount) ||
+    Number(value.affectedCount) < 0 ||
+    !(
+      value.providerReceiptId === null ||
+      (typeof value.providerReceiptId === 'string' && value.providerReceiptId.trim().length > 0)
+    ) ||
+    !(
+      value.sourceContentFingerprint === null ||
+      (typeof value.sourceContentFingerprint === 'string' &&
+        /^[0-9a-f]{64}$/u.test(value.sourceContentFingerprint))
+    ) ||
+    !(
+      value.findingManifestSha256 === null ||
+      (typeof value.findingManifestSha256 === 'string' &&
+        /^[0-9a-f]{64}$/u.test(value.findingManifestSha256))
+    ) ||
+    !(
+      value.resultContentSha256 === null ||
+      (typeof value.resultContentSha256 === 'string' &&
+        /^[0-9a-f]{64}$/u.test(value.resultContentSha256))
+    ) ||
+    !Array.isArray(value.remediatedCodes) ||
+    !(
+      value.residualFindingCount === null ||
+      (Number.isSafeInteger(value.residualFindingCount) && Number(value.residualFindingCount) >= 0)
+    ) ||
+    typeof value.resultSha256 !== 'string' ||
+    !/^[0-9a-f]{64}$/u.test(value.resultSha256) ||
+    !isAgentDate(value.completedAt)
+  ) {
+    throw new HttpError('Artifact remediation receipt is invalid.', 502, value);
+  }
+  const codes = value.remediatedCodes as unknown[];
+  if (action === 'REVIEW_NOTIFICATION') {
+    if (
+      value.providerReceiptId === null ||
+      value.affectedCount !== 1 ||
+      value.sourceContentFingerprint !== null ||
+      value.findingManifestSha256 !== null ||
+      value.resultContentSha256 !== null ||
+      codes.length !== 0 ||
+      value.residualFindingCount !== null
+    ) {
+      throw new HttpError('Artifact review notification evidence is invalid.', 502, value);
+    }
+  } else if (
+    value.providerReceiptId !== null ||
+    Number(value.affectedCount) < 1 ||
+    typeof value.sourceContentFingerprint !== 'string' ||
+    typeof value.findingManifestSha256 !== 'string' ||
+    typeof value.resultContentSha256 !== 'string' ||
+    value.residualFindingCount !== 0 ||
+    codes.length < 1 ||
+    codes.some((code) => typeof code !== 'string' || !/^[A-Z][A-Z0-9_.-]{1,63}$/u.test(code)) ||
+    new Set(codes).size !== codes.length
+  ) {
+    throw new HttpError('Artifact content remediation evidence is invalid.', 502, value);
+  }
+  assertAgentUuid(value.receiptId, 'Artifact remediation receipt');
+  assertAgentUuid(value.commandId, 'Artifact remediation command');
+  assertAgentUuid(value.artifactId, 'Artifact remediation artifact');
+  return value as DwaionTeamArtifactRemediationReceipt;
 }
 
 function validateCommand(command: DwaionArtifactCollaborationCommand, highRisk: boolean): void {

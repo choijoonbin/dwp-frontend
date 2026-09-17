@@ -16,6 +16,7 @@ const api = vi.hoisted(() => ({
   closures: vi.fn(),
   impact: vi.fn(),
   create: vi.fn(),
+  preview: vi.fn(),
 }));
 const principal = vi.hoisted(() => ({ roles: ['SITE_ADMIN'] }));
 const controls = vi.hoisted(() => ({
@@ -31,11 +32,29 @@ vi.mock('@dwp-frontend/shared-utils', async () => ({
     isLoaded: true,
     hasPermission: (key: string) => key === 'ADMIN.WORKPLACE',
   }),
+  useProductSurfaceAuthority: () => ({
+    snapshot: { envelope: { activeAccessMode: 'ELEVATED' } },
+  }),
   getWorkplaceGovernanceEffectiveDelegatedScopes: api.effective,
   getWorkplaceAdminResources: api.resources,
   getWorkplaceResourceClosures: api.closures,
   getWorkplaceFutureBookingImpact: api.impact,
   createWorkplaceResourceClosure: api.create,
+  createWorkplaceClosureImpactPreview: api.preview,
+  createWorkplaceIdempotencyKey: () => '40000000-0000-4000-8000-000000000001',
+  executeWorkplaceClosureImpact: vi.fn(),
+  getWorkplaceClosureCommand: vi.fn(),
+  getWorkplaceClosureCommandReceipt: vi.fn(),
+  reconcileWorkplaceClosureNotifications: vi.fn(),
+  resolveIdempotentMutationIntent: (
+    previous: { key: string; fingerprint: string } | null,
+    payload: unknown,
+    createKey: () => string
+  ) => {
+    const fingerprint = JSON.stringify(payload);
+    return previous?.fingerprint === fingerprint ? previous : { key: createKey(), fingerprint };
+  },
+  retryWorkplaceClosureNotifications: vi.fn(),
   getWorkplaceResourceClosure: vi.fn(),
   getWorkplaceRoomBookingImpact: vi.fn(),
   cancelWorkplaceResourceClosure: vi.fn(),
@@ -168,10 +187,14 @@ const render = async (withPanel = true) => {
   );
   await settle();
 };
-const action = () =>
+const previewAction = () =>
   [...container.querySelectorAll('button')].find(
-    (button) => button.textContent === 'workplace.experience.closureCreate'
+    (button) => button.textContent === 'workplace.experience.closureExecution.preview'
   )!;
+const executeAction = () =>
+  [...container.querySelectorAll('button')].find(
+    (button) => button.textContent === 'workplace.experience.closureExecution.execute'
+  );
 const checkbox = () => container.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
 const reason = () =>
   container.querySelector<HTMLInputElement>(
@@ -181,8 +204,10 @@ const confirm = async () => {
   await act(async () =>
     controls.reason({ target: { value: 'Maintenance inside the current delegated floor' } })
   );
+  await act(async () => previewAction().click());
+  await settle();
   await act(async () => controls.confirm({ target: { checked: true } }));
-  expect(action().disabled).toBe(false);
+  expect(executeAction()!.disabled).toBe(false);
   expect(checkbox().checked).toBe(true);
 };
 beforeEach(() => {
@@ -201,6 +226,28 @@ beforeEach(() => {
       to,
       metadata: { availability: 'EMPTY' },
       affectedBookings: page(),
+    })
+  );
+  api.preview.mockImplementation(
+    async (
+      site: string,
+      targetResource: string,
+      input: { startsAt: string; endsAt: string; resourceVersion: number }
+    ) => ({
+      previewId: '40000000-0000-4000-8000-000000000002',
+      resourceId: targetResource,
+      siteId: site,
+      reservationOwner: 'WORKPLACE',
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+      resourceVersion: input.resourceVersion,
+      previewVersion: 1,
+      confirmationToken: 'snapshot-token',
+      affectedBookingCount: 0,
+      affectedRecipientCount: 0,
+      expiresAt: new Date(epoch + 86_400_000).toISOString(),
+      generatedAt: new Date(epoch).toISOString(),
+      items: [],
     })
   );
   api.effective.mockResolvedValue([
@@ -230,7 +277,7 @@ it('closes the actual idle floor action and confirmation at validUntil without a
   await confirm();
   expect(api.effective).toHaveBeenCalledTimes(1);
   await advance(epoch + 4_999 - Date.now());
-  expect(action().disabled).toBe(false);
+  expect(executeAction()!.disabled).toBe(false);
   expect(checkbox().checked).toBe(true);
   await advance(1);
   expect(observed.effectiveScopes.map((item) => item.delegationId)).toEqual([
@@ -240,8 +287,8 @@ it('closes the actual idle floor action and confirmation at validUntil without a
   expect(observed.allowsTarget('CATALOG_VIEW', siteId, floorId)).toBe(true);
   expect(observed.allowsTarget('CATALOG_MANAGE', siteId, floorId)).toBe(false);
   expect(observed.allowsTarget('CATALOG_MANAGE', siteId, otherFloorId)).toBe(true);
-  expect(action().disabled).toBe(true);
-  expect(checkbox().checked).toBe(false);
+  expect(executeAction()).toBeUndefined();
+  expect(checkbox()).toBeNull();
   expect(reason().value).toBe('');
   expect(api.effective).toHaveBeenCalledTimes(1);
   expect(api.create).not.toHaveBeenCalled();
@@ -253,7 +300,7 @@ it('observes out-of-band revocation on the 10s poll and clears the stale actual 
   api.effective.mockResolvedValue(retained());
   await advance(epoch + 9_999 - Date.now());
   expect(api.effective).toHaveBeenCalledTimes(1);
-  expect(action().disabled).toBe(false);
+  expect(executeAction()!.disabled).toBe(false);
   expect(checkbox().checked).toBe(true);
   await advance(1);
   await settle();
@@ -261,8 +308,8 @@ it('observes out-of-band revocation on the 10s poll and clears the stale actual 
   expect(observed.hierarchy.canManage).toBe(true);
   expect(observed.allowsTarget('CATALOG_MANAGE', siteId, floorId)).toBe(false);
   expect(observed.allowsTarget('CATALOG_MANAGE', siteId, otherFloorId)).toBe(true);
-  expect(action().disabled).toBe(true);
-  expect(checkbox().checked).toBe(false);
+  expect(executeAction()).toBeUndefined();
+  expect(checkbox()).toBeNull();
   expect(reason().value).toBe('');
   expect(api.create).not.toHaveBeenCalled();
 });

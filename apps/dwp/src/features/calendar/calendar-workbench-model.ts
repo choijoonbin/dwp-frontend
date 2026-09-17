@@ -59,7 +59,13 @@ export function calendarInvitations(events: readonly CalendarEvent[]): readonly 
         event.myResponse !== null &&
         event.myResponse !== undefined
     )
-    .sort(byStart);
+    .sort((left, right) => {
+      const responseDelta =
+        Number(left.myResponse !== 'NEEDS_ACTION') - Number(right.myResponse !== 'NEEDS_ACTION');
+      if (responseDelta) return responseDelta;
+      const conflictDelta = Number(!left.conflict) - Number(!right.conflict);
+      return conflictDelta || byStart(left, right);
+    });
 }
 
 export function filterCalendarInvitations(

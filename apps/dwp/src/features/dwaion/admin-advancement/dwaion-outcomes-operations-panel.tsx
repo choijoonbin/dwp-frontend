@@ -39,6 +39,11 @@ import {
   DwaionGovernedCommandDialog,
   type DwaionCommandIntent,
 } from './dwaion-governed-command-dialog';
+import { DwaionCommandCapabilityButton } from './dwaion-command-capability-button';
+import {
+  DwaionTokenBudgetActivationNotice,
+  tokenBudgetEnforcementLabel,
+} from './dwaion-token-budget-activation';
 
 export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: number }) {
   const copy = useDwaionAdminAdvancementCopy();
@@ -54,7 +59,6 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
   const [backlog, setBacklog] = useState<DwaionBacklogDraft | null>(null);
   const [budget, setBudget] = useState<DwaionBudgetDraft | null>(null);
   const data = query.data;
-  const commandsAvailable = data?.capability.status === 'AVAILABLE' && data.capability.configured;
 
   const requestExport = () => {
     if (!data) return;
@@ -189,19 +193,25 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
       target: { type: 'TOKEN_BUDGET', id: current.scope },
       expectedVersion: current.version,
       changes: [
-        { label: 'Budget', before: String(current.budgetTokens), after: budget.budgetTokens },
+        {
+          label: 'Budget',
+          before: current.budgetTokens == null ? 'Unconfigured' : String(current.budgetTokens),
+          after: budget.budgetTokens,
+        },
         { label: 'Enforcement', before: current.policyMode, after: budget.policyMode },
       ],
       impacts: [
         current.scope,
         `${current.consumedTokens} tokens already consumed`,
+        `Runtime enforcement ${current.enforcementActivationState}`,
         'Queued AI work',
       ],
       recoveryPlan:
         'Restore the prior limit and mode, then release throttled work only after usage validation.',
       payload: { budgetTokens: Number(budget.budgetTokens), policyMode: budget.policyMode },
       destructive:
-        budget.policyMode === 'BLOCK' || Number(budget.budgetTokens) < current.budgetTokens,
+        budget.policyMode === 'BLOCK' ||
+        (current.budgetTokens != null && Number(budget.budgetTokens) < current.budgetTokens),
     });
     setBudget(null);
   };
@@ -290,18 +300,18 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                 gap={1}
                 sx={{ px: { xs: 1.5, md: 2 }, pt: 2 }}
               >
-                <ActionButton
+                <DwaionCommandCapabilityButton
+                  commandKind="OUTCOME_EXPORT"
                   intent="secondary"
                   startIcon={<Download size={16} />}
-                  disabled={!commandsAvailable}
                   onClick={requestExport}
                 >
                   {copy.outcomes.export}
-                </ActionButton>
-                <ActionButton
+                </DwaionCommandCapabilityButton>
+                <DwaionCommandCapabilityButton
+                  commandKind="COST_SIMULATE"
                   intent="secondary"
                   startIcon={<Calculator size={16} />}
-                  disabled={!commandsAvailable}
                   onClick={() =>
                     setSimulation({
                       workloadVolume: '1000',
@@ -318,11 +328,11 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                   }
                 >
                   {copy.outcomes.simulate}
-                </ActionButton>
-                <ActionButton
+                </DwaionCommandCapabilityButton>
+                <DwaionCommandCapabilityButton
+                  commandKind="BACKLOG_CREATE"
                   intent="primary"
                   startIcon={<Plus size={16} />}
-                  disabled={!commandsAvailable}
                   onClick={() =>
                     setBacklog({
                       itemId: crypto.randomUUID(),
@@ -339,7 +349,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                   }
                 >
                   {copy.outcomes.createBacklog}
-                </ActionButton>
+                </DwaionCommandCapabilityButton>
                 <Chip
                   variant="outlined"
                   label={`Privacy threshold ${data.privacyThreshold} · ${data.suppressedCohortCount} suppressed`}
@@ -420,10 +430,10 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                             {item.version}
                           </Typography>
                         </Box>
-                        <ActionButton
+                        <DwaionCommandCapabilityButton
+                          commandKind="BACKLOG_UPDATE"
                           intent="quiet"
                           startIcon={<Pencil size={15} />}
-                          disabled={!commandsAvailable}
                           onClick={() =>
                             setBacklog({
                               itemId: item.itemId,
@@ -440,7 +450,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           }
                         >
                           {copy.outcomes.backlog}
-                        </ActionButton>
+                        </DwaionCommandCapabilityButton>
                       </Stack>
                     ))}
                   </Stack>
@@ -450,8 +460,21 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                   <Typography component="h3" variant="subtitle1">
                     {copy.ui.outcomes.tokenBudgets}
                   </Typography>
+                  <DwaionTokenBudgetActivationNotice
+                    activationState={
+                      data.tokenBudgets.some(
+                        (item) => item.enforcementActivationState === 'DISABLED'
+                      )
+                        ? 'DISABLED'
+                        : 'ENABLED'
+                    }
+                    warning={copy.ui.outcomes.enforcementDisabledWarning}
+                    recovery={copy.ui.outcomes.enforcementDisabledRecovery}
+                  />
                   {data.tokenBudgets.map((item) => {
-                    const usage = Math.min((item.consumedTokens / item.budgetTokens) * 100, 100);
+                    const usage = item.budgetTokens
+                      ? Math.min((item.consumedTokens / item.budgetTokens) * 100, 100)
+                      : 0;
                     return (
                       <Box
                         key={item.scope}
@@ -461,15 +484,27 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           <Typography variant="subtitle2">{item.scope}</Typography>
                           <Chip
                             size="small"
-                            color={item.spikeDetected ? 'warning' : 'default'}
-                            label={item.policyMode}
+                            color={
+                              item.spikeDetected || item.enforcementActivationState === 'DISABLED'
+                                ? 'warning'
+                                : 'default'
+                            }
+                            label={tokenBudgetEnforcementLabel(
+                              item.policyMode,
+                              item.enforcementActivationState,
+                              copy.ui.outcomes.enforcementActive,
+                              copy.ui.outcomes.enforcementStaged
+                            )}
                           />
                         </Stack>
                         <Typography
                           variant="body2"
                           sx={{ mt: 1, fontVariantNumeric: 'tabular-nums' }}
                         >
-                          {formatNumber(item.consumedTokens)} / {formatNumber(item.budgetTokens)}
+                          {formatNumber(item.consumedTokens)} /{' '}
+                          {item.budgetTokens == null
+                            ? 'Not configured'
+                            : formatNumber(item.budgetTokens)}
                         </Typography>
                         <LinearProgress
                           variant="determinate"
@@ -484,21 +519,29 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                           {copy.ui.common.versionSeparator}
                           {item.version}
                         </Typography>
-                        <ActionButton
+                        <DwaionCommandCapabilityButton
+                          commandKind="TOKEN_BUDGET_UPDATE"
                           intent="quiet"
                           startIcon={<Gauge size={15} />}
-                          disabled={!commandsAvailable}
                           onClick={() =>
                             setBudget({
                               scope: item.scope,
-                              budgetTokens: String(item.budgetTokens),
+                              budgetTokens: String(
+                                item.budgetTokens ??
+                                  Math.max(
+                                    item.projectedTokens ?? item.consumedTokens,
+                                    item.consumedTokens,
+                                    100_000
+                                  )
+                              ),
                               policyMode: item.policyMode,
+                              enforcementActivationState: item.enforcementActivationState,
                               version: item.version,
                             })
                           }
                         >
                           {copy.outcomes.budget}
-                        </ActionButton>
+                        </DwaionCommandCapabilityButton>
                       </Box>
                     );
                   })}
@@ -510,7 +553,7 @@ export function DwaionOutcomesOperationsPanel({ periodDays }: { periodDays: numb
                 title={copy.ui.outcomes.deliveryOperations}
                 description={copy.ui.outcomes.deliveryOperationsDescription}
                 actions={backlogCanonicalActions(data.backlog[0], copy.command.description)}
-                disabled={!commandsAvailable}
+                disabled={false}
                 onRefresh={async () => {
                   await query.refetch();
                 }}

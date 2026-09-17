@@ -103,6 +103,7 @@ function hundredDefinitionCatalog() {
 
 type AccountHomeRouteOptions = Readonly<{
   catalog?: ReturnType<typeof widgetRegistryEffectiveCatalog>;
+  emptyViews?: boolean;
   widgets?: readonly WidgetPreference[];
 }>;
 
@@ -112,7 +113,7 @@ async function routeAccountHome(page: Page, options: AccountHomeRouteOptions = {
     layout: layout('balanced', options.widgets),
   };
   const state = {
-    views: [defaultView],
+    views: options.emptyViews ? [] : [defaultView],
     conflictCount: 0,
     submittedDraft: null as null | Record<string, unknown>,
     reappliedDraft: null as null | Record<string, unknown>,
@@ -130,6 +131,10 @@ async function routeAccountHome(page: Page, options: AccountHomeRouteOptions = {
       contexts: catalog.contexts.map((context) => ({
         ...context,
         placementContext: 'FLOW_PERSONAL',
+        capabilities: {
+          ...context.capabilities,
+          legacyPlacementWrite: true,
+        },
       })),
     });
   });
@@ -183,6 +188,22 @@ async function routeAccountHome(page: Page, options: AccountHomeRouteOptions = {
       updatedAt: NOW,
     })
   );
+  await page.route('**/api/platform/v1/home-preferences', (route) =>
+    fulfillSuccess(route, {
+      schemaVersion: 5,
+      surfaceKey: 'workspace-home',
+      customized: true,
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      enabledModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      disabledModeReasons: {},
+      defaultMode: 'CLASSIC',
+      currentMode: 'FLOW_V1',
+      warnings: [],
+      layout: layout(),
+      version: 1,
+      updatedAt: NOW,
+    })
+  );
   await page.route('**/api/platform/v1/home/overview**', (route) =>
     fulfillSuccess(route, {
       audience: { profile: 'MEMBER', ruleVersion: 'wave5-test', reasons: [] },
@@ -206,11 +227,14 @@ async function routeAccountHome(page: Page, options: AccountHomeRouteOptions = {
       const requestBody = request.postDataJSON() as {
         name: string;
         viewKey: string;
+        modeKey?: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1';
+        makeDefault: boolean;
         layout: ReturnType<typeof layout>;
       };
       const created = {
-        ...homeView('view-keyboard', requestBody.name, 1, false),
+        ...homeView('view-keyboard', requestBody.name, 0, requestBody.makeDefault),
         viewKey: requestBody.viewKey,
+        modeKey: requestBody.modeKey ?? 'FLOW_V1',
         layout: requestBody.layout,
       };
       state.views.push(created);
@@ -401,6 +425,48 @@ test('every Account Home route supports direct entry and hard refresh', async ({
     await page.reload();
     await expect(page.getByRole('tab', { name: tabName })).toHaveAttribute('aria-selected', 'true');
   }
+});
+
+test('an empty mode creates its default view on the first appearance save and keeps it after navigation', async ({
+  page,
+}) => {
+  const state = await routeAccountHome(page, { emptyViews: true });
+  await page.goto('/account/settings/home/appearance');
+
+  const focused = page.locator('[data-appearance-option="focused"]');
+  await expect(focused).toBeEnabled();
+  await focused.click();
+  await expect.poll(() => state.views.length).toBe(1);
+  expect(state.views[0]).toMatchObject({
+    isDefault: true,
+    modeKey: 'FLOW_V1',
+    version: 0,
+    layout: { presentation: 'focused' },
+  });
+
+  await page.reload();
+  await expect(focused).toHaveAttribute('aria-checked', 'true');
+  await page.goto('/account/settings/home/overview');
+  await expect(page.getByTestId('account-home-overview')).toContainText('My work home');
+});
+
+test('Account personalization is the single Home mode switcher and lists all three modes', async ({
+  page,
+}) => {
+  await routeAccountHome(page);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/account/settings/home/overview');
+
+  await page.getByRole('tab', { name: 'Home mode' }).click();
+  const choices = page.locator('[data-mode-choice]');
+  await expect(choices).toHaveCount(3);
+  await expect(choices.nth(0)).toHaveAttribute('data-mode-choice', 'CLASSIC');
+  await expect(choices.nth(1)).toHaveAttribute('data-mode-choice', 'FLOW_V1');
+  await expect(choices.nth(2)).toHaveAttribute('data-mode-choice', 'MZ_V1');
+  await expect(choices.nth(0)).toContainText('Classic organization portal');
+  await expect(choices.nth(1)).toContainText('Flow work home');
+  await expect(choices.nth(2)).toContainText('AI Stage');
+  await expect(choices.nth(2)).not.toContainText('MZ');
 });
 
 test('100-definition effective catalog stays bounded at the 30-instance editor ceiling', async ({

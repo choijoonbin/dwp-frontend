@@ -43,11 +43,15 @@ const COMMANDS: readonly CommandItem[] = [
 export function MailCommandPalette({
   open,
   hasSelectedThread,
+  canCompose = true,
+  canUpdate = true,
   onClose,
   onCommand,
 }: {
   open: boolean;
   hasSelectedThread: boolean;
+  canCompose?: boolean;
+  canUpdate?: boolean;
   onClose: () => void;
   onCommand: (command: MailCommand) => void;
 }) {
@@ -58,11 +62,13 @@ export function MailCommandPalette({
   const commands = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return COMMANDS.filter((command) => {
+      if (command.id === 'compose' && !canCompose) return false;
+      if (command.requiresThread && !canUpdate) return false;
       if (command.requiresThread && !hasSelectedThread) return false;
       const label = t(`command.items.${command.id}`);
       return !normalized || label.toLocaleLowerCase().includes(normalized);
     });
-  }, [hasSelectedThread, query, t]);
+  }, [canCompose, canUpdate, hasSelectedThread, query, t]);
 
   useEffect(() => {
     if (!open) return;

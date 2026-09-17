@@ -32,6 +32,10 @@ function fields(value: unknown): value is MailDraftFields {
     (candidate.toName === undefined || typeof candidate.toName === 'string') &&
     typeof candidate.subject === 'string' &&
     typeof candidate.body === 'string' &&
+    (candidate.classification === undefined ||
+      ['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'].includes(
+        candidate.classification as string
+      )) &&
     (candidate.composeOptions === undefined || isMailComposeOptions(candidate.composeOptions))
   );
 }
@@ -42,6 +46,7 @@ export function mailDraftFieldsFromDetail(detail: MailAdvancedThreadDetail): Mai
     toEmail: primaryRecipient?.email ?? '',
     subject: detail.thread.subject,
     body: detail.messages.find((message) => message.direction === 'DRAFT')?.body ?? '',
+    classification: detail.thread.classification,
     composeOptions: detail.draftOptions ?? {
       accountId: detail.thread.accountId,
       recipients: primaryRecipient

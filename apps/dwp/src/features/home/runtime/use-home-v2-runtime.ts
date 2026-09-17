@@ -10,7 +10,9 @@ import type {
   HomeV2ReadResult,
 } from '@dwp-frontend/shared-utils';
 
-export const HOME_V2_QUERY_ROOT = ['home-runtime-v2'] as const;
+import { HOME_V2_QUERY_ROOT } from '../../../components/home-v2-query-contract';
+
+export { HOME_V2_QUERY_ROOT } from '../../../components/home-v2-query-contract';
 
 type UseHomeV2RuntimeInput = Readonly<{
   accessFingerprint: string;

@@ -84,6 +84,8 @@ async function mockProposalActionReview(page: Page) {
     updatedAt: NOW,
   };
   const handoffRequests: Array<Record<string, unknown>> = [];
+  const draftRequests: Array<Record<string, unknown>> = [];
+  let serverDraft: Record<string, unknown> | null = null;
 
   await page.route('**/api/agent/v1/proposals/preferences', (route) =>
     route.fulfill({
@@ -130,10 +132,31 @@ async function mockProposalActionReview(page: Page) {
       return route.fulfill({ status: 404, json: { success: false, message: 'Not found' } });
     return route.fulfill({ json: { success: true, data: handoff } });
   });
+  await page.route(
+    `**/api/agent/v1/proposal-handoffs/${HANDOFF_ID}/drafts/current`,
+    async (route) => {
+      if (route.request().method() === 'PUT') {
+        const request = route.request().postDataJSON() as Record<string, unknown>;
+        draftRequests.push(request);
+        serverDraft = {
+          draftId: 'ab9de810-e1f5-4837-89cc-17cdac682f5e',
+          handoffId: HANDOFF_ID,
+          proposalId: proposal.proposalId,
+          handoffVersion: handoff.version,
+          revision: draftRequests.length,
+          reviewedInputs: request.reviewedInputs,
+          contentSha256: 'a'.repeat(64),
+          savedAt: '2026-09-17T01:31:00.000Z',
+        };
+      }
+      return route.fulfill({ json: { success: true, data: serverDraft } });
+    }
+  );
 
   return {
     proposalId: proposal.proposalId,
     handoffRequests,
+    draftRequests,
     completeHandoff: () => {
       handoff = {
         ...handoff,
@@ -236,16 +259,11 @@ for (const width of [1440, 390] as const) {
     expect(fixture.handoffRequests[0]?.commandId).toEqual(expect.any(String));
     expect(fixture.handoffRequests[0]?.idempotencyKey).toEqual(expect.any(String));
 
-    await review.getByRole('button', { name: '초안 임시 보관' }).click();
-    await expect(review.getByText(/이 브라우저 세션에 보관됨/)).toBeVisible();
-    expect(
-      await page.evaluate((proposalId) => {
-        const raw = sessionStorage.getItem(`dwaion:proposal-action-draft:${proposalId}`);
-        return raw ? JSON.parse(raw) : null;
-      }, fixture.proposalId)
-    ).toMatchObject({
-      proposalId: fixture.proposalId,
-      handoffId: HANDOFF_ID,
+    await review.getByRole('button', { name: '서버에 초안 보관' }).click();
+    await expect(review.getByText(/암호화된 서버 초안 저장/)).toContainText('v1');
+    expect(fixture.draftRequests).toHaveLength(1);
+    expect(fixture.draftRequests[0]).toMatchObject({
+      expectedVersion: 1,
       reviewedInputs: {
         currentInfrastructure: '2노드 인프라 · 수동 대기',
         proposedInfrastructure: 'GPU 클러스터 4노드 증설 · g5.2xlarge × 4',
@@ -256,6 +274,12 @@ for (const width of [1440, 390] as const) {
         approvers: ['approver@example.test'],
       },
     });
+    expect(fixture.draftRequests[0]?.commandId).toEqual(expect.any(String));
+
+    await page.reload();
+    await expect(page.getByTestId('dwaion-proposal-action-review')).toBeVisible();
+    await expect(page.getByText(/암호화된 서버 초안 저장/)).toContainText('v1');
+    expect(fixture.draftRequests).toHaveLength(1);
     await expect(review.getByRole('button', { name: '전자결재 원본 검토로 인계' })).toBeVisible();
 
     const geometry = await assertCanvasUsesAvailableWidth(page, 'dwaion-proposal-action-review');

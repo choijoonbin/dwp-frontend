@@ -56,3 +56,13 @@ export function saveMailAttachmentBlob(blob: Blob, fileName: string) {
   anchor.remove();
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 }
+
+export function mailAdminEvidenceExportFileName(
+  kind: 'RETENTION' | 'DELIVERY_AUDIT',
+  exportId: string
+) {
+  const safeId = exportId.trim().replaceAll(/[^a-zA-Z0-9_-]/gu, '_') || 'export';
+  return kind === 'RETENTION'
+    ? `mail-retention-evidence-${safeId}.json`
+    : `mail-delivery-audit-${safeId}.json`;
+}

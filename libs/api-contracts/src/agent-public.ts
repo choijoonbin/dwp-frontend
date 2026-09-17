@@ -289,6 +289,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/control-plane/command-capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Command Capabilities */
+        get: operations["command_capabilities_v1_admin_control_plane_command_capabilities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/control-plane/commands": {
         parameters: {
             query?: never;
@@ -1045,6 +1062,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/artifact-collaboration/{artifact_id}/remediation-actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Execute Team Artifact Remediation */
+        post: operations["execute_team_artifact_remediation_v1_artifact_collaboration__artifact_id__remediation_actions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/artifact-collaboration/{artifact_id}/workspace": {
         parameters: {
             query?: never;
@@ -1475,6 +1509,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/attachments/audit-reports/{report_id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download Attachment Audit Report */
+        get: operations["download_attachment_audit_report_v1_attachments_audit_reports__report_id__download_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/attachments/capabilities": {
         parameters: {
             query?: never;
@@ -1486,6 +1537,40 @@ export interface paths {
         get: operations["attachment_capabilities_v1_attachments_capabilities_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/attachments/conversations/{conversation_id}/audit-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Attachment Audit Report */
+        post: operations["create_attachment_audit_report_v1_attachments_conversations__conversation_id__audit_reports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/attachments/conversations/{conversation_id}/detach-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Detach Conversation Attachments */
+        post: operations["detach_conversation_attachments_v1_attachments_conversations__conversation_id__detach_all_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1700,6 +1785,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/personal-data/deletions/evidence/receipt-index.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download Personal Data Receipt Index */
+        get: operations["download_personal_data_receipt_index_v1_personal_data_deletions_evidence_receipt_index_json_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/personal-data/deletions/{deletion_job_id}": {
         parameters: {
             query?: never;
@@ -1709,6 +1811,74 @@ export interface paths {
         };
         /** Get Personal Data Deletion */
         get: operations["get_personal_data_deletion_v1_personal_data_deletions__deletion_job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/deletions/{deletion_job_id}/evidence-actions/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Execute Personal Data Evidence Action */
+        post: operations["execute_personal_data_evidence_action_v1_personal_data_deletions__deletion_job_id__evidence_actions__action__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/deletions/{deletion_job_id}/evidence-actions/{command_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Personal Data Evidence Action */
+        get: operations["get_personal_data_evidence_action_v1_personal_data_deletions__deletion_job_id__evidence_actions__command_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/deletions/{deletion_job_id}/evidence-actions/{command_id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download Personal Data Evidence Action */
+        get: operations["download_personal_data_evidence_action_v1_personal_data_deletions__deletion_job_id__evidence_actions__command_id__download_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/deletions/{deletion_job_id}/evidence/legal-hold.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download Personal Data Legal Hold Evidence */
+        get: operations["download_personal_data_legal_hold_evidence_v1_personal_data_deletions__deletion_job_id__evidence_legal_hold_json_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1778,6 +1948,24 @@ export interface paths {
         /** Get Handoff */
         get: operations["get_handoff_v1_proposal_handoffs__handoff_id__get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/proposal-handoffs/{handoff_id}/drafts/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Proposal Handoff Draft */
+        get: operations["get_proposal_handoff_draft_v1_proposal_handoffs__handoff_id__drafts_current_get"];
+        /** Save Proposal Handoff Draft */
+        put: operations["save_proposal_handoff_draft_v1_proposal_handoffs__handoff_id__drafts_current_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -2094,6 +2282,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/research/runs/{run_id}/downloads/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download Research Pdf */
+        get: operations["download_research_pdf_v1_research_runs__run_id__downloads_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/research/runs/{run_id}/downloads/raw": {
         parameters: {
             query?: never;
@@ -2196,6 +2401,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/research/runs/{run_id}/recovery-actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Recover Research Run */
+        post: operations["recover_research_run_v1_research_runs__run_id__recovery_actions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/research/runs/{run_id}/routines": {
         parameters: {
             query?: never;
@@ -2248,6 +2470,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/routines/advanced-commands/pending-approvals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Pending Routine Approvals */
+        get: operations["list_pending_routine_approvals_v1_routines_advanced_commands_pending_approvals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/advanced-commands/{command_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decide Routine Advanced Command */
+        post: operations["decide_routine_advanced_command_v1_routines_advanced_commands__command_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/routines/capabilities": {
         parameters: {
             query?: never;
@@ -2294,6 +2550,41 @@ export interface paths {
         put?: never;
         /** Change Routine Activation */
         post: operations["change_routine_activation_v1_routines__routine_id__activation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/advanced-commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Routine Advanced Commands */
+        get: operations["list_routine_advanced_commands_v1_routines__routine_id__advanced_commands_get"];
+        put?: never;
+        /** Create Routine Advanced Command */
+        post: operations["create_routine_advanced_command_v1_routines__routine_id__advanced_commands_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/advanced-commands/{command_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Routine Advanced Command */
+        get: operations["get_routine_advanced_command_v1_routines__routine_id__advanced_commands__command_id__get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2961,6 +3252,52 @@ export interface components {
             targetId: string;
             /** Targettype */
             targetType: string;
+        };
+        /** AdminCommandCapabilitiesEnvelope */
+        AdminCommandCapabilitiesEnvelope: {
+            data: components["schemas"]["AdminCommandCapabilitiesSnapshot"];
+            /**
+             * Message
+             * @default DWAI-ON admin command capabilities loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** AdminCommandCapabilitiesSnapshot */
+        AdminCommandCapabilitiesSnapshot: {
+            /** Commands */
+            commands: components["schemas"]["AdminCommandCapability"][];
+            /**
+             * Generatedat
+             * Format: date-time
+             */
+            generatedAt: string;
+            /** Workeravailable */
+            workerAvailable: boolean;
+        };
+        /** AdminCommandCapability */
+        AdminCommandCapability: {
+            /** Configured */
+            configured: boolean;
+            /** Executionmode */
+            executionMode: string;
+            /** Family */
+            family: string;
+            kind: components["schemas"]["GovernedCommandKind"];
+            /** Reason */
+            reason?: string | null;
+            /** Recoveryhint */
+            recoveryHint?: string | null;
+            status: components["schemas"]["CapabilityStatus"];
         };
         /** AdminCommandResolution */
         AdminCommandResolution: {
@@ -3843,6 +4180,63 @@ export interface components {
          * @enum {string}
          */
         AskState: "COMPLETED" | "ABSTAINED" | "CONFIGURATION_REQUIRED";
+        /** AttachmentAuditReportReceipt */
+        AttachmentAuditReportReceipt: {
+            /** Attachmentids */
+            attachmentIds: string[];
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Contentsha256 */
+            contentSha256: string;
+            /**
+             * Conversationid
+             * Format: uuid
+             */
+            conversationId: string;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /** Downloadpath */
+            downloadPath: string;
+            /**
+             * Reportid
+             * Format: uuid
+             */
+            reportId: string;
+            /** Signature */
+            signature: string;
+            /**
+             * Signaturealgorithm
+             * @default HMAC-SHA256
+             */
+            signatureAlgorithm: string;
+            /** Signingkeyfingerprint */
+            signingKeyFingerprint: string;
+        };
+        /** AttachmentAuditReportReceiptEnvelope */
+        AttachmentAuditReportReceiptEnvelope: {
+            data: components["schemas"]["AttachmentAuditReportReceipt"];
+            /**
+             * Message
+             * @default Signed secure attachment audit report generated.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /** AttachmentCapabilities */
         AttachmentCapabilities: {
             /** Allowedmediatypes */
@@ -3894,6 +4288,52 @@ export interface components {
             /** Locator */
             locator: string;
         };
+        /** AttachmentDetachReceipt */
+        AttachmentDetachReceipt: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Conversationid
+             * Format: uuid
+             */
+            conversationId: string;
+            /**
+             * Detachedat
+             * Format: date-time
+             */
+            detachedAt: string;
+            /** Detachedattachments */
+            detachedAttachments: components["schemas"]["DetachedAttachment"][];
+            /** Integrityfingerprint */
+            integrityFingerprint: string;
+            /**
+             * Receiptid
+             * Format: uuid
+             */
+            receiptId: string;
+        };
+        /** AttachmentDetachReceiptEnvelope */
+        AttachmentDetachReceiptEnvelope: {
+            data: components["schemas"]["AttachmentDetachReceipt"];
+            /**
+             * Message
+             * @default Secure attachments detached from the conversation.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /** AttachmentEnvelope */
         AttachmentEnvelope: {
             data: components["schemas"]["SecureAttachment"];
@@ -3922,6 +4362,15 @@ export interface components {
             attachmentId: string;
             /** Citations */
             citations: components["schemas"]["AttachmentCitation"][];
+            /**
+             * Deletionattemptcount
+             * @default 0
+             */
+            deletionAttemptCount: number;
+            /** Deletionlasterrorcode */
+            deletionLastErrorCode?: string | null;
+            /** Deletionreceiptid */
+            deletionReceiptId?: string | null;
             /** Inspectionlog */
             inspectionLog: components["schemas"]["AttachmentEvidenceEvent"][];
             /** Maskinghistory */
@@ -3993,6 +4442,16 @@ export interface components {
              */
             success: boolean;
         };
+        /** AttachmentRevisionBinding */
+        AttachmentRevisionBinding: {
+            /**
+             * Attachmentid
+             * Format: uuid
+             */
+            attachmentId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+        };
         /** AttachmentStage */
         AttachmentStage: {
             key: components["schemas"]["AttachmentStageKey"];
@@ -4000,8 +4459,12 @@ export interface components {
             observedAt?: string | null;
             /** Providercode */
             providerCode?: string | null;
+            /** Providerreceiptid */
+            providerReceiptId?: string | null;
             /** Recoveryhint */
             recoveryHint?: string | null;
+            /** Resultdigest */
+            resultDigest?: string | null;
             /** Safeerrorcode */
             safeErrorCode?: string | null;
             state: components["schemas"]["AttachmentStageState"];
@@ -4147,7 +4610,7 @@ export interface components {
          * BudgetEnforcementMode
          * @enum {string}
          */
-        BudgetEnforcementMode: "ALERT_ONLY" | "ENFORCED";
+        BudgetEnforcementMode: "ALERT_ONLY" | "THROTTLED" | "ENFORCED";
         /**
          * CapabilityStatus
          * @enum {string}
@@ -4647,6 +5110,23 @@ export interface components {
             /** Reasoncode */
             reasonCode: string;
         };
+        /** CreateAttachmentAuditReportRequest */
+        CreateAttachmentAuditReportRequest: {
+            /** Attachments */
+            attachments: components["schemas"]["AttachmentRevisionBinding"][];
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+            /** Reason */
+            reason: string;
+        };
         /** CreateAttachmentRequest */
         CreateAttachmentRequest: {
             /**
@@ -4757,6 +5237,24 @@ export interface components {
             /** Title */
             title: string;
         };
+        /** CreatePersonalDataEvidenceCommandRequest */
+        CreatePersonalDataEvidenceCommandRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Parameters */
+            parameters?: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** CreateProposalHandoffRequest */
         CreateProposalHandoffRequest: {
             /**
@@ -4813,6 +5311,22 @@ export interface components {
              * @default 0
              */
             expectedRevision: number;
+        };
+        /** CreateRoutineAdvancedCommandRequest */
+        CreateRoutineAdvancedCommandRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Payload */
+            payload: components["schemas"]["RoutineChangeApprovalPayload"] | components["schemas"]["RoutineAgentEngineSwitchPayload"] | components["schemas"]["RoutineWormEvidenceDeliveryPayload"] | components["schemas"]["RoutineOAuthReauthorizationPayload"] | components["schemas"]["RoutineTemporaryBudgetIncreasePayload"] | components["schemas"]["RoutineOperatorEscalationPayload"] | components["schemas"]["RoutineProviderRollbackPayload"];
+            /** Reasoncode */
+            reasonCode: string;
         };
         /** CreateRoutineRequest */
         CreateRoutineRequest: {
@@ -5053,6 +5567,27 @@ export interface components {
              */
             validDays: number;
         };
+        /** DecideRoutineAdvancedCommandRequest */
+        DecideRoutineAdvancedCommandRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "APPROVE" | "REJECT";
+            /** Evidencerefs */
+            evidenceRefs: string[];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** DecideTeamArtifactReviewStageRequest */
         DecideTeamArtifactReviewStageRequest: {
             /** Changereason */
@@ -5208,6 +5743,33 @@ export interface components {
          * @enum {string}
          */
         DeletionTargetState: "REQUESTED" | "RUNNING" | "COMPLETED" | "BLOCKED_LEGAL_HOLD" | "FAILED";
+        /** DetachAllAttachmentsRequest */
+        DetachAllAttachmentsRequest: {
+            /** Attachments */
+            attachments: components["schemas"]["AttachmentRevisionBinding"][];
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+            /** Reason */
+            reason: string;
+        };
+        /** DetachedAttachment */
+        DetachedAttachment: {
+            /**
+             * Attachmentid
+             * Format: uuid
+             */
+            attachmentId: string;
+            /** Revision */
+            revision: number;
+        };
         /** DlpFinding */
         DlpFinding: {
             /** Code */
@@ -5401,12 +5963,18 @@ export interface components {
              * Format: date-time
              */
             createdAt: string;
+            /** Datasetid */
+            datasetId?: string | null;
+            /** Datasetversion */
+            datasetVersion?: number | null;
             /** Evaluatorfailurecount */
             evaluatorFailureCount?: number | null;
             /** Passrate */
             passRate?: number | null;
             /** Regressioncount */
             regressionCount?: number | null;
+            /** Resultversion */
+            resultVersion?: number | null;
             /** State */
             state: string;
         };
@@ -5681,6 +6249,23 @@ export interface components {
             commandId: string;
             /** Expectedversion */
             expectedVersion: number;
+        };
+        /** ExecuteTeamArtifactRemediationRequest */
+        ExecuteTeamArtifactRemediationRequest: {
+            action: components["schemas"]["TeamArtifactRemediationKind"];
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Stageid */
+            stageId?: string | null;
         };
         /** ExecutionSummary */
         ExecutionSummary: {
@@ -6762,6 +7347,73 @@ export interface components {
              */
             success: boolean;
         };
+        /**
+         * PersonalDataEvidenceAction
+         * @enum {string}
+         */
+        PersonalDataEvidenceAction: "BACKUP_LEDGER" | "SRE_ESCALATION" | "LEGAL_HOLD_APPEAL" | "SIGNED_CERTIFICATE" | "SIEM_SYNC";
+        /** PersonalDataEvidenceCommand */
+        PersonalDataEvidenceCommand: {
+            action: components["schemas"]["PersonalDataEvidenceAction"];
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Completedat */
+            completedAt?: string | null;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
+             * Deletionjobid
+             * Format: uuid
+             */
+            deletionJobId: string;
+            /**
+             * Downloadavailable
+             * @default false
+             */
+            downloadAvailable: boolean;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Providerreceiptid */
+            providerReceiptId?: string | null;
+            /** Receiptid */
+            receiptId?: string | null;
+            /** Recoveryhint */
+            recoveryHint?: string | null;
+            /** Result */
+            result?: {
+                [key: string]: components["schemas"]["JsonValue"];
+            } | null;
+            /** Resultfingerprint */
+            resultFingerprint?: string | null;
+            /** Safeerrorcode */
+            safeErrorCode?: string | null;
+            state: components["schemas"]["PersonalDataEvidenceCommandState"];
+        };
+        /** PersonalDataEvidenceCommandEnvelope */
+        PersonalDataEvidenceCommandEnvelope: {
+            data: components["schemas"]["PersonalDataEvidenceCommand"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * PersonalDataEvidenceCommandState
+         * @enum {string}
+         */
+        PersonalDataEvidenceCommandState: "PENDING" | "COMPLETED" | "FAILED";
         /** PersonalDataGovernanceCapabilities */
         PersonalDataGovernanceCapabilities: {
             /**
@@ -7195,6 +7847,58 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** ProposalHandoffDraft */
+        ProposalHandoffDraft: {
+            /** Contentsha256 */
+            contentSha256: string;
+            /**
+             * Draftid
+             * Format: uuid
+             */
+            draftId: string;
+            /**
+             * Handoffid
+             * Format: uuid
+             */
+            handoffId: string;
+            /** Handoffversion */
+            handoffVersion: number;
+            /**
+             * Proposalid
+             * Format: uuid
+             */
+            proposalId: string;
+            /** Reviewedinputs */
+            reviewedInputs: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Revision */
+            revision: number;
+            /**
+             * Savedat
+             * Format: date-time
+             */
+            savedAt: string;
+        };
+        /** ProposalHandoffDraftEnvelope */
+        ProposalHandoffDraftEnvelope: {
+            data: components["schemas"]["ProposalHandoffDraft"] | null;
+            /**
+             * Message
+             * @default Proposal handoff draft loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /** ProposalHandoffEnvelope */
         ProposalHandoffEnvelope: {
             data: components["schemas"]["ProposalHandoff"];
@@ -7435,6 +8139,7 @@ export interface components {
         ResearchCapabilities: {
             auditDownload: components["schemas"]["WorkflowCapability"];
             cacheFallback: components["schemas"]["WorkflowCapability"];
+            delivery: components["schemas"]["ResearchDeliveryCapabilities"];
             fork: components["schemas"]["WorkflowCapability"];
             keepLocal: components["schemas"]["WorkflowCapability"];
             merge: components["schemas"]["WorkflowCapability"];
@@ -7477,19 +8182,36 @@ export interface components {
              */
             deliveryId: string;
             deliveryType: components["schemas"]["ResearchDeliveryType"];
+            /** Receipt */
+            receipt?: {
+                [key: string]: components["schemas"]["JsonValue"];
+            } | null;
             /** Receiptid */
             receiptId?: string | null;
+            /** Recoveryhint */
+            recoveryHint?: string | null;
             /**
              * Runid
              * Format: uuid
              */
             runId: string;
+            /** Safeerrorcode */
+            safeErrorCode?: string | null;
             state: components["schemas"]["ResearchDeliveryState"];
             /**
              * Updatedat
              * Format: date-time
              */
             updatedAt: string;
+        };
+        /** ResearchDeliveryCapabilities */
+        ResearchDeliveryCapabilities: {
+            artifact: components["schemas"]["WorkflowCapability"];
+            export: components["schemas"]["WorkflowCapability"];
+            handoff: components["schemas"]["WorkflowCapability"];
+            proposal: components["schemas"]["WorkflowCapability"];
+            routine: components["schemas"]["WorkflowCapability"];
+            share: components["schemas"]["WorkflowCapability"];
         };
         /** ResearchDeliveryEnvelope */
         ResearchDeliveryEnvelope: {
@@ -7686,6 +8408,96 @@ export interface components {
              */
             schemaVersion: 1;
         };
+        /**
+         * ResearchRecoveryAction
+         * @enum {string}
+         */
+        ResearchRecoveryAction: "SAVE_AS_FORK" | "PULL_AND_MERGE" | "KEEP_LOCAL" | "RECALCULATE_SENSITIVITY" | "USE_CACHE_FALLBACK";
+        /** ResearchRecoveryCommandRequest */
+        ResearchRecoveryCommandRequest: {
+            action: components["schemas"]["ResearchRecoveryAction"];
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedversion */
+            expectedVersion: number;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+            localDefinition?: components["schemas"]["ResearchPlanDefinition"] | null;
+            /** Reason */
+            reason: string;
+        };
+        /** ResearchRecoveryReceipt */
+        ResearchRecoveryReceipt: {
+            action: components["schemas"]["ResearchRecoveryAction"];
+            /** Cachedrunid */
+            cachedRunId?: string | null;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Completedat
+             * Format: date-time
+             */
+            completedAt: string;
+            /** Integrityfingerprint */
+            integrityFingerprint: string;
+            /**
+             * Receiptid
+             * Format: uuid
+             */
+            receiptId: string;
+            /** Resultsha256 */
+            resultSha256?: string | null;
+            /**
+             * Runid
+             * Format: uuid
+             */
+            runId: string;
+            sensitivity?: components["schemas"]["ResearchSensitivityAssessment"] | null;
+            /**
+             * Sourceplanid
+             * Format: uuid
+             */
+            sourcePlanId: string;
+            /** Sourceplanrevision */
+            sourcePlanRevision: number;
+            /**
+             * State
+             * @default COMPLETED
+             */
+            state: string;
+            /** Targetplanid */
+            targetPlanId?: string | null;
+            /** Targetplanrevision */
+            targetPlanRevision?: number | null;
+        };
+        /** ResearchRecoveryReceiptEnvelope */
+        ResearchRecoveryReceiptEnvelope: {
+            data: components["schemas"]["ResearchRecoveryReceipt"];
+            /**
+             * Message
+             * @default Research recovery action completed.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /** ResearchResult */
         ResearchResult: {
             /** Citations */
@@ -7779,6 +8591,15 @@ export interface components {
          * @enum {string}
          */
         ResearchRunState: "QUEUED" | "RUNNING" | "PAUSED" | "PARTIAL" | "CONFLICT" | "CANCELLING" | "CANCELLED" | "FAILED" | "COMPLETED";
+        /** ResearchSensitivityAssessment */
+        ResearchSensitivityAssessment: {
+            /** Classification */
+            classification: string;
+            /** Matchedindicators */
+            matchedIndicators?: string[];
+            /** Score */
+            score: number;
+        };
         /** ResearchSourcePolicy */
         ResearchSourcePolicy: {
             /** Allowed */
@@ -7885,6 +8706,173 @@ export interface components {
          * @enum {string}
          */
         RoutineActivationAction: "ACTIVATE" | "DEACTIVATE";
+        /** RoutineAdvancedCommand */
+        RoutineAdvancedCommand: {
+            /**
+             * Canapprove
+             * @default false
+             */
+            canApprove: boolean;
+            /** Checkeruserid */
+            checkerUserId?: string | null;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            kind: components["schemas"]["RoutineAdvancedCommandKind"];
+            /** Makeruserid */
+            makerUserId: string;
+            /** Owneruserid */
+            ownerUserId: string;
+            problem?: components["schemas"]["RoutineAdvancedCommandProblem"] | null;
+            proposedDefinition: components["schemas"]["RoutineDefinition"] | null;
+            receipt?: components["schemas"]["RoutineAdvancedCommandReceipt"] | null;
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+            state: components["schemas"]["RoutineAdvancedCommandState"];
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+            /** Version */
+            version: number;
+        };
+        /** RoutineAdvancedCommandEnvelope */
+        RoutineAdvancedCommandEnvelope: {
+            data: components["schemas"]["RoutineAdvancedCommand"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * RoutineAdvancedCommandKind
+         * @enum {string}
+         */
+        RoutineAdvancedCommandKind: "CHANGE_APPROVAL" | "AGENT_ENGINE_SWITCH" | "WORM_EVIDENCE_DELIVERY" | "OAUTH_REAUTHORIZATION" | "TEMPORARY_BUDGET_INCREASE" | "OPERATOR_ESCALATION" | "PROVIDER_ROLLBACK";
+        /** RoutineAdvancedCommandListEnvelope */
+        RoutineAdvancedCommandListEnvelope: {
+            /** Data */
+            data: components["schemas"]["RoutineAdvancedCommand"][];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** RoutineAdvancedCommandProblem */
+        RoutineAdvancedCommandProblem: {
+            /** Code */
+            code: string;
+            /** Detail */
+            detail: string;
+            /** Recoveryhint */
+            recoveryHint: string;
+        };
+        /** RoutineAdvancedCommandReceipt */
+        RoutineAdvancedCommandReceipt: {
+            /** Appliedrevision */
+            appliedRevision?: number | null;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Completedat
+             * Format: date-time
+             */
+            completedAt: string;
+            kind: components["schemas"]["RoutineAdvancedCommandKind"];
+            providerOutcome: components["schemas"]["RoutineAdvancedProviderOutcome"];
+            /** Providerreceiptid */
+            providerReceiptId: string;
+            /**
+             * Receiptid
+             * Format: uuid
+             */
+            receiptId: string;
+            /** Resultsha256 */
+            resultSha256: string;
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "SUCCEEDED" | "PARTIAL";
+        };
+        /**
+         * RoutineAdvancedCommandState
+         * @enum {string}
+         */
+        RoutineAdvancedCommandState: "AWAITING_APPROVAL" | "RUNNING" | "SUCCEEDED" | "PARTIAL" | "FAILED" | "REJECTED";
+        /** RoutineAdvancedProviderOutcome */
+        RoutineAdvancedProviderOutcome: {
+            /** Appliedpayload */
+            appliedPayload: components["schemas"]["RoutineChangeApprovalPayload"] | components["schemas"]["RoutineAgentEngineSwitchPayload"] | components["schemas"]["RoutineWormEvidenceDeliveryPayload"] | components["schemas"]["RoutineOAuthReauthorizationPayload"] | components["schemas"]["RoutineTemporaryBudgetIncreasePayload"] | components["schemas"]["RoutineOperatorEscalationPayload"] | components["schemas"]["RoutineProviderRollbackPayload"];
+            /** Evidenceref */
+            evidenceRef: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            kind: components["schemas"]["RoutineAdvancedCommandKind"];
+            /**
+             * Outcome
+             * @enum {string}
+             */
+            outcome: "APPLIED" | "PARTIALLY_APPLIED";
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+        };
+        /** RoutineAgentEngineSwitchPayload */
+        RoutineAgentEngineSwitchPayload: {
+            /**
+             * Action
+             * @default APPLY
+             * @enum {string}
+             */
+            action: "APPLY" | "ROLLBACK";
+            /** Agentid */
+            agentId?: string | null;
+            /** Engineid */
+            engineId?: string | null;
+            /** Expiresat */
+            expiresAt?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "AGENT_ENGINE_SWITCH";
+        };
         /** RoutineBudget */
         RoutineBudget: {
             /**
@@ -7907,7 +8895,7 @@ export interface components {
          * RoutineCadence
          * @enum {string}
          */
-        RoutineCadence: "DAILY" | "WEEKDAYS" | "WEEKLY";
+        RoutineCadence: "DAILY" | "WEEKDAYS" | "WEEKLY" | "MONTHLY";
         /** RoutineCapabilities */
         RoutineCapabilities: {
             /**
@@ -8038,6 +9026,15 @@ export interface components {
              */
             success: boolean;
         };
+        /** RoutineChangeApprovalPayload */
+        RoutineChangeApprovalPayload: {
+            definition: components["schemas"]["RoutineDefinition"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "CHANGE_APPROVAL";
+        };
         /** RoutineCompensationPolicy */
         RoutineCompensationPolicy: {
             /**
@@ -8082,6 +9079,8 @@ export interface components {
             localTime?: string | null;
             /** Locale */
             locale: string;
+            /** Monthday */
+            monthDay?: number | null;
             /** Name */
             name: string;
             notificationPolicy?: components["schemas"]["RoutineNotificationPolicy"];
@@ -8268,6 +9267,9 @@ export interface components {
              * Format: uuid
              */
             receiptId: string;
+            recoveryAction?: components["schemas"]["RoutineRecoveryAction"] | null;
+            /** Recoverycommandid */
+            recoveryCommandId?: string | null;
             /** Resultsha256 */
             resultSha256: string;
             /**
@@ -8327,6 +9329,9 @@ export interface components {
              */
             proposalsCreated: number;
             receipt?: components["schemas"]["RoutineExecutionReceipt"] | null;
+            recoveryAction?: components["schemas"]["RoutineRecoveryAction"] | null;
+            /** Recoverycommandid */
+            recoveryCommandId?: string | null;
             /** Recoveryhint */
             recoveryHint?: string | null;
             /**
@@ -8461,6 +9466,54 @@ export interface components {
          * @enum {string}
          */
         RoutineNotificationState: "NOT_REQUIRED" | "DELIVERED" | "NOT_CONFIGURED" | "FAILED";
+        /** RoutineOAuthReauthorizationPayload */
+        RoutineOAuthReauthorizationPayload: {
+            /** Connectionreference */
+            connectionReference: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "OAUTH_REAUTHORIZATION";
+            source: components["schemas"]["RoutineSource"];
+        };
+        /** RoutineOperatorEscalationPayload */
+        RoutineOperatorEscalationPayload: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "OPERATOR_ESCALATION";
+            /** Routinerunid */
+            routineRunId?: string | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "P1" | "P2" | "P3";
+            /** Summary */
+            summary: string;
+        };
+        /** RoutineProviderRollbackPayload */
+        RoutineProviderRollbackPayload: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "PROVIDER_ROLLBACK";
+            /** Providerreceiptid */
+            providerReceiptId: string;
+            /**
+             * Routinerunid
+             * Format: uuid
+             */
+            routineRunId: string;
+        };
+        /**
+         * RoutineRecoveryAction
+         * @enum {string}
+         */
+        RoutineRecoveryAction: "SKIP_QUARANTINED_AND_CONTINUE";
         /** RoutineRetryPolicy */
         RoutineRetryPolicy: {
             /**
@@ -8524,7 +9577,7 @@ export interface components {
          * RoutineRunCommand
          * @enum {string}
          */
-        RoutineRunCommand: "RETRY" | "CANCEL" | "COMPENSATE";
+        RoutineRunCommand: "RETRY" | "CANCEL" | "COMPENSATE" | "SKIP_QUARANTINED_AND_CONTINUE";
         /**
          * RoutineRunState
          * @enum {string}
@@ -8540,6 +9593,34 @@ export interface components {
          * @enum {string}
          */
         RoutineSource: "WORK_ITEM" | "MAIL" | "CALENDAR";
+        /** RoutineTemporaryBudgetIncreasePayload */
+        RoutineTemporaryBudgetIncreasePayload: {
+            /**
+             * Additionalminutesperrun
+             * @default 0
+             */
+            additionalMinutesPerRun: number;
+            /**
+             * Additionalruns
+             * @default 0
+             */
+            additionalRuns: number;
+            /**
+             * Additionaltokensperrun
+             * @default 0
+             */
+            additionalTokensPerRun: number;
+            /**
+             * Expiresat
+             * Format: date-time
+             */
+            expiresAt: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "TEMPORARY_BUDGET_INCREASE";
+        };
         /**
          * RoutineTriggerType
          * @enum {string}
@@ -8583,6 +9664,26 @@ export interface components {
             /** Rollbacktargetrevision */
             rollbackTargetRevision?: number | null;
             snapshot: components["schemas"]["PersonalRoutine"];
+        };
+        /** RoutineWormEvidenceDeliveryPayload */
+        RoutineWormEvidenceDeliveryPayload: {
+            /**
+             * Evidencescope
+             * @enum {string}
+             */
+            evidenceScope: "ROUTINE_HISTORY" | "LATEST_RUN" | "FULL_AUDIT";
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "WORM_EVIDENCE_DELIVERY";
+            /**
+             * Legalhold
+             * @default false
+             */
+            legalHold: boolean;
+            /** Retentiondays */
+            retentionDays: number;
         };
         /** RoutingPolicySummary */
         RoutingPolicySummary: {
@@ -8753,6 +9854,20 @@ export interface components {
              */
             success: boolean;
         };
+        /** SaveProposalHandoffDraftRequest */
+        SaveProposalHandoffDraftRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedversion */
+            expectedVersion: number;
+            /** Reviewedinputs */
+            reviewedInputs?: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+        };
         /** SecureAttachment */
         SecureAttachment: {
             /**
@@ -8772,6 +9887,15 @@ export interface components {
             createdAt: string;
             /** Deletedat */
             deletedAt?: string | null;
+            /**
+             * Deletionattemptcount
+             * @default 0
+             */
+            deletionAttemptCount: number;
+            /** Deletionlasterrorcode */
+            deletionLastErrorCode?: string | null;
+            /** Deletionreceiptid */
+            deletionReceiptId?: string | null;
             /** Filename */
             fileName: string;
             /** Mediatype */
@@ -9228,6 +10352,71 @@ export interface components {
          * @enum {string}
          */
         TeamArtifactPreflightState: "READY" | "PARTIAL" | "PERMISSION_DENIED" | "EXPIRED";
+        /** TeamArtifactRemediationEnvelope */
+        TeamArtifactRemediationEnvelope: {
+            data: components["schemas"]["TeamArtifactRemediationReceipt"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * TeamArtifactRemediationKind
+         * @enum {string}
+         */
+        TeamArtifactRemediationKind: "AUTOMATIC_MASKING" | "SYNTHETIC_REPLACEMENT" | "REVIEW_NOTIFICATION";
+        /** TeamArtifactRemediationReceipt */
+        TeamArtifactRemediationReceipt: {
+            action: components["schemas"]["TeamArtifactRemediationKind"];
+            /** Affectedcount */
+            affectedCount: number;
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            /** Artifactrevision */
+            artifactRevision: number;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /**
+             * Completedat
+             * Format: date-time
+             */
+            completedAt: string;
+            /** Findingmanifestsha256 */
+            findingManifestSha256?: string | null;
+            /** Providerreceiptid */
+            providerReceiptId?: string | null;
+            /**
+             * Receiptid
+             * Format: uuid
+             */
+            receiptId: string;
+            /** Remediatedcodes */
+            remediatedCodes?: string[];
+            /** Residualfindingcount */
+            residualFindingCount?: number | null;
+            /** Resultcontentsha256 */
+            resultContentSha256?: string | null;
+            /** Resultsha256 */
+            resultSha256: string;
+            /** Sourcecontentfingerprint */
+            sourceContentFingerprint?: string | null;
+            /** State */
+            state: string;
+            /** Workspacerevision */
+            workspaceRevision?: number | null;
+        };
         /**
          * TeamArtifactReviewDecision
          * @enum {string}
@@ -9448,9 +10637,10 @@ export interface components {
         /** TokenBudgetSummary */
         TokenBudgetSummary: {
             /** Budgettokens */
-            budgetTokens: number;
+            budgetTokens?: number | null;
             /** Consumedtokens */
             consumedTokens: number;
+            enforcementActivationState: components["schemas"]["EnforcementActivationState"];
             /** Policymode */
             policyMode: string;
             /** Projectedtokens */
@@ -10741,6 +11931,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    command_capabilities_v1_admin_control_plane_command_capabilities_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCommandCapabilitiesEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -13124,6 +14351,52 @@ export interface operations {
             };
         };
     };
+    execute_team_artifact_remediation_v1_artifact_collaboration__artifact_id__remediation_actions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExecuteTeamArtifactRemediationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamArtifactRemediationEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_team_artifact_workspace_v1_artifact_collaboration__artifact_id__workspace_get: {
         parameters: {
             query?: never;
@@ -14431,6 +15704,46 @@ export interface operations {
             };
         };
     };
+    download_attachment_audit_report_v1_attachments_audit_reports__report_id__download_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                report_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     attachment_capabilities_v1_attachments_capabilities_get: {
         parameters: {
             query?: never;
@@ -14456,6 +15769,98 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AttachmentCapabilitiesEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_attachment_audit_report_v1_attachments_conversations__conversation_id__audit_reports_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAttachmentAuditReportRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentAuditReportReceiptEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    detach_conversation_attachments_v1_attachments_conversations__conversation_id__detach_all_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DetachAllAttachmentsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentDetachReceiptEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -15101,6 +16506,44 @@ export interface operations {
             };
         };
     };
+    download_personal_data_receipt_index_v1_personal_data_deletions_evidence_receipt_index_json_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_personal_data_deletion_v1_personal_data_deletions__deletion_job_id__get: {
         parameters: {
             query?: never;
@@ -15128,6 +16571,175 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeletionJobEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    execute_personal_data_evidence_action_v1_personal_data_deletions__deletion_job_id__evidence_actions__action__post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                deletion_job_id: string;
+                action: components["schemas"]["PersonalDataEvidenceAction"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePersonalDataEvidenceCommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonalDataEvidenceCommandEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_personal_data_evidence_action_v1_personal_data_deletions__deletion_job_id__evidence_actions__command_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                deletion_job_id: string;
+                command_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonalDataEvidenceCommandEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_personal_data_evidence_action_v1_personal_data_deletions__deletion_job_id__evidence_actions__command_id__download_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                deletion_job_id: string;
+                command_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_personal_data_legal_hold_evidence_v1_personal_data_deletions__deletion_job_id__evidence_legal_hold_json_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                deletion_job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -15293,6 +16905,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProposalHandoffEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_proposal_handoff_draft_v1_proposal_handoffs__handoff_id__drafts_current_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                handoff_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalHandoffDraftEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_proposal_handoff_draft_v1_proposal_handoffs__handoff_id__drafts_current_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                handoff_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveProposalHandoffDraftRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalHandoffDraftEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -16201,6 +17899,46 @@ export interface operations {
             };
         };
     };
+    download_research_pdf_v1_research_runs__run_id__downloads_pdf_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     download_research_raw_v1_research_runs__run_id__downloads_raw_get: {
         parameters: {
             query?: never;
@@ -16465,6 +18203,52 @@ export interface operations {
             };
         };
     };
+    recover_research_run_v1_research_runs__run_id__recovery_actions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResearchRecoveryCommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResearchRecoveryReceiptEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_research_routine_v1_research_runs__run_id__routines_post: {
         parameters: {
             query?: never;
@@ -16639,6 +18423,92 @@ export interface operations {
             };
         };
     };
+    list_pending_routine_approvals_v1_routines_advanced_commands_pending_approvals_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineAdvancedCommandListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_routine_advanced_command_v1_routines_advanced_commands__command_id__decision_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                command_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideRoutineAdvancedCommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineAdvancedCommandEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_routine_capabilities_v1_routines_capabilities_get: {
         parameters: {
             query?: never;
@@ -16796,6 +18666,133 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_routine_advanced_commands_v1_routines__routine_id__advanced_commands_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineAdvancedCommandListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_routine_advanced_command_v1_routines__routine_id__advanced_commands_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoutineAdvancedCommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineAdvancedCommandEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_routine_advanced_command_v1_routines__routine_id__advanced_commands__command_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+                command_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineAdvancedCommandEnvelope"];
                 };
             };
             /** @description Validation Error */

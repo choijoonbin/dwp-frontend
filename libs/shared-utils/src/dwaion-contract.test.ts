@@ -105,7 +105,10 @@ describe('dwaion contract', () => {
         planHash: 'c'.repeat(64),
         reviewedInputs: { title: 'Cloud capacity', businessJustification: 'Verified demand' },
         sourceReferences: ['source-1'],
-        origin: origin(),
+        origin: {
+          ...origin(),
+          sourceRequestId: '00000000-0000-4000-8000-000000000012',
+        },
       },
       now
     );
@@ -124,17 +127,46 @@ describe('dwaion contract', () => {
       state.dwaionProposalHandoff
     );
     expect(
-      parseDwaionProposalHandoffBinding({
-        ...state,
-        dwaionProposalHandoff: { ...state.dwaionProposalHandoff, proposalId: crypto.randomUUID() },
-      }, now.getTime())
+      parseDwaionProposalHandoffBinding(
+        {
+          ...state,
+          dwaionProposalHandoff: {
+            ...state.dwaionProposalHandoff,
+            proposalId: crypto.randomUUID(),
+          },
+        },
+        now.getTime()
+      )
     ).toBeNull();
     expect(
-      parseDwaionProposalHandoffBinding({
-        ...state,
-        dwaionProposalHandoff: { ...state.dwaionProposalHandoff, handoffId: crypto.randomUUID() },
-      }, now.getTime())
+      parseDwaionProposalHandoffBinding(
+        {
+          ...state,
+          dwaionProposalHandoff: { ...state.dwaionProposalHandoff, handoffId: crypto.randomUUID() },
+        },
+        now.getTime()
+      )
     ).toBeNull();
+    const mailState = {
+      dwaionHandoff: {
+        ...state.dwaionHandoff,
+        actionKey: 'MAIL.DRAFT.CREATE',
+        reviewedInputs: {
+          to: ['owner@example.com'],
+          subject: 'Reviewed subject',
+          body: 'Reviewed body',
+        },
+      },
+      dwaionProposalHandoff: {
+        ...state.dwaionProposalHandoff,
+        actionKey: 'MAIL.DRAFT.CREATE',
+      },
+    };
+    expect(parseDwaionProposalHandoffBinding(mailState, now.getTime())).toMatchObject({
+      actionKey: 'MAIL.DRAFT.CREATE',
+      handoffId: state.dwaionProposalHandoff.handoffId,
+      proposalId: state.dwaionProposalHandoff.proposalId,
+    });
   });
 });
 

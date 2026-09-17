@@ -5,16 +5,13 @@ import Box from '@mui/material/Box';
 
 import { groupTargetId } from './app-launchpad-dnd';
 import {
-  HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
-  HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH,
-  HOME_LAUNCHPAD_VISIBLE_COLUMNS,
+  HOME_LAUNCHPAD_FIVE_ITEM_COLUMNS_MIN_WIDTH,
+  HOME_LAUNCHPAD_FOUR_ITEM_COLUMNS_MIN_WIDTH,
+  HOME_LAUNCHPAD_THREE_ITEM_COLUMNS_MIN_WIDTH,
   HOME_LAUNCHPAD_VISIBLE_ROWS,
+  homeLaunchpadFixedItemColumnTemplate,
 } from '../../components/workspace-composer/home-launchpad-layout-contract';
-import {
-  LAUNCHPAD_TILE_HEIGHT,
-  LAUNCHPAD_TILE_HEIGHT_CSS,
-  LAUNCHPAD_TILE_WIDTH,
-} from './app-launchpad-styles';
+import { LAUNCHPAD_TILE_HEIGHT, LAUNCHPAD_TILE_HEIGHT_CSS } from './app-launchpad-styles';
 
 import type { HomeAppGroupId } from '../../components/workspace-composer/app-launchpad-model';
 
@@ -57,7 +54,6 @@ export function AppLaunchpadGroupList({
     data: { groupId, type: 'group-target' },
     disabled: dragDisabled,
   });
-
   return (
     <SortableContext items={sortableItemIds} strategy={rectSortingStrategy}>
       <Box
@@ -65,8 +61,9 @@ export function AppLaunchpadGroupList({
         ref={dropTarget.setNodeRef}
         data-launchpad-group-target={groupId}
         aria-label={groupName}
+        data-launchpad-item-count={itemIds.length}
         sx={{
-          '--launchpad-tile-width': flow ? '72px' : '100%',
+          '--launchpad-tile-width': '100%',
           '--launchpad-label-height': flow ? '3.5em' : undefined,
           '--launchpad-label-line-height': flow
             ? (theme) => theme.typography.caption.lineHeight ?? 1.5
@@ -78,18 +75,10 @@ export function AppLaunchpadGroupList({
           boxSizing: 'border-box',
           listStyle: 'none',
           display: 'grid',
-          gridTemplateColumns: flow
-            ? `repeat(auto-fill, ${LAUNCHPAD_TILE_WIDTH}px)`
-            : immersive
-              ? `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`
-              : {
-                  xs: 'repeat(4, minmax(0, 1fr))',
-                  lg: 'repeat(3, minmax(0, 1fr))',
-                  xl: 'repeat(5, minmax(0, 1fr))',
-                },
+          gridTemplateColumns: homeLaunchpadFixedItemColumnTemplate(2),
           gridAutoRows: flow ? LAUNCHPAD_TILE_HEIGHT_CSS : `${LAUNCHPAD_TILE_HEIGHT}px`,
           justifyItems: immersive ? 'stretch' : 'center',
-          justifyContent: flow ? 'start' : 'normal',
+          justifyContent: 'stretch',
           columnGap: flow ? 0.75 : immersive ? 0 : { xs: 0.5, md: 1 },
           rowGap: immersive ? `${ROW_GAP}px` : `${HOME_ROW_GAP}px`,
           height: flow
@@ -144,21 +133,20 @@ export function AppLaunchpadGroupList({
                 overflowWrap: 'anywhere',
               }
             : undefined,
-          [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]: flow
-            ? {
-                '--launchpad-tile-width': '100%',
-                gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
-                justifyContent: 'center',
-                '& [data-launchpad-edit-frame]': { width: 48, height: 48 },
-                '& [data-launchpad-glyph]': { scale: `${48 / 52}` },
-              }
-            : undefined,
-          [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]: flow
-            ? {
-                gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
-                justifyContent: 'center',
-              }
-            : undefined,
+          [`@container launchpad-group (min-width: ${HOME_LAUNCHPAD_THREE_ITEM_COLUMNS_MIN_WIDTH}px)`]:
+            {
+              gridTemplateColumns: homeLaunchpadFixedItemColumnTemplate(3),
+            },
+          [`@container launchpad-group (min-width: ${HOME_LAUNCHPAD_FOUR_ITEM_COLUMNS_MIN_WIDTH}px)`]:
+            {
+              gridTemplateColumns: homeLaunchpadFixedItemColumnTemplate(4),
+            },
+          [`@container launchpad-group (min-width: ${HOME_LAUNCHPAD_FIVE_ITEM_COLUMNS_MIN_WIDTH}px)`]:
+            {
+              gridTemplateColumns: homeLaunchpadFixedItemColumnTemplate(5),
+              '& [data-launchpad-edit-frame]': flow ? { width: 48, height: 48 } : undefined,
+              '& [data-launchpad-glyph]': flow ? { scale: `${48 / 52}` } : undefined,
+            },
         }}
       >
         {children}

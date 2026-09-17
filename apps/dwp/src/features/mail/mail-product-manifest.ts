@@ -7,6 +7,30 @@ const capability = (capabilityContractKey: string) => ({
   capabilityContractKey,
 });
 
+const anyCapability = (capabilityContractKeys: readonly [string, ...string[]]) => ({
+  type: 'capability-expression' as const,
+  mode: 'ANY' as const,
+  capabilityContractKeys,
+});
+
+const RETENTION_CAPABILITIES = [
+  'mail.policy.read',
+  'mail.management.hold.manage',
+  'mail.management.purge.preview',
+  'mail.management.purge.authorize',
+  'mail.management.purge.execute',
+  'mail.management.evidence.export',
+] as const;
+const DELIVERY_CAPABILITIES = [
+  'mail.operations.read',
+  'mail.management.audit.read',
+  'mail.management.audit.reveal',
+  'mail.management.delivery.reconcile',
+  'mail.management.delivery.retry',
+  'mail.management.delivery.cancel',
+  'mail.management.evidence.export',
+] as const;
+
 export const MAIL_WORK_NAVIGATION = projectProductSurfaceNavigation(MAIL_NAVIGATION, {
   home: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   inbox: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
@@ -57,10 +81,13 @@ export const MAIL_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(MAIL_N
   },
   'admin-writing-assets': { taskKind: 'administration', access: capability('mail.policy.read') },
   'admin-policies': { taskKind: 'administration', access: capability('mail.policy.read') },
-  'admin-retention': { taskKind: 'administration', access: capability('mail.policy.read') },
+  'admin-retention': {
+    taskKind: 'administration',
+    access: anyCapability(RETENTION_CAPABILITIES),
+  },
   'admin-delivery-audit': {
     taskKind: 'operations',
-    access: capability('mail.operations.read'),
+    access: anyCapability(DELIVERY_CAPABILITIES),
   },
 });
 
@@ -101,6 +128,16 @@ export const MAIL_PRODUCT_MANIFEST = defineProductManifest({
           'mail.connections.read',
           'mail.shared-inboxes.read',
           'mail.policy.read',
+          'mail.management.hold.manage',
+          'mail.management.purge.preview',
+          'mail.management.purge.authorize',
+          'mail.management.purge.execute',
+          'mail.management.audit.read',
+          'mail.management.audit.reveal',
+          'mail.management.delivery.reconcile',
+          'mail.management.delivery.retry',
+          'mail.management.delivery.cancel',
+          'mail.management.evidence.export',
         ],
         requiresProductEntitlement: false,
       },

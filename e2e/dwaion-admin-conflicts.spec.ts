@@ -84,7 +84,11 @@ for (const lifecycleState of ['DRAFT', 'ACTIVE'] as const) {
     const { requests, state } = await mockDwaionAdminStitch(page);
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/dwaion/admin/agents');
-    await page.getByRole('button', { name: /DWP work assistant/ }).click();
+    await page
+      .getByRole('button', {
+        name: /DWP work assistant — governed reference review rev \d+ · DRAFT/u,
+      })
+      .click();
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Edit agent' });
     const draftName = 'Reviewed agent metadata remains in this draft';

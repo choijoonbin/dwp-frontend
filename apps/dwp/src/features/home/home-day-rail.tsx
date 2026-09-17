@@ -12,7 +12,6 @@ import {
   PanelsTopLeft,
   RefreshCw,
   Settings2,
-  Sparkles,
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -147,9 +146,9 @@ export function HomeDayRail({
         data-testid="home-hero"
         sx={{
           width: 1,
-          maxWidth: 1192,
+          maxWidth: 'var(--classic-shell-width)',
           mx: 'auto',
-          px: { xs: 1.25, sm: 2, md: 3 },
+          px: { xs: 1.25, sm: 2, md: 'var(--classic-shell-gutter)' },
           pt: { xs: 1, md: 2.25 },
           '@media (forced-colors: active)': { bgcolor: 'Canvas', color: 'CanvasText' },
         }}
@@ -202,49 +201,6 @@ export function HomeDayRail({
             >
               {t('classic.portalTimestamp')}
             </Typography>
-          </Stack>
-
-          <Stack
-            data-classic-mode-selector
-            role="group"
-            aria-label={t('classic.modeAriaLabel')}
-            direction="row"
-            sx={{
-              flex: '0 0 auto',
-              p: 0.375,
-              bgcolor: 'action.hover',
-              borderRadius: foundationTokens.home.radius.control,
-              '& .MuiButton-root': {
-                minWidth: 0,
-                minHeight: { xs: 36, md: 38 },
-                px: { xs: 1, md: 1.5 },
-                fontSize: { xs: 11, md: 12 },
-              },
-            }}
-          >
-            <ActionButton
-              aria-current="page"
-              intent="quiet"
-              startIcon={<Building2 size={15} aria-hidden="true" />}
-              sx={{ bgcolor: 'background.paper', color: 'primary.main', boxShadow: 1 }}
-            >
-              <Box
-                component="span"
-                sx={{ display: { xs: 'none', sm: 'inline' } }}
-              >
-                {t('classic.classicModePrefix')}
-              </Box>
-              {t('classic.portalBadge')}
-            </ActionButton>
-            <ActionButton
-              intent="quiet"
-              startIcon={<Sparkles size={15} aria-hidden="true" />}
-              onClick={onOpenStudio ?? onStartEditing}
-              disabled={personalizationBusy || (!onOpenStudio && !onStartEditing)}
-              sx={{ display: { xs: 'none', md: 'inline-flex' } }}
-            >
-              {t('classic.flowModeLabel')}
-            </ActionButton>
           </Stack>
         </Stack>
 

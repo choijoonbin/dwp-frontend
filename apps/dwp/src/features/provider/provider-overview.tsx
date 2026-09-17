@@ -51,6 +51,10 @@ import {
   ProviderSectionHeading,
   ProviderStatusChip,
 } from './provider-ui';
+import {
+  providerCommandCenterPresentationState,
+  providerCustomerImpactTone,
+} from './provider-command-center-presentation';
 import { providerOperationalSnapshotState } from './provider-operational-freshness';
 
 type QueueFilter = 'ALL' | 'CRITICAL' | 'REVIEW';
@@ -182,6 +186,7 @@ export function ProviderOverview() {
     ? (data.estate.activeTenants / data.estate.tenants) * 100
     : 0;
   const criticalActions = data.actionQueue.filter((item) => item.severity === 'CRITICAL').length;
+  const operatingState = providerCommandCenterPresentationState(data);
   const primaryAction = data.actionQueue[0];
   const reliabilityAvailable = Boolean(reliability.data && !reliability.isError);
   const objectiveRisk = reliabilityAvailable
@@ -198,9 +203,9 @@ export function ProviderOverview() {
     ),
   });
   const operatingTone =
-    data.operatingState === 'CRITICAL'
+    operatingState === 'CRITICAL'
       ? 'error'
-      : data.operatingState === 'ATTENTION'
+      : operatingState === 'ATTENTION'
         ? 'warning'
         : 'success';
 
@@ -286,7 +291,7 @@ export function ProviderOverview() {
                 bgcolor: 'background.paper',
               }}
             >
-              {data.operatingState === 'HEALTHY' ? (
+              {operatingState === 'HEALTHY' ? (
                 <ShieldCheck size={20} />
               ) : (
                 <AlertTriangle size={20} />
@@ -294,10 +299,10 @@ export function ProviderOverview() {
             </Box>
             <Box minWidth={0}>
               <Typography component="h2" variant="h5">
-                {t(`command.state.${data.operatingState}`)}
+                {t(`command.state.${operatingState}`)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                {t(`command.pulse.${data.operatingState}`, {
+                {t(`command.pulse.${operatingState}`, {
                   actions: data.actionQueue.length,
                   critical: criticalActions,
                   incidents: data.activeIncidents,
@@ -388,7 +393,7 @@ export function ProviderOverview() {
           value={formatNumber(data.activeIncidents)}
           detail={t('command.signals.customerImpactDetail', { count: serviceTotals.impactSignals })}
           icon={<AlertTriangle size={18} />}
-          tone={data.activeIncidents ? 'error' : 'success'}
+          tone={providerCustomerImpactTone(data.activeIncidents, serviceTotals.impactSignals)}
           actionLabel={t('command.signals.openIncidents')}
           onClick={() => navigate('/provider/health')}
         />

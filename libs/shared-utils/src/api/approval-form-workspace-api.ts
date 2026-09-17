@@ -163,12 +163,17 @@ export async function getApprovalFormWorkspacePublishReview(
   contextScopeKey?: string,
   signal?: AbortSignal
 ) {
-  return readApprovalFormWorkspaceReview(
-    await read<ApprovalFormWorkspaceReview>(
+  const [review, reviewRequest] = await Promise.all([
+    read<Omit<ApprovalFormWorkspaceReview, 'reviewRequest'>>(
       `${path(formId)}/publish-review`,
       contextScopeKey,
       signal
     ),
+    getApprovalFormPublishReviewRequest(formId, contextScopeKey, signal),
+  ]);
+  if (reviewRequest === null) invalidApprovalFormWorkspace();
+  return readApprovalFormWorkspaceReview(
+    { ...review, reviewRequest },
     formId
   );
 }

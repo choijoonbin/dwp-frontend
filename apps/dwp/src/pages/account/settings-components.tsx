@@ -138,21 +138,34 @@ export function AutoSaveStatus({
   lastSavedAt: string | null;
 }) {
   const { t } = useTranslation('account');
-  const Icon = state === 'saving' ? LoaderCircle : state === 'error' ? CircleAlert : Check;
+  const Icon =
+    state === 'saving'
+      ? LoaderCircle
+      : state === 'error' || state === 'conflict'
+        ? CircleAlert
+        : Check;
   const color =
-    state === 'error' ? 'error.main' : state === 'saved' ? 'success.main' : 'text.secondary';
+    state === 'error'
+      ? 'error.main'
+      : state === 'conflict'
+        ? 'warning.main'
+        : state === 'saved'
+          ? 'success.main'
+          : 'text.secondary';
   const label =
     state === 'saving'
       ? t('personalPreferences.saving')
-      : state === 'error'
-        ? t('personalPreferences.saveStateError')
-        : state === 'saved'
-          ? t('personalPreferences.saved', {
-              time: lastSavedAt
-                ? formatDate(lastSavedAt, { timeStyle: 'short' })
-                : t('personalPreferences.justNow'),
-            })
-          : t('personalPreferences.autoSave');
+      : state === 'conflict'
+        ? t('personalPreferences.conflict.status')
+        : state === 'error'
+          ? t('personalPreferences.saveStateError')
+          : state === 'saved'
+            ? t('personalPreferences.saved', {
+                time: lastSavedAt
+                  ? formatDate(lastSavedAt, { timeStyle: 'short' })
+                  : t('personalPreferences.justNow'),
+              })
+            : t('personalPreferences.autoSave');
 
   return (
     <Box

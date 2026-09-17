@@ -1,11 +1,16 @@
 // @vitest-environment jsdom
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { fireEvent, getByLabelText } from '@testing-library/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MailAdminOperationsContent } from './mail-admin-operations-ui';
 
-import type { MailAdminOverview } from '@dwp-frontend/shared-utils';
+import type {
+  MailAdminOverview,
+  MailLegalHoldReleasePreview,
+  MailRetentionSnapshot,
+} from '@dwp-frontend/shared-utils';
 import type { MailDeliveryRecoveryEvidence } from './mail-admin-operations-model';
 
 vi.mock('react-i18next', () => ({
@@ -16,6 +21,13 @@ vi.mock('react-i18next', () => ({
 }));
 
 const NOW = Date.parse('2026-09-16T06:00:00.000Z');
+const PURGE_SNAPSHOT_RESOURCES = {
+  resourceCounts: { THREADS: 4, MESSAGES: 8, ATTACHMENTS: 2, DRAFTS: 1 },
+  heldResourceCounts: { THREADS: 0, MESSAGES: 0, ATTACHMENTS: 0, DRAFTS: 0 },
+  exclusionReasonCounts: { LEGAL_HOLD: 0, IMMUTABLE_EVIDENCE: 0 },
+  resourceTypes: ['THREADS', 'MESSAGES', 'ATTACHMENTS', 'DRAFTS'] as const,
+  scope: { tenant: true },
+};
 
 const overview: MailAdminOverview = {
   personalAccounts: 1,
@@ -42,6 +54,69 @@ const overview: MailAdminOverview = {
   providerCatalog: [],
   generatedAt: '2026-09-16T05:59:30.000Z',
 };
+
+const activeHold = {
+  holdId: 'hold-1',
+  name: 'Investigation hold',
+  safeCaseRef: 'CASE-42',
+  scope: { accountIds: ['account-1'] },
+  status: 'ACTIVE' as const,
+  startsAt: '2026-09-01T00:00:00.000Z',
+  expiresAt: '2026-12-31T23:59:59.999Z',
+  version: 4,
+};
+
+const releaseCounts = { THREADS: 2, MESSAGES: 5, ATTACHMENTS: 1, DRAFTS: 0 };
+
+function releasePreview(state: MailLegalHoldReleasePreview['state']): MailLegalHoldReleasePreview {
+  return {
+    releasePreviewId: 'release-preview-1',
+    holdId: activeHold.holdId,
+    requesterUserId: 11,
+    holdVersion: activeHold.version,
+    policyVersion: 3,
+    holdScope: activeHold.scope,
+    retentionBoundary: '2026-08-01T00:00:00.000Z',
+    fingerprint: 'sha256:release-review',
+    impact: {
+      affectedResourceCounts: releaseCounts,
+      currentlyHeldResourceCounts: releaseCounts,
+      purgeSafeAfterReleaseResourceCounts: {
+        THREADS: 1,
+        MESSAGES: 3,
+        ATTACHMENTS: 0,
+        DRAFTS: 0,
+      },
+      stillProtectedAfterReleaseResourceCounts: {
+        THREADS: 1,
+        MESSAGES: 2,
+        ATTACHMENTS: 1,
+        DRAFTS: 0,
+      },
+      providerCapabilityRequiredResourceCounts: {
+        THREADS: 0,
+        MESSAGES: 1,
+        ATTACHMENTS: 0,
+        DRAFTS: 0,
+      },
+    },
+    state,
+    distinctApproverCount: state === 'APPROVED' || state === 'RELEASED' ? 1 : 0,
+    approvals: [],
+    generatedAt: '2026-09-16T05:59:00.000Z',
+    expiresAt: '2026-09-16T06:10:00.000Z',
+  };
+}
+
+function retentionWithHold(): MailRetentionSnapshot {
+  return {
+    generatedAt: '2026-09-16T05:59:30.000Z',
+    policyVersion: 3,
+    resourcePolicies: [],
+    holds: [activeHold],
+    purgeJobs: [],
+  };
+}
 
 function delivery(evidenceGeneratedAt: string): MailDeliveryRecoveryEvidence {
   return {
@@ -123,7 +198,109 @@ describe('Mail admin delivery recovery controls', () => {
     );
     expect(retry?.disabled).toBe(false);
     await act(async () => retry?.click());
+    expect(onRetry).not.toHaveBeenCalled();
+    const confirm = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Confirm retry'
+    );
+    expect(confirm).toBeDefined();
+    await act(async () => confirm?.click());
     expect(onRetry).toHaveBeenCalledWith('delivery-1');
+  });
+
+  it('rechecks current retry permission and evidence while the confirmation is open', async () => {
+    const onRetry = vi.fn();
+    const render = async (canRetryDeliveries: boolean, evidenceGeneratedAt: string) =>
+      act(async () =>
+        root.render(
+          <MailAdminOperationsContent
+            surface="delivery-audit"
+            overview={overview}
+            canManage={false}
+            canReadAudit
+            canRetryDeliveries={canRetryDeliveries}
+            now={NOW}
+            deliveryEvidence={[delivery(evidenceGeneratedAt)]}
+            onRetryDelivery={onRetry}
+          />
+        )
+      );
+
+    await render(true, '2026-09-16T05:59:00.000Z');
+    const retry = [...host.querySelectorAll('button')].find((button) =>
+      button.textContent?.includes('delivery.retry')
+    );
+    await act(async () => retry?.click());
+
+    await render(false, '2026-09-16T05:59:00.000Z');
+    const confirm = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Confirm retry'
+    );
+    expect(confirm?.disabled).toBe(true);
+    await act(async () => confirm?.click());
+    expect(onRetry).not.toHaveBeenCalled();
+
+    await render(true, '2026-09-16T05:57:00.000Z');
+    expect(confirm?.disabled).toBe(true);
+    await act(async () => confirm?.click());
+    expect(onRetry).not.toHaveBeenCalled();
+  });
+
+  it('rechecks cancellation access while the confirmation is open', async () => {
+    const onCancel = vi.fn();
+    const auditItem = {
+      deliveryId: 'delivery-cancel-1',
+      safeResourceRef: 'message:••77',
+      commandType: 'SEND',
+      actorName: 'Mail operator',
+      accountName: 'Primary',
+      providerType: 'DWP_SANDBOX',
+      stage: 'OUTBOX' as const,
+      state: 'QUEUED' as const,
+      retryEligibility: 'UNKNOWN' as const,
+      providerDisposition: 'NOT_ACCEPTED' as const,
+      idempotencyState: 'UNKNOWN' as const,
+      reconcileCapability: false,
+      cancelCapability: true,
+      evidenceGeneratedAt: '2026-09-16T05:59:00.000Z',
+      lastEvidenceAt: '2026-09-16T05:59:00.000Z',
+      correlationId: 'corr-cancel-1',
+      timeline: [],
+      version: 2,
+    };
+    const render = async (canCancelDeliveries: boolean) =>
+      act(async () =>
+        root.render(
+          <MailAdminOperationsContent
+            surface="delivery-audit"
+            overview={overview}
+            canManage={false}
+            canReadAudit
+            canCancelDeliveries={canCancelDeliveries}
+            now={NOW}
+            deliveryAudit={{
+              items: [auditItem],
+              total: 1,
+              page: 0,
+              pageSize: 50,
+              generatedAt: '2026-09-16T05:59:30.000Z',
+            }}
+            onCancelDelivery={onCancel}
+          />
+        )
+      );
+
+    await render(true);
+    const cancel = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'actions.cancel'
+    );
+    await act(async () => cancel?.click());
+    await render(false);
+    const confirm = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Confirm cancellation'
+    );
+    expect(confirm?.disabled).toBe(true);
+    await act(async () => confirm?.click());
+    expect(onCancel).not.toHaveBeenCalled();
   });
 });
 
@@ -309,6 +486,7 @@ describe('Mail administrative evidence surfaces', () => {
       holds: [],
       purgeJobs: [],
       candidate: {
+        ...PURGE_SNAPSHOT_RESOURCES,
         candidateSnapshotId: 'snapshot-ready',
         fingerprint: 'sha256:ready',
         totalCandidates: 4,
@@ -316,6 +494,7 @@ describe('Mail administrative evidence surfaces', () => {
         eligibleCount: 4,
         partialSources: [],
         generatedAt: '2026-09-16T05:59:30.000Z',
+        before: '2026-09-01T00:00:00.000Z',
         expiresAt: '2026-09-16T06:10:00.000Z',
         policyVersion: 1,
         distinctApproverCount: 2,
@@ -394,6 +573,7 @@ describe('Mail administrative evidence surfaces', () => {
             holds: [],
             purgeJobs: [],
             candidate: {
+              ...PURGE_SNAPSHOT_RESOURCES,
               candidateSnapshotId: 'snapshot-1',
               fingerprint: 'sha256:one',
               totalCandidates: 4,
@@ -401,6 +581,7 @@ describe('Mail administrative evidence surfaces', () => {
               eligibleCount: 4,
               partialSources: [],
               generatedAt: '2026-09-16T05:59:30.000Z',
+              before: '2026-09-01T00:00:00.000Z',
               expiresAt: '2026-09-16T06:10:00.000Z',
               policyVersion: 1,
               distinctApproverCount: 1,
@@ -416,6 +597,183 @@ describe('Mail administrative evidence surfaces', () => {
     );
     expect(execute?.disabled).toBe(true);
     expect(onExecute).not.toHaveBeenCalled();
+  });
+
+  it('requires a reviewed release preview, separate approval, and acknowledgement before release', async () => {
+    const awaiting = releasePreview('AWAITING_APPROVAL');
+    const approved = releasePreview('APPROVED');
+    const onPreview = vi.fn().mockResolvedValue(awaiting);
+    const onApprove = vi.fn().mockResolvedValue(approved);
+    const onExecute = vi.fn().mockResolvedValue(true);
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="retention"
+          overview={overview}
+          canManage={false}
+          canManageHolds
+          now={NOW}
+          retention={retentionWithHold()}
+          onPreviewLegalHoldRelease={onPreview}
+          onApproveLegalHoldRelease={onApprove}
+          onExecuteLegalHoldRelease={onExecute}
+        />
+      )
+    );
+
+    const release = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Release hold'
+    );
+    await act(async () => {
+      release?.click();
+      await Promise.resolve();
+    });
+    expect(onPreview).toHaveBeenCalledWith(activeHold);
+    expect(document.body.textContent).toContain('release-preview-1');
+    expect(onApprove).not.toHaveBeenCalled();
+    expect(onExecute).not.toHaveBeenCalled();
+
+    const approve = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Approve release impact'
+    );
+    await act(async () => {
+      approve?.click();
+      await Promise.resolve();
+    });
+    expect(onApprove).toHaveBeenCalledWith(awaiting);
+
+    const confirm = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Confirm hold release'
+    );
+    expect(confirm?.disabled).toBe(true);
+    const acknowledgement = document.body.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    await act(async () => acknowledgement?.click());
+    expect(confirm?.disabled).toBe(false);
+    await act(async () => {
+      confirm?.click();
+      await Promise.resolve();
+    });
+    expect(onExecute).toHaveBeenCalledWith(approved);
+  });
+
+  it('keeps an active hold protection scope and dates immutable during metadata edits', async () => {
+    const onUpdate = vi.fn();
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="retention"
+          overview={overview}
+          canManage={false}
+          canManageHolds
+          now={NOW}
+          retention={retentionWithHold()}
+          onUpdateLegalHold={onUpdate}
+          onPreviewLegalHoldRelease={vi.fn().mockResolvedValue(null)}
+        />
+      )
+    );
+
+    const edit = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Edit'
+    );
+    await act(async () => edit?.click());
+    expect(document.body.textContent).toContain('Protection scope and dates are locked');
+    expect(document.body.textContent).toContain(JSON.stringify(activeHold.scope));
+    expect(document.body.querySelector('input[type="date"]')).toBeNull();
+
+    const name = getByLabelText(document.body, 'Hold name');
+    await act(async () => fireEvent.change(name, { target: { value: 'Updated case label' } }));
+    const save = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'actions.save'
+    );
+    await act(async () => save?.click());
+
+    expect(onUpdate).toHaveBeenCalledWith(activeHold.holdId, {
+      name: 'Updated case label',
+      safeCaseRef: activeHold.safeCaseRef,
+      scope: activeHold.scope,
+      startsAt: activeHold.startsAt,
+      expiresAt: activeHold.expiresAt,
+      version: activeHold.version,
+    });
+  });
+
+  it.each(['REJECTED', 'EXPIRED', 'RELEASED'] as const)(
+    'keeps a %s release preview terminal and blocks approval and execution',
+    async (state) => {
+      const onApprove = vi.fn();
+      const onExecute = vi.fn();
+      await act(async () =>
+        root.render(
+          <MailAdminOperationsContent
+            surface="retention"
+            overview={overview}
+            canManage={false}
+            canManageHolds
+            now={NOW}
+            retention={retentionWithHold()}
+            onPreviewLegalHoldRelease={vi.fn().mockResolvedValue(releasePreview(state))}
+            onApproveLegalHoldRelease={onApprove}
+            onExecuteLegalHoldRelease={onExecute}
+          />
+        )
+      );
+
+      const release = [...host.querySelectorAll('button')].find(
+        (button) => button.textContent === 'Release hold'
+      );
+      await act(async () => {
+        release?.click();
+        await Promise.resolve();
+      });
+      expect(document.body.textContent).toContain('This release review is closed');
+      expect(
+        [...document.body.querySelectorAll('button')].some(
+          (button) => button.textContent === 'Approve release impact'
+        )
+      ).toBe(false);
+      expect(
+        [...document.body.querySelectorAll('button')].some(
+          (button) => button.textContent === 'Confirm hold release'
+        )
+      ).toBe(false);
+      expect(onApprove).not.toHaveBeenCalled();
+      expect(onExecute).not.toHaveBeenCalled();
+    }
+  );
+
+  it('opens a purge scope form and submits the reviewed default cascade', async () => {
+    const onPreview = vi.fn();
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="retention"
+          overview={overview}
+          canManage={false}
+          canPreviewPurge
+          now={NOW}
+          retention={{ ...retentionWithHold(), holds: [] }}
+          onPreviewPurge={onPreview}
+        />
+      )
+    );
+
+    const open = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Preview purge'
+    );
+    await act(async () => open?.click());
+    expect(onPreview).not.toHaveBeenCalled();
+    expect(document.body.textContent).toContain('Choose purge preview scope');
+
+    const submit = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Preview purge' && button !== open
+    );
+    await act(async () => submit?.click());
+    expect(onPreview).toHaveBeenCalledWith({
+      scope: { tenant: true, resourceTypes: [...PURGE_SNAPSHOT_RESOURCES.resourceTypes] },
+      resourceTypes: [...PURGE_SNAPSHOT_RESOURCES.resourceTypes],
+      before: '2026-09-16T23:59:59.999Z',
+    });
   });
 
   it('uses the member version when confirming shared-inbox access revocation', async () => {
@@ -468,6 +826,17 @@ describe('Mail administrative evidence surfaces', () => {
               ],
             },
           ]}
+          onPreviewSharedMemberRevoke={vi.fn().mockResolvedValue({
+            previewId: 'preview-1',
+            fingerprint: 'a'.repeat(64),
+            activeAssignments: 0,
+            openDrafts: 0,
+            pendingCommands: 0,
+            providerRevocationRequired: false,
+            memberVersion: 7,
+            generatedAt: '2026-09-17T09:00:00Z',
+            expiresAt: '2026-09-17T09:05:00Z',
+          })}
           onRemoveSharedMember={onRemove}
         />
       )
@@ -476,7 +845,11 @@ describe('Mail administrative evidence surfaces', () => {
     const revoke = [...host.querySelectorAll('button')].find(
       (button) => button.textContent === 'Revoke'
     );
-    await act(async () => revoke?.click());
+    await act(async () => {
+      revoke?.click();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
     const confirm = [...document.body.querySelectorAll('button')].find(
       (button) => button.textContent === 'Confirm revocation'
     );
@@ -485,7 +858,8 @@ describe('Mail administrative evidence surfaces', () => {
     expect(onRemove).toHaveBeenCalledWith(
       'shared-1',
       expect.objectContaining({ memberId: 'member-1', version: 7 }),
-      7
+      expect.objectContaining({ previewId: 'preview-1', memberVersion: 7 }),
+      false
     );
   });
 

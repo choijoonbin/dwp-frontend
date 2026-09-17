@@ -70,6 +70,7 @@ describe('mail address book API boundary', () => {
       body: 'Please review.',
       classification: 'INTERNAL',
       recipientMode: 'BCC',
+      accountId: 'account-1',
       idempotencyKey: 'send-request',
       groupVersion: 8,
     });
@@ -84,6 +85,7 @@ describe('mail address book API boundary', () => {
       body: 'Please review.',
       classification: 'INTERNAL',
       recipientMode: 'BCC',
+      accountId: 'account-1',
       idempotencyKey: 'send-request',
       groupVersion: 8,
     });

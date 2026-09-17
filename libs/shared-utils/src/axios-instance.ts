@@ -42,6 +42,26 @@ export type EventStreamConfig = {
   onMessage: (message: EventStreamMessage) => void;
 };
 
+/**
+ * Uploads bytes to a caller-validated presigned target without forwarding DWP session headers.
+ * The caller must validate the target origin before dispatch.
+ */
+export function putExternalBinary(
+  target: URL,
+  body: Blob,
+  pageOrigin: string,
+  signal?: AbortSignal
+) {
+  return fetch(target, {
+    method: 'PUT',
+    body,
+    signal,
+    credentials: target.origin === pageOrigin ? 'same-origin' : 'omit',
+    redirect: 'error',
+    referrerPolicy: 'no-referrer',
+  });
+}
+
 type CsrfTokenData = {
   token: string;
   headerName: string;
@@ -454,6 +474,8 @@ function createHttpClient(sessionEffect: SessionEffect) {
       previous?: ConditionalHttpSnapshot<T>,
       config?: ConditionalGetConfig
     ) => conditionalGet(sessionEffect, url, previous, config),
+    deleteWithBody: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+      request<T>('DELETE', url, body, config, sessionEffect),
   };
 }
 

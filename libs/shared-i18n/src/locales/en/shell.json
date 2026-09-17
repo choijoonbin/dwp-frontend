@@ -169,6 +169,10 @@
     "menu": {
       "settings": "Account settings",
       "settingsDescription": "Profile, preferences, and security",
+      "sessions": "Session monitor",
+      "sessionsDescription": "{{count}} active sessions",
+      "sessionsLoading": "Checking active sessions",
+      "sessionsUnavailable": "Session status unavailable",
       "administration": "Administration console",
       "administrationDescription": "Users, policy, and system controls",
       "supportAdministrationDescription": "Approved support scope for {{tenant}}",

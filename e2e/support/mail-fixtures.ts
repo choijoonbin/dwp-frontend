@@ -13,9 +13,21 @@ export const MEMBER_PERMISSIONS = [
   {
     resourceType: 'APP',
     resourceKey: 'APP.MAIL',
+    permissionCode: 'CREATE',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.MAIL',
     permissionCode: 'UPDATE',
     effect: 'ALLOW' as const,
   },
+  ...['SEND', 'DELETE', 'DECIDE'].map((permissionCode) => ({
+    resourceType: 'APP',
+    resourceKey: 'APP.MAIL',
+    permissionCode,
+    effect: 'ALLOW' as const,
+  })),
 ];
 
 export function fulfill(route: Route, data: unknown) {
@@ -234,12 +246,20 @@ export function mailAddressBook(
   };
 }
 
-export async function mockMailMember(page: Page) {
+export async function mockMailMember(
+  page: Page,
+  additionalPermissions: Array<{
+    resourceType: string;
+    resourceKey: string;
+    permissionCode: string;
+    effect: 'ALLOW' | 'DENY';
+  }> = []
+) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'en',
     displayName: 'Mina Kim',
     email: 'mina.kim@sk.com',
-    permissions: MEMBER_PERMISSIONS,
+    permissions: [...MEMBER_PERMISSIONS, ...additionalPermissions],
   });
   await page.route('**/api/platform/v1/mail/compose-context', (route) =>
     fulfill(route, defaultMailComposeContext())
@@ -269,16 +289,62 @@ function defaultMailPreferences() {
 }
 
 function defaultMailComposeContext() {
+  const capabilities = {
+    multipleRecipients: true,
+    cc: true,
+    bcc: true,
+    html: true,
+    attachments: true,
+    scheduling: true,
+    maximumAttachmentBytes: 25 * 1024 * 1024,
+  };
   return {
     accounts: mailOrganization().accounts,
-    capabilities: {
-      multipleRecipients: true,
-      cc: true,
-      bcc: true,
-      html: true,
-      attachments: true,
-      scheduling: true,
-      maximumAttachmentBytes: 25 * 1024 * 1024,
+    capabilities,
+    accountCapabilities: {
+      '10000000-0000-0000-0000-000000000001': capabilities,
+    },
+    accountReadiness: {
+      '10000000-0000-0000-0000-000000000001': {
+        state: 'READY',
+        source: 'CONNECTOR_RUNTIME',
+        observedAt: '2026-09-17T05:00:00Z',
+        errorCode: null,
+        credentialConfigured: true,
+        lastSuccessfulSyncAt: '2026-09-17T04:55:00Z',
+        lastSuccessfulSyncScope: 'INBOX',
+        action: 'NONE',
+        consentEvidence: {
+          state: 'NOT_REQUIRED',
+          source: 'CONNECTOR_RUNTIME',
+          observedAt: '2026-09-17T05:00:00Z',
+          expiresAt: null,
+          errorCode: null,
+          action: 'NONE',
+        },
+        tokenEvidence: {
+          state: 'NOT_REQUIRED',
+          source: 'CONNECTOR_RUNTIME',
+          observedAt: '2026-09-17T05:00:00Z',
+          expiresAt: null,
+          errorCode: null,
+          action: 'NONE',
+        },
+        featureReadiness: Object.fromEntries(
+          ['SEND', 'BCC', 'HTML_BODY', 'ATTACHMENTS', 'SCHEDULING'].map((feature) => [
+            feature,
+            {
+              state: 'READY',
+              source: 'CONNECTOR_RUNTIME',
+              observedAt: '2026-09-17T05:00:00Z',
+              errorCode: null,
+              lastSuccessfulAt: '2026-09-17T04:55:00Z',
+              lastSuccessfulScope: feature,
+              action: 'NONE',
+            },
+          ])
+        ),
+      },
     },
     templates: [],
     signatures: [],

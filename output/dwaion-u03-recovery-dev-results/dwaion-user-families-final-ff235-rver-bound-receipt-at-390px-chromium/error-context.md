@@ -1,0 +1,120 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic "DWAI·ON 메뉴 열기" [ref=e6]:
+        - button "DWAI·ON 메뉴 열기" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+      - generic [ref=e9]: DWP
+      - generic [ref=e10]: DWAI·ON
+      - generic "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e12]:
+        - button "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic: "0"
+      - 'button "계정: Mina Kim, Tenant administrator" [ref=e18] [cursor=pointer]':
+        - generic [ref=e19]: M
+        - img [ref=e20]
+    - main [ref=e22]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - text: 승인형 개인 AI 확장
+            - 'heading "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [level=1] [ref=e27]'
+            - paragraph [ref=e28]: 허용한 출처와 시간을 정의하고 드라이런, 예약 실행, 실패 복구와 완료 영수증을 한곳에서 관리합니다.
+          - generic [ref=e29]:
+            - button "버전 변경 이력(Audit Log)" [ref=e30] [cursor=pointer]:
+              - img [ref=e32]
+              - text: 버전 변경 이력(Audit Log)
+            - button "전체 건전성 진단" [ref=e36] [cursor=pointer]:
+              - img [ref=e38]
+              - text: 전체 건전성 진단
+            - button "새 루틴 생성" [ref=e40] [cursor=pointer]:
+              - img [ref=e42]
+              - text: 새 루틴 생성
+        - 'region "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [ref=e43]':
+          - generic [ref=e45]:
+            - paragraph [ref=e46]: "1"
+            - paragraph [ref=e47]: 등록한 루틴
+            - text: 내 개인 루틴
+          - generic [ref=e49]:
+            - paragraph [ref=e50]: "1"
+            - paragraph [ref=e51]: 검증 준비
+            - text: 동의 완료 초안
+          - generic [ref=e53]:
+            - paragraph [ref=e54]: "0"
+            - paragraph [ref=e55]: 재확인 필요
+            - text: 동의 또는 상태 확인
+          - generic [ref=e57]:
+            - paragraph [ref=e58]: "0"
+            - paragraph [ref=e59]: 일시 중지
+            - text: 드라이런 중지
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e63]:
+              - img [ref=e65]
+              - searchbox "루틴 검색" [ref=e68]
+              - group
+            - group "루틴 상태 필터" [ref=e69]:
+              - button "전체 1" [pressed] [ref=e70] [cursor=pointer]
+              - button "스케줄 1" [ref=e71] [cursor=pointer]
+              - button "이벤트 0" [ref=e72] [cursor=pointer]
+              - button "검증 준비 1" [ref=e73] [cursor=pointer]
+              - button "재확인 필요 0" [ref=e74] [cursor=pointer]
+              - button "일시 중지 0" [ref=e75] [cursor=pointer]
+            - generic [ref=e77]:
+              - img [ref=e78]
+              - generic [ref=e83]: 기준 타임존 · Asia/Seoul
+          - 'region "내 AI 루틴: 지능형 자동화 및 조건형 실행 거버넌스" [ref=e85]':
+            - button "선택됨 리비전 7 검증 준비 Morning priority review Validate due work and calendar boundaries before I begin. 실행 일정 평일 · 09:00 허용한 정보 출처 업무 항목 · 메일 실행 계약 검증 전용" [pressed] [ref=e87] [cursor=pointer]:
+              - generic [ref=e88]:
+                - generic [ref=e89]:
+                  - generic [ref=e90]:
+                    - generic [ref=e92]: 선택됨
+                    - generic [ref=e94]: 리비전 7
+                    - generic [ref=e96]: 검증 준비
+                  - heading "Morning priority review" [level=6] [ref=e97]
+                - img [ref=e99]
+              - paragraph [ref=e101]: Validate due work and calendar boundaries before I begin.
+              - separator [ref=e102]
+              - generic [ref=e103]:
+                - generic [ref=e104]:
+                  - img [ref=e106]
+                  - generic [ref=e109]:
+                    - generic [ref=e110]: 실행 일정
+                    - text: 평일 · 09:00
+                - generic [ref=e111]:
+                  - img [ref=e113]
+                  - generic [ref=e117]:
+                    - generic [ref=e118]: 허용한 정보 출처
+                    - text: 업무 항목 · 메일
+                - generic [ref=e119]:
+                  - img [ref=e121]
+                  - generic [ref=e124]:
+                    - generic [ref=e125]: 실행 계약
+                    - text: 검증 전용
+    - navigation "DWAI·ON 빠른 탐색" [ref=e126]:
+      - link "홈" [ref=e127] [cursor=pointer]:
+        - /url: /dwaion/home
+        - img [ref=e128]
+        - generic [ref=e131]: 홈
+      - link "새 대화" [ref=e132] [cursor=pointer]:
+        - /url: /dwaion/new
+        - img [ref=e133]
+        - generic [ref=e135]: 새 대화
+      - link "내 대화" [ref=e136] [cursor=pointer]:
+        - /url: /dwaion/conversations
+        - img [ref=e137]
+        - generic [ref=e141]: 내 대화
+      - link "제안함" [ref=e142] [cursor=pointer]:
+        - /url: /dwaion/proposals
+        - img [ref=e143]
+        - generic [ref=e146]: 제안함
+      - button "더보기" [ref=e147] [cursor=pointer]:
+        - img [ref=e148]
+        - generic [ref=e149]: 더보기
+```

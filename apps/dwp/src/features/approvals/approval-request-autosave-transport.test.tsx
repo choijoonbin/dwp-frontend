@@ -6,7 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useApprovalRequestAutosave } from './use-approval-request-autosave';
 import { ApprovalDraftSaveBlockedError } from './approval-request-autosave-model';
 
-import type { ApprovalRequestDetail } from '@dwp-frontend/shared-utils';
+import type {
+  ApprovalRequestDetail,
+  DwaionProposalHandoffBinding,
+} from '@dwp-frontend/shared-utils';
 import type { ApprovalDraftSnapshot } from './approval-request-autosave-model';
 
 const dependencies = vi.hoisted(() => ({
@@ -76,22 +79,32 @@ const receipt = (key: string) => ({
   ],
 });
 let api: ReturnType<typeof useApprovalRequestAutosave>;
-function Harness({ sessionKey }: { sessionKey: string }) {
+function Harness({
+  sessionKey,
+  dwaionProposalHandoff,
+}: {
+  sessionKey: string;
+  dwaionProposalHandoff?: DwaionProposalHandoffBinding;
+}) {
   api = useApprovalRequestAutosave({
     sessionKey,
     input,
     ready: true,
     contextScopeKey: sessionKey,
     isCurrent: () => true,
+    dwaionProposalHandoff,
   });
   return <output>{api.status}</output>;
 }
 let root: Root;
 let container: HTMLDivElement;
-function render(sessionKey = 'scope-a:epoch-1') {
+function render(
+  sessionKey = 'scope-a:epoch-1',
+  dwaionProposalHandoff?: DwaionProposalHandoffBinding
+) {
   root.render(
     <StrictMode>
-      <Harness sessionKey={sessionKey} />
+      <Harness sessionKey={sessionKey} dwaionProposalHandoff={dwaionProposalHandoff} />
     </StrictMode>
   );
 }
@@ -198,5 +211,30 @@ describe('Approval autosave transport and receipt binding', () => {
     expect(dependencies.create).not.toHaveBeenCalled();
     expect(api.receipt).toBeUndefined();
     expect(api.status).toBe('LOCAL');
+  });
+
+  it('never carries a DWAI-ON binding into a later ordinary request session', async () => {
+    const binding: DwaionProposalHandoffBinding = {
+      version: 1,
+      handoffId: '00000000-0000-4000-8000-000000000011',
+      proposalId: '00000000-0000-4000-8000-000000000012',
+      actionKey: 'APPROVAL.REQUEST.CREATE',
+      handoffVersion: 1,
+    };
+    dependencies.create.mockResolvedValue(detail().request);
+    await act(async () => render('scope-dwaion:epoch-1', binding));
+    await act(async () => void (await api.flush()));
+    expect(dependencies.create.mock.calls.at(-1)?.[0]).toMatchObject({
+      dwaionProposalHandoff: binding,
+    });
+
+    dependencies.create.mockClear();
+    await act(async () => render('scope-ordinary:epoch-2'));
+    await act(async () => void (await api.flush()));
+    expect(dependencies.create.mock.calls.at(-1)?.[0]).not.toHaveProperty(
+      'dwaionProposalHandoff',
+      binding
+    );
+    expect(dependencies.create.mock.calls.at(-1)?.[0].dwaionProposalHandoff).toBeUndefined();
   });
 });

@@ -247,7 +247,12 @@ test('HR owner creation binds the accepted command, submits once, and only polls
         version: terminal ? 6 : 5,
       });
     }
-    return fulfill(route, [{ ...leaveProposal, status: createCount ? 'EXECUTED' : 'ACCEPTED' }]);
+    return fulfill(route, {
+      items: [{ ...leaveProposal, status: createCount ? 'EXECUTED' : 'ACCEPTED' }],
+      total: 1,
+      page: Number(url.searchParams.get('page') ?? 0),
+      pageSize: Number(url.searchParams.get('pageSize') ?? 20),
+    });
   });
   await page.route('**/api/people/v1/hr/absence/requests', (route) => {
     createCount += 1;
@@ -297,11 +302,7 @@ test('HR owner creation binds the accepted command, submits once, and only polls
 test('owner cancellation conflict reads the terminal receipt and returns without repeating a command', async ({
   page,
 }) => {
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
-    locale: 'en',
-    displayName: 'Mail User',
-    permissions: MAIL_PERMISSIONS,
-  });
+  await mockMailProposalHome(page);
   const commandId = '60000000-0000-4000-8000-000000000044';
   let handoffReads = 0;
   let cancelCount = 0;
@@ -317,7 +318,7 @@ test('owner cancellation conflict reads the terminal receipt and returns without
     }
     if (url.pathname.endsWith(`/proposals/${leaveProposal.proposalId}/handoff`)) {
       handoffReads += 1;
-      const terminal = handoffReads > 1;
+      const terminal = cancelCount > 0;
       return fulfill(route, {
         proposalId: leaveProposal.proposalId,
         commandId,
@@ -330,7 +331,12 @@ test('owner cancellation conflict reads the terminal receipt and returns without
         version: terminal ? 6 : 5,
       });
     }
-    return fulfill(route, [{ ...leaveProposal, status: 'CANCELLED' }]);
+    return fulfill(route, {
+      items: [{ ...leaveProposal, status: 'CANCELLED' }],
+      total: 1,
+      page: Number(url.searchParams.get('page') ?? 0),
+      pageSize: Number(url.searchParams.get('pageSize') ?? 20),
+    });
   });
   const ownerSearch = new URLSearchParams({
     request: 'open',
@@ -341,7 +347,10 @@ test('owner cancellation conflict reads the terminal receipt and returns without
   });
 
   await page.goto(`/hr/absence?${ownerSearch.toString()}`);
-  await page.getByRole('button', { name: 'Cancel review and return' }).click();
+  await page
+    .getByRole('dialog', { name: 'New time-off request' })
+    .getByRole('button', { name: 'Cancel', exact: true })
+    .click();
 
   await expect.poll(() => cancelCount).toBe(1);
   await expect.poll(() => handoffReads).toBeGreaterThan(1);

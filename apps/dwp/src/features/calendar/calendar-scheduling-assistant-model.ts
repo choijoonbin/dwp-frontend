@@ -92,6 +92,24 @@ export function calendarSchedulingEvaluationIsUsable(
   );
 }
 
+export type CalendarSchedulingEvaluationState = 'COMPLETE' | 'PARTIAL' | 'STALE' | 'UNAVAILABLE';
+
+export function calendarSchedulingEvaluationState(
+  evaluation: CalendarSchedulingEvaluation | null | undefined,
+  now = Date.now()
+): CalendarSchedulingEvaluationState {
+  if (!evaluation) return 'UNAVAILABLE';
+  const validUntil = Date.parse(evaluation.validUntil);
+  if (!Number.isFinite(validUntil) || validUntil <= now) return 'STALE';
+  if (!evaluation.sources.length) return 'UNAVAILABLE';
+  const healthySources = evaluation.sources.filter((source) => source.status === 'HEALTHY');
+  if (!healthySources.length) return 'UNAVAILABLE';
+  return evaluation.completeness === 'COMPLETE' &&
+    healthySources.length === evaluation.sources.length
+    ? 'COMPLETE'
+    : 'PARTIAL';
+}
+
 export function rankCalendarRooms(
   resources: readonly CalendarResource[],
   attendeeCount: number

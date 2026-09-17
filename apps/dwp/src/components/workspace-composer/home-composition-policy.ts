@@ -225,10 +225,6 @@ export function isFlowHomeVariant(policy: HomeCompositionPolicy): boolean {
   return policy.schemaVersion === 4 && policy.experienceVariant === 'FLOW_V1';
 }
 
-export function isMzHomeVariant(policy: HomeCompositionPolicy): boolean {
-  return policy.schemaVersion === 4 && policy.experienceVariant === 'MZ_V1';
-}
-
 export function homeCompositionPolicyWritePayload(
   policy: HomeCompositionPolicy,
   v4Supported: boolean

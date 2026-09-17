@@ -69,6 +69,7 @@ import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadLifecycleActions } from './mail-thread-lifecycle-actions';
 import { MailThreadMessageCard } from './mail-thread-message-card';
 import { useMailProposalHandoff } from './use-mail-proposal-handoff';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   IdempotentMutationIntent,
@@ -91,6 +92,21 @@ export function permitsSharedInboxAction(
 
 export function mailThreadAccessRevoked(error: unknown) {
   return error instanceof HttpError && (error.status === 403 || error.status === 404);
+}
+
+export function withoutMailSharedInboxActions(
+  detail: MailThreadDetail,
+  revoked: readonly MailSharedInboxAction[]
+) {
+  const revokedSet = new Set(revoked);
+  const replyIdentityRevoked = revokedSet.has('REPLY') || revokedSet.has('SEND_AS');
+  return {
+    ...detail,
+    sharedInboxActions: (detail.sharedInboxActions ?? []).filter(
+      (action) => !revokedSet.has(action)
+    ),
+    ...(replyIdentityRevoked ? { sharedInboxReplyIdentity: null } : {}),
+  };
 }
 
 type ReplySendPayload = Readonly<{
@@ -190,6 +206,7 @@ export function MailThreadDetailPane({
   });
   const runtimePreferences = useMailRuntimePreferences();
   const proposalHandoff = useMailProposalHandoff();
+  const { canCreate, canUpdate, canSend, canDecide } = useMailUserPermissions();
   useEffect(() => {
     setAssigneeId(query.data?.thread.assignedUserId ?? '');
   }, [query.data?.thread.assignedUserId, query.data?.thread.threadId]);
@@ -222,7 +239,9 @@ export function MailThreadDetailPane({
     const detail = query.data;
     if (!threadId || !detail?.thread.sharedInboxId) return;
     const canContinueReply =
-      permitsSharedInboxAction(detail, 'REPLY') && permitsSharedInboxAction(detail, 'SEND_AS');
+      permitsSharedInboxAction(detail, 'REPLY') &&
+      permitsSharedInboxAction(detail, 'SEND_AS') &&
+      Boolean(detail.sharedInboxReplyIdentity);
     if (!canContinueReply) {
       const scope = mailReplySendScope(custodyOwner, threadId);
       clearMailSendAttempt(scope);
@@ -254,10 +273,23 @@ export function MailThreadDetailPane({
     onUpdated?.(thread);
     await queryClient.invalidateQueries({ queryKey: ['mail'] });
   };
+  const refreshDeniedSharedActions = (
+    error: unknown,
+    revoked: readonly MailSharedInboxAction[]
+  ) => {
+    if (!mailThreadAccessRevoked(error) || !threadId) return false;
+    queryClient.setQueryData<MailThreadDetail>(['mail', 'thread', threadId], (current) =>
+      current ? withoutMailSharedInboxActions(current, revoked) : current
+    );
+    void query.refetch();
+    return true;
+  };
   const actionMutation = useMutation({
     onMutate: () => setThreadConflict(false),
-    mutationFn: (action: MailThreadAction) =>
-      applyMailThreadAction(threadId!, action, query.data!.thread.version),
+    mutationFn: (action: MailThreadAction) => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
+      return applyMailThreadAction(threadId!, action, query.data!.thread.version);
+    },
     onSuccess: async (detail) => {
       queryClient.setQueryData(['mail', 'thread', threadId], detail);
       await refresh(detail.thread);
@@ -271,7 +303,10 @@ export function MailThreadDetailPane({
     },
   });
   const snoozeMutation = useMutation({
-    mutationFn: (until: string) => snoozeMailThread(threadId!, until, query.data!.thread.version),
+    mutationFn: (until: string) => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
+      return snoozeMailThread(threadId!, until, query.data!.thread.version);
+    },
     onSuccess: async (detail) => {
       setSnoozeOpen(false);
       queryClient.setQueryData(['mail', 'thread', threadId], detail);
@@ -282,9 +317,11 @@ export function MailThreadDetailPane({
   });
   const replyMutation = useMutation({
     mutationFn: () => {
+      if (!canSend) throw new Error('Mail send permission is required.');
       if (
         !permitsSharedInboxAction(query.data, 'REPLY') ||
-        !permitsSharedInboxAction(query.data, 'SEND_AS')
+        !permitsSharedInboxAction(query.data, 'SEND_AS') ||
+        (Boolean(query.data?.thread.sharedInboxId) && !query.data?.sharedInboxReplyIdentity)
       ) {
         throw new Error('Shared inbox reply permission is required.');
       }
@@ -334,6 +371,7 @@ export function MailThreadDetailPane({
       toast.success(t('thread.replySent'));
     },
     onError: (error) => {
+      refreshDeniedSharedActions(error, ['REPLY', 'SEND_AS']);
       const failedScope = activeReplyScopeRef.current;
       const failedOwner = activeReplyOwnerRef.current;
       const failedPrefix = failedOwner ? `${failedOwner}:reply:` : null;
@@ -377,6 +415,7 @@ export function MailThreadDetailPane({
   });
   const commentMutation = useMutation({
     mutationFn: () => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
       if (!permitsSharedInboxAction(query.data, 'COMMENT')) {
         throw new Error('Shared inbox comment permission is required.');
       }
@@ -388,10 +427,14 @@ export function MailThreadDetailPane({
       await refresh(detail.thread);
       toast.success(t('thread.commentAdded'));
     },
-    onError: () => toast.error(t('thread.commentError')),
+    onError: (error) => {
+      refreshDeniedSharedActions(error, ['COMMENT']);
+      toast.error(t('thread.commentError'));
+    },
   });
   const assignmentMutation = useMutation({
     mutationFn: () => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
       if (!permitsSharedInboxAction(query.data, 'ASSIGN')) {
         throw new Error('Shared inbox assignment permission is required.');
       }
@@ -410,6 +453,7 @@ export function MailThreadDetailPane({
       toast.success(t('thread.assignmentSaved'));
     },
     onError: (error) => {
+      refreshDeniedSharedActions(error, ['ASSIGN']);
       if (error instanceof HttpError && error.status === 409) {
         setThreadConflict(true);
         void query.refetch();
@@ -424,7 +468,10 @@ export function MailThreadDetailPane({
     }: {
       proposal: MailActionProposal;
       decision: 'ACCEPT' | 'DISMISS';
-    }) => decideMailProposal(proposal.proposalId, decision, proposal.version),
+    }) => {
+      if (!canDecide) throw new Error('Mail proposal decision permission is required.');
+      return decideMailProposal(proposal.proposalId, decision, proposal.version);
+    },
     onSuccess: async (proposal, variables) => {
       setProposalToAccept(null);
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
@@ -440,6 +487,7 @@ export function MailThreadDetailPane({
   });
 
   const openForward = (message: MailThreadDetail['messages'][number]) => {
+    if (!canCreate) return;
     const draft = mailForwardDraft(thread.subject, message, {
       forwardedMessage: t('thread.forwardedMessage', { defaultValue: 'Forwarded message' }),
       from: t('thread.from', { defaultValue: 'From' }),
@@ -491,10 +539,13 @@ export function MailThreadDetailPane({
   const thread = detail.thread;
   const language = i18n.resolvedLanguage ?? i18n.language;
   const isSharedInbox = Boolean(thread.sharedInboxId);
-  const canAssign = permitsSharedInboxAction(detail, 'ASSIGN');
-  const canComment = permitsSharedInboxAction(detail, 'COMMENT');
+  const canAssign = canUpdate && permitsSharedInboxAction(detail, 'ASSIGN');
+  const canComment = canUpdate && permitsSharedInboxAction(detail, 'COMMENT');
   const canReply =
-    permitsSharedInboxAction(detail, 'REPLY') && permitsSharedInboxAction(detail, 'SEND_AS');
+    canSend &&
+    permitsSharedInboxAction(detail, 'REPLY') &&
+    permitsSharedInboxAction(detail, 'SEND_AS') &&
+    (!isSharedInbox || Boolean(detail.sharedInboxReplyIdentity));
   const hasRestrictedSharedInboxActions = isSharedInbox && (!canAssign || !canComment || !canReply);
   const replyAccountEmail = replyAccountQuery.data?.accounts.find(
     (account) => account.accountId === thread.accountId
@@ -545,6 +596,7 @@ export function MailThreadDetailPane({
             <ActionIconButton
               label={thread.unread ? t('thread.markRead') : t('thread.markUnread')}
               loading={actionMutation.isPending}
+              disabled={!canUpdate}
               onClick={() => actionMutation.mutate(thread.unread ? 'MARK_READ' : 'MARK_UNREAD')}
             >
               <MailOpen size={18} />
@@ -552,6 +604,7 @@ export function MailThreadDetailPane({
             <ActionIconButton
               label={thread.starred ? t('thread.unstar') : t('thread.star')}
               loading={actionMutation.isPending}
+              disabled={!canUpdate}
               intent={thread.starred ? 'primary' : 'default'}
               onClick={() => actionMutation.mutate(thread.starred ? 'UNSTAR' : 'STAR')}
             >
@@ -560,6 +613,7 @@ export function MailThreadDetailPane({
             <ActionIconButton
               label={t('thread.snooze')}
               loading={snoozeMutation.isPending}
+              disabled={!canUpdate}
               onClick={() => setSnoozeOpen(true)}
             >
               <Clock3 size={18} />
@@ -568,6 +622,7 @@ export function MailThreadDetailPane({
               <ActionButton
                 intent="secondary"
                 size="small"
+                disabled={!canUpdate}
                 loading={actionMutation.isPending}
                 startIcon={<RotateCcw size={15} />}
                 onClick={() => actionMutation.mutate('REOPEN')}
@@ -594,6 +649,14 @@ export function MailThreadDetailPane({
       </Box>
 
       <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', p: { xs: 2, md: 3 } }}>
+        {!canUpdate && !canSend && !canDecide ? (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            {t('permissions.readOnly', {
+              defaultValue:
+                'You have read-only mail access. Reply and message actions are unavailable.',
+            })}
+          </Alert>
+        ) : null}
         {thread.externalSender && (
           <Alert severity="warning" icon={<ShieldAlert size={19} />} sx={{ mb: 2 }}>
             {t('thread.externalSender')}
@@ -698,6 +761,7 @@ export function MailThreadDetailPane({
               language={language}
               remoteImagePolicy={runtimePreferences.data?.remoteImages ?? 'BLOCK'}
               remoteImagesManuallyAllowed={loadedRemoteImages.has(message.messageId)}
+              canForward={canCreate}
               onLoadRemoteImages={() =>
                 setLoadedRemoteImages((current) => new Set([...current, message.messageId]))
               }
@@ -716,9 +780,11 @@ export function MailThreadDetailPane({
                 <MailProposalCard
                   key={proposal.proposalId}
                   proposal={proposal}
-                  busy={proposalMutation.isPending || proposalHandoff.isPending}
-                  onAccept={() => setProposalToAccept(proposal)}
-                  onDismiss={() => proposalMutation.mutate({ proposal, decision: 'DISMISS' })}
+                  busy={!canDecide || proposalMutation.isPending || proposalHandoff.isPending}
+                  onAccept={() => canDecide && setProposalToAccept(proposal)}
+                  onDismiss={() =>
+                    canDecide && proposalMutation.mutate({ proposal, decision: 'DISMISS' })
+                  }
                 />
               ))}
             </Stack>
@@ -856,9 +922,17 @@ export function MailThreadDetailPane({
             sx={{ mt: 1 }}
           >
             <Typography variant="caption" color="text.secondary">
-              {t('thread.replyIdentity', {
-                name: auth.user?.displayName ?? t('home.member'),
-              })}
+              {isSharedInbox && detail.sharedInboxReplyIdentity
+                ? t('thread.sharedReplyIdentity', {
+                    name: detail.sharedInboxReplyIdentity.displayName,
+                    address: detail.sharedInboxReplyIdentity.emailAddress,
+                    mode: t(
+                      `thread.sharedReplySenderMode.${detail.sharedInboxReplyIdentity.senderMode}`
+                    ),
+                  })
+                : t('thread.replyIdentity', {
+                    name: auth.user?.displayName ?? t('home.member'),
+                  })}
             </Typography>
             <ActionButton
               intent="primary"
@@ -878,7 +952,7 @@ export function MailThreadDetailPane({
         busy={proposalMutation.isPending || proposalHandoff.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {
-          if (proposalToAccept) {
+          if (proposalToAccept && canDecide) {
             proposalMutation.mutate({ proposal: proposalToAccept, decision: 'ACCEPT' });
           }
         }}

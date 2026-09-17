@@ -1,8 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatMailAttachmentSize, mailMessageAttachments } from './mail-attachment-download';
+import {
+  formatMailAttachmentSize,
+  mailAdminEvidenceExportFileName,
+  mailMessageAttachments,
+} from './mail-attachment-download';
 
 describe('mail attachment presentation', () => {
+  it('builds safe deterministic evidence export filenames', () => {
+    expect(mailAdminEvidenceExportFileName('RETENTION', 'export/1')).toBe(
+      'mail-retention-evidence-export_1.json'
+    );
+    expect(mailAdminEvidenceExportFileName('DELIVERY_AUDIT', 'delivery:2')).toBe(
+      'mail-delivery-audit-delivery_2.json'
+    );
+  });
   it('keeps every downloadable attachment in server order', () => {
     expect(
       mailMessageAttachments([

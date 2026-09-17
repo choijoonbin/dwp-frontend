@@ -1,0 +1,201 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic "Open DWAI·ON navigation" [ref=e6]:
+        - button "Open DWAI·ON navigation" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+      - generic [ref=e9]: DWP
+      - generic [ref=e10]: DWAI·ON
+      - generic "0 actionable notifications, 0 total unread" [ref=e12]:
+        - button "0 actionable notifications, 0 total unread" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic: "0"
+      - 'button "Account: Mina Kim, Tenant administrator" [ref=e18] [cursor=pointer]':
+        - generic [ref=e19]: M
+        - img [ref=e20]
+    - main [ref=e22]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - text: Consent-led personal AI extension
+            - 'heading "My AI routines: governed automation and conditional execution" [level=1] [ref=e27]'
+            - paragraph [ref=e28]: Define approved sources and timing, then manage validation, scheduled execution, recovery, and completion receipts.
+          - generic [ref=e29]:
+            - button "Version history (audit log)" [disabled]:
+              - generic:
+                - img
+              - text: Version history (audit log)
+            - button "Run full health check" [disabled]:
+              - generic:
+                - img
+              - text: Run full health check
+            - button "Create new routine" [ref=e30] [cursor=pointer]:
+              - img [ref=e32]
+              - text: Create new routine
+        - generic [ref=e33]:
+          - alert [ref=e34]:
+            - generic [ref=e36]:
+              - img [ref=e38]
+              - generic [ref=e40]:
+                - generic [ref=e41]:
+                  - generic [ref=e43]: HTTP 409 CONFLICT
+                  - generic [ref=e45]: Policy blocked
+                  - generic [ref=e47]: Safe mode active
+                - 'heading "Activation pipeline stopped: remote revision conflict" [level=2] [ref=e48]'
+                - paragraph [ref=e49]: The server version changed while this routine was being edited. Reload the canonical server state or create a new revision from a governed snapshot.
+                - generic [ref=e50]: "Routine ID: 11111111-1111-4111-8111-111111111111 · Edit baseline Revision 7"
+          - generic [ref=e51]:
+            - generic [ref=e53]:
+              - heading "Revision comparison" [level=3] [ref=e54]
+              - paragraph [ref=e55]: The latest server version and preserved local work were compared three ways. Select a recovery strategy.
+              - generic [ref=e56]:
+                - generic [ref=e57]:
+                  - generic [ref=e58]:
+                    - heading "My local draft" [level=6] [ref=e59]
+                    - generic [ref=e61]: Revision 7
+                  - paragraph [ref=e62]: Morning priority review partial fork
+                  - generic [ref=e63]: SCHEDULED · WORK_ITEM, MAIL
+                - generic [ref=e64]:
+                  - generic [ref=e65]:
+                    - heading "Latest server version" [level=6] [ref=e66]
+                    - generic [ref=e68]: Revision 8
+                  - paragraph [ref=e69]: Morning priority review · server canonical
+                  - generic [ref=e70]: SCHEDULED · WORK_ITEM, MAIL
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - heading "Conflict recovery workbench" [level=3] [ref=e77]
+                - generic [ref=e79]: 3-Way Diff
+              - paragraph [ref=e80]: Choose a conflict strategy
+              - radiogroup [ref=e81]:
+                - generic [ref=e82] [cursor=pointer]:
+                  - generic [ref=e83]:
+                    - radio "Save as a forked version Recommended Keep the latest server version and create the preserved local draft as a real new routine, then restore its required consents." [checked] [ref=e84]
+                    - generic [ref=e85]:
+                      - img [ref=e86]
+                      - img [ref=e88]
+                  - generic [ref=e91]:
+                    - generic [ref=e92]:
+                      - heading "Save as a forked version" [level=6] [ref=e93]
+                      - generic [ref=e95]: Recommended
+                    - generic [ref=e96]: Keep the latest server version and create the preserved local draft as a real new routine, then restore its required consents.
+                - generic [ref=e97] [cursor=pointer]:
+                  - generic [ref=e98]:
+                    - radio "Apply latest server version Discard the local edit and synchronize to the latest server version without issuing a server write." [ref=e99]
+                    - img [ref=e101]
+                  - generic [ref=e104]:
+                    - heading "Apply latest server version" [level=6] [ref=e106]
+                    - generic [ref=e107]: Discard the local edit and synchronize to the latest server version without issuing a server write.
+                - generic [ref=e108] [cursor=pointer]:
+                  - generic [ref=e109]:
+                    - radio "Inspect field-level semantic merge Choose local or server values for each of five change groups and save against the latest server revision." [ref=e110]
+                    - img [ref=e112]
+                  - generic [ref=e115]:
+                    - heading "Inspect field-level semantic merge" [level=6] [ref=e117]
+                    - generic [ref=e118]: Choose local or server values for each of five change groups and save against the latest server revision.
+              - alert [ref=e119]:
+                - img [ref=e121]
+                - generic [ref=e123]:
+                  - heading "Conflict recovery could not be completed." [level=6] [ref=e124]
+                  - paragraph [ref=e125]: This routine changed elsewhere. Refresh before trying again.
+                  - generic [ref=e126]:
+                    - heading "Some commands were applied, so the server state was reloaded." [level=6] [ref=e127]
+                    - paragraph [ref=e128]: This is not reported as success. Review the server state below, reload the latest version, and retry.
+                    - generic [ref=e129]: "Current server state: eeeeeeee-eeee-4eee-8eee-000000000001 · Revision 2 · Ready to validate"
+              - generic [ref=e130]:
+                - button "Resolve and save with selected strategy" [ref=e131] [cursor=pointer]:
+                  - img [ref=e133]
+                  - text: Resolve and save with selected strategy
+                - button "Cancel edit and keep current server version" [ref=e136] [cursor=pointer]
+        - 'region "My AI routines: governed automation and conditional execution" [ref=e137]':
+          - generic [ref=e139]:
+            - paragraph [ref=e140]: "1"
+            - paragraph [ref=e141]: Saved routines
+            - text: Your personal routines
+          - generic [ref=e143]:
+            - paragraph [ref=e144]: "1"
+            - paragraph [ref=e145]: Ready to validate
+            - text: Drafts with full consent
+          - generic [ref=e147]:
+            - paragraph [ref=e148]: "0"
+            - paragraph [ref=e149]: Needs review
+            - text: Consent or lifecycle check
+          - generic [ref=e151]:
+            - paragraph [ref=e152]: "0"
+            - paragraph [ref=e153]: Paused
+            - text: Dry runs stopped
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - generic [ref=e157]:
+              - img [ref=e159]
+              - searchbox "Search routines" [ref=e162]
+              - group
+            - group "Routine status filters" [ref=e163]:
+              - button "All 1" [pressed] [ref=e164] [cursor=pointer]
+              - button "Schedule 1" [ref=e165] [cursor=pointer]
+              - button "Event 0" [ref=e166] [cursor=pointer]
+              - button "Ready 1" [ref=e167] [cursor=pointer]
+              - button "Needs review 0" [ref=e168] [cursor=pointer]
+              - button "Paused 0" [ref=e169] [cursor=pointer]
+            - generic [ref=e171]:
+              - img [ref=e172]
+              - generic [ref=e177]: Reference time zone · Asia/Seoul
+          - 'region "My AI routines: governed automation and conditional execution" [ref=e179]':
+            - button "Revision 8 Ready to validate Morning priority review · server canonical Validate due work and calendar boundaries before I begin. Schedule preview Weekdays · 09:30 Approved sources Work items · Mail Execution contract Validation only" [ref=e181] [cursor=pointer]:
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - generic [ref=e186]: Revision 8
+                    - generic [ref=e188]: Ready to validate
+                  - heading "Morning priority review · server canonical" [level=6] [ref=e189]
+                - img [ref=e191]
+              - paragraph [ref=e193]: Validate due work and calendar boundaries before I begin.
+              - separator [ref=e194]
+              - generic [ref=e195]:
+                - generic [ref=e196]:
+                  - img [ref=e198]
+                  - generic [ref=e201]:
+                    - generic [ref=e202]: Schedule preview
+                    - text: Weekdays · 09:30
+                - generic [ref=e203]:
+                  - img [ref=e205]
+                  - generic [ref=e209]:
+                    - generic [ref=e210]: Approved sources
+                    - text: Work items · Mail
+                - generic [ref=e211]:
+                  - img [ref=e213]
+                  - generic [ref=e216]:
+                    - generic [ref=e217]: Execution contract
+                    - text: Validation only
+    - navigation "DWAI·ON quick navigation" [ref=e218]:
+      - link "Home" [ref=e219] [cursor=pointer]:
+        - /url: /dwaion/home
+        - img [ref=e220]
+        - generic [ref=e223]: Home
+      - link "New" [ref=e224] [cursor=pointer]:
+        - /url: /dwaion/new
+        - img [ref=e225]
+        - generic [ref=e227]: New
+      - link "Conversations" [ref=e228] [cursor=pointer]:
+        - /url: /dwaion/conversations
+        - img [ref=e229]
+        - generic [ref=e233]: Conversations
+      - link "Proposals" [ref=e234] [cursor=pointer]:
+        - /url: /dwaion/proposals
+        - img [ref=e235]
+        - generic [ref=e238]: Proposals
+      - button "More" [ref=e239] [cursor=pointer]:
+        - img [ref=e240]
+        - generic [ref=e241]: More
+  - alert [ref=e242]:
+    - img [ref=e244]
+    - generic [ref=e246]: Conflict recovery could not be completed.
+    - button "Close" [ref=e248] [cursor=pointer]:
+      - img [ref=e249]
+```

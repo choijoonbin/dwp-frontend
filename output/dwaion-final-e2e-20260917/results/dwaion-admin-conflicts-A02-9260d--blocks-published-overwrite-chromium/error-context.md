@@ -1,0 +1,441 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Operations
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Operations
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e37]: Operations overview
+              - listitem [ref=e38]:
+                - link "Models & routing" [ref=e39] [cursor=pointer]:
+                  - /url: /dwaion/admin/models
+                  - img [ref=e41]
+                  - paragraph [ref=e46]: Models & routing
+              - listitem [ref=e47]:
+                - link "Agent and publishing management" [ref=e48] [cursor=pointer]:
+                  - /url: /dwaion/admin/agents
+                  - img [ref=e50]
+                  - paragraph [ref=e54]: Agent and publishing management
+              - listitem [ref=e55]:
+                - link "Data sources and connectors" [ref=e56] [cursor=pointer]:
+                  - /url: /dwaion/admin/sources
+                  - img [ref=e58]
+                  - paragraph [ref=e64]: Data sources and connectors
+              - listitem [ref=e65]:
+                - link "Actions and execution access" [ref=e66] [cursor=pointer]:
+                  - /url: /dwaion/admin/actions
+                  - img [ref=e68]
+                  - paragraph [ref=e73]: Actions and execution access
+              - listitem [ref=e74]:
+                - link "Policy and safety controls" [ref=e75] [cursor=pointer]:
+                  - /url: /dwaion/admin/safety
+                  - img [ref=e77]
+                  - paragraph [ref=e80]: Policy and safety controls
+              - listitem [ref=e81]:
+                - link "Response quality and evaluation" [ref=e82] [cursor=pointer]:
+                  - /url: /dwaion/admin/evaluation
+                  - img [ref=e84]
+                  - paragraph [ref=e87]: Response quality and evaluation
+              - listitem [ref=e88]:
+                - link "Operational readiness review" [ref=e89] [cursor=pointer]:
+                  - /url: /dwaion/admin/gates
+                  - img [ref=e91]
+                  - paragraph [ref=e95]: Operational readiness review
+              - listitem [ref=e96]:
+                - link "Data retention and audit" [ref=e97] [cursor=pointer]:
+                  - /url: /dwaion/admin/audit
+                  - img [ref=e99]
+                  - paragraph [ref=e103]: Data retention and audit
+        - link "Return to work" [ref=e105] [cursor=pointer]:
+          - /url: /dwaion/home
+          - img [ref=e107]
+          - text: Return to work
+    - banner [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - img [ref=e113]
+          - generic "DWAI·ON management" [ref=e117]
+        - navigation "App area switcher" [ref=e120]:
+          - generic [ref=e121]: Management mode
+          - 'link "Return to work: DWAI·ON" [ref=e123] [cursor=pointer]':
+            - /url: /dwaion/home
+            - img [ref=e125]
+            - generic [ref=e127]: Return to work
+        - generic [ref=e128]:
+          - button "Search DWP" [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+            - paragraph [ref=e134]: Search DWP
+            - generic [ref=e135]: ⌘K
+          - generic [ref=e136]:
+            - button "Enter full screen" [ref=e137] [cursor=pointer]:
+              - img [ref=e138]
+            - generic "0 actionable notifications, 0 total unread" [ref=e144]:
+              - button "0 actionable notifications, 0 total unread" [ref=e145] [cursor=pointer]:
+                - generic [ref=e146]:
+                  - img [ref=e147]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e151] [cursor=pointer]':
+            - generic [ref=e152]: T
+            - img [ref=e153]
+    - main [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]: Governance registry · A02
+            - heading "Agent and publishing management" [level=1] [ref=e160]
+            - paragraph [ref=e161]: Manage specialized agent definitions and revisions with explicit publication review.
+          - generic [ref=e163]:
+            - button "Deployment history" [ref=e164] [cursor=pointer]:
+              - img [ref=e166]
+              - text: Deployment history
+            - button "Export registry" [ref=e169] [cursor=pointer]:
+              - img [ref=e171]
+              - text: Export registry
+            - button "New agent" [ref=e175] [cursor=pointer]:
+              - img [ref=e177]
+              - text: New agent
+        - alert [ref=e178]:
+          - img [ref=e180]
+          - generic [ref=e183]: Draft authoring and publication permissions are separated. Only published versions appear in the user catalog, and every state transition is audited.
+        - region "Loaded agent status summary" [ref=e184]:
+          - generic [ref=e185]:
+            - generic [ref=e186]:
+              - text: Published
+              - heading "3" [level=4] [ref=e187]
+            - img [ref=e189]
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - text: Drafts
+              - heading "2" [level=4] [ref=e194]
+            - img [ref=e196]
+          - generic [ref=e199]:
+            - generic [ref=e200]:
+              - text: Retired
+              - heading "1" [level=4] [ref=e201]
+            - img [ref=e203]
+          - generic [ref=e206]:
+            - generic [ref=e207]:
+              - text: Elevated risk
+              - heading "2" [level=4] [ref=e208]
+            - img [ref=e210]
+        - status [ref=e212]:
+          - img [ref=e214]
+          - generic [ref=e216]: Registry metadata and rollout governance come from verified APIs. Promotion, rollback, and kill-switch changes always use reviewable governed commands.
+        - region "Builder, evaluation & rollout governance" [ref=e218]:
+          - generic [ref=e220]:
+            - heading "Builder, evaluation & rollout governance" [level=2] [ref=e221]
+            - paragraph [ref=e222]: Review prompt diffs, source/tool bindings, memory policy, and evaluations before promotion or rollback.
+          - generic [ref=e224]:
+            - generic [ref=e225]:
+              - button "DWP work assistant — governed reference review rev 3 · DRAFT" [pressed] [ref=e226] [cursor=pointer]:
+                - generic [ref=e227]:
+                  - heading "DWP work assistant — governed reference review" [level=6] [ref=e228]
+                  - generic [ref=e229]: rev 3 · DRAFT
+              - button "Approval evidence specialist rev 4 · ACTIVE" [ref=e230] [cursor=pointer]:
+                - generic [ref=e231]:
+                  - heading "Approval evidence specialist" [level=6] [ref=e232]
+                  - generic [ref=e233]: rev 4 · ACTIVE
+              - button "General work assistant rev 8 · ACTIVE" [ref=e234] [cursor=pointer]:
+                - generic [ref=e235]:
+                  - heading "General work assistant" [level=6] [ref=e236]
+                  - generic [ref=e237]: rev 8 · ACTIVE
+              - button "Legacy document search rev 2 · RETIRED" [ref=e238] [cursor=pointer]:
+                - generic [ref=e239]:
+                  - heading "Legacy document search" [level=6] [ref=e240]
+                  - generic [ref=e241]: rev 2 · RETIRED
+              - button "Finance evidence analyst rev 2 · DRAFT" [ref=e242] [cursor=pointer]:
+                - generic [ref=e243]:
+                  - heading "Finance evidence analyst" [level=6] [ref=e244]
+                  - generic [ref=e245]: rev 2 · DRAFT
+              - button "IT service support rev 5 · ACTIVE" [ref=e246] [cursor=pointer]:
+                - generic [ref=e247]:
+                  - heading "IT service support" [level=6] [ref=e248]
+                  - generic [ref=e249]: rev 5 · ACTIVE
+            - generic [ref=e250]:
+              - generic [ref=e251]:
+                - heading "DWP work assistant — governed reference review" [level=3] [ref=e252]
+                - generic [ref=e254]: v7
+                - generic [ref=e256]: MEDIUM
+              - generic [ref=e257]:
+                - generic [ref=e258]: Allowed work
+                - generic [ref=e259]:
+                  - textbox "Allowed work" [ref=e260]: Review authorized work sources and prepare a user-confirmed handoff.
+                  - group:
+                    - generic: Allowed work
+              - generic [ref=e261]:
+                - generic: Prohibited work
+                - generic [ref=e262]:
+                  - textbox "Prohibited work" [ref=e263]
+                  - group:
+                    - generic: Prohibited work
+              - generic [ref=e264]:
+                - generic: Semantic version diff
+                - generic [ref=e265]:
+                  - textbox "Semantic version diff" [ref=e266]
+                  - group:
+                    - generic: Semantic version diff
+              - generic [ref=e267]:
+                - generic [ref=e268]:
+                  - generic [ref=e269]: Input schema
+                  - generic [ref=e270]:
+                    - textbox "Input schema" [ref=e271]: DWP_ASSISTANT.input.v3
+                    - group:
+                      - generic: Input schema
+                - generic [ref=e272]:
+                  - generic [ref=e273]: Output schema
+                  - generic [ref=e274]:
+                    - textbox "Output schema" [ref=e275]: DWP_ASSISTANT.output.v3
+                    - group:
+                      - generic: Output schema
+                - generic [ref=e276]:
+                  - generic: Source bindings
+                  - generic [ref=e277]:
+                    - textbox "Source bindings" [ref=e278]
+                    - group:
+                      - generic: Source bindings
+                - generic [ref=e279]:
+                  - generic: Tool bindings
+                  - generic [ref=e280]:
+                    - textbox "Tool bindings" [ref=e281]
+                    - group:
+                      - generic: Tool bindings
+            - generic [ref=e282]:
+              - generic [ref=e283]:
+                - img [ref=e284]
+                - heading "Pinned rollout contract" [level=6] [ref=e286]
+              - generic [ref=e287]:
+                - generic [ref=e288]: Model route
+                - generic [ref=e289]:
+                  - textbox "Model route" [ref=e290]: 1.3.0
+                  - group:
+                    - generic: Model route
+              - generic [ref=e291]:
+                - generic [ref=e292]: Memory policy
+                - generic [ref=e293]:
+                  - combobox "Memory policy DISABLED" [ref=e294] [cursor=pointer]: DISABLED
+                  - textbox: DISABLED
+                  - img
+                  - group:
+                    - generic: Memory policy
+              - generic [ref=e295]:
+                - generic: Pinned evaluation evidence
+                - generic [ref=e296]:
+                  - textbox "Pinned evaluation evidence" [ref=e297]
+                  - group:
+                    - generic: Pinned evaluation evidence
+              - generic [ref=e298]:
+                - generic [ref=e299]: Canary traffic percent
+                - generic [ref=e300]:
+                  - spinbutton "Canary traffic percent" [ref=e301]: "10"
+                  - group:
+                    - generic: Canary traffic percent
+              - separator [ref=e302]
+              - generic "The governed command capability is still being verified. Wait for capability verification to complete and retry." [ref=e303]:
+                - button "Save governed draft" [disabled]:
+                  - generic:
+                    - img
+                  - text: Save governed draft
+              - generic "The governed command capability is still being verified. Wait for capability verification to complete and retry." [ref=e304]:
+                - button "Sandbox evaluation" [disabled]:
+                  - generic:
+                    - img
+                  - text: Sandbox evaluation
+              - generic "The governed command capability is still being verified. Wait for capability verification to complete and retry." [ref=e305]:
+                - button "Sign evaluation certificate" [disabled]:
+                  - generic:
+                    - img
+                  - text: Sign evaluation certificate
+              - generic "The governed command capability is still being verified. Wait for capability verification to complete and retry." [ref=e306]:
+                - button "Request promotion" [disabled]:
+                  - generic:
+                    - img
+                  - text: Request promotion
+              - generic "The governed command capability is still being verified. Wait for capability verification to complete and retry." [ref=e307]:
+                - button "Rollback" [disabled]:
+                  - generic:
+                    - img
+                  - text: Rollback
+              - generic "The governed command capability is still being verified. Wait for capability verification to complete and retry." [ref=e308]:
+                - button "Kill switch" [disabled]:
+                  - generic:
+                    - img
+                  - text: Kill switch
+              - generic [ref=e309]:
+                - img [ref=e310]
+                - generic [ref=e313]: expectedVersion · UUID · Maker-Checker · receipt
+        - generic [ref=e314]:
+          - generic [ref=e315]:
+            - generic [ref=e316]:
+              - heading "Agent registry master" [level=2] [ref=e317]
+              - text: 6 loaded · 6 total on server
+            - generic [ref=e319]: DRAFT · ACTIVE · RETIRED
+          - region "DWAI·ON agent registry" [ref=e320]:
+            - generic [ref=e321]:
+              - generic [ref=e322]:
+                - generic: Search loaded items
+                - generic [ref=e323]:
+                  - textbox "Search loaded items" [ref=e324]
+                  - group:
+                    - generic: Search loaded items
+              - generic [ref=e325]:
+                - generic [ref=e326]: Status
+                - generic [ref=e327]:
+                  - combobox "Status All statuses" [ref=e328] [cursor=pointer]: All statuses
+                  - textbox: ALL
+                  - img
+                  - group:
+                    - generic: Status
+            - paragraph [ref=e329]: Search covers the first 100 entries. Registry lifecycle is separate from actual model connectivity.
+            - generic [ref=e330]:
+              - list "DWAI·ON agent registry" [ref=e331]:
+                - generic [ref=e332]:
+                  - generic [ref=e333]: Item
+                  - generic [ref=e334]: Owning team
+                  - generic [ref=e335]: Risk tier
+                  - generic [ref=e336]: Key
+                  - generic [ref=e337]: Status
+                - listitem [ref=e338]:
+                  - button "DWP work assistant — governed reference review Review authorized work sources and prepare a user-confirmed handoff. Work operations MEDIUM DWP_ASSISTANT DRAFT" [pressed] [ref=e339] [cursor=pointer]:
+                    - generic [ref=e340]:
+                      - generic [ref=e341]:
+                        - heading "DWP work assistant — governed reference review" [level=6] [ref=e342]
+                        - generic [ref=e343]: Review authorized work sources and prepare a user-confirmed handoff.
+                      - generic "Work operations" [ref=e345]
+                      - generic "MEDIUM" [ref=e347]
+                      - generic "DWP_ASSISTANT" [ref=e349]
+                      - generic [ref=e351]: DRAFT
+                - listitem [ref=e352]:
+                  - button "Approval evidence specialist Summarize permitted approval evidence without making the decision. Approval operations HIGH DWP_APPROVAL_EXPERT ACTIVE" [ref=e353] [cursor=pointer]:
+                    - generic [ref=e354]:
+                      - generic [ref=e355]:
+                        - heading "Approval evidence specialist" [level=6] [ref=e356]
+                        - generic [ref=e357]: Summarize permitted approval evidence without making the decision.
+                      - generic "Approval operations" [ref=e359]
+                      - generic "HIGH" [ref=e361]
+                      - generic "DWP_APPROVAL_EXPERT" [ref=e363]
+                      - generic [ref=e365]: ACTIVE
+                - listitem [ref=e366]:
+                  - button "General work assistant Answer general workplace questions from the current governed source scope. Workplace AI LOW DWP_GENERAL_ASSIST ACTIVE" [ref=e367] [cursor=pointer]:
+                    - generic [ref=e368]:
+                      - generic [ref=e369]:
+                        - heading "General work assistant" [level=6] [ref=e370]
+                        - generic [ref=e371]: Answer general workplace questions from the current governed source scope.
+                      - generic "Workplace AI" [ref=e373]
+                      - generic "LOW" [ref=e375]
+                      - generic "DWP_GENERAL_ASSIST" [ref=e377]
+                      - generic [ref=e379]: ACTIVE
+                - listitem [ref=e380]:
+                  - button "Legacy document search Retained registry history for a superseded search configuration. Infrastructure operations LOW DWP_LEGACY_SEARCH RETIRED" [ref=e381] [cursor=pointer]:
+                    - generic [ref=e382]:
+                      - generic [ref=e383]:
+                        - heading "Legacy document search" [level=6] [ref=e384]
+                        - generic [ref=e385]: Retained registry history for a superseded search configuration.
+                      - generic "Infrastructure operations" [ref=e387]
+                      - generic "LOW" [ref=e389]
+                      - generic "DWP_LEGACY_SEARCH" [ref=e391]
+                      - generic [ref=e393]: RETIRED
+                - listitem [ref=e394]:
+                  - button "Finance evidence analyst Prepare source-grounded finance summaries for an authorized reviewer. Finance operations HIGH DWP_FIN_EVIDENCE DRAFT" [ref=e395] [cursor=pointer]:
+                    - generic [ref=e396]:
+                      - generic [ref=e397]:
+                        - heading "Finance evidence analyst" [level=6] [ref=e398]
+                        - generic [ref=e399]: Prepare source-grounded finance summaries for an authorized reviewer.
+                      - generic "Finance operations" [ref=e401]
+                      - generic "HIGH" [ref=e403]
+                      - generic "DWP_FIN_EVIDENCE" [ref=e405]
+                      - generic [ref=e407]: DRAFT
+                - listitem [ref=e408]:
+                  - button "IT service support Guide employees through permitted service-catalog and support content. IT operations MEDIUM DWP_IT_HELPDESK ACTIVE" [ref=e409] [cursor=pointer]:
+                    - generic [ref=e410]:
+                      - generic [ref=e411]:
+                        - heading "IT service support" [level=6] [ref=e412]
+                        - generic [ref=e413]: Guide employees through permitted service-catalog and support content.
+                      - generic "IT operations" [ref=e415]
+                      - generic "MEDIUM" [ref=e417]
+                      - generic "DWP_IT_HELPDESK" [ref=e419]
+                      - generic [ref=e421]: ACTIVE
+              - complementary "Review selected item" [ref=e422]:
+                - generic [ref=e423]:
+                  - generic [ref=e424]:
+                    - heading "DWP work assistant — governed reference review" [level=2] [ref=e425]
+                    - generic [ref=e427]: DRAFT
+                  - paragraph [ref=e428]: Review authorized work sources and prepare a user-confirmed handoff.
+                  - generic [ref=e429]:
+                    - generic [ref=e430]:
+                      - term [ref=e431]: Owning team
+                      - definition [ref=e432]: Work operations
+                    - generic [ref=e433]:
+                      - term [ref=e434]: Risk tier
+                      - definition [ref=e435]: MEDIUM
+                    - generic [ref=e436]:
+                      - term [ref=e437]: Key
+                      - definition [ref=e438]: DWP_ASSISTANT
+                    - generic [ref=e439]:
+                      - term [ref=e440]: Revision
+                      - definition [ref=e441]: "3"
+                    - generic [ref=e442]:
+                      - term [ref=e443]: Contract version
+                      - definition [ref=e444]: 1.3.0
+                    - generic [ref=e445]:
+                      - term [ref=e446]: Updated at
+                      - definition [ref=e447]: Sep 8, 2026, 12:00 PM
+                  - region "Registry contract boundary" [ref=e448]:
+                    - heading "Registry contract boundary" [level=3] [ref=e449]
+                    - paragraph [ref=e450]: The current lifecycle is DRAFT. This registry response cannot verify the operational information below.
+                    - generic [ref=e451]:
+                      - generic [ref=e453]:
+                        - paragraph [ref=e454]: Runtime and model connectivity
+                        - generic [ref=e456]: Not provided
+                      - generic [ref=e457]:
+                        - separator [ref=e458]
+                        - generic [ref=e459]:
+                          - paragraph [ref=e460]: Attached sources and allowed actions
+                          - generic [ref=e462]: Not provided
+                      - generic [ref=e463]:
+                        - separator [ref=e464]
+                        - generic [ref=e465]:
+                          - paragraph [ref=e466]: Assigned reviewer and rejection reason
+                          - generic [ref=e468]: Not provided
+                      - generic [ref=e469]:
+                        - separator [ref=e470]
+                        - generic [ref=e471]:
+                          - paragraph [ref=e472]: Deployment environment and history
+                          - generic [ref=e474]: Not provided
+                  - region "Revision history" [ref=e475]:
+                    - heading "Revision history" [level=3] [ref=e476]
+                    - paragraph [ref=e477]: 3 · 1.3.0 · DRAFT · Work operations
+                    - paragraph [ref=e478]: 2 · 1.2.0 · RETIRED · Work operations
+                  - generic [ref=e479]:
+                    - button "Edit" [ref=e480] [cursor=pointer]:
+                      - img [ref=e482]
+                      - text: Edit
+                    - button "Publish" [ref=e485] [cursor=pointer]:
+                      - img [ref=e487]
+                      - text: Publish
+                    - button "Retire" [ref=e490] [cursor=pointer]:
+                      - img [ref=e492]
+                      - text: Retire
+```

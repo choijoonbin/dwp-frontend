@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CheckCircle2, CircleStop, Play, RotateCcw, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { ActionButton, OperationalKpiStrip } from '@dwp-frontend/design-system';
+import { OperationalKpiStrip } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { getDwaionIncidents, type DwaionIncidentSummary } from '@dwp-frontend/shared-utils';
 
@@ -31,6 +31,7 @@ import {
   DwaionIncidentOperationDialog,
   type DwaionIncidentOperationDraft,
 } from './dwaion-incident-operation-dialog';
+import { DwaionCommandCapabilityButton } from './dwaion-command-capability-button';
 
 type IncidentOperation =
   | 'INCIDENT_CONTAIN'
@@ -51,8 +52,6 @@ export function DwaionIncidentWorkbenchPanel() {
   const [intent, setIntent] = useState<DwaionCommandIntent | null>(null);
   const [operationDraft, setOperationDraft] = useState<DwaionIncidentOperationDraft | null>(null);
   const incidents = useMemo(() => query.data?.incidents ?? [], [query.data?.incidents]);
-  const commandsAvailable =
-    query.data?.capability.status === 'AVAILABLE' && query.data.capability.configured;
   const selected = useMemo(
     () => incidents.find((incident) => incident.incidentId === selectedId) ?? incidents[0],
     [incidents, selectedId]
@@ -273,54 +272,54 @@ export function DwaionIncidentWorkbenchPanel() {
                     </Box>
                     <Divider />
                     <Stack direction="row" gap={1} flexWrap="wrap">
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      <DwaionCommandCapabilityButton
+                        commandKind="INCIDENT_CONTAIN"
                         intent="danger"
                         startIcon={<ShieldAlert size={16} />}
                         onClick={() => open('INCIDENT_CONTAIN')}
                       >
                         {copy.incidents.contain}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="RUN_QUARANTINE"
                         intent="danger"
                         startIcon={<CircleStop size={16} />}
                         onClick={() => open('RUN_QUARANTINE')}
                       >
                         {copy.incidents.quarantine}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="RUN_REPLAY"
                         intent="secondary"
                         startIcon={<Play size={16} />}
                         onClick={() => open('RUN_REPLAY')}
                       >
                         {copy.incidents.replay}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="RUN_COMPENSATE"
                         intent="secondary"
                         startIcon={<RotateCcw size={16} />}
                         onClick={() => open('RUN_COMPENSATE')}
                       >
                         {copy.incidents.compensate}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="INCIDENT_RECOVERY"
                         intent="primary"
                         startIcon={<ShieldCheck size={16} />}
                         onClick={() => open('INCIDENT_RECOVERY')}
                       >
                         {copy.incidents.recover}
-                      </ActionButton>
-                      <ActionButton
-                        disabled={!commandsAvailable}
+                      </DwaionCommandCapabilityButton>
+                      <DwaionCommandCapabilityButton
+                        commandKind="INCIDENT_CLOSE"
                         intent="secondary"
                         startIcon={<CheckCircle2 size={16} />}
                         onClick={() => open('INCIDENT_CLOSE')}
                       >
                         {copy.incidents.close}
-                      </ActionButton>
+                      </DwaionCommandCapabilityButton>
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
                       {copy.ui.incidents.replayExplanation}
@@ -334,7 +333,7 @@ export function DwaionIncidentWorkbenchPanel() {
                 title={copy.ui.incidents.responseOperations}
                 description={copy.ui.incidents.responseOperationsDescription}
                 actions={incidentCanonicalActions(selected, copy.command.description)}
-                disabled={!commandsAvailable}
+                disabled={false}
                 onRefresh={async () => {
                   await query.refetch();
                 }}

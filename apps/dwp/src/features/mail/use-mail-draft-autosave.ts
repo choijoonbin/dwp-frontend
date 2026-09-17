@@ -5,7 +5,9 @@ import {
   saveAdvancedMailDraft,
   type MailAdvancedDraftSaveInput,
   type MailAdvancedThreadDetail,
+  type MailClassification,
   type MailComposeOptions,
+  type DwaionProposalHandoffBinding,
 } from '@dwp-frontend/shared-utils';
 
 export type MailDraftFields = {
@@ -13,6 +15,7 @@ export type MailDraftFields = {
   toName?: string;
   subject: string;
   body: string;
+  classification?: MailClassification;
   composeOptions?: MailComposeOptions;
 };
 
@@ -52,8 +55,16 @@ type DraftSaveAttempt = {
 
 type DraftSaveFailureDisposition = 'REJECTED' | 'UNCONFIRMED' | 'CONFLICT';
 
-const EMPTY_DRAFT_SNAPSHOT = '{}';
-const EMPTY_DRAFT_FIELDS: MailDraftFields = { toEmail: '', subject: '', body: '' };
+const EMPTY_DRAFT_FIELDS: MailDraftFields = {
+  toEmail: '',
+  subject: '',
+  body: '',
+  classification: 'INTERNAL',
+};
+const EMPTY_DRAFT_SNAPSHOT = JSON.stringify({
+  classification: 'INTERNAL',
+  externalRecipientConfirmed: false,
+});
 
 function copyDraftFields(fields: MailDraftFields): MailDraftFields {
   return { ...fields };
@@ -90,6 +101,8 @@ export function mailDraftPayload(
     toName: optionalTrimmed(fields.toName),
     subject: optionalTrimmed(fields.subject),
     body: optionalBody(fields.body),
+    classification: fields.classification ?? 'INTERNAL',
+    externalRecipientConfirmed: false,
     ...(composeOptions ? { composeOptions } : {}),
   };
 }
@@ -116,9 +129,12 @@ export function mailDraftCanSend(fields: MailDraftFields) {
 
 function meaningfulComposeOptions(options: MailComposeOptions | undefined) {
   if (!options) return undefined;
-  return options.recipients.length ||
+  return options.accountId ||
+    options.bodyFormat === 'HTML' ||
+    options.recipients.length ||
     options.attachmentIds.length ||
     options.scheduledAt ||
+    options.timeZone ||
     options.templateId ||
     options.signatureId
     ? options
@@ -134,6 +150,7 @@ export function useMailDraftAutosave({
   delayMs = 1_750,
   onSaved,
   onConflict,
+  dwaionProposalBinding,
 }: {
   enabled: boolean;
   fields: MailDraftFields;
@@ -147,6 +164,7 @@ export function useMailDraftAutosave({
     base: MailDraftFields;
     local: MailDraftFields;
   }) => void;
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null;
 }) {
   const initialSnapshotRef = useRef(mailDraftSnapshot(fields));
   const fieldsRef = useRef(fields);
@@ -205,7 +223,9 @@ export function useMailDraftAutosave({
       };
       const request =
         attempt.target.kind === 'CREATE'
-          ? createAdvancedMailDraft(input)
+          ? dwaionProposalBinding
+            ? createAdvancedMailDraft(input, dwaionProposalBinding)
+            : createAdvancedMailDraft(input)
           : saveAdvancedMailDraft(attempt.target.threadId, {
               ...input,
               version: attempt.target.version,
@@ -250,7 +270,7 @@ export function useMailDraftAutosave({
       activePromiseRef.current = promise;
       return promise;
     },
-    [clearTimer, updateStatus]
+    [clearTimer, dwaionProposalBinding, updateStatus]
   );
 
   const saveNow = useCallback(async (): Promise<MailAdvancedThreadDetail | null> => {

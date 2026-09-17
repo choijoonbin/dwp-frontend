@@ -1,7 +1,9 @@
 import { axiosInstance } from '../axios-instance';
+import { dwaionProposalHandoffHeaders } from '../dwaion-contract';
 import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
 
 import type { ApiResponse } from '../types';
+import type { DwaionProposalHandoffBinding } from '../dwaion-contract';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type ServiceCatalogLifecycle = 'DRAFT' | 'ACTIVE' | 'RETIRED';
@@ -307,12 +309,20 @@ export async function createServiceRequest(
     idempotencyKey: string;
     submit: boolean;
   },
-  authority: ProductSurfaceGovernedMutationAuthority
+  authority: ProductSurfaceGovernedMutationAuthority,
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null
 ): Promise<ServiceRequestDetail> {
+  const config = productSurfaceGovernedMutationConfig(authority);
   const response = await axiosInstance.post<ApiResponse<ServiceRequestDetail>, typeof input>(
     '/api/platform/v1/services/requests',
     input,
-    productSurfaceGovernedMutationConfig(authority)
+    {
+      ...config,
+      headers: {
+        ...config.headers,
+        ...dwaionProposalHandoffHeaders(dwaionProposalBinding),
+      },
+    }
   );
   return response.data.data;
 }

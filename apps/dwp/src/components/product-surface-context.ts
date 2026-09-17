@@ -9,4 +9,7 @@ export type {
   ProductSurfaceDirectEvaluation,
   SurfaceDecision,
 } from '../features/shell/product-surface-context';
-export { mapProductSurfaceDirectEvaluation } from '../features/shell/product-surface-context';
+export {
+  canContextAccessNavigation,
+  mapProductSurfaceDirectEvaluation,
+} from '../features/shell/product-surface-context';

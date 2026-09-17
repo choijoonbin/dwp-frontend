@@ -1,9 +1,8 @@
-import { mkdirSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Download, type Page } from '@playwright/test';
 
 import {
   DWAION_PERSONAL_PERMISSIONS,
@@ -11,7 +10,7 @@ import {
 } from './support/dwaion-personal-intelligence-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
-const OUTPUT = join(process.cwd(), 'output', 'dwaion-user-advancement-final');
+const OUTPUT = join(process.cwd(), 'output', 'dwaion-frontend-final-pass-20260917');
 
 test.beforeAll(() => mkdirSync(OUTPUT, { recursive: true }));
 
@@ -55,25 +54,23 @@ for (const viewport of [
     await filters.getByRole('tab', { name: 'Manual 1', exact: true }).click();
     await expect(detail).toBeVisible();
 
-    const downloadPromise = page.waitForEvent('download');
-    await page
-      .getByRole('button', {
-        name: 'Export current server deletion-history snapshot (JSON)',
-        exact: true,
-      })
-      .click();
-    const download = await downloadPromise;
-    expect(download.suggestedFilename()).toMatch(/^dwaion-deletion-receipt-index-\d+\.json$/u);
-    const downloadPath = await download.path();
-    expect(downloadPath).not.toBeNull();
-    const snapshot = JSON.parse(await readFile(downloadPath as string, 'utf8')) as Record<
-      string,
-      unknown
-    >;
-    expect(snapshot).toMatchObject({
-      evidenceClass: 'SERVER_RESPONSE_SNAPSHOT',
-      officialCertificate: false,
-      source: 'personal-data-deletion-history-api',
+    const receiptIndexButton = page.getByRole('button', {
+      name: 'Export current server deletion-history snapshot (JSON)',
+      exact: true,
+    });
+    await expect(receiptIndexButton).toBeEnabled();
+    const receiptIndexDownload = page.waitForEvent('download');
+    await receiptIndexButton.click();
+    const receiptIndex = await receiptIndexDownload;
+    expect(receiptIndex.suggestedFilename()).toBe('dwaion-deletion-receipts.json');
+    expect(await readDownloadedJson(receiptIndex)).toMatchObject({
+      schemaVersion: 1,
+      deletionJobs: [
+        expect.objectContaining({
+          deletionJobId: '66666666-6666-4666-8666-666666666666',
+          state: 'COMPLETED',
+        }),
+      ],
     });
 
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
@@ -125,34 +122,41 @@ for (const viewport of [
       history.getByRole('button', { name: 'Request legal-hold explanation', exact: true })
     ).toBeDisabled();
 
-    const holdDownloadPromise = page.waitForEvent('download');
-    await history
-      .getByRole('button', {
-        name: 'Export current legal-hold state snapshot (JSON)',
-        exact: true,
-      })
-      .click();
-    const holdDownload = await holdDownloadPromise;
-    const holdPath = await holdDownload.path();
-    expect(holdPath).not.toBeNull();
-    const holdSnapshot = JSON.parse(await readFile(holdPath as string, 'utf8')) as {
-      evidenceClass?: string;
-      officialCertificate?: boolean;
-      jobs?: Array<{ deletionJobId?: string }>;
-    };
-    expect(holdSnapshot).toMatchObject({
-      evidenceClass: 'SERVER_RESPONSE_SNAPSHOT',
-      officialCertificate: false,
+    const legalHoldButton = history.getByRole('button', {
+      name: 'Export current legal-hold state snapshot (JSON)',
+      exact: true,
     });
-    expect(holdSnapshot.jobs?.map((job) => job.deletionJobId)).toContain(
-      '66666666-6666-4666-8666-666666666678'
+    await expect(legalHoldButton).toBeEnabled();
+    const legalHoldDownload = page.waitForEvent('download');
+    await legalHoldButton.click();
+    const legalHoldEvidence = await legalHoldDownload;
+    expect(legalHoldEvidence.suggestedFilename()).toBe(
+      'dwaion-legal-hold-66666666-6666-4666-8666-666666666678.json'
+    );
+    expect(await readDownloadedJson(legalHoldEvidence)).toMatchObject({
+      schemaVersion: 1,
+      deletionJobId: '66666666-6666-4666-8666-666666666678',
+      legalHolds: [
+        expect.objectContaining({
+          authorityReference: 'LEGAL-2026-0914-001',
+          dpoSubjectId: 'dpo@company.com',
+        }),
+      ],
+    });
+    await expect(history.getByTestId('dwaion-legal-hold-evidence')).toContainText(
+      'LEGAL-2026-0914-001'
+    );
+    await expect(history.getByTestId('dwaion-legal-hold-evidence')).toContainText(
+      'dpo@company.com'
     );
 
     await history.getByRole('button', { name: 'Retry failed targets', exact: true }).click();
-    await expect.poll(() => retryBody).toMatchObject({
-      expectedRevision: 2,
-      reasonCode: 'USER_DATA_DELETION_RETRY',
-    });
+    await expect
+      .poll(() => retryBody)
+      .toMatchObject({
+        expectedRevision: 2,
+        reasonCode: 'USER_DATA_DELETION_RETRY',
+      });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       await page.evaluate(() => window.innerWidth + 1)
     );
@@ -186,7 +190,24 @@ async function prepare(page: Page, viewport: { readonly width: number; readonly 
   await mockDwaionPersonalIntelligence(page);
 }
 
+async function readDownloadedJson(download: Download): Promise<unknown> {
+  const path = await download.path();
+  if (!path) throw new Error('Playwright did not retain the downloaded evidence file.');
+  return JSON.parse(readFileSync(path, 'utf8')) as unknown;
+}
+
 function legalHoldDeletionJob() {
+  const holdEvidence = {
+    available: true,
+    domain: 'MEMORY',
+    holdId: '15151515-1515-4515-8515-151515151515',
+    state: 'ACTIVE',
+    authorityReference: 'LEGAL-2026-0914-001',
+    dpoSubjectId: 'dpo@company.com',
+    reasonCode: 'LEGAL_HOLD_ACTIVE',
+    effectiveAt: '2026-09-14T04:30:00Z',
+    expiresAt: null,
+  };
   return {
     deletionJobId: '66666666-6666-4666-8666-666666666678',
     state: 'BLOCKED_LEGAL_HOLD',
@@ -197,6 +218,8 @@ function legalHoldDeletionJob() {
     deletionExecutionAvailable: true,
     blockedDomains: ['MEMORY'],
     attemptCount: 1,
+    stages: deletionStages('BLOCKED'),
+    legalHolds: [holdEvidence],
     targets: [
       {
         domain: 'MEMORY',
@@ -204,6 +227,7 @@ function legalHoldDeletionJob() {
         affectedCount: null,
         safeErrorCode: 'LEGAL_HOLD_ACTIVE',
         disposition: null,
+        legalHoldEvidence: holdEvidence,
       },
     ],
   };
@@ -220,12 +244,15 @@ function partialDeletionJob() {
     deletionExecutionAvailable: true,
     blockedDomains: [],
     attemptCount: 2,
+    stages: deletionStages('PARTIAL'),
+    legalHolds: [],
     targets: [
       {
         domain: 'MEMORY',
         state: 'COMPLETED',
         affectedCount: 2,
         safeErrorCode: null,
+        legalHoldEvidence: null,
         disposition: {
           dispositionId: '66666666-6666-4666-8666-666666666680',
           domain: 'MEMORY',
@@ -247,7 +274,51 @@ function partialDeletionJob() {
         affectedCount: null,
         safeErrorCode: 'ARTIFACT_PURGE_RETRYABLE',
         disposition: null,
+        legalHoldEvidence: null,
       },
     ],
+  };
+}
+
+function deletionStages(outcome: 'PARTIAL' | 'BLOCKED') {
+  const activeState = outcome === 'BLOCKED' ? 'BLOCKED' : 'PARTIAL';
+  return [
+    deletionStage('REQUEST_ACCEPTED', 'COMPLETED', 'REQUEST_ACCEPTED'),
+    deletionStage('TARGETS_SCHEDULED', 'COMPLETED', 'TARGETS_SCHEDULED'),
+    deletionStage(
+      'ACTIVE_STORE_DISPOSITION',
+      activeState,
+      outcome === 'BLOCKED' ? 'LEGAL_HOLD_ACTIVE' : 'ACTIVE_STORE_DISPOSITION_PARTIAL'
+    ),
+    deletionStage(
+      'BACKUP_BOUNDARY',
+      outcome === 'BLOCKED' ? 'BLOCKED' : 'PARTIAL',
+      outcome === 'BLOCKED' ? 'LEGAL_HOLD_BOUNDARY_RECORDED' : 'BACKUP_BOUNDARY_PARTIAL'
+    ),
+    deletionStage(
+      'RECEIPT_FINALIZATION',
+      outcome === 'BLOCKED' ? 'BLOCKED' : 'PARTIAL',
+      outcome === 'BLOCKED' ? 'LEGAL_HOLD_RECEIPT_FINALIZED' : 'PARTIAL_RECEIPT_FINALIZED'
+    ),
+  ];
+}
+
+function deletionStage(
+  key:
+    | 'REQUEST_ACCEPTED'
+    | 'TARGETS_SCHEDULED'
+    | 'ACTIVE_STORE_DISPOSITION'
+    | 'BACKUP_BOUNDARY'
+    | 'RECEIPT_FINALIZATION',
+  state: 'COMPLETED' | 'PARTIAL' | 'BLOCKED',
+  detailCode: string
+) {
+  return {
+    key,
+    state,
+    detailCode,
+    observedAt: '2026-09-14T04:36:00Z',
+    evidenceReference: `deletion:${key.toLowerCase()}`,
+    evidenceFingerprint: '8'.repeat(64),
   };
 }

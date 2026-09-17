@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   hasMailProposalOwnerHandoff,
+  mailProposalHandoffIsPending,
   mailProposalOwnerReturnPath,
   readMailProposalOwnerContext,
 } from './mail-proposal-owner-handoff';
@@ -45,5 +46,13 @@ describe('Mail proposal owner handoff boundary', () => {
       readMailProposalOwnerContext(new URLSearchParams(`proposalId=${proposalId}`))
     ).toBeNull();
     expect(hasMailProposalOwnerHandoff(new URLSearchParams('compose=open'))).toBe(false);
+  });
+
+  it('keeps an executing reservation pending and reconcile-only', () => {
+    expect(mailProposalHandoffIsPending('ACCEPTED')).toBe(true);
+    expect(mailProposalHandoffIsPending('EXECUTING')).toBe(true);
+    expect(mailProposalHandoffIsPending('UNKNOWN')).toBe(true);
+    expect(mailProposalHandoffIsPending('EXECUTED')).toBe(false);
+    expect(mailProposalHandoffIsPending('FAILED')).toBe(false);
   });
 });

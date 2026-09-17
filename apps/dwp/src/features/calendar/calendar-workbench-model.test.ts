@@ -106,4 +106,29 @@ describe('calendar workbench model', () => {
     expect(filterCalendarInvitations([elapsed], 'NEEDS_ACTION', now)).toEqual([]);
     expect(countCalendarInvitationResponses([elapsed], now).NEEDS_ACTION).toBe(0);
   });
+
+  it('prioritizes unanswered conflicts before other decisions and completed history', () => {
+    const events = [
+      event({
+        eventId: 'accepted-earlier',
+        myResponse: 'ACCEPTED',
+        startsAt: '2026-08-26T01:00:00Z',
+      }),
+      event({
+        eventId: 'pending-clear',
+        startsAt: '2026-08-27T01:00:00Z',
+      }),
+      event({
+        eventId: 'pending-conflict',
+        conflict: true,
+        startsAt: '2026-08-28T01:00:00Z',
+      }),
+    ];
+
+    expect(calendarInvitations(events).map((item) => item.eventId)).toEqual([
+      'pending-conflict',
+      'pending-clear',
+      'accepted-earlier',
+    ]);
+  });
 });

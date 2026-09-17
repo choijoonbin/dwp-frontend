@@ -576,9 +576,15 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
   const canManage = hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
   const commandKeys = useRef(new Map<string, string>());
   const activeCommandScope = useRef<string | null>(null);
+  const preservePolicyDraft = useRef<MailTenantPolicy | null>(null);
   const [policy, setPolicy] = useState<MailTenantPolicy | null>(null);
   useEffect(() => {
-    if (query.data?.policy) setPolicy(query.data.policy);
+    if (!query.data?.policy) return;
+    const currentDraft = preservePolicyDraft.current;
+    preservePolicyDraft.current = null;
+    setPolicy(
+      currentDraft ? { ...currentDraft, version: query.data.policy.version } : query.data.policy
+    );
   }, [query.data?.policy]);
   const mutation = useMutation({
     mutationFn: () => {
@@ -606,13 +612,11 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
     },
     onError: async (error) => {
       if (error instanceof HttpError && error.status === 409 && policy) {
-        const currentDraft = policy;
         if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
         activeCommandScope.current = null;
+        preservePolicyDraft.current = policy;
         const result = await query.refetch();
-        if (result.data?.policy) {
-          setPolicy({ ...currentDraft, version: result.data.policy.version });
-        }
+        if (!result.data?.policy) preservePolicyDraft.current = null;
         toast.error(t('admin.conflict'));
         return;
       }

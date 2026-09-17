@@ -1,6 +1,17 @@
 import { axiosInstance } from '../axios-instance';
+import { parseMailAccountReadinessEvidence } from './mail-readiness-contract';
 
 import type { ApiResponse } from '../types';
+import type { MailAccountReadinessEvidence } from './mail-readiness-contract';
+
+export { parseMailAccountReadinessEvidence } from './mail-readiness-contract';
+export type {
+  MailAccountFeatureKey,
+  MailAccountFeatureReadinessEvidence,
+  MailAccountReadinessEvidence,
+  MailAuthorizationEvidence,
+  MailReadinessAction,
+} from './mail-readiness-contract';
 
 export type MailProviderType =
   'DWP_SANDBOX' | 'MICROSOFT_GRAPH' | 'GOOGLE_GMAIL' | 'NAVER_WORKS' | 'JMAP' | 'IMAP_SMTP';
@@ -36,6 +47,7 @@ export type MailAccount = {
   connectionState: MailAccountConnectionState;
   synchronizationState: MailAccountSynchronizationState;
   defaultAccount: boolean;
+  readiness?: MailAccountReadinessEvidence | null;
 };
 
 export type MailParticipant = { name: string; email: string };
@@ -128,8 +140,15 @@ export type MailActionProposal = {
   version: number;
 };
 
+export type MailActionProposalPage = {
+  items: MailActionProposal[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
 export type MailProposalHandoffStatus =
-  'ACCEPTED' | 'EXECUTED' | 'CANCELLED' | 'FAILED' | 'UNKNOWN';
+  'ACCEPTED' | 'EXECUTING' | 'EXECUTED' | 'CANCELLED' | 'FAILED' | 'UNKNOWN';
 
 export type MailProposalHandoff = {
   proposalId: string;
@@ -150,6 +169,11 @@ export type MailThreadDetail = {
   proposals: MailActionProposal[];
   sharedInboxMembers: MailSharedInboxMember[];
   sharedInboxActions?: MailSharedInboxAction[];
+  sharedInboxReplyIdentity?: {
+    displayName: string;
+    emailAddress: string;
+    senderMode: 'SEND_AS' | 'ON_BEHALF_OF';
+  } | null;
 };
 
 export type MailDraftSaveInput = {
@@ -157,6 +181,8 @@ export type MailDraftSaveInput = {
   toName?: string;
   subject?: string;
   body?: string;
+  classification: MailClassification;
+  externalRecipientConfirmed: boolean;
   idempotencyKey: string;
   version?: number;
 };
@@ -394,24 +420,35 @@ export async function getMailHome(input: { accountId?: string } = {}): Promise<M
   const response = await axiosInstance.get<ApiResponse<MailHome>>(
     `/api/platform/v1/mail/home${suffix}`
   );
-  return response.data.data;
+  const home = response.data.data;
+  return {
+    ...home,
+    accounts: home.accounts.map((account) => ({
+      ...account,
+      readiness: parseMailAccountReadinessEvidence(account.readiness),
+    })),
+  };
 }
 
 export async function getMailThreads(input: {
   lane?: MailTriageLane;
+  importance?: MailImportance;
+  unread?: boolean;
   state?: MailWorkflowState;
   folder?: MailThread['folderType'];
   folderId?: string;
   sharedOnly?: boolean;
   accountId?: string;
   sharedInboxId?: string;
-  assignment?: 'MINE' | 'UNASSIGNED';
+  assignment?: 'MINE' | 'UNASSIGNED' | 'OVERDUE';
   query?: string;
   page?: number;
   pageSize?: number;
 }): Promise<MailThreadPage> {
   const search = new URLSearchParams();
   if (input.lane) search.set('lane', input.lane);
+  if (input.importance) search.set('importance', input.importance);
+  if (input.unread !== undefined) search.set('unread', String(input.unread));
   if (input.state) search.set('state', input.state);
   if (input.folder) search.set('folder', input.folder);
   if (input.folderId) search.set('folderId', input.folderId);
@@ -538,6 +575,8 @@ export async function composeMail(input: {
   toName?: string | null;
   subject: string;
   body: string;
+  classification: MailClassification;
+  externalRecipientConfirmed: boolean;
   deliveryMode: 'SEND' | 'DRAFT';
   idempotencyKey: string;
 }): Promise<MailThreadDetail> {
@@ -574,6 +613,8 @@ export async function updateMailDraft(
     toName?: string | null;
     subject: string;
     body: string;
+    classification: MailClassification;
+    externalRecipientConfirmed: boolean;
     deliveryMode: 'SEND' | 'DRAFT';
     idempotencyKey: string;
     version: number;
@@ -845,13 +886,26 @@ export async function reorderMailRules(input: {
 }
 
 export async function getMailProposals(
-  input: { status?: MailProposalStatus; type?: MailProposalType } = {}
-): Promise<MailActionProposal[]> {
+  input: {
+    status?: MailProposalStatus;
+    type?: MailProposalType;
+    accountId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    pageSize?: number;
+  } = {}
+): Promise<MailActionProposalPage> {
   const search = new URLSearchParams();
   if (input.status) search.set('status', input.status);
   if (input.type) search.set('type', input.type);
+  if (input.accountId) search.set('accountId', input.accountId);
+  if (input.dateFrom) search.set('dateFrom', input.dateFrom);
+  if (input.dateTo) search.set('dateTo', input.dateTo);
+  if (input.page !== undefined) search.set('page', String(input.page));
+  if (input.pageSize !== undefined) search.set('pageSize', String(input.pageSize));
   const suffix = search.size ? `?${search.toString()}` : '';
-  const response = await axiosInstance.get<ApiResponse<MailActionProposal[]>>(
+  const response = await axiosInstance.get<ApiResponse<MailActionProposalPage>>(
     `/api/platform/v1/mail/proposals${suffix}`
   );
   return response.data.data;

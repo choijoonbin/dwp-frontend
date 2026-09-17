@@ -51,6 +51,49 @@ const source = {
   updatedAt: null,
 };
 
+const requestedDeletionStages = [
+  {
+    key: 'REQUEST_ACCEPTED',
+    state: 'COMPLETED',
+    detailCode: 'DELETION_REQUEST_ACCEPTED',
+    observedAt: '2026-09-17T01:00:00Z',
+    evidenceReference: '00000000-0000-4000-8000-000000000261',
+    evidenceFingerprint: null,
+  },
+  {
+    key: 'TARGETS_SCHEDULED',
+    state: 'COMPLETED',
+    detailCode: 'DELETION_TARGETS_RECORDED',
+    observedAt: '2026-09-17T01:00:00Z',
+    evidenceReference: 'targets:1',
+    evidenceFingerprint: null,
+  },
+  {
+    key: 'ACTIVE_STORE_DISPOSITION',
+    state: 'PENDING',
+    detailCode: 'ACTIVE_STORE_DISPOSITION_PENDING',
+    observedAt: null,
+    evidenceReference: 'dispositions:0/targets:1',
+    evidenceFingerprint: null,
+  },
+  {
+    key: 'BACKUP_BOUNDARY',
+    state: 'UNAVAILABLE',
+    detailCode: 'BACKUP_DESTRUCTION_LOG_NOT_CONFIGURED',
+    observedAt: null,
+    evidenceReference: 'EXTERNAL_RETENTION_BOUNDARY',
+    evidenceFingerprint: null,
+  },
+  {
+    key: 'RECEIPT_FINALIZATION',
+    state: 'PENDING',
+    detailCode: 'SERVER_DISPOSITION_RECEIPT_PENDING',
+    observedAt: null,
+    evidenceReference: 'server-disposition-receipts:0',
+    evidenceFingerprint: null,
+  },
+] as const;
+
 const completedDeletion = {
   deletionJobId: '00000000-0000-4000-8000-000000000261',
   state: 'COMPLETED',
@@ -81,8 +124,31 @@ const completedDeletion = {
         receiptFingerprint: 'a'.repeat(64),
         completedAt: '2026-09-17T01:01:00Z',
       },
+      legalHoldEvidence: null,
     },
   ],
+  stages: requestedDeletionStages.map((stage) =>
+    stage.key === 'ACTIVE_STORE_DISPOSITION'
+      ? {
+          ...stage,
+          state: 'COMPLETED' as const,
+          detailCode: 'ACTIVE_STORE_DISPOSITION_COMPLETED',
+          observedAt: '2026-09-17T01:01:00Z',
+          evidenceReference: 'dispositions:1/targets:1',
+          evidenceFingerprint: 'a'.repeat(64),
+        }
+      : stage.key === 'RECEIPT_FINALIZATION'
+        ? {
+            ...stage,
+            state: 'COMPLETED' as const,
+            detailCode: 'SERVER_DISPOSITION_RECEIPTS_FINALIZED',
+            observedAt: '2026-09-17T01:01:00Z',
+            evidenceReference: 'server-disposition-receipts:1',
+            evidenceFingerprint: 'a'.repeat(64),
+          }
+        : stage
+  ),
+  legalHolds: [],
 } as const;
 
 const personalMemory = {
@@ -139,6 +205,30 @@ describe('Agent personal AI controls API', () => {
       response({ success: true, data: { ...capabilities, siemSync: undefined } })
     );
     await expect(getDwaionPersonalDataCapabilities()).rejects.toMatchObject({ status: 502 });
+    fetchMock.mockResolvedValueOnce(
+      response({
+        success: true,
+        data: {
+          ...capabilities,
+          sreSupport: {
+            available: true,
+            configured: true,
+            reasonCode: null,
+            recoveryHint: null,
+          },
+          signedCertificate: {
+            available: true,
+            configured: true,
+            reasonCode: null,
+            recoveryHint: null,
+          },
+        },
+      })
+    );
+    await expect(getDwaionPersonalDataCapabilities()).resolves.toMatchObject({
+      sreSupport: { available: true },
+      signedCertificate: { available: true },
+    });
   });
 
   it('validates memory scope, expiry, and derived expiry state fail closed', async () => {
@@ -341,6 +431,8 @@ describe('Agent personal AI controls API', () => {
       blockedDomains: [],
       attemptCount: 0,
       targets: [],
+      stages: requestedDeletionStages,
+      legalHolds: [],
     };
     const fetchMock = vi
       .fn()
@@ -407,6 +499,7 @@ describe('Agent personal AI controls API', () => {
           affectedCount: null,
           safeErrorCode: 'PROVIDER_TIMEOUT',
           disposition: null,
+          legalHoldEvidence: null,
         },
       ],
     } as const;

@@ -59,20 +59,36 @@ export function parseDwaionSecureAttachment(value: unknown): DwaionSecureAttachm
     !(value.uploadTicket === null || isUploadTicket(value.uploadTicket)) ||
     !isAgentDate(value.createdAt) ||
     !isAgentDate(value.updatedAt) ||
-    !(value.deletedAt === null || isAgentDate(value.deletedAt))
+    !(value.deletedAt === null || isAgentDate(value.deletedAt)) ||
+    !(value.deletionAttemptCount === undefined || integer(value.deletionAttemptCount, 0)) ||
+    !(
+      value.deletionLastErrorCode === undefined ||
+      value.deletionLastErrorCode === null ||
+      safeCode(value.deletionLastErrorCode)
+    ) ||
+    !(
+      value.deletionReceiptId === undefined ||
+      value.deletionReceiptId === null ||
+      boundedString(value.deletionReceiptId, 1, 240)
+    )
   ) {
     throw invalid('Secure attachment response is invalid.', value);
   }
-  if (value.capabilities.signedAuditReport.available) {
-    throw invalid('Signed attachment audit reports lack a governed download endpoint.', value);
-  }
+  const attachment = value as unknown as DwaionSecureAttachment;
+  const normalized: DwaionSecureAttachment = {
+    ...attachment,
+    deletionAttemptCount: value.deletionAttemptCount ?? 0,
+    deletionLastErrorCode: value.deletionLastErrorCode ?? null,
+    deletionReceiptId: value.deletionReceiptId ?? null,
+  };
   if (
-    (value.state === 'DELETED') !== (value.deletedAt !== null) ||
-    (value.state === 'UPLOADING') !== (value.uploadTicket !== null)
+    (normalized.state === 'DELETED') !== (normalized.deletedAt !== null) ||
+    (normalized.state === 'UPLOADING') !== (normalized.uploadTicket !== null) ||
+    (normalized.state === 'DELETED') !== (normalized.deletionReceiptId !== null)
   ) {
     throw invalid('Secure attachment lifecycle is inconsistent.', value);
   }
-  return value as DwaionSecureAttachment;
+  return normalized as DwaionSecureAttachment;
 }
 
 export function parseDwaionAttachmentEvidence(value: unknown): DwaionAttachmentEvidence {
@@ -81,6 +97,17 @@ export function parseDwaionAttachmentEvidence(value: unknown): DwaionAttachmentE
     !uuid(value.attachmentId) ||
     typeof value.sourceSha256 !== 'string' ||
     !SHA256.test(value.sourceSha256) ||
+    !(value.deletionAttemptCount === undefined || integer(value.deletionAttemptCount, 0)) ||
+    !(
+      value.deletionLastErrorCode === undefined ||
+      value.deletionLastErrorCode === null ||
+      safeCode(value.deletionLastErrorCode)
+    ) ||
+    !(
+      value.deletionReceiptId === undefined ||
+      value.deletionReceiptId === null ||
+      boundedString(value.deletionReceiptId, 1, 240)
+    ) ||
     !Array.isArray(value.stages) ||
     value.stages.length > 6 ||
     !value.stages.every(isAttachmentStage) ||
@@ -107,7 +134,12 @@ export function parseDwaionAttachmentEvidence(value: unknown): DwaionAttachmentE
   ) {
     throw invalid('Secure attachment evidence binding is invalid.', value);
   }
-  return value as DwaionAttachmentEvidence;
+  return {
+    ...value,
+    deletionAttemptCount: value.deletionAttemptCount ?? 0,
+    deletionLastErrorCode: value.deletionLastErrorCode ?? null,
+    deletionReceiptId: value.deletionReceiptId ?? null,
+  } as DwaionAttachmentEvidence;
 }
 
 export function parseDwaionResearchPlan(value: unknown): DwaionResearchPlan {
@@ -126,16 +158,16 @@ export function parseDwaionResearchPlan(value: unknown): DwaionResearchPlan {
 }
 
 export function parseDwaionResearchCapabilities(value: unknown): DwaionResearchCapabilities {
+  const delivery = isAgentRecord(value) && isAgentRecord(value.delivery) ? value.delivery : null;
   if (
     !isAgentRecord(value) ||
     !RESEARCH_CAPABILITY_KEYS.every((key) => isWorkflowCapability(value[key])) ||
-    RESEARCH_UNBOUND_CAPABILITY_KEYS.some(
-      (key) => isAgentRecord(value[key]) && value[key].available !== false
-    )
+    delivery === null ||
+    !RESEARCH_DELIVERY_CAPABILITY_KEYS.every((key) => isWorkflowCapability(delivery[key]))
   ) {
     throw invalid('Deep research capabilities response is invalid.', value);
   }
-  return value as DwaionResearchCapabilities;
+  return value as unknown as DwaionResearchCapabilities;
 }
 
 export function parseDwaionResearchRun(value: unknown): DwaionResearchRun {
@@ -185,10 +217,39 @@ export function parseDwaionResearchDelivery(value: unknown): DwaionResearchDeliv
   ) {
     throw invalid('Deep research delivery response is invalid.', value);
   }
-  if (value.state === 'COMPLETED' && (value.receiptId === null || value.completedAt === null)) {
-    throw invalid('Completed research delivery lacks a receipt.', value);
+  if (
+    !(value.receipt === undefined || value.receipt === null || isAgentRecord(value.receipt)) ||
+    !(
+      value.safeErrorCode === undefined ||
+      value.safeErrorCode === null ||
+      safeCode(value.safeErrorCode)
+    ) ||
+    !(
+      value.recoveryHint === undefined ||
+      value.recoveryHint === null ||
+      boundedString(value.recoveryHint, 1, 500)
+    )
+  ) {
+    throw invalid('Deep research delivery evidence is invalid.', value);
   }
-  return value as DwaionResearchDelivery;
+  const completed = value.state === 'COMPLETED';
+  const incomplete = value.state === 'PARTIAL' || value.state === 'FAILED';
+  if (
+    (completed &&
+      (value.receiptId === null || value.completedAt === null || !isAgentRecord(value.receipt))) ||
+    (!completed && value.receipt != null) ||
+    (incomplete &&
+      (!safeCode(value.safeErrorCode) || !boundedString(value.recoveryHint, 1, 500))) ||
+    (!incomplete && (value.safeErrorCode != null || value.recoveryHint != null))
+  ) {
+    throw invalid('Deep research delivery lifecycle evidence is inconsistent.', value);
+  }
+  return {
+    ...value,
+    receipt: value.receipt ?? null,
+    safeErrorCode: value.safeErrorCode ?? null,
+    recoveryHint: value.recoveryHint ?? null,
+  } as DwaionResearchDelivery;
 }
 
 export function parseDwaionProposalHandoff(value: unknown): DwaionProposalHandoff {
@@ -480,13 +541,13 @@ const RESEARCH_CAPABILITY_KEYS = [
   'sensitivityRecalculation',
   'cacheFallback',
 ] as const;
-const RESEARCH_UNBOUND_CAPABILITY_KEYS = [
-  'pdfExport',
-  'fork',
-  'merge',
-  'keepLocal',
-  'sensitivityRecalculation',
-  'cacheFallback',
+const RESEARCH_DELIVERY_CAPABILITY_KEYS = [
+  'artifact',
+  'proposal',
+  'export',
+  'handoff',
+  'share',
+  'routine',
 ] as const;
 const HANDOFF_STATES = new Set<DwaionProposalHandoffState>([
   'REVIEW_REQUIRED',

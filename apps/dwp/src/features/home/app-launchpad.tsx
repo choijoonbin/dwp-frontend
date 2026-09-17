@@ -21,8 +21,10 @@ import {
   ungroupLaunchpadFolder,
 } from '../../components/workspace-composer/app-launchpad-model';
 import {
+  HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
   HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH,
   HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH,
+  homeLaunchpadEqualColumnTemplate,
 } from '../../components/workspace-composer/home-launchpad-layout-contract';
 import {
   createLaunchpadCollisionDetection,
@@ -176,6 +178,16 @@ export function AppLaunchpad({
   );
   const renderedLayout = crossGroupPreview ? layout : (dragPreview?.layout ?? layout);
   const flow = variant === 'flow';
+  const visibleGroups = localizedGroups.filter(
+    (group) => editing || (renderedLayout.groups[group.id]?.length ?? 0) > 0
+  );
+  const visibleGroupCount = visibleGroups.length;
+  const groupColumns = {
+    mobile: homeLaunchpadEqualColumnTemplate(visibleGroupCount, 'mobile'),
+    tablet: homeLaunchpadEqualColumnTemplate(visibleGroupCount, 'tablet'),
+    desktop: homeLaunchpadEqualColumnTemplate(visibleGroupCount, 'desktop'),
+    wide: homeLaunchpadEqualColumnTemplate(visibleGroupCount, 'wide'),
+  } as const;
 
   const keyboardCoordinates: KeyboardCoordinateGetter = (event, args) => {
     keyboardHorizontalDirectionRef.current =
@@ -587,6 +599,7 @@ export function AppLaunchpad({
         ) : (
           <Box
             data-launchpad-group-grid
+            data-launchpad-group-count={visibleGroupCount}
             data-flow-app-dock-list={flow ? true : undefined}
             sx={{
               width: 1,
@@ -594,13 +607,7 @@ export function AppLaunchpad({
               mx: 'auto',
               px: immersive ? { xs: 2, md: 3, xl: 4 } : 0,
               display: 'grid',
-              gridTemplateColumns: flow
-                ? 'minmax(0, 1fr)'
-                : {
-                    xs: 'minmax(0, 1fr)',
-                    sm: 'repeat(2, minmax(0, 1fr))',
-                    lg: 'repeat(4, minmax(0, 1fr))',
-                  },
+              gridTemplateColumns: groupColumns.mobile,
               gap: flow
                 ? { xs: 1, md: 1.25 }
                 : { xs: immersive ? 1.5 : 1, md: immersive ? 1.5 : 2 },
@@ -612,13 +619,32 @@ export function AppLaunchpad({
               borderRadius: 0,
               overflowY: flow ? 'visible' : 'hidden',
               bgcolor: 'transparent',
+              '@media (min-width: 600px)': flow
+                ? undefined
+                : { gridTemplateColumns: groupColumns.tablet },
+              '@media (min-width: 1200px)': flow
+                ? undefined
+                : { gridTemplateColumns: groupColumns.desktop },
+              '@media (min-width: 1536px)': flow
+                ? undefined
+                : { gridTemplateColumns: groupColumns.wide },
+              '@container classic-home-shell (min-width: 520px)': flow
+                ? undefined
+                : { gridTemplateColumns: groupColumns.tablet },
+              '@container classic-home-shell (min-width: 900px)': flow
+                ? undefined
+                : { gridTemplateColumns: groupColumns.desktop },
+              [`@container classic-home-shell (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                flow ? undefined : { gridTemplateColumns: groupColumns.wide },
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
-                flow ? { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' } : undefined,
+                flow ? { gridTemplateColumns: groupColumns.tablet } : undefined,
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
-                flow ? { gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' } : undefined,
+                flow ? { gridTemplateColumns: groupColumns.desktop } : undefined,
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                flow ? { gridTemplateColumns: groupColumns.wide } : undefined,
             }}
           >
-            {localizedGroups.map((group) => {
+            {visibleGroups.map((group) => {
               const destinationPreviewIds = dragPreview?.layout.groups[group.id] ?? [];
               const isCrossGroupDestination = Boolean(
                 crossGroupPreview && dragPreview?.targetGroupId === group.id
@@ -629,7 +655,6 @@ export function AppLaunchpad({
               const sortableItemIds = isCrossGroupDestination
                 ? itemIds.filter((itemId) => itemId !== activeId)
                 : itemIds;
-              if (itemIds.length === 0 && !editing) return null;
               return (
                 <Box
                   component="section"
@@ -702,6 +727,8 @@ export function AppLaunchpad({
                           }
                         : undefined,
                     scrollSnapAlign: 'none',
+                    containerType: 'inline-size',
+                    containerName: 'launchpad-group',
                   }}
                 >
                   <Typography

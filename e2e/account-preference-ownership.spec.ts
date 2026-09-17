@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 test('일반 구성원의 언어 변경은 언어 및 지역 설정에서만 제공한다', async ({ page }) => {
   await page.goto('/account/profile');
 
-  await expect(page.getByRole('heading', { name: '프로필', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '프로필 및 계정', level: 1 })).toBeVisible();
   await expect(page.getByText('기본 언어', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: '변경', exact: true })).toHaveCount(0);
   const profile = page.getByTestId('account-main');

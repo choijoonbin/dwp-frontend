@@ -40,7 +40,7 @@
   },
   "mz": {
     "stage": {
-      "eyebrow": "MZ / AI Stage",
+      "eyebrow": "AI Stage",
       "title": "What would you like to move forward?",
       "description": "Describe the outcome you need. DWAI·ON will open a grounded workspace where you can inspect evidence, edit the plan, and review every owner action before handoff.",
       "intentLabel": "Your intent",
@@ -154,7 +154,7 @@
     },
     "scope": {
       "title": "Evidence scope",
-      "description": "MZ uses only sources and apps available to your current identity. Missing access is never presented as a zero result.",
+      "description": "AI Stage uses only sources and apps available to your current identity. Missing access is never presented as a zero result.",
       "helpTitle": "Review and control",
       "helpDescription": "Inspect personal AI controls, source boundaries, and retained work before starting a handoff.",
       "openControls": "Open AI controls"

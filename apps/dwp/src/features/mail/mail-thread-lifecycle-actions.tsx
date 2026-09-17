@@ -20,6 +20,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { MailLifecycleUndo, type MailLifecycleUndoState } from './mail-lifecycle-undo';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type { MailLifecycleAction, MailThread } from '@dwp-frontend/shared-utils';
 
@@ -41,6 +42,9 @@ export function MailThreadLifecycleActions({
   const { t } = useTranslation('mail');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { canUpdate, canDelete } = useMailUserPermissions();
+  const permitted = (action: MailLifecycleAction) =>
+    action === 'DELETE_FOREVER' ? canDelete : canUpdate;
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [undoState, setUndoState] = useState<MailLifecycleUndoState | null>(null);
   const [pending, setPending] = useState<PendingLifecycle | null>(null);
@@ -60,13 +64,15 @@ export function MailThreadLifecycleActions({
     }: {
       action: MailLifecycleAction;
       targetFolderId?: string;
-    }) =>
-      applyMailLifecycle(
+    }) => {
+      if (!permitted(action)) throw new Error('Mail lifecycle permission is required.');
+      return applyMailLifecycle(
         thread.threadId,
         action,
         preview?.version ?? thread.version,
         targetFolderId
-      ),
+      );
+    },
     onSuccess: async (result, variables) => {
       setAnchor(null);
       setPending(null);
@@ -91,12 +97,14 @@ export function MailThreadLifecycleActions({
     onError: () => toast.error(t('lifecycle.error')),
   });
   const previewMutation = useMutation({
-    mutationFn: (request: PendingLifecycle) =>
-      previewMailLifecycle(thread.threadId, {
+    mutationFn: (request: PendingLifecycle) => {
+      if (!permitted(request.action)) throw new Error('Mail lifecycle permission is required.');
+      return previewMailLifecycle(thread.threadId, {
         action: request.action,
         targetFolderId: request.targetFolderId,
         version: thread.version,
-      }),
+      });
+    },
     onSuccess: (result, request) => {
       setAnchor(null);
       if (!result.allowed) {
@@ -136,8 +144,14 @@ export function MailThreadLifecycleActions({
       {restorable ? (
         <ActionIconButton
           label={t('lifecycle.restore')}
-          loading={mutation.isPending}
-          onClick={() => mutation.mutate({ action: 'RESTORE' })}
+          loading={previewMutation.isPending || mutation.isPending}
+          disabled={!canUpdate}
+          onClick={() =>
+            previewMutation.mutate({
+              action: 'RESTORE',
+              targetLabel: t('lifecycle.restore'),
+            })
+          }
         >
           <RotateCcw size={18} />
         </ActionIconButton>
@@ -145,6 +159,7 @@ export function MailThreadLifecycleActions({
         <ActionIconButton
           label={t('thread.archive')}
           loading={mutation.isPending}
+          disabled={!canUpdate}
           onClick={() => mutation.mutate({ action: 'ARCHIVE' })}
         >
           <Archive size={18} />
@@ -154,7 +169,7 @@ export function MailThreadLifecycleActions({
         <ActionIconButton
           label={t('lifecycle.move')}
           size="small"
-          disabled={mutation.isPending}
+          disabled={!canUpdate || mutation.isPending}
           onClick={(event) => setAnchor(event.currentTarget)}
         >
           <FolderInput size={17} />
@@ -206,6 +221,7 @@ export function MailThreadLifecycleActions({
           label={t('lifecycle.deleteForever')}
           intent="danger"
           loading={previewMutation.isPending || mutation.isPending}
+          disabled={!canDelete}
           onClick={() =>
             previewMutation.mutate({
               action: 'DELETE_FOREVER',

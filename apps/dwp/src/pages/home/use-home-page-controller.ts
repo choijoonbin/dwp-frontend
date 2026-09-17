@@ -11,7 +11,6 @@ import {
   isAppResourceEntitled,
   launchWorkspaceApp,
   resolveHomeBackgroundUrl,
-  updateHomeCurrentMode,
   useAuth,
   usePermissions,
   useToast,
@@ -77,7 +76,10 @@ import {
   resolveHomePageCopy,
   resolveHomeWorkspaceUpdatedAt,
 } from '../../features/home/runtime/home-page-runtime-state';
-import { resolveBrokeredHomeExperience } from '../../features/home/runtime/home-store-capabilities';
+import {
+  activeHomeStoreUsesViews,
+  resolveBrokeredHomeExperience,
+} from '../../features/home/runtime/home-store-capabilities';
 import { reconcileHomeCompositionPolicy } from '../../features/home/home-composition-policy';
 import { HOME_V2_QUERY_ROOT } from '../../features/home/runtime/use-home-v2-runtime';
 import {
@@ -231,6 +233,9 @@ export function useHomePageController() {
     configuredHomeMode,
     viewStoreEnabled
   );
+  const homeStudioPreferenceStore = activeHomeStoreUsesViews(viewStoreEnabled, editSession?.store)
+    ? 'VIEWS'
+    : 'LEGACY';
   useEffect(() => reportHomeMode?.(homeModeKey), [homeModeKey, reportHomeMode]);
   const {
     activeHomeViewScope,
@@ -246,6 +251,7 @@ export function useHomePageController() {
     homeModeKey,
     modeScopedHomeViewsSupported,
     fourDeviceLayoutsSupported,
+    preferenceStore: homeStudioPreferenceStore,
     editSession,
     homeV2Active: homeV2Runtime.active,
     galleryOpen,
@@ -301,34 +307,6 @@ export function useHomePageController() {
     sourceHomeView,
     widgetPreferences,
   } = homeReadModel;
-  const homeModeMutation = useMutation({
-    mutationFn: async (nextMode: HomeExperienceVariant) => {
-      const preference = homePreferenceQuery.data;
-      const enabledModes =
-        preference?.enabledModes ?? preference?.allowedModes ?? homeModePolicy.allowedModes;
-      if (
-        !preference ||
-        !homeModePolicy.allowedModes.includes(nextMode) ||
-        !enabledModes.includes(nextMode)
-      ) {
-        throw new Error('The requested Home mode is not available for this tenant.');
-      }
-      return updateHomeCurrentMode(preference, nextMode);
-    },
-    onSuccess: async (preference) => {
-      queryClient.setQueryData(
-        ['home-preference', auth.user?.tenantId, auth.user?.userId],
-        preference
-      );
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
-        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
-        queryClient.invalidateQueries({ queryKey: ['home-experience'] }),
-        queryClient.invalidateQueries({ queryKey: ['home-view'] }),
-        queryClient.invalidateQueries({ queryKey: ['home-personalization'] }),
-      ]);
-    },
-  });
   const editorSessionActive = editorOpen && editSession !== null;
   const editorActive = editorSessionActive && !homeV2Runtime.active;
   const activeHomeMode: HomeExperienceVariant =
@@ -589,6 +567,7 @@ export function useHomePageController() {
       }
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
         queryClient.invalidateQueries({ queryKey: ['home-personalization', 'device-layouts'] }),
         queryClient.invalidateQueries({ queryKey: ['home-personalization', 'revisions'] }),
         queryClient.invalidateQueries({ queryKey: activeHomeViewQueryKey }),
@@ -809,25 +788,6 @@ export function useHomePageController() {
     homeOverviewRefreshPartial,
     homePageGate,
     homePreferenceQuery: personalizationPreferenceQuery,
-    homeModePreset: homePreference
-      ? {
-          currentMode: activeHomeMode,
-          initialSelectedMode: activeHomeMode,
-          allowedModes: homePreference.allowedModes ?? homeModePolicy.allowedModes,
-          enabledModes:
-            homePreference.enabledModes ??
-            homePreference.allowedModes ??
-            homeModePolicy.allowedModes,
-          disabledModeReasons: homePreference.disabledModeReasons,
-          defaultMode: homePreference.defaultMode ?? homeModePolicy.defaultMode,
-          disabled: editorOpen || homeModeMutation.isPending,
-          applying: homeModeMutation.isPending,
-          sharedAppOrder: entitledApps.map((app) => ({ id: app.id, label: app.name })),
-          onApply: async (mode: HomeExperienceVariant) => {
-            await homeModeMutation.mutateAsync(mode);
-          },
-        }
-      : undefined,
     homeRuntimePartial,
     homeStudioEnabled,
     homeSubheadline,

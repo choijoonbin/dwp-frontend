@@ -1,8 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-import { mockAuthenticatedRuntime } from './support/runtime-access';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import {
+  adminEnvelope as envelope,
+  DEFAULT_ADMIN_PERMISSIONS,
+  mockAdminSession,
+} from './support/admin-session';
 
 type Item = {
   code: string;
@@ -71,84 +75,6 @@ type IdentityUser = {
   accessRevision: number;
   version: number;
 };
-
-function envelope(data: unknown) {
-  return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
-}
-
-type AdminSessionOptions = {
-  roles?: string[];
-  permissions?: Array<{
-    resourceType: string;
-    resourceKey: string;
-    permissionCode: string;
-    effect: 'ALLOW' | 'DENY';
-  }>;
-};
-
-const DEFAULT_ADMIN_PERMISSIONS = FULL_PRODUCT_PERMISSIONS.filter(({ resourceKey }) =>
-  [
-    'APP.ADMINISTRATION',
-    'ADMIN.API_MONITORING',
-    'ADMIN.AUDIT_VIEW',
-    'ADMIN.HOME_EXPERIENCE',
-    'ADMIN.HOME_TEMPLATE',
-    'ADMIN.HOME_WIDGET_POLICY',
-  ].includes(resourceKey)
-);
-
-async function mockAdminSession(page: Page, options: AdminSessionOptions = {}) {
-  await mockAuthenticatedRuntime(page);
-  await page.route('**/api/auth/me', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        userId: 1,
-        displayName: 'Admin User',
-        jobTitle: 'Platform administrator',
-        email: 'admin@dwp.local',
-        tenantId: 1,
-        tenantCode: 'default',
-        identityPlane: 'TENANT',
-        roles: options.roles ?? ['ADMIN'],
-        resourceRoles: [],
-      }),
-    })
-  );
-  await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope(options.permissions ?? DEFAULT_ADMIN_PERMISSIONS),
-    })
-  );
-  await page.route('**/api/auth/csrf', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }),
-    })
-  );
-  await page.route('**/api/platform/v1/tenant-branding', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({ organizationName: null, logoUrl: null, version: 0 }),
-    })
-  );
-  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        schemaVersion: 1,
-        customized: false,
-        preferences: {
-          appearance: { mode: 'system', density: 'standard' },
-          accessibility: { highContrast: false, reduceMotion: false },
-        },
-        version: 0,
-        updatedAt: null,
-      }),
-    })
-  );
-}
 
 test('tenant administrators govern fixed home zones without owning personal widgets', async ({
   page,

@@ -91,6 +91,37 @@ function workspace(openConflict: ReturnType<typeof conflict> | null = null) {
     members: [allowedMember],
     openConflict,
     shares: [],
+    reviewStages: [
+      {
+        stageId: '00000000-0000-4000-8000-000000000411',
+        stageOrder: 1,
+        stageKey: 'AUTHOR',
+        assigneeSubjectId: 'owner@company.com',
+        state: 'APPROVED',
+        revision: 1,
+        evidenceFingerprint: '1'.repeat(64),
+        decidedBySubjectId: 'owner@company.com',
+        decidedAt: '2026-09-17T00:00:30Z',
+      },
+    ],
+    governanceGates: [
+      ...(['DLP', 'CITATION', 'RECIPIENT_ACL', 'IMMUTABLE_VERSION'] as const).map((key) => ({
+        key,
+        state: 'PASS',
+        detailCode: `${key}_VERIFIED`,
+        evidenceReference: `evidence:${key}`,
+        evidenceFingerprint: '2'.repeat(64),
+        evaluatedAt: '2026-09-17T00:01:00Z',
+      })),
+    ],
+    signatureEvidence: {
+      capability: unavailableCapability('ARTIFACT_SIGNED_WORM_RECEIPT_NOT_CONFIGURED'),
+      provider: null,
+      keyReferenceFingerprint: null,
+      signature: null,
+      signedAt: null,
+    },
+    reviewSlaDueAt: '2026-09-18T00:00:00Z',
     createdAt: '2026-09-17T00:00:00Z',
     updatedAt: '2026-09-17T00:02:00Z',
   } as const;
@@ -128,10 +159,22 @@ describe('DWAI.ON artifact collaboration contract', () => {
         reasonCode: null,
         recoveryHint: null,
       },
+      stagedReview: {
+        available: true,
+        configured: true,
+        reasonCode: null,
+        recoveryHint: null,
+      },
+      signedWormReceipt: unavailableCapability('ARTIFACT_SIGNED_WORM_RECEIPT_NOT_CONFIGURED'),
       automaticMasking: unavailableCapability('AUTOMATIC_MASKING_NOT_CONFIGURED'),
       syntheticReplacement: unavailableCapability('SYNTHETIC_REPLACEMENT_NOT_CONFIGURED'),
       reviewNotification: unavailableCapability('REVIEW_NOTIFICATION_NOT_CONFIGURED'),
-      reviewRejection: unavailableCapability('REVIEW_REJECTION_NOT_CONFIGURED'),
+      reviewRejection: {
+        available: true,
+        configured: true,
+        reasonCode: null,
+        recoveryHint: null,
+      },
       providerState: 'AVAILABLE',
       recoveryHint: null,
     };
@@ -150,6 +193,8 @@ describe('DWAI.ON artifact collaboration contract', () => {
               .map((key) => [key, false])
           ),
           inlineComments: unavailableCapability('INLINE_COMMENTS_NOT_CONFIGURED'),
+          stagedReview: unavailableCapability('ARTIFACT_STAGED_REVIEW_NOT_CONFIGURED'),
+          reviewRejection: unavailableCapability('REVIEW_REJECTION_NOT_CONFIGURED'),
           providerState,
           recoveryHint: 'Configure the governed collaboration dependency.',
         }).providerState
@@ -165,7 +210,7 @@ describe('DWAI.ON artifact collaboration contract', () => {
     expect(() =>
       parseDwaionTeamArtifactCapabilities({ ...available, automaticMasking: undefined })
     ).toThrowError(expect.objectContaining({ status: 502 }));
-    expect(() =>
+    expect(
       parseDwaionTeamArtifactCapabilities({
         ...available,
         automaticMasking: {
@@ -174,8 +219,24 @@ describe('DWAI.ON artifact collaboration contract', () => {
           reasonCode: null,
           recoveryHint: null,
         },
+        syntheticReplacement: {
+          available: true,
+          configured: true,
+          reasonCode: null,
+          recoveryHint: null,
+        },
+        reviewNotification: {
+          available: true,
+          configured: true,
+          reasonCode: null,
+          recoveryHint: null,
+        },
       })
-    ).toThrowError(expect.objectContaining({ status: 502 }));
+    ).toMatchObject({
+      automaticMasking: { available: true },
+      syntheticReplacement: { available: true },
+      reviewNotification: { available: true },
+    });
   });
 
   it('binds access requests to the denied preflight and preserves caller retry identity', async () => {

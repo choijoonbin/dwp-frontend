@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { HttpError } from '@dwp-frontend/shared-utils';
 
-import { mailThreadAccessRevoked, permitsSharedInboxAction } from './mail-thread-detail';
+import {
+  mailThreadAccessRevoked,
+  permitsSharedInboxAction,
+  withoutMailSharedInboxActions,
+} from './mail-thread-detail';
 
 import type { MailThreadDetail } from '@dwp-frontend/shared-utils';
 
@@ -24,5 +28,21 @@ describe('mail shared inbox action projection', () => {
     expect(mailThreadAccessRevoked(new HttpError('Forbidden', 403))).toBe(true);
     expect(mailThreadAccessRevoked(new HttpError('Missing', 404))).toBe(true);
     expect(mailThreadAccessRevoked(new HttpError('Conflict', 409))).toBe(false);
+  });
+
+  it('removes denied actions and the projected sender identity from the cached detail', () => {
+    const current = {
+      ...detail(['REPLY', 'SEND_AS', 'COMMENT']),
+      sharedInboxReplyIdentity: {
+        displayName: 'People Help',
+        emailAddress: 'people@example.com',
+        senderMode: 'SEND_AS' as const,
+      },
+    };
+
+    expect(withoutMailSharedInboxActions(current, ['REPLY', 'SEND_AS'])).toMatchObject({
+      sharedInboxActions: ['COMMENT'],
+      sharedInboxReplyIdentity: null,
+    });
   });
 });

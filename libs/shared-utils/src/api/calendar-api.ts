@@ -1,16 +1,20 @@
 import { axiosInstance } from '../axios-instance';
+import { dwaionProposalHandoffHeaders } from '../dwaion-contract';
 import { mailProposalMutationHeaders } from './mail-proposal-binding';
 
 import type { ApiResponse } from '../types';
+import type { DwaionProposalHandoffBinding } from '../dwaion-contract';
 import type { MailProposalMutationBinding } from './mail-proposal-binding';
 
 export * from './calendar-team-api';
+export * from './calendar-settings-api';
 
 export type CalendarType = 'PERSONAL' | 'TEAM' | 'RESOURCE' | 'SYSTEM';
 export type CalendarEventType = 'MEETING' | 'FOCUS' | 'TASK' | 'OUT_OF_OFFICE' | 'REMINDER';
 export type CalendarEventStatus = 'CONFIRMED' | 'TENTATIVE' | 'CANCELLED';
 export type CalendarVisibility = 'DEFAULT' | 'PUBLIC' | 'PRIVATE' | 'CONFIDENTIAL';
 export type CalendarRecurrence = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
+export type CalendarRecurrenceEditScope = 'SERIES' | 'THIS_OCCURRENCE';
 export type CalendarResponseStatus = 'NEEDS_ACTION' | 'ACCEPTED' | 'TENTATIVE' | 'DECLINED';
 export type CalendarAttendeeType = 'REQUIRED' | 'OPTIONAL' | 'RESOURCE';
 export type CalendarResourceType = 'ROOM' | 'DESK' | 'EQUIPMENT';
@@ -161,6 +165,7 @@ export type CalendarEvent = {
   preferenceVersion?: number;
   capabilities?: CalendarEventCapabilities;
   restrictionReason?: string | null;
+  recurrenceId?: string | null;
   version: number;
 };
 
@@ -188,6 +193,70 @@ export type CalendarTrashedEvent = {
   version: number;
   capabilities: CalendarEventCapabilities;
 };
+
+export type CalendarRestoreOutcome =
+  | 'EVENT_AND_RESOURCES_RESTORED'
+  | 'EVENT_AND_RESOURCES_PARTIALLY_RESTORED'
+  | 'EVENT_AND_RESOURCE_REBOOK_REQUESTED'
+  | 'EVENT_ONLY_RESOURCE_REBOOK_REQUIRED'
+  | 'EVENT_ONLY_RESOURCE_CONFLICT'
+  | 'EVENT_ONLY_RESOURCE_ACCESS_REVOKED'
+  | 'EVENT_ONLY_RESOURCE_UNAVAILABLE'
+  | 'EVENT_ONLY_NO_PRIOR_RESOURCE';
+
+export type CalendarRestoreReason =
+  | 'RESOURCE_REBOOKED'
+  | 'RESOURCE_APPROVAL_REQUIRED'
+  | 'ADDITIONAL_RESOURCES_REQUIRE_REBOOK'
+  | 'EXPLICIT_REBOOK_REQUIRED'
+  | 'RESOURCE_TIME_CONFLICT'
+  | 'RESOURCE_ACCESS_REVOKED'
+  | 'RESOURCE_NOT_AVAILABLE'
+  | 'RESOURCE_POLICY_BLOCKED'
+  | 'EVENT_TIME_IS_PAST'
+  | 'NO_PRIOR_RESOURCE';
+
+export type CalendarRestoreResourceResult = {
+  resourceId: string;
+  bookingVersion: number;
+  outcome: CalendarRestoreOutcome;
+  reason: CalendarRestoreReason;
+  canRebook: boolean;
+};
+
+export type CalendarRestoreEventResponse = CalendarEventCapabilities & {
+  outcome: CalendarRestoreOutcome;
+  reason: CalendarRestoreReason;
+  eventVersion: number;
+  resources: CalendarRestoreResourceResult[];
+};
+
+const CALENDAR_RESTORE_OUTCOMES: readonly CalendarRestoreOutcome[] = [
+  'EVENT_AND_RESOURCES_RESTORED',
+  'EVENT_AND_RESOURCES_PARTIALLY_RESTORED',
+  'EVENT_AND_RESOURCE_REBOOK_REQUESTED',
+  'EVENT_ONLY_RESOURCE_REBOOK_REQUIRED',
+  'EVENT_ONLY_RESOURCE_CONFLICT',
+  'EVENT_ONLY_RESOURCE_ACCESS_REVOKED',
+  'EVENT_ONLY_RESOURCE_UNAVAILABLE',
+  'EVENT_ONLY_NO_PRIOR_RESOURCE',
+];
+
+function calendarRestoreResponse(value: unknown): CalendarRestoreEventResponse {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('Calendar restore response is invalid.');
+  }
+  const result = value as Partial<CalendarRestoreEventResponse>;
+  if (
+    !CALENDAR_RESTORE_OUTCOMES.includes(result.outcome as CalendarRestoreOutcome) ||
+    typeof result.reason !== 'string' ||
+    typeof result.eventVersion !== 'number' ||
+    !Array.isArray(result.resources)
+  ) {
+    throw new Error('Calendar restore response is incomplete.');
+  }
+  return result as CalendarRestoreEventResponse;
+}
 
 export type CompanyCalendar = {
   calendarId: string;
@@ -245,6 +314,44 @@ export type CalendarDayLoad = {
   loadPercent: number;
 };
 
+export type CalendarInsightPeriod = 4 | 8 | 12;
+
+export type CalendarInsightsMetrics = {
+  eventCount: number;
+  meetingMinutes: number;
+  focusMinutes: number;
+  protectedFocusMinutes: number;
+  focusQualityPercent: number;
+  afterHoursMinutes: number;
+  noMeetingDays: number;
+  fragmentedDays: number;
+  conflictCount: number;
+};
+
+export type CalendarInsightsWeek = {
+  weekStart: string;
+  weekEnd: string;
+  metrics: CalendarInsightsMetrics;
+};
+
+export type CalendarInsights = {
+  weeks: CalendarInsightPeriod;
+  periodStart: string;
+  periodEnd: string;
+  previousPeriodStart: string;
+  previousPeriodEnd: string;
+  timeZone: string;
+  workingDays: string[];
+  workingDayStart: string;
+  workingDayEnd: string;
+  current: CalendarInsightsMetrics;
+  previous: CalendarInsightsMetrics;
+  trend: CalendarInsightsWeek[];
+  source: 'DWP_NATIVE_CALENDAR';
+  completeness: 'COMPLETE';
+  generatedAt: string;
+};
+
 export type CalendarAttentionItem = {
   key: string;
   severity: 'LOW' | 'MEDIUM' | 'HIGH';
@@ -271,6 +378,7 @@ export type CalendarHome = {
   weekLoad: CalendarDayLoad[];
   attention: CalendarAttentionItem[];
   generatedAt: string;
+  insights?: CalendarInsights | null;
 };
 
 export type CalendarPolicy = {
@@ -399,6 +507,9 @@ export type UpdateCalendarEventInput = Omit<
   'idempotencyKey' | 'calendarId'
 > & {
   version: number;
+  editScope?: CalendarRecurrenceEditScope;
+  originalStartsAt?: string | null;
+  idempotencyKey?: string | null;
 };
 
 function rangeQuery(from: string, to: string) {
@@ -410,6 +521,22 @@ export async function getCalendarHome(timeZone = 'Asia/Seoul'): Promise<Calendar
     `/api/platform/v1/calendar/home?timeZone=${encodeURIComponent(timeZone)}`
   );
   return response.data.data;
+}
+
+export async function getCalendarInsights(
+  weeks: CalendarInsightPeriod,
+  timeZone = 'Asia/Seoul',
+  signal?: AbortSignal
+): Promise<CalendarInsights> {
+  const path =
+    `/api/platform/v1/calendar/home?timeZone=${encodeURIComponent(timeZone)}` +
+    `&insightWeeks=${encodeURIComponent(String(weeks))}`;
+  const response = signal
+    ? await axiosInstance.get<ApiResponse<CalendarHome>>(path, { signal })
+    : await axiosInstance.get<ApiResponse<CalendarHome>>(path);
+  const insights = response.data.data.insights;
+  if (!insights) throw new Error('Calendar insights were not included in the home response.');
+  return insights;
 }
 
 export function getCalendars(): Promise<CalendarSummary[]>;
@@ -482,7 +609,8 @@ export async function getCalendarEvents(
 export async function createCalendarEvent(
   input: CreateCalendarEventInput,
   signal?: AbortSignal,
-  proposalBinding?: MailProposalMutationBinding
+  proposalBinding?: MailProposalMutationBinding,
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null
 ): Promise<CalendarEvent> {
   const path = '/api/platform/v1/calendar/events';
   const response = await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(
@@ -490,7 +618,10 @@ export async function createCalendarEvent(
     input,
     {
       ...(signal ? { signal } : {}),
-      headers: mailProposalMutationHeaders(proposalBinding),
+      headers: {
+        ...mailProposalMutationHeaders(proposalBinding),
+        ...dwaionProposalHandoffHeaders(dwaionProposalBinding),
+      },
     }
   );
   return response.data.data;
@@ -543,23 +674,47 @@ export async function trashCalendarEvent(
 export async function restoreCalendarEvent(
   eventId: string,
   version: number
-): Promise<CalendarEventCapabilities> {
+): Promise<CalendarRestoreEventResponse> {
   const response = await axiosInstance.post<
-    ApiResponse<CalendarEventCapabilities>,
+    ApiResponse<CalendarRestoreEventResponse>,
     { version: number }
   >(`/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}/restore`, { version });
-  return response.data.data;
+  return calendarRestoreResponse(response.data.data);
+}
+
+export async function rebookCalendarEventResource(
+  eventId: string,
+  input: {
+    eventVersion: number;
+    resourceId: string;
+    bookingVersion: number;
+    idempotencyKey: string;
+  }
+): Promise<CalendarRestoreEventResponse> {
+  const response = await axiosInstance.post<
+    ApiResponse<CalendarRestoreEventResponse>,
+    typeof input
+  >(`/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}/resource-rebook`, input);
+  return calendarRestoreResponse(response.data.data);
 }
 
 export async function respondToCalendarEvent(
   eventId: string,
-  responseStatus: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>
+  responseStatus: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>,
+  expectedVersion: number,
+  idempotencyKey: string
 ): Promise<CalendarEvent> {
   const response = await axiosInstance.post<
     ApiResponse<CalendarEvent>,
-    { response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'> }
+    {
+      response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>;
+      expectedVersion: number;
+      idempotencyKey: string;
+    }
   >(`/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}/response`, {
     response: responseStatus,
+    expectedVersion,
+    idempotencyKey,
   });
   return response.data.data;
 }

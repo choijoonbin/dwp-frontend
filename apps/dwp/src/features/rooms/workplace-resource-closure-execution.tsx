@@ -141,6 +141,12 @@ export function WorkplaceResourceClosureExecution({
     recoveryIntent.current = null;
   }, [targetScope]);
   useEffect(() => {
+    if (canManage && sourceFresh) return;
+    setConfirmed(false);
+    setExecutionOutcome(null);
+    executeIntent.current = null;
+  }, [canManage, sourceFresh]);
+  useEffect(() => {
     if (!preview) return undefined;
     const remaining = Date.parse(preview.expiresAt) - Date.now();
     if (remaining <= 0) {

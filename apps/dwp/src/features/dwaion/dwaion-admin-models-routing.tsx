@@ -13,7 +13,6 @@ import {
   ShieldOff,
 } from 'lucide-react';
 import {
-  ActionButton,
   FormField,
   OperationalKpiStrip,
   PageCanvas,
@@ -51,6 +50,7 @@ import {
 } from './admin-advancement/dwaion-emergency-operation-dialog';
 import { DwaionPendingApprovalPanel } from './admin-advancement/dwaion-pending-approval-panel';
 import { DwaionModelRoutingRegistry } from './admin-advancement/dwaion-model-routing-registry';
+import { DwaionCommandCapabilityButton } from './admin-advancement/dwaion-command-capability-button';
 
 type PolicyDraft = {
   primaryModelId: string;
@@ -93,7 +93,6 @@ export function DwaionAdminModelsRouting() {
   const [intent, setIntent] = useState<DwaionCommandIntent | null>(null);
   const [emergencyDraft, setEmergencyDraft] = useState<DwaionEmergencyOperationDraft | null>(null);
   const data = query.data;
-  const commandsAvailable = data?.capability.status === 'AVAILABLE' && data.capability.configured;
   const selectedPolicy = useMemo(
     () =>
       data?.routingPolicies.find((policy) => policy.policyId === selectedPolicyId) ??
@@ -157,6 +156,7 @@ export function DwaionAdminModelsRouting() {
         modalities: splitScopes(activeDraft.modalities),
         agentScopes: splitScopes(activeDraft.agentScopes),
         inFlightPolicy: activeDraft.inFlightPolicy,
+        trafficPercent: 5,
       },
       destructive: kind === 'MODEL_ROLLBACK',
     });
@@ -422,31 +422,33 @@ export function DwaionAdminModelsRouting() {
                             value && setDraft({ ...activeDraft, inFlightPolicy: value })
                           }
                         />
-                        <ActionButton
-                          disabled={!commandsAvailable || !policyValid}
+                        <DwaionCommandCapabilityButton
+                          commandKind="MODEL_ROUTING_UPDATE"
+                          disabled={!policyValid}
                           intent="primary"
                           startIcon={<Route size={16} />}
                           onClick={() => openPolicyCommand('MODEL_ROUTING_UPDATE')}
                         >
                           {copy.models.updatePolicy}
-                        </ActionButton>
+                        </DwaionCommandCapabilityButton>
                         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-                          <ActionButton
-                            disabled={!commandsAvailable || !policyValid}
+                          <DwaionCommandCapabilityButton
+                            commandKind="MODEL_CANARY_START"
+                            disabled={!policyValid}
                             intent="secondary"
                             startIcon={<Play size={16} />}
                             onClick={() => openPolicyCommand('MODEL_CANARY_START')}
                           >
                             {copy.models.startCanary}
-                          </ActionButton>
-                          <ActionButton
-                            disabled={!commandsAvailable}
+                          </DwaionCommandCapabilityButton>
+                          <DwaionCommandCapabilityButton
+                            commandKind="MODEL_ROLLBACK"
                             intent="danger"
                             startIcon={<RotateCcw size={16} />}
                             onClick={() => openPolicyCommand('MODEL_ROLLBACK')}
                           >
                             {copy.models.rollback}
-                          </ActionButton>
+                          </DwaionCommandCapabilityButton>
                         </Stack>
                       </Stack>
                     </DwaionAdminSection>
@@ -514,11 +516,11 @@ export function DwaionAdminModelsRouting() {
                           setSimulation({ ...simulation, constraints: event.target.value })
                         }
                       />
-                      <ActionButton
+                      <DwaionCommandCapabilityButton
+                        commandKind="MODEL_ROUTE_SIMULATE"
                         intent="secondary"
                         startIcon={<GitCompareArrows size={16} />}
                         disabled={
-                          !commandsAvailable ||
                           !simulation.requesterRole.trim() ||
                           !simulation.agentId.trim() ||
                           !Number.isFinite(Number(simulation.estimatedTokens)) ||
@@ -547,7 +549,7 @@ export function DwaionAdminModelsRouting() {
                         }
                       >
                         {copy.models.simulator}
-                      </ActionButton>
+                      </DwaionCommandCapabilityButton>
                       {data.latestSimulation && (
                         <Box
                           aria-label={copy.ui.models.latestSimulationResult}
@@ -592,9 +594,11 @@ export function DwaionAdminModelsRouting() {
                           ? 'Traffic is stopped. Validate fallback health before recovery.'
                           : 'Stops selected AI traffic and moves supported workloads to the verified fallback.'}
                       </Typography>
-                      <ActionButton
+                      <DwaionCommandCapabilityButton
+                        commandKind={
+                          data.emergencyStopActive ? 'EMERGENCY_RECOVERY' : 'EMERGENCY_STOP'
+                        }
                         intent={data.emergencyStopActive ? 'primary' : 'danger'}
-                        disabled={!commandsAvailable}
                         startIcon={
                           data.emergencyStopActive ? (
                             <ShieldCheck size={16} />
@@ -626,7 +630,7 @@ export function DwaionAdminModelsRouting() {
                         }
                       >
                         {data.emergencyStopActive ? copy.models.recovery : copy.models.emergency}
-                      </ActionButton>
+                      </DwaionCommandCapabilityButton>
                     </Stack>
                   </DwaionAdminSection>
                 </Stack>
@@ -636,7 +640,7 @@ export function DwaionAdminModelsRouting() {
                 <DwaionCanonicalCommandActions
                   title={copy.ui.models.controlOperations}
                   description={copy.ui.models.controlOperationsDescription}
-                  disabled={!commandsAvailable}
+                  disabled={false}
                   onRefresh={async () => {
                     await query.refetch();
                   }}

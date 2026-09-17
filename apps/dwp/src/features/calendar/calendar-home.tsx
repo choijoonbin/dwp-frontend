@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -8,6 +8,7 @@ import {
   dwaionHandoffText,
   getCalendarPolicy,
   parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
   respondToCalendarEvent,
   trashCalendarEvent,
   updateCalendarEventPreference,
@@ -46,6 +47,11 @@ import {
 } from './calendar-read-source-state';
 import { eventCapability } from './calendar-source-model';
 import { calendarInternalPath, isCalendarCommandShortcut } from './calendar-schedule-state';
+import {
+  completeCalendarResponseIntent,
+  prepareCalendarResponseCommand,
+  type CalendarResponseIntent,
+} from './calendar-response-intent';
 
 import type {
   CalendarEvent,
@@ -60,6 +66,7 @@ type CalendarHomeCreateState = Readonly<{
   title?: string;
   attendeeEmails?: string[];
   fromDwaion?: boolean;
+  dwaionProposalBinding?: import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding;
 }>;
 
 function requestedCalendarType(value: string | null): CalendarEventType {
@@ -111,6 +118,7 @@ export function CalendarHome() {
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
+  const responseIntentRef = useRef<CalendarResponseIntent | null>(null);
   const [createState, setCreateState] = useState<CalendarHomeCreateState | null>(null);
   const language = i18n.resolvedLanguage ?? i18n.language;
   const currentSearch = useMemo(() => new URLSearchParams(location.search), [location.search]);
@@ -145,6 +153,10 @@ export function CalendarHome() {
     () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
     [location.state]
   );
+  const dwaionProposalBinding = useMemo(
+    () => parseDwaionProposalHandoffBinding(location.state),
+    [location.state]
+  );
 
   useEffect(() => {
     const openCommands = (event: KeyboardEvent) => {
@@ -174,6 +186,10 @@ export function CalendarHome() {
         title: dwaionHandoffText(dwaionHandoff, 'title') ?? undefined,
         attendeeEmails: dwaionHandoffStrings(dwaionHandoff, 'attendees'),
         fromDwaion: Boolean(dwaionHandoff),
+        dwaionProposalBinding:
+          dwaionProposalBinding?.actionKey === 'CALENDAR.EVENT.CREATE'
+            ? dwaionProposalBinding
+            : undefined,
       });
     }
     const next = new URLSearchParams(location.search);
@@ -188,6 +204,7 @@ export function CalendarHome() {
     canCreateGranted,
     currentSearch,
     dwaionHandoff,
+    dwaionProposalBinding,
     location.pathname,
     location.search,
     navigate,
@@ -241,11 +258,19 @@ export function CalendarHome() {
     mutationFn: ({
       eventId,
       response,
+      expectedVersion,
+      idempotencyKey,
     }: {
       eventId: string;
       response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>;
-    }) => respondToCalendarEvent(eventId, response),
-    onSuccess: async (event) => {
+      expectedVersion: number;
+      idempotencyKey: string;
+    }) => respondToCalendarEvent(eventId, response, expectedVersion, idempotencyKey),
+    onSuccess: async (event, command) => {
+      responseIntentRef.current = completeCalendarResponseIntent(
+        responseIntentRef.current,
+        command.idempotencyKey
+      );
       setSelected(event);
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('event.responseSaved'));
@@ -296,8 +321,11 @@ export function CalendarHome() {
     canUpdate && event.status !== 'CANCELLED' && eventCapability(event, 'canEdit');
   const canDelete = (event: CalendarEvent) =>
     canUpdate && event.status !== 'CANCELLED' && eventCapability(event, 'canDelete');
-  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') =>
-    respondMutation.mutate({ eventId: event.eventId, response });
+  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') => {
+    const prepared = prepareCalendarResponseCommand(responseIntentRef.current, event, response);
+    responseIntentRef.current = prepared.intent;
+    respondMutation.mutate(prepared.command);
+  };
   const openNow = (type: CalendarEventType) => {
     if (!canCreate) return;
     setCreateState({
@@ -505,6 +533,7 @@ export function CalendarHome() {
           initialTimeZone={summary.data?.timeZone}
           initialAttendeeEmails={createState?.attendeeEmails}
           fromDwaion={createState?.fromDwaion}
+          dwaionProposalBinding={createState?.dwaionProposalBinding}
           onClose={() => setCreateState(null)}
         />
       ) : null}

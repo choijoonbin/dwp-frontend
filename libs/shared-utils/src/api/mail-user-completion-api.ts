@@ -1,9 +1,14 @@
 import { axiosInstance } from '../axios-instance';
+import { dwaionProposalHandoffHeaders } from '../dwaion-contract';
+import { parseMailAccountReadinessEvidence } from './mail-api';
 import { mailProposalMutationHeaders } from './mail-proposal-binding';
 
 import type { ApiResponse } from '../types';
+import type { DwaionProposalHandoffBinding } from '../dwaion-contract';
 import type {
   MailAccount,
+  MailAccountReadinessEvidence,
+  MailClassification,
   MailDraftSaveInput,
   MailRecipient,
   MailThreadDetail,
@@ -42,6 +47,7 @@ export type MailComposeCapabilities = {
   attachments: boolean;
   scheduling: boolean;
   maximumAttachmentBytes: number;
+  senderMode?: 'ACCOUNT' | 'SEND_AS' | 'SEND_ON_BEHALF';
 };
 
 export type MailWritingAssetScope = 'PERSONAL' | 'ACCOUNT' | 'ORGANIZATION';
@@ -115,6 +121,7 @@ export type MailComposeContext = {
   accounts: MailAccount[];
   capabilities: MailComposeCapabilities;
   accountCapabilities: Record<string, MailComposeCapabilities>;
+  accountReadiness?: Record<string, MailAccountReadinessEvidence>;
   templates: MailTemplate[];
   signatures: MailSignature[];
   preferences: MailPreferences;
@@ -221,6 +228,8 @@ export type MailAdvancedThreadDetail = MailThreadDetail & {
 };
 
 export type MailAdvancedDraftSaveInput = MailDraftSaveInput & {
+  classification: MailClassification;
+  externalRecipientConfirmed: boolean;
   composeOptions?: MailComposeOptions;
 };
 
@@ -241,7 +250,20 @@ export async function getMailComposeContext(): Promise<MailComposeContext> {
   const response = await axiosInstance.get<ApiResponse<MailComposeContext>>(
     `${MAIL_USER_BASE}/compose-context`
   );
-  return response.data.data;
+  const context = response.data.data;
+  return {
+    ...context,
+    accounts: context.accounts.map((account) => ({
+      ...account,
+      readiness: parseMailAccountReadinessEvidence(account.readiness),
+    })),
+    accountReadiness: Object.fromEntries(
+      Object.entries(context.accountReadiness ?? {}).flatMap(([accountId, readiness]) => {
+        const parsed = parseMailAccountReadinessEvidence(readiness);
+        return parsed ? [[accountId, parsed] as const] : [];
+      })
+    ),
+  };
 }
 
 export async function uploadMailAttachment(file: File): Promise<MailAttachment> {
@@ -505,12 +527,15 @@ export async function updateMailPreferences(input: MailPreferencesInput): Promis
 }
 
 export async function createAdvancedMailDraft(
-  input: MailAdvancedDraftSaveInput
+  input: MailAdvancedDraftSaveInput,
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null
 ): Promise<MailAdvancedThreadDetail> {
   const response = await axiosInstance.post<
     ApiResponse<MailAdvancedThreadDetail>,
     MailAdvancedDraftSaveInput
-  >(`${MAIL_USER_BASE}/drafts`, input);
+  >(`${MAIL_USER_BASE}/drafts`, input, {
+    headers: dwaionProposalHandoffHeaders(dwaionProposalBinding),
+  });
   return response.data.data;
 }
 
@@ -535,6 +560,8 @@ export async function updateAdvancedMailDraft(
     deliveryMode: 'SEND' | 'DRAFT';
     idempotencyKey: string;
     version: number;
+    classification: MailClassification;
+    externalRecipientConfirmed: boolean;
     composeOptions?: MailComposeOptions;
   },
   proposalBinding?: MailProposalMutationBinding

@@ -9,12 +9,15 @@ import {
   getCalendarAvailability,
   getCalendarEvents,
   getCalendarHome,
+  getCalendarInsights,
   getCalendarPolicy,
   getCalendarShares,
   getCalendars,
   getCompanyCalendarEvents,
   getCompanyCalendars,
   putCalendarShare,
+  rebookCalendarEventResource,
+  respondToCalendarEvent,
   restoreCalendarEvent,
   restoreCompanyCalendarEvent,
   trashCalendarEvent,
@@ -141,6 +144,42 @@ describe('calendar API boundary', () => {
     });
   });
 
+  it('binds a reviewed DWAI.ON proposal to the Calendar owner command', async () => {
+    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({
+      data: { data: { eventId: 'event-1', version: 1 } },
+    });
+    const input = {
+      title: 'DWAI.ON event',
+      type: 'MEETING' as const,
+      startsAt: '2026-09-08T00:00:00Z',
+      endsAt: '2026-09-08T01:00:00Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      visibility: 'DEFAULT' as const,
+      recurrence: 'NONE' as const,
+      recurrenceInterval: 1,
+      responseRequired: true,
+      attendees: [],
+      importance: 'NORMAL' as const,
+      idempotencyKey: '70000000-0000-4000-8000-000000000001',
+    };
+    await createCalendarEvent(input, undefined, undefined, {
+      version: 1,
+      handoffId: '70000000-0000-4000-8000-000000000002',
+      proposalId: '70000000-0000-4000-8000-000000000003',
+      actionKey: 'CALENDAR.EVENT.CREATE',
+      handoffVersion: 3,
+    });
+    expect(post).toHaveBeenCalledWith('/api/platform/v1/calendar/events', input, {
+      headers: {
+        'X-DWP-DWAI-ON-Handoff-ID': '70000000-0000-4000-8000-000000000002',
+        'X-DWP-DWAI-ON-Proposal-ID': '70000000-0000-4000-8000-000000000003',
+        'X-DWP-DWAI-ON-Action-Key': 'CALENDAR.EVENT.CREATE',
+        'X-DWP-DWAI-ON-Handoff-Version': '3',
+      },
+    });
+  });
+
   it('loads the today workspace with an explicit IANA time zone', async () => {
     const home = { date: '2026-08-14', timeZone: 'Asia/Seoul', today: [] };
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(home));
@@ -151,6 +190,37 @@ describe('calendar API boundary', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/platform/v1/calendar/home?timeZone=Asia%2FSeoul',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
+    );
+  });
+
+  it('loads an actual four, eight, or twelve week insight window through the protected home route', async () => {
+    const signal = new AbortController().signal;
+    const insights = {
+      weeks: 8,
+      periodStart: '2026-07-27',
+      periodEnd: '2026-09-20',
+      previousPeriodStart: '2026-06-01',
+      previousPeriodEnd: '2026-07-26',
+      timeZone: 'Asia/Seoul',
+      workingDays: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'],
+      workingDayStart: '09:00:00',
+      workingDayEnd: '18:00:00',
+      current: { eventCount: 1 },
+      previous: { eventCount: 0 },
+      trend: [],
+      source: 'DWP_NATIVE_CALENDAR',
+      completeness: 'COMPLETE',
+      generatedAt: '2026-09-17T09:00:00+09:00',
+    };
+    const get = vi.spyOn(axiosInstance, 'get').mockResolvedValue({
+      data: { data: { insights } },
+    });
+
+    await expect(getCalendarInsights(8, 'Asia/Seoul', signal)).resolves.toEqual(insights);
+
+    expect(get).toHaveBeenCalledWith(
+      '/api/platform/v1/calendar/home?timeZone=Asia%2FSeoul&insightWeeks=8',
+      { signal }
     );
   });
 
@@ -213,6 +283,45 @@ describe('calendar API boundary', () => {
     expect(request.method).toBe('PUT');
     expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
     expect(JSON.parse(String(request.body))).toEqual(input);
+  });
+
+  it('sends an occurrence edit as a stable scoped command', async () => {
+    const updatedEvent = {
+      eventId: 'event-1',
+      recurrenceId: '2026-08-24T00:00:00Z',
+      version: 8,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(updatedEvent));
+    vi.stubGlobal('fetch', fetchMock);
+    const input: UpdateCalendarEventInput = {
+      title: '이번 회차만 변경',
+      description: '반복 시리즈의 한 회차입니다.',
+      type: 'MEETING',
+      startsAt: '2026-08-24T01:00:00Z',
+      endsAt: '2026-08-24T02:00:00Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      location: null,
+      conferenceUrl: null,
+      visibility: 'DEFAULT',
+      recurrence: 'WEEKLY',
+      recurrenceInterval: 1,
+      recurrenceUntil: '2026-10-31',
+      responseRequired: true,
+      attendees: [],
+      resourceId: null,
+      version: 7,
+      editScope: 'THIS_OCCURRENCE',
+      originalStartsAt: '2026-08-24T00:00:00Z',
+      idempotencyKey: '8b7fe7e4-0b95-464f-b8c0-9955b66a79e1',
+    };
+
+    await expect(updateCalendarEvent('event-1', input)).resolves.toEqual(updatedEvent);
+
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(input);
   });
 
   it('cancels with the current optimistic-lock version', async () => {
@@ -326,12 +435,43 @@ describe('calendar API boundary', () => {
       canRespond: false,
       canStar: true,
     };
+    const restoreResponse = {
+      ...capabilities,
+      outcome: 'EVENT_ONLY_RESOURCE_REBOOK_REQUIRED',
+      reason: 'EXPLICIT_REBOOK_REQUIRED',
+      eventVersion: 7,
+      resources: [
+        {
+          resourceId: '15048c1b-81af-6757-9bc6-ea09894e5b64',
+          bookingVersion: 2,
+          outcome: 'EVENT_ONLY_RESOURCE_REBOOK_REQUIRED',
+          reason: 'EXPLICIT_REBOOK_REQUIRED',
+          canRebook: true,
+        },
+      ],
+    } as const;
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
       .mockResolvedValueOnce(jsonResponse(preference))
       .mockResolvedValueOnce(jsonResponse(capabilities))
-      .mockResolvedValueOnce(jsonResponse(capabilities));
+      .mockResolvedValueOnce(jsonResponse(restoreResponse))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ...restoreResponse,
+          outcome: 'EVENT_AND_RESOURCES_RESTORED',
+          reason: 'RESOURCE_REBOOKED',
+          resources: [
+            {
+              ...restoreResponse.resources[0],
+              outcome: 'EVENT_AND_RESOURCES_RESTORED',
+              reason: 'RESOURCE_REBOOKED',
+              canRebook: false,
+              bookingVersion: 3,
+            },
+          ],
+        })
+      );
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
@@ -340,12 +480,26 @@ describe('calendar API boundary', () => {
     await expect(trashCalendarEvent('event-1', 5, 'No longer needed')).resolves.toEqual(
       capabilities
     );
-    await expect(restoreCalendarEvent('event-1', 6)).resolves.toEqual(capabilities);
+    await expect(restoreCalendarEvent('event-1', 6)).resolves.toEqual(restoreResponse);
+    await expect(
+      rebookCalendarEventResource('event-1', {
+        eventVersion: 7,
+        resourceId: '15048c1b-81af-6757-9bc6-ea09894e5b64',
+        bookingVersion: 2,
+        idempotencyKey: 'a5ab6bd1-f44c-4b49-9033-07dc410cefe9',
+      })
+    ).resolves.toEqual(
+      expect.objectContaining({
+        outcome: 'EVENT_AND_RESOURCES_RESTORED',
+        reason: 'RESOURCE_REBOOKED',
+      })
+    );
 
     expect(fetchMock.mock.calls.slice(1).map((call) => call[0])).toEqual([
       '/api/platform/v1/calendar/events/event-1/preference',
       '/api/platform/v1/calendar/events/event-1/trash',
       '/api/platform/v1/calendar/events/event-1/restore',
+      '/api/platform/v1/calendar/events/event-1/resource-rebook',
     ]);
     expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual({
       version: 5,
@@ -353,6 +507,60 @@ describe('calendar API boundary', () => {
     });
     expect(JSON.parse(String((fetchMock.mock.calls[3]?.[1] as RequestInit).body))).toEqual({
       version: 6,
+    });
+    expect(JSON.parse(String((fetchMock.mock.calls[4]?.[1] as RequestInit).body))).toEqual({
+      eventVersion: 7,
+      resourceId: '15048c1b-81af-6757-9bc6-ea09894e5b64',
+      bookingVersion: 2,
+      idempotencyKey: 'a5ab6bd1-f44c-4b49-9033-07dc410cefe9',
+    });
+  });
+
+  it('rejects an incomplete restore receipt instead of rendering invented recovery state', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          canViewDetails: true,
+          canEdit: true,
+          canDelete: true,
+          canRestore: false,
+          canRespond: false,
+          canStar: true,
+        })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(restoreCalendarEvent('event-1', 6)).rejects.toThrow(
+      'Calendar restore response is incomplete.'
+    );
+  });
+
+  it('sends the event version and stable command key with an invitation response', async () => {
+    const event = { eventId: 'event-1', version: 9, myResponse: 'ACCEPTED' };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(event));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      respondToCalendarEvent(
+        'event-1',
+        'ACCEPTED',
+        8,
+        'dc12dd3d-8339-4a13-80d2-ae67d3c3bf16'
+      )
+    ).resolves.toEqual(event);
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/calendar/events/event-1/response'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
+      response: 'ACCEPTED',
+      expectedVersion: 8,
+      idempotencyKey: 'dc12dd3d-8339-4a13-80d2-ae67d3c3bf16',
     });
   });
 

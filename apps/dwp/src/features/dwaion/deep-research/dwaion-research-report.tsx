@@ -262,6 +262,7 @@ function renderNodes(nodes: DwaionResearchReportNode[], tableLabel: string): Rea
         content = (
           <TableContainer
             component={Box}
+            tabIndex={0}
             sx={{ my: 1.5, maxWidth: '100%', overflowX: 'auto', border: 1, borderColor: 'divider' }}
           >
             <Table size="small" aria-label={tableLabel}>

@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import type { MailDraftConflictRecord } from './mail-draft-conflict';
 import type { MailDraftFields } from './use-mail-draft-autosave';
 
-const FIELD_KEYS = ['toEmail', 'subject', 'body'] as const;
+const FIELD_KEYS = ['toEmail', 'subject', 'classification', 'body'] as const;
 
 export function MailDraftConflictReview({
   conflict,

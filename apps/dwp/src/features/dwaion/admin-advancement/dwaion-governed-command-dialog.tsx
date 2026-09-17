@@ -39,6 +39,7 @@ import {
   type DwaionCommandTransition,
 } from './dwaion-governed-command-presentation';
 import { useDwaionControlPlaneAuthority } from './use-dwaion-control-plane-authority';
+import { useDwaionCommandCapabilities } from './use-dwaion-command-capabilities';
 
 export type { DwaionCommandIntent } from './dwaion-governed-command-presentation';
 
@@ -57,6 +58,7 @@ export function DwaionGovernedCommandDialog({
 }) {
   const copy = useDwaionAdminAdvancementCopy();
   const authority = useDwaionControlPlaneAuthority();
+  const commandCapabilities = useDwaionCommandCapabilities();
   const [reason, setReason] = useState('');
   const [ticketRef, setTicketRef] = useState('');
   const [evidence, setEvidence] = useState('');
@@ -248,8 +250,11 @@ export function DwaionGovernedCommandDialog({
     createMutation.isPending || transitionMutation.isPending || recoveryStepUp.controller.busy;
   const visibleCommand = command;
   const needsTransitionEvidence = Boolean(visibleCommand?.allowedTransitions.length);
+  const intentCapability = intent ? commandCapabilities.capability(intent.kind) : null;
+  const intentAvailable = intent ? commandCapabilities.available(intent.kind) : true;
   const createDisabled =
     !authority.available ||
+    !intentAvailable ||
     !createCommandId ||
     reason.trim().length < 10 ||
     ticketRef.trim().length < 3 ||
@@ -282,6 +287,17 @@ export function DwaionGovernedCommandDialog({
                 <InlineFeedback severity="error">
                   {copy.command.authorityUnavailable}
                 </InlineFeedback>
+              )}
+              {intentCapability && !intentAvailable && (
+                <Alert severity="warning">
+                  <Typography variant="subtitle2">{intentCapability.kind}</Typography>
+                  <Typography variant="body2">{intentCapability.reason}</Typography>
+                  {intentCapability.recoveryHint && (
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      {intentCapability.recoveryHint}
+                    </Typography>
+                  )}
+                </Alert>
               )}
               <DwaionCommandReview intent={intent} />
               <FormField

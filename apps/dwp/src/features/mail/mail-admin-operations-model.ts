@@ -1,7 +1,9 @@
 import type {
   MailAdminOverview,
   MailConnection,
+  MailDeliveryAuditExport,
   MailProviderDescriptor,
+  MailRetentionEvidenceExport,
 } from '@dwp-frontend/shared-utils';
 
 export type MailAdminSurface =
@@ -95,6 +97,14 @@ export type MailSharedInboxAccessImpact = {
   providerRevocationRequired: boolean;
 };
 
+export type MailSharedInboxMemberRevokePreview = MailSharedInboxAccessImpact & {
+  previewId: string;
+  fingerprint: string;
+  memberVersion: number;
+  generatedAt: string;
+  expiresAt: string;
+};
+
 export type MailSharedInboxMemberInput = {
   userId: number;
   displayName: string;
@@ -144,7 +154,7 @@ export type MailLegalHold = {
   holdId: string;
   name: string;
   safeCaseRef: string;
-  scope: string | Readonly<Record<string, unknown>>;
+  scope: Readonly<Record<string, unknown>>;
   status: 'ACTIVE' | 'RELEASED' | 'EXPIRED';
   startsAt: string;
   expiresAt?: string | null;
@@ -159,10 +169,18 @@ export type MailPurgeCandidateSnapshot = {
   eligibleCount: number;
   partialSources: readonly string[];
   generatedAt: string;
+  before: string;
   expiresAt: string;
   policyVersion: number;
   distinctApproverCount: number;
+  resourceCounts: Record<'THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS', number>;
+  heldResourceCounts: Record<'THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS', number>;
+  exclusionReasonCounts: Record<'LEGAL_HOLD' | 'IMMUTABLE_EVIDENCE', number>;
+  resourceTypes: readonly ('THREADS' | 'MESSAGES' | 'ATTACHMENTS' | 'DRAFTS')[];
+  scope: Readonly<Record<string, unknown>>;
 };
+
+export const MAIL_PURGE_RESOURCE_TYPES = ['THREADS', 'MESSAGES', 'ATTACHMENTS', 'DRAFTS'] as const;
 
 export type MailPurgeStepResult = {
   step: 'LOCAL' | 'PROVIDER' | 'ATTACHMENT' | 'EVENT' | 'VERIFICATION';
@@ -193,17 +211,78 @@ export type MailRetentionSnapshot = {
   resourcePolicies: readonly MailRetentionResourcePolicy[];
   holds: readonly MailLegalHold[];
   purgeJobs: readonly MailPurgeJob[];
+  candidates?: readonly MailPurgeCandidateSnapshot[];
   candidate?: MailPurgeCandidateSnapshot | null;
 };
 
 export type MailLegalHoldInput = {
   name: string;
   safeCaseRef: string;
-  scope: string;
+  scope: Record<string, unknown>;
   startsAt?: string | null;
   expiresAt?: string | null;
   version: number;
 };
+
+export type MailLegalHoldScopeMode = 'TENANT' | 'ACCOUNT' | 'THREAD';
+
+export type MailLegalHoldScopeEditor = Readonly<{
+  editable: boolean;
+  mode: MailLegalHoldScopeMode;
+  ids: string;
+  resourceTypes: readonly string[];
+}>;
+
+const MAIL_SCOPE_UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+
+function scopeStrings(value: unknown): string[] {
+  if (typeof value === 'string') return [value];
+  if (Array.isArray(value) && value.every((item) => typeof item === 'string')) return value;
+  return [];
+}
+
+export function mailLegalHoldScopeEditor(
+  scope: Readonly<Record<string, unknown>> | null | undefined
+): MailLegalHoldScopeEditor {
+  if (!scope) return { editable: true, mode: 'TENANT', ids: '', resourceTypes: [] };
+  const resourceTypes = scopeStrings(scope.resourceTypes);
+  if (scope.tenant === true) return { editable: true, mode: 'TENANT', ids: '', resourceTypes };
+  const accountIds = [...scopeStrings(scope.accountId), ...scopeStrings(scope.accountIds)];
+  if (accountIds.length) {
+    return { editable: true, mode: 'ACCOUNT', ids: accountIds.join(', '), resourceTypes };
+  }
+  const threadIds = [...scopeStrings(scope.threadId), ...scopeStrings(scope.threadIds)];
+  if (threadIds.length) {
+    return { editable: true, mode: 'THREAD', ids: threadIds.join(', '), resourceTypes };
+  }
+  return { editable: false, mode: 'TENANT', ids: '', resourceTypes };
+}
+
+export function buildMailLegalHoldScope(
+  mode: MailLegalHoldScopeMode,
+  ids: string,
+  resourceTypes: readonly string[]
+): Record<string, unknown> | null {
+  const parsedIds = ids
+    .split(/[\s,;]+/u)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (
+    mode !== 'TENANT' &&
+    (!parsedIds.length || parsedIds.some((id) => !MAIL_SCOPE_UUID.test(id)))
+  ) {
+    return null;
+  }
+  const base: Record<string, unknown> =
+    mode === 'TENANT'
+      ? { tenant: true }
+      : mode === 'ACCOUNT'
+        ? { accountIds: parsedIds }
+        : { threadIds: parsedIds };
+  if (resourceTypes.length) base.resourceTypes = [...resourceTypes];
+  return base;
+}
 
 export type MailDeliveryTimelineItem = {
   stage: string;
@@ -246,13 +325,8 @@ export type MailDeliveryAuditPage = {
   generatedAt: string;
 };
 
-export type MailAuditExport = {
-  exportId: string;
-  state: 'ACCEPTED' | 'RUNNING' | 'READY' | 'FAILED';
-  expiresAt?: string | null;
-  watermark?: string | null;
-  downloadUrl?: string | null;
-};
+export type MailAuditExport = MailDeliveryAuditExport;
+export type MailRetentionExport = MailRetentionEvidenceExport;
 
 export type MailConnectionReadiness = {
   connection: MailConnection;
@@ -313,6 +387,7 @@ export type MailPurgeGateEvidence = {
   policyVersion?: number | null;
   distinctApproverCount: number;
   authorizationCurrent: boolean;
+  candidateCurrent?: boolean;
 };
 
 export type MailPurgeAvailability = {
@@ -327,6 +402,7 @@ export type MailPurgeBlocker =
   | 'LEGAL_HOLD_UNVERIFIED'
   | 'CANDIDATE_SNAPSHOT_REQUIRED'
   | 'POLICY_VERSION_REQUIRED'
+  | 'CANDIDATE_EXPIRED'
   | 'TWO_APPROVERS_REQUIRED'
   | 'AUTHORIZATION_STALE';
 
@@ -530,6 +606,7 @@ export function getMailPurgeAvailability(evidence: MailPurgeGateEvidence): MailP
   if (evidence.legalHoldState === 'UNKNOWN') blockers.push('LEGAL_HOLD_UNVERIFIED');
   if (!evidence.candidateSnapshotId) blockers.push('CANDIDATE_SNAPSHOT_REQUIRED');
   if (!evidence.policyVersion) blockers.push('POLICY_VERSION_REQUIRED');
+  if (evidence.candidateCurrent === false) blockers.push('CANDIDATE_EXPIRED');
   if (evidence.distinctApproverCount < 2) blockers.push('TWO_APPROVERS_REQUIRED');
   if (!evidence.authorizationCurrent) blockers.push('AUTHORIZATION_STALE');
 
@@ -552,9 +629,11 @@ export function sourceEvidenceState(source: MailAdminSourceEvidence): MailAdminE
 
 export function buildMailPurgeGateEvidence(
   snapshot: MailRetentionSnapshot | null | undefined,
-  authorizationCurrent: boolean
+  authorizationCurrent: boolean,
+  now = Date.now()
 ): MailPurgeGateEvidence {
   const candidate = snapshot?.candidate;
+  const candidateExpiresAt = validInstant(candidate?.expiresAt);
   return {
     purgeApiAvailable: Boolean(snapshot),
     legalHoldState: snapshot
@@ -563,14 +642,21 @@ export function buildMailPurgeGateEvidence(
         : 'CLEAR'
       : 'UNKNOWN',
     candidateSnapshotId: candidate?.candidateSnapshotId ?? null,
-    policyVersion: snapshot?.policyVersion ?? null,
+    policyVersion:
+      candidate && snapshot && candidate.policyVersion === snapshot.policyVersion
+        ? snapshot.policyVersion
+        : null,
     distinctApproverCount: candidate?.distinctApproverCount ?? 0,
     authorizationCurrent,
+    candidateCurrent: candidate ? candidateExpiresAt !== null && candidateExpiresAt > now : true,
   };
 }
 
-export function canCancelMailDelivery(item: MailDeliveryAuditItem): boolean {
-  if (!item.cancelCapability) return false;
+export function canCancelMailDelivery(
+  item: Pick<MailDeliveryAuditItem, 'state'> &
+    Partial<Pick<MailDeliveryAuditItem, 'cancelCapability' | 'stage'>>
+): boolean {
+  if (!item.cancelCapability || !item.stage) return false;
   return (
     ['RECEIVED', 'OUTBOX'].includes(item.stage) &&
     !['ACCEPTED_BY_PROVIDER', 'DELIVERED_CONFIRMED'].includes(item.state)

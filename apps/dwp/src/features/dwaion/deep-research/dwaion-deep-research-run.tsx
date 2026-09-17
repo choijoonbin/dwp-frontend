@@ -33,11 +33,16 @@ import Typography from '@mui/material/Typography';
 
 import { deepResearchCopy } from './dwaion-deep-research-copy';
 import {
+  dwaionResearchDeliveryCapabilityKey,
   dwaionResearchProgressPercent,
   dwaionResearchRunCanDeliver,
 } from './dwaion-deep-research-model';
 import { DwaionCapabilityActions } from '../dwaion-capability-actions';
 import { DwaionResearchReport } from './dwaion-research-report';
+import {
+  DwaionResearchDeliveryDialog,
+  type DwaionResearchDeliveryParameters,
+} from './dwaion-research-delivery-dialog';
 
 import type {
   DwaionResearchCommand,
@@ -47,6 +52,9 @@ import type {
   DwaionResearchDownloadKind,
   DwaionResearchPlan,
   DwaionResearchRun,
+  DwaionResearchRecoveryAction,
+  DwaionResearchRecoveryReceipt,
+  DwaionWorkflowCapability,
 } from '@dwp-frontend/shared-utils';
 
 const DELIVERY_TYPES: readonly DwaionResearchDeliveryType[] = [
@@ -64,6 +72,7 @@ export function DwaionDeepResearchRun({
   run,
   capabilities,
   deliveries,
+  recoveryReceipt,
   busy,
   operationError,
   onRefresh,
@@ -71,6 +80,7 @@ export function DwaionDeepResearchRun({
   onCommand,
   onDeliver,
   onDownload,
+  onRecovery,
   onExit,
 }: {
   locale: 'ko' | 'en';
@@ -78,13 +88,18 @@ export function DwaionDeepResearchRun({
   run: DwaionResearchRun;
   capabilities: DwaionResearchCapabilities | null;
   deliveries: readonly DwaionResearchDelivery[];
+  recoveryReceipt: DwaionResearchRecoveryReceipt | null;
   busy: string | null;
   operationError: boolean;
   onRefresh: () => void;
   onExecute: () => void;
   onCommand: (command: DwaionResearchCommand, sourceKey?: string) => void;
-  onDeliver: (type: DwaionResearchDeliveryType) => void;
+  onDeliver: (
+    type: DwaionResearchDeliveryType,
+    parameters?: DwaionResearchDeliveryParameters
+  ) => void;
   onDownload: (kind: DwaionResearchDownloadKind) => void;
+  onRecovery: (action: DwaionResearchRecoveryAction) => void;
   onExit: () => void;
 }) {
   const { t } = useTranslation('work');
@@ -98,6 +113,7 @@ export function DwaionDeepResearchRun({
   const warning = ['PARTIAL', 'CONFLICT', 'FAILED'].includes(run.state);
   const [reportFullscreen, setReportFullscreen] = useState(false);
   const [copiedReceiptId, setCopiedReceiptId] = useState<string | null>(null);
+  const [deliveryDialogType, setDeliveryDialogType] = useState<'HANDOFF' | 'SHARE' | null>(null);
 
   const copyReceiptId = async (receiptId: string) => {
     try {
@@ -358,25 +374,62 @@ export function DwaionDeepResearchRun({
               {copy.outputHint}
             </Typography>
             <Stack gap={0.75}>
-              {DELIVERY_TYPES.map((type) => (
-                <ActionButton
-                  key={type}
-                  intent={type === 'ARTIFACT' ? 'primary' : 'secondary'}
-                  startIcon={<FileOutput size={16} />}
-                  disabled={!dwaionResearchRunCanDeliver(run.state)}
-                  loading={busy === `DELIVER_${type}`}
-                  onClick={() => onDeliver(type)}
-                >
-                  {copy.deliveryLabels[type]}
-                </ActionButton>
-              ))}
+              {DELIVERY_TYPES.map((type) => {
+                const capability =
+                  capabilities?.delivery[dwaionResearchDeliveryCapabilityKey(type)];
+                const enabled = Boolean(
+                  dwaionResearchRunCanDeliver(run.state) && capability?.available
+                );
+                const reasonId = `dwaion-research-delivery-${type.toLowerCase()}-reason`;
+                return (
+                  <Stack key={type} gap={0.25}>
+                    <ActionButton
+                      intent={type === 'ARTIFACT' ? 'primary' : 'secondary'}
+                      startIcon={<FileOutput size={16} />}
+                      disabled={!enabled}
+                      loading={busy === `DELIVER_${type}`}
+                      aria-describedby={!enabled ? reasonId : undefined}
+                      onClick={() => {
+                        if (type === 'HANDOFF' || type === 'SHARE') {
+                          setDeliveryDialogType(type);
+                          return;
+                        }
+                        onDeliver(type);
+                      }}
+                    >
+                      {copy.deliveryLabels[type]}
+                    </ActionButton>
+                    {!enabled ? (
+                      <Typography id={reasonId} variant="caption" color="text.secondary">
+                        {!dwaionResearchRunCanDeliver(run.state)
+                          ? copy.deliveryRequiresCompletion
+                          : (capability?.recoveryHint ??
+                            capability?.reasonCode ??
+                            copy.deliveryCapabilityLoading)}
+                      </Typography>
+                    ) : null}
+                  </Stack>
+                );
+              })}
             </Stack>
           </Panel>
           <DwaionCapabilityActions
             title={copy.evidenceActions}
             description={copy.evidenceActionsHelp}
-            actions={researchEvidenceActions({ run, capabilities, busy, copy, onDownload })}
+            actions={researchEvidenceActions({
+              run,
+              capabilities,
+              busy,
+              copy,
+              onDownload,
+              onRecovery,
+            })}
           />
+          {recoveryReceipt ? (
+            <InlineFeedback severity="success" title={copy.recovery}>
+              {recoveryReceipt.action} · {recoveryReceipt.receiptId}
+            </InlineFeedback>
+          ) : null}
           {run.receiptId ? (
             <Receipt
               title={copy.receipt}
@@ -389,20 +442,34 @@ export function DwaionDeepResearchRun({
           ) : (
             <InlineFeedback severity="info">{copy.noReceipt}</InlineFeedback>
           )}
-          {deliveries.map((delivery) => (
-            <Receipt
-              key={delivery.deliveryId}
-              title={`${copy.deliveryLabels[delivery.deliveryType]} · ${delivery.state}`}
-              receiptId={delivery.receiptId}
-              copied={Boolean(delivery.receiptId && copiedReceiptId === delivery.receiptId)}
-              copy={copy}
-              onCopy={
-                delivery.receiptId
-                  ? () => void copyReceiptId(delivery.receiptId as string)
-                  : undefined
-              }
-            />
-          ))}
+          {deliveries.map((delivery) =>
+            delivery.receiptId ? (
+              <Receipt
+                key={delivery.deliveryId}
+                title={`${copy.deliveryLabels[delivery.deliveryType]} · ${delivery.state}`}
+                receiptId={delivery.receiptId}
+                targetPath={deliveryTargetPath(delivery)}
+                copied={copiedReceiptId === delivery.receiptId}
+                copy={copy}
+                onCopy={() => void copyReceiptId(delivery.receiptId as string)}
+              />
+            ) : (
+              <InlineFeedback
+                key={delivery.deliveryId}
+                severity={
+                  delivery.state === 'FAILED'
+                    ? 'error'
+                    : delivery.state === 'PARTIAL'
+                      ? 'warning'
+                      : 'info'
+                }
+                title={`${copy.deliveryLabels[delivery.deliveryType]} · ${delivery.state}`}
+              >
+                {[delivery.safeErrorCode, delivery.recoveryHint].filter(Boolean).join(' · ') ||
+                  copy.deliveryQueued}
+              </InlineFeedback>
+            )
+          )}
         </Stack>
       </Box>
       <Dialog
@@ -434,6 +501,19 @@ export function DwaionDeepResearchRun({
           ) : null}
         </DialogContent>
       </Dialog>
+      <DwaionResearchDeliveryDialog
+        open={deliveryDialogType !== null}
+        type={deliveryDialogType}
+        locale={locale}
+        runId={run.runId}
+        suggestedTitle={plan?.definition.goal ?? copy.report}
+        busy={Boolean(deliveryDialogType && busy === `DELIVER_${deliveryDialogType}`)}
+        onClose={() => setDeliveryDialogType(null)}
+        onSubmit={(type, parameters) => {
+          onDeliver(type, parameters);
+          setDeliveryDialogType(null);
+        }}
+      />
     </Stack>
   );
 }
@@ -444,15 +524,19 @@ function researchEvidenceActions({
   busy,
   copy,
   onDownload,
+  onRecovery,
 }: {
   run: DwaionResearchRun;
   capabilities: DwaionResearchCapabilities | null;
   busy: string | null;
   copy: ReturnType<typeof deepResearchCopy>;
   onDownload: (kind: DwaionResearchDownloadKind) => void;
+  onRecovery: (action: DwaionResearchRecoveryAction) => void;
 }) {
-  const capability = (key: keyof DwaionResearchCapabilities) => capabilities?.[key];
-  const reason = (key: keyof DwaionResearchCapabilities) => {
+  type ResearchOperationCapabilityKey = Exclude<keyof DwaionResearchCapabilities, 'delivery'>;
+  const capability = (key: ResearchOperationCapabilityKey): DwaionWorkflowCapability | undefined =>
+    capabilities?.[key];
+  const reason = (key: ResearchOperationCapabilityKey) => {
     const value = capability(key);
     if (value?.available) return copy.serverDownloadReady;
     return (
@@ -477,6 +561,7 @@ function researchEvidenceActions({
       capability: 'browser.print',
       reason: reason('pdfExport'),
       available: Boolean(capability('pdfExport')?.available && run.result),
+      onClick: () => onDownload('pdf'),
     },
     {
       key: 'receipt-download',
@@ -502,22 +587,38 @@ function researchEvidenceActions({
         ['sensitivity', 'sensitivityRecalculation'],
         ['cache-fallback', 'cacheFallback'],
       ] as const
-    ).map(([key, capabilityKey]) => ({
-      key,
-      label: {
-        'save-fork': copy.saveFork,
-        'merge-latest': copy.mergeLatest,
-        'keep-local': copy.keepLocal,
-        sensitivity: copy.sensitivity,
-        'cache-fallback': copy.cacheFallback,
-      }[key],
-      capability: `research.recovery.${key}`,
-      reason: reason(capabilityKey),
-      available: Boolean(capability(capabilityKey)?.available),
-    })),
+    ).map(([key, capabilityKey]) => {
+      const action: DwaionResearchRecoveryAction = {
+        'save-fork': 'SAVE_AS_FORK',
+        'merge-latest': 'PULL_AND_MERGE',
+        'keep-local': 'KEEP_LOCAL',
+        sensitivity: 'RECALCULATE_SENSITIVITY',
+        'cache-fallback': 'USE_CACHE_FALLBACK',
+      }[key] as DwaionResearchRecoveryAction;
+      const stateAllows =
+        action === 'RECALCULATE_SENSITIVITY'
+          ? run.state === 'COMPLETED'
+          : action === 'USE_CACHE_FALLBACK'
+            ? ['PARTIAL', 'CONFLICT', 'FAILED'].includes(run.state)
+            : ['PARTIAL', 'CONFLICT', 'FAILED', 'COMPLETED'].includes(run.state);
+      return {
+        key,
+        label: {
+          'save-fork': copy.saveFork,
+          'merge-latest': copy.mergeLatest,
+          'keep-local': copy.keepLocal,
+          sensitivity: copy.sensitivity,
+          'cache-fallback': copy.cacheFallback,
+        }[key],
+        capability: `research.recovery.${key}`,
+        reason: stateAllows ? reason(capabilityKey) : copy.providerActionUnavailable,
+        available: Boolean(capability(capabilityKey)?.available && stateAllows),
+        onClick: () => onRecovery(action),
+      };
+    }),
   ].map((action) => ({
     ...action,
-    available: action.available && !busy?.startsWith('DOWNLOAD_'),
+    available: action.available && !busy,
   }));
 }
 
@@ -557,6 +658,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 function Receipt({
   title,
   receiptId,
+  targetPath,
   copied,
   copy,
   showUnavailableEvidence = false,
@@ -564,6 +666,7 @@ function Receipt({
 }: {
   title: string;
   receiptId: string | null;
+  targetPath?: string;
   copied: boolean;
   copy: ReturnType<typeof deepResearchCopy>;
   showUnavailableEvidence?: boolean;
@@ -598,14 +701,21 @@ function Receipt({
           {receiptId ?? '—'}
         </Typography>
         {receiptId && onCopy ? (
-          <ActionButton
-            intent="quiet"
-            size="small"
-            startIcon={copied ? <Check size={14} /> : <Copy size={14} />}
-            onClick={onCopy}
-          >
-            {copied ? copy.copiedReceipt : copy.copyReceipt}
-          </ActionButton>
+          <Stack direction="row" gap={0.5}>
+            {targetPath ? (
+              <ActionButton intent="quiet" size="small" href={targetPath}>
+                {copy.openDeliveryTarget}
+              </ActionButton>
+            ) : null}
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={copied ? <Check size={14} /> : <Copy size={14} />}
+              onClick={onCopy}
+            >
+              {copied ? copy.copiedReceipt : copy.copyReceipt}
+            </ActionButton>
+          </Stack>
         ) : null}
       </Stack>
       {showUnavailableEvidence ? (
@@ -635,4 +745,11 @@ function Receipt({
       ) : null}
     </Box>
   );
+}
+
+function deliveryTargetPath(delivery: DwaionResearchDelivery): string | undefined {
+  const value = delivery.receipt?.targetPath;
+  return typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')
+    ? value
+    : undefined;
 }

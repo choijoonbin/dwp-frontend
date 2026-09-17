@@ -47,6 +47,7 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { AuditPolicyRevisionEvidence } from './audit-policy-revision-evidence';
 
 import type {
   AuditIntegrityCheckpoint,
@@ -114,8 +115,15 @@ function LifecycleStep({
   last?: boolean;
 }) {
   return (
-    <Stack direction="row" alignItems="center" flex={1} minWidth={0}>
-      <Stack alignItems="center" gap={0.75} minWidth={112} textAlign="center">
+    <Stack direction="row" alignItems="center" flex={1} minWidth={0} width={{ xs: 1, sm: 'auto' }}>
+      <Stack
+        direction={{ xs: 'row', sm: 'column' }}
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        gap={{ xs: 1.25, sm: 0.75 }}
+        minWidth={{ sm: 112 }}
+        width={{ xs: 1, sm: 'auto' }}
+        textAlign={{ xs: 'left', sm: 'center' }}
+      >
         <Box
           sx={(theme) => ({
             display: 'grid',
@@ -129,14 +137,27 @@ function LifecycleStep({
         >
           <Icon size={19} />
         </Box>
-        <Typography component="p" variant="subtitle2">
-          {title}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {detail}
-        </Typography>
+        <Box minWidth={0}>
+          <Typography component="p" variant="subtitle2">
+            {title}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {detail}
+          </Typography>
+        </Box>
       </Stack>
-      {!last && <Box sx={{ flex: 1, minWidth: 24, height: 1, mx: 1, bgcolor: 'divider' }} />}
+      {!last && (
+        <Box
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            flex: 1,
+            minWidth: 24,
+            height: 1,
+            mx: 1,
+            bgcolor: 'divider',
+          }}
+        />
+      )}
     </Stack>
   );
 }
@@ -327,6 +348,7 @@ function PolicyRevisionLedger({
                     </Typography>
                   )}
                 </Stack>
+                <AuditPolicyRevisionEvidence revision={revision} />
                 <Stack direction={{ xs: 'column', sm: 'row' }} gap={{ xs: 0.25, sm: 2 }} mt={1}>
                   <Typography variant="caption" color="text.secondary">
                     {t('auditControl.governance.revisions.author', {
@@ -574,7 +596,7 @@ export function AuditGovernance() {
         role="region"
         aria-label={t('auditControl.governance.lifecycle')}
         tabIndex={0}
-        sx={{ p: 2.5, borderBottom: 1, borderColor: 'divider', overflowX: 'auto' }}
+        sx={{ p: 2.5, borderBottom: 1, borderColor: 'divider', overflowX: { sm: 'auto' } }}
       >
         <Stack
           direction="row"
@@ -600,7 +622,12 @@ export function AuditGovernance() {
             })}
           />
         </Stack>
-        <Stack direction="row" alignItems="flex-start" sx={{ minWidth: 760 }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems="flex-start"
+          gap={{ xs: 1.5, sm: 0 }}
+          sx={{ minWidth: { sm: 760 } }}
+        >
           <LifecycleStep
             icon={Database}
             title={t('auditControl.governance.stageCapture')}

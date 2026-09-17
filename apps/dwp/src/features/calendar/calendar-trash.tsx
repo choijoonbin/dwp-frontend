@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArchiveRestore, Clock3, LockKeyhole, Trash2 } from 'lucide-react';
+import { ArchiveRestore, CalendarCheck2, Clock3, LockKeyhole, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import {
   getCalendarTrash,
+  rebookCalendarEventResource,
   restoreCalendarEvent,
   usePermissions,
   useToast,
@@ -21,7 +23,16 @@ import Typography from '@mui/material/Typography';
 import { CalendarPageHeading, calendarDate, calendarTime } from './calendar-components';
 import { CalendarCanvas, CalendarSectionHeader } from './calendar-experience';
 
-import type { CalendarTrashedEvent } from '@dwp-frontend/shared-utils';
+import type {
+  CalendarRestoreEventResponse,
+  CalendarRestoreResourceResult,
+  CalendarTrashedEvent,
+} from '@dwp-frontend/shared-utils';
+
+type RestoreReceipt = Readonly<{
+  event: CalendarTrashedEvent;
+  result: CalendarRestoreEventResponse;
+}>;
 
 function retentionDays(value?: string | null) {
   if (!value) return null;
@@ -34,6 +45,8 @@ export function CalendarTrash() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const [restoring, setRestoring] = useState<CalendarTrashedEvent | null>(null);
+  const [restoreReceipt, setRestoreReceipt] = useState<RestoreReceipt | null>(null);
+  const resourceRebookIntents = useRef(new Map<string, string>());
   const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
   const language = i18n.resolvedLanguage ?? i18n.language;
   const query = useQuery({
@@ -80,13 +93,66 @@ export function CalendarTrash() {
   ].filter((group) => group.items.length > 0);
   const restoreMutation = useMutation({
     mutationFn: (event: CalendarTrashedEvent) => restoreCalendarEvent(event.eventId, event.version),
-    onSuccess: async () => {
+    onSuccess: async (result, event) => {
+      setRestoreReceipt({ event, result });
       setRestoring(null);
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('trash.restored'));
     },
     onError: () => toast.error(t('trash.restoreError')),
   });
+  const resourceRebookMutation = useMutation({
+    mutationFn: ({
+      eventId,
+      eventVersion,
+      resource,
+      idempotencyKey,
+    }: {
+      eventId: string;
+      eventVersion: number;
+      resource: CalendarRestoreResourceResult;
+      idempotencyKey: string;
+    }) =>
+      rebookCalendarEventResource(eventId, {
+        eventVersion,
+        resourceId: resource.resourceId,
+        bookingVersion: resource.bookingVersion,
+        idempotencyKey,
+      }),
+    onSuccess: async (result, command) => {
+      resourceRebookIntents.current.delete(
+        `${command.eventId}:${command.eventVersion}:${command.resource.resourceId}:${command.resource.bookingVersion}`
+      );
+      setRestoreReceipt((current) => {
+        if (!current || current.event.eventId !== command.eventId) return current;
+        const replacements = new Map(result.resources.map((resource) => [resource.resourceId, resource]));
+        return {
+          ...current,
+          result: {
+            ...result,
+            resources: current.result.resources.map(
+              (resource) => replacements.get(resource.resourceId) ?? resource
+            ),
+          },
+        };
+      });
+      await queryClient.invalidateQueries({ queryKey: ['calendar'] });
+      toast.success(t('trash.resourceRebookSaved'));
+    },
+    onError: () => toast.error(t('trash.resourceRebookError')),
+  });
+  const rebookResource = (receipt: RestoreReceipt, resource: CalendarRestoreResourceResult) => {
+    const fingerprint = `${receipt.event.eventId}:${receipt.result.eventVersion}:${resource.resourceId}:${resource.bookingVersion}`;
+    const idempotencyKey =
+      resourceRebookIntents.current.get(fingerprint) ?? globalThis.crypto.randomUUID();
+    resourceRebookIntents.current.set(fingerprint, idempotencyKey);
+    resourceRebookMutation.mutate({
+      eventId: receipt.event.eventId,
+      eventVersion: receipt.result.eventVersion,
+      resource,
+      idempotencyKey,
+    });
+  };
 
   return (
     <CalendarCanvas archetype="queue">
@@ -96,6 +162,74 @@ export function CalendarTrash() {
         title={t('trash.title')}
         description={t('trash.description')}
       />
+      {restoreReceipt ? (
+        <Alert
+          severity={
+            restoreReceipt.result.outcome === 'EVENT_AND_RESOURCES_RESTORED' ||
+            restoreReceipt.result.outcome === 'EVENT_AND_RESOURCE_REBOOK_REQUESTED'
+              ? 'success'
+              : 'warning'
+          }
+          icon={<CalendarCheck2 size={19} />}
+          onClose={() => setRestoreReceipt(null)}
+          action={
+            <ActionButton component={Link} to="/calendar/schedule" intent="quiet" size="small">
+              {t('trash.openSchedule')}
+            </ActionButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          <Typography variant="body2" fontWeight={700}>
+            {t('trash.restoreReceiptTitle', { title: restoreReceipt.event.title })}
+          </Typography>
+          <Typography variant="body2">
+            {t(`trash.restoreOutcomes.${restoreReceipt.result.outcome}`, {
+              calendar: restoreReceipt.event.calendarName,
+            })}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+            {t(`trash.restoreReasons.${restoreReceipt.result.reason}`)}
+          </Typography>
+          {restoreReceipt.result.resources.length ? (
+            <Stack spacing={0.75} sx={{ mt: 1.25 }}>
+              {restoreReceipt.result.resources.map((resource, index) => {
+                const busy =
+                  resourceRebookMutation.isPending &&
+                  resourceRebookMutation.variables?.resource.resourceId === resource.resourceId;
+                return (
+                  <Stack
+                    key={resource.resourceId}
+                    direction={{ xs: 'column', sm: 'row' }}
+                    spacing={1}
+                    alignItems={{ xs: 'stretch', sm: 'center' }}
+                    justifyContent="space-between"
+                    sx={{ p: 1, borderRadius: 1, bgcolor: 'action.hover' }}
+                  >
+                    <Box>
+                      <Typography variant="caption" fontWeight={700}>
+                        {t('trash.resourceResultLabel', { index: index + 1 })}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        {t(`trash.restoreReasons.${resource.reason}`)}
+                      </Typography>
+                    </Box>
+                    {resource.canRebook ? (
+                      <ActionButton
+                        intent="secondary"
+                        size="small"
+                        disabled={resourceRebookMutation.isPending}
+                        onClick={() => rebookResource(restoreReceipt, resource)}
+                      >
+                        {busy ? t('trash.resourceRebooking') : t('trash.resourceRebook')}
+                      </ActionButton>
+                    ) : null}
+                  </Stack>
+                );
+              })}
+            </Stack>
+          ) : null}
+        </Alert>
+      ) : null}
       {query.isError ? (
         <Alert
           severity="error"

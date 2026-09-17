@@ -5,7 +5,6 @@ import { useLocation, useNavigate, useOutletContext, useSearchParams } from 'rea
 import {
   ActionButton,
   GuidedEmptyState,
-  LoadingState,
   LocalErrorState,
   PageCanvas,
   mergeFilterSearchParams,
@@ -34,6 +33,7 @@ import { useWorkHubPlanSave } from '../features/work-hub/use-work-hub-plan-save'
 import { useWorkHubRuntime } from '../features/work-hub/use-work-hub-runtime';
 import { WorkHubSelectionToolbar } from '../features/work-hub/work-hub-selection-toolbar';
 import { WorkHubPageHeader } from '../features/work-hub/work-hub-page-header';
+import { WorkHubInitialState } from '../features/work-hub/work-hub-initial-state';
 import { useWorkHubTaskSave } from '../features/work-hub/use-work-hub-task-save';
 import { useWorkHubReturnHandoff } from '../features/work-hub/use-work-hub-return-handoff';
 import { useWorkHubCalendarHandoff } from '../features/work-hub/use-work-hub-calendar-handoff';
@@ -534,30 +534,16 @@ export default function WorkPage() {
       }}
     />
   );
-  if (query.isLoading) {
+  if (query.isLoading || !snapshot) {
     return (
-      <PageCanvas topInset="compact">
-        {header}
-        <LoadingState label={t('work:workPage.loading')} variant="skeleton" size="page" />
-      </PageCanvas>
+      <WorkHubInitialState
+        header={header}
+        loading={query.isLoading}
+        retrying={query.isFetching}
+        onRetry={() => void query.refetch()}
+      />
     );
   }
-  if (!snapshot) {
-    return (
-      <PageCanvas topInset="compact">
-        {header}
-        <LocalErrorState
-          title={t('work:workPage.loadErrorTitle')}
-          description={t('work:workPage.loadErrorDescription')}
-          retryLabel={t('work:workPage.retry')}
-          onRetry={() => void query.refetch()}
-          retrying={query.isFetching}
-          size="page"
-        />
-      </PageCanvas>
-    );
-  }
-  const requestedUnavailable = Boolean(requested) && !explicitSelection;
   return (
     <PageCanvas topInset="compact">
       {header}
@@ -787,7 +773,7 @@ export default function WorkPage() {
                   }}
                 />
               </Box>
-            ) : requestedUnavailable ? (
+            ) : Boolean(requested) && !explicitSelection ? (
               <Stack alignItems="center" justifyContent="center" sx={{ minHeight: 480, p: 3 }}>
                 <LocalErrorState
                   title={t('work:workHub.unavailable.title')}

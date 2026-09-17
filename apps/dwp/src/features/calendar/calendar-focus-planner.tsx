@@ -193,7 +193,11 @@ function PlannerLane({
       <Divider />
       {events.length ? (
         events.map((event) => (
-          <PlannerEventRow key={event.eventId} event={event} onOpen={() => onOpen(event)} />
+          <PlannerEventRow
+            key={`${event.eventId}:${event.recurrenceId ?? event.startsAt}`}
+            event={event}
+            onOpen={() => onOpen(event)}
+          />
         ))
       ) : (
         <GuidedEmptyState kind="empty" title={emptyTitle} description={emptyDescription} />

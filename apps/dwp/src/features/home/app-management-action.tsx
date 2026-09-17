@@ -29,36 +29,54 @@ export function AppManagementAction({
         <Box
           component="button"
           type="button"
+          data-app-management-action
           aria-label={label}
+          onPointerDown={(event) => event.stopPropagation()}
           onClick={(event) => {
             event.stopPropagation();
             activate();
           }}
           sx={{
             position: 'absolute',
-            top: -4,
-            right: 3,
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-28px)',
             zIndex: 3,
             width: 24,
             height: 24,
             p: 0,
             display: 'grid',
             placeItems: 'center',
-            border: 1,
-            borderColor: 'divider',
+            border: 0,
             borderRadius: '50%',
-            color: 'primary.main',
-            bgcolor: 'background.paper',
+            color: 'inherit',
+            bgcolor: 'transparent',
             cursor: 'pointer',
-            boxShadow: 1,
             '&:focus-visible': {
               outline: '2px solid',
               outlineColor: 'primary.main',
-              outlineOffset: 2,
+              outlineOffset: -2,
             },
           }}
         >
-          <ShieldCheck size={14} strokeWidth={2} aria-hidden="true" />
+          <Box
+            component="span"
+            data-app-management-visual
+            sx={{
+              width: 20,
+              height: 20,
+              display: 'grid',
+              placeItems: 'center',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: '50%',
+              color: 'primary.main',
+              bgcolor: 'background.paper',
+              boxShadow: 1,
+            }}
+          >
+            <ShieldCheck size={12} strokeWidth={2} aria-hidden="true" />
+          </Box>
         </Box>
       )}
     </Tooltip>

@@ -39,8 +39,14 @@ type MzAiStageProps = Readonly<{
   onStart: (intent: string) => void;
 }>;
 
+const AI_STAGE_SCENE_BUCKETS = {
+  focus: ['action', 'request'],
+  meeting: ['timeline', 'response'],
+  team: ['response', 'pulse'],
+} as const;
+
 /**
- * First-class MZ entry surface. It only assembles permission-scoped context and hands the
+ * First-class AI Stage entry surface. It only assembles permission-scoped context and hands the
  * user's explicit intent to DWAI·ON. Planning, review, approval, and execution stay in the
  * governed owner product; Home never fabricates an AI result or command receipt.
  */
@@ -77,13 +83,8 @@ export function MzAiStage({
     { key: 'response', icon: CheckCircle2, value: responseCount },
     { key: 'apps', icon: Files, value: appCount },
   ] as const;
-  const sceneBuckets = {
-    focus: ['action', 'request'],
-    meeting: ['timeline', 'response'],
-    team: ['response', 'pulse'],
-  } as const;
   const sceneEvidence = useMemo(() => {
-    const buckets: readonly MzStarterEvidence['bucket'][] = sceneBuckets[scene];
+    const buckets: readonly MzStarterEvidence['bucket'][] = AI_STAGE_SCENE_BUCKETS[scene];
     return starterEvidence.filter((item) => buckets.includes(item.bucket));
   }, [scene, starterEvidence]);
   const hasGroundedStarters = sceneEvidence.length > 0;
@@ -127,6 +128,7 @@ export function MzAiStage({
         borderColor: 'divider',
         borderRadius: 'var(--home-radius-section)',
         bgcolor: 'background.paper',
+        color: 'text.primary',
         boxShadow: '0 16px 38px rgba(15,23,42,0.08)',
         overflow: 'hidden',
       }}

@@ -74,6 +74,12 @@ export type EmergencyAccessPrincipal = {
   justification: string;
   reviewDueAt: string;
   lifecycleState: 'ACTIVE' | 'SUSPENDED' | 'RETIRED';
+  verificationStatus: 'NOT_VERIFIED' | 'VERIFIED' | 'OVERDUE';
+  verificationMethod?: 'OPERATOR_ATTESTED' | 'RECOVERY_DRILL_COMPLETED' | null;
+  verificationReference?: string | null;
+  lastVerifiedAt?: string | null;
+  lastVerifiedBy?: number | null;
+  verificationDueAt?: string | null;
   version: number;
 };
 
@@ -223,6 +229,22 @@ export async function registerEmergencyAccessPrincipal(request: {
   const response = await axiosInstance.post<ApiResponse<EmergencyAccessPrincipal>, typeof request>(
     `${BASE}/emergency-principals`,
     request
+  );
+  return response.data.data;
+}
+
+export async function verifyEmergencyAccessPrincipal(
+  principal: EmergencyAccessPrincipal,
+  request: {
+    method: 'OPERATOR_ATTESTED' | 'RECOVERY_DRILL_COMPLETED';
+    evidenceReference: string;
+    nextVerificationDueAt: string;
+  }
+): Promise<EmergencyAccessPrincipal> {
+  const body = { ...request, version: principal.version };
+  const response = await axiosInstance.post<ApiResponse<EmergencyAccessPrincipal>, typeof body>(
+    `${BASE}/emergency-principals/${principal.emergencyPrincipalId}/verification`,
+    body
   );
   return response.data.data;
 }

@@ -3,8 +3,6 @@ import { expect, test } from '@playwright/test';
 import {
   captureConsoleMessages,
   collectReducedMotionEvidence,
-  expectNoHorizontalOverflow,
-  expectNoSeriousAccessibilityViolations,
   tabTo,
 } from './support/accessibility';
 import {
@@ -21,7 +19,18 @@ import {
   HOME_WAVE2_FLOW_WIDGETS as FLOW_WIDGETS,
   HOME_WAVE2_MODE_LAYOUTS as MODE_LAYOUTS,
 } from './support/home-wave2-state-fixtures';
-import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
+import {
+  createHomeWave4Model,
+  HOME_V2_ROUTE,
+  homeWave4ResponseBody,
+  homeWave4ResponseHeaders,
+  routeHomeWave4ShadowRuntime,
+  withHomeWave6Runtime,
+} from './support/home-wave4-runtime-fixtures';
+import {
+  captureHomeWave2Evidence as captureEvidence,
+  captureHomeWave2ViewportInteraction as captureViewportInteraction,
+} from './support/home-wave2-evidence-capture';
 
 import type { Locator, Page } from '@playwright/test';
 
@@ -109,56 +118,6 @@ async function prepareClassic(page: Page) {
 
 async function routeOverview(page: Page, data: unknown) {
   await page.route(OVERVIEW_ROUTE, (route) => fulfillSuccess(route, data));
-}
-
-async function stabilizeVisual(page: Page) {
-  await page.evaluate(async () => {
-    document.querySelectorAll('vite-plugin-checker-error-overlay').forEach((node) => node.remove());
-    const style = document.createElement('style');
-    style.dataset.wave2VisualStability = 'true';
-    style.textContent =
-      '[data-testid="dwaion-launcher"], [role="tooltip"] { visibility: hidden !important; }';
-    document.head.append(style);
-    await document.fonts.ready;
-  });
-}
-
-async function captureEvidence(
-  page: Page,
-  canonicalId: string,
-  fixtureId: string,
-  include = '#dwp-main-content',
-  maxDiffPixels?: number
-) {
-  test.info().annotations.push({ type: 'canonical-fixture', description: fixtureId });
-  await stabilizeVisual(page);
-  await expectNoHorizontalOverflow(page);
-  await expectNoSeriousAccessibilityViolations(page, include);
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-  await expect(page).toHaveScreenshot(`home-wave2-${canonicalId}.png`, {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    maxDiffPixels,
-    scale: 'css',
-  });
-}
-
-async function captureViewportInteraction(
-  page: Page,
-  canonicalId: string,
-  include = '#dwp-main-content'
-) {
-  await expectNoHorizontalOverflow(page);
-  await expectNoSeriousAccessibilityViolations(page, include);
-  await expect(page).toHaveScreenshot(`home-wave2-${canonicalId}-interaction.png`, {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: false,
-    maxDiffPixels: 100,
-    scale: 'css',
-  });
 }
 
 async function expectFocusableAboveToolbar(target: Locator, toolbar: Locator) {
@@ -397,6 +356,57 @@ async function routeModeIsolatedHomeViews(page: Page) {
   });
   await page.route('**/api/platform/v1/home-templates**', (route) => fulfillSuccess(route, []));
   return { layouts, requests, views };
+}
+
+async function routeC17HomeRuntime(page: Page) {
+  const deviceClasses = [
+    'DESKTOP_WIDE',
+    'DESKTOP_STANDARD',
+    'MOBILE_STANDARD',
+    'MOBILE_COMPACT',
+  ] as const;
+  await page.unroute(HOME_V2_ROUTE);
+  await page.route(HOME_V2_ROUTE, (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/api/platform/v2/home/shadow-receipts') {
+      return route.fulfill({
+        status: 202,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'SUCCESS',
+          message: 'Accepted',
+          data: { accepted: true, receiptVersion: 'home-shadow-v1' },
+        }),
+      });
+    }
+    if (url.pathname !== '/api/platform/v2/home') return route.fallback();
+    const candidate = url.searchParams.get('deviceClass');
+    const deviceClass = deviceClasses.find((value) => value === candidate);
+    if (!deviceClass) {
+      return route.fulfill({ status: 400, contentType: 'application/json', body: '{}' });
+    }
+    const rolloutRevision = 'wave6-shadow-compare-wave2-r1';
+    const marker = `wave2-shadow-classic-${deviceClass.toLowerCase()}`;
+    const headers = homeWave4ResponseHeaders('SHADOW', `"${marker}"`, {
+      runtimeState: 'SHADOW_COMPARE',
+      rolloutRevision,
+      rolloutRing: 'CONTROL',
+    });
+    const model = withHomeWave6Runtime(
+      createHomeWave4Model({ deviceClass, marker, mode: 'CLASSIC' }),
+      'SHADOW_COMPARE',
+      { rolloutRevision, rolloutRing: 'CONTROL' }
+    );
+    return route.fulfill({
+      status: 200,
+      headers: {
+        ...headers,
+        'Access-Control-Expose-Headers': Object.keys(headers).join(', '),
+      },
+      contentType: 'application/json',
+      body: homeWave4ResponseBody(model),
+    });
+  });
 }
 
 test.beforeEach(async ({ page }, testInfo) => {
@@ -722,13 +732,13 @@ test('C16 an actual 409 shows the conflict dialog and preserves the draft', asyn
   expect(missingCloseLabelWarnings).toEqual([]);
 });
 
-test('C17 compares Classic, Flow, and MZ in the real Studio after isolated round-trips', async ({
+test('C17 keeps mode-specific device layouts isolated and mode switching in Account settings', async ({
   page,
 }) => {
-  const fixtureId = 'HOME_SPEC_MODE_PRESET';
   await page.unroute(OVERVIEW_ROUTE);
   await routeOverview(page, freshOverview());
   const runtime = await routeModeIsolatedHomeViews(page);
+  await routeC17HomeRuntime(page);
   const modeWrites: Array<Record<string, unknown>> = [];
   page.on('request', (request) => {
     if (
@@ -842,83 +852,9 @@ test('C17 compares Classic, Flow, and MZ in the real Studio after isolated round
   for (const deviceClass of ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_COMPACT'] as const) {
     expect(runtime.layouts.MZ_V1[deviceClass]).toEqual(before.MZ_V1[deviceClass]);
   }
-  await dialog.getByRole('tab', { name: '홈 모드' }).click();
-  const comparison = dialog.locator('[data-home-studio-mode-surface]');
-  await expect(comparison).toBeVisible();
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-current-mode',
-    'CLASSIC'
-  );
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-selected-mode',
-    'CLASSIC'
-  );
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-dirty',
-    'false'
-  );
-  await expect(comparison.locator('[data-mode-choice]')).toHaveCount(3);
-  await expect(comparison.locator('[data-mode-preview="CLASSIC"]')).toContainText(
-    '사내 소식 · 경영 브리핑'
-  );
-  await expect(comparison.locator('[data-mode-preview="FLOW_V1"]')).toContainText('우선 대기 큐');
-  await expect(comparison.locator('[data-mode-preview="MZ_V1"]')).toContainText(
-    '근거 기반 AI Stage'
-  );
-  await expect(comparison.locator('[data-shared-app-id]')).toHaveCount(18);
-  const flowMode = comparison.getByRole('radio', { name: /Flow 업무 홈/u });
-  const classicMode = comparison.getByRole('radio', { name: /Classic 조직 포털/u });
-  await classicMode.focus();
-  await page.keyboard.press('Space');
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-dirty',
-    'false'
-  );
-  await expect(comparison.getByRole('button', { name: '변경 사항 적용하기' })).toBeDisabled();
-  await flowMode.focus();
-  await page.keyboard.press('Space');
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-dirty',
-    'true'
-  );
-  await expect(comparison.getByRole('button', { name: '변경 사항 적용하기' })).toBeEnabled();
-  await captureViewportInteraction(page, 'C17-MODE-PRESET', '[role="dialog"]');
-  await captureEvidence(page, 'C17-MODE-PRESET', fixtureId, '[role="dialog"]');
-  await comparison.getByRole('button', { name: '변경 사항 적용하기' }).click();
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-current-mode',
-    'FLOW_V1'
-  );
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-dirty',
-    'false'
-  );
-  await comparison.locator('[data-mode-choice="MZ_V1"] input[type="radio"]').click();
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-dirty',
-    'true'
-  );
-  await comparison.getByRole('button', { name: '변경 사항 적용하기' }).click();
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-current-mode',
-    'MZ_V1'
-  );
-  await expect.poll(() => modeWrites.length).toBe(2);
-  expect(modeWrites).toEqual([
-    { currentMode: 'FLOW_V1', version: 0 },
-    { currentMode: 'MZ_V1', version: 1 },
-  ]);
-  for (const body of modeWrites) expect(body).not.toHaveProperty('layout');
-  await comparison.getByRole('radio', { name: /Classic 조직 포털/u }).click();
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-dirty',
-    'true'
-  );
-  await comparison.getByRole('button', { name: '취소' }).click();
-  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
-    'data-selected-mode',
-    'MZ_V1'
-  );
+  await expect(dialog.getByRole('tab', { name: '홈 모드' })).toHaveCount(0);
+  await expect(dialog.locator('[data-home-studio-mode-surface]')).toHaveCount(0);
+  expect(modeWrites).toEqual([]);
 });
 
 test('C18 keeps the real Home keyboard path and disables motion', async ({ page }) => {

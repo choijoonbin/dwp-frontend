@@ -23,6 +23,7 @@ import {
   getServiceMyRequest,
   getServiceMyRequests,
   parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
   submitServiceDraft,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -109,6 +110,9 @@ function DiscoverView() {
   const [dwaionSummary, setDwaionSummary] = useState('');
   const [dwaionCategory, setDwaionCategory] = useState('');
   const [dwaionDraft, setDwaionDraft] = useState(false);
+  const [dwaionProposalBinding, setDwaionProposalBinding] = useState<
+    import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding | null
+  >(null);
   const dwaionHandoff = useMemo(
     () => parseDwaionHandoff(location.state, 'SERVICE.REQUEST.CREATE'),
     [location.state]
@@ -143,11 +147,15 @@ function DiscoverView() {
     setDwaionSummary(dwaionHandoffText(dwaionHandoff, 'requestSummary') ?? '');
     setDwaionCategory(dwaionHandoffText(dwaionHandoff, 'serviceCategory') ?? '');
     setDwaionDraft(true);
+    const binding = parseDwaionProposalHandoffBinding(location.state);
+    setDwaionProposalBinding(
+      binding?.actionKey === 'SERVICE.REQUEST.CREATE' ? binding : null
+    );
     navigate(
       { pathname: location.pathname, search: location.search },
       { replace: true, state: null }
     );
-  }, [dwaionHandoff, location.pathname, location.search, navigate]);
+  }, [dwaionHandoff, location.pathname, location.search, location.state, navigate]);
 
   useEffect(() => {
     if (
@@ -392,11 +400,13 @@ function DiscoverView() {
         service={requesting}
         initialSummary={dwaionSummary}
         fromDwaion={dwaionDraft}
+        dwaionProposalBinding={dwaionProposalBinding}
         onClose={() => {
           setRequesting(null);
           setDwaionSummary('');
           setDwaionCategory('');
           setDwaionDraft(false);
+          setDwaionProposalBinding(null);
         }}
       />
     </>

@@ -10,7 +10,7 @@ import {
 } from './support/dwaion-personal-intelligence-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
-const OUTPUT = join(process.cwd(), 'output', 'dwaion-user-advancement-final');
+const OUTPUT = join(process.cwd(), 'output', 'dwaion-frontend-final-pass-20260917');
 
 test.beforeAll(() => mkdirSync(OUTPUT, { recursive: true }));
 

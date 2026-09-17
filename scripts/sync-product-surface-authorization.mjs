@@ -75,6 +75,23 @@ const EXPECTED_ROLLOUT_PRODUCTS = [
   'workplace',
 ];
 const SHA_256 = /^[a-f0-9]{64}$/u;
+const V30_RESEARCH_AUTHORITY_UPGRADE_ROUTES = new Set([
+  'route.dwaion.work.research-audit-download.data',
+  'route.dwaion.work.research-deliveries.data',
+  'route.dwaion.work.research-output.action',
+  'route.dwaion.work.research-plan-create.action',
+  'route.dwaion.work.research-plan-update.action',
+  'route.dwaion.work.research-plans.data',
+  'route.dwaion.work.research-raw-download.data',
+  'route.dwaion.work.research-receipt-download.data',
+  'route.dwaion.work.research-run-command.action',
+  'route.dwaion.work.research-run-execute.action',
+  'route.dwaion.work.research-run-start.action',
+  'route.dwaion.work.research-runs.data',
+]);
+const V30_RESEARCH_READ_AUTHORITY_UPGRADE_ROUTES = new Set(
+  [...V30_RESEARCH_AUTHORITY_UPGRADE_ROUTES].filter((key) => key.endsWith('.data'))
+);
 
 function fail(message) {
   throw new Error(`Product surface authorization contract error: ${message}`);
@@ -254,8 +271,15 @@ function validateNoDroppedContracts(previous, next) {
         Array.isArray(candidateRouteKeys) &&
         previousRouteKeys.every((routeKey) => candidateRouteKeys.includes(routeKey));
       if (
-        !routeReferencesAreMonotonic ||
-        !isAppendOnlySuperset(previousDescriptor, candidateDescriptor)
+        (!routeReferencesAreMonotonic ||
+          !isAppendOnlySuperset(previousDescriptor, candidateDescriptor)) &&
+        !isV30ResearchAuthorityUpgrade(
+          next.version,
+          section,
+          record[key],
+          record,
+          candidate
+        )
       ) {
         fail(
           `v${next.version} non-monotonically changed v${previous.version} ${section} ${record[key]}`
@@ -263,6 +287,43 @@ function validateNoDroppedContracts(previous, next) {
       }
     }
   }
+}
+
+function isV30ResearchAuthorityUpgrade(version, section, key, previous, candidate) {
+  if (version !== 30) return false;
+  const normalized = structuredClone(candidate);
+  if (section === 'accessPolicies' && key === 'dwaion.work-access.v1') {
+    normalized.routeContractKeys = [
+      ...new Set([
+        ...(normalized.routeContractKeys ?? []),
+        ...V30_RESEARCH_READ_AUTHORITY_UPGRADE_ROUTES,
+      ]),
+    ].sort();
+    const prior = structuredClone(previous);
+    return isAppendOnlySuperset(normalized, prior);
+  }
+  if (section !== 'routes' || !V30_RESEARCH_AUTHORITY_UPGRADE_ROUTES.has(key)) {
+    return false;
+  }
+  const capability = V30_RESEARCH_READ_AUTHORITY_UPGRADE_ROUTES.has(key)
+    ? 'dwaion.work.research.read'
+    : 'dwaion.work.research.manage';
+  const expected = {
+    type: 'CAPABILITY_EXPRESSION',
+    mode: 'ALL',
+    capabilityContractKeys: ['dwaion.work.ask.execute', capability],
+  };
+  const previousProfiles = new Map(
+    previous.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  for (const profile of normalized.accessProfiles) {
+    const inherited = previousProfiles.get(profile.profileKey);
+    if (!inherited || canonicalJson(profile.requiredAccess) !== canonicalJson(expected)) {
+      return false;
+    }
+    profile.requiredAccess = structuredClone(inherited.requiredAccess);
+  }
+  return isAppendOnlySuperset(normalized, previous);
 }
 
 function validateIndex(value, bundles) {

@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import { canAccessAdminNavigationItem } from './admin-access-policy';
 import { ADMIN_NAVIGATION } from './admin-navigation';
 import { filterSettingsDocuments } from '../../components/settings-search';
+import { TenantSettingsOverview } from './tenant-settings-overview';
 
 const ENHANCEMENT_ENTRIES = [
   {
@@ -83,6 +84,7 @@ export function AdminSettingsHome() {
   const availableEnhancements = ENHANCEMENT_ENTRIES.filter(({ resourceKey }) =>
     hasPermission(resourceKey, 'VIEW')
   );
+  const visibleViews = new Set(groups.flatMap((group) => group.items.map((item) => item.view)));
 
   return (
     <PageCanvas>
@@ -150,6 +152,15 @@ export function AdminSettingsHome() {
         <Typography id="admin-settings-search-help" variant="caption" color="text.secondary">
           {t('settingsHome.searchHelp')}
         </Typography>
+
+        {!query.trim() && (
+          <TenantSettingsOverview
+            canReadIdentity={visibleViews.has('access')}
+            canReadProvisioning={visibleViews.has('provisioning')}
+            canReadAppGovernance={visibleViews.has('app-governance')}
+            canReadAuditGovernance={visibleViews.has('audit-governance')}
+          />
+        )}
 
         {!query.trim() && availableEnhancements.length > 0 && (
           <Box component="section" aria-labelledby="admin-settings-control-loop">

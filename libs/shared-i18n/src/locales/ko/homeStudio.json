@@ -26,7 +26,8 @@
     "deviceSummary_other": "사용 중인 홈에 기기 레이아웃 {{count}}개가 동기화되었습니다.",
     "modes": {
       "CLASSIC": "클래식",
-      "FLOW_V1": "플로우"
+      "FLOW_V1": "플로우",
+      "MZ_V1": "AI Stage"
     }
   },
   "common": {
@@ -234,7 +235,7 @@
   },
   "modePreset": {
     "title": "사용할 홈 모드 선택",
-    "description": "Classic, Flow, MZ / AI Stage의 정보 구성 방식을 비교하고 선택합니다. 모드를 바꿔도 승인된 공통 앱 18개의 순서와 접근 권한은 그대로 유지됩니다.",
+    "description": "Classic, Flow, AI Stage의 정보 구성 방식을 비교하고 선택합니다. 모드를 바꿔도 승인된 공통 앱 18개의 순서와 접근 권한은 그대로 유지됩니다.",
     "groupLabel": "홈 모드",
     "current": "현재 적용 중",
     "selected": "선택됨",
@@ -254,13 +255,13 @@
         "description": "지금 처리할 업무와 일정, 응답 요청을 우선순위에 따라 한 흐름으로 확인합니다."
       },
       "MZ_V1": {
-        "title": "MZ / AI Stage",
+        "title": "AI Stage",
         "description": "명확한 업무 의도를 근거와 검토 가능한 계획으로 만든 뒤 담당 앱에 안전하게 인계합니다."
       }
     },
     "preview": {
       "blindTestTitle": "Blind Header Test",
-      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic, 긴급 실행형 Flow, 근거 기반 AI Stage형 MZ가 즉시 구별됩니다.",
+      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic, 긴급 실행형 Flow, 근거 기반 AI Stage가 즉시 구별됩니다.",
       "axisIntegrity": "정보구조 · 표현 폭 · 공통 앱 18개 순서를 각각 보존",
       "firstQuestion": "첫 질문:",
       "primaryAction": "주 행동:",

@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import { resolveMailAdminFreshness } from './mail-admin-operations-model';
 
-import type { MailAdminOverview } from '@dwp-frontend/shared-utils';
+import type { MailAdminOverview, MailLegalHoldReleasePreview } from '@dwp-frontend/shared-utils';
 import type {
   MailAdminEvidenceState,
   MailAdminOperationalException,
@@ -21,15 +21,19 @@ import type {
   MailConnectionOperation,
   MailDeliveryAuditPage,
   MailDeliveryRecoveryEvidence,
+  MailLegalHold,
   MailLegalHoldInput,
   MailPolicyGovernance,
   MailPurgeCandidateSnapshot,
   MailPurgeGateEvidence,
+  MailRetentionExport,
   MailRetentionSnapshot,
   MailSharedInboxAccess,
   MailSharedInboxMember,
   MailSharedInboxMemberInput,
+  MailSharedInboxMemberRevokePreview,
 } from './mail-admin-operations-model';
+import type { MailDeliveryAuditFilters } from './mail-delivery-audit-filters';
 
 const PANEL_RADIUS = `${foundationTokens.radius.compact}px`;
 
@@ -41,10 +45,15 @@ export type MailAdminOperationsContentProps = {
   canManageSharedInboxes?: boolean;
   canManagePolicy?: boolean;
   canManageHolds?: boolean;
+  canPreviewPurge?: boolean;
   canAuthorizePurge?: boolean;
   canExecutePurge?: boolean;
   canReadAudit?: boolean;
+  canRevealAudit?: boolean;
   canRecoverDeliveries?: boolean;
+  canReconcileDeliveries?: boolean;
+  canRetryDeliveries?: boolean;
+  canCancelDeliveries?: boolean;
   canExportAudit?: boolean;
   now?: number;
   operations?: MailAdminOperationsSnapshot;
@@ -52,9 +61,11 @@ export type MailAdminOperationsContentProps = {
   sharedAccess?: readonly MailSharedInboxAccess[];
   policyGovernance?: MailPolicyGovernance;
   retention?: MailRetentionSnapshot;
+  retentionExport?: MailRetentionExport;
   deliveryAudit?: MailDeliveryAuditPage;
   auditExport?: MailAuditExport;
   deliveryEvidence?: readonly MailDeliveryRecoveryEvidence[];
+  deliveryAuditFilters?: MailDeliveryAuditFilters;
   purgeEvidence?: MailPurgeGateEvidence;
   busyAction?: string | null;
   onOpenConnectionSettings?: () => void;
@@ -70,21 +81,43 @@ export type MailAdminOperationsContentProps = {
     memberId: string,
     input: MailSharedInboxMemberInput
   ) => void;
+  onPreviewSharedMemberRevoke?: (
+    sharedInboxId: string,
+    member: MailSharedInboxMember
+  ) => Promise<MailSharedInboxMemberRevokePreview>;
   onRemoveSharedMember?: (
     sharedInboxId: string,
     member: MailSharedInboxMember,
-    memberVersion: number
-  ) => void;
+    preview: MailSharedInboxMemberRevokePreview,
+    impactAcknowledged: boolean
+  ) => void | Promise<boolean>;
   onCreateLegalHold?: (input: MailLegalHoldInput) => void;
   onUpdateLegalHold?: (holdId: string, input: MailLegalHoldInput) => void;
-  onReleaseLegalHold?: (holdId: string, version: number) => void;
-  onPreviewPurge?: () => void;
+  onPreviewLegalHoldRelease?: (hold: MailLegalHold) => Promise<MailLegalHoldReleasePreview | null>;
+  onApproveLegalHoldRelease?: (
+    preview: MailLegalHoldReleasePreview
+  ) => Promise<MailLegalHoldReleasePreview | null>;
+  onExecuteLegalHoldRelease?: (preview: MailLegalHoldReleasePreview) => Promise<boolean>;
+  onPreviewPurge?: (input?: {
+    scope: Record<string, unknown>;
+    resourceTypes: string[];
+    before: string;
+  }) => void;
+  onSelectPurgeCandidate?: (candidate: MailPurgeCandidateSnapshot) => void;
   onApprovePurge?: (candidate: MailPurgeCandidateSnapshot) => void;
   onExecutePurge?: (candidate: MailPurgeCandidateSnapshot) => void;
+  onExportRetentionEvidence?: () => void;
+  onApproveRetentionEvidenceExport?: (exportId: string) => void;
+  onRefreshRetentionEvidenceExport?: (exportId: string) => void;
+  onDownloadRetentionEvidenceExport?: (exportId: string) => void;
   onReconcileDelivery?: (deliveryId: string) => void;
   onRetryDelivery?: (deliveryId: string) => void;
   onCancelDelivery?: (deliveryId: string) => void;
+  onDeliveryAuditFiltersChange?: (filters: MailDeliveryAuditFilters) => void;
   onExportDeliveryAudit?: () => void;
+  onApproveDeliveryAuditExport?: (exportId: string) => void;
+  onRefreshDeliveryAuditExport?: (exportId: string) => void;
+  onDownloadDeliveryAuditExport?: (exportId: string) => void;
 };
 
 export function EvidenceChip({ state }: { state: MailAdminEvidenceState }) {
@@ -108,9 +141,15 @@ export function EvidenceChip({ state }: { state: MailAdminEvidenceState }) {
 }
 
 export function StateChip({ label, displayLabel }: { label: string; displayLabel?: string }) {
-  const success = ['SUCCEEDED', 'READY', 'ENFORCED', 'ACTIVE', 'APPLIED', 'VERIFIED'].includes(
-    label
-  );
+  const success = [
+    'SUCCEEDED',
+    'READY',
+    'ENFORCED',
+    'ACTIVE',
+    'APPLIED',
+    'VERIFIED',
+    'APPROVED',
+  ].includes(label);
   const error = ['FAILED', 'UNKNOWN', 'BLOCKED', 'REVOKED'].includes(label);
   const warning = ['PARTIAL', 'PENDING', 'RUNNING', 'STALE'].includes(label);
   return (

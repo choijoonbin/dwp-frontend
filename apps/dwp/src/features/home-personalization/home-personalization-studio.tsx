@@ -1,14 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Bot,
-  History,
-  LayoutDashboard,
-  MonitorSmartphone,
-  Palette,
-  PanelsTopLeft,
-  SlidersHorizontal,
-} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ContentDialog,
@@ -35,6 +26,7 @@ import {
   restoreHomeViewRevision,
   revokeHomeTemplate,
   undoHomeComposerProposal,
+  updateHomePreference,
   updateHomeDeviceLayout,
   updateHomeView,
   updateHomeWidgetConfiguration,
@@ -43,8 +35,6 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
@@ -58,82 +48,57 @@ import {
 } from './home-studio-sections';
 import { HomeAppearanceSection } from './home-appearance-section';
 import { HomeModePresetComparison } from './home-mode-preset-comparison';
-import type { HomeModeStudioPreset } from './home-mode-studio-preset';
 import { HomeLayoutStudioWorkbench } from '../../components/home-layout-studio-workbench';
+import { HOME_V2_QUERY_ROOT } from '../../components/home-v2-query-contract';
 import {
   activeHomeView,
   buildWorkstyleChanges,
   createHomeViewKey,
 } from './home-personalization-model';
 import { homeViewQueryKey, requireHomeViewMode } from '../../components/home-view-query-key';
+import { homeStudioNavigation } from './home-studio-navigation';
+import { HomeStudioTabs } from './home-studio-tabs';
+import {
+  createInitialHomeStudioView,
+  createLegacyHomeStudioView,
+  createNoopHomeComposerProposal,
+  homeStudioTemplateQueryKey,
+  replaceHomeStudioView,
+} from './home-personalization-studio-model';
 
 import type {
   HomeComposerProposal,
   HomeDeviceClass,
-  HomeExperienceVariant,
   HomePresentation,
-  HomePreferenceLayout,
+  HomePreference,
   HomeTemplate,
   HomeView,
   HomeViewRevision,
   HomeWidgetConfiguration,
-  HomeOverview,
-  HomeRecommendation,
-  PersonalHomeWidgetPreference,
   HomeWidgetSize,
-  EffectiveWidgetCatalog,
 } from '@dwp-frontend/shared-utils';
-import type { HomeStudioSection, HomeWorkstyleIntent } from './home-personalization-model';
-import type { HomeWidgetRuntimeDecisions } from '../../components/home-widget-runtime-contract';
+import type { HomeWorkstyleIntent } from './home-personalization-model';
 import { HomeStudioOverviewSection } from './home-studio-overview-section';
 import { useHomeViewConflictRecovery } from './use-home-view-conflict-recovery';
+import type {
+  ActiveHomeStudioSection,
+  HomePersonalizationStudioProps,
+  HomeStudioWidgetPreference,
+} from './home-personalization-studio-contracts';
+import { LEGACY_HOME_STUDIO_SECTIONS } from './home-personalization-studio-contracts';
 
-export type HomePersonalizationStudioProps = {
-  open: boolean;
-  composerEnabled: boolean;
-  modeKey: HomeExperienceVariant;
-  modeScopedViews: boolean;
-  fourDeviceLayoutsSupported: boolean;
-  tenantId?: number | null;
-  userId?: number | null;
-  seedLayout: HomePreferenceLayout<string> | null;
-  overview?: HomeOverview;
-  overviewLoading: boolean;
-  overviewFetching: boolean;
-  overviewFailed: boolean;
-  widgetRuntimeDecisions: HomeWidgetRuntimeDecisions;
-  effectiveWidgetCatalog?: EffectiveWidgetCatalog;
-  feedbackBusy: boolean;
-  onRetryOverview: () => void;
-  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
-  onClose: () => void;
-  onExited?: () => void;
-  onEditView: (view: HomeView) => void;
-  onActiveViewChanged?: (view: HomeView) => void;
-  modePreset?: HomeModeStudioPreset;
-  presentation?: 'dialog' | 'page';
-  initialSection?: ActiveHomeStudioSection;
-  onSectionChange?: (section: ActiveHomeStudioSection) => void;
-};
-
-export type ActiveHomeStudioSection = HomeStudioSection | 'mode' | 'overview';
-type StudioWidgetPreference = PersonalHomeWidgetPreference<string>;
-
-const templateQueryKey = ['home-personalization', 'templates'] as const;
-
-function replaceView(views: readonly HomeView[] | undefined, next: HomeView): HomeView[] {
-  if (!views) return [next];
-  const exists = views.some((view) => view.viewId === next.viewId);
-  return exists
-    ? views.map((view) => (view.viewId === next.viewId ? next : view))
-    : [...views, next];
-}
+export type {
+  ActiveHomeStudioSection,
+  HomePersonalizationStudioProps,
+} from './home-personalization-studio-contracts';
 
 export function HomePersonalizationStudio({
   open,
   composerEnabled,
   modeKey,
   modeScopedViews,
+  preferenceStore = 'LEGACY',
+  legacyPreference,
   fourDeviceLayoutsSupported,
   tenantId,
   userId,
@@ -162,8 +127,7 @@ export function HomePersonalizationStudio({
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission } = usePermissions();
-  const hasModePreset = modePreset !== undefined;
-  const modePresetCurrentMode = modePreset?.currentMode;
+  const legacyStore = preferenceStore === 'LEGACY';
   const modePresetInitialSelectedMode = modePreset?.initialSelectedMode;
   const advancedMode = modeKey !== 'CLASSIC';
   const [section, setSection] = useState<ActiveHomeStudioSection>(
@@ -191,45 +155,70 @@ export function HomePersonalizationStudio({
   const viewsQuery = useQuery({
     queryKey: viewQueryKey,
     queryFn: () => getHomeViews('workspace-home', modeKey, modeScopedViews),
-    enabled: open,
+    enabled: open && !legacyStore,
     staleTime: 30_000,
     retry: 1,
   });
   const templatesQuery = useQuery({
-    queryKey: templateQueryKey,
+    queryKey: homeStudioTemplateQueryKey,
     queryFn: getHomeTemplates,
-    enabled: open,
+    enabled: open && !legacyStore,
     staleTime: 60_000,
     retry: 1,
   });
+  const legacyView = useMemo(
+    () => createLegacyHomeStudioView(legacyStore, legacyPreference, modeKey, t('title')),
+    [legacyPreference, legacyStore, modeKey, t]
+  );
   const selectedView = useMemo(
     () =>
+      legacyView ??
       viewsQuery.data?.find((view) => view.viewId === selectedViewId) ??
       activeHomeView(viewsQuery.data ?? []),
-    [selectedViewId, viewsQuery.data]
+    [legacyView, selectedViewId, viewsQuery.data]
   );
+  const initialView = useMemo(
+    () =>
+      createInitialHomeStudioView(
+        legacyStore,
+        selectedView,
+        seedLayout,
+        viewsQuery.isLoading || viewsQuery.isError,
+        modeKey,
+        t('title')
+      ),
+    [legacyStore, modeKey, seedLayout, selectedView, t, viewsQuery.isError, viewsQuery.isLoading]
+  );
+  const editableView = selectedView ?? initialView;
   const deviceLayoutsQuery = useQuery({
     queryKey: ['home-personalization', 'device-layouts', selectedView?.viewId],
     queryFn: () => getHomeDeviceLayouts(selectedView!.viewId),
-    enabled: open && Boolean(selectedView),
+    enabled: open && !legacyStore && Boolean(selectedView),
     staleTime: 30_000,
     retry: 1,
   });
   const revisionsQuery = useQuery({
     queryKey: ['home-personalization', 'revisions', selectedView?.viewId],
     queryFn: () => getHomeViewRevisions(selectedView!.viewId),
-    enabled: open && Boolean(selectedView),
+    enabled: open && !legacyStore && Boolean(selectedView),
     staleTime: 15_000,
     retry: 1,
   });
   const conflictRecovery = useHomeViewConflictRecovery({ viewQueryKey, selectedView });
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || legacyStore) return;
     if (!selectedViewId || !viewsQuery.data?.some((view) => view.viewId === selectedViewId)) {
       setSelectedViewId(activeHomeView(viewsQuery.data ?? [])?.viewId ?? null);
     }
-  }, [open, selectedViewId, viewsQuery.data]);
+  }, [legacyStore, open, selectedViewId, viewsQuery.data]);
+
+  useEffect(() => {
+    if (!legacyStore) return;
+    if (LEGACY_HOME_STUDIO_SECTIONS.includes(section)) return;
+    setSection('overview');
+    onSectionChange?.('overview');
+  }, [legacyStore, onSectionChange, section]);
 
   useEffect(() => {
     if (!composerEnabled && section === 'ai' && presentation === 'dialog') setSection('profiles');
@@ -240,20 +229,18 @@ export function HomePersonalizationStudio({
   }, [initialSection]);
 
   useEffect(() => {
-    if (modePresetCurrentMode) setAppliedMode(modePresetCurrentMode);
-  }, [modePresetCurrentMode]);
-
+    if (modePreset?.currentMode) setAppliedMode(modePreset.currentMode);
+  }, [modePreset?.currentMode]);
   useEffect(() => {
-    if (!open || !hasModePreset || !modePresetInitialSelectedMode) return;
+    if (!open || presentation === 'page' || !modePreset || !modePresetInitialSelectedMode) return;
     setSection('mode');
     setSelectedMode(modePresetInitialSelectedMode);
-  }, [hasModePreset, modePresetInitialSelectedMode, open]);
-
+  }, [modePreset, modePresetInitialSelectedMode, open, presentation]);
   useEffect(() => {
-    if (!hasModePreset && section === 'mode') {
+    if (!modePreset && section === 'mode') {
       setSection(advancedMode ? 'layout' : 'profiles');
     }
-  }, [advancedMode, hasModePreset, section]);
+  }, [advancedMode, modePreset, section]);
 
   const currentModeView = async (request: Promise<HomeView>) =>
     requireHomeViewMode(await request, modeKey, !modeScopedViews);
@@ -262,7 +249,7 @@ export function HomePersonalizationStudio({
     conflictRecovery.clearPendingMutation();
     const resolvedView = requireHomeViewMode(view, modeKey, !modeScopedViews);
     queryClient.setQueryData<HomeView[]>(viewQueryKey, (current) =>
-      replaceView(current, resolvedView)
+      replaceHomeStudioView(current, resolvedView)
     );
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: viewQueryKey }),
@@ -270,6 +257,15 @@ export function HomePersonalizationStudio({
         queryKey: ['home-personalization', 'revisions', resolvedView.viewId],
       }),
       queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
+      queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
+    ]);
+  };
+
+  const refreshLegacyPreference = async (preference: HomePreference<string>) => {
+    queryClient.setQueryData(['home-preference', tenantId, userId], preference);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
+      queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
     ]);
   };
 
@@ -282,6 +278,39 @@ export function HomePersonalizationStudio({
     queryClient
       .getQueryData<HomeView[]>(viewQueryKey)
       ?.find((view) => view.viewId === selectedView?.viewId) ?? selectedView;
+
+  const saveEditableLayout = (layout: HomeView['layout'], version?: number) => {
+    const view = latestSelectedView();
+    if (legacyStore) {
+      if (!view) throw new Error('A home preference must be selected.');
+      return updateHomePreference(layout, version ?? view.version);
+    }
+    if (!view) {
+      return currentModeView(
+        createHomeView(
+          {
+            viewKey: 'default',
+            name: t('title'),
+            ...(modeScopedViews ? { modeKey } : {}),
+            makeDefault: true,
+            layout,
+          },
+          createHomeCommandKey('create-default-view')
+        )
+      );
+    }
+    return currentModeView(
+      updateHomeView(
+        view.viewId,
+        {
+          name: view.name,
+          layout,
+          version: version ?? view.version,
+        },
+        createHomeCommandKey('update-view-layout')
+      )
+    );
+  };
 
   const createViewMutation = useMutation({
     mutationFn: (name: string) => {
@@ -317,8 +346,11 @@ export function HomePersonalizationStudio({
       ),
     onSuccess: async (view) => {
       setSelectedViewId(view.viewId);
-      await queryClient.invalidateQueries({ queryKey: viewQueryKey });
-      await queryClient.invalidateQueries({ queryKey: ['home-preference'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: viewQueryKey }),
+        queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
+      ]);
       onActiveViewChanged?.(view);
       toast.success(t('feedback.activated'));
     },
@@ -329,7 +361,10 @@ export function HomePersonalizationStudio({
       deleteHomeView(view.viewId, view.version, createHomeCommandKey('delete-view')),
     onSuccess: async () => {
       setSelectedViewId(null);
-      await queryClient.invalidateQueries({ queryKey: viewQueryKey });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: viewQueryKey }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
+      ]);
       toast.success(t('feedback.deleted'));
     },
     onError: showNonRecoverableMutationError,
@@ -362,7 +397,11 @@ export function HomePersonalizationStudio({
     },
     onError: showMutationError,
   });
-  const appearanceMutation = useMutation({
+  const appearanceMutation = useMutation<
+    HomeView | HomePreference<string>,
+    Error,
+    { presentation: HomePresentation; version?: number }
+  >({
     mutationFn: ({
       presentation,
       version,
@@ -370,47 +409,43 @@ export function HomePersonalizationStudio({
       presentation: HomePresentation;
       version?: number;
     }) => {
-      const view = latestSelectedView();
-      if (!view) throw new Error('A home view must be selected.');
-      return currentModeView(
-        updateHomeView(
-          view.viewId,
-          {
-            name: view.name,
-            layout: { ...view.layout, presentation },
-            version: version ?? view.version,
-          },
-          createHomeCommandKey('configure-appearance')
-        )
-      );
+      const view = latestSelectedView() ?? editableView;
+      if (!view) throw new Error('A home preference must be selected.');
+      return saveEditableLayout({ ...view.layout, presentation }, version);
     },
-    onSuccess: async (view) => {
-      await refreshViewDependencies(view);
+    onSuccess: async (result) => {
+      if ('viewId' in result) {
+        setSelectedViewId(result.viewId);
+        await refreshViewDependencies(result);
+      } else await refreshLegacyPreference(result);
       toast.success(t('appearance.saved'));
     },
-    onError: showMutationError,
+    onError: legacyStore ? showNonRecoverableMutationError : showMutationError,
   });
-  const layoutMutation = useMutation({
-    mutationFn: ({ widgets, version }: { widgets: StudioWidgetPreference[]; version?: number }) => {
-      const view = latestSelectedView();
-      if (!view) throw new Error('A home view must be selected.');
-      return currentModeView(
-        updateHomeView(
-          view.viewId,
-          {
-            name: view.name,
-            layout: { ...view.layout, widgets },
-            version: version ?? view.version,
-          },
-          createHomeCommandKey('configure-layout')
-        )
-      );
+  const layoutMutation = useMutation<
+    HomeView | HomePreference<string>,
+    Error,
+    { widgets: HomeStudioWidgetPreference[]; version?: number }
+  >({
+    mutationFn: ({
+      widgets,
+      version,
+    }: {
+      widgets: HomeStudioWidgetPreference[];
+      version?: number;
+    }) => {
+      const view = latestSelectedView() ?? editableView;
+      if (!view) throw new Error('A home preference must be selected.');
+      return saveEditableLayout({ ...view.layout, widgets }, version);
     },
-    onSuccess: async (view) => {
-      await refreshViewDependencies(view);
+    onSuccess: async (result) => {
+      if ('viewId' in result) {
+        setSelectedViewId(result.viewId);
+        await refreshViewDependencies(result);
+      } else await refreshLegacyPreference(result);
       toast.success(t('feedback.saved'));
     },
-    onError: showMutationError,
+    onError: legacyStore ? showNonRecoverableMutationError : showMutationError,
   });
   const deviceMutation = useMutation({
     mutationFn: ({
@@ -462,6 +497,7 @@ export function HomePersonalizationStudio({
         queryClient.invalidateQueries({
           queryKey: ['home-personalization', 'revisions', selectedView?.viewId],
         }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
       ]);
       toast.success(
         t('device.saved', {
@@ -507,7 +543,7 @@ export function HomePersonalizationStudio({
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: templateQueryKey });
+      await queryClient.invalidateQueries({ queryKey: homeStudioTemplateQueryKey });
       toast.success(t('feedback.created'));
     },
     onError: showNonRecoverableMutationError,
@@ -526,7 +562,7 @@ export function HomePersonalizationStudio({
             createHomeCommandKey('revoke-template')
           ),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: templateQueryKey });
+      await queryClient.invalidateQueries({ queryKey: homeStudioTemplateQueryKey });
       toast.success(t('feedback.saved'));
     },
     onError: showNonRecoverableMutationError,
@@ -554,22 +590,8 @@ export function HomePersonalizationStudio({
     mutationFn: (intent: HomeWorkstyleIntent) => {
       if (!selectedView) throw new Error('A home view must be selected.');
       const changes = buildWorkstyleChanges(selectedView, intent);
-      if (changes.length === 0) {
-        const now = new Date();
-        return Promise.resolve({
-          proposalId: `noop-${selectedView.viewId}`,
-          viewId: selectedView.viewId,
-          state: 'PREVIEWED' as const,
-          baseViewVersion: selectedView.version,
-          reasonCodes: [intent],
-          changes: [],
-          warnings: [],
-          beforeLayout: selectedView.layout,
-          proposedLayout: selectedView.layout,
-          createdAt: now.toISOString(),
-          expiresAt: new Date(now.getTime() + 5 * 60_000).toISOString(),
-        });
-      }
+      if (changes.length === 0)
+        return Promise.resolve(createNoopHomeComposerProposal(selectedView, intent));
       return createHomeComposerProposal(
         {
           viewId: selectedView.viewId,
@@ -599,10 +621,13 @@ export function HomePersonalizationStudio({
     },
     onSuccess: async (next) => {
       setProposal(next);
-      await queryClient.invalidateQueries({ queryKey: viewQueryKey });
-      await queryClient.invalidateQueries({
-        queryKey: ['home-personalization', 'revisions', selectedView?.viewId],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: viewQueryKey }),
+        queryClient.invalidateQueries({
+          queryKey: ['home-personalization', 'revisions', selectedView?.viewId],
+        }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
+      ]);
       toast.success(next.state === 'UNDONE' ? t('ai.undone') : t('ai.applied'));
     },
     onError: showNonRecoverableMutationError,
@@ -624,24 +649,13 @@ export function HomePersonalizationStudio({
     proposalTransitionMutation,
   ];
   const busy = mutations.some((mutation) => mutation.isPending);
-  const canManageTemplates = hasPermission('ADMIN.HOME_TEMPLATE', 'MANAGE');
-  const loading = viewsQuery.isLoading;
-  const failed = viewsQuery.isError;
-
-  const navItems: Array<{ key: ActiveHomeStudioSection; icon: typeof LayoutDashboard }> = [
-    ...(presentation === 'page' ? ([{ key: 'overview', icon: LayoutDashboard }] as const) : []),
-    ...(modePreset ? ([{ key: 'mode', icon: PanelsTopLeft }] as const) : []),
-    ...(advancedMode || presentation === 'page'
-      ? ([{ key: 'layout', icon: PanelsTopLeft }] as const)
-      : []),
-    { key: 'profiles', icon: LayoutDashboard },
-    { key: 'appearance', icon: Palette },
-    { key: 'content', icon: SlidersHorizontal },
-    { key: 'device', icon: MonitorSmartphone },
-    { key: 'templates', icon: PanelsTopLeft },
-    { key: 'history', icon: History },
-    ...(composerEnabled || presentation === 'page' ? ([{ key: 'ai', icon: Bot }] as const) : []),
-  ];
+  const navItems = homeStudioNavigation({
+    presentation,
+    modePreset: Boolean(modePreset),
+    advancedMode,
+    legacyStore,
+    composerEnabled,
+  });
 
   const selectSection = (nextSection: ActiveHomeStudioSection) => {
     setSection(nextSection);
@@ -691,42 +705,14 @@ export function HomePersonalizationStudio({
         minHeight: presentation === 'page' ? { md: section === 'layout' ? 620 : 0 } : { md: 560 },
       }}
     >
-      <Tabs
-        orientation={
-          fullScreen || advancedMode || presentation === 'page' ? 'horizontal' : 'vertical'
-        }
-        variant="scrollable"
-        allowScrollButtonsMobile
+      <HomeStudioTabs
+        advancedMode={advancedMode}
+        fullScreen={fullScreen}
+        items={navItems}
+        onChange={selectSection}
+        presentation={presentation}
         value={section}
-        onChange={(_, value: ActiveHomeStudioSection) => selectSection(value)}
-        aria-label={t('title')}
-        sx={{
-          borderRight: { md: advancedMode || presentation === 'page' ? 0 : 1 },
-          borderBottom: { xs: 1, md: advancedMode || presentation === 'page' ? 1 : 0 },
-          borderColor: 'divider',
-          bgcolor: 'background.default',
-          '& .MuiTab-root': {
-            minHeight: 48,
-            justifyContent: {
-              md: advancedMode || presentation === 'page' ? 'center' : 'flex-start',
-            },
-            alignItems: 'center',
-            textTransform: 'none',
-            px: 2,
-            gap: 1.25,
-          },
-        }}
-      >
-        {navItems.map(({ key, icon: Icon }) => (
-          <Tab
-            key={key}
-            value={key}
-            icon={<Icon size={17} aria-hidden="true" />}
-            iconPosition="start"
-            label={t(`sections.${key}`)}
-          />
-        ))}
-      </Tabs>
+      />
       <Box
         role="tabpanel"
         tabIndex={0}
@@ -766,9 +752,9 @@ export function HomePersonalizationStudio({
               onApply={() => void handleModeApply()}
             />
           </Box>
-        ) : loading ? (
+        ) : (legacyStore ? !legacyPreference : viewsQuery.isLoading) ? (
           <LoadingState label={t('common.loading')} variant="skeleton" size="page" />
-        ) : failed ? (
+        ) : !legacyStore && viewsQuery.isError ? (
           <ErrorState
             title={t('common.unavailable')}
             retryLabel={t('common.retry')}
@@ -788,7 +774,7 @@ export function HomePersonalizationStudio({
             )}
             {section === 'layout' && (
               <HomeLayoutStudioWorkbench
-                view={selectedView}
+                view={editableView}
                 overview={overview}
                 overviewLoading={overviewLoading}
                 overviewFetching={overviewFetching}
@@ -801,11 +787,13 @@ export function HomePersonalizationStudio({
                 onRecommendationFeedback={onRecommendationFeedback}
                 forceResetToken={conflictRecovery.reloadToken}
                 onSave={(widgets, baseVersion) => {
-                  conflictRecovery.rememberMutation(
-                    ({ viewVersion }) => layoutMutation.mutate({ widgets, version: viewVersion }),
-                    widgets.length,
-                    baseVersion
-                  );
+                  if (!legacyStore && selectedView) {
+                    conflictRecovery.rememberMutation(
+                      ({ viewVersion }) => layoutMutation.mutate({ widgets, version: viewVersion }),
+                      widgets.length,
+                      baseVersion
+                    );
+                  }
                   layoutMutation.mutate({ widgets, version: baseVersion });
                 }}
                 onOpenHistory={() => selectSection('history')}
@@ -833,15 +821,17 @@ export function HomePersonalizationStudio({
             )}
             {section === 'appearance' && (
               <HomeAppearanceSection
-                view={selectedView}
+                view={editableView}
                 busy={busy}
                 onChange={(nextPresentation) => {
-                  conflictRecovery.rememberMutation(({ viewVersion }) =>
-                    appearanceMutation.mutate({
-                      presentation: nextPresentation,
-                      version: viewVersion,
-                    })
-                  );
+                  if (!legacyStore && selectedView) {
+                    conflictRecovery.rememberMutation(({ viewVersion }) =>
+                      appearanceMutation.mutate({
+                        presentation: nextPresentation,
+                        version: viewVersion,
+                      })
+                    );
+                  }
                   appearanceMutation.mutate({ presentation: nextPresentation });
                 }}
               />
@@ -908,7 +898,7 @@ export function HomePersonalizationStudio({
                 <HomeTemplatesSection
                   templates={templatesQuery.data ?? []}
                   view={selectedView}
-                  canManage={canManageTemplates}
+                  canManage={hasPermission('ADMIN.HOME_TEMPLATE', 'MANAGE')}
                   busy={busy}
                   onApply={(template) => {
                     conflictRecovery.rememberMutation(({ viewVersion }) =>

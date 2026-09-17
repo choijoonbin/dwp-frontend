@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, Trash2, UserRoundPlus } from 'lucide-react';
+import { ShieldCheck, Trash2, UserRoundPlus, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteCalendarShare,
@@ -182,9 +182,7 @@ export function CalendarShareDialog({
 
   const activeShares = useMemo(
     () =>
-      (sharesQuery.data ?? []).filter(
-        (share) => share.principalType === 'PERSON' && share.lifecycleState !== 'REVOKED'
-      ),
+      (sharesQuery.data ?? []).filter((share) => share.lifecycleState !== 'REVOKED'),
     [sharesQuery.data]
   );
   const people = useMemo(() => {
@@ -423,7 +421,11 @@ export function CalendarShareDialog({
                           fontSize: '0.8rem',
                         }}
                       >
-                        {personInitials(share.principalDisplayName)}
+                        {share.principalType === 'GROUP' ? (
+                          <UsersRound size={17} aria-hidden="true" />
+                        ) : (
+                          personInitials(share.principalDisplayName)
+                        )}
                       </Avatar>
                       <Box sx={{ minWidth: 0 }}>
                         <Typography
@@ -434,6 +436,14 @@ export function CalendarShareDialog({
                         >
                           {share.principalDisplayName}
                         </Typography>
+                        {share.principalType === 'GROUP' ? (
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={t('sharing.groupAccess')}
+                            sx={{ mt: 0.5, mr: 0.5 }}
+                          />
+                        ) : null}
                         {share.lifecycleState === 'EXPIRED' && (
                           <Chip
                             size="small"
@@ -443,9 +453,14 @@ export function CalendarShareDialog({
                             sx={{ mt: 0.5 }}
                           />
                         )}
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary" display="block">
                           {t(`sharing.access.${share.accessLevel}.description`)}
                         </Typography>
+                        {share.principalType === 'GROUP' ? (
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            {t('sharing.groupManagedHint')}
+                          </Typography>
+                        ) : null}
                       </Box>
                     </Stack>
                     <Stack

@@ -50,12 +50,9 @@ export function parseDwaionRoutineCapabilities(value: unknown): DwaionRoutineRun
     typeof value.lifecycleMode !== 'string' ||
     !capabilityBooleans.every((key) => typeof value[key] === 'boolean') ||
     !workflowCapabilityKeys.every((key) => isProviderCapability(value[key])) ||
-    unavailableMutationCapabilityKeys.some(
-      (key) => isAgentRecord(value[key]) && value[key].available !== false
-    ) ||
     typeof value.executionProviderState !== 'string' ||
     !(value.recoveryHint === null || typeof value.recoveryHint === 'string') ||
-    !enumArray(value.supportedCadences, new Set(['DAILY', 'WEEKDAYS', 'WEEKLY'])) ||
+    !enumArray(value.supportedCadences, new Set(['DAILY', 'WEEKDAYS', 'WEEKLY', 'MONTHLY'])) ||
     !enumArray(value.consentScopes, new Set(['SOURCE_ACCESS', 'ANALYSIS', 'PROPOSAL_DELIVERY']))
   ) {
     throw invalid('Routine runtime capabilities response is invalid.', value);
@@ -89,6 +86,9 @@ export function parseDwaionRoutineRun(value: unknown): DwaionRoutineExecutionRun
       (typeof value.safeErrorCode === 'string' && SAFE_CODE.test(value.safeErrorCode))
     ) ||
     !(value.recoveryHint === null || typeof value.recoveryHint === 'string') ||
+    !(value.recoveryAction === null || value.recoveryAction === 'SKIP_QUARANTINED_AND_CONTINUE') ||
+    !(value.recoveryCommandId === null || uuid(value.recoveryCommandId)) ||
+    (value.recoveryAction === null) !== (value.recoveryCommandId === null) ||
     typeof value.compensationRequired !== 'boolean' ||
     !isAgentDate(value.createdAt) ||
     !isAgentDate(value.updatedAt)
@@ -105,12 +105,22 @@ export function parseDwaionRoutineRun(value: unknown): DwaionRoutineExecutionRun
       receipt.routineRunId !== value.routineRunId ||
       receipt.routineId !== value.routineId ||
       receipt.routineRevision !== value.routineRevision ||
-      receipt.terminalState !== state
+      receipt.terminalState !== state ||
+      receipt.completedAt !== value.completedAt ||
+      receipt.evidenceCount !== value.evidenceCount ||
+      receipt.proposalsCreated !== value.proposalsCreated ||
+      receipt.approvalGatedActionsCreated !== value.approvalGatedActionsCreated ||
+      receipt.notificationState !== value.notificationState ||
+      receipt.recoveryAction !== value.recoveryAction ||
+      receipt.recoveryCommandId !== value.recoveryCommandId
     ) {
       throw invalid('Routine execution receipt is not bound to the returned run.', value);
     }
   } else if (['COMPLETED', 'COMPENSATED'].includes(state)) {
     throw invalid('Successful routine execution lacks a receipt.', value);
+  }
+  if (value.recoveryAction !== null && !['QUEUED', 'COMPLETED'].includes(state)) {
+    throw invalid('Routine recovery evidence contradicts the returned run state.', value);
   }
   return value as DwaionRoutineExecutionRun;
 }
@@ -135,6 +145,9 @@ export function parseDwaionRoutineReceipt(value: unknown): DwaionRoutineExecutio
     !integer(value.authorizationDecisionRevision, 1) ||
     !enumArray(value.authorizedSources, SOURCES) ||
     value.authorizedSources.length < 1 ||
+    !(value.recoveryAction === null || value.recoveryAction === 'SKIP_QUARANTINED_AND_CONTINUE') ||
+    !(value.recoveryCommandId === null || uuid(value.recoveryCommandId)) ||
+    (value.recoveryAction === null) !== (value.recoveryCommandId === null) ||
     !isAgentDate(value.completedAt)
   ) {
     throw invalid('Routine execution receipt is invalid.', value);
@@ -250,15 +263,6 @@ const workflowCapabilityKeys = [
   'changeApproval',
   'agentSwitching',
   'wormDelivery',
-  'oauthReauthorization',
-  'temporaryBudgetIncrease',
-  'operatorEscalation',
-  'providerRollback',
-] as const;
-
-const unavailableMutationCapabilityKeys = [
-  'changeApproval',
-  'agentSwitching',
   'oauthReauthorization',
   'temporaryBudgetIncrease',
   'operatorEscalation',

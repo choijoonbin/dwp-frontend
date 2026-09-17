@@ -274,13 +274,17 @@ function isReviewStage(value: unknown): value is DwaionTeamArtifactReviewStage {
     !uuid(value.stageId) ||
     !integer(value.stageOrder, 1, 3) ||
     !['AUTHOR', 'PRIMARY_REVIEW', 'FINAL_APPROVAL'].includes(String(value.stageKey)) ||
-    !(value.assigneeSubjectId === null ||
-      (typeof value.assigneeSubjectId === 'string' && SUBJECT.test(value.assigneeSubjectId))) ||
+    !(
+      value.assigneeSubjectId === null ||
+      (typeof value.assigneeSubjectId === 'string' && SUBJECT.test(value.assigneeSubjectId))
+    ) ||
     !['PENDING', 'APPROVED', 'REJECTED', 'UNAVAILABLE'].includes(String(value.state)) ||
     !integer(value.revision, 1) ||
     !(value.evidenceFingerprint === null || sha(value.evidenceFingerprint)) ||
-    !(value.decidedBySubjectId === null ||
-      (typeof value.decidedBySubjectId === 'string' && SUBJECT.test(value.decidedBySubjectId))) ||
+    !(
+      value.decidedBySubjectId === null ||
+      (typeof value.decidedBySubjectId === 'string' && SUBJECT.test(value.decidedBySubjectId))
+    ) ||
     !(value.decidedAt === null || isAgentDate(value.decidedAt))
   )
     return false;
@@ -311,9 +315,10 @@ function isGovernanceGate(value: unknown): value is DwaionTeamArtifactGovernance
 }
 
 function signatureEvidence(value: unknown): boolean {
+  const capability = isAgentRecord(value) ? value.capability : undefined;
   if (
     !isAgentRecord(value) ||
-    !providerCapability(value.capability) ||
+    !providerCapability(capability) ||
     !(value.provider === null || boundedText(value.provider, 80)) ||
     !(value.keyReferenceFingerprint === null || sha(value.keyReferenceFingerprint)) ||
     !(value.signature === null || boundedText(value.signature, 2_000)) ||
@@ -326,7 +331,7 @@ function signatureEvidence(value: unknown): boolean {
     value.signature,
     value.signedAt,
   ].every((item) => item !== null);
-  return value.capability.available === complete;
+  return capability.available === complete;
 }
 
 function isComment(value: unknown): value is DwaionTeamArtifactComment {
@@ -425,15 +430,14 @@ const providerCapabilityKeys = [
   'reviewRejection',
 ] as const;
 
-const providerOnlyUnavailableKeys = [
-  'signedWormReceipt',
-  'automaticMasking',
-  'syntheticReplacement',
-  'reviewNotification',
-  'reviewRejection',
-] as const;
+const providerOnlyUnavailableKeys = ['signedWormReceipt'] as const;
 
-function providerCapability(value: unknown) {
+function providerCapability(value: unknown): value is {
+  available: boolean;
+  configured: boolean;
+  reasonCode: string | null;
+  recoveryHint: string | null;
+} {
   return (
     isAgentRecord(value) &&
     typeof value.available === 'boolean' &&

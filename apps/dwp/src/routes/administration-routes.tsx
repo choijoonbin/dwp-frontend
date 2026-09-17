@@ -16,6 +16,10 @@ import {
   canAccessAdminNavigationItem,
   canEnterCompanyAdministration,
 } from '../features/admin/admin-access-policy';
+import {
+  ADMIN_HOME_STUDIO_LEGACY_ROUTE_CONTRACTS,
+  type AdminHomeStudioLegacyView,
+} from '../features/admin/admin-home-studio-route-contract';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import {
   SPACE_ADMIN_AUTHORITIES,
@@ -111,10 +115,13 @@ function AdminPeopleLegacyRedirect() {
   return <Navigate to="/admin" replace />;
 }
 
-export function AdminHomeLegacyRedirect({ view }: { view: 'experience' | 'composition' | 'apps' }) {
+export function AdminHomeLegacyRedirect({ view }: { view: AdminHomeStudioLegacyView }) {
   const [searchParams] = useSearchParams();
-  if (view === 'experience') return <Navigate to="/admin/experience/home/content" replace />;
-  if (view === 'apps') return <Navigate to="/admin/experience/home/app-dock" replace />;
+  const contract = ADMIN_HOME_STUDIO_LEGACY_ROUTE_CONTRACTS.find(
+    (candidate) => candidate.view === view
+  );
+  if (!contract) return <Navigate to="/admin/experience/home/modes" replace />;
+  if (view !== 'composition') return <Navigate to={contract.defaultTarget} replace />;
   const tab = searchParams.get('tab');
   const section = tab === 'catalog' ? 'widgets' : tab === 'blueprints' ? 'templates' : 'modes';
   return <Navigate to={`/admin/experience/home/${section}`} replace />;
@@ -266,18 +273,10 @@ export const administrationRoutes: RouteObject[] = [
           </AdminHomeStudioRouteGuard>
         ),
       },
-      {
-        path: 'experience/home-experience',
-        element: <AdminHomeLegacyRedirect view="experience" />,
-      },
-      {
-        path: 'experience/home-composition',
-        element: <AdminHomeLegacyRedirect view="composition" />,
-      },
-      {
-        path: 'experience/home-apps',
-        element: <AdminHomeLegacyRedirect view="apps" />,
-      },
+      ...ADMIN_HOME_STUDIO_LEGACY_ROUTE_CONTRACTS.map(({ sourcePath, view }) => ({
+        path: sourcePath.slice('/admin/'.length),
+        element: <AdminHomeLegacyRedirect view={view} />,
+      })),
       { path: ':section', element: <AdminSectionRedirect /> },
       {
         path: ':section/:view',

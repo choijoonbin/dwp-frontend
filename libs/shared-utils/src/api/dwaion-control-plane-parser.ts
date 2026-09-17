@@ -4,6 +4,7 @@ import type {
   DwaionConnectorsSnapshot,
   DwaionEvaluationSafetySnapshot,
   DwaionGovernedCommand,
+  DwaionGovernedCommandKind,
   DwaionGovernedCommandState,
   DwaionGovernedCommandsSnapshot,
   DwaionIncidentsSnapshot,
@@ -20,6 +21,7 @@ const MODEL_LIFECYCLES = new Set(['ACTIVE', 'CANARY', 'PAUSED', 'RETIRED']);
 const CREDENTIAL_STATES = new Set(['BOUND', 'ROTATION_DUE', 'EXPIRED', 'MISSING']);
 const ROUTING_DECISIONS = new Set(['ROUTED', 'BLOCKED', 'REVIEW_REQUIRED']);
 const BUDGET_MODES = new Set(['WARN', 'THROTTLE', 'BLOCK']);
+const ENFORCEMENT_ACTIVATION_STATES = new Set(['ENABLED', 'DISABLED']);
 const ROUTING_STATES = new Set(['ACTIVE', 'CANARY', 'PAUSED']);
 const CONNECTOR_SYNC_STATES = new Set(['IDLE', 'SYNCING', 'PARTIAL', 'FAILED', 'PAUSED']);
 const DATASET_PII_STATES = new Set(['PENDING', 'PASS', 'REVIEW', 'BLOCKED']);
@@ -50,7 +52,7 @@ const COMMAND_STATES = new Set([
   'ROLLED_BACK',
 ]);
 const COMMAND_TRANSITIONS = new Set(['APPROVE', 'REJECT', 'CANCEL', 'RETRY', 'ROLLBACK']);
-const COMMAND_KINDS = new Set([
+export const DWAION_GOVERNED_COMMAND_KINDS: ReadonlySet<DwaionGovernedCommandKind> = new Set([
   'MODEL_ROUTING_UPDATE',
   'MODEL_ROUTING_DRAFT_SAVE',
   'MODEL_ROUTE_SIMULATE',
@@ -117,6 +119,13 @@ const COMMAND_KINDS = new Set([
   'COST_SIMULATE',
   'TOKEN_BUDGET_UPDATE',
 ]);
+
+export function isDwaionGovernedCommandKind(value: unknown): value is DwaionGovernedCommandKind {
+  return (
+    typeof value === 'string' &&
+    DWAION_GOVERNED_COMMAND_KINDS.has(value as DwaionGovernedCommandKind)
+  );
+}
 const SHA_256 = /^[a-f\d]{64}$/i;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -440,6 +449,13 @@ export function parseDwaionEvaluationSafety(value: unknown): DwaionEvaluationSaf
     optionalPercentage(item.passRate, `${label}.passRate`);
     optionalNonNegativeInteger(item.regressionCount, `${label}.regressionCount`);
     optionalNonNegativeInteger(item.evaluatorFailureCount, `${label}.evaluatorFailureCount`);
+    optionalText(item.datasetId, `${label}.datasetId`);
+    if (item.datasetVersion != null) {
+      positiveInteger(item.datasetVersion, `${label}.datasetVersion`);
+    }
+    if (item.resultVersion != null) {
+      positiveInteger(item.resultVersion, `${label}.resultVersion`);
+    }
     timestamp(item.createdAt, `${label}.createdAt`);
   });
   signals.forEach((candidate, index) => {
@@ -553,11 +569,26 @@ export function parseDwaionOutcomes(value: unknown): DwaionOutcomesSnapshot {
     const label = `tokenBudgets[${index}]`;
     const item = record(candidate, label);
     const consumed = nonNegativeInteger(item.consumedTokens, `${label}.consumedTokens`);
-    const budget = positiveInteger(item.budgetTokens, `${label}.budgetTokens`);
+    const budget =
+      item.budgetTokens == null
+        ? null
+        : positiveInteger(item.budgetTokens, `${label}.budgetTokens`);
     optionalNonNegativeInteger(item.projectedTokens, `${label}.projectedTokens`);
     boolean(item.spikeDetected, `${label}.spikeDetected`);
     const policyMode = enumValue(item.policyMode, BUDGET_MODES, `${label}.policyMode`);
-    if (policyMode === 'BLOCK' && consumed > budget) invalid(`${label}.consumedTokens`);
+    const activationState = enumValue(
+      item.enforcementActivationState,
+      ENFORCEMENT_ACTIVATION_STATES,
+      `${label}.enforcementActivationState`
+    );
+    if (
+      policyMode === 'BLOCK' &&
+      activationState === 'ENABLED' &&
+      budget != null &&
+      consumed > budget
+    ) {
+      invalid(`${label}.consumedTokens`);
+    }
     positiveInteger(item.version, `${label}.version`);
   });
   return snapshot as DwaionOutcomesSnapshot;
@@ -566,7 +597,7 @@ export function parseDwaionOutcomes(value: unknown): DwaionOutcomesSnapshot {
 export function parseDwaionGovernedCommand(value: unknown): DwaionGovernedCommand {
   const command = record(value, 'command');
   if (!UUID.test(text(command.commandId, 'command.commandId'))) invalid('command.commandId');
-  enumValue(command.kind, COMMAND_KINDS, 'command.kind');
+  enumValue(command.kind, DWAION_GOVERNED_COMMAND_KINDS, 'command.kind');
   const state = enumValue(command.state, COMMAND_STATES, 'command.state');
   const target = record(command.target, 'command.target');
   text(target.type, 'command.target.type');

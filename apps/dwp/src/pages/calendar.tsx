@@ -42,6 +42,11 @@ const CalendarInsights = lazy(() =>
     default: module.CalendarInsights,
   }))
 );
+const CalendarSettings = lazy(() =>
+  import('../features/calendar/calendar-settings').then((module) => ({
+    default: module.CalendarSettings,
+  }))
+);
 const CalendarAdminOverview = lazy(() =>
   import('../features/calendar/calendar-admin').then((module) => ({
     default: module.CalendarAdminOverview,
@@ -72,6 +77,7 @@ export default function CalendarPage() {
     availability: <CalendarAvailability />,
     trash: <CalendarTrash />,
     insights: <CalendarInsights />,
+    settings: <CalendarSettings />,
     'admin-overview': <CalendarAdminOverview />,
     'admin-company-calendars': <CalendarAdminCompanyCalendars />,
     'admin-policies': <CalendarAdminPolicies />,

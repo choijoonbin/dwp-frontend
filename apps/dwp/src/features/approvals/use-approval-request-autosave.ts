@@ -107,12 +107,17 @@ export function useApprovalRequestAutosave({
           );
           return result.request;
         }
+        const createInput = {
+          ...attempt.input,
+          payload: structuredClone(attempt.input.payload),
+        };
         return createApprovalRequest(
-          {
-            ...attempt.input,
-            payload: structuredClone(attempt.input.payload),
-            dwaionProposalHandoff: current.current.dwaionProposalHandoff,
-          },
+          current.current.dwaionProposalHandoff
+            ? {
+                ...createInput,
+                dwaionProposalHandoff: current.current.dwaionProposalHandoff,
+              }
+            : createInput,
           execution,
           { idempotencyKey: attempt.idempotencyKey }
         );

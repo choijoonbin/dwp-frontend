@@ -1,0 +1,420 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic "DWAI·ON 메뉴 열기" [ref=e6]:
+        - button "DWAI·ON 메뉴 열기" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+      - generic [ref=e9]: DWP
+      - generic [ref=e10]: DWAI·ON
+      - generic "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e12]:
+        - button "조치 필요 알림 0건, 전체 새 알림 0건" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic: "0"
+      - 'button "계정: 김민아, Tenant administrator" [ref=e18] [cursor=pointer]':
+        - generic [ref=e19]: 김
+        - img [ref=e20]
+    - main [ref=e22]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - text: 개인 AI 거버넌스
+            - heading "나의 AI 제어" [level=1] [ref=e27]
+            - paragraph [ref=e28]: DWAI·ON이 참조할 정보 경계와 사용자가 직접 저장한 선호, 보존·삭제 요청을 한곳에서 관리합니다.
+            - generic [ref=e29]:
+              - generic [ref=e31]: 서버 정책 응답 확인
+              - generic [ref=e33]: 저장한 선호 · 1
+              - generic [ref=e35]: 삭제 실행 미지원
+          - button "권한·정책 다시 확인" [ref=e36] [cursor=pointer]:
+            - img [ref=e38]
+            - text: 권한·정책 다시 확인
+        - navigation "개인 AI 제어 영역" [ref=e43]:
+          - link "1. 업무 신호 분석 허용" [ref=e44] [cursor=pointer]:
+            - /url: "#dwaion-controls-sources"
+          - link "2. 개인 명시적 메모리" [ref=e45] [cursor=pointer]:
+            - /url: "#dwaion-controls-memories"
+          - link "3. 데이터 비우기" [ref=e46] [cursor=pointer]:
+            - /url: "#dwaion-controls-cleanup"
+          - link "4. 컴플라이언스" [ref=e47] [cursor=pointer]:
+            - /url: "#dwaion-controls-compliance"
+          - generic [ref=e49]: 서버 정책 응답 확인
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - region "업무 신호 분석 범위" [ref=e53]:
+              - generic [ref=e54]:
+                - img [ref=e55]
+                - generic [ref=e58]:
+                  - heading "업무 신호 분석 범위" [level=2] [ref=e59]
+                  - paragraph [ref=e60]: 출처별로 허용 여부를 정합니다. 유효한 출처는 개인 루틴의 드라이런에서 참조 식별자만 사용합니다.
+              - generic [ref=e61]:
+                - generic [ref=e63]:
+                  - generic [ref=e64]:
+                    - img [ref=e66]
+                    - generic [ref=e70]:
+                      - generic [ref=e71]:
+                        - paragraph [ref=e72]: 업무 항목
+                        - generic [ref=e74]: 유효
+                      - generic [ref=e75]: 현재 권한으로 볼 수 있는 업무의 식별자와 상태
+                      - generic [ref=e76]: 원문 복제 없음 · 개인 루틴 검증에만 사용
+                  - 'switch "업무 항목: 사용" [checked] [ref=e79] [cursor=pointer]'
+                - generic [ref=e82]:
+                  - separator [ref=e83]
+                  - generic [ref=e84]:
+                    - generic [ref=e85]:
+                      - img [ref=e87]
+                      - generic [ref=e91]:
+                        - generic [ref=e92]:
+                          - paragraph [ref=e93]: 메일
+                          - generic [ref=e95]: 유효
+                        - generic [ref=e96]: 현재 권한으로 볼 수 있는 메일의 식별자와 메타데이터
+                        - generic [ref=e97]: 원문 복제 없음 · 개인 루틴 검증에만 사용
+                    - 'switch "메일: 사용" [checked] [ref=e100] [cursor=pointer]'
+                - generic [ref=e103]:
+                  - separator [ref=e104]
+                  - generic [ref=e105]:
+                    - generic [ref=e106]:
+                      - img [ref=e108]
+                      - generic [ref=e110]:
+                        - generic [ref=e111]:
+                          - paragraph [ref=e112]: 일정
+                          - generic [ref=e114]: 사용할 수 없음
+                        - generic [ref=e115]: 사용할 수 없음
+                        - generic [ref=e116]: 원문 복제 없음 · 개인 루틴 검증에만 사용
+                    - generic [ref=e117]:
+                      - generic:
+                        - 'switch "일정: 사용 안 함" [disabled]'
+            - region "명시적 메모리 저장" [ref=e120]:
+              - generic [ref=e122]:
+                - img [ref=e124]
+                - generic [ref=e136]:
+                  - generic [ref=e137]:
+                    - heading "명시적 메모리 저장" [level=2] [ref=e138]
+                    - generic [ref=e140]: 답변 개인화 켜짐
+                  - paragraph [ref=e141]: 내가 직접 입력한 선호만 암호화해 저장합니다. 대화에서 자동 추론하거나 자격 증명을 저장하지 않습니다.
+              - separator [ref=e142]
+              - generic [ref=e143]:
+                - generic [ref=e144]:
+                  - generic [ref=e145]:
+                    - generic [ref=e146]:
+                      - heading "선호 저장" [level=6] [ref=e147]
+                      - generic [ref=e149]: 사용
+                    - paragraph [ref=e150]: 직접 입력한 선호를 암호화해 저장하고 언제든 수정하거나 삭제합니다.
+                  - 'switch "선호 저장: 사용" [checked] [ref=e153] [cursor=pointer]'
+                - generic [ref=e156]:
+                  - generic [ref=e157]:
+                    - generic [ref=e158]:
+                      - heading "답변에 선호 적용" [level=6] [ref=e159]
+                      - generic [ref=e161]: 사용
+                    - paragraph [ref=e162]: 활성 선호를 답변 생성에 전달합니다. 선호는 표현 방식에만 사용되며 사실·권한·정책을 바꾸지 않습니다.
+                  - 'switch "답변에 선호 적용: 사용" [checked] [ref=e165] [cursor=pointer]'
+            - region "내가 저장한 선호" [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - img [ref=e172]
+                  - generic [ref=e180]:
+                    - heading "내가 저장한 선호" [level=2] [ref=e181]
+                    - paragraph [ref=e182]: 응답 형식·길이·말투·업무 방식만 저장할 수 있습니다. 계정·결제·규제 식별정보는 저장할 수 없습니다.
+                - button "선호 추가" [ref=e183] [cursor=pointer]:
+                  - img [ref=e185]
+                  - text: 선호 추가
+              - alert [ref=e186]:
+                - img [ref=e188]
+                - generic [ref=e190]: 비밀번호, 인증 토큰, 주민번호, 계좌·카드 번호는 입력하지 마세요.
+              - generic [ref=e192]:
+                - tablist "메모리 분류" [ref=e193]:
+                  - tab "전체 1" [selected] [ref=e194] [cursor=pointer]
+                  - tab "수동 1" [ref=e195] [cursor=pointer]
+                  - tab "AI 승인 0" [ref=e196] [cursor=pointer]
+                  - tab "만료 임박 1" [ref=e197] [cursor=pointer]
+                - generic [ref=e198]:
+                  - region "내가 저장한 선호" [ref=e199]:
+                    - 'button "상세 보기: 말투" [pressed] [ref=e200] [cursor=pointer]':
+                      - generic [ref=e201]:
+                        - generic [ref=e202]: 22222222-2222-4222-8222-222222222222
+                        - generic [ref=e204]: 사용
+                      - heading "말투" [level=6] [ref=e205]
+                      - paragraph [ref=e206]: 항상 세 줄 핵심 요약과 간결한 문장을 사용합니다.
+                      - generic [ref=e207]: 사용자 직접 등록 · 2026. 9. 4. 오전 9:00
+                  - article "말투" [ref=e208]:
+                    - generic [ref=e209]:
+                      - generic [ref=e210]:
+                        - text: 선택한 메모리 상세 및 증거
+                        - heading "말투" [level=3] [ref=e211]
+                      - generic [ref=e212]:
+                        - generic [ref=e214]: 사용자 직접 등록
+                        - generic [ref=e216]: 사용
+                    - paragraph [ref=e217]: 항상 세 줄 핵심 요약과 간결한 문장을 사용합니다.
+                    - generic [ref=e218]:
+                      - heading "출처 및 변경 증거" [level=4] [ref=e219]
+                      - generic [ref=e220]:
+                        - generic [ref=e221]:
+                          - term [ref=e222]: 등록 방식
+                          - definition [ref=e223]: MANUAL
+                        - generic [ref=e224]:
+                          - term [ref=e225]: 출처 유형
+                          - definition [ref=e226]: USER_EXPLICIT_ENTRY
+                        - generic [ref=e227]:
+                          - term [ref=e228]: 메모리 ID
+                          - definition [ref=e229]: 22222222-2222-4222-8222-222222222222
+                        - generic [ref=e230]:
+                          - term [ref=e231]: 생성
+                          - definition [ref=e232]: 2026. 9. 1. 오전 9:00
+                        - generic [ref=e233]:
+                          - term [ref=e234]: 최근 변경
+                          - definition [ref=e235]: 2026. 9. 4. 오전 9:00
+                        - generic [ref=e236]:
+                          - term [ref=e237]: 서버 리비전
+                          - definition [ref=e238]: r2
+                        - generic [ref=e239]:
+                          - term [ref=e240]: 만료
+                          - definition [ref=e241]: 2026. 10. 14. 오전 9:00
+                      - generic [ref=e242]: 적용 스코프
+                      - generic [ref=e243]:
+                        - generic [ref=e245]: AI에게 묻기
+                        - generic [ref=e247]: Deep Research
+                        - generic [ref=e249]: AI 제안함
+                    - generic [ref=e250]:
+                      - button "선호 수정" [ref=e251] [cursor=pointer]:
+                        - img [ref=e253]
+                        - text: 선호 수정
+                      - button "일시 비활성화" [ref=e256] [cursor=pointer]:
+                        - img [ref=e258]
+                        - text: 일시 비활성화
+                      - button "적용 스코프 축소" [ref=e260] [cursor=pointer]:
+                        - img [ref=e262]
+                        - text: 적용 스코프 축소
+                      - button "만료일 재설정" [ref=e264] [cursor=pointer]:
+                        - img [ref=e266]
+                        - text: 만료일 재설정
+                      - button "선호 삭제" [ref=e270] [cursor=pointer]:
+                        - img [ref=e272]
+                        - text: 선호 삭제
+                    - separator [ref=e275]
+                    - heading "고급 메모리 증거" [level=4] [ref=e276]
+                    - paragraph [ref=e277]: 서버가 검증해 반환한 데이터만 표시하며 값이 없는 지표는 추정하지 않습니다.
+                    - generic [ref=e278]:
+                      - generic [ref=e279]:
+                        - generic [ref=e280]:
+                          - img [ref=e282]
+                          - heading "검증 팩트 벡터 및 신뢰도" [level=5] [ref=e286]
+                        - generic [ref=e287]:
+                          - generic [ref=e288]:
+                            - generic [ref=e290]: 검증 데이터 미제공
+                            - generic [ref=e291]: The current governed memory contract does not provide this evidence.
+                          - generic [ref=e292]:
+                            - generic [ref=e294]: 검증 데이터 미제공
+                            - generic [ref=e295]: The current governed memory contract does not provide this evidence.
+                      - generic [ref=e296]:
+                        - generic [ref=e297]:
+                          - img [ref=e299]
+                          - heading "활용 이력 및 사용 지표" [level=5] [ref=e301]
+                        - generic [ref=e302]:
+                          - generic [ref=e303]:
+                            - generic [ref=e304]:
+                              - term [ref=e305]: 적용 횟수
+                              - definition [ref=e306]: "9"
+                            - generic [ref=e307]:
+                              - term [ref=e308]: 최근 적용
+                              - definition [ref=e309]: 2026. 9. 4. 오전 10:30
+                          - generic [ref=e310]:
+                            - generic [ref=e312]: 검증 데이터 미제공
+                            - generic [ref=e313]: The current governed memory contract does not provide this evidence.
+                      - generic [ref=e314]:
+                        - generic [ref=e315]:
+                          - img [ref=e317]
+                          - heading "KMS 및 보안 키 바인딩" [level=5] [ref=e319]
+                        - generic [ref=e321]:
+                          - generic [ref=e322]:
+                            - term [ref=e323]: 암호화 제공자
+                            - definition [ref=e324]: AWS_KMS
+                          - generic [ref=e325]:
+                            - term [ref=e326]: 키 버전
+                            - definition [ref=e327]: v7
+                          - generic [ref=e328]:
+                            - term [ref=e329]: 키 참조 지문
+                            - definition [ref=e330]: 4e8201a4c301
+            - region "데이터 삭제 및 비우기" [ref=e332]:
+              - generic [ref=e333]:
+                - generic [ref=e334]:
+                  - img [ref=e336]
+                  - generic [ref=e341]:
+                    - heading "데이터 삭제 및 비우기" [level=2] [ref=e342]
+                    - paragraph [ref=e343]: 제안함은 즉시 숨김 처리하고, 다른 개인 데이터는 서버 삭제 작업을 요청합니다.
+                - button "데이터 정리" [ref=e344] [cursor=pointer]:
+                  - img [ref=e346]
+                  - text: 데이터 정리
+              - alert [ref=e349]:
+                - img [ref=e351]
+                - generic [ref=e353]: 원본 업무·메일·일정과 필수 감사 메타데이터는 삭제하지 않습니다.
+              - generic [ref=e354]:
+                - generic [ref=e356]: 현재 버전은 삭제 요청 접수까지만 지원합니다. 실행 완료로 표시하지 않습니다.
+                - generic [ref=e358]: 완료 주장 권한 없음
+            - region "개인 데이터 소멸 이력" [ref=e359]:
+              - generic [ref=e360]:
+                - generic [ref=e361]:
+                  - generic [ref=e362]:
+                    - img [ref=e363]
+                    - heading "개인 데이터 소멸 이력" [level=2] [ref=e366]
+                  - paragraph [ref=e367]: 실제 삭제 작업, 도메인별 상태, 봉인된 물리 삭제 영수증을 확인합니다.
+                - button "이력 새로고침" [ref=e368] [cursor=pointer]:
+                  - img [ref=e370]
+                  - text: 이력 새로고침
+              - generic [ref=e376]:
+                - generic [ref=e377]:
+                  - generic [ref=e378]:
+                    - img [ref=e379]
+                    - generic [ref=e382]:
+                      - heading "66666666-6666-4666-8666-666666666667" [level=6] [ref=e383]
+                      - generic [ref=e384]: 2026. 9. 4. 오전 9:05 · 시도 1
+                  - generic [ref=e387]: 삭제 완료
+                - generic [ref=e390]: 개인 메모리
+                - region "삭제 처리 5단계" [ref=e391]:
+                  - heading "삭제 처리 5단계" [level=6] [ref=e392]
+                  - generic [ref=e393]:
+                    - generic [ref=e394]:
+                      - generic [ref=e395]: 1. 요청 접수
+                      - generic [ref=e397]: 완료
+                      - generic [ref=e398]: REQUEST_ACCEPTED · deletion:request_accepted
+                    - generic [ref=e399]:
+                      - generic [ref=e400]: 2. 대상 예약
+                      - generic [ref=e402]: 완료
+                      - generic [ref=e403]: TARGETS_SCHEDULED · deletion:targets_scheduled
+                    - generic [ref=e404]:
+                      - generic [ref=e405]: 3. 활성 저장소 처분
+                      - generic [ref=e407]: 완료
+                      - generic [ref=e408]: ACTIVE_STORE_DISPOSITION_COMPLETED · deletion:active_store_disposition
+                    - generic [ref=e409]:
+                      - generic [ref=e410]: 4. 백업 경계
+                      - generic [ref=e412]: 완료
+                      - generic [ref=e413]: BACKUP_BOUNDARY_RECORDED · deletion:backup_boundary
+                    - generic [ref=e414]:
+                      - generic [ref=e415]: 5. 영수증 확정
+                      - generic [ref=e417]: 완료
+                      - generic [ref=e418]: RECEIPT_FINALIZED · deletion:receipt_finalization
+                - generic [ref=e420]:
+                  - generic [ref=e421]:
+                    - paragraph [ref=e422]: 개인 메모리
+                    - generic [ref=e423]: 완료
+                  - generic [ref=e424]:
+                    - generic [ref=e425]: 소멸 영수증 · 66666666-6666-4666-8666-666666666668
+                    - generic [ref=e426]: SHA-256 6666666666666666666666666666666666666666666666666666666666666666
+                    - generic [ref=e427]: 삭제 행 2
+                    - generic [ref=e428]: 처분 방식 PHYSICAL_ROW_PURGE_OF_ENCRYPTED_RECORDS
+                    - generic [ref=e429]: 처분 범위 AGENT_ACTIVE_POSTGRES_DOMAIN_ONLY
+                    - generic [ref=e430]: 백업 상태 EXTERNAL_RETENTION_BOUNDARY
+                - generic [ref=e431]: 완료 2026. 9. 4. 오전 9:06
+              - region "소멸 증거와 감사 연계" [ref=e433]:
+                - generic [ref=e434]:
+                  - img [ref=e435]
+                  - heading "소멸 증거와 감사 연계" [level=6] [ref=e439]
+                - generic [ref=e440]: 현재 서버 삭제 이력 응답을 JSON 스냅샷으로 내보냅니다. 공식 증명서는 별도 서버 계약이 있을 때만 제공됩니다.
+                - generic [ref=e441]:
+                  - generic [ref=e442]:
+                    - button "현재 백업 파기 상태 스냅샷 (JSON)" [disabled]
+                    - generic [ref=e443]: deletion.disposition.backup-state · Ask an administrator to configure this governed data action.
+                  - generic [ref=e444]:
+                    - button "현재 법적 보존 상태 스냅샷 (JSON)" [disabled]
+                    - generic [ref=e445]: deletion.legal-hold-evidence · 현재 서버 삭제 이력 응답의 스냅샷입니다. 공식 증명서가 아닙니다.
+                  - generic [ref=e446]:
+                    - button "공식 소멸 증명서 PDF 다운로드" [disabled]
+                    - generic [ref=e447]: browser.print · Ask an administrator to configure this governed data action.
+                  - generic [ref=e448]:
+                    - button "현재 서버 삭제 이력 스냅샷 (JSON)" [ref=e449] [cursor=pointer]
+                    - generic [ref=e450]: deletion.history · 현재 서버 삭제 이력 응답의 스냅샷입니다. 공식 증명서가 아닙니다.
+                  - generic [ref=e451]:
+                    - button "SRE 보안팀 지원 요청" [disabled]
+                    - generic [ref=e452]: deletion.provider.sre-support · Ask an administrator to configure this governed data action.
+                  - generic [ref=e453]:
+                    - button "보존 사유 소명 요청" [disabled]
+                    - generic [ref=e454]: deletion.provider.legal-hold-explanation · Ask an administrator to configure this governed data action.
+                  - generic [ref=e455]:
+                    - button "SIEM 감사 로그 수동 동기화" [disabled]
+                    - generic [ref=e456]: deletion.provider.siem-sync · Ask an administrator to configure this governed data action.
+          - generic [ref=e457]:
+            - region "보안 경계 증거" [ref=e458]:
+              - generic [ref=e459]:
+                - img [ref=e460]
+                - generic [ref=e464]:
+                  - heading "보안 경계 증거" [level=2] [ref=e465]
+                  - text: 현재 API 계약으로 확인한 개인 AI 안전 경계입니다.
+              - generic [ref=e466]:
+                - generic [ref=e467]:
+                  - term [ref=e468]: 대화 자동 추론
+                  - definition [ref=e469]:
+                    - img [ref=e470]
+                    - generic [ref=e473]: 차단
+                - generic [ref=e474]:
+                  - term [ref=e475]: 민감정보 메모리
+                  - definition [ref=e476]:
+                    - img [ref=e477]
+                    - generic [ref=e480]: 차단
+                - generic [ref=e481]:
+                  - term [ref=e482]: 자격 증명 저장
+                  - definition [ref=e483]:
+                    - img [ref=e484]
+                    - generic [ref=e487]: 차단
+                - generic [ref=e488]:
+                  - term [ref=e489]: 팀 공유 메모리
+                  - definition [ref=e490]:
+                    - img [ref=e491]
+                    - generic [ref=e494]: 차단
+                - generic [ref=e495]:
+                  - term [ref=e496]: 승인 없는 외부 실행
+                  - definition [ref=e497]:
+                    - img [ref=e498]
+                    - generic [ref=e501]: 차단
+              - generic [ref=e502]: 개인 감사 이벤트 목록 API는 제공되지 않습니다.
+            - region "보존 경계" [ref=e503]:
+              - generic [ref=e504]:
+                - img [ref=e505]
+                - heading "보존 경계" [level=2] [ref=e508]
+              - generic [ref=e509]:
+                - generic [ref=e510]:
+                  - term [ref=e511]: 개인 AI 루틴
+                  - definition [ref=e512]:
+                    - generic [ref=e513]: 보존 90일 · 삭제 유예 7일
+                    - generic [ref=e515]: 법적 보존 없음
+                - generic [ref=e516]:
+                  - term [ref=e517]: 명시적 메모리
+                  - definition [ref=e518]:
+                    - generic [ref=e519]: 보존 90일 · 삭제 유예 7일
+                    - generic [ref=e521]: 법적 보존 없음
+                - generic [ref=e522]:
+                  - term [ref=e523]: 결과물과 버전
+                  - definition [ref=e524]:
+                    - generic [ref=e525]: 보존 90일 · 삭제 유예 7일
+                    - generic [ref=e527]: 법적 보존 없음
+                - generic [ref=e528]:
+                  - term [ref=e529]: 내보내기 요청
+                  - definition [ref=e530]:
+                    - generic [ref=e531]: 보존 90일 · 삭제 유예 7일
+                    - generic [ref=e533]: 법적 보존 없음
+              - status [ref=e534]:
+                - img [ref=e536]
+                - generic [ref=e538]: 원본 업무·메일·일정과 필수 감사 메타데이터는 삭제하지 않습니다.
+    - navigation "DWAI·ON 빠른 탐색" [ref=e539]:
+      - link "홈" [ref=e540] [cursor=pointer]:
+        - /url: /dwaion/home
+        - img [ref=e541]
+        - generic [ref=e544]: 홈
+      - link "새 대화" [ref=e545] [cursor=pointer]:
+        - /url: /dwaion/new
+        - img [ref=e546]
+        - generic [ref=e548]: 새 대화
+      - link "내 대화" [ref=e549] [cursor=pointer]:
+        - /url: /dwaion/conversations
+        - img [ref=e550]
+        - generic [ref=e554]: 내 대화
+      - link "제안함" [ref=e555] [cursor=pointer]:
+        - /url: /dwaion/proposals
+        - img [ref=e556]
+        - generic [ref=e559]: 제안함
+      - button "더보기" [ref=e560] [cursor=pointer]:
+        - img [ref=e561]
+        - generic [ref=e562]: 더보기
+```

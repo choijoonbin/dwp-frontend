@@ -26,6 +26,8 @@ import type {
   DwaionTeamArtifactShare,
   DwaionTeamArtifactSharePermission,
   DwaionTeamArtifactWorkspace,
+  DwaionTeamArtifactRemediationAction,
+  DwaionTeamArtifactRemediationReceipt,
 } from '@dwp-frontend/shared-utils';
 
 import type { DwaionArtifactDocument } from './dwaion-artifact-model';
@@ -46,6 +48,7 @@ type CollaborationProps = {
   preflight: DwaionTeamArtifactPreflight | null;
   latestShare: DwaionTeamArtifactShare | null;
   accessRequest: DwaionTeamArtifactAccessRequest | null;
+  remediationReceipt: DwaionTeamArtifactRemediationReceipt | null;
   loading: boolean;
   busy: boolean;
   error: unknown;
@@ -82,6 +85,7 @@ type CollaborationProps = {
     permission: DwaionTeamArtifactSharePermission;
     expiresAt: string;
   }) => Promise<unknown>;
+  onRemediate: (action: DwaionTeamArtifactRemediationAction) => Promise<unknown>;
 };
 
 export function DwaionArtifactCollaboration(props: CollaborationProps) {
@@ -413,6 +417,10 @@ export function DwaionArtifactCollaboration(props: CollaborationProps) {
           canEdit={props.canEdit}
           canResubmit={Boolean(canPreflight && props.canPublish && Date.parse(expiry) > Date.now())}
           busy={props.busy}
+          receipt={props.remediationReceipt}
+          canNotifyReview={Boolean(
+            workspace?.reviewStages.some((stage) => stage.state === 'PENDING')
+          )}
           onSaveExplanation={props.onSaveExplanation}
           onSavePrivateDraft={props.onSavePrivateDraft}
           onResubmit={() =>
@@ -424,6 +432,7 @@ export function DwaionArtifactCollaboration(props: CollaborationProps) {
               expiresAt: new Date(expiry).toISOString(),
             })
           }
+          onRemediate={props.onRemediate}
         />
       </Stack>
     </Box>

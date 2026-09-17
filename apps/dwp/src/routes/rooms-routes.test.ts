@@ -143,9 +143,9 @@ describe('Workplace weekly planner route', () => {
 describe('Workplace Screens 17–23 production reachability', () => {
   const navigationItems = ROOMS_NAVIGATION.flatMap((group) => group.items);
 
-  it('publishes the 27 canonical human menu entries exactly once', () => {
-    expect(navigationItems).toHaveLength(27);
-    expect(new Set(navigationItems.map((item) => item.path)).size).toBe(27);
+  it('publishes the 28 canonical human menu entries exactly once', () => {
+    expect(navigationItems).toHaveLength(28);
+    expect(new Set(navigationItems.map((item) => item.path)).size).toBe(28);
     expect(navigationItems.map((item) => item.path)).toEqual(
       expect.arrayContaining([
         '/workplace/navigation',

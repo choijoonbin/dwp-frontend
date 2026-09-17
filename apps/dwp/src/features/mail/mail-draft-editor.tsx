@@ -48,10 +48,12 @@ import {
   mailDraftSnapshot,
   useMailDraftAutosave,
 } from './use-mail-draft-autosave';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   IdempotentMutationIntent,
   MailAdvancedThreadDetail,
+  MailClassification,
   MailThread,
   MailComposeOptions,
   MailSignature,
@@ -65,6 +67,8 @@ type DraftSendPayload = Readonly<{
   toEmail: string;
   subject: string;
   body: string;
+  classification: MailClassification;
+  externalRecipientConfirmed: boolean;
   deliveryMode: 'SEND';
   composeOptions?: MailComposeOptions;
   base: MailDraftFields;
@@ -78,6 +82,10 @@ function isDraftFields(value: unknown): value is MailDraftFields {
     (candidate.toName === undefined || typeof candidate.toName === 'string') &&
     typeof candidate.subject === 'string' &&
     typeof candidate.body === 'string' &&
+    (candidate.classification === undefined ||
+      ['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'].includes(
+        candidate.classification as string
+      )) &&
     (candidate.composeOptions === undefined || isMailComposeOptions(candidate.composeOptions))
   );
 }
@@ -91,6 +99,10 @@ function isDraftSendPayload(value: unknown): value is DraftSendPayload {
     typeof candidate.toEmail === 'string' &&
     typeof candidate.subject === 'string' &&
     typeof candidate.body === 'string' &&
+    ['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED'].includes(
+      candidate.classification as string
+    ) &&
+    typeof candidate.externalRecipientConfirmed === 'boolean' &&
     candidate.deliveryMode === 'SEND' &&
     isDraftFields(candidate.base)
   );
@@ -160,6 +172,7 @@ export function MailDraftEditor({
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { canUpdate, canSend } = useMailUserPermissions();
   const thread = detail.thread;
   const custodyOwner = mailSendCustodyOwner(auth.user);
   const sendScope = mailDraftSendScope(custodyOwner, thread.threadId);
@@ -182,6 +195,12 @@ export function MailDraftEditor({
       detail.messages.find((message) => message.direction === 'DRAFT')?.body ??
       ''
   );
+  const [classification, setClassification] = useState<MailClassification>(
+    restoredConflict?.local.classification ??
+      unresolvedSend?.payload.classification ??
+      thread.classification ??
+      'INTERNAL'
+  );
   const [composeOptions, setComposeOptions] = useState<MailComposeOptions>(
     restoredConflict?.local.composeOptions ??
       unresolvedSend?.payload.composeOptions ??
@@ -197,6 +216,8 @@ export function MailDraftEditor({
     (detail.draftAttachments ?? []).every((attachment) => attachment.scanState === 'READY')
   );
   const [personalizationReviewPending, setPersonalizationReviewPending] = useState(false);
+  const [externalRecipients, setExternalRecipients] = useState(Boolean(toEmail.trim()));
+  const [externalConfirmationOpen, setExternalConfirmationOpen] = useState(false);
   const [sendResolutionPending, setSendResolutionPending] = useState(Boolean(unresolvedSend));
   const [sendRejected, setSendRejected] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -212,9 +233,9 @@ export function MailDraftEditor({
   const [reviewedLocalPendingSave, setReviewedLocalPendingSave] = useState(false);
   const sessionActiveRef = useRef(true);
   const sendIdentityRef = useRef<IdempotentMutationIntent | null>(unresolvedSend?.intent ?? null);
-  const fields = { toEmail, subject, body, composeOptions };
+  const fields = { toEmail, subject, body, classification, composeOptions };
   const autosave = useMailDraftAutosave({
-    enabled: !sending && !sendResolutionPending && !sendRejected && !draftConflict,
+    enabled: canUpdate && !sending && !sendResolutionPending && !sendRejected && !draftConflict,
     fields,
     initialThreadId: thread.threadId,
     initialVersion: thread.version,
@@ -275,7 +296,7 @@ export function MailDraftEditor({
     if (!reviewedLocalPendingSave || !autosave.identity) return;
     const pending = readMailDraftConflict(custodyOwner, autosave.identity.threadId);
     if (!pending) return;
-    const local = { toEmail, subject, body, composeOptions };
+    const local = { toEmail, subject, body, classification, composeOptions };
     if (mailDraftSnapshot(local) === mailDraftSnapshot(autosave.savedFields)) {
       clearMailDraftConflict(custodyOwner, autosave.identity.threadId);
       setReviewedLocalPendingSave(false);
@@ -289,6 +310,7 @@ export function MailDraftEditor({
     autosave.identity,
     autosave.savedFields,
     body,
+    classification,
     custodyOwner,
     reviewedLocalPendingSave,
     subject,
@@ -296,7 +318,8 @@ export function MailDraftEditor({
     composeOptions,
   ]);
   const sendMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: (externalRecipientConfirmed: boolean) => {
+      if (!canSend) throw new Error('Mail send permission is required.');
       const draft = autosave.identity;
       if (!draft) throw new Error('Draft identity is unavailable.');
       const storedAttempt = readMailSendAttempt<DraftSendPayload>(sendScope);
@@ -306,6 +329,8 @@ export function MailDraftEditor({
           toEmail: toEmail.trim(),
           subject: subject.trim(),
           body: body.trim(),
+          classification,
+          externalRecipientConfirmed,
           deliveryMode: 'SEND',
           composeOptions,
           threadId: draft.threadId,
@@ -320,6 +345,8 @@ export function MailDraftEditor({
         toEmail: payload.toEmail,
         subject: payload.subject,
         body: payload.body,
+        classification: payload.classification,
+        externalRecipientConfirmed: payload.externalRecipientConfirmed,
         composeOptions: payload.composeOptions,
         deliveryMode: payload.deliveryMode,
         idempotencyKey: sendIdentity.key,
@@ -354,6 +381,7 @@ export function MailDraftEditor({
             toEmail: attempt.payload.toEmail,
             subject: attempt.payload.subject,
             body: attempt.payload.body,
+            classification: attempt.payload.classification,
             composeOptions: attempt.payload.composeOptions,
           };
           const conflict = {
@@ -386,6 +414,7 @@ export function MailDraftEditor({
     setToEmail(selected.toEmail);
     setSubject(selected.subject);
     setBody(selected.body);
+    setClassification(selected.classification ?? 'INTERNAL');
     setComposeOptions(
       selected.composeOptions ?? emptyComposeOptions(selected.toEmail, null, thread.accountId)
     );
@@ -471,6 +500,20 @@ export function MailDraftEditor({
             {t('draft.description')}
           </Typography>
           <Stack spacing={2}>
+            {!canUpdate ? (
+              <Alert severity="info">
+                {t('permissions.readOnly', {
+                  defaultValue: 'You have read-only mail access. Draft changes are unavailable.',
+                })}
+              </Alert>
+            ) : !canSend ? (
+              <Alert severity="info">
+                {t('permissions.draftOnly', {
+                  defaultValue:
+                    'You can edit and save this draft, but sending requires permission.',
+                })}
+              </Alert>
+            ) : null}
             {closeWhenSaved && <Alert severity="info">{t('draft.autosave.closing')}</Alert>}
             {sendResolutionPending && (
               <Alert severity="warning">{t('compose.retrySameCommand')}</Alert>
@@ -489,12 +532,17 @@ export function MailDraftEditor({
                 onKeepLocal={() => resolveConflict('LOCAL')}
               />
             )}
-            <MailDraftSaveStatus status={autosave.status} onRetry={() => void autosave.saveNow()} />
+            <MailDraftSaveStatus
+              status={autosave.status}
+              onRetry={canUpdate ? () => void autosave.saveNow() : undefined}
+            />
             <MailComposeOptionsFields
               toEmail={toEmail}
               options={composeOptions}
               initialAttachments={detail.draftAttachments ?? []}
-              disabled={closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
+              disabled={
+                !canUpdate || closeWhenSaved || sendResolutionPending || Boolean(draftConflict)
+              }
               hasBody={Boolean(body.trim())}
               onToEmailChange={(value) => {
                 setSendRejected(false);
@@ -506,13 +554,21 @@ export function MailDraftEditor({
               }}
               onAttachmentReadyChange={setAttachmentsReady}
               onPersonalizationReviewChange={setPersonalizationReviewPending}
+              classification={classification}
+              onClassificationChange={(value) => {
+                setSendRejected(false);
+                setClassification(value);
+              }}
+              onExternalRecipientChange={setExternalRecipients}
               onInsertTemplate={(template) => applyTemplate(template, setSubject, setBody)}
               onInsertSignature={(signature) => applySignature(signature, setBody)}
             />
             <FormField
               label={t('compose.subject')}
               value={subject}
-              disabled={closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
+              disabled={
+                !canUpdate || closeWhenSaved || sendResolutionPending || Boolean(draftConflict)
+              }
               inputProps={{ maxLength: 500 }}
               onChange={(event) => {
                 setSendRejected(false);
@@ -522,7 +578,9 @@ export function MailDraftEditor({
             <MailMessageBodyField
               format={composeOptions.bodyFormat}
               value={body}
-              disabled={closeWhenSaved || sendResolutionPending || Boolean(draftConflict)}
+              disabled={
+                !canUpdate || closeWhenSaved || sendResolutionPending || Boolean(draftConflict)
+              }
               minRows={12}
               onChange={(value) => {
                 setSendRejected(false);
@@ -540,6 +598,7 @@ export function MailDraftEditor({
               intent="secondary"
               startIcon={<Save size={16} />}
               disabled={
+                !canUpdate ||
                 !autosave.canSave ||
                 closeWhenSaved ||
                 sendResolutionPending ||
@@ -555,6 +614,7 @@ export function MailDraftEditor({
               intent="primary"
               startIcon={<Send size={16} />}
               disabled={
+                !canSend ||
                 !autosave.canSend ||
                 !attachmentsReady ||
                 personalizationReviewPending ||
@@ -567,8 +627,12 @@ export function MailDraftEditor({
               loading={sending || sendMutation.isPending}
               onClick={() => {
                 autosave.cancelScheduledSave();
+                if (externalRecipients) {
+                  setExternalConfirmationOpen(true);
+                  return;
+                }
                 setSending(true);
-                sendMutation.mutate();
+                sendMutation.mutate(false);
               }}
             >
               {composeOptions.scheduledAt ? t('compose.scheduleSend') : t('compose.send')}
@@ -576,6 +640,21 @@ export function MailDraftEditor({
           </Stack>
         </Box>
       </Box>
+      <ConfirmDialog
+        open={externalConfirmationOpen}
+        title={t('compose.externalConfirmTitle')}
+        description={t('compose.externalConfirmDescription')}
+        cancelLabel={t('actions.cancel')}
+        confirmLabel={t('compose.externalConfirmAction')}
+        busy={sending || sendMutation.isPending}
+        onClose={() => setExternalConfirmationOpen(false)}
+        onConfirm={() => {
+          setExternalConfirmationOpen(false);
+          autosave.cancelScheduledSave();
+          setSending(true);
+          sendMutation.mutate(true);
+        }}
+      />
       <ConfirmDialog
         open={discardOpen}
         title={t('draft.discard.title')}

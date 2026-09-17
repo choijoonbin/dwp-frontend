@@ -52,10 +52,8 @@ import { workplaceHomeSourceData } from './workplace-home-source-state';
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { WorkplaceMobileReservationInspector } from './workplace-mobile-reservation-inspector';
 import { WorkplaceReservationDetailTabContent } from './workplace-reservation-detail-tab-content';
-import {
-  resolveReservationSourceState,
-  WorkplaceReservationSourceStatus,
-} from './workplace-reservation-source-status';
+import { resolveReservationSourceState } from './workplace-reservation-source-status';
+import { WorkplaceReservationSourceSummary } from './workplace-reservation-source-summary';
 import {
   WORKPLACE_RESERVATION_AUTHORITIES,
   WORKPLACE_RESERVATION_PERIODS,
@@ -72,30 +70,21 @@ import {
   projectWorkplaceUnifiedReservations,
   selectWorkplaceUnifiedReservation,
   workplaceUnifiedReservationTargetId,
-  type WorkplaceReservationAuthority,
   type WorkplaceUnifiedReservation,
 } from './workplace-unified-reservations-model';
+import {
+  DEFAULT_WORKPLACE_RESERVATION_FILTERS,
+  formatWorkplaceReservationRange,
+  readWorkplaceReservationDetailTab,
+  WORKPLACE_RESERVATION_DETAIL_TABS,
+  writeWorkplaceReservationDetailTab,
+  type CalendarMutationInput,
+  type WorkplaceMutationInput,
+  type WorkplaceReservationConfirmation,
+  type WorkplaceReservationDetailTab,
+} from './workplace-unified-reservations-runtime';
 
 import type { CalendarEvent, WorkplaceBooking } from '@dwp-frontend/shared-utils';
-
-type WorkplaceCommand = 'check-in' | 'release' | 'cancel';
-type CalendarCommand = 'accept' | 'decline' | 'cancel';
-type WorkplaceMutationInput = {
-  booking: WorkplaceBooking;
-  action: WorkplaceCommand;
-  commandIdentity: string;
-};
-type CalendarMutationInput = {
-  event: CalendarEvent;
-  action: CalendarCommand;
-  commandIdentity: string;
-};
-type Confirmation = Readonly<{
-  authority: WorkplaceReservationAuthority;
-  authorityId: string;
-  version: number;
-  action: 'release' | 'cancel';
-}>;
 
 export function WorkplaceUnifiedReservations() {
   const { t, i18n } = useTranslation('rooms');
@@ -115,16 +104,10 @@ export function WorkplaceUnifiedReservations() {
   const searchParamsRef = useRef(searchParams);
   searchParamsRef.current = searchParams;
   const [urlWasNormalized, setUrlWasNormalized] = useState(false);
-  const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [confirmation, setConfirmation] = useState<WorkplaceReservationConfirmation | null>(null);
   const [relocating, setRelocating] = useState<WorkplaceBooking | null>(null);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const requestedDetailTab = searchParams.get('tab')?.toLowerCase();
-  const initialDetailTab =
-    requestedDetailTab === 'visits'
-      ? 'visitors'
-      : ['overview', 'visitors', 'services', 'access', 'audit'].includes(requestedDetailTab ?? '')
-        ? requestedDetailTab!
-        : 'overview';
+  const initialDetailTab = readWorkplaceReservationDetailTab(searchParams);
   const [detailTab, setDetailTab] = useState(initialDetailTab);
   const { nowInstant, readNow } = useWorkplaceDecisionClock(identityKey);
 
@@ -142,11 +125,9 @@ export function WorkplaceUnifiedReservations() {
     searchParamsRef.current = next;
     setSearchParams(next, { replace: true });
   };
-  const updateDetailTab = (value: string) => {
+  const updateDetailTab = (value: WorkplaceReservationDetailTab) => {
     setDetailTab(value);
-    const next = new URLSearchParams(searchParamsRef.current);
-    if (value === 'overview') next.delete('tab');
-    else next.set('tab', value === 'visitors' ? 'VISITS' : value.toUpperCase());
+    const next = writeWorkplaceReservationDetailTab(searchParamsRef.current, value);
     searchParamsRef.current = next;
     setSearchParams(next, { replace: true });
   };
@@ -399,28 +380,9 @@ export function WorkplaceUnifiedReservations() {
       reservationAuthority: item.authority,
     });
   };
-  const formatRange = (item: WorkplaceUnifiedReservation) => {
-    const options: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeStyle: 'short' };
-    const suffix = item.timeZone ? ` (${item.timeZone})` : '';
-    return `${formatDate(item.startsAt, options, locale)} – ${formatDate(item.endsAt, options, locale)}${suffix}`;
-  };
-  const sourceUpdatedAt = (authority: WorkplaceReservationAuthority) => {
-    const timestamp =
-      authority === 'WORKPLACE' ? workplaceQuery.dataUpdatedAt : calendarQuery.dataUpdatedAt;
-    return timestamp > 0
-      ? formatDate(timestamp, { dateStyle: 'short', timeStyle: 'short' }, locale)
-      : t('workplace.reservations.notYetVerified');
-  };
-  const resetFilters = () =>
-    updateParams({
-      period: 'UPCOMING',
-      types: 'ALL',
-      status: 'ACTIVE',
-      authority: 'ALL',
-      q: null,
-      reservation: null,
-      reservationAuthority: null,
-    });
+  const formatRange = (item: WorkplaceUnifiedReservation) =>
+    formatWorkplaceReservationRange(item, locale);
+  const resetFilters = () => updateParams(DEFAULT_WORKPLACE_RESERVATION_FILTERS);
   const anySourceVisible = projection.items.length > 0;
   const allTerminal = ![workplaceState, calendarState].includes('LOADING');
 
@@ -485,26 +447,20 @@ export function WorkplaceUnifiedReservations() {
         </Box>
       )}
 
-      <Box sx={(theme) => ({ ...workplaceMemberCard(theme), p: 2, mb: 2 })}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          gap={1.5}
-          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}
-        >
-          <WorkplaceReservationSourceStatus
-            authority="WORKPLACE"
-            state={workplaceState}
-            lastVerified={sourceUpdatedAt('WORKPLACE')}
-            onRetry={() => workplaceQuery.refetch()}
-          />
-          <WorkplaceReservationSourceStatus
-            authority="CALENDAR"
-            state={calendarState}
-            lastVerified={sourceUpdatedAt('CALENDAR')}
-            onRetry={() => calendarQuery.refetch()}
-          />
-        </Stack>
-      </Box>
+      <WorkplaceReservationSourceSummary
+        workplace={{
+          state: workplaceState,
+          updatedAt: workplaceQuery.dataUpdatedAt,
+          retry: () => void workplaceQuery.refetch(),
+        }}
+        calendar={{
+          state: calendarState,
+          updatedAt: calendarQuery.dataUpdatedAt,
+          retry: () => void calendarQuery.refetch(),
+        }}
+        locale={locale}
+        notYetVerified={t('workplace.reservations.notYetVerified')}
+      />
 
       <Box
         data-testid="workplace-reservations-filters"
@@ -797,12 +753,12 @@ export function WorkplaceUnifiedReservations() {
             </Box>
             <Tabs
               value={detailTab}
-              onChange={(_, value: string) => updateDetailTab(value)}
+              onChange={(_, value: WorkplaceReservationDetailTab) => updateDetailTab(value)}
               variant="scrollable"
               scrollButtons="auto"
               sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider', px: 1 }}
             >
-              {['overview', 'visitors', 'services', 'access', 'audit'].map((value) => (
+              {WORKPLACE_RESERVATION_DETAIL_TABS.map((value) => (
                 <Tab
                   key={value}
                   value={value}

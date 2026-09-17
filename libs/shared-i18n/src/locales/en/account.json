@@ -10,7 +10,7 @@
     "mode": {
       "CLASSIC": "Classic mode",
       "FLOW_V1": "Flow mode",
-      "MZ_V1": "MZ / AI Stage mode"
+      "MZ_V1": "AI Stage mode"
     }
   },
   "labels": {
@@ -138,7 +138,22 @@
     "saving": "Saving changes",
     "saved": "Saved {{time}}",
     "justNow": "just now",
-    "saveStateError": "Changes were not saved"
+    "saveStateError": "Changes were not saved",
+    "undo": "Undo last save",
+    "conflict": {
+      "title": "Choose which changes to keep",
+      "description": "These settings changed on another session while you were editing. Compare each value before saving so no change is overwritten silently.",
+      "status": "Waiting for conflict review",
+      "previousValue": "Previously: {{value}}",
+      "fieldChoice": "Value to keep for {{field}}",
+      "keepMine": "Keep mine — {{value}}",
+      "useLatest": "Use latest — {{value}}",
+      "useLatestAll": "Use latest for conflicts",
+      "saveChoices": "Save selected values",
+      "valueEnabled": "On",
+      "valueDisabled": "Off",
+      "valueMissing": "Not set"
+    }
   },
   "preview": {
     "live": "Live preview",
@@ -163,17 +178,20 @@
     }
   },
   "profile": {
-    "title": "Profile",
-    "description": "Review the identity information and access context used across your workspace.",
+    "title": "Profile and account",
+    "description": "Manage your workspace identity, connected application permissions, and data consent.",
     "loading": "Loading profile",
     "loadError": "Your profile could not be loaded.",
     "retry": "Retry",
+    "valueUnavailable": "Not provided by the current authentication response",
     "identity": {
       "title": "Identity details",
       "description": "Each value shows its system of record. Organization-managed identity fields are read only here."
     },
     "fields": {
       "name": "Name",
+      "department": "Department",
+      "employeeId": "Employee ID",
       "jobTitle": "Job title",
       "email": "Email",
       "tenant": "Organization",
@@ -186,11 +204,109 @@
       "tenant": "Tenant record",
       "authIdentity": "Auth / identity directory",
       "providerIdentity": "Provider identity service",
-      "access": "Access policy"
+      "access": "Access policy",
+      "notProvided": "Not provided by authentication owner contract"
     },
     "governance": {
       "title": "Profile data is governed by your organization",
       "description": "Name, title, email, organization, and role changes must be made in the authoritative workforce or identity system. Profile visibility follows tenant directory permissions and is audited by the owning service."
+    },
+    "connections": {
+      "title": "Connected work applications and data access",
+      "description": "Review and manage the real OAuth connection state and granted scopes for tenant-approved work applications.",
+      "count": "{{count}} connected",
+      "refresh": "Refresh status",
+      "loading": "Loading connected applications",
+      "unavailable": "The connected-application owner service is unavailable. No connection or permission state is inferred.",
+      "providerBoundary": "Provider identities cannot inspect personal application connections in customer tenants.",
+      "empty": "No work application connections are configured for this tenant.",
+      "scopes": "Scopes: {{scopes}}",
+      "noScopes": "No granted scopes",
+      "lastSync": "Last successful sync: {{date}}",
+      "neverSynced": "No successful sync recorded",
+      "actionRequired": "Action required: {{code}}",
+      "transferBoundary": "This view reports only mail and calendar synchronization returned by the productivity-connection owner. There is no owner contract or API for an aggregated cross-product account-data transfer status.",
+      "sync": "Sync now",
+      "connect": "Connect",
+      "reauthorize": "Renew access",
+      "disconnect": "Disconnect",
+      "states": {
+        "NOT_CONNECTED": "Not connected",
+        "CONNECTED": "Connected",
+        "REAUTHORIZATION_REQUIRED": "Renewal required",
+        "REVOKED": "Disconnected"
+      },
+      "disconnectDialog": {
+        "title": "Disconnect work application",
+        "description": "This revokes the delegated token and sync cursor for {{app}}. OAuth authorization is required to use it again."
+      },
+      "toasts": {
+        "authorizationFailed": "The application authorization flow could not be started.",
+        "syncStarted": "Synchronization started for the permitted data.",
+        "syncPartial": "Synchronization started for {{started}} resource type(s); {{failed}} could not be started.",
+        "syncFailed": "Synchronization could not be started.",
+        "disconnected": "The connection was removed and its delegated credential was revoked.",
+        "disconnectFailed": "The application connection could not be removed."
+      }
+    },
+    "privacy": {
+      "title": "Privacy and data consent",
+      "description": "Manage required security processing, optional consent, and privacy-request intake as distinct states.",
+      "loading": "Loading privacy settings",
+      "loadError": "The privacy consent or request ledger could not be loaded.",
+      "providerBoundary": "Provider identities do not read or change customer-tenant user privacy ledgers.",
+      "required": {
+        "title": "Authentication and security audit records",
+        "description": "Access and security action records are collected under organization security and compliance policy. This required processing is not presented as optional consent.",
+        "badge": "Organization required"
+      },
+      "telemetry": {
+        "title": "Product usage analytics consent",
+        "description": "Allow privacy-minimized events for product navigation and task completion.",
+        "recorded": "User consent ledger recorded {{date}}",
+        "notRecorded": "No selection has been recorded in the server consent ledger yet.",
+        "saved": "Product analytics consent was recorded.",
+        "saveError": "The consent ledger could not be saved, so the current choice was not changed."
+      },
+      "requests": {
+        "types": {
+          "DATA_EXPORT": {
+            "title": "Request a copy of my data",
+            "description": "Registers an internal request. Data collection across owner services, archive creation, and download delivery are not connected yet.",
+            "action": "Request export"
+          },
+          "ACCOUNT_DELETION": {
+            "title": "Request personal-data deletion",
+            "description": "Registers a deletion review request in the internal ledger. This action does not immediately delete the account or externally owned data.",
+            "action": "Request deletion review"
+          }
+        },
+        "states": {
+          "RECEIVED": "Internally received",
+          "CANCELLED": "Cancelled"
+        },
+        "createdAt": "Received {{date}}",
+        "cancel": "Cancel request",
+        "received": "The privacy request was registered in the internal review ledger.",
+        "cancelled": "The privacy request was cancelled.",
+        "error": "The privacy request could not be processed.",
+        "deleteDialog": {
+          "title": "Request a personal-data deletion review?",
+          "description": "This registers an internal request. It does not immediately deactivate the account or delete data.",
+          "cancel": "Go back",
+          "confirm": "Request review",
+          "confirming": "Registering"
+        }
+      },
+      "history": {
+        "title": "Product analytics consent history",
+        "empty": "No choices have been recorded.",
+        "states": {
+          "GRANTED": "Granted",
+          "WITHDRAWN": "Withdrawn"
+        }
+      },
+      "ownerBoundary": "This screen owns consent and request-intake records. Data collection, archive creation, account deletion, and completion notices remain incomplete until each owner service is connected for execution."
     },
     "provider": {
       "description": "Review the provider identity and control-plane access context used for global operations.",
@@ -263,6 +379,8 @@
       "ssoConfigured": "Configured provider",
       "ssoNotConfigured": "Not configured",
       "ssoDetail": "{{protocol}} identity provider is enabled for this tenant.",
+      "idpLoading": "Identity provider details are being checked.",
+      "idpNotObserved": "SSO is enabled by policy, but the identity provider owner returned no provider details.",
       "ssoNotConfiguredDetail": "A tenant administrator must configure and verify an enterprise identity provider.",
       "idpUnavailable": "Identity provider readiness could not be verified.",
       "mfa": "Multi-factor policy",
@@ -433,6 +551,56 @@
     "description": "Search and manage your account, security, display, and work preferences.",
     "providerDescription": "Manage the personal experience and security settings allowed for your Provider operator account.",
     "providerBoundary": "Customer tenant home, notification, and organization-managed values are not shown in these account settings.",
+    "status": {
+      "title": "Current settings status",
+      "description": "Current values reported by the authentication-session and personal-preference owners.",
+      "loading": "Checking",
+      "unavailable": "Unavailable",
+      "preferenceUpdated": "Preferences updated {{date}}",
+      "identity": {
+        "title": "Identity context",
+        "provider": "DWP provider control plane",
+        "unavailable": "Identity unavailable"
+      },
+      "sessions": {
+        "title": "Active sessions",
+        "count": "{{count}} sessions",
+        "description": "Browser and device sessions returned by the security owner service.",
+        "error": "The session owner service did not return a current value."
+      },
+      "experience": {
+        "title": "Display experience",
+        "value": "{{mode}} · {{density}}",
+        "description": "The color mode and working density currently in effect."
+      },
+      "managed": {
+        "title": "Organization policy",
+        "count": "{{count}} managed settings",
+        "description": "Tenant-managed rules included in the personal-preference response.",
+        "providerLocal": "Provider-local settings",
+        "providerDescription": "Provider-identity values kept separate from customer tenant policy."
+      }
+    },
+    "observations": {
+      "label": "Security recommendation and recent-setting observation coverage",
+      "security": {
+        "title": "Security review task",
+        "sessionReview": "There are {{count}} sessions in addition to this one. Review them on the security page.",
+        "unavailable": "No owner service is connected to evaluate account-wide security recommendations.",
+        "boundary": "Only the session count returned by authentication is used here; no security score or risk is inferred.",
+        "open": "Review sessions and security"
+      },
+      "recent": {
+        "title": "Recent settings activity",
+        "loading": "Loading recent activity.",
+        "loadError": "Recent settings activity could not be loaded; no activity is inferred.",
+        "empty": "No settings activity has been recorded yet.",
+        "types": {
+          "VIEW": "Viewed",
+          "CHANGE": "Changed"
+        }
+      }
+    },
     "availableCount": "{{count}} available in this scope",
     "searchLabel": "Search personal settings",
     "searchPlaceholder": "Search security, language, notifications, and more",
@@ -458,6 +626,13 @@
       "home": "home apps widgets",
       "notifications": "notifications channels focus quiet hours",
       "managed": "organization policy exception effective value"
+    },
+    "favorites": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites",
+      "addNamed": "Add {{name}} to favorites",
+      "removeNamed": "Remove {{name}} from favorites",
+      "saveError": "The favorite could not be saved. Refresh and try again."
     }
   },
   "shell": {

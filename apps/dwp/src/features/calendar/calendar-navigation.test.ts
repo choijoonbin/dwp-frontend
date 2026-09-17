@@ -17,6 +17,7 @@ describe('calendar product navigation', () => {
       'invitations',
       'availability',
       'insights',
+      'settings',
       'trash',
       'admin-overview',
       'admin-company-calendars',
@@ -33,6 +34,7 @@ describe('calendar product navigation', () => {
     expect(CALENDAR_DEFAULT_PATH).toBe('/calendar/home');
     expect(findCalendarNavigationItem('/calendar/schedule/')?.view).toBe('schedule');
     expect(findCalendarNavigationItem('/calendar/focus/')?.view).toBe('focus');
+    expect(findCalendarNavigationItem('/calendar/settings/')?.view).toBe('settings');
     expect(findCalendarNavigationItem('/calendar/not-a-view')).toBeUndefined();
   });
 });

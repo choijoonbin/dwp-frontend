@@ -24,11 +24,8 @@ import { ErrorBoundary } from './routes/components/error-boundary';
 import { PersonalPreferenceProvider } from './providers/personal-preference-provider';
 import { ShellBootScreen } from './components/shell-boot-screen';
 import { CalendarWorkHandoffSessionGuard } from './components/calendar-work-handoff-session-guard';
-import { readProductSurfaceTelemetryConsent } from './observability/product-surface-telemetry-context';
+import { ProductSurfaceTelemetryConsentBoundary } from './observability/product-surface-telemetry-consent-boundary';
 
-const ProductSurfaceTelemetryProvider = lazy(
-  () => import('./observability/product-surface-telemetry-provider')
-);
 const ProviderSupportAuthorityBoundary = lazy(() =>
   import('./components/provider-support-authority-boundary').then((module) => ({
     default: module.ProviderSupportAuthorityBoundary,
@@ -162,18 +159,16 @@ export function bootstrapApplication(routes: RouteObject[], runtime: ProductAppl
   if (hotData) hotData.reactRoot = reactRoot;
   const productionTelemetryEnabled =
     import.meta.env.VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION === 'true';
-  const telemetryConsentGranted = readProductSurfaceTelemetryConsent(window.localStorage);
   const routedApplication = <RouterProvider router={router} />;
-  const telemetryApplication =
-    productionTelemetryEnabled && telemetryConsentGranted ? (
-      <Suspense fallback={<ShellBootScreen />}>
-        <ProductSurfaceTelemetryProvider productionCollectionEnabled privacyConsentGranted>
-          {routedApplication}
-        </ProductSurfaceTelemetryProvider>
-      </Suspense>
-    ) : (
-      routedApplication
-    );
+  const telemetryApplication = (
+    <Suspense fallback={<ShellBootScreen />}>
+      <ProductSurfaceTelemetryConsentBoundary
+        productionCollectionEnabled={productionTelemetryEnabled}
+      >
+        {routedApplication}
+      </ProductSurfaceTelemetryConsentBoundary>
+    </Suspense>
+  );
 
   reactRoot.render(
     <StrictMode>

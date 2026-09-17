@@ -27,6 +27,7 @@ import { useHomeWidgetRegistryRuntime } from '../../features/home/runtime/use-ho
 import { HOME_APPS } from '../../components/workspace-composer/app-launchpad-model';
 import { reconcileHomeCompositionPolicy } from '../../features/home/home-composition-policy';
 import { HOME_V2_QUERY_ROOT } from '../../features/home/runtime/use-home-v2-runtime';
+import { resolveHomePreferenceStore } from '../../features/home-personalization/home-personalization-studio-model';
 
 import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
@@ -158,16 +159,21 @@ export default function AccountHomeSettingsPage() {
   if (!isAccountHomeSection(homeSection)) {
     return <Navigate to="/account/settings/home/overview" replace />;
   }
-  if (experienceQuery.isLoading) {
+  if (experienceQuery.isLoading || preferenceQuery.isLoading) {
     return <LoadingState label={t('common.loading', { ns: 'homeStudio' })} size="page" />;
   }
-  if (experienceQuery.isError || !experienceQuery.data) {
+  if (
+    experienceQuery.isError ||
+    !experienceQuery.data ||
+    preferenceQuery.isError ||
+    !preferenceQuery.data
+  ) {
     return (
       <ErrorState
         title={t('common.unavailable', { ns: 'homeStudio' })}
         retryLabel={t('common.retry', { ns: 'homeStudio' })}
-        retrying={experienceQuery.isFetching}
-        onRetry={() => void experienceQuery.refetch()}
+        retrying={experienceQuery.isFetching || preferenceQuery.isFetching}
+        onRetry={() => void Promise.all([experienceQuery.refetch(), preferenceQuery.refetch()])}
         size="page"
       />
     );
@@ -188,6 +194,7 @@ export default function AccountHomeSettingsPage() {
     experience,
     HOME_CONTRACT_CAPABILITIES.fourDeviceLayouts
   );
+  const preferenceStore = resolveHomePreferenceStore(experience.homePreferenceStore);
 
   return (
     <PageCanvas>
@@ -224,6 +231,8 @@ export default function AccountHomeSettingsPage() {
         composerEnabled={experience.composerEnabled === true}
         modeKey={modeKey}
         modeScopedViews={modeScopedViews}
+        preferenceStore={preferenceStore}
+        legacyPreference={preferenceStore === 'LEGACY' ? preferenceQuery.data : undefined}
         fourDeviceLayoutsSupported={fourDeviceLayoutsSupported}
         tenantId={auth.user?.tenantId}
         userId={auth.user?.userId}

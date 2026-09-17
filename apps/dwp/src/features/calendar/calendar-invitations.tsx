@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Check, Clock3, Inbox, MapPin, X } from 'lucide-react';
+import { AlertTriangle, Check, Clock3, Inbox, MapPin, RefreshCcw, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import {
   getCalendarEvents,
   respondToCalendarEvent,
@@ -34,6 +35,11 @@ import {
   calendarTime,
 } from './calendar-components';
 import { CalendarCanvas, CalendarSectionHeader } from './calendar-experience';
+import {
+  completeCalendarResponseIntent,
+  prepareCalendarResponseCommand,
+  type CalendarResponseIntent,
+} from './calendar-response-intent';
 import { eventCapability } from './calendar-source-model';
 import {
   calendarHorizon,
@@ -88,9 +94,17 @@ function InvitationRow({
         gridTemplateColumns: { xs: '1fr', md: '112px minmax(0, 1fr) auto' },
         gap: { xs: 1.5, md: 2 },
         alignItems: { xs: 'stretch', md: 'center' },
-        p: { xs: 1.75, md: 2 },
+        p: { xs: 2, md: 2 },
+        mx: { xs: 1.5, md: 0 },
+        my: { xs: 1.25, md: 0 },
+        border: { xs: 1, md: 0 },
         borderBottom: 1,
         borderColor: 'divider',
+        borderRadius: { xs: 1.5, md: 0 },
+        bgcolor: 'background.paper',
+        '@media (forced-colors: active)': {
+          borderColor: 'CanvasText',
+        },
       }}
     >
       <Box>
@@ -148,7 +162,14 @@ function InvitationRow({
           </Stack>
         </Stack>
       </Box>
-      <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+      <Stack
+        direction="row"
+        spacing={0.75}
+        alignItems="center"
+        flexWrap="wrap"
+        useFlexGap
+        sx={{ '& > *': { minHeight: { xs: 44, md: 32 } } }}
+      >
         {response === 'NEEDS_ACTION' && canRespond ? (
           <>
             <ActionButton
@@ -182,6 +203,18 @@ function InvitationRow({
             </ActionButton>
           </>
         ) : null}
+        {response === 'NEEDS_ACTION' && event.organizerPersonPublicId ? (
+          <ActionButton
+            component={Link}
+            to={`/calendar/availability?person=${encodeURIComponent(event.organizerPersonPublicId)}`}
+            size="small"
+            intent="quiet"
+            startIcon={<RefreshCcw size={15} />}
+            aria-label={t('invitations.findAlternativeFor', { title: event.title })}
+          >
+            {t('invitations.findAlternative')}
+          </ActionButton>
+        ) : null}
         <ActionButton
           size="small"
           intent="quiet"
@@ -205,6 +238,7 @@ export function CalendarInvitations() {
   const [filter, setFilter] = useState<CalendarInvitationFilter>('NEEDS_ACTION');
   const [selected, setSelected] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
+  const responseIntentRef = useRef<CalendarResponseIntent | null>(null);
   const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
   const canRespond = canUpdate;
   const query = useQuery({
@@ -217,17 +251,33 @@ export function CalendarInvitations() {
     mutationFn: ({
       eventId,
       response,
+      expectedVersion,
+      idempotencyKey,
     }: {
       eventId: string;
       response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>;
-    }) => respondToCalendarEvent(eventId, response),
-    onSuccess: async (event) => {
+      expectedVersion: number;
+      idempotencyKey: string;
+    }) => respondToCalendarEvent(eventId, response, expectedVersion, idempotencyKey),
+    onSuccess: async (event, command) => {
+      responseIntentRef.current = completeCalendarResponseIntent(
+        responseIntentRef.current,
+        command.idempotencyKey
+      );
       setSelected((current) => (current?.eventId === event.eventId ? event : current));
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('event.responseSaved'));
     },
     onError: () => toast.error(t('event.responseError')),
   });
+  const respondToInvitation = (
+    event: CalendarEvent,
+    response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>
+  ) => {
+    const prepared = prepareCalendarResponseCommand(responseIntentRef.current, event, response);
+    responseIntentRef.current = prepared.intent;
+    respond.mutate(prepared.command);
+  };
   const trashMutation = useMutation({
     mutationFn: (event: CalendarEvent) =>
       trashCalendarEvent(event.eventId, event.version, t('event.userDeletionReason')),
@@ -276,8 +326,8 @@ export function CalendarInvitations() {
       <Box
         component="section"
         sx={{
-          bgcolor: 'background.paper',
-          border: 1,
+          bgcolor: { xs: 'transparent', md: 'background.paper' },
+          border: { xs: 0, md: 1 },
           borderColor: 'divider',
           borderRadius: 1,
           overflow: 'hidden',
@@ -363,12 +413,12 @@ export function CalendarInvitations() {
         ) : filtered.length ? (
           filtered.map((event) => (
             <InvitationRow
-              key={event.eventId}
+              key={`${event.eventId}:${event.recurrenceId ?? event.startsAt}`}
               event={event}
               canRespond={canRespond && eventCapability(event, 'canRespond')}
               busy={respond.isPending && respond.variables?.eventId === event.eventId}
               onOpen={() => setSelected(event)}
-              onRespond={(response) => respond.mutate({ eventId: event.eventId, response })}
+              onRespond={(response) => respondToInvitation(event, response)}
             />
           ))
         ) : (
@@ -404,7 +454,7 @@ export function CalendarInvitations() {
         }
         onRespond={
           selected && canRespond && eventCapability(selected, 'canRespond')
-            ? (response) => selected && respond.mutate({ eventId: selected.eventId, response })
+            ? (response) => selected && respondToInvitation(selected, response)
             : undefined
         }
       />

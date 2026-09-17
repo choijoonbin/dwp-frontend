@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest';
 import {
   authorizedCalendarWorkReturnTarget,
   calendarInternalPath,
+  calendarScheduleAuthorizedEvent,
   calendarScheduleCalendarIds,
   calendarScheduleDate,
   calendarScheduleDateValue,
+  calendarScheduleInitialRange,
   calendarScheduleReturnTarget,
   calendarScheduleSavedConfiguration,
   calendarScheduleSearchParams,
@@ -14,9 +16,18 @@ import {
   fullCalendarView,
   isCalendarCommandShortcut,
   scheduleViewFromFullCalendar,
+  sameCalendarSelection,
 } from './calendar-schedule-state';
 
 describe('calendar schedule state', () => {
+  it('removes an open event when a successful refresh no longer authorizes it', () => {
+    const event = { eventId: 'event-revoked', title: 'Private planning' };
+
+    expect(calendarScheduleAuthorizedEvent(event, new Set(['event-visible']))).toBeNull();
+    expect(calendarScheduleAuthorizedEvent(event, new Set(['event-revoked']))).toBe(event);
+    expect(calendarScheduleAuthorizedEvent(null, new Set(['event-revoked']))).toBeNull();
+  });
+
   it('validates views and maps them to the calendar renderer contract', () => {
     expect(calendarScheduleView('month', 'week')).toBe('month');
     expect(calendarScheduleView('threeDay', 'week')).toBe('threeDay');
@@ -34,6 +45,15 @@ describe('calendar schedule state', () => {
     const date = calendarScheduleDate('2026-08-27', new Date('2020-01-01T00:00:00Z'));
     expect(calendarScheduleDateValue(date)).toBe('2026-08-27');
     expect(calendarScheduleDate('not-a-date', new Date(2026, 7, 28)).getDate()).toBe(28);
+  });
+
+  it('owns the initial Monday range and exact source-selection comparison', () => {
+    expect(calendarScheduleInitialRange(new Date(2026, 7, 27, 12))).toEqual({
+      from: new Date(2026, 7, 24).toISOString(),
+      to: new Date(2026, 7, 31).toISOString(),
+    });
+    expect(sameCalendarSelection(['personal', 'team'], ['personal', 'team'])).toBe(true);
+    expect(sameCalendarSelection(['personal', 'team'], ['team', 'personal'])).toBe(false);
   });
 
   it('parses, deduplicates, and explicitly preserves an empty calendar selection', () => {

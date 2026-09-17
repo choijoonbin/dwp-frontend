@@ -42,12 +42,18 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
-import { mailAccountCapabilityPresentation } from './mail-account-capability-presentation';
+import {
+  mailAccountCapabilityPresentation,
+  mailAccountFeatureReadinessPresentation,
+  mailAccountReadinessIsReady,
+} from './mail-account-capability-presentation';
 import { MAIL_PREFERENCES_QUERY_KEY } from './mail-runtime-preferences';
+import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   MailAccount,
   MailAccountConnectionState,
+  MailAccountReadinessEvidence,
   MailAccountSynchronizationState,
   MailComposeCapabilities,
   MailPreferences,
@@ -59,6 +65,7 @@ type LockedPreference = MailPreferenceKey;
 
 export function MailPreferencesWorkspace() {
   const { t } = useTranslation('mail');
+  const { isLoaded, canUpdate } = useMailUserPermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<PreferenceTab>('accounts');
@@ -94,6 +101,7 @@ export function MailPreferencesWorkspace() {
 
   const save = useMutation({
     mutationFn: () => {
+      if (!canUpdate) throw new Error('APP.MAIL:UPDATE is required');
       if (!draft) throw new Error('Mail preferences are unavailable.');
       const { orgLocks: _orgLocks, ...input } = draft;
       return updateMailPreferences(input);
@@ -126,6 +134,13 @@ export function MailPreferencesWorkspace() {
           </ActionIconButton>
         }
       />
+      {isLoaded && !canUpdate && (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {t('permissions.readOnly', {
+            defaultValue: 'You have read-only access. Preference changes are unavailable.',
+          })}
+        </Alert>
+      )}
       <Tabs
         value={tab}
         onChange={(_event, value: PreferenceTab) => setTab(value)}
@@ -147,13 +162,15 @@ export function MailPreferencesWorkspace() {
           {t('secondary.accounts.preferencesLoadError')}
         </Alert>
       ) : (
-        <Box sx={{ mt: 2 }}>
+        <Box component="fieldset" disabled={!canUpdate} sx={{ mt: 2, p: 0, m: 0, border: 0 }}>
           {tab === 'accounts' && (
             <AccountSettings
               accounts={home.data?.accounts ?? []}
               accountCapabilities={composeContext.data?.accountCapabilities ?? {}}
+              accountReadiness={composeContext.data?.accountReadiness ?? {}}
               capabilityLoading={composeContext.isLoading}
               capabilityError={composeContext.isError}
+              onRefreshReadiness={() => void composeContext.refetch()}
               draft={draft}
               onChange={setDraft}
             />
@@ -176,6 +193,7 @@ export function MailPreferencesWorkspace() {
               intent="primary"
               startIcon={<Save size={16} />}
               loading={save.isPending}
+              disabled={!canUpdate}
               loadingLabel={t('actions.saving')}
               onClick={() => save.mutate()}
             >
@@ -191,15 +209,19 @@ export function MailPreferencesWorkspace() {
 function AccountSettings({
   accounts,
   accountCapabilities,
+  accountReadiness,
   capabilityLoading,
   capabilityError,
+  onRefreshReadiness,
   draft,
   onChange,
 }: {
   accounts: MailAccount[];
   accountCapabilities: Record<string, MailComposeCapabilities>;
+  accountReadiness: Record<string, MailAccountReadinessEvidence>;
   capabilityLoading: boolean;
   capabilityError: boolean;
+  onRefreshReadiness: () => void;
   draft: MailPreferences;
   onChange: (next: MailPreferences) => void;
 }) {
@@ -227,7 +249,11 @@ function AccountSettings({
         options={accounts.map((account) => ({
           value: account.accountId,
           label: `${account.displayName} · ${account.emailAddress}`,
-          disabled: account.connectionState !== 'ACTIVE',
+          disabled:
+            account.connectionState !== 'ACTIVE' ||
+            !mailAccountReadinessIsReady(
+              accountReadiness[account.accountId] ?? account.readiness ?? undefined
+            ),
         }))}
         disabled={isLocked(draft, 'defaultAccountId')}
         supportingText={lockReason(draft, 'defaultAccountId')}
@@ -243,8 +269,16 @@ function AccountSettings({
             {index > 0 && <Divider />}
             <AccountRow
               account={account}
-              capabilities={accountCapabilities[account.accountId]}
+              capabilities={
+                mailAccountReadinessIsReady(
+                  accountReadiness[account.accountId] ?? account.readiness ?? undefined
+                )
+                  ? accountCapabilities[account.accountId]
+                  : undefined
+              }
+              readiness={accountReadiness[account.accountId] ?? account.readiness ?? undefined}
               capabilityLoading={capabilityLoading}
+              onRetry={onRefreshReadiness}
             />
           </Box>
         ))}
@@ -264,15 +298,35 @@ function AccountSettings({
 function AccountRow({
   account,
   capabilities,
+  readiness,
   capabilityLoading,
+  onRetry,
 }: {
   account: MailAccount;
   capabilities?: MailComposeCapabilities;
+  readiness?: MailAccountReadinessEvidence;
   capabilityLoading: boolean;
+  onRetry: () => void;
 }) {
   const { t } = useTranslation('mail');
   const status = accountStatusPresentation(account);
   const StatusIcon = status.icon;
+  const readinessReady = mailAccountReadinessIsReady(readiness);
+  const readinessState = readinessReady ? 'READY' : (readiness?.state ?? 'UNAVAILABLE');
+  const featureReadiness = mailAccountFeatureReadinessPresentation(readiness);
+  const readinessSourceLabel = (source: string) => {
+    const knownSources = new Set([
+      'CONNECTOR_RUNTIME',
+      'PERSISTED_CONNECTION',
+      'RUNTIME_REGISTRY',
+      'ACCESS_POLICY',
+      'NO_RUNTIME_ATTESTATION',
+      'ACCOUNT_CONFIGURATION',
+    ]);
+    return knownSources.has(source)
+      ? t(`secondary.accounts.readiness.source.${source}`)
+      : t('secondary.accounts.readiness.source.unknown');
+  };
   return (
     <Stack
       direction={{ xs: 'column', sm: 'row' }}
@@ -309,27 +363,247 @@ function AccountRow({
           {t(`provider.${account.providerType}`)} ·{' '}
           {t(`accounts.sync.${account.synchronizationState}`)}
         </Typography>
-        <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.75 }}>
+        <Stack spacing={0.4} sx={{ mt: 1, p: 1.25, bgcolor: 'action.hover' }}>
+          <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+            <Chip
+              size="small"
+              color={
+                readinessReady ? 'success' : readinessState === 'DEGRADED' ? 'warning' : 'error'
+              }
+              label={t(`secondary.accounts.readiness.state.${readinessState}`)}
+            />
+            <Typography variant="caption" color="text.secondary">
+              {readiness
+                ? t('secondary.accounts.readiness.observed', {
+                    source: readinessSourceLabel(readiness.source),
+                    time: readiness.observedAt,
+                  })
+                : t('secondary.accounts.readiness.missingEvidence')}
+            </Typography>
+          </Stack>
+          <Typography variant="caption" color="text.secondary">
+            {t('secondary.accounts.readiness.credential', {
+              state: t(
+                readiness?.credentialConfigured
+                  ? 'secondary.accounts.readiness.configured'
+                  : 'secondary.accounts.readiness.notConfigured'
+              ),
+            })}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {readiness?.lastSuccessfulSyncAt
+              ? t('secondary.accounts.readiness.lastSync', {
+                  time: readiness.lastSuccessfulSyncAt,
+                  scope:
+                    readiness.lastSuccessfulSyncScope ??
+                    t('secondary.accounts.readiness.scopeUnavailable'),
+                })
+              : t('secondary.accounts.readiness.noSuccessfulSync')}
+          </Typography>
+          {readiness?.errorCode ? (
+            <Typography variant="caption" color="error.main">
+              {t('secondary.accounts.readiness.error', { code: readiness.errorCode })}
+            </Typography>
+          ) : null}
+          {readiness?.action === 'RETRY' ? (
+            <ActionButton
+              intent="secondary"
+              size="small"
+              startIcon={<RefreshCw size={14} />}
+              onClick={onRetry}
+              sx={{ alignSelf: 'flex-start' }}
+            >
+              {t('secondary.accounts.readiness.action.RETRY')}
+            </ActionButton>
+          ) : readiness && readiness.action !== 'NONE' ? (
+            <Typography variant="caption" color="warning.main" fontWeight={700}>
+              {t(`secondary.accounts.readiness.action.${readiness.action}`)}
+            </Typography>
+          ) : !readiness ? (
+            <Typography variant="caption" color="warning.main" fontWeight={700}>
+              {t('secondary.accounts.readiness.action.ACTIVATE_EXTERNALLY')}
+            </Typography>
+          ) : null}
+        </Stack>
+        <Typography variant="caption" fontWeight={800} sx={{ mt: 1 }}>
+          {t('secondary.accounts.authorization.title')}
+        </Typography>
+        <Stack
+          component="dl"
+          spacing={0.75}
+          aria-label={t('secondary.accounts.authorization.title')}
+          sx={{ m: 0, mt: 0.75 }}
+        >
+          {(
+            [
+              ['consent', readiness?.consentEvidence],
+              ['token', readiness?.tokenEvidence],
+            ] as const
+          ).map(([kind, evidence]) => (
+            <Box
+              key={kind}
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'minmax(9rem, auto) 1fr' },
+                gap: { xs: 0.25, sm: 1 },
+                p: 1,
+                border: 1,
+                borderColor: 'divider',
+              }}
+            >
+              <Typography component="dt" variant="caption" fontWeight={800}>
+                {t(`secondary.accounts.authorization.${kind}`)}
+              </Typography>
+              <Box component="dd" sx={{ m: 0, minWidth: 0 }}>
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  alignItems="center"
+                  flexWrap="wrap"
+                  useFlexGap
+                >
+                  <Chip
+                    size="small"
+                    color={
+                      evidence?.state === 'VERIFIED' || evidence?.state === 'NOT_REQUIRED'
+                        ? 'success'
+                        : 'error'
+                    }
+                    label={t(
+                      `secondary.accounts.authorization.state.${evidence?.state ?? 'UNKNOWN'}`
+                    )}
+                  />
+                  <Typography variant="caption" color="text.secondary">
+                    {evidence
+                      ? t('secondary.accounts.authorization.observed', {
+                          source: readinessSourceLabel(evidence.source),
+                          time: evidence.observedAt,
+                        })
+                      : t('secondary.accounts.authorization.missing')}
+                  </Typography>
+                </Stack>
+                {evidence?.expiresAt ? (
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    {t('secondary.accounts.authorization.expires', { time: evidence.expiresAt })}
+                  </Typography>
+                ) : null}
+                {evidence?.errorCode ? (
+                  <Typography variant="caption" color="error.main" display="block">
+                    {t('secondary.accounts.readiness.error', { code: evidence.errorCode })}
+                  </Typography>
+                ) : null}
+                {evidence && evidence.action !== 'NONE' ? (
+                  <Typography
+                    variant="caption"
+                    color="warning.main"
+                    display="block"
+                    fontWeight={700}
+                  >
+                    {t(`secondary.accounts.readiness.action.${evidence.action}`)}
+                  </Typography>
+                ) : null}
+              </Box>
+            </Box>
+          ))}
+        </Stack>
+        <Stack spacing={0.75} sx={{ mt: 1 }}>
+          <Typography variant="caption" fontWeight={800}>
+            {t('secondary.accounts.featureReadiness.title')}
+          </Typography>
           {capabilityLoading ? (
-            <Chip size="small" variant="outlined" label={t('secondary.accounts.capabilityLoading')} />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t('secondary.accounts.capabilityLoading')}
+            />
           ) : (
-            mailAccountCapabilityPresentation(account, capabilities).map((capability) => (
-              <Chip
-                key={capability.key}
-                size="small"
-                variant={capability.ready ? 'filled' : 'outlined'}
-                color={capability.ready ? 'success' : 'default'}
-                label={t('secondary.accounts.capabilityStatus', {
-                  feature: t(`secondary.accounts.capabilities.${capability.key}`),
-                  status: t(
-                    capability.ready
-                      ? 'secondary.accounts.capabilityReady'
-                      : 'secondary.accounts.capabilityUnavailable'
-                  ),
-                })}
-              />
-            ))
+            <Stack component="ul" spacing={0.75} sx={{ m: 0, p: 0, listStyle: 'none' }}>
+              {featureReadiness.map((feature) => (
+                <Box
+                  component="li"
+                  key={feature.featureKey}
+                  sx={{ p: 1, border: 1, borderColor: 'divider', minWidth: 0 }}
+                >
+                  <Stack
+                    direction="row"
+                    spacing={0.75}
+                    alignItems="center"
+                    flexWrap="wrap"
+                    useFlexGap
+                  >
+                    <Typography variant="caption" fontWeight={800}>
+                      {t(`secondary.accounts.capabilities.${feature.presentationKey}`)}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      variant={feature.ready ? 'filled' : 'outlined'}
+                      color={feature.ready ? 'success' : 'default'}
+                      label={t(
+                        feature.ready
+                          ? 'secondary.accounts.capabilityReady'
+                          : 'secondary.accounts.capabilityUnavailable'
+                      )}
+                    />
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    {feature.evidence
+                      ? t('secondary.accounts.featureReadiness.observed', {
+                          source: readinessSourceLabel(feature.evidence.source),
+                          time: feature.evidence.observedAt,
+                        })
+                      : t('secondary.accounts.featureReadiness.missing')}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    {feature.evidence?.lastSuccessfulAt
+                      ? t('secondary.accounts.featureReadiness.lastSuccess', {
+                          time: feature.evidence.lastSuccessfulAt,
+                          scope:
+                            feature.evidence.lastSuccessfulScope ??
+                            t('secondary.accounts.readiness.scopeUnavailable'),
+                        })
+                      : t('secondary.accounts.featureReadiness.noSuccess')}
+                  </Typography>
+                  {feature.evidence?.errorCode ? (
+                    <Typography variant="caption" color="error.main" display="block">
+                      {t('secondary.accounts.readiness.error', {
+                        code: feature.evidence.errorCode,
+                      })}
+                    </Typography>
+                  ) : null}
+                  {feature.evidence && feature.evidence.action !== 'NONE' ? (
+                    <Typography
+                      variant="caption"
+                      color="warning.main"
+                      display="block"
+                      fontWeight={700}
+                    >
+                      {t(`secondary.accounts.readiness.action.${feature.evidence.action}`)}
+                    </Typography>
+                  ) : null}
+                </Box>
+              ))}
+            </Stack>
           )}
+          <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">
+            {mailAccountCapabilityPresentation(account, capabilities)
+              .filter((capability) => capability.key.startsWith('sharedIdentity'))
+              .map((capability) => (
+                <Chip
+                  key={capability.key}
+                  size="small"
+                  variant={capability.ready ? 'filled' : 'outlined'}
+                  color={capability.ready ? 'success' : 'default'}
+                  label={t('secondary.accounts.capabilityStatus', {
+                    feature: t(`secondary.accounts.capabilities.${capability.key}`),
+                    status: t(
+                      capability.ready
+                        ? 'secondary.accounts.capabilityReady'
+                        : 'secondary.accounts.capabilityUnavailable'
+                    ),
+                  })}
+                />
+              ))}
+          </Stack>
         </Stack>
       </Box>
       <Stack direction="row" spacing={0.75} alignItems="center" color={`${status.color}.main`}>

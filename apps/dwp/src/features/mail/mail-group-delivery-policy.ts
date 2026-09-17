@@ -9,9 +9,13 @@ export function mailGroupAttemptCanSubmit(attempt?: MailGroupReviewState | null)
   return attempt?.snapshotStale !== true;
 }
 
-export function mailGroupDeliveryPolicy(memberCount: number, recipientMode: 'TO' | 'BCC') {
+export function mailGroupDeliveryPolicy(
+  memberCount: number,
+  recipientMode: 'TO' | 'BCC',
+  supportsBcc: boolean
+) {
   const recipientLimitExceeded = memberCount > MAIL_GROUP_TO_RECIPIENT_LIMIT;
-  const unsupportedPrivateMode = recipientMode === 'BCC';
+  const unsupportedPrivateMode = recipientMode === 'BCC' && !supportsBcc;
   return {
     recipientLimitExceeded,
     unsupportedPrivateMode,

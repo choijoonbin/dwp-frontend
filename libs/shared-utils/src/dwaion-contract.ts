@@ -40,7 +40,7 @@ export type DwaionProposalHandoffBinding = Readonly<{
   version: 1;
   handoffId: string;
   proposalId: string;
-  actionKey: 'APPROVAL.REQUEST.CREATE';
+  actionKey: DwaionActionKey;
   handoffVersion: number;
 }>;
 
@@ -181,7 +181,7 @@ export function parseDwaionProposalHandoffBinding(
   state: unknown,
   now = Date.now()
 ): DwaionProposalHandoffBinding | null {
-  const handoff = parseDwaionHandoff(state, 'APPROVAL.REQUEST.CREATE', now);
+  const handoff = parseDwaionHandoff(state, undefined, now);
   if (!handoff || !isRecord(state)) return null;
   const value = state.dwaionProposalHandoff;
   if (
@@ -192,7 +192,8 @@ export function parseDwaionProposalHandoffBinding(
     typeof value.proposalId !== 'string' ||
     !UUID_PATTERN.test(value.proposalId) ||
     value.proposalId !== handoff.origin.sourceRequestId ||
-    value.actionKey !== 'APPROVAL.REQUEST.CREATE' ||
+    !isActionKey(value.actionKey) ||
+    value.actionKey !== handoff.actionKey ||
     !Number.isSafeInteger(value.handoffVersion) ||
     (value.handoffVersion as number) < 1
   ) {
@@ -204,6 +205,18 @@ export function parseDwaionProposalHandoffBinding(
     proposalId: value.proposalId,
     actionKey: value.actionKey,
     handoffVersion: value.handoffVersion as number,
+  };
+}
+
+export function dwaionProposalHandoffHeaders(
+  binding?: DwaionProposalHandoffBinding | null
+): Record<string, string> {
+  if (!binding) return {};
+  return {
+    'X-DWP-DWAI-ON-Handoff-ID': binding.handoffId,
+    'X-DWP-DWAI-ON-Proposal-ID': binding.proposalId,
+    'X-DWP-DWAI-ON-Action-Key': binding.actionKey,
+    'X-DWP-DWAI-ON-Handoff-Version': String(binding.handoffVersion),
   };
 }
 

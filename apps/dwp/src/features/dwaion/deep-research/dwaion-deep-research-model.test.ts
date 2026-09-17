@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createDwaionResearchDraft,
   dwaionResearchDefinition,
+  dwaionResearchDeliveryCapabilityKey,
   dwaionResearchProgressPercent,
   validateDwaionResearchDraft,
 } from './dwaion-deep-research-model';
@@ -48,5 +49,14 @@ describe('DWAI.ON deep research model', () => {
     expect(dwaionResearchProgressPercent(2, 4)).toBe(50);
     expect(dwaionResearchProgressPercent(7, 4)).toBe(100);
     expect(dwaionResearchProgressPercent(0, 0)).toBe(0);
+  });
+
+  it('binds every visible delivery action to its server capability', () => {
+    expect(dwaionResearchDeliveryCapabilityKey('ARTIFACT')).toBe('artifact');
+    expect(dwaionResearchDeliveryCapabilityKey('EXPORT')).toBe('export');
+    expect(dwaionResearchDeliveryCapabilityKey('PROPOSAL')).toBe('proposal');
+    expect(dwaionResearchDeliveryCapabilityKey('HANDOFF')).toBe('handoff');
+    expect(dwaionResearchDeliveryCapabilityKey('SHARE')).toBe('share');
+    expect(dwaionResearchDeliveryCapabilityKey('ROUTINE')).toBe('routine');
   });
 });

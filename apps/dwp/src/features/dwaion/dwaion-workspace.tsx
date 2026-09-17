@@ -93,6 +93,7 @@ function DwaionWorkspaceContent({
     attachments: [],
     canSubmit: true,
     hasFiles: false,
+    hasReceipt: false,
   });
   const [submittedAttachmentIds, setSubmittedAttachmentIds] = useState<string[]>([]);
   const [submittedAttachments, setSubmittedAttachments] = useState<
@@ -335,6 +336,7 @@ function DwaionWorkspaceContent({
       attachments: [],
       canSubmit: true,
       hasFiles: false,
+      hasReceipt: false,
     });
     setSubmittedAttachmentIds([]);
     setSubmittedAttachments([]);
@@ -377,6 +379,7 @@ function DwaionWorkspaceContent({
       attachments: [],
       canSubmit: true,
       hasFiles: false,
+      hasReceipt: false,
     });
     setSubmittedAttachmentIds([]);
     setSubmittedAttachments([]);
@@ -546,7 +549,8 @@ function DwaionWorkspaceContent({
                       onReset={reset}
                     />
                   )}
-                  {submittedQuery && attachmentSelection.hasFiles ? (
+                  {submittedQuery &&
+                  (attachmentSelection.hasFiles || attachmentSelection.hasReceipt) ? (
                     <Box
                       sx={{
                         mt: 3,

@@ -5,6 +5,7 @@ import { mailSharedAssignmentFilter, updateMailSharedFilters } from './mail-shar
 describe('shared inbox filters', () => {
   it('fails unknown assignment values back to all', () => {
     expect(mailSharedAssignmentFilter('MINE')).toBe('MINE');
+    expect(mailSharedAssignmentFilter('OVERDUE')).toBe('OVERDUE');
     expect(mailSharedAssignmentFilter('someone-else')).toBe('ALL');
   });
 
@@ -14,5 +15,9 @@ describe('shared inbox filters', () => {
       sharedInboxId: 'shared-1',
     });
     expect(next.toString()).toBe('lane=PRIORITY&assignment=UNASSIGNED&sharedInboxId=shared-1');
+
+    expect(
+      updateMailSharedFilters(new URLSearchParams(), { assignment: 'OVERDUE' }).toString()
+    ).toBe('assignment=OVERDUE');
   });
 });

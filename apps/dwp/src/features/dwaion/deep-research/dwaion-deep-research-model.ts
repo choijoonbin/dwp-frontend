@@ -1,8 +1,22 @@
 import type {
   DwaionResearchDeliverableType,
+  DwaionResearchDeliveryCapabilities,
+  DwaionResearchDeliveryType,
   DwaionResearchPlanDefinition,
   DwaionResearchRunState,
 } from '@dwp-frontend/shared-utils';
+
+const DELIVERY_CAPABILITY_BY_TYPE: Record<
+  DwaionResearchDeliveryType,
+  keyof DwaionResearchDeliveryCapabilities
+> = {
+  ARTIFACT: 'artifact',
+  PROPOSAL: 'proposal',
+  EXPORT: 'export',
+  HANDOFF: 'handoff',
+  SHARE: 'share',
+  ROUTINE: 'routine',
+};
 
 export const DWAION_RESEARCH_SOURCES = [
   'WORK_ITEM',
@@ -112,6 +126,12 @@ export function dwaionResearchRunNeedsPolling(state: DwaionResearchRunState): bo
 
 export function dwaionResearchRunCanDeliver(state: DwaionResearchRunState): boolean {
   return state === 'COMPLETED';
+}
+
+export function dwaionResearchDeliveryCapabilityKey(
+  type: DwaionResearchDeliveryType
+): keyof DwaionResearchDeliveryCapabilities {
+  return DELIVERY_CAPABILITY_BY_TYPE[type];
 }
 
 export function dwaionResearchProgressPercent(completed: number, total: number): number {

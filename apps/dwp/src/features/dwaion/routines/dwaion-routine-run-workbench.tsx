@@ -20,11 +20,13 @@ import { formatNumber } from '@dwp-frontend/shared-i18n';
 import type {
   DwaionRoutineExecutionRun,
   DwaionRoutineRunCommand,
+  DwaionRoutineRuntimeCapabilities,
 } from '@dwp-frontend/shared-utils';
 import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 
 export function DwaionRoutineRunWorkbench({
   run,
+  capabilities,
   busy,
   canManage,
   copy,
@@ -32,6 +34,7 @@ export function DwaionRoutineRunWorkbench({
   onCommand,
 }: {
   run: DwaionRoutineExecutionRun;
+  capabilities?: DwaionRoutineRuntimeCapabilities;
   busy: boolean;
   canManage: boolean;
   copy: DwaionRoutineCopy;
@@ -41,7 +44,12 @@ export function DwaionRoutineRunWorkbench({
   const running = ['QUEUED', 'CLAIMED', 'RUNNING', 'RETRY_SCHEDULED'].includes(run.state);
   const retryable = ['PARTIAL', 'FAILED'].includes(run.state);
   const compensatable =
-    ['PARTIAL', 'COMPLETED', 'FAILED'].includes(run.state) && Boolean(run.receipt);
+    (run.state === 'PARTIAL' && run.compensationRequired) ||
+    (run.state === 'COMPLETED' && Boolean(run.receipt));
+  const quarantineAssured = Boolean(
+    capabilities?.automaticQuarantine.available && capabilities.automaticQuarantine.configured
+  );
+  const canSkipQuarantined = run.state === 'PARTIAL' && quarantineAssured && !run.recoveryAction;
   const receipt = run.receipt;
   const stages = [
     {
@@ -197,6 +205,26 @@ export function DwaionRoutineRunWorkbench({
         </Typography>
       </Box>
 
+      <Box sx={{ mt: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+        <Stack direction="row" gap={0.75} alignItems="center">
+          <ShieldCheck size={16} aria-hidden="true" />
+          <Typography variant="subtitle2">{copy.automaticQuarantineEvidence}</Typography>
+          <Chip
+            size="small"
+            color={quarantineAssured ? 'success' : 'default'}
+            label={quarantineAssured ? copy.configured : copy.notConfigured}
+            sx={{ ml: 'auto' }}
+          />
+        </Stack>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.35 }}>
+          {quarantineAssured
+            ? copy.automaticQuarantineActive
+            : (capabilities?.automaticQuarantine.recoveryHint ??
+              capabilities?.automaticQuarantine.reasonCode ??
+              copy.automaticQuarantineUnavailable)}
+        </Typography>
+      </Box>
+
       <Box sx={{ mt: 1.25 }}>
         <Stack direction="row" gap={0.75} alignItems="center">
           <FileKey2 size={16} aria-hidden="true" />
@@ -213,8 +241,32 @@ export function DwaionRoutineRunWorkbench({
             value={receipt?.receiptId ?? copy.runReceiptPending}
           />
           <TraceLine label={copy.idempotencyEvidence} value={copy.idempotencyUnavailable} />
+          {run.recoveryAction ? (
+            <TraceLine label={copy.recoveryAction} value={run.recoveryAction} />
+          ) : null}
+          {run.recoveryCommandId ? (
+            <TraceLine label={copy.recoveryCommandId} value={run.recoveryCommandId} />
+          ) : null}
         </Stack>
       </Box>
+
+      {receipt?.recoveryAction && receipt.recoveryCommandId ? (
+        <Box
+          role="status"
+          data-testid="dwaion-routine-recovery-receipt"
+          sx={{ mt: 1, p: 1, bgcolor: 'success.lighter', borderRadius: 1 }}
+        >
+          <Stack direction="row" gap={0.75} alignItems="center">
+            <CheckCircle2 size={16} color="var(--mui-palette-success-main)" aria-hidden="true" />
+            <Typography variant="subtitle2">{copy.skipQuarantinedComplete}</Typography>
+          </Stack>
+          <Stack gap={0.35} sx={{ mt: 0.5 }}>
+            <TraceLine label={copy.recoveryAction} value={receipt.recoveryAction} />
+            <TraceLine label={copy.recoveryCommandId} value={receipt.recoveryCommandId} />
+            <TraceLine label={copy.runReceiptIdentifier} value={receipt.receiptId} />
+          </Stack>
+        </Box>
+      ) : null}
 
       {run.safeErrorCode ? (
         <Stack direction="row" gap={0.6} alignItems="flex-start" sx={{ mt: 1 }}>
@@ -227,6 +279,16 @@ export function DwaionRoutineRunWorkbench({
       ) : null}
 
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75} sx={{ mt: 1.25 }}>
+        {canSkipQuarantined ? (
+          <ActionButton
+            intent="primary"
+            startIcon={<GitBranch size={15} aria-hidden="true" />}
+            disabled={busy || !canManage}
+            onClick={() => onCommand('SKIP_QUARANTINED_AND_CONTINUE')}
+          >
+            {copy.skipQuarantined}
+          </ActionButton>
+        ) : null}
         {retryable ? (
           <ActionButton
             intent="secondary"
@@ -254,7 +316,7 @@ export function DwaionRoutineRunWorkbench({
             disabled={busy || !canManage}
             onClick={() => onCommand('COMPENSATE')}
           >
-            {copy.compensateRun}
+            {run.state === 'PARTIAL' ? copy.safeCancelRollback : copy.compensateRun}
           </ActionButton>
         ) : null}
         {!running && !retryable && !compensatable ? (

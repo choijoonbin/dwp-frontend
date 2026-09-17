@@ -1,0 +1,417 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - button [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+        - generic [ref=e9]: DWP
+        - generic [ref=e10]: DWAI·ON
+        - button [ref=e13] [cursor=pointer]:
+          - img [ref=e15]
+        - button [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]: M
+          - img [ref=e20]
+      - main [ref=e22]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - text: Consent-led personal AI extension
+              - heading [level=1] [ref=e27]: "My AI routines: governed automation and conditional execution"
+              - paragraph [ref=e28]: Define approved sources and timing, then manage validation, scheduled execution, recovery, and completion receipts.
+            - generic [ref=e29]:
+              - button [ref=e30] [cursor=pointer]:
+                - img [ref=e32]
+                - text: Version history (audit log)
+              - button [ref=e36] [cursor=pointer]:
+                - img [ref=e38]
+                - text: Run full health check
+              - button [ref=e40] [cursor=pointer]:
+                - img [ref=e42]
+                - text: Create new routine
+          - alert [ref=e43]: Provider quarantine evidence changed, so the recovery command was rejected. Review the latest run state and retry with the same command.
+          - region [ref=e44]:
+            - generic [ref=e46]:
+              - paragraph [ref=e47]: "1"
+              - paragraph [ref=e48]: Saved routines
+              - text: Your personal routines
+            - generic [ref=e50]:
+              - paragraph [ref=e51]: "1"
+              - paragraph [ref=e52]: Ready to validate
+              - text: Drafts with full consent
+            - generic [ref=e54]:
+              - paragraph [ref=e55]: "0"
+              - paragraph [ref=e56]: Needs review
+              - text: Consent or lifecycle check
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: "0"
+              - paragraph [ref=e60]: Paused
+              - text: Dry runs stopped
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - generic [ref=e64]:
+                - img [ref=e66]
+                - searchbox [ref=e69]
+                - group
+              - group [ref=e70]:
+                - button [pressed] [ref=e71] [cursor=pointer]: All 1
+                - button [ref=e72] [cursor=pointer]: Schedule 1
+                - button [ref=e73] [cursor=pointer]: Event 0
+                - button [ref=e74] [cursor=pointer]: Ready 1
+                - button [ref=e75] [cursor=pointer]: Needs review 0
+                - button [ref=e76] [cursor=pointer]: Paused 0
+              - generic [ref=e78]:
+                - img [ref=e79]
+                - generic [ref=e84]: Reference time zone · Asia/Seoul
+            - region [ref=e86]:
+              - button [pressed] [ref=e88] [cursor=pointer]:
+                - generic [ref=e89]:
+                  - generic [ref=e90]:
+                    - generic [ref=e91]:
+                      - generic [ref=e93]: Selected
+                      - generic [ref=e95]: Revision 7
+                      - generic [ref=e97]: Ready to validate
+                    - heading [level=6] [ref=e98]: Morning priority review
+                  - img [ref=e100]
+                - paragraph [ref=e102]: Validate due work and calendar boundaries before I begin.
+                - separator [ref=e103]
+                - generic [ref=e104]:
+                  - generic [ref=e105]:
+                    - img [ref=e107]
+                    - generic [ref=e110]:
+                      - generic [ref=e111]: Schedule preview
+                      - text: Weekdays · 09:00
+                  - generic [ref=e112]:
+                    - img [ref=e114]
+                    - generic [ref=e118]:
+                      - generic [ref=e119]: Approved sources
+                      - text: Work items · Mail
+                  - generic [ref=e120]:
+                    - img [ref=e122]
+                    - generic [ref=e125]:
+                      - generic [ref=e126]: Execution contract
+                      - text: Validation only
+      - navigation [ref=e127]:
+        - link [ref=e128] [cursor=pointer]:
+          - /url: /dwaion/home
+          - img [ref=e129]
+          - generic [ref=e132]: Home
+        - link [ref=e133] [cursor=pointer]:
+          - /url: /dwaion/new
+          - img [ref=e134]
+          - generic [ref=e136]: New
+        - link [ref=e137] [cursor=pointer]:
+          - /url: /dwaion/conversations
+          - img [ref=e138]
+          - generic [ref=e142]: Conversations
+        - link [ref=e143] [cursor=pointer]:
+          - /url: /dwaion/proposals
+          - img [ref=e144]
+          - generic [ref=e147]: Proposals
+        - button [ref=e148] [cursor=pointer]:
+          - img [ref=e149]
+          - generic [ref=e150]: More
+    - alert [ref=e151]:
+      - img [ref=e153]
+      - generic [ref=e155]: Provider quarantine evidence changed, so the recovery command was rejected. Review the latest run state and retry with the same command.
+      - button [ref=e157] [cursor=pointer]:
+        - img [ref=e158]
+  - dialog "Morning priority review" [ref=e161]:
+    - complementary "Morning priority review" [ref=e162]:
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - heading "Morning priority review" [level=2] [ref=e165]
+          - paragraph [ref=e166]: Ready to validate · Revision 7
+        - generic "Close details" [ref=e168]:
+          - button "Close details" [ref=e169] [cursor=pointer]:
+            - img [ref=e170]
+      - generic [ref=e175]: Validation only
+      - generic [ref=e177]:
+        - region "Six-step safety and consent chain" [ref=e178]:
+          - generic [ref=e179]:
+            - img [ref=e180]
+            - heading "Six-step safety and consent chain" [level=3] [ref=e183]
+          - list [ref=e184]:
+            - listitem [ref=e185]:
+              - generic [ref=e186]: "1"
+              - generic [ref=e187]:
+                - heading "Purpose binding" [level=6] [ref=e188]
+                - text: Validate due work and calendar boundaries before I begin.
+            - listitem [ref=e189]:
+              - generic [ref=e190]: "2"
+              - generic [ref=e191]:
+                - heading "Access isolation" [level=6] [ref=e192]
+                - text: Work items · Mail
+            - listitem [ref=e193]:
+              - generic [ref=e194]: "3"
+              - generic [ref=e195]:
+                - heading "Execution schedule and policy" [level=6] [ref=e196]
+                - text: Weekdays · 09:00 · Asia/Seoul. Saved timing is used only to preview the next occurrence.
+            - listitem [ref=e197]:
+              - generic [ref=e198]: "4"
+              - generic [ref=e199]:
+                - heading "Safe result boundary" [level=6] [ref=e200]
+                - text: Proposal generation and delivery are not connected, so no result is created.
+            - listitem [ref=e201]:
+              - generic [ref=e202]: "5"
+              - generic [ref=e203]:
+                - heading "Safety guardrails" [level=6] [ref=e204]
+                - text: "Maximum runs per month: 22 · Maximum tokens per run: 25000 · Maximum minutes per run: 20"
+            - listitem [ref=e205]:
+              - generic [ref=e206]: "6"
+              - generic [ref=e207]:
+                - heading "Explicit user consent" [level=6] [ref=e208]
+                - text: All three consent scopes are enabled.
+                - generic [ref=e209]:
+                  - generic [ref=e211]: Source access consent · Consented
+                  - generic [ref=e213]: AI analysis consent · Consented
+                  - generic [ref=e215]: Proposal delivery consent · Consented
+        - region "Preflight simulation inspection (dry-run)" [ref=e216]:
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - generic [ref=e219]:
+                - img [ref=e220]
+                - heading "Preflight simulation inspection (dry-run)" [level=3] [ref=e222]
+              - text: Review the five-stage safety pipeline while keeping the saved definition separate from server receipt evidence.
+            - generic [ref=e224]: Latest receipt unavailable
+          - list [ref=e225]:
+            - listitem [ref=e226]:
+              - generic [ref=e227]: "1"
+              - generic [ref=e228]:
+                - paragraph [ref=e229]: Work objective binding
+                - text: Validate due work and calendar boundaries before I begin.
+            - listitem [ref=e230]:
+              - generic [ref=e231]: "2"
+              - generic [ref=e232]:
+                - paragraph [ref=e233]: Allowed source boundary
+                - text: WORK_ITEM · MAIL
+            - listitem [ref=e234]:
+              - generic [ref=e235]: "3"
+              - generic [ref=e236]:
+                - paragraph [ref=e237]: Trigger and time-zone validation
+                - text: Weekdays · 09:00:00 · Asia/Seoul
+            - listitem [ref=e238]:
+              - generic [ref=e239]: "4"
+              - generic [ref=e240]:
+                - paragraph [ref=e241]: Zero-write guard
+                - text: The policy capability is configured, while zero external writes are final only in a per-run receipt.
+            - listitem [ref=e242]:
+              - generic [ref=e243]: "5"
+              - generic [ref=e244]:
+                - paragraph [ref=e245]: Proposal and delivery isolation
+                - text: The server does not yet provide an endpoint to reload the latest dry-run receipt. A new validation displays its real receipt in this session.
+          - status [ref=e246]:
+            - img [ref=e248]
+            - generic [ref=e250]: The server does not yet provide an endpoint to reload the latest dry-run receipt. A new validation displays its real receipt in this session.
+          - generic [ref=e251]:
+            - generic [ref=e252]:
+              - img [ref=e253]
+              - heading "Evidence boundary in the current dry-run contract" [level=4] [ref=e256]
+            - generic [ref=e257]:
+              - generic [ref=e258]:
+                - paragraph [ref=e259]: Cost estimate
+                - generic [ref=e261]: Not configured
+                - generic [ref=e262]: The current dry-run receipt does not return an estimated cost.
+              - generic [ref=e263]:
+                - paragraph [ref=e264]: Latency estimate
+                - generic [ref=e266]: Not configured
+                - generic [ref=e267]: The current dry-run receipt does not return simulated latency.
+              - generic [ref=e268]:
+                - paragraph [ref=e269]: Idempotency evidence
+                - generic [ref=e271]: Not configured
+                - generic [ref=e272]: The current dry-run read contract does not expose commandId or an idempotency token.
+        - region "Recent real executions" [ref=e273]:
+          - generic [ref=e274]:
+            - img [ref=e275]
+            - heading "Recent real executions" [level=3] [ref=e279]
+            - generic [ref=e281]: Ready to validate
+          - generic [ref=e282]:
+            - button "Activate routine" [ref=e283] [cursor=pointer]:
+              - img [ref=e285]
+              - text: Activate routine
+            - button "Run now" [disabled]:
+              - generic:
+                - img
+              - text: Run now
+          - region "Selected run trace and recovery workbench" [ref=e287]:
+            - generic [ref=e288]:
+              - generic [ref=e289]:
+                - generic [ref=e290]:
+                  - img [ref=e291]
+                  - heading "Selected run trace and recovery workbench" [level=3] [ref=e295]
+                - text: Inspect the five-stage DAG, budgets, approval gates, delivery, and compensation from the real execution ledger.
+              - generic [ref=e297]: PARTIAL
+            - generic [ref=e298]:
+              - generic [ref=e299]:
+                - heading "4" [level=6] [ref=e300]
+                - text: Evidence
+              - generic [ref=e301]:
+                - heading "2,240" [level=6] [ref=e302]
+                - text: Tokens used
+              - generic [ref=e303]:
+                - heading "6100ms" [level=6] [ref=e304]
+                - text: Elapsed time
+              - generic [ref=e305]:
+                - heading "1/3" [level=6] [ref=e306]
+                - text: Attempt/maximum
+            - heading "Five-stage execution DAG" [level=4] [ref=e307]
+            - list [ref=e308]:
+              - listitem [ref=e309]:
+                - generic [ref=e310]: "1"
+                - generic [ref=e311]:
+                  - paragraph [ref=e312]: Trigger accepted and ledger created
+                  - text: MANUAL · Sep 4, 2026, 9:00 AM · 55555555-5555-4555-8555-555555555556
+              - listitem [ref=e313]:
+                - generic [ref=e314]: "2"
+                - generic [ref=e315]:
+                  - paragraph [ref=e316]: Execution-time authorization revalidated
+                  - text: The execution-time authorization decision is finalized only in a terminal receipt.
+              - listitem [ref=e317]:
+                - generic [ref=e318]: "3"
+                - generic [ref=e319]:
+                  - paragraph [ref=e320]: Authorized evidence collected
+                  - text: Sources checked 4
+              - listitem [ref=e321]:
+                - generic [ref=e322]: "4"
+                - generic [ref=e323]:
+                  - paragraph [ref=e324]: Proposal and approval gates created
+                  - text: Proposals 1 · Approval gates 1
+              - listitem [ref=e325]:
+                - generic [ref=e326]: "5"
+                - generic [ref=e327]:
+                  - paragraph [ref=e328]: Notification and receipt delivered
+                  - text: "Notification state: FAILED"
+            - generic [ref=e329]:
+              - generic [ref=e330]:
+                - img [ref=e331]
+                - heading "Zero-write evidence" [level=6] [ref=e334]
+              - generic [ref=e335]: Zero external writes are final only after the terminal receipt is issued. This run is awaiting that receipt.
+            - generic [ref=e336]:
+              - generic [ref=e337]:
+                - img [ref=e338]
+                - heading "Automatic quarantine assurance" [level=6] [ref=e341]
+                - generic [ref=e343]: Configured
+              - generic [ref=e344]: The provider quarantine policy is active and preserves failed items outside the accepted result set.
+            - generic [ref=e345]:
+              - generic [ref=e346]:
+                - img [ref=e347]
+                - heading "Trace and audit ledger" [level=4] [ref=e351]
+              - generic [ref=e352]:
+                - generic [ref=e353]:
+                  - generic [ref=e354]: "Run ID:"
+                  - text: 55555555-5555-4555-8555-555555555556
+                - generic [ref=e355]:
+                  - generic [ref=e356]: "Ledger version:"
+                  - text: "5"
+                - generic [ref=e357]:
+                  - generic [ref=e358]: "Last updated:"
+                  - text: Sep 17, 2026, 1:01 PM
+                - generic [ref=e359]:
+                  - generic [ref=e360]: "Receipt ID:"
+                  - text: Terminal receipt pending
+                - generic [ref=e361]:
+                  - generic [ref=e362]: "Idempotency evidence:"
+                  - text: The public read contract does not expose commandId. Re-query the immutable run ID and version.
+            - generic [ref=e363]:
+              - img [ref=e364]
+              - generic [ref=e366]: PROVIDER_ITEM_QUARANTINED · Review quarantine evidence, then continue with verified items or cancel and roll back safely.
+            - generic [ref=e367]:
+              - button "Skip quarantined items and continue" [ref=e368] [cursor=pointer]:
+                - img [ref=e370]
+                - text: Skip quarantined items and continue
+              - button "Retry failed run" [ref=e374] [cursor=pointer]:
+                - img [ref=e376]
+                - text: Retry failed run
+              - button "Cancel safely and roll back now" [ref=e379] [cursor=pointer]:
+                - img [ref=e381]
+                - text: Cancel safely and roll back now
+          - list [ref=e384]:
+            - listitem [ref=e385]:
+              - generic [ref=e386]:
+                - generic [ref=e387]:
+                  - paragraph [ref=e388]: PARTIAL · MANUAL
+                  - generic [ref=e389]: Sep 17, 2026, 1:01 PM · 1/3
+                - generic [ref=e391]: 6100ms
+              - generic [ref=e392]:
+                - img [ref=e393]
+                - generic [ref=e395]: PROVIDER_ITEM_QUARANTINED · Review quarantine evidence, then continue with verified items or cancel and roll back safely.
+          - region "Server version, health, and audit evidence" [ref=e396]:
+            - generic [ref=e397]:
+              - img [ref=e398]
+              - heading "Server version, health, and audit evidence" [level=3] [ref=e401]
+            - generic [ref=e402]: Inspect the server change ledger, current health, rollback receipt, and raw telemetry.
+            - generic [ref=e403]:
+              - generic [ref=e404]:
+                - generic [ref=e405]:
+                  - img [ref=e406]
+                  - heading "Run full health check" [level=6] [ref=e408]
+                  - generic [ref=e410]: Degraded
+                - generic [ref=e411]:
+                  - generic [ref=e413]: "Execution worker: Configured"
+                  - generic [ref=e415]: "Trigger currency: Current"
+                  - generic [ref=e417]: "Consent chain: Current"
+                - generic [ref=e418]: Review provider quarantine evidence before choosing a recovery action.
+                - generic [ref=e419]: Sep 17, 2026, 1:02 PM
+              - generic [ref=e420]:
+                - generic [ref=e421]:
+                  - img [ref=e422]
+                  - heading "Version history" [level=6] [ref=e427]
+                - list [ref=e428]:
+                  - listitem [ref=e429]:
+                    - generic [ref=e430]:
+                      - generic [ref=e431]:
+                        - paragraph [ref=e432]: Revision 7 · UPDATE
+                        - generic [ref=e433]: Sep 4, 2026, 9:00 AM · cccccccccccc…
+                      - generic [ref=e435]: Current
+                  - listitem [ref=e436]:
+                    - generic [ref=e437]:
+                      - generic [ref=e438]:
+                        - paragraph [ref=e439]: Revision 1 · CREATE
+                        - generic [ref=e440]: Sep 1, 2026, 9:00 AM · dddddddddddd…
+                      - button "Roll back to this revision" [ref=e441] [cursor=pointer]:
+                        - img [ref=e443]
+                        - text: Roll back to this revision
+              - button "Download raw log (JSONL)" [ref=e446] [cursor=pointer]:
+                - img [ref=e448]
+                - text: Download raw log (JSONL)
+          - region "Run diagnostics and recovery tools" [ref=e452]:
+            - generic [ref=e453]:
+              - img [ref=e454]
+              - heading "Run diagnostics and recovery tools" [level=6] [ref=e458]
+            - generic [ref=e459]: Availability follows the live run record and runtime provider state.
+            - generic [ref=e460]:
+              - generic [ref=e461]:
+                - button "Print run report" [ref=e462] [cursor=pointer]
+                - generic [ref=e463]: browser.print · Uses the current server run record and capability response.
+              - generic [ref=e464]:
+                - button "Refresh OAuth authorization" [disabled]
+                - generic [ref=e465]: routine.provider.oauth · Ask an administrator to configure this governed runtime operation.
+              - generic [ref=e466]:
+                - button "Request temporary limit increase" [disabled]
+                - generic [ref=e467]: routine.provider.temporary-limit · Ask an administrator to configure this governed runtime operation.
+              - generic [ref=e468]:
+                - button "Escalate to operator" [disabled]
+                - generic [ref=e469]: routine.provider.escalate · Ask an administrator to configure this governed runtime operation.
+              - generic [ref=e470]:
+                - button "Start compensation" [disabled]
+                - generic [ref=e471]: routine.provider.provider-rollback · Ask an administrator to configure this governed runtime operation.
+        - generic [ref=e472]:
+          - button "Run validation" [ref=e473] [cursor=pointer]:
+            - img [ref=e475]
+            - text: Run validation
+          - generic [ref=e477]:
+            - button "Edit settings" [ref=e478] [cursor=pointer]:
+              - img [ref=e480]
+              - text: Edit settings
+            - button "Pause" [ref=e483] [cursor=pointer]:
+              - img [ref=e485]
+              - text: Pause
+            - button "Archive" [ref=e487] [cursor=pointer]:
+              - img [ref=e489]
+              - text: Archive
+```

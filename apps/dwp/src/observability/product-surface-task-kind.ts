@@ -85,11 +85,15 @@ const WORKPLACE_OPERATIONS_ACTIONS = new Set([
   'route.workplace.management.room-resource-by-resource-id-put.action',
   'route.workplace.management.room-resources-post.action',
   'route.workplace.management.safety-connectors-by-kind-put.action',
+  'route.workplace.management.safety-emergency-contacts-by-contact-id-put.action',
   'route.workplace.management.safety-incidents-by-incident-id-assembly-confirmations-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-closure-requests-by-closure-id-approve-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-closure-requests-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-closures-preview-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-dispatches-resend-post.action',
+  'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-by-command-id-reconcile-post.action',
+  'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-post.action',
+  'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-preview-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-exports-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-messages-post.action',
   'route.workplace.management.safety-incidents-by-incident-id-scope-revisions-post.action',
@@ -122,6 +126,7 @@ const WORKPLACE_OPERATIONS_ACTIONS = new Set([
   'route.workplace.management.space-planning-scenarios-by-scenario-id-put.action',
   'route.workplace.management.space-planning-scenarios-by-scenario-id-submit-post.action',
   'route.workplace.management.space-planning-scenarios-post.action',
+  'route.workplace.management.space-planning-report-execute.action',
   'route.workplace.management.visit-policies-by-policy-id-impact-preview-post.action',
   'route.workplace.management.visit-policies-by-policy-id-put.action',
   'route.workplace.management.visit-policies-post.action',
@@ -129,6 +134,43 @@ const WORKPLACE_OPERATIONS_ACTIONS = new Set([
   'route.workplace.management.visits-by-visit-id-confirm-checkout-post.action',
   'route.workplace.management.visits-by-visit-id-notify-host-post.action',
   'route.workplace.management.visits-by-visit-id-retry-access-post.action',
+]);
+
+const MAIL_OPERATIONS_ACTIONS = new Set([
+  'route.admin.mail.connection-diagnostics.action',
+  'route.admin.mail.connection-sync.action',
+  'route.admin.mail.connection-test-send.action',
+  'route.admin.mail.delivery-export-approve.action',
+  'route.admin.mail.delivery-export-create.action',
+  'route.admin.mail.delivery.cancel.action',
+  'route.admin.mail.delivery.reconcile.action',
+  'route.admin.mail.delivery.retry.action',
+]);
+
+const MAIL_ADMINISTRATION_ACTIONS = new Set([
+  'route.admin.mail.connection-update.action',
+  'route.admin.mail.policy-update.action',
+  'route.admin.mail.retention.evidence-export-approve.action',
+  'route.admin.mail.retention.evidence-export.action',
+  'route.admin.mail.retention.hold-create.action',
+  'route.admin.mail.retention.hold-release-approve.action',
+  'route.admin.mail.retention.hold-release-execute.action',
+  'route.admin.mail.retention.hold-release-preview-create.action',
+  'route.admin.mail.retention.hold-update.action',
+  'route.admin.mail.retention.purge-authorize.action',
+  'route.admin.mail.retention.purge-execute.action',
+  'route.admin.mail.retention.purge-preview.action',
+  'route.admin.mail.shared-inbox-update.action',
+  'route.admin.mail.shared-member-create.action',
+  'route.admin.mail.shared-member-revoke-preview.action',
+  'route.admin.mail.shared-member-revoke.action',
+  'route.admin.mail.shared-member-update.action',
+  'route.admin.mail.writing-asset-approve.action',
+  'route.admin.mail.writing-asset-create.action',
+  'route.admin.mail.writing-asset-edit.action',
+  'route.admin.mail.writing-asset-publish.action',
+  'route.admin.mail.writing-asset-retire.action',
+  'route.admin.mail.writing-asset-submit.action',
 ]);
 
 /**
@@ -140,8 +182,11 @@ export function resolveProductSurfaceTaskKind(
   binding: ProductSurfaceTaskBinding
 ): ProductSurfaceTaskKind {
   const { productKey, surfaceKey, routeContractKey } = binding;
+  const productRoutePrefix = `route.${productKey}.`;
+  const adminProductRoutePrefix = `route.admin.${productKey}.`;
   if (
-    !routeContractKey.startsWith(`route.${productKey}.`) ||
+    (!routeContractKey.startsWith(productRoutePrefix) &&
+      !routeContractKey.startsWith(adminProductRoutePrefix)) ||
     !routeContractKey.endsWith('.action')
   ) {
     throw new Error(`Invalid governed mutation telemetry binding: ${routeContractKey}`);
@@ -169,6 +214,11 @@ export function resolveProductSurfaceTaskKind(
     (productKey === 'workplace' && surfaceKey === 'workplace.work')
   ) {
     return 'WORK';
+  }
+
+  if (productKey === 'mail' && surfaceKey === 'mail.management') {
+    if (MAIL_OPERATIONS_ACTIONS.has(routeContractKey)) return 'OPERATIONS';
+    if (MAIL_ADMINISTRATION_ACTIONS.has(routeContractKey)) return 'ADMINISTRATION';
   }
 
   if (

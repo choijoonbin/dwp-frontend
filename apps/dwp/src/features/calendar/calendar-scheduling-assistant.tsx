@@ -18,7 +18,7 @@ import {
   applyCalendarAvailabilitySlot,
   calendarAvailabilityWindow,
   calendarMeetingDurationMinutes,
-  calendarSchedulingEvaluationIsUsable,
+  calendarSchedulingEvaluationState,
   calendarSchedulingFingerprint,
   calendarSchedulingParticipants,
   rankCalendarRooms,
@@ -109,25 +109,22 @@ export function CalendarSchedulingAssistant({
     },
   });
   const resetAvailability = availabilityMutation.reset;
-  const evaluationFresh = Boolean(
-    availabilityMutation.data &&
-    Number.isFinite(Date.parse(availabilityMutation.data.validUntil)) &&
-    Date.parse(availabilityMutation.data.validUntil) > Date.now()
-  );
-  const evaluationUsable =
-    calendarSchedulingEvaluationIsUsable(availabilityMutation.data) &&
-    lastFingerprint === fingerprint;
+  const evaluationState = calendarSchedulingEvaluationState(availabilityMutation.data);
+  const evaluationMatches = lastFingerprint === fingerprint;
+  const evaluationComplete = evaluationState === 'COMPLETE' && evaluationMatches;
+  const evaluationPartial = evaluationState === 'PARTIAL' && evaluationMatches;
+  const evaluationVisible = evaluationComplete || evaluationPartial;
   const rooms = useMemo(
     () =>
       rankCalendarRooms(
         availabilityMutation.data
-          ? evaluationUsable
+          ? evaluationComplete
             ? availabilityMutation.data.rooms
             : []
           : resources,
         attendees.length
       ),
-    [attendees.length, availabilityMutation.data, evaluationUsable, resources]
+    [attendees.length, availabilityMutation.data, evaluationComplete, resources]
   );
 
   useEffect(() => {
@@ -147,7 +144,7 @@ export function CalendarSchedulingAssistant({
   }, [availabilityMutation.data?.validUntil]);
 
   const resultsStale = Boolean(
-    availabilityMutation.data && (!evaluationFresh || lastFingerprint !== fingerprint)
+    availabilityMutation.data && (evaluationState === 'STALE' || !evaluationMatches)
   );
   const canSearch = Boolean(durationMinutes && availabilityWindow);
   const search = () => {
@@ -306,13 +303,25 @@ export function CalendarSchedulingAssistant({
           </Stack>
         )}
 
-        {availabilityMutation.data && !evaluationUsable && !resultsStale && (
+        {availabilityMutation.data && evaluationState === 'UNAVAILABLE' && !resultsStale && (
           <Alert severity="warning" sx={{ mt: 1.5 }} role="status">
             {t('schedulingAssistant.incompleteResults')}
           </Alert>
         )}
 
-        {availabilityMutation.data && evaluationUsable && (
+        {availabilityMutation.data && evaluationPartial && !resultsStale && (
+          <Alert severity="warning" sx={{ mt: 1.5 }} role="status">
+            {t('schedulingAssistant.partialResults', {
+              sources:
+                availabilityMutation.data.sources
+                  .filter((source) => source.status !== 'HEALTHY')
+                  .map((source) => source.sourceType)
+                  .join(', ') || t('availability.unknownSource'),
+            })}
+          </Alert>
+        )}
+
+        {availabilityMutation.data && evaluationVisible && (
           <Box sx={{ mt: 2 }}>
             <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
               <Typography variant="overline" color="text.secondary">
@@ -342,6 +351,7 @@ export function CalendarSchedulingAssistant({
                     <ActionButton
                       key={`${slot.startsAt}:${slot.endsAt}`}
                       intent="secondary"
+                      disabled={evaluationPartial}
                       aria-label={t('schedulingAssistant.applyTimeLabel', { label })}
                       onClick={() => applySlot(slot)}
                       sx={{

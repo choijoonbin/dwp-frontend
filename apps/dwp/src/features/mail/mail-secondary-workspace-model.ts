@@ -1,9 +1,4 @@
-import type {
-  MailAccount,
-  MailDeliveryState,
-  MailThread,
-  MailThreadDetail,
-} from '@dwp-frontend/shared-utils';
+import type { MailAccount, MailDeliveryState, MailThread } from '@dwp-frontend/shared-utils';
 
 export type MailSecondaryView =
   | 'search'
@@ -188,9 +183,9 @@ const DELIVERY_PRESENTATIONS: Record<MailDeliveryState, MailDeliveryPresentation
     retryAllowed: false,
   },
   SENT: {
-    severity: 'success',
+    severity: 'info',
     labelKey: 'secondary.delivery.sentUnconfirmed',
-    labelFallback: 'Sent from DWP; recipient delivery is not confirmed',
+    labelFallback: 'Accepted by provider',
     confirmedDelivered: false,
     retryAllowed: false,
   },
@@ -205,12 +200,6 @@ const DELIVERY_PRESENTATIONS: Record<MailDeliveryState, MailDeliveryPresentation
 
 export function mailDeliveryPresentation(state: MailDeliveryState): MailDeliveryPresentation {
   return DELIVERY_PRESENTATIONS[state];
-}
-
-export function latestOutboundMessage(detail: MailThreadDetail) {
-  return [...detail.messages]
-    .reverse()
-    .find((message) => message.direction === 'OUTBOUND' || message.direction === 'DRAFT');
 }
 
 export function mailAccountReadiness(account: MailAccount): MailSecondaryCapabilityState {

@@ -4,12 +4,14 @@ import { resetCsrfToken } from '../axios-instance';
 import {
   createDwaionGovernedCommand,
   decideDwaionGovernedCommand,
+  getDwaionCommandCapabilities,
   getDwaionGovernedCommand,
   getDwaionGovernedCommands,
   getDwaionModelsRouting,
   getDwaionOutcomes,
 } from './dwaion-control-plane-api';
 import {
+  DWAION_GOVERNED_COMMAND_KINDS,
   parseDwaionConnectors,
   parseDwaionEvaluationSafety,
   parseDwaionGovernedCommand,
@@ -18,6 +20,7 @@ import {
   parseDwaionModelsRouting,
   parseDwaionOutcomes,
 } from './dwaion-control-plane-parser';
+import { parseDwaionCommandCapabilities } from './dwaion-command-capability-parser';
 
 const AUTHORITY = {
   mode: 'SECURE',
@@ -77,11 +80,61 @@ const command = {
   version: 1,
   receipt: null,
 };
+const commandCapabilities = {
+  generatedAt: '2026-09-17T00:00:00Z',
+  workerAvailable: true,
+  commands: [...DWAION_GOVERNED_COMMAND_KINDS].map((kind) => ({
+    kind,
+    family: 'A01',
+    executionMode: 'INTERNAL',
+    status: 'AVAILABLE',
+    configured: true,
+    reason: null,
+    recoveryHint: null,
+  })),
+};
 
 describe('DWAI-ON control-plane API', () => {
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();
+  });
+
+  it('loads the exhaustive per-command capability contract from the canonical endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(response(commandCapabilities));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await getDwaionCommandCapabilities();
+
+    expect(result.commands).toHaveLength(65);
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/agent/v1/admin/control-plane/command-capabilities',
+      expect.any(Object)
+    );
+  });
+
+  it('rejects incomplete, duplicated, and contradictory command capability snapshots', () => {
+    expect(() =>
+      parseDwaionCommandCapabilities({
+        ...commandCapabilities,
+        commands: commandCapabilities.commands.slice(1),
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionCommandCapabilities({
+        ...commandCapabilities,
+        commands: [commandCapabilities.commands[0], ...commandCapabilities.commands.slice(0, 64)],
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionCommandCapabilities({
+        ...commandCapabilities,
+        commands: [
+          { ...commandCapabilities.commands[0], status: 'NOT_CONFIGURED', configured: true },
+          ...commandCapabilities.commands.slice(1),
+        ],
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
   });
 
   it('uses the canonical read endpoints and clamps the outcome range', async () => {
@@ -385,6 +438,9 @@ describe('DWAI-ON control-plane API', () => {
           passRate: 95,
           regressionCount: 0,
           evaluatorFailureCount: 0,
+          datasetId: 'dataset-1',
+          datasetVersion: 1,
+          resultVersion: 1,
           createdAt: '2026-09-17T00:00:00Z',
         },
       ],
@@ -531,6 +587,7 @@ describe('DWAI-ON control-plane API', () => {
           projectedTokens: 950,
           spikeDetected: false,
           policyMode: 'WARN',
+          enforcementActivationState: 'DISABLED',
           version: 1,
         },
       ],
@@ -538,6 +595,12 @@ describe('DWAI-ON control-plane API', () => {
     };
 
     expect(() => parseDwaionOutcomes(outcome)).not.toThrow();
+    expect(() =>
+      parseDwaionOutcomes({
+        ...outcome,
+        tokenBudgets: [{ ...outcome.tokenBudgets[0], budgetTokens: null }],
+      })
+    ).not.toThrow();
     expect(() => parseDwaionOutcomes({ ...outcome, periodDays: 91 })).toThrowError(
       expect.objectContaining({ status: 502 })
     );
@@ -545,6 +608,12 @@ describe('DWAI-ON control-plane API', () => {
       parseDwaionOutcomes({
         ...outcome,
         cohorts: [{ ...outcome.cohorts[0], rollbackRate: -1 }],
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionOutcomes({
+        ...outcome,
+        tokenBudgets: [{ ...outcome.tokenBudgets[0], enforcementActivationState: 'UNKNOWN' }],
       })
     ).toThrowError(expect.objectContaining({ status: 502 }));
     expect(() =>
@@ -578,10 +647,25 @@ describe('DWAI-ON control-plane API', () => {
             consumedTokens: 1_001,
             budgetTokens: 1_000,
             policyMode: 'BLOCK',
+            enforcementActivationState: 'ENABLED',
           },
         ],
       })
     ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionOutcomes({
+        ...outcome,
+        tokenBudgets: [
+          {
+            ...outcome.tokenBudgets[0],
+            consumedTokens: 1_001,
+            budgetTokens: 1_000,
+            policyMode: 'BLOCK',
+            enforcementActivationState: 'DISABLED',
+          },
+        ],
+      })
+    ).not.toThrow();
     expect(() => parseDwaionGovernedCommand({ ...command, progressPercent: 101 })).toThrowError(
       expect.objectContaining({ status: 502 })
     );

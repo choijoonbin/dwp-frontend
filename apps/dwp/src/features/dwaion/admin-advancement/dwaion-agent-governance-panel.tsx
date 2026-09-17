@@ -8,7 +8,7 @@ import {
   Save,
   ShieldCheck,
 } from 'lucide-react';
-import { ActionButton, FormField, SelectField } from '@dwp-frontend/design-system';
+import { FormField, SelectField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -25,6 +25,7 @@ import {
   DwaionGovernedCommandDialog,
   type DwaionCommandIntent,
 } from './dwaion-governed-command-dialog';
+import { DwaionCommandCapabilityButton } from './dwaion-command-capability-button';
 
 type AgentDraft = {
   allowedWork: string;
@@ -114,7 +115,21 @@ export function DwaionAgentGovernancePanel({
       ],
       recoveryPlan:
         'Restore the previous active agent revision, disable changed bindings, and rerun the pinned evaluation suite.',
-      payload: activeDraft,
+      payload: {
+        ...activeDraft,
+        rolloutPercent: Number(activeDraft.rolloutPercent || 0),
+        ...(kind === 'AGENT_EVALUATE'
+          ? {
+              suiteId: 'governed-agent-release',
+              suiteVersion: activeDraft.evaluationEvidence || 'unconfigured',
+            }
+          : {}),
+        ...(kind === 'AGENT_EVALUATION_CERT_SIGN'
+          ? { evaluationRunId: activeDraft.evaluationEvidence }
+          : {}),
+        ...(kind === 'AGENT_ROLLBACK' ? { rollbackSourceRef: activeDraft.evaluationEvidence } : {}),
+        ...(kind === 'AGENT_KILL_SWITCH' ? { inFlightHandling: 'CANCEL' } : {}),
+      },
       destructive: kind === 'AGENT_ROLLBACK' || kind === 'AGENT_KILL_SWITCH',
     });
   };
@@ -287,50 +302,56 @@ export function DwaionAgentGovernancePanel({
                 }
               />
               <Divider />
-              <ActionButton
+              <DwaionCommandCapabilityButton
+                commandKind="AGENT_DRAFT_SAVE"
                 intent="secondary"
                 startIcon={<Save size={16} />}
                 onClick={() => open('AGENT_DRAFT_SAVE')}
               >
                 {copy.ui.agents.saveGovernedDraft}
-              </ActionButton>
-              <ActionButton
+              </DwaionCommandCapabilityButton>
+              <DwaionCommandCapabilityButton
+                commandKind="AGENT_EVALUATE"
                 intent="secondary"
                 startIcon={<FlaskConical size={16} />}
                 onClick={() => open('AGENT_EVALUATE')}
               >
                 {copy.ui.agents.sandboxEvaluation}
-              </ActionButton>
-              <ActionButton
+              </DwaionCommandCapabilityButton>
+              <DwaionCommandCapabilityButton
+                commandKind="AGENT_EVALUATION_CERT_SIGN"
                 intent="secondary"
                 startIcon={<FileSignature size={16} />}
                 disabled={!activeDraft.evaluationEvidence.trim()}
                 onClick={() => open('AGENT_EVALUATION_CERT_SIGN')}
               >
                 {copy.ui.agents.signEvaluationCertificate}
-              </ActionButton>
-              <ActionButton
+              </DwaionCommandCapabilityButton>
+              <DwaionCommandCapabilityButton
+                commandKind="AGENT_PROMOTE"
                 intent="primary"
                 startIcon={<Rocket size={16} />}
                 disabled={!promotionReady(activeDraft)}
                 onClick={() => open('AGENT_PROMOTE')}
               >
                 {copy.agents.promote}
-              </ActionButton>
-              <ActionButton
+              </DwaionCommandCapabilityButton>
+              <DwaionCommandCapabilityButton
+                commandKind="AGENT_ROLLBACK"
                 intent="secondary"
                 startIcon={<RotateCcw size={16} />}
                 onClick={() => open('AGENT_ROLLBACK')}
               >
                 {copy.agents.rollback}
-              </ActionButton>
-              <ActionButton
+              </DwaionCommandCapabilityButton>
+              <DwaionCommandCapabilityButton
+                commandKind="AGENT_KILL_SWITCH"
                 intent="danger"
                 startIcon={<Ban size={16} />}
                 onClick={() => open('AGENT_KILL_SWITCH')}
               >
                 {copy.agents.kill}
-              </ActionButton>
+              </DwaionCommandCapabilityButton>
               <Stack direction="row" gap={0.75} alignItems="center">
                 <ShieldCheck size={15} aria-hidden="true" />
                 <Typography variant="caption" color="text.secondary">

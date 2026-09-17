@@ -24,6 +24,132 @@
     "searchHelp": "현재 역할과 위임 범위에서 허용된 설정만 결과에 표시합니다.",
     "emptyTitle": "일치하는 회사 설정이 없습니다",
     "emptyDescription": "검색어를 줄이거나 담당 관리자에게 필요한 권한을 확인하세요.",
+    "overview": {
+      "partialFailure": "일부 담당 시스템의 상태를 불러오지 못했습니다. 확인되지 않은 값은 운영 상태로 추정하지 않습니다.",
+      "unavailable": "확인 불가",
+      "notConfigured": "설정되지 않음",
+      "openDetail": "상세 관리",
+      "priority": {
+        "title": "우선 처리 과업",
+        "description": "Auth, SCIM, 앱 권한과 감사 정책 담당 시스템에서 확인된 작업만 표시합니다.",
+        "count": "{{count}}건 조치 필요",
+        "unavailableCount": "과업 상태 확인 불가",
+        "unavailableTitle": "대기 과업 여부를 확인하지 못했습니다",
+        "unavailableDescription": "일부 담당 시스템을 읽지 못했습니다. 표시된 과업이 없다는 이유로 정상 상태로 판단하지 말고 다시 확인하세요.",
+        "emptyTitle": "현재 확인된 대기 과업이 없습니다",
+        "emptyDescription": "읽기 권한이 있는 담당 시스템에서 승인·활성화·복구 대기 항목을 찾지 못했습니다."
+      },
+      "tasks": {
+        "count": "{{count}}건",
+        "openOwner": "담당 화면에서 계속",
+        "SSO_CONFIGURATION": {
+          "title": "기업 SSO 구성을 확인하세요",
+          "description": "Auth 정책에서 SSO가 비활성 또는 제공자 연결 미완료 상태로 확인되었습니다."
+        },
+        "SCIM_CONFIGURATION": {
+          "title": "SCIM 프로비저닝을 설정하세요",
+          "description": "활성 SCIM 커넥터가 없습니다. 목적·소유자·범위·만료를 지정해 연결해야 합니다."
+        },
+        "SCIM_ATTENTION": {
+          "title": "SCIM 자격 증명 조치가 필요합니다",
+          "description": "담당 시스템에서 만료 임박, 만료 또는 주의 상태의 커넥터를 보고했습니다."
+        },
+        "APP_APPROVAL": {
+          "title": "앱 권한 독립 검토가 대기 중입니다",
+          "description": "요청자·승인자·활성자 분리 절차가 끝나지 않은 실제 앱 관리 요청입니다."
+        },
+        "POLICY_REVIEW": {
+          "title": "감사 정책 변경안 검토가 필요합니다",
+          "description": "초안, 검토 또는 게시 대기 상태의 실제 감사 정책 revision이 있습니다."
+        }
+      },
+      "profile": {
+        "title": "조직 및 인증 프로필",
+        "description": "담당 시스템의 정본 값과 관측할 수 없는 경계를 구분해 표시합니다."
+      },
+      "branding": {
+        "title": "테넌트 브랜딩",
+        "revision": "게시 버전 v{{version}}",
+        "organization": "조직 명칭",
+        "accent": "강조색"
+      },
+      "authentication": {
+        "title": "인증 및 프로비저닝",
+        "provider": "활성 IdP",
+        "mfa": "MFA 정책",
+        "required": "필수",
+        "optional": "선택",
+        "scimLabel": "SCIM",
+        "sso": {
+          "ENABLED": "SSO 활성",
+          "INCOMPLETE": "SSO 연결 미완료",
+          "DISABLED": "SSO 비활성",
+          "UNAVAILABLE": "SSO 상태 확인 불가"
+        },
+        "scim": {
+          "READY": "활성 커넥터 {{count}}개",
+          "ATTENTION": "조치 필요",
+          "NOT_CONFIGURED": "설정되지 않음",
+          "UNAVAILABLE": "상태 확인 불가"
+        }
+      },
+      "organization": {
+        "title": "조직 및 도메인",
+        "domainOwner": "Provider 정본",
+        "identities": "현재 범위 신원",
+        "identityCount": "{{count}}명",
+        "domainVerification": "도메인 소유권",
+        "notObserved": "Tenant 읽기 계약 미지원"
+      },
+      "recent": {
+        "title": "최근 거버넌스 변경",
+        "description": "실제 감사 정책 revision의 작성자, 시각과 lifecycle을 표시합니다.",
+        "open": "정책 이력 열기",
+        "actor": "{{actor}} · {{date}}",
+        "empty": "기록된 감사 정책 변경 revision이 없습니다."
+      }
+    },
+    "authPolicyWorkflow": {
+      "title": "인증 정책 변경 통제",
+      "description": "테넌트 인증 정책을 초안 작성하고 독립 검토·승인·게시하며 버전과 영향 근거를 남깁니다.",
+      "boundary": "영향은 Auth 내부 디렉터리의 활성 신원을 기준으로 추정합니다. 외부 IdP 모집단과 로그인 연결 시험은 담당 소유자의 근거가 있기 전까지 제외합니다.",
+      "create": "정책 초안 만들기",
+      "empty": "기록된 인증 정책 변경이 없습니다.",
+      "error": "인증 정책 변경 이력을 불러오지 못했습니다.",
+      "saved": "인증 정책 워크플로를 갱신했습니다.",
+      "submit": "검토 요청",
+      "approve": "승인",
+      "reject": "반려",
+      "publish": "게시",
+      "decisionReason": "독립 검토 사유",
+      "impact": "영향 {{confidence}} · 신원 {{count}}명",
+      "coverage": "산정 범위: {{coverage}}",
+      "meta": "요청자 {{requester}} · {{date}} · 버전 {{version}}",
+      "states": {
+        "DRAFT": "초안",
+        "IN_REVIEW": "검토 중",
+        "APPROVED": "승인됨",
+        "REJECTED": "반려됨",
+        "PUBLISHED": "게시됨",
+        "SUPERSEDED": "대체됨"
+      },
+      "decision": {
+        "APPROVE": "인증 정책 변경 승인",
+        "REJECT": "인증 정책 변경 반려"
+      },
+      "draft": {
+        "title": "인증 정책 초안 만들기",
+        "description": "게시 전에 서버가 활성 로그인 방식과 선택한 IdP를 다시 검증합니다.",
+        "create": "초안 만들기",
+        "warning": "게시하면 모든 테넌트 신원의 로그인 방식이 바뀔 수 있습니다. 다른 관리자의 독립 승인이 필요합니다.",
+        "local": "로컬 로그인 허용",
+        "sso": "SSO 로그인 허용",
+        "mfa": "정책으로 MFA 필수",
+        "defaultLogin": "기본 로그인 방식",
+        "provider": "활성 ID 공급자",
+        "justification": "변경 사유"
+      }
+    },
     "controlLoop": {
       "title": "적용과 운영 확인",
       "description": "설정 저장 여부와 실제 적용·관측 결과를 구분하여 담당 작업공간에서 확인합니다.",
@@ -707,6 +833,12 @@
     "mfaDisabled": "MFA 꺼짐",
     "additionalRoles": "추가 역할 {{count}}개",
     "inheritedCount": "상속 {{count}}",
+    "projection": {
+      "coverage": "Auth 내부 소유자 {{owners}}개의 통합 스냅샷 {{snapshot}} · {{observedAt}} 관측",
+      "exclusions": "명시적 제외 범위: {{exclusions}}",
+      "unavailable": "통합 내부 접근 스냅샷을 불러오지 못했습니다. 개별 신원 정본은 계속 표시하지만 앱 및 승인 대기 범위는 확인되지 않았습니다.",
+      "appPresetCount": "앱 {{count}} · 대기 {{pending}}"
+    },
     "roleFamilies": {
       "WORKSPACE": "기본 접근",
       "PEOPLE": "인사 운영",
@@ -2391,6 +2523,14 @@
         "reason": "결정 또는 변경 사유",
         "incidentCase": "연결할 감사 케이스 ID(선택)",
         "incidentCaseHint": "사고 대응 변경이면 기존 조사 케이스 UUID를 입력합니다.",
+        "diffTitle": "정책 변경 전후 비교",
+        "diffField": "정책 항목",
+        "diffBefore": "현재 값",
+        "diffAfter": "제안 값",
+        "impactUnavailable": "변경 항목 {{count}}개가 영향을 받습니다. 대상 사용자·데이터 규모의 정확/추정 수치는 owner 응답에 없어 확인되지 않은 상태로 유지합니다.",
+        "approvalRequested": "검토 요청: {{actor}} · {{date}}",
+        "approvalPending": "독립 승인 대기",
+        "approvalDecided": "결정: {{actor}} · {{date}}",
         "fields": {
           "standardRetentionDays": "표준 보존",
           "extendedRetentionDays": "장기 보존",
@@ -3138,6 +3278,28 @@
       "emergencyTitle": "긴급 접근 등록부",
       "emergencyDescription": "긴급 계정은 사전 등록과 주기적 검토를 통과해야만 활성화 요청을 만들 수 있습니다."
     },
+    "verification": {
+      "title": "복구 계정 검증 기록",
+      "description": "{{name}} 계정의 독립적인 복구 점검 결과를 기록합니다.",
+      "boundary": "내부 운영자 확인 또는 완료된 복구 훈련을 기록합니다. 외부 IdP 로그인을 시험했다고 표시하지 않습니다.",
+      "status": "복구 검증",
+      "action": "검증",
+      "submit": "검증 기록",
+      "method": "검증 방식",
+      "evidence": "증적 참조",
+      "evidenceHelp": "내부 훈련, 티켓 또는 통제된 확인 기록을 참조하세요. 자격 증명은 입력하지 마세요.",
+      "nextDue": "다음 검증 기한",
+      "saved": "복구 계정 검증을 기록했습니다.",
+      "methods": {
+        "OPERATOR_ATTESTED": "독립 운영자 확인",
+        "RECOVERY_DRILL_COMPLETED": "복구 훈련 완료"
+      },
+      "states": {
+        "NOT_VERIFIED": "미검증",
+        "VERIFIED": "검증됨",
+        "OVERDUE": "검증 기한 초과"
+      }
+    },
     "toasts": {
       "policyUpdated": "특권 역할 활성화 정책을 변경했습니다.",
       "eligibilityCreated": "시간 제한 역할 자격을 부여했습니다.",
@@ -3154,6 +3316,45 @@
     "loadError": "카탈로그를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.",
     "search": "자산, 참조 또는 소유자 검색",
     "allKinds": "모든 자산 유형",
+    "applications": {
+      "title": "애플리케이션 수명주기 카탈로그",
+      "description": "이 테넌트와 현재 관리자에게 실제로 제공된 소유자 정본을 기준으로 앱별 상태를 확인합니다.",
+      "contractBoundary": "테넌트 설치와 일반 사용자 할당은 테넌트 조회 계약으로 제공되지 않습니다. 레지스트리나 관리자 기록으로 추정하지 않고 미확인 상태로 유지합니다.",
+      "partialFailure": "일부 소유자 정본을 불러오지 못했습니다. 조회 불가와 실제 미관측 상태를 구분해 표시합니다.",
+      "search": "애플리케이션 또는 리소스 키 검색",
+      "emptyTitle": "조건에 맞는 애플리케이션이 없습니다",
+      "emptyDescription": "검색어를 바꾸거나 레지스트리 소유자가 앱 정본을 게시했는지 확인하세요.",
+      "openManagement": "관리 워크벤치 열기",
+      "observation": {
+        "OBSERVED": "관측됨",
+        "NOT_OBSERVED": "관측되지 않음",
+        "UNAVAILABLE": "소유자 조회 불가"
+      },
+      "management": {
+        "OBSERVED": "관리 접근 확인됨",
+        "NOT_OBSERVED": "관리 접근 미관측",
+        "UNAVAILABLE": "관리 접근 미확인"
+      },
+      "stages": {
+        "registry": "앱 레지스트리",
+        "tenantBoundary": "테넌트 관리자 범위",
+        "entitlement": "현재 행위자 엔타이틀먼트",
+        "installation": "테넌트 설치",
+        "workforceAssignment": "일반 사용자 할당",
+        "runnable": "현재 행위자 실행 화면"
+      },
+      "details": {
+        "registry": "{{lifecycle}} · {{scope}} · 개정 {{revision}}",
+        "boundaryCount_one": "관리 범위 {{count}}개",
+        "boundaryCount_other": "관리 범위 {{count}}개",
+        "accessSources": "권한 정본: {{sources}}",
+        "surfaceCount_one": "업무 화면 {{count}}개",
+        "surfaceCount_other": "업무 화면 {{count}}개",
+        "ownerContractUnavailable": "테넌트 소유자 조회 계약 없음",
+        "adminAssignments": "관리 책임 증적: 활성 {{active}} · 대기 {{pending}}",
+        "adminAssignmentsUnavailable": "관리 책임 소유자 정본 조회 불가"
+      }
+    },
     "metrics": {
       "assets": "관리 자산",
       "assetsDetail": "테넌트 및 제품 범위",
@@ -3168,6 +3369,7 @@
     },
     "views": {
       "label": "카탈로그 보기",
+      "applications": "애플리케이션",
       "graph": "관계 그래프",
       "inventory": "자산 인벤토리",
       "assurance": "보증 검토"
@@ -3575,6 +3777,38 @@
       "reviewTable": "기존 Permission-only 관리자 검토 목록",
       "emptyTitle": "지정된 앱 관리자 Preset이 없습니다",
       "emptyDescription": "광범위한 관리자 역할 대신 앱별 최소 직무와 명시적인 종료 시각을 지정하세요.",
+      "progress": {
+        "title": "통제 변경 진행 상태",
+        "description": "우선순위가 가장 높은 Preset 변경을 요청자·승인자·활성화 담당자 정본으로 확인합니다.",
+        "target": "대상 사용자 또는 그룹",
+        "package": "Preset 패키지",
+        "scope": "애플리케이션 범위",
+        "channel": "요청 채널",
+        "validTo": "유효 종료",
+        "reviewDue": "재검토 기한",
+        "duties": "전문 Duty",
+        "noDuties": "Duty 기록 없음",
+        "justification": "업무 근거",
+        "decisionReason": "승인 결정 근거",
+        "activationReason": "활성화 근거",
+        "actorId": "행위자 #{{id}}",
+        "actorNotRecorded": "행위자 식별자 미기록",
+        "roles": {
+          "REQUESTER": "요청자",
+          "APPROVER": "독립 승인자",
+          "ACTIVATOR": "독립 활성화 담당자"
+        },
+        "stageStates": {
+          "RECORDED": "기록됨",
+          "PENDING": "대기",
+          "NOT_RECORDED": "미기록"
+        },
+        "separation": {
+          "COMPLETE": "요청자·승인자·활성화 담당자가 서로 다르며 승인자와 활성화 담당자는 사용자 대상과 독립되어 있습니다.",
+          "PENDING": "필수 수명주기 행위자가 기록되고 승인·활성화 담당자가 대상과 독립될 때까지 직무 분리는 대기 상태입니다.",
+          "VIOLATION": "분리되어야 할 직무 또는 사용자 대상에 같은 행위자 식별자가 사용되었습니다. 다음 작업 전에 이 할당을 검토하세요."
+        }
+      },
       "columns": {
         "preset": "관리 직무",
         "duties": "전문 Duty",
@@ -4753,6 +4987,10 @@
       "scope": "범위",
       "budgetTokens": "예산 토큰",
       "enforcement": "집행 방식",
+      "enforcementActive": "실제 집행 중",
+      "enforcementStaged": "사전 설정 전용",
+      "enforcementDisabledWarning": "현재 ASK 런타임 집행이 비활성화되어 BLOCK·THROTTLE 정책은 저장만 되며 요청을 차단하지 않습니다.",
+      "enforcementDisabledRecovery": "Release 승인 후 런타임 배포에서 DWP_AI_RUNTIME_CONTROL_ENFORCEMENT_ENABLED=true를 설정하고 서비스를 재시작하세요.",
       "drillDownScope": "성과 세부 분석 범위",
       "organization": "조직",
       "workType": "업무 유형",
@@ -4852,9 +5090,9 @@
       "defaultTitle": "조직 기본 모드",
       "classic": "Classic Home",
       "flow": "Flow Home",
-      "mz": "MZ / AI Stage",
+      "mz": "AI Stage",
       "flowNotice": "승인된 배포 대상에만 Flow Home을 게시하세요. 서버 Kill Switch로 저장된 개인 설정을 바꾸지 않고 즉시 Classic Home으로 복귀할 수 있습니다.",
-      "mzNotice": "MZ는 모드별로 저장되는 독립 AI Stage입니다. 의도 인계는 검토 전용이며 실제 실행 권한은 각 담당 앱이 별도로 확인합니다."
+      "mzNotice": "AI Stage는 모드별로 저장되는 독립 업무 경험입니다. 의도 인계는 검토 전용이며 실제 실행 권한은 각 담당 앱이 별도로 확인합니다."
     },
     "personal": {
       "title": "구성원 홈 개인화 허용",

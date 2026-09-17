@@ -7,6 +7,7 @@ import {
   createDwaionTeamArtifactShare,
   createDwaionTeamArtifactWorkspace,
   decideDwaionTeamArtifactReviewStage,
+  executeDwaionTeamArtifactRemediation,
   getDwaionTeamArtifactCapabilities,
   getDwaionTeamArtifactComments,
   getDwaionTeamArtifactWorkspace,
@@ -26,6 +27,8 @@ import {
   type DwaionTeamArtifactSharePermission,
   type DwaionTeamArtifactReviewDecision,
   type DwaionTeamArtifactReviewStage,
+  type DwaionTeamArtifactRemediationAction,
+  type DwaionTeamArtifactRemediationReceipt,
 } from '@dwp-frontend/shared-utils';
 
 import { useDwaionGovernedMutation } from '../../../components/use-dwaion-governed-mutation';
@@ -58,10 +61,13 @@ export function useDwaionArtifactCollaboration({
   const [preflight, setPreflight] = useState<DwaionTeamArtifactPreflight | null>(null);
   const [latestShare, setLatestShare] = useState<DwaionTeamArtifactShare | null>(null);
   const [accessRequest, setAccessRequest] = useState<DwaionTeamArtifactAccessRequest | null>(null);
+  const [remediationReceipt, setRemediationReceipt] =
+    useState<DwaionTeamArtifactRemediationReceipt | null>(null);
   useEffect(() => {
     setPreflight(null);
     setLatestShare(null);
     setAccessRequest(null);
+    setRemediationReceipt(null);
     attempts.current.clear();
   }, [artifactId]);
   const governPreflight = useDwaionGovernedMutation(
@@ -90,6 +96,9 @@ export function useDwaionArtifactCollaboration({
   );
   const governReview = useDwaionGovernedMutation(
     'route.dwaion.work.artifact-collaboration-review-decision.action'
+  );
+  const governRemediation = useDwaionGovernedMutation(
+    'route.dwaion.work.artifact-collaboration-remediation.action'
   );
 
   const capabilitiesQuery = useQuery({
@@ -573,6 +582,59 @@ export function useDwaionArtifactCollaboration({
     },
   });
 
+  const remediationMutation = useMutation({
+    mutationFn: async (action: DwaionTeamArtifactRemediationAction) => {
+      if (!document) throw new Error('Artifact is required.');
+      const pendingStage = workspaceQuery.data?.reviewStages.find(
+        (stage) => stage.state === 'PENDING'
+      );
+      if (action === 'REVIEW_NOTIFICATION' && !pendingStage) {
+        throw new Error('A pending review stage is required.');
+      }
+      const stageId = action === 'REVIEW_NOTIFICATION' ? (pendingStage?.stageId ?? null) : null;
+      const key = collaborationAttemptKey(
+        'remediation',
+        document.artifactId,
+        document.revision,
+        action,
+        stageId
+      );
+      const reasonKey =
+        action === 'AUTOMATIC_MASKING'
+          ? 'automaticMasking'
+          : action === 'SYNTHETIC_REPLACEMENT'
+            ? 'syntheticReplacement'
+            : 'reviewNotification';
+      return governRemediation((authority) =>
+        executeDwaionTeamArtifactRemediation(document.artifactId, {
+          ...collaborationHighRiskCommand(
+            collaborationCommandId(attempts.current, key),
+            document.revision,
+            `USER_CONFIRMED_ARTIFACT_${action}`,
+            collaborationReason(locale, reasonKey),
+            authority
+          ),
+          action,
+          stageId,
+        })
+      );
+    },
+    onSuccess: async (receipt) => {
+      setRemediationReceipt(receipt);
+      clearCollaborationAttempts(attempts.current, 'remediation');
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'governed-artifacts'] }),
+        workspaceQuery.refetch(),
+      ]);
+    },
+    onError: () => {
+      void Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'governed-artifacts'] }),
+        workspaceQuery.refetch(),
+      ]);
+    },
+  });
+
   const retry = useCallback(() => {
     void Promise.all([
       capabilitiesQuery.refetch(),
@@ -595,6 +657,7 @@ export function useDwaionArtifactCollaboration({
     replyCommentMutation,
     resolveCommentMutation,
     reviewDecisionMutation,
+    remediationMutation,
   ];
   return {
     capabilities: capabilitiesQuery.data ?? null,
@@ -602,6 +665,7 @@ export function useDwaionArtifactCollaboration({
     preflight,
     latestShare,
     accessRequest,
+    remediationReceipt,
     comments: commentsQuery.data ?? [],
     commentsLoading: commentsQuery.isPending && commentsQuery.isEnabled,
     commentsError: commentsQuery.error,
@@ -622,5 +686,6 @@ export function useDwaionArtifactCollaboration({
     replyComment: replyCommentMutation.mutateAsync,
     resolveComment: resolveCommentMutation.mutateAsync,
     decideReviewStage: reviewDecisionMutation.mutateAsync,
+    remediate: remediationMutation.mutateAsync,
   };
 }

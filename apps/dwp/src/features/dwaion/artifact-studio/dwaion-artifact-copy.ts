@@ -226,7 +226,11 @@ export const DWAION_ARTIFACT_COPY_EN: DwaionArtifactCopy = {
   artifactTagFilterLabel: 'Tag',
   artifactProjectFilterLabel: 'Project',
   artifactFilterAll: 'All',
-  artifactGroups: { RECENT: 'Recent artifacts', PROJECTS: 'Active team projects', ARCHIVED: 'Archived' },
+  artifactGroups: {
+    RECENT: 'Recent artifacts',
+    PROJECTS: 'Active team projects',
+    ARCHIVED: 'Archived',
+  },
   artifactSla: { due: 'Review SLA', overdue: 'SLA overdue', none: 'SLA not set' },
   artifactFilterLabel: 'Status filter',
   artifactFilters: {
