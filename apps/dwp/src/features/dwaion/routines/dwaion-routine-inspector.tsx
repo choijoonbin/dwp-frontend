@@ -28,8 +28,11 @@ import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type { DwaionRoutine, DwaionRoutineDryRunReceipt } from './dwaion-routine-model';
 import type {
   DwaionRoutineExecutionRun,
+  DwaionRoutineHealth,
+  DwaionRoutineRollbackReceipt,
   DwaionRoutineRunCommand,
   DwaionRoutineRuntimeCapabilities,
+  DwaionRoutineVersionSnapshot,
 } from '@dwp-frontend/shared-utils';
 
 export function DwaionRoutineInspector({
@@ -42,6 +45,11 @@ export function DwaionRoutineInspector({
   runs = [],
   runsLoading = false,
   runsError = false,
+  versions = [],
+  health,
+  rollbackReceipt,
+  evidenceLoading = false,
+  evidenceError = false,
   busy = false,
   canManage = true,
   onClose,
@@ -52,6 +60,8 @@ export function DwaionRoutineInspector({
   onActivate,
   onTriggerRun,
   onRunCommand,
+  onRollbackVersion,
+  onDownloadTelemetry,
   onRetryRuntime,
   copy = DWAION_ROUTINE_COPY_KO,
   formatTimestamp = (value) => value,
@@ -65,6 +75,11 @@ export function DwaionRoutineInspector({
   runs?: readonly DwaionRoutineExecutionRun[];
   runsLoading?: boolean;
   runsError?: boolean;
+  versions?: readonly DwaionRoutineVersionSnapshot[];
+  health?: DwaionRoutineHealth;
+  rollbackReceipt?: DwaionRoutineRollbackReceipt | null;
+  evidenceLoading?: boolean;
+  evidenceError?: boolean;
   busy?: boolean;
   canManage?: boolean;
   onClose: () => void;
@@ -79,6 +94,8 @@ export function DwaionRoutineInspector({
     run: DwaionRoutineExecutionRun,
     action: DwaionRoutineRunCommand['action']
   ) => void;
+  onRollbackVersion: (routine: DwaionRoutine, version: DwaionRoutineVersionSnapshot) => void;
+  onDownloadTelemetry: (routine: DwaionRoutine) => void;
   onRetryRuntime: () => void;
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
@@ -111,7 +128,13 @@ export function DwaionRoutineInspector({
           size="small"
           variant="outlined"
           color={routine.executionMode === 'SCHEDULED' ? 'success' : 'info'}
-          label={routine.executionMode === 'SCHEDULED' ? copy.status.ACTIVE : copy.proposalOnly}
+          label={
+            routine.executionMode === 'SCHEDULED'
+              ? copy.status.ACTIVE
+              : routine.executionMode === 'WEBHOOK'
+                ? copy.webhookTrigger
+                : copy.proposalOnly
+          }
         />
       }
     >
@@ -152,8 +175,16 @@ export function DwaionRoutineInspector({
             <ContractStep
               number={3}
               title={copy.contractSteps.trigger}
-              value={`${copy.cadence[routine.schedule.cadence]} · ${routine.schedule.localTime.slice(0, 5)} · ${routine.schedule.timeZone}. ${copy.contractValues.triggerPreview}`}
-              warning={!routine.schedulingAvailable || !routine.backgroundExecutionAvailable}
+              value={
+                routine.triggerType === 'WEBHOOK'
+                  ? `${copy.webhookTrigger} · ${routine.webhookEventType ?? copy.capabilityUnavailable}${routine.webhookEndpointReference ? ` · ${routine.webhookEndpointReference}` : ''}`
+                  : `${copy.cadence[routine.schedule.cadence]} · ${routine.schedule.localTime.slice(0, 5)} · ${routine.schedule.timeZone}. ${copy.contractValues.triggerPreview}`
+              }
+              warning={
+                routine.triggerType === 'WEBHOOK'
+                  ? !runtimeCapabilities?.webhookTriggerAvailable
+                  : !routine.schedulingAvailable || !routine.backgroundExecutionAvailable
+              }
             />
             <ContractStep
               number={4}
@@ -237,7 +268,10 @@ export function DwaionRoutineInspector({
                 <Stack direction="row" gap={0.75} alignItems="center" sx={{ mt: 0.75 }}>
                   <Clock3 size={15} aria-hidden="true" />
                   <Typography variant="caption" color="text.secondary">
-                    {copy.nextPreview}: {formatTimestamp(currentReceipt.previewNextRunAt)}
+                    {copy.nextPreview}:{' '}
+                    {currentReceipt.previewNextRunAt
+                      ? formatTimestamp(currentReceipt.previewNextRunAt)
+                      : (routine.webhookEventType ?? copy.webhookTrigger)}
                   </Typography>
                 </Stack>
               </Box>
@@ -252,6 +286,11 @@ export function DwaionRoutineInspector({
           runs={runs}
           runsLoading={runsLoading}
           runsError={runsError}
+          versions={versions}
+          health={health}
+          rollbackReceipt={rollbackReceipt}
+          evidenceLoading={evidenceLoading}
+          evidenceError={evidenceError}
           busy={busy}
           canManage={canManage}
           copy={copy}
@@ -259,6 +298,8 @@ export function DwaionRoutineInspector({
           onActivate={(action) => onActivate(routine, action)}
           onTrigger={() => onTriggerRun(routine)}
           onRunCommand={(run, action) => onRunCommand(routine, run, action)}
+          onRollbackVersion={(version) => onRollbackVersion(routine, version)}
+          onDownloadTelemetry={() => onDownloadTelemetry(routine)}
           onRetry={onRetryRuntime}
         />
 

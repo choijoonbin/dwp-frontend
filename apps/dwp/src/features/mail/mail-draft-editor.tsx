@@ -26,6 +26,7 @@ import Typography from '@mui/material/Typography';
 import { MailDraftSaveStatus } from './mail-draft-save-status';
 import { MailComposeOptionsFields } from './mail-compose-options';
 import { MailMessageBodyField } from './mail-message-body-field';
+import { mailWritingAssetBody } from './mail-writing-asset-content';
 import {
   clearMailDraftConflict,
   mailDraftFieldsFromDetail,
@@ -103,11 +104,21 @@ function restoreDraftSendAttempt(scope: string) {
   return null;
 }
 
-function emptyComposeOptions(toEmail = '', toName?: string | null): MailComposeOptions {
+function emptyComposeOptions(
+  toEmail = '',
+  toName?: string | null,
+  accountId?: string | null
+): MailComposeOptions {
   return {
-    accountId: null,
+    accountId: accountId ?? null,
     recipients: toEmail.trim()
-      ? [{ type: 'TO', name: toName?.trim() || null, email: toEmail.trim() }]
+      ? [
+          {
+            type: 'TO',
+            name: toName?.trim() && toName.trim() !== toEmail.trim() ? toName.trim() : null,
+            email: toEmail.trim(),
+          },
+        ]
       : [],
     bodyFormat: 'TEXT',
     attachmentIds: [],
@@ -124,7 +135,7 @@ function applyTemplate(
   setBody: (value: string) => void
 ) {
   if (template.subject) setSubject(template.subject);
-  setBody(template.body);
+  setBody(mailWritingAssetBody(template));
 }
 
 function applySignature(
@@ -132,7 +143,7 @@ function applySignature(
   setBody: React.Dispatch<React.SetStateAction<string>>
 ) {
   const separator = signature.bodyFormat === 'HTML' ? '<br><br>' : '\n\n';
-  const content = [signature.body, signature.mandatoryContent].filter(Boolean).join(separator);
+  const content = mailWritingAssetBody(signature);
   setBody((current) => `${current.trimEnd()}${current.trim() ? separator : ''}${content}`);
 }
 
@@ -175,12 +186,17 @@ export function MailDraftEditor({
     restoredConflict?.local.composeOptions ??
       unresolvedSend?.payload.composeOptions ??
       detail.draftOptions ??
-      emptyComposeOptions(thread.participants[0]?.email, thread.participants[0]?.name)
+      emptyComposeOptions(
+        thread.participants[0]?.email,
+        thread.participants[0]?.name,
+        thread.accountId
+      )
   );
   const [sending, setSending] = useState(false);
   const [attachmentsReady, setAttachmentsReady] = useState(() =>
     (detail.draftAttachments ?? []).every((attachment) => attachment.scanState === 'READY')
   );
+  const [personalizationReviewPending, setPersonalizationReviewPending] = useState(false);
   const [sendResolutionPending, setSendResolutionPending] = useState(Boolean(unresolvedSend));
   const [sendRejected, setSendRejected] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -370,7 +386,9 @@ export function MailDraftEditor({
     setToEmail(selected.toEmail);
     setSubject(selected.subject);
     setBody(selected.body);
-    setComposeOptions(selected.composeOptions ?? emptyComposeOptions(selected.toEmail));
+    setComposeOptions(
+      selected.composeOptions ?? emptyComposeOptions(selected.toEmail, null, thread.accountId)
+    );
     autosave.adoptServerVersion(conflictServerDetail, serverFields, selected);
     if (selection === 'SERVER' || mailDraftSnapshot(selected) === mailDraftSnapshot(serverFields)) {
       clearMailDraftConflict(custodyOwner, draftConflict.threadId);
@@ -487,6 +505,7 @@ export function MailDraftEditor({
                 setComposeOptions(value);
               }}
               onAttachmentReadyChange={setAttachmentsReady}
+              onPersonalizationReviewChange={setPersonalizationReviewPending}
               onInsertTemplate={(template) => applyTemplate(template, setSubject, setBody)}
               onInsertSignature={(signature) => applySignature(signature, setBody)}
             />
@@ -538,6 +557,7 @@ export function MailDraftEditor({
               disabled={
                 !autosave.canSend ||
                 !attachmentsReady ||
+                personalizationReviewPending ||
                 sending ||
                 closeWhenSaved ||
                 sendRejected ||

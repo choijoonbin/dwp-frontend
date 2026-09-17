@@ -41,6 +41,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
+import { MAIL_PREFERENCES_QUERY_KEY } from './mail-runtime-preferences';
 
 import type {
   MailAccount,
@@ -66,14 +67,14 @@ export function MailPreferencesWorkspace() {
     retry: 1,
   });
   const preferences = useQuery({
-    queryKey: ['mail', 'preferences'],
+    queryKey: MAIL_PREFERENCES_QUERY_KEY,
     queryFn: getMailPreferences,
     staleTime: 30_000,
     retry: 1,
   });
   const assets = useQuery({
     queryKey: ['mail', 'writing-assets'],
-    queryFn: getMailWritingAssets,
+    queryFn: () => getMailWritingAssets(),
     staleTime: 30_000,
     retry: 1,
   });
@@ -90,7 +91,7 @@ export function MailPreferencesWorkspace() {
     },
     onSuccess: async (saved) => {
       setDraft(saved);
-      queryClient.setQueryData(['mail', 'preferences'], saved);
+      queryClient.setQueryData(MAIL_PREFERENCES_QUERY_KEY, saved);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'compose-context'] });
       toast.success(t('secondary.accounts.preferencesSaved'));
     },

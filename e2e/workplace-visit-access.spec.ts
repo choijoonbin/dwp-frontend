@@ -272,10 +272,17 @@ async function openVisitorTab(page: Page, locale: 'en' | 'ko' = 'en') {
   await page.goto(
     `/workplace/reservations?v=1&period=UPCOMING&types=ALL&status=ACTIVE&authority=ALL&reservation=${RESERVATION_ID}&reservationAuthority=WORKPLACE&tab=VISITS`
   );
-  const inspector = page.getByRole('complementary', {
-    name: locale === 'ko' ? '예약 상세 검사기' : 'Reservation inspector',
-  });
+  const inspectorName = locale === 'ko' ? '예약 상세 검사기' : 'Reservation inspector';
+  const inspector = page
+    .getByRole('complementary', { name: inspectorName })
+    .or(page.getByRole('dialog', { name: inspectorName }));
   await expect(inspector).toBeVisible();
+  const visitorTab = inspector.getByRole('tab', {
+    name: locale === 'ko' ? '방문자' : 'Visitors',
+  });
+  if ((await visitorTab.getAttribute('aria-selected')) !== 'true') await visitorTab.click();
+  await expect(visitorTab).toHaveAttribute('aria-selected', 'true');
+  await expect(page).toHaveURL(/(?:\?|&)tab=VISITS(?:&|$)/u);
   return page.getByTestId('workplace-reservation-visitors');
 }
 
@@ -308,20 +315,20 @@ test('runs preview, create, invitation, GET-only access recovery, and cancel wit
   await expect(visits.getByText('Visitor provider · Ready')).toBeVisible();
   await visits.getByRole('button', { name: 'Create visit' }).click();
 
-  await expect(visits.getByText('Prepared')).toBeVisible();
+  await expect(visits.getByText('Prepared', { exact: true })).toBeVisible();
   await visits.getByRole('checkbox', { name: /current visit version/i }).check();
   await visits.getByRole('button', { name: 'Send invitation' }).click();
-  await expect(visits.getByText('Approved')).toBeVisible();
+  await expect(visits.getByText('Approved', { exact: true })).toBeVisible();
   await visits.getByRole('checkbox', { name: /current visit version/i }).check();
   await visits.getByRole('button', { name: 'Request access' }).click();
   await expect(visits.getByText(/GET status recovery/i)).toBeVisible();
   const postsBeforeRecovery = evidence.commandUrls.length;
   await visits.getByRole('button', { name: 'Refresh status' }).click();
-  await expect(visits.getByText('Ready for arrival')).toBeVisible();
+  await expect(visits.getByText('Ready for arrival', { exact: true })).toBeVisible();
   expect(evidence.commandUrls).toHaveLength(postsBeforeRecovery);
   await visits.getByRole('checkbox', { name: /current visit version/i }).check();
   await visits.getByRole('button', { name: 'Cancel visit' }).click();
-  await expect(visits.getByText('Cancelled')).toBeVisible();
+  await expect(visits.getByText('Cancelled', { exact: true })).toBeVisible();
 
   expect(evidence.previewBodies[0]).toMatchObject({
     guests: [{ opaqueRef: 'vault://visitor/screen-17', maskedLabel: 'K** J**' }],
@@ -486,7 +493,7 @@ test('operates the elevated visitor exception inspector and fails closed in read
   const inspector = page.getByRole('complementary', { name: 'Visitor exception inspector' });
   await inspector.getByRole('checkbox', { name: /elevated operation/i }).check();
   await inspector.getByRole('button', { name: 'Approve visit' }).click();
-  await expect(inspector.getByText('Approved')).toBeVisible();
+  await expect(inspector.getByText('Approved', { exact: true })).toBeVisible();
   expect(evidence.posts()).toBe(1);
 
   await mockAdminVisit(page, true);
@@ -651,9 +658,7 @@ test('reaches and operates policy, zone, provider, and kiosk management menus', 
 
   await page.goto('/workplace/admin/kiosk-devices');
   await page.getByRole('button', { name: 'Inspect' }).click();
-  await page
-    .getByRole('textbox', { name: 'Device identity SHA-256' })
-    .fill('c'.repeat(64));
+  await page.getByRole('textbox', { name: 'Device identity SHA-256' }).fill('c'.repeat(64));
   await page.getByRole('checkbox', { name: /versioned change/i }).check();
   await page.getByRole('button', { name: 'Save' }).click();
 

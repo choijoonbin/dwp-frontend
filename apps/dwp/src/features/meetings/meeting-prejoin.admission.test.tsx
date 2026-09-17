@@ -73,6 +73,7 @@ const props = (): MeetingPreJoinProps => ({
     videoDeviceId: 'default',
     speakerDeviceId: 'default',
     noiseSuppression: false,
+    hdVideo: false,
     backgroundMode: 'original',
   },
   busy: false,

@@ -2,6 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMeetingBackgroundCompositor } from './meeting-background-compositor';
 
 type Context = ReturnType<typeof context>;
+type Canvas = {
+  width: number;
+  height: number;
+  context: Context;
+  getContext: () => Context;
+  captureStream: ReturnType<typeof vi.fn>;
+};
 function context() {
   return {
     fillStyle: '',
@@ -15,23 +22,23 @@ function context() {
     }),
   };
 }
-let canvases: { width: number; height: number; context: Context }[];
+let canvases: Canvas[];
 let stop: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   canvases = [];
   stop = vi.fn();
   vi.stubGlobal('document', {
     createElement: () => {
-      const value = {
+      const value: Canvas = {
         width: 0,
         height: 0,
         context: context(),
         getContext() {
           return this.context;
         },
-        captureStream() {
+        captureStream: vi.fn(() => {
           return { getVideoTracks: () => [{ stop }] };
-        },
+        }),
       };
       canvases.push(value);
       return value;
@@ -89,6 +96,15 @@ describe('background output canvas', () => {
       expect.anything(),
       expect.anything()
     );
+    compositor.destroy();
+  });
+  it('preserves an explicit HD background publication at 1080p and 30fps', () => {
+    const compositor = createMeetingBackgroundCompositor('blur', undefined, { hdVideo: true });
+    const video = { videoWidth: 3840, videoHeight: 2160 } as HTMLVideoElement;
+    compositor.render(video, { width: 1, height: 1, foreground: new Uint8Array([1]) });
+    expect(canvases[0].captureStream).toHaveBeenCalledWith(30);
+    expect(canvases[0]).toMatchObject({ width: 1920, height: 1080 });
+    expect(canvases[0].context.drawImage).toHaveBeenCalledExactlyOnceWith(canvases[1], 0, 0);
     compositor.destroy();
   });
   it('fails closed when office mode has no approved plate', () => {

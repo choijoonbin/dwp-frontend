@@ -5,6 +5,7 @@ import {
   routineCommandState,
   routineConsentComplete,
   routineDraftErrors,
+  routineDraftChangeKeys,
   routineDryRunIsCurrent,
 } from './dwaion-routine-model';
 
@@ -23,6 +24,9 @@ const routine: DwaionRoutine = {
   status: 'DRAFT',
   revision: 4,
   executionMode: 'DRY_RUN_ONLY',
+  triggerType: 'SCHEDULED',
+  webhookEventType: null,
+  webhookEndpointReference: null,
   sourceKeys: ['WORK_ITEM'],
   schedule: {
     cadence: 'WEEKDAYS',
@@ -135,6 +139,7 @@ describe('DWAI personal routine governance model', () => {
 
   it('never reuses a dry-run receipt after the routine revision changes', () => {
     const receipt = {
+      routineRunId: '55555555-5555-4555-8555-555555555555',
       routineId: routine.routineId,
       routineRevision: 4,
       evaluatedAt: '2026-09-04T00:00:00Z',
@@ -143,11 +148,53 @@ describe('DWAI personal routine governance model', () => {
       evidenceScope: 'AUTHORIZED_SOURCE_BINDING' as const,
       businessEvidenceCount: 0,
       proposalsCreated: 0,
+      externalWritesPerformed: 0 as const,
       validatedSources: ['WORK_ITEM'],
       previewNextRunAt: '2026-09-05T00:00:00Z',
       schedulingAvailable: false as const,
     };
     expect(routineDryRunIsCurrent(routine, receipt)).toBe(true);
     expect(routineDryRunIsCurrent({ ...routine, revision: 5 }, receipt)).toBe(false);
+  });
+
+  it('validates webhook definitions without requiring schedule-only fields', () => {
+    const draft: DwaionRoutineDraft = {
+      ...createEmptyRoutineDraft('Asia/Seoul'),
+      title: 'Ledger close monitor',
+      description: 'Review approved ledger close evidence.',
+      triggerType: 'WEBHOOK',
+      webhookEventType: 'ERP.LEDGER_CLOSE',
+      webhookEndpointReference: 'hook://erp-ledger-close',
+      sourceKeys: ['WORK_ITEM'],
+      consentKeys: ['SOURCE_ACCESS', 'ANALYSIS', 'PROPOSAL_DELIVERY'],
+      schedule: {
+        ...createEmptyRoutineDraft('Asia/Seoul').schedule,
+        localTime: '',
+        timeZone: '',
+      },
+    };
+    expect(routineDraftErrors(draft)).toEqual([]);
+    expect(routineDraftErrors({ ...draft, webhookEventType: 'not safe' })).toContain(
+      'WEBHOOK_EVENT_TYPE_INVALID'
+    );
+  });
+
+  it('derives a truthful semantic change summary from the saved draft', () => {
+    const saved: DwaionRoutineDraft = {
+      ...createEmptyRoutineDraft('Asia/Seoul'),
+      title: 'Morning review',
+      description: 'Review due work',
+      sourceKeys: ['WORK_ITEM'],
+      consentKeys: ['SOURCE_ACCESS', 'ANALYSIS', 'PROPOSAL_DELIVERY'],
+    };
+    expect(routineDraftChangeKeys(saved, saved)).toEqual([]);
+    expect(
+      routineDraftChangeKeys(saved, {
+        ...saved,
+        triggerType: 'WEBHOOK',
+        webhookEventType: 'WORK.ITEM_CHANGED',
+        sourceKeys: ['MAIL'],
+      })
+    ).toEqual(['TRIGGER', 'SOURCES']);
   });
 });

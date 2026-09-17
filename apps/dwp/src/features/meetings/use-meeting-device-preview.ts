@@ -13,6 +13,7 @@ import {
   createMeetingBackgroundProcessor,
   meetingBackgroundSupported,
 } from './meeting-background-processor';
+import { resolveMeetingHdVideo } from './meeting-video-quality';
 
 type PreviewState = 'idle' | 'requesting' | 'active';
 
@@ -225,6 +226,7 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
     setStates((current) => ({ ...current, [kind]: 'requesting' }));
     try {
       const backgroundMode = resolveMeetingBackgroundMode(preferences);
+      const hdVideo = kind === 'video' && resolveMeetingHdVideo(preferences.hdVideo === true);
       if (
         kind === 'video' &&
         backgroundMode !== 'original' &&
@@ -237,7 +239,8 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       const stream = await session.current.start(
         kind,
         kind === 'audio' ? preferences.microphoneId : preferences.cameraId,
-        preferences.noiseSuppression
+        preferences.noiseSuppression,
+        hdVideo
       );
       if (!alive.current || attempts.current[kind] !== attempt || !stream) return;
       let visibleStream = stream;
@@ -245,6 +248,7 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
         setBackgroundState('loading');
         const processor = createMeetingBackgroundProcessor({
           mode: backgroundMode,
+          hdVideo,
           onStateChange: (event) => {
             if (!alive.current || attempts.current.video !== attempt || event.state !== 'failed')
               return;

@@ -32,7 +32,10 @@ import {
   DWAION_ARTIFACT_COPY_KO,
 } from './artifact-studio/dwaion-artifact-copy';
 import { DwaionArtifactStudio } from './artifact-studio/dwaion-artifact-studio';
+import { DwaionArtifactCollaboration } from './artifact-studio/dwaion-artifact-collaboration';
+import { DwaionArtifactInlineComments } from './artifact-studio/dwaion-artifact-inline-comments';
 import { useDwaionArtifactAutosave } from './artifact-studio/use-dwaion-artifact-autosave';
+import { useDwaionArtifactCollaboration } from './artifact-studio/use-dwaion-artifact-collaboration';
 
 import type { DwaionArtifactExportFormat as UiExportFormat } from './artifact-studio/dwaion-artifact-export-dialog';
 import type {
@@ -187,6 +190,44 @@ export function DwaionArtifacts() {
     save: saveArtifact,
     onError: handleCommandError,
   });
+  const collaboration = useDwaionArtifactCollaboration({
+    document: autosave.document,
+    enabled: canView && selectionAvailable,
+    locale,
+  });
+  const collaborationDraftMutation = useMutation({
+    mutationFn: async ({ explanation }: { explanation?: string }) => {
+      const document = autosave.document;
+      if (!document) throw new Error('Artifact is not selected.');
+      const body = explanation
+        ? `${document.body.trimEnd()}\n\n## ${locale === 'ko' ? '검토 소명' : 'Review explanation'}\n${explanation}`
+        : document.body;
+      const saved = await saveArtifact(
+        document.artifactId,
+        document.revision,
+        { title: document.title, body },
+        document.sources
+      );
+      const version = await governVersion((authority) =>
+        createDwaionArtifactVersion(saved.artifactId, saved.revision, authority)
+      );
+      return { saved, version };
+    },
+    onSuccess: async ({ saved }) => {
+      setCommandError(undefined);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: [...ARTIFACTS_KEY, identity] }),
+        queryClient.invalidateQueries({
+          queryKey: [...ARTIFACTS_KEY, 'detail', identity, saved.artifactId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [...ARTIFACTS_KEY, 'versions', identity, saved.artifactId],
+        }),
+      ]);
+      toast.success(copy.save);
+    },
+    onError: handleCommandError,
+  });
 
   const createMutation = useMutation({
     mutationFn: (input: { artifactType: DwaionArtifactType; title: string; body: string }) =>
@@ -293,6 +334,11 @@ export function DwaionArtifacts() {
         state: receipt.state,
         executionAvailable: receipt.executionAvailable,
         fileAvailable: receipt.fileAvailable,
+        fileName: receipt.fileName ?? null,
+        byteSize: receipt.byteSize ?? null,
+        contentFingerprint: receipt.contentFingerprint ?? null,
+        completedAt: receipt.completedAt ?? null,
+        safeErrorCode: receipt.safeErrorCode ?? null,
       });
       setCommandError(undefined);
       await queryClient.invalidateQueries({ queryKey: ARTIFACTS_KEY });
@@ -401,6 +447,78 @@ export function DwaionArtifacts() {
       formatTimestamp={(value) =>
         formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale)
       }
+      collaboration={
+        autosave.document ? (
+          <DwaionArtifactCollaboration
+            document={autosave.document}
+            capabilities={collaboration.capabilities}
+            workspace={collaboration.workspace}
+            preflight={collaboration.preflight}
+            latestShare={collaboration.latestShare}
+            accessRequest={collaboration.accessRequest}
+            loading={collaboration.loading}
+            busy={collaboration.busy || collaborationDraftMutation.isPending}
+            error={collaboration.error}
+            canEdit={canEdit && selectionAvailable}
+            canPublish={canPublish && selectionAvailable}
+            locale={locale}
+            onRetry={collaboration.retry}
+            onRunPreflight={collaboration.runPreflight}
+            onCreateWorkspace={collaboration.createWorkspace}
+            onUpdateMembers={collaboration.updateMembers}
+            onSyncEdit={collaboration.syncEdit}
+            onResolveConflict={collaboration.resolveConflict}
+            onCreateShare={collaboration.createShare}
+            onRevokeShare={collaboration.revokeShare}
+            onRequestAccess={collaboration.requestAccess}
+            onSaveExplanation={(explanation) =>
+              collaborationDraftMutation.mutateAsync({ explanation })
+            }
+            onSavePrivateDraft={() => collaborationDraftMutation.mutateAsync({})}
+            onResubmit={collaboration.resubmit}
+          />
+        ) : null
+      }
+      comments={
+        autosave.document ? (
+          <DwaionArtifactInlineComments
+            capability={collaboration.capabilities?.inlineComments ?? null}
+            workspaceAvailable={Boolean(collaboration.workspace)}
+            comments={collaboration.comments}
+            loading={collaboration.commentsLoading}
+            busy={collaboration.busy}
+            error={collaboration.commentsError}
+            canEdit={canEdit && selectionAvailable}
+            locale={locale}
+            formatTimestamp={(value) =>
+              formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale)
+            }
+            onRetry={collaboration.retry}
+            onCreate={collaboration.createComment}
+            onReply={collaboration.replyComment}
+            onResolve={collaboration.resolveComment}
+          />
+        ) : null
+      }
+      navigationCapabilities={{
+        teamWorkspaceAvailable: Boolean(
+          collaboration.capabilities?.providerState === 'AVAILABLE' &&
+          collaboration.capabilities.teamWorkspaceAvailable
+        ),
+        teamWorkspaceReason: collaboration.capabilities?.recoveryHint,
+        teamArtifactIds: collaboration.workspace ? [collaboration.workspace.artifactId] : [],
+        reviewRequestsAvailable: Boolean(
+          (collaboration.capabilities?.reviewNotification.available &&
+            collaboration.capabilities.reviewNotification.configured) ||
+          (collaboration.capabilities?.reviewRejection.available &&
+            collaboration.capabilities.reviewRejection.configured)
+        ),
+        reviewRequestsReason:
+          collaboration.capabilities?.reviewNotification.recoveryHint ??
+          collaboration.capabilities?.reviewNotification.reasonCode ??
+          collaboration.capabilities?.reviewRejection.recoveryHint ??
+          collaboration.capabilities?.reviewRejection.reasonCode,
+      }}
     />
   );
 }

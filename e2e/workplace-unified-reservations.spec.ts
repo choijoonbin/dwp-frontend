@@ -15,6 +15,21 @@ const NOW = new Date('2026-09-16T01:00:00.000Z');
 const canonicalPath =
   '/workplace/reservations?v=1&period=UPCOMING&types=ALL&status=ACTIVE&authority=ALL';
 
+const governedProductKeys = [
+  'approvals',
+  'calendar',
+  'communications',
+  'dwaion',
+  'hcm',
+  'mail',
+  'meetings',
+  'messaging',
+  'notifications',
+  'services',
+  'spaces',
+  'workplace',
+] as const;
+
 const roomPolicy = {
   weekStart: 1,
   workingDayStart: '08:00:00',
@@ -69,6 +84,7 @@ function calendarEvent(): CalendarEvent {
     organizerEmail: 'morgan.lee@example.com',
     title: 'Design planning review',
     description: 'Review the next workplace release.',
+    conferenceUrl: 'https://teams.example.test/meet/screen-16',
     type: 'MEETING',
     startsAt: minutesFromNow(120),
     endsAt: minutesFromNow(180),
@@ -243,6 +259,36 @@ async function mockUnifiedReservations(
   };
 }
 
+async function useElevatedProductAuthority(page: Page) {
+  await page.unroute('**/api/auth/product-surface-contexts');
+  await page.route('**/api/auth/product-surface-contexts', (route) =>
+    fulfillSuccess(route, {
+      contractVersion: 'product-surfaces/v3',
+      decisionRevision: 'screen-16-elevated',
+      sourceRevisions: {
+        auth: 'screen-16',
+        policy: 'screen-16',
+        productRelationship: 'screen-16',
+      },
+      activeAccessMode: 'ELEVATED',
+      generatedAt: NOW.toISOString(),
+      contexts: [],
+      rollouts: governedProductKeys.map((productKey) => ({
+        productKey,
+        state: '000',
+        flags: {
+          contextShadow: false,
+          capabilityEnforcement: false,
+          surfaceUi: false,
+        },
+        cohort: 'baseline',
+        opaqueRevision: `rollout-${productKey}-baseline`,
+        authorityStatus: 'NOT_EVALUATED',
+      })),
+    })
+  );
+}
+
 async function expectSourceState(
   page: Page,
   source: 'calendar' | 'workplace',
@@ -330,6 +376,212 @@ test('combines both authorities, preserves their command routes, and restores ba
   await expect(search).toHaveValue('Design planning');
   await expect(inspector.getByRole('heading', { name: 'Design planning review' })).toBeVisible();
   expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+});
+
+test('keeps Screen 16 provider actions fail-closed and wires Teams copy and 1:1 help to real authorities', async ({
+  page,
+  isMobile,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (value: string) => {
+          window.localStorage.setItem('screen16-copied-link', value);
+        },
+      },
+    });
+  });
+  await mockUnifiedReservations(page);
+  await page.route(
+    '**/api/platform/v1/workplace/bookings/wp-urgent-16/resource-command-context',
+    (route) =>
+      fulfillSuccess(route, {
+        bookingId: 'wp-urgent-16',
+        resourceId: 'desk-focus-16',
+        resourceType: 'DESK',
+        bookingVersion: 7,
+        actions: [
+          {
+            commandType: 'NFC_KEY_RESEND',
+            providerCapability: 'NFC',
+            providerState: 'CONFIGURED_UNVERIFIED',
+            availability: 'PROVIDER_NOT_READY',
+            limitationCode: 'PROVIDER_CONFIGURED_UNVERIFIED',
+            elevatedConfirmationRequired: true,
+          },
+        ],
+        evaluatedAt: NOW.toISOString(),
+      })
+  );
+
+  await page.goto(`${canonicalPath}&reservation=wp-urgent-16&reservationAuthority=WORKPLACE`);
+  const controls = page.getByTestId('workplace-reservation-resource-commands');
+  await expect(controls).toBeVisible();
+  await expect(controls.getByRole('button', { name: 'Resend NFC key' })).toBeDisabled();
+  await expect(controls).toContainText('provider configuration is not yet verified');
+
+  await page.getByRole('button', { name: 'Request 1:1 help' }).click();
+  await expect(page.getByRole('tab', { name: 'Services' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  expect(new URL(page.url()).searchParams.get('tab')).toBe('SERVICES');
+
+  await page.getByRole('tab', { name: 'Overview' }).click();
+  if (isMobile) {
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+  }
+  await page
+    .getByTestId('workplace-reservation-calendar-calendar-room-16')
+    .getByRole('button', { name: 'View detail' })
+    .click();
+  await page.getByRole('button', { name: 'Copy Teams meeting link' }).click();
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem('screen16-copied-link')))
+    .toBe('https://teams.example.test/meet/screen-16');
+});
+
+test('runs a verified Screen 16 resource command and reconciles an unknown provider result', async ({
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await mockUnifiedReservations(page);
+  await useElevatedProductAuthority(page);
+
+  const previewBodies: unknown[] = [];
+  const executeBodies: unknown[] = [];
+  const reconcileBodies: unknown[] = [];
+  const executeKeys: string[] = [];
+  const reconcileKeys: string[] = [];
+
+  await page.route(
+    '**/api/platform/v1/workplace/bookings/wp-urgent-16/resource-command-context',
+    (route) =>
+      fulfillSuccess(route, {
+        bookingId: 'wp-urgent-16',
+        resourceId: 'desk-focus-16',
+        resourceType: 'DESK',
+        bookingVersion: 7,
+        actions: [
+          {
+            commandType: 'NFC_KEY_RESEND',
+            providerCapability: 'NFC',
+            providerState: 'READY',
+            availability: 'AVAILABLE',
+            limitationCode: null,
+            elevatedConfirmationRequired: true,
+          },
+        ],
+        evaluatedAt: NOW.toISOString(),
+      })
+  );
+  await page.route(
+    '**/api/platform/v1/workplace/bookings/wp-urgent-16/resource-commands:preview',
+    async (route) => {
+      previewBodies.push(route.request().postDataJSON());
+      return fulfillSuccess(route, {
+        previewId: 'preview-screen-16',
+        bookingId: 'wp-urgent-16',
+        resourceId: 'desk-focus-16',
+        commandType: 'NFC_KEY_RESEND',
+        expectedBookingVersion: 7,
+        parameters: {},
+        providerCapability: 'NFC',
+        providerState: 'READY',
+        providerCode: 'nfc-provider',
+        providerConfigurationVersion: 12,
+        eligible: true,
+        impact: ['CURRENT_NFC_KEY_WILL_BE_REPLACED'],
+        limitations: [],
+        expiresAt: minutesFromNow(5),
+        createdAt: NOW.toISOString(),
+      });
+    }
+  );
+  await page.route(
+    '**/api/platform/v1/workplace/bookings/wp-urgent-16/resource-commands',
+    async (route) => {
+      executeBodies.push(route.request().postDataJSON());
+      executeKeys.push(route.request().headers()['idempotency-key'] ?? '');
+      expect(route.request().headers()['x-dwp-active-access-mode']).toBe('ELEVATED');
+      return fulfillSuccess(route, {
+        commandId: 'command-screen-16',
+        previewId: 'preview-screen-16',
+        bookingId: 'wp-urgent-16',
+        resourceId: 'desk-focus-16',
+        commandType: 'NFC_KEY_RESEND',
+        state: 'RESULT_UNKNOWN',
+        resultCode: 'PROVIDER_TIMEOUT',
+        providerOperationReference: 'provider-operation-16',
+        version: 1,
+        statusHref:
+          '/api/platform/v1/workplace/bookings/wp-urgent-16/resource-commands/command-screen-16',
+        correlationId: 'screen-16-e2e',
+        acceptedAt: NOW.toISOString(),
+        completedAt: null,
+        updatedAt: NOW.toISOString(),
+        requeryRequired: true,
+        idempotentReplay: false,
+      });
+    }
+  );
+  await page.route(
+    '**/api/platform/v1/workplace/bookings/wp-urgent-16/resource-commands/command-screen-16:reconcile',
+    async (route) => {
+      reconcileBodies.push(route.request().postDataJSON());
+      reconcileKeys.push(route.request().headers()['idempotency-key'] ?? '');
+      expect(route.request().headers()['x-dwp-active-access-mode']).toBe('ELEVATED');
+      return fulfillSuccess(route, {
+        commandId: 'command-screen-16',
+        previewId: 'preview-screen-16',
+        bookingId: 'wp-urgent-16',
+        resourceId: 'desk-focus-16',
+        commandType: 'NFC_KEY_RESEND',
+        state: 'SUCCEEDED',
+        resultCode: 'KEY_RESENT',
+        providerOperationReference: 'provider-operation-16',
+        version: 2,
+        statusHref:
+          '/api/platform/v1/workplace/bookings/wp-urgent-16/resource-commands/command-screen-16',
+        correlationId: 'screen-16-e2e',
+        acceptedAt: NOW.toISOString(),
+        completedAt: minutesFromNow(1),
+        updatedAt: minutesFromNow(1),
+        requeryRequired: false,
+        idempotentReplay: false,
+      });
+    }
+  );
+
+  await page.goto(`${canonicalPath}&reservation=wp-urgent-16&reservationAuthority=WORKPLACE`);
+  const controls = page.getByTestId('workplace-reservation-resource-commands');
+  await controls.getByRole('textbox', { name: 'Action reason' }).fill('Replace lost NFC key');
+  await controls.getByRole('button', { name: 'Resend NFC key' }).click();
+  const confirm = page.getByRole('alertdialog', { name: 'Run Resend NFC key?' });
+  await expect(confirm).toBeVisible();
+  await confirm.getByRole('button', { name: 'Confirm' }).click();
+
+  await expect(controls).toContainText('Provider result requires review');
+  expect(previewBodies).toEqual([
+    { commandType: 'NFC_KEY_RESEND', expectedBookingVersion: 7, parameters: {} },
+  ]);
+  expect(executeBodies).toEqual([
+    {
+      previewId: 'preview-screen-16',
+      expectedBookingVersion: 7,
+      reason: 'Replace lost NFC key',
+      explicitConfirmation: true,
+    },
+  ]);
+  expect(executeKeys).toHaveLength(1);
+  expect(executeKeys[0]).toMatch(/^workplace:resource-command:/u);
+
+  await controls.getByRole('button', { name: 'Check provider result' }).click();
+  await expect(controls).toContainText('Provider action completed');
+  expect(reconcileBodies).toEqual([{ reason: 'Replace lost NFC key', explicitConfirmation: true }]);
+  expect(reconcileKeys).toHaveLength(1);
+  expect(reconcileKeys[0]).toMatch(/^workplace:resource-command-reconcile:/u);
 });
 
 test('keeps Calendar reservations actionable when Workplace is unavailable', async ({ page }) => {

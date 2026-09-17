@@ -165,6 +165,11 @@ export function mailProposalPresentation(
   };
 }
 
+export function mailProposalOwnsRoute(proposal: MailActionProposal, route: string) {
+  const descriptor = descriptors[proposal.type];
+  return Boolean(descriptor && matchesRoutePrefix(route, descriptor.routePrefix));
+}
+
 function reviewBlock(
   proposal: MailActionProposal,
   descriptor: ProposalDescriptor,

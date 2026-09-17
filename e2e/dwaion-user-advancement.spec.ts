@@ -1,3 +1,6 @@
+import { mkdirSync } from 'node:fs';
+import { join } from 'node:path';
+
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import type { AgentComponents } from '../libs/api-contracts/src';
@@ -10,6 +13,9 @@ type Proposal = AgentComponents['schemas']['AgentProposal'];
 const NOW = '2026-09-17T01:30:00.000Z';
 const HANDOFF_ID = 'a3f9af2f-c4a4-46fd-af96-62cccb876f73';
 const RECEIPT_ID = 'f9a72e5d-1fb1-4bf4-a868-87e5fe3444c2';
+const OUTPUT = join(process.cwd(), 'output', 'dwaion-user-advancement-final');
+
+test.beforeAll(() => mkdirSync(OUTPUT, { recursive: true }));
 
 async function mockProposalActionReview(page: Page) {
   await page.clock.setFixedTime(new Date(NOW));
@@ -22,16 +28,47 @@ async function mockProposalActionReview(page: Page) {
 
   let proposal: Proposal = {
     ...structuredClone(PROPOSAL_DESIGN_ITEMS[0]),
+    kind: 'APPROVAL',
+    actionKey: 'APPROVAL.REQUEST.CREATE',
     expiresAt: '2026-09-18T09:00:00.000Z',
     content: {
       ...structuredClone(PROPOSAL_DESIGN_ITEMS[0].content),
-      title: '내일 회의 준비 항목 확인',
-      summary: '고객 미팅 전 미완료된 준비 항목을 검토합니다.',
-      rationale: '회의가 내일로 예정되어 있고 준비 업무 2건이 완료되지 않았습니다.',
+      title: '2026 Q3 클라우드 인프라 오토스케일링 및 GPU 예약 결재 상신',
+      summary: '검증된 워크로드·예산·보안 근거를 토대로 전자결재 행동 초안을 검토합니다.',
+      rationale:
+        '주간 워크로드 85% 초과 감지 및 FinOps 분기 예산 잔여액 충족에 따른 선제 인프라 스케일아웃 권고입니다.',
       actionInputs: {
-        catalogItemId: 'customer-meeting-preparation',
-        requestedFor: 'me',
+        currentInfrastructure: '2노드 인프라 · 수동 대기',
+        proposedInfrastructure: 'GPU 클러스터 4노드 증설 · g5.2xlarge × 4',
+        currentMonthlyCost: '1,800,000 KRW',
+        incrementalMonthlyCost: '4,500,000 KRW',
+        accountCode: 'EXP-2026-IT-09',
+        department: 'IT인프라전략그룹 / 백엔드팀',
+        approvers: ['approver@example.test'],
       },
+      evidence: [
+        {
+          sourceType: 'TELEMETRY',
+          referenceId: 'tele-infra-prod-kr',
+          label: 'AWS CloudWatch 워크로드 메트릭',
+          occurredAt: '2026-09-17T01:29:00.000Z',
+          route: '/observability/metrics/tele-infra-prod-kr',
+        },
+        {
+          sourceType: 'FINOPS_LEDGER',
+          referenceId: '2026-Q3',
+          label: 'FinOps 예산 원장 정책 v4.2',
+          occurredAt: '2026-09-17T01:25:00.000Z',
+          route: '/finance/budgets/2026-Q3',
+        },
+        {
+          sourceType: 'SECURITY_POLICY',
+          referenceId: 'SEC-RULE-2026',
+          label: '보안 심의 가이드라인',
+          occurredAt: '2026-09-17T01:20:00.000Z',
+          route: '/security/policies/SEC-RULE-2026',
+        },
+      ],
     },
   };
   let handoff = {
@@ -40,7 +77,7 @@ async function mockProposalActionReview(page: Page) {
     actionKey: proposal.actionKey!,
     state: 'REVIEW_REQUIRED',
     version: 1,
-    targetRoute: '/services/catalog',
+    targetRoute: '/approvals/requests/new',
     approvalRequired: true,
     receiptId: null as string | null,
     createdAt: NOW,
@@ -130,17 +167,28 @@ function assertCanvasUsesAvailableWidth(page: Page, testId: string) {
 for (const width of [1440, 390] as const) {
   test(`U00 proposal inbox and governed action review match the approved hierarchy at ${width}px`, async ({
     page,
-  }, testInfo) => {
+  }) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
     const fixture = await mockProposalActionReview(page);
     await page.goto('/dwaion/proposals');
 
     await expect(page.getByRole('heading', { name: 'AI 제안함', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: /전체/ })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: '제안 검색' })).toBeVisible();
-    await expect(page.getByText('내일 회의 준비 항목 확인', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: '전체', exact: true })).toBeVisible();
+    if (width === 1440) {
+      await expect(page.getByRole('textbox', { name: '제안 검색' })).toBeVisible();
+    }
+    await expect(
+      page
+        .getByText('2026 Q3 클라우드 인프라 오토스케일링 및 GPU 예약 결재 상신', {
+          exact: true,
+        })
+        .first()
+    ).toBeVisible();
+    await page.evaluate(() => {
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    });
     await page.screenshot({
-      path: testInfo.outputPath(`U00-proposal-inbox-${width}.png`),
+      path: join(OUTPUT, `U00-proposal-inbox-${width}.png`),
       fullPage: true,
       animations: 'disabled',
     });
@@ -152,21 +200,63 @@ for (const width of [1440, 390] as const) {
 
     const review = page.getByTestId('dwaion-proposal-action-review');
     await expect(review).toBeVisible();
+    await expect(review.getByText('제안 수락 기반 행동 검토')).toBeVisible();
+    await expect(review.getByText('불변 결속 확인', { exact: false })).toBeVisible();
+    await expect(review.getByText('응답 계약')).toBeVisible();
+    await expect(review.getByText('전송 채널 증명')).toBeVisible();
     await expect(review.getByText('원본 제안 및 근거')).toBeVisible();
     await expect(review.getByText('행동 초안 검토')).toBeVisible();
+    await expect(review.getByText('실행 전후 영향 대조')).toBeVisible();
+    await expect(review.getByText('원 업무 앱 재검증 필요')).toBeVisible();
+    await expect(
+      review.getByText('/observability/metrics/tele-infra-prod-kr', { exact: false })
+    ).toBeVisible();
+    await expect(review.getByText('원본 지표 추이')).toBeVisible();
+    await expect(review.getByText('시계열 데이터 미제공')).toBeVisible();
+    await expect(review.getByText('승인 필요 계약 · 필수')).toBeVisible();
+    await expect(review.getByText('필수 증빙·첨부 검증')).toBeVisible();
     await expect(review.getByText('인계 및 거버넌스 통제')).toBeVisible();
+    await expect(review.getByText('인계 버전')).toBeVisible();
     await expect(review.getByText('감사 추적 영수증')).toBeVisible();
     await expect(review.getByText('최종 영수증 대기 중입니다.')).toBeVisible();
+    await expect(review.getByText('DWAI·ON 계약 아키텍처 상태')).toBeVisible();
     expect(fixture.handoffRequests).toHaveLength(1);
     expect(fixture.handoffRequests[0]).toMatchObject({
       expectedVersion: 3,
       reviewedInputs: {
-        catalogItemId: 'customer-meeting-preparation',
-        requestedFor: 'me',
+        currentInfrastructure: '2노드 인프라 · 수동 대기',
+        proposedInfrastructure: 'GPU 클러스터 4노드 증설 · g5.2xlarge × 4',
+        currentMonthlyCost: '1,800,000 KRW',
+        incrementalMonthlyCost: '4,500,000 KRW',
+        accountCode: 'EXP-2026-IT-09',
+        department: 'IT인프라전략그룹 / 백엔드팀',
+        approvers: ['approver@example.test'],
       },
     });
     expect(fixture.handoffRequests[0]?.commandId).toEqual(expect.any(String));
     expect(fixture.handoffRequests[0]?.idempotencyKey).toEqual(expect.any(String));
+
+    await review.getByRole('button', { name: '초안 임시 보관' }).click();
+    await expect(review.getByText(/이 브라우저 세션에 보관됨/)).toBeVisible();
+    expect(
+      await page.evaluate((proposalId) => {
+        const raw = sessionStorage.getItem(`dwaion:proposal-action-draft:${proposalId}`);
+        return raw ? JSON.parse(raw) : null;
+      }, fixture.proposalId)
+    ).toMatchObject({
+      proposalId: fixture.proposalId,
+      handoffId: HANDOFF_ID,
+      reviewedInputs: {
+        currentInfrastructure: '2노드 인프라 · 수동 대기',
+        proposedInfrastructure: 'GPU 클러스터 4노드 증설 · g5.2xlarge × 4',
+        currentMonthlyCost: '1,800,000 KRW',
+        incrementalMonthlyCost: '4,500,000 KRW',
+        accountCode: 'EXP-2026-IT-09',
+        department: 'IT인프라전략그룹 / 백엔드팀',
+        approvers: ['approver@example.test'],
+      },
+    });
+    await expect(review.getByRole('button', { name: '전자결재 원본 검토로 인계' })).toBeVisible();
 
     const geometry = await assertCanvasUsesAvailableWidth(page, 'dwaion-proposal-action-review');
     expect(Math.abs(geometry.startDelta)).toBeLessThanOrEqual(1.5);
@@ -196,8 +286,11 @@ for (const width of [1440, 390] as const) {
     expect(
       audit.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? ''))
     ).toEqual([]);
+    await page.evaluate(() => {
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    });
     await page.screenshot({
-      path: testInfo.outputPath(`U00-proposal-action-review-${width}.png`),
+      path: join(OUTPUT, `U00-proposal-action-review-${width}.png`),
       fullPage: true,
       animations: 'disabled',
     });

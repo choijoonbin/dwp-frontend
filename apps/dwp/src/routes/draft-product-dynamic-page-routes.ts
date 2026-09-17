@@ -7,13 +7,6 @@ import type { ProductPageRouteContractSource } from './product-route-contract-so
  */
 export const DYNAMIC_DRAFT_PRODUCT_PAGE_ROUTES: readonly ProductPageRouteContractSource[] = [
   {
-    routeId: 'dwaion.work.conversation-detail',
-    pattern: '/dwaion/conversations/:conversationId',
-    productId: 'dwaion',
-    surfaceId: 'dwaion.work',
-    routeContractKey: 'route.dwaion.work.conversation-detail.page',
-  },
-  {
     routeId: 'notifications.work.notification-detail',
     pattern: '/notifications/center/:notificationId',
     productId: 'notifications',

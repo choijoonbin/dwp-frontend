@@ -253,6 +253,124 @@ export type MailDeliveryAuditExport = {
   downloadUrl?: string | null;
 };
 
+export type MailOrganizationWritingAssetKind = 'TEMPLATE' | 'SIGNATURE';
+export type MailOrganizationWritingAssetState =
+  'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'PUBLISHED' | 'RETIRED';
+
+export type MailOrganizationWritingAsset = {
+  assetId: string;
+  kind: MailOrganizationWritingAssetKind;
+  publicationKey: string;
+  publicationVersion: number;
+  publicationState: MailOrganizationWritingAssetState;
+  supersedesId?: string | null;
+  name: string;
+  subject?: string | null;
+  body: string;
+  bodyFormat: 'TEXT' | 'HTML';
+  mandatoryContent: string;
+  defaultForNew: boolean;
+  defaultForReply: boolean;
+  createdBy: number;
+  approvedBy?: number | null;
+  submittedAt?: string | null;
+  approvedAt?: string | null;
+  publishedAt?: string | null;
+  retiredAt?: string | null;
+  version: number;
+  updatedAt: string;
+};
+
+export type MailOrganizationWritingAssetDraftInput = {
+  name: string;
+  subject?: string | null;
+  body: string;
+  bodyFormat: 'TEXT' | 'HTML';
+  mandatoryContent: string;
+  defaultForNew: boolean;
+  defaultForReply: boolean;
+  supersedesId?: string | null;
+  version?: number | null;
+};
+
+export type MailOrganizationWritingAssetMutationOptions = {
+  activeAccessMode: 'ELEVATED';
+  idempotencyKey: string;
+  correlationId?: string;
+};
+
+const MAIL_ORGANIZATION_ASSET_BASE = '/api/platform/v1/admin/mail/writing-assets';
+
+function mailOrganizationAssetHeaders(options: MailOrganizationWritingAssetMutationOptions) {
+  return {
+    'X-DWP-Active-Access-Mode': options.activeAccessMode,
+    'Idempotency-Key': options.idempotencyKey,
+    ...(options.correlationId ? { 'X-Correlation-ID': options.correlationId } : {}),
+  };
+}
+
+export async function getMailOrganizationWritingAssets(
+  input: {
+    kind?: MailOrganizationWritingAssetKind;
+    state?: MailOrganizationWritingAssetState | '';
+  } = {}
+): Promise<MailOrganizationWritingAsset[]> {
+  const search = new URLSearchParams();
+  if (input.kind) search.set('kind', input.kind);
+  if (input.state) search.set('state', input.state);
+  const query = search.size ? `?${search.toString()}` : '';
+  const response = await axiosInstance.get<ApiResponse<MailOrganizationWritingAsset[]>>(
+    `${MAIL_ORGANIZATION_ASSET_BASE}${query}`
+  );
+  return response.data.data;
+}
+
+export async function createMailOrganizationWritingAssetDraft(
+  kind: MailOrganizationWritingAssetKind,
+  input: MailOrganizationWritingAssetDraftInput,
+  options: MailOrganizationWritingAssetMutationOptions
+): Promise<MailOrganizationWritingAsset> {
+  const response = await axiosInstance.post<
+    ApiResponse<MailOrganizationWritingAsset>,
+    MailOrganizationWritingAssetDraftInput
+  >(`${MAIL_ORGANIZATION_ASSET_BASE}/${kind}/drafts`, input, {
+    headers: mailOrganizationAssetHeaders(options),
+  });
+  return response.data.data;
+}
+
+export async function updateMailOrganizationWritingAssetDraft(
+  asset: Pick<MailOrganizationWritingAsset, 'assetId' | 'kind'>,
+  input: MailOrganizationWritingAssetDraftInput,
+  options: MailOrganizationWritingAssetMutationOptions
+): Promise<MailOrganizationWritingAsset> {
+  const response = await axiosInstance.put<
+    ApiResponse<MailOrganizationWritingAsset>,
+    MailOrganizationWritingAssetDraftInput
+  >(
+    `${MAIL_ORGANIZATION_ASSET_BASE}/${asset.kind}/drafts/${encodeURIComponent(asset.assetId)}`,
+    input,
+    { headers: mailOrganizationAssetHeaders(options) }
+  );
+  return response.data.data;
+}
+
+export async function transitionMailOrganizationWritingAsset(
+  asset: Pick<MailOrganizationWritingAsset, 'assetId' | 'kind' | 'version'>,
+  action: 'submit' | 'approve' | 'publish' | 'retire',
+  options: MailOrganizationWritingAssetMutationOptions
+): Promise<MailOrganizationWritingAsset> {
+  const response = await axiosInstance.post<
+    ApiResponse<MailOrganizationWritingAsset>,
+    { version: number }
+  >(
+    `${MAIL_ORGANIZATION_ASSET_BASE}/${asset.kind}/${encodeURIComponent(asset.assetId)}/${action}`,
+    { version: asset.version },
+    { headers: mailOrganizationAssetHeaders(options) }
+  );
+  return response.data.data;
+}
+
 export async function getMailAdminOperations(): Promise<MailAdminOperationsSnapshot> {
   const response = await axiosInstance.get<ApiResponse<MailAdminOperationsSnapshot>>(
     '/api/platform/v1/admin/mail/operations'

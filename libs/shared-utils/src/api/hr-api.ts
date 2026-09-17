@@ -1,9 +1,11 @@
 import { axiosInstance } from '../axios-instance';
+import { mailProposalMutationHeaders } from './mail-proposal-binding';
 import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
 import { productSurfaceReadScopeConfig } from './product-surface-read-scope';
 
 import type { ApiResponse } from '../types';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
+import type { MailProposalMutationBinding } from './mail-proposal-binding';
 
 export type HrEmployeeContext = {
   personId: string;
@@ -507,12 +509,20 @@ export async function createHrLeaveRequest(
     requestedMinutes: number;
     reason?: string;
   },
-  authority: ProductSurfaceGovernedMutationAuthority
+  authority: ProductSurfaceGovernedMutationAuthority,
+  proposalBinding?: MailProposalMutationBinding
 ): Promise<HrLeaveRequest> {
+  const governed = productSurfaceGovernedMutationConfig(authority);
   const response = await axiosInstance.post<ApiResponse<HrLeaveRequest>, typeof request>(
     `${BASE}/absence/requests`,
     request,
-    productSurfaceGovernedMutationConfig(authority)
+    {
+      ...governed,
+      headers: {
+        ...governed.headers,
+        ...mailProposalMutationHeaders(proposalBinding),
+      },
+    }
   );
   return response.data.data;
 }

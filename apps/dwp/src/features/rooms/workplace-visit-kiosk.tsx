@@ -61,10 +61,10 @@ export function WorkplaceVisitKiosk({ auth }: { auth: WorkplaceKioskDeviceAuth }
   const session = sessionQuery.data ?? null;
   const ready = Boolean(
     session?.state === 'READY' &&
-      session.active &&
-      session.privacyNoticeAccepted &&
-      session.deviceId &&
-      session.siteId
+    session.active &&
+    session.privacyNoticeAccepted &&
+    session.deviceId &&
+    session.siteId
   );
   const stateMessage = session ? kioskMessage(session.state) : null;
   const lookup = useMutation({

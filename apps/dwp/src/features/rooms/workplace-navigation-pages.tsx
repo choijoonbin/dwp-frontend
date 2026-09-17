@@ -82,11 +82,19 @@ export function WorkplaceWayfindingPage() {
           resource.resourceId === occupancy.resourceId && resource.siteId === selectedSiteId
       )
   )?.resourceId;
+  const requestedDestinationResourceId = search.get('destinationResourceId')?.trim() ?? '';
+  const authorizedDestinationResourceId = contextQuery.data.resources.some(
+    (resource) =>
+      resource.resourceId === requestedDestinationResourceId && resource.siteId === selectedSiteId
+  )
+    ? requestedDestinationResourceId
+    : '';
   const defaultResourceId =
-    currentBookingResourceId ??
-    contextQuery.data.resources.find(
-      (resource) => resource.siteId === selectedSiteId && resource.state === 'AVAILABLE'
-    )?.resourceId ??
+    (authorizedDestinationResourceId ||
+      currentBookingResourceId ||
+      contextQuery.data.resources.find(
+        (resource) => resource.siteId === selectedSiteId && resource.state === 'AVAILABLE'
+      )?.resourceId) ??
     '';
   return (
     <>

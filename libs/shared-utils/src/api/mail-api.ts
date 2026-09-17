@@ -51,6 +51,14 @@ export type MailRecipient = {
   displayName?: string | null;
 };
 
+export type MailMessageAttachment = {
+  attachmentId: string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  checksumSha256?: string;
+};
+
 export type MailThread = {
   threadId: string;
   accountId: string;
@@ -85,7 +93,7 @@ export type MailMessage = {
   direction: 'INBOUND' | 'OUTBOUND' | 'DRAFT';
   bodyFormat: 'TEXT' | 'HTML';
   body: string;
-  attachments: Array<Record<string, unknown>>;
+  attachments: MailMessageAttachment[];
   sentAt: string;
   deliveryState: MailDeliveryState;
   acceptedAt?: string | null;
@@ -117,6 +125,21 @@ export type MailActionProposal = {
   requiredPermissionCode?: string | null;
   targetRoute?: string | null;
   expiresAt?: string | null;
+  version: number;
+};
+
+export type MailProposalHandoffStatus =
+  'ACCEPTED' | 'EXECUTED' | 'CANCELLED' | 'FAILED' | 'UNKNOWN';
+
+export type MailProposalHandoff = {
+  proposalId: string;
+  commandId: string;
+  ownerRoute: string;
+  returnTo?: string | null;
+  focus?: string | null;
+  status: MailProposalHandoffStatus;
+  resultRef?: string | null;
+  updatedAt?: string | null;
   version: number;
 };
 
@@ -576,6 +599,27 @@ export async function decideMailProposal(
   return response.data.data;
 }
 
+export async function getMailProposalHandoff(proposalId: string): Promise<MailProposalHandoff> {
+  const response = await axiosInstance.get<ApiResponse<MailProposalHandoff>>(
+    `/api/platform/v1/mail/proposals/${encodeURIComponent(proposalId)}/handoff`
+  );
+  return response.data.data;
+}
+
+export async function cancelMailProposalHandoff(
+  proposalId: string,
+  input: {
+    commandId: string;
+    version: number;
+  }
+): Promise<MailProposalHandoff> {
+  const response = await axiosInstance.post<ApiResponse<MailProposalHandoff>, typeof input>(
+    `/api/platform/v1/mail/proposals/${encodeURIComponent(proposalId)}/handoff/cancel`,
+    input
+  );
+  return response.data.data;
+}
+
 export async function getMailAdminOverview(): Promise<MailAdminOverview> {
   const response = await axiosInstance.get<ApiResponse<MailAdminOverview>>(
     '/api/platform/v1/admin/mail/overview'
@@ -583,13 +627,30 @@ export async function getMailAdminOverview(): Promise<MailAdminOverview> {
   return response.data.data;
 }
 
+export type MailAdminMutationOptions = {
+  idempotencyKey: string;
+};
+
+const MAIL_ADMIN_IDEMPOTENCY_KEY_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+
+function mailAdminMutationHeaders(options: MailAdminMutationOptions): Record<string, string> {
+  if (!MAIL_ADMIN_IDEMPOTENCY_KEY_PATTERN.test(options.idempotencyKey)) {
+    throw new Error('A UUID Idempotency-Key is required for Mail administration mutations.');
+  }
+  return { 'Idempotency-Key': options.idempotencyKey };
+}
+
 export async function updateMailPolicy(
-  input: Omit<MailTenantPolicy, 'aiAutoExecuteEnabled'>
+  input: Omit<MailTenantPolicy, 'aiAutoExecuteEnabled'>,
+  options: MailAdminMutationOptions
 ): Promise<MailTenantPolicy> {
   const response = await axiosInstance.put<
     ApiResponse<MailTenantPolicy>,
     Omit<MailTenantPolicy, 'aiAutoExecuteEnabled'>
-  >('/api/platform/v1/admin/mail/policy', input);
+  >('/api/platform/v1/admin/mail/policy', input, {
+    headers: mailAdminMutationHeaders(options),
+  });
   return response.data.data;
 }
 
@@ -601,11 +662,13 @@ export async function updateMailConnection(
     credentialRef?: string | null;
     state: MailConnectionState;
     version: number;
-  }
+  },
+  options: MailAdminMutationOptions
 ): Promise<MailConnection> {
   const response = await axiosInstance.put<ApiResponse<MailConnection>, typeof input>(
     `/api/platform/v1/admin/mail/connections/${encodeURIComponent(connectionId)}`,
-    input
+    input,
+    { headers: mailAdminMutationHeaders(options) }
   );
   return response.data.data;
 }
@@ -618,11 +681,13 @@ export async function updateMailSharedInbox(
     serviceTargetMinutes: number;
     lifecycleState: MailSharedInbox['lifecycleState'];
     version: number;
-  }
+  },
+  options: MailAdminMutationOptions
 ): Promise<MailSharedInbox> {
   const response = await axiosInstance.put<ApiResponse<MailSharedInbox>, typeof input>(
     `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}`,
-    input
+    input,
+    { headers: mailAdminMutationHeaders(options) }
   );
   return response.data.data;
 }

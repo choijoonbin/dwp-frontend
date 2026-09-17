@@ -151,7 +151,10 @@ const success = (route: Route, data: unknown) =>
     contentType: 'application/json',
     body: JSON.stringify({ status: 'SUCCESS', success: true, message: 'OK', data }),
   });
-async function session(page: Page) {
+async function session(
+  page: Page,
+  options: { hdSupported?: boolean; preferenceMethods?: string[] } = {}
+) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     userId: 42,
     locale: 'en',
@@ -162,21 +165,24 @@ async function session(page: Page) {
       effect: 'ALLOW',
     })),
   });
-  await page.addInitScript(() => {
-    let calls = 0;
-    Object.defineProperty(window, '__meetingMediaCalls', { get: () => calls });
-    Object.defineProperty(navigator, 'mediaDevices', {
-      configurable: true,
-      value: {
-        enumerateDevices: async () => [],
-        getSupportedConstraints: () => ({}),
-        getUserMedia: async () => {
-          calls += 1;
-          throw new DOMException('Not allowed', 'NotAllowedError');
+  await page.addInitScript(
+    ({ hdSupported }) => {
+      let calls = 0;
+      Object.defineProperty(window, '__meetingMediaCalls', { get: () => calls });
+      Object.defineProperty(navigator, 'mediaDevices', {
+        configurable: true,
+        value: {
+          enumerateDevices: async () => [],
+          getSupportedConstraints: () => (hdSupported ? { width: true, height: true } : {}),
+          getUserMedia: async () => {
+            calls += 1;
+            throw new DOMException('Not allowed', 'NotAllowedError');
+          },
         },
-      },
-    });
-  });
+      });
+    },
+    { hdSupported: options.hdSupported === true }
+  );
   await page.route('**/api/meetings/v1/templates**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/apply'))
@@ -196,7 +202,10 @@ async function session(page: Page) {
     if (path.endsWith('/' + templateId)) return success(route, template);
     return success(route, { items: [template], total: 1, page: 0, pageSize: 30 });
   });
-  await page.route('**/api/meetings/v1/preferences', (route) => success(route, preferences));
+  await page.route('**/api/meetings/v1/preferences', (route) => {
+    options.preferenceMethods?.push(route.request().method());
+    return success(route, preferences);
+  });
   await page.route('**/api/meetings/v1/schedule-draft', (route) =>
     success(route, {
       draft: null,
@@ -274,6 +283,38 @@ test('new user menu routes render actual templates and preferences, never admini
     page.getByRole('heading', { name: en.preferences.title, exact: true })
   ).toBeVisible();
   expect(await page.evaluate(() => Reflect.get(window, '__meetingMediaCalls'))).toBe(0);
+});
+
+test('HD preference is capability-gated, local-only, and does not acquire an idle camera', async ({
+  page,
+}, testInfo) => {
+  const preferenceMethods: string[] = [];
+  await session(page, { hdSupported: true, preferenceMethods });
+  await page.goto('/meetings/preferences');
+  const hd = page.getByRole('switch', { name: en.stitch.devices.hd, exact: true });
+  await expect(hd).toBeEnabled();
+  await hd.click();
+  await expect(hd).toBeChecked();
+  expect(await page.evaluate(() => Reflect.get(window, '__meetingMediaCalls'))).toBe(0);
+  await page
+    .getByRole('button', { name: en.preferences.save, exact: true })
+    .filter({ visible: true })
+    .click();
+  await expect(page.getByText(en.preferences.saved, { exact: true })).toBeVisible();
+  const saved = await page.evaluate(() => {
+    const key = Object.keys(localStorage).find((candidate) =>
+      candidate.startsWith('dwp:meetings:devices:v1:')
+    );
+    return key ? JSON.parse(localStorage.getItem(key) ?? 'null') : null;
+  });
+  expect(saved).toMatchObject({ hdVideo: true });
+  expect(preferenceMethods).toContain('GET');
+  expect(preferenceMethods).not.toContain('PUT');
+  await noOverflow(page);
+  await accessible(page);
+  await page
+    .locator('#meeting-preferences-video')
+    .screenshot({ path: testInfo.outputPath('meeting-hd-preference.png') });
 });
 
 test('template selection revalidates current source and opens a structured schedule without private URL content', async ({

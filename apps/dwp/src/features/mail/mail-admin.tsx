@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -38,6 +38,7 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
+import { resolveMailAdminCommandKey } from './mail-admin-command-key';
 import {
   buildMailConnectionReadiness,
   canSetMailConnectionState,
@@ -122,7 +123,9 @@ export function MailAdminConnections({ onBack }: { onBack?: () => void } = {}) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { hasPermission } = usePermissions();
-  const canManage = hasPermission('ADMIN.MAIL', 'MANAGE');
+  const canManage = hasPermission('ADMIN.MAIL', 'CONNECTION_MANAGE');
+  const commandKeys = useRef(new Map<string, string>());
+  const activeCommandScope = useRef<string | null>(null);
   const [editing, setEditing] = useState<MailConnection | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [mailDomain, setMailDomain] = useState('');
@@ -153,15 +156,22 @@ export function MailAdminConnections({ onBack }: { onBack?: () => void } = {}) {
       if (!editing || !canSetMailConnectionState(state, executionReadiness)) {
         throw new Error(MAIL_CONNECTION_ACTIVATION_BLOCKED);
       }
-      return updateMailConnection(editing.connectionId, {
+      const input = {
         displayName: displayName.trim(),
         mailDomain: mailDomain.trim() || null,
         credentialRef: credentialRef.trim() || null,
         state,
         version: editing.version,
+      };
+      const scope = `connection:${editing.connectionId}:${JSON.stringify(input)}`;
+      activeCommandScope.current = scope;
+      return updateMailConnection(editing.connectionId, input, {
+        idempotencyKey: resolveMailAdminCommandKey(commandKeys.current, scope),
       });
     },
     onSuccess: async () => {
+      if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
+      activeCommandScope.current = null;
       setEditing(null);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.connections.saved'));
@@ -342,22 +352,32 @@ export function MailAdminSharedInboxes({ onBack }: { onBack?: () => void } = {})
   const queryClient = useQueryClient();
   const toast = useToast();
   const { hasPermission } = usePermissions();
-  const canManage = hasPermission('ADMIN.MAIL', 'MANAGE');
+  const canManage = hasPermission('ADMIN.MAIL', 'SHARED_INBOX_MANAGE');
+  const commandKeys = useRef(new Map<string, string>());
+  const activeCommandScope = useRef<string | null>(null);
   const [editing, setEditing] = useState<MailSharedInbox | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [purpose, setPurpose] = useState('');
   const [serviceTargetMinutes, setServiceTargetMinutes] = useState(240);
   const [lifecycleState, setLifecycleState] = useState<MailSharedInbox['lifecycleState']>('ACTIVE');
   const mutation = useMutation({
-    mutationFn: () =>
-      updateMailSharedInbox(editing!.sharedInboxId, {
+    mutationFn: () => {
+      const input = {
         displayName: displayName.trim(),
         purpose: purpose.trim() || null,
         serviceTargetMinutes,
         lifecycleState,
         version: editing!.version,
-      }),
+      };
+      const scope = `shared-inbox:${editing!.sharedInboxId}:${JSON.stringify(input)}`;
+      activeCommandScope.current = scope;
+      return updateMailSharedInbox(editing!.sharedInboxId, input, {
+        idempotencyKey: resolveMailAdminCommandKey(commandKeys.current, scope),
+      });
+    },
     onSuccess: async () => {
+      if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
+      activeCommandScope.current = null;
       setEditing(null);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.shared.saved'));
@@ -511,14 +531,16 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { hasPermission } = usePermissions();
-  const canManage = hasPermission('ADMIN.MAIL', 'MANAGE');
+  const canManage = hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
+  const commandKeys = useRef(new Map<string, string>());
+  const activeCommandScope = useRef<string | null>(null);
   const [policy, setPolicy] = useState<MailTenantPolicy | null>(null);
   useEffect(() => {
     if (query.data?.policy) setPolicy(query.data.policy);
   }, [query.data?.policy]);
   const mutation = useMutation({
-    mutationFn: () =>
-      updateMailPolicy({
+    mutationFn: () => {
+      const input = {
         externalSenderBanner: policy!.externalSenderBanner,
         blockRemoteImages: policy!.blockRemoteImages,
         allowSharedInboxes: policy!.allowSharedInboxes,
@@ -527,8 +549,16 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
         retentionDays: policy!.retentionDays,
         maximumAttachmentMb: policy!.maximumAttachmentMb,
         version: policy!.version,
-      }),
+      };
+      const scope = `policy:${JSON.stringify(input)}`;
+      activeCommandScope.current = scope;
+      return updateMailPolicy(input, {
+        idempotencyKey: resolveMailAdminCommandKey(commandKeys.current, scope),
+      });
+    },
     onSuccess: async () => {
+      if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
+      activeCommandScope.current = null;
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.policies.saved'));
     },
@@ -596,7 +626,7 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
                   <Switch
                     checked={policy[key]}
                     disabled={!canManage}
-                    inputProps={{ 'aria-label': label }}
+                    slotProps={{ input: { 'aria-label': label } }}
                     onChange={(_event, checked) => setPolicy({ ...policy, [key]: checked })}
                   />
                 </Stack>

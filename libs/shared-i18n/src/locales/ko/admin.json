@@ -2480,7 +2480,8 @@
         "state": "상태",
         "health": "준비 상태",
         "activity24h": "24시간 활동",
-        "lastUsed": "최근 사용"
+        "lastUsed": "최근 사용",
+        "expiresAt": "자격 증명 만료"
       },
       "failedCount": "실패 {{count}}",
       "metrics": {
@@ -2536,6 +2537,13 @@
         "copyEndpoint": "SCIM 엔드포인트 복사",
         "endpointCopied": "SCIM 엔드포인트를 복사했습니다.",
         "tokenPrefix": "자격 증명 식별자: {{prefix}}",
+        "credentialGovernance": "자격 증명 거버넌스",
+        "purpose": "목적",
+        "owner": "담당 사용자 ID",
+        "scope": "실제 적용 범위",
+        "issuedAt": "발급 시각",
+        "expiresAt": "만료 시각",
+        "rotatedAt": "최근 교체",
         "mapping": "지원 속성 계약",
         "mappingDescription": "운영 전환 전에 테넌트 IdP 매핑을 승인해야 합니다. DWP는 다음의 안정된 SCIM 투영을 수신합니다.",
         "recentEvents": "최근 커넥터 근거",
@@ -2551,7 +2559,23 @@
         "title": "새 SCIM 커넥터",
         "key": "커넥터 키",
         "keyHelp": "프로바이더 연동에 사용할 고정 식별자",
-        "name": "표시명"
+        "name": "표시명",
+        "purpose": "운영 목적",
+        "purposeHelp": "이 비인간 자격 증명이 필요한 이유와 정기 검토 대상을 기록합니다.",
+        "scope": "허용할 SCIM 리소스",
+        "usersScope": "사용자 리소스",
+        "groupsScope": "그룹 리소스",
+        "scopeHelp": "선택한 USERS·GROUPS 범위를 모든 SCIM 요청에서 실제로 집행합니다.",
+        "ttl": "자격 증명 유효기간",
+        "ttlDays": "{{count}}일"
+      },
+      "rotation": {
+        "title": "SCIM 자격 증명 교체",
+        "description": "{{name}}의 새 자격 증명을 발급합니다.",
+        "immediateImpact": "교체 즉시 기존 토큰이 무효화됩니다. 동기화를 재개하기 전에 ID 공급자의 토큰을 갱신하세요.",
+        "reason": "교체 사유",
+        "confirmation": "기존 토큰이 즉시 중단된다는 점을 확인했습니다.",
+        "submit": "자격 증명 교체"
       },
       "secret": {
         "title": "SCIM Bearer 토큰",

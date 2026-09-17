@@ -193,6 +193,85 @@ test('uses the authoritative command response while the overview requery is dela
   expect(evidence.commandBodies[1]).toMatchObject({ expectedVersion: 3 });
 });
 
+test('previews, confirms, receipts and downloads a verified aggregate board report', async ({
+  page,
+}) => {
+  const evidence = await mockWorkplaceSpacePlanning(page);
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await openPlanning(page);
+
+  const report = page.getByTestId('space-planning-board-report');
+  await expect(report).toBeVisible();
+  await report
+    .getByRole('textbox', { name: 'Export reason' })
+    .fill('Quarterly board review of aggregate capacity and demand');
+  await report.getByRole('button', { name: 'Preview board report' }).click();
+  const preview = page.getByTestId('space-planning-board-report-preview');
+  await expect(preview).toContainText('40 → 44');
+  await expect(preview).toContainText('aggregate operational metrics only');
+
+  await report
+    .getByRole('checkbox', {
+      name: 'I reviewed this aggregate snapshot and confirm the governed export.',
+    })
+    .check();
+  await report.getByRole('button', { name: 'Create board report' }).click();
+  const receipt = page.getByTestId('space-planning-board-report-receipt');
+  await expect(receipt).toContainText('SUCCEEDED');
+  await expect(receipt).toContainText('workplace-space-planning-board-report-22000000.pdf');
+
+  await receipt.getByRole('button', { name: 'Refresh receipt' }).click();
+  await expect.poll(() => evidence.reportRequests).toContain('receipt');
+  const contentResponse = page.waitForResponse((response) =>
+    response.url().includes(`/space-planning/reports/${PLANNING_IDS.reportCommand}/content`)
+  );
+  await receipt.getByRole('button', { name: 'Download verified report' }).click();
+  await contentResponse;
+
+  expect(evidence.reportRequests).toEqual(['preview', 'execute', 'receipt', 'content']);
+  expect(evidence.commandBodies[0]).toMatchObject({
+    scenarioId: PLANNING_IDS.scenario,
+    expectedScenarioVersion: 2,
+    format: 'PDF',
+    reason: 'Quarterly board review of aggregate capacity and demand',
+  });
+  expect(evidence.commandBodies[1]).toMatchObject({
+    previewId: PLANNING_IDS.reportPreview,
+    expectedPreviewVersion: 1,
+    expectedScenarioVersion: 2,
+    explicitConfirmation: true,
+  });
+  expect(evidence.reportHeaders[1]?.['x-dwp-active-access-mode']).toBe('ELEVATED');
+  expect(evidence.reportHeaders[1]?.['x-dwp-expected-decision-revision']).toMatch(/^psr-/u);
+  expect(evidence.reportHeaders[3]?.accept).toBe('application/pdf');
+});
+
+test('fails closed when board-report export permission is absent', async ({ page }) => {
+  await mockWorkplaceSpacePlanning(page, { denyReportExport: true });
+  await openPlanning(page);
+  const denied = page.getByTestId('space-planning-board-report');
+  await expect(denied).toContainText('ADMIN.WORKPLACE:EXPORT permission is required');
+  await expect(denied.getByRole('button', { name: 'Preview board report' })).toBeDisabled();
+});
+
+test('fails closed when the source planning preview expired', async ({ page }) => {
+  await mockWorkplaceSpacePlanning(page, { expiredScenarioPreview: true });
+  await openPlanning(page);
+  const expired = page.getByTestId('space-planning-board-report');
+  await expect(expired).toContainText('Create a current scenario preview');
+  await expect(expired.getByRole('button', { name: 'Preview board report' })).toBeDisabled();
+});
+
+test('keeps a report preview service failure visible and non-actionable', async ({ page }) => {
+  await mockWorkplaceSpacePlanning(page, { failReportPreview: true });
+  await openPlanning(page);
+  const failed = page.getByTestId('space-planning-board-report');
+  await failed.getByRole('textbox', { name: 'Export reason' }).fill('Verify failure handling');
+  await failed.getByRole('button', { name: 'Preview board report' }).click();
+  await expect(failed).toContainText('authoritative report service is temporarily unavailable');
+  await expect(failed.getByRole('button', { name: 'Create board report' })).toHaveCount(0);
+});
+
 test('keeps Korean mobile layouts usable at 390 and 320 pixels with high contrast', async ({
   page,
 }) => {

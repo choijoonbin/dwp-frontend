@@ -37,11 +37,32 @@ function fields(value: unknown): value is MailDraftFields {
 }
 
 export function mailDraftFieldsFromDetail(detail: MailAdvancedThreadDetail): MailDraftFields {
+  const primaryRecipient = detail.thread.participants[0];
   return {
-    toEmail: detail.thread.participants[0]?.email ?? '',
+    toEmail: primaryRecipient?.email ?? '',
     subject: detail.thread.subject,
     body: detail.messages.find((message) => message.direction === 'DRAFT')?.body ?? '',
-    composeOptions: detail.draftOptions,
+    composeOptions: detail.draftOptions ?? {
+      accountId: detail.thread.accountId,
+      recipients: primaryRecipient
+        ? [
+            {
+              type: 'TO',
+              name:
+                primaryRecipient.name && primaryRecipient.name !== primaryRecipient.email
+                  ? primaryRecipient.name
+                  : null,
+              email: primaryRecipient.email,
+            },
+          ]
+        : [],
+      bodyFormat: 'TEXT',
+      attachmentIds: [],
+      scheduledAt: null,
+      timeZone: null,
+      templateId: null,
+      signatureId: null,
+    },
   };
 }
 

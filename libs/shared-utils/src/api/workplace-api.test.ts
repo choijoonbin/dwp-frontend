@@ -176,10 +176,9 @@ describe('Workplace API boundary', () => {
     await cancelWorkplaceBooking('booking-1', 4, 'cancel-command-1');
     await releaseWorkplaceBooking('booking-1', 4, 'release-command-1');
 
-    expect(fetchMock.mock.calls.slice(1).map((call) => [
-      call[0],
-      (call[1] as RequestInit).headers,
-    ])).toEqual([
+    expect(
+      fetchMock.mock.calls.slice(1).map((call) => [call[0], (call[1] as RequestInit).headers])
+    ).toEqual([
       [
         '/api/platform/v1/workplace/bookings/booking-1/check-in',
         expect.objectContaining({ 'Idempotency-Key': 'check-in-command-1' }),
@@ -226,9 +225,11 @@ describe('Workplace API boundary', () => {
     });
     await cancelWorkplaceBooking('booking-1', 5);
 
-    const commandKeys = fetchMock.mock.calls.slice(1).map(
-      (call) => ((call[1] as RequestInit).headers as Record<string, string>)['Idempotency-Key']
-    );
+    const commandKeys = fetchMock.mock.calls
+      .slice(1)
+      .map(
+        (call) => ((call[1] as RequestInit).headers as Record<string, string>)['Idempotency-Key']
+      );
     expect(commandKeys).toEqual([
       'workplace:booking-cancel:booking-1:v4',
       'workplace:booking-cancel:booking-1:v4',

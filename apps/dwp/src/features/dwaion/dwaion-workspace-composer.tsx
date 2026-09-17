@@ -6,6 +6,7 @@ import {
   Gauge,
   ListChecks,
   Mail,
+  Paperclip,
   PanelsTopLeft,
   ShieldCheck,
   Square,
@@ -52,6 +53,7 @@ const SOURCE_ICONS: Record<AskCitationSourceType, LucideIcon> = {
   APPROVAL_REQUEST: FileCheck2,
   APPROVAL_FORM: FileText,
   APPROVAL_OPERATION: Gauge,
+  ATTACHMENT: Paperclip,
 };
 
 export function DwaionWorkspaceComposer({

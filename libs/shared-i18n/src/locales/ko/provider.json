@@ -1904,6 +1904,7 @@
       "VALUE_UNAVAILABLE": "현재 유효값을 결정할 수 없습니다. 사유: {{reason}}"
     },
     "observationUnsupported": "게시된 유효값은 확인했지만 실행 대상의 적용 영수증을 수집하는 연결이 아직 없습니다. 실제 적용 완료로 간주하지 않습니다.",
+    "sampledGatewayObservation": "기능 롤아웃 증거는 권한 결정이 적용된 Gateway 요청 경로의 표본을 뜻합니다. 모든 Gateway replica가 수렴했다는 의미는 아닙니다.",
     "stages": {
       "desired": "원하는 상태",
       "effective": "현재 유효값",
@@ -1937,7 +1938,7 @@
       "OBSERVATION_UNSUPPORTED": "적용 관측 미지원",
       "PUBLISHED_UNOBSERVED": "게시됨 · 미관측",
       "APPLYING": "적용 중",
-      "CONVERGED": "전체 일치",
+      "CONVERGED": "관측 대상 일치",
       "PARTIAL": "일부 적용",
       "DRIFTED": "드리프트 발견",
       "FAILED": "적용 실패",

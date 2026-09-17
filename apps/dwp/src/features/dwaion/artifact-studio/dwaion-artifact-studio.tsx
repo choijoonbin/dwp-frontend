@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { FilePlus2, PanelLeftOpen, PanelRightOpen, RefreshCw, Users } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -17,7 +17,10 @@ import {
 } from '@dwp-frontend/design-system';
 
 import { DWAION_ARTIFACT_COPY_KO } from './dwaion-artifact-copy';
-import { DwaionArtifactConversationRail } from './dwaion-artifact-conversation-rail';
+import {
+  DwaionArtifactConversationRail,
+  type DwaionArtifactNavigationCapabilities,
+} from './dwaion-artifact-conversation-rail';
 import { DwaionArtifactCreateDialog } from './dwaion-artifact-create-dialog';
 import { DwaionArtifactEditor } from './dwaion-artifact-editor';
 import {
@@ -70,6 +73,9 @@ export function DwaionArtifactStudio({
   onExport,
   copy = DWAION_ARTIFACT_COPY_KO,
   formatTimestamp,
+  collaboration,
+  comments,
+  navigationCapabilities,
 }: {
   state: DwaionArtifactViewState;
   selectionAccessDenied?: boolean;
@@ -112,6 +118,9 @@ export function DwaionArtifactStudio({
   ) => Promise<void>;
   copy?: DwaionArtifactCopy;
   formatTimestamp?: (value: string) => string;
+  collaboration?: ReactNode;
+  comments?: ReactNode;
+  navigationCapabilities?: DwaionArtifactNavigationCapabilities;
 }) {
   const compact = useMediaQuery('(max-width:1199.95px)', { noSsr: true });
   const [artifactRailOpen, setArtifactRailOpen] = useState(false);
@@ -174,6 +183,7 @@ export function DwaionArtifactStudio({
           artifacts={artifacts}
           selectedId={document?.artifactId}
           canCreate={canCreate}
+          navigationCapabilities={navigationCapabilities}
           onCreate={() => setCreateOpen(true)}
           onSelect={(artifact) => {
             onSelect(artifact.artifactId);
@@ -186,13 +196,16 @@ export function DwaionArtifactStudio({
     </Stack>
   );
   const evidenceRail = (
-    <DwaionArtifactEvidenceRail
-      evidence={evidence}
-      preflight={preflight}
-      capabilities={document?.capabilities ?? null}
-      copy={copy}
-      formatTimestamp={formatTimestamp}
-    />
+    <Stack gap={1.5}>
+      {!compact ? comments : null}
+      <DwaionArtifactEvidenceRail
+        evidence={evidence}
+        preflight={preflight}
+        capabilities={document?.capabilities ?? null}
+        copy={copy}
+        formatTimestamp={formatTimestamp}
+      />
+    </Stack>
   );
 
   return (
@@ -317,6 +330,8 @@ export function DwaionArtifactStudio({
           </Typography>
         ) : null}
 
+        {collaboration}
+
         {state === 'loading' ? (
           <LoadingState label={copy.loading} variant="skeleton" skeletonHeights={[64, 360, 80]} />
         ) : state === 'error' ? (
@@ -370,24 +385,27 @@ export function DwaionArtifactStudio({
                   }
                 />
               ) : document ? (
-                <DwaionArtifactEditor
-                  artifact={document}
-                  preflight={preflight}
-                  exportReceipt={exportReceipt}
-                  canEdit={canEdit}
-                  canPublish={canPublish}
-                  canExport={canExport}
-                  preflightBusy={preflightBusy}
-                  publishBusy={publishBusy}
-                  exportBusy={exportBusy}
-                  onDraftChange={onDraftChange}
-                  onOpenVersions={() => setVersionsOpen(true)}
-                  onRunPreflight={onRunPreflight}
-                  onPublish={onPublish}
-                  onExport={() => setExportOpen(true)}
-                  copy={copy}
-                  formatTimestamp={formatTimestamp}
-                />
+                <Stack gap={2}>
+                  <DwaionArtifactEditor
+                    artifact={document}
+                    preflight={preflight}
+                    exportReceipt={exportReceipt}
+                    canEdit={canEdit}
+                    canPublish={canPublish}
+                    canExport={canExport}
+                    preflightBusy={preflightBusy}
+                    publishBusy={publishBusy}
+                    exportBusy={exportBusy}
+                    onDraftChange={onDraftChange}
+                    onOpenVersions={() => setVersionsOpen(true)}
+                    onRunPreflight={onRunPreflight}
+                    onPublish={onPublish}
+                    onExport={() => setExportOpen(true)}
+                    copy={copy}
+                    formatTimestamp={formatTimestamp}
+                  />
+                  {compact ? comments : null}
+                </Stack>
               ) : (
                 <GuidedEmptyState
                   kind="empty"

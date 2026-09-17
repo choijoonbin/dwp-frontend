@@ -25,7 +25,10 @@ export type DwaionRoutine = {
   description: string;
   status: DwaionRoutineStatus;
   revision: number;
-  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED';
+  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED' | 'WEBHOOK';
+  triggerType: 'SCHEDULED' | 'WEBHOOK';
+  webhookEventType: string | null;
+  webhookEndpointReference: string | null;
   sourceKeys: readonly string[];
   schedule: DwaionRoutineSchedule;
   consents: readonly DwaionRoutineConsent[];
@@ -68,6 +71,9 @@ export type DwaionRoutineCompensationPolicy = {
 export type DwaionRoutineDraft = {
   title: string;
   description: string;
+  triggerType: 'SCHEDULED' | 'WEBHOOK';
+  webhookEventType: string;
+  webhookEndpointReference: string;
   sourceKeys: readonly string[];
   schedule: DwaionRoutineSchedule;
   consentKeys: readonly DwaionRoutineConsent['key'][];
@@ -78,6 +84,7 @@ export type DwaionRoutineDraft = {
 };
 
 export type DwaionRoutineDryRunReceipt = {
+  routineRunId: string;
   routineId: string;
   routineRevision: number;
   evaluatedAt: string;
@@ -86,8 +93,9 @@ export type DwaionRoutineDryRunReceipt = {
   evidenceScope: 'AUTHORIZED_SOURCE_BINDING';
   businessEvidenceCount: number;
   proposalsCreated: number;
+  externalWritesPerformed: 0;
   validatedSources: readonly string[];
-  previewNextRunAt: string;
+  previewNextRunAt: string | null;
   schedulingAvailable: false;
 };
 
@@ -113,6 +121,9 @@ export function createEmptyRoutineDraft(timeZone: string): DwaionRoutineDraft {
   return {
     title: '',
     description: '',
+    triggerType: 'SCHEDULED',
+    webhookEventType: '',
+    webhookEndpointReference: '',
     sourceKeys: [],
     schedule: {
       cadence: 'WEEKDAYS',
@@ -176,8 +187,18 @@ export function routineDraftErrors(draft: DwaionRoutineDraft): readonly string[]
   if (!draft.title.trim()) errors.push('TITLE_REQUIRED');
   if (!draft.description.trim()) errors.push('DESCRIPTION_REQUIRED');
   if (!draft.sourceKeys.length) errors.push('SOURCE_REQUIRED');
-  if (!draft.schedule.localTime) errors.push('LOCAL_TIME_REQUIRED');
-  if (!draft.schedule.timeZone.trim()) errors.push('TIME_ZONE_REQUIRED');
+  if (draft.triggerType === 'SCHEDULED' && !draft.schedule.localTime)
+    errors.push('LOCAL_TIME_REQUIRED');
+  if (draft.triggerType === 'SCHEDULED' && !draft.schedule.timeZone.trim())
+    errors.push('TIME_ZONE_REQUIRED');
+  if (draft.triggerType === 'WEBHOOK' && !/^[A-Z][A-Z0-9_.-]{1,63}$/u.test(draft.webhookEventType))
+    errors.push('WEBHOOK_EVENT_TYPE_INVALID');
+  if (
+    draft.triggerType === 'WEBHOOK' &&
+    draft.webhookEndpointReference &&
+    !/^[A-Za-z0-9][A-Za-z0-9:/._-]{0,239}$/u.test(draft.webhookEndpointReference)
+  )
+    errors.push('WEBHOOK_ENDPOINT_REFERENCE_INVALID');
   if (
     draft.schedule.activeFrom &&
     draft.schedule.activeUntil &&
@@ -185,13 +206,24 @@ export function routineDraftErrors(draft: DwaionRoutineDraft): readonly string[]
   ) {
     errors.push('DATE_RANGE_INVALID');
   }
-  if (draft.schedule.cadence === 'WEEKLY' && draft.schedule.weekDays.length === 0) {
+  if (
+    draft.triggerType === 'SCHEDULED' &&
+    draft.schedule.cadence === 'WEEKLY' &&
+    draft.schedule.weekDays.length === 0
+  ) {
     errors.push('WEEK_DAY_REQUIRED');
   }
-  if (draft.schedule.cadence !== 'WEEKLY' && draft.schedule.weekDays.length > 0) {
+  if (
+    draft.triggerType === 'SCHEDULED' &&
+    draft.schedule.cadence !== 'WEEKLY' &&
+    draft.schedule.weekDays.length > 0
+  ) {
     errors.push('WEEK_DAY_NOT_ALLOWED');
   }
-  if (Boolean(draft.schedule.quietHoursStart) !== Boolean(draft.schedule.quietHoursEnd)) {
+  if (
+    draft.triggerType === 'SCHEDULED' &&
+    Boolean(draft.schedule.quietHoursStart) !== Boolean(draft.schedule.quietHoursEnd)
+  ) {
     errors.push('QUIET_HOURS_INCOMPLETE');
   }
   for (const key of REQUIRED_CONSENTS) {
@@ -224,4 +256,40 @@ export function routineDryRunIsCurrent(
     receipt.routineId === routine.routineId &&
     receipt.routineRevision === routine.revision
   );
+}
+
+export type DwaionRoutineChangeKey =
+  'IDENTITY' | 'TRIGGER' | 'SOURCES' | 'DELIVERY_AND_CONSENT' | 'BUDGET_AND_RECOVERY';
+
+export function routineDraftChangeKeys(
+  saved: DwaionRoutineDraft | null,
+  draft: DwaionRoutineDraft
+): DwaionRoutineChangeKey[] {
+  if (!saved)
+    return ['IDENTITY', 'TRIGGER', 'SOURCES', 'DELIVERY_AND_CONSENT', 'BUDGET_AND_RECOVERY'];
+  const changes: DwaionRoutineChangeKey[] = [];
+  if (!same([saved.title, saved.description], [draft.title, draft.description]))
+    changes.push('IDENTITY');
+  if (
+    !same(
+      [saved.triggerType, saved.webhookEventType, saved.webhookEndpointReference, saved.schedule],
+      [draft.triggerType, draft.webhookEventType, draft.webhookEndpointReference, draft.schedule]
+    )
+  )
+    changes.push('TRIGGER');
+  if (!same([...saved.sourceKeys].sort(), [...draft.sourceKeys].sort())) changes.push('SOURCES');
+  if (
+    !same(
+      [[...saved.consentKeys].sort(), saved.notificationPolicy, saved.compensationPolicy],
+      [[...draft.consentKeys].sort(), draft.notificationPolicy, draft.compensationPolicy]
+    )
+  )
+    changes.push('DELIVERY_AND_CONSENT');
+  if (!same([saved.budget, saved.retryPolicy], [draft.budget, draft.retryPolicy]))
+    changes.push('BUDGET_AND_RECOVERY');
+  return changes;
+}
+
+function same(left: unknown, right: unknown): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
 }

@@ -23,6 +23,7 @@ export type { MeetingBackgroundState, MeetingBackgroundFailure } from './meeting
 
 export type MeetingBackgroundOptions = {
   mode?: MeetingProcessedBackgroundMode;
+  hdVideo?: boolean;
   onStateChange?: (state: MeetingBackgroundState) => void;
   /** LiveKit capture owns its input; failed setup must stop it before publish. */
   stopInputOnFailure?: boolean;
@@ -197,7 +198,9 @@ export class MeetingBackgroundProcessor implements TrackProcessor<Track.Kind.Vid
           throw new MeetingBackgroundError('SUPERSEDED');
         }
         session.segmenter = segmenter;
-        session.compositor = createMeetingBackgroundCompositor(this.mode, session.office);
+        session.compositor = createMeetingBackgroundCompositor(this.mode, session.office, {
+          hdVideo: this.options.hdVideo === true,
+        });
         this.processedTrack = session.compositor.track;
         while (session.video.readyState < 2 || !session.video.videoWidth)
           await this.nextFrame(session);
@@ -209,10 +212,11 @@ export class MeetingBackgroundProcessor implements TrackProcessor<Track.Kind.Vid
       clearTimeout(session.timer);
       this.emit(session, { state: 'ready' });
       let lastTime = performance.now();
+      const frameInterval = 1000 / (this.options.hdVideo === true ? 30 : 20);
       const tick = (now: number) => {
         try {
           this.assertCurrent(session);
-          if (now - lastTime >= 50) {
+          if (now - lastTime >= frameInterval) {
             this.render(session, now);
             lastTime = now;
           }

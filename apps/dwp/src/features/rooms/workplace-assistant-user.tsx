@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ShieldCheck } from 'lucide-react';
+import { RotateCcw, ShieldCheck } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import {
   createWorkplaceIdempotencyKey,
@@ -17,7 +17,12 @@ import {
   submitWorkplaceAssistantFeedback,
   validateWorkplaceAssistantRequest,
 } from '@dwp-frontend/shared-utils/api/workplace-assistant-api';
-import { InlineFeedback, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  InlineFeedback,
+  LoadingState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 
 import { RoomsPageHeading } from './rooms-ui';
@@ -49,6 +54,7 @@ export function WorkplaceAssistantUser() {
   const requestedId = params.get('request');
   const validRequestedId = Boolean(requestedId && UUID.test(requestedId));
   const [activeRequest, setActiveRequest] = useState<WorkplaceAssistantRequest | null>(null);
+  const [draftEpoch, setDraftEpoch] = useState(0);
   const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(new Set());
   const [pendingCanonicalRequestId, setPendingCanonicalRequestId] = useState<string | null>(null);
   const [lastReceipt, setLastReceipt] = useState<WorkplaceAssistantCommandReceipt | null>(null);
@@ -214,6 +220,22 @@ export function WorkplaceAssistantUser() {
     setActiveRequest(await getWorkplaceAssistantRequest(activeRequest.requestId));
     setLastReceipt(null);
   };
+  const resetConversation = () => {
+    const next = new URLSearchParams(params);
+    next.delete('request');
+    setParams(next, { replace: true });
+    setActiveRequest(null);
+    setSelectedIds(new Set());
+    setPendingCanonicalRequestId(null);
+    setLastReceipt(null);
+    setFeedbackReceipt(null);
+    setDraftEpoch((current) => current + 1);
+    intentRef.current = null;
+    createMutation.reset();
+    validateMutation.reset();
+    confirmMutation.reset();
+    feedbackMutation.reset();
+  };
   const commandPending =
     createMutation.isPending ||
     validateMutation.isPending ||
@@ -247,6 +269,17 @@ export function WorkplaceAssistantUser() {
         eyebrow={copy.userEyebrow}
         title={copy.userTitle}
         description={copy.userDescription}
+        actions={
+          <ActionButton
+            intent="secondary"
+            size="small"
+            startIcon={<RotateCcw size={16} />}
+            disabled={commandPending}
+            onClick={resetConversation}
+          >
+            {copy.resetConversation}
+          </ActionButton>
+        }
       />
       <Stack spacing={2}>
         <InlineFeedback severity="info" icon={<ShieldCheck size={18} />}>
@@ -262,6 +295,7 @@ export function WorkplaceAssistantUser() {
         {commandError && <InlineFeedback severity="error">{copy.commandError}</InlineFeedback>}
         {!activeRequest ? (
           <WorkplaceAssistantRequestForm
+            key={draftEpoch}
             beneficiaries={authorizedBeneficiaries}
             beneficiarySourceState={beneficiarySourceState}
             onRetryBeneficiaries={() => void beneficiariesQuery.refetch()}

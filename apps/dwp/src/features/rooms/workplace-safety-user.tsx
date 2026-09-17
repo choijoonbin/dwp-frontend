@@ -32,6 +32,7 @@ import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading } from './rooms-ui';
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { useWorkplaceSafetyOnlineState } from './workplace-safety-online';
+import { WorkplaceSafetyEmergencyContacts } from './workplace-safety-emergency-contacts';
 import { workplaceSafetySeverityTone } from './workplace-safety-ui-model';
 
 import type {
@@ -380,78 +381,81 @@ export function WorkplaceSafetyUser() {
                 </Box>
               </Stack>
 
-              <Box sx={(theme) => ({ ...workplaceMemberCard(theme), p: { xs: 1.5, md: 2 } })}>
-                <Stack spacing={1.25}>
-                  <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-                    {t('workplace.safety.messages.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('workplace.safety.messages.maskingNotice')}
-                  </Typography>
-                  {messagesQuery.isError ? (
-                    <InlineFeedback severity="error">
-                      {t('workplace.safety.messages.loadError')}
-                    </InlineFeedback>
-                  ) : (messagesQuery.data ?? []).length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
-                      {t('workplace.safety.messages.empty')}
+              <Stack spacing={2}>
+                <WorkplaceSafetyEmergencyContacts incidentId={selected.incidentId} />
+                <Box sx={(theme) => ({ ...workplaceMemberCard(theme), p: { xs: 1.5, md: 2 } })}>
+                  <Stack spacing={1.25}>
+                    <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
+                      {t('workplace.safety.messages.title')}
                     </Typography>
-                  ) : (
-                    <Stack component="ol" spacing={1} sx={{ p: 0, m: 0, listStyle: 'none' }}>
-                      {(messagesQuery.data ?? []).map((item) => (
-                        <Box
-                          component="li"
-                          key={item.messageId}
-                          sx={(theme) => ({ ...workplaceMemberSoftSurface(theme), p: 1.25 })}
-                        >
-                          <Typography variant="caption" color="text.secondary">
-                            {t(`workplace.safety.messageDirections.${item.direction}`)} ·{' '}
-                            {formatDate(item.createdAt, { timeStyle: 'short' }, locale)}
-                          </Typography>
-                          <Typography sx={{ overflowWrap: 'anywhere' }}>
-                            {item.maskedBody}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Stack>
-                  )}
-                  <FormField
-                    label={t('workplace.safety.messages.body')}
-                    value={message}
-                    onChange={(event) => setMessage(event.target.value)}
-                  />
-                  <FormField
-                    label={t('workplace.safety.fields.reason')}
-                    value={messageReason}
-                    onChange={(event) => setMessageReason(event.target.value)}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={messageConfirmed}
-                        onChange={(event) => setMessageConfirmed(event.target.checked)}
-                      />
-                    }
-                    label={t('workplace.safety.confirmation')}
-                  />
-                  <ActionButton
-                    intent="secondary"
-                    startIcon={<MessageSquareText size={17} />}
-                    disabled={
-                      !canWrite || !message.trim() || !messageReason.trim() || !messageConfirmed
-                    }
-                    loading={messageMutation.isPending}
-                    onClick={() => messageMutation.mutate()}
-                  >
-                    {t('workplace.safety.actions.sendMessage')}
-                  </ActionButton>
-                  {messageMutation.isError && (
-                    <InlineFeedback severity="error">
-                      {t('workplace.safety.messages.sendError')}
-                    </InlineFeedback>
-                  )}
-                </Stack>
-              </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {t('workplace.safety.messages.maskingNotice')}
+                    </Typography>
+                    {messagesQuery.isError ? (
+                      <InlineFeedback severity="error">
+                        {t('workplace.safety.messages.loadError')}
+                      </InlineFeedback>
+                    ) : (messagesQuery.data ?? []).length === 0 ? (
+                      <Typography variant="body2" color="text.secondary">
+                        {t('workplace.safety.messages.empty')}
+                      </Typography>
+                    ) : (
+                      <Stack component="ol" spacing={1} sx={{ p: 0, m: 0, listStyle: 'none' }}>
+                        {(messagesQuery.data ?? []).map((item) => (
+                          <Box
+                            component="li"
+                            key={item.messageId}
+                            sx={(theme) => ({ ...workplaceMemberSoftSurface(theme), p: 1.25 })}
+                          >
+                            <Typography variant="caption" color="text.secondary">
+                              {t(`workplace.safety.messageDirections.${item.direction}`)} ·{' '}
+                              {formatDate(item.createdAt, { timeStyle: 'short' }, locale)}
+                            </Typography>
+                            <Typography sx={{ overflowWrap: 'anywhere' }}>
+                              {item.maskedBody}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
+                    <FormField
+                      label={t('workplace.safety.messages.body')}
+                      value={message}
+                      onChange={(event) => setMessage(event.target.value)}
+                    />
+                    <FormField
+                      label={t('workplace.safety.fields.reason')}
+                      value={messageReason}
+                      onChange={(event) => setMessageReason(event.target.value)}
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={messageConfirmed}
+                          onChange={(event) => setMessageConfirmed(event.target.checked)}
+                        />
+                      }
+                      label={t('workplace.safety.confirmation')}
+                    />
+                    <ActionButton
+                      intent="secondary"
+                      startIcon={<MessageSquareText size={17} />}
+                      disabled={
+                        !canWrite || !message.trim() || !messageReason.trim() || !messageConfirmed
+                      }
+                      loading={messageMutation.isPending}
+                      onClick={() => messageMutation.mutate()}
+                    >
+                      {t('workplace.safety.actions.sendMessage')}
+                    </ActionButton>
+                    {messageMutation.isError && (
+                      <InlineFeedback severity="error">
+                        {t('workplace.safety.messages.sendError')}
+                      </InlineFeedback>
+                    )}
+                  </Stack>
+                </Box>
+              </Stack>
             </Box>
           )}
         </Stack>

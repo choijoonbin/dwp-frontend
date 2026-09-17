@@ -37,6 +37,7 @@ const defaults: MeetingPreJoinPreferenceDefaults = {
   videoDeviceId: 'saved-camera',
   speakerDeviceId: 'saved-speaker',
   noiseSuppression: false,
+  hdVideo: false,
   backgroundMode: 'original',
 };
 let root: Root;
@@ -69,6 +70,7 @@ describe('prejoin local device session handoff', () => {
       cameraId: 'saved-camera',
       speakerId: 'saved-speaker',
       noiseSuppression: false,
+      hdVideo: false,
       backgroundMode: 'original',
     });
     expect(runtime.start).toHaveBeenCalledWith(

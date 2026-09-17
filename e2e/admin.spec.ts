@@ -1061,13 +1061,19 @@ test('identity administrators inspect SCIM readiness and provisioning evidence',
     roles: ['IDENTITY_ADMIN', 'WORKSPACE_MEMBER'],
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
-  const connector = {
+  let connector = {
     connectorId: 'scim-entra-1',
     connectorKey: 'entra-production',
     displayName: 'Microsoft Entra ID',
     tokenPrefix: 'dwp_scim_9f2a',
-    allowedOperations: ['Users', 'Groups'],
+    allowedOperations: ['USERS', 'GROUPS'],
+    purpose: 'Provision workforce identities and group memberships from Entra ID',
+    ownerUserId: 1,
     lifecycleState: 'ACTIVE' as const,
+    credentialState: 'ACTIVE' as const,
+    credentialIssuedAt: '2026-06-15T01:00:00Z',
+    credentialExpiresAt: '2026-12-12T01:00:00Z',
+    credentialRotatedAt: '2026-06-15T01:00:00Z',
     lastUsedAt: '2026-08-12T01:45:00Z',
     health: 'ATTENTION' as const,
     events24h: 12,
@@ -1076,6 +1082,7 @@ test('identity administrators inspect SCIM readiness and provisioning evidence',
     lastFailureAt: '2026-08-12T01:45:00Z',
     version: 3,
   };
+  let rotationPayload: unknown = null;
   const events = [
     {
       eventId: 'scim-event-1',
@@ -1113,6 +1120,22 @@ test('identity administrators inspect SCIM readiness and provisioning evidence',
       await route.fulfill({ contentType: 'application/json', body: envelope([connector]) });
       return;
     }
+    if (route.request().method() === 'POST' && path.endsWith('/rotate-secret')) {
+      rotationPayload = route.request().postDataJSON();
+      connector = {
+        ...connector,
+        tokenPrefix: 'dwp_scim_rotated',
+        credentialIssuedAt: '2026-09-17T01:00:00Z',
+        credentialExpiresAt: '2027-03-16T01:00:00Z',
+        credentialRotatedAt: '2026-09-17T01:00:00Z',
+        version: 4,
+      };
+      await route.fulfill({
+        contentType: 'application/json',
+        body: envelope({ connector, bearerToken: 'dwp_scim_one_time_replacement' }),
+      });
+      return;
+    }
     await route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
   });
 
@@ -1133,6 +1156,34 @@ test('identity administrators inspect SCIM readiness and provisioning evidence',
   await expect(page.getByText('Group PATCH', { exact: true })).toBeVisible();
   await expect(page.getByText('Group member reference could not be resolved')).toBeVisible();
   await expect(page.locator('input[value$="/api/auth/scim/v2"]')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Close connector details' }).click();
+  await page
+    .getByRole('row')
+    .filter({ hasText: 'entra-production' })
+    .getByRole('button', { name: 'Rotate secret' })
+    .click();
+  const rotationDialog = page.getByRole('dialog', { name: 'Rotate SCIM credential' });
+  await expect(
+    rotationDialog.getByText('Rotation invalidates the current token immediately.', {
+      exact: false,
+    })
+  ).toBeVisible();
+  await rotationDialog.getByLabel('Rotation reason').fill('Scheduled workforce IdP rotation');
+  await rotationDialog
+    .getByLabel('I understand the current token will stop working immediately.')
+    .check();
+  await rotationDialog.getByRole('button', { name: 'Rotate credential' }).click();
+
+  await expect(page.getByRole('textbox', { name: 'Bearer token' })).toHaveValue(
+    'dwp_scim_one_time_replacement'
+  );
+  expect(rotationPayload).toEqual({
+    expectedVersion: 3,
+    credentialTtlDays: 180,
+    explicitConfirmation: true,
+    reason: 'Scheduled workforce IdP rotation',
+  });
 });
 
 test('delegated administrators manage identity, standards, registry, and audit', async ({

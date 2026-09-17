@@ -28,6 +28,7 @@
     "ENDED": "Ended",
     "ERROR": "Error",
     "EXPIRED": "Expired",
+    "EXPIRING": "Expiring soon",
     "EXECUTING": "Executing",
     "EXHAUSTED": "Retries exhausted",
     "FAILED": "Failed",

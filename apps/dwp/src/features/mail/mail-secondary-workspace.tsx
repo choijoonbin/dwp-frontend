@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, RefreshCw, Search } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
   decideMailProposal,
   getMailFollowUps,
+  getMailProposalHandoff,
   getMailProposals,
   getMailThreads,
   searchMailThreads,
@@ -37,6 +38,8 @@ import { MailDeliveryOperationsWorkspace } from './mail-delivery-operations-work
 import { MailFollowUpTracker } from './mail-follow-up-tracker';
 import { MailOrganization } from './mail-organization';
 import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
+import { mailReturnedProposalId } from './mail-proposal-handoff';
+import { MailProposalHandoffStatus } from './mail-proposal-handoff-status';
 import {
   MailProposalEditButton,
   MailProposalFilterControls,
@@ -45,12 +48,14 @@ import {
   updateMailProposalFilterSearch,
 } from './mail-proposal-workspace-controls';
 import { MailSearchControls } from './mail-search-controls';
+import { mailUsesCompactDensity, useMailRuntimePreferences } from './mail-runtime-preferences';
 import {
   MailAccountsPreferencesWorkspace,
   MailTemplatesWorkspace,
 } from './mail-secondary-workspace-availability';
 import { MailThreadDetailPane } from './mail-thread-detail';
 import { getMailSecondaryView } from './mail-secondary-workspace-model';
+import { useMailProposalHandoff } from './use-mail-proposal-handoff';
 
 import type { TFunction } from 'i18next';
 import type {
@@ -386,19 +391,32 @@ function MailSharedWorkspace() {
 function MailActionCenterWorkspace() {
   const { t } = useTranslation('mail');
   const descriptor = getMailSecondaryView('actions');
-  const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = mailProposalFiltersFromSearch(searchParams);
+  const returnedProposalId = mailReturnedProposalId(searchParams);
+  const requestedFocus = searchParams.get('focus');
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const [proposalToEdit, setProposalToEdit] = useState<MailActionProposal | null>(null);
+  const proposalHandoff = useMailProposalHandoff();
   const query = useQuery({
     queryKey: ['mail', 'proposals', filters],
     queryFn: () => getMailProposals(filters),
     staleTime: 20_000,
     retry: 1,
+    refetchOnMount: returnedProposalId ? 'always' : true,
   });
+  const returnedHandoff = useQuery({
+    queryKey: ['mail', 'proposal-handoff', returnedProposalId],
+    queryFn: () => getMailProposalHandoff(returnedProposalId!),
+    enabled: Boolean(returnedProposalId),
+    staleTime: 0,
+    retry: 1,
+    refetchOnMount: 'always',
+  });
+  const verifiedReturnedHandoff =
+    returnedHandoff.data?.proposalId === returnedProposalId ? returnedHandoff.data : undefined;
   const mutation = useMutation({
     mutationFn: ({
       proposal,
@@ -412,7 +430,7 @@ function MailActionCenterWorkspace() {
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
       if (variables.decision === 'ACCEPT') {
         toast.success(t('proposal.accepted'));
-        if (proposal.targetRoute) navigate(proposal.targetRoute);
+        proposalHandoff.mutate(proposal);
       } else {
         toast.success(t('proposal.dismissed'));
       }
@@ -442,6 +460,22 @@ function MailActionCenterWorkspace() {
     onError: () => toast.error(t('proposal.payloadEditor.error')),
   });
 
+  useEffect(() => {
+    if (
+      !returnedProposalId ||
+      requestedFocus !== `mail-proposal-${returnedProposalId}` ||
+      !query.data?.some((proposal) => proposal.proposalId === returnedProposalId)
+    ) {
+      return;
+    }
+    const frame = window.requestAnimationFrame(() => {
+      const target = document.getElementById(`mail-proposal-${returnedProposalId}`);
+      target?.scrollIntoView({ block: 'center', behavior: 'auto' });
+      target?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [query.data, requestedFocus, returnedProposalId, verifiedReturnedHandoff?.status]);
+
   return (
     <PageCanvas topInset="compact">
       <MailPageHeading
@@ -461,6 +495,16 @@ function MailActionCenterWorkspace() {
           'Accepting a proposal opens the responsible app for final review. It does not complete the action here.'
         )}
       </Alert>
+      {returnedProposalId && (
+        <MailProposalHandoffStatus
+          handoff={verifiedReturnedHandoff}
+          loading={returnedHandoff.isLoading}
+          error={
+            returnedHandoff.isError || Boolean(returnedHandoff.data && !verifiedReturnedHandoff)
+          }
+          onRetry={() => void returnedHandoff.refetch()}
+        />
+      )}
       <MailProposalFilterControls
         value={filters}
         disabled={query.isFetching}
@@ -478,16 +522,42 @@ function MailActionCenterWorkspace() {
       ) : query.data?.length ? (
         <Stack spacing={1.25} sx={{ mt: 2 }}>
           {query.data.map((proposal) => (
-            <Stack key={proposal.proposalId} spacing={0.5} alignItems="flex-end">
+            <Stack
+              key={proposal.proposalId}
+              id={`mail-proposal-${proposal.proposalId}`}
+              tabIndex={-1}
+              spacing={0.5}
+              alignItems="flex-end"
+              sx={{
+                width: 1,
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: 3,
+                },
+              }}
+            >
               <MailProposalCard
                 proposal={proposal}
-                busy={mutation.isPending || proposal.status !== 'PROPOSED'}
+                busy={
+                  mutation.isPending || proposalHandoff.isPending || proposal.status !== 'PROPOSED'
+                }
                 onAccept={() => setProposalToAccept(proposal)}
                 onDismiss={() => mutation.mutate({ proposal, decision: 'DISMISS' })}
               />
+              {proposal.status === 'ACCEPTED' && (
+                <ActionButton
+                  intent="secondary"
+                  size="small"
+                  disabled={proposalHandoff.isPending}
+                  onClick={() => proposalHandoff.mutate(proposal)}
+                >
+                  {t('proposal.handoff.continue')}
+                </ActionButton>
+              )}
               <MailProposalEditButton
                 proposal={proposal}
-                disabled={mutation.isPending || update.isPending}
+                disabled={mutation.isPending || proposalHandoff.isPending || update.isPending}
                 onEdit={setProposalToEdit}
               />
             </Stack>
@@ -502,7 +572,7 @@ function MailActionCenterWorkspace() {
       )}
       <MailProposalReviewDialog
         proposal={proposalToAccept}
-        busy={mutation.isPending}
+        busy={mutation.isPending || proposalHandoff.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {
           if (proposalToAccept) {
@@ -590,6 +660,7 @@ function ThreadListPanel({
   onSelect: (threadId: string) => void;
 }) {
   const { t } = useTranslation('mail');
+  const runtimePreferences = useMailRuntimePreferences();
   return (
     <Box
       component="section"
@@ -631,6 +702,7 @@ function ThreadListPanel({
             key={thread.threadId}
             thread={thread}
             selected={thread.threadId === selectedId}
+            compact={mailUsesCompactDensity(runtimePreferences.data)}
             onSelect={() => onSelect(thread.threadId)}
           />
         ))

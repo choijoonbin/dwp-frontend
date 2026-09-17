@@ -34,6 +34,9 @@ export const WORKPLACE_RESERVATION_AUTHORITIES = ['ALL', 'WORKPLACE', 'CALENDAR'
 export type WorkplaceReservationAuthorityFilter =
   (typeof WORKPLACE_RESERVATION_AUTHORITIES)[number];
 
+export const WORKPLACE_RESERVATION_DETAIL_TABS = ['VISITS', 'SERVICES', 'ACCESS', 'AUDIT'] as const;
+export type WorkplaceReservationDetailTab = (typeof WORKPLACE_RESERVATION_DETAIL_TABS)[number];
+
 export type WorkplaceReservationsUrlState = Readonly<{
   period: WorkplaceReservationPeriod;
   type: WorkplaceReservationType;
@@ -42,6 +45,7 @@ export type WorkplaceReservationsUrlState = Readonly<{
   query: string;
   reservationId: string | null;
   reservationAuthority: Exclude<WorkplaceReservationAuthorityFilter, 'ALL'> | null;
+  detailTab: WorkplaceReservationDetailTab | null;
 }>;
 
 export type WorkplaceReservationsUrlPatch = Partial<{
@@ -52,6 +56,7 @@ export type WorkplaceReservationsUrlPatch = Partial<{
   q: string | null;
   reservation: string | null;
   reservationAuthority: Exclude<WorkplaceReservationAuthorityFilter, 'ALL'> | null;
+  detailTab: WorkplaceReservationDetailTab | null;
 }>;
 
 const DEFAULT_STATE: WorkplaceReservationsUrlState = Object.freeze({
@@ -62,6 +67,7 @@ const DEFAULT_STATE: WorkplaceReservationsUrlState = Object.freeze({
   query: '',
   reservationId: null,
   reservationAuthority: null,
+  detailTab: null,
 });
 
 function enumValue<const T extends readonly string[]>(
@@ -96,11 +102,13 @@ function appendCanonical(state: WorkplaceReservationsUrlState): URLSearchParams 
   if (state.reservationId && state.reservationAuthority) {
     next.set('reservationAuthority', state.reservationAuthority);
   }
+  if (state.reservationId && state.detailTab) next.set('tab', state.detailTab);
   return next;
 }
 
 export function parseWorkplaceReservationsUrl(searchParams: URLSearchParams) {
   const requestedReservationAuthority = searchParams.get('reservationAuthority');
+  const requestedDetailTab = searchParams.get('tab');
   const state: WorkplaceReservationsUrlState = {
     period: enumValue(
       searchParams.get('period'),
@@ -123,6 +131,13 @@ export function parseWorkplaceReservationsUrl(searchParams: URLSearchParams) {
     reservationAuthority:
       requestedReservationAuthority === 'WORKPLACE' || requestedReservationAuthority === 'CALENDAR'
         ? requestedReservationAuthority
+        : null,
+    detailTab:
+      searchParams.get('reservation') &&
+      WORKPLACE_RESERVATION_DETAIL_TABS.includes(
+        requestedDetailTab as WorkplaceReservationDetailTab
+      )
+        ? (requestedDetailTab as WorkplaceReservationDetailTab)
         : null,
   };
   const canonicalSearchParams = appendCanonical(state);
@@ -152,6 +167,12 @@ export function updateWorkplaceReservationsUrl(
       patch.reservation === null
         ? null
         : (patch.reservationAuthority ?? parsed.reservationAuthority),
+    detailTab:
+      patch.reservation === null
+        ? null
+        : patch.detailTab === undefined
+          ? parsed.detailTab
+          : patch.detailTab,
   };
   return appendCanonical(next);
 }

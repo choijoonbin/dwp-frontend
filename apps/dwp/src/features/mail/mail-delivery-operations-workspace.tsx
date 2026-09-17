@@ -14,7 +14,7 @@ import {
   getMailDeliveryReceipt,
   reconcileMailDelivery,
   rescheduleMailDelivery,
-  retryMailDelivery,
+  retryMailDeliveryReceipt,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -322,7 +322,7 @@ function DeliveryReceiptInspector({
     onError: () => toast.error(t('secondary.delivery.commandError')),
   });
   const retry = useMutation({
-    mutationFn: () => retryMailDelivery(receipt!.deliveryId, { version: receipt!.version }),
+    mutationFn: () => retryMailDeliveryReceipt(receipt!.deliveryId, { version: receipt!.version }),
     onSuccess: async () => {
       setRetryOpen(false);
       await refresh();

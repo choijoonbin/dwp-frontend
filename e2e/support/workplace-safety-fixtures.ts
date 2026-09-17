@@ -37,6 +37,11 @@ export const SAFETY_IDS = {
   assembly: '20000000-0000-4000-8000-000000000014',
   report: '20000000-0000-4000-8000-000000000015',
   export: '20000000-0000-4000-8000-000000000016',
+  emergencyHotline: '20000000-0000-4000-8000-000000000017',
+  emergencyHandoffContact: '20000000-0000-4000-8000-000000000018',
+  emergencyPreview: '20000000-0000-4000-8000-000000000019',
+  emergencyHandoff: '20000000-0000-4000-8000-000000000020',
+  emergencyCommand: '20000000-0000-4000-8000-000000000021',
 } as const;
 
 const NOW = '2026-09-16T12:00:00Z';
@@ -251,6 +256,86 @@ function closurePreview() {
   };
 }
 
+function emergencyContacts(providerReady = false) {
+  return [
+    {
+      contactId: SAFETY_IDS.emergencyHotline,
+      kind: 'PUBLIC_EMERGENCY',
+      displayNameKo: '공공 긴급 서비스',
+      displayNameEn: 'Public emergency service',
+      actionMode: 'TEL_URI',
+      telUri: 'tel:+82123456789',
+      directTelAllowed: true,
+      providerState: 'READY',
+      providerCode: null,
+      providerConfigurationVersion: null,
+      active: true,
+      sortOrder: 10,
+      version: 1,
+      evaluatedAt: NOW,
+    },
+    {
+      contactId: SAFETY_IDS.emergencyHandoffContact,
+      kind: 'HOTLINE',
+      displayNameKo: '외부 긴급 인계 센터',
+      displayNameEn: 'External emergency relay',
+      actionMode: 'GOVERNED_HANDOFF',
+      telUri: null,
+      directTelAllowed: false,
+      providerState: providerReady ? 'READY' : 'NOT_CONFIGURED',
+      providerCode: providerReady ? 'emergency-relay' : null,
+      providerConfigurationVersion: providerReady ? 7 : null,
+      active: true,
+      sortOrder: 20,
+      version: 2,
+      evaluatedAt: NOW,
+    },
+  ];
+}
+
+function emergencyPreview() {
+  return {
+    previewId: SAFETY_IDS.emergencyPreview,
+    incidentId: SAFETY_IDS.incident,
+    contactId: SAFETY_IDS.emergencyHandoffContact,
+    expectedIncidentVersion: 4,
+    expectedContactVersion: 2,
+    providerState: 'READY',
+    providerCode: 'emergency-relay',
+    providerConfigurationVersion: 7,
+    eligible: true,
+    impact: [
+      'EXTERNAL_PROVIDER_HANDOFF',
+      'AUDIT_EVIDENCE_RECORDED',
+      'NO_PERSONAL_CONTACT_DATA_SENT',
+    ],
+    limitations: [],
+    expiresAt: '2026-09-16T12:05:00Z',
+    createdAt: NOW,
+  };
+}
+
+function emergencyHandoffReceipt(state: 'SUCCEEDED' | 'FAILED' | 'RESULT_UNKNOWN') {
+  return {
+    handoffId: SAFETY_IDS.emergencyHandoff,
+    commandId: SAFETY_IDS.emergencyCommand,
+    previewId: SAFETY_IDS.emergencyPreview,
+    incidentId: SAFETY_IDS.incident,
+    contactId: SAFETY_IDS.emergencyHandoffContact,
+    state,
+    resultCode: state === 'RESULT_UNKNOWN' ? 'PROVIDER_RESULT_UNKNOWN' : 'HANDOFF_ACCEPTED',
+    providerOperationReference: 'opaque-provider-operation',
+    providerEvidenceReference: state === 'SUCCEEDED' ? 'opaque-provider-evidence' : null,
+    version: state === 'RESULT_UNKNOWN' ? 2 : 3,
+    statusHref: `/v1/admin/workplace/safety/incidents/${SAFETY_IDS.incident}/emergency-handoffs/${SAFETY_IDS.emergencyCommand}`,
+    correlationId: 'screen-20-emergency',
+    acceptedAt: NOW,
+    completedAt: state === 'RESULT_UNKNOWN' ? null : NOW,
+    updatedAt: NOW,
+    idempotentReplay: false,
+  };
+}
+
 export type WorkplaceSafetyEvidence = {
   postPaths: string[];
   postBodies: unknown[];
@@ -268,6 +353,8 @@ export async function mockWorkplaceSafety(
     responseUnknown?: boolean;
     incidentUnknown?: boolean;
     unverifiedEbs?: boolean;
+    emergencyProviderReady?: boolean;
+    emergencyHandoffUnknown?: boolean;
   } = {}
 ): Promise<WorkplaceSafetyEvidence> {
   await isolateWorkplaceDevelopmentUpdates(page);
@@ -379,6 +466,9 @@ export async function mockWorkplaceSafety(
     if (request.method() === 'GET' && path.endsWith('/messages')) {
       return fulfillSuccess(route, messages);
     }
+    if (request.method() === 'GET' && path.endsWith('/emergency-contacts')) {
+      return fulfillSuccess(route, emergencyContacts(options.emergencyProviderReady));
+    }
     if (request.method() === 'GET') return fulfillSuccess(route, currentSheet);
     record(route);
     if (path.endsWith('/responses')) {
@@ -411,6 +501,15 @@ export async function mockWorkplaceSafety(
     const method = request.method();
     if (method === 'GET' && path.endsWith('/connectors')) {
       return fulfillSuccess(route, connectors(options.unverifiedEbs));
+    }
+    if (method === 'GET' && path.endsWith('/emergency-contacts')) {
+      return fulfillSuccess(route, emergencyContacts(options.emergencyProviderReady));
+    }
+    if (method === 'GET' && path.includes('/emergency-handoffs/')) {
+      return fulfillSuccess(
+        route,
+        emergencyHandoffReceipt(options.emergencyHandoffUnknown ? 'RESULT_UNKNOWN' : 'SUCCEEDED')
+      );
     }
     if (method === 'GET' && path.includes('/connectors/commands/')) {
       return fulfillSuccess(route, receipt('SUCCEEDED'));
@@ -466,6 +565,27 @@ export async function mockWorkplaceSafety(
         connector: connector(String(body.kind), 'CONFIGURED_UNVERIFIED'),
         receipt: receipt(),
       });
+    }
+    if (method === 'PUT' && path.includes('/emergency-contacts/')) {
+      const contact = emergencyContacts(options.emergencyProviderReady).find((item) =>
+        path.endsWith(item.contactId)
+      );
+      return accepted(route, {
+        contact: contact ?? emergencyContacts(options.emergencyProviderReady)[0],
+        receipt: receipt(),
+      });
+    }
+    if (path.endsWith('/emergency-handoffs:preview')) {
+      return accepted(route, { preview: emergencyPreview(), receipt: receipt() });
+    }
+    if (path.endsWith('/emergency-handoffs')) {
+      return accepted(
+        route,
+        emergencyHandoffReceipt(options.emergencyHandoffUnknown ? 'RESULT_UNKNOWN' : 'SUCCEEDED')
+      );
+    }
+    if (path.endsWith(':reconcile') && path.includes('/emergency-handoffs/')) {
+      return accepted(route, emergencyHandoffReceipt('SUCCEEDED'));
     }
     if (path.endsWith('/incidents:preview')) {
       const requestedChannels = Array.isArray(body.channels) ? body.channels : [];

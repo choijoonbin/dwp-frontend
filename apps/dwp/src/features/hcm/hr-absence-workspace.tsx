@@ -33,6 +33,10 @@ import {
 } from './hr-domain-components';
 import type { HrLeaveRequest } from '@dwp-frontend/shared-utils';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import {
+  MailProposalOwnerHandoffNotice,
+  useMailProposalOwnerHandoff,
+} from '../../components/mail-proposal-owner-handoff';
 
 function minutesToDays(minutes: number): string {
   const days = minutes / 480;
@@ -44,6 +48,7 @@ export function HrAbsenceWorkspace() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const proposalOwnerHandoff = useMailProposalOwnerHandoff('HCM');
   const query = useQuery({
     queryKey: ['hcm', 'absence'],
     queryFn: getHrAbsence,
@@ -63,7 +68,9 @@ export function HrAbsenceWorkspace() {
   useEffect(() => {
     if (searchParams.get('request') !== 'open') return;
     setRequestOpen(true);
-    setSearchParams({}, { replace: true });
+    const next = new URLSearchParams(searchParams);
+    next.delete('request');
+    setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
   useEffect(() => {
@@ -81,7 +88,8 @@ export function HrAbsenceWorkspace() {
             requestedMinutes: hours * 60,
             reason: reason.trim() || undefined,
           },
-          authority
+          authority,
+          proposalOwnerHandoff.binding
         )
       ),
     onSuccess: async () => {
@@ -89,6 +97,9 @@ export function HrAbsenceWorkspace() {
       setRequestOpen(false);
       setReason('');
       toast.success(t('domains.absence.submitted'));
+      if (proposalOwnerHandoff.active) {
+        await proposalOwnerHandoff.waitForTerminalAndReturn();
+      }
     },
     onError: () => toast.error(t('domains.absence.submitError')),
   });
@@ -123,6 +134,7 @@ export function HrAbsenceWorkspace() {
       onRetry={() => void query.refetch()}
     >
       <Stack gap={2}>
+        <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />
         {query.data?.balances.some((balance) => balance.dataOrigin === 'REFERENCE') && (
           <ReferenceNotice />
         )}
@@ -237,8 +249,14 @@ export function HrAbsenceWorkspace() {
         cancelLabel={t('domains.actions.cancel')}
         submitLabel={t('domains.absence.submit')}
         busy={createMutation.isPending}
-        submitDisabled={!requestValid}
-        onClose={() => setRequestOpen(false)}
+        submitDisabled={!requestValid || proposalOwnerHandoff.blocksSubmission}
+        onClose={() => {
+          if (proposalOwnerHandoff.active) {
+            void proposalOwnerHandoff.cancelAndReturn();
+            return;
+          }
+          setRequestOpen(false);
+        }}
         onSubmit={() => createMutation.mutate()}
       >
         <Stack gap={2}>

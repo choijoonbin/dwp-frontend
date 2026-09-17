@@ -57,6 +57,7 @@ import {
   WorkplaceSpacePlanningComparison,
 } from './workplace-space-planning-impact';
 import { WorkplaceSpacePlanningCommandFeedback } from './workplace-space-planning-command-feedback';
+import { WorkplaceSpacePlanningBoardReport } from './workplace-space-planning-board-report';
 
 import type { IdempotentMutationIntent } from '@dwp-frontend/shared-utils';
 import type {
@@ -100,7 +101,9 @@ export function WorkplaceSpacePlanning() {
   const canView = capabilities.canViewWorkplaceAdmin;
   const canManage = capabilities.canManageWorkplaceAdmin;
   const canApprove = permissions.hasPermission('ADMIN.WORKPLACE', 'APPROVE');
+  const canExport = permissions.hasPermission('ADMIN.WORKPLACE', 'EXPORT');
   const elevated = authority.snapshot?.envelope.activeAccessMode === 'ELEVATED';
+  const decisionRevision = authority.snapshot?.envelope.decisionRevision ?? '';
   const [scopeForm, setScopeForm] = useState(initialUrl.current.form);
   const [appliedForm, setAppliedForm] = useState(initialUrl.current.form);
   const [appliedScope, setAppliedScope] = useState<WorkplacePlanningScope | null>(null);
@@ -667,6 +670,17 @@ export function WorkplaceSpacePlanning() {
                     {!creating && selectedScenario?.activePreview ? (
                       <WorkplaceSpacePlanningComparison
                         preview={selectedScenario.activePreview}
+                        locale={locale}
+                        timeZone={appliedTimeZone}
+                      />
+                    ) : null}
+                    {!creating && selectedScenario ? (
+                      <WorkplaceSpacePlanningBoardReport
+                        scenario={selectedScenario}
+                        siteId={selectedScenario.scope.siteId}
+                        canExport={canExport}
+                        elevated={elevated}
+                        decisionRevision={decisionRevision}
                         locale={locale}
                         timeZone={appliedTimeZone}
                       />

@@ -530,10 +530,7 @@ export function parseWorkplaceKioskVisitCommandResult(
       visitId: uuid(item.visitId, 'kioskCommandVisit.visitId'),
       state: enumeration(item.state, WORKPLACE_VISIT_STATES, 'kioskCommandVisit.state'),
       version: number(item.version, 'kioskCommandVisit.version'),
-      recoveryByGetOnly: boolean(
-        item.recoveryByGetOnly,
-        'kioskCommandVisit.recoveryByGetOnly'
-      ),
+      recoveryByGetOnly: boolean(item.recoveryByGetOnly, 'kioskCommandVisit.recoveryByGetOnly'),
       recoveryHref: optionalString(item.recoveryHref, 'kioskCommandVisit.recoveryHref'),
       updatedAt: instant(item.updatedAt, 'kioskCommandVisit.updatedAt'),
     },

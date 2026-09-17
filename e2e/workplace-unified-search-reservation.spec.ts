@@ -56,6 +56,15 @@ const canonicalWindow =
 
 async function mockUnifiedFind(page: Page) {
   await isolateWorkplaceDevelopmentUpdates(page);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (value: string) => localStorage.setItem('qa-workplace-link', value),
+      },
+    });
+  });
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:00Z'));
   await mockShellSession(page, ['TENANT_ADMIN'], {
     locale: 'en',
@@ -64,6 +73,7 @@ async function mockUnifiedFind(page: Page) {
 
   let workplaceWrites = 0;
   let roomWrites = 0;
+  const favoriteWrites: Record<string, unknown>[] = [];
   let persistedBooking: Record<string, unknown> | null = null;
 
   await page.route('**/api/platform/v1/workplace/**', async (route) => {
@@ -82,6 +92,37 @@ async function mockUnifiedFind(page: Page) {
         closures: [],
         generatedAt: '2026-08-19T00:00:00Z',
         policy: workplacePolicy,
+      });
+    }
+    if (path.endsWith('/resource-favorites') && request.method() === 'GET') {
+      return fulfillSuccess(route, [
+        {
+          resourceId: new URL(request.url()).searchParams.get('resourceIds'),
+          favorite: false,
+          version: 0,
+          updatedAt: null,
+        },
+      ]);
+    }
+    if (path.endsWith('/favorite') && request.method() === 'PUT') {
+      const input = request.postDataJSON() as Record<string, unknown>;
+      favoriteWrites.push({
+        path,
+        key: request.headers()['idempotency-key'],
+        body: input,
+      });
+      const favoriteResourceId = path.split('/').at(-2)!;
+      return fulfillSuccess(route, {
+        commandId: '50000000-0000-4000-8000-000000000014',
+        favorite: {
+          resourceId: favoriteResourceId,
+          favorite: input.favorite,
+          version: Number(input.expectedVersion) + 1,
+          updatedAt: '2026-08-19T00:01:00Z',
+        },
+        auditEventId: '60000000-0000-4000-8000-000000000014',
+        correlationId: request.headers()['x-correlation-id'],
+        completedAt: '2026-08-19T00:01:00Z',
       });
     }
     if (path.endsWith('/bookings')) {
@@ -135,6 +176,7 @@ async function mockUnifiedFind(page: Page) {
   return {
     workplaceWrites: () => workplaceWrites,
     roomWrites: () => roomWrites,
+    favoriteWrites,
   };
 }
 
@@ -274,6 +316,32 @@ test('keeps non-room discovery and booking usable when the room policy source fa
   const sharedUrl = page.url();
   expect(currentUrl(page).searchParams.get('q')).toBe('Focus');
   expect(currentUrl(page).searchParams.get('resource')).toBe(locationResource.resourceId);
+  await deskInspector.getByRole('button', { name: 'Save favorite', exact: true }).click();
+  await expect(
+    deskInspector.getByRole('button', { name: 'Remove favorite', exact: true })
+  ).toBeVisible();
+  expect(writes.favoriteWrites).toHaveLength(1);
+  expect(writes.favoriteWrites[0]).toMatchObject({
+    path: `/api/platform/v1/workplace/resources/${locationResource.resourceId}/favorite`,
+    body: { favorite: true, expectedVersion: 0 },
+  });
+  expect(writes.favoriteWrites[0]?.key).toMatch(/^workplace:resource-favorite:/u);
+  await deskInspector.getByRole('button', { name: 'Copy space link', exact: true }).click();
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem('qa-workplace-link')))
+    .toContain(`/workplace/find?`);
+  const copiedLink = await page.evaluate(() => localStorage.getItem('qa-workplace-link'));
+  expect(copiedLink).toContain(`resource=${locationResource.resourceId}`);
+  expect(copiedLink).not.toMatch(/bookingId|correlation|token|passId|code=/u);
+  await deskInspector.getByRole('button', { name: 'Open indoor route', exact: true }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/workplace/navigation' &&
+      url.searchParams.get('siteId') === locationSite.siteId &&
+      url.searchParams.get('destinationResourceId') === locationResource.resourceId
+  );
+  await page.goto(sharedUrl);
+  await expect(deskInspector).toBeVisible();
 
   const roomUrl = new URL(sharedUrl);
   roomUrl.searchParams.set('q', 'Horizon');

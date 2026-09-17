@@ -41,9 +41,9 @@ test('connected accounts expose actual account and synchronization states', asyn
 
   await page.goto('/mail/accounts');
   await expect(page.getByText('Reauthentication required')).toBeVisible();
-  await expect(page.getByText(/authenticate with the provider again/i)).toBeVisible();
+  await expect(page.getByText(/DWP development mail · Ready/)).toBeVisible();
   await expect(page.getByText('Disconnected')).toBeVisible();
-  await expect(page.getByText(/mail cannot be retrieved or sent/i)).toBeVisible();
+  await expect(page.getByText(/DWP development mail · Sync paused/)).toBeVisible();
 });
 
 test('shared inbox actions fail closed when action permissions are not projected', async ({
@@ -135,7 +135,11 @@ test('reply retries preserve the original command identity after a response fail
   await page.getByRole('button', { name: 'Send reply' }).click();
   await expect.poll(() => replies.length).toBe(2);
 
-  expect(replies[0]).toEqual({ body: 'Approved response', idempotencyKey: expect.any(String) });
+  expect(replies[0]).toEqual({
+    body: 'Approved response',
+    idempotencyKey: expect.any(String),
+    mode: 'REPLY',
+  });
   expect(replies[1]).toEqual(replies[0]);
 });
 
@@ -302,7 +306,9 @@ test('a draft send conflict preserves input and requires a three-way review', as
   );
   await pendingReview.getByRole('button', { name: 'Use latest server draft' }).click();
   await expect(page.getByLabel('Recipient email')).toHaveValue('server.owner@example.com');
-  await expect(page.getByLabel('Subject')).toHaveValue('Server draft subject');
+  await expect(page.getByRole('textbox', { name: 'Subject', exact: true })).toHaveValue(
+    'Server draft subject'
+  );
   await expect(page.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue(
     'Server draft body'
   );

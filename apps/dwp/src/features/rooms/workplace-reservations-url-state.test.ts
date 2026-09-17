@@ -23,6 +23,7 @@ describe('workplace reservations URL state', () => {
       query: 'focus',
       reservationId: null,
       reservationAuthority: null,
+      detailTab: null,
     });
     expect(parsed.canonicalSearchParams.toString()).toBe(
       'v=1&period=UPCOMING&types=ALL&status=ACTIVE&authority=ALL&q=focus'
@@ -33,13 +34,13 @@ describe('workplace reservations URL state', () => {
   it('updates filters while preserving a selected reservation', () => {
     const next = updateWorkplaceReservationsUrl(
       new URLSearchParams(
-        'v=1&period=WEEK&types=ALL&status=ACTIVE&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE'
+        'v=1&period=WEEK&types=ALL&status=ACTIVE&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE&tab=VISITS'
       ),
       { types: 'DESK', status: 'CHECKED_IN' }
     );
 
     expect(next.toString()).toBe(
-      'v=1&period=WEEK&types=DESK&status=CHECKED_IN&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE'
+      'v=1&period=WEEK&types=DESK&status=CHECKED_IN&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE&tab=VISITS'
     );
   });
 

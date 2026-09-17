@@ -257,6 +257,92 @@ test('disables model-improvement use when the tenant has not opted in', async ({
   ).toBeDisabled();
 });
 
+test('resets a completed conversation to a private new draft without issuing a command', async ({
+  page,
+}) => {
+  const evidence = await mockWorkplaceAssistant(page);
+  await page.goto(`/workplace/assistant?request=${ASSISTANT_IDS.request}`);
+  await expect(page.getByRole('heading', { name: 'Review proposals' })).toBeVisible();
+  await page.getByRole('button', { name: 'Reset conversation' }).click();
+  await expect(page).not.toHaveURL(/(?:\?|&)request=/u);
+  await expect(
+    page.getByRole('heading', { name: 'Describe the work and booking requirements' })
+  ).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Natural-language request' })).toHaveValue('');
+  expect(evidence.commandPaths).toEqual([]);
+});
+
+test('starts opt-in voice input and keeps its transcript editable before submission', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    type SpeechResultEvent = {
+      resultIndex: number;
+      results: Array<Array<{ transcript: string }>>;
+    };
+    class TestSpeechRecognition {
+      continuous = false;
+      interimResults = false;
+      lang = '';
+      onresult: ((event: SpeechResultEvent) => void) | null = null;
+      onerror: ((event: Event) => void) | null = null;
+      onend: (() => void) | null = null;
+
+      start() {
+        window.setTimeout(() => {
+          this.onresult?.({
+            resultIndex: 0,
+            results: [[{ transcript: 'Book a quiet focus room tomorrow' }]],
+          });
+          this.onend?.();
+        }, 0);
+      }
+
+      stop() {
+        this.onend?.();
+      }
+
+      abort() {
+        this.onend?.();
+      }
+    }
+    Object.defineProperty(window, 'SpeechRecognition', {
+      configurable: true,
+      value: TestSpeechRecognition,
+    });
+  });
+  const evidence = await mockWorkplaceAssistant(page);
+  await page.goto('/workplace/assistant');
+  await page.getByRole('button', { name: 'Voice input' }).click();
+  const consentDialog = page.getByRole('dialog', { name: 'Start voice input' });
+  await expect(consentDialog).toBeVisible();
+  await expect(consentDialog.getByRole('button', { name: 'Start listening' })).toBeDisabled();
+  await consentDialog
+    .getByRole('checkbox', { name: /understand the voice-processing notice/i })
+    .check();
+  await consentDialog.getByRole('button', { name: 'Start listening' }).click();
+  const request = page.getByRole('textbox', { name: 'Natural-language request' });
+  await expect(request).toHaveValue('Book a quiet focus room tomorrow');
+  await request.fill('Book a quiet focus room tomorrow near the design team.');
+  await expect(request).toHaveValue('Book a quiet focus room tomorrow near the design team.');
+  expect(evidence.commandPaths).toEqual([]);
+  expect(await page.evaluate(() => location.href)).not.toContain('Book a quiet focus room');
+  expect(
+    await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))
+  ).not.toContain('Book a quiet focus room');
+  await page
+    .getByRole('textbox', { name: 'Command reason' })
+    .fill('Create a reviewable proposal from the reviewed transcript');
+  await page
+    .getByRole('checkbox', {
+      name: 'I consent to processing this request for booking suggestions.',
+    })
+    .check();
+  await request.press('ControlOrMeta+Enter');
+  await expect(page).toHaveURL(new RegExp(`request=${ASSISTANT_IDS.request}`));
+  expect(evidence.commandPaths).toContain('/api/platform/v1/workplace/assistant/requests');
+});
+
 test('updates governed assistant controls with elevation and renders redacted audit evidence', async ({
   page,
 }, testInfo) => {

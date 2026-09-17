@@ -21,7 +21,8 @@ function drawCover(
 /** A private scratch canvas is never published. Only a complete masked frame is copied out. */
 export function createMeetingBackgroundCompositor(
   mode: MeetingProcessedBackgroundMode = 'blur',
-  office?: MeetingBackgroundImage
+  office?: MeetingBackgroundImage,
+  options: { hdVideo?: boolean } = {}
 ) {
   if (mode === 'office' && !office) throw new MeetingBackgroundError('ASSET_UNAVAILABLE');
   const output = document.createElement('canvas');
@@ -42,7 +43,10 @@ export function createMeetingBackgroundCompositor(
   output.height = 360;
   out.fillStyle = 'black';
   out.fillRect(0, 0, output.width, output.height);
-  const track = output.captureStream(20).getVideoTracks()[0];
+  const frameRate = options.hdVideo === true ? 30 : 20;
+  const maxWidth = options.hdVideo === true ? 1920 : 1280;
+  const maxHeight = options.hdVideo === true ? 1080 : 720;
+  const track = output.captureStream(frameRate).getVideoTracks()[0];
   if (!track) throw new MeetingBackgroundError('UNSUPPORTED');
   return {
     track,
@@ -60,7 +64,7 @@ export function createMeetingBackgroundCompositor(
       ) {
         throw new MeetingBackgroundError('PROCESSING_FAILED');
       }
-      const scale = Math.min(1, 1280 / video.videoWidth, 720 / video.videoHeight);
+      const scale = Math.min(1, maxWidth / video.videoWidth, maxHeight / video.videoHeight);
       const width = Math.max(1, Math.round(video.videoWidth * scale));
       const height = Math.max(1, Math.round(video.videoHeight * scale));
       for (const canvas of [composite, foreground]) {

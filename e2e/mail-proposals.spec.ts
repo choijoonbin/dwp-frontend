@@ -16,6 +16,12 @@ const MAIL_PERMISSIONS = [
     permissionCode,
     effect: 'ALLOW' as const,
   })),
+  ...['VIEW', 'CREATE'].map((permissionCode) => ({
+    resourceType: 'APP',
+    resourceKey: 'APP.HCM',
+    permissionCode,
+    effect: 'ALLOW' as const,
+  })),
 ];
 
 const calendarProposal = proposal({
@@ -185,6 +191,19 @@ test('accepting a proposal records the decision before opening the target app', 
     decision = route.request().postDataJSON();
     await fulfill(route, { ...calendarProposal, status: 'ACCEPTED', version: 3 });
   });
+  await page.route('**/api/platform/v1/mail/proposals/*/handoff', (route) =>
+    fulfill(route, {
+      proposalId: calendarProposal.proposalId,
+      commandId: '60000000-0000-4000-8000-000000000001',
+      ownerRoute: calendarProposal.targetRoute,
+      returnTo: `/mail/actions?proposalId=${calendarProposal.proposalId}`,
+      focus: `mail-proposal-${calendarProposal.proposalId}`,
+      status: 'ACCEPTED',
+      resultRef: null,
+      updatedAt: '2026-09-17T09:00:00Z',
+      version: 1,
+    })
+  );
 
   await page.goto('/mail/home');
   const calendarCard = page.getByTestId('mail-proposal-CREATE_CALENDAR_EVENT');
@@ -192,7 +211,87 @@ test('accepting a proposal records the decision before opening the target app', 
   await page.getByRole('button', { name: 'Approve and open calendar' }).click();
 
   await expect.poll(() => decision).toEqual({ decision: 'ACCEPT', version: 2 });
-  await expect(page).toHaveURL(/\/calendar\/schedule\?action=create$/u);
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/calendar/schedule');
+  const ownerUrl = new URL(page.url());
+  expect(Object.fromEntries(ownerUrl.searchParams)).toEqual({
+    create: 'meeting',
+    proposalId: calendarProposal.proposalId,
+    commandId: '60000000-0000-4000-8000-000000000001',
+    returnTo: `/mail/actions?proposalId=${calendarProposal.proposalId}`,
+    focus: `mail-proposal-${calendarProposal.proposalId}`,
+  });
+});
+
+test('HR owner creation binds the accepted command, submits once, and only polls Mail outcome', async ({
+  page,
+}) => {
+  await mockMailProposalHome(page);
+  const commandId = '60000000-0000-4000-8000-000000000004';
+  let createCount = 0;
+  let ownerHeaders: Record<string, string> = {};
+  let handoffReads = 0;
+  await page.route('**/api/platform/v1/mail/proposals**', (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith(`/proposals/${leaveProposal.proposalId}/handoff`)) {
+      handoffReads += 1;
+      const terminal = createCount > 0;
+      return fulfill(route, {
+        proposalId: leaveProposal.proposalId,
+        commandId,
+        ownerRoute: leaveProposal.targetRoute,
+        returnTo: `/mail/actions?proposalId=${leaveProposal.proposalId}`,
+        focus: `mail-proposal-${leaveProposal.proposalId}`,
+        status: terminal ? 'EXECUTED' : 'ACCEPTED',
+        resultRef: terminal ? 'hr-leave-request:leave-owner-1' : null,
+        updatedAt: '2026-09-17T09:00:00Z',
+        version: terminal ? 6 : 5,
+      });
+    }
+    return fulfill(route, [{ ...leaveProposal, status: createCount ? 'EXECUTED' : 'ACCEPTED' }]);
+  });
+  await page.route('**/api/people/v1/hr/absence/requests', (route) => {
+    createCount += 1;
+    ownerHeaders = route.request().headers();
+    return fulfill(route, {
+      requestId: 'leave-owner-1',
+      planId: 'leave-plan-annual',
+      planName: 'Annual leave',
+      startAt: '2026-09-20T09:00:00Z',
+      endAt: '2026-09-20T18:00:00Z',
+      requestedMinutes: 480,
+      status: 'SUBMITTED',
+      version: 0,
+    });
+  });
+  const ownerSearch = new URLSearchParams({
+    request: 'open',
+    proposalId: leaveProposal.proposalId as string,
+    commandId,
+    returnTo: `/mail/actions?proposalId=${leaveProposal.proposalId}`,
+    focus: `mail-proposal-${leaveProposal.proposalId}`,
+  });
+
+  await page.goto(`/hr/absence?${ownerSearch.toString()}`);
+  const dialog = page.getByRole('dialog', { name: 'New time-off request' });
+  await expect(dialog).toBeVisible();
+  for (const fieldName of ['Start date', 'End date']) {
+    const field = dialog.getByRole('group', { name: fieldName });
+    await field.getByRole('spinbutton', { name: 'Month' }).fill('09');
+    await field.getByRole('spinbutton', { name: 'Day' }).fill('20');
+    await field.getByRole('spinbutton', { name: 'Year' }).fill('2026');
+    await field.getByRole('spinbutton', { name: 'Year' }).press('Tab');
+  }
+  await dialog.getByRole('button', { name: 'Submit request' }).click();
+
+  await expect.poll(() => createCount).toBe(1);
+  expect(ownerHeaders['x-dwp-mail-proposal-id']).toBe(leaveProposal.proposalId);
+  expect(ownerHeaders['x-dwp-mail-command-id']).toBe(commandId);
+  expect(ownerHeaders['x-dwp-mail-proposal-version']).toBe('5');
+  await expect.poll(() => handoffReads).toBeGreaterThan(1);
+  await expect(page).toHaveURL(
+    new RegExp(`/mail/actions\\?proposalId=${leaveProposal.proposalId}`, 'u')
+  );
+  expect(createCount).toBe(1);
 });
 
 test('mail home retains work context across themes, reflow, and reduced motion', async ({

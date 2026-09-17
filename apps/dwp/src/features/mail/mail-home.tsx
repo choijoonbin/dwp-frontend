@@ -44,6 +44,8 @@ import { MailPageHeading, MailThreadListItem } from './mail-components';
 import { mailAccountScopedPath, validMailAccountScope } from './mail-account-scope';
 import { MailDailyFlow } from './mail-home-journey';
 import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
+import { mailUsesCompactDensity, useMailRuntimePreferences } from './mail-runtime-preferences';
+import { useMailProposalHandoff } from './use-mail-proposal-handoff';
 
 import type { ReactNode } from 'react';
 import type {
@@ -68,6 +70,8 @@ export function MailHome() {
   const [search, setSearch] = useState('');
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const [proposalsExpanded, setProposalsExpanded] = useState(false);
+  const runtimePreferences = useMailRuntimePreferences();
+  const proposalHandoff = useMailProposalHandoff();
   const query = useQuery({
     queryKey: ['mail', 'home', requestedAccountId],
     queryFn: () => getMailHome({ accountId: requestedAccountId ?? undefined }),
@@ -99,9 +103,7 @@ export function MailHome() {
       setProposalToAccept(null);
       if (variables.decision === 'ACCEPT') {
         toast.success(t('proposal.accepted'));
-        if (proposal.targetRoute) {
-          navigate(mailAccountScopedPath(proposal.targetRoute, requestedAccountId));
-        }
+        proposalHandoff.mutate(proposal);
       } else {
         toast.success(t('proposal.dismissed'));
       }
@@ -327,7 +329,7 @@ export function MailHome() {
                     <MailThreadListItem
                       key={thread.threadId}
                       thread={thread}
-                      compact
+                      compact={mailUsesCompactDensity(runtimePreferences.data)}
                       presentation="focus"
                       onSelect={() => navigateInScope(`/mail/inbox?thread=${thread.threadId}`)}
                     />
@@ -378,7 +380,7 @@ export function MailHome() {
                       <MailProposalCard
                         key={proposal.proposalId}
                         proposal={proposal}
-                        busy={proposalMutation.isPending}
+                        busy={proposalMutation.isPending || proposalHandoff.isPending}
                         onAccept={() => setProposalToAccept(proposal)}
                         onDismiss={() => proposalMutation.mutate({ proposal, decision: 'DISMISS' })}
                       />
@@ -427,7 +429,7 @@ export function MailHome() {
 
       <MailProposalReviewDialog
         proposal={proposalToAccept}
-        busy={proposalMutation.isPending}
+        busy={proposalMutation.isPending || proposalHandoff.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {
           if (proposalToAccept) {

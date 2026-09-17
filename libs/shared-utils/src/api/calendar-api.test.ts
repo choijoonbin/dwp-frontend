@@ -100,7 +100,45 @@ describe('calendar API boundary', () => {
 
     await expect(createCalendarEvent(input, signal)).resolves.toEqual(createdEvent);
 
-    expect(post).toHaveBeenCalledWith('/api/platform/v1/calendar/events', input, { signal });
+    expect(post).toHaveBeenCalledWith('/api/platform/v1/calendar/events', input, {
+      signal,
+      headers: {},
+    });
+  });
+
+  it('binds a Mail owner command to the real Calendar create request', async () => {
+    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({
+      data: { data: { eventId: 'event-1', version: 1 } },
+    });
+    const input = {
+      title: 'Owner event',
+      type: 'MEETING' as const,
+      startsAt: '2026-09-08T00:00:00Z',
+      endsAt: '2026-09-08T01:00:00Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      visibility: 'DEFAULT' as const,
+      recurrence: 'NONE' as const,
+      recurrenceInterval: 1,
+      responseRequired: true,
+      attendees: [],
+      importance: 'NORMAL' as const,
+      idempotencyKey: 'calendar-event-intent-1',
+    };
+
+    await createCalendarEvent(input, undefined, {
+      proposalId: '50000000-0000-4000-8000-000000000001',
+      commandId: '60000000-0000-4000-8000-000000000001',
+      version: 4,
+    });
+
+    expect(post).toHaveBeenCalledWith('/api/platform/v1/calendar/events', input, {
+      headers: {
+        'X-DWP-Mail-Proposal-ID': '50000000-0000-4000-8000-000000000001',
+        'X-DWP-Mail-Command-ID': '60000000-0000-4000-8000-000000000001',
+        'X-DWP-Mail-Proposal-Version': '4',
+      },
+    });
   });
 
   it('loads the today workspace with an explicit IANA time zone', async () => {

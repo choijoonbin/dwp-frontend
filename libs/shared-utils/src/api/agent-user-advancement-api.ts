@@ -10,7 +10,9 @@ import {
 } from './product-surface-governed-mutation';
 import {
   parseDwaionProposalHandoff,
+  parseDwaionAttachmentEvidence,
   parseDwaionResearchDelivery,
+  parseDwaionResearchCapabilities,
   parseDwaionResearchPlan,
   parseDwaionResearchRun,
   parseDwaionSecureAttachment,
@@ -19,11 +21,14 @@ import {
 import type {
   CreateDwaionAttachmentOptions,
   DwaionCommandAttempt,
+  DwaionAttachmentEvidence,
   DwaionProposalHandoff,
   DwaionResearchCommand,
   DwaionResearchCommandOptions,
   DwaionResearchDelivery,
+  DwaionResearchCapabilities,
   DwaionResearchDeliveryType,
+  DwaionResearchDownloadKind,
   DwaionResearchPlan,
   DwaionResearchPlanDefinition,
   DwaionResearchRun,
@@ -87,6 +92,24 @@ export async function getDwaionSecureAttachment(
   return parseDwaionSecureAttachment(response.data.data);
 }
 
+export async function getDwaionAttachmentEvidence(
+  attachmentId: string,
+  expectedSourceSha256: string,
+  signal?: AbortSignal
+): Promise<DwaionAttachmentEvidence> {
+  if (!/^[0-9a-f]{64}$/u.test(expectedSourceSha256))
+    throw new TypeError('Attachment evidence digest is invalid.');
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
+    `${ATTACHMENT_BASE}/${encodeId(attachmentId)}/evidence`,
+    { signal }
+  );
+  const evidence = parseDwaionAttachmentEvidence(response.data.data);
+  if (evidence.attachmentId !== attachmentId || evidence.sourceSha256 !== expectedSourceSha256) {
+    throw new HttpError('Secure attachment evidence binding is invalid.', 502, evidence);
+  }
+  return evidence;
+}
+
 export async function deleteDwaionSecureAttachment(
   attachmentId: string,
   expectedRevision: number,
@@ -122,6 +145,15 @@ export async function createDwaionResearchPlan(
     productSurfaceGovernedMutationConfig(authority)
   );
   return parseDwaionResearchPlan(response.data.data);
+}
+
+export async function getDwaionResearchCapabilities(
+  signal?: AbortSignal
+): Promise<DwaionResearchCapabilities> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(`${RESEARCH_BASE}/capabilities`, {
+    signal,
+  });
+  return parseDwaionResearchCapabilities(response.data.data);
 }
 
 export async function getDwaionResearchPlan(
@@ -183,6 +215,43 @@ export async function getDwaionResearchRun(
     { signal }
   );
   return parseDwaionResearchRun(response.data.data);
+}
+
+export async function downloadDwaionResearchRun(
+  runId: string,
+  kind: DwaionResearchDownloadKind
+): Promise<Blob> {
+  assertAgentUuid(runId, 'Research run identifier');
+  const accept = kind === 'audit' ? 'application/x-ndjson' : 'application/json';
+  const response = await axiosInstance.get<Blob>(
+    `${RESEARCH_BASE}/runs/${encodeId(runId)}/downloads/${kind}`,
+    { responseType: 'blob', headers: { Accept: accept } }
+  );
+  if (!(response.data instanceof Blob) || response.data.size < 1) {
+    throw new HttpError('Research download response is empty or invalid.', 502);
+  }
+  return response.data;
+}
+
+export async function executeDwaionResearchRun(
+  runId: string,
+  expectedVersion: number,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+): Promise<DwaionResearchRun> {
+  assertAgentRevision(expectedVersion, 'Research run version', 1);
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${RESEARCH_BASE}/runs/${encodeId(runId)}/execute`,
+    {
+      commandId: checkedUuid(commandId, 'Research execution command'),
+      expectedVersion,
+    },
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  const run = parseDwaionResearchRun(response.data.data);
+  if (run.runId !== runId)
+    throw new HttpError('Research execution response binding is invalid.', 502);
+  return run;
 }
 
 export async function commandDwaionResearchRun(

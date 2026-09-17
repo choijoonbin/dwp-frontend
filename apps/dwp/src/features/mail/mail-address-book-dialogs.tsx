@@ -22,6 +22,10 @@ import type {
   MailContactGroup,
   MailContactInput,
 } from '@dwp-frontend/shared-utils';
+import {
+  MAIL_GROUP_TO_RECIPIENT_LIMIT,
+  mailGroupDeliveryPolicy,
+} from './mail-group-delivery-policy';
 
 const EMPTY_CONTACT: MailContactInput = {
   displayName: '',
@@ -341,21 +345,23 @@ export function MailGroupMessageDialog({
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [classification, setClassification] = useState<MailClassification>('INTERNAL');
-  const [recipientMode, setRecipientMode] = useState<'BCC' | 'TO'>('TO');
   const [confirmed, setConfirmed] = useState(false);
   useEffect(() => {
     if (!open || !group) return;
     setSubject(attempt?.input.subject ?? '');
     setBody(attempt?.input.body ?? '');
     setClassification(attempt?.input.classification ?? 'INTERNAL');
-    setRecipientMode(attempt?.input.recipientMode ?? 'TO');
     setConfirmed(Boolean(attempt) && !attempt?.reviewRequired);
   }, [open, group, attempt]);
   const reviewedGroup = attempt?.group ?? group;
   const locked = busy || Boolean(attempt && !attempt.reviewRequired);
-  const valid = Boolean(
-    reviewedGroup?.members.length && subject.trim() && body.trim() && confirmed
+  const groupDeliveryPolicy = mailGroupDeliveryPolicy(
+    reviewedGroup?.members.length ?? 0,
+    attempt?.reviewRequired ? 'TO' : (attempt?.input.recipientMode ?? 'TO')
   );
+  const { recipientLimitExceeded, unsupportedPrivateMode: unsupportedPrivateAttempt } =
+    groupDeliveryPolicy;
+  const valid = Boolean(groupDeliveryPolicy.canSend && subject.trim() && body.trim() && confirmed);
   return (
     <FormDialog
       open={open}
@@ -379,7 +385,7 @@ export function MailGroupMessageDialog({
               subject: subject.trim(),
               body: body.trim(),
               classification,
-              recipientMode,
+              recipientMode: 'TO' as const,
               groupVersion: reviewedGroup!.version,
             },
             reviewRequired: false,
@@ -387,6 +393,7 @@ export function MailGroupMessageDialog({
           onAttempt(reviewedAttempt);
           onSubmit(reviewedAttempt.input);
         } else if (attempt) {
+          if (attempt.input.recipientMode !== 'TO') return;
           onAttempt({ ...attempt, reviewRequired: false });
           onSubmit(attempt.input);
         } else if (group && valid) {
@@ -396,7 +403,7 @@ export function MailGroupMessageDialog({
               subject,
               body,
               classification,
-              recipientMode,
+              recipientMode: 'TO' as const,
               groupVersion: group.version,
               idempotencyKey: crypto.randomUUID(),
             },
@@ -418,39 +425,34 @@ export function MailGroupMessageDialog({
             {t('addressBook.send.recipients', { count: reviewedGroup?.members.length ?? 0 })}
           </Typography>
         </Stack>
-        <FormControl disabled={locked}>
-          <InputLabel id="mail-group-recipient-mode-label">
-            {t('addressBook.send.recipientMode')}
-          </InputLabel>
-          <Select
-            labelId="mail-group-recipient-mode-label"
-            label={t('addressBook.send.recipientMode')}
-            value={recipientMode}
-            onChange={(event) => {
-              setRecipientMode(event.target.value as 'BCC' | 'TO');
-              setConfirmed(false);
-            }}
-          >
-            <MenuItem value="TO">{t('addressBook.send.mode.TO')}</MenuItem>
-            <MenuItem value="BCC">{t('addressBook.send.mode.BCC')}</MenuItem>
-          </Select>
-        </FormControl>
-        <Alert severity={recipientMode === 'TO' ? 'warning' : 'info'}>
+        <Alert severity={recipientLimitExceeded ? 'error' : 'warning'}>
           <Typography variant="body2" fontWeight={750}>
-            {t(
-              recipientMode === 'TO'
-                ? 'addressBook.send.recipientVisibilityTitle'
-                : 'addressBook.send.privateVisibilityTitle'
-            )}
+            {t('addressBook.send.recipientVisibilityTitle')}
           </Typography>
           <Typography variant="body2">
+            {t('addressBook.send.recipientVisibilityDescription')}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.5 }}>
             {t(
-              recipientMode === 'TO'
-                ? 'addressBook.send.recipientVisibilityDescription'
-                : 'addressBook.send.privateVisibilityDescription'
+              recipientLimitExceeded
+                ? 'addressBook.send.recipientLimitExceeded'
+                : 'addressBook.send.recipientLimit',
+              { limit: MAIL_GROUP_TO_RECIPIENT_LIMIT }
             )}
           </Typography>
         </Alert>
+        {unsupportedPrivateAttempt && (
+          <Alert
+            severity="error"
+            action={
+              <ActionButton intent="quiet" disabled={busy} onClick={onReviewLatest}>
+                {t('addressBook.send.reviewLatest')}
+              </ActionButton>
+            }
+          >
+            {t('addressBook.send.privateModeUnavailable')}
+          </Alert>
+        )}
         <Box
           component="ul"
           aria-label={t('addressBook.send.recipientList')}
@@ -473,11 +475,7 @@ export function MailGroupMessageDialog({
               onChange={(event) => setConfirmed(event.target.checked)}
             />
           }
-          label={t(
-            recipientMode === 'TO'
-              ? 'addressBook.send.confirmRecipients'
-              : 'addressBook.send.confirmPrivateRecipients'
-          )}
+          label={t('addressBook.send.confirmRecipients')}
         />
         {(retryFailed || (attempt && !attempt.reviewRequired)) && !busy && (
           <Typography role="alert" variant="body2" color="warning.main">

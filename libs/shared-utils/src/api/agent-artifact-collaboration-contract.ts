@@ -1,28 +1,21 @@
-import type { DwaionArtifactDraftContent, DwaionArtifactSourceReference } from './agent-artifact-api';
+import type {
+  DwaionArtifactDraftContent,
+  DwaionArtifactSourceReference,
+} from './agent-artifact-api';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type DwaionTeamArtifactRole = 'OWNER' | 'EDITOR' | 'REVIEWER' | 'VIEWER';
 export type DwaionTeamArtifactWorkspaceState = 'ACTIVE' | 'READ_ONLY' | 'REVOKED';
 export type DwaionTeamArtifactPreflightState =
-  | 'READY'
-  | 'PARTIAL'
-  | 'PERMISSION_DENIED'
-  | 'EXPIRED';
+  'READY' | 'PARTIAL' | 'PERMISSION_DENIED' | 'EXPIRED';
 export type DwaionTeamArtifactConflictState =
-  | 'OPEN'
-  | 'RESOLVED_LOCAL'
-  | 'RESOLVED_SERVER'
-  | 'RESOLVED_MERGED'
-  | 'STASHED'
-  | 'ROLLED_BACK';
+  'OPEN' | 'RESOLVED_LOCAL' | 'RESOLVED_SERVER' | 'RESOLVED_MERGED' | 'STASHED' | 'ROLLED_BACK';
 export type DwaionTeamArtifactConflictResolution =
-  | 'USE_LOCAL'
-  | 'USE_SERVER'
-  | 'MERGE'
-  | 'STASH'
-  | 'ROLLBACK';
+  'USE_LOCAL' | 'USE_SERVER' | 'MERGE' | 'STASH' | 'ROLLBACK';
 export type DwaionTeamArtifactShareState = 'ACTIVE' | 'EXPIRED' | 'REVOKED';
 export type DwaionTeamArtifactSharePermission = 'VIEW' | 'COMMENT' | 'EDIT';
+export type DwaionTeamArtifactAccessRequestState = 'PENDING' | 'APPROVED' | 'DENIED' | 'EXPIRED';
+export type DwaionTeamArtifactCommentState = 'OPEN' | 'RESOLVED';
 
 export type DwaionTeamArtifactMemberRequest = {
   subjectId: string;
@@ -38,13 +31,27 @@ export type DwaionTeamArtifactMember = DwaionTeamArtifactMemberRequest & {
 export type DwaionTeamArtifactCapabilities = {
   teamWorkspaceAvailable: boolean;
   aclPreflightAvailable: boolean;
+  accessRequestAvailable: boolean;
   collaborationAvailable: boolean;
   conflictResolutionAvailable: boolean;
   internalSharingAvailable: boolean;
   externalSharingAvailable: false;
   shareExpiryAvailable: boolean;
   shareRevocationAvailable: boolean;
-  providerState: 'AVAILABLE' | 'NOT_CONFIGURED';
+  inlineComments: DwaionArtifactProviderCapability;
+  automaticMasking: DwaionArtifactProviderCapability;
+  syntheticReplacement: DwaionArtifactProviderCapability;
+  reviewNotification: DwaionArtifactProviderCapability;
+  reviewRejection: DwaionArtifactProviderCapability;
+  providerState:
+    'AVAILABLE' | 'NOT_CONFIGURED' | 'DATABASE_NOT_CONFIGURED' | 'SECURITY_NOT_CONFIGURED';
+  recoveryHint: string | null;
+};
+
+export type DwaionArtifactProviderCapability = {
+  available: boolean;
+  configured: boolean;
+  reasonCode: string | null;
   recoveryHint: string | null;
 };
 
@@ -60,6 +67,18 @@ export type DwaionTeamArtifactPreflight = {
   excludedSourceCount: number;
   evidenceSha256: string;
   expiresAt: string;
+  createdAt: string;
+};
+
+export type DwaionTeamArtifactAccessRequest = {
+  accessRequestId: string;
+  artifactId: string;
+  teamId: string;
+  preflightId: string;
+  state: DwaionTeamArtifactAccessRequestState;
+  deniedSubjectCount: number;
+  deniedSourceCount: number;
+  submissionEvidenceSha256: string;
   createdAt: string;
 };
 
@@ -113,6 +132,31 @@ export type DwaionTeamArtifactEditResult = {
   conflict: DwaionTeamArtifactConflict | null;
 };
 
+export type DwaionTeamArtifactCommentReply = {
+  replyId: string;
+  commentId: string;
+  authorSubjectId: string;
+  authorDisplayName: string | null;
+  body: string;
+  createdAt: string;
+};
+
+export type DwaionTeamArtifactComment = {
+  commentId: string;
+  workspaceId: string;
+  artifactId: string;
+  authorSubjectId: string;
+  authorDisplayName: string | null;
+  body: string;
+  anchor: string | null;
+  state: DwaionTeamArtifactCommentState;
+  revision: number;
+  replies: DwaionTeamArtifactCommentReply[];
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt: string | null;
+};
+
 export type DwaionArtifactCollaborationCommand = {
   commandId: string;
   expectedRevision: number;
@@ -120,15 +164,14 @@ export type DwaionArtifactCollaborationCommand = {
   authority?: ProductSurfaceGovernedMutationAuthority;
 };
 
-export type DwaionArtifactCollaborationHighRiskCommand =
-  DwaionArtifactCollaborationCommand & {
-    changeReason: string;
-  };
+export type DwaionArtifactCollaborationHighRiskCommand = DwaionArtifactCollaborationCommand & {
+  changeReason: string;
+};
 
 export type RunDwaionTeamArtifactPreflightInput = DwaionArtifactCollaborationCommand & {
   teamId: string;
   artifactRevision: number;
-  members: DwaionTeamArtifactMemberRequest[];
-  sources: DwaionArtifactSourceReference[];
+  members: readonly DwaionTeamArtifactMemberRequest[];
+  sources: readonly DwaionArtifactSourceReference[];
   excludeInaccessibleSources: boolean;
 };

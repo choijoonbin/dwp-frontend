@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   BrainCircuit,
   CheckCircle2,
@@ -63,6 +63,7 @@ export function DwaionPersonalAiControls({
   memoryBusy = false,
   clearing = false,
   clearEvidence = [],
+  deletionHistory,
   canManage = true,
   canViewMemory = true,
   canViewPrivacy = true,
@@ -76,6 +77,8 @@ export function DwaionPersonalAiControls({
   onSourcePreferenceChange,
   onSaveMemory,
   onMemoryStateChange,
+  onMemoryScopeChange,
+  onMemoryExpiryChange,
   onDeleteMemory,
   onClear,
   copy = DWAION_PERSONAL_CONTROLS_COPY_KO,
@@ -94,6 +97,7 @@ export function DwaionPersonalAiControls({
   memoryBusy?: boolean;
   clearing?: boolean;
   clearEvidence?: readonly DwaionClearEvidence[];
+  deletionHistory?: ReactNode;
   canManage?: boolean;
   canViewMemory?: boolean;
   canViewPrivacy?: boolean;
@@ -113,7 +117,17 @@ export function DwaionPersonalAiControls({
   onMemoryStateChange: (
     memoryId: string,
     expectedRevision: number,
-    state: Exclude<DwaionMemoryState, 'DELETED'>
+    state: Extract<DwaionMemoryState, 'ACTIVE' | 'DISABLED'>
+  ) => void | Promise<void>;
+  onMemoryScopeChange: (
+    memoryId: string,
+    expectedRevision: number,
+    scope: DwaionMemoryRecord['scope']
+  ) => void | Promise<void>;
+  onMemoryExpiryChange: (
+    memoryId: string,
+    expectedRevision: number,
+    expiresAt: string | null
   ) => void | Promise<void>;
   onDeleteMemory: (memoryId: string, expectedRevision: number) => void | Promise<void>;
   onClear: (scopes: readonly DwaionClearScope[]) => void | Promise<void>;
@@ -338,8 +352,12 @@ export function DwaionPersonalAiControls({
                       busy={memoryBusy}
                       canManage={canManage}
                       memoryEnabled={Boolean(memoryPreference?.enabled)}
+                      automaticMemoryInference={memoryPreference?.automaticMemoryInference ?? null}
+                      evidenceCapabilities={memoryPreference?.evidenceCapabilities ?? null}
                       onSave={onSaveMemory}
                       onStateChange={onMemoryStateChange}
+                      onScopeChange={onMemoryScopeChange}
+                      onExpiryChange={onMemoryExpiryChange}
                       onDelete={onDeleteMemory}
                       copy={copy}
                       formatTimestamp={formatTimestamp}
@@ -359,6 +377,7 @@ export function DwaionPersonalAiControls({
                   formatTimestamp={formatTimestamp}
                 />
               </Box>
+              {deletionHistory}
             </Stack>
             <Stack id="dwaion-controls-compliance" gap={2}>
               {memoryPreference ? (

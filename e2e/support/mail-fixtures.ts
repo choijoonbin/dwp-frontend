@@ -241,4 +241,48 @@ export async function mockMailMember(page: Page) {
     email: 'mina.kim@sk.com',
     permissions: MEMBER_PERMISSIONS,
   });
+  await page.route('**/api/platform/v1/mail/compose-context', (route) =>
+    fulfill(route, defaultMailComposeContext())
+  );
+  await page.route('**/api/platform/v1/mail/writing-assets', (route) =>
+    fulfill(route, { templates: [], signatures: [] })
+  );
+  await page.route('**/api/platform/v1/mail/preferences', (route) =>
+    fulfill(route, defaultMailPreferences())
+  );
+}
+
+function defaultMailPreferences() {
+  return {
+    density: 'COMFORTABLE',
+    remoteImages: 'BLOCK',
+    sendDelaySeconds: 0,
+    keyboardShortcuts: false,
+    notifyNewMail: true,
+    notifySharedAssignment: true,
+    notifyFollowUpDue: true,
+    defaultAccountId: '10000000-0000-0000-0000-000000000001',
+    defaultSignatureId: null,
+    version: 1,
+    orgLocks: {},
+  };
+}
+
+function defaultMailComposeContext() {
+  return {
+    accounts: mailOrganization().accounts,
+    capabilities: {
+      multipleRecipients: true,
+      cc: true,
+      bcc: true,
+      html: true,
+      attachments: true,
+      scheduling: true,
+      maximumAttachmentBytes: 25 * 1024 * 1024,
+    },
+    templates: [],
+    signatures: [],
+    preferences: defaultMailPreferences(),
+    variables: { displayName: 'Mina Kim', department: 'Digital Workplace' },
+  };
 }

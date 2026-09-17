@@ -28,6 +28,7 @@
     "ENDED": "종료됨",
     "ERROR": "오류",
     "EXPIRED": "만료됨",
+    "EXPIRING": "곧 만료",
     "EXECUTING": "실행 중",
     "EXHAUSTED": "재시도 소진",
     "FAILED": "실패",

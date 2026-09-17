@@ -80,6 +80,7 @@ test('A01 models and routing keeps the governed work visible at every required w
 test('A02-A06 are integrated into the canonical admin information architecture', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(180_000);
   await mockDwaionAdminStitch(page);
 
   const surfaces = [
@@ -123,8 +124,13 @@ test('A02-A06 are integrated into the canonical admin information architecture',
   ] as const;
 
   for (const surface of surfaces) {
-    for (const width of [1440, 390]) {
-      await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    for (const viewport of [
+      { width: 1440, height: 900, label: '1440' },
+      { width: 720, height: 450, label: '200-percent' },
+      { width: 390, height: 844, label: '390' },
+      { width: 320, height: 760, label: '320' },
+    ]) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto(surface.path);
       await page.evaluate(() => window.scrollTo(0, 0));
       await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
@@ -134,7 +140,7 @@ test('A02-A06 are integrated into the canonical admin information architecture',
       await expectNoHorizontalOverflow(page);
       await expectAccessible(page);
       if ('selector' in surface) await expect(page.locator(surface.selector)).toBeVisible();
-      await capture(page, testInfo, `${surface.id}-${width}`);
+      await capture(page, testInfo, `${surface.id}-${viewport.label}`);
     }
   }
 });

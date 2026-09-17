@@ -634,11 +634,45 @@ test.describe('Screen 19 indoor navigation and device experience', () => {
   }) => {
     await installHarness(page);
     const api = await installApi(page);
+    let sharedUrlViaFallback = '';
+    await page.exposeFunction('__screen19CaptureClipboard', (value: string) => {
+      sharedUrlViaFallback = value;
+    });
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/__screen19?view=wayfinding');
     await expect(page.getByRole('heading', { name: '경로 요약' })).toBeVisible();
     await expect(page.getByTestId('workplace-access-pass')).toBeVisible();
+    await page.evaluate(() => {
+      const capture = (
+        window as typeof window & {
+          __screen19CaptureClipboard: (value: string) => Promise<void>;
+        }
+      ).__screen19CaptureClipboard;
+      Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
+      Object.defineProperty(navigator.clipboard, 'writeText', {
+        configurable: true,
+        value: (value: string) => capture(value),
+      });
+    });
+    await page.evaluate(() => navigator.clipboard.writeText('probe'));
+    expect(sharedUrlViaFallback).toBe('probe');
+    const shareOrigin = new URL(page.url()).origin;
+    await page.getByRole('button', { name: '스마트폰으로 공유' }).click();
+    await expect(page.getByText('안전한 경로 링크를 복사했습니다.')).toBeVisible();
+    expect(sharedUrlViaFallback).toBe(
+      `${shareOrigin}/workplace/navigation?accessible=false&avoidStairs=false&destinationPoiId=${DESTINATION_ID}&originPoiId=${ORIGIN_ID}&siteId=${SITE_ID}&v=1`
+    );
+    expect(sharedUrlViaFallback).not.toMatch(/credential|pairing|passId|bookingId|correlation/i);
+    await page.goto(
+      '/__screen19?view=wayfinding&originPoiId=unauthorized&destinationPoiId=missing'
+    );
+    await expect(
+      page.getByText(
+        '요청한 출발지 또는 목적지를 사용할 수 없어 권한 있는 기본 위치를 선택했습니다.'
+      )
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: '경로 요약' })).toBeVisible();
     await page.getByRole('button', { name: '원타임 패스 발급' }).click();
     await confirmAccessPassCommand(page, '예약된 회의실 출입');
     await expect(page.getByText('8N5K Q7RM 2W41')).toBeVisible();

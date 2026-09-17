@@ -46,6 +46,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import type { Theme } from '@mui/material/styles';
 
+import {
+  MailProposalOwnerHandoffNotice,
+  useMailProposalOwnerHandoff,
+} from '../../components/mail-proposal-owner-handoff';
 import { MailCommandPalette, type MailCommand } from './mail-command-palette';
 import { validMailAccountScope } from './mail-account-scope';
 import { parseMailComposeNavigationState } from './mail-compose-navigation';
@@ -57,6 +61,11 @@ import { mailSendCustodyOwner } from './mail-send-attempt';
 import { mailSharedAssignmentFilter, updateMailSharedFilters } from './mail-shared-filter';
 import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadDetailPane } from './mail-thread-detail';
+import {
+  mailKeyboardShortcutsEnabled,
+  mailUsesCompactDensity,
+  useMailRuntimePreferences,
+} from './mail-runtime-preferences';
 
 import type { MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
 
@@ -102,9 +111,14 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const listRef = useRef<HTMLDivElement | null>(null);
   const restoreListContextRef = useRef(false);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+  const runtimePreferences = useMailRuntimePreferences();
+  const proposalOwnerHandoff = useMailProposalOwnerHandoff('MAIL');
+  const proposalDomainCompletedRef = useRef(false);
+  const proposalReturnStartedRef = useRef(false);
   const selectedId = params.get('thread');
   const composeOpen = params.get('compose') === 'open';
   const requestedFolderId = params.get('folderId');
+
   const [dwaionHandoffState, setDwaionHandoffState] = useState(() => ({
     owner: custodyOwner,
     handoff: parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE'),
@@ -362,18 +376,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!mailKeyboardShortcutsEnabled(runtimePreferences.data)) return;
+      if (isMailShortcutTargetInteractive(event.target)) return;
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         event.stopImmediatePropagation();
         setCommandOpen(true);
         return;
       }
-      if (
-        isMailShortcutTargetInteractive(event.target) ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.altKey
-      ) {
+      if (event.metaKey || event.ctrlKey || event.altKey) {
         return;
       }
       if (event.key === '/') {
@@ -397,6 +408,17 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     setParams(next, { replace: true });
   };
   const closeCompose = () => {
+    const proposalDomainCompleted = proposalDomainCompletedRef.current;
+    if (proposalDomainCompleted) {
+      proposalDomainCompletedRef.current = false;
+      const returnStarted = proposalReturnStartedRef.current;
+      proposalReturnStartedRef.current = false;
+      if (returnStarted) return;
+    }
+    if (!proposalDomainCompleted && proposalOwnerHandoff.active) {
+      void proposalOwnerHandoff.cancelAndReturn();
+      return;
+    }
     setDwaionHandoffState({ owner: custodyOwnerRef.current, handoff: null });
     const returnTo = composeNavigation.returnTo;
     setComposeNavigationState({ owner: custodyOwnerRef.current, seed: null, returnTo: null });
@@ -480,6 +502,8 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           </Stack>
         }
       />
+
+      {!composeOpen && <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />}
 
       <Box
         sx={{
@@ -668,6 +692,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                   buttonId={`mail-thread-${thread.threadId}`}
                   thread={thread}
                   selected={selectedId === thread.threadId}
+                  compact={mailUsesCompactDensity(runtimePreferences.data)}
                   disabled={query.isFetching}
                   onSelect={() => selectThread(thread.threadId)}
                 />
@@ -752,14 +777,23 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           composeNavigation.seed?.body ?? dwaionHandoffText(dwaionHandoff, 'body') ?? undefined
         }
         fromDwaion={Boolean(dwaionHandoff)}
+        proposalBinding={proposalOwnerHandoff.binding}
+        submissionBlocked={proposalOwnerHandoff.blocksSubmission}
+        handoffNotice={<MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />}
         onClose={closeCompose}
-        onCompleted={(threadId, deliveryMode) => {
+        onCompleted={async (threadId, deliveryMode) => {
+          if (proposalOwnerHandoff.active) {
+            proposalDomainCompletedRef.current = true;
+            proposalReturnStartedRef.current =
+              await proposalOwnerHandoff.waitForTerminalAndReturn();
+          }
           if (
             (mode === 'sent' && deliveryMode === 'SEND') ||
             (mode === 'drafts' && deliveryMode === 'DRAFT')
           ) {
             selectThread(threadId);
           }
+          return true;
         }}
       />
       <MailCommandPalette

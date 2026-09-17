@@ -13,7 +13,8 @@ export class MeetingDeviceSession {
   async start(
     kind: MeetingPreviewKind,
     deviceId = 'default',
-    noiseSuppression = true
+    noiseSuppression = true,
+    hdVideo = false
   ): Promise<MediaStream | null> {
     if (this.disposed) return null;
     this.stop(kind);
@@ -24,7 +25,11 @@ export class MeetingDeviceSession {
         ? { audio: { deviceId: device, echoCancellation: true, noiseSuppression }, video: false }
         : {
             audio: false,
-            video: { deviceId: device, width: { ideal: 1280 }, height: { ideal: 720 } },
+            video: {
+              deviceId: device,
+              width: { ideal: hdVideo ? 1920 : 1280 },
+              height: { ideal: hdVideo ? 1080 : 720 },
+            },
           };
     const stream = await this.devices.getUserMedia(constraints);
     if (this.disposed || generation !== this.generations[kind]) {

@@ -30,7 +30,7 @@ export type DwaionPersonalRoutine = Omit<
 > & {
   definition: DwaionRoutineDefinition;
   lifecycleState: 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
-  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED';
+  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED' | 'WEBHOOK';
 };
 export type DwaionRoutineDryRunReceipt = AgentSchemas['RoutineDryRunReceipt'];
 export type DwaionRoutineConsentScope = AgentSchemas['RoutineConsentScope'];
@@ -54,7 +54,11 @@ export async function getDwaionRoutine(routineId: string): Promise<DwaionPersona
   const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${ROUTINE_BASE}/${encodeURIComponent(routineId)}`
   );
-  return expectAgentData(response.data.data, isRoutine, 'Personal routine response is invalid.');
+  return expectAgentData(
+    response.data.data,
+    isDwaionPersonalRoutine,
+    'Personal routine response is invalid.'
+  );
 }
 
 export async function createDwaionRoutine(
@@ -194,7 +198,11 @@ async function mutateRoutine(
     method === 'post'
       ? await axiosInstance.post<ApiResponse<unknown>, object>(url, body, config)
       : await axiosInstance.put<ApiResponse<unknown>, object>(url, body, config);
-  return expectAgentData(response.data.data, isRoutine, 'Personal routine response is invalid.');
+  return expectAgentData(
+    response.data.data,
+    isDwaionPersonalRoutine,
+    'Personal routine response is invalid.'
+  );
 }
 
 function encodeRoutineId(routineId: string): string {
@@ -203,10 +211,10 @@ function encodeRoutineId(routineId: string): string {
 }
 
 function isRoutineList(value: unknown): value is DwaionPersonalRoutine[] {
-  return Array.isArray(value) && value.every(isRoutine);
+  return Array.isArray(value) && value.every(isDwaionPersonalRoutine);
 }
 
-function isRoutine(value: unknown): value is DwaionPersonalRoutine {
+export function isDwaionPersonalRoutine(value: unknown): value is DwaionPersonalRoutine {
   if (
     !isAgentRecord(value) ||
     !isAgentRecord(value.definition) ||
@@ -215,24 +223,81 @@ function isRoutine(value: unknown): value is DwaionPersonalRoutine {
   ) {
     return false;
   }
+  const capabilities = value.capabilities;
   return (
     typeof value.routineId === 'string' &&
     typeof value.lifecycleState === 'string' &&
     typeof value.consentState === 'string' &&
-    typeof value.executionMode === 'string' &&
+    ['DRY_RUN_ONLY', 'SCHEDULED', 'WEBHOOK'].includes(String(value.executionMode)) &&
     Number.isInteger(value.revision) &&
     typeof value.definition.name === 'string' &&
     typeof value.definition.objective === 'string' &&
     Array.isArray(value.definition.sources) &&
+    isRoutineDefinition(value.definition) &&
     isRoutineExecutionPolicy(value.definition) &&
-    typeof value.capabilities.backgroundExecutionAvailable === 'boolean' &&
-    typeof value.capabilities.dryRunAvailable === 'boolean' &&
-    typeof value.capabilities.notificationDeliveryAvailable === 'boolean' &&
-    typeof value.capabilities.proposalDeliveryAvailable === 'boolean' &&
+    typeof capabilities.backgroundExecutionAvailable === 'boolean' &&
+    typeof capabilities.dryRunAvailable === 'boolean' &&
+    typeof capabilities.notificationDeliveryAvailable === 'boolean' &&
+    typeof capabilities.proposalDeliveryAvailable === 'boolean' &&
+    typeof capabilities.webhookTriggerAvailable === 'boolean' &&
+    ROUTINE_WORKFLOW_CAPABILITIES.every((key) => isWorkflowCapability(capabilities[key])) &&
     isAgentDate(value.createdAt) &&
     isAgentDate(value.updatedAt)
   );
 }
+
+function isRoutineDefinition(value: Record<string, unknown>): boolean {
+  const triggerType = value.triggerType;
+  if (!['SCHEDULED', 'WEBHOOK'].includes(String(triggerType))) return false;
+  if (triggerType === 'SCHEDULED') {
+    return (
+      ['DAILY', 'WEEKDAYS', 'WEEKLY'].includes(String(value.cadence)) &&
+      typeof value.localTime === 'string' &&
+      typeof value.timeZone === 'string' &&
+      value.timeZone.trim().length > 0 &&
+      value.webhookEventType == null &&
+      value.webhookEndpointReference == null
+    );
+  }
+  return (
+    value.cadence == null &&
+    value.localTime == null &&
+    value.timeZone == null &&
+    typeof value.webhookEventType === 'string' &&
+    /^[A-Z][A-Z0-9_.-]{1,63}$/u.test(value.webhookEventType) &&
+    (value.webhookEndpointReference == null ||
+      (typeof value.webhookEndpointReference === 'string' &&
+        /^[A-Za-z0-9][A-Za-z0-9:/._-]{0,239}$/u.test(value.webhookEndpointReference)))
+  );
+}
+
+function isWorkflowCapability(value: unknown): boolean {
+  return (
+    isAgentRecord(value) &&
+    typeof value.available === 'boolean' &&
+    typeof value.configured === 'boolean' &&
+    (value.reasonCode === null || typeof value.reasonCode === 'string') &&
+    (value.recoveryHint === null || typeof value.recoveryHint === 'string') &&
+    (!value.available || value.configured)
+  );
+}
+
+const ROUTINE_WORKFLOW_CAPABILITIES = [
+  'agentKernelBinding',
+  'whitelistedSourceBinding',
+  'blockedSourcePolicy',
+  'zeroWritePolicy',
+  'semanticVersionDiff',
+  'runtimeBudgetRetry',
+  'automaticQuarantine',
+  'changeApproval',
+  'agentSwitching',
+  'wormDelivery',
+  'oauthReauthorization',
+  'temporaryBudgetIncrease',
+  'operatorEscalation',
+  'providerRollback',
+] as const;
 
 function isRoutineExecutionPolicy(value: Record<string, unknown>): boolean {
   if (

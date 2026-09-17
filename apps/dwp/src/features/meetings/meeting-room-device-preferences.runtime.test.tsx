@@ -215,6 +215,7 @@ describe('meeting room saved device handoff', () => {
       cameraId: 'camera-current',
       speakerId: 'speaker-current',
       noiseSuppression: false,
+      hdVideo: true,
       backgroundMode: 'office',
     };
     localStorage.setItem(meetingDevicePreferenceKey(scope), JSON.stringify(saved));
@@ -248,6 +249,7 @@ describe('meeting room saved device handoff', () => {
       videoDeviceId: 'camera-current',
       speakerDeviceId: 'speaker-current',
       noiseSuppression: false,
+      hdVideo: true,
       backgroundMode: 'office',
     });
     expect(JSON.parse(localStorage.getItem(meetingDevicePreferenceKey(scope))!)).toMatchObject({
@@ -263,6 +265,7 @@ describe('meeting room saved device handoff', () => {
     expect(runtime.liveProps).toMatchObject({
       speakerDeviceId: 'speaker-current',
       noiseSuppression: false,
+      hdVideo: true,
       backgroundMode: 'office',
     });
 

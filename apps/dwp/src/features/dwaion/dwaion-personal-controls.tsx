@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -11,10 +11,12 @@ import {
   getDwaionPersonalAiControls,
   getDwaionPersonalDataCapabilities,
   getDwaionPersonalDataDeletion,
+  getDwaionPersonalDataDeletions,
   getDwaionPersonalMemories,
   getDwaionRetentionPolicies,
   HttpError,
   requestDwaionPersonalDataDeletion,
+  retryDwaionPersonalDataDeletion,
   updateDwaionMemoryPreference,
   updateDwaionMemoryRuntimePreference,
   updateDwaionPersonalMemory,
@@ -24,11 +26,14 @@ import {
   useToast,
   type DwaionAiSourceKey,
   type DwaionDeletionDomain,
+  type DwaionDeletionJob,
+  type DwaionMemoryScope,
   type DwaionPersonalMemory,
 } from '@dwp-frontend/shared-utils';
 
 import { deletionStatusPollInterval } from './personal-controls/dwaion-personal-controls-model';
 import { DwaionPersonalAiControls } from './personal-controls/dwaion-personal-ai-controls';
+import { DwaionDeletionHistory } from './personal-controls/dwaion-deletion-history';
 import {
   DWAION_PERSONAL_CONTROLS_COPY_EN,
   DWAION_PERSONAL_CONTROLS_COPY_KO,
@@ -72,6 +77,9 @@ export function DwaionPersonalControls() {
   const governDeletion = useDwaionGovernedMutation(
     'route.dwaion.work.personal-deletion-request.action'
   );
+  const governDeletionRetry = useDwaionGovernedMutation(
+    'route.dwaion.work.personal-deletion-retry.action'
+  );
   const governProposalClear = useDwaionGovernedMutation('route.dwaion.work.proposal-clear.action');
   const identity = `${user?.tenantId ?? ''}:${user?.userId ?? ''}`;
   const canViewMemory = isAuthenticated && isLoaded && hasPermission('APP.DWAION_MEMORY', 'VIEW');
@@ -112,12 +120,22 @@ export function DwaionPersonalControls() {
     retry: retryGovernedQuery,
     meta: { accessSensitive: true },
   });
+  const deletionHistory = useQuery({
+    queryKey: [...PRIVACY_KEY, 'deletions', identity],
+    queryFn: ({ signal }) => getDwaionPersonalDataDeletions(signal),
+    enabled: canViewPrivacy,
+    staleTime: 10_000,
+    retry: retryGovernedQuery,
+    meta: { accessSensitive: true },
+  });
 
   const [commandError, setCommandError] = useState<
     'REVISION_CONFLICT' | 'COMMAND_FAILED' | undefined
   >();
   const [clearEvidence, setClearEvidence] = useState<readonly DwaionClearEvidence[]>([]);
   const [clearPartialError, setClearPartialError] = useState<string>();
+  const deletionRequestIds = useRef(new Map<string, string>());
+  const deletionRetryIds = useRef(new Map<string, string>());
   const trackedDeletion = [...clearEvidence]
     .reverse()
     .find(
@@ -205,13 +223,69 @@ export function DwaionPersonalControls() {
             updateDwaionPersonalMemory(
               input.memoryId!,
               input.expectedRevision!,
-              input.draft.value,
+              {
+                memory: { value: input.draft.value },
+                changeReason:
+                  locale === 'ko'
+                    ? '사용자가 저장된 선호 내용을 직접 수정했습니다.'
+                    : 'The user explicitly updated the saved preference.',
+              },
               authority
             )
           )
         : governMemoryCreate((authority) =>
-            createDwaionPersonalMemory(input.draft.kind, input.draft.value, authority)
+            createDwaionPersonalMemory(
+              input.draft.kind,
+              input.draft.value,
+              { scope: ['ASK'], expiresAt: null },
+              authority
+            )
           ),
+    onSuccess: async () => {
+      setCommandError(undefined);
+      await queryClient.invalidateQueries({ queryKey: MEMORIES_KEY });
+      toast.success(copy.saved);
+    },
+    onError: handleCommandError,
+  });
+  const memoryBoundaryMutation = useMutation({
+    mutationFn: (
+      input:
+        | {
+            kind: 'SCOPE';
+            memoryId: string;
+            expectedRevision: number;
+            scope: readonly DwaionMemoryScope[];
+          }
+        | {
+            kind: 'EXPIRY';
+            memoryId: string;
+            expectedRevision: number;
+            expiresAt: string | null;
+          }
+    ) =>
+      governMemoryUpdate((authority) =>
+        updateDwaionPersonalMemory(
+          input.memoryId,
+          input.expectedRevision,
+          input.kind === 'SCOPE'
+            ? {
+                scope: input.scope,
+                changeReason:
+                  locale === 'ko'
+                    ? '사용자가 메모리 적용 스코프를 직접 축소했습니다.'
+                    : 'The user explicitly narrowed the memory application scope.',
+              }
+            : {
+                expiresAt: input.expiresAt,
+                changeReason:
+                  locale === 'ko'
+                    ? '사용자가 메모리 만료일을 직접 재설정했습니다.'
+                    : 'The user explicitly reset the memory expiry.',
+              },
+          authority
+        )
+      ),
     onSuccess: async () => {
       setCommandError(undefined);
       await queryClient.invalidateQueries({ queryKey: MEMORIES_KEY });
@@ -223,7 +297,7 @@ export function DwaionPersonalControls() {
     mutationFn: (input: {
       memoryId: string;
       expectedRevision: number;
-      state: Exclude<DwaionMemoryState, 'DELETED'>;
+      state: Extract<DwaionMemoryState, 'ACTIVE' | 'DISABLED'>;
     }) =>
       governMemoryState((authority) =>
         changeDwaionPersonalMemoryState(
@@ -261,9 +335,13 @@ export function DwaionPersonalControls() {
       );
       if (domains.length) {
         try {
+          const key = [...domains].sort().join(':');
+          const commandId = deletionRequestIds.current.get(key) ?? globalThis.crypto.randomUUID();
+          deletionRequestIds.current.set(key, commandId);
           const job = await governDeletion((authority) =>
-            requestDwaionPersonalDataDeletion(domains, authority)
+            requestDwaionPersonalDataDeletion(domains, authority, commandId)
           );
+          deletionRequestIds.current.delete(key);
           evidence.push({
             kind: 'DELETION_REQUEST',
             receiptId: job.deletionJobId,
@@ -306,10 +384,43 @@ export function DwaionPersonalControls() {
         queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] }),
         queryClient.invalidateQueries({ queryKey: MEMORIES_KEY }),
         queryClient.invalidateQueries({ queryKey: ['dwaion', 'personal-routines'] }),
+        queryClient.invalidateQueries({ queryKey: [...PRIVACY_KEY, 'deletions', identity] }),
       ]);
       if (failed.length) toast.error(copy.partial);
       else toast.success(copy.saved);
     },
+  });
+  const deletionRetryMutation = useMutation({
+    mutationFn: (job: DwaionDeletionJob) => {
+      const key = `${job.deletionJobId}:${job.attemptCount}`;
+      const commandId = deletionRetryIds.current.get(key) ?? globalThis.crypto.randomUUID();
+      deletionRetryIds.current.set(key, commandId);
+      return governDeletionRetry((authority) =>
+        retryDwaionPersonalDataDeletion(job.deletionJobId, job.attemptCount, commandId, authority)
+      );
+    },
+    onSuccess: async (job, requestedJob) => {
+      deletionRetryIds.current.delete(`${requestedJob.deletionJobId}:${requestedJob.attemptCount}`);
+      queryClient.setQueryData<DwaionDeletionJob[]>(
+        [...PRIVACY_KEY, 'deletions', identity],
+        (current = []) =>
+          [job, ...current.filter((item) => item.deletionJobId !== job.deletionJobId)].sort(
+            (left, right) => Date.parse(right.requestedAt) - Date.parse(left.requestedAt)
+          )
+      );
+      setClearEvidence((current) =>
+        current.map((item) =>
+          item.kind === 'DELETION_REQUEST' && item.receiptId === job.deletionJobId
+            ? deletionEvidence(job, capabilities.data?.deletionCompletionClaimAvailable ?? false)
+            : item
+        )
+      );
+      toast.success(copy.saved);
+      await queryClient.invalidateQueries({
+        queryKey: [...PRIVACY_KEY, 'deletions', identity],
+      });
+    },
+    onError: handleCommandError,
   });
 
   function handleCommandError(error: Error) {
@@ -323,9 +434,12 @@ export function DwaionPersonalControls() {
   }
 
   const memoryAccessDenied = [controls.error, memories.error].some(isAccessDenied);
-  const privacyAccessDenied = [capabilities.error, retention.error, deletionStatus.error].some(
-    isAccessDenied
-  );
+  const privacyAccessDenied = [
+    capabilities.error,
+    retention.error,
+    deletionStatus.error,
+    deletionHistory.error,
+  ].some(isAccessDenied);
   const memoryAvailable = canViewMemory && !memoryAccessDenied;
   const privacyAvailable = canViewPrivacy && !privacyAccessDenied;
   const memoryReady = memoryAvailable && controls.isSuccess;
@@ -376,6 +490,7 @@ export function DwaionPersonalControls() {
     preferenceMutation.isPending ||
     runtimePreferenceMutation.isPending ||
     memoryMutation.isPending ||
+    memoryBoundaryMutation.isPending ||
     memoryStateMutation.isPending ||
     deleteMutation.isPending;
   const deletionStatusError =
@@ -384,7 +499,7 @@ export function DwaionPersonalControls() {
     deletionStatusError ||
     clearPartialError ||
     ((canViewMemory && (controls.isError || memories.isError)) ||
-    (canViewPrivacy && (retention.isError || capabilities.isError))
+    (canViewPrivacy && (retention.isError || capabilities.isError || deletionHistory.isError))
       ? copy.partial
       : undefined);
   const effectiveClearEvidence = clearEvidence.map((item) => {
@@ -426,6 +541,7 @@ export function DwaionPersonalControls() {
               backgroundCredentialStorage: controls.data.backgroundCredentialStorage,
               teamMemoryAvailable: controls.data.teamMemoryAvailable,
               externalActionWithoutApproval: controls.data.externalActionWithoutApproval,
+              evidenceCapabilities: controls.data.evidenceCapabilities,
             }
           : null
       }
@@ -453,6 +569,24 @@ export function DwaionPersonalControls() {
         capabilities.data?.deletionCompletionClaimAvailable ?? false
       }
       auditMetadataMayBeRetained={capabilities.data?.auditMetadataMayBeRetained ?? true}
+      deletionHistory={
+        privacyAvailable ? (
+          <DwaionDeletionHistory
+            jobs={deletionHistory.data ?? []}
+            capabilities={capabilities.data ?? null}
+            loading={deletionHistory.isPending}
+            error={deletionHistory.error}
+            canManage={canManagePrivacy}
+            retryingJobId={deletionRetryMutation.variables?.deletionJobId}
+            locale={locale}
+            onRefresh={() => void deletionHistory.refetch()}
+            onRetry={(job) => deletionRetryMutation.mutate(job)}
+            formatTimestamp={(value) =>
+              formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale)
+            }
+          />
+        ) : null
+      }
       canManage={canManage && memoryAvailable}
       canViewMemory={memoryAvailable}
       canViewPrivacy={privacyAvailable}
@@ -461,6 +595,7 @@ export function DwaionPersonalControls() {
         void Promise.all([
           ...(canViewMemory ? [controls.refetch(), memories.refetch()] : []),
           ...(canViewPrivacy ? [capabilities.refetch(), retention.refetch()] : []),
+          ...(canViewPrivacy ? [deletionHistory.refetch()] : []),
           ...(canViewPrivacy && trackedDeletion ? [deletionStatus.refetch()] : []),
         ])
       }
@@ -483,6 +618,16 @@ export function DwaionPersonalControls() {
       onMemoryStateChange={(memoryId, expectedRevision, memoryState) =>
         memoryStateMutation
           .mutateAsync({ memoryId, expectedRevision, state: memoryState })
+          .then(() => undefined)
+      }
+      onMemoryScopeChange={(memoryId, expectedRevision, scope) =>
+        memoryBoundaryMutation
+          .mutateAsync({ kind: 'SCOPE', memoryId, expectedRevision, scope })
+          .then(() => undefined)
+      }
+      onMemoryExpiryChange={(memoryId, expectedRevision, expiresAt) =>
+        memoryBoundaryMutation
+          .mutateAsync({ kind: 'EXPIRY', memoryId, expectedRevision, expiresAt })
           .then(() => undefined)
       }
       onDeleteMemory={(memoryId, expectedRevision) =>
@@ -509,7 +654,18 @@ function toMemoryRecord(memory: DwaionPersonalMemory, label: string): DwaionMemo
     kind: memory.kind,
     label,
     value: memory.memory.value,
+    origin: memory.origin,
+    sourceType: memory.sourceType,
+    confidence: memory.confidence ?? null,
+    factVector: memory.factVector ?? [],
+    useCount: memory.useCount,
+    lastUsedAt: memory.lastUsedAt ?? null,
+    encryptionProvider: memory.encryptionProvider ?? null,
+    encryptionKeyVersion: memory.encryptionKeyVersion ?? null,
+    encryptionKeyReferenceFingerprint: memory.encryptionKeyReferenceFingerprint ?? null,
     state: memory.state,
+    scope: memory.scope,
+    expiresAt: memory.expiresAt,
     revision: memory.revision,
     createdAt: memory.createdAt,
     updatedAt: memory.updatedAt,
@@ -518,4 +674,22 @@ function toMemoryRecord(memory: DwaionPersonalMemory, label: string): DwaionMemo
 
 function isAccessDenied(error: unknown): boolean {
   return error instanceof HttpError && [401, 403].includes(error.status);
+}
+
+function deletionEvidence(
+  job: DwaionDeletionJob,
+  deletionCompletionClaimAvailable: boolean
+): Extract<DwaionClearEvidence, { kind: 'DELETION_REQUEST' }> {
+  return {
+    kind: 'DELETION_REQUEST',
+    receiptId: job.deletionJobId,
+    requestedAt: job.requestedAt,
+    state: job.state,
+    scopes: job.domains,
+    deletionPerformed: job.deletionPerformed,
+    deletionExecutionAvailable: job.deletionExecutionAvailable,
+    deletionCompletionClaimAvailable,
+    blockedScopes: job.blockedDomains ?? [],
+    completedAt: job.completedAt ?? null,
+  };
 }

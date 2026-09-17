@@ -1,0 +1,177 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic "Open DWAI·ON navigation" [ref=e6]:
+        - button "Open DWAI·ON navigation" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+      - generic [ref=e9]: DWP
+      - generic [ref=e10]: DWAI·ON
+      - generic "0 actionable notifications, 0 total unread" [ref=e12]:
+        - button "0 actionable notifications, 0 total unread" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic: "0"
+      - 'button "Account: Mina Kim, Tenant administrator" [ref=e18] [cursor=pointer]':
+        - generic [ref=e19]: M
+        - img [ref=e20]
+    - main [ref=e22]:
+      - generic [ref=e24]:
+        - generic [ref=e26]:
+          - generic [ref=e29]: SKAX
+          - generic [ref=e30]: Mina Kim · Read only
+        - generic [ref=e32]:
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - button "Back to conversation" [ref=e36] [cursor=pointer]:
+                - img [ref=e38]
+                - text: Back to conversation
+              - generic [ref=e40]:
+                - generic [ref=e42]: Verified
+                - generic [ref=e44]: Run ID · aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2
+              - heading "Compare governed infrastructure options with verified evidence." [level=1] [ref=e45]
+              - paragraph [ref=e46]: Which option offers the best verified value within policy?
+            - button "Reload" [ref=e47] [cursor=pointer]:
+              - img [ref=e49]
+              - text: Reload
+          - generic [ref=e54]:
+            - generic [ref=e56]:
+              - heading "Live deep research run" [level=2] [ref=e57]
+              - generic [ref=e58]:
+                - paragraph [ref=e59]: Completed steps
+                - heading "4/4 · 100%" [level=6] [ref=e60]
+              - 'progressbar "Completed steps: 4/4" [ref=e61]'
+              - generic [ref=e63]:
+                - paragraph [ref=e64]: Discovered sources
+                - paragraph [ref=e65]: "4"
+              - generic [ref=e66]:
+                - paragraph [ref=e67]: Verified citations
+                - paragraph [ref=e68]: "3"
+              - generic [ref=e69]:
+                - paragraph [ref=e70]: Started
+                - paragraph [ref=e71]: Sep 17, 2026, 11:47 AM
+            - generic [ref=e72]:
+              - generic [ref=e73]:
+                - heading "Verified report" [level=2] [ref=e74]
+                - generic [ref=e75]:
+                  - button "View report full screen" [ref=e77] [cursor=pointer]:
+                    - img [ref=e79]
+                    - text: View report full screen
+                  - generic [ref=e84]:
+                    - heading "Verified recommendation" [level=3] [ref=e85]
+                    - paragraph [ref=e86]: The governed option meets the evidence and budget criteria.
+              - generic [ref=e87]:
+                - heading "Source evidence" [level=2] [ref=e88]
+                - generic [ref=e90]:
+                  - heading "Approved infrastructure comparison" [level=6] [ref=e91]
+                  - generic [ref=e92]: work-item:1042 · SHA-256 333333333333…
+            - generic [ref=e93]:
+              - heading "Recovery guidance" [level=2] [ref=e95]
+              - generic [ref=e96]:
+                - heading "Next action handoff" [level=2] [ref=e97]
+                - paragraph [ref=e98]: Each command shows the real server state and receipt.
+                - generic [ref=e99]:
+                  - button "Save as artifact" [ref=e100] [cursor=pointer]:
+                    - img [ref=e102]
+                    - text: Save as artifact
+                  - button "Create AI proposal" [ref=e107] [cursor=pointer]:
+                    - img [ref=e109]
+                    - text: Create AI proposal
+                  - button "Export file" [ref=e114] [cursor=pointer]:
+                    - img [ref=e116]
+                    - text: Export file
+                  - button "Handoff to work app" [ref=e121] [cursor=pointer]:
+                    - img [ref=e123]
+                    - text: Handoff to work app
+                  - button "Share with team" [ref=e128] [cursor=pointer]:
+                    - img [ref=e130]
+                    - text: Share with team
+                  - button "Create recurring routine" [ref=e135] [cursor=pointer]:
+                    - img [ref=e137]
+                    - text: Create recurring routine
+              - region "Verified output and recovery actions" [ref=e142]:
+                - generic [ref=e143]:
+                  - img [ref=e144]
+                  - heading "Verified output and recovery actions" [level=6] [ref=e148]
+                - generic [ref=e149]: Only actions backed by the current run response and receipt are enabled.
+                - generic [ref=e150]:
+                  - generic [ref=e151]:
+                    - button "Extract raw dataset (JSON)" [ref=e152] [cursor=pointer]
+                    - generic [ref=e153]: research.result · Uses the permission-checked, audited server download.
+                  - generic [ref=e154]:
+                    - button "Export official report (PDF)" [disabled]
+                    - generic [ref=e155]: browser.print · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e156]:
+                    - button "Download receipt" [ref=e157] [cursor=pointer]
+                    - generic [ref=e158]: research.receipt · Uses the permission-checked, audited server download.
+                  - generic [ref=e159]:
+                    - button "Open execution audit ledger" [ref=e160] [cursor=pointer]
+                    - generic [ref=e161]: research.run-ledger · Uses the permission-checked, audited server download.
+                  - generic [ref=e162]:
+                    - button "Save as a new fork" [disabled]
+                    - generic [ref=e163]: research.recovery.save-fork · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e164]:
+                    - button "Merge latest server version" [disabled]
+                    - generic [ref=e165]: research.recovery.merge-latest · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e166]:
+                    - button "Keep local draft" [disabled]
+                    - generic [ref=e167]: research.recovery.keep-local · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e168]:
+                    - button "Recalculate scenario sensitivity" [disabled]
+                    - generic [ref=e169]: research.recovery.sensitivity · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e170]:
+                    - button "Use cached fallback" [disabled]
+                    - generic [ref=e171]: research.recovery.cache-fallback · Ask an administrator to configure this governed research operation.
+              - generic [ref=e172]:
+                - heading "Completion receipt" [level=6] [ref=e173]:
+                  - img [ref=e174]
+                  - text: Completion receipt
+                - generic [ref=e177]:
+                  - generic [ref=e178]: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3
+                  - button "Copy receipt ID" [ref=e179] [cursor=pointer]:
+                    - img [ref=e181]
+                    - text: Copy receipt ID
+                - generic [ref=e184]:
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: Receipt fingerprint
+                    - generic [ref=e187]: Unavailable — not returned by the current server contract
+                  - generic [ref=e188]:
+                    - generic [ref=e189]: Issued at
+                    - generic [ref=e190]: Unavailable — not returned by the current server contract
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: Ledger detail link
+                    - generic [ref=e193]: Unavailable — not returned by the current server contract
+              - generic [ref=e194]:
+                - heading "Save as artifact · COMPLETED" [level=6] [ref=e195]:
+                  - img [ref=e196]
+                  - text: Save as artifact · COMPLETED
+                - generic [ref=e199]:
+                  - generic [ref=e200]: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3
+                  - button "Copy receipt ID" [ref=e201] [cursor=pointer]:
+                    - img [ref=e203]
+                    - text: Copy receipt ID
+    - navigation "DWAI·ON quick navigation" [ref=e206]:
+      - link "Home" [ref=e207] [cursor=pointer]:
+        - /url: /dwaion/home
+        - img [ref=e208]
+        - generic [ref=e211]: Home
+      - link "New" [ref=e212] [cursor=pointer]:
+        - /url: /dwaion/new
+        - img [ref=e213]
+        - generic [ref=e215]: New
+      - link "Conversations" [ref=e216] [cursor=pointer]:
+        - /url: /dwaion/conversations
+        - img [ref=e217]
+        - generic [ref=e221]: Conversations
+      - link "Proposals" [ref=e222] [cursor=pointer]:
+        - /url: /dwaion/proposals
+        - img [ref=e223]
+        - generic [ref=e226]: Proposals
+      - button "More" [ref=e227] [cursor=pointer]:
+        - img [ref=e228]
+        - generic [ref=e229]: More
+```

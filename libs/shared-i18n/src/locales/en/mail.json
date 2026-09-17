@@ -89,6 +89,9 @@
         },
         "admin-delivery-audit": {
           "label": "Delivery audit"
+        },
+        "admin-writing-assets": {
+          "label": "Organization writing assets"
         }
       }
     }
@@ -305,6 +308,9 @@
       },
       "recipientVisibilityTitle": "Recipient names and email addresses will be visible to everyone",
       "recipientVisibilityDescription": "This message places every group member in the To field.",
+      "recipientLimit": "Group delivery supports up to {{limit}} To recipients. Private Bcc group delivery is unavailable until per-recipient provider privacy and receipt evidence are supported.",
+      "recipientLimitExceeded": "This group has more than {{limit}} recipients and cannot be sent. Reduce the group to {{limit}} recipients or fewer.",
+      "privateModeUnavailable": "This saved request used private Bcc delivery, which is no longer available. Review the latest recipients to create a To-only request.",
       "privateVisibilityTitle": "Recipients stay private from one another",
       "privateVisibilityDescription": "Each group member is placed in Bcc. Review the snapshot because the group version is locked when you send.",
       "confirmRecipients": "I understand the recipient list is public to this group and have reviewed every name and email address.",
@@ -467,12 +473,16 @@
     "archive": "Archive",
     "externalSender": "This message came from outside your organization. Verify the sender before opening links or attachments.",
     "attachment": "Attachment",
+    "attachments": "Attachments",
+    "downloadAttachment": "Download {{name}}",
+    "attachmentDownloadError": "The attachment could not be downloaded. Check your access and try again.",
     "recipientType": {
       "TO": "To",
       "CC": "Cc",
       "BCC": "Bcc"
     },
     "remoteImagesBlocked": "{{count}} remote images were blocked to protect your privacy.",
+    "remoteImagesBlockedByPolicy": "{{count}} remote images remain blocked by your mail image policy.",
     "loadRemoteImages": "Load images",
     "forward": "Forward",
     "forwardedMessage": "Forwarded message",
@@ -563,6 +573,15 @@
     "deleteUnavailable": "Permanent deletion is unavailable until retention and legal-hold policy is ready",
     "deleteTitle": "Permanently delete this conversation?",
     "deleteDescription": "This cannot be undone. Shared inbox deletion requires manager access.",
+    "deleteBlockedTitle": "This conversation cannot be deleted permanently",
+    "deleteBlockedDescription": "Resolve each policy requirement below before trying permanent deletion again.",
+    "blockers": {
+      "THREAD_NOT_TRASHED": "Move the conversation to trash first.",
+      "RETENTION_PERIOD_ACTIVE": "The retention period has not ended.",
+      "ACTIVE_LEGAL_HOLD": "An active legal hold protects this conversation.",
+      "IMMUTABLE_DELIVERY_EVIDENCE": "Immutable delivery evidence must be retained.",
+      "EXTERNAL_PROVIDER_DELETE_UNAVAILABLE": "Permanent deletion is unavailable for this connected mail provider."
+    },
     "deleting": "Deleting",
     "undo": "Undo",
     "undoError": "The previous location could not be restored. Refresh and try again.",
@@ -784,6 +803,32 @@
       "noFields": "This proposal has no editable details.",
       "safety": "Saving changes creates a new proposal version. Final execution still happens in the responsible app."
     },
+    "handoff": {
+      "invalid": "The responsible app route could not be verified. Return to Action Center and try again.",
+      "openError": "The responsible app handoff could not be loaded. The accepted proposal remains available in Action Center.",
+      "loading": "Checking the responsible app result…",
+      "loadError": "The responsible app result could not be loaded. Refresh and try again.",
+      "continue": "Continue in responsible app",
+      "command": "Command: {{commandId}}",
+      "result": "Result: {{resultRef}}",
+      "status": {
+        "ACCEPTED": "The proposal was accepted and is waiting for final review in the responsible app.",
+        "EXECUTED": "The responsible app completed the action.",
+        "CANCELLED": "The action was cancelled in the responsible app.",
+        "FAILED": "The responsible app could not complete the action.",
+        "UNKNOWN": "The responsible app result is not confirmed yet."
+      }
+    },
+    "owner": {
+      "loading": "Verifying the Mail proposal handoff before this action can run…",
+      "invalid": "This Mail proposal handoff could not be verified. The owner action is blocked.",
+      "review": "Review and submit this action here. Mail will update only after this app confirms the result.",
+      "pending": "The owner action was saved. Waiting for Mail to confirm its server-recorded result; submitting again is blocked.",
+      "completionReadError": "The owner action was saved, but its server-recorded result could not be read. Refresh the status without submitting again.",
+      "refresh": "Refresh status",
+      "cancel": "Cancel review and return",
+      "return": "Return to Action Center"
+    },
     "risk": {
       "LOW": "Low risk",
       "MEDIUM": "Review needed",
@@ -916,13 +961,14 @@
       "remove": "Remove {{name}}",
       "uploadError": "The attachment could not be uploaded.",
       "deleteError": "The attachment could not be removed.",
-      "pendingBlocksSend": "Every attachment must pass security scanning before sending.",
+      "securityScanningUnavailable": "File upload is unavailable because verified malware and data-loss-prevention scanning is not configured.",
+      "pendingBlocksSend": "Every attachment must pass the file and attachment policy checks before sending.",
       "state": {
         "UPLOADING": "Uploading",
-        "SCANNING": "Security scan in progress",
-        "READY": "Scan complete",
+        "SCANNING": "Checking the local file-type policy",
+        "READY": "Accepted by the local file-type policy; malware and DLP scan evidence is unavailable",
         "BLOCKED": "Blocked by policy",
-        "FAILED": "Scan failed"
+        "FAILED": "Attachment policy check failed"
       }
     },
     "subject": "Subject",
@@ -961,7 +1007,10 @@
       "addGroup": "Add all",
       "added": "Added",
       "add": "Add"
-    }
+    },
+    "personalizationReapply": "Apply template again",
+    "personalizationReviewed": "I reviewed it",
+    "personalizationReviewRequired": "Recipients changed after recipient details were inserted. Apply the template again or confirm that you reviewed the personalized content before sending."
   },
   "draft": {
     "title": "Drafts",
@@ -1313,7 +1362,22 @@
       "saveError": "The writing asset could not be saved. Review the latest version.",
       "archived": "The writing asset was archived.",
       "archiveError": "The writing asset could not be archived.",
-      "loadError": "Templates and signatures could not be loaded."
+      "loadError": "Templates and signatures could not be loaded.",
+      "showArchived": "Show archived",
+      "statusArchived": "Archived",
+      "statusActive": "Active",
+      "accountRemoved": "Account removed",
+      "accountRemovedDescription": "This sender account is no longer connected. Choose an available account before saving.",
+      "version": "Version {{value}}",
+      "updatedAt": "Updated {{value}}",
+      "variable": {
+        "displayName": "Insert display name",
+        "department": "Insert department",
+        "recipientName": "Insert recipient name"
+      },
+      "saveConflict": "A newer version is available. The latest data was reloaded.",
+      "archiveConflict": "This asset changed before it could be archived. Review the latest version.",
+      "conflictDescription": "Someone else changed this asset. Review the latest version, then save again."
     },
     "accounts": {
       "title": "My accounts and preferences",
@@ -1478,7 +1542,15 @@
         "aggregateOnly": "Only a total is available; message-level outcome and recovery evidence are not available.",
         "noReportedExceptions": "No exceptions were reported by the operations view.",
         "noReportedExceptionsCaveat": "This does not verify provider health because source coverage is unavailable.",
-        "summaryTitle": "Reported workload"
+        "summaryTitle": "Reported workload",
+        "affected": "{{count}} affected",
+        "commands": "Recent administrative commands",
+        "commandsDescription": "Results come from command and audit evidence; mail content is not exposed.",
+        "noCommands": "No command-audit records were returned.",
+        "openEvidence": "Open evidence",
+        "sourceUnavailable": "Source-by-source evidence is unavailable. Overview totals are not treated as verified health.",
+        "sources": "Operational evidence sources",
+        "sourcesDescription": "Freshness and collection failures are shown per source."
       },
       "a02": {
         "pageDescription": "Separate reported provider state from confirmed connection, sign-in, and synchronization readiness.",
@@ -1486,17 +1558,44 @@
         "runtime": "Connection service",
         "credentials": "Sign-in readiness",
         "lastSync": "Last synchronization",
-        "externalEvidenceMissing": "The available information cannot confirm that this external connection is ready to activate."
+        "externalEvidenceMissing": "The available information cannot confirm that this external connection is ready to activate.",
+        "diagnostic": "Run diagnostics",
+        "sync": "Synchronize",
+        "testSend": "Test send",
+        "testWarning": "This sends a real message. Confirm the recipient and external impact.",
+        "confirmTest": "Confirm and send test"
       },
       "a03": {
         "title": "Shared inbox access",
         "pageDescription": "Review workload and access information without treating a member role as permission for every action.",
         "evidenceMissing": "Action permissions, delegated access status, and access-removal progress are unavailable. Access editing remains disabled here.",
-        "workload": "{{open}} open · {{overdue}} overdue"
+        "workload": "{{open}} open · {{overdue}} overdue",
+        "accessUnavailable": "Access details are unavailable for this inbox.",
+        "addMember": "Add member",
+        "confirmRevoke": "Confirm revocation",
+        "editMember": "Edit member access",
+        "expires": "Expires {{time}}",
+        "expiresAt": "Access expiry",
+        "impactAcknowledgement": "I reviewed assignment, draft, pending command, and provider revocation impact.",
+        "impactUnavailable": "Detailed impact counts are unavailable. Provider revocation may complete separately.",
+        "memberCount": "{{count}} members",
+        "memberName": "Display name",
+        "permissions": "Permissions",
+        "revoke": "Revoke",
+        "revokeImpact": "Review active assignments, open drafts, pending commands, and provider revocation before removing access.",
+        "userId": "User ID"
       },
       "a04": {
         "pageDescription": "Keep saved settings, effective values, and enforcement evidence visibly separate.",
-        "configuredNotEnforced": "These are saved configuration values. Enforcement and inspection evidence are unavailable, so no compliance percentage or enforced state is shown."
+        "configuredNotEnforced": "These are saved configuration values. Enforcement and inspection evidence are unavailable, so no compliance percentage or enforced state is shown.",
+        "versionLabel": "Version {{version}}",
+        "configuredValue": "Configured: {{value}}",
+        "effective": "Configured and effective policy",
+        "effectiveDescription": "An enabled setting is only marked enforced when current evidence confirms it.",
+        "effectiveValue": "Effective: {{value}}",
+        "history": "Policy change history",
+        "historyDescription": "Versioned changes and application results.",
+        "noHistory": "No policy history was returned."
       },
       "a05": {
         "eyebrow": "Retention governance",
@@ -1542,14 +1641,111 @@
         "noEvidence": "No message-level recovery evidence is available.",
         "reconcile": "Reconcile outcome",
         "retryEvidenceReady": "Retry safety evidence is complete.",
+        "recoveryUnavailable": "Recovery is unavailable until current evidence is confirmed.",
+        "exportReady": "Delivery evidence export",
+        "exportExpiry": "Available until {{time}}",
+        "deliveryRecord": "Delivery record",
+        "providerDetail": "Additional provider detail is available in the evidence export.",
+        "stages": {
+          "received": "Request received",
+          "outbox": "Waiting in the delivery queue",
+          "providerSubmitted": "Submitted to the mail provider",
+          "acceptedByProvider": "Accepted by the mail provider",
+          "deliveredConfirmed": "Delivery confirmed",
+          "bounced": "Message bounced",
+          "failed": "Delivery failed",
+          "unknown": "Outcome unknown",
+          "cancelled": "Delivery cancelled",
+          "blockedByAccess": "Blocked by access policy",
+          "commandAccepted": "Send command accepted",
+          "providerAttempt": "Mail provider attempt",
+          "providerAccepted": "Mail provider accepted the message",
+          "adminReconcile": "Outcome reconciliation recorded",
+          "adminRetry": "Retry recorded",
+          "adminCancel": "Cancellation recorded",
+          "worker": "Delivery processing",
+          "providerReceipt": "Mail provider receipt",
+          "other": "Delivery event"
+        },
+        "sources": {
+          "queue": "Delivery queue",
+          "worker": "Delivery worker",
+          "providerReceipt": "Mail provider receipt",
+          "adminAudit": "Administrator recovery audit",
+          "dwpMail": "DWP Mail",
+          "microsoft365": "Microsoft 365",
+          "googleWorkspace": "Google Workspace",
+          "naverWorks": "NAVER WORKS",
+          "standardProvider": "Connected mail provider",
+          "other": "System evidence"
+        },
+        "commands": {
+          "send": "Send message",
+          "retry": "Retry message",
+          "cancel": "Cancel delivery",
+          "reconcile": "Reconcile outcome",
+          "other": "Mail command"
+        },
         "blockers": {
           "RESULT_UNKNOWN_RECONCILE_FIRST": "Reconcile the outcome before deciding whether to retry",
           "RECOVERY_EVIDENCE_NOT_CURRENT": "Refresh recovery evidence before deciding whether to retry",
           "NOT_RETRYABLE": "Not eligible for retry",
           "DUPLICATE_SAFETY_UNVERIFIED": "Duplicate-safety evidence is unverified",
           "RECONCILIATION_UNAVAILABLE": "Outcome reconciliation is unavailable"
-        }
+        },
+        "download": "Download",
+        "export": "Export evidence",
+        "filter": "Filter safe reference, correlation ID, or state",
+        "noMatches": "No delivery evidence matches the current filter.",
+        "timeline": "Delivery evidence timeline"
       }
+    },
+    "writingAssets": {
+      "eyebrow": "Mail administration",
+      "title": "Organization writing assets",
+      "description": "Create, review, publish, version, and retire required organization templates and signatures.",
+      "readOnly": "You can review organization assets, but your current role cannot change them.",
+      "elevatedRequired": "Enter elevated access mode before changing organization writing assets.",
+      "workflow": "A draft must be submitted and approved by a different administrator before it can be published.",
+      "tabsLabel": "Organization writing asset type",
+      "templates": "Templates",
+      "signatures": "Signatures",
+      "search": "Search organization assets",
+      "stateFilter": "Publication state",
+      "allStates": "All states",
+      "state": {
+        "DRAFT": "Draft",
+        "PENDING_APPROVAL": "Pending approval",
+        "APPROVED": "Approved",
+        "PUBLISHED": "Published",
+        "RETIRED": "Retired"
+      },
+      "newTemplate": "New organization template",
+      "newSignature": "New organization signature",
+      "publicationVersion": "Publication v{{value}}",
+      "updatedAt": "Updated {{value}}",
+      "submit": "Submit for approval",
+      "approve": "Approve",
+      "publish": "Publish",
+      "newVersion": "Create new version",
+      "retire": "Retire",
+      "emptyTitle": "No organization writing assets",
+      "emptyDescription": "Create a governed template or signature for organization-wide use.",
+      "saved": "The organization writing asset was saved.",
+      "conflict": "A newer version is available. The latest data was reloaded.",
+      "saveError": "The organization writing asset could not be saved.",
+      "transitioned": "The publication state was updated.",
+      "transitionError": "The publication state could not be updated.",
+      "loadError": "Organization writing assets could not be loaded.",
+      "signatureDialogTitle": "Organization signature",
+      "templateDialogTitle": "Organization template",
+      "dialogDescription": "Only supported variables are accepted. Required content is included whenever this asset is used.",
+      "conflictDetail": "Another administrator changed this draft. Review the latest version before saving again.",
+      "versioningNotice": "This draft will become publication version {{value}}.",
+      "publishConfirmTitle": "Publish this writing asset?",
+      "publishConfirmDescription": "It will become available to mail users. Any earlier published version in this series will be retired.",
+      "retireConfirmTitle": "Retire this writing asset?",
+      "retireConfirmDescription": "It will be removed from new message and reply choices. Existing message content will remain unchanged."
     }
   }
 }

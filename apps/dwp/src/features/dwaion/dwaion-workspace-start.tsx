@@ -185,7 +185,7 @@ export function DwaionWorkspaceStart({
           </Box>
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="subtitle1" fontWeight="fontWeightBold">
-              Deep Research
+              {t('dwaionOperational.workspace.deepResearch')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {locale === 'ko'

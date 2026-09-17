@@ -31,6 +31,21 @@ describe('meeting local device session', () => {
     expect(await session.start('video')).toBeNull();
     expect(getUserMedia).toHaveBeenCalledTimes(1);
   });
+  it('requests 1080p only for an explicit HD preference and keeps constraints adaptive', async () => {
+    const video = mediaStream();
+    const getUserMedia = vi.fn().mockResolvedValue(video.stream);
+    const session = new MeetingDeviceSession({ getUserMedia, enumerateDevices: vi.fn() });
+    await session.start('video', 'camera-hd', true, true);
+    expect(getUserMedia).toHaveBeenCalledWith({
+      audio: false,
+      video: {
+        deviceId: { exact: 'camera-hd' },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      },
+    });
+    session.dispose();
+  });
   it('stops a late permission success after route exit', async () => {
     const late = mediaStream();
     let resolve!: (stream: MediaStream) => void;

@@ -32,12 +32,65 @@ import type {
   MailDeliveryRecoveryEvidence,
 } from './mail-admin-operations-model';
 
+const DELIVERY_STAGE_LABELS: Readonly<Record<string, readonly [string, string]>> = {
+  RECEIVED: ['received', 'Request received'],
+  OUTBOX: ['outbox', 'Waiting in the delivery queue'],
+  PROVIDER_SUBMITTED: ['providerSubmitted', 'Submitted to the mail provider'],
+  ACCEPTED_BY_PROVIDER: ['acceptedByProvider', 'Accepted by the mail provider'],
+  DELIVERED_CONFIRMED: ['deliveredConfirmed', 'Delivery confirmed'],
+  BOUNCED: ['bounced', 'Message bounced'],
+  FAILED: ['failed', 'Delivery failed'],
+  UNKNOWN: ['unknown', 'Outcome unknown'],
+  CANCELLED: ['cancelled', 'Delivery cancelled'],
+  BLOCKED_BY_ACCESS: ['blockedByAccess', 'Blocked by access policy'],
+  COMMAND_ACCEPTED: ['commandAccepted', 'Send command accepted'],
+  PROVIDER_ATTEMPT: ['providerAttempt', 'Mail provider attempt'],
+  PROVIDER_ACCEPTED: ['providerAccepted', 'Mail provider accepted the message'],
+  ADMIN_RECONCILE: ['adminReconcile', 'Outcome reconciliation recorded'],
+  ADMIN_RETRY: ['adminRetry', 'Retry recorded'],
+  ADMIN_CANCEL: ['adminCancel', 'Cancellation recorded'],
+  DWP_OUTBOX: ['outbox', 'Waiting in the delivery queue'],
+  DWP_WORKER: ['worker', 'Delivery processing'],
+  PROVIDER_RECEIPT: ['providerReceipt', 'Mail provider receipt'],
+};
+
+const DELIVERY_SOURCE_LABELS: Readonly<Record<string, readonly [string, string]>> = {
+  mail_delivery_outbox: ['queue', 'Delivery queue'],
+  DWP_OUTBOX: ['queue', 'Delivery queue'],
+  DWP_WORKER: ['worker', 'Delivery worker'],
+  PROVIDER_RECEIPT: ['providerReceipt', 'Mail provider receipt'],
+  mail_delivery_recovery_events: ['adminAudit', 'Administrator recovery audit'],
+  DWP_SANDBOX: ['dwpMail', 'DWP Mail'],
+  MICROSOFT_GRAPH: ['microsoft365', 'Microsoft 365'],
+  GOOGLE_GMAIL: ['googleWorkspace', 'Google Workspace'],
+  NAVER_WORKS: ['naverWorks', 'NAVER WORKS'],
+  JMAP: ['standardProvider', 'Connected mail provider'],
+  IMAP_SMTP: ['standardProvider', 'Connected mail provider'],
+};
+
+const DELIVERY_COMMAND_LABELS: Readonly<Record<string, readonly [string, string]>> = {
+  SEND: ['send', 'Send message'],
+  RETRY: ['retry', 'Retry message'],
+  CANCEL: ['cancel', 'Cancel delivery'],
+  RECONCILE: ['reconcile', 'Reconcile outcome'],
+};
+
+const DELIVERY_BLOCKER_LABELS: Readonly<Record<string, string>> = {
+  RESULT_UNKNOWN_RECONCILE_FIRST: 'Reconcile the outcome before deciding whether to retry.',
+  RECOVERY_EVIDENCE_NOT_CURRENT: 'Refresh recovery evidence before deciding whether to retry.',
+  NOT_RETRYABLE: 'This delivery is not eligible for retry.',
+  DUPLICATE_SAFETY_UNVERIFIED: 'Duplicate-safety evidence is unverified.',
+  RECONCILIATION_UNAVAILABLE: 'Outcome reconciliation is unavailable.',
+};
+
 export function DeliveryAuditSurface({
   overview,
   page,
   auditExport,
   evidence,
-  canManage,
+  canReadAudit,
+  canRecover,
+  canExport,
   now,
   busyAction,
   onReconcile,
@@ -49,7 +102,9 @@ export function DeliveryAuditSurface({
   page?: MailDeliveryAuditPage;
   auditExport?: MailAuditExport;
   evidence?: readonly MailDeliveryRecoveryEvidence[];
-  canManage: boolean;
+  canReadAudit: boolean;
+  canRecover: boolean;
+  canExport: boolean;
   now: number;
   busyAction?: string | null;
   onReconcile?: (deliveryId: string) => void;
@@ -58,9 +113,44 @@ export function DeliveryAuditSurface({
   onExport?: () => void;
 }) {
   const { t } = useTranslation('mail');
+  const translatedLabel = (
+    group: 'stages' | 'sources' | 'commands',
+    definitions: Readonly<Record<string, readonly [string, string]>>,
+    value: string,
+    fallback: string
+  ) => {
+    const definition = definitions[value];
+    return definition
+      ? t(`admin.operationsWorkspace.a06.${group}.${definition[0]}`, {
+          defaultValue: definition[1],
+        })
+      : t(`admin.operationsWorkspace.a06.${group}.other`, { defaultValue: fallback });
+  };
+  const stageLabel = (value: string) =>
+    translatedLabel('stages', DELIVERY_STAGE_LABELS, value, 'Delivery event');
+  const sourceLabel = (value: string) =>
+    translatedLabel('sources', DELIVERY_SOURCE_LABELS, value, 'System evidence');
+  const commandLabel = (value: string) =>
+    translatedLabel('commands', DELIVERY_COMMAND_LABELS, value, 'Mail command');
+  const providerLabel = (value: string) =>
+    translatedLabel('sources', DELIVERY_SOURCE_LABELS, value, 'Connected mail provider');
+  const blockerLabel = (value: string | null) =>
+    value
+      ? t(`admin.operationsWorkspace.a06.blockers.${value}`, {
+          defaultValue:
+            DELIVERY_BLOCKER_LABELS[value] ??
+            t('admin.operationsWorkspace.a06.recoveryUnavailable', {
+              defaultValue: 'Recovery is unavailable until current evidence is confirmed.',
+            }),
+        })
+      : t('admin.operationsWorkspace.a06.retryEvidenceReady', {
+          defaultValue: 'Retry safety evidence is current.',
+        });
   const [filter, setFilter] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const items = page?.items ?? [];
+  const authorizedPage = canReadAudit ? page : undefined;
+  const authorizedEvidence = canReadAudit ? evidence : undefined;
+  const items = authorizedPage?.items ?? [];
   const visible = items.filter(
     (item) =>
       !filter ||
@@ -71,12 +161,17 @@ export function DeliveryAuditSurface({
   const selected = items.find((item) => item.deliveryId === selectedId);
   return (
     <Stack spacing={2.5}>
-      {!page ? (
+      {!authorizedPage ? (
         <InlineFeedback severity="warning">
-          {t('admin.operationsWorkspace.a06.aggregateOnly', {
-            defaultValue:
-              'Message-level command, provider, and audit evidence could not be loaded. Recovery actions remain evidence-gated.',
-          })}
+          {canReadAudit
+            ? t('admin.operationsWorkspace.a06.aggregateOnly', {
+                defaultValue:
+                  'Message-level command, provider, and audit evidence could not be loaded. Recovery actions remain evidence-gated.',
+              })
+            : t('admin.operationsWorkspace.a06.auditReadRequired', {
+                defaultValue:
+                  'Delivery audit permission is required to view message-level evidence.',
+              })}
         </InlineFeedback>
       ) : null}
       <Section
@@ -86,7 +181,7 @@ export function DeliveryAuditSurface({
         action={
           <ActionButton
             intent="secondary"
-            disabled={!page || !onExport}
+            disabled={!canExport || !authorizedPage || !onExport}
             loading={busyAction === 'export-audit'}
             startIcon={<Download size={16} />}
             onClick={onExport}
@@ -95,7 +190,7 @@ export function DeliveryAuditSurface({
           </ActionButton>
         }
       >
-        {auditExport ? (
+        {canExport && auditExport ? (
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1.25}
@@ -105,10 +200,15 @@ export function DeliveryAuditSurface({
             <Download size={17} />
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" fontWeight="fontWeightBold">
-                {auditExport.exportId}
+                {t('admin.operationsWorkspace.a06.exportReady', {
+                  defaultValue: 'Delivery evidence export',
+                })}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {auditExport.watermark ?? 'Evidence export'}
+                {t('admin.operationsWorkspace.a06.exportExpiry', {
+                  defaultValue: 'Available until {{time}}',
+                  time: auditExport.expiresAt ?? '',
+                })}
               </Typography>
             </Box>
             <StateChip label={auditExport.state} />
@@ -124,7 +224,7 @@ export function DeliveryAuditSurface({
             ) : null}
           </Stack>
         ) : null}
-        {auditExport ? <Divider /> : null}
+        {canExport && auditExport ? <Divider /> : null}
         <Box sx={{ p: 2 }}>
           <TextField
             fullWidth
@@ -137,7 +237,7 @@ export function DeliveryAuditSurface({
           />
         </Box>
         <Divider />
-        {page ? (
+        {authorizedPage ? (
           <>
             {visible.length ? (
               visible.map((item, index) => {
@@ -157,7 +257,8 @@ export function DeliveryAuditSurface({
                             {item.safeResourceRef}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {item.commandType} · {item.accountName} · {item.providerType}
+                            {commandLabel(item.commandType)} · {item.accountName} ·{' '}
+                            {providerLabel(item.providerType)}
                           </Typography>
                           <Typography
                             variant="caption"
@@ -167,7 +268,7 @@ export function DeliveryAuditSurface({
                             {item.correlationId}
                           </Typography>
                         </Box>
-                        <StateChip label={item.stage} />
+                        <StateChip label={item.stage} displayLabel={stageLabel(item.stage)} />
                         <Typography variant="caption">
                           <FormattedTime value={item.lastEvidenceAt} />
                         </Typography>
@@ -176,7 +277,7 @@ export function DeliveryAuditSurface({
                         variant="caption"
                         color={availability.blockedReason ? 'warning.main' : 'success.main'}
                       >
-                        {availability.blockedReason ?? 'Retry safety evidence is current.'}
+                        {blockerLabel(availability.blockedReason)}
                       </Typography>
                       <Stack
                         direction={{ xs: 'column', sm: 'row' }}
@@ -197,7 +298,7 @@ export function DeliveryAuditSurface({
                           intent="secondary"
                           size="small"
                           loading={busyAction === `reconcile:${item.deliveryId}`}
-                          disabled={!canManage || !availability.reconcileEnabled || !onReconcile}
+                          disabled={!canRecover || !availability.reconcileEnabled || !onReconcile}
                           startIcon={<RefreshCw size={15} />}
                           onClick={() => onReconcile?.(item.deliveryId)}
                         >
@@ -209,7 +310,7 @@ export function DeliveryAuditSurface({
                           intent="primary"
                           size="small"
                           loading={busyAction === `retry:${item.deliveryId}`}
-                          disabled={!canManage || !availability.retryEnabled || !onRetry}
+                          disabled={!canRecover || !availability.retryEnabled || !onRetry}
                           startIcon={<RotateCcw size={15} />}
                           onClick={() => onRetry?.(item.deliveryId)}
                         >
@@ -219,7 +320,7 @@ export function DeliveryAuditSurface({
                           intent="danger"
                           size="small"
                           loading={busyAction === `cancel:${item.deliveryId}`}
-                          disabled={!canManage || !cancelEnabled || !onCancel}
+                          disabled={!canRecover || !cancelEnabled || !onCancel}
                           onClick={() => onCancel?.(item.deliveryId)}
                         >
                           {t('actions.cancel')}
@@ -239,8 +340,8 @@ export function DeliveryAuditSurface({
               </Box>
             )}
           </>
-        ) : evidence?.length ? (
-          evidence.map((item, index) => {
+        ) : authorizedEvidence?.length ? (
+          authorizedEvidence.map((item, index) => {
             const availability = getMailDeliveryRecoveryAvailability(item, now);
             return (
               <Box key={item.deliveryId}>
@@ -252,19 +353,26 @@ export function DeliveryAuditSurface({
                   sx={{ p: 2 }}
                 >
                   <Typography variant="body2" fontWeight="fontWeightBold" sx={{ flex: 1 }}>
-                    {item.deliveryId} · {item.state}
+                    {t('admin.operationsWorkspace.a06.deliveryRecord', {
+                      defaultValue: 'Delivery record',
+                    })}{' '}
+                    · {stageLabel(item.state)}
                   </Typography>
-                  <Typography variant="caption">{availability.blockedReason}</Typography>
+                  <Typography variant="caption">
+                    {blockerLabel(availability.blockedReason)}
+                  </Typography>
                   <ActionButton
                     intent="secondary"
-                    disabled={!canManage || !availability.reconcileEnabled || !onReconcile}
+                    disabled={!canRecover || !availability.reconcileEnabled || !onReconcile}
                     onClick={() => onReconcile?.(item.deliveryId)}
                   >
-                    Reconcile
+                    {t('admin.operationsWorkspace.a06.reconcile', {
+                      defaultValue: 'Reconcile outcome',
+                    })}
                   </ActionButton>
                   <ActionButton
                     intent="primary"
-                    disabled={!canManage || !availability.retryEnabled || !onRetry}
+                    disabled={!canRecover || !availability.retryEnabled || !onRetry}
                     onClick={() => onRetry?.(item.deliveryId)}
                   >
                     {t('delivery.retry')}
@@ -291,7 +399,9 @@ export function DeliveryAuditSurface({
                 })}
               </Typography>
               <ActionButton intent="secondary" disabled>
-                Reconcile
+                {t('admin.operationsWorkspace.a06.reconcile', {
+                  defaultValue: 'Reconcile outcome',
+                })}
               </ActionButton>
               <ActionButton intent="primary" disabled>
                 {t('delivery.retry')}
@@ -319,11 +429,16 @@ export function DeliveryAuditSurface({
                   <Clock3 size={17} />
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="body2" fontWeight="fontWeightBold">
-                      {event.stage} · {event.source}
+                      {stageLabel(event.stage)} · {sourceLabel(event.source)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       <FormattedTime value={event.at} />
-                      {event.code ? ` · ${event.code}` : ''}
+                      {event.code
+                        ? ` · ${t('admin.operationsWorkspace.a06.providerDetail', {
+                            defaultValue:
+                              'Additional provider detail is available in the evidence export.',
+                          })}`
+                        : ''}
                     </Typography>
                   </Box>
                   <StateChip label={event.state} />

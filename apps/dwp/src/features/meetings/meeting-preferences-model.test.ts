@@ -24,9 +24,11 @@ describe('meeting account and device preferences', () => {
     };
     writeMeetingDevicePreferences(storage, 'tenant-a:user-1', {
       ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      hdVideo: true,
       backgroundMode: 'office',
     });
     expect(readMeetingDevicePreferences(storage, 'tenant-a:user-1').backgroundMode).toBe('office');
+    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-1').hdVideo).toBe(true);
     expect(readMeetingDevicePreferences(storage, 'tenant-a:user-2').backgroundMode).toBe(
       'original'
     );
@@ -96,6 +98,7 @@ describe('meeting account and device preferences', () => {
           cameraId: 'camera-local',
           speakerId: 'speaker-local',
           noiseSuppression: false,
+          hdVideo: true,
         }
       )
     ).toEqual({
@@ -106,6 +109,7 @@ describe('meeting account and device preferences', () => {
       videoDeviceId: 'camera-local',
       speakerDeviceId: 'speaker-local',
       noiseSuppression: false,
+      hdVideo: true,
       backgroundMode: 'original',
     });
     expect(

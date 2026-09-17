@@ -2563,7 +2563,8 @@
         "state": "State",
         "health": "Readiness",
         "activity24h": "Activity (24h)",
-        "lastUsed": "Last used"
+        "lastUsed": "Last used",
+        "expiresAt": "Credential expiry"
       },
       "failedCount": "{{count}} failed",
       "metrics": {
@@ -2619,6 +2620,13 @@
         "copyEndpoint": "Copy SCIM endpoint",
         "endpointCopied": "SCIM endpoint copied.",
         "tokenPrefix": "Credential fingerprint: {{prefix}}",
+        "credentialGovernance": "Credential governance",
+        "purpose": "Purpose",
+        "owner": "Owner user ID",
+        "scope": "Runtime scope",
+        "issuedAt": "Issued",
+        "expiresAt": "Expires",
+        "rotatedAt": "Last rotated",
         "mapping": "Supported attribute contract",
         "mappingDescription": "The tenant IdP mapping must be approved before rollout. DWP accepts the following stable SCIM projection.",
         "recentEvents": "Recent connector evidence",
@@ -2634,7 +2642,23 @@
         "title": "New SCIM connector",
         "key": "Connector key",
         "keyHelp": "Stable provider-facing identifier",
-        "name": "Display name"
+        "name": "Display name",
+        "purpose": "Operational purpose",
+        "purposeHelp": "State why this non-human credential exists and who should review its continued use.",
+        "scope": "Allowed SCIM resources",
+        "usersScope": "Users resource",
+        "groupsScope": "Groups resource",
+        "scopeHelp": "The selected USERS and GROUPS scopes are enforced on every SCIM request.",
+        "ttl": "Credential lifetime",
+        "ttlDays": "{{count}} days"
+      },
+      "rotation": {
+        "title": "Rotate SCIM credential",
+        "description": "Issue a replacement credential for {{name}}.",
+        "immediateImpact": "Rotation invalidates the current token immediately. Update the identity provider before resuming synchronization.",
+        "reason": "Rotation reason",
+        "confirmation": "I understand the current token will stop working immediately.",
+        "submit": "Rotate credential"
       },
       "secret": {
         "title": "SCIM bearer token",

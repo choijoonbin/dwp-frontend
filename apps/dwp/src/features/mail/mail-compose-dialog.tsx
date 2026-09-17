@@ -18,6 +18,7 @@ import Stack from '@mui/material/Stack';
 import { MailDraftSaveStatus } from './mail-draft-save-status';
 import { MailComposeOptionsFields } from './mail-compose-options';
 import { MailMessageBodyField } from './mail-message-body-field';
+import { mailWritingAssetBody } from './mail-writing-asset-content';
 import {
   clearMailDraftConflict,
   listMailDraftConflicts,
@@ -42,7 +43,10 @@ import {
   useMailDraftAutosave,
 } from './use-mail-draft-autosave';
 
-import type { IdempotentMutationIntent } from '@dwp-frontend/shared-utils';
+import type {
+  IdempotentMutationIntent,
+  MailProposalMutationBinding,
+} from '@dwp-frontend/shared-utils';
 import type { MailComposeOptions, MailSignature, MailTemplate } from '@dwp-frontend/shared-utils';
 import type { MailDraftFields } from './use-mail-draft-autosave';
 
@@ -99,8 +103,14 @@ type MailComposeDialogProps = {
   initialSubject?: string;
   initialBody?: string;
   fromDwaion?: boolean;
+  proposalBinding?: MailProposalMutationBinding;
+  submissionBlocked?: boolean;
+  handoffNotice?: React.ReactNode;
   onClose: () => void;
-  onCompleted?: (threadId: string, deliveryMode: 'SEND' | 'DRAFT') => void;
+  onCompleted?: (
+    threadId: string,
+    deliveryMode: 'SEND' | 'DRAFT'
+  ) => boolean | void | Promise<boolean | void>;
 };
 
 export function MailComposeDialog(props: MailComposeDialogProps) {
@@ -134,7 +144,7 @@ function applyTemplate(
   setBody: (value: string) => void
 ) {
   if (template.subject) setSubject(template.subject);
-  setBody(template.body);
+  setBody(mailWritingAssetBody(template));
 }
 
 function applySignature(
@@ -142,7 +152,7 @@ function applySignature(
   setBody: React.Dispatch<React.SetStateAction<string>>
 ) {
   const separator = signature.bodyFormat === 'HTML' ? '<br><br>' : '\n\n';
-  const content = [signature.body, signature.mandatoryContent].filter(Boolean).join(separator);
+  const content = mailWritingAssetBody(signature);
   setBody((current) => `${current.trimEnd()}${current.trim() ? separator : ''}${content}`);
 }
 
@@ -152,6 +162,9 @@ function MailComposeDialogSession({
   initialSubject = '',
   initialBody = '',
   fromDwaion = false,
+  proposalBinding,
+  submissionBlocked = false,
+  handoffNotice,
   onClose,
   onCompleted,
   custodyOwner,
@@ -178,7 +191,9 @@ function MailComposeDialogSession({
       emptyComposeOptions(initialToEmail)
   );
   const [sending, setSending] = useState(false);
+  const [ownerCompletionPending, setOwnerCompletionPending] = useState(false);
   const [attachmentsReady, setAttachmentsReady] = useState(true);
+  const [personalizationReviewPending, setPersonalizationReviewPending] = useState(false);
   const [sendResolutionPending, setSendResolutionPending] = useState(Boolean(restoredSend));
   const [sendRejected, setSendRejected] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -197,9 +212,16 @@ function MailComposeDialogSession({
     restoredSend?.attempt.intent ?? null
   );
   const activeSendScopeRef = useRef<string | null>(restoredSend?.scope ?? null);
+  const ownerDraftCompletionKeyRef = useRef<string | null>(null);
   const fields = { toEmail, subject, body, composeOptions };
   const autosave = useMailDraftAutosave({
-    enabled: open && !sending && !sendResolutionPending && !sendRejected && !draftConflict,
+    enabled:
+      open &&
+      !submissionBlocked &&
+      !sending &&
+      !sendResolutionPending &&
+      !sendRejected &&
+      !draftConflict,
     fields,
     initialThreadId: restoredSend?.attempt.payload.threadId,
     initialVersion: restoredSend?.attempt.payload.version,
@@ -306,15 +328,19 @@ function MailComposeDialogSession({
         intent: sendIdentity,
         payload,
       });
-      return updateAdvancedMailDraft(payload.threadId, {
-        toEmail: payload.toEmail,
-        subject: payload.subject,
-        body: payload.body,
-        composeOptions: payload.composeOptions,
-        deliveryMode: payload.deliveryMode,
-        idempotencyKey: sendIdentity.key,
-        version: payload.version,
-      });
+      return updateAdvancedMailDraft(
+        payload.threadId,
+        {
+          toEmail: payload.toEmail,
+          subject: payload.subject,
+          body: payload.body,
+          composeOptions: payload.composeOptions,
+          deliveryMode: payload.deliveryMode,
+          idempotencyKey: sendIdentity.key,
+          version: payload.version,
+        },
+        proposalBinding
+      );
     },
     onSuccess: async (detail) => {
       if (activeSendScopeRef.current) clearMailSendAttempt(activeSendScopeRef.current);
@@ -325,7 +351,8 @@ function MailComposeDialogSession({
       setSendRejected(false);
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
       toast.success(composeOptions.scheduledAt ? t('compose.scheduled') : t('compose.sent'));
-      onCompleted?.(detail.thread.threadId, 'SEND');
+      const completed = await onCompleted?.(detail.thread.threadId, 'SEND');
+      if (completed === false) return;
       onClose();
     },
     onError: (error) => {
@@ -392,16 +419,47 @@ function MailComposeDialogSession({
     setSendRejected(false);
   };
 
-  const closeSavedDraft = useCallback(() => {
-    if (autosave.identity) onCompleted?.(autosave.identity.threadId, 'DRAFT');
+  const closeSavedDraft = useCallback(async () => {
+    if (autosave.identity) {
+      let completedThreadId = autosave.identity.threadId;
+      if (proposalBinding) {
+        setOwnerCompletionPending(true);
+        try {
+          const saved = autosave.savedFields;
+          ownerDraftCompletionKeyRef.current ??= crypto.randomUUID();
+          const detail = await updateAdvancedMailDraft(
+            autosave.identity.threadId,
+            {
+              toEmail: saved.toEmail,
+              toName: saved.toName,
+              subject: saved.subject,
+              body: saved.body,
+              composeOptions: saved.composeOptions,
+              deliveryMode: 'DRAFT',
+              idempotencyKey: ownerDraftCompletionKeyRef.current,
+              version: autosave.identity.version,
+            },
+            proposalBinding
+          );
+          completedThreadId = detail.thread.threadId;
+        } catch {
+          toast.error(t('draft.error'));
+          return;
+        } finally {
+          setOwnerCompletionPending(false);
+        }
+      }
+      const completed = await onCompleted?.(completedThreadId, 'DRAFT');
+      if (completed === false) return;
+    }
     onClose();
-  }, [autosave.identity, onClose, onCompleted]);
+  }, [autosave.identity, autosave.savedFields, onClose, onCompleted, proposalBinding, t, toast]);
 
   useEffect(() => {
     if (!closeWhenSaved) return;
     if (autosave.status === 'SAVED') {
       setCloseWhenSaved(false);
-      closeSavedDraft();
+      void closeSavedDraft();
       return;
     }
     if (autosave.status === 'ERROR' || autosave.status === 'CONFLICT') {
@@ -411,6 +469,7 @@ function MailComposeDialogSession({
   }, [autosave.status, closeSavedDraft, closeWhenSaved]);
 
   const requestClose = () => {
+    if (ownerCompletionPending) return;
     autosave.cancelScheduledSave();
     if (sendResolutionPending) {
       toast.error(t('compose.resolveBeforeLeaving'));
@@ -432,7 +491,7 @@ function MailComposeDialogSession({
       setDiscardOpen(true);
       return;
     }
-    closeSavedDraft();
+    void closeSavedDraft();
   };
 
   return (
@@ -446,10 +505,13 @@ function MailComposeDialogSession({
         submittingLabel={
           composeOptions.scheduledAt ? t('compose.scheduling') : t('compose.sending')
         }
-        busy={sending || sendMutation.isPending}
+        busy={sending || sendMutation.isPending || ownerCompletionPending}
         submitDisabled={
           !autosave.canSend ||
+          ownerCompletionPending ||
+          submissionBlocked ||
           !attachmentsReady ||
+          personalizationReviewPending ||
           !autosave.identity ||
           closeWhenSaved ||
           sendRejected ||
@@ -469,6 +531,8 @@ function MailComposeDialogSession({
             startIcon={<Save size={16} />}
             disabled={
               !autosave.canSave ||
+              ownerCompletionPending ||
+              submissionBlocked ||
               closeWhenSaved ||
               sendResolutionPending ||
               sendRejected ||
@@ -482,6 +546,7 @@ function MailComposeDialogSession({
         }
       >
         <Stack spacing={2}>
+          {handoffNotice}
           {fromDwaion && <Alert severity="info">{t('compose.dwaionDraftNotice')}</Alert>}
           {closeWhenSaved && <Alert severity="info">{t('draft.autosave.closing')}</Alert>}
           {sendResolutionPending && (
@@ -514,6 +579,7 @@ function MailComposeDialogSession({
               setComposeOptions(value);
             }}
             onAttachmentReadyChange={setAttachmentsReady}
+            onPersonalizationReviewChange={setPersonalizationReviewPending}
             onInsertTemplate={(template) => applyTemplate(template, setSubject, setBody)}
             onInsertSignature={(signature) => applySignature(signature, setBody)}
           />

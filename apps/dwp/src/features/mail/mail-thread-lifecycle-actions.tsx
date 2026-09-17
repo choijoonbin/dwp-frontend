@@ -100,9 +100,14 @@ export function MailThreadLifecycleActions({
     onSuccess: (result, request) => {
       setAnchor(null);
       if (!result.allowed) {
-        setPending(null);
-        setPreview(null);
-        toast.error(t('lifecycle.previewBlocked'));
+        if (request.action === 'DELETE_FOREVER') {
+          setPending(request);
+          setPreview(result);
+        } else {
+          setPending(null);
+          setPreview(null);
+          toast.error(t('lifecycle.previewBlocked'));
+        }
         return;
       }
       setPending(request);
@@ -123,6 +128,8 @@ export function MailThreadLifecycleActions({
     ) ?? [];
   const restorable = ['ARCHIVE', 'SPAM', 'TRASH'].includes(thread.folderType);
   const inTrash = thread.folderType === 'TRASH';
+  const deletePreview = pending?.action === 'DELETE_FOREVER';
+  const previewBlocked = Boolean(preview && !preview.allowed);
 
   return (
     <>
@@ -195,7 +202,17 @@ export function MailThreadLifecycleActions({
         </MenuItem>
       </Menu>
       {inTrash && (
-        <ActionIconButton label={t('lifecycle.deleteUnavailable')} intent="danger" disabled>
+        <ActionIconButton
+          label={t('lifecycle.deleteForever')}
+          intent="danger"
+          loading={previewMutation.isPending || mutation.isPending}
+          onClick={() =>
+            previewMutation.mutate({
+              action: 'DELETE_FOREVER',
+              targetLabel: t('lifecycle.deleteForever'),
+            })
+          }
+        >
           <Trash2 size={18} />
         </ActionIconButton>
       )}
@@ -206,28 +223,58 @@ export function MailThreadLifecycleActions({
       />
       <ConfirmDialog
         open={Boolean(pending && preview)}
-        title={t('lifecycle.previewTitle')}
-        description={t('lifecycle.previewDescription', { target: pending?.targetLabel ?? '' })}
+        title={
+          previewBlocked
+            ? t('lifecycle.deleteBlockedTitle')
+            : deletePreview
+              ? t('lifecycle.deleteTitle')
+              : t('lifecycle.previewTitle')
+        }
+        description={
+          previewBlocked
+            ? t('lifecycle.deleteBlockedDescription')
+            : deletePreview
+              ? t('lifecycle.deleteDescription')
+              : t('lifecycle.previewDescription', { target: pending?.targetLabel ?? '' })
+        }
         cancelLabel={t('actions.cancel')}
-        confirmLabel={t('lifecycle.previewConfirm')}
-        confirmingLabel={t('lifecycle.moving')}
+        confirmLabel={
+          previewBlocked
+            ? t('actions.close')
+            : deletePreview
+              ? t('lifecycle.deleteForever')
+              : t('lifecycle.previewConfirm')
+        }
+        confirmingLabel={deletePreview ? t('lifecycle.deleting') : t('lifecycle.moving')}
         busy={mutation.isPending}
+        intent={deletePreview && !previewBlocked ? 'danger' : 'primary'}
+        focusCancelAfterOpen={deletePreview && !previewBlocked}
         details={
           preview ? (
             <Stack spacing={1}>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  {t('lifecycle.previewTarget')}
-                </Typography>
-                <Typography variant="body2" fontWeight={750}>
-                  {preview.targetFolderName ?? pending?.targetLabel}
-                </Typography>
-              </Box>
+              {!deletePreview && (
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('lifecycle.previewTarget')}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={750}>
+                    {preview.targetFolderName ?? pending?.targetLabel}
+                  </Typography>
+                </Box>
+              )}
               <Typography variant="body2">
                 {t('lifecycle.previewAffected', { count: preview.affectedCount })}
               </Typography>
               {preview.blockers.length > 0 && (
-                <Alert severity="warning">{preview.blockers.join(', ')}</Alert>
+                <Alert severity="warning">
+                  <Stack component="ul" spacing={0.5} sx={{ my: 0, pl: 2.5 }}>
+                    {preview.blockers.map((blocker) => (
+                      <Typography component="li" variant="body2" key={blocker}>
+                        {t(`lifecycle.blockers.${blocker}`, { defaultValue: blocker })}
+                      </Typography>
+                    ))}
+                  </Stack>
+                </Alert>
               )}
             </Stack>
           ) : null
@@ -238,7 +285,12 @@ export function MailThreadLifecycleActions({
           setPreview(null);
         }}
         onConfirm={() => {
-          if (pending && preview?.allowed) mutation.mutate(pending);
+          if (previewBlocked) {
+            setPending(null);
+            setPreview(null);
+          } else if (pending && preview?.allowed) {
+            mutation.mutate(pending);
+          }
         }}
       />
     </>

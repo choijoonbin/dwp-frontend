@@ -9,8 +9,10 @@ describe('DWAI-ON governed mutation bindings', () => {
       (route) => route.productId === 'dwaion' && route.routeKind === 'ACTION'
     );
     const routeKeys = exactActions.map((route) => route.routeContractKey).sort();
+    const bindingKeys = Object.keys(DWAION_MUTATION_BINDINGS).sort();
 
-    expect(routeKeys).toHaveLength(60);
+    expect(routeKeys.length).toBeGreaterThan(0);
+    expect(bindingKeys).toEqual(routeKeys);
     for (const route of exactActions) {
       const binding = DWAION_MUTATION_BINDINGS[route.routeContractKey];
       expect(binding).toBeDefined();

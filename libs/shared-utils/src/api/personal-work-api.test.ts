@@ -76,6 +76,26 @@ describe('personal Work API contracts', () => {
       { headers: { 'Idempotency-Key': key }, signal: controller.signal }
     );
   });
+  it('binds a Mail owner command to the personal task create request', async () => {
+    const task = { title: 'Work', priority: 'NORMAL' as const };
+    await createPersonalWorkTask(task, key, undefined, {
+      proposalId: '50000000-0000-4000-8000-000000000002',
+      commandId: '60000000-0000-4000-8000-000000000002',
+      version: 7,
+    });
+    expect(http.post).toHaveBeenCalledWith(
+      '/api/platform/v1/workspace/work-hub/personal-tasks',
+      task,
+      {
+        headers: {
+          'Idempotency-Key': key,
+          'X-DWP-Mail-Proposal-ID': '50000000-0000-4000-8000-000000000002',
+          'X-DWP-Mail-Command-ID': '60000000-0000-4000-8000-000000000002',
+          'X-DWP-Mail-Proposal-Version': '7',
+        },
+      }
+    );
+  });
   it('keeps a stable idempotency key and original version for command replay', async () => {
     await transitionPersonalWorkTask('id/1', 'complete', { version: 4 }, key);
     await transitionPersonalWorkTask('id/1', 'complete', { version: 4 }, key);

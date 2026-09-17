@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 
 import type { Page, Route } from '@playwright/test';
 
@@ -17,6 +18,8 @@ export const PLANNING_IDS = {
   southDesk: '22000000-0000-4000-8000-000000000012',
   room: '22000000-0000-4000-8000-000000000013',
   retiredDesk: '22000000-0000-4000-8000-000000000014',
+  reportPreview: '22000000-0000-4000-8000-000000000015',
+  reportCommand: '22000000-0000-4000-8000-000000000016',
 } as const;
 
 const SOURCE_KINDS = [
@@ -30,6 +33,8 @@ const SOURCE_KINDS = [
 const GENERATED_AT = '2026-09-17T23:30:00Z';
 const SOURCE_AT = '2026-09-17T22:00:00Z';
 const RECEIVED_AT = '2026-09-17T22:01:00Z';
+const REPORT_PDF = Buffer.from('%PDF-1.7\nDWP aggregate board report\n', 'utf8');
+const REPORT_SHA256 = createHash('sha256').update(REPORT_PDF).digest('hex');
 
 function success(route: Route, data: unknown, status = 200) {
   return route.fulfill({
@@ -144,8 +149,8 @@ function scenario(scope: ReturnType<typeof scopeFrom>, version: number) {
       emission: null,
       eligible: false,
       limitations: ['Sensor occupancy coverage is partial.'],
-      expiresAt: '2020-09-17T01:00:00Z',
-      createdAt: '2020-09-17T00:00:00Z',
+      expiresAt: '2027-09-17T01:00:00Z',
+      createdAt: '2026-09-17T00:00:00Z',
     },
     version,
     submittedAt: null,
@@ -297,6 +302,85 @@ function impactResult(state: 'RESULT_UNKNOWN' | 'SUCCEEDED', scenarioVersion: nu
   };
 }
 
+function reportPreview(scenarioVersion: number, format: 'PDF' | 'XLSX' = 'PDF') {
+  return {
+    previewId: PLANNING_IDS.reportPreview,
+    scenarioId: PLANNING_IDS.scenario,
+    siteId: PLANNING_IDS.site,
+    floorId: null,
+    format,
+    scenarioVersion,
+    previewVersion: 1,
+    confirmationToken: '22000000-0000-4000-8000-000000000017',
+    snapshotSha256: 'a'.repeat(64),
+    snapshot: {
+      scenarioId: PLANNING_IDS.scenario,
+      scenarioVersion,
+      scenarioName: 'North desk plan',
+      scenarioState: 'PREVIEWED',
+      siteId: PLANNING_IDS.site,
+      siteCode: 'SEL',
+      siteName: 'Seoul Workplace',
+      floorId: null,
+      floorName: null,
+      windowStart: '2026-09-16T15:00:00Z',
+      windowEnd: '2026-09-30T14:59:59Z',
+      currentCapacity: 40,
+      proposedCapacity: 44,
+      currentRoomCapacity: 4,
+      proposedRoomCapacity: 5,
+      currentAccessibleResourceCount: 2,
+      proposedAccessibleResourceCount: 3,
+      currentUtilizationPercent: 73.4,
+      proposedUtilizationPercent: 79.1,
+      peakDemand: 38,
+      forecastConfidencePercent: 92,
+      forecastState: 'READY',
+      calculationVersion: 'forecast-v22',
+      energyValue: 120.5,
+      energyUnit: 'kWh',
+      co2eValue: 52.2,
+      co2eUnit: 'kgCO2e',
+      emissionFactorVersion: 'factor-kr-2026',
+      emissionRegionCode: 'KR',
+      affectedResourceCount: 2,
+      impactedBookingCount: 1,
+      personLevelDataIncluded: false,
+      personLevelRowCount: 0,
+      capturedAt: GENERATED_AT,
+    },
+    createdAt: GENERATED_AT,
+    expiresAt: '2027-09-17T23:45:00Z',
+    idempotentReplay: false,
+  };
+}
+
+function reportReceipt(scenarioVersion: number) {
+  return {
+    commandId: PLANNING_IDS.reportCommand,
+    previewId: PLANNING_IDS.reportPreview,
+    scenarioId: PLANNING_IDS.scenario,
+    siteId: PLANNING_IDS.site,
+    floorId: null,
+    format: 'PDF',
+    state: 'SUCCEEDED',
+    scenarioVersion,
+    commandVersion: 1,
+    mimeType: 'application/pdf',
+    fileName: 'workplace-space-planning-board-report-22000000.pdf',
+    byteSize: REPORT_PDF.byteLength,
+    contentSha256: REPORT_SHA256,
+    contentHref:
+      `/v1/admin/workplace/space-planning/reports/${PLANNING_IDS.reportCommand}` +
+      `/content?siteId=${PLANNING_IDS.site}`,
+    acceptedAt: GENERATED_AT,
+    completedAt: GENERATED_AT,
+    expiresAt: '2027-09-18T23:30:00Z',
+    idempotentReplay: false,
+    correlationId: 'screen-21-board-report',
+  };
+}
+
 export async function installWorkplaceSpacePlanningHarness(page: Page) {
   const harnessPath = path.resolve(
     process.cwd(),
@@ -316,6 +400,9 @@ export async function mockWorkplaceSpacePlanning(
     roomOverviewDelayMs?: number;
     postCommandOverviewDelayMs?: number;
     failResourceCatalog?: boolean;
+    denyReportExport?: boolean;
+    failReportPreview?: boolean;
+    expiredScenarioPreview?: boolean;
   } = {}
 ) {
   let scenarioVersion = 2;
@@ -334,6 +421,8 @@ export async function mockWorkplaceSpacePlanning(
   const resourceFloorRequests: string[] = [];
   const commandKeys: string[] = [];
   const commandBodies: unknown[] = [];
+  const reportRequests: string[] = [];
+  const reportHeaders: Record<string, string>[] = [];
 
   await page.route('**/api/auth/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
@@ -358,18 +447,20 @@ export async function mockWorkplaceSpacePlanning(
     if (path === '/api/auth/permissions') {
       return success(
         route,
-        ['VIEW', 'MANAGE', 'APPROVE'].map((permissionCode) => ({
-          resourceType: 'APPLICATION',
-          resourceKey: 'ADMIN.WORKPLACE',
-          permissionCode,
-          effect: 'ALLOW',
-        }))
+        ['VIEW', 'MANAGE', 'APPROVE', ...(options.denyReportExport ? [] : ['EXPORT'])].map(
+          (permissionCode) => ({
+            resourceType: 'APPLICATION',
+            resourceKey: 'ADMIN.WORKPLACE',
+            permissionCode,
+            effect: 'ALLOW',
+          })
+        )
       );
     }
     if (path === '/api/auth/product-surface-contexts') {
       return success(route, {
         contractVersion: 'product-surfaces/v3',
-        decisionRevision: `screen-22-${'a'.repeat(64)}`,
+        decisionRevision: `psr-${'a'.repeat(64)}`,
         sourceRevisions: { auth: '22', policy: '22', productRelationship: '22' },
         activeAccessMode: 'ELEVATED',
         generatedAt: new Date().toISOString(),
@@ -442,7 +533,49 @@ export async function mockWorkplaceSpacePlanning(
         postCommandOverviewPending = false;
         await new Promise((resolve) => setTimeout(resolve, options.postCommandOverviewDelayMs));
       }
-      return success(route, overview(url, scenarioVersion));
+      const payload = overview(url, scenarioVersion);
+      if (options.expiredScenarioPreview) {
+        payload.scenarios[0]!.activePreview!.expiresAt = '2026-09-17T00:30:00Z';
+      }
+      return success(route, payload);
+    }
+    if (path.endsWith('/space-planning/reports:preview') && request.method() === 'POST') {
+      reportRequests.push('preview');
+      reportHeaders.push(request.headers());
+      commandKeys.push(request.headers()['idempotency-key'] ?? '');
+      commandBodies.push(request.postDataJSON());
+      if (options.failReportPreview) {
+        return route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'FAIL', message: 'Unavailable', data: null }),
+        });
+      }
+      const body = request.postDataJSON() as { format?: 'PDF' | 'XLSX' };
+      return success(route, reportPreview(scenarioVersion, body.format));
+    }
+    if (path.endsWith('/space-planning/reports') && request.method() === 'POST') {
+      reportRequests.push('execute');
+      reportHeaders.push(request.headers());
+      commandKeys.push(request.headers()['idempotency-key'] ?? '');
+      commandBodies.push(request.postDataJSON());
+      return success(route, reportReceipt(scenarioVersion));
+    }
+    if (
+      path.endsWith(`/space-planning/reports/${PLANNING_IDS.reportCommand}`) &&
+      request.method() === 'GET'
+    ) {
+      reportRequests.push('receipt');
+      reportHeaders.push(request.headers());
+      return success(route, reportReceipt(scenarioVersion));
+    }
+    if (
+      path.endsWith(`/space-planning/reports/${PLANNING_IDS.reportCommand}/content`) &&
+      request.method() === 'GET'
+    ) {
+      reportRequests.push('content');
+      reportHeaders.push(request.headers());
+      return route.fulfill({ status: 200, contentType: 'application/pdf', body: REPORT_PDF });
     }
     if (path.endsWith('/booking-impact:preview') && request.method() === 'POST') {
       commandKeys.push(request.headers()['idempotency-key'] ?? '');
@@ -497,6 +630,8 @@ export async function mockWorkplaceSpacePlanning(
     resourceFloorRequests,
     commandKeys,
     commandBodies,
+    reportRequests,
+    reportHeaders,
     roomOverviewStarted,
     releaseRoomOverview,
     setScenarioVersion(value: number) {

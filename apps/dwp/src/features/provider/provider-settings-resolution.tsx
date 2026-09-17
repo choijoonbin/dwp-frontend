@@ -354,6 +354,13 @@ export function ProviderSettingsResolution({
                   {t('settingsResolution.observationUnsupported')}
                 </InlineFeedback>
               )}
+              {definition?.owner.domain === 'FEATURE_ROLLOUT' &&
+                applicationStatus &&
+                applicationStatus.expectedTargetCount > 0 && (
+                  <InlineFeedback severity="info">
+                    {t('settingsResolution.sampledGatewayObservation')}
+                  </InlineFeedback>
+                )}
               <Box
                 sx={{
                   display: 'grid',

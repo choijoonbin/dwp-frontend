@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -29,6 +29,10 @@ import LinearProgress from '@mui/material/LinearProgress';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha } from '@mui/material/styles';
 
+import {
+  MailProposalOwnerHandoffNotice,
+  useMailProposalOwnerHandoff,
+} from '../../components/mail-proposal-owner-handoff';
 import { CalendarEventDialog } from './calendar-event-dialog';
 import { CalendarEventDrawer } from './calendar-components';
 import { CalendarCanvas } from './calendar-experience';
@@ -126,6 +130,9 @@ export function CalendarSchedule() {
   const { hasPermission, permissions, isLoaded: permissionsLoaded } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const proposalOwnerHandoff = useMailProposalOwnerHandoff('CALENDAR');
+  const proposalDomainCompletedRef = useRef(false);
+  const proposalReturnStartedRef = useRef(false);
   const mobile = useMediaQuery('(max-width:767.95px)', { noSsr: true });
   const tablet = useMediaQuery('(min-width:768px) and (max-width:1279.95px)', { noSsr: true });
   const compact = useMediaQuery('(max-width:1279.95px)', { noSsr: true });
@@ -229,6 +236,7 @@ export function CalendarSchedule() {
   const scheduleWritable = readState === 'READY';
   const canCreate = canCreateGranted && scheduleWritable;
   const canUpdate = canUpdateGranted && scheduleWritable;
+
   const {
     activeWorkHandoff: activeCreateWorkHandoff,
     closeCreateState,
@@ -650,6 +658,8 @@ export function CalendarSchedule() {
         }}
       />
 
+      <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />
+
       {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
         <Box
           data-testid="calendar-read-state"
@@ -886,6 +896,8 @@ export function CalendarSchedule() {
             initialVisibility={createState?.visibility}
             initialImportance={createState?.importance}
             fromDwaion={createState?.fromDwaion}
+            proposalBinding={proposalOwnerHandoff.binding}
+            submissionBlocked={proposalOwnerHandoff.blocksSubmission}
             workHandoff={activeCreateWorkHandoff}
             workRecovery={workRecovery}
             onBeforeCreate={
@@ -898,25 +910,47 @@ export function CalendarSchedule() {
                 : undefined
             }
             onCreateReceipt={
-              activeCreateWorkHandoff
+              activeCreateWorkHandoff || proposalOwnerHandoff.active
                 ? async (event, idempotencyKey) => {
-                    if (
-                      !hasPermission('APP.WORK', 'UPDATE') ||
-                      !isWorkHandoffAuthorized(activeCreateWorkHandoff)
-                    )
-                      throw new Error(t('event.workLinkSaveError'));
-                    await persistWorkCalendarHandoffLink(
-                      activeCreateWorkHandoff,
-                      event,
-                      idempotencyKey
-                    );
-                    await queryClient.invalidateQueries({
-                      queryKey: ['workspace', 'work-hub', 'schedule-links'],
-                    });
+                    if (activeCreateWorkHandoff) {
+                      if (
+                        !hasPermission('APP.WORK', 'UPDATE') ||
+                        !isWorkHandoffAuthorized(activeCreateWorkHandoff)
+                      )
+                        throw new Error(t('event.workLinkSaveError'));
+                      await persistWorkCalendarHandoffLink(
+                        activeCreateWorkHandoff,
+                        event,
+                        idempotencyKey
+                      );
+                      await queryClient.invalidateQueries({
+                        queryKey: ['workspace', 'work-hub', 'schedule-links'],
+                      });
+                    }
+                    if (proposalOwnerHandoff.active) {
+                      proposalDomainCompletedRef.current = true;
+                      proposalReturnStartedRef.current =
+                        await proposalOwnerHandoff.waitForTerminalAndReturn();
+                    }
                   }
                 : undefined
             }
-            onClose={closeCreateState}
+            onClose={() => {
+              const proposalDomainCompleted = proposalDomainCompletedRef.current;
+              if (proposalDomainCompleted) {
+                proposalDomainCompletedRef.current = false;
+                const returnStarted = proposalReturnStartedRef.current;
+                proposalReturnStartedRef.current = false;
+                closeCreateState();
+                if (returnStarted) return;
+                return;
+              }
+              if (proposalOwnerHandoff.active) {
+                void proposalOwnerHandoff.cancelAndReturn();
+                return;
+              }
+              closeCreateState();
+            }}
             onReturnToWork={
               activeCreateWorkHandoff && returnTarget
                 ? () => {

@@ -176,6 +176,33 @@ export type WorkplaceBookingHoldResponse = Readonly<{
   holds: readonly WorkplaceReservationHold[];
 }>;
 
+export type WorkplaceBookingHoldReleaseInput = Readonly<{
+  expectedIntentVersion: number;
+  holds: readonly Readonly<{
+    holdId: string;
+    expectedHoldVersion: number;
+  }>[];
+  reason: string;
+  explicitConfirmation: boolean;
+}>;
+
+export type WorkplaceBookingHoldReleaseReceipt = Readonly<{
+  commandId: string;
+  intentId: string;
+  state: 'SUCCEEDED' | 'RESULT_UNKNOWN';
+  releasedHoldIds: readonly string[];
+  intentVersion: number;
+  idempotentReplay: boolean;
+  requeryRequired: boolean;
+  correlationId: string;
+  completedAt: string | null;
+}>;
+
+export type WorkplaceBookingHoldReleaseResult = Readonly<{
+  intent: WorkplaceBookingHoldResponse;
+  receipt: WorkplaceBookingHoldReleaseReceipt;
+}>;
+
 export type WorkplaceBookingIntentStatus = Readonly<{
   intent: WorkplaceBookingIntentPreview;
   holds: readonly WorkplaceReservationHold[];
@@ -392,6 +419,22 @@ export async function createWorkplaceReservationHolds(
     ApiResponse<WorkplaceBookingHoldResponse>,
     WorkplaceBookingHoldInput
   >(`${ROOT}/booking-intents/${id(intentId)}/holds`, input, commandHeaders(idempotencyKey));
+  return response.data.data;
+}
+
+export async function releaseWorkplaceReservationHolds(
+  intentId: string,
+  input: WorkplaceBookingHoldReleaseInput,
+  idempotencyKey: string
+) {
+  const response = await axiosInstance.post<
+    ApiResponse<WorkplaceBookingHoldReleaseResult>,
+    WorkplaceBookingHoldReleaseInput
+  >(
+    `${ROOT}/booking-orchestration/intents/${id(intentId)}/holds:release`,
+    input,
+    commandHeaders(idempotencyKey)
+  );
   return response.data.data;
 }
 

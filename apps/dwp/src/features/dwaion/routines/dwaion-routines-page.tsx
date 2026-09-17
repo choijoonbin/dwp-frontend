@@ -1,9 +1,20 @@
 import { useMemo, useState } from 'react';
-import { BellOff, Globe2, Plus, RefreshCw, ShieldCheck, TimerOff } from 'lucide-react';
+import {
+  Activity,
+  BellOff,
+  Globe2,
+  History,
+  Plus,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  TimerOff,
+} from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
+import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -12,6 +23,7 @@ import {
   ActionButton,
   ConfirmDialog,
   ErrorState,
+  FormField,
   GuidedEmptyState,
   LoadingState,
   OperationalKpiStrip,
@@ -22,6 +34,7 @@ import { DWAION_ROUTINE_COPY_KO } from './dwaion-routine-copy';
 import { DwaionRoutineInspector } from './dwaion-routine-inspector';
 import { DwaionRoutineList } from './dwaion-routine-list';
 import { routineConsentComplete } from './dwaion-routine-model';
+import { DwaionCapabilityActions } from '../dwaion-capability-actions';
 
 import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type {
@@ -31,8 +44,11 @@ import type {
 } from './dwaion-routine-model';
 import type {
   DwaionRoutineExecutionRun,
+  DwaionRoutineHealth,
+  DwaionRoutineRollbackReceipt,
   DwaionRoutineRunCommand,
   DwaionRoutineRuntimeCapabilities,
+  DwaionRoutineVersionSnapshot,
 } from '@dwp-frontend/shared-utils';
 
 export function DwaionRoutinesPage({
@@ -47,6 +63,11 @@ export function DwaionRoutinesPage({
   runs = [],
   runsLoading,
   runsError,
+  versions = [],
+  health,
+  rollbackReceipt,
+  evidenceLoading,
+  evidenceError,
   busy = false,
   canManage = true,
   canCreate = canManage,
@@ -61,6 +82,8 @@ export function DwaionRoutinesPage({
   onActivate,
   onTriggerRun,
   onRunCommand,
+  onRollbackVersion,
+  onDownloadTelemetry,
   onRetryRuntime,
   copy = DWAION_ROUTINE_COPY_KO,
   formatTimestamp,
@@ -76,6 +99,11 @@ export function DwaionRoutinesPage({
   runs?: readonly DwaionRoutineExecutionRun[];
   runsLoading?: boolean;
   runsError?: boolean;
+  versions?: readonly DwaionRoutineVersionSnapshot[];
+  health?: DwaionRoutineHealth;
+  rollbackReceipt?: DwaionRoutineRollbackReceipt | null;
+  evidenceLoading?: boolean;
+  evidenceError?: boolean;
   busy?: boolean;
   canManage?: boolean;
   canCreate?: boolean;
@@ -94,6 +122,8 @@ export function DwaionRoutinesPage({
     run: DwaionRoutineExecutionRun,
     action: DwaionRoutineRunCommand['action']
   ) => void;
+  onRollbackVersion: (routine: DwaionRoutine, version: DwaionRoutineVersionSnapshot) => void;
+  onDownloadTelemetry: (routine: DwaionRoutine) => void;
   onRetryRuntime: () => void;
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
@@ -104,7 +134,10 @@ export function DwaionRoutinesPage({
     [routines, selectedId]
   );
   const [compactInspectorOpen, setCompactInspectorOpen] = useState(false);
-  const [filter, setFilter] = useState<'ALL' | 'READY' | 'ATTENTION' | 'PAUSED'>('ALL');
+  const [filter, setFilter] = useState<
+    'ALL' | 'SCHEDULED' | 'WEBHOOK' | 'READY' | 'ATTENTION' | 'PAUSED'
+  >('ALL');
+  const [search, setSearch] = useState('');
   const [statusTarget, setStatusTarget] = useState<DwaionRoutine | null>(null);
   const [archiveTarget, setArchiveTarget] = useState<DwaionRoutine | null>(null);
   const metrics = useMemo(
@@ -119,13 +152,25 @@ export function DwaionRoutinesPage({
         (routine) => routine.status === 'DRAFT' && !routineConsentComplete(routine.consents)
       ).length,
       paused: routines.filter((routine) => routine.status === 'PAUSED').length,
+      scheduled: routines.filter((routine) => routine.triggerType === 'SCHEDULED').length,
+      webhook: routines.filter((routine) => routine.triggerType === 'WEBHOOK').length,
     }),
     [routines]
   );
   const filteredRoutines = useMemo(
     () =>
       routines.filter((routine) => {
+        const query = search.trim().toLocaleLowerCase();
+        const matchesSearch =
+          !query ||
+          [routine.title, routine.description, ...routine.sourceKeys]
+            .join(' ')
+            .toLocaleLowerCase()
+            .includes(query);
+        if (!matchesSearch) return false;
         if (filter === 'ALL') return true;
+        if (filter === 'SCHEDULED') return routine.triggerType === 'SCHEDULED';
+        if (filter === 'WEBHOOK') return routine.triggerType === 'WEBHOOK';
         if (filter === 'PAUSED') return routine.status === 'PAUSED';
         if (filter === 'READY') {
           return (
@@ -135,16 +180,26 @@ export function DwaionRoutinesPage({
         }
         return routine.status === 'DRAFT' && !routineConsentComplete(routine.consents);
       }),
-    [filter, routines]
+    [filter, routines, search]
   );
   const filterCounts = {
     ALL: metrics.total,
+    SCHEDULED: metrics.scheduled,
+    WEBHOOK: metrics.webhook,
     READY: metrics.ready,
     ATTENTION: metrics.attention,
     PAUSED: metrics.paused,
   } as const;
   const timeZones = [...new Set(routines.map((routine) => routine.schedule.timeZone))];
   const timeZoneLabel = timeZones.length === 1 ? timeZones[0] : timeZones.join(' · ');
+  const focusServerEvidence = () => {
+    if (compact && selected) setCompactInspectorOpen(true);
+    window.setTimeout(() => {
+      document
+        .getElementById('routine-server-evidence-title')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+  };
 
   return (
     <PageCanvas mode="workspace" topInset="compact">
@@ -174,15 +229,35 @@ export function DwaionRoutinesPage({
               {copy.description}
             </Typography>
           </Box>
-          <ActionButton
-            intent="primary"
-            startIcon={<Plus size={17} aria-hidden="true" />}
-            onClick={onCreate}
-            disabled={!canCreate}
-            sx={{ minHeight: 44 }}
-          >
-            {copy.create}
-          </ActionButton>
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75} sx={{ flexShrink: 0 }}>
+            <ActionButton
+              intent="secondary"
+              startIcon={<History size={17} aria-hidden="true" />}
+              onClick={focusServerEvidence}
+              disabled={!selected}
+              sx={{ minHeight: 44 }}
+            >
+              {copy.versionAudit}
+            </ActionButton>
+            <ActionButton
+              intent="secondary"
+              startIcon={<Activity size={17} aria-hidden="true" />}
+              onClick={focusServerEvidence}
+              disabled={!selected}
+              sx={{ minHeight: 44 }}
+            >
+              {copy.healthCheck}
+            </ActionButton>
+            <ActionButton
+              intent="primary"
+              startIcon={<Plus size={17} aria-hidden="true" />}
+              onClick={onCreate}
+              disabled={!canCreate}
+              sx={{ minHeight: 44 }}
+            >
+              {copy.create}
+            </ActionButton>
+          </Stack>
         </Stack>
 
         {partialError ? (
@@ -205,9 +280,50 @@ export function DwaionRoutinesPage({
             </ActionButton>
           </Stack>
         ) : null}
-        {commandError ? (
+        {commandError === 'REVISION_CONFLICT' ? (
+          <Stack
+            role="alert"
+            gap={1}
+            sx={{ p: 2, border: 1, borderColor: 'warning.main', bgcolor: 'background.paper' }}
+          >
+            <Typography component="h2" variant="subtitle1" color="warning.main">
+              {copy.conflictTitle}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {copy.conflictDescription}
+            </Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75}>
+              <ActionButton intent="primary" onClick={onRetry}>
+                {copy.discardAndRefresh}
+              </ActionButton>
+              <ActionButton intent="secondary" onClick={focusServerEvidence} disabled={!selected}>
+                {copy.snapshotRollback}
+              </ActionButton>
+            </Stack>
+            <DwaionCapabilityActions
+              title={copy.conflictTitle}
+              description={copy.conflictStrategyUnavailable}
+              actions={[
+                {
+                  key: 'fork-version',
+                  label: copy.forkVersion,
+                  capability: 'routine.version-fork',
+                  available: false,
+                  reason: copy.conflictStrategyUnavailable,
+                },
+                {
+                  key: 'semantic-merge',
+                  label: copy.semanticMerge,
+                  capability: 'routine.semantic-merge',
+                  available: false,
+                  reason: copy.conflictStrategyUnavailable,
+                },
+              ]}
+            />
+          </Stack>
+        ) : commandError ? (
           <Typography role="alert" variant="body2" color="error.main">
-            {commandError === 'REVISION_CONFLICT' ? copy.revisionConflict : copy.commandFailed}
+            {copy.commandFailed}
           </Typography>
         ) : null}
 
@@ -280,6 +396,24 @@ export function DwaionRoutinesPage({
                 borderRadius: (theme) => Number(theme.shape.borderRadius) * 2 + 'px',
               }}
             >
+              <FormField
+                type="search"
+                size="small"
+                value={search}
+                placeholder={copy.searchPlaceholder}
+                onChange={(event) => setSearch(event.target.value)}
+                slotProps={{
+                  htmlInput: { 'aria-label': copy.searchLabel },
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search size={16} aria-hidden="true" />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                sx={{ width: { xs: '100%', md: 280 }, flexShrink: 0 }}
+              />
               <Box
                 role="group"
                 aria-label={copy.filtersLabel}
@@ -374,6 +508,11 @@ export function DwaionRoutinesPage({
                       runs={runs}
                       runsLoading={runsLoading}
                       runsError={runsError}
+                      versions={versions}
+                      health={health}
+                      rollbackReceipt={rollbackReceipt}
+                      evidenceLoading={evidenceLoading}
+                      evidenceError={evidenceError}
                       busy={busy}
                       canManage={canManage}
                       onClose={onCloseSelection}
@@ -384,6 +523,8 @@ export function DwaionRoutinesPage({
                       onActivate={onActivate}
                       onTriggerRun={onTriggerRun}
                       onRunCommand={onRunCommand}
+                      onRollbackVersion={onRollbackVersion}
+                      onDownloadTelemetry={onDownloadTelemetry}
                       onRetryRuntime={onRetryRuntime}
                       copy={copy}
                       formatTimestamp={formatTimestamp}
@@ -424,6 +565,11 @@ export function DwaionRoutinesPage({
           runs={runs}
           runsLoading={runsLoading}
           runsError={runsError}
+          versions={versions}
+          health={health}
+          rollbackReceipt={rollbackReceipt}
+          evidenceLoading={evidenceLoading}
+          evidenceError={evidenceError}
           busy={busy}
           canManage={canManage}
           onClose={() => {
@@ -437,6 +583,8 @@ export function DwaionRoutinesPage({
           onActivate={onActivate}
           onTriggerRun={onTriggerRun}
           onRunCommand={onRunCommand}
+          onRollbackVersion={onRollbackVersion}
+          onDownloadTelemetry={onDownloadTelemetry}
           onRetryRuntime={onRetryRuntime}
           copy={copy}
           formatTimestamp={formatTimestamp}

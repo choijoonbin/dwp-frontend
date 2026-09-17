@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 21,
-  checksum: '4cd1732df91d197cc47fca94699b0fb702ab1f6f2c557d3d17ce0e069d65af85',
-  indexChecksum: '79d16d664df9a732b24fb1cc7cbe5d8ab1c859fe22217a852cd298417b8182f0',
+  version: 24,
+  checksum: 'be3db891d27cd0b94aa88ac706d9bc87d4b991c9f9d8e505e26b296647728b84',
+  indexChecksum: '27a35ef35cbe4d6fee7cbd5ee9493168cb52b13b32a947f6e9fbf1baeb1e8bca',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -4017,6 +4017,86 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.management.control-plane-command.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/control-plane/commands',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/control-plane/commands/{commandId}/decision',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/control-plane/commands/{commandId}/cancel',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/control-plane/commands/{commandId}/retry',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/control-plane/commands/{commandId}/rollback',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.management.control-plane-commands.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/commands',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.management.control-plane-snapshots.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/connectors',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/evaluation-safety',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/incidents',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/outcomes',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.management.domain-retention-update.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.management',
@@ -4289,6 +4369,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.management.models-routing.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: 'dwaion.management.models-routing',
+    pattern: '/dwaion/admin/models',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/control-plane/models-routing',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.management.overview.page',
     routeKind: 'PAGE',
     navigationContextId: 'dwaion.management',
@@ -4529,6 +4625,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.activity.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: 'dwaion.work.activity',
+    pattern: '/dwaion/activity',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/navigation/activity',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.agents.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: 'dwaion.work.agents',
+    pattern: '/dwaion/agents',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/navigation/agents',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.artifact-autosave.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.work',
@@ -4541,6 +4669,182 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'PUT',
         path: '/api/agent/v1/artifacts/{artifactId}/draft',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-access-request.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/access-requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-comments.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/comments',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/comments/{commentId}/replies',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/comments/{commentId}/resolve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-comments.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/comments',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-edit.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/edits',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-members.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/members',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-preflight.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/preflights',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-resolve.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/conflicts/{conflictId}/resolve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-share.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/shares',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/shares/{shareId}/revoke',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-workspace.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/artifact-collaboration/capabilities',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace',
       },
     ],
   },
@@ -4737,6 +5041,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.attachment-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/attachments',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/attachments/{attachmentId}/complete',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.attachment-delete.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'DELETE',
+        path: '/api/agent/v1/attachments/{attachmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.attachments.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/attachments',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/attachments/capabilities',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/attachments/{attachmentId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/attachments/{attachmentId}/evidence',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.conversation-delete.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.work',
@@ -4749,6 +5117,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'DELETE',
         path: '/api/agent/v1/conversations/{conversationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.conversation-detail.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: 'dwaion.work.conversation-detail',
+    pattern: '/dwaion/conversations/:conversationId',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/navigation/conversations/{conversationId}',
       },
     ],
   },
@@ -4781,6 +5165,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/agent/v1/conversations/{conversationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.conversations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: 'dwaion.work.conversations',
+    pattern: '/dwaion/conversations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/navigation/conversations',
       },
     ],
   },
@@ -4913,6 +5313,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.new.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: 'dwaion.work.new',
+    pattern: '/dwaion/new',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/navigation/new',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.personal-controls.page',
     routeKind: 'PAGE',
     navigationContextId: 'dwaion.work',
@@ -4961,6 +5377,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.personal-deletion-retry.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/personal-data/deletions/{deletionJobId}/retry',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.personal-deletion.data',
     routeKind: 'DATA',
     navigationContextId: 'dwaion.work',
@@ -4973,6 +5405,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/agent/v1/personal-data/deletions/{deletionJobId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.personal-deletions.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/personal-data/deletions',
       },
     ],
   },
@@ -5057,6 +5505,42 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.proposal-handoff.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/proposals/{proposalId}/handoff',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.proposal-handoff.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/proposals/{proposalId}/handoff',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/proposal-handoffs/{handoffId}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.proposal-preferences-update.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.work',
@@ -5133,6 +5617,242 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/agent/v1/question-launches',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-audit-download.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/runs/{runId}/downloads/audit',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-deliveries.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/runs/{runId}/deliveries',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/runs/{runId}/deliveries/{deliveryId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-output.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/artifact',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/proposal',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/exports',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/handoffs',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/shares',
+      },
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/routines',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-plan-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/plans',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-plan-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/agent/v1/research/plans/{planId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-plans.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/plans/{planId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/capabilities',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-raw-download.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/runs/{runId}/downloads/raw',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-receipt-download.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/runs/{runId}/downloads/receipt',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-run-command.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/commands',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-run-execute.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/runs/{runId}/execute',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-run-start.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/research/plans/{planId}/runs',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.research-runs.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/research/runs/{runId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.routine-activation.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/routines/{routineId}/activation',
       },
     ],
   },
@@ -5217,6 +5937,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.routine-evidence.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/routines/{routineId}/versions',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/routines/{routineId}/health',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/routines/{routineId}/telemetry/download',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.routine-execution.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/routines/capabilities',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/routines/{routineId}/runs',
+      },
+      {
+        method: 'GET',
+        path: '/api/agent/v1/routines/{routineId}/runs/{routineRunId}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.routine-lifecycle.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.work',
@@ -5233,6 +6001,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.routine-run-command.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/routines/{routineId}/runs/{routineRunId}/commands',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.routine-run-trigger.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/routines/{routineId}/runs',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.routine-update.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.work',
@@ -5245,6 +6045,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'PUT',
         path: '/api/agent/v1/routines/{routineId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.routine-version-rollback.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/routines/{routineId}/versions/{revision}/rollback',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.routine-webhook-trigger.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/routines/{routineId}/webhook-events',
       },
     ],
   },
@@ -9092,6 +9924,55 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.workplace.management.safety-emergency-contacts-by-contact-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/emergency-contacts/{contactId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-emergency-contacts-by-contact-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/safety/emergency-contacts/{contactId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-emergency-contacts-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/emergency-contacts',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.workplace.management.safety-exports-by-export-id-content-get.data',
     routeKind: 'DATA',
     navigationContextId: 'workplace.management',
@@ -9223,6 +10104,91 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/dispatches:resend',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-emergency-handoff-previews-by-preview-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoff-previews/{previewId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-by-command-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-by-command-id-reconcile-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs/{commandId}:reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-emergency-handoffs-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs:preview',
       },
     ],
   },
@@ -9962,6 +10928,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.workplace.management.space-planning-report-content.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/space-planning/reports/{commandId}/content',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-report-execute.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/reports',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-report-preview.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/reports:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-report-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/space-planning/reports/{commandId}',
+      },
+    ],
+  },
+  {
     routeContractKey:
       'route.workplace.management.space-planning-scenarios-by-scenario-id-approve-post.action',
     routeKind: 'ACTION',
@@ -10625,6 +11655,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.workplace.work.booking-intent-holds-release.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/booking-orchestration/intents/{intentId}/holds:release',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.workplace.work.booking-intent-preview.action',
     routeKind: 'ACTION',
     navigationContextId: 'workplace.work',
@@ -11084,6 +12130,134 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.workplace.work.resource-command-context.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/resource-command-context',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-command-execute.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/resource-commands',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-command-preview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/resource-command-previews/{previewId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-command-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/resource-commands:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-command-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/resource-commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-command-reconcile.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/resource-commands/{commandId}:reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-favorite-set.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/workplace/resources/{resourceId}/favorite',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.resource-favorites-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/resource-favorites',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.workplace.work.room-availability-get.data',
     routeKind: 'DATA',
     navigationContextId: 'workplace.work',
@@ -11176,6 +12350,23 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/platform/v1/rooms/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.safety-incidents-by-incident-id-emergency-contacts-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/safety/incidents/{incidentId}/emergency-contacts',
       },
     ],
   },

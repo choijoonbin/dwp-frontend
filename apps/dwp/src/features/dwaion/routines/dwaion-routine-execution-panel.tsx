@@ -23,11 +23,17 @@ import {
 
 import type {
   DwaionRoutineExecutionRun,
+  DwaionRoutineHealth,
+  DwaionRoutineRollbackReceipt,
   DwaionRoutineRunCommand,
   DwaionRoutineRuntimeCapabilities,
+  DwaionRoutineVersionSnapshot,
 } from '@dwp-frontend/shared-utils';
 import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type { DwaionRoutine } from './dwaion-routine-model';
+import { DwaionCapabilityActions } from '../dwaion-capability-actions';
+import { DwaionRoutineEvidencePanel } from './dwaion-routine-evidence-panel';
+import { DwaionRoutineRunWorkbench } from './dwaion-routine-run-workbench';
 
 type PendingOperation =
   | { kind: 'activation'; action: 'ACTIVATE' | 'DEACTIVATE' }
@@ -41,6 +47,11 @@ export function DwaionRoutineExecutionPanel({
   runs,
   runsLoading,
   runsError,
+  versions = [],
+  health,
+  rollbackReceipt,
+  evidenceLoading = false,
+  evidenceError = false,
   busy,
   canManage,
   copy,
@@ -48,6 +59,8 @@ export function DwaionRoutineExecutionPanel({
   onActivate,
   onTrigger,
   onRunCommand,
+  onRollbackVersion,
+  onDownloadTelemetry,
   onRetry,
 }: {
   routine: DwaionRoutine;
@@ -56,6 +69,11 @@ export function DwaionRoutineExecutionPanel({
   runs: readonly DwaionRoutineExecutionRun[];
   runsLoading?: boolean;
   runsError?: boolean;
+  versions?: readonly DwaionRoutineVersionSnapshot[];
+  health?: DwaionRoutineHealth;
+  rollbackReceipt?: DwaionRoutineRollbackReceipt | null;
+  evidenceLoading?: boolean;
+  evidenceError?: boolean;
   busy: boolean;
   canManage: boolean;
   copy: DwaionRoutineCopy;
@@ -63,13 +81,17 @@ export function DwaionRoutineExecutionPanel({
   onActivate: (action: 'ACTIVATE' | 'DEACTIVATE') => void;
   onTrigger: () => void;
   onRunCommand: (run: DwaionRoutineExecutionRun, action: DwaionRoutineRunCommand['action']) => void;
+  onRollbackVersion: (version: DwaionRoutineVersionSnapshot) => void;
+  onDownloadTelemetry: () => void;
   onRetry: () => void;
 }) {
   const [pending, setPending] = useState<PendingOperation | null>(null);
-  const active = routine.status === 'ACTIVE' && routine.executionMode === 'SCHEDULED';
+  const active = routine.status === 'ACTIVE' && routine.executionMode !== 'DRY_RUN_ONLY';
   const runtimeAvailable = Boolean(
     capabilities?.activationAvailable &&
-    capabilities.schedulingAvailable &&
+    (routine.triggerType === 'WEBHOOK'
+      ? capabilities.webhookTriggerAvailable
+      : capabilities.schedulingAvailable) &&
     capabilities.backgroundExecutionAvailable
   );
   const confirmCopy = operationCopy(pending, copy);
@@ -139,6 +161,17 @@ export function DwaionRoutineExecutionPanel({
         </ActionButton>
       </Stack>
 
+      {runs[0] ? (
+        <DwaionRoutineRunWorkbench
+          run={runs[0]}
+          busy={busy}
+          canManage={canManage}
+          copy={copy}
+          formatTimestamp={formatTimestamp}
+          onCommand={(action) => setPending({ kind: 'run', run: runs[0]!, action })}
+        />
+      ) : null}
+
       {runsLoading ? (
         <LoadingState embedded label={copy.runHistory} variant="skeleton" skeletonRows={2} />
       ) : runsError ? (
@@ -155,7 +188,7 @@ export function DwaionRoutineExecutionPanel({
         </InlineFeedback>
       ) : runs.length ? (
         <Stack component="ol" gap={1} sx={{ p: 0, m: 0, mt: 1.25, listStyle: 'none' }}>
-          {runs.slice(0, 5).map((run) => (
+          {runs.slice(0, 5).map((run, index) => (
             <RunItem
               key={run.routineRunId}
               run={run}
@@ -163,6 +196,7 @@ export function DwaionRoutineExecutionPanel({
               canManage={canManage}
               copy={copy}
               formatTimestamp={formatTimestamp}
+              showActions={index > 0}
               onCommand={(action) => setPending({ kind: 'run', run, action })}
             />
           ))}
@@ -172,6 +206,30 @@ export function DwaionRoutineExecutionPanel({
           {copy.noRuns}
         </Typography>
       )}
+
+      <DwaionRoutineEvidencePanel
+        routine={routine}
+        versions={versions}
+        health={health}
+        rollbackReceipt={rollbackReceipt}
+        loading={evidenceLoading}
+        error={evidenceError}
+        busy={busy}
+        canManage={canManage}
+        copy={copy}
+        formatTimestamp={formatTimestamp}
+        onRetry={onRetry}
+        onRollback={onRollbackVersion}
+        onDownloadTelemetry={onDownloadTelemetry}
+      />
+
+      <Box sx={{ mt: 1.25 }}>
+        <DwaionCapabilityActions
+          title={copy.advancedRuntimeTitle}
+          description={copy.advancedRuntimeDescription}
+          actions={routineProviderActions(capabilities, copy)}
+        />
+      </Box>
 
       <ConfirmDialog
         open={Boolean(pending)}
@@ -199,12 +257,50 @@ export function DwaionRoutineExecutionPanel({
   );
 }
 
+function routineProviderActions(
+  capabilities: DwaionRoutineRuntimeCapabilities | undefined,
+  copy: DwaionRoutineCopy
+) {
+  const providerReason = capabilities?.recoveryHint ?? copy.runtimeActionUnavailable;
+  return [
+    {
+      key: 'print',
+      label: copy.printReport,
+      capability: 'browser.print',
+      reason: copy.runtimeEvidenceReady,
+      available: true,
+      onClick: () => window.print(),
+    },
+    ...(
+      [
+        ['skip-quarantined', copy.skipQuarantined, capabilities?.automaticQuarantine],
+        ['oauth', copy.oauthReauthorize, capabilities?.oauthReauthorization],
+        ['temporary-limit', copy.temporaryLimit, capabilities?.temporaryBudgetIncrease],
+        ['escalate', copy.escalate, capabilities?.operatorEscalation],
+        ['provider-rollback', copy.compensateRun, capabilities?.providerRollback],
+      ] as const
+    ).map(([key, label, capability]) => ({
+      key,
+      label,
+      capability: `routine.provider.${key}`,
+      reason:
+        capability?.recoveryHint ??
+        capability?.reasonCode ??
+        (capability?.available && capability.configured
+          ? copy.runtimeActionUnavailable
+          : providerReason),
+      available: false,
+    })),
+  ];
+}
+
 function RunItem({
   run,
   busy,
   canManage,
   copy,
   formatTimestamp,
+  showActions,
   onCommand,
 }: {
   run: DwaionRoutineExecutionRun;
@@ -212,6 +308,7 @@ function RunItem({
   canManage: boolean;
   copy: DwaionRoutineCopy;
   formatTimestamp: (value: string) => string;
+  showActions: boolean;
   onCommand: (action: DwaionRoutineRunCommand['action']) => void;
 }) {
   const running = ['QUEUED', 'CLAIMED', 'RUNNING', 'RETRY_SCHEDULED'].includes(run.state);
@@ -268,7 +365,7 @@ function RunItem({
           </Typography>
         </Box>
       ) : null}
-      {running || retryable || compensatable ? (
+      {showActions && (running || retryable || compensatable) ? (
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75} sx={{ mt: 1 }}>
           {retryable ? (
             <ActionButton

@@ -171,9 +171,15 @@ describe('meeting background fail-closed processor', () => {
     expect(processor.name).toBe('dwp-local-background-office-v1');
     expect(mocks.supported).toHaveBeenCalledWith('office');
     expect(mocks.loadOffice).toHaveBeenCalledOnce();
-    expect(mocks.compose).toHaveBeenCalledWith('office', office);
+    expect(mocks.compose).toHaveBeenCalledWith('office', office, { hdVideo: false });
     await processor.destroy();
     expect(office.close).toHaveBeenCalledOnce();
+  });
+  it('carries the HD publication policy into the privacy compositor', async () => {
+    const processor = createMeetingBackgroundProcessor({ hdVideo: true });
+    await processor.start(input());
+    expect(mocks.compose).toHaveBeenCalledWith('blur', undefined, { hdVideo: true });
+    await processor.destroy();
   });
   it('never resolves during model loading and closes a late model after destroy', async () => {
     const pending = deferred<ReturnType<typeof segmenter>>();

@@ -21,10 +21,15 @@ type PendingUpload = {
   completeCommandId: string;
 };
 
-export function useDwaionSecureAttachments(conversationId?: string | null) {
+export function useDwaionSecureAttachments(
+  conversationId?: string | null,
+  initialAttachments: readonly DwaionSecureAttachment[] = []
+) {
   const governCreate = useDwaionGovernedMutation('route.dwaion.work.attachment-create.action');
   const governDelete = useDwaionGovernedMutation('route.dwaion.work.attachment-delete.action');
-  const [attachments, setAttachments] = useState<DwaionSecureAttachment[]>([]);
+  const [attachments, setAttachments] = useState<DwaionSecureAttachment[]>(() => [
+    ...initialAttachments,
+  ]);
   const [uploads, setUploads] = useState<PendingUpload[]>([]);
   const [uploadingNames, setUploadingNames] = useState<string[]>([]);
   const [selectionError, setSelectionError] = useState<DwaionAttachmentSelectionError | null>(null);
@@ -84,6 +89,13 @@ export function useDwaionSecureAttachments(conversationId?: string | null) {
     uploads.forEach((item) => void runUpload(item));
   }, [runUpload, uploads]);
 
+  const detachAll = useCallback(() => {
+    if (uploads.length || uploadingNames.length) return;
+    setAttachments([]);
+    setSelectionError(null);
+    setOperationError(null);
+  }, [uploadingNames.length, uploads.length]);
+
   const remove = useCallback(
     async (attachment: DwaionSecureAttachment) => {
       let commandId = deleteCommands.current.get(attachment.attachmentId);
@@ -111,6 +123,14 @@ export function useDwaionSecureAttachments(conversationId?: string | null) {
     },
     [governDelete]
   );
+
+  const removeAll = useCallback(async () => {
+    for (const attachment of attachments.filter(
+      (item) => item.state !== 'DELETED' && item.state !== 'DELETION_PENDING'
+    )) {
+      await remove(attachment);
+    }
+  }, [attachments, remove]);
 
   useEffect(() => {
     const active = attachments.filter(dwaionAttachmentNeedsPolling);
@@ -158,7 +178,9 @@ export function useDwaionSecureAttachments(conversationId?: string | null) {
     canSubmit: dwaionAttachmentSelectionCanSubmit(visible, uploadingNames.length > 0),
     addFiles,
     retryUploads,
+    detachAll,
     remove,
+    removeAll,
     clearError: () => {
       setSelectionError(null);
       setOperationError(null);

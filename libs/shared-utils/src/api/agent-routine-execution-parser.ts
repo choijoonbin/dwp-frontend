@@ -1,13 +1,17 @@
 import { HttpError } from '../http-error';
 import { isAgentDate, isAgentRecord } from './agent-governed-api';
+import { isDwaionPersonalRoutine } from './agent-routine-api';
 
 import type {
   DwaionRoutineExecutionReceipt,
   DwaionRoutineExecutionRun,
+  DwaionRoutineHealth,
   DwaionRoutineNotificationState,
+  DwaionRoutineRollbackReceipt,
   DwaionRoutineRunState,
   DwaionRoutineRuntimeCapabilities,
   DwaionRoutineSource,
+  DwaionRoutineVersionSnapshot,
 } from './agent-routine-execution-contract';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
@@ -45,6 +49,10 @@ export function parseDwaionRoutineCapabilities(value: unknown): DwaionRoutineRun
     !isAgentRecord(value) ||
     typeof value.lifecycleMode !== 'string' ||
     !capabilityBooleans.every((key) => typeof value[key] === 'boolean') ||
+    !workflowCapabilityKeys.every((key) => isProviderCapability(value[key])) ||
+    unavailableMutationCapabilityKeys.some(
+      (key) => isAgentRecord(value[key]) && value[key].available !== false
+    ) ||
     typeof value.executionProviderState !== 'string' ||
     !(value.recoveryHint === null || typeof value.recoveryHint === 'string') ||
     !enumArray(value.supportedCadences, new Set(['DAILY', 'WEEKDAYS', 'WEEKLY'])) ||
@@ -61,7 +69,7 @@ export function parseDwaionRoutineRun(value: unknown): DwaionRoutineExecutionRun
     !uuid(value.routineRunId) ||
     !uuid(value.routineId) ||
     !integer(value.routineRevision, 1) ||
-    !['SCHEDULED', 'MANUAL'].includes(String(value.trigger)) ||
+    !['SCHEDULED', 'MANUAL', 'WEBHOOK'].includes(String(value.trigger)) ||
     !STATES.has(value.state as DwaionRoutineRunState) ||
     !integer(value.version, 1) ||
     !integer(value.attemptCount, 0) ||
@@ -134,6 +142,84 @@ export function parseDwaionRoutineReceipt(value: unknown): DwaionRoutineExecutio
   return value as DwaionRoutineExecutionReceipt;
 }
 
+export function parseDwaionRoutineVersions(value: unknown): DwaionRoutineVersionSnapshot[] {
+  if (!Array.isArray(value)) throw invalid('Routine version history response is invalid.', value);
+  const versions = value.map(parseDwaionRoutineVersion);
+  for (let index = 1; index < versions.length; index += 1) {
+    if (versions[index - 1]!.revision <= versions[index]!.revision)
+      throw invalid('Routine version history order is invalid.', value);
+  }
+  return versions;
+}
+
+export function parseDwaionRoutineVersion(value: unknown): DwaionRoutineVersionSnapshot {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.commandId) ||
+    typeof value.commandType !== 'string' ||
+    value.commandType.length < 1 ||
+    value.commandType.length > 24 ||
+    !integer(value.revision, 1) ||
+    !isDwaionPersonalRoutine(value.snapshot) ||
+    value.snapshot.revision !== value.revision ||
+    !isAgentDate(value.createdAt) ||
+    typeof value.integrityFingerprint !== 'string' ||
+    !SHA256.test(value.integrityFingerprint) ||
+    !nullableInteger(value.rollbackTargetRevision, 1) ||
+    !nullableSha256(value.rollbackTargetFingerprint) ||
+    (value.rollbackTargetRevision === null || value.rollbackTargetRevision === undefined) !==
+      (value.rollbackTargetFingerprint === null || value.rollbackTargetFingerprint === undefined)
+  ) {
+    throw invalid('Routine version snapshot is invalid.', value);
+  }
+  return value as DwaionRoutineVersionSnapshot;
+}
+
+export function parseDwaionRoutineHealth(value: unknown): DwaionRoutineHealth {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.routineId) ||
+    !integer(value.routineRevision, 1) ||
+    !['HEALTHY', 'DEGRADED', 'BLOCKED'].includes(String(value.state)) ||
+    typeof value.workerAvailable !== 'boolean' ||
+    typeof value.scheduleCurrent !== 'boolean' ||
+    typeof value.allConsentsEnabled !== 'boolean' ||
+    !(value.latestRunId == null || uuid(value.latestRunId)) ||
+    !(value.latestRunState == null || STATES.has(value.latestRunState as DwaionRoutineRunState)) ||
+    !nullableDate(value.latestRunAt) ||
+    !stringArray(value.recoveryHints) ||
+    !isAgentDate(value.checkedAt) ||
+    (value.latestRunId == null) !== (value.latestRunState == null) ||
+    (value.latestRunId == null) !== (value.latestRunAt == null) ||
+    (value.state === 'HEALTHY' &&
+      (!value.workerAvailable || !value.scheduleCurrent || !value.allConsentsEnabled))
+  ) {
+    throw invalid('Routine health response is invalid.', value);
+  }
+  return value as DwaionRoutineHealth;
+}
+
+export function parseDwaionRoutineRollback(value: unknown): DwaionRoutineRollbackReceipt {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.commandId) ||
+    !uuid(value.routineId) ||
+    !integer(value.targetRevision, 1) ||
+    typeof value.targetFingerprint !== 'string' ||
+    !SHA256.test(value.targetFingerprint) ||
+    !integer(value.createdRevision, 2) ||
+    !isDwaionPersonalRoutine(value.routine) ||
+    value.routine.routineId !== value.routineId ||
+    value.routine.revision !== value.createdRevision ||
+    !isAgentDate(value.rolledBackAt) ||
+    typeof value.integrityFingerprint !== 'string' ||
+    !SHA256.test(value.integrityFingerprint)
+  ) {
+    throw invalid('Routine rollback receipt is invalid.', value);
+  }
+  return value as DwaionRoutineRollbackReceipt;
+}
+
 const capabilityBooleans = [
   'activationAvailable',
   'schedulingAvailable',
@@ -150,7 +236,47 @@ const capabilityBooleans = [
   'notificationDeliveryAvailable',
   'proposalDeliveryAvailable',
   'externalWriteAvailable',
+  'webhookTriggerAvailable',
 ] as const;
+
+const workflowCapabilityKeys = [
+  'agentKernelBinding',
+  'whitelistedSourceBinding',
+  'blockedSourcePolicy',
+  'zeroWritePolicy',
+  'semanticVersionDiff',
+  'runtimeBudgetRetry',
+  'automaticQuarantine',
+  'changeApproval',
+  'agentSwitching',
+  'wormDelivery',
+  'oauthReauthorization',
+  'temporaryBudgetIncrease',
+  'operatorEscalation',
+  'providerRollback',
+] as const;
+
+const unavailableMutationCapabilityKeys = [
+  'changeApproval',
+  'agentSwitching',
+  'oauthReauthorization',
+  'temporaryBudgetIncrease',
+  'operatorEscalation',
+  'providerRollback',
+] as const;
+
+function isProviderCapability(value: unknown) {
+  return (
+    isAgentRecord(value) &&
+    typeof value.available === 'boolean' &&
+    typeof value.configured === 'boolean' &&
+    (value.reasonCode === null ||
+      (typeof value.reasonCode === 'string' && SAFE_CODE.test(value.reasonCode))) &&
+    (value.recoveryHint === null ||
+      (typeof value.recoveryHint === 'string' && value.recoveryHint.trim().length > 0)) &&
+    (!value.available || value.configured)
+  );
+}
 
 function enumArray<T extends string>(value: unknown, allowed: ReadonlySet<T>): value is T[] {
   return (
@@ -169,7 +295,24 @@ function integer(value: unknown, minimum: number, maximum = Number.MAX_SAFE_INTE
 }
 
 function nullableDate(value: unknown) {
-  return value === null || isAgentDate(value);
+  return value == null || isAgentDate(value);
+}
+
+function nullableInteger(value: unknown, minimum: number) {
+  return value == null || integer(value, minimum);
+}
+
+function nullableSha256(value: unknown) {
+  return value == null || (typeof value === 'string' && SHA256.test(value));
+}
+
+function stringArray(value: unknown) {
+  return (
+    value === undefined ||
+    (Array.isArray(value) &&
+      value.length <= 20 &&
+      value.every((item) => typeof item === 'string' && item.trim().length > 0))
+  );
 }
 
 function invalid(message: string, value: unknown) {

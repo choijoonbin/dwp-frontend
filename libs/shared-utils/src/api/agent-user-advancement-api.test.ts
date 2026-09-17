@@ -5,9 +5,13 @@ import {
   createDwaionSecureAttachment,
   createDwaionProposalHandoff,
   createDwaionResearchDelivery,
+  downloadDwaionResearchRun,
+  executeDwaionResearchRun,
   secureAttachmentUploadUrl,
 } from './agent-user-advancement-api';
 import {
+  parseDwaionAttachmentEvidence,
+  parseDwaionResearchCapabilities,
   parseDwaionResearchPlan,
   parseDwaionResearchRun,
   parseDwaionSecureAttachment,
@@ -20,6 +24,15 @@ const SHA = 'a'.repeat(64);
 
 function capability() {
   return { available: true, configured: true, reasonCode: null, recoveryHint: null };
+}
+
+function unavailableCapability() {
+  return {
+    available: false,
+    configured: false,
+    reasonCode: 'PROVIDER_NOT_CONFIGURED',
+    recoveryHint: 'Configure the governed provider.',
+  };
 }
 
 function attachment() {
@@ -52,6 +65,11 @@ function attachment() {
       ocr: capability(),
       index: capability(),
       deletion: capability(),
+      detachAll: capability(),
+      inspectionLog: capability(),
+      maskingHistory: capability(),
+      ocrViewer: capability(),
+      signedAuditReport: unavailableCapability(),
       maximumFileBytes: 104_857_600,
       allowedMediaTypes: ['application/pdf'],
     },
@@ -126,6 +144,108 @@ describe('DWAI.ON user advancement contract', () => {
     vi.unstubAllGlobals();
   });
 
+  it('requires every material research output and recovery capability', () => {
+    const capabilities = Object.fromEntries(
+      [
+        'rawExport',
+        'pdfExport',
+        'receiptDownload',
+        'auditDownload',
+        'fork',
+        'merge',
+        'keepLocal',
+        'sensitivityRecalculation',
+        'cacheFallback',
+      ].map((key) => [key, unavailableCapability()])
+    );
+    expect(parseDwaionResearchCapabilities(capabilities).pdfExport.available).toBe(false);
+    expect(() =>
+      parseDwaionResearchCapabilities({ ...capabilities, cacheFallback: undefined })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(
+      parseDwaionResearchCapabilities({ ...capabilities, rawExport: capability() }).rawExport
+        .available
+    ).toBe(true);
+    expect(() =>
+      parseDwaionResearchCapabilities({ ...capabilities, fork: capability() })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+  });
+
+  it('downloads only non-empty server-produced research artifacts', async () => {
+    const blob = new Blob(['{"receipt":"sealed"}'], { type: 'application/json' });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      blob: async () => blob,
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(downloadDwaionResearchRun(ID, 'receipt')).resolves.toBe(blob);
+    expect(fetchMock).toHaveBeenCalledWith(
+      `/api/agent/v1/research/runs/${ID}/downloads/receipt`,
+      expect.objectContaining({
+        headers: expect.objectContaining({ Accept: 'application/json' }),
+      })
+    );
+  });
+
+  it('binds ordered attachment inspection, masking, and OCR evidence', () => {
+    const citation = {
+      citationId: 'ocr-page-1',
+      locator: 'page:1',
+      label: 'OCR page 1',
+      contentSha256: SHA,
+    };
+    const first = {
+      eventId: '00000000-0000-4000-8000-000000000904',
+      eventType: 'ATTACHMENT_SCANNING_STARTED',
+      previousState: 'UPLOADING',
+      currentState: 'SCANNING',
+      revision: 2,
+      safeErrorCode: null,
+      occurredAt: '2026-09-17T00:01:00Z',
+    };
+    const masked = {
+      ...first,
+      eventId: '00000000-0000-4000-8000-000000000905',
+      eventType: 'DLP_MASK_APPLIED',
+      revision: 3,
+      occurredAt: '2026-09-17T00:02:00Z',
+    };
+    const evidence = {
+      attachmentId: ID,
+      sourceSha256: SHA,
+      stages: [
+        {
+          key: 'OCR',
+          state: 'PASSED',
+          providerCode: 'OCR_OK',
+          observedAt: '2026-09-17T00:03:00Z',
+          safeErrorCode: null,
+          recoveryHint: null,
+        },
+      ],
+      citations: [citation],
+      inspectionLog: [first, masked],
+      maskingHistory: [masked],
+      ocrEvidence: [citation],
+    } as const;
+    expect(parseDwaionAttachmentEvidence(evidence).maskingHistory).toHaveLength(1);
+    expect(() =>
+      parseDwaionAttachmentEvidence({
+        ...evidence,
+        maskingHistory: [{ ...masked, eventType: 'DLP_SCAN_COMPLETED' }],
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+    expect(() =>
+      parseDwaionAttachmentEvidence({
+        ...evidence,
+        stages: [{ ...evidence.stages[0], state: 'NOT_REQUIRED' }],
+      })
+    ).toThrowError(expect.objectContaining({ status: 502 }));
+  });
+
   it('accepts canonical attachment states and rejects lifecycle contradictions', () => {
     expect(parseDwaionSecureAttachment(attachment()).state).toBe('UPLOADING');
     expect(() => parseDwaionSecureAttachment({ ...attachment(), state: 'READY' })).toThrowError(
@@ -190,6 +310,29 @@ describe('DWAI.ON user advancement contract', () => {
         progress: { ...run().progress, completedSteps: 5, totalSteps: 4 },
       })
     ).toThrowError(expect.objectContaining({ status: 502 }));
+  });
+
+  it('reuses the caller execution command when a queued run is reauthorized', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(response(run('QUEUED')))
+      .mockResolvedValueOnce(response(run('QUEUED')));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await executeDwaionResearchRun(ID, 3, ID2);
+    await executeDwaionResearchRun(ID, 3, ID2);
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      `/api/agent/v1/research/runs/${ID}/execute`,
+      expect.objectContaining({ body: expect.stringContaining(`"commandId":"${ID2}"`) })
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      `/api/agent/v1/research/runs/${ID}/execute`,
+      expect.objectContaining({ body: expect.stringContaining(`"commandId":"${ID2}"`) })
+    );
   });
 
   it('rejects untrusted upload origins before any bytes are sent', () => {

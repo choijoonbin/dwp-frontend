@@ -32,6 +32,7 @@ import type { MeetingBackgroundMode } from './meeting-background-types';
 import { useMeetingDevicePreview } from './use-meeting-device-preview';
 import { isMeetingBackgroundSupported } from './meeting-background-processor';
 import { meetingSurface, meetingShape } from './meeting-visual-system';
+import { isMeetingHdVideoSupported } from './meeting-video-quality';
 import type { MeetingDeviceDiagnosticSnapshot } from './meeting-device-settings-diagnostics';
 import { alpha } from '@mui/material/styles';
 
@@ -99,10 +100,13 @@ export function MeetingDeviceSettings({
     onChange({ ...value, [key]: id });
   };
   let noiseSupported = false;
+  const hdSupported = isMeetingHdVideoSupported();
   try {
-    noiseSupported =
-      typeof navigator !== 'undefined' &&
-      Boolean(navigator.mediaDevices?.getSupportedConstraints?.().noiseSuppression);
+    const constraints =
+      typeof navigator === 'undefined'
+        ? undefined
+        : navigator.mediaDevices?.getSupportedConstraints?.();
+    noiseSupported = Boolean(constraints?.noiseSuppression);
   } catch {
     /* Browser device policy can reject capability access. */
   }
@@ -455,11 +459,23 @@ export function MeetingDeviceSettings({
               </Typography>
             </Box>
             <Switch
-              disabled
-              checked={false}
+              disabled={!hdSupported && value.hdVideo !== true}
+              checked={value.hdVideo === true}
+              onChange={(_, checked) => {
+                const wasPreviewing = preview.states.video !== 'idle';
+                preview.stop('video');
+                const next = { ...value, hdVideo: checked };
+                onChange(next);
+                if (wasPreviewing) void preview.start('video', next);
+              }}
               slotProps={{ input: { 'aria-label': t('stitch.devices.hd') } }}
             />
           </Stack>
+          {!hdSupported && (
+            <Typography variant="caption" color="text.secondary">
+              {t('stitch.devices.hdUnsupported')}
+            </Typography>
+          )}
         </Stack>
       </Box>
     </Stack>

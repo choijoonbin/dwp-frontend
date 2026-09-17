@@ -8,7 +8,7 @@ import {
   useRoomContext,
   type LocalUserChoices,
 } from '@livekit/components-react';
-import type { DisconnectReason } from 'livekit-client';
+import { VideoPresets, type DisconnectReason } from 'livekit-client';
 import { Radio, ShieldCheck, Square, UsersRound, X } from 'lucide-react';
 import {
   ActionButton,
@@ -36,6 +36,7 @@ import { MeetingConference } from './meeting-conference';
 import { MeetingContentControl } from './meeting-content-governance';
 import { MeetingLiveFacilitationLauncher } from './meeting-live-facilitation';
 import { meetingLiveTheme } from './meeting-visual-system';
+import { resolveMeetingHdVideo } from './meeting-video-quality';
 import {
   authorizeReceivedMeetingReaction,
   type MeetingReactionInteraction,
@@ -66,6 +67,7 @@ export function LiveVideoMeetingRoom({
   choices,
   speakerDeviceId,
   noiseSuppression,
+  hdVideo,
   backgroundMode,
   ending,
   operationError,
@@ -80,6 +82,7 @@ export function LiveVideoMeetingRoom({
   choices: LocalUserChoices;
   speakerDeviceId: string;
   noiseSuppression: boolean;
+  hdVideo: boolean;
   backgroundMode: MeetingBackgroundMode;
   ending: boolean;
   operationError?: string | null;
@@ -96,13 +99,19 @@ export function LiveVideoMeetingRoom({
   const handleOutputError = useCallback(() => setPermissionError(t('errors.mediaPermission')), [t]);
   const backgroundSettingValid = isMeetingBackgroundMode(backgroundMode);
   const effectiveBackgroundMode = backgroundSettingValid ? backgroundMode : 'original';
-  const background = useMeetingBackgroundPublication(effectiveBackgroundMode, authorizationScope);
+  const effectiveHdVideo = resolveMeetingHdVideo(hdVideo);
+  const background = useMeetingBackgroundPublication(
+    effectiveBackgroundMode,
+    authorizationScope,
+    effectiveHdVideo
+  );
   const captureOptions = useMemo(
     () => ({
       deviceId: choices.videoDeviceId,
+      ...(effectiveHdVideo ? { resolution: VideoPresets.h1080.resolution } : {}),
       ...(background.processor ? { processor: background.processor } : {}),
     }),
-    [choices.videoDeviceId, background.processor]
+    [choices.videoDeviceId, background.processor, effectiveHdVideo]
   );
   const roomOptions = useMemo(
     () => ({ audioCaptureDefaults: { noiseSuppression }, videoCaptureDefaults: captureOptions }),

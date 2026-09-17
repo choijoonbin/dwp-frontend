@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
@@ -30,22 +30,35 @@ import {
   formatDwaionAttachmentBytes,
 } from './dwaion-secure-attachment-model';
 import { useDwaionSecureAttachments } from './use-dwaion-secure-attachments';
+import { DwaionAttachmentEvidenceDialog } from './dwaion-secure-attachment-evidence-dialog';
+import {
+  DwaionAttachmentPipelineSummary,
+  formatAttachmentMediaType,
+} from './dwaion-secure-attachment-pipeline';
+import { DwaionCapabilityActions } from '../dwaion-capability-actions';
 
-import type { DwaionSecureAttachment } from '@dwp-frontend/shared-utils';
+import {
+  getDwaionAttachmentEvidence,
+  type DwaionAttachmentEvidence,
+  type DwaionSecureAttachment,
+} from '@dwp-frontend/shared-utils';
 
 export type DwaionAttachmentSelection = {
   attachmentIds: string[];
+  attachments: DwaionSecureAttachment[];
   canSubmit: boolean;
   hasFiles: boolean;
 };
 
 export function DwaionSecureAttachmentTray({
   conversationId,
+  initialAttachments = [],
   disabled = false,
   expanded = false,
   onSelectionChange,
 }: {
   conversationId?: string | null;
+  initialAttachments?: readonly DwaionSecureAttachment[];
   disabled?: boolean;
   expanded?: boolean;
   onSelectionChange: (selection: DwaionAttachmentSelection) => void;
@@ -55,18 +68,42 @@ export function DwaionSecureAttachmentTray({
   const copy = secureAttachmentCopy(locale);
   const inputId = useId();
   const input = useRef<HTMLInputElement | null>(null);
-  const state = useDwaionSecureAttachments(conversationId);
+  const [evidenceView, setEvidenceView] = useState<'LOG' | 'DLP' | 'OCR' | null>(null);
+  const [evidence, setEvidence] = useState<DwaionAttachmentEvidence[]>([]);
+  const [evidenceBusy, setEvidenceBusy] = useState(false);
+  const [evidenceError, setEvidenceError] = useState(false);
+  const state = useDwaionSecureAttachments(conversationId, initialAttachments);
+  const actionCapabilities = attachmentActionCapabilities(state.attachments, copy);
 
   useEffect(() => {
     onSelectionChange({
       attachmentIds: state.readyIds,
+      attachments: state.attachments,
       canSubmit: state.canSubmit,
       hasFiles: state.hasFiles,
     });
-  }, [onSelectionChange, state.canSubmit, state.hasFiles, state.readyIds]);
+  }, [onSelectionChange, state.attachments, state.canSubmit, state.hasFiles, state.readyIds]);
 
   const openPicker = () => {
     if (!disabled) input.current?.click();
+  };
+  const openEvidence = async (view: 'LOG' | 'DLP' | 'OCR') => {
+    setEvidenceView(view);
+    setEvidenceBusy(true);
+    setEvidenceError(false);
+    try {
+      const values = await Promise.all(
+        state.attachments.map((attachment) =>
+          getDwaionAttachmentEvidence(attachment.attachmentId, attachment.sourceSha256)
+        )
+      );
+      setEvidence(values);
+    } catch {
+      setEvidence([]);
+      setEvidenceError(true);
+    } finally {
+      setEvidenceBusy(false);
+    }
   };
 
   return (
@@ -143,6 +180,9 @@ export function DwaionSecureAttachmentTray({
                   : copy.waiting}
             </InlineFeedback>
           ) : null}
+          {expanded && state.attachments.length ? (
+            <DwaionAttachmentPipelineSummary attachments={state.attachments} copy={copy} />
+          ) : null}
           {state.uploadingNames.map((name) => (
             <AttachmentUploadingRow key={name} name={name} label={copy.uploading} />
           ))}
@@ -161,10 +201,125 @@ export function DwaionSecureAttachmentTray({
               {copy.waiting}
             </Typography>
           ) : null}
+          {expanded && state.attachments.length ? (
+            <>
+              <ActionButton
+                intent="danger"
+                size="small"
+                startIcon={<Trash2 size={16} aria-hidden="true" />}
+                disabled={
+                  disabled ||
+                  state.attachments.some(
+                    (item) =>
+                      item.state === 'DELETION_PENDING' ||
+                      !item.capabilities.deletion.available ||
+                      !item.capabilities.deletion.configured
+                  )
+                }
+                onClick={() => void state.removeAll()}
+                sx={{ minHeight: 44, alignSelf: 'flex-start' }}
+              >
+                {copy.removeAll}
+              </ActionButton>
+              <DwaionCapabilityActions
+                title={copy.advancedTitle}
+                description={copy.advancedDescription}
+                actions={[
+                  {
+                    key: 'detach-all',
+                    label: copy.detachAll,
+                    capability: 'attachment.detach',
+                    reason: actionCapabilities.detachAll.reason,
+                    available:
+                      actionCapabilities.detachAll.available && !state.uploadingNames.length,
+                    onClick: state.detachAll,
+                  },
+                  {
+                    key: 'inspection-log',
+                    label: copy.inspectionLog,
+                    capability: 'attachment.stages',
+                    reason: actionCapabilities.inspectionLog.reason,
+                    available:
+                      actionCapabilities.inspectionLog.available &&
+                      state.attachments.some((item) => item.stages.length > 0),
+                    onClick: () => void openEvidence('LOG'),
+                  },
+                  {
+                    key: 'masking-history',
+                    label: copy.maskingHistory,
+                    capability: 'attachment.capabilities.maskingHistory',
+                    reason: actionCapabilities.maskingHistory.reason,
+                    available: state.attachments.some(
+                      (item) =>
+                        item.capabilities.maskingHistory.available &&
+                        item.stages.some((stage) => stage.key === 'DLP')
+                    ),
+                    onClick: () => void openEvidence('DLP'),
+                  },
+                  {
+                    key: 'ocr-viewer',
+                    label: copy.ocrViewer,
+                    capability: 'attachment.capabilities.ocrViewer',
+                    reason: actionCapabilities.ocrViewer.reason,
+                    available: state.attachments.some(
+                      (item) =>
+                        item.capabilities.ocrViewer.available &&
+                        item.stages.some((stage) => stage.key === 'OCR')
+                    ),
+                    onClick: () => void openEvidence('OCR'),
+                  },
+                  {
+                    key: 'audit-report',
+                    label: copy.auditReport,
+                    capability: 'attachment.capabilities.signedAuditReport',
+                    reason: actionCapabilities.signedAuditReport.reason,
+                    available: actionCapabilities.signedAuditReport.available,
+                  },
+                ]}
+              />
+            </>
+          ) : null}
         </Stack>
       </Collapse>
+      <DwaionAttachmentEvidenceDialog
+        open={Boolean(evidenceView)}
+        view={evidenceView}
+        evidence={evidence}
+        busy={evidenceBusy}
+        error={evidenceError}
+        copy={copy}
+        onClose={() => setEvidenceView(null)}
+      />
     </Box>
   );
+}
+
+function attachmentActionCapabilities(
+  attachments: readonly DwaionSecureAttachment[],
+  copy: ReturnType<typeof secureAttachmentCopy>
+) {
+  const keys = [
+    'detachAll',
+    'inspectionLog',
+    'maskingHistory',
+    'ocrViewer',
+    'signedAuditReport',
+  ] as const;
+  return Object.fromEntries(
+    keys.map((key) => {
+      const capabilities = attachments.map((attachment) => attachment.capabilities[key]);
+      const unavailable = capabilities.find(
+        (capability) => !capability.available || !capability.configured
+      );
+      return [
+        key,
+        {
+          available: capabilities.length > 0 && !unavailable,
+          reason: unavailable?.recoveryHint ?? unavailable?.reasonCode ?? copy.actualEvidence,
+        },
+      ];
+    })
+  ) as Record<(typeof keys)[number], { available: boolean; reason: string }>;
 }
 
 function AttachmentUploadingRow({ name, label }: { name: string; label: string }) {
@@ -232,6 +387,11 @@ function AttachmentRow({
               size="small"
               variant="outlined"
               label={formatDwaionAttachmentBytes(attachment.sizeBytes)}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={`${copy.fileType} · ${formatAttachmentMediaType(attachment.mediaType)}`}
             />
             {attachment.citations.length ? (
               <Chip

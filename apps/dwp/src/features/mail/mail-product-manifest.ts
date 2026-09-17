@@ -55,6 +55,7 @@ export const MAIL_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(MAIL_N
     taskKind: 'administration',
     access: capability('mail.shared-inboxes.read'),
   },
+  'admin-writing-assets': { taskKind: 'administration', access: capability('mail.policy.read') },
   'admin-policies': { taskKind: 'administration', access: capability('mail.policy.read') },
   'admin-retention': { taskKind: 'administration', access: capability('mail.policy.read') },
   'admin-delivery-audit': {

@@ -1,7 +1,24 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accessibility, Clock3, MapPin, ShieldCheck, UsersRound, WifiOff } from 'lucide-react';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import {
+  Accessibility,
+  Clock3,
+  Heart,
+  MapPin,
+  Navigation,
+  ShieldCheck,
+  UsersRound,
+  WifiOff,
+} from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  createWorkplaceIdempotencyKey,
+  getWorkplaceResourceFavorites,
+  setWorkplaceResourceFavorite,
+  useAuth,
+  useToast,
+} from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   DetailInspector,
@@ -25,6 +42,10 @@ import { WorkplaceFacilityRequestDialog } from './workplace-facility-request';
 import { workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { WorkplaceResourcePhoto } from './workplace-resource-photo';
 import { WorkplaceResourceWindowSummary } from './workplace-resource-window-summary';
+import {
+  buildWorkplaceCanonicalDeepLink,
+  WorkplaceCanonicalDeepLinkActions,
+} from './workplace-canonical-deep-link-actions';
 import type { WorkplaceResourceWindowContext } from './workplace-resource-window-facts';
 
 import type { WorkplaceResource, WorkplaceResourceType } from '@dwp-frontend/shared-utils';
@@ -39,6 +60,7 @@ type Props = {
   resource: WorkplaceResource | null;
   status: WorkplaceResourceAvailability | null;
   siteName: string;
+  siteId: string;
   floorName: string;
   typeLabels: Record<WorkplaceResourceType, string>;
   statusLabels: Record<WorkplaceResourceAvailability, string>;
@@ -65,6 +87,7 @@ export function WorkplaceResourceInspector({
   resource,
   status,
   siteName,
+  siteId,
   floorName,
   typeLabels,
   statusLabels,
@@ -85,12 +108,75 @@ export function WorkplaceResourceInspector({
   const capabilities = useRoomsCapabilities();
   const { preference } = useAppearance();
   const auth = useAuth();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
+  const resourceId = resource?.resourceId ?? '';
+  const favoriteQuery = useQuery({
+    queryKey: ['workplace', 'resource-favorite', identityKey, resourceId],
+    queryFn: () => getWorkplaceResourceFavorites([resourceId]),
+    enabled: Boolean(resourceId && capabilities.canViewWorkplace),
+    select: (rows) => rows[0] ?? null,
+    retry: false,
+  });
+  const favoriteIntent = useRef<{
+    fingerprint: string;
+    key: string;
+    correlationId: string;
+  } | null>(null);
+  const favoriteMutation = useMutation({
+    mutationFn: async (favorite: boolean) => {
+      const expectedVersion = favoriteQuery.data?.version ?? 0;
+      const fingerprint = `${resourceId}:${favorite}:${expectedVersion}`;
+      if (favoriteIntent.current?.fingerprint !== fingerprint) {
+        favoriteIntent.current = {
+          fingerprint,
+          key: createWorkplaceIdempotencyKey('resource-favorite'),
+          correlationId: crypto.randomUUID(),
+        };
+      }
+      return setWorkplaceResourceFavorite(
+        resourceId,
+        { favorite, expectedVersion },
+        {
+          idempotencyKey: favoriteIntent.current.key,
+          correlationId: favoriteIntent.current.correlationId,
+        }
+      );
+    },
+    onSuccess: (receipt) => {
+      queryClient.setQueryData(
+        ['workplace', 'resource-favorite', identityKey, resourceId],
+        [receipt.favorite]
+      );
+      favoriteIntent.current = null;
+      toast.success(
+        t(
+          receipt.favorite.favorite
+            ? 'workplace.explore.favoriteSaved'
+            : 'workplace.explore.favoriteRemoved'
+        )
+      );
+    },
+    onError: () => {
+      void favoriteQuery.refetch();
+      toast.error(t('workplace.explore.favoriteResultUnknown'));
+    },
+  });
   const [requestTarget, setRequestTarget] = useState<{
     identityKey: string;
     resourceId: string;
   } | null>(null);
   if (!resource || !status) return null;
+  const indoorRouteUrl = new URL(
+    buildWorkplaceCanonicalDeepLink(
+      '/workplace/navigation',
+      { v: 1, siteId, destinationResourceId: resource.resourceId },
+      window.location.origin
+    )
+  );
 
   return (
     <>
@@ -256,6 +342,44 @@ export function WorkplaceResourceInspector({
             timeZone={timeZone}
           />
           <Divider />
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} useFlexGap flexWrap="wrap">
+            <ActionButton
+              intent="secondary"
+              startIcon={
+                <Heart size={16} fill={favoriteQuery.data?.favorite ? 'currentColor' : 'none'} />
+              }
+              disabled={
+                !capabilities.canViewWorkplace ||
+                !capabilities.canUpdateWorkplaceBooking ||
+                favoriteQuery.isLoading
+              }
+              loading={favoriteMutation.isPending}
+              onClick={() => favoriteMutation.mutate(!favoriteQuery.data?.favorite)}
+            >
+              {t(
+                favoriteQuery.data?.favorite
+                  ? 'workplace.explore.removeFavorite'
+                  : 'workplace.explore.addFavorite'
+              )}
+            </ActionButton>
+            <ActionButton
+              intent="secondary"
+              startIcon={<Navigation size={16} />}
+              onClick={() => navigate(`${indoorRouteUrl.pathname}${indoorRouteUrl.search}`)}
+            >
+              {t('workplace.explore.sendIndoorRoute')}
+            </ActionButton>
+          </Stack>
+          <WorkplaceCanonicalDeepLinkActions
+            routePath="/workplace/find"
+            query={Object.fromEntries(new URLSearchParams(location.search))}
+            title={resource.name}
+            text={t('workplace.explore.shareText', { name: resource.name })}
+            shareLabel={t('workplace.explore.share')}
+            copyLabel={t('workplace.explore.copyLink')}
+            copiedLabel={t('workplace.explore.linkCopied')}
+            errorLabel={t('workplace.explore.linkCopyFailed')}
+          />
           <ActionButton
             intent="secondary"
             disabled={!capabilities.canViewWorkplace || !capabilities.canCreateWorkplaceBooking}

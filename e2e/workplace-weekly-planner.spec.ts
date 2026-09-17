@@ -293,6 +293,7 @@ async function mockPlanner(page: Page, options: PlannerOptions = {}) {
 
   let previewWrites = 0;
   let holdWrites = 0;
+  let holdReleaseWrites = 0;
   let batchWrites = 0;
   let compensationWrites = 0;
   let replanWrites = 0;
@@ -414,6 +415,46 @@ async function mockPlanner(page: Page, options: PlannerOptions = {}) {
         holds: currentHolds,
       });
     }
+    if (
+      path.includes('/booking-orchestration/intents/') &&
+      path.endsWith('/holds:release') &&
+      method === 'POST'
+    ) {
+      holdReleaseWrites += 1;
+      const body = request.postDataJSON() as {
+        holds: readonly { holdId: string; expectedHoldVersion: number }[];
+      };
+      requestBodies.push({
+        path,
+        body,
+        key: request.headers()['idempotency-key'] ?? null,
+      });
+      currentHolds = currentHolds.map((hold) => ({
+        ...hold,
+        state: 'RELEASED',
+        version: Number(hold.version) + 1,
+      }));
+      return fulfillSuccess(route, {
+        intent: {
+          intentId: currentIntent.intentId,
+          intentState: 'PREVIEWED',
+          intentVersion: 3,
+          serverTime: NOW.toISOString(),
+          holds: currentHolds,
+        },
+        receipt: {
+          commandId: '5f000000-0000-4000-8000-000000000090',
+          intentId: currentIntent.intentId,
+          state: 'SUCCEEDED',
+          releasedHoldIds: body.holds.map((hold) => hold.holdId),
+          intentVersion: 3,
+          idempotentReplay: false,
+          requeryRequired: false,
+          correlationId: 'planner-release-e2e',
+          completedAt: NOW.toISOString(),
+        },
+      });
+    }
     if (/\/booking-intents\/[^/]+$/u.test(path) && method === 'GET') {
       return fulfillSuccess(route, {
         intent: currentIntent,
@@ -529,6 +570,7 @@ async function mockPlanner(page: Page, options: PlannerOptions = {}) {
     counts: () => ({
       previewWrites,
       holdWrites,
+      holdReleaseWrites,
       batchWrites,
       compensationWrites,
       replanWrites,
@@ -646,6 +688,36 @@ test('plans and confirms a server-held multi-day package with responsive and acc
   await page.screenshot({
     path: testInfo.outputPath('workplace-weekly-planner-result-1440.png'),
     fullPage: false,
+  });
+});
+
+test('releases authoritative server holds before returning to plan editing', async ({ page }) => {
+  const evidence = await mockPlanner(page);
+  await page.goto(canonicalPlan);
+  const previewAction =
+    (page.viewportSize()?.width ?? 1440) <= 600
+      ? page.getByTestId('workplace-planner-preview-mobile')
+      : page.getByTestId('workplace-planner-preview');
+  await previewAction.click();
+  await page.getByTestId('workplace-planner-acquire-holds').click();
+  await expect(page.getByTestId('workplace-planner-hold-timer')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Edit plan' }).click();
+  const dialog = page.getByRole('alertdialog');
+  await expect(dialog).toContainText('Release the temporary holds and edit this plan?');
+  await dialog.getByRole('button', { name: 'Release holds and edit' }).click();
+
+  await expect.poll(() => evidence.counts().holdReleaseWrites).toBe(1);
+  await expect(page).toHaveURL((url) => {
+    return url.searchParams.get('step') === 'PLAN' && !url.searchParams.has('intent');
+  });
+  await expect(page.getByTestId('workplace-planner-configuration')).toBeVisible();
+  const command = evidence.requestBodies.find((entry) => entry.path.endsWith('/holds:release'));
+  expect(command?.key).toBeTruthy();
+  expect(command?.body).toMatchObject({
+    expectedIntentVersion: 2,
+    holds: [{ holdId: HOLD_ONE, expectedHoldVersion: 1 }],
+    explicitConfirmation: true,
   });
 });
 

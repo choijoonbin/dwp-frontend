@@ -9121,7 +9121,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish_4"];
+        post: operations["platform_publish_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10017,7 +10017,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_retire_2"];
+        post: operations["platform_retire_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10209,7 +10209,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish_3"];
+        post: operations["platform_publish_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10417,7 +10417,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_createDraft_2"];
+        post: operations["platform_createDraft_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10495,7 +10495,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_preview_10"];
+        get: operations["platform_preview_16"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10513,7 +10513,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish_2"];
+        post: operations["platform_publish_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10545,7 +10545,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_submit_2"];
+        post: operations["platform_submit_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10962,6 +10962,118 @@ export interface paths {
         get?: never;
         put: operations["platform_updateSharedInbox"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_assets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets/{kind}/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createDraft_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets/{kind}/drafts/{assetId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateDraft_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets/{kind}/{assetId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_approve_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets/{kind}/{assetId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_publish_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets/{kind}/{assetId}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_retire_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/writing-assets/{kind}/{assetId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_submit_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11601,7 +11713,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_preview_8"];
+        post: operations["platform_preview_12"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12017,7 +12129,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_preview_7"];
+        post: operations["platform_preview_11"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12289,7 +12401,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_preview_6"];
+        post: operations["platform_preview_10"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12657,7 +12769,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_reconcile_1"];
+        post: operations["platform_reconcile_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12673,7 +12785,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_retry"];
+        post: operations["platform_retry_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12687,7 +12799,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_receipt_1"];
+        get: operations["platform_receipt_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -12703,7 +12815,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_preview_9"];
+        get: operations["platform_preview_15"];
         put?: never;
         post?: never;
         delete?: never;
@@ -12721,7 +12833,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_execute_1"];
+        post: operations["platform_execute_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12817,7 +12929,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_preview_5"];
+        post: operations["platform_preview_9"];
         delete?: never;
         options?: never;
         head?: never;
@@ -13592,6 +13704,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/workplace/safety/emergency-contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_contacts_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/safety/emergency-contacts/{contactId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_contact"];
+        put: operations["platform_configure"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/workplace/safety/exports/{exportId}/content": {
         parameters: {
             query?: never;
@@ -13752,6 +13896,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoff-previews/{previewId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_preview_14"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_execute_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs/{commandId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_handoff"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs/{commandId}:reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reconcile_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/emergency-handoffs:preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_preview_8"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/exports": {
         parameters: {
             query?: never;
@@ -13857,7 +14081,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_preview_4"];
+        post: operations["platform_preview_7"];
         delete?: never;
         options?: never;
         head?: never;
@@ -14306,6 +14530,71 @@ export interface paths {
         get: operations["platform_overview_2"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/space-planning/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_execute_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/space-planning/reports/{commandId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_receipt_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/space-planning/reports/{commandId}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download a guarded aggregate space-planning board report */
+        get: operations["platform_content"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/space-planning/reports:preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_preview_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -15737,6 +16026,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/mail/contact-groups/{groupId}/messages/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_groupMessageHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/mail/contacts": {
         parameters: {
             query?: never;
@@ -15826,7 +16131,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_reconcile"];
+        post: operations["platform_reconcile_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -15843,6 +16148,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_reschedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/deliveries/{deliveryId}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_retry"];
         delete?: never;
         options?: never;
         head?: never;
@@ -16073,6 +16394,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/mail/organization/rules/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_reorderRules"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/mail/organization/rules/{ruleId}": {
         parameters: {
             query?: never;
@@ -16137,6 +16474,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/mail/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_proposals"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/proposals/{proposalId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateProposal"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/mail/proposals/{proposalId}/decision": {
         parameters: {
             query?: never;
@@ -16147,6 +16516,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_decideProposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/proposals/{proposalId}/handoff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_proposalHandoff"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/proposals/{proposalId}/handoff/outcome": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_recordProposalOutcome"];
         delete?: never;
         options?: never;
         head?: never;
@@ -16371,6 +16772,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_lifecycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/lifecycle/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_preview_5"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/messages/{messageId}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_downloadAttachment"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -17042,7 +17475,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_preview_3"];
+        post: operations["platform_preview_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -17075,6 +17508,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_holds"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/booking-orchestration/intents/{intentId}/holds:release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_releaseHolds"];
         delete?: never;
         options?: never;
         head?: never;
@@ -17155,6 +17604,102 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_relocateWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/resource-command-context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_context_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/resource-command-previews/{previewId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_preview_13"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/resource-commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_execute_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/resource-commands/{commandId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_receipt_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/resource-commands/{commandId}:reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reconcile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/resource-commands:preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_preview_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -17641,6 +18186,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/workplace/resource-favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_favorites"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/resources/{resourceId}/favorite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_set"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/workplace/safety/incidents/active": {
         parameters: {
             query?: never;
@@ -17665,6 +18242,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["platform_incident"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/safety/incidents/{incidentId}/emergency-contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_contacts"];
         put?: never;
         post?: never;
         delete?: never;
@@ -17810,7 +18403,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_contact"];
+        post: operations["platform_contact_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -27543,6 +28136,13 @@ export interface components {
             /** Format: uuid */
             connectorId?: string;
             connectorKey?: string;
+            /** Format: date-time */
+            credentialExpiresAt?: string;
+            /** Format: date-time */
+            credentialIssuedAt?: string;
+            /** Format: date-time */
+            credentialRotatedAt?: string;
+            credentialState?: string;
             displayName?: string;
             /** Format: int64 */
             events24h?: number;
@@ -27556,6 +28156,9 @@ export interface components {
             /** Format: date-time */
             lastUsedAt?: string;
             lifecycleState?: string;
+            /** Format: int64 */
+            ownerUserId?: number;
+            purpose?: string;
             tokenPrefix?: string;
             /** Format: int64 */
             version?: number;
@@ -27647,8 +28250,12 @@ export interface components {
             parentOrgUnitId?: number;
         };
         auth_CreateRequest: {
+            allowedOperations: string[];
             connectorKey: string;
+            /** Format: int32 */
+            credentialTtlDays: number;
             displayName: string;
+            purpose: string;
         };
         auth_CreateResourceRequest: {
             key: string;
@@ -28503,6 +29110,14 @@ export interface components {
             status?: string;
             /** Format: int64 */
             version?: number;
+        };
+        auth_RotateRequest: {
+            /** Format: int32 */
+            credentialTtlDays: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            explicitConfirmation: boolean;
+            reason: string;
         };
         auth_ServletContext: {
             attributeNames?: unknown;
@@ -35301,6 +35916,7 @@ export interface components {
             providers?: components["schemas"]["platform_ProviderTruth"][];
         };
         platform_AccessPassPairingReceipt: {
+            correlationId?: string;
             /** Format: uuid */
             deviceId?: string;
             /** Format: date-time */
@@ -36876,6 +37492,56 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseEmergencyContactConfigurationResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EmergencyContactConfigurationResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEmergencyContactView: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EmergencyContactView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEmergencyHandoffPreview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EmergencyHandoffPreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEmergencyHandoffPreviewResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EmergencyHandoffPreviewResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEmergencyHandoffReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EmergencyHandoffReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseEvent: {
             correlationId?: string;
             data?: components["schemas"]["platform_Event"];
@@ -36999,6 +37665,16 @@ export interface components {
         platform_ApiResponseFacilityRequest: {
             correlationId?: string;
             data?: components["schemas"]["platform_FacilityRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseFavoriteReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_FavoriteReceipt"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -37139,6 +37815,16 @@ export interface components {
         platform_ApiResponseGraphRevisionView: {
             correlationId?: string;
             data?: components["schemas"]["platform_GraphRevisionView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseGroupSendResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_GroupSendResult"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -37306,6 +37992,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseLifecyclePreview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_LifecyclePreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseLifecycleResult: {
             correlationId?: string;
             data?: components["schemas"]["platform_LifecycleResult"];
@@ -37349,6 +38045,16 @@ export interface components {
         platform_ApiResponseListAccessZone: {
             correlationId?: string;
             data?: components["schemas"]["platform_AccessZone"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListActionProposal: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ActionProposal"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -37566,9 +38272,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseListEmergencyContactView: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EmergencyContactView"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseListEventSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_EventSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListFavoriteView: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_FavoriteView"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -37599,6 +38325,16 @@ export interface components {
         platform_ApiResponseListGraphRevisionView: {
             correlationId?: string;
             data?: components["schemas"]["platform_GraphRevisionView"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListGroupSendReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_GroupSendReceipt"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -37689,6 +38425,16 @@ export interface components {
         platform_ApiResponseListKioskDevice: {
             correlationId?: string;
             data?: components["schemas"]["platform_KioskDevice"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListOrganizationAsset: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_OrganizationAsset"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -38126,6 +38872,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseOrganizationAsset: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_OrganizationAsset"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseOrganizationResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_OrganizationResponse"];
@@ -38359,6 +39115,16 @@ export interface components {
         platform_ApiResponsePreview: {
             correlationId?: string;
             data?: components["schemas"]["platform_Preview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseProposalHandoff: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ProposalHandoff"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -39306,6 +40072,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseWorkplaceBookingHoldReleaseResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceBookingHoldReleaseResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseWorkplaceBookingHoldResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceBookingHoldResponse"];
@@ -39369,6 +40145,16 @@ export interface components {
         platform_ApiResponseWorkplaceExploreResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceExploreResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceFacilityClosureCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFacilityClosureCommandReceipt"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -39456,6 +40242,36 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseWorkplaceResourceCommandContext: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResourceCommandContext"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceResourceCommandPreview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResourceCommandPreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceResourceCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResourceCommandReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseWorkplaceServiceCatalog: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceServiceCatalog"];
@@ -39529,6 +40345,26 @@ export interface components {
         platform_ApiResponseWorkplaceSiteAccessRule: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceSiteAccessRule"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceSpacePlanningBoardReportPreview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSpacePlanningBoardReportPreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceSpacePlanningBoardReportReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSpacePlanningBoardReportReceipt"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -39928,6 +40764,17 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             updatedBy?: string;
+        };
+        platform_AuditEntry: {
+            /** Format: int64 */
+            actorUserId?: number;
+            /** Format: uuid */
+            commandEventId?: string;
+            correlationId?: string;
+            eventType?: string;
+            evidence?: string;
+            /** Format: date-time */
+            occurredAt?: string;
         };
         platform_AuditEvent: {
             action?: string;
@@ -40997,6 +41844,9 @@ export interface components {
             scheduling?: boolean;
         };
         platform_ComposeContext: {
+            accountCapabilities?: {
+                [key: string]: components["schemas"]["platform_ComposeCapabilities"];
+            };
             accounts?: components["schemas"]["platform_AccountSummary"][];
             capabilities?: components["schemas"]["platform_ComposeCapabilities"];
             /** Format: date-time */
@@ -41085,6 +41935,16 @@ export interface components {
         platform_ConfirmAccessPassCommandRequest: {
             /** Format: int64 */
             expectedPassVersion?: number;
+            explicitConfirmation?: boolean;
+            /** Format: uuid */
+            previewId: string;
+            reason: string;
+        };
+        platform_ConfirmEmergencyHandoffRequest: {
+            /** Format: int64 */
+            expectedContactVersion?: number;
+            /** Format: int64 */
+            expectedIncidentVersion?: number;
             explicitConfirmation?: boolean;
             /** Format: uuid */
             previewId: string;
@@ -41795,7 +42655,13 @@ export interface components {
             expiresAt?: string;
             /** Format: uuid */
             exportId?: string;
+            /** Format: int32 */
+            itemCount?: number;
+            payloadSha256?: string;
+            /** Format: date-time */
+            snapshotCutoff?: string;
             state?: string;
+            truncated?: boolean;
             watermark?: string;
         };
         platform_DeliveryExportRequest: {
@@ -42093,6 +42959,20 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_DraftRequest: {
+            body: string;
+            /** @enum {string} */
+            bodyFormat: "TEXT" | "HTML";
+            defaultForNew?: boolean;
+            defaultForReply?: boolean;
+            mandatoryContent: string;
+            name: string;
+            subject?: string;
+            /** Format: uuid */
+            supersedesId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_DraftSaveRequest: {
             body?: string;
             composeOptions?: components["schemas"]["platform_ComposeOptions"];
@@ -42143,6 +43023,116 @@ export interface components {
             targetScopeId?: string;
             /** @enum {string} */
             targetScopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+        };
+        platform_EmergencyContactConfigurationRequest: {
+            /** @enum {string} */
+            actionMode: "TEL_URI" | "GOVERNED_HANDOFF";
+            active?: boolean;
+            directTelAllowed?: boolean;
+            displayNameEn: string;
+            displayNameKo: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            explicitConfirmation?: boolean;
+            /** @enum {string} */
+            kind: "HOTLINE" | "RADIO" | "PUBLIC_EMERGENCY";
+            reason: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            telUri?: string;
+        };
+        platform_EmergencyContactConfigurationResult: {
+            contact?: components["schemas"]["platform_EmergencyContactView"];
+            receipt?: components["schemas"]["platform_CommandReceipt"];
+        };
+        platform_EmergencyContactView: {
+            /** @enum {string} */
+            actionMode?: "TEL_URI" | "GOVERNED_HANDOFF";
+            active?: boolean;
+            /** Format: uuid */
+            contactId?: string;
+            directTelAllowed?: boolean;
+            displayNameEn?: string;
+            displayNameKo?: string;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** @enum {string} */
+            kind?: "HOTLINE" | "RADIO" | "PUBLIC_EMERGENCY";
+            providerCode?: string;
+            /** Format: int64 */
+            providerConfigurationVersion?: number;
+            /** @enum {string} */
+            providerState?: "NOT_CONFIGURED" | "CONFIGURED_UNVERIFIED" | "READY" | "DEGRADED" | "STALE";
+            /** Format: int32 */
+            sortOrder?: number;
+            telUri?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_EmergencyHandoffPreview: {
+            /** Format: uuid */
+            contactId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            eligible?: boolean;
+            /** Format: int64 */
+            expectedContactVersion?: number;
+            /** Format: int64 */
+            expectedIncidentVersion?: number;
+            /** Format: date-time */
+            expiresAt?: string;
+            impact?: string[];
+            /** Format: uuid */
+            incidentId?: string;
+            limitations?: string[];
+            /** Format: uuid */
+            previewId?: string;
+            providerCode?: string;
+            /** Format: int64 */
+            providerConfigurationVersion?: number;
+            /** @enum {string} */
+            providerState?: "NOT_CONFIGURED" | "CONFIGURED_UNVERIFIED" | "READY" | "DEGRADED" | "STALE";
+        };
+        platform_EmergencyHandoffPreviewRequest: {
+            /** Format: uuid */
+            contactId: string;
+            /** Format: int64 */
+            expectedContactVersion?: number;
+            /** Format: int64 */
+            expectedIncidentVersion?: number;
+            reason: string;
+        };
+        platform_EmergencyHandoffPreviewResult: {
+            preview?: components["schemas"]["platform_EmergencyHandoffPreview"];
+            receipt?: components["schemas"]["platform_CommandReceipt"];
+        };
+        platform_EmergencyHandoffReceipt: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: uuid */
+            commandId?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: uuid */
+            contactId?: string;
+            correlationId?: string;
+            /** Format: uuid */
+            handoffId?: string;
+            idempotentReplay?: boolean;
+            /** Format: uuid */
+            incidentId?: string;
+            /** Format: uuid */
+            previewId?: string;
+            providerEvidenceReference?: string;
+            providerOperationReference?: string;
+            resultCode?: string;
+            /** @enum {string} */
+            state?: "ACCEPTED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "RESULT_UNKNOWN";
+            statusHref?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
         };
         platform_EmissionProjection: {
             co2eUnit?: string;
@@ -42586,6 +43576,25 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_FavoriteReceipt: {
+            /** Format: uuid */
+            auditEventId: string;
+            /** Format: uuid */
+            commandId: string;
+            /** Format: date-time */
+            completedAt?: string;
+            correlationId?: string;
+            favorite: components["schemas"]["platform_FavoriteView"];
+        };
+        platform_FavoriteView: {
+            favorite?: boolean;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_FeedResponse: {
             /** @description Reader-wide action-first detail slice; intentionally independent of scope and query filters. */
             actionableItems?: components["schemas"]["platform_CommunicationItem"][];
@@ -43016,7 +44025,30 @@ export interface components {
             groupVersion: number;
             /** Format: uuid */
             idempotencyKey: string;
+            /** @enum {string} */
+            recipientMode: "TO" | "BCC";
             subject: string;
+        };
+        platform_GroupSendReceipt: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: uuid */
+            groupId?: string;
+            /** Format: int64 */
+            groupVersion?: number;
+            /** Format: uuid */
+            receiptId?: string;
+            /** Format: int32 */
+            recipientCount?: number;
+            /** @enum {string} */
+            recipientMode?: "TO" | "BCC";
+            state?: string;
+            /** Format: uuid */
+            threadId?: string;
+        };
+        platform_GroupSendResult: {
+            receipt?: components["schemas"]["platform_GroupSendReceipt"];
+            thread?: components["schemas"]["platform_ThreadDetail"];
         };
         platform_GuardedExport: {
             contentType?: string;
@@ -43427,28 +44459,11 @@ export interface components {
             transitiveDependentCount?: number;
         };
         platform_ImpactItem: {
-            /** Format: uuid */
-            bookingId?: string;
-            bookingStatus?: string;
-            /** Format: int64 */
-            bookingVersion?: number;
-            /** Format: date-time */
-            endsAt?: string;
-            /** Format: uuid */
-            eventId?: string;
-            /** Format: uuid */
-            previewItemId?: string;
-            recipientUserIds?: number[];
-            replacementBlockReason?: string;
-            replacementCandidates?: components["schemas"]["platform_ReplacementCandidate"][];
-            /** @enum {string} */
-            reservationOwner?: "WORKPLACE" | "CALENDAR";
-            /** Format: uuid */
-            sourceOwnerResourceId?: string;
-            /** Format: uuid */
-            sourceWorkplaceResourceId?: string;
-            /** Format: date-time */
-            startsAt?: string;
+            /** Format: int32 */
+            distance?: number;
+            entity?: components["schemas"]["platform_Entity"];
+            highestCriticality?: string;
+            relationTypes?: string[];
         };
         platform_ImpactPreview: {
             /** Format: int32 */
@@ -43462,7 +44477,7 @@ export interface components {
             expiresAt?: string;
             /** Format: date-time */
             generatedAt?: string;
-            items?: components["schemas"]["platform_ImpactItem"][];
+            items?: components["schemas"]["platform_WorkplaceFacilityClosureImpactItem"][];
             /** Format: uuid */
             previewId?: string;
             /** Format: int64 */
@@ -43759,6 +44774,21 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_LifecyclePreview: {
+            /** @enum {string} */
+            action?: "MOVE" | "ARCHIVE" | "TRASH" | "SPAM" | "RESTORE" | "DELETE_FOREVER";
+            /** Format: int32 */
+            affectedCount?: number;
+            allowed?: boolean;
+            blockers?: string[];
+            /** Format: uuid */
+            targetFolderId?: string;
+            targetFolderName?: string;
+            /** Format: uuid */
+            threadId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_LifecycleRequest: {
             /** @enum {string} */
             action: "MOVE" | "ARCHIVE" | "TRASH" | "SPAM" | "RESTORE" | "DELETE_FOREVER";
@@ -44001,6 +45031,44 @@ export interface components {
             /** @enum {string} */
             state?: "ACCEPTED" | "SUCCEEDED" | "FAILED" | "RESULT_UNKNOWN";
             statusHref?: string;
+        };
+        platform_OrganizationAsset: {
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            /** Format: uuid */
+            assetId?: string;
+            body?: string;
+            /** @enum {string} */
+            bodyFormat?: "TEXT" | "HTML";
+            /** Format: int64 */
+            createdBy?: number;
+            defaultForNew?: boolean;
+            defaultForReply?: boolean;
+            /** @enum {string} */
+            kind?: "TEMPLATE" | "SIGNATURE";
+            mandatoryContent?: string;
+            name?: string;
+            /** Format: uuid */
+            publicationKey?: string;
+            /** @enum {string} */
+            publicationState?: "DRAFT" | "PENDING_APPROVAL" | "APPROVED" | "PUBLISHED" | "RETIRED";
+            /** Format: int32 */
+            publicationVersion?: number;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: date-time */
+            retiredAt?: string;
+            subject?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: uuid */
+            supersedesId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
         };
         platform_OrganizationResponse: {
             accounts?: components["schemas"]["platform_AccountSummary"][];
@@ -44959,6 +46027,38 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_ProposalHandoff: {
+            /** Format: uuid */
+            commandId?: string;
+            focus?: string;
+            ownerRoute?: string;
+            /** Format: uuid */
+            proposalId?: string;
+            resultRef?: string;
+            returnTo?: string;
+            /** @enum {string} */
+            status?: "ACCEPTED" | "EXECUTED" | "CANCELLED" | "FAILED" | "UNKNOWN";
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ProposalOutcomeRequest: {
+            /** Format: uuid */
+            commandId: string;
+            resultRef: string;
+            /** @enum {string} */
+            status: "ACCEPTED" | "EXECUTED" | "CANCELLED" | "FAILED" | "UNKNOWN";
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ProposalUpdateRequest: {
+            proposedPayload: {
+                [key: string]: unknown;
+            };
+            /** Format: int64 */
+            version: number;
+        };
         platform_ProviderBinding: {
             active?: boolean;
             /** Format: uuid */
@@ -45243,6 +46343,10 @@ export interface components {
             confidencePercent?: number;
             lowUtilizationDemand?: number;
             peakDemand?: number;
+        };
+        platform_ReconcileEmergencyHandoffRequest: {
+            explicitConfirmation?: boolean;
+            reason: string;
         };
         platform_ReconcileNotifications: {
             confirmed?: boolean;
@@ -45993,6 +47097,15 @@ export interface components {
             priority?: number;
             stopProcessing?: boolean;
         };
+        platform_RuleOrderItem: {
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_RuleOrderRequest: {
+            rules: components["schemas"]["platform_RuleOrderItem"][];
+        };
         platform_RuleRunSummary: {
             /** Format: int32 */
             changedCount?: number;
@@ -46618,6 +47731,11 @@ export interface components {
             items?: components["schemas"]["platform_WorkplaceServiceOrder"][];
             nextCursor?: string;
         };
+        platform_SetFavoriteRequest: {
+            /** Format: int64 */
+            expectedVersion?: number;
+            favorite?: boolean;
+        };
         platform_ShareableGroup: {
             displayName?: string;
             /** Format: uuid */
@@ -46777,6 +47895,9 @@ export interface components {
             editable?: boolean;
             mandatoryContent?: string;
             name?: string;
+            publicationState?: string;
+            /** Format: int32 */
+            publicationVersion?: number;
             /** @enum {string} */
             scope?: "PERSONAL" | "ACCOUNT" | "ORGANIZATION";
             /** Format: uuid */
@@ -47015,6 +48136,9 @@ export interface components {
             editable?: boolean;
             mandatoryContent?: string;
             name?: string;
+            publicationState?: string;
+            /** Format: int32 */
+            publicationVersion?: number;
             /** @enum {string} */
             scope?: "PERSONAL" | "ACCOUNT" | "ORGANIZATION";
             subject?: string;
@@ -48310,6 +49434,39 @@ export interface components {
             siteId?: string;
             timeZone?: string;
         };
+        platform_WorkplaceBookingHoldReleaseReceipt: {
+            /** Format: uuid */
+            commandId?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            correlationId?: string;
+            idempotentReplay?: boolean;
+            /** Format: uuid */
+            intentId?: string;
+            /** Format: int64 */
+            intentVersion?: number;
+            releasedHoldIds?: string[];
+            requeryRequired?: boolean;
+            /** @enum {string} */
+            state?: "SUCCEEDED" | "RESULT_UNKNOWN";
+        };
+        platform_WorkplaceBookingHoldReleaseReference: {
+            /** Format: int64 */
+            expectedHoldVersion: number;
+            /** Format: uuid */
+            holdId: string;
+        };
+        platform_WorkplaceBookingHoldReleaseRequest: {
+            /** Format: int64 */
+            expectedIntentVersion: number;
+            explicitConfirmation?: boolean;
+            holds: components["schemas"]["platform_WorkplaceBookingHoldReleaseReference"][];
+            reason: string;
+        };
+        platform_WorkplaceBookingHoldReleaseResult: {
+            intent?: components["schemas"]["platform_WorkplaceBookingHoldResponse"];
+            receipt?: components["schemas"]["platform_WorkplaceBookingHoldReleaseReceipt"];
+        };
         platform_WorkplaceBookingHoldRequest: {
             /** Format: int64 */
             expectedIntentVersion: number;
@@ -48512,6 +49669,39 @@ export interface components {
             resources?: components["schemas"]["platform_WorkplaceResource"][];
             selectedFloor?: components["schemas"]["platform_WorkplaceFloor"];
             sites?: components["schemas"]["platform_WorkplaceSite"][];
+        };
+        platform_WorkplaceFacilityClosureCommandReceipt: {
+            auditTrail?: components["schemas"]["platform_AuditEntry"][];
+            bookingsMutated?: boolean;
+            command?: components["schemas"]["platform_ClosureCommand"];
+            externalDeliveryProven?: boolean;
+            notificationDispatchPublished?: boolean;
+            notificationScheduled?: boolean;
+            owner?: string;
+        };
+        platform_WorkplaceFacilityClosureImpactItem: {
+            /** Format: uuid */
+            bookingId?: string;
+            bookingStatus?: string;
+            /** Format: int64 */
+            bookingVersion?: number;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: uuid */
+            previewItemId?: string;
+            recipientUserIds?: number[];
+            replacementBlockReason?: string;
+            replacementCandidates?: components["schemas"]["platform_ReplacementCandidate"][];
+            /** @enum {string} */
+            reservationOwner?: "WORKPLACE" | "CALENDAR";
+            /** Format: uuid */
+            sourceOwnerResourceId?: string;
+            /** Format: uuid */
+            sourceWorkplaceResourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
         };
         platform_WorkplaceFloor: {
             backgroundAssetPath?: string;
@@ -48778,6 +49968,109 @@ export interface components {
             /** Format: int64 */
             version?: number;
             widthPercent?: number;
+        };
+        platform_WorkplaceResourceCommandAction: {
+            /** @enum {string} */
+            availability?: "AVAILABLE" | "BOOKING_INACTIVE" | "PROVIDER_NOT_READY";
+            /** @enum {string} */
+            commandType?: "PARKING_EXTEND" | "PARKING_EXIT_STATUS" | "LOCKER_UNLOCK" | "NFC_KEY_RESEND" | "ROOM_PRE_ENTRY";
+            elevatedConfirmationRequired?: boolean;
+            limitationCode?: string;
+            /** @enum {string} */
+            providerCapability?: "NFC" | "SPEED_GATE";
+            /** @enum {string} */
+            providerState?: "NOT_CONFIGURED" | "CONFIGURED_UNVERIFIED" | "READY" | "DEGRADED" | "STALE";
+        };
+        platform_WorkplaceResourceCommandContext: {
+            actions?: components["schemas"]["platform_WorkplaceResourceCommandAction"][];
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: int64 */
+            bookingVersion?: number;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** @enum {string} */
+            resourceType?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+        };
+        platform_WorkplaceResourceCommandExecuteRequest: {
+            /** Format: int64 */
+            expectedBookingVersion?: number;
+            explicitConfirmation?: boolean;
+            /** Format: uuid */
+            previewId: string;
+            reason: string;
+        };
+        platform_WorkplaceResourceCommandPreview: {
+            /** Format: uuid */
+            bookingId?: string;
+            /** @enum {string} */
+            commandType?: "PARKING_EXTEND" | "PARKING_EXIT_STATUS" | "LOCKER_UNLOCK" | "NFC_KEY_RESEND" | "ROOM_PRE_ENTRY";
+            /** Format: date-time */
+            createdAt?: string;
+            eligible?: boolean;
+            /** Format: int64 */
+            expectedBookingVersion?: number;
+            /** Format: date-time */
+            expiresAt?: string;
+            impact?: string[];
+            limitations?: string[];
+            parameters?: {
+                [key: string]: string;
+            };
+            /** Format: uuid */
+            previewId?: string;
+            /** @enum {string} */
+            providerCapability?: "NFC" | "SPEED_GATE";
+            providerCode?: string;
+            /** Format: int64 */
+            providerConfigurationVersion?: number;
+            /** @enum {string} */
+            providerState?: "NOT_CONFIGURED" | "CONFIGURED_UNVERIFIED" | "READY" | "DEGRADED" | "STALE";
+            /** Format: uuid */
+            resourceId?: string;
+        };
+        platform_WorkplaceResourceCommandPreviewRequest: {
+            /** @enum {string} */
+            commandType: "PARKING_EXTEND" | "PARKING_EXIT_STATUS" | "LOCKER_UNLOCK" | "NFC_KEY_RESEND" | "ROOM_PRE_ENTRY";
+            /** Format: int64 */
+            expectedBookingVersion?: number;
+            parameters: {
+                [key: string]: string;
+            };
+        };
+        platform_WorkplaceResourceCommandReceipt: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: uuid */
+            commandId?: string;
+            /** @enum {string} */
+            commandType?: "PARKING_EXTEND" | "PARKING_EXIT_STATUS" | "LOCKER_UNLOCK" | "NFC_KEY_RESEND" | "ROOM_PRE_ENTRY";
+            /** Format: date-time */
+            completedAt?: string;
+            correlationId?: string;
+            idempotentReplay?: boolean;
+            /** Format: uuid */
+            previewId?: string;
+            providerOperationReference?: string;
+            requeryRequired?: boolean;
+            /** Format: uuid */
+            resourceId?: string;
+            resultCode?: string;
+            /** @enum {string} */
+            state?: "SUCCEEDED" | "FAILED" | "RESULT_UNKNOWN";
+            statusHref?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceResourceCommandReconcileRequest: {
+            explicitConfirmation?: boolean;
+            reason: string;
         };
         platform_WorkplaceServiceAttachmentScanRequest: {
             detail?: string;
@@ -49239,6 +50532,136 @@ export interface components {
             validUntil?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_WorkplaceSpacePlanningBoardReportExecuteRequest: {
+            confirmationToken: string;
+            /** Format: int64 */
+            expectedPreviewVersion: number;
+            /** Format: int64 */
+            expectedScenarioVersion: number;
+            explicitConfirmation?: boolean;
+            /** Format: uuid */
+            previewId: string;
+            reason: string;
+        };
+        platform_WorkplaceSpacePlanningBoardReportPreview: {
+            confirmationToken?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** @enum {string} */
+            format?: "PDF" | "XLSX";
+            idempotentReplay?: boolean;
+            /** Format: uuid */
+            previewId?: string;
+            /** Format: int64 */
+            previewVersion?: number;
+            /** Format: uuid */
+            scenarioId?: string;
+            /** Format: int64 */
+            scenarioVersion?: number;
+            /** Format: uuid */
+            siteId?: string;
+            snapshot?: components["schemas"]["platform_WorkplaceSpacePlanningBoardReportSnapshot"];
+            snapshotSha256?: string;
+        };
+        platform_WorkplaceSpacePlanningBoardReportPreviewRequest: {
+            /** Format: int64 */
+            expectedScenarioVersion: number;
+            /** @enum {string} */
+            format: "PDF" | "XLSX";
+            reason: string;
+            /** Format: uuid */
+            scenarioId: string;
+        };
+        platform_WorkplaceSpacePlanningBoardReportReceipt: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: int64 */
+            byteSize?: number;
+            /** Format: uuid */
+            commandId?: string;
+            /** Format: int64 */
+            commandVersion?: number;
+            /** Format: date-time */
+            completedAt?: string;
+            contentHref?: string;
+            contentSha256?: string;
+            correlationId?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            fileName?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** @enum {string} */
+            format?: "PDF" | "XLSX";
+            idempotentReplay?: boolean;
+            mimeType?: string;
+            /** Format: uuid */
+            previewId?: string;
+            /** Format: uuid */
+            scenarioId?: string;
+            /** Format: int64 */
+            scenarioVersion?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "SUCCEEDED" | "FAILED" | "RESULT_UNKNOWN";
+        };
+        platform_WorkplaceSpacePlanningBoardReportSnapshot: {
+            /** Format: int32 */
+            affectedResourceCount?: number;
+            calculationVersion?: string;
+            /** Format: date-time */
+            capturedAt?: string;
+            co2eUnit?: string;
+            co2eValue?: number;
+            /** Format: int32 */
+            currentAccessibleResourceCount?: number;
+            /** Format: int32 */
+            currentCapacity?: number;
+            /** Format: int32 */
+            currentRoomCapacity?: number;
+            currentUtilizationPercent?: number;
+            emissionFactorVersion?: string;
+            emissionRegionCode?: string;
+            energyUnit?: string;
+            energyValue?: number;
+            /** Format: uuid */
+            floorId?: string;
+            floorName?: string;
+            forecastConfidencePercent?: number;
+            forecastState?: string;
+            /** Format: int32 */
+            impactedBookingCount?: number;
+            peakDemand?: number;
+            personLevelDataIncluded?: boolean;
+            /** Format: int32 */
+            personLevelRowCount?: number;
+            /** Format: int32 */
+            proposedAccessibleResourceCount?: number;
+            /** Format: int32 */
+            proposedCapacity?: number;
+            /** Format: int32 */
+            proposedRoomCapacity?: number;
+            proposedUtilizationPercent?: number;
+            /** Format: uuid */
+            scenarioId?: string;
+            scenarioName?: string;
+            scenarioState?: string;
+            /** Format: int64 */
+            scenarioVersion?: number;
+            siteCode?: string;
+            /** Format: uuid */
+            siteId?: string;
+            siteName?: string;
+            /** Format: date-time */
+            windowEnd?: string;
+            /** Format: date-time */
+            windowStart?: string;
         };
         platform_WorkplaceTeamPlacementConstraint: {
             adjacentSeats?: boolean;
@@ -61260,7 +62683,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_RotateRequest"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
@@ -69847,7 +71274,7 @@ export interface operations {
             };
         };
     };
-    platform_publish_4: {
+    platform_publish_5: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -71430,7 +72857,7 @@ export interface operations {
             };
         };
     };
-    platform_retire_2: {
+    platform_retire_3: {
         parameters: {
             query?: never;
             header?: {
@@ -71851,7 +73278,7 @@ export interface operations {
             };
         };
     };
-    platform_publish_3: {
+    platform_publish_4: {
         parameters: {
             query?: never;
             header?: {
@@ -72194,7 +73621,7 @@ export interface operations {
             };
         };
     };
-    platform_createDraft_2: {
+    platform_createDraft_3: {
         parameters: {
             query?: never;
             header?: {
@@ -72344,7 +73771,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_10: {
+    platform_preview_16: {
         parameters: {
             query?: never;
             header?: never;
@@ -72366,7 +73793,7 @@ export interface operations {
             };
         };
     };
-    platform_publish_2: {
+    platform_publish_3: {
         parameters: {
             query?: never;
             header?: {
@@ -72422,7 +73849,7 @@ export interface operations {
             };
         };
     };
-    platform_submit_2: {
+    platform_submit_3: {
         parameters: {
             query?: never;
             header?: {
@@ -73137,6 +74564,202 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseSharedInboxSummary"];
+                };
+            };
+        };
+    };
+    platform_assets: {
+        parameters: {
+            query?: {
+                kind?: "TEMPLATE" | "SIGNATURE";
+                state?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListOrganizationAsset"];
+                };
+            };
+        };
+    };
+    platform_createDraft_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "TEMPLATE" | "SIGNATURE";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationAsset"];
+                };
+            };
+        };
+    };
+    platform_updateDraft_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "TEMPLATE" | "SIGNATURE";
+                assetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationAsset"];
+                };
+            };
+        };
+    };
+    platform_approve_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "TEMPLATE" | "SIGNATURE";
+                assetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationAsset"];
+                };
+            };
+        };
+    };
+    platform_publish_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "TEMPLATE" | "SIGNATURE";
+                assetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationAsset"];
+                };
+            };
+        };
+    };
+    platform_retire_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "TEMPLATE" | "SIGNATURE";
+                assetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationAsset"];
+                };
+            };
+        };
+    };
+    platform_submit_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                kind: "TEMPLATE" | "SIGNATURE";
+                assetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationAsset"];
                 };
             };
         };
@@ -74326,7 +75949,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_8: {
+    platform_preview_12: {
         parameters: {
             query?: never;
             header?: never;
@@ -75196,7 +76819,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_7: {
+    platform_preview_11: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -75719,7 +77342,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_6: {
+    platform_preview_10: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -76517,7 +78140,7 @@ export interface operations {
             };
         };
     };
-    platform_reconcile_1: {
+    platform_reconcile_3: {
         parameters: {
             query: {
                 siteId: string;
@@ -76551,7 +78174,7 @@ export interface operations {
             };
         };
     };
-    platform_retry: {
+    platform_retry_1: {
         parameters: {
             query: {
                 siteId: string;
@@ -76585,7 +78208,7 @@ export interface operations {
             };
         };
     };
-    platform_receipt_1: {
+    platform_receipt_3: {
         parameters: {
             query: {
                 siteId: string;
@@ -76606,12 +78229,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseCommandReceipt"];
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFacilityClosureCommandReceipt"];
                 };
             };
         };
     };
-    platform_preview_9: {
+    platform_preview_15: {
         parameters: {
             query: {
                 siteId: string;
@@ -76637,7 +78260,7 @@ export interface operations {
             };
         };
     };
-    platform_execute_1: {
+    platform_execute_4: {
         parameters: {
             query: {
                 siteId: string;
@@ -76825,7 +78448,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_5: {
+    platform_preview_9: {
         parameters: {
             query: {
                 siteId: string;
@@ -78688,6 +80311,88 @@ export interface operations {
             };
         };
     };
+    platform_contacts_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListEmergencyContactView"];
+                };
+            };
+        };
+    };
+    platform_contact: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                contactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyContactView"];
+                };
+            };
+        };
+    };
+    platform_configure: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                contactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_EmergencyContactConfigurationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyContactConfigurationResult"];
+                };
+            };
+        };
+    };
     platform_export_1: {
         parameters: {
             query?: {
@@ -79019,6 +80724,161 @@ export interface operations {
             };
         };
     };
+    platform_preview_14: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                incidentId: string;
+                previewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyHandoffPreview"];
+                };
+            };
+        };
+    };
+    platform_execute_3: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                incidentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ConfirmEmergencyHandoffRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyHandoffReceipt"];
+                };
+            };
+        };
+    };
+    platform_handoff: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                incidentId: string;
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyHandoffReceipt"];
+                };
+            };
+        };
+    };
+    platform_reconcile_2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                incidentId: string;
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ReconcileEmergencyHandoffRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyHandoffReceipt"];
+                };
+            };
+        };
+    };
+    platform_preview_8: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                incidentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_EmergencyHandoffPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEmergencyHandoffPreviewResult"];
+                };
+            };
+        };
+    };
     platform_createExport: {
         parameters: {
             query?: {
@@ -79231,7 +81091,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_4: {
+    platform_preview_7: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -80355,6 +82215,125 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponsePlanningOverview"];
+                };
+            };
+        };
+    };
+    platform_execute_2: {
+        parameters: {
+            query: {
+                siteId: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceSpacePlanningBoardReportExecuteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSpacePlanningBoardReportReceipt"];
+                };
+            };
+        };
+    };
+    platform_receipt_2: {
+        parameters: {
+            query: {
+                siteId: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSpacePlanningBoardReportReceipt"];
+                };
+            };
+        };
+    };
+    platform_content: {
+        parameters: {
+            query: {
+                siteId: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+        };
+    };
+    platform_preview_6: {
+        parameters: {
+            query: {
+                siteId: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceSpacePlanningBoardReportPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSpacePlanningBoardReportPreview"];
                 };
             };
         };
@@ -81906,6 +83885,7 @@ export interface operations {
             query?: never;
             header: {
                 "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
             };
             path: {
                 deviceId: string;
@@ -84105,7 +86085,29 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                    "*/*": components["schemas"]["platform_ApiResponseGroupSendResult"];
+                };
+            };
+        };
+    };
+    platform_groupMessageHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListGroupSendReceipt"];
                 };
             };
         };
@@ -84260,7 +86262,7 @@ export interface operations {
             };
         };
     };
-    platform_reconcile: {
+    platform_reconcile_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -84298,6 +86300,32 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["platform_RescheduleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDeliveryReceipt"];
+                };
+            };
+        };
+    };
+    platform_retry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deliveryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
             };
         };
         responses: {
@@ -84697,6 +86725,32 @@ export interface operations {
             };
         };
     };
+    platform_reorderRules: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RuleOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseOrganizationResponse"];
+                };
+            };
+        };
+    };
     platform_updateRule: {
         parameters: {
             query?: never;
@@ -84821,6 +86875,57 @@ export interface operations {
             };
         };
     };
+    platform_proposals: {
+        parameters: {
+            query?: {
+                status?: string;
+                type?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListActionProposal"];
+                };
+            };
+        };
+    };
+    platform_updateProposal: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ProposalUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseActionProposal"];
+                };
+            };
+        };
+    };
     platform_decideProposal: {
         parameters: {
             query?: never;
@@ -84845,6 +86950,56 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseActionProposal"];
+                };
+            };
+        };
+    };
+    platform_proposalHandoff: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseProposalHandoff"];
+                };
+            };
+        };
+    };
+    platform_recordProposalOutcome: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ProposalOutcomeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseProposalHandoff"];
                 };
             };
         };
@@ -85321,6 +87476,56 @@ export interface operations {
             };
         };
     };
+    platform_preview_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_LifecycleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseLifecyclePreview"];
+                };
+            };
+        };
+    };
+    platform_downloadAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                threadId: string;
+                messageId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
     platform_retryDelivery: {
         parameters: {
             query?: never;
@@ -85404,7 +87609,9 @@ export interface operations {
     };
     platform_writingAssets: {
         parameters: {
-            query?: never;
+            query?: {
+                includeArchived?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -86580,7 +88787,7 @@ export interface operations {
             };
         };
     };
-    platform_preview_3: {
+    platform_preview_4: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -86670,6 +88877,40 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkplaceBookingHoldResponse"];
+                };
+            };
+        };
+    };
+    platform_releaseHolds: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                intentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceBookingHoldReleaseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBookingHoldReleaseResult"];
                 };
             };
         };
@@ -86870,6 +89111,184 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_context_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResourceCommandContext"];
+                };
+            };
+        };
+    };
+    platform_preview_13: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                bookingId: string;
+                previewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResourceCommandPreview"];
+                };
+            };
+        };
+    };
+    platform_execute_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceResourceCommandExecuteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResourceCommandReceipt"];
+                };
+            };
+        };
+    };
+    platform_receipt_1: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                bookingId: string;
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResourceCommandReceipt"];
+                };
+            };
+        };
+    };
+    platform_reconcile: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                bookingId: string;
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceResourceCommandReconcileRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResourceCommandReceipt"];
+                };
+            };
+        };
+    };
+    platform_preview_3: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceResourceCommandPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResourceCommandPreview"];
                 };
             };
         };
@@ -87767,6 +90186,64 @@ export interface operations {
             };
         };
     };
+    platform_favorites: {
+        parameters: {
+            query?: {
+                resourceIds?: string[];
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListFavoriteView"];
+                };
+            };
+        };
+    };
+    platform_set: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SetFavoriteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFavoriteReceipt"];
+                };
+            };
+        };
+    };
     platform_active: {
         parameters: {
             query?: {
@@ -87811,6 +90288,31 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseSafetySheet"];
+                };
+            };
+        };
+    };
+    platform_contacts: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                incidentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListEmergencyContactView"];
                 };
             };
         };
@@ -88106,7 +90608,7 @@ export interface operations {
             };
         };
     };
-    platform_contact: {
+    platform_contact_1: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */

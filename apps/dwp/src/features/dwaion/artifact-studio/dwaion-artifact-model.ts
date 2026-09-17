@@ -40,7 +40,8 @@ export type DwaionArtifactSourceReference = {
     | 'APPROVAL_TASK'
     | 'APPROVAL_REQUEST'
     | 'APPROVAL_FORM'
-    | 'APPROVAL_OPERATION';
+    | 'APPROVAL_OPERATION'
+    | 'ATTACHMENT';
   reference: string;
 };
 
@@ -99,6 +100,11 @@ export type DwaionArtifactExportEvidence = {
   state: 'PENDING' | 'CLAIMED' | 'SUCCEEDED' | 'PARTIAL' | 'FAILED' | 'CANCELLED';
   executionAvailable: boolean;
   fileAvailable: boolean;
+  fileName?: string | null;
+  byteSize?: number | null;
+  contentFingerprint?: string | null;
+  completedAt?: string | null;
+  safeErrorCode?: string | null;
 };
 
 export type DwaionArtifactReleaseCapability =

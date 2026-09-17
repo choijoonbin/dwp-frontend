@@ -13,6 +13,7 @@ import {
   getWorkplaceWaitlistEntry,
   getWorkplaceWaitlistEntries,
   previewWorkplaceBookingIntent,
+  releaseWorkplaceReservationHolds,
   replanWorkplaceBookingBatch,
   startWorkplaceBookingBatch,
   updateWorkplaceWaitlistEntry,
@@ -59,6 +60,12 @@ describe('Workplace booking orchestration gateway contract', () => {
       .mockResolvedValueOnce(response({ intentId: 'intent-1', items: [], version: 1 }))
       .mockResolvedValueOnce(response({ intentId: 'intent-1', holds: [], intentVersion: 2 }))
       .mockResolvedValueOnce(
+        response({
+          intent: { intentId: 'intent-1', holds: [], intentVersion: 3 },
+          receipt: { commandId: 'release-1', state: 'SUCCEEDED' },
+        })
+      )
+      .mockResolvedValueOnce(
         response({ batchId: 'batch-1', state: 'ACCEPTED', statusUrl: '/status', version: 1 }, 202)
       )
       .mockResolvedValueOnce(
@@ -93,6 +100,16 @@ describe('Workplace booking orchestration gateway contract', () => {
       },
       'hold-key'
     );
+    await releaseWorkplaceReservationHolds(
+      'intent/1',
+      {
+        expectedIntentVersion: 2,
+        holds: [{ holdId: 'hold-1', expectedHoldVersion: 1 }],
+        reason: 'Edit this plan',
+        explicitConfirmation: true,
+      },
+      'release-key'
+    );
     await startWorkplaceBookingBatch(
       {
         intentId: 'intent-1',
@@ -113,14 +130,15 @@ describe('Workplace booking orchestration gateway contract', () => {
       '/api/auth/csrf',
       '/api/platform/v1/workplace/booking-intents/preview',
       '/api/platform/v1/workplace/booking-intents/intent%2F1/holds',
+      '/api/platform/v1/workplace/booking-orchestration/intents/intent%2F1/holds:release',
       '/api/platform/v1/workplace/booking-batches',
       '/api/platform/v1/workplace/booking-batches/batch%2F1',
     ]);
     expect(
       fetchMock.mock.calls
-        .slice(1, 4)
+        .slice(1, 5)
         .map(([, request]) => new Headers((request as RequestInit).headers).get('Idempotency-Key'))
-    ).toEqual(['preview-key', 'hold-key', 'batch-key']);
+    ).toEqual(['preview-key', 'hold-key', 'release-key', 'batch-key']);
   });
 
   it('keeps waitlist conditions and alternative offer acceptance on separate versioned commands', async () => {

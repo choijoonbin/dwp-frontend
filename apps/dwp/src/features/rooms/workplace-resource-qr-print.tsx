@@ -82,17 +82,20 @@ export function WorkplaceResourceQrPrint({
               'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog': {
                 visibility: 'visible',
               },
-              'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiBackdrop-root, body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiDialogActions-root': {
-                display: 'none',
-              },
-              'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiDialog-container': {
-                alignItems: 'flex-start',
-              },
-              'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiDialog-paper': {
-                boxShadow: 'none',
-                margin: 0,
-                width: '100%',
-              },
+              'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiBackdrop-root, body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiDialogActions-root':
+                {
+                  display: 'none',
+                },
+              'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiDialog-container':
+                {
+                  alignItems: 'flex-start',
+                },
+              'body.workplace-resource-qr-printing .workplace-resource-qr-print-dialog .MuiDialog-paper':
+                {
+                  boxShadow: 'none',
+                  margin: 0,
+                  width: '100%',
+                },
             },
           }}
         />

@@ -35,6 +35,26 @@ export type DwaionAttachmentCitation = {
   contentSha256: string;
 };
 
+export type DwaionAttachmentEvidenceEvent = {
+  eventId: string;
+  eventType: string;
+  previousState: DwaionAttachmentState | null;
+  currentState: DwaionAttachmentState;
+  revision: number;
+  safeErrorCode: string | null;
+  occurredAt: string;
+};
+
+export type DwaionAttachmentEvidence = {
+  attachmentId: string;
+  sourceSha256: string;
+  stages: DwaionAttachmentStage[];
+  citations: DwaionAttachmentCitation[];
+  inspectionLog: DwaionAttachmentEvidenceEvent[];
+  maskingHistory: DwaionAttachmentEvidenceEvent[];
+  ocrEvidence: DwaionAttachmentCitation[];
+};
+
 export type DwaionAttachmentCapabilities = {
   upload: DwaionWorkflowCapability;
   antivirus: DwaionWorkflowCapability;
@@ -43,9 +63,28 @@ export type DwaionAttachmentCapabilities = {
   ocr: DwaionWorkflowCapability;
   index: DwaionWorkflowCapability;
   deletion: DwaionWorkflowCapability;
+  detachAll: DwaionWorkflowCapability;
+  inspectionLog: DwaionWorkflowCapability;
+  maskingHistory: DwaionWorkflowCapability;
+  ocrViewer: DwaionWorkflowCapability;
+  signedAuditReport: DwaionWorkflowCapability;
   maximumFileBytes: number;
   allowedMediaTypes: string[];
 };
+
+export type DwaionResearchCapabilities = {
+  rawExport: DwaionWorkflowCapability;
+  pdfExport: DwaionWorkflowCapability;
+  receiptDownload: DwaionWorkflowCapability;
+  auditDownload: DwaionWorkflowCapability;
+  fork: DwaionWorkflowCapability;
+  merge: DwaionWorkflowCapability;
+  keepLocal: DwaionWorkflowCapability;
+  sensitivityRecalculation: DwaionWorkflowCapability;
+  cacheFallback: DwaionWorkflowCapability;
+};
+
+export type DwaionResearchDownloadKind = 'raw' | 'receipt' | 'audit';
 
 export type DwaionAttachmentUploadTicket = {
   method: 'PUT';

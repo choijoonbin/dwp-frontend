@@ -90,10 +90,14 @@ function DwaionWorkspaceContent({
   const [launchFailure, setLaunchFailure] = useState(false);
   const [attachmentSelection, setAttachmentSelection] = useState<DwaionAttachmentSelection>({
     attachmentIds: [],
+    attachments: [],
     canSubmit: true,
     hasFiles: false,
   });
   const [submittedAttachmentIds, setSubmittedAttachmentIds] = useState<string[]>([]);
+  const [submittedAttachments, setSubmittedAttachments] = useState<
+    DwaionAttachmentSelection['attachments']
+  >([]);
   const [attachmentSession, setAttachmentSession] = useState(0);
   const requestSequence = useRef(0);
   const requestController = useRef<AbortController | null>(null);
@@ -159,6 +163,7 @@ function DwaionWorkspaceContent({
         ? []
         : [...(retryAttachmentIds ?? attachmentSelection.attachmentIds)];
       setSubmittedAttachmentIds(requestAttachmentIds);
+      setSubmittedAttachments([...attachmentSelection.attachments]);
       setDraft('');
       setResponse(null);
       setProgressStage('AUTHORIZING');
@@ -220,9 +225,9 @@ function DwaionWorkspaceContent({
         if (controller.signal.aborted || requestSequence.current !== sequence) return;
         setResponse(result);
         if (result.conversationId) {
-          onConversationVerified(result.conversationId, agentKey);
           internalConversationNavigation.current = result.conversationId;
           setConversationId(result.conversationId);
+          onConversationVerified(result.conversationId, agentKey);
           navigate(dwaionWorkspaceRoute(undefined, result.conversationId, agentKey), {
             replace: true,
           });
@@ -254,6 +259,7 @@ function DwaionWorkspaceContent({
       onConversationVerified,
       runAskMutation,
       attachmentSelection.attachmentIds,
+      attachmentSelection.attachments,
       attachmentSelection.canSubmit,
     ]
   );
@@ -323,6 +329,15 @@ function DwaionWorkspaceContent({
     setProgressStage(null);
     setDraft('');
     setState('idle');
+    setAttachmentSession((current) => current + 1);
+    setAttachmentSelection({
+      attachmentIds: [],
+      attachments: [],
+      canSubmit: true,
+      hasFiles: false,
+    });
+    setSubmittedAttachmentIds([]);
+    setSubmittedAttachments([]);
   }, [agentKey, conversationId, routeConversationId, searchParams]);
 
   useEffect(() => {
@@ -357,8 +372,14 @@ function DwaionWorkspaceContent({
     setState('idle');
     setLaunchFailure(false);
     setAttachmentSession((current) => current + 1);
-    setAttachmentSelection({ attachmentIds: [], canSubmit: true, hasFiles: false });
+    setAttachmentSelection({
+      attachmentIds: [],
+      attachments: [],
+      canSubmit: true,
+      hasFiles: false,
+    });
     setSubmittedAttachmentIds([]);
+    setSubmittedAttachments([]);
     navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { replace: true });
   };
 
@@ -396,10 +417,11 @@ function DwaionWorkspaceContent({
 
   const attachmentSlot = selectedWork ? undefined : (
     <DwaionSecureAttachmentTray
-      key={`${conversationId ?? 'new'}:${attachmentSession}`}
+      key={attachmentSession}
       conversationId={conversationId}
+      initialAttachments={submittedQuery ? submittedAttachments : []}
       disabled={state === 'loading'}
-      expanded={!submittedQuery && !conversationId}
+      expanded={attachmentSelection.hasFiles || (!submittedQuery && !conversationId)}
       onSelectionChange={setAttachmentSelection}
     />
   );
@@ -524,6 +546,20 @@ function DwaionWorkspaceContent({
                       onReset={reset}
                     />
                   )}
+                  {submittedQuery && attachmentSelection.hasFiles ? (
+                    <Box
+                      sx={{
+                        mt: 3,
+                        p: { xs: 1.25, sm: 2 },
+                        bgcolor: 'background.paper',
+                        border: 1,
+                        borderColor: 'divider',
+                        borderRadius: 1.5,
+                      }}
+                    >
+                      {attachmentSlot}
+                    </Box>
+                  ) : null}
                   {response && !wideResultLayout && (
                     <DwaionWorkspaceContext
                       response={response}
@@ -538,7 +574,7 @@ function DwaionWorkspaceContent({
                       compact
                       sourceScopes={activeScopes}
                       availableSources={selectedWork ? activeScopes : availableSourceScopes}
-                      attachmentSlot={attachmentSlot}
+                      attachmentSlot={submittedQuery ? undefined : attachmentSlot}
                       attachmentsReady={attachmentSelection.canSubmit}
                       onToggleSource={toggleSource}
                       onCancel={cancelRequest}

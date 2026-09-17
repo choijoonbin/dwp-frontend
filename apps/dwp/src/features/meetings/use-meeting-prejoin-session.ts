@@ -22,6 +22,7 @@ export function useMeetingPrejoinSession(
     cameraId: videoDeviceId,
     speakerId: defaults.speakerDeviceId,
     noiseSuppression: defaults.noiseSuppression,
+    hdVideo: defaults.hdVideo,
     backgroundMode,
   };
   useEffect(() => {
@@ -32,6 +33,7 @@ export function useMeetingPrejoinSession(
       cameraId: saved.videoDeviceId,
       speakerId: saved.speakerDeviceId,
       noiseSuppression: saved.noiseSuppression,
+      hdVideo: saved.hdVideo,
       backgroundMode: saved.backgroundMode,
     };
     void current.refresh();

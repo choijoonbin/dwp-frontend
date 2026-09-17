@@ -37,6 +37,7 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { WorkplaceAccessPassPanel } from './workplace-access-pass';
+import { WorkplaceCanonicalDeepLinkActions } from './workplace-canonical-deep-link-actions';
 import {
   workplaceNavigationCanRenderGuidedRoute,
   workplaceNavigationCopy,
@@ -89,6 +90,7 @@ export function WorkplaceWayfinding({
   const [destinationPoiId, setDestinationPoiId] = useState(initialDestinationPoiId);
   const [accessible, setAccessible] = useState(false);
   const [avoidStairs, setAvoidStairs] = useState(false);
+  const [invalidDeepLink, setInvalidDeepLink] = useState(false);
   const autoRoutedSite = useRef('');
   const poisQuery = useQuery({
     queryKey: ['workplace', 'navigation', 'pois', siteId],
@@ -107,28 +109,42 @@ export function WorkplaceWayfinding({
       }),
   });
   const pois = useMemo(() => poisQuery.data ?? [], [poisQuery.data]);
+  const effectiveOriginPoiId = pois.some((poi) => poi.poiId === originPoiId) ? originPoiId : '';
+  const effectiveDestinationPoiId = pois.some((poi) => poi.poiId === destinationPoiId)
+    ? destinationPoiId
+    : '';
   const route = routeMutation.data ?? null;
   const guided = route ? workplaceNavigationCanRenderGuidedRoute(route) : false;
   const breadcrumb = route ? workplaceNavigationFallbackBreadcrumb(route) : [];
   const canSearch =
-    Boolean(originPoiId && destinationPoiId) &&
-    originPoiId !== destinationPoiId &&
+    Boolean(effectiveOriginPoiId && effectiveDestinationPoiId) &&
+    effectiveOriginPoiId !== effectiveDestinationPoiId &&
     !routeMutation.isPending;
 
   useEffect(() => {
     if (!pois.length) return;
     const validOrigin = pois.some((poi) => poi.poiId === originPoiId);
     const validDestination = pois.some((poi) => poi.poiId === destinationPoiId);
+    const requestedOrigin = initialOriginPoiId
+      ? pois.find((poi) => poi.poiId === initialOriginPoiId)
+      : undefined;
+    const requestedDestination = initialDestinationPoiId
+      ? pois.find((poi) => poi.poiId === initialDestinationPoiId)
+      : undefined;
+    setInvalidDeepLink(
+      Boolean(
+        (initialOriginPoiId && !requestedOrigin) ||
+        (initialDestinationPoiId && !requestedDestination)
+      )
+    );
     if (!validOrigin) {
-      const requested = pois.find((poi) => poi.poiId === initialOriginPoiId);
       const fallback = pois.find((poi) => poi.category === 'ENTRY') ?? pois[0];
-      setOriginPoiId((requested ?? fallback)?.poiId ?? '');
+      setOriginPoiId((requestedOrigin ?? fallback)?.poiId ?? '');
     }
     if (!validDestination) {
-      const requested = pois.find((poi) => poi.poiId === initialDestinationPoiId);
       const booked = pois.find((poi) => poi.resourceId === defaultDestinationResourceId);
       const fallback = pois.find((poi) => poi.category === 'ROOM') ?? pois.at(1) ?? pois[0];
-      setDestinationPoiId((requested ?? booked ?? fallback)?.poiId ?? '');
+      setDestinationPoiId((requestedDestination ?? booked ?? fallback)?.poiId ?? '');
     }
   }, [
     defaultDestinationResourceId,
@@ -204,6 +220,13 @@ export function WorkplaceWayfinding({
           </InlineFeedback>
         ) : (
           <Stack spacing={2}>
+            {invalidDeepLink ? (
+              <InlineFeedback severity="warning">
+                {locale === 'ko'
+                  ? '요청한 출발지 또는 목적지를 사용할 수 없어 권한 있는 기본 위치를 선택했습니다.'
+                  : 'The requested origin or destination is unavailable. An authorized default was selected.'}
+              </InlineFeedback>
+            ) : null}
             {siteOptions.length > 1 ? (
               <FormControl fullWidth>
                 <InputLabel id="wayfinding-site-label">
@@ -231,7 +254,7 @@ export function WorkplaceWayfinding({
                 <Select
                   labelId="wayfinding-origin-label"
                   label={copy.origin}
-                  value={originPoiId}
+                  value={effectiveOriginPoiId}
                   onChange={(event) => setOriginPoiId(event.target.value)}
                 >
                   <MenuItem value="">
@@ -249,7 +272,7 @@ export function WorkplaceWayfinding({
                 <Select
                   labelId="wayfinding-destination-label"
                   label={copy.destination}
-                  value={destinationPoiId}
+                  value={effectiveDestinationPoiId}
                   onChange={(event) => setDestinationPoiId(event.target.value)}
                 >
                   <MenuItem value="">
@@ -349,14 +372,33 @@ export function WorkplaceWayfinding({
                     {workplaceNavigationPoiName(route.destination!, locale)}
                   </Typography>
                 </Box>
-                <Stack direction="row" gap={1} flexWrap="wrap">
-                  <Chip
-                    icon={<Accessibility size={15} />}
-                    label={`${Math.max(1, Math.ceil(route.totalTravelSeconds / 60))} ${copy.minutes}`}
-                  />
-                  <Chip
-                    variant="outlined"
-                    label={`${copy.publishedGraph} r${route.graphRevisionNumber}`}
+                <Stack spacing={1} alignItems={{ xs: 'flex-start', sm: 'flex-end' }}>
+                  <Stack direction="row" gap={1} flexWrap="wrap">
+                    <Chip
+                      icon={<Accessibility size={15} />}
+                      label={`${Math.max(1, Math.ceil(route.totalTravelSeconds / 60))} ${copy.minutes}`}
+                    />
+                    <Chip
+                      variant="outlined"
+                      label={`${copy.publishedGraph} r${route.graphRevisionNumber}`}
+                    />
+                  </Stack>
+                  <WorkplaceCanonicalDeepLinkActions
+                    routePath="/workplace/navigation"
+                    query={{
+                      siteId,
+                      originPoiId,
+                      destinationPoiId,
+                      accessible,
+                      avoidStairs,
+                      v: 1,
+                    }}
+                    title={t('screen19.wayfinding.shareTitle')}
+                    text={`${workplaceNavigationPoiName(route.origin!, locale)} → ${workplaceNavigationPoiName(route.destination!, locale)}`}
+                    shareLabel={t('screen19.wayfinding.share')}
+                    copyLabel={t('screen19.wayfinding.copyLink')}
+                    copiedLabel={t('screen19.wayfinding.linkCopied')}
+                    errorLabel={t('screen19.wayfinding.linkError')}
                   />
                 </Stack>
               </Stack>

@@ -61,7 +61,8 @@
       "office": "Office",
       "image": "Custom image unavailable",
       "hd": "HD video (1080p)",
-      "hdHint": "The current provider connection does not support a quality preference. Actual meeting quality depends on the device and network.",
+      "hdHint": "Requests 1080p capture on supported devices. Actual send quality adapts to the device and network.",
+      "hdUnsupported": "This browser cannot select an HD capture resolution.",
       "storageTitle": "Separate device and account settings",
       "storageMobile": "Device choices stay in this browser; meeting defaults are saved to your account.",
       "saveShort": "Save"
@@ -1083,7 +1084,8 @@
     "operation": "The meeting action could not be completed. Try again.",
     "mediaPermission": "Camera or microphone permission is unavailable. Check your browser settings.",
     "connection": "The realtime meeting connection was interrupted.",
-    "attendanceSync": "The room connected, but the attendance state could not be synchronized.",
+    "attendanceSyncRecovering": "Audio and video are connected. Attendance confirmation is delayed, and the app is retrying it automatically.",
+    "attendanceSyncFailed": "Audio and video remain connected, but attendance could not be recorded after automatic retries. The meeting record may be incomplete; check your network, then rejoin the meeting.",
     "lifecycleSync": "The meeting is still connected, but its latest lifecycle and permissions could not be verified.",
     "leaveSync": "You are leaving the room, but attendance synchronization is delayed."
   },

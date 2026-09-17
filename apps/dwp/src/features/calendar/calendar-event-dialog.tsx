@@ -50,6 +50,7 @@ import type {
   CalendarEventImportance,
   CalendarEventType,
   IdempotentMutationIntent,
+  MailProposalMutationBinding,
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
@@ -93,6 +94,8 @@ type CalendarEventDialogProps = {
   initialAttendees?: PersonSummary[];
   initialAttendeeEmails?: string[];
   fromDwaion?: boolean;
+  proposalBinding?: MailProposalMutationBinding;
+  submissionBlocked?: boolean;
   workHandoff?: WorkCalendarEventHandoff | null;
   workRecovery?: CalendarWorkHandoffRecovery | null;
   onBeforeCreate?: () => void | Promise<void>;
@@ -133,6 +136,8 @@ export function CalendarEventDialog({
   initialAttendees = EMPTY_ATTENDEES,
   initialAttendeeEmails = EMPTY_EMAILS,
   fromDwaion = false,
+  proposalBinding,
+  submissionBlocked = false,
   workHandoff,
   workRecovery,
   onBeforeCreate,
@@ -399,7 +404,7 @@ export function CalendarEventDialog({
       };
       await onBeforeCreate?.();
       createIntent.current = intent;
-      const saved = await createCalendarEvent(request);
+      const saved = await createCalendarEvent(request, undefined, proposalBinding);
       if (workHandoff) {
         if (!isExactWorkHandoffEventReceipt(saved, request))
           throw new Error(t('event.workLinkSaveError'));
@@ -433,7 +438,7 @@ export function CalendarEventDialog({
   });
 
   const submit = () => {
-    if (!canMutate || (!pendingWorkReceipt.current && !valid)) {
+    if (!canMutate || submissionBlocked || (!pendingWorkReceipt.current && !valid)) {
       setValidationVisible(true);
       return;
     }
@@ -460,7 +465,7 @@ export function CalendarEventDialog({
       onClose={requestClose}
       onSubmit={submit}
       busy={mutation.isPending}
-      submitDisabled={!canMutate}
+      submitDisabled={!canMutate || submissionBlocked}
       secondaryActions={
         onReturnToWork ? (
           <ActionButton

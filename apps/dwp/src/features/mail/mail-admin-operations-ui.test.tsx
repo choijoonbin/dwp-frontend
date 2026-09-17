@@ -91,7 +91,10 @@ describe('Mail admin delivery recovery controls', () => {
     const buttons = [...host.querySelectorAll('button')];
     const reconcile = buttons.find((button) => button.textContent?.includes('Reconcile'));
     const retry = buttons.find((button) => button.textContent?.includes('delivery.retry'));
-    expect(host.textContent).toContain('RECOVERY_EVIDENCE_NOT_CURRENT');
+    expect(host.textContent).toContain(
+      'Refresh recovery evidence before deciding whether to retry.'
+    );
+    expect(host.textContent).not.toContain('RECOVERY_EVIDENCE_NOT_CURRENT');
     expect(reconcile?.disabled).toBe(false);
     expect(retry?.disabled).toBe(true);
 
@@ -201,6 +204,180 @@ describe('Mail administrative evidence surfaces', () => {
     );
   });
 
+  it('does not let a broad legacy flag bypass connection, shared-inbox, or policy permissions', async () => {
+    const connectionOverview: MailAdminOverview = {
+      ...overview,
+      connections: [
+        {
+          connectionId: 'connection-1',
+          connectionKey: 'primary',
+          displayName: 'Primary mail',
+          providerType: 'DWP_SANDBOX',
+          authenticationMode: 'INTERNAL',
+          state: 'CONFIGURATION_REQUIRED',
+          capabilities: ['SEND'],
+          credentialConfigured: false,
+          version: 1,
+        },
+      ],
+    };
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="connections"
+          overview={connectionOverview}
+          canManage
+          canManageConnections={false}
+          onOpenConnectionSettings={vi.fn()}
+        />
+      )
+    );
+    expect(
+      [...host.querySelectorAll('button')].find(
+        (button) => button.textContent === 'admin.connections.configure'
+      )?.disabled
+    ).toBe(true);
+
+    const sharedOverview: MailAdminOverview = {
+      ...overview,
+      sharedAccounts: 1,
+      sharedInboxes: [
+        {
+          sharedInboxId: 'shared-1',
+          inboxKey: 'support',
+          displayName: 'Support',
+          address: 'support@example.com',
+          serviceTargetMinutes: 120,
+          lifecycleState: 'ACTIVE',
+          openCount: 0,
+          overdueCount: 0,
+          version: 1,
+        },
+      ],
+    };
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="shared-access"
+          overview={sharedOverview}
+          canManage
+          canManageSharedInboxes={false}
+          sharedAccess={[
+            {
+              sharedInboxId: 'shared-1',
+              version: 1,
+              providerState: 'APPLIED',
+              members: [],
+            },
+          ]}
+          onOpenSharedInboxSettings={vi.fn()}
+          onAddSharedMember={vi.fn()}
+        />
+      )
+    );
+    const sharedButtons = [...host.querySelectorAll('button')];
+    expect(
+      sharedButtons.find((button) => button.textContent === 'admin.shared.configure')?.disabled
+    ).toBe(true);
+    expect(sharedButtons.find((button) => button.textContent === 'Add member')?.disabled).toBe(
+      true
+    );
+
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="governance"
+          overview={overview}
+          canManage
+          canManagePolicy={false}
+          onOpenPolicySettings={vi.fn()}
+        />
+      )
+    );
+    expect(
+      [...host.querySelectorAll('button')].find(
+        (button) => button.textContent === 'admin.shared.configure'
+      )?.disabled
+    ).toBe(true);
+  });
+
+  it('separates hold, purge authorization, purge execution, and delivery recovery permissions', async () => {
+    const retention = {
+      generatedAt: '2026-09-16T05:59:30.000Z',
+      policyVersion: 1,
+      resourcePolicies: [],
+      holds: [],
+      purgeJobs: [],
+      candidate: {
+        candidateSnapshotId: 'snapshot-ready',
+        fingerprint: 'sha256:ready',
+        totalCandidates: 4,
+        heldCount: 0,
+        eligibleCount: 4,
+        partialSources: [],
+        generatedAt: '2026-09-16T05:59:30.000Z',
+        expiresAt: '2026-09-16T06:10:00.000Z',
+        policyVersion: 1,
+        distinctApproverCount: 2,
+      },
+    };
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="retention"
+          overview={overview}
+          canManage={false}
+          canManageHolds
+          canAuthorizePurge={false}
+          canExecutePurge
+          now={NOW}
+          retention={retention}
+          onCreateLegalHold={vi.fn()}
+          onPreviewPurge={vi.fn()}
+          onApprovePurge={vi.fn()}
+          onExecutePurge={vi.fn()}
+        />
+      )
+    );
+    const retentionButtons = [...host.querySelectorAll('button')];
+    expect(
+      retentionButtons.find((button) => button.textContent === 'Create legal hold')?.disabled
+    ).toBe(false);
+    expect(
+      retentionButtons.find((button) => button.textContent === 'Preview purge')?.disabled
+    ).toBe(true);
+    expect(
+      retentionButtons.find((button) => button.textContent === 'Approve snapshot')?.disabled
+    ).toBe(true);
+    expect(
+      retentionButtons.find((button) => button.textContent === 'Execute purge')?.disabled
+    ).toBe(false);
+
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="delivery-audit"
+          overview={overview}
+          canManage={false}
+          canReadAudit
+          canRecoverDeliveries
+          canExportAudit={false}
+          now={NOW}
+          deliveryEvidence={[delivery('2026-09-16T05:59:30.000Z')]}
+          onRetryDelivery={vi.fn()}
+          onExportDeliveryAudit={vi.fn()}
+        />
+      )
+    );
+    const deliveryButtons = [...host.querySelectorAll('button')];
+    expect(
+      deliveryButtons.find((button) => button.textContent?.includes('delivery.retry'))?.disabled
+    ).toBe(false);
+    expect(
+      deliveryButtons.find((button) => button.textContent === 'Export evidence')?.disabled
+    ).toBe(true);
+  });
+
   it('keeps purge execution disabled until the current snapshot has two approvals', async () => {
     const onExecute = vi.fn();
     await act(async () =>
@@ -239,5 +416,137 @@ describe('Mail administrative evidence surfaces', () => {
     );
     expect(execute?.disabled).toBe(true);
     expect(onExecute).not.toHaveBeenCalled();
+  });
+
+  it('uses the member version when confirming shared-inbox access revocation', async () => {
+    const onRemove = vi.fn();
+    const sharedOverview: MailAdminOverview = {
+      ...overview,
+      sharedAccounts: 1,
+      sharedInboxes: [
+        {
+          sharedInboxId: 'shared-1',
+          inboxKey: 'people-help',
+          displayName: 'People Help',
+          address: 'people-help@example.com',
+          purpose: 'Shared support',
+          serviceTargetMinutes: 120,
+          lifecycleState: 'ACTIVE',
+          openCount: 2,
+          overdueCount: 0,
+          version: 12,
+        },
+      ],
+    };
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="shared-access"
+          overview={sharedOverview}
+          canManage
+          sharedAccess={[
+            {
+              sharedInboxId: 'shared-1',
+              version: 12,
+              providerState: 'APPLIED',
+              members: [
+                {
+                  memberId: 'member-1',
+                  userId: 42,
+                  displayName: 'Mail member',
+                  state: 'ACTIVE',
+                  permissions: {
+                    read: true,
+                    sendAs: false,
+                    sendOnBehalf: false,
+                    assign: false,
+                    manage: false,
+                  },
+                  providerState: 'APPLIED',
+                  version: 7,
+                },
+              ],
+            },
+          ]}
+          onRemoveSharedMember={onRemove}
+        />
+      )
+    );
+
+    const revoke = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Revoke'
+    );
+    await act(async () => revoke?.click());
+    const confirm = [...document.body.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Confirm revocation'
+    );
+    await act(async () => confirm?.click());
+
+    expect(onRemove).toHaveBeenCalledWith(
+      'shared-1',
+      expect.objectContaining({ memberId: 'member-1', version: 7 }),
+      7
+    );
+  });
+
+  it('renders translated delivery stages and sources without raw technical identifiers', async () => {
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="delivery-audit"
+          overview={overview}
+          canManage
+          now={NOW}
+          deliveryAudit={{
+            total: 1,
+            page: 0,
+            pageSize: 50,
+            generatedAt: '2026-09-16T05:59:30.000Z',
+            items: [
+              {
+                deliveryId: 'delivery-1',
+                safeResourceRef: 'message:••42',
+                commandType: 'SEND',
+                actorName: 'Mail administrator',
+                accountName: 'People Help',
+                providerType: 'DWP_SANDBOX',
+                stage: 'ACCEPTED_BY_PROVIDER',
+                state: 'ACCEPTED_BY_PROVIDER',
+                retryEligibility: 'INELIGIBLE',
+                providerDisposition: 'ACCEPTED',
+                idempotencyState: 'UNKNOWN',
+                reconcileCapability: false,
+                cancelCapability: false,
+                evidenceGeneratedAt: '2026-09-16T05:59:30.000Z',
+                lastEvidenceAt: '2026-09-16T05:59:30.000Z',
+                correlationId: 'corr-safe-1',
+                version: 2,
+                timeline: [
+                  {
+                    stage: 'PROVIDER_ACCEPTED',
+                    state: 'SUCCEEDED',
+                    at: '2026-09-16T05:59:30.000Z',
+                    source: 'DWP_OUTBOX',
+                    evidenceState: 'VERIFIED',
+                  },
+                ],
+              },
+            ],
+          }}
+        />
+      )
+    );
+
+    expect(host.textContent).toContain('Accepted by the mail provider');
+    expect(host.textContent).not.toContain('ACCEPTED_BY_PROVIDER');
+    expect(host.textContent).not.toContain('DWP_SANDBOX');
+    const timeline = [...host.querySelectorAll('button')].find((button) =>
+      button.textContent?.includes('Timeline')
+    );
+    await act(async () => timeline?.click());
+    expect(document.body.textContent).toContain('Mail provider accepted the message');
+    expect(document.body.textContent).toContain('Delivery queue');
+    expect(document.body.textContent).not.toContain('PROVIDER_ACCEPTED');
+    expect(document.body.textContent).not.toContain('DWP_OUTBOX');
   });
 });

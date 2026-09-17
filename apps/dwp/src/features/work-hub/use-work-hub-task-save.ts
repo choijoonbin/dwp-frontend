@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import { mergeFilterSearchParams } from '@dwp-frontend/design-system';
 import { getPersonalWorkTask } from '@dwp-frontend/shared-utils/api/personal-work-api';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
+import type { MailProposalMutationBinding } from '@dwp-frontend/shared-utils';
 import type {
   PersonalWorkTask,
   WorkSourceReference,
@@ -47,6 +48,8 @@ export function useWorkHubTaskSave({
   onPlanError,
   onFeedback,
   onCreated,
+  onCreateCompleted,
+  proposalBinding,
   onScheduleCreated,
   taskSaveCoordinator,
   enabled,
@@ -62,6 +65,9 @@ export function useWorkHubTaskSave({
   onPlanError: (message: string | null) => void;
   onFeedback: (feedback: WorkHubOperationFeedback) => void;
   onCreated: (reference: WorkSourceReference) => void;
+  /** Runs only after a newly created task and its requested follow-up work are complete. */
+  onCreateCompleted?: (reference: WorkSourceReference) => void | Promise<void>;
+  proposalBinding?: MailProposalMutationBinding;
   /** Opens scheduling only after the created task is present in an exact, command-ready snapshot. */
   onScheduleCreated?: (handoff: WorkTaskScheduleHandoff) => void;
   taskSaveCoordinator?: WorkTaskSaveCoordinator;
@@ -177,16 +183,21 @@ export function useWorkHubTaskSave({
               input,
               context.idempotencyKey,
               (replayInput, idempotencyKey, guard) =>
-                controller.capture(replayInput, idempotencyKey, guard),
+                controller.capture(replayInput, idempotencyKey, guard, proposalBinding),
               planIntent
             )
           : {
               confirmationId: 0,
               planIntent,
-              task: await controller.capture(input, context.idempotencyKey, {
-                signal: run.abort.signal,
-                canContinue: isCurrent,
-              }),
+              task: await controller.capture(
+                input,
+                context.idempotencyKey,
+                {
+                  signal: run.abort.signal,
+                  canContinue: isCurrent,
+                },
+                proposalBinding
+              ),
             };
         const created = confirmation.task;
         createdTask = created;
@@ -346,6 +357,7 @@ export function useWorkHubTaskSave({
         else taskSaveCoordinator?.acknowledgeCreate(owner, claimedCreate);
         claimedCreate = null;
       }
+      if (createdReference) await onCreateCompleted?.(createdReference);
     } catch (error) {
       if (claimedCreate !== null) {
         taskSaveCoordinator?.releaseCreate(owner, claimedCreate);

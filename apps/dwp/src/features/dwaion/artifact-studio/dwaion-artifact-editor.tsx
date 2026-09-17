@@ -1,7 +1,23 @@
-import { CircleHelp, Download, Files, FileSearch2, ListChecks, ShieldCheck } from 'lucide-react';
+import { useRef, useState } from 'react';
+import {
+  Bold,
+  BookmarkPlus,
+  CircleHelp,
+  Download,
+  Files,
+  FileSearch2,
+  Heading1,
+  Heading2,
+  List,
+  ListChecks,
+  ShieldCheck,
+  Table2,
+} from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -9,6 +25,10 @@ import { ActionButton, FormField, InlineFeedback } from '@dwp-frontend/design-sy
 
 import { DwaionArtifactExportStatus } from './dwaion-artifact-export-status';
 import { DWAION_ARTIFACT_COPY_KO } from './dwaion-artifact-copy';
+import {
+  applyDwaionArtifactEditorCommand,
+  type DwaionArtifactEditorCommand,
+} from './dwaion-artifact-editor-command';
 import { artifactExportCapability, artifactPublishCapability } from './dwaion-artifact-model';
 
 import type { DwaionArtifactCopy } from './dwaion-artifact-copy';
@@ -71,6 +91,30 @@ export function DwaionArtifactEditor({
   const sourceReferences = artifact.sources.map(
     (source) => `${source.sourceType} ${copy.separator} ${source.reference}`
   );
+  const bodyInput = useRef<HTMLTextAreaElement | null>(null);
+  const [citationAnchor, setCitationAnchor] = useState<HTMLElement | null>(null);
+  const applyEditorCommand = (
+    command: DwaionArtifactEditorCommand,
+    source?: DwaionArtifactDocument['sources'][number]
+  ) => {
+    if (!canEdit) return;
+    const input = bodyInput.current;
+    const result = applyDwaionArtifactEditorCommand(
+      artifact.body,
+      input?.selectionStart ?? artifact.body.length,
+      input?.selectionEnd ?? artifact.body.length,
+      command,
+      source
+    );
+    onDraftChange(artifact.artifactId, artifact.revision, {
+      title: artifact.title,
+      body: result.value,
+    });
+    globalThis.requestAnimationFrame(() => {
+      bodyInput.current?.focus();
+      bodyInput.current?.setSelectionRange(result.selectionStart, result.selectionEnd);
+    });
+  };
 
   return (
     <Box component="section" aria-labelledby="dwaion-artifact-editor-heading" sx={{ minWidth: 0 }}>
@@ -288,6 +332,9 @@ export function DwaionArtifactEditor({
           receipt={exportReceipt}
           permitted={canExport}
           copy={copy}
+          onRetry={() => {
+            if (preflight && exportState.allowed) onExport(artifact, preflight);
+          }}
         />
       ) : null}
 
@@ -304,6 +351,76 @@ export function DwaionArtifactEditor({
             })
           }
         />
+        <Box
+          role="toolbar"
+          aria-label={copy.editorToolbarLabel}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 0.5,
+            p: 0.75,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1.5,
+            bgcolor: 'background.default',
+          }}
+        >
+          {(
+            [
+              ['HEADING_ONE', copy.formatHeadingOne, <Heading1 key="h1" size={17} />],
+              ['HEADING_TWO', copy.formatHeadingTwo, <Heading2 key="h2" size={17} />],
+              ['BOLD', copy.formatBold, <Bold key="bold" size={17} />],
+              ['BULLET_LIST', copy.formatList, <List key="list" size={17} />],
+              ['TABLE', copy.formatTable, <Table2 key="table" size={17} />],
+            ] as const
+          ).map(([command, label, icon]) => (
+            <ActionButton
+              key={command}
+              intent="quiet"
+              size="small"
+              aria-label={label}
+              title={label}
+              disabled={!canEdit}
+              onClick={() => applyEditorCommand(command)}
+              sx={{ minWidth: 44, minHeight: 44, px: 1 }}
+            >
+              {icon}
+              <Box component="span" sx={{ display: { xs: 'none', lg: 'inline' }, ml: 0.5 }}>
+                {label}
+              </Box>
+            </ActionButton>
+          ))}
+          <ActionButton
+            intent="quiet"
+            size="small"
+            startIcon={<BookmarkPlus size={17} aria-hidden="true" />}
+            disabled={!canEdit || artifact.sources.length === 0}
+            title={artifact.sources.length === 0 ? copy.citationUnavailable : copy.insertCitation}
+            onClick={(event) => setCitationAnchor(event.currentTarget)}
+            sx={{ minHeight: 44 }}
+          >
+            {copy.insertCitation}
+          </ActionButton>
+          <Menu
+            anchorEl={citationAnchor}
+            open={Boolean(citationAnchor)}
+            onClose={() => setCitationAnchor(null)}
+          >
+            {artifact.sources.map((source) => (
+              <MenuItem
+                key={`${source.sourceType}:${source.reference}`}
+                onClick={() => {
+                  setCitationAnchor(null);
+                  applyEditorCommand('CITATION', source);
+                }}
+                sx={{ minHeight: 44, maxWidth: { xs: 300, sm: 480 }, overflowWrap: 'anywhere' }}
+              >
+                {source.sourceType} {copy.separator} {source.reference}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
         <FormField
           label={copy.editorLabel}
           value={artifact.body}
@@ -312,6 +429,7 @@ export function DwaionArtifactEditor({
           fullWidth
           required
           disabled={!canEdit}
+          inputRef={bodyInput}
           onChange={(event) =>
             onDraftChange(artifact.artifactId, artifact.revision, {
               title: artifact.title,

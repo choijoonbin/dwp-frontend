@@ -20,9 +20,12 @@ const SECURE_AUTHORITY = {
 const definition = {
   name: 'Morning review',
   objective: 'Review authorized work signals',
+  triggerType: 'SCHEDULED' as const,
   cadence: 'WEEKDAYS' as const,
   localTime: '09:00',
   timeZone: 'Asia/Seoul',
+  webhookEventType: null,
+  webhookEndpointReference: null,
   locale: 'ko',
   sources: ['WORK_ITEM'] as const,
   weekDays: [],
@@ -68,11 +71,40 @@ function routine() {
       dryRunAvailable: true,
       notificationDeliveryAvailable: false,
       proposalDeliveryAvailable: false,
+      webhookTriggerAvailable: false,
+      agentKernelBinding: availableCapability,
+      whitelistedSourceBinding: availableCapability,
+      blockedSourcePolicy: availableCapability,
+      zeroWritePolicy: availableCapability,
+      semanticVersionDiff: availableCapability,
+      runtimeBudgetRetry: availableCapability,
+      automaticQuarantine: availableCapability,
+      changeApproval: unavailableCapability,
+      agentSwitching: unavailableCapability,
+      wormDelivery: unavailableCapability,
+      oauthReauthorization: unavailableCapability,
+      temporaryBudgetIncrease: unavailableCapability,
+      operatorEscalation: unavailableCapability,
+      providerRollback: unavailableCapability,
     },
     createdAt: '2026-09-04T01:00:00Z',
     updatedAt: '2026-09-04T01:00:00Z',
   };
 }
+
+const availableCapability = {
+  available: true,
+  configured: true,
+  reasonCode: null,
+  recoveryHint: null,
+};
+
+const unavailableCapability = {
+  available: false,
+  configured: false,
+  reasonCode: 'PROVIDER_NOT_CONFIGURED',
+  recoveryHint: 'Ask an administrator to configure this governed operation.',
+};
 
 function response(payload: unknown, status = 200): Response {
   return {

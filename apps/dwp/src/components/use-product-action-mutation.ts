@@ -12,37 +12,28 @@ type ProductActionProjection = Extract<
 
 export type ProductActionRouteContractKey = ProductActionProjection['routeContractKey'];
 
-const PRODUCT_ACTION_BINDINGS = new Map<
-  ProductActionRouteContractKey,
-  ProductSurfaceMutationBinding
->(
+const PRODUCT_ACTION_PROJECTIONS = new Map<ProductActionRouteContractKey, ProductActionProjection>(
   PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
     (route): route is ProductActionProjection =>
       route.routeKind === 'ACTION' && route.subjectType === 'PRODUCT'
-  ).flatMap((route) => {
-    return [
-      [
-        route.routeContractKey,
-        {
-          productKey: route.productId,
-          surfaceKey: route.surfaceId,
-          routeContractKey: route.routeContractKey,
-          taskKind: resolveProductSurfaceTaskKind({
-            productKey: route.productId,
-            surfaceKey: route.surfaceId,
-            routeContractKey: route.routeContractKey,
-          }),
-        },
-      ] as const,
-    ];
-  })
+  ).map((route) => [route.routeContractKey, route])
 );
 
 export function productActionMutationBinding(routeContractKey: ProductActionRouteContractKey) {
-  const binding = PRODUCT_ACTION_BINDINGS.get(routeContractKey);
-  if (!binding) {
+  const route = PRODUCT_ACTION_PROJECTIONS.get(routeContractKey);
+  if (!route) {
     throw new Error(`Unknown governed product ACTION: ${routeContractKey}`);
   }
+  const binding: ProductSurfaceMutationBinding = {
+    productKey: route.productId,
+    surfaceKey: route.surfaceId,
+    routeContractKey: route.routeContractKey,
+    taskKind: resolveProductSurfaceTaskKind({
+      productKey: route.productId,
+      surfaceKey: route.surfaceId,
+      routeContractKey: route.routeContractKey,
+    }),
+  };
   return binding;
 }
 

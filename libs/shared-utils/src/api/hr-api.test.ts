@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
 import {
+  createHrLeaveRequest,
   decideHrTeamRequest,
   getHrHome,
   getHrTeam,
@@ -45,6 +46,37 @@ describe('HR API boundary', () => {
     );
     expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
     expect(JSON.parse(String(request.body))).toEqual({ note: 'Plans changed', version: 4 });
+  });
+
+  it('binds a Mail owner command to the real HR leave request', async () => {
+    const created = { requestId: 'leave-owner-1', version: 0 };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(created));
+    vi.stubGlobal('fetch', fetchMock);
+    const request = {
+      planId: 'annual',
+      startAt: '2026-09-20T09:00:00Z',
+      endAt: '2026-09-20T18:00:00Z',
+      requestedMinutes: 480,
+    };
+
+    await createHrLeaveRequest(request, legacyAuthority, {
+      proposalId: '50000000-0000-4000-8000-000000000004',
+      commandId: '60000000-0000-4000-8000-000000000004',
+      version: 5,
+    });
+
+    const sent = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(sent.headers).toEqual(
+      expect.objectContaining({
+        'X-DWP-Mail-Proposal-ID': '50000000-0000-4000-8000-000000000004',
+        'X-DWP-Mail-Command-ID': '60000000-0000-4000-8000-000000000004',
+        'X-DWP-Mail-Proposal-Version': '5',
+      })
+    );
+    expect(JSON.parse(String(sent.body))).toEqual(request);
   });
 
   it('normalizes legacy home fields and internal seed origins at the API boundary', async () => {

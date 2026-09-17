@@ -113,6 +113,36 @@ test('secondary mail workspaces expose honest capabilities and reflow without ov
   await attachScreenshot(page, testInfo, 'accounts-preferences');
 });
 
+test('action center restores the returned proposal and reports the owner result', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  await mockSecondaryMailApis(page, {
+    proposalStatus: 'EXECUTED',
+    handoff: {
+      proposalId: actionProposal.proposalId,
+      commandId: '60000000-0000-4000-8000-000000000081',
+      ownerRoute: '/work?action=create',
+      returnTo: `/mail/actions?proposalId=${actionProposal.proposalId}`,
+      focus: `mail-proposal-${actionProposal.proposalId}`,
+      status: 'EXECUTED',
+      resultRef: 'work-item/DWP-81',
+      updatedAt: '2026-09-17T09:30:00Z',
+      version: 4,
+    },
+  });
+
+  await page.goto(
+    `/mail/actions?proposalId=${actionProposal.proposalId}&focus=mail-proposal-${actionProposal.proposalId}`
+  );
+
+  await expect(page.getByText('The responsible app completed the action.')).toBeVisible();
+  await expect(page.getByText('Result: work-item/DWP-81')).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.id))
+    .toBe(`mail-proposal-${actionProposal.proposalId}`);
+});
+
 test('retention and delivery recovery remain blocked without required evidence', async ({
   page,
 }, testInfo) => {
@@ -149,10 +179,22 @@ test('retention and delivery recovery remain blocked without required evidence',
   await attachScreenshot(page, testInfo, 'admin-delivery-audit');
 });
 
-async function mockSecondaryMailApis(page: Page) {
-  await page.route('**/api/platform/v1/mail/proposals**', (route) =>
-    fulfill(route, [actionProposal])
-  );
+async function mockSecondaryMailApis(
+  page: Page,
+  options?: {
+    proposalStatus?: string;
+    handoff?: Record<string, unknown>;
+  }
+) {
+  await page.route('**/api/platform/v1/mail/proposals**', (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith(`/proposals/${actionProposal.proposalId}/handoff`)) {
+      return fulfill(route, options?.handoff ?? {});
+    }
+    return fulfill(route, [
+      { ...actionProposal, status: options?.proposalStatus ?? actionProposal.status },
+    ]);
+  });
   await page.route('**/api/platform/v1/mail/saved-views', (route) => fulfill(route, []));
   await page.route('**/api/platform/v1/mail/follow-ups**', (route) => fulfill(route, []));
   await page.route('**/api/platform/v1/mail/writing-assets', (route) =>
@@ -248,12 +290,22 @@ async function mockMailAdministrator(page: Page) {
         permissionCode: 'VIEW',
         effect: 'ALLOW',
       },
-      {
+      ...[
+        'CONNECTION_MANAGE',
+        'SHARED_INBOX_MANAGE',
+        'POLICY_MANAGE',
+        'HOLD_MANAGE',
+        'PURGE_AUTHORIZE',
+        'PURGE_EXECUTE',
+        'AUDIT_READ',
+        'RECOVERY',
+        'EXPORT',
+      ].map((permissionCode) => ({
         resourceType: 'ADMIN',
         resourceKey: 'ADMIN.MAIL',
-        permissionCode: 'MANAGE',
-        effect: 'ALLOW',
-      },
+        permissionCode,
+        effect: 'ALLOW' as const,
+      })),
     ],
   });
   await page.route('**/api/platform/v1/admin/mail/overview', (route) =>

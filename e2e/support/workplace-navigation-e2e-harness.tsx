@@ -14,6 +14,8 @@ const query = new URLSearchParams(window.location.search);
 const view = query.get('view') ?? 'wayfinding';
 const locale = query.get('locale') === 'en' ? 'en' : 'ko';
 const siteId = query.get('siteId') ?? '19000000-0000-4000-8000-000000000001';
+const originPoiId = query.get('originPoiId') ?? '19000000-0000-4000-8000-000000000003';
+const destinationPoiId = query.get('destinationPoiId') ?? '19000000-0000-4000-8000-000000000004';
 const deviceId = query.get('deviceId') ?? '19000000-0000-4000-8000-000000000005';
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
@@ -38,8 +40,8 @@ const content =
   ) : (
     <WorkplaceWayfinding
       siteId={siteId}
-      initialOriginPoiId="19000000-0000-4000-8000-000000000003"
-      initialDestinationPoiId="19000000-0000-4000-8000-000000000004"
+      initialOriginPoiId={originPoiId}
+      initialDestinationPoiId={destinationPoiId}
       defaultDestinationResourceId="19000000-0000-4000-8000-000000000004"
       locale={locale}
       canUpdate

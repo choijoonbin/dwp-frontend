@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { Download, RefreshCw } from 'lucide-react';
 import Stack from '@mui/material/Stack';
@@ -19,12 +20,15 @@ export function DwaionArtifactExportStatus({
   receipt,
   permitted,
   copy,
+  onRetry,
 }: {
   artifactId: string;
   receipt: DwaionArtifactExportEvidence;
   permitted: boolean;
   copy: DwaionArtifactCopy;
+  onRetry: () => void;
 }) {
+  const { t } = useTranslation('work');
   const { user } = useAuth();
   const [downloading, setDownloading] = useState(false);
   const [downloadFailed, setDownloadFailed] = useState(false);
@@ -64,6 +68,27 @@ export function DwaionArtifactExportStatus({
         {current && !current.executionAvailable && !current.fileAvailable ? (
           <Typography variant="caption">{copy.exportUnavailable}</Typography>
         ) : null}
+        {current?.safeErrorCode ? (
+          <Typography variant="caption" color="warning.main">
+            {current.safeErrorCode}
+          </Typography>
+        ) : null}
+        {file ? (
+          <Stack
+            data-testid="artifact-export-completion-receipt"
+            gap={0.25}
+            sx={{ p: 1, bgcolor: 'action.hover', borderRadius: 1 }}
+          >
+            <Typography variant="caption">
+              {copy.exportCompletionReceipt} · {file.fileName} · {file.byteSize}{' '}
+              {t('dwaionOperational.artifact.bytesUnit')}
+            </Typography>
+            <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
+              {t('dwaionOperational.artifact.checksumPrefix')} {file.contentFingerprint}
+            </Typography>
+            <Typography variant="caption">{file.completedAt}</Typography>
+          </Stack>
+        ) : null}
         {downloadFailed ? <Typography variant="caption">{copy.commandFailed}</Typography> : null}
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
           <ActionButton
@@ -77,6 +102,11 @@ export function DwaionArtifactExportStatus({
           >
             {copy.exportRefresh}
           </ActionButton>
+          {current && ['FAILED', 'CANCELLED', 'PARTIAL'].includes(current.state) ? (
+            <ActionButton intent="secondary" onClick={onRetry}>
+              {copy.exportRetry}
+            </ActionButton>
+          ) : null}
           {file ? (
             <ActionButton
               intent="secondary"

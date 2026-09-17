@@ -199,6 +199,41 @@ describe('Ask runtime API', () => {
     ).resolves.toEqual(response);
   });
 
+  it('accepts citations produced from verified secure attachments', async () => {
+    const grounded = groundedResponse();
+    const response = {
+      ...grounded,
+      citations: [
+        {
+          ...grounded.citations[0],
+          sourceType: 'ATTACHMENT',
+          title: 'infrastructure-review.pdf: page 4',
+          sourceSystem: 'DWAI_ON_ATTACHMENT',
+          route: null,
+        },
+      ],
+      sourceCount: 1,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, { data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(
+        jsonResponse(200, { status: 'SUCCESS', message: 'OK', data: response })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      askDwp({
+        requestId: 'request-ask-1',
+        query: 'Review the verified attachments.',
+        locale: 'en',
+        attachmentIds: ['bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1'],
+      })
+    ).resolves.toEqual(response);
+  });
+
   it('accepts an explicitly identified evidence-only fallback', async () => {
     const grounded = groundedResponse();
     const response = {

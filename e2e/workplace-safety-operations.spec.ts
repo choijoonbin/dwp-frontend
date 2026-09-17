@@ -101,6 +101,23 @@ test('submits SAFE and a bidirectional masked message, then recovers RESULT_UNKN
   });
 });
 
+test('shows only a configured safe emergency call action on the mobile Safety Sheet', async ({
+  page,
+}) => {
+  await mockWorkplaceSafety(page, { locale: 'ko' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/workplace/safety');
+
+  const contacts = page.getByRole('region', { name: '긴급 연락처' });
+  const call = contacts.getByRole('link', { name: '공공 긴급 서비스에 전화' });
+  await expect(call).toHaveAttribute('href', 'tel:+82123456789');
+  await expect(contacts.getByText('외부 긴급 인계 센터')).toBeVisible();
+  await expect(contacts.getByText(/지휘 센터 운영자만/u)).toBeVisible();
+  await expect(contacts.locator('a[href^="tel:"]')).toHaveCount(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await expectNoSeriousAccessibilityViolations(page);
+});
+
 for (const entry of [
   { width: 1280, locale: 'en' as const },
   { width: 390, locale: 'ko' as const },
@@ -264,6 +281,50 @@ test('operates activation, source evidence, resend, scope, assembly, messaging, 
     path: testInfo.outputPath('screen20-safety-admin-en-1440.png'),
     fullPage: true,
   });
+});
+
+test('previews one external handoff and resolves an unknown result by provider lookup without resend', async ({
+  page,
+}) => {
+  const evidence = await mockWorkplaceSafety(page, {
+    emergencyProviderReady: true,
+    emergencyHandoffUnknown: true,
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const inspector = await openAdminIncident(page);
+  const handoff = section(inspector, 'External emergency handoff');
+  await handoff.getByRole('button').first().click();
+
+  await expect(handoff.getByText('Ready', { exact: true })).toBeVisible();
+  const previewButton = handoff.getByRole('button', { name: 'Preview external handoff' });
+  await expect(previewButton).toBeDisabled();
+  await handoff
+    .getByRole('textbox', { name: 'Audit reason' })
+    .fill('Escalate the verified incident to the configured emergency relay');
+  await expect(previewButton).toBeEnabled();
+  await previewButton.click();
+  await expect(handoff.getByText('External handoff is eligible for confirmation')).toBeVisible();
+  await expect(handoff.getByRole('button', { name: 'Confirm external handoff' })).toBeDisabled();
+  await handoff
+    .getByRole('checkbox', { name: /explicitly confirm one external emergency handoff/i })
+    .check();
+  await handoff.getByRole('button', { name: 'Confirm external handoff' }).click();
+  await expect(handoff.getByText(/provider result is unknown/i)).toBeVisible();
+  await expect(handoff.getByRole('button', { name: 'Confirm external handoff' })).toBeDisabled();
+
+  const postsAfterHandoff = evidence.postCount();
+  await handoff.getByRole('button', { name: 'Recheck receipt with GET' }).click();
+  expect(evidence.postCount()).toBe(postsAfterHandoff);
+  await handoff.getByRole('checkbox', { name: /provider status lookup only/i }).check();
+  await handoff.getByRole('button', { name: 'Reconcile provider status' }).click();
+  await expect(handoff.getByText(/External handoff Succeeded/u)).toBeVisible();
+
+  const executePaths = evidence.postPaths.filter((path) => path.endsWith('/emergency-handoffs'));
+  expect(executePaths).toHaveLength(1);
+  expect(evidence.postPaths).toContain(
+    `/api/platform/v1/admin/workplace/safety/incidents/${SAFETY_IDS.incident}/emergency-handoffs/${SAFETY_IDS.emergencyCommand}:reconcile`
+  );
+  await expectNoSeriousAccessibilityViolations(page);
 });
 
 test('keeps RESULT_UNKNOWN fail-closed and rechecks the admin incident with GET only', async ({

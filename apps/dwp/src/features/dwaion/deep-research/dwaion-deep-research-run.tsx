@@ -1,13 +1,19 @@
 import {
   ArrowLeft,
   Ban,
+  Check,
   Clock3,
+  Copy,
   FileOutput,
+  Maximize2,
   Pause,
   Play,
   RefreshCcw,
   ShieldCheck,
+  X,
 } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
   EmptyState,
@@ -18,6 +24,9 @@ import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -27,11 +36,15 @@ import {
   dwaionResearchProgressPercent,
   dwaionResearchRunCanDeliver,
 } from './dwaion-deep-research-model';
+import { DwaionCapabilityActions } from '../dwaion-capability-actions';
+import { DwaionResearchReport } from './dwaion-research-report';
 
 import type {
   DwaionResearchCommand,
+  DwaionResearchCapabilities,
   DwaionResearchDelivery,
   DwaionResearchDeliveryType,
+  DwaionResearchDownloadKind,
   DwaionResearchPlan,
   DwaionResearchRun,
 } from '@dwp-frontend/shared-utils';
@@ -49,25 +62,32 @@ export function DwaionDeepResearchRun({
   locale,
   plan,
   run,
+  capabilities,
   deliveries,
   busy,
   operationError,
   onRefresh,
+  onExecute,
   onCommand,
   onDeliver,
+  onDownload,
   onExit,
 }: {
   locale: 'ko' | 'en';
   plan: DwaionResearchPlan | null;
   run: DwaionResearchRun;
+  capabilities: DwaionResearchCapabilities | null;
   deliveries: readonly DwaionResearchDelivery[];
   busy: string | null;
   operationError: boolean;
   onRefresh: () => void;
+  onExecute: () => void;
   onCommand: (command: DwaionResearchCommand, sourceKey?: string) => void;
   onDeliver: (type: DwaionResearchDeliveryType) => void;
+  onDownload: (kind: DwaionResearchDownloadKind) => void;
   onExit: () => void;
 }) {
+  const { t } = useTranslation('work');
   const copy = deepResearchCopy(locale);
   const percent = dwaionResearchProgressPercent(
     run.progress.completedSteps,
@@ -76,6 +96,17 @@ export function DwaionDeepResearchRun({
   const failedSource = run.progress.failedSources[0];
   const active = ['QUEUED', 'RUNNING', 'CANCELLING'].includes(run.state);
   const warning = ['PARTIAL', 'CONFLICT', 'FAILED'].includes(run.state);
+  const [reportFullscreen, setReportFullscreen] = useState(false);
+  const [copiedReceiptId, setCopiedReceiptId] = useState<string | null>(null);
+
+  const copyReceiptId = async (receiptId: string) => {
+    try {
+      await navigator.clipboard.writeText(receiptId);
+      setCopiedReceiptId(receiptId);
+    } catch {
+      setCopiedReceiptId(null);
+    }
+  };
 
   return (
     <Stack gap={2} data-testid="dwaion-deep-research-run">
@@ -163,6 +194,7 @@ export function DwaionDeepResearchRun({
             <LinearProgress
               variant={active ? undefined : 'determinate'}
               value={percent}
+              aria-label={`${copy.steps}: ${run.progress.completedSteps}/${run.progress.totalSteps}`}
               sx={{ mt: 1, height: 8, borderRadius: 999 }}
             />
             <Metric
@@ -175,7 +207,7 @@ export function DwaionDeepResearchRun({
             />
             {run.startedAt ? (
               <Metric
-                label="Started"
+                label={t('dwaionOperational.deepResearch.started')}
                 value={formatDate(
                   run.startedAt,
                   { dateStyle: 'medium', timeStyle: 'short' },
@@ -203,13 +235,19 @@ export function DwaionDeepResearchRun({
         <Stack gap={2}>
           <Panel title={run.state === 'COMPLETED' ? copy.report : copy.runTitle}>
             {run.result ? (
-              <Typography
-                component="div"
-                variant="body2"
-                sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.75, overflowWrap: 'anywhere' }}
-              >
-                {run.result.reportMarkdown}
-              </Typography>
+              <Stack gap={1.25}>
+                <Stack direction="row" justifyContent="flex-end">
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    startIcon={<Maximize2 size={16} />}
+                    onClick={() => setReportFullscreen(true)}
+                  >
+                    {copy.viewFullscreen}
+                  </ActionButton>
+                </Stack>
+                <DwaionResearchReport markdown={run.result.reportMarkdown} locale={locale} />
+              </Stack>
             ) : (
               <Box sx={{ py: 3, textAlign: 'center' }}>
                 <Clock3 size={28} aria-hidden="true" />
@@ -229,7 +267,8 @@ export function DwaionDeepResearchRun({
                   >
                     <Typography variant="subtitle2">{citation.label}</Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {citation.locator} · SHA-256 {citation.contentSha256.slice(0, 12)}…
+                      {citation.locator} {t('dwaionOperational.deepResearch.checksumSeparator')}{' '}
+                      {citation.contentSha256.slice(0, 12)}…
                     </Typography>
                   </Box>
                 ))}
@@ -243,6 +282,16 @@ export function DwaionDeepResearchRun({
         <Stack gap={2} sx={{ position: { lg: 'sticky' }, top: { lg: 88 } }}>
           <Panel title={copy.recovery}>
             <Stack gap={0.75}>
+              {run.state === 'QUEUED' ? (
+                <ActionButton
+                  intent="primary"
+                  startIcon={<Play size={16} />}
+                  loading={busy === 'EXECUTE'}
+                  onClick={onExecute}
+                >
+                  {locale === 'ko' ? '현재 권한으로 실행 승인' : 'Authorize and execute'}
+                </ActionButton>
+              ) : null}
               {run.state === 'RUNNING' ? (
                 <ActionButton
                   intent="secondary"
@@ -323,8 +372,20 @@ export function DwaionDeepResearchRun({
               ))}
             </Stack>
           </Panel>
+          <DwaionCapabilityActions
+            title={copy.evidenceActions}
+            description={copy.evidenceActionsHelp}
+            actions={researchEvidenceActions({ run, capabilities, busy, copy, onDownload })}
+          />
           {run.receiptId ? (
-            <Receipt title={copy.receipt} receiptId={run.receiptId} />
+            <Receipt
+              title={copy.receipt}
+              receiptId={run.receiptId}
+              copied={copiedReceiptId === run.receiptId}
+              copy={copy}
+              showUnavailableEvidence
+              onCopy={() => void copyReceiptId(run.receiptId as string)}
+            />
           ) : (
             <InlineFeedback severity="info">{copy.noReceipt}</InlineFeedback>
           )}
@@ -333,12 +394,131 @@ export function DwaionDeepResearchRun({
               key={delivery.deliveryId}
               title={`${copy.deliveryLabels[delivery.deliveryType]} · ${delivery.state}`}
               receiptId={delivery.receiptId}
+              copied={Boolean(delivery.receiptId && copiedReceiptId === delivery.receiptId)}
+              copy={copy}
+              onCopy={
+                delivery.receiptId
+                  ? () => void copyReceiptId(delivery.receiptId as string)
+                  : undefined
+              }
             />
           ))}
         </Stack>
       </Box>
+      <Dialog
+        fullScreen
+        open={reportFullscreen}
+        onClose={() => setReportFullscreen(false)}
+        aria-labelledby="dwaion-research-fullscreen-title"
+      >
+        <DialogTitle id="dwaion-research-fullscreen-title">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
+            <Typography component="span" variant="h6">
+              {copy.report}
+            </Typography>
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<X size={16} />}
+              onClick={() => setReportFullscreen(false)}
+            >
+              {copy.closeFullscreen}
+            </ActionButton>
+          </Stack>
+        </DialogTitle>
+        <DialogContent dividers sx={{ px: { xs: 2, md: 6 }, py: 3 }}>
+          {run.result ? (
+            <Box sx={{ maxWidth: 1040, mx: 'auto' }}>
+              <DwaionResearchReport markdown={run.result.reportMarkdown} locale={locale} />
+            </Box>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </Stack>
   );
+}
+
+function researchEvidenceActions({
+  run,
+  capabilities,
+  busy,
+  copy,
+  onDownload,
+}: {
+  run: DwaionResearchRun;
+  capabilities: DwaionResearchCapabilities | null;
+  busy: string | null;
+  copy: ReturnType<typeof deepResearchCopy>;
+  onDownload: (kind: DwaionResearchDownloadKind) => void;
+}) {
+  const capability = (key: keyof DwaionResearchCapabilities) => capabilities?.[key];
+  const reason = (key: keyof DwaionResearchCapabilities) => {
+    const value = capability(key);
+    if (value?.available) return copy.serverDownloadReady;
+    return (
+      value?.recoveryHint ??
+      value?.reasonCode ??
+      run.progress.recoveryHint ??
+      copy.providerActionUnavailable
+    );
+  };
+  return [
+    {
+      key: 'raw-download',
+      label: copy.rawDownload,
+      capability: 'research.result',
+      reason: reason('rawExport'),
+      available: Boolean(capability('rawExport')?.available && run.result),
+      onClick: () => onDownload('raw'),
+    },
+    {
+      key: 'pdf-download',
+      label: copy.pdfDownload,
+      capability: 'browser.print',
+      reason: reason('pdfExport'),
+      available: Boolean(capability('pdfExport')?.available && run.result),
+    },
+    {
+      key: 'receipt-download',
+      label: copy.receiptDownload,
+      capability: 'research.receipt',
+      reason: reason('receiptDownload'),
+      available: Boolean(capability('receiptDownload')?.available && run.receiptId),
+      onClick: () => onDownload('receipt'),
+    },
+    {
+      key: 'audit-ledger',
+      label: copy.auditLedger,
+      capability: 'research.run-ledger',
+      reason: reason('auditDownload'),
+      available: Boolean(capability('auditDownload')?.available && run.receiptId),
+      onClick: () => onDownload('audit'),
+    },
+    ...(
+      [
+        ['save-fork', 'fork'],
+        ['merge-latest', 'merge'],
+        ['keep-local', 'keepLocal'],
+        ['sensitivity', 'sensitivityRecalculation'],
+        ['cache-fallback', 'cacheFallback'],
+      ] as const
+    ).map(([key, capabilityKey]) => ({
+      key,
+      label: {
+        'save-fork': copy.saveFork,
+        'merge-latest': copy.mergeLatest,
+        'keep-local': copy.keepLocal,
+        sensitivity: copy.sensitivity,
+        'cache-fallback': copy.cacheFallback,
+      }[key],
+      capability: `research.recovery.${key}`,
+      reason: reason(capabilityKey),
+      available: Boolean(capability(capabilityKey)?.available),
+    })),
+  ].map((action) => ({
+    ...action,
+    available: action.available && !busy?.startsWith('DOWNLOAD_'),
+  }));
 }
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
@@ -374,7 +554,21 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Receipt({ title, receiptId }: { title: string; receiptId: string | null }) {
+function Receipt({
+  title,
+  receiptId,
+  copied,
+  copy,
+  showUnavailableEvidence = false,
+  onCopy,
+}: {
+  title: string;
+  receiptId: string | null;
+  copied: boolean;
+  copy: ReturnType<typeof deepResearchCopy>;
+  showUnavailableEvidence?: boolean;
+  onCopy?: () => void;
+}) {
   return (
     <Box
       sx={{
@@ -389,13 +583,56 @@ function Receipt({ title, receiptId }: { title: string; receiptId: string | null
         <ShieldCheck size={16} aria-hidden="true" />
         {title}
       </Typography>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ display: 'block', mt: 0.5, overflowWrap: 'anywhere' }}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={1}
+        sx={{ mt: 0.5 }}
       >
-        {receiptId ?? '—'}
-      </Typography>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
+        >
+          {receiptId ?? '—'}
+        </Typography>
+        {receiptId && onCopy ? (
+          <ActionButton
+            intent="quiet"
+            size="small"
+            startIcon={copied ? <Check size={14} /> : <Copy size={14} />}
+            onClick={onCopy}
+          >
+            {copied ? copy.copiedReceipt : copy.copyReceipt}
+          </ActionButton>
+        ) : null}
+      </Stack>
+      {showUnavailableEvidence ? (
+        <Box
+          sx={{ mt: 1, pt: 1, borderTop: 1, borderColor: 'divider' }}
+          data-testid="dwaion-receipt-contract-boundary"
+        >
+          {[copy.receiptFingerprint, copy.receiptIssuedAt, copy.receiptLedgerDetail].map(
+            (label) => (
+              <Stack
+                key={label}
+                direction="row"
+                justifyContent="space-between"
+                gap={1}
+                sx={{ mt: 0.5 }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  {label}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" textAlign="right">
+                  {copy.receiptDetailUnavailable}
+                </Typography>
+              </Stack>
+            )
+          )}
+        </Box>
+      ) : null}
     </Box>
   );
 }

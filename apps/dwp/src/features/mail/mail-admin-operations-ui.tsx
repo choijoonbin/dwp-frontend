@@ -11,6 +11,7 @@ export type { MailAdminOperationsContentProps } from './mail-admin-operations-ui
 
 export function MailAdminOperationsContent(props: MailAdminOperationsContentProps) {
   const now = props.now ?? Date.now();
+  const fallback = props.canManage;
   if (props.surface === 'operations')
     return (
       <OperationsSurface
@@ -26,7 +27,7 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
         overview={props.overview}
         operations={props.connectionOperations}
         now={now}
-        canManage={props.canManage}
+        canManage={props.canManageConnections ?? fallback}
         busyAction={props.busyAction}
         onOpenSettings={props.onOpenConnectionSettings}
         onDiagnostic={props.onRunConnectionDiagnostic}
@@ -39,7 +40,7 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
       <SharedAccessSurface
         overview={props.overview}
         access={props.sharedAccess}
-        canManage={props.canManage}
+        canManage={props.canManageSharedInboxes ?? fallback}
         busyAction={props.busyAction}
         onOpenSettings={props.onOpenSharedInboxSettings}
         onAdd={props.onAddSharedMember}
@@ -52,7 +53,7 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
       <GovernanceSurface
         overview={props.overview}
         governance={props.policyGovernance}
-        canManage={props.canManage}
+        canManage={props.canManagePolicy ?? fallback}
         onOpenSettings={props.onOpenPolicySettings}
       />
     );
@@ -62,7 +63,9 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
         overview={props.overview}
         retention={props.retention}
         fallbackEvidence={props.purgeEvidence}
-        canManage={props.canManage}
+        canManageHolds={props.canManageHolds ?? fallback}
+        canAuthorizePurge={props.canAuthorizePurge ?? fallback}
+        canExecutePurge={props.canExecutePurge ?? fallback}
         busyAction={props.busyAction}
         onCreateHold={props.onCreateLegalHold}
         onUpdateHold={props.onUpdateLegalHold}
@@ -78,7 +81,9 @@ export function MailAdminOperationsContent(props: MailAdminOperationsContentProp
       page={props.deliveryAudit}
       auditExport={props.auditExport}
       evidence={props.deliveryEvidence}
-      canManage={props.canManage}
+      canReadAudit={props.canReadAudit ?? fallback}
+      canRecover={props.canRecoverDeliveries ?? fallback}
+      canExport={props.canExportAudit ?? fallback}
       now={now}
       busyAction={props.busyAction}
       onReconcile={props.onReconcileDelivery}

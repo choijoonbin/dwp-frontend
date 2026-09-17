@@ -1,6 +1,8 @@
 export type DwaionPersonalControlsViewState = 'loading' | 'error' | 'permission-denied' | 'ready';
 export type DwaionMemoryKind = 'RESPONSE_LENGTH' | 'OUTPUT_FORMAT' | 'TONE' | 'WORKING_STYLE';
-export type DwaionMemoryState = 'ACTIVE' | 'DISABLED' | 'DELETED';
+export type DwaionMemoryState = 'ACTIVE' | 'DISABLED' | 'DELETED' | 'EXPIRED';
+export type DwaionMemoryScope = 'ASK' | 'RESEARCH' | 'PROPOSALS' | 'ROUTINES' | 'ARTIFACTS';
+export type DwaionMemoryFilter = 'ALL' | 'MANUAL' | 'AI_APPROVED' | 'EXPIRING';
 
 export type DwaionMemoryPreference = {
   state: 'UNSET' | 'DISABLED' | 'ENABLED';
@@ -16,6 +18,7 @@ export type DwaionMemoryPreference = {
   backgroundCredentialStorage: boolean | null;
   teamMemoryAvailable: boolean | null;
   externalActionWithoutApproval: boolean | null;
+  evidenceCapabilities: DwaionMemoryEvidenceCapabilities | null;
 };
 
 export type DwaionSourcePreference = {
@@ -36,11 +39,40 @@ export type DwaionMemoryRecord = {
   kind: DwaionMemoryKind;
   label: string;
   value: string;
+  origin: 'MANUAL';
+  sourceType: string;
+  confidence: number | null;
+  factVector: readonly string[];
+  useCount: number;
+  lastUsedAt: string | null;
+  encryptionProvider: string | null;
+  encryptionKeyVersion: string | null;
+  encryptionKeyReferenceFingerprint: string | null;
   state: DwaionMemoryState;
+  scope: readonly DwaionMemoryScope[];
+  expiresAt: string | null;
   revision: number;
   createdAt: string;
   updatedAt: string;
 };
+
+export type DwaionMemoryEvidenceCapability = {
+  available: boolean;
+  configured: boolean;
+  reasonCode?: string | null;
+  recoveryHint?: string | null;
+};
+
+export type DwaionMemoryEvidenceCapabilities = Record<
+  | 'manualProvenance'
+  | 'aiDerivedMemory'
+  | 'confidenceScoring'
+  | 'factVector'
+  | 'usageMetrics'
+  | 'usageTrail'
+  | 'kmsBinding',
+  DwaionMemoryEvidenceCapability
+>;
 
 export type DwaionMemoryDraft = {
   kind: DwaionMemoryKind;
@@ -97,9 +129,48 @@ export function memoryDraftErrors(draft: DwaionMemoryDraft): readonly string[] {
 export function memoryCanMutate(
   memory: DwaionMemoryRecord,
   expectedRevision: number
-): 'ALLOWED' | 'REVISION_CONFLICT' | 'DELETED' {
-  if (memory.state === 'DELETED') return 'DELETED';
+): 'ALLOWED' | 'REVISION_CONFLICT' | 'DELETED' | 'EXPIRED' {
+  if (memory.state === 'DELETED' || memory.state === 'EXPIRED') return memory.state;
   return memory.revision === expectedRevision ? 'ALLOWED' : 'REVISION_CONFLICT';
+}
+
+export function memoryExpiresSoon(
+  memory: DwaionMemoryRecord,
+  referenceTime: number,
+  windowDays = 30
+): boolean {
+  if (!memory.expiresAt || memory.state === 'EXPIRED' || windowDays <= 0) return false;
+  const expiresAt = Date.parse(memory.expiresAt);
+  return (
+    Number.isFinite(expiresAt) &&
+    expiresAt > referenceTime &&
+    expiresAt <= referenceTime + windowDays * 24 * 60 * 60 * 1_000
+  );
+}
+
+export function filterDwaionMemories(
+  memories: readonly DwaionMemoryRecord[],
+  filter: DwaionMemoryFilter,
+  referenceTime: number
+): readonly DwaionMemoryRecord[] {
+  if (filter === 'AI_APPROVED') return [];
+  if (filter === 'EXPIRING') {
+    return memories.filter((memory) => memoryExpiresSoon(memory, referenceTime));
+  }
+  if (filter === 'MANUAL') return memories.filter((memory) => memory.origin === 'MANUAL');
+  return memories;
+}
+
+export function dwaionMemoryFilterCounts(
+  memories: readonly DwaionMemoryRecord[],
+  referenceTime: number
+): Record<DwaionMemoryFilter, number> {
+  return {
+    ALL: memories.length,
+    MANUAL: memories.filter((memory) => memory.origin === 'MANUAL').length,
+    AI_APPROVED: 0,
+    EXPIRING: memories.filter((memory) => memoryExpiresSoon(memory, referenceTime)).length,
+  };
 }
 
 export function clearRequestIsValid(scopes: readonly DwaionClearScope[]): boolean {

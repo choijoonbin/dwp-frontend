@@ -14,6 +14,7 @@ import type {
   WorkSourceReference,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
+import type { MailProposalMutationBinding } from '@dwp-frontend/shared-utils';
 import {
   executeWorkHubAction,
   type WorkHubActionGuard,
@@ -233,13 +234,19 @@ export function createWorkHubController(
     async capture(
       input: PersonalWorkTaskInput,
       idempotencyKey: string,
-      guard: WorkHubActionGuard = {}
+      guard: WorkHubActionGuard = {},
+      proposalBinding?: MailProposalMutationBinding
     ) {
       if (pending || !canContinue(guard) || personalTaskInputUsesUnsupportedSource(input))
         throw new Error('A work command is already pending or its source is unsupported');
       pending = true;
       try {
-        const task = await clients.createPersonalWorkTask(input, idempotencyKey, guard.signal);
+        const task = await clients.createPersonalWorkTask(
+          input,
+          idempotencyKey,
+          guard.signal,
+          proposalBinding
+        );
         if (!canContinue(guard) || !isPersonalTaskCreateReceipt(task, input)) {
           throw new Error('Unverified personal task creation receipt');
         }

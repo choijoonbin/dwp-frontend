@@ -1,0 +1,412 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [active] [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Operations
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Operations
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e37]: Operations overview
+              - listitem [ref=e38]:
+                - link "Models & routing" [ref=e39] [cursor=pointer]:
+                  - /url: /dwaion/admin/models
+                  - img [ref=e41]
+                  - paragraph [ref=e46]: Models & routing
+              - listitem [ref=e47]:
+                - link "Agent and publishing management" [ref=e48] [cursor=pointer]:
+                  - /url: /dwaion/admin/agents
+                  - img [ref=e50]
+                  - paragraph [ref=e54]: Agent and publishing management
+              - listitem [ref=e55]:
+                - link "Data sources and connectors" [ref=e56] [cursor=pointer]:
+                  - /url: /dwaion/admin/sources
+                  - img [ref=e58]
+                  - paragraph [ref=e64]: Data sources and connectors
+              - listitem [ref=e65]:
+                - link "Actions and execution access" [ref=e66] [cursor=pointer]:
+                  - /url: /dwaion/admin/actions
+                  - img [ref=e68]
+                  - paragraph [ref=e73]: Actions and execution access
+              - listitem [ref=e74]:
+                - link "Policy and safety controls" [ref=e75] [cursor=pointer]:
+                  - /url: /dwaion/admin/safety
+                  - img [ref=e77]
+                  - paragraph [ref=e80]: Policy and safety controls
+              - listitem [ref=e81]:
+                - link "Response quality and evaluation" [ref=e82] [cursor=pointer]:
+                  - /url: /dwaion/admin/evaluation
+                  - img [ref=e84]
+                  - paragraph [ref=e87]: Response quality and evaluation
+              - listitem [ref=e88]:
+                - link "Operational readiness review" [ref=e89] [cursor=pointer]:
+                  - /url: /dwaion/admin/gates
+                  - img [ref=e91]
+                  - paragraph [ref=e95]: Operational readiness review
+              - listitem [ref=e96]:
+                - link "Data retention and audit" [ref=e97] [cursor=pointer]:
+                  - /url: /dwaion/admin/audit
+                  - img [ref=e99]
+                  - paragraph [ref=e103]: Data retention and audit
+        - link "Return to work" [ref=e105] [cursor=pointer]:
+          - /url: /dwaion/home
+          - img [ref=e107]
+          - text: Return to work
+    - banner [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - img [ref=e113]
+          - generic "DWAI·ON management" [ref=e117]
+        - navigation "App area switcher" [ref=e120]:
+          - generic [ref=e121]: Management mode
+          - 'link "Return to work: DWAI·ON" [ref=e123] [cursor=pointer]':
+            - /url: /dwaion/home
+            - img [ref=e125]
+            - generic [ref=e127]: Return to work
+        - generic [ref=e128]:
+          - button "Search DWP" [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+            - paragraph [ref=e134]: Search DWP
+            - generic [ref=e135]: ⌘K
+          - generic [ref=e136]:
+            - button "Enter full screen" [ref=e137] [cursor=pointer]:
+              - img [ref=e138]
+            - generic "0 actionable notifications, 0 total unread" [ref=e144]:
+              - button "0 actionable notifications, 0 total unread" [ref=e145] [cursor=pointer]:
+                - generic [ref=e146]:
+                  - img [ref=e147]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e151] [cursor=pointer]':
+            - generic [ref=e152]: T
+            - img [ref=e153]
+    - main [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]: A-01 · AI Control Plane
+            - heading "Models & routing" [level=1] [ref=e160]
+            - paragraph [ref=e161]: Operate providers, models, workload routing, budgets, and recovery within one governed boundary.
+          - status [ref=e163]:
+            - generic [ref=e165]:
+              - generic [ref=e166]: Live operational data
+              - generic [ref=e167]: Generated Sep 8, 2026, 12:00 PM
+            - generic "Refresh" [ref=e168]:
+              - button "Refresh" [ref=e169] [cursor=pointer]:
+                - img [ref=e170]
+        - generic [ref=e176]:
+          - region "AI control plane summary" [ref=e177]:
+            - generic [ref=e179]:
+              - paragraph [ref=e180]: "2"
+              - paragraph [ref=e181]: Providers
+              - text: 2 models
+            - generic [ref=e183]:
+              - paragraph [ref=e184]: "1"
+              - paragraph [ref=e185]: Pending approval
+            - generic [ref=e187]:
+              - paragraph [ref=e188]: "1"
+              - paragraph [ref=e189]: Canaries
+            - generic [ref=e191]:
+              - paragraph [ref=e192]: 68%
+              - paragraph [ref=e193]: Monthly budget
+              - text: 82,000,000 / 120,000,000
+          - region "Checker approval inbox" [ref=e194]:
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - heading "Checker approval inbox" [level=2] [ref=e197]
+                - paragraph [ref=e198]: Independently review the submitted diff, impact, recovery plan, and evidence.
+              - status [ref=e200]:
+                - generic [ref=e202]:
+                  - generic [ref=e203]: Live operational data
+                  - generic [ref=e204]: Generated Sep 8, 2026, 12:00 PM
+                - generic "Refresh" [ref=e205]:
+                  - button "Refresh" [ref=e206] [cursor=pointer]:
+                    - img [ref=e207]
+            - 'button "Review approval command: MODEL_ROUTING_UPDATE route-enterprise" [ref=e214] [cursor=pointer]':
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - generic [ref=e217]:
+                    - img [ref=e218]
+                    - heading "MODEL_ROUTING_UPDATE" [level=6] [ref=e221]
+                    - generic [ref=e223]: AWAITING_APPROVAL
+                  - paragraph [ref=e224]: ROUTING_POLICY:route-enterprise · AI-OPS-41
+                  - generic [ref=e225]: fixture-maker · v1
+                - img [ref=e226]
+          - generic [ref=e228]:
+            - region "Provider & immutable model registry" [ref=e229]:
+              - generic [ref=e231]:
+                - heading "Provider & immutable model registry" [level=2] [ref=e232]
+                - paragraph [ref=e233]: Pinned model identity, data boundary, credential, region, cost, and runtime evidence.
+              - table "Provider and immutable model registry" [ref=e235]:
+                - row "Provider / model Modality / limit Allowed data Governance / region Credential Runtime" [ref=e236]:
+                  - columnheader "Provider / model" [ref=e237]
+                  - columnheader "Modality / limit" [ref=e238]
+                  - columnheader "Allowed data" [ref=e239]
+                  - columnheader "Governance / region" [ref=e240]
+                  - columnheader "Credential" [ref=e241]
+                  - columnheader "Runtime" [ref=e242]
+                - generic [ref=e243]:
+                  - row "Managed enterprise provider Enterprise multimodal model · ACTIVE TEXT · VISION 128,000 context TIER_1 TIER_2_MASKED No training · DLP masking required ap-northeast-2 BOUND kms:key:9021 HEALTHY P95 420ms" [ref=e244]:
+                    - cell "Managed enterprise provider Enterprise multimodal model · ACTIVE" [ref=e245]:
+                      - heading "Managed enterprise provider" [level=6] [ref=e246]
+                      - generic [ref=e247]: Enterprise multimodal model · ACTIVE
+                    - cell "TEXT · VISION 128,000 context" [ref=e248]:
+                      - paragraph [ref=e249]: TEXT · VISION
+                      - generic [ref=e250]: 128,000 context
+                    - cell "TIER_1 TIER_2_MASKED" [ref=e251]:
+                      - generic [ref=e252]:
+                        - generic [ref=e254]: TIER_1
+                        - generic [ref=e256]: TIER_2_MASKED
+                    - cell "No training · DLP masking required ap-northeast-2" [ref=e257]:
+                      - paragraph [ref=e258]: No training · DLP masking required
+                      - generic [ref=e259]: ap-northeast-2
+                    - cell "BOUND kms:key:9021" [ref=e260]:
+                      - generic [ref=e261]:
+                        - img [ref=e262]
+                        - paragraph [ref=e266]: BOUND
+                      - generic [ref=e267]: kms:key:9021
+                    - cell "HEALTHY P95 420ms" [ref=e268]:
+                      - generic [ref=e269]:
+                        - img [ref=e270]
+                        - generic [ref=e273]: HEALTHY
+                      - generic [ref=e274]: P95 420ms
+                  - separator [ref=e275]
+                  - row "Private inference cluster Private safe fallback · CANARY TEXT 64,000 context TIER_1 TIER_2_MASKED TIER_3 Zero egress · private mTLS kr-private-1 BOUND mtls:cluster-a3 DEGRADED P95 1420ms" [ref=e276]:
+                    - cell "Private inference cluster Private safe fallback · CANARY" [ref=e277]:
+                      - heading "Private inference cluster" [level=6] [ref=e278]
+                      - generic [ref=e279]: Private safe fallback · CANARY
+                    - cell "TEXT 64,000 context" [ref=e280]:
+                      - paragraph [ref=e281]: TEXT
+                      - generic [ref=e282]: 64,000 context
+                    - cell "TIER_1 TIER_2_MASKED TIER_3" [ref=e283]:
+                      - generic [ref=e284]:
+                        - generic [ref=e286]: TIER_1
+                        - generic [ref=e288]: TIER_2_MASKED
+                        - generic [ref=e290]: TIER_3
+                    - cell "Zero egress · private mTLS kr-private-1" [ref=e291]:
+                      - paragraph [ref=e292]: Zero egress · private mTLS
+                      - generic [ref=e293]: kr-private-1
+                    - cell "BOUND mtls:cluster-a3" [ref=e294]:
+                      - generic [ref=e295]:
+                        - img [ref=e296]
+                        - paragraph [ref=e300]: BOUND
+                      - generic [ref=e301]: mtls:cluster-a3
+                    - cell "DEGRADED P95 1420ms" [ref=e302]:
+                      - generic [ref=e303]:
+                        - img [ref=e304]
+                        - generic [ref=e306]: DEGRADED
+                      - generic [ref=e307]: P95 1420ms
+            - region "Work domain & task routing matrix" [ref=e308]:
+              - generic [ref=e310]:
+                - heading "Work domain & task routing matrix" [level=2] [ref=e311]
+                - paragraph [ref=e312]: Decision rules combine task, data class, latency, and budget constraints.
+              - generic [ref=e314]:
+                - generic [ref=e315]:
+                  - generic [ref=e316]:
+                    - generic [ref=e317]:
+                      - generic [ref=e318]: "01"
+                      - heading "General questions and daily briefings" [level=6] [ref=e319]
+                      - generic [ref=e321]: STANDARD_QUERY
+                    - paragraph [ref=e322]: Latency < 1.2s · Cost optimized
+                    - generic [ref=e323]: TIER_1 · TIER_2_MASKED · v4
+                  - generic [ref=e324]:
+                    - img [ref=e325]
+                    - paragraph [ref=e328]: Enterprise multimodal model
+                    - img [ref=e329]
+                    - generic [ref=e333]: Private safe fallback
+                - separator [ref=e334]
+                - generic [ref=e335]:
+                  - generic [ref=e336]:
+                    - generic [ref=e337]:
+                      - generic [ref=e338]: "02"
+                      - heading "Finance and HR confidential review" [level=6] [ref=e339]
+                      - generic [ref=e341]: STRICT_ZERO_EGRESS
+                      - generic [ref=e343]: FAIL-CLOSED
+                    - paragraph [ref=e344]: External providers prohibited · DLP hard block
+                    - generic [ref=e345]: TIER_3 · v3
+                  - generic [ref=e346]:
+                    - img [ref=e347]
+                    - paragraph [ref=e350]: Private safe fallback
+                    - img [ref=e351]
+                    - generic [ref=e355]: No external fallback
+          - generic [ref=e356]:
+            - region "Workload routing policies" [ref=e358]:
+              - heading "Workload routing policies" [level=2] [ref=e361]
+              - button "General work routing ACTIVE · v7 tenant:fixture · model-primary → model-fallback" [pressed] [ref=e364] [cursor=pointer]:
+                - generic [ref=e365]:
+                  - generic [ref=e366]:
+                    - heading "General work routing" [level=6] [ref=e367]
+                    - generic [ref=e369]: ACTIVE · v7
+                  - paragraph [ref=e370]: tenant:fixture · model-primary → model-fallback
+            - generic [ref=e371]:
+              - region "General work routing" [ref=e372]:
+                - generic [ref=e374]:
+                  - heading "General work routing" [level=2] [ref=e375]
+                  - paragraph [ref=e376]: tenant:fixture · v7
+                - generic [ref=e378]:
+                  - generic [ref=e379]:
+                    - generic [ref=e380]: Primary model
+                    - generic [ref=e381]:
+                      - combobox "Primary model Enterprise multimodal model" [ref=e382] [cursor=pointer]: Enterprise multimodal model
+                      - textbox: model-primary
+                      - img
+                      - group:
+                        - generic: Primary model
+                  - generic [ref=e383]:
+                    - generic [ref=e384]: Fallback model
+                    - generic [ref=e385]:
+                      - combobox "Fallback model Private safe fallback" [ref=e386] [cursor=pointer]: Private safe fallback
+                      - textbox: model-fallback
+                      - img
+                      - group:
+                        - generic: Fallback model
+                  - generic [ref=e387]:
+                    - generic [ref=e388]: Budget action
+                    - generic [ref=e389]:
+                      - combobox "Budget action THROTTLE" [ref=e390] [cursor=pointer]: THROTTLE
+                      - textbox: THROTTLE
+                      - img
+                      - group:
+                        - generic: Budget action
+                  - generic [ref=e391]:
+                    - generic [ref=e392]: Daily budget
+                    - generic [ref=e393]:
+                      - spinbutton "Daily budget" [ref=e394]: "4000000"
+                      - group:
+                        - generic: Daily budget
+                  - generic [ref=e395]:
+                    - generic [ref=e396]: Modalities
+                    - generic [ref=e397]:
+                      - textbox "Modalities" [ref=e398]: TEXT, VISION
+                      - group:
+                        - generic: Modalities
+                    - paragraph [ref=e399]: Comma-separated verified modalities
+                  - generic [ref=e400]:
+                    - generic: Agent scope
+                    - generic [ref=e401]:
+                      - textbox "Agent scope" [ref=e402]
+                      - group:
+                        - generic: Agent scope
+                    - paragraph [ref=e403]: Comma-separated Agent IDs or governed selectors
+                  - generic [ref=e404]:
+                    - generic [ref=e405]: In-flight jobs
+                    - generic [ref=e406]:
+                      - combobox "In-flight jobs DRAIN" [ref=e407] [cursor=pointer]: DRAIN
+                      - textbox: DRAIN
+                      - img
+                      - group:
+                        - generic: In-flight jobs
+                  - button "Change policy" [ref=e408] [cursor=pointer]:
+                    - img [ref=e410]
+                    - text: Change policy
+                  - generic [ref=e414]:
+                    - button "Start canary" [ref=e415] [cursor=pointer]:
+                      - img [ref=e417]
+                      - text: Start canary
+                    - button "Restore previous version" [ref=e419] [cursor=pointer]:
+                      - img [ref=e421]
+                      - text: Restore previous version
+              - region "Routing simulator" [ref=e424]:
+                - heading "Routing simulator" [level=2] [ref=e427]
+                - generic [ref=e429]:
+                  - generic [ref=e430]:
+                    - generic [ref=e431]:
+                      - generic [ref=e432]: Requester role
+                      - generic [ref=e433]:
+                        - textbox "Requester role" [ref=e434]: knowledge-worker
+                        - group:
+                          - generic: Requester role
+                    - generic [ref=e435]:
+                      - generic [ref=e436]: Agent ID
+                      - generic [ref=e437]:
+                        - textbox "Agent ID" [ref=e438]: dwaion-assistant
+                        - group:
+                          - generic: Agent ID
+                    - generic [ref=e439]:
+                      - generic [ref=e440]: Data classification
+                      - generic [ref=e441]:
+                        - combobox "Data classification INTERNAL" [ref=e442] [cursor=pointer]: INTERNAL
+                        - textbox: INTERNAL
+                        - img
+                        - group:
+                          - generic: Data classification
+                    - generic [ref=e443]:
+                      - generic [ref=e444]: Modality
+                      - generic [ref=e445]:
+                        - combobox "Modality TEXT" [ref=e446] [cursor=pointer]: TEXT
+                        - textbox: TEXT
+                        - img
+                        - group:
+                          - generic: Modality
+                    - generic [ref=e447]:
+                      - generic [ref=e448]: Estimated tokens
+                      - generic [ref=e449]:
+                        - spinbutton "Estimated tokens" [ref=e450]: "2400"
+                        - group:
+                          - generic: Estimated tokens
+                  - generic [ref=e451]:
+                    - generic [ref=e452]: Workload and constraints
+                    - generic [ref=e453]:
+                      - textbox "Workload and constraints" [ref=e454]: p95 <= 1800ms, retain in tenant region, cost optimized
+                      - group:
+                        - generic: Workload and constraints
+                  - button "Routing simulator" [ref=e455] [cursor=pointer]:
+                    - img [ref=e457]
+                    - text: Routing simulator
+                  - generic "Latest routing simulation result" [ref=e464]:
+                    - generic [ref=e465]:
+                      - heading "ROUTED" [level=6] [ref=e466]
+                      - generic [ref=e468]: rule-standard
+                    - paragraph [ref=e469]: "Target: model-primary"
+                    - generic [ref=e470]: 38.4000 KRW · 420ms · fallback model-fallback
+              - region "Emergency control" [ref=e471]:
+                - heading "Emergency control" [level=2] [ref=e474]
+                - generic [ref=e476]:
+                  - paragraph [ref=e477]: Stops selected AI traffic and moves supported workloads to the verified fallback.
+                  - button "Emergency stop" [ref=e478] [cursor=pointer]:
+                    - img [ref=e480]
+                    - text: Emergency stop
+          - region "Model control operations" [ref=e484]:
+            - generic [ref=e486]:
+              - heading "Model control operations" [level=2] [ref=e487]
+              - paragraph [ref=e488]: Every operation records a canonical diff, impact scope, recovery evidence, and an independent approval trail.
+            - generic [ref=e491]:
+              - button "Save routing draft" [ref=e492] [cursor=pointer]:
+                - img [ref=e494]
+                - text: Save routing draft
+              - button "Open provider circuit" [ref=e498] [cursor=pointer]:
+                - img [ref=e500]
+                - text: Open provider circuit
+              - button "Smart isolate model" [ref=e502] [cursor=pointer]:
+                - img [ref=e504]
+                - text: Smart isolate model
+              - button "Recovery dry-run" [ref=e508] [cursor=pointer]:
+                - img [ref=e510]
+                - text: Recovery dry-run
+              - button "Rollback isolation" [ref=e512] [cursor=pointer]:
+                - img [ref=e514]
+                - text: Rollback isolation
+              - button "Export incident JSONL" [ref=e517] [cursor=pointer]:
+                - img [ref=e519]
+                - text: Export incident JSONL
+```

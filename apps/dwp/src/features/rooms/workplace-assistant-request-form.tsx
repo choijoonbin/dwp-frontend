@@ -14,6 +14,7 @@ import {
   workplaceAssistantInitialLocalRange,
   workplaceAssistantLocalDateTimeToInstant,
 } from './workplace-assistant-time';
+import { WorkplaceAssistantVoiceInput } from './workplace-assistant-voice-input';
 
 import type {
   WorkplaceAssistantCreateInput,
@@ -262,10 +263,21 @@ export function WorkplaceAssistantRequestForm({
           multiline
           minRows={3}
           label={copy.requestText}
-          supportingText={copy.requestTextHint}
+          supportingText={`${copy.requestTextHint} ${copy.submitShortcut}`}
           value={requestText}
           inputProps={{ maxLength: 4000 }}
           onChange={(event) => setRequestText(event.target.value)}
+          onKeyDown={(event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+              event.preventDefault();
+              submit();
+            }
+          }}
+        />
+        <WorkplaceAssistantVoiceInput
+          value={requestText}
+          disabled={disabled || loading}
+          onChange={setRequestText}
         />
         <SelectField
           label={copy.beneficiaryTarget}

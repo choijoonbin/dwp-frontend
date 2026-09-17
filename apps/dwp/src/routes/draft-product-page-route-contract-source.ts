@@ -40,8 +40,11 @@ export function buildDraftProductPageRouteContractSource(
       )
     )
   );
-  const dynamicRoutes = DYNAMIC_DRAFT_PRODUCT_PAGE_ROUTES.filter((route) =>
-    mountedProductIds.has(route.productId)
+  const dynamicRoutes = DYNAMIC_DRAFT_PRODUCT_PAGE_ROUTES.filter(
+    (route) =>
+      mountedProductIds.has(route.productId) &&
+      !officialRouteIds.has(route.routeId) &&
+      !officialRoutePatterns.has(route.pattern)
   );
   return defineProductRouteContractSource([...menuRoutes, ...dynamicRoutes], manifests);
 }

@@ -24,6 +24,7 @@ import Typography from '@mui/material/Typography';
 
 import { WorkplaceSafetyActionSection } from './workplace-safety-action-section';
 import { WorkplaceSafetyClosureReport } from './workplace-safety-closure-report';
+import { WorkplaceSafetyEmergencyHandoff } from './workplace-safety-emergency-handoff';
 import { workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import {
   WorkplaceSafetyAudienceEvidence,
@@ -567,6 +568,12 @@ export function WorkplaceSafetyIncidentActions({
           </ActionButton>
         </Stack>
       </WorkplaceSafetyActionSection>
+
+      <WorkplaceSafetyEmergencyHandoff
+        incident={incident}
+        canManage={canManage && !getOnlyRecovery}
+        onChanged={onChanged}
+      />
 
       <WorkplaceSafetyClosureReport
         incident={incident}

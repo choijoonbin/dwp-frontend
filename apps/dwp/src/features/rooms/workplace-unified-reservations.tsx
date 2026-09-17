@@ -122,9 +122,7 @@ export function WorkplaceUnifiedReservations() {
   const initialDetailTab =
     requestedDetailTab === 'visits'
       ? 'visitors'
-      : ['overview', 'visitors', 'services', 'access', 'audit'].includes(
-            requestedDetailTab ?? ''
-          )
+      : ['overview', 'visitors', 'services', 'access', 'audit'].includes(requestedDetailTab ?? '')
         ? requestedDetailTab!
         : 'overview';
   const [detailTab, setDetailTab] = useState(initialDetailTab);
@@ -289,11 +287,7 @@ export function WorkplaceUnifiedReservations() {
     ]);
 
   const workplaceMutation = useMutation({
-    mutationFn: ({
-      booking,
-      action,
-      commandIdentity,
-    }: WorkplaceMutationInput) => {
+    mutationFn: ({ booking, action, commandIdentity }: WorkplaceMutationInput) => {
       const current = workplaceQuery.data?.find(
         (candidate) =>
           candidate.bookingId === booking.bookingId && candidate.version === booking.version
@@ -336,11 +330,7 @@ export function WorkplaceUnifiedReservations() {
   });
 
   const calendarMutation = useMutation({
-    mutationFn: async ({
-      event,
-      action,
-      commandIdentity,
-    }: CalendarMutationInput) => {
+    mutationFn: async ({ event, action, commandIdentity }: CalendarMutationInput) => {
       const current = calendarQuery.data?.find(
         (candidate) => candidate.eventId === event.eventId && candidate.version === event.version
       );
@@ -824,6 +814,14 @@ export function WorkplaceUnifiedReservations() {
               <WorkplaceReservationDetailTabContent
                 detailTab={detailTab}
                 reservation={selectedItem}
+                conferenceUrl={
+                  selectedCalendarEvent &&
+                  !selectedCalendarEvent.redacted &&
+                  selectedCalendarEvent.detailLevel !== 'FREE_BUSY'
+                    ? (selectedCalendarEvent.conferenceUrl ?? null)
+                    : null
+                }
+                onOpenServices={() => updateDetailTab('services')}
                 calendarPolicyUnavailable={Boolean(
                   selectedCalendarEvent && calendarState === 'READY' && policyState !== 'READY'
                 )}

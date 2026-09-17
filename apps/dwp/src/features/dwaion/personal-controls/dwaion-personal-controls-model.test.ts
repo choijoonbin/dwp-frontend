@@ -8,6 +8,9 @@ import {
   clearRequestIsValid,
   memoryCanMutate,
   memoryDraftErrors,
+  memoryExpiresSoon,
+  filterDwaionMemories,
+  dwaionMemoryFilterCounts,
   sourcePreferenceCanChange,
 } from './dwaion-personal-controls-model';
 
@@ -30,7 +33,18 @@ const memory: DwaionMemoryRecord = {
   kind: 'TONE',
   label: 'Tone',
   value: 'Use concise summaries',
+  origin: 'MANUAL',
+  sourceType: 'USER_EXPLICIT_ENTRY',
+  confidence: null,
+  factVector: [],
+  useCount: 7,
+  lastUsedAt: '2026-09-02T12:00:00Z',
+  encryptionProvider: 'AWS_KMS',
+  encryptionKeyVersion: 'v7',
+  encryptionKeyReferenceFingerprint: 'abc123def456',
   state: 'ACTIVE',
+  scope: ['ASK', 'RESEARCH'],
+  expiresAt: '2026-10-01T00:00:00Z',
   revision: 2,
   createdAt: '2026-09-01T00:00:00Z',
   updatedAt: '2026-09-02T00:00:00Z',
@@ -52,6 +66,27 @@ describe('DWAI personal AI controls model', () => {
     expect(memoryCanMutate(memory, 2)).toBe('ALLOWED');
     expect(memoryCanMutate(memory, 1)).toBe('REVISION_CONFLICT');
     expect(memoryCanMutate({ ...memory, state: 'DELETED' }, 2)).toBe('DELETED');
+    expect(memoryCanMutate({ ...memory, state: 'EXPIRED' }, 2)).toBe('EXPIRED');
+  });
+
+  it('derives manual and expiring filters from canonical explicit-memory fields only', () => {
+    const referenceTime = Date.parse('2026-09-17T00:00:00Z');
+    const later = {
+      ...memory,
+      memoryId: 'memory-2',
+      expiresAt: '2027-01-01T00:00:00Z',
+    };
+    expect(memoryExpiresSoon(memory, referenceTime)).toBe(true);
+    expect(memoryExpiresSoon(later, referenceTime)).toBe(false);
+    expect(filterDwaionMemories([memory, later], 'MANUAL', referenceTime)).toEqual([memory, later]);
+    expect(filterDwaionMemories([memory, later], 'AI_APPROVED', referenceTime)).toEqual([]);
+    expect(filterDwaionMemories([memory, later], 'EXPIRING', referenceTime)).toEqual([memory]);
+    expect(dwaionMemoryFilterCounts([memory, later], referenceTime)).toEqual({
+      ALL: 2,
+      MANUAL: 2,
+      AI_APPROVED: 0,
+      EXPIRING: 1,
+    });
   });
 
   it('rejects empty and duplicate cleanup scopes', () => {

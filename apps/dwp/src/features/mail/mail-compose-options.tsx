@@ -26,6 +26,13 @@ import type {
   MailTemplate,
 } from '@dwp-frontend/shared-utils';
 import { MailRecipientPicker } from './mail-recipient-picker';
+import {
+  mailRecipientIdentityChanged,
+  mailTemplateRequiresRecipientReview,
+  mailWritingAssetAppliesToAccount,
+  materializeMailTemplate,
+  resolveMailNewSignature,
+} from './mail-writing-asset-content';
 
 type InsertRequest =
   { kind: 'template'; value: MailTemplate } | { kind: 'signature'; value: MailSignature };
@@ -41,6 +48,7 @@ export function MailComposeOptionsFields({
   onToEmailChange,
   onChange,
   onAttachmentReadyChange,
+  onPersonalizationReviewChange,
   onInsertTemplate,
   onInsertSignature,
 }: {
@@ -52,6 +60,7 @@ export function MailComposeOptionsFields({
   onToEmailChange: (value: string) => void;
   onChange: (value: MailComposeOptions) => void;
   onAttachmentReadyChange: (ready: boolean) => void;
+  onPersonalizationReviewChange: (pending: boolean) => void;
   onInsertTemplate: (template: MailTemplate) => void;
   onInsertSignature: (signature: MailSignature) => void;
 }) {
@@ -72,6 +81,7 @@ export function MailComposeOptionsFields({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [attachments, setAttachments] = useState(initialAttachments);
   const [insertRequest, setInsertRequest] = useState<InsertRequest | null>(null);
+  const [personalizationReviewPending, setPersonalizationReviewPending] = useState(false);
   const context = useQuery({
     queryKey: ['mail', 'compose-context'],
     queryFn: getMailComposeContext,
@@ -79,7 +89,12 @@ export function MailComposeOptionsFields({
     retry: 1,
   });
   const upload = useMutation({
-    mutationFn: uploadMailAttachment,
+    mutationFn: (file: File) => {
+      if (context.data?.capabilities.attachments !== true) {
+        throw new Error('Mail attachment security scanning is unavailable.');
+      }
+      return uploadMailAttachment(file);
+    },
     onSuccess: (attachment) => {
       setAttachments((current) => [
         ...current.filter((item) => item.attachmentId !== attachment.attachmentId),
@@ -114,19 +129,28 @@ export function MailComposeOptionsFields({
 
   useEffect(() => {
     const ready =
-      !upload.isPending && attachments.every((attachment) => attachment.scanState === 'READY');
+      !upload.isPending &&
+      attachments.every((attachment) => attachment.scanState === 'READY') &&
+      (attachments.length === 0 || context.data?.capabilities.attachments === true);
     if (attachmentReadyRef.current === ready) return;
     attachmentReadyRef.current = ready;
     onAttachmentReadyChange(ready);
-  }, [attachments, onAttachmentReadyChange, upload.isPending]);
+  }, [
+    attachments,
+    context.data?.capabilities.attachments,
+    onAttachmentReadyChange,
+    upload.isPending,
+  ]);
 
   useEffect(() => {
     if (!context.data || defaultsAppliedRef.current) return;
     defaultsAppliedRef.current = true;
     const current = optionsRef.current;
     const defaultAccountId = current.accountId ?? context.data.preferences.defaultAccountId;
-    const defaultSignature = context.data.signatures.find(
-      (item) => item.signatureId === context.data.preferences.defaultSignatureId
+    const defaultSignature = resolveMailNewSignature(
+      context.data.signatures,
+      defaultAccountId,
+      context.data.preferences.defaultSignatureId
     );
     commitOptions({ ...current, accountId: defaultAccountId ?? null });
     if (!hasBody && !current.signatureId && defaultSignature) {
@@ -155,8 +179,25 @@ export function MailComposeOptionsFields({
     const parsed = parseRecipients(value, type);
     const current = optionsRef.current;
     const other = current.recipients.filter((item) => item.type !== type);
+    if (type === 'TO') requirePersonalizationReview([...other, ...parsed]);
     if (type === 'TO') onToEmailChange(parsed[0]?.email ?? '');
     commitOptions({ ...current, recipients: [...other, ...parsed] });
+  };
+  const requirePersonalizationReview = (nextRecipients: MailRecipient[]) => {
+    const current = optionsRef.current;
+    const selectedTemplate = context.data?.templates.find(
+      (item) => item.templateId === current.templateId
+    );
+    if (
+      mailTemplateRequiresRecipientReview(selectedTemplate) &&
+      mailRecipientIdentityChanged(
+        current.recipients.find((item) => item.type === 'TO'),
+        nextRecipients.find((item) => item.type === 'TO')
+      )
+    ) {
+      setPersonalizationReviewPending(true);
+      onPersonalizationReviewChange(true);
+    }
   };
   const performInsert = (request: InsertRequest) => {
     if (request.kind === 'template') {
@@ -165,18 +206,17 @@ export function MailComposeOptionsFields({
         templateId: request.value.templateId,
         bodyFormat: request.value.bodyFormat,
       });
-      const recipientName = options.recipients.find((item) => item.type === 'TO')?.name ?? '';
-      onInsertTemplate({
-        ...request.value,
-        subject: resolveTemplateVariables(request.value.subject ?? '', {
+      const recipientName = optionsRef.current.recipients.find((item) => item.type === 'TO')?.name;
+      onInsertTemplate(
+        materializeMailTemplate(request.value, {
           ...context.data?.variables,
           recipientName,
-        }),
-        body: resolveTemplateVariables(request.value.body, {
-          ...context.data?.variables,
-          recipientName,
-        }),
-      });
+        })
+      );
+      const missingRecipientValue =
+        mailTemplateRequiresRecipientReview(request.value) && !recipientName;
+      setPersonalizationReviewPending(missingRecipientValue);
+      onPersonalizationReviewChange(missingRecipientValue);
     } else {
       commitOptions({
         ...optionsRef.current,
@@ -194,13 +234,60 @@ export function MailComposeOptionsFields({
   const capabilities = context.data?.capabilities;
   const activeAccounts =
     context.data?.accounts.filter((account) => account.connectionState === 'ACTIVE') ?? [];
+  const configuredAccountId = options.accountId ?? context.data?.preferences.defaultAccountId ?? '';
+  const displayedAccountId = activeAccounts.some(
+    (account) => account.accountId === configuredAccountId
+  )
+    ? configuredAccountId
+    : '';
+  const availableTemplates = (context.data?.templates ?? []).filter(
+    (item) => item.active !== false && mailWritingAssetAppliesToAccount(item, displayedAccountId)
+  );
+  const availableSignatures = (context.data?.signatures ?? []).filter(
+    (item) => item.active !== false && mailWritingAssetAppliesToAccount(item, displayedAccountId)
+  );
 
   return (
     <Stack spacing={2}>
       {context.isError && <Alert severity="error">{t('compose.optionsLoadError')}</Alert>}
+      {personalizationReviewPending && (
+        <Alert
+          severity="warning"
+          action={
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={0.5}>
+              {options.templateId && (
+                <ActionButton
+                  size="small"
+                  intent="quiet"
+                  onClick={() => {
+                    const selected = context.data?.templates.find(
+                      (item) => item.templateId === optionsRef.current.templateId
+                    );
+                    if (selected) performInsert({ kind: 'template', value: selected });
+                  }}
+                >
+                  {t('compose.personalizationReapply')}
+                </ActionButton>
+              )}
+              <ActionButton
+                size="small"
+                intent="quiet"
+                onClick={() => {
+                  setPersonalizationReviewPending(false);
+                  onPersonalizationReviewChange(false);
+                }}
+              >
+                {t('compose.personalizationReviewed')}
+              </ActionButton>
+            </Stack>
+          }
+        >
+          {t('compose.personalizationReviewRequired')}
+        </Alert>
+      )}
       <SelectField
         label={t('compose.from')}
-        value={options.accountId ?? context.data?.preferences.defaultAccountId ?? ''}
+        value={displayedAccountId}
         options={activeAccounts.map((account) => ({
           value: account.accountId,
           label: `${account.displayName} · ${account.emailAddress}`,
@@ -299,7 +386,7 @@ export function MailComposeOptionsFields({
           value={options.templateId ?? ''}
           options={[
             { value: '', label: t('compose.noTemplate') },
-            ...(context.data?.templates ?? []).map((item) => ({
+            ...availableTemplates.map((item) => ({
               value: item.templateId,
               label: item.name,
             })),
@@ -316,7 +403,7 @@ export function MailComposeOptionsFields({
           value={options.signatureId ?? ''}
           options={[
             { value: '', label: t('compose.noSignature') },
-            ...(context.data?.signatures ?? []).map((item) => ({
+            ...availableSignatures.map((item) => ({
               value: item.signatureId,
               label: item.name,
             })),
@@ -355,12 +442,22 @@ export function MailComposeOptionsFields({
             hidden
             type="file"
             multiple
+            disabled={disabled || upload.isPending || !capabilities?.attachments}
             onChange={(event) => {
+              if (!capabilities?.attachments) {
+                event.target.value = '';
+                return;
+              }
               for (const file of Array.from(event.target.files ?? [])) upload.mutate(file);
               event.target.value = '';
             }}
           />
         </Stack>
+        {context.data && !capabilities?.attachments && (
+          <Alert severity="warning" sx={{ mt: 1 }}>
+            {t('compose.attachments.securityScanningUnavailable')}
+          </Alert>
+        )}
         {attachments.length > 0 && (
           <Stack
             divider={<Divider flexItem />}
@@ -490,6 +587,7 @@ export function MailComposeOptionsFields({
         recipients={options.recipients}
         onClose={() => setPickerOpen(false)}
         onChange={(recipients) => {
+          requirePersonalizationReview(recipients);
           commitOptions({ ...optionsRef.current, recipients });
           onToEmailChange(recipients.find((item) => item.type === 'TO')?.email ?? '');
           if (recipients.some((item) => item.type !== 'TO')) setCcOpen(true);
@@ -561,15 +659,5 @@ function sameAttachments(left: MailAttachment[], right: MailAttachment[]) {
         candidate.sizeBytes === item.sizeBytes
       );
     })
-  );
-}
-
-function resolveTemplateVariables(
-  value: string,
-  variables: Partial<Record<'displayName' | 'department' | 'recipientName', string | null>>
-) {
-  return value.replace(
-    /\{\{(displayName|department|recipientName)\}\}/gu,
-    (_match, key: keyof typeof variables) => variables[key] ?? ''
   );
 }

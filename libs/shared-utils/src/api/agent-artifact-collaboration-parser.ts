@@ -3,6 +3,9 @@ import { isAgentDate, isAgentRecord } from './agent-governed-api';
 
 import type {
   DwaionTeamArtifactCapabilities,
+  DwaionTeamArtifactAccessRequest,
+  DwaionTeamArtifactComment,
+  DwaionTeamArtifactCommentReply,
   DwaionTeamArtifactConflict,
   DwaionTeamArtifactEditResult,
   DwaionTeamArtifactMember,
@@ -33,10 +36,23 @@ export function parseDwaionTeamArtifactCapabilities(
   if (
     !isAgentRecord(value) ||
     !capabilityKeys.every((key) => typeof value[key] === 'boolean') ||
+    !providerCapabilityKeys.every((key) => providerCapability(value[key])) ||
+    providerOnlyUnavailableKeys.some(
+      (key) => isAgentRecord(value[key]) && value[key].available !== false
+    ) ||
     value.externalSharingAvailable !== false ||
-    !['AVAILABLE', 'NOT_CONFIGURED'].includes(String(value.providerState)) ||
+    !['AVAILABLE', 'NOT_CONFIGURED', 'DATABASE_NOT_CONFIGURED', 'SECURITY_NOT_CONFIGURED'].includes(
+      String(value.providerState)
+    ) ||
     !(value.recoveryHint === null || nonBlank(value.recoveryHint)) ||
-    (value.providerState === 'NOT_CONFIGURED' && !nonBlank(value.recoveryHint))
+    (value.providerState !== 'AVAILABLE' &&
+      (!nonBlank(value.recoveryHint) ||
+        capabilityKeys.some((key) => value[key] !== false) ||
+        providerCapabilityKeys.some(
+          (key) =>
+            isAgentRecord(value[key]) &&
+            (value[key].available !== false || value[key].configured !== false)
+        )))
   ) {
     throw invalid('Artifact collaboration capabilities response is invalid.', value);
   }
@@ -50,6 +66,7 @@ export function parseDwaionTeamArtifactPreflight(value: unknown): DwaionTeamArti
     !uuid(value.artifactId) ||
     !uuid(value.teamId) ||
     !integer(value.artifactRevision, 1) ||
+    typeof value.state !== 'string' ||
     !PREFLIGHT_STATES.has(value.state) ||
     !integer(value.decisionRevision, 1) ||
     !members(value.members) ||
@@ -61,15 +78,40 @@ export function parseDwaionTeamArtifactPreflight(value: unknown): DwaionTeamArti
   ) {
     throw invalid('Artifact collaboration preflight response is invalid.', value);
   }
-  const allowedMembers = value.members.filter((member) => member.allowed).length;
+  const deniedMembers = value.members.filter((member) => !member.allowed).length;
   if (
-    (value.state === 'READY' && allowedMembers !== value.members.length) ||
-    (value.state === 'PERMISSION_DENIED' && allowedMembers !== 0) ||
+    (value.state === 'READY' && (deniedMembers > 0 || value.excludedSourceCount !== 0)) ||
+    (value.state === 'PARTIAL' && (deniedMembers > 0 || value.excludedSourceCount === 0)) ||
+    (value.state === 'PERMISSION_DENIED' &&
+      deniedMembers === 0 &&
+      value.excludedSourceCount === 0) ||
+    Date.parse(value.expiresAt) <= Date.parse(value.createdAt) ||
     (value.state === 'EXPIRED' && Date.parse(value.expiresAt) > Date.now())
   ) {
     throw invalid('Artifact collaboration preflight state is contradictory.', value);
   }
   return value as DwaionTeamArtifactPreflight;
+}
+
+export function parseDwaionTeamArtifactAccessRequest(
+  value: unknown
+): DwaionTeamArtifactAccessRequest {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.accessRequestId) ||
+    !uuid(value.artifactId) ||
+    !uuid(value.teamId) ||
+    !uuid(value.preflightId) ||
+    !['PENDING', 'APPROVED', 'DENIED', 'EXPIRED'].includes(String(value.state)) ||
+    !integer(value.deniedSubjectCount, 0, 100) ||
+    !integer(value.deniedSourceCount, 0, 20) ||
+    Number(value.deniedSubjectCount) + Number(value.deniedSourceCount) < 1 ||
+    !sha(value.submissionEvidenceSha256) ||
+    !isAgentDate(value.createdAt)
+  ) {
+    throw invalid('Artifact collaboration access-request response is invalid.', value);
+  }
+  return value as DwaionTeamArtifactAccessRequest;
 }
 
 export function parseDwaionTeamArtifactWorkspace(value: unknown): DwaionTeamArtifactWorkspace {
@@ -78,6 +120,7 @@ export function parseDwaionTeamArtifactWorkspace(value: unknown): DwaionTeamArti
     !uuid(value.workspaceId) ||
     !uuid(value.artifactId) ||
     !uuid(value.teamId) ||
+    typeof value.state !== 'string' ||
     !WORKSPACE_STATES.has(value.state) ||
     !integer(value.revision, 1) ||
     !content(value.content) ||
@@ -92,7 +135,7 @@ export function parseDwaionTeamArtifactWorkspace(value: unknown): DwaionTeamArti
   }
   const conflict = value.openConflict;
   if (
-    !value.members.some((member) => member.allowed && member.role === 'OWNER') ||
+    value.members.filter((member) => member.allowed && member.role === 'OWNER').length !== 1 ||
     value.shares.some((share) => share.workspaceId !== value.workspaceId) ||
     (conflict !== null &&
       (!isConflict(conflict) ||
@@ -124,6 +167,21 @@ export function parseDwaionTeamArtifactShare(value: unknown): DwaionTeamArtifact
   return value;
 }
 
+export function parseDwaionTeamArtifactComment(value: unknown): DwaionTeamArtifactComment {
+  if (!isComment(value))
+    throw invalid('Artifact collaboration comment response is invalid.', value);
+  return value;
+}
+
+export function parseDwaionTeamArtifactComments(value: unknown): DwaionTeamArtifactComment[] {
+  if (!Array.isArray(value) || !value.every(isComment))
+    throw invalid('Artifact collaboration comments response is invalid.', value);
+  const commentIds = value.map((comment) => comment.commentId);
+  if (new Set(commentIds).size !== commentIds.length)
+    throw invalid('Artifact collaboration comments contain duplicate identifiers.', value);
+  return value;
+}
+
 function members(value: unknown): value is DwaionTeamArtifactMember[] {
   return (
     Array.isArray(value) &&
@@ -139,12 +197,15 @@ function isMember(value: unknown): value is DwaionTeamArtifactMember {
     isAgentRecord(value) &&
     typeof value.subjectId === 'string' &&
     SUBJECT.test(value.subjectId) &&
+    typeof value.role === 'string' &&
     ROLES.has(value.role) &&
     typeof value.allowed === 'boolean' &&
     integer(value.deniedSourceCount, 0) &&
     (value.reasonCode === null ||
       (typeof value.reasonCode === 'string' && SAFE_CODE.test(value.reasonCode))) &&
-    (value.allowed || value.reasonCode !== null)
+    (value.allowed
+      ? value.deniedSourceCount === 0 && value.reasonCode === null
+      : value.reasonCode !== null)
   );
 }
 
@@ -155,6 +216,7 @@ function isConflict(value: unknown): value is DwaionTeamArtifactConflict {
     !uuid(value.workspaceId) ||
     !integer(value.baseRevision, 1) ||
     !integer(value.serverRevision, 1) ||
+    typeof value.state !== 'string' ||
     !CONFLICT_STATES.has(value.state) ||
     !content(value.localContent) ||
     !content(value.serverContent) ||
@@ -186,9 +248,53 @@ function isShare(value: unknown): value is DwaionTeamArtifactShare {
     return false;
   const revoked = value.state === 'REVOKED';
   return (
+    Date.parse(value.expiresAt) > Date.parse(value.createdAt) &&
     revoked === (value.revokedAt !== null) &&
     revoked === (value.revocationReceiptId !== null) &&
     revoked === (value.revocationReceiptSha256 !== null)
+  );
+}
+
+function isComment(value: unknown): value is DwaionTeamArtifactComment {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.commentId) ||
+    !uuid(value.workspaceId) ||
+    !uuid(value.artifactId) ||
+    !boundedText(value.authorSubjectId, 160) ||
+    !(value.authorDisplayName === null || boundedText(value.authorDisplayName, 200)) ||
+    !boundedText(value.body, 4_000) ||
+    !(value.anchor === null || boundedText(value.anchor, 1_000)) ||
+    !['OPEN', 'RESOLVED'].includes(String(value.state)) ||
+    !integer(value.revision, 1) ||
+    !Array.isArray(value.replies) ||
+    value.replies.length > 500 ||
+    !value.replies.every((reply) => isCommentReply(reply, String(value.commentId))) ||
+    !isAgentDate(value.createdAt) ||
+    !isAgentDate(value.updatedAt) ||
+    !(value.resolvedAt === null || isAgentDate(value.resolvedAt))
+  )
+    return false;
+  return (
+    (value.state === 'RESOLVED') === (value.resolvedAt !== null) &&
+    Date.parse(value.updatedAt) >= Date.parse(value.createdAt) &&
+    (value.resolvedAt === null || Date.parse(value.resolvedAt) >= Date.parse(value.createdAt)) &&
+    new Set(value.replies.map((reply) => reply.replyId)).size === value.replies.length
+  );
+}
+
+function isCommentReply(
+  value: unknown,
+  commentId: string
+): value is DwaionTeamArtifactCommentReply {
+  return (
+    isAgentRecord(value) &&
+    uuid(value.replyId) &&
+    value.commentId === commentId &&
+    boundedText(value.authorSubjectId, 160) &&
+    (value.authorDisplayName === null || boundedText(value.authorDisplayName, 200)) &&
+    boundedText(value.body, 4_000) &&
+    isAgentDate(value.createdAt)
   );
 }
 
@@ -219,9 +325,14 @@ function nonBlank(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+function boundedText(value: unknown, maximum: number): value is string {
+  return nonBlank(value) && value.length <= maximum;
+}
+
 const capabilityKeys = [
   'teamWorkspaceAvailable',
   'aclPreflightAvailable',
+  'accessRequestAvailable',
   'collaborationAvailable',
   'conflictResolutionAvailable',
   'internalSharingAvailable',
@@ -229,6 +340,33 @@ const capabilityKeys = [
   'shareExpiryAvailable',
   'shareRevocationAvailable',
 ] as const;
+
+const providerCapabilityKeys = [
+  'inlineComments',
+  'automaticMasking',
+  'syntheticReplacement',
+  'reviewNotification',
+  'reviewRejection',
+] as const;
+
+const providerOnlyUnavailableKeys = [
+  'automaticMasking',
+  'syntheticReplacement',
+  'reviewNotification',
+  'reviewRejection',
+] as const;
+
+function providerCapability(value: unknown) {
+  return (
+    isAgentRecord(value) &&
+    typeof value.available === 'boolean' &&
+    typeof value.configured === 'boolean' &&
+    (value.reasonCode === null ||
+      (typeof value.reasonCode === 'string' && SAFE_CODE.test(value.reasonCode))) &&
+    (value.recoveryHint === null || nonBlank(value.recoveryHint)) &&
+    (!value.available || value.configured)
+  );
+}
 
 function invalid(message: string, value: unknown) {
   return new HttpError(message, 502, value);

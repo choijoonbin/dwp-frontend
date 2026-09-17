@@ -9,7 +9,8 @@ import type { MeetingBackgroundMode } from './meeting-background-types';
 /** Install at capture time, never after an unprocessed track has been published. */
 export function useMeetingBackgroundPublication(
   mode: MeetingBackgroundMode,
-  authorizationScope: string
+  authorizationScope: string,
+  hdVideo = false
 ) {
   const [snapshot, setSnapshot] = useState<{
     owner: MeetingBackgroundProcessor;
@@ -25,6 +26,7 @@ export function useMeetingBackgroundPublication(
     if (mode === 'original') return undefined;
     const next = createMeetingBackgroundProcessor({
       mode,
+      hdVideo,
       stopInputOnFailure: true,
       onStateChange: (state) => {
         if (
@@ -36,7 +38,7 @@ export function useMeetingBackgroundPublication(
       },
     });
     return next;
-  }, [mode, authorizationScope]);
+  }, [mode, authorizationScope, hdVideo]);
   fence.current.processor = processor;
   fence.current.scope = authorizationScope;
   useEffect(() => {

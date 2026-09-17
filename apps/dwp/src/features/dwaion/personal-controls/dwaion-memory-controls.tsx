@@ -1,16 +1,15 @@
 import { useMemo, useState } from 'react';
-import { Brain, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Brain, Plus } from 'lucide-react';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import {
   ActionButton,
-  ActionIconButton,
   ConfirmDialog,
   FormDialog,
   FormField,
@@ -20,13 +19,16 @@ import {
 } from '@dwp-frontend/design-system';
 
 import { DWAION_PERSONAL_CONTROLS_COPY_KO } from './dwaion-personal-controls-copy';
+import { DwaionMemoryEvidenceExplorer } from './dwaion-memory-evidence';
 import { memoryDraftErrors } from './dwaion-personal-controls-model';
 
 import type { DwaionPersonalControlsCopy } from './dwaion-personal-controls-copy';
 import type {
   DwaionMemoryDraft,
+  DwaionMemoryEvidenceCapabilities,
   DwaionMemoryKind,
   DwaionMemoryRecord,
+  DwaionMemoryScope,
   DwaionMemoryState,
 } from './dwaion-personal-controls-model';
 
@@ -43,9 +45,13 @@ export function DwaionMemoryControls({
   busy = false,
   canManage = true,
   memoryEnabled = true,
+  automaticMemoryInference = null,
+  evidenceCapabilities = null,
   onSave,
   onDelete,
   onStateChange,
+  onScopeChange,
+  onExpiryChange,
   copy = DWAION_PERSONAL_CONTROLS_COPY_KO,
   formatTimestamp = (value) => value,
 }: {
@@ -53,6 +59,8 @@ export function DwaionMemoryControls({
   busy?: boolean;
   canManage?: boolean;
   memoryEnabled?: boolean;
+  automaticMemoryInference?: boolean | null;
+  evidenceCapabilities?: DwaionMemoryEvidenceCapabilities | null;
   onSave: (
     memoryId: string | null,
     expectedRevision: number | null,
@@ -62,13 +70,28 @@ export function DwaionMemoryControls({
   onStateChange: (
     memoryId: string,
     expectedRevision: number,
-    state: Exclude<DwaionMemoryState, 'DELETED'>
+    state: Extract<DwaionMemoryState, 'ACTIVE' | 'DISABLED'>
+  ) => void | Promise<void>;
+  onScopeChange: (
+    memoryId: string,
+    expectedRevision: number,
+    scope: readonly DwaionMemoryScope[]
+  ) => void | Promise<void>;
+  onExpiryChange: (
+    memoryId: string,
+    expectedRevision: number,
+    expiresAt: string | null
   ) => void | Promise<void>;
   copy?: DwaionPersonalControlsCopy;
   formatTimestamp?: (value: string) => string;
 }) {
   const [editing, setEditing] = useState<DwaionMemoryRecord | 'new' | null>(null);
   const [deleting, setDeleting] = useState<DwaionMemoryRecord | null>(null);
+  const [scopeEditing, setScopeEditing] = useState<DwaionMemoryRecord | null>(null);
+  const [scopeDraft, setScopeDraft] = useState<readonly DwaionMemoryScope[]>([]);
+  const [expiryEditing, setExpiryEditing] = useState<DwaionMemoryRecord | null>(null);
+  const [expiryDraft, setExpiryDraft] = useState('');
+  const [clearExpiry, setClearExpiry] = useState(false);
   const [draft, setDraft] = useState<DwaionMemoryDraft>(EMPTY_DRAFT);
   const errors = useMemo(() => memoryDraftErrors(draft), [draft]);
   const canCreate = canManage && memoryEnabled;
@@ -76,6 +99,17 @@ export function DwaionMemoryControls({
   const openEditor = (memory: DwaionMemoryRecord | 'new') => {
     setEditing(memory);
     setDraft(memory === 'new' ? EMPTY_DRAFT : { kind: memory.kind, value: memory.value });
+  };
+
+  const openScopeEditor = (memory: DwaionMemoryRecord) => {
+    setScopeEditing(memory);
+    setScopeDraft(memory.scope);
+  };
+
+  const openExpiryEditor = (memory: DwaionMemoryRecord) => {
+    setExpiryEditing(memory);
+    setExpiryDraft(toLocalDateTime(memory.expiresAt));
+    setClearExpiry(memory.expiresAt === null);
   };
 
   return (
@@ -123,86 +157,27 @@ export function DwaionMemoryControls({
           announce={false}
         />
       ) : (
-        <Box sx={{ mt: 1.5, borderBlock: 1, borderColor: 'divider' }}>
-          {memories.map((memory, index) => (
-            <Box key={memory.memoryId}>
-              {index > 0 ? <Divider /> : null}
-              <Stack
-                direction="row"
-                alignItems="flex-start"
-                justifyContent="space-between"
-                gap={2}
-                sx={{ minHeight: 72, py: 1.25, px: { xs: 0, sm: 1 } }}
-              >
-                <Box sx={{ minWidth: 0 }}>
-                  <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
-                    <Typography
-                      variant="body2"
-                      fontWeight="fontWeightBold"
-                      sx={{ overflowWrap: 'anywhere' }}
-                    >
-                      {memory.label}
-                    </Typography>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={memory.state === 'ACTIVE' ? 'success' : 'default'}
-                      label={copy.memoryStates[memory.state]}
-                    />
-                  </Stack>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 0.35, overflowWrap: 'anywhere', whiteSpace: 'pre-wrap' }}
-                  >
-                    {memory.value}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {copy.memorySource} {copy.separator} {formatTimestamp(memory.updatedAt)}{' '}
-                    {copy.separator} {copy.revisionPrefix}
-                    {memory.revision}
-                  </Typography>
-                </Box>
-                <Stack direction="row" gap={0.25} alignItems="center">
-                  <Switch
-                    size="small"
-                    checked={memory.state === 'ACTIVE'}
-                    disabled={!canManage || busy}
-                    slotProps={{
-                      input: {
-                        'aria-label': `${memory.label}: ${copy.memoryStates[memory.state]}`,
-                      },
-                    }}
-                    onChange={(_, enabled) =>
-                      onStateChange(
-                        memory.memoryId,
-                        memory.revision,
-                        enabled ? 'ACTIVE' : 'DISABLED'
-                      )
-                    }
-                  />
-                  <ActionIconButton
-                    label={`${copy.editMemory}: ${memory.label}`}
-                    tooltip={copy.editMemory}
-                    disabled={!canManage || busy}
-                    onClick={() => openEditor(memory)}
-                    sx={{ width: 44, height: 44 }}
-                  >
-                    <Pencil size={17} aria-hidden="true" />
-                  </ActionIconButton>
-                  <ActionIconButton
-                    label={`${copy.deleteMemory}: ${memory.label}`}
-                    tooltip={copy.deleteMemory}
-                    disabled={!canManage || busy}
-                    onClick={() => setDeleting(memory)}
-                    sx={{ width: 44, height: 44 }}
-                  >
-                    <Trash2 size={17} aria-hidden="true" />
-                  </ActionIconButton>
-                </Stack>
-              </Stack>
-            </Box>
-          ))}
+        <Box sx={{ mt: 1.5 }}>
+          <DwaionMemoryEvidenceExplorer
+            memories={memories}
+            automaticMemoryInference={automaticMemoryInference}
+            evidenceCapabilities={evidenceCapabilities}
+            busy={busy}
+            canManage={canManage}
+            copy={copy}
+            formatTimestamp={formatTimestamp}
+            onEdit={openEditor}
+            onStateChange={(memory) =>
+              onStateChange(
+                memory.memoryId,
+                memory.revision,
+                memory.state === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'
+              )
+            }
+            onScope={openScopeEditor}
+            onExpiry={openExpiryEditor}
+            onDelete={setDeleting}
+          />
         </Box>
       )}
 
@@ -251,6 +226,84 @@ export function DwaionMemoryControls({
         </Stack>
       </FormDialog>
 
+      <FormDialog
+        open={Boolean(scopeEditing)}
+        title={copy.scopeDialogTitle}
+        description={copy.scopeDialogDescription}
+        cancelLabel={copy.cancel}
+        submitLabel={copy.save}
+        submittingLabel={copy.saving}
+        busy={busy}
+        submitDisabled={scopeDraft.length === 0}
+        mobileFullScreen
+        onClose={() => setScopeEditing(null)}
+        onSubmit={async () => {
+          if (!scopeEditing || scopeDraft.length === 0) return;
+          await onScopeChange(scopeEditing.memoryId, scopeEditing.revision, scopeDraft);
+          setScopeEditing(null);
+        }}
+      >
+        <Stack gap={0.5}>
+          {scopeEditing?.scope.map((scope) => (
+            <FormControlLabel
+              key={scope}
+              control={
+                <Checkbox
+                  checked={scopeDraft.includes(scope)}
+                  onChange={(_, checked) =>
+                    setScopeDraft((current) =>
+                      checked ? [...current, scope] : current.filter((item) => item !== scope)
+                    )
+                  }
+                />
+              }
+              label={copy.memoryScopes[scope]}
+            />
+          ))}
+          {scopeDraft.length === 0 ? (
+            <Typography role="alert" color="error.main" variant="caption">
+              {copy.scopeRequired}
+            </Typography>
+          ) : null}
+        </Stack>
+      </FormDialog>
+
+      <FormDialog
+        open={Boolean(expiryEditing)}
+        title={copy.expiryDialogTitle}
+        description={copy.expiryDialogDescription}
+        cancelLabel={copy.cancel}
+        submitLabel={copy.save}
+        submittingLabel={copy.saving}
+        busy={busy}
+        submitDisabled={!clearExpiry && !validFutureLocalDateTime(expiryDraft)}
+        mobileFullScreen
+        onClose={() => setExpiryEditing(null)}
+        onSubmit={async () => {
+          if (!expiryEditing) return;
+          const expiresAt = clearExpiry ? null : new Date(expiryDraft).toISOString();
+          await onExpiryChange(expiryEditing.memoryId, expiryEditing.revision, expiresAt);
+          setExpiryEditing(null);
+        }}
+      >
+        <Stack gap={1.5}>
+          <FormControlLabel
+            control={
+              <Switch checked={clearExpiry} onChange={(_, checked) => setClearExpiry(checked)} />
+            }
+            label={copy.clearExpiry}
+          />
+          <FormField
+            label={copy.expiryValue}
+            type="datetime-local"
+            value={expiryDraft}
+            disabled={clearExpiry}
+            required={!clearExpiry}
+            onChange={(event) => setExpiryDraft(event.target.value)}
+          />
+        </Stack>
+      </FormDialog>
+
       <ConfirmDialog
         open={Boolean(deleting)}
         title={copy.deleteTitle}
@@ -268,4 +321,17 @@ export function DwaionMemoryControls({
       />
     </Box>
   );
+}
+
+function toLocalDateTime(value: string | null): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+  const offset = date.getTimezoneOffset() * 60_000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+function validFutureLocalDateTime(value: string): boolean {
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && timestamp > Date.now();
 }

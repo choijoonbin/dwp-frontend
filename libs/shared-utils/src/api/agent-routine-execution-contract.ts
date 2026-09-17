@@ -1,4 +1,9 @@
+import type { AgentComponents } from '@dwp-frontend/api-contracts';
+
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
+import type { DwaionPersonalRoutine } from './agent-routine-api';
+
+type AgentSchemas = AgentComponents['schemas'];
 
 export type DwaionRoutineSource = 'WORK_ITEM' | 'MAIL' | 'CALENDAR';
 
@@ -49,10 +54,32 @@ export type DwaionRoutineRuntimeCapabilities = {
   notificationDeliveryAvailable: boolean;
   proposalDeliveryAvailable: boolean;
   externalWriteAvailable: boolean;
+  webhookTriggerAvailable: boolean;
+  agentKernelBinding: DwaionRoutineProviderCapability;
+  whitelistedSourceBinding: DwaionRoutineProviderCapability;
+  blockedSourcePolicy: DwaionRoutineProviderCapability;
+  zeroWritePolicy: DwaionRoutineProviderCapability;
+  semanticVersionDiff: DwaionRoutineProviderCapability;
+  runtimeBudgetRetry: DwaionRoutineProviderCapability;
+  automaticQuarantine: DwaionRoutineProviderCapability;
+  changeApproval: DwaionRoutineProviderCapability;
+  agentSwitching: DwaionRoutineProviderCapability;
+  wormDelivery: DwaionRoutineProviderCapability;
+  oauthReauthorization: DwaionRoutineProviderCapability;
+  temporaryBudgetIncrease: DwaionRoutineProviderCapability;
+  operatorEscalation: DwaionRoutineProviderCapability;
+  providerRollback: DwaionRoutineProviderCapability;
   executionProviderState: string;
   recoveryHint: string | null;
   supportedCadences: Array<'DAILY' | 'WEEKDAYS' | 'WEEKLY'>;
   consentScopes: Array<'SOURCE_ACCESS' | 'ANALYSIS' | 'PROPOSAL_DELIVERY'>;
+};
+
+export type DwaionRoutineProviderCapability = {
+  available: boolean;
+  configured: boolean;
+  reasonCode: string | null;
+  recoveryHint: string | null;
 };
 
 export type DwaionRoutineRunState =
@@ -92,7 +119,7 @@ export type DwaionRoutineExecutionRun = {
   routineRunId: string;
   routineId: string;
   routineRevision: number;
-  trigger: 'SCHEDULED' | 'MANUAL';
+  trigger: 'SCHEDULED' | 'MANUAL' | 'WEBHOOK';
   state: DwaionRoutineRunState;
   version: number;
   attemptCount: number;
@@ -130,4 +157,27 @@ export type DwaionRoutineActivationCommand = DwaionRoutineHighRiskCommand & {
 
 export type DwaionRoutineRunCommand = DwaionRoutineHighRiskCommand & {
   action: 'RETRY' | 'CANCEL' | 'COMPENSATE';
+};
+
+export type DwaionRoutineWebhookCommand = DwaionRoutineHighRiskCommand & {
+  eventId: string;
+  eventType: string;
+  occurredAt: string;
+  payload?: Record<string, unknown>;
+};
+
+export type DwaionRoutineVersionSnapshot = Omit<
+  AgentSchemas['RoutineVersionSnapshot'],
+  'snapshot'
+> & {
+  snapshot: DwaionPersonalRoutine;
+};
+
+export type DwaionRoutineHealth = AgentSchemas['RoutineHealth'];
+
+export type DwaionRoutineRollbackReceipt = Omit<
+  AgentSchemas['RoutineRollbackReceipt'],
+  'routine'
+> & {
+  routine: DwaionPersonalRoutine;
 };

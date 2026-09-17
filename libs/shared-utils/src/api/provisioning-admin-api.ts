@@ -7,10 +7,16 @@ export type ScimConnector = {
   connectorKey: string;
   displayName: string;
   tokenPrefix: string;
-  allowedOperations: string[];
+  allowedOperations: Array<'USERS' | 'GROUPS'>;
+  purpose: string;
+  ownerUserId?: number | null;
   lifecycleState: 'ACTIVE' | 'SUSPENDED' | 'RETIRED';
+  credentialState: 'ACTIVE' | 'EXPIRING' | 'EXPIRED';
+  credentialIssuedAt: string;
+  credentialExpiresAt: string;
+  credentialRotatedAt?: string | null;
   lastUsedAt?: string | null;
-  health: 'READY' | 'PENDING' | 'ATTENTION' | 'SUSPENDED' | 'RETIRED';
+  health: 'READY' | 'PENDING' | 'ATTENTION' | 'EXPIRING' | 'EXPIRED' | 'SUSPENDED' | 'RETIRED';
   events24h: number;
   failedEvents24h: number;
   lastSuccessAt?: string | null;
@@ -58,6 +64,9 @@ export async function listScimProvisioningEvents(
 export async function createScimConnector(request: {
   connectorKey: string;
   displayName: string;
+  purpose: string;
+  allowedOperations: Array<'USERS' | 'GROUPS'>;
+  credentialTtlDays: number;
 }): Promise<ScimCredentialIssued> {
   const response = await axiosInstance.post<ApiResponse<ScimCredentialIssued>, typeof request>(
     BASE,
@@ -67,11 +76,17 @@ export async function createScimConnector(request: {
 }
 
 export async function rotateScimConnectorSecret(
-  connectorId: string
+  connectorId: string,
+  request: {
+    expectedVersion: number;
+    credentialTtlDays: number;
+    explicitConfirmation: true;
+    reason: string;
+  }
 ): Promise<ScimCredentialIssued> {
-  const response = await axiosInstance.post<ApiResponse<ScimCredentialIssued>, undefined>(
+  const response = await axiosInstance.post<ApiResponse<ScimCredentialIssued>, typeof request>(
     `${BASE}/${encodeURIComponent(connectorId)}/rotate-secret`,
-    undefined
+    request
   );
   return response.data.data;
 }

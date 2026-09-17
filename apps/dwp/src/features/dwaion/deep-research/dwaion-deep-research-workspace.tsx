@@ -6,8 +6,11 @@ import {
   commandDwaionResearchRun,
   createDwaionResearchDelivery,
   createDwaionResearchPlan,
+  downloadDwaionResearchRun,
+  executeDwaionResearchRun,
   getDwaionResearchDelivery,
   getDwaionResearchDeliveries,
+  getDwaionResearchCapabilities,
   getDwaionResearchPlan,
   getDwaionResearchRun,
   newDwaionCommandAttempt,
@@ -15,8 +18,10 @@ import {
   updateDwaionResearchPlan,
   type DwaionCommandAttempt,
   type DwaionResearchCommand,
+  type DwaionResearchCapabilities,
   type DwaionResearchDelivery,
   type DwaionResearchDeliveryType,
+  type DwaionResearchDownloadKind,
   type DwaionResearchPlan,
   type DwaionResearchRun,
 } from '@dwp-frontend/shared-utils';
@@ -51,6 +56,7 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
   const [plan, setPlan] = useState<DwaionResearchPlan | null>(null);
   const [dirty, setDirty] = useState(false);
   const [run, setRun] = useState<DwaionResearchRun | null>(null);
+  const [capabilities, setCapabilities] = useState<DwaionResearchCapabilities | null>(null);
   const [deliveries, setDeliveries] = useState<DwaionResearchDelivery[]>([]);
   const [loading, setLoading] = useState(Boolean(planId || runId));
   const [busy, setBusy] = useState<string | null>(null);
@@ -66,10 +72,21 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
     'route.dwaion.work.research-plan-update.action'
   );
   const governRunStart = useDwaionGovernedMutation('route.dwaion.work.research-run-start.action');
+  const governRunExecute = useDwaionGovernedMutation(
+    'route.dwaion.work.research-run-execute.action'
+  );
   const governRunCommand = useDwaionGovernedMutation(
     'route.dwaion.work.research-run-command.action'
   );
   const governOutput = useDwaionGovernedMutation('route.dwaion.work.research-output.action');
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void getDwaionResearchCapabilities(controller.signal)
+      .then((value) => setCapabilities(value))
+      .catch(() => setOperationError(true));
+    return () => controller.abort();
+  }, []);
 
   const setIds = useCallback(
     (nextPlanId?: string | null, nextRunId?: string | null) => {
@@ -204,6 +221,32 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
       startAttempt.current = null;
       setRun(started);
       setIds(plan.planId, started.runId);
+      const executed = await execute(started);
+      setRun(executed);
+    } catch {
+      setOperationError(true);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const execute = async (target: DwaionResearchRun) => {
+    const key = `${target.runId}:${target.version}:EXECUTE`;
+    const commandId = commandIds.current.get(key) ?? globalThis.crypto.randomUUID();
+    commandIds.current.set(key, commandId);
+    const executed = await governRunExecute((authority) =>
+      executeDwaionResearchRun(target.runId, target.version, commandId, authority)
+    );
+    commandIds.current.delete(key);
+    return executed;
+  };
+
+  const executeQueued = async () => {
+    if (!run || run.state !== 'QUEUED') return;
+    setBusy('EXECUTE');
+    setOperationError(false);
+    try {
+      setRun(await execute(run));
     } catch {
       setOperationError(true);
     } finally {
@@ -264,6 +307,25 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
     }
   };
 
+  const download = async (kind: DwaionResearchDownloadKind) => {
+    if (!run || run.state !== 'COMPLETED') return;
+    setBusy(`DOWNLOAD_${kind.toUpperCase()}`);
+    setOperationError(false);
+    try {
+      const blob = await downloadDwaionResearchRun(run.runId, kind);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `dwaion-research-${kind}-${run.runId}.${kind === 'audit' ? 'jsonl' : 'json'}`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setOperationError(true);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   if (loading)
     return (
       <Box sx={{ minHeight: 320, display: 'grid', placeItems: 'center' }}>
@@ -276,12 +338,15 @@ export function DwaionDeepResearchWorkspace({ onExit }: { onExit: () => void }) 
         locale={locale}
         plan={plan}
         run={run}
+        capabilities={capabilities}
         deliveries={deliveries}
         busy={busy}
         operationError={operationError}
         onRefresh={() => void refreshRun()}
+        onExecute={() => void executeQueued()}
         onCommand={(action, source) => void command(action, source)}
         onDeliver={(type) => void deliver(type)}
+        onDownload={(kind) => void download(kind)}
         onExit={onExit}
       />
     );

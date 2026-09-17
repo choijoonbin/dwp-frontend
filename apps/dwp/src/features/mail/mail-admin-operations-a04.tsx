@@ -12,6 +12,8 @@ import { FormattedTime, Section, StateChip } from './mail-admin-operations-ui-sh
 import type { MailAdminOverview } from '@dwp-frontend/shared-utils';
 import type { MailPolicyGovernance } from './mail-admin-operations-model';
 
+const UNVERIFIED_STATE = 'UNVERIFIED';
+
 export function GovernanceSurface({
   overview,
   governance,
@@ -122,7 +124,12 @@ export function GovernanceSurface({
                       value: value ? 'On' : 'Off',
                     })}
                   </Typography>
-                  <StateChip label="UNVERIFIED" />
+                  <StateChip
+                    label={UNVERIFIED_STATE}
+                    displayLabel={t('admin.operationsWorkspace.evidence.UNVERIFIED', {
+                      defaultValue: 'Unverified',
+                    })}
+                  />
                 </Stack>
               </Box>
             ))}
@@ -148,7 +155,11 @@ export function GovernanceSurface({
                 <History size={17} />
                 <Box sx={{ flex: 1 }}>
                   <Typography variant="body2" fontWeight="fontWeightBold">
-                    v{item.version} · {item.diffSummary}
+                    {t('admin.operationsWorkspace.a04.versionLabel', {
+                      defaultValue: 'Version {{version}}',
+                      version: item.version,
+                    })}{' '}
+                    · {item.diffSummary}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
                     {item.changedBy} · <FormattedTime value={item.changedAt} /> ·{' '}

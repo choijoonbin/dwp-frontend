@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   compareApprovalTemplateVersion,
   getApprovalFormStudioDraftInput,
@@ -117,6 +118,7 @@ function AdminWorkspaceTabs<T extends string>({
 
 function TemplateLibraryRuntime() {
   const { t, i18n } = useTranslation('approvals');
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const copy = {
     ...approvalAdminV2Copy(t).templates,
     previewTitle: t('admin.studio.preview'),
@@ -285,10 +287,7 @@ function TemplateLibraryRuntime() {
                 schemaSha256: detail.schemaSha256,
                 fields: detail.fields.map((field) => ({
                   id: field.id,
-                  label:
-                    i18n.resolvedLanguage?.toLowerCase().startsWith('ko') === true
-                      ? field.labelKo
-                      : field.labelEn,
+                  label: locale === 'ko' ? field.labelKo : field.labelEn,
                   type: field.type,
                   required: field.required,
                 })),
@@ -425,7 +424,7 @@ function FormStudioRuntime() {
     () => (editor ? readFormStudioV3EditorFields(editor.schema) : []),
     [editor]
   );
-  const locale = i18n.resolvedLanguage?.toLowerCase().startsWith('ko') ? 'ko' : 'en';
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const fields = useMemo(() => {
     const serverFields = new Map((data?.fields ?? []).map((field) => [field.id, field]));
     return editorFields.map((field) => {

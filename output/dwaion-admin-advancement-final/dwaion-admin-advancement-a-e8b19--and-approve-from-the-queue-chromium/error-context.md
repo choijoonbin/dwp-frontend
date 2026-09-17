@@ -1,0 +1,300 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Operations
+            - paragraph [ref=e26]: SKAX
+          - navigation [ref=e27]
+          - link [ref=e29] [cursor=pointer]:
+            - /url: /apps
+            - img [ref=e31]
+            - text: Return to apps
+      - banner [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - img [ref=e37]
+            - generic [ref=e40]:
+              - generic [ref=e41]: DWAI·ON management
+              - generic [ref=e42]: SKAX · DWAI·ON tenant operations
+          - generic [ref=e46]: Management mode
+          - generic [ref=e48]:
+            - group [ref=e49]:
+              - img [ref=e51]:
+                - img [ref=e52]
+                - generic [ref=e55]: Access revalidation
+            - status [ref=e56]
+          - generic [ref=e57]:
+            - button [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+            - generic [ref=e63]:
+              - button [ref=e64] [cursor=pointer]:
+                - img [ref=e65]
+              - button [ref=e72] [cursor=pointer]:
+                - img [ref=e74]
+            - button [ref=e78] [cursor=pointer]:
+              - generic [ref=e79]: T
+              - img [ref=e80]
+      - main [ref=e82]:
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e86]: A-01 · AI Control Plane
+              - heading [level=1] [ref=e87]: Models & routing
+              - paragraph [ref=e88]: Operate providers, models, workload routing, budgets, and recovery within one governed boundary.
+            - status [ref=e90]:
+              - generic [ref=e92]:
+                - generic [ref=e93]: Live operational data
+                - generic [ref=e94]: Generated 9/8/2026, 12:00:00 PM
+              - button [ref=e96] [cursor=pointer]:
+                - img [ref=e97]
+          - generic [ref=e103]:
+            - region [ref=e104]:
+              - generic [ref=e106]:
+                - paragraph [ref=e107]: "2"
+                - paragraph [ref=e108]: Providers
+                - text: 2 models
+              - generic [ref=e110]:
+                - paragraph [ref=e111]: "1"
+                - paragraph [ref=e112]: Pending approval
+              - generic [ref=e114]:
+                - paragraph [ref=e115]: "1"
+                - paragraph [ref=e116]: Canaries
+              - generic [ref=e118]:
+                - paragraph [ref=e119]: 68%
+                - paragraph [ref=e120]: Monthly budget
+                - text: 82,000,000 / 120,000,000
+            - region [ref=e121]:
+              - generic [ref=e122]:
+                - generic [ref=e123]:
+                  - heading [level=2] [ref=e124]: Checker approval inbox
+                  - paragraph [ref=e125]: Independently review the submitted diff, impact, recovery plan, and evidence.
+                - status [ref=e127]:
+                  - generic [ref=e129]:
+                    - generic [ref=e130]: Live operational data
+                    - generic [ref=e131]: Generated 9/8/2026, 12:00:00 PM
+                  - button [ref=e133] [cursor=pointer]:
+                    - img [ref=e134]
+              - button [ref=e141] [cursor=pointer]:
+                - generic [ref=e142]:
+                  - generic [ref=e143]:
+                    - generic [ref=e144]:
+                      - img [ref=e145]
+                      - heading [level=6] [ref=e148]: MODEL_ROUTING_UPDATE
+                      - generic [ref=e150]: AWAITING_APPROVAL
+                    - paragraph [ref=e151]: ROUTING_POLICY:route-enterprise · AI-OPS-41
+                    - generic [ref=e152]: fixture-maker · v1
+                  - img [ref=e153]
+            - generic [ref=e155]:
+              - generic [ref=e156]:
+                - region [ref=e157]:
+                  - heading [level=2] [ref=e160]: Provider and model health
+                  - generic [ref=e162]:
+                    - generic [ref=e163]:
+                      - generic [ref=e164]:
+                        - generic [ref=e165]:
+                          - heading [level=6] [ref=e166]: Managed enterprise provider
+                          - generic [ref=e167]:
+                            - img [ref=e168]
+                            - generic [ref=e171]: HEALTHY
+                        - generic [ref=e172]: MANAGED · ap-northeast-2 · 2 models
+                      - generic [ref=e173]:
+                        - generic [ref=e174]:
+                          - text: P95
+                          - paragraph [ref=e175]: 420ms
+                        - generic [ref=e176]:
+                          - text: Success
+                          - paragraph [ref=e177]: 99.88%
+                    - separator [ref=e178]
+                    - generic [ref=e179]:
+                      - generic [ref=e180]:
+                        - generic [ref=e181]:
+                          - heading [level=6] [ref=e182]: Private inference cluster
+                          - generic [ref=e183]:
+                            - img [ref=e184]
+                            - generic [ref=e186]: DEGRADED
+                        - generic [ref=e187]: PRIVATE · kr-private-1 · 1 models
+                      - generic [ref=e188]:
+                        - generic [ref=e189]:
+                          - text: P95
+                          - paragraph [ref=e190]: 1420ms
+                        - generic [ref=e191]:
+                          - text: Success
+                          - paragraph [ref=e192]: 98.40%
+                - region [ref=e193]:
+                  - heading [level=2] [ref=e196]: Workload routing policies
+                  - button [pressed] [ref=e199] [cursor=pointer]:
+                    - generic [ref=e200]:
+                      - generic [ref=e201]:
+                        - heading [level=6] [ref=e202]: General work routing
+                        - generic [ref=e204]: ACTIVE · v7
+                      - paragraph [ref=e205]: tenant:fixture · model-primary → model-fallback
+              - generic [ref=e206]:
+                - region [ref=e207]:
+                  - generic [ref=e209]:
+                    - heading [level=2] [ref=e210]: General work routing
+                    - paragraph [ref=e211]: tenant:fixture · v7
+                  - generic [ref=e213]:
+                    - generic [ref=e214]:
+                      - generic [ref=e215]: Primary model
+                      - generic [ref=e216]:
+                        - combobox [ref=e217] [cursor=pointer]: Enterprise multimodal model
+                        - textbox: model-primary
+                        - img
+                        - group:
+                          - generic: Primary model
+                    - generic [ref=e218]:
+                      - generic [ref=e219]: Fallback model
+                      - generic [ref=e220]:
+                        - combobox [ref=e221] [cursor=pointer]: Private safe fallback
+                        - textbox: model-fallback
+                        - img
+                        - group:
+                          - generic: Fallback model
+                    - generic [ref=e222]:
+                      - generic [ref=e223]: Budget action
+                      - generic [ref=e224]:
+                        - combobox [ref=e225] [cursor=pointer]: THROTTLE
+                        - textbox: THROTTLE
+                        - img
+                        - group:
+                          - generic: Budget action
+                    - generic [ref=e226]:
+                      - generic [ref=e227]: Daily budget
+                      - generic [ref=e228]:
+                        - spinbutton [ref=e229]: "4000000"
+                        - group:
+                          - generic: Daily budget
+                    - generic [ref=e230]:
+                      - generic [ref=e231]: Modalities
+                      - generic [ref=e232]:
+                        - textbox [ref=e233]: TEXT, VISION
+                        - group:
+                          - generic: Modalities
+                      - paragraph [ref=e234]: Comma-separated verified modalities
+                    - generic [ref=e235]:
+                      - generic: Agent scope
+                      - generic [ref=e236]:
+                        - textbox [ref=e237]
+                        - group:
+                          - generic: Agent scope
+                      - paragraph [ref=e238]: Comma-separated Agent IDs or governed selectors
+                    - generic [ref=e239]:
+                      - generic [ref=e240]: In-flight jobs
+                      - generic [ref=e241]:
+                        - combobox [ref=e242] [cursor=pointer]: DRAIN
+                        - textbox: DRAIN
+                        - img
+                        - group:
+                          - generic: In-flight jobs
+                    - button [ref=e243] [cursor=pointer]:
+                      - img [ref=e245]
+                      - text: Change policy
+                    - generic [ref=e249]:
+                      - button [ref=e250] [cursor=pointer]:
+                        - img [ref=e252]
+                        - text: Start canary
+                      - button [ref=e254] [cursor=pointer]:
+                        - img [ref=e256]
+                        - text: Restore previous version
+                - region [ref=e259]:
+                  - heading [level=2] [ref=e262]: Routing simulator
+                  - generic [ref=e264]:
+                    - generic [ref=e265]:
+                      - generic: Workload and constraints
+                      - generic [ref=e266]:
+                        - textbox [ref=e267]
+                        - group:
+                          - generic: Workload and constraints
+                    - button [disabled]:
+                      - generic:
+                        - img
+                      - text: Routing simulator
+                - region [ref=e268]:
+                  - heading [level=2] [ref=e271]: Emergency control
+                  - generic [ref=e273]:
+                    - paragraph [ref=e274]: Stops selected AI traffic and moves supported workloads to the verified fallback.
+                    - button [ref=e275] [cursor=pointer]:
+                      - img [ref=e277]
+                      - text: Emergency stop
+  - dialog "Review pending command" [ref=e283]:
+    - heading "Review pending command" [level=2] [ref=e284]
+    - generic [ref=e286]:
+      - generic [ref=e287]:
+        - generic [ref=e288]:
+          - heading "Submitted review record" [level=3] [ref=e289]
+          - paragraph [ref=e290]: Move enterprise research traffic to the evaluated routing policy.
+          - generic [ref=e291]: AI-OPS-41 · evaluation:run:41 · audit:event:41
+        - generic [ref=e292]:
+          - generic [ref=e293]:
+            - generic [ref=e294]:
+              - generic [ref=e295]: Primary model
+              - paragraph [ref=e296]: model-primary
+              - paragraph [ref=e297]: model-canary
+            - generic [ref=e298]:
+              - generic [ref=e299]: Canary traffic
+              - paragraph [ref=e300]: 0%
+              - paragraph [ref=e301]: 5%
+          - list [ref=e302]:
+            - listitem [ref=e303]: tenant:fixture
+            - listitem [ref=e304]: agent:research
+        - generic [ref=e305]:
+          - heading "Recovery plan" [level=6] [ref=e306]
+          - paragraph [ref=e307]: Restore model-primary and drain the canary route if validation fails.
+          - generic [ref=e308]: SHA-256 · aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        - separator [ref=e309]
+      - generic [ref=e310]:
+        - generic [ref=e311]:
+          - generic [ref=e312]:
+            - img [ref=e313]
+            - generic [ref=e316]: AWAITING_APPROVAL
+          - generic [ref=e317]: checker-command-42
+          - button "Refresh status" [ref=e318] [cursor=pointer]
+        - generic [ref=e319]:
+          - img [ref=e320]
+          - alert [ref=e323]:
+            - img [ref=e325]
+            - generic [ref=e327]: Awaiting checker approval
+        - separator [ref=e328]
+        - generic [ref=e329]:
+          - heading "Completion receipt" [level=3] [ref=e330]
+          - paragraph [ref=e331]: No verified domain completion receipt has been issued yet.
+        - generic [ref=e332]:
+          - generic:
+            - text: Decision or follow-up reason
+            - generic: "*"
+          - generic [ref=e333]:
+            - textbox "Decision or follow-up reason" [ref=e334]
+            - group:
+              - generic: Decision or follow-up reason *
+      - generic [ref=e335]:
+        - generic:
+          - text: Decision evidence references
+          - generic: "*"
+        - generic [ref=e336]:
+          - textbox "Decision evidence references" [ref=e337]
+          - group:
+            - generic: Decision evidence references *
+        - paragraph [ref=e338]: Enter audit events, evaluation runs, or document references separated by commas.
+    - generic [ref=e339]:
+      - button "Close" [ref=e340] [cursor=pointer]
+      - generic [ref=e341]:
+        - button "Reject" [disabled]
+        - button "Approve" [disabled]
+```

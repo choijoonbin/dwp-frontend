@@ -17,6 +17,7 @@ import {
 } from '../features/mail/mail-admin-operations-workspace';
 import { MailHome } from '../features/mail/mail-home';
 import { MailInbox } from '../features/mail/mail-inbox';
+import { MailAdminWritingAssetsWorkspace } from '../features/mail/mail-admin-writing-assets-workspace';
 import { MailAddressBook } from '../features/mail/mail-address-book';
 import { MailOrganization } from '../features/mail/mail-organization';
 import { findMailNavigationItem } from '../features/mail/mail-navigation';
@@ -66,6 +67,7 @@ export default function MailPage() {
           ) : (
             <MailSharedAccessAdminWorkspace onOpenSharedInboxSettings={openSettings} />
           ),
+          'admin-writing-assets': <MailAdminWritingAssetsWorkspace />,
           'admin-policies': settingsOpen ? (
             <MailAdminPolicies onBack={closeSettings} />
           ) : (

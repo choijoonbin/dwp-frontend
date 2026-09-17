@@ -137,7 +137,11 @@ export function DwaionRoutineList({
               <Fact
                 icon={<Clock3 size={15} />}
                 label={copy.schedule}
-                value={`${copy.cadence[routine.schedule.cadence]} · ${routine.schedule.localTime.slice(0, 5)}`}
+                value={
+                  routine.triggerType === 'WEBHOOK'
+                    ? `${copy.webhookTrigger} · ${routine.webhookEventType ?? copy.capabilityUnavailable}`
+                    : `${copy.cadence[routine.schedule.cadence]} · ${routine.schedule.localTime.slice(0, 5)}`
+                }
               />
               <Fact
                 icon={<Database size={15} />}

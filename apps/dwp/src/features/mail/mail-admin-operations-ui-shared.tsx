@@ -37,6 +37,15 @@ export type MailAdminOperationsContentProps = {
   surface: MailAdminSurface;
   overview: MailAdminOverview;
   canManage: boolean;
+  canManageConnections?: boolean;
+  canManageSharedInboxes?: boolean;
+  canManagePolicy?: boolean;
+  canManageHolds?: boolean;
+  canAuthorizePurge?: boolean;
+  canExecutePurge?: boolean;
+  canReadAudit?: boolean;
+  canRecoverDeliveries?: boolean;
+  canExportAudit?: boolean;
   now?: number;
   operations?: MailAdminOperationsSnapshot;
   connectionOperations?: readonly MailConnectionOperation[];
@@ -98,7 +107,7 @@ export function EvidenceChip({ state }: { state: MailAdminEvidenceState }) {
   );
 }
 
-export function StateChip({ label }: { label: string }) {
+export function StateChip({ label, displayLabel }: { label: string; displayLabel?: string }) {
   const success = ['SUCCEEDED', 'READY', 'ENFORCED', 'ACTIVE', 'APPLIED', 'VERIFIED'].includes(
     label
   );
@@ -109,7 +118,7 @@ export function StateChip({ label }: { label: string }) {
       size="small"
       variant="outlined"
       color={success ? 'success' : error ? 'error' : warning ? 'warning' : 'default'}
-      label={label}
+      label={displayLabel ?? label}
     />
   );
 }

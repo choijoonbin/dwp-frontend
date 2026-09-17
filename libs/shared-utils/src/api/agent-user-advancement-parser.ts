@@ -4,6 +4,8 @@ import { isAgentDate, isAgentRecord } from './agent-governed-api';
 import type {
   DwaionAttachmentCapabilities,
   DwaionAttachmentCitation,
+  DwaionAttachmentEvidence,
+  DwaionAttachmentEvidenceEvent,
   DwaionAttachmentStage,
   DwaionAttachmentStageKey,
   DwaionAttachmentStageState,
@@ -14,6 +16,7 @@ import type {
   DwaionResearchDelivery,
   DwaionResearchDeliveryState,
   DwaionResearchDeliveryType,
+  DwaionResearchCapabilities,
   DwaionResearchDeliverableType,
   DwaionResearchPlan,
   DwaionResearchPlanDefinition,
@@ -60,6 +63,9 @@ export function parseDwaionSecureAttachment(value: unknown): DwaionSecureAttachm
   ) {
     throw invalid('Secure attachment response is invalid.', value);
   }
+  if (value.capabilities.signedAuditReport.available) {
+    throw invalid('Signed attachment audit reports lack a governed download endpoint.', value);
+  }
   if (
     (value.state === 'DELETED') !== (value.deletedAt !== null) ||
     (value.state === 'UPLOADING') !== (value.uploadTicket !== null)
@@ -67,6 +73,41 @@ export function parseDwaionSecureAttachment(value: unknown): DwaionSecureAttachm
     throw invalid('Secure attachment lifecycle is inconsistent.', value);
   }
   return value as DwaionSecureAttachment;
+}
+
+export function parseDwaionAttachmentEvidence(value: unknown): DwaionAttachmentEvidence {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.attachmentId) ||
+    typeof value.sourceSha256 !== 'string' ||
+    !SHA256.test(value.sourceSha256) ||
+    !Array.isArray(value.stages) ||
+    value.stages.length > 6 ||
+    !value.stages.every(isAttachmentStage) ||
+    new Set(value.stages.map((stage) => stage.key)).size !== value.stages.length ||
+    !Array.isArray(value.citations) ||
+    value.citations.length > 2_000 ||
+    !value.citations.every(isAttachmentCitation) ||
+    !evidenceEvents(value.inspectionLog) ||
+    !evidenceEvents(value.maskingHistory) ||
+    !Array.isArray(value.ocrEvidence) ||
+    !value.ocrEvidence.every(isAttachmentCitation)
+  ) {
+    throw invalid('Secure attachment evidence response is invalid.', value);
+  }
+  const inspectionIds = new Set(value.inspectionLog.map((event) => event.eventId));
+  const citationIds = new Set(value.citations.map((citation) => citation.citationId));
+  const ocrPassed = value.stages.some((stage) => stage.key === 'OCR' && stage.state === 'PASSED');
+  if (
+    value.maskingHistory.some(
+      (event) => !inspectionIds.has(event.eventId) || !event.eventType.includes('MASK')
+    ) ||
+    (!ocrPassed && value.ocrEvidence.length > 0) ||
+    value.ocrEvidence.some((citation) => !citationIds.has(citation.citationId))
+  ) {
+    throw invalid('Secure attachment evidence binding is invalid.', value);
+  }
+  return value as DwaionAttachmentEvidence;
 }
 
 export function parseDwaionResearchPlan(value: unknown): DwaionResearchPlan {
@@ -82,6 +123,19 @@ export function parseDwaionResearchPlan(value: unknown): DwaionResearchPlan {
     throw invalid('Deep research plan response is invalid.', value);
   }
   return value as DwaionResearchPlan;
+}
+
+export function parseDwaionResearchCapabilities(value: unknown): DwaionResearchCapabilities {
+  if (
+    !isAgentRecord(value) ||
+    !RESEARCH_CAPABILITY_KEYS.every((key) => isWorkflowCapability(value[key])) ||
+    RESEARCH_UNBOUND_CAPABILITY_KEYS.some(
+      (key) => isAgentRecord(value[key]) && value[key].available !== false
+    )
+  ) {
+    throw invalid('Deep research capabilities response is invalid.', value);
+  }
+  return value as DwaionResearchCapabilities;
 }
 
 export function parseDwaionResearchRun(value: unknown): DwaionResearchRun {
@@ -259,12 +313,50 @@ function isAttachmentCitation(value: unknown): value is DwaionAttachmentCitation
   );
 }
 
+function evidenceEvents(value: unknown): value is DwaionAttachmentEvidenceEvent[] {
+  return (
+    Array.isArray(value) &&
+    value.length <= 10_000 &&
+    value.every(
+      (event) =>
+        isAgentRecord(event) &&
+        uuid(event.eventId) &&
+        safeCode(event.eventType) &&
+        (event.previousState === null ||
+          ATTACHMENT_STATES.has(event.previousState as DwaionAttachmentState)) &&
+        ATTACHMENT_STATES.has(event.currentState as DwaionAttachmentState) &&
+        integer(event.revision, 1) &&
+        (event.safeErrorCode === null || safeCode(event.safeErrorCode)) &&
+        isAgentDate(event.occurredAt)
+    ) &&
+    new Set(value.map((event) => event.eventId)).size === value.length &&
+    value.every(
+      (event, index) =>
+        index === 0 ||
+        Date.parse(value[index - 1].occurredAt) < Date.parse(event.occurredAt) ||
+        (value[index - 1].occurredAt === event.occurredAt &&
+          value[index - 1].eventId.localeCompare(event.eventId) < 0)
+    )
+  );
+}
+
 function isAttachmentCapabilities(value: unknown): value is DwaionAttachmentCapabilities {
   return (
     isAgentRecord(value) &&
-    ['upload', 'antivirus', 'dlp', 'parser', 'ocr', 'index', 'deletion'].every((key) =>
-      isWorkflowCapability(value[key])
-    ) &&
+    [
+      'upload',
+      'antivirus',
+      'dlp',
+      'parser',
+      'ocr',
+      'index',
+      'deletion',
+      'detachAll',
+      'inspectionLog',
+      'maskingHistory',
+      'ocrViewer',
+      'signedAuditReport',
+    ].every((key) => isWorkflowCapability(value[key])) &&
     integer(value.maximumFileBytes, 1, 104_857_600) &&
     Array.isArray(value.allowedMediaTypes) &&
     value.allowedMediaTypes.every((item) => boundedString(item, 3, 120))
@@ -377,6 +469,25 @@ const DELIVERY_STATES = new Set<DwaionResearchDeliveryState>([
   'FAILED',
   'CANCELLED',
 ]);
+const RESEARCH_CAPABILITY_KEYS = [
+  'rawExport',
+  'pdfExport',
+  'receiptDownload',
+  'auditDownload',
+  'fork',
+  'merge',
+  'keepLocal',
+  'sensitivityRecalculation',
+  'cacheFallback',
+] as const;
+const RESEARCH_UNBOUND_CAPABILITY_KEYS = [
+  'pdfExport',
+  'fork',
+  'merge',
+  'keepLocal',
+  'sensitivityRecalculation',
+  'cacheFallback',
+] as const;
 const HANDOFF_STATES = new Set<DwaionProposalHandoffState>([
   'REVIEW_REQUIRED',
   'AWAITING_APPROVAL',

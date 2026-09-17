@@ -44,6 +44,7 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { ScimCreateDialog, ScimRotationDialog } from './identity-provisioning-credential-dialogs';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -61,9 +62,9 @@ function StateChip({ state }: { state: string }) {
   const color =
     state === 'ACTIVE' || state === 'SUCCEEDED' || state === 'READY'
       ? 'success'
-      : state === 'FAILED' || state === 'ATTENTION'
+      : state === 'FAILED' || state === 'ATTENTION' || state === 'EXPIRED'
         ? 'error'
-        : state === 'PENDING'
+        : state === 'PENDING' || state === 'EXPIRING'
           ? 'warning'
           : 'default';
   return <Chip size="small" variant="outlined" color={color} label={display('states', state)} />;
@@ -118,7 +119,8 @@ function ConnectorInspector({
               {[
                 {
                   label: t('provisioning.scim.steps.credential'),
-                  complete: connector.lifecycleState === 'ACTIVE',
+                  complete:
+                    connector.lifecycleState === 'ACTIVE' && connector.credentialState === 'ACTIVE',
                 },
                 {
                   label: t('provisioning.scim.steps.idp'),
@@ -196,6 +198,77 @@ function ConnectorInspector({
             <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.75 }}>
               {t('provisioning.scim.inspector.tokenPrefix', { prefix: connector.tokenPrefix })}
             </Typography>
+          </Box>
+
+          <Box component="section" aria-labelledby="scim-credential-governance-title">
+            <Typography id="scim-credential-governance-title" component="h3" variant="subtitle2">
+              {t('provisioning.scim.inspector.credentialGovernance')}
+            </Typography>
+            <Box
+              component="dl"
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(120px, auto) minmax(0, 1fr)',
+                gap: 1,
+                m: 0,
+                mt: 1,
+                '& dt': { color: 'text.secondary' },
+                '& dd': { m: 0, overflowWrap: 'anywhere' },
+              }}
+            >
+              <Typography component="dt" variant="caption">
+                {t('provisioning.scim.inspector.purpose')}
+              </Typography>
+              <Typography component="dd" variant="body2">
+                {connector.purpose}
+              </Typography>
+              <Typography component="dt" variant="caption">
+                {t('provisioning.scim.inspector.owner')}
+              </Typography>
+              <Typography component="dd" variant="body2">
+                {connector.ownerUserId ?? t('provisioning.notAvailable')}
+              </Typography>
+              <Typography component="dt" variant="caption">
+                {t('provisioning.scim.inspector.scope')}
+              </Typography>
+              <Stack component="dd" direction="row" gap={0.5} flexWrap="wrap" sx={{ m: 0 }}>
+                {connector.allowedOperations.map((operation) => (
+                  <Chip key={operation} size="small" variant="outlined" label={operation} />
+                ))}
+              </Stack>
+              <Typography component="dt" variant="caption">
+                {t('provisioning.scim.inspector.issuedAt')}
+              </Typography>
+              <Typography component="dd" variant="body2">
+                {formatDate(connector.credentialIssuedAt, {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                })}
+              </Typography>
+              <Typography component="dt" variant="caption">
+                {t('provisioning.scim.inspector.expiresAt')}
+              </Typography>
+              <Stack component="dd" direction="row" gap={0.75} alignItems="center" sx={{ m: 0 }}>
+                <Typography variant="body2">
+                  {formatDate(connector.credentialExpiresAt, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
+                </Typography>
+                <StateChip state={connector.credentialState} />
+              </Stack>
+              <Typography component="dt" variant="caption">
+                {t('provisioning.scim.inspector.rotatedAt')}
+              </Typography>
+              <Typography component="dd" variant="body2">
+                {connector.credentialRotatedAt
+                  ? formatDate(connector.credentialRotatedAt, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })
+                  : t('provisioning.never')}
+              </Typography>
+            </Box>
           </Box>
 
           <Box component="section" aria-labelledby="scim-mapping-title">
@@ -305,60 +378,6 @@ function SecretDialog({
   );
 }
 
-function ScimCreateDialog({
-  open,
-  busy,
-  onClose,
-  onSave,
-}: {
-  open: boolean;
-  busy: boolean;
-  onClose: () => void;
-  onSave: (request: { connectorKey: string; displayName: string }) => Promise<boolean>;
-}) {
-  const { t } = useTranslation('admin');
-  const [connectorKey, setConnectorKey] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  return (
-    <FormDialog
-      open={open}
-      title={t('provisioning.scim.create.title')}
-      cancelLabel={t('common.actions.cancel')}
-      submitLabel={t('common.actions.create')}
-      onClose={onClose}
-      onSubmit={async () => {
-        const saved = await onSave({
-          connectorKey: connectorKey.trim(),
-          displayName: displayName.trim(),
-        });
-        if (saved) {
-          setConnectorKey('');
-          setDisplayName('');
-        }
-      }}
-      busy={busy}
-      submitDisabled={!connectorKey.trim() || !displayName.trim()}
-    >
-      <Stack gap={2}>
-        <FormField
-          autoFocus
-          required
-          label={t('provisioning.scim.create.key')}
-          value={connectorKey}
-          onChange={(event) => setConnectorKey(event.target.value)}
-          supportingText={t('provisioning.scim.create.keyHelp')}
-        />
-        <FormField
-          required
-          label={t('provisioning.scim.create.name')}
-          value={displayName}
-          onChange={(event) => setDisplayName(event.target.value)}
-        />
-      </Stack>
-    </FormDialog>
-  );
-}
-
 export function IdentityProvisioningManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
@@ -366,6 +385,7 @@ export function IdentityProvisioningManager() {
   const [createOpen, setCreateOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [issued, setIssued] = useState<ScimCredentialIssued | null>(null);
+  const [rotationTarget, setRotationTarget] = useState<ScimConnector | null>(null);
   const [inspectedConnectorId, setInspectedConnectorId] = useState<string | null>(null);
   const connectorsQuery = useQuery({
     queryKey: ['admin', 'provisioning', 'scim'],
@@ -418,7 +438,13 @@ export function IdentityProvisioningManager() {
           </Box>
         ),
       },
-      { field: 'tokenPrefix', headerName: t('provisioning.scim.columns.tokenPrefix'), width: 150 },
+      {
+        field: 'credentialExpiresAt',
+        headerName: t('provisioning.scim.columns.expiresAt'),
+        width: 190,
+        valueGetter: (_value, row) =>
+          formatDate(row.credentialExpiresAt, { dateStyle: 'medium', timeStyle: 'short' }),
+      },
       {
         field: 'allowedOperations',
         headerName: t('provisioning.scim.columns.operations'),
@@ -472,10 +498,7 @@ export function IdentityProvisioningManager() {
               disabled={busy || row.lifecycleState === 'RETIRED'}
               onClick={(event) => {
                 event.stopPropagation();
-                void run(
-                  () => rotateScimConnectorSecret(row.connectorId),
-                  t('provisioning.scim.toasts.rotated')
-                );
+                setRotationTarget(row);
               }}
             >
               <RotateCw size={16} />
@@ -563,10 +586,10 @@ export function IdentityProvisioningManager() {
   const inspectedConnector =
     connectors.find((connector) => connector.connectorId === inspectedConnectorId) ?? null;
   const activeConnectors = connectors.filter(
-    (connector) => connector.lifecycleState === 'ACTIVE'
+    (connector) => connector.lifecycleState === 'ACTIVE' && connector.credentialState !== 'EXPIRED'
   ).length;
-  const attentionConnectors = connectors.filter(
-    (connector) => (connector.health ?? connector.lifecycleState) === 'ATTENTION'
+  const attentionConnectors = connectors.filter((connector) =>
+    ['ATTENTION', 'EXPIRING', 'EXPIRED'].includes(connector.health)
   ).length;
   const events24h = connectors.reduce((sum, connector) => sum + (connector.events24h ?? 0), 0);
   const failures24h = connectors.reduce(
@@ -669,7 +692,14 @@ export function IdentityProvisioningManager() {
               key: 'credential',
               label: t('provisioning.scim.steps.credential'),
               detail: t('provisioning.scim.steps.credentialDetail'),
-              state: connectors.length ? 'complete' : 'pending',
+              state: connectors.some(
+                (connector) =>
+                  connector.lifecycleState === 'ACTIVE' && connector.credentialState === 'ACTIVE'
+              )
+                ? 'complete'
+                : connectors.some((connector) => connector.credentialState === 'EXPIRED')
+                  ? 'attention'
+                  : 'pending',
             },
             {
               key: 'idp',
@@ -814,6 +844,17 @@ export function IdentityProvisioningManager() {
         }}
       />
       <SecretDialog issued={issued} onClose={() => setIssued(null)} />
+      <ScimRotationDialog
+        connector={rotationTarget}
+        busy={busy}
+        onClose={() => setRotationTarget(null)}
+        onRotate={(connector, request) =>
+          run(
+            () => rotateScimConnectorSecret(connector.connectorId, request),
+            t('provisioning.scim.toasts.rotated')
+          )
+        }
+      />
       <ConnectorInspector
         connector={inspectedConnector}
         events={events}

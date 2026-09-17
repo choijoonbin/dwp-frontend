@@ -1906,6 +1906,7 @@
       "VALUE_UNAVAILABLE": "The effective value is currently unavailable. Reason: {{reason}}"
     },
     "observationUnsupported": "The published effective value is known, but no application receipt connector is available for its runtime targets. This is not treated as applied.",
+    "sampledGatewayObservation": "Feature rollout evidence covers a sampled authoritative Gateway request path. It does not assert convergence across every Gateway replica.",
     "stages": {
       "desired": "Desired state",
       "effective": "Current effective value",
@@ -1939,7 +1940,7 @@
       "OBSERVATION_UNSUPPORTED": "Application observation unsupported",
       "PUBLISHED_UNOBSERVED": "Published · unobserved",
       "APPLYING": "Applying",
-      "CONVERGED": "Converged",
+      "CONVERGED": "Observed targets match",
       "PARTIAL": "Partially applied",
       "DRIFTED": "Drift detected",
       "FAILED": "Application failed",

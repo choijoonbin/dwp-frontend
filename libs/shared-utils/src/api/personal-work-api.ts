@@ -1,5 +1,7 @@
 import { axiosInstance } from '../axios-instance';
+import { mailProposalMutationHeaders } from './mail-proposal-binding';
 import type { ApiResponse } from '../types';
+import type { MailProposalMutationBinding } from './mail-proposal-binding';
 import type {
   PersonalDayPlan,
   PersonalWorkPage,
@@ -80,13 +82,21 @@ export async function preflightPersonalWorkSource(
 export async function createPersonalWorkTask(
   input: PersonalWorkTaskInput,
   idempotencyKey: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  proposalBinding?: MailProposalMutationBinding
 ): Promise<PersonalWorkTask> {
   return (
     await axiosInstance.post<ApiResponse<PersonalWorkTask>, PersonalWorkTaskInput>(
       `${base}/personal-tasks`,
       input,
-      { ...mutationConfig(idempotencyKey), ...(signal ? { signal } : {}) }
+      {
+        ...mutationConfig(idempotencyKey),
+        ...(signal ? { signal } : {}),
+        headers: {
+          ...mutationConfig(idempotencyKey).headers,
+          ...mailProposalMutationHeaders(proposalBinding),
+        },
+      }
     )
   ).data.data;
 }

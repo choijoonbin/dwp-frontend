@@ -1,0 +1,275 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Start
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Start
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "DWAI·ON home" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: DWAI·ON home
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: Conversations
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "New conversation" [ref=e43] [cursor=pointer]:
+                  - /url: /dwaion/new
+                  - img [ref=e45]
+                  - paragraph [ref=e48]: New conversation
+              - listitem [ref=e49]:
+                - link "My conversations" [ref=e50] [cursor=pointer]:
+                  - /url: /dwaion/conversations
+                  - img [ref=e52]
+                  - paragraph [ref=e57]: My conversations
+          - generic [ref=e58]:
+            - paragraph [ref=e59]: Runs
+            - list [ref=e60]:
+              - listitem [ref=e61]:
+                - link "AI run activity" [ref=e62] [cursor=pointer]:
+                  - /url: /dwaion/activity
+                  - img [ref=e64]
+                  - paragraph [ref=e67]: AI run activity
+          - generic [ref=e68]:
+            - paragraph [ref=e69]: Proposals
+            - list [ref=e70]:
+              - listitem [ref=e71]:
+                - link "AI proposals" [ref=e72] [cursor=pointer]:
+                  - /url: /dwaion/proposals
+                  - img [ref=e74]
+                  - paragraph [ref=e78]: AI proposals
+          - generic [ref=e79]:
+            - paragraph [ref=e80]: Discover
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "Specialized agents" [ref=e83] [cursor=pointer]:
+                  - /url: /dwaion/agents
+                  - img [ref=e85]
+                  - paragraph [ref=e89]: Specialized agents
+              - listitem [ref=e90]:
+                - link "Work actions and connections" [ref=e91] [cursor=pointer]:
+                  - /url: /dwaion/actions
+                  - img [ref=e93]
+                  - paragraph [ref=e98]: Work actions and connections
+          - generic [ref=e99]:
+            - paragraph [ref=e100]: Extensions & outputs
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - link "My AI routines" [ref=e103] [cursor=pointer]:
+                  - /url: /dwaion/routines
+                  - img [ref=e105]
+                  - paragraph [ref=e109]: My AI routines
+              - listitem [ref=e110]:
+                - link "Personal AI controls" [ref=e111] [cursor=pointer]:
+                  - /url: /dwaion/personal-controls
+                  - img [ref=e113]
+                  - paragraph [ref=e115]: Personal AI controls
+              - listitem [ref=e116]:
+                - link "Artifact studio" [ref=e117] [cursor=pointer]:
+                  - /url: /dwaion/artifacts
+                  - img [ref=e119]
+                  - paragraph [ref=e122]: Artifact studio
+        - link "Return to apps" [ref=e124] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e126]
+          - text: Return to apps
+    - banner [ref=e128]:
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - img [ref=e132]
+          - generic "DWAI·ON" [ref=e136]
+        - navigation "App area switcher" [ref=e139]:
+          - 'link "App management: DWAI·ON" [ref=e141] [cursor=pointer]':
+            - /url: /dwaion/admin/overview
+            - img [ref=e143]
+            - generic [ref=e146]: App management
+        - generic [ref=e147]:
+          - button "Search DWP" [ref=e149] [cursor=pointer]:
+            - img [ref=e150]
+            - paragraph [ref=e153]: Search DWP
+            - generic [ref=e154]: ⌘K
+          - generic [ref=e155]:
+            - button "Enter full screen" [ref=e156] [cursor=pointer]:
+              - img [ref=e157]
+            - generic "0 actionable notifications, 0 total unread" [ref=e163]:
+              - button "0 actionable notifications, 0 total unread" [ref=e164] [cursor=pointer]:
+                - generic [ref=e165]:
+                  - img [ref=e166]
+                  - generic: "0"
+          - 'button "Account: Mina Kim, Tenant administrator" [ref=e170] [cursor=pointer]':
+            - generic [ref=e171]: M
+            - img [ref=e172]
+    - main [ref=e174]:
+      - generic [ref=e176]:
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - generic [ref=e181]: SKAX
+            - generic [ref=e182]: Mina Kim · Read only
+          - generic [ref=e183]:
+            - generic [ref=e185]:
+              - text: Permission-aware work AI
+              - heading "DWAI·ON" [level=1] [ref=e186]
+            - generic [ref=e187]:
+              - generic [ref=e188]:
+                - img [ref=e189]
+                - generic [ref=e192]: My access scope
+              - generic [ref=e193]:
+                - img [ref=e194]
+                - generic [ref=e198]: Read only
+              - button "My conversations" [ref=e199] [cursor=pointer]:
+                - img [ref=e201]
+                - text: My conversations
+              - button "New conversation" [ref=e205] [cursor=pointer]:
+                - img [ref=e207]
+                - text: New conversation
+        - generic [ref=e210]:
+          - generic [ref=e212]:
+            - generic [ref=e213]:
+              - button "Back to conversation" [ref=e214] [cursor=pointer]:
+                - img [ref=e216]
+                - text: Back to conversation
+              - generic [ref=e218]:
+                - generic [ref=e220]: Verified
+                - generic [ref=e222]: Run ID · aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2
+              - heading "Compare governed infrastructure options with verified evidence." [level=1] [ref=e223]
+              - paragraph [ref=e224]: Which option offers the best verified value within policy?
+            - button "Reload" [ref=e225] [cursor=pointer]:
+              - img [ref=e227]
+              - text: Reload
+          - generic [ref=e232]:
+            - generic [ref=e234]:
+              - heading "Live deep research run" [level=2] [ref=e235]
+              - generic [ref=e236]:
+                - paragraph [ref=e237]: Completed steps
+                - heading "4/4 · 100%" [level=6] [ref=e238]
+              - 'progressbar "Completed steps: 4/4" [ref=e239]'
+              - generic [ref=e241]:
+                - paragraph [ref=e242]: Discovered sources
+                - paragraph [ref=e243]: "4"
+              - generic [ref=e244]:
+                - paragraph [ref=e245]: Verified citations
+                - paragraph [ref=e246]: "3"
+              - generic [ref=e247]:
+                - paragraph [ref=e248]: Started
+                - paragraph [ref=e249]: Sep 17, 2026, 11:47 AM
+            - generic [ref=e250]:
+              - generic [ref=e251]:
+                - heading "Verified report" [level=2] [ref=e252]
+                - generic [ref=e253]:
+                  - button "View report full screen" [ref=e255] [cursor=pointer]:
+                    - img [ref=e257]
+                    - text: View report full screen
+                  - generic [ref=e262]:
+                    - heading "Verified recommendation" [level=3] [ref=e263]
+                    - paragraph [ref=e264]: The governed option meets the evidence and budget criteria.
+              - generic [ref=e265]:
+                - heading "Source evidence" [level=2] [ref=e266]
+                - generic [ref=e268]:
+                  - heading "Approved infrastructure comparison" [level=6] [ref=e269]
+                  - generic [ref=e270]: work-item:1042 · SHA-256 333333333333…
+            - generic [ref=e271]:
+              - heading "Recovery guidance" [level=2] [ref=e273]
+              - generic [ref=e274]:
+                - heading "Next action handoff" [level=2] [ref=e275]
+                - paragraph [ref=e276]: Each command shows the real server state and receipt.
+                - generic [ref=e277]:
+                  - button "Save as artifact" [ref=e278] [cursor=pointer]:
+                    - img [ref=e280]
+                    - text: Save as artifact
+                  - button "Create AI proposal" [ref=e285] [cursor=pointer]:
+                    - img [ref=e287]
+                    - text: Create AI proposal
+                  - button "Export file" [ref=e292] [cursor=pointer]:
+                    - img [ref=e294]
+                    - text: Export file
+                  - button "Handoff to work app" [ref=e299] [cursor=pointer]:
+                    - img [ref=e301]
+                    - text: Handoff to work app
+                  - button "Share with team" [ref=e306] [cursor=pointer]:
+                    - img [ref=e308]
+                    - text: Share with team
+                  - button "Create recurring routine" [ref=e313] [cursor=pointer]:
+                    - img [ref=e315]
+                    - text: Create recurring routine
+              - region "Verified output and recovery actions" [ref=e320]:
+                - generic [ref=e321]:
+                  - img [ref=e322]
+                  - heading "Verified output and recovery actions" [level=6] [ref=e326]
+                - generic [ref=e327]: Only actions backed by the current run response and receipt are enabled.
+                - generic [ref=e328]:
+                  - generic [ref=e329]:
+                    - button "Extract raw dataset (JSON)" [ref=e330] [cursor=pointer]
+                    - generic [ref=e331]: research.result · Uses the permission-checked, audited server download.
+                  - generic [ref=e332]:
+                    - button "Export official report (PDF)" [disabled]
+                    - generic [ref=e333]: browser.print · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e334]:
+                    - button "Download receipt" [ref=e335] [cursor=pointer]
+                    - generic [ref=e336]: research.receipt · Uses the permission-checked, audited server download.
+                  - generic [ref=e337]:
+                    - button "Open execution audit ledger" [ref=e338] [cursor=pointer]
+                    - generic [ref=e339]: research.run-ledger · Uses the permission-checked, audited server download.
+                  - generic [ref=e340]:
+                    - button "Save as a new fork" [disabled]
+                    - generic [ref=e341]: research.recovery.save-fork · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e342]:
+                    - button "Merge latest server version" [disabled]
+                    - generic [ref=e343]: research.recovery.merge-latest · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e344]:
+                    - button "Keep local draft" [disabled]
+                    - generic [ref=e345]: research.recovery.keep-local · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e346]:
+                    - button "Recalculate scenario sensitivity" [disabled]
+                    - generic [ref=e347]: research.recovery.sensitivity · Ask an administrator to configure this governed research operation.
+                  - generic [ref=e348]:
+                    - button "Use cached fallback" [disabled]
+                    - generic [ref=e349]: research.recovery.cache-fallback · Ask an administrator to configure this governed research operation.
+              - generic [ref=e350]:
+                - heading "Completion receipt" [level=6] [ref=e351]:
+                  - img [ref=e352]
+                  - text: Completion receipt
+                - generic [ref=e355]:
+                  - generic [ref=e356]: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3
+                  - button "Copy receipt ID" [ref=e357] [cursor=pointer]:
+                    - img [ref=e359]
+                    - text: Copy receipt ID
+                - generic [ref=e362]:
+                  - generic [ref=e363]:
+                    - generic [ref=e364]: Receipt fingerprint
+                    - generic [ref=e365]: Unavailable — not returned by the current server contract
+                  - generic [ref=e366]:
+                    - generic [ref=e367]: Issued at
+                    - generic [ref=e368]: Unavailable — not returned by the current server contract
+                  - generic [ref=e369]:
+                    - generic [ref=e370]: Ledger detail link
+                    - generic [ref=e371]: Unavailable — not returned by the current server contract
+              - generic [ref=e372]:
+                - heading "Save as artifact · COMPLETED" [level=6] [ref=e373]:
+                  - img [ref=e374]
+                  - text: Save as artifact · COMPLETED
+                - generic [ref=e377]:
+                  - generic [ref=e378]: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3
+                  - button "Copy receipt ID" [ref=e379] [cursor=pointer]:
+                    - img [ref=e381]
+                    - text: Copy receipt ID
+```

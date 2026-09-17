@@ -139,6 +139,7 @@ function isCitation(value: unknown): value is AskCitation {
       'APPROVAL_REQUEST',
       'APPROVAL_FORM',
       'APPROVAL_OPERATION',
+      'ATTACHMENT',
     ].includes(String(citation.sourceType)) &&
     nonEmptyString(citation.title) &&
     nonEmptyString(citation.sourceSystem) &&

@@ -3436,7 +3436,8 @@
       "APPROVAL_TASK": "Decision tasks",
       "APPROVAL_REQUEST": "Requests",
       "APPROVAL_FORM": "Forms",
-      "APPROVAL_OPERATION": "Operations"
+      "APPROVAL_OPERATION": "Operations",
+      "ATTACHMENT": "Secure attachment"
     },
     "openSource": "Open source: {{title}}",
     "progress": {
@@ -4100,6 +4101,33 @@
         "failed": "Failed",
         "stopped": "Stopped"
       }
+    }
+  },
+  "dwaionOperational": {
+    "artifact": {
+      "revisionSeparator": "· r",
+      "checksumPrefix": "SHA-256",
+      "checksumSeparator": "· SHA-256",
+      "bytesUnit": "bytes"
+    },
+    "deepResearch": {
+      "started": "Started",
+      "checksumSeparator": "· SHA-256"
+    },
+    "adminEvaluation": {
+      "datasetImport": "Dataset import"
+    },
+    "workspace": {
+      "deepResearch": "Deep Research"
+    },
+    "deletion": {
+      "checksumPrefix": "SHA-256"
+    },
+    "secureAttachments": {
+      "checksumPrefix": "SHA-256",
+      "eventMetadata": "{{eventType}} · r{{revision}} · {{state}}",
+      "eventMetadataWithError": "{{eventType}} · r{{revision}} · {{state}} · {{errorCode}}",
+      "ocrCitation": "{{label}} · {{locator}}"
     }
   },
   "reference": {

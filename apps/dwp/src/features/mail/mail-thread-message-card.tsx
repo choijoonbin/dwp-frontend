@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { Forward, ImageOff, Paperclip, RotateCcw } from 'lucide-react';
+import { Download, Forward, ImageOff, RotateCcw } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { downloadMailMessageAttachment, useToast } from '@dwp-frontend/shared-utils';
 import { ActionButton } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -11,30 +13,55 @@ import Typography from '@mui/material/Typography';
 
 import { mailRelativeTime } from './mail-components';
 import {
+  formatMailAttachmentSize,
+  mailMessageAttachments,
+  saveMailAttachmentBlob,
+} from './mail-attachment-download';
+import {
   mailMessageRecipients,
   mailRemoteImageCount,
   sanitizeMailHtml,
 } from './mail-message-presentation';
+import { mailRemoteImageState } from './mail-runtime-preferences';
 
-import type { MailMessage } from '@dwp-frontend/shared-utils';
+import type { MailMessage, MailPreferences } from '@dwp-frontend/shared-utils';
 
 export function MailThreadMessageCard({
+  threadId,
   message,
   language,
-  remoteImagesAllowed,
+  remoteImagePolicy,
+  remoteImagesManuallyAllowed,
   onLoadRemoteImages,
   onForward,
 }: {
+  threadId: string;
   message: MailMessage;
   language: string;
-  remoteImagesAllowed: boolean;
+  remoteImagePolicy: MailPreferences['remoteImages'];
+  remoteImagesManuallyAllowed: boolean;
   onLoadRemoteImages: () => void;
   onForward: () => void;
 }) {
   const { t } = useTranslation('mail');
+  const toast = useToast();
   const outgoing = message.direction === 'OUTBOUND' || message.direction === 'DRAFT';
   const recipients = mailMessageRecipients(message);
+  const attachments = mailMessageAttachments(message.attachments);
   const remoteImageCount = message.bodyFormat === 'HTML' ? mailRemoteImageCount(message.body) : 0;
+  const remoteImages = mailRemoteImageState(remoteImagePolicy, remoteImagesManuallyAllowed);
+  const download = useMutation({
+    mutationFn: async (attachment: (typeof attachments)[number]) => ({
+      attachment,
+      blob: await downloadMailMessageAttachment(
+        threadId,
+        message.messageId,
+        attachment.attachmentId
+      ),
+    }),
+    onSuccess: ({ attachment, blob }) => saveMailAttachmentBlob(blob, attachment.fileName),
+    onError: () => toast.error(t('thread.attachmentDownloadError')),
+  });
   return (
     <Box
       sx={{
@@ -79,18 +106,25 @@ export function MailThreadMessageCard({
           })}
         </Stack>
       )}
-      {remoteImageCount > 0 && !remoteImagesAllowed && (
+      {remoteImageCount > 0 && !remoteImages.allowed && (
         <Alert
           severity="info"
           icon={<ImageOff size={17} />}
           action={
-            <ActionButton intent="quiet" size="small" onClick={onLoadRemoteImages}>
-              {t('thread.loadRemoteImages')}
-            </ActionButton>
+            remoteImages.canLoad ? (
+              <ActionButton intent="quiet" size="small" onClick={onLoadRemoteImages}>
+                {t('thread.loadRemoteImages')}
+              </ActionButton>
+            ) : undefined
           }
           sx={{ mt: 1.5 }}
         >
-          {t('thread.remoteImagesBlocked', { count: remoteImageCount })}
+          {t(
+            remoteImages.policy === 'BLOCK'
+              ? 'thread.remoteImagesBlockedByPolicy'
+              : 'thread.remoteImagesBlocked',
+            { count: remoteImageCount }
+          )}
         </Alert>
       )}
       {message.bodyFormat === 'HTML' ? (
@@ -106,7 +140,7 @@ export function MailThreadMessageCard({
             '& [data-mail-remote-image]': { color: 'text.secondary', fontStyle: 'italic' },
           }}
           dangerouslySetInnerHTML={{
-            __html: sanitizeMailHtml(message.body, remoteImagesAllowed),
+            __html: sanitizeMailHtml(message.body, remoteImages.allowed),
           }}
         />
       ) : (
@@ -122,12 +156,33 @@ export function MailThreadMessageCard({
           {message.body}
         </Typography>
       )}
-      {message.attachments.length > 0 && (
-        <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mt: 1.5 }}>
-          <Paperclip size={15} />
-          <Typography variant="caption" fontWeight={650}>
-            {String(message.attachments[0]?.name ?? t('thread.attachment'))}
-          </Typography>
+      {attachments.length > 0 && (
+        <Stack
+          component="section"
+          aria-label={t('thread.attachments')}
+          direction="row"
+          spacing={0.75}
+          alignItems="center"
+          flexWrap="wrap"
+          useFlexGap
+          sx={{ mt: 1.5 }}
+        >
+          {attachments.map((attachment) => (
+            <ActionButton
+              key={attachment.attachmentId}
+              intent="secondary"
+              size="small"
+              startIcon={<Download size={14} />}
+              disabled={download.isPending}
+              loading={
+                download.isPending && download.variables?.attachmentId === attachment.attachmentId
+              }
+              aria-label={t('thread.downloadAttachment', { name: attachment.fileName })}
+              onClick={() => download.mutate(attachment)}
+            >
+              {attachment.fileName} · {formatMailAttachmentSize(attachment.sizeBytes, language)}
+            </ActionButton>
+          ))}
         </Stack>
       )}
       {outgoing && (

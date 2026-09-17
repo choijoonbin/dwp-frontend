@@ -19,6 +19,10 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import {
+  MailProposalOwnerHandoffNotice,
+  useMailProposalOwnerHandoff,
+} from '../components/mail-proposal-owner-handoff';
 import { AccessReviewWorkItem } from '../features/work/access-review-work-item';
 import { useWorkClock } from '../features/work/use-work-clock';
 import { useWorkHubActivityReturn } from '../features/work-hub/use-work-hub-activity-return';
@@ -106,11 +110,13 @@ export default function WorkPage() {
   const mobile = availableWidth === undefined ? narrowViewport : availableWidth < 900;
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const proposalOwnerHandoff = useMailProposalOwnerHandoff('WORK');
   const runtime = useWorkHubRuntime();
   const { query, controller, owner } = runtime;
   const snapshot = query.data?.snapshot;
   const workCommandsReady = Boolean(snapshot && snapshot.completeness !== 'UNAVAILABLE');
   const canCreate = runtime.canUpdatePersonal && isWorkHubSourceCommandReady(snapshot, 'personal');
+  const taskCreationEnabled = canCreate && !proposalOwnerHandoff.blocksSubmission;
   const messenger = useWorkMessengerCapture(
     location.state,
     owner,
@@ -406,7 +412,8 @@ export default function WorkPage() {
     editingTask,
     today,
     taskSaveCoordinator,
-    enabled: canCreate,
+    enabled: taskCreationEnabled,
+    proposalBinding: proposalOwnerHandoff.binding,
     preflight: refreshWorkSnapshot,
     onTaskClosed: () => {
       setTaskDialogOpen(false);
@@ -418,6 +425,10 @@ export default function WorkPage() {
     onFeedback: setFeedback,
     onCreated: () => {
       lastMobileSelection.current = null;
+    },
+    onCreateCompleted: async () => {
+      if (!proposalOwnerHandoff.active) return;
+      await proposalOwnerHandoff.waitForTerminalAndReturn();
     },
     onScheduleCreated: ({ item, snapshot: scheduleSnapshot }) => {
       if (!owner) return;
@@ -550,6 +561,7 @@ export default function WorkPage() {
   return (
     <PageCanvas topInset="compact">
       {header}
+      <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />
       <WorkHubPageNotices
         queryError={query.isError}
         snapshot={snapshot}
@@ -599,7 +611,7 @@ export default function WorkPage() {
           <WorkHubMobileEmptyCapture
             key={owner}
             ownerKey={owner ?? ''}
-            canCreate={canCreate}
+            canCreate={taskCreationEnabled}
             canScheduleAfterCreate={canSchedule}
             onSubmit={saveTask}
           />
@@ -966,12 +978,16 @@ export default function WorkPage() {
         open={taskDialogOpen}
         task={editingTask}
         items={snapshot.items}
-        disabled={!canCreate || messenger.sourcePending || messenger.sourceError}
+        disabled={!taskCreationEnabled || messenger.sourcePending || messenger.sourceError}
         canScheduleAfterCreate={canSchedule}
         captureSource={messengerSource}
         captureSourceState={messenger.sourceState}
         onRetryCaptureSource={() => void messenger.retrySource()}
         onClose={() => {
+          if (proposalOwnerHandoff.active) {
+            void proposalOwnerHandoff.cancelAndReturn();
+            return;
+          }
           setTaskDialogOpen(false);
           setEditingTask(null);
           clearTaskComposeIntent();

@@ -20,7 +20,7 @@ test('mail administrators see reported connection state separately from verified
       {
         resourceType: 'ADMIN',
         resourceKey: 'ADMIN.MAIL',
-        permissionCode: 'MANAGE',
+        permissionCode: 'CONNECTION_MANAGE',
         effect: 'ALLOW',
       },
     ],
@@ -82,8 +82,12 @@ test('mail administrators see reported connection state separately from verified
 
   await page.goto('/mail/admin/connections');
   await expect(
-    page.getByText(/cannot confirm that this external connection is ready to activate/i)
+    page.getByText(/reported state is kept separate from confirmed connection/i)
   ).toBeVisible();
+  await expect(page.getByText('CONFIGURATION_REQUIRED', { exact: true })).toBeVisible();
+  await expect(page.getByText('Partial evidence', { exact: true })).toBeVisible();
+  await expect(page.getByText('Not verified', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Test send' })).toBeDisabled();
   await page.getByRole('button', { name: 'Configure' }).click();
   await expect(page).toHaveURL(/settings=edit/u);
   await expect(page.getByText('Connection service available')).toBeVisible();
@@ -117,7 +121,7 @@ test('mail activation expires while settings stay open and is rechecked before m
       {
         resourceType: 'ADMIN',
         resourceKey: 'ADMIN.MAIL',
-        permissionCode: 'MANAGE',
+        permissionCode: 'CONNECTION_MANAGE',
         effect: 'ALLOW',
       },
     ],
@@ -197,4 +201,81 @@ test('mail activation expires while settings stay open and is rechecked before m
 
   await page.clock.runFor(15_000);
   await expect(save).toBeDisabled();
+});
+
+test('mail policy save reuses its UUID idempotency key for the same failed command', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'MAIL_ADMIN'], {
+    locale: 'en',
+    displayName: 'Mail Admin',
+    permissions: [
+      ...MEMBER_PERMISSIONS,
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.MAIL',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.MAIL',
+        permissionCode: 'POLICY_MANAGE',
+        effect: 'ALLOW',
+      },
+    ],
+  });
+  const policy = {
+    externalSenderBanner: true,
+    blockRemoteImages: true,
+    allowSharedInboxes: true,
+    aiAssistanceEnabled: false,
+    aiCrossAppActionsEnabled: false,
+    aiAutoExecuteEnabled: false,
+    retentionDays: 365,
+    maximumAttachmentMb: 25,
+    version: 1,
+  };
+  await page.route('**/api/platform/v1/admin/mail/overview', (route) =>
+    fulfill(route, {
+      personalAccounts: 1,
+      sharedAccounts: 0,
+      activeConnections: 0,
+      degradedConnections: 0,
+      openSharedThreads: 0,
+      pendingAiProposals: 0,
+      queuedDeliveries: 0,
+      failedDeliveries: 0,
+      policy,
+      connections: [],
+      sharedInboxes: [],
+      providerCatalog: [],
+      generatedAt: '2026-09-17T00:00:00.000Z',
+    })
+  );
+  const keys: string[] = [];
+  await page.route('**/api/platform/v1/admin/mail/policy', async (route) => {
+    keys.push(route.request().headers()['idempotency-key'] ?? '');
+    if (keys.length === 1) {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'TEMPORARY_FAILURE' }),
+      });
+      return;
+    }
+    await fulfill(route, { ...policy, externalSenderBanner: false, version: 2 });
+  });
+
+  await page.goto('/mail/admin/policies?settings=edit');
+  await page.getByRole('switch', { name: 'External sender warning' }).uncheck();
+  const save = page.getByRole('button', { name: 'Save', exact: true });
+  await save.click();
+  await expect(page.getByText('Mail policies could not be saved.')).toBeVisible();
+  await save.click();
+  await expect(page.getByText('Mail policies were saved.')).toBeVisible();
+
+  expect(keys).toHaveLength(2);
+  expect(keys[0]).toMatch(/^[0-9a-f-]{36}$/u);
+  expect(keys[1]).toBe(keys[0]);
 });

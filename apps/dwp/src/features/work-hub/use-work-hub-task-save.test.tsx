@@ -63,6 +63,7 @@ const callbacks = {
   onPlanError: vi.fn(),
   onFeedback: vi.fn(),
   onCreated: vi.fn(),
+  onCreateCompleted: vi.fn(),
   onScheduleCreated: vi.fn(),
 };
 const controller = {
@@ -307,6 +308,25 @@ describe('Work task save lifecycle', () => {
     expect(controller.capture).toHaveBeenCalledOnce();
     expect(state.setParams.mock.calls[0][0].get('query')).toBe('new-filter');
     expect(callbacks.onTaskClosed).toHaveBeenCalledOnce();
+  });
+
+  it('publishes the created task identity to the owner only after the save flow completes', async () => {
+    const created = personal({ ...input, source: null, sources: [], checklist: [], version: 0 });
+    controller.capture.mockResolvedValue(created);
+    await render();
+
+    await save(input, {
+      idempotencyKey: '11111111-1111-4111-8111-111111111111',
+      addToTodayPlan: false,
+    });
+
+    expect(callbacks.onCreateCompleted).toHaveBeenCalledWith({
+      sourceSystem: 'PERSONAL_TASK',
+      sourceReference: created.taskId,
+    });
+    expect(callbacks.onCreateCompleted.mock.invocationCallOrder[0]).toBeGreaterThan(
+      callbacks.onFeedback.mock.invocationCallOrder[0] ?? 0
+    );
   });
 
   it('opens scheduling only with the exact created task from a fresh command-ready snapshot', async () => {

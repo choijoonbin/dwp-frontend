@@ -3436,7 +3436,8 @@
       "APPROVAL_TASK": "결재 업무",
       "APPROVAL_REQUEST": "요청",
       "APPROVAL_FORM": "양식",
-      "APPROVAL_OPERATION": "운영"
+      "APPROVAL_OPERATION": "운영",
+      "ATTACHMENT": "보안 첨부"
     },
     "openSource": "출처 열기: {{title}}",
     "progress": {
@@ -4100,6 +4101,33 @@
         "failed": "실패",
         "stopped": "중지됨"
       }
+    }
+  },
+  "dwaionOperational": {
+    "artifact": {
+      "revisionSeparator": "· 리비전 ",
+      "checksumPrefix": "SHA-256",
+      "checksumSeparator": "· SHA-256",
+      "bytesUnit": "바이트"
+    },
+    "deepResearch": {
+      "started": "시작",
+      "checksumSeparator": "· SHA-256"
+    },
+    "adminEvaluation": {
+      "datasetImport": "Dataset 가져오기"
+    },
+    "workspace": {
+      "deepResearch": "Deep Research 심층 조사"
+    },
+    "deletion": {
+      "checksumPrefix": "SHA-256"
+    },
+    "secureAttachments": {
+      "checksumPrefix": "SHA-256",
+      "eventMetadata": "{{eventType}} · 리비전 {{revision}} · {{state}}",
+      "eventMetadataWithError": "{{eventType}} · 리비전 {{revision}} · {{state}} · {{errorCode}}",
+      "ocrCitation": "{{label}} · {{locator}}"
     }
   },
   "reference": {

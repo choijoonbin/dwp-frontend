@@ -47,6 +47,7 @@ export type MailView =
   | 'admin-overview'
   | 'admin-connections'
   | 'admin-shared-inboxes'
+  | 'admin-writing-assets'
   | 'admin-policies'
   | 'admin-retention'
   | 'admin-delivery-audit';
@@ -126,6 +127,14 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
         view: 'admin-shared-inboxes',
         path: '/mail/admin/shared-inboxes',
         icon: ShieldCheck,
+        requiredResourceKey: 'ADMIN.MAIL',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'admin',
+        view: 'admin-writing-assets',
+        path: '/mail/admin/writing-assets',
+        icon: FileText,
         requiredResourceKey: 'ADMIN.MAIL',
         requiredPermissionCode: 'VIEW',
       },

@@ -326,8 +326,8 @@ describe('all-product surface expansion', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(70);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(75);
+    expect(menuContracts).toHaveLength(65);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(69);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -446,9 +446,12 @@ describe('all-product surface expansion', () => {
   );
 
   it('binds every supported W2/W3 path-based detail route without changing menu counts', () => {
-    const details = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) =>
-      route.pattern.includes(':')
-    );
+    const details = [
+      ...DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) => route.pattern.includes(':')),
+      ...PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+        (route) => route.routeContractKey === 'route.dwaion.work.conversation-detail.page'
+      ),
+    ];
     expect(details.map((route) => route.pattern).sort()).toEqual([
       '/dwaion/conversations/:conversationId',
       '/meetings/room/:meetingId',

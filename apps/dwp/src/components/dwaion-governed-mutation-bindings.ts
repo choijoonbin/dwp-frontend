@@ -193,6 +193,18 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.artifact-collaboration-edit.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.artifact-collaboration-access-request.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-access-request.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-comments.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-comments.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.artifact-collaboration-members.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -325,6 +337,12 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.personal-deletion-request.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.personal-deletion-retry.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.personal-deletion-retry.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.proposal-analyze.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -391,6 +409,12 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.research-run-command.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.research-run-execute.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-run-execute.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.research-output.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -449,6 +473,18 @@ export const DWAION_MUTATION_BINDINGS = {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.routine-update.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-version-rollback.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-version-rollback.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-webhook-trigger.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-webhook-trigger.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.source-preference-update.action': {

@@ -62,6 +62,15 @@ export type MailAdminOperationsWorkspaceProps = {
   surface: MailAdminSurface;
   overview?: MailAdminOverview;
   canManage?: boolean;
+  canManageConnections?: boolean;
+  canManageSharedInboxes?: boolean;
+  canManagePolicy?: boolean;
+  canManageHolds?: boolean;
+  canAuthorizePurge?: boolean;
+  canExecutePurge?: boolean;
+  canReadAudit?: boolean;
+  canRecoverDeliveries?: boolean;
+  canExportAudit?: boolean;
   now?: number;
   operations?: MailAdminOperationsSnapshot;
   connectionOperations?: readonly MailConnectionOperation[];
@@ -190,7 +199,46 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
   const toast = useToast();
   const { hasPermission } = usePermissions();
   const overview = props.overview ?? query.data;
-  const canManage = props.canManage ?? hasPermission('ADMIN.MAIL', 'MANAGE');
+  const legacyPermissionOverride = props.canManage;
+  const canManageConnections =
+    props.canManageConnections ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'CONNECTION_MANAGE');
+  const canManageSharedInboxes =
+    props.canManageSharedInboxes ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'SHARED_INBOX_MANAGE');
+  const canManagePolicy =
+    props.canManagePolicy ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
+  const canManageHolds =
+    props.canManageHolds ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'HOLD_MANAGE');
+  const canAuthorizePurge =
+    props.canAuthorizePurge ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'PURGE_AUTHORIZE');
+  const canExecutePurge =
+    props.canExecutePurge ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'PURGE_EXECUTE');
+  const canReadAudit =
+    props.canReadAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'AUDIT_READ');
+  const canRecoverDeliveries =
+    props.canRecoverDeliveries ??
+    legacyPermissionOverride ??
+    hasPermission('ADMIN.MAIL', 'RECOVERY');
+  const canExportAudit =
+    props.canExportAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'EXPORT');
+  const canRunAnyMutation =
+    canManageConnections ||
+    canManageSharedInboxes ||
+    canManagePolicy ||
+    canManageHolds ||
+    canAuthorizePurge ||
+    canExecutePurge ||
+    canRecoverDeliveries ||
+    canExportAudit;
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [connectionOperations, setConnectionOperations] = useState<MailConnectionOperation[]>([]);
   const [purgeCandidate, setPurgeCandidate] = useState<MailPurgeCandidateSnapshot | null>(null);
@@ -229,7 +277,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
   const deliveryAuditQuery = useQuery({
     queryKey: ['mail', 'admin', 'delivery-audit', correlationId ?? 'all'],
     queryFn: () => getMailDeliveryAudit({ page: 0, pageSize: 50, correlationId }),
-    enabled: surface === 'delivery-audit' && !props.deliveryAudit,
+    enabled: surface === 'delivery-audit' && canReadAudit && !props.deliveryAudit,
     staleTime: 10_000,
     retry: 1,
   });
@@ -300,6 +348,14 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     if (props.onOpenException) return props.onOpenException(exception);
     if (exception.nextAction === 'OPEN_CONNECTION') navigate('/mail/admin/connections');
     else if (exception.nextAction === 'OPEN_DELIVERY') {
+      if (!canReadAudit) {
+        toast.error(
+          t('admin.operationsWorkspace.auditReadRequired', {
+            defaultValue: 'Delivery audit access is required to open this evidence.',
+          })
+        );
+        return;
+      }
       const correlation = exception.correlationId
         ? `?correlationId=${encodeURIComponent(exception.correlationId)}`
         : '';
@@ -348,6 +404,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     ? ({
         ...retentionSource,
         candidate: props.retention?.candidate ?? purgeCandidate,
+        purgeJobs: canAuthorizePurge ? retentionSource.purgeJobs : [],
       } as MailRetentionSnapshot)
     : undefined;
   const deliveryAudit = props.deliveryAudit ?? deliveryAuditQuery.data;
@@ -382,7 +439,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
         }
       />
 
-      {!canManage ? (
+      {!canRunAnyMutation ? (
         <Alert severity="info" sx={{ mt: 2.5 }}>
           {t('admin.operationsWorkspace.readOnly', {
             defaultValue:
@@ -407,16 +464,27 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
           <MailAdminOperationsContent
             surface={surface}
             overview={overview}
-            canManage={canManage}
+            canManage={legacyPermissionOverride ?? canRunAnyMutation}
+            canManageConnections={canManageConnections}
+            canManageSharedInboxes={canManageSharedInboxes}
+            canManagePolicy={canManagePolicy}
+            canManageHolds={canManageHolds}
+            canAuthorizePurge={canAuthorizePurge}
+            canExecutePurge={canExecutePurge}
+            canReadAudit={canReadAudit}
+            canRecoverDeliveries={canRecoverDeliveries}
+            canExportAudit={canExportAudit}
             now={props.now}
             operations={operations}
             connectionOperations={props.connectionOperations ?? connectionOperations}
             sharedAccess={sharedAccess}
             policyGovernance={policyGovernance}
             retention={retention}
-            deliveryAudit={deliveryAudit}
-            auditExport={props.auditExport ?? auditExport ?? undefined}
-            deliveryEvidence={props.deliveryEvidence}
+            deliveryAudit={canReadAudit ? deliveryAudit : undefined}
+            auditExport={
+              canExportAudit ? (props.auditExport ?? auditExport ?? undefined) : undefined
+            }
+            deliveryEvidence={canReadAudit ? props.deliveryEvidence : undefined}
             purgeEvidence={props.purgeEvidence}
             busyAction={busyAction}
             onOpenConnectionSettings={props.onOpenConnectionSettings}

@@ -165,7 +165,7 @@ export function WorkplaceResourceClosureExecution({
     preview.resourceVersion === resource.version &&
     preview.startsAt === range.from &&
     preview.endsAt === range.to &&
-      Date.parse(preview.expiresAt) > previewClock
+    Date.parse(preview.expiresAt) > previewClock
   );
 
   const previewMutation = useMutation({

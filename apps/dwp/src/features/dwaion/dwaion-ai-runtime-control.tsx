@@ -13,7 +13,7 @@ import {
   LocalErrorState,
   SignalMetric,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   bootstrapAIExecutionPolicy,
   getAIControlOverview,
@@ -126,7 +126,6 @@ export function DwaionAIRuntimeControl() {
   const policy = overview?.policy;
   const bootstrap = Boolean(editor && !policy);
   const commandBusy = bootstrapMutation.isPending || updateMutation.isPending;
-  const number = useMemo(() => new Intl.NumberFormat(locale), [locale]);
   const periodPressure = policy
     ? overview.usage.measuredTotalTokens + overview.usage.reservedTokens
     : 0;
@@ -266,9 +265,9 @@ export function DwaionAIRuntimeControl() {
             />
             <SignalMetric
               label={t(`${copy}.summary.usage`)}
-              value={number.format(overview.usage.measuredTotalTokens)}
+              value={formatNumber(overview.usage.measuredTotalTokens, undefined, locale)}
               detail={t(`${copy}.summary.usageDetail`, {
-                reserved: number.format(overview.usage.reservedTokens),
+                reserved: formatNumber(overview.usage.reservedTokens, undefined, locale),
               })}
               tone={overview.usage.unmeasuredReservedTokens > 0 ? 'warning' : 'info'}
               icon={<Gauge size={18} aria-hidden="true" />}
@@ -371,27 +370,27 @@ export function DwaionAIRuntimeControl() {
               >
                 <EvidenceRow
                   label={t(`${copy}.budget.maxOutput`)}
-                  value={number.format(policy.maxOutputTokensPerRequest)}
+                  value={formatNumber(policy.maxOutputTokensPerRequest, undefined, locale)}
                 />
                 <EvidenceRow
                   label={t(`${copy}.budget.periodLimit`)}
                   value={
                     policy.periodTokenLimit
-                      ? number.format(policy.periodTokenLimit)
+                      ? formatNumber(policy.periodTokenLimit, undefined, locale)
                       : t(`${copy}.unavailable`)
                   }
                 />
                 <EvidenceRow
                   label={t(`${copy}.budget.measured`)}
-                  value={number.format(overview.usage.measuredTotalTokens)}
+                  value={formatNumber(overview.usage.measuredTotalTokens, undefined, locale)}
                 />
                 <EvidenceRow
                   label={t(`${copy}.budget.reserved`)}
-                  value={number.format(overview.usage.reservedTokens)}
+                  value={formatNumber(overview.usage.reservedTokens, undefined, locale)}
                 />
                 <EvidenceRow
                   label={t(`${copy}.budget.unmeasured`)}
-                  value={number.format(overview.usage.unmeasuredReservedTokens)}
+                  value={formatNumber(overview.usage.unmeasuredReservedTokens, undefined, locale)}
                   warning={overview.usage.unmeasuredReservedTokens > 0}
                 />
                 {periodPercent !== null && (

@@ -13,10 +13,12 @@ import {
 } from './mail-admin-completion-api';
 import {
   applyMailLifecycle,
+  cancelMailProposalHandoff,
   createMailDraft,
   createMailFolder,
   createMailRule,
   getMailHome,
+  getMailProposalHandoff,
   getMailProposals,
   getMailRuleBackfillPreview,
   getMailThreads,
@@ -25,7 +27,10 @@ import {
   replyToMailThread,
   runMailRuleBackfill,
   saveMailDraft,
+  updateMailConnection,
+  updateMailPolicy,
   updateMailProposal,
+  updateMailSharedInbox,
 } from './mail-api';
 
 function jsonResponse(data: unknown): Response {
@@ -274,6 +279,50 @@ describe('mail collaboration API boundary', () => {
     );
     expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/platform/v1/mail/proposals/proposal%2F1');
   });
+
+  it('reads an owner handoff and sends only an actor-bound versioned cancellation', async () => {
+    const accepted = {
+      proposalId: 'proposal/1',
+      commandId: 'command-1',
+      ownerRoute: '/work?action=create',
+      returnTo: null,
+      focus: 'task-editor',
+      status: 'ACCEPTED',
+      resultRef: null,
+      updatedAt: '2026-09-17T09:00:00Z',
+      version: 4,
+    };
+    const cancellation = {
+      commandId: 'command-1',
+      version: 4,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(accepted))
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ...accepted,
+          status: 'CANCELLED',
+          resultRef: 'cancelled-by-actor',
+          version: 5,
+        })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getMailProposalHandoff('proposal/1');
+    await cancelMailProposalHandoff('proposal/1', cancellation);
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/mail/proposals/proposal%2F1/handoff'
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      '/api/platform/v1/mail/proposals/proposal%2F1/handoff/cancel'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual(
+      cancellation
+    );
+  });
 });
 
 describe('mail administration API boundary', () => {
@@ -296,6 +345,61 @@ describe('mail administration API boundary', () => {
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
       '/api/platform/v1/admin/mail/delivery-audit?page=0&pageSize=50&correlationId=corr%2F42'
     );
+  });
+
+  it('sends a UUID Idempotency-Key on policy, connection, and shared-inbox updates', async () => {
+    const keys = [
+      '10000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000002',
+      '10000000-0000-4000-8000-000000000003',
+    ];
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValue(jsonResponse({ version: 2 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await updateMailPolicy(
+      {
+        externalSenderBanner: true,
+        blockRemoteImages: true,
+        allowSharedInboxes: true,
+        aiAssistanceEnabled: false,
+        aiCrossAppActionsEnabled: false,
+        retentionDays: 365,
+        maximumAttachmentMb: 25,
+        version: 1,
+      },
+      { idempotencyKey: keys[0]! }
+    );
+    await updateMailConnection(
+      'connection/1',
+      {
+        displayName: 'Primary mail',
+        mailDomain: 'example.com',
+        credentialRef: null,
+        state: 'SUSPENDED',
+        version: 1,
+      },
+      { idempotencyKey: keys[1]! }
+    );
+    await updateMailSharedInbox(
+      'shared/1',
+      {
+        displayName: 'Support',
+        purpose: 'Customer support',
+        serviceTargetMinutes: 240,
+        lifecycleState: 'ACTIVE',
+        version: 1,
+      },
+      { idempotencyKey: keys[2]! }
+    );
+
+    expect(
+      fetchMock.mock.calls
+        .slice(1)
+        .map(([, init]) => new Headers(init?.headers).get('Idempotency-Key'))
+    ).toEqual(keys);
   });
 
   it('sends connection diagnostics as an idempotent versioned command', async () => {

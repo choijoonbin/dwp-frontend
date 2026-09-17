@@ -15,6 +15,7 @@ import {
   getWorkplaceExplore,
   getWorkplaceWaitlistEntries,
   previewWorkplaceBookingIntent,
+  releaseWorkplaceReservationHolds,
   replanWorkplaceBookingBatch,
   resolveIdempotentMutationIntent,
   startWorkplaceBookingBatch,
@@ -67,7 +68,7 @@ import type {
   WorkplaceWaitlistEntry,
 } from '@dwp-frontend/shared-utils';
 
-type Confirmation = 'BATCH' | 'COMPENSATE' | null;
+type Confirmation = 'BATCH' | 'COMPENSATE' | 'RELEASE_HOLDS' | null;
 
 function authorizedReference(value: {
   beneficiaryUserId: number;
@@ -118,6 +119,7 @@ export function WorkplacePlanner() {
   const [waitlistToCancel, setWaitlistToCancel] = useState<WorkplaceWaitlistEntry | null>(null);
   const previewIntentRef = useRef<IdempotentMutationIntent | null>(null);
   const holdIntentRef = useRef<IdempotentMutationIntent | null>(null);
+  const holdReleaseIntentRef = useRef<IdempotentMutationIntent | null>(null);
   const batchIntentRef = useRef<IdempotentMutationIntent | null>(null);
   const waitlistIntentRef = useRef<IdempotentMutationIntent | null>(null);
   const compensationIntentRef = useRef<IdempotentMutationIntent | null>(null);
@@ -390,6 +392,54 @@ export function WorkplacePlanner() {
       toast.error(t('workplace.planner.feedback.holdError'));
     },
   });
+  const holdReleaseMutation = useMutation({
+    mutationFn: async () => {
+      if (!preview) throw new Error('Missing preview');
+      const activeHolds = holds.filter((hold) => hold.state === 'ACTIVE');
+      if (activeHolds.length === 0) throw new Error('Missing active holds');
+      const input = {
+        expectedIntentVersion:
+          holdStatus?.intentVersion ?? intentQuery.data?.intent.version ?? preview.version,
+        holds: activeHolds.map((hold) => ({
+          holdId: hold.holdId,
+          expectedHoldVersion: hold.version,
+        })),
+        reason: t('workplace.planner.releaseReason'),
+        explicitConfirmation: true,
+      };
+      const mutationIntent = resolveIdempotentMutationIntent(
+        holdReleaseIntentRef.current,
+        input,
+        () => createWorkplaceIdempotencyKey('planner-hold-release')
+      );
+      holdReleaseIntentRef.current = mutationIntent;
+      return releaseWorkplaceReservationHolds(preview.intentId, input, mutationIntent.key);
+    },
+    retry: false,
+    onSuccess: (result) => {
+      setConfirmation(null);
+      if (result.receipt.requeryRequired) {
+        setUncertainSubmission(true);
+        void intentQuery.refetch();
+        toast.error(t('workplace.planner.feedback.holdReleaseUnknown'));
+        return;
+      }
+      holdReleaseIntentRef.current = null;
+      setPreviewSnapshot(null);
+      setHoldSnapshot(null);
+      setUncertainSubmission(false);
+      setSelections({});
+      updateParams({ intent: null, batch: null, item: null, step: 'PLAN' });
+      void queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      toast.success(t('workplace.planner.feedback.holdReleased'));
+    },
+    onError: () => {
+      setConfirmation(null);
+      setUncertainSubmission(true);
+      void intentQuery.refetch();
+      toast.error(t('workplace.planner.feedback.holdReleaseError'));
+    },
+  });
   const batchMutation = useMutation({
     mutationFn: async () => {
       if (!preview) throw new Error('Missing preview');
@@ -602,6 +652,7 @@ export function WorkplacePlanner() {
   });
 
   const resetPlan = () => {
+    holdReleaseIntentRef.current = null;
     setPreviewSnapshot(null);
     setHoldSnapshot(null);
     setUncertainSubmission(false);
@@ -735,7 +786,13 @@ export function WorkplacePlanner() {
             onFailurePolicy={setFailurePolicy}
             onConfirm={() => setConfirmation('BATCH')}
             onWaitlist={(item) => waitlistMutation.mutate(item)}
-            onEdit={resetPlan}
+            onEdit={() => {
+              if (holds.some((hold) => hold.state === 'ACTIVE')) {
+                setConfirmation('RELEASE_HOLDS');
+              } else {
+                resetPlan();
+              }
+            }}
             onRefresh={() => {
               previewIntentRef.current = null;
               if (builtItems.ok) previewMutation.mutate(builtItems.items);
@@ -794,27 +851,38 @@ export function WorkplacePlanner() {
           title={t(
             confirmation === 'COMPENSATE'
               ? 'workplace.planner.confirm.compensateTitle'
-              : 'workplace.planner.confirm.batchTitle'
+              : confirmation === 'RELEASE_HOLDS'
+                ? 'workplace.planner.confirm.releaseHoldsTitle'
+                : 'workplace.planner.confirm.batchTitle'
           )}
           description={t(
             confirmation === 'COMPENSATE'
               ? 'workplace.planner.confirm.compensateDescription'
-              : 'workplace.planner.confirm.batchDescription'
+              : confirmation === 'RELEASE_HOLDS'
+                ? 'workplace.planner.confirm.releaseHoldsDescription'
+                : 'workplace.planner.confirm.batchDescription'
           )}
           cancelLabel={t('actions.cancel')}
           confirmLabel={t(
             confirmation === 'COMPENSATE'
               ? 'workplace.planner.actions.compensate'
-              : 'workplace.planner.actions.confirmNow'
+              : confirmation === 'RELEASE_HOLDS'
+                ? 'workplace.planner.actions.releaseHolds'
+                : 'workplace.planner.actions.confirmNow'
           )}
           confirmingLabel={t('actions.saving')}
-          intent={confirmation === 'COMPENSATE' ? 'danger' : 'primary'}
-          busy={batchMutation.isPending || compensationMutation.isPending}
+          intent={confirmation === 'BATCH' ? 'primary' : 'danger'}
+          busy={
+            batchMutation.isPending ||
+            compensationMutation.isPending ||
+            holdReleaseMutation.isPending
+          }
           focusCancelAfterOpen
           minimumActionHeight={44}
           onClose={() => setConfirmation(null)}
           onConfirm={() => {
             if (confirmation === 'COMPENSATE') compensationMutation.mutate();
+            else if (confirmation === 'RELEASE_HOLDS') holdReleaseMutation.mutate();
             else batchMutation.mutate();
           }}
         />

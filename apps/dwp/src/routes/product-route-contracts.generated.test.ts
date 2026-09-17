@@ -85,7 +85,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(112);
+    expect(router).toHaveLength(118);
     expect(registry).toEqual(router);
   });
 
@@ -110,19 +110,14 @@ describe('generated product route authorization contracts', () => {
       latestAuthorizationBundle.routes.filter((route) => route.routeKind !== 'PAGE').length
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(75);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(69);
     expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(187);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(187);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );
     expect(
-      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
-        (route) => route.routeContractKey === 'route.dwaion.work.activity.page'
-      )
-    ).toBe(false);
-    expect(
-      DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
         (route) => route.routeContractKey === 'route.dwaion.work.activity.page'
       )
     ).toEqual([
@@ -134,6 +129,11 @@ describe('generated product route authorization contracts', () => {
         routeContractKey: 'route.dwaion.work.activity.page',
       },
     ]);
+    expect(
+      DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+        (route) => route.routeContractKey === 'route.dwaion.work.activity.page'
+      )
+    ).toEqual([]);
     for (const view of ['routines', 'personal-controls', 'artifacts']) {
       const expected = {
         routeId: `dwaion.work.${view}`,

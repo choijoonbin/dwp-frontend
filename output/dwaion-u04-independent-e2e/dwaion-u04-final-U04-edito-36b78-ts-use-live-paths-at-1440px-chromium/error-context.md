@@ -1,0 +1,444 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Start
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Start
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "DWAI·ON home" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: DWAI·ON home
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: Conversations
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "New conversation" [ref=e43] [cursor=pointer]:
+                  - /url: /dwaion/new
+                  - img [ref=e45]
+                  - paragraph [ref=e48]: New conversation
+              - listitem [ref=e49]:
+                - link "My conversations" [ref=e50] [cursor=pointer]:
+                  - /url: /dwaion/conversations
+                  - img [ref=e52]
+                  - paragraph [ref=e57]: My conversations
+          - generic [ref=e58]:
+            - paragraph [ref=e59]: Runs
+            - list [ref=e60]:
+              - listitem [ref=e61]:
+                - link "AI run activity" [ref=e62] [cursor=pointer]:
+                  - /url: /dwaion/activity
+                  - img [ref=e64]
+                  - paragraph [ref=e67]: AI run activity
+          - generic [ref=e68]:
+            - paragraph [ref=e69]: Proposals
+            - list [ref=e70]:
+              - listitem [ref=e71]:
+                - link "AI proposals" [ref=e72] [cursor=pointer]:
+                  - /url: /dwaion/proposals
+                  - img [ref=e74]
+                  - paragraph [ref=e78]: AI proposals
+          - generic [ref=e79]:
+            - paragraph [ref=e80]: Discover
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "Specialized agents" [ref=e83] [cursor=pointer]:
+                  - /url: /dwaion/agents
+                  - img [ref=e85]
+                  - paragraph [ref=e89]: Specialized agents
+              - listitem [ref=e90]:
+                - link "Work actions and connections" [ref=e91] [cursor=pointer]:
+                  - /url: /dwaion/actions
+                  - img [ref=e93]
+                  - paragraph [ref=e98]: Work actions and connections
+          - generic [ref=e99]:
+            - paragraph [ref=e100]: Extensions & outputs
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - link "My AI routines" [ref=e103] [cursor=pointer]:
+                  - /url: /dwaion/routines
+                  - img [ref=e105]
+                  - paragraph [ref=e109]: My AI routines
+              - listitem [ref=e110]:
+                - link "Personal AI controls" [ref=e111] [cursor=pointer]:
+                  - /url: /dwaion/personal-controls
+                  - img [ref=e113]
+                  - paragraph [ref=e115]: Personal AI controls
+              - listitem [ref=e116]:
+                - link "Artifact studio" [ref=e117] [cursor=pointer]:
+                  - /url: /dwaion/artifacts
+                  - img [ref=e119]
+                  - paragraph [ref=e122]: Artifact studio
+        - link "Return to apps" [ref=e124] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e126]
+          - text: Return to apps
+    - banner [ref=e128]:
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - img [ref=e132]
+          - generic "DWAI·ON" [ref=e136]
+        - navigation "App area switcher" [ref=e139]:
+          - 'link "App management: DWAI·ON" [ref=e141] [cursor=pointer]':
+            - /url: /dwaion/admin/overview
+            - img [ref=e143]
+            - generic [ref=e146]: App management
+        - generic [ref=e147]:
+          - button "Search DWP" [ref=e149] [cursor=pointer]:
+            - img [ref=e150]
+            - paragraph [ref=e153]: Search DWP
+            - generic [ref=e154]: ⌘K
+          - generic [ref=e155]:
+            - button "Enter full screen" [ref=e156] [cursor=pointer]:
+              - img [ref=e157]
+            - generic "0 actionable notifications, 0 total unread" [ref=e163]:
+              - button "0 actionable notifications, 0 total unread" [ref=e164] [cursor=pointer]:
+                - generic [ref=e165]:
+                  - img [ref=e166]
+                  - generic: "0"
+          - 'button "Account: Mina Kim, Tenant administrator" [ref=e170] [cursor=pointer]':
+            - generic [ref=e171]: M
+            - img [ref=e172]
+    - main [ref=e174]:
+      - generic [ref=e176]:
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - text: Governed AI deliverables
+            - heading "Artifact studio" [level=1] [ref=e179]
+            - paragraph [ref=e180]: Draft with AI, capture immutable versions, run deterministic preflight, and manage personal workspace publication state.
+            - generic [ref=e181]:
+              - generic [ref=e183]: v2
+              - generic [ref=e185]: Live API contract · Autosaved
+              - generic [ref=e187]: Security preflight · Passed
+              - generic [ref=e189]: Source references · 1
+              - generic [ref=e191]: Compare versions · 2
+          - button "Create artifact" [ref=e193] [cursor=pointer]:
+            - img [ref=e195]
+            - text: Create artifact
+        - region "Team artifacts and review" [ref=e198]:
+          - generic [ref=e199]:
+            - generic [ref=e200]:
+              - generic [ref=e201]:
+                - generic [ref=e202]:
+                  - img [ref=e203]
+                  - heading "Team artifacts and review" [level=6] [ref=e208]
+                - paragraph [ref=e209]: Manage recipient ACL preflight, conflict recovery, and expiring internal shares with live receipts.
+              - generic [ref=e210]:
+                - img [ref=e211]
+                - generic [ref=e214]: Collaboration connected
+            - generic [ref=e215]:
+              - generic [ref=e216]:
+                - generic [ref=e217]:
+                  - generic [ref=e218]:
+                    - img [ref=e219]
+                    - heading "Team workspace · r3" [level=6] [ref=e222]
+                  - generic [ref=e223]: SHA-256 8888888888888888888888888888888888888888888888888888888888888888
+                - generic [ref=e224]:
+                  - heading "Authorized members · 2" [level=6] [ref=e225]
+                  - generic [ref=e226]:
+                    - generic [ref=e228]: mina.kim@company.com · OWNER
+                    - generic [ref=e230]: reviewer@company.com · REVIEWER
+              - generic [ref=e231]:
+                - button "Sync current document" [ref=e232] [cursor=pointer]
+                - button "Apply preflight members" [disabled]
+              - generic [ref=e233]:
+                - heading "Expiring internal share" [level=6] [ref=e234]
+                - generic [ref=e235]:
+                  - generic [ref=e236]:
+                    - generic [ref=e237]: Permission
+                    - generic [ref=e238]:
+                      - combobox "Permission" [ref=e239] [cursor=pointer]: Comment
+                      - textbox: COMMENT
+                      - img
+                      - group:
+                        - generic: Permission
+                  - generic [ref=e240]:
+                    - generic [ref=e241]: Share expiry
+                    - generic [ref=e242]:
+                      - textbox "Share expiry" [ref=e243]: 2026-09-18T12:00
+                      - group:
+                        - generic: Share expiry
+                  - button "Create internal share" [disabled]
+                - generic [ref=e245]:
+                  - paragraph [ref=e246]: Comment · 2 · ACTIVE · Sep 5, 2026, 9:00 AM
+                  - button "Revoke share" [ref=e247] [cursor=pointer]
+            - generic [ref=e248]:
+              - heading "Review recovery and resubmission" [level=6] [ref=e249]
+              - paragraph [ref=e250]: Save an explanation or private draft as a governed artifact version, then rerun preflight and share.
+              - generic [ref=e251]:
+                - generic: Review explanation
+                - generic [ref=e252]:
+                  - textbox "Review explanation" [ref=e253]:
+                    - /placeholder: Describe the exception and evidence for the reviewer.
+                  - group:
+                    - generic: Review explanation
+              - generic [ref=e254]:
+                - button "Save explanation" [disabled]
+                - button "Keep private draft" [ref=e255] [cursor=pointer]
+                - button "Recheck and resubmit" [disabled]
+            - region "Review recovery and resubmission" [ref=e256]:
+              - generic [ref=e257]:
+                - img [ref=e258]
+                - heading "Review recovery and resubmission" [level=6] [ref=e262]
+              - generic [ref=e263]: The connected provider does not offer this action.
+              - generic [ref=e264]:
+                - generic [ref=e265]:
+                  - button "Mask all" [disabled]
+                  - generic [ref=e266]: artifact-collaboration.automaticMasking · Ask an administrator to configure this governed runtime operation.
+                - generic [ref=e267]:
+                  - button "Replace with synthetic data" [disabled]
+                  - generic [ref=e268]: artifact-collaboration.syntheticReplacement · Ask an administrator to configure this governed runtime operation.
+                - generic [ref=e269]:
+                  - button "Resend review" [disabled]
+                  - generic [ref=e270]: artifact-collaboration.reviewNotification · Ask an administrator to configure this governed runtime operation.
+                - generic [ref=e271]:
+                  - button "Reject review" [disabled]
+                  - generic [ref=e272]: artifact-collaboration.reviewRejection · Ask an administrator to configure this governed runtime operation.
+        - generic [ref=e273]:
+          - generic [ref=e275]:
+            - generic [ref=e276]:
+              - generic [ref=e277]:
+                - img [ref=e278]
+                - heading "Document collaboration session" [level=6] [ref=e283]
+              - generic [ref=e284]: Collaborative editing and an AI conversation session are unavailable.
+            - region "My artifacts" [ref=e286]:
+              - generic [ref=e287]:
+                - heading "My artifacts" [level=2] [ref=e288]
+                - button "Create artifact" [ref=e289] [cursor=pointer]:
+                  - img [ref=e290]
+              - tablist "Artifact scope" [ref=e291]:
+                - tab "My drafts (1)" [ref=e292] [cursor=pointer]
+                - tab "Team workspace (1)" [selected] [ref=e293] [cursor=pointer]: Team workspace (1)
+                - tab "Review requests (0)" [ref=e294] [cursor=pointer]
+              - generic [ref=e295]:
+                - generic [ref=e296]:
+                  - generic [ref=e297]: Search artifacts
+                  - generic [ref=e298]:
+                    - img [ref=e300]
+                    - textbox "Search artifacts" [ref=e303]:
+                      - /placeholder: Search title, type, or status
+                      - text: Launch readiness
+                    - group:
+                      - generic: Search artifacts
+                - generic [ref=e304]:
+                  - generic [ref=e305]: Status filter
+                  - generic [ref=e306]:
+                    - combobox "Status filter All statuses" [ref=e307] [cursor=pointer]: All statuses
+                    - textbox: ALL
+                    - img
+                    - group:
+                      - generic: Status filter
+                - generic [ref=e308]: Search uses title, type, and status returned by the server. Tag and author metadata are not exposed yet.
+              - button "Launch readiness plan Work plan Draft r5 · Sep 4, 2026, 10:00 AM" [pressed] [ref=e311] [cursor=pointer]:
+                - img [ref=e312]
+                - generic [ref=e315]:
+                  - paragraph [ref=e316]: Launch readiness plan
+                  - generic [ref=e317]:
+                    - generic [ref=e319]: Work plan
+                    - generic [ref=e321]: Draft
+                    - generic [ref=e322]: r5 · Sep 4, 2026, 10:00 AM
+          - region "Launch readiness plan" [ref=e325]:
+            - generic [ref=e326]:
+              - generic [ref=e327]:
+                - heading "Launch readiness plan" [level=2] [ref=e328]
+                - generic [ref=e329]:
+                  - generic [ref=e331]: Work plan
+                  - generic [ref=e333]: Draft
+                  - generic [ref=e335]: r5
+                  - generic [ref=e337]: Autosaved
+                - generic [ref=e338]: "Updated: Sep 4, 2026, 10:00 AM · Current version: v2"
+              - generic [ref=e339]:
+                - button "Compare versions" [ref=e340] [cursor=pointer]:
+                  - img [ref=e342]
+                  - text: Compare versions
+                - button "Create version and inspect" [ref=e346] [cursor=pointer]:
+                  - img [ref=e348]
+                  - text: Create version and inspect
+                - button "Publish personally" [disabled]:
+                  - generic:
+                    - img
+                  - text: Publish personally
+                - button "Request export" [disabled]:
+                  - generic:
+                    - img
+                  - text: Request export
+            - status [ref=e353]:
+              - img [ref=e355]
+              - generic [ref=e357]:
+                - paragraph [ref=e358]: Marks the version reviewed in your workspace without sharing it with recipients.
+                - generic [ref=e359]: Recipient sharing and external writes are unavailable. An export request is not a completed file. Download is available only when the worker has produced a verified file.
+            - region "Document review structure" [ref=e360]:
+              - generic [ref=e361]:
+                - img [ref=e362]
+                - heading "Document review structure" [level=3] [ref=e365]
+              - text: The server stores title, body, and source references only. Structured items must be authored in the body.
+              - generic [ref=e366]:
+                - generic [ref=e367]:
+                  - generic [ref=e368]:
+                    - img [ref=e369]
+                    - heading "Verified facts" [level=6] [ref=e372]
+                  - generic [ref=e373]: 1 references await authenticity checks
+                  - list [ref=e374]:
+                    - listitem [ref=e375]:
+                      - img [ref=e376]
+                      - generic [ref=e381]: WORK_ITEM · WK-1042
+                - generic [ref=e382]:
+                  - generic [ref=e383]:
+                    - img [ref=e384]
+                    - heading "Open questions and risks" [level=6] [ref=e387]
+                  - generic [ref=e388]: No structured risk-record API
+                - generic [ref=e389]:
+                  - generic [ref=e390]:
+                    - img [ref=e391]
+                    - heading "Next action plan" [level=6] [ref=e394]
+                  - generic [ref=e395]: No action-item API · 0 work items created
+            - status [ref=e396]: Run preflight against the current immutable version.
+            - generic [ref=e398]:
+              - heading "Version and preflight" [level=6] [ref=e399]
+              - generic [ref=e401]: Passed
+              - generic [ref=e402]: Sep 4, 2026, 9:00 AM · v2
+            - generic [ref=e403]:
+              - generic [ref=e404]:
+                - generic [ref=e405]:
+                  - text: Title
+                  - generic [ref=e406]: "*"
+                - generic [ref=e407]:
+                  - textbox "Title" [ref=e408]: Launch readiness plan
+                  - group:
+                    - generic: Title *
+              - toolbar "Body formatting tools" [ref=e409]:
+                - button "Heading 1" [ref=e410] [cursor=pointer]:
+                  - img [ref=e411]
+                  - generic [ref=e413]: Heading 1
+                - button "Heading 2" [ref=e414] [cursor=pointer]:
+                  - img [ref=e415]
+                  - generic [ref=e417]: Heading 2
+                - button "Bold" [ref=e418] [cursor=pointer]:
+                  - img [ref=e419]
+                  - generic [ref=e421]: Bold
+                - button "List" [ref=e422] [cursor=pointer]:
+                  - img [ref=e423]
+                  - generic [ref=e424]: List
+                - button "Table" [ref=e425] [cursor=pointer]:
+                  - img [ref=e426]
+                  - generic [ref=e428]: Table
+                - button "Insert citation" [ref=e429] [cursor=pointer]:
+                  - img [ref=e431]
+                  - text: Insert citation
+              - generic [ref=e433]:
+                - generic [ref=e434]:
+                  - text: Artifact body
+                  - generic [ref=e435]: "*"
+                - generic [ref=e436]:
+                  - textbox "Artifact body" [ref=e437]: "# Review access boundaries, evidence, and deployment readiness.[WORK_ITEM · WK-1042]"
+                  - group:
+                    - generic: Artifact body *
+          - generic [ref=e439]:
+            - region "Inline feedback comments (2)" [ref=e440]:
+              - generic [ref=e441]:
+                - generic [ref=e443]:
+                  - img [ref=e444]
+                  - heading "Inline feedback comments (2)" [level=3] [ref=e446]
+                - generic [ref=e448]:
+                  - generic [ref=e449]:
+                    - generic: Document anchor (optional)
+                    - generic [ref=e450]:
+                      - textbox "Document anchor (optional)" [ref=e451]:
+                        - /placeholder: "For example: 3. Exchange-rate sensitivity"
+                      - group:
+                        - generic: Document anchor (optional)
+                  - generic [ref=e452]:
+                    - generic: New comment
+                    - generic [ref=e453]:
+                      - textbox "New comment" [ref=e454]:
+                        - /placeholder: Enter review feedback.
+                      - group:
+                        - generic: New comment
+                  - button "Add comment" [disabled]
+                - generic [ref=e455]:
+                  - article [ref=e456]:
+                    - generic [ref=e457]:
+                      - generic [ref=e458]:
+                        - generic [ref=e459]:
+                          - paragraph [ref=e460]: Current user
+                          - text: Sep 4, 2026, 11:00 AM
+                        - generic [ref=e462]: Open
+                      - generic [ref=e463]: Document anchor · Executive summary
+                      - paragraph [ref=e464]: Add the approved budget owner.
+                      - generic [ref=e465]:
+                        - button "Reply" [ref=e466] [cursor=pointer]:
+                          - img [ref=e468]
+                          - text: Reply
+                        - button "Resolve" [ref=e471] [cursor=pointer]:
+                          - img [ref=e473]
+                          - text: Resolve
+                  - separator [ref=e476]
+                  - article [ref=e477]:
+                    - generic [ref=e478]:
+                      - generic [ref=e479]:
+                        - generic [ref=e480]:
+                          - paragraph [ref=e481]: Mina Kim
+                          - text: Sep 4, 2026, 10:30 AM
+                        - generic [ref=e483]: Open
+                      - generic [ref=e484]: Document anchor · 3. Exchange-rate sensitivity
+                      - paragraph [ref=e485]: Please reconfirm the baseline date for the exchange-rate stress test.
+                      - generic [ref=e486]:
+                        - button "Reply" [ref=e487] [cursor=pointer]:
+                          - img [ref=e489]
+                          - text: Reply
+                        - button "Resolve" [ref=e492] [cursor=pointer]:
+                          - img [ref=e494]
+                          - text: Resolve
+            - generic [ref=e497]:
+              - region "Source references" [ref=e498]:
+                - generic [ref=e499]:
+                  - generic [ref=e500]:
+                    - img [ref=e501]
+                    - heading "Source references" [level=2] [ref=e504]
+                  - generic [ref=e506]: "1"
+                - status [ref=e507]:
+                  - img [ref=e509]
+                  - generic [ref=e511]: Source authenticity and freshness verification are not connected yet.
+                - generic [ref=e514]:
+                  - generic [ref=e515]:
+                    - img [ref=e516]
+                    - generic [ref=e519]:
+                      - paragraph [ref=e520]: Work item
+                      - generic [ref=e521]: "Reference: WK-1042"
+                  - generic [ref=e522]:
+                    - generic [ref=e524]: Unverified
+                    - generic [ref=e526]: Freshness unknown
+              - region "Security preflight" [ref=e527]:
+                - generic [ref=e528]:
+                  - generic [ref=e529]:
+                    - img [ref=e530]
+                    - heading "Security preflight" [level=2] [ref=e533]
+                  - generic [ref=e535]: Passed
+                - generic [ref=e536]:
+                  - generic [ref=e537]: v2 · Sep 4, 2026, 9:00 AM
+                  - paragraph [ref=e538]: 0 findings
+                - status [ref=e539]:
+                  - img [ref=e541]
+                  - generic [ref=e543]: The enterprise DLP connector is not connected.
+                - generic [ref=e544]: External sharing and recipient delivery are blocked.
+```

@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
 
 import { afterEach, describe, expect, it } from 'vitest';
+import type { MailAdvancedThreadDetail } from '@dwp-frontend/shared-utils';
 
 import {
   clearMailDraftConflict,
   clearMailDraftConflictsForTests,
+  mailDraftFieldsFromDetail,
   readMailDraftConflict,
   rememberMailDraftConflict,
 } from './mail-draft-conflict';
@@ -34,5 +36,27 @@ describe('mail draft conflict custody', () => {
     );
 
     expect(readMailDraftConflict('tenant:7:42', 'draft-1')).toBeNull();
+  });
+
+  it('canonicalizes a legacy draft without advanced options for conflict comparison', () => {
+    const fields = mailDraftFieldsFromDetail({
+      thread: {
+        accountId: 'account-1',
+        subject: 'Matching draft',
+        participants: [{ name: 'owner@example.com', email: 'owner@example.com' }],
+      },
+      messages: [{ direction: 'DRAFT', body: 'Matching body' }],
+    } as unknown as MailAdvancedThreadDetail);
+
+    expect(fields).toMatchObject({
+      toEmail: 'owner@example.com',
+      subject: 'Matching draft',
+      body: 'Matching body',
+      composeOptions: {
+        accountId: 'account-1',
+        recipients: [{ type: 'TO', name: null, email: 'owner@example.com' }],
+        bodyFormat: 'TEXT',
+      },
+    });
   });
 });

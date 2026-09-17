@@ -2,7 +2,12 @@
 import { act, createElement, useEffect, type ComponentProps, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Room, type LocalTrackPublication, type VideoCaptureOptions } from 'livekit-client';
+import {
+  Room,
+  VideoPresets,
+  type LocalTrackPublication,
+  type VideoCaptureOptions,
+} from 'livekit-client';
 import type * as DesignSystem from '@dwp-frontend/design-system';
 import type {
   MeetingBackgroundOptions,
@@ -95,6 +100,7 @@ const props = (): Props => ({
   },
   speakerDeviceId: 'default',
   noiseSuppression: true,
+  hdVideo: false,
   backgroundMode: 'office',
   ending: false,
   onConnected: vi.fn(),
@@ -254,6 +260,46 @@ describe('room camera background publication privacy boundary', () => {
     expect(transport.video).toEqual({ deviceId: 'default' });
     expect(transport.options?.videoCaptureDefaults?.processor).toBeUndefined();
     expect(mocks.factory).not.toHaveBeenCalled();
+  });
+
+  it('applies an explicit HD preference to initial and later LiveKit camera capture', async () => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getSupportedConstraints: () => ({ width: true, height: true }) },
+    });
+    await render({ hdVideo: true, backgroundMode: 'original' });
+    expect(transport.video).toEqual({
+      deviceId: 'default',
+      resolution: VideoPresets.h1080.resolution,
+    });
+    expect(transport.options?.videoCaptureDefaults?.resolution).toEqual(
+      VideoPresets.h1080.resolution
+    );
+  });
+
+  it('carries HD through the background processor instead of publishing a 720p effect', async () => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getSupportedConstraints: () => ({ width: true, height: true }) },
+    });
+    await render({ hdVideo: true, backgroundMode: 'office' });
+    expect(transport.video).toMatchObject({
+      resolution: VideoPresets.h1080.resolution,
+      processor: owners[0],
+    });
+    expect(mocks.factory).toHaveBeenCalledWith(
+      expect.objectContaining({ mode: 'office', hdVideo: true, stopInputOnFailure: true })
+    );
+  });
+
+  it('ignores a stale HD preference when the browser cannot express HD constraints', async () => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getSupportedConstraints: () => ({}) },
+    });
+    await render({ hdVideo: true, backgroundMode: 'original' });
+    expect(transport.video).toEqual({ deviceId: 'default' });
+    expect(transport.options?.videoCaptureDefaults?.resolution).toBeUndefined();
   });
 
   it.each([undefined, null, 'remote'])(

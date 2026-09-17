@@ -124,7 +124,9 @@ export function RetentionSurface({
   overview,
   retention,
   fallbackEvidence,
-  canManage,
+  canManageHolds,
+  canAuthorizePurge,
+  canExecutePurge,
   busyAction,
   onCreateHold,
   onUpdateHold,
@@ -136,7 +138,9 @@ export function RetentionSurface({
   overview: MailAdminOverview;
   retention?: MailRetentionSnapshot;
   fallbackEvidence?: MailPurgeGateEvidence;
-  canManage: boolean;
+  canManageHolds: boolean;
+  canAuthorizePurge: boolean;
+  canExecutePurge: boolean;
   busyAction?: string | null;
   onCreateHold?: MailAdminOperationsContentProps['onCreateLegalHold'];
   onUpdateHold?: MailAdminOperationsContentProps['onUpdateLegalHold'];
@@ -147,8 +151,8 @@ export function RetentionSurface({
 }) {
   const { t } = useTranslation('mail');
   const [holdEditor, setHoldEditor] = useState<{ hold: MailLegalHold | null } | null>(null);
-  const candidate = retention?.candidate;
-  const gate = fallbackEvidence ?? buildMailPurgeGateEvidence(retention, canManage);
+  const candidate = canAuthorizePurge || canExecutePurge ? retention?.candidate : undefined;
+  const gate = fallbackEvidence ?? buildMailPurgeGateEvidence(retention, true);
   const availability = getMailPurgeAvailability(gate);
   return (
     <Stack spacing={2.5}>
@@ -221,7 +225,7 @@ export function RetentionSurface({
         action={
           <ActionButton
             intent="primary"
-            disabled={!canManage || !retention || !onCreateHold}
+            disabled={!canManageHolds || !retention || !onCreateHold}
             startIcon={<Plus size={16} />}
             onClick={() => setHoldEditor({ hold: null })}
           >
@@ -254,7 +258,7 @@ export function RetentionSurface({
                 <ActionButton
                   size="small"
                   intent="secondary"
-                  disabled={!canManage || hold.status !== 'ACTIVE' || !onUpdateHold}
+                  disabled={!canManageHolds || hold.status !== 'ACTIVE' || !onUpdateHold}
                   onClick={() => setHoldEditor({ hold })}
                 >
                   {t('actions.edit', { defaultValue: 'Edit' })}
@@ -263,7 +267,7 @@ export function RetentionSurface({
                   size="small"
                   intent="danger"
                   loading={busyAction === `release-hold:${hold.holdId}`}
-                  disabled={!canManage || hold.status !== 'ACTIVE' || !onReleaseHold}
+                  disabled={!canManageHolds || hold.status !== 'ACTIVE' || !onReleaseHold}
                   onClick={() => onReleaseHold?.(hold.holdId, hold.version)}
                 >
                   {t('admin.operationsWorkspace.a05.releaseHold', { defaultValue: 'Release hold' })}
@@ -336,7 +340,7 @@ export function RetentionSurface({
           <ActionButton
             intent="secondary"
             loading={busyAction === 'preview-purge'}
-            disabled={!canManage || !availability.previewEnabled || !onPreview}
+            disabled={!canAuthorizePurge || !availability.previewEnabled || !onPreview}
             onClick={onPreview}
           >
             {t('admin.operationsWorkspace.a05.preview', { defaultValue: 'Preview purge' })}
@@ -345,7 +349,7 @@ export function RetentionSurface({
             intent="secondary"
             loading={busyAction === 'approve-purge'}
             disabled={
-              !canManage || !candidate || candidate.distinctApproverCount >= 2 || !onApprove
+              !canAuthorizePurge || !candidate || candidate.distinctApproverCount >= 2 || !onApprove
             }
             onClick={() => candidate && onApprove?.(candidate)}
           >
@@ -354,40 +358,42 @@ export function RetentionSurface({
           <ActionButton
             intent="danger"
             loading={busyAction === 'execute-purge'}
-            disabled={!canManage || !candidate || !availability.executeEnabled || !onExecute}
+            disabled={!canExecutePurge || !candidate || !availability.executeEnabled || !onExecute}
             onClick={() => candidate && onExecute?.(candidate)}
           >
             {t('admin.operationsWorkspace.a05.execute', { defaultValue: 'Execute purge' })}
           </ActionButton>
         </Stack>
-        {retention?.purgeJobs.map((job, index) => (
-          <Box key={job.jobId}>
-            {index > 0 || Boolean(candidate) ? <Divider /> : null}
-            <Stack spacing={1} sx={{ p: 2 }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Typography variant="body2" fontWeight="fontWeightBold" sx={{ flex: 1 }}>
-                  {job.jobId}
-                </Typography>
-                <StateChip label={job.state} />
-                <StateChip label={job.verificationState} />
-              </Stack>
-              <Stack direction="row" spacing={0.75} flexWrap="wrap">
-                {(job.steps ?? job.stepResults ?? []).map((step, index) => {
-                  const name = 'step' in step ? String(step.step) : `STEP_${index + 1}`;
-                  const state = 'state' in step ? String(step.state) : 'UNKNOWN';
-                  return (
-                    <Chip
-                      key={`${name}:${index}`}
-                      size="small"
-                      variant="outlined"
-                      label={`${name}: ${state}`}
-                    />
-                  );
-                })}
-              </Stack>
-            </Stack>
-          </Box>
-        ))}
+        {canAuthorizePurge
+          ? retention?.purgeJobs.map((job, index) => (
+              <Box key={job.jobId}>
+                {index > 0 || Boolean(candidate) ? <Divider /> : null}
+                <Stack spacing={1} sx={{ p: 2 }}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography variant="body2" fontWeight="fontWeightBold" sx={{ flex: 1 }}>
+                      {job.jobId}
+                    </Typography>
+                    <StateChip label={job.state} />
+                    <StateChip label={job.verificationState} />
+                  </Stack>
+                  <Stack direction="row" spacing={0.75} flexWrap="wrap">
+                    {(job.steps ?? job.stepResults ?? []).map((step, index) => {
+                      const name = 'step' in step ? String(step.step) : `STEP_${index + 1}`;
+                      const state = 'state' in step ? String(step.state) : 'UNKNOWN';
+                      return (
+                        <Chip
+                          key={`${name}:${index}`}
+                          size="small"
+                          variant="outlined"
+                          label={`${name}: ${state}`}
+                        />
+                      );
+                    })}
+                  </Stack>
+                </Stack>
+              </Box>
+            ))
+          : null}
       </Section>
       {holdEditor ? (
         <HoldEditor

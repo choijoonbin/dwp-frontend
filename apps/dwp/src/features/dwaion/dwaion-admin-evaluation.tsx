@@ -248,7 +248,7 @@ export function DwaionAdminEvaluation() {
                   ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
               }
             >
-              Dataset import
+              {t('dwaionOperational.adminEvaluation.datasetImport')}
             </ActionButton>
             {canCreate && (
               <ActionButton

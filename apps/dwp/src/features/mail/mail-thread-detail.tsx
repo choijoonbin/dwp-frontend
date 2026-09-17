@@ -21,6 +21,7 @@ import {
   decideMailProposal,
   getMailHome,
   getMailThread,
+  getMailWritingAssets,
   HttpError,
   replyToMailThread,
   resolveIdempotentMutationIntent,
@@ -51,6 +52,8 @@ import { MailDraftEditor } from './mail-draft-editor';
 import { mailForwardDraft } from './mail-message-presentation';
 import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
 import { mailReplyAllRecipients } from './mail-reply-recipients';
+import { mailReplySignatureText, resolveMailReplySignature } from './mail-reply-signature';
+import { useMailRuntimePreferences } from './mail-runtime-preferences';
 import {
   clearMailRejectedReplyReview,
   clearMailSendAttempt,
@@ -65,6 +68,7 @@ import {
 import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadLifecycleActions } from './mail-thread-lifecycle-actions';
 import { MailThreadMessageCard } from './mail-thread-message-card';
+import { useMailProposalHandoff } from './use-mail-proposal-handoff';
 
 import type {
   IdempotentMutationIntent,
@@ -134,6 +138,7 @@ export function MailThreadDetailPane({
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const [loadedRemoteImages, setLoadedRemoteImages] = useState<Set<string>>(() => new Set());
   const [threadConflict, setThreadConflict] = useState(false);
+  const replySignatureApplicationRef = useRef<string | null>(null);
   const replyIdentityRef = useRef<IdempotentMutationIntent | null>(
     initialReplyAttempt?.intent ?? null
   );
@@ -168,6 +173,15 @@ export function MailThreadDetailPane({
     staleTime: 60_000,
     retry: 1,
   });
+  const writingAssetsQuery = useQuery({
+    queryKey: ['mail', 'writing-assets'],
+    queryFn: () => getMailWritingAssets(),
+    enabled: Boolean(threadId),
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const runtimePreferences = useMailRuntimePreferences();
+  const proposalHandoff = useMailProposalHandoff();
   useEffect(() => {
     setAssigneeId(query.data?.thread.assignedUserId ?? '');
   }, [query.data?.thread.assignedUserId, query.data?.thread.threadId]);
@@ -180,9 +194,22 @@ export function MailThreadDetailPane({
     setReplyMode(attempt?.payload.mode ?? rejected?.mode ?? 'REPLY');
     setReplyResolutionPending(Boolean(attempt));
     setReplyRejected(Boolean(rejected));
+    replySignatureApplicationRef.current = null;
     setLoadedRemoteImages(new Set());
     setThreadConflict(false);
   }, [custodyOwner, threadId]);
+  useEffect(() => {
+    const accountId = query.data?.thread.accountId;
+    if (!threadId || !accountId || !writingAssetsQuery.data) return;
+    const signature = resolveMailReplySignature(writingAssetsQuery.data.signatures, accountId);
+    const applicationKey = `${custodyOwner}:${threadId}:${signature?.signatureId ?? 'none'}`;
+    if (replySignatureApplicationRef.current === applicationKey) return;
+    replySignatureApplicationRef.current = applicationKey;
+    if (!signature) return;
+    const signatureText = mailReplySignatureText(signature);
+    if (!signatureText) return;
+    setReply((current) => (current.trim() ? current : signatureText));
+  }, [custodyOwner, query.data?.thread.accountId, threadId, writingAssetsQuery.data]);
   useEffect(() => {
     const detail = query.data;
     if (!threadId || !detail?.thread.sharedInboxId) return;
@@ -382,7 +409,7 @@ export function MailThreadDetailPane({
       await query.refetch();
       if (variables.decision === 'ACCEPT') {
         toast.success(t('proposal.accepted'));
-        if (proposal.targetRoute) navigate(proposal.targetRoute);
+        proposalHandoff.mutate(proposal);
       } else {
         toast.success(t('proposal.dismissed'));
       }
@@ -644,9 +671,11 @@ export function MailThreadDetailPane({
           {detail.messages.map((message) => (
             <MailThreadMessageCard
               key={message.messageId}
+              threadId={thread.threadId}
               message={message}
               language={language}
-              remoteImagesAllowed={loadedRemoteImages.has(message.messageId)}
+              remoteImagePolicy={runtimePreferences.data?.remoteImages ?? 'BLOCK'}
+              remoteImagesManuallyAllowed={loadedRemoteImages.has(message.messageId)}
               onLoadRemoteImages={() =>
                 setLoadedRemoteImages((current) => new Set([...current, message.messageId]))
               }
@@ -665,7 +694,7 @@ export function MailThreadDetailPane({
                 <MailProposalCard
                   key={proposal.proposalId}
                   proposal={proposal}
-                  busy={proposalMutation.isPending}
+                  busy={proposalMutation.isPending || proposalHandoff.isPending}
                   onAccept={() => setProposalToAccept(proposal)}
                   onDismiss={() => proposalMutation.mutate({ proposal, decision: 'DISMISS' })}
                 />
@@ -824,7 +853,7 @@ export function MailThreadDetailPane({
 
       <MailProposalReviewDialog
         proposal={proposalToAccept}
-        busy={proposalMutation.isPending}
+        busy={proposalMutation.isPending || proposalHandoff.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {
           if (proposalToAccept) {

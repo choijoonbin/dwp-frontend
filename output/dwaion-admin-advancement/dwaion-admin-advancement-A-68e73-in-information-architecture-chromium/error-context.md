@@ -1,0 +1,371 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Operations
+          - paragraph [ref=e26]: SKAX
+        - navigation "DWAI·ON navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Operations
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /dwaion/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e37]: Operations overview
+              - listitem [ref=e38]:
+                - link "Models & routing" [ref=e39] [cursor=pointer]:
+                  - /url: /dwaion/admin/models
+                  - img [ref=e41]
+                  - paragraph [ref=e46]: Models & routing
+              - listitem [ref=e47]:
+                - link "Agent and publishing management" [ref=e48] [cursor=pointer]:
+                  - /url: /dwaion/admin/agents
+                  - img [ref=e50]
+                  - paragraph [ref=e54]: Agent and publishing management
+              - listitem [ref=e55]:
+                - link "Data sources and connectors" [ref=e56] [cursor=pointer]:
+                  - /url: /dwaion/admin/sources
+                  - img [ref=e58]
+                  - paragraph [ref=e64]: Data sources and connectors
+              - listitem [ref=e65]:
+                - link "Actions and execution access" [ref=e66] [cursor=pointer]:
+                  - /url: /dwaion/admin/actions
+                  - img [ref=e68]
+                  - paragraph [ref=e73]: Actions and execution access
+              - listitem [ref=e74]:
+                - link "Policy and safety controls" [ref=e75] [cursor=pointer]:
+                  - /url: /dwaion/admin/safety
+                  - img [ref=e77]
+                  - paragraph [ref=e80]: Policy and safety controls
+              - listitem [ref=e81]:
+                - link "Response quality and evaluation" [ref=e82] [cursor=pointer]:
+                  - /url: /dwaion/admin/evaluation
+                  - img [ref=e84]
+                  - paragraph [ref=e87]: Response quality and evaluation
+              - listitem [ref=e88]:
+                - link "Operational readiness review" [ref=e89] [cursor=pointer]:
+                  - /url: /dwaion/admin/gates
+                  - img [ref=e91]
+                  - paragraph [ref=e95]: Operational readiness review
+              - listitem [ref=e96]:
+                - link "Data retention and audit" [ref=e97] [cursor=pointer]:
+                  - /url: /dwaion/admin/audit
+                  - img [ref=e99]
+                  - paragraph [ref=e103]: Data retention and audit
+        - link "Return to work" [ref=e105] [cursor=pointer]:
+          - /url: /dwaion/home
+          - img [ref=e107]
+          - text: Return to work
+    - banner [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - img [ref=e113]
+          - generic "DWAI·ON management" [ref=e117]
+        - navigation "App area switcher" [ref=e120]:
+          - generic [ref=e121]: Management mode
+          - 'link "Return to work: DWAI·ON" [ref=e123] [cursor=pointer]':
+            - /url: /dwaion/home
+            - img [ref=e125]
+            - generic [ref=e127]: Return to work
+        - generic [ref=e128]:
+          - button "Search DWP" [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+          - generic [ref=e134]:
+            - button "Enter full screen" [ref=e135] [cursor=pointer]:
+              - img [ref=e136]
+            - generic "0 actionable notifications, 0 total unread" [ref=e142]:
+              - button "0 actionable notifications, 0 total unread" [ref=e143] [cursor=pointer]:
+                - generic [ref=e144]:
+                  - img [ref=e145]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e149] [cursor=pointer]':
+            - generic [ref=e150]: T
+            - img [ref=e151]
+    - main [ref=e153]:
+      - generic [ref=e154]:
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - generic [ref=e157]: DATA GOVERNANCE · A03
+            - heading "Data sources and connectors" [level=1] [ref=e158]
+            - paragraph [ref=e159]: Manage allowed source systems and source-permission synchronization as tenant policy.
+          - generic [ref=e161]:
+            - button "Refresh status" [ref=e162] [cursor=pointer]:
+              - img [ref=e164]
+              - text: Refresh status
+            - button "Export policies" [ref=e169] [cursor=pointer]:
+              - img [ref=e171]
+              - text: Export policies
+            - button "New connector" [ref=e175] [cursor=pointer]:
+              - img [ref=e177]
+              - text: New connector
+        - region "Connector & ACL operations" [ref=e185]:
+          - generic [ref=e186]:
+            - generic [ref=e187]:
+              - heading "Connector & ACL operations" [level=2] [ref=e188]
+              - paragraph [ref=e189]: Operate ownership, scope, repositories, group mapping, secrets, sync, and deletion lifecycle.
+            - generic [ref=e191]:
+              - status [ref=e192]:
+                - generic [ref=e194]:
+                  - generic [ref=e195]: Live operational data
+                  - generic [ref=e196]: Generated 9/8/2026, 12:00:00 PM
+                - generic "Refresh" [ref=e197]:
+                  - button "Refresh" [ref=e198] [cursor=pointer]:
+                    - img [ref=e199]
+              - button "Add connector" [ref=e204] [cursor=pointer]:
+                - img [ref=e206]
+                - text: Add connector
+          - generic [ref=e210]:
+            - button "Enterprise knowledge IDLE SHAREPOINT · team:knowledge-platform" [pressed] [ref=e212] [cursor=pointer]:
+              - generic [ref=e213]:
+                - generic [ref=e214]:
+                  - heading "Enterprise knowledge" [level=6] [ref=e215]
+                  - generic [ref=e217]: IDLE
+                - generic [ref=e218]: SHAREPOINT · team:knowledge-platform
+            - generic [ref=e219]:
+              - generic [ref=e220]:
+                - generic [ref=e221]:
+                  - heading "Enterprise knowledge" [level=3] [ref=e222]
+                  - generic [ref=e223]: team:knowledge-platform · tenant:fixture · ap-northeast-2 · v4
+                - generic [ref=e224]:
+                  - img [ref=e225]
+                  - generic [ref=e228]: HEALTHY
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - text: Sync
+                  - paragraph [ref=e231]: IDLE
+                - generic [ref=e232]:
+                  - text: ACL coverage
+                  - paragraph [ref=e233]: 99.40%
+                - generic [ref=e234]:
+                  - text: Repositories
+                  - paragraph [ref=e235]: "2"
+                - generic [ref=e236]:
+                  - text: Last sync
+                  - paragraph [ref=e237]: 9/8/2026, 12:00:00 PM
+              - separator [ref=e238]
+              - generic [ref=e239]:
+                - button "ACL probe" [ref=e240] [cursor=pointer]:
+                  - img [ref=e242]
+                  - text: ACL probe
+                - button "Sync" [ref=e246] [cursor=pointer]:
+                  - img [ref=e248]
+                  - text: Sync
+                - button "Reindex" [ref=e253] [cursor=pointer]:
+                  - img [ref=e255]
+                  - text: Reindex
+                - button "Rotate secret" [ref=e258] [cursor=pointer]:
+                  - img [ref=e260]
+                  - text: Rotate secret
+                - button "Reduce scope" [ref=e263] [cursor=pointer]
+                - button "Revoke" [ref=e264] [cursor=pointer]:
+                  - img [ref=e266]
+                  - text: Revoke
+                - button "Delete" [ref=e273] [cursor=pointer]:
+                  - img [ref=e275]
+                  - text: Delete
+        - alert [ref=e278]:
+          - img [ref=e280]
+          - generic [ref=e283]: Connector credentials are never stored in this screen or policy store. Only a secret-store reference ID may be linked.
+        - region "Data source policy summary" [ref=e284]:
+          - generic [ref=e286]:
+            - generic [ref=e287]:
+              - generic [ref=e288]:
+                - generic [ref=e289]: Registered policies
+                - paragraph [ref=e290]: "7"
+              - img [ref=e292]
+            - generic [ref=e296]: Fixed source definitions returned by the server
+          - generic [ref=e298]:
+            - generic [ref=e299]:
+              - generic [ref=e300]:
+                - generic [ref=e301]: Enabled policies
+                - paragraph [ref=e302]: "2"
+              - img [ref=e304]
+            - generic [ref=e307]: Sources permitted by tenant policy
+          - generic [ref=e309]:
+            - generic [ref=e310]:
+              - generic [ref=e311]:
+                - generic [ref=e312]: Configured state
+                - paragraph [ref=e313]: "2"
+              - img [ref=e315]
+            - generic [ref=e318]: Server-reported configuration state, not a live probe
+          - generic [ref=e320]:
+            - generic [ref=e321]:
+              - generic [ref=e322]:
+                - generic [ref=e323]: Source permissions
+                - paragraph [ref=e324]: "2"
+              - img [ref=e326]
+            - generic [ref=e328]: Policies enforcing the source user's permissions
+        - status [ref=e329]:
+          - img [ref=e331]
+          - generic [ref=e333]: Policy and live connector evidence come from separate verified APIs. Missing probes, sync timestamps, ACL coverage, or credential state stay explicitly unavailable.
+        - generic [ref=e334]:
+          - generic [ref=e335]:
+            - generic [ref=e336]:
+              - heading "Data source policy master" [level=2] [ref=e337]
+              - text: 7 policies returned by the server
+            - generic [ref=e339]: Policy · configuration state
+          - region "DWAI·ON data source policies" [ref=e340]:
+            - generic [ref=e341]:
+              - generic [ref=e342]:
+                - generic: Search loaded items
+                - generic [ref=e343]:
+                  - textbox "Search loaded items" [ref=e344]
+                  - group:
+                    - generic: Search loaded items
+              - generic [ref=e345]:
+                - generic [ref=e346]: Status
+                - generic [ref=e347]:
+                  - combobox "Status All statuses" [ref=e348] [cursor=pointer]: All statuses
+                  - textbox: ALL
+                  - img
+                  - group:
+                    - generic: Status
+            - paragraph [ref=e349]: Source policy controls reading scope and configuration references. Configured connectivity is not a connection test and does not grant source-data permissions.
+            - generic [ref=e350]:
+              - list "DWAI·ON data source policies" [ref=e351]:
+                - generic [ref=e352]:
+                  - generic [ref=e353]: Item
+                  - generic [ref=e354]: Provider
+                  - generic [ref=e355]: Access mode
+                  - generic [ref=e356]: Classification
+                  - generic [ref=e357]: Status
+                - listitem [ref=e358]:
+                  - button "Calendar Read permitted calendar events for meeting preparation. DWP_CALENDAR Source permissions Confidential Configured connection" [pressed] [ref=e359] [cursor=pointer]:
+                    - generic [ref=e360]:
+                      - generic [ref=e361]:
+                        - heading "Calendar" [level=6] [ref=e362]
+                        - generic [ref=e363]: Read permitted calendar events for meeting preparation.
+                      - generic "DWP_CALENDAR" [ref=e365]
+                      - generic "Source permissions" [ref=e367]
+                      - generic "Confidential" [ref=e369]
+                      - generic [ref=e371]: Configured connection
+                - listitem [ref=e372]:
+                  - button "Work Read only source records permitted for the current user. DWP_PLATFORM Source permissions Internal Configured connection" [ref=e373] [cursor=pointer]:
+                    - generic [ref=e374]:
+                      - generic [ref=e375]:
+                        - heading "Work" [level=6] [ref=e376]
+                        - generic [ref=e377]: Read only source records permitted for the current user.
+                      - generic "DWP_PLATFORM" [ref=e379]
+                      - generic "Source permissions" [ref=e381]
+                      - generic "Internal" [ref=e383]
+                      - generic [ref=e385]: Configured connection
+                - listitem [ref=e386]:
+                  - button "Mail Read only source records permitted for the current user. DWP_MAIL Blocked Confidential Blocked" [ref=e387] [cursor=pointer]:
+                    - generic [ref=e388]:
+                      - generic [ref=e389]:
+                        - heading "Mail" [level=6] [ref=e390]
+                        - generic [ref=e391]: Read only source records permitted for the current user.
+                      - generic "DWP_MAIL" [ref=e393]
+                      - generic "Blocked" [ref=e395]
+                      - generic "Confidential" [ref=e397]
+                      - generic [ref=e399]: Blocked
+                - listitem [ref=e400]:
+                  - button "Approval tasks Read only source records permitted for the current user. DWP_APPROVAL Blocked Confidential Blocked" [ref=e401] [cursor=pointer]:
+                    - generic [ref=e402]:
+                      - generic [ref=e403]:
+                        - heading "Approval tasks" [level=6] [ref=e404]
+                        - generic [ref=e405]: Read only source records permitted for the current user.
+                      - generic "DWP_APPROVAL" [ref=e407]
+                      - generic "Blocked" [ref=e409]
+                      - generic "Confidential" [ref=e411]
+                      - generic [ref=e413]: Blocked
+                - listitem [ref=e414]:
+                  - button "Approval requests Read only source records permitted for the current user. DWP_APPROVAL Blocked Confidential Blocked" [ref=e415] [cursor=pointer]:
+                    - generic [ref=e416]:
+                      - generic [ref=e417]:
+                        - heading "Approval requests" [level=6] [ref=e418]
+                        - generic [ref=e419]: Read only source records permitted for the current user.
+                      - generic "DWP_APPROVAL" [ref=e421]
+                      - generic "Blocked" [ref=e423]
+                      - generic "Confidential" [ref=e425]
+                      - generic [ref=e427]: Blocked
+                - listitem [ref=e428]:
+                  - button "Approval forms Read only source records permitted for the current user. DWP_APPROVAL Blocked Internal Blocked" [ref=e429] [cursor=pointer]:
+                    - generic [ref=e430]:
+                      - generic [ref=e431]:
+                        - heading "Approval forms" [level=6] [ref=e432]
+                        - generic [ref=e433]: Read only source records permitted for the current user.
+                      - generic "DWP_APPROVAL" [ref=e435]
+                      - generic "Blocked" [ref=e437]
+                      - generic "Internal" [ref=e439]
+                      - generic [ref=e441]: Blocked
+                - listitem [ref=e442]:
+                  - button "Approval operations Read only source records permitted for the current user. DWP_APPROVAL Blocked Restricted Blocked" [ref=e443] [cursor=pointer]:
+                    - generic [ref=e444]:
+                      - generic [ref=e445]:
+                        - heading "Approval operations" [level=6] [ref=e446]
+                        - generic [ref=e447]: Read only source records permitted for the current user.
+                      - generic "DWP_APPROVAL" [ref=e449]
+                      - generic "Blocked" [ref=e451]
+                      - generic "Restricted" [ref=e453]
+                      - generic [ref=e455]: Blocked
+              - complementary "Review selected item" [ref=e456]:
+                - generic [ref=e457]:
+                  - generic [ref=e458]:
+                    - heading "Calendar" [level=2] [ref=e459]
+                    - generic [ref=e461]: Configured connection
+                  - paragraph [ref=e462]: Read permitted calendar events for meeting preparation.
+                  - generic [ref=e463]:
+                    - generic [ref=e464]:
+                      - term [ref=e465]: Provider
+                      - definition [ref=e466]: DWP_CALENDAR
+                    - generic [ref=e467]:
+                      - term [ref=e468]: Access mode
+                      - definition [ref=e469]: Source permissions
+                    - generic [ref=e470]:
+                      - term [ref=e471]: Classification
+                      - definition [ref=e472]: Confidential
+                    - generic [ref=e473]:
+                      - term [ref=e474]: Policy
+                      - definition [ref=e475]: Enabled
+                    - generic [ref=e476]:
+                      - term [ref=e477]: Secret-store reference ID
+                      - definition [ref=e478]: calendar-service-reference
+                    - generic [ref=e479]:
+                      - term [ref=e480]: Policy version
+                      - definition [ref=e481]: "4"
+                    - generic [ref=e482]:
+                      - term [ref=e483]: Updated at
+                      - definition [ref=e484]: Sep 8, 2026, 12:00 PM
+                  - region "Connection, permission, and freshness evidence" [ref=e485]:
+                    - heading "Connection, permission, and freshness evidence" [level=3] [ref=e486]
+                    - paragraph [ref=e487]: Only values present in the selected source policy response are treated as verified.
+                    - generic [ref=e488]:
+                      - paragraph [ref=e489]: Configuration state
+                      - generic [ref=e490]: Configured connection
+                    - generic [ref=e491]:
+                      - paragraph [ref=e492]: Permission enforcement
+                      - generic [ref=e493]: Source permissions
+                    - generic [ref=e494]:
+                      - paragraph [ref=e495]: Policy updated at
+                      - generic [ref=e496]: Sep 8, 2026, 12:00 PM
+                    - generic [ref=e497]:
+                      - paragraph [ref=e498]: Last successful source sync
+                      - generic [ref=e499]: Not provided by this policy API
+                    - generic [ref=e500]:
+                      - paragraph [ref=e501]: Connection and sync latency
+                      - generic [ref=e502]: Not provided by this policy API
+                    - generic [ref=e503]:
+                      - paragraph [ref=e504]: Credential validation
+                      - generic [ref=e505]: Not provided by this policy API
+                  - button "Edit policy" [ref=e507] [cursor=pointer]:
+                    - img [ref=e509]
+                    - text: Edit policy
+```

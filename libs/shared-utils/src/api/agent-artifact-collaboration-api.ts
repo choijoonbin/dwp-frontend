@@ -3,6 +3,9 @@ import { HttpError } from '../http-error';
 import { assertAgentRevision, assertAgentUuid } from './agent-governed-api';
 import {
   parseDwaionTeamArtifactCapabilities,
+  parseDwaionTeamArtifactAccessRequest,
+  parseDwaionTeamArtifactComment,
+  parseDwaionTeamArtifactComments,
   parseDwaionTeamArtifactEditResult,
   parseDwaionTeamArtifactPreflight,
   parseDwaionTeamArtifactShare,
@@ -18,6 +21,8 @@ import type {
   DwaionArtifactCollaborationCommand,
   DwaionArtifactCollaborationHighRiskCommand,
   DwaionTeamArtifactConflictResolution,
+  DwaionTeamArtifactComment,
+  DwaionTeamArtifactAccessRequest,
   DwaionTeamArtifactEditResult,
   DwaionTeamArtifactPreflight,
   DwaionTeamArtifactShare,
@@ -53,6 +58,84 @@ export async function getDwaionTeamArtifactWorkspace(
     if (error instanceof HttpError && error.status === 404) return null;
     throw error;
   }
+}
+
+export async function getDwaionTeamArtifactComments(
+  artifactId: string,
+  signal?: AbortSignal
+): Promise<DwaionTeamArtifactComment[]> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
+    `${artifactPath(artifactId)}/workspace/comments`,
+    { signal }
+  );
+  const comments = parseDwaionTeamArtifactComments(response.data.data);
+  assertBinding(
+    comments.every((comment) => comment.artifactId === artifactId),
+    'comments'
+  );
+  return comments;
+}
+
+export async function createDwaionTeamArtifactComment(
+  artifactId: string,
+  body: string,
+  anchor: string | null,
+  command: DwaionArtifactCollaborationCommand
+): Promise<DwaionTeamArtifactComment> {
+  validateCommand(command, false);
+  validateCommentBody(body);
+  if (anchor !== null && anchor.length > 1_000)
+    throw new TypeError('Artifact comment anchor is invalid.');
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${artifactPath(artifactId)}/workspace/comments`,
+    { ...commandBody(command), body: body.trim(), anchor: anchor?.trim() || null },
+    productSurfaceGovernedMutationConfig(command.authority ?? LEGACY_AUTHORITY)
+  );
+  const comment = parseDwaionTeamArtifactComment(response.data.data);
+  assertBinding(comment.artifactId === artifactId, 'comment');
+  return comment;
+}
+
+export async function replyDwaionTeamArtifactComment(
+  artifactId: string,
+  commentId: string,
+  body: string,
+  command: DwaionArtifactCollaborationCommand
+): Promise<DwaionTeamArtifactComment> {
+  validateCommand(command, false);
+  assertAgentUuid(commentId, 'Artifact comment identifier');
+  validateCommentBody(body);
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${artifactPath(artifactId)}/workspace/comments/${encodeURIComponent(commentId)}/replies`,
+    { ...commandBody(command), body: body.trim() },
+    productSurfaceGovernedMutationConfig(command.authority ?? LEGACY_AUTHORITY)
+  );
+  const comment = parseDwaionTeamArtifactComment(response.data.data);
+  assertBinding(
+    comment.artifactId === artifactId && comment.commentId === commentId,
+    'comment reply'
+  );
+  return comment;
+}
+
+export async function resolveDwaionTeamArtifactComment(
+  artifactId: string,
+  commentId: string,
+  command: DwaionArtifactCollaborationHighRiskCommand
+): Promise<DwaionTeamArtifactComment> {
+  validateCommand(command, true);
+  assertAgentUuid(commentId, 'Artifact comment identifier');
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${artifactPath(artifactId)}/workspace/comments/${encodeURIComponent(commentId)}/resolve`,
+    { ...commandBody(command), changeReason: command.changeReason.trim() },
+    highRiskConfig(command)
+  );
+  const comment = parseDwaionTeamArtifactComment(response.data.data);
+  assertBinding(
+    comment.artifactId === artifactId && comment.commentId === commentId,
+    'comment resolution'
+  );
+  return comment;
 }
 
 export async function runDwaionTeamArtifactPreflight(
@@ -101,11 +184,36 @@ export async function createDwaionTeamArtifactWorkspace(
     highRiskConfig(command)
   );
   const workspace = parseDwaionTeamArtifactWorkspace(response.data.data);
-  assertBinding(
-    workspace.artifactId === artifactId && workspace.teamId === teamId,
-    'workspace'
-  );
+  assertBinding(workspace.artifactId === artifactId && workspace.teamId === teamId, 'workspace');
   return workspace;
+}
+
+export async function createDwaionTeamArtifactAccessRequest(
+  artifactId: string,
+  teamId: string,
+  preflightId: string,
+  command: DwaionArtifactCollaborationHighRiskCommand
+): Promise<DwaionTeamArtifactAccessRequest> {
+  validateCommand(command, true);
+  assertAgentUuid(teamId, 'Artifact collaboration team identifier');
+  assertAgentUuid(preflightId, 'Artifact collaboration preflight identifier');
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${artifactPath(artifactId)}/access-requests`,
+    {
+      ...commandBody(command),
+      changeReason: command.changeReason.trim(),
+      preflightId,
+    },
+    highRiskConfig(command)
+  );
+  const request = parseDwaionTeamArtifactAccessRequest(response.data.data);
+  assertBinding(
+    request.artifactId === artifactId &&
+      request.teamId === teamId &&
+      request.preflightId === preflightId,
+    'access request'
+  );
+  return request;
 }
 
 export async function updateDwaionTeamArtifactMembers(
@@ -226,10 +334,7 @@ async function mutateWorkspace(
   return workspace;
 }
 
-function validateCommand(
-  command: DwaionArtifactCollaborationCommand,
-  highRisk: boolean
-): void {
+function validateCommand(command: DwaionArtifactCollaborationCommand, highRisk: boolean): void {
   assertAgentUuid(command.commandId, 'Artifact collaboration command identifier');
   assertAgentRevision(command.expectedRevision, 'Artifact collaboration command revision');
   if (!/^[A-Z][A-Z0-9_.-]{1,63}$/u.test(command.reasonCode))
@@ -264,6 +369,11 @@ function artifactPath(artifactId: string) {
 
 function assertBinding(condition: boolean, label: string): asserts condition {
   if (!condition) throw new HttpError(`Artifact collaboration ${label} binding is invalid.`, 502);
+}
+
+function validateCommentBody(value: string): void {
+  if (value.trim().length < 1 || value.length > 4_000)
+    throw new TypeError('Artifact comment body is invalid.');
 }
 
 export function newDwaionArtifactCollaborationCommandId(): string {

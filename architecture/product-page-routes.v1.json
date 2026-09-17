@@ -255,6 +255,13 @@
       "surfaceId": "dwaion.management"
     },
     {
+      "routeContractKey": "route.dwaion.management.models-routing.page",
+      "routeId": "dwaion.management.models-routing",
+      "pattern": "/dwaion/admin/models",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.management"
+    },
+    {
       "routeContractKey": "route.dwaion.management.overview.page",
       "routeId": "dwaion.management.overview",
       "pattern": "/dwaion/admin/overview",
@@ -283,6 +290,20 @@
       "surfaceId": "dwaion.work"
     },
     {
+      "routeContractKey": "route.dwaion.work.activity.page",
+      "routeId": "dwaion.work.activity",
+      "pattern": "/dwaion/activity",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.agents.page",
+      "routeId": "dwaion.work.agents",
+      "pattern": "/dwaion/agents",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
       "routeContractKey": "route.dwaion.work.artifacts.page",
       "routeId": "dwaion.work.artifacts",
       "pattern": "/dwaion/artifacts",
@@ -290,9 +311,30 @@
       "surfaceId": "dwaion.work"
     },
     {
+      "routeContractKey": "route.dwaion.work.conversation-detail.page",
+      "routeId": "dwaion.work.conversation-detail",
+      "pattern": "/dwaion/conversations/:conversationId",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.conversations.page",
+      "routeId": "dwaion.work.conversations",
+      "pattern": "/dwaion/conversations",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
       "routeContractKey": "route.dwaion.work.home.page",
       "routeId": "dwaion.work.home",
       "pattern": "/dwaion/home",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.new.page",
+      "routeId": "dwaion.work.new",
+      "pattern": "/dwaion/new",
       "productId": "dwaion",
       "surfaceId": "dwaion.work"
     },

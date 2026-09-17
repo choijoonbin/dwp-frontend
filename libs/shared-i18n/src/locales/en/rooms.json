@@ -116,7 +116,12 @@
     "wayfinding": {
       "eyebrow": "Indoor experience",
       "startFromContext": "Start wayfinding from a reservation or space with a selected site.",
-      "secondsShort": "sec"
+      "secondsShort": "sec",
+      "shareTitle": "Workplace indoor route",
+      "share": "Share to phone",
+      "copyLink": "Copy route link",
+      "linkCopied": "Secure route link copied.",
+      "linkError": "The route link could not be shared."
     },
     "devices": {
       "eyebrow": "Device operations",
@@ -681,6 +686,72 @@
         "evidence": "SHA-256 {{sha}} · {{size}} bytes",
         "confirmation": "I confirm this purpose-limited, audited export of the current incident version.",
         "permissionRequired": "ADMIN.WORKPLACE:EXPORT and current elevated access are required."
+      },
+      "emergencyContacts": {
+        "userTitle": "Emergency contacts",
+        "userDescription": "Use only tenant-approved contacts. External handoffs remain controlled by the safety command center.",
+        "loading": "Loading emergency contacts",
+        "loadError": "Emergency contacts could not be verified. Use your local emergency procedure.",
+        "notConfigured": "No emergency contact is configured for this incident.",
+        "call": "Call now",
+        "callNamed": "Call {{name}}",
+        "commandCenterOnly": "A verified command-center operator must perform this external handoff.",
+        "unavailable": "This contact is not currently available.",
+        "privacyNotice": "Only organizational contact routes are shown. Personal contact details and provider credentials are never exposed.",
+        "directoryTitle": "Emergency contact directory",
+        "directoryDescription": "Configure tenant-approved hotlines, radio desks, and public emergency services. Provider secrets remain outside DWP.",
+        "editContact": "Configured contact",
+        "newContact": "New contact",
+        "kind": "Contact type",
+        "actionMode": "Action mode",
+        "nameKo": "Korean display name",
+        "nameEn": "English display name",
+        "telUri": "Approved tel URI",
+        "telHint": "Use international format, for example tel:+8212345678.",
+        "sortOrder": "Display order",
+        "directTelAllowed": "Tenant policy permits this direct organizational call",
+        "active": "Contact is active",
+        "configureConfirmation": "I confirm this versioned tenant contact configuration.",
+        "save": "Save emergency contact",
+        "configureError": "The emergency contact was not saved. Refresh the directory before trying again.",
+        "handoffTitle": "External emergency handoff",
+        "handoffDescription": "Preview the current incident, contact, and provider truth before one confirmed external handoff.",
+        "handoffContact": "Governed contact",
+        "noGovernedContact": "No governed contact configured",
+        "providerNotConfigured": "Provider not configured",
+        "preview": "Preview external handoff",
+        "previewEligible": "External handoff is eligible for confirmation",
+        "previewBlocked": "External handoff is blocked",
+        "executeConfirmation": "I reviewed this preview and explicitly confirm one external emergency handoff.",
+        "execute": "Confirm external handoff",
+        "handoffError": "The external handoff was not confirmed. Refresh provider truth and create a new preview.",
+        "receipt": "External handoff {{state}} · correlation {{correlation}}",
+        "unknownRecovery": "The provider result is unknown. Do not issue another handoff. Recheck this receipt or perform the lookup-only reconciliation.",
+        "recheckReceipt": "Recheck receipt with GET",
+        "reconcileConfirmation": "I confirm a provider status lookup only. This will not send another handoff.",
+        "reconcile": "Reconcile provider status",
+        "reconcileError": "Provider status could not be reconciled. No handoff was resent.",
+        "kinds": {
+          "HOTLINE": "Emergency hotline",
+          "RADIO": "Safety radio desk",
+          "PUBLIC_EMERGENCY": "Public emergency service"
+        },
+        "actionModes": {
+          "TEL_URI": "Approved direct call",
+          "GOVERNED_HANDOFF": "Governed provider handoff"
+        },
+        "providerStates": {
+          "NOT_CONFIGURED": "Not configured",
+          "CONFIGURED_UNVERIFIED": "Configured, unverified",
+          "READY": "Ready",
+          "DEGRADED": "Degraded",
+          "STALE": "Stale"
+        },
+        "impact": {
+          "EXTERNAL_PROVIDER_HANDOFF": "One request will be sent to the configured emergency provider.",
+          "AUDIT_EVIDENCE_RECORDED": "The command, receipt, and provider evidence will be audited.",
+          "NO_PERSONAL_CONTACT_DATA_SENT": "No personal contact data or credential is sent."
+        }
       }
     },
     "planner": {
@@ -688,6 +759,7 @@
       "title": "Weekly booking planner",
       "description": "Plan desks, parking and lockers for yourself or authorized beneficiaries, then confirm one server-held batch.",
       "defaultPurpose": "Weekly workplace plan",
+      "releaseReason": "Release temporary holds before editing this plan",
       "progress": {
         "label": "Planner progress"
       },
@@ -815,6 +887,7 @@
       "actions": {
         "preview": "Preview package availability",
         "edit": "Edit plan",
+        "releaseHolds": "Release holds and edit",
         "hold": "Hold selected resources",
         "reacquire": "Refresh and reacquire holds",
         "confirm": "Confirm {{count}} held resources",
@@ -941,6 +1014,8 @@
       "confirm": {
         "batchTitle": "Confirm this held booking batch?",
         "batchDescription": "Each item is sent to its authoritative Workplace or Calendar source. Partial results follow the selected failure policy.",
+        "releaseHoldsTitle": "Release the temporary holds and edit this plan?",
+        "releaseHoldsDescription": "All current server holds will be released with version checks before the planner returns to editing.",
         "compensateTitle": "Cancel the successful items?",
         "compensateDescription": "This sends a compensation command for the successful items in this batch. The audit trail remains available.",
         "leaveTitle": "Leave this waitlist?",
@@ -950,6 +1025,9 @@
         "previewError": "Availability could not be evaluated. Refresh the source and try again.",
         "holdCreated": "The selected resources are held on the server.",
         "holdError": "The hold could not be confirmed. Its status was refreshed.",
+        "holdReleased": "The temporary holds were released. You can now edit the plan.",
+        "holdReleaseError": "The holds may have changed. Their authoritative status was refreshed before another release attempt.",
+        "holdReleaseUnknown": "The release result is not yet authoritative. Query the current intent before retrying.",
         "waitlistCreated": "The waitlist entry was created.",
         "waitlistError": "The waitlist entry could not be created.",
         "waitlistCancelled": "You left the waitlist.",
@@ -1540,6 +1618,52 @@
           "services": "Services",
           "access": "Access",
           "audit": "Audit"
+        }
+      },
+      "resourceCommands": {
+        "title": "Reservation resource controls",
+        "description": "Commands are sent only to a verified resource provider and return an authoritative receipt.",
+        "stepUpRequired": "Physical resource commands require fresh elevated access.",
+        "loadError": "The resource provider state could not be verified. No command was sent.",
+        "reason": "Action reason",
+        "parkingMinutes": "Parking extension",
+        "minutes": "{{count}} minutes",
+        "reconcile": "Check provider result",
+        "commandError": "The command result could not be confirmed. Requery the stored receipt before retrying.",
+        "confirmTitle": "Run {{action}}?",
+        "confirmDescription": "Review the booking version, provider state, and impacts before the one-time command runs.",
+        "confirm": "Confirm",
+        "confirming": "Confirming",
+        "copyTeamsLink": "Copy Teams meeting link",
+        "teamsCopied": "The verified Teams meeting link was copied.",
+        "teamsCopyError": "The meeting link could not be copied.",
+        "openHelpRequest": "Request 1:1 help",
+        "actions": {
+          "PARKING_EXTEND": "Extend parking",
+          "PARKING_EXIT_STATUS": "Check exit status",
+          "LOCKER_UNLOCK": "Remote unlock (once)",
+          "NFC_KEY_RESEND": "Resend NFC key",
+          "ROOM_PRE_ENTRY": "Open room early"
+        },
+        "limitations": {
+          "BOOKING_INACTIVE": "This booking is no longer active.",
+          "PROVIDER_NOT_CONFIGURED": "The provider is not configured.",
+          "PROVIDER_CONFIGURED_UNVERIFIED": "The provider configuration is not yet verified.",
+          "PROVIDER_DEGRADED": "The provider is degraded, so the command is blocked.",
+          "PROVIDER_STALE": "Provider evidence is stale, so the command is blocked.",
+          "PROVIDER_NOT_READY": "The provider is not ready."
+        },
+        "impacts": {
+          "PARKING_ACCESS_WINDOW_WILL_CHANGE": "The parking access window will change.",
+          "PARKING_EXIT_STATUS_WILL_REFRESH": "The latest exit status will be requested from the parking provider.",
+          "LOCKER_WILL_UNLOCK_ONCE": "The selected locker will be unlocked once.",
+          "CURRENT_NFC_KEY_WILL_BE_REPLACED": "The current NFC key will be replaced and resent.",
+          "ROOM_ACCESS_WINDOW_WILL_OPEN_EARLY": "The meeting room early-entry window will open."
+        },
+        "states": {
+          "SUCCEEDED": "Provider action completed",
+          "FAILED": "Provider action failed",
+          "RESULT_UNKNOWN": "Provider result requires review"
         }
       },
       "confirm": {
@@ -2396,6 +2520,17 @@
       "unreservedInterval": "Unreserved interval",
       "closureInterval": "Scheduled closure",
       "timelineNotice": "Reservations and scheduled closures for the selected window; this does not indicate actual presence.",
+      "addFavorite": "Save favorite",
+      "removeFavorite": "Remove favorite",
+      "favoriteSaved": "Space saved to your favorites.",
+      "favoriteRemoved": "Space removed from your favorites.",
+      "favoriteResultUnknown": "The favorite result could not be verified. Current state is being refreshed.",
+      "sendIndoorRoute": "Open indoor route",
+      "share": "Share space",
+      "copyLink": "Copy space link",
+      "shareText": "Open {{name}} in DWP Workplace.",
+      "linkCopied": "Secure space link copied.",
+      "linkCopyFailed": "The space link could not be shared.",
       "nativeDetailsUnavailable": "Reservation details and rules appear after current information is verified."
     },
     "booking": {
@@ -3246,6 +3381,45 @@
       "description": "Compare demand, capacity, policy, and trusted emissions evidence before publishing a space plan.",
       "refresh": "Refresh planning data",
       "retry": "Try again",
+      "boardReport": {
+        "title": "Board report",
+        "description": "Create a governed PDF or Excel report from the reviewed aggregate planning snapshot.",
+        "permissionReady": "Export authorized",
+        "permissionMissing": "Export unavailable",
+        "sourceExpired": "Create a current scenario preview before preparing a board report.",
+        "format": "Report format",
+        "formats": {
+          "PDF": "PDF board pack",
+          "XLSX": "Excel workbook"
+        },
+        "reason": "Export reason",
+        "reasonHint": "Recorded with the preview, command receipt, and audit evidence.",
+        "preview": "Preview board report",
+        "previewExpired": "This report preview expired or no longer matches the selected scenario. Create a new preview.",
+        "aggregateOnly": "The report contains aggregate operational metrics only. It excludes person-level and booking rows.",
+        "stepUpRequired": "Current elevated access and a verified authorization revision are required to create or download the report.",
+        "confirm": "I reviewed this aggregate snapshot and confirm the governed export.",
+        "create": "Create board report",
+        "receiptTitle": "Report receipt",
+        "receiptEvidence": "SHA-256 {{hash}}… · command version {{version}}",
+        "idempotentReplay": "This receipt is an exact replay of the original command.",
+        "resultUnknown": "The command result is not yet authoritative. Refresh the receipt before downloading.",
+        "contentExpired": "The report content expired or is unavailable. Create a new report preview.",
+        "refreshReceipt": "Refresh receipt",
+        "download": "Download verified report",
+        "metrics": {
+          "capacity": "Capacity",
+          "rooms": "Room capacity",
+          "bookings": "Impacted bookings",
+          "expires": "Preview expires"
+        },
+        "errors": {
+          "denied": "ADMIN.WORKPLACE:EXPORT permission is required for board reports.",
+          "conflict": "The scenario or authorization changed. Refresh planning data and create a new report preview.",
+          "unavailable": "The authoritative report service is temporarily unavailable.",
+          "default": "The board-report operation could not be completed. Retry with the same reviewed input."
+        }
+      },
       "actions": {
         "approve": "Approve",
         "bookingImpact": "Preview booking impact",
@@ -3473,6 +3647,21 @@
       "createTitle": "Describe the work and booking requirements",
       "requestText": "Natural-language request",
       "requestTextHint": "Do not enter email, phone, identity document, credential, or access-token values.",
+      "submitShortcut": "Press Ctrl or Command + Enter to create suggestions.",
+      "resetConversation": "Reset conversation",
+      "voiceStart": "Voice input",
+      "voiceStop": "Stop listening",
+      "voiceListening": "Listening… The transcript remains editable before submission.",
+      "voiceEditable": "Voice is optional. Review and edit every transcript before submission.",
+      "voiceUnsupported": "Voice recognition is unavailable in this browser. Keyboard input remains available.",
+      "voiceError": "Voice recognition stopped ({{reason}}). Review the text or continue with the keyboard.",
+      "voiceErrorGeneric": "Voice recognition could not start. Continue with keyboard input.",
+      "voiceConsentTitle": "Start voice input",
+      "voiceConsentDescription": "Voice recognition is optional and starts only after your confirmation.",
+      "voicePrivacy": "Your browser or configured speech service may process microphone audio. DWP does not store the audio; only the editable transcript is placed in this draft.",
+      "voiceConsent": "I understand the voice-processing notice and want to activate the microphone for this draft.",
+      "voiceCancel": "Keep typing",
+      "voiceBegin": "Start listening",
       "reason": "Command reason",
       "processingConsent": "I consent to processing this request for booking suggestions.",
       "feedbackConsent": "Allow separately submitted feedback to be considered under tenant policy.",

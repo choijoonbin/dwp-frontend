@@ -925,6 +925,7 @@ export function WorkplaceExplore({
           resource={inspected}
           status={inspectedStatus}
           siteName={selectedSite?.name ?? ''}
+          siteId={selectedSite?.siteId ?? ''}
           floorName={selectedFloor?.name ?? ''}
           typeLabels={typeLabels}
           statusLabels={statusLabels}

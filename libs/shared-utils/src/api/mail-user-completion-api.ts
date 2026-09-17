@@ -1,4 +1,5 @@
 import { axiosInstance } from '../axios-instance';
+import { mailProposalMutationHeaders } from './mail-proposal-binding';
 
 import type { ApiResponse } from '../types';
 import type {
@@ -10,6 +11,7 @@ import type {
   MailTriageLane,
   MailWorkflowState,
 } from './mail-api';
+import type { MailProposalMutationBinding } from './mail-proposal-binding';
 
 // Mail user completion contracts
 
@@ -59,6 +61,9 @@ export type MailTemplate = MailTemplateInput & {
   updatedAt?: string | null;
   editable?: boolean;
   mandatoryContent?: string | null;
+  publicationState?: 'PRIVATE' | 'PUBLISHED' | 'RETIRED';
+  publicationVersion?: number;
+  active?: boolean;
 };
 
 export type MailSignatureInput = {
@@ -77,6 +82,9 @@ export type MailSignature = MailSignatureInput & {
   updatedAt?: string | null;
   editable?: boolean;
   mandatoryContent?: string | null;
+  publicationState?: 'PRIVATE' | 'PUBLISHED' | 'RETIRED';
+  publicationVersion?: number;
+  active?: boolean;
 };
 
 export type MailWritingAssets = {
@@ -251,6 +259,18 @@ export async function deleteMailAttachment(attachmentId: string): Promise<void> 
   );
 }
 
+export async function downloadMailMessageAttachment(
+  threadId: string,
+  messageId: string,
+  attachmentId: string
+): Promise<Blob> {
+  const response = await axiosInstance.get<Blob>(
+    `${MAIL_USER_BASE}/threads/${encodeURIComponent(threadId)}/messages/${encodeURIComponent(messageId)}/attachments/${encodeURIComponent(attachmentId)}`,
+    { responseType: 'blob' }
+  );
+  return response.data;
+}
+
 export async function searchMailThreads(
   input: MailSearchCriteria & { page?: number; pageSize?: number }
 ): Promise<MailThreadPage> {
@@ -393,7 +413,7 @@ export async function reconcileMailDelivery(
   return response.data.data;
 }
 
-export async function retryMailDelivery(
+export async function retryMailDeliveryReceipt(
   deliveryId: string,
   input: { version: number }
 ): Promise<MailDeliveryReceipt> {
@@ -404,9 +424,12 @@ export async function retryMailDelivery(
   return response.data.data;
 }
 
-export async function getMailWritingAssets(): Promise<MailWritingAssets> {
+export async function getMailWritingAssets(
+  input: { includeArchived?: boolean } = {}
+): Promise<MailWritingAssets> {
+  const search = input.includeArchived ? '?includeArchived=true' : '';
   const response = await axiosInstance.get<ApiResponse<MailWritingAssets>>(
-    `${MAIL_USER_BASE}/writing-assets`
+    `${MAIL_USER_BASE}/writing-assets${search}`
   );
   return response.data.data;
 }
@@ -512,11 +535,13 @@ export async function updateAdvancedMailDraft(
     idempotencyKey: string;
     version: number;
     composeOptions?: MailComposeOptions;
-  }
+  },
+  proposalBinding?: MailProposalMutationBinding
 ): Promise<MailAdvancedThreadDetail> {
   const response = await axiosInstance.put<ApiResponse<MailAdvancedThreadDetail>, typeof input>(
     `${MAIL_USER_BASE}/threads/${encodeURIComponent(threadId)}/draft`,
-    input
+    input,
+    { headers: mailProposalMutationHeaders(proposalBinding) }
   );
   return response.data.data;
 }

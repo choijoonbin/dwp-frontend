@@ -155,6 +155,65 @@ describe('device settings browser-policy boundaries', () => {
     expect(container.textContent).toContain('preferences.video.backgroundUnsupported');
   });
 
+  it('enables HD on capable browsers, persists the preference, and does not acquire an idle camera', async () => {
+    const getUserMedia = vi.fn();
+    const onChange = vi.fn();
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: {
+        getUserMedia,
+        enumerateDevices: vi.fn(),
+        getSupportedConstraints: () => ({ width: true, height: true }),
+      },
+    });
+    await act(async () =>
+      root.render(
+        createElement(MeetingDeviceSettings, {
+          value: DEFAULT_MEETING_DEVICE_PREFERENCES,
+          onChange,
+        })
+      )
+    );
+    const hd = container.querySelector<HTMLInputElement>('input[aria-label="stitch.devices.hd"]')!;
+    expect(hd.disabled).toBe(false);
+    await act(async () => hd.click());
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      hdVideo: true,
+    });
+    expect(getUserMedia).not.toHaveBeenCalled();
+    expect(container.textContent).not.toContain('stitch.devices.hdUnsupported');
+  });
+
+  it('lets a user clear a saved HD preference when the current browser is unsupported', async () => {
+    const onChange = vi.fn();
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: {
+        getUserMedia: vi.fn(),
+        enumerateDevices: vi.fn(),
+        getSupportedConstraints: () => ({}),
+      },
+    });
+    await act(async () =>
+      root.render(
+        createElement(MeetingDeviceSettings, {
+          value: { ...DEFAULT_MEETING_DEVICE_PREFERENCES, hdVideo: true },
+          onChange,
+        })
+      )
+    );
+    const hd = container.querySelector<HTMLInputElement>('input[aria-label="stitch.devices.hd"]')!;
+    expect(hd.disabled).toBe(false);
+    expect(hd.checked).toBe(true);
+    await act(async () => hd.click());
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      hdVideo: false,
+    });
+    expect(container.textContent).toContain('stitch.devices.hdUnsupported');
+  });
+
   it('never equates local media preview success with measured network quality', async () => {
     await act(async () =>
       root.render(

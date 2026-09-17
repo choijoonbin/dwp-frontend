@@ -2,9 +2,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
 import {
+  createDwaionPersonalMemory,
   getDwaionPersonalAiControls,
+  getDwaionPersonalDataCapabilities,
+  getDwaionPersonalDataDeletions,
+  getDwaionPersonalMemories,
   requestDwaionPersonalDataDeletion,
+  retryDwaionPersonalDataDeletion,
   updateDwaionMemoryRuntimePreference,
+  updateDwaionPersonalMemory,
   updateDwaionSourcePreference,
 } from './agent-personal-ai-api';
 
@@ -45,10 +51,172 @@ const source = {
   updatedAt: null,
 };
 
+const completedDeletion = {
+  deletionJobId: '00000000-0000-4000-8000-000000000261',
+  state: 'COMPLETED',
+  domains: ['MEMORY'],
+  requestedAt: '2026-09-17T01:00:00Z',
+  completedAt: '2026-09-17T01:01:00Z',
+  deletionPerformed: true,
+  deletionExecutionAvailable: true,
+  blockedDomains: [],
+  attemptCount: 1,
+  targets: [
+    {
+      domain: 'MEMORY',
+      state: 'COMPLETED',
+      affectedCount: 3,
+      safeErrorCode: null,
+      disposition: {
+        dispositionId: '00000000-0000-4000-8000-000000000262',
+        domain: 'MEMORY',
+        generation: 1,
+        purgedRowCount: 3,
+        purgedTableCounts: { ai_memories: 3 },
+        dispositionScope: 'AGENT_ACTIVE_POSTGRES_DOMAIN_ONLY',
+        dispositionMethod: 'PHYSICAL_ROW_PURGE_OF_ENCRYPTED_RECORDS',
+        activeStoreEnvelopesDestroyed: true,
+        sourceSystemDataAffected: false,
+        backupDispositionState: 'EXTERNAL_RETENTION_BOUNDARY',
+        receiptFingerprint: 'a'.repeat(64),
+        completedAt: '2026-09-17T01:01:00Z',
+      },
+    },
+  ],
+} as const;
+
+const personalMemory = {
+  memoryId: '00000000-0000-4000-8000-000000000271',
+  kind: 'TONE',
+  state: 'ACTIVE',
+  revision: 2,
+  memory: { value: 'Use concise answers.' },
+  origin: 'MANUAL',
+  sourceType: 'USER_EXPLICIT_ENTRY',
+  confidence: null,
+  factVector: [],
+  useCount: 4,
+  lastUsedAt: '2026-09-17T01:30:00Z',
+  encryptionProvider: 'AWS_KMS',
+  encryptionKeyVersion: 'v7',
+  encryptionKeyReferenceFingerprint: 'abc123def456',
+  scope: ['ASK', 'RESEARCH'],
+  expiresAt: '2026-10-17T03:00:00Z',
+  createdAt: '2026-09-17T01:00:00Z',
+  updatedAt: '2026-09-17T02:00:00Z',
+} as const;
+
 describe('Agent personal AI controls API', () => {
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();
+  });
+
+  it('requires every governed personal-data evidence capability', async () => {
+    const providerCapability = {
+      available: false,
+      configured: false,
+      reasonCode: 'PROVIDER_NOT_CONFIGURED',
+      recoveryHint: 'Ask an administrator to configure the provider.',
+    };
+    const capabilities = {
+      supportedDeletionDomains: ['MEMORY'],
+      deletionRequestAvailable: true,
+      deletionExecutionAvailable: true,
+      deletionCompletionClaimAvailable: true,
+      backupDestructionLog: providerCapability,
+      sreSupport: providerCapability,
+      legalHoldEvidence: providerCapability,
+      legalHoldAppeal: providerCapability,
+      signedCertificate: providerCapability,
+      siemSync: providerCapability,
+    };
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    fetchMock.mockResolvedValueOnce(response({ success: true, data: capabilities }));
+    await expect(getDwaionPersonalDataCapabilities()).resolves.toEqual(capabilities);
+    fetchMock.mockResolvedValueOnce(
+      response({ success: true, data: { ...capabilities, siemSync: undefined } })
+    );
+    await expect(getDwaionPersonalDataCapabilities()).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('validates memory scope, expiry, and derived expiry state fail closed', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    fetchMock.mockResolvedValueOnce(
+      response({ success: true, data: [{ ...personalMemory, state: 'EXPIRED' }] })
+    );
+    await expect(getDwaionPersonalMemories()).resolves.toEqual([
+      { ...personalMemory, state: 'EXPIRED' },
+    ]);
+
+    fetchMock.mockResolvedValueOnce(
+      response({ success: true, data: [{ ...personalMemory, scope: [] }] })
+    );
+    await expect(getDwaionPersonalMemories()).rejects.toMatchObject({ status: 502 });
+    fetchMock.mockResolvedValueOnce(
+      response({ success: true, data: [{ ...personalMemory, expiresAt: 'not-a-date' }] })
+    );
+    await expect(getDwaionPersonalMemories()).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('sends governed scope and expiry mutations through the memory update contract', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ data: { token: 'csrf', headerName: 'X-XSRF-TOKEN' } }))
+      .mockResolvedValueOnce(response({ success: true, data: personalMemory }))
+      .mockResolvedValueOnce(
+        response({
+          success: true,
+          data: { ...personalMemory, revision: 3, scope: ['ASK'], expiresAt: null },
+        })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      createDwaionPersonalMemory(
+        'TONE',
+        personalMemory.memory.value,
+        { scope: ['ASK', 'RESEARCH'], expiresAt: personalMemory.expiresAt },
+        SECURE_AUTHORITY
+      )
+    ).resolves.toEqual(personalMemory);
+    await expect(
+      updateDwaionPersonalMemory(
+        personalMemory.memoryId,
+        personalMemory.revision,
+        {
+          scope: ['ASK'],
+          expiresAt: null,
+          changeReason: 'The user narrowed scope and removed the explicit expiry.',
+        },
+        SECURE_AUTHORITY
+      )
+    ).resolves.toMatchObject({ revision: 3, scope: ['ASK'], expiresAt: null });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/agent/v1/ai-controls/memories?contextScopeKey=scope-dwaion-self',
+      expect.objectContaining({
+        body: expect.stringContaining('"scope":["ASK","RESEARCH"]'),
+      })
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      `${'/api/agent/v1/ai-controls/memories/'}${personalMemory.memoryId}?contextScopeKey=scope-dwaion-self`,
+      expect.objectContaining({
+        body: expect.stringContaining('"expiresAt":null'),
+      })
+    );
+    await expect(
+      updateDwaionPersonalMemory(
+        personalMemory.memoryId,
+        personalMemory.revision,
+        { scope: [], changeReason: 'Narrow scope.' },
+        SECURE_AUTHORITY
+      )
+    ).rejects.toThrow('unique supported values');
   });
 
   it('fails runtime application closed while an older runtime contract is rolling out', async () => {
@@ -68,6 +236,58 @@ describe('Agent personal AI controls API', () => {
       runtimeApplicationState: 'UNSET',
       runtimeApplicationEnabled: false,
       runtimeApplicationAvailable: false,
+      evidenceCapabilities: null,
+    });
+  });
+
+  it('uses memory evidence only when every capability is explicitly returned', async () => {
+    const available = {
+      available: true,
+      configured: true,
+      reasonCode: null,
+      recoveryHint: null,
+    };
+    const unavailable = {
+      available: false,
+      configured: false,
+      reasonCode: 'MEMORY_EVIDENCE_NOT_SUPPORTED',
+      recoveryHint: 'This evidence is not provided by the current memory contract.',
+    };
+    const evidenceCapabilities = {
+      manualProvenance: available,
+      aiDerivedMemory: unavailable,
+      confidenceScoring: unavailable,
+      factVector: unavailable,
+      usageMetrics: available,
+      usageTrail: unavailable,
+      kmsBinding: available,
+    };
+    const controls = {
+      memoryState: 'ENABLED',
+      revision: 3,
+      memoryEnabled: true,
+      memoryEffective: true,
+      explicitMemoryStorageAvailable: true,
+      sourcePreferences: [source],
+      evidenceCapabilities,
+    };
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    fetchMock.mockResolvedValueOnce(response({ success: true, data: controls }));
+    await expect(getDwaionPersonalAiControls()).resolves.toMatchObject({
+      evidenceCapabilities,
+    });
+    fetchMock.mockResolvedValueOnce(
+      response({
+        success: true,
+        data: {
+          ...controls,
+          evidenceCapabilities: { ...evidenceCapabilities, kmsBinding: undefined },
+        },
+      })
+    );
+    await expect(getDwaionPersonalAiControls()).resolves.toMatchObject({
+      evidenceCapabilities: null,
     });
   });
 
@@ -91,7 +311,7 @@ describe('Agent personal AI controls API', () => {
 
     await expect(
       updateDwaionMemoryRuntimePreference(2, 'ENABLED', SECURE_AUTHORITY)
-    ).resolves.toEqual({ ...controls, ...governanceUnknown });
+    ).resolves.toEqual({ ...controls, ...governanceUnknown, evidenceCapabilities: null });
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
       '/api/agent/v1/ai-controls/runtime?contextScopeKey=scope-dwaion-self',
@@ -119,6 +339,8 @@ describe('Agent personal AI controls API', () => {
       deletionPerformed: false,
       deletionExecutionAvailable: false,
       blockedDomains: [],
+      attemptCount: 0,
+      targets: [],
     };
     const fetchMock = vi
       .fn()
@@ -141,6 +363,90 @@ describe('Agent personal AI controls API', () => {
       '/api/agent/v1/personal-data/deletions',
       expect.objectContaining({ body: expect.stringContaining('"domains":["MEMORY"]') })
     );
+  });
+
+  it('loads deletion history only when every sealed disposition is internally consistent', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    fetchMock.mockResolvedValueOnce(response({ success: true, data: [completedDeletion] }));
+    await expect(getDwaionPersonalDataDeletions()).resolves.toEqual([completedDeletion]);
+
+    fetchMock.mockResolvedValueOnce(
+      response({
+        success: true,
+        data: [
+          {
+            ...completedDeletion,
+            targets: [
+              {
+                ...completedDeletion.targets[0],
+                disposition: {
+                  ...completedDeletion.targets[0].disposition,
+                  purgedRowCount: 4,
+                },
+              },
+            ],
+          },
+        ],
+      })
+    );
+    await expect(getDwaionPersonalDataDeletions()).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('retries failed deletion targets with the caller-owned command identity', async () => {
+    const failed = {
+      ...completedDeletion,
+      state: 'FAILED',
+      completedAt: '2026-09-17T01:02:00Z',
+      deletionPerformed: false,
+      attemptCount: 2,
+      targets: [
+        {
+          domain: 'MEMORY',
+          state: 'FAILED',
+          affectedCount: null,
+          safeErrorCode: 'PROVIDER_TIMEOUT',
+          disposition: null,
+        },
+      ],
+    } as const;
+    const retried = {
+      ...failed,
+      state: 'RUNNING',
+      completedAt: null,
+      attemptCount: 3,
+      targets: [{ ...failed.targets[0], state: 'RUNNING', safeErrorCode: null }],
+    } as const;
+    const commandId = '00000000-0000-4000-8000-000000000263';
+    const authority = {
+      ...SECURE_AUTHORITY,
+      objectVersion: 2,
+      idempotencyKey: commandId,
+      stepUp: {
+        challenge: 'signed-user-presence-proof',
+        challengeId: 'deletion-retry-challenge',
+        decisionRevision: SECURE_AUTHORITY.expectedDecisionRevision,
+        expiresAt: '2099-09-17T02:00:00Z',
+      },
+    } as const;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ data: { token: 'csrf', headerName: 'X-XSRF-TOKEN' } }))
+      .mockResolvedValue(response({ success: true, data: retried }, 202));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await retryDwaionPersonalDataDeletion(failed.deletionJobId, 2, commandId, authority);
+    await retryDwaionPersonalDataDeletion(failed.deletionJobId, 2, commandId, authority);
+    for (const call of [fetchMock.mock.calls[1], fetchMock.mock.calls[2]]) {
+      expect(call?.[0]).toBe(
+        `/api/agent/v1/personal-data/deletions/${failed.deletionJobId}/retry?contextScopeKey=scope-dwaion-self`
+      );
+      expect(JSON.parse(call?.[1]?.body as string)).toMatchObject({
+        commandId,
+        expectedRevision: 2,
+        reasonCode: 'USER_DATA_DELETION_RETRY',
+      });
+    }
   });
   it.each(Object.keys(governanceUnknown))(
     'preserves unknown and rejects invalid %s security evidence',

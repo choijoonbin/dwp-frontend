@@ -36,6 +36,8 @@ export type MeetingDevicePreferences = {
   cameraId: string;
   speakerId: string;
   noiseSuppression: boolean;
+  /** Local capture preference. Missing legacy values resolve to standard 720p capture. */
+  hdVideo?: boolean;
   /** Canonical local-only choice. Unknown values always fail back to original. */
   backgroundMode?: MeetingBackgroundMode;
   /** Read-only migration input for v1 browser records; new writes omit it. */
@@ -50,6 +52,7 @@ export type MeetingPreJoinPreferenceDefaults = {
   videoDeviceId: string;
   speakerDeviceId: string;
   noiseSuppression: boolean;
+  hdVideo: boolean;
   backgroundMode: MeetingBackgroundMode;
 };
 
@@ -93,6 +96,7 @@ export function resolveMeetingPreJoinPreferenceDefaults(
     videoDeviceId: devices.cameraId,
     speakerDeviceId: devices.speakerId,
     noiseSuppression: devices.noiseSuppression,
+    hdVideo: devices.hdVideo === true,
     backgroundMode: resolveMeetingBackgroundMode(devices),
   };
 }
@@ -103,6 +107,7 @@ export const DEFAULT_MEETING_DEVICE_PREFERENCES: Readonly<MeetingDevicePreferenc
     cameraId: 'default',
     speakerId: 'default',
     noiseSuppression: true,
+    hdVideo: false,
     backgroundMode: 'original',
   }
 );
@@ -129,6 +134,7 @@ export function readMeetingDevicePreferences(
       cameraId: deviceId('cameraId'),
       speakerId: deviceId('speakerId'),
       noiseSuppression: record.noiseSuppression !== false,
+      hdVideo: record.hdVideo === true,
       backgroundMode:
         record.backgroundMode === 'original' ||
         record.backgroundMode === 'blur' ||
@@ -164,6 +170,7 @@ export function writeMeetingDevicePreferences(
       cameraId: value.cameraId,
       speakerId: value.speakerId,
       noiseSuppression: value.noiseSuppression,
+      hdVideo: value.hdVideo === true,
       backgroundMode: resolveMeetingBackgroundMode(value),
     })
   );
@@ -233,6 +240,7 @@ export function meetingDevicePreferencesEqual(
     left.cameraId === right.cameraId &&
     left.speakerId === right.speakerId &&
     left.noiseSuppression === right.noiseSuppression &&
+    (left.hdVideo === true) === (right.hdVideo === true) &&
     resolveMeetingBackgroundMode(left) === resolveMeetingBackgroundMode(right)
   );
 }

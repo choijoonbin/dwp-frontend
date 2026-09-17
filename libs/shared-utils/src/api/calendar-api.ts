@@ -1,6 +1,8 @@
 import { axiosInstance } from '../axios-instance';
+import { mailProposalMutationHeaders } from './mail-proposal-binding';
 
 import type { ApiResponse } from '../types';
+import type { MailProposalMutationBinding } from './mail-proposal-binding';
 
 export * from './calendar-team-api';
 
@@ -479,14 +481,18 @@ export async function getCalendarEvents(
 
 export async function createCalendarEvent(
   input: CreateCalendarEventInput,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  proposalBinding?: MailProposalMutationBinding
 ): Promise<CalendarEvent> {
   const path = '/api/platform/v1/calendar/events';
-  const response = signal
-    ? await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(path, input, {
-        signal,
-      })
-    : await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(path, input);
+  const response = await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(
+    path,
+    input,
+    {
+      ...(signal ? { signal } : {}),
+      headers: mailProposalMutationHeaders(proposalBinding),
+    }
+  );
   return response.data.data;
 }
 

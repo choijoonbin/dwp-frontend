@@ -14,13 +14,18 @@ import {
   changeDwaionRoutineLifecycle,
   commandDwaionRoutineRun,
   createDwaionRoutine,
+  downloadDwaionRoutineTelemetry,
   dryRunDwaionRoutine,
   getDwaionPersonalAiControls,
   getDwaionRoutineRuntimeCapabilities,
   getDwaionRoutineRuns,
+  getDwaionRoutineHealth,
+  getDwaionRoutineVersions,
   getDwaionRoutines,
   HttpError,
   newDwaionRoutineCommandId,
+  rollbackDwaionRoutineVersion,
+  triggerDwaionRoutineWebhook,
   triggerDwaionRoutineRun,
   updateDwaionRoutine,
   useAuth,
@@ -32,6 +37,8 @@ import {
   type DwaionRoutineLifecycleAction,
   type DwaionRoutineExecutionRun,
   type DwaionRoutineRunCommand,
+  type DwaionRoutineRollbackReceipt,
+  type DwaionRoutineVersionSnapshot,
 } from '@dwp-frontend/shared-utils';
 
 import { DWAION_ROUTINE_COPY_EN, DWAION_ROUTINE_COPY_KO } from './routines/dwaion-routine-copy';
@@ -71,6 +78,12 @@ export function DwaionRoutines() {
   );
   const governRunCommand = useDwaionGovernedMutation(
     'route.dwaion.work.routine-run-command.action'
+  );
+  const governWebhookTrigger = useDwaionGovernedMutation(
+    'route.dwaion.work.routine-webhook-trigger.action'
+  );
+  const governVersionRollback = useDwaionGovernedMutation(
+    'route.dwaion.work.routine-version-rollback.action'
   );
   const identity = `${user?.tenantId ?? ''}:${user?.userId ?? ''}`;
   const canView = isAuthenticated && isLoaded && hasPermission('APP.DWAION_ROUTINES', 'VIEW');
@@ -124,16 +137,34 @@ export function DwaionRoutines() {
         : false,
     meta: { accessSensitive: true },
   });
+  const versionsQuery = useQuery({
+    queryKey: ['dwaion', 'routine-versions', identity, effectiveSelectedId],
+    queryFn: ({ signal }) => getDwaionRoutineVersions(effectiveSelectedId!, signal),
+    enabled: canView && Boolean(effectiveSelectedId),
+    retry: retryGovernedQuery,
+    meta: { accessSensitive: true },
+  });
+  const healthQuery = useQuery({
+    queryKey: ['dwaion', 'routine-health', identity, effectiveSelectedId],
+    queryFn: ({ signal }) => getDwaionRoutineHealth(effectiveSelectedId!, signal),
+    enabled: canView && Boolean(effectiveSelectedId),
+    retry: retryGovernedQuery,
+    refetchInterval: 30_000,
+    meta: { accessSensitive: true },
+  });
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<DwaionRoutineDraft>(() =>
     createEmptyRoutineDraft(currentTimeZone)
   );
   const [dryRunReceipt, setDryRunReceipt] = useState<DwaionRoutineDryRunReceipt | null>(null);
+  const [rollbackReceipt, setRollbackReceipt] = useState<DwaionRoutineRollbackReceipt | null>(null);
   const [commandError, setCommandError] = useState<
     'REVISION_CONFLICT' | 'COMMAND_FAILED' | undefined
   >();
   const commandIds = useRef(new Map<string, string>());
+  const webhookEventIds = useRef(new Map<string, string>());
+  const webhookOccurredAt = useRef(new Map<string, string>());
 
   const saveMutation = useMutation({
     mutationFn: async (input: { routineId: string | null; draft: DwaionRoutineDraft }) => {
@@ -261,9 +292,31 @@ export function DwaionRoutines() {
   });
   const triggerRunMutation = useMutation({
     mutationFn: (routine: DwaionRoutine) => {
-      const key = `trigger:${routine.routineId}:${routine.revision}`;
+      const key = `trigger:${routine.triggerType}:${routine.routineId}:${routine.revision}`;
       const commandId = commandIds.current.get(key) ?? newDwaionRoutineCommandId();
       commandIds.current.set(key, commandId);
+      if (routine.triggerType === 'WEBHOOK') {
+        const eventId = webhookEventIds.current.get(key) ?? crypto.randomUUID();
+        webhookEventIds.current.set(key, eventId);
+        const occurredAt = webhookOccurredAt.current.get(key) ?? new Date().toISOString();
+        webhookOccurredAt.current.set(key, occurredAt);
+        return governWebhookTrigger((authority) =>
+          triggerDwaionRoutineWebhook(routine.routineId, {
+            commandId,
+            expectedRevision: routine.revision,
+            reasonCode: 'USER_CONFIRMED_WEBHOOK_TEST',
+            changeReason:
+              locale === 'ko'
+                ? '사용자가 등록된 이벤트 유형과 현재 권한을 검토하고 웹훅 실행을 요청했습니다.'
+                : 'The user reviewed the registered event type and current authorization before triggering the webhook run.',
+            eventId,
+            eventType: routine.webhookEventType ?? 'USER.MANUAL_TEST',
+            occurredAt,
+            payload: { source: 'DWAION_USER_CONSOLE' },
+            authority,
+          })
+        );
+      }
       return governRunTrigger((authority) =>
         triggerDwaionRoutineRun(routine.routineId, {
           commandId,
@@ -278,7 +331,10 @@ export function DwaionRoutines() {
       );
     },
     onSuccess: async (run, routine) => {
-      commandIds.current.delete(`trigger:${routine.routineId}:${routine.revision}`);
+      const key = `trigger:${routine.triggerType}:${routine.routineId}:${routine.revision}`;
+      commandIds.current.delete(key);
+      webhookEventIds.current.delete(key);
+      webhookOccurredAt.current.delete(key);
       queryClient.setQueryData<DwaionRoutineExecutionRun[]>(
         ['dwaion', 'routine-runs', identity, routine.routineId],
         (current) => [
@@ -326,9 +382,55 @@ export function DwaionRoutines() {
     },
     onError: handleCommandError,
   });
+  const rollbackMutation = useMutation({
+    mutationFn: (input: { routine: DwaionRoutine; version: DwaionRoutineVersionSnapshot }) => {
+      const key = `rollback:${input.routine.routineId}:${input.routine.revision}:${input.version.revision}`;
+      const commandId = commandIds.current.get(key) ?? newDwaionRoutineCommandId();
+      commandIds.current.set(key, commandId);
+      return governVersionRollback((authority) =>
+        rollbackDwaionRoutineVersion(input.routine.routineId, input.version.revision, {
+          commandId,
+          expectedRevision: input.routine.revision,
+          reasonCode: 'USER_CONFIRMED_VERSION_ROLLBACK',
+          changeReason:
+            locale === 'ko'
+              ? '사용자가 버전 스냅샷과 무결성 지문을 검토하고 새 리비전 롤백을 요청했습니다.'
+              : 'The user reviewed the version snapshot and integrity fingerprint before rollback.',
+          authority,
+        })
+      );
+    },
+    onSuccess: async (receipt, input) => {
+      commandIds.current.delete(
+        `rollback:${input.routine.routineId}:${input.routine.revision}:${input.version.revision}`
+      );
+      setRollbackReceipt(receipt);
+      setSelectedId(receipt.routineId);
+      setCommandError(undefined);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ROUTINES_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'routine-versions'] }),
+        queryClient.invalidateQueries({ queryKey: ['dwaion', 'routine-health'] }),
+      ]);
+      toast.success(copy.rollbackComplete);
+    },
+    onError: handleCommandError,
+  });
+  const telemetryMutation = useMutation({
+    mutationFn: (routine: DwaionRoutine) => downloadDwaionRoutineTelemetry(routine.routineId),
+    onSuccess: (blob, routine) => {
+      downloadBlob(blob, `routine-${routine.routineId}-telemetry.jsonl`);
+      toast.success(copy.telemetryDownloaded);
+    },
+    onError: () => toast.error(copy.telemetryFailed),
+  });
 
   function handleCommandError(error: Error) {
     const conflict = error instanceof HttpError && error.status === 409;
+    if (conflict) {
+      setEditorOpen(false);
+      setEditingId(null);
+    }
     setCommandError(conflict ? 'REVISION_CONFLICT' : 'COMMAND_FAILED');
     void queryClient.invalidateQueries({ queryKey: ROUTINES_KEY });
     toast.error(conflict ? copy.revisionConflict : copy.commandFailed);
@@ -354,7 +456,9 @@ export function DwaionRoutines() {
     archiveMutation.isPending ||
     activationMutation.isPending ||
     triggerRunMutation.isPending ||
-    runCommandMutation.isPending;
+    runCommandMutation.isPending ||
+    rollbackMutation.isPending ||
+    telemetryMutation.isPending;
   const canConfigure = canManage && controlsQuery.isSuccess;
   const accessDenied =
     !canView ||
@@ -379,6 +483,9 @@ export function DwaionRoutines() {
     setDraft(toDraft(routine));
     setEditorOpen(true);
   };
+  const editingRoutine = editingId
+    ? (routines.find((routine) => routine.routineId === editingId) ?? null)
+    : null;
 
   return (
     <>
@@ -394,6 +501,13 @@ export function DwaionRoutines() {
         runs={runsQuery.data ?? []}
         runsLoading={runsQuery.isPending && Boolean(effectiveSelectedId)}
         runsError={runsQuery.isError}
+        versions={versionsQuery.data ?? []}
+        health={healthQuery.data}
+        rollbackReceipt={rollbackReceipt}
+        evidenceLoading={
+          Boolean(effectiveSelectedId) && (versionsQuery.isPending || healthQuery.isPending)
+        }
+        evidenceError={versionsQuery.isError || healthQuery.isError}
         busy={busy}
         canManage={canManage}
         canCreate={canConfigure}
@@ -403,6 +517,8 @@ export function DwaionRoutines() {
             controlsQuery.refetch(),
             capabilitiesQuery.refetch(),
             runsQuery.refetch(),
+            versionsQuery.refetch(),
+            healthQuery.refetch(),
           ])
         }
         onCreate={openCreate}
@@ -421,7 +537,16 @@ export function DwaionRoutines() {
         onActivate={(routine, action) => activationMutation.mutate({ routine, action })}
         onTriggerRun={(routine) => triggerRunMutation.mutate(routine)}
         onRunCommand={(routine, run, action) => runCommandMutation.mutate({ routine, run, action })}
-        onRetryRuntime={() => void Promise.all([capabilitiesQuery.refetch(), runsQuery.refetch()])}
+        onRollbackVersion={(routine, version) => rollbackMutation.mutate({ routine, version })}
+        onDownloadTelemetry={(routine) => telemetryMutation.mutate(routine)}
+        onRetryRuntime={() =>
+          void Promise.all([
+            capabilitiesQuery.refetch(),
+            runsQuery.refetch(),
+            versionsQuery.refetch(),
+            healthQuery.refetch(),
+          ])
+        }
         copy={copy}
         formatTimestamp={(value) =>
           formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale)
@@ -430,13 +555,28 @@ export function DwaionRoutines() {
       <DwaionRoutineEditorDialog
         open={editorOpen}
         draft={draft}
+        savedDraft={editingRoutine ? toDraft(editingRoutine) : null}
         sourceOptions={sourceOptions}
         timeZoneOptions={[...new Set([currentTimeZone, 'UTC'])]}
+        capabilities={capabilitiesQuery.data}
         busy={saveMutation.isPending}
+        dryRunBusy={dryRunMutation.isPending}
         onDraftChange={setDraft}
         onClose={() => setEditorOpen(false)}
         onSubmit={(nextDraft) =>
-          saveMutation.mutateAsync({ routineId: editingId, draft: nextDraft }).then(() => undefined)
+          saveMutation
+            .mutateAsync({ routineId: editingId, draft: nextDraft })
+            .then(() => undefined)
+            .catch(() => undefined)
+        }
+        onDryRun={
+          editingRoutine
+            ? () =>
+                dryRunMutation.mutate({
+                  routineId: editingRoutine.routineId,
+                  expectedRevision: editingRoutine.revision,
+                })
+            : undefined
         }
         copy={copy}
       />
@@ -454,15 +594,21 @@ function toDefinition(draft: DwaionRoutineDraft, locale: 'ko' | 'en'): DwaionRou
   return {
     name: draft.title.trim(),
     objective: draft.description.trim(),
-    cadence: draft.schedule.cadence,
-    localTime: draft.schedule.localTime,
-    timeZone: draft.schedule.timeZone,
+    triggerType: draft.triggerType,
+    cadence: draft.triggerType === 'SCHEDULED' ? draft.schedule.cadence : null,
+    localTime: draft.triggerType === 'SCHEDULED' ? draft.schedule.localTime : null,
+    timeZone: draft.triggerType === 'SCHEDULED' ? draft.schedule.timeZone : null,
+    webhookEventType: draft.triggerType === 'WEBHOOK' ? draft.webhookEventType.trim() : null,
+    webhookEndpointReference:
+      draft.triggerType === 'WEBHOOK' && draft.webhookEndpointReference.trim()
+        ? draft.webhookEndpointReference.trim()
+        : null,
     locale,
-    activeFrom: draft.schedule.activeFrom,
-    activeUntil: draft.schedule.activeUntil,
-    quietHoursStart: draft.schedule.quietHoursStart,
-    quietHoursEnd: draft.schedule.quietHoursEnd,
-    weekDays: [...draft.schedule.weekDays],
+    activeFrom: draft.triggerType === 'SCHEDULED' ? draft.schedule.activeFrom : null,
+    activeUntil: draft.triggerType === 'SCHEDULED' ? draft.schedule.activeUntil : null,
+    quietHoursStart: draft.triggerType === 'SCHEDULED' ? draft.schedule.quietHoursStart : null,
+    quietHoursEnd: draft.triggerType === 'SCHEDULED' ? draft.schedule.quietHoursEnd : null,
+    weekDays: draft.triggerType === 'SCHEDULED' ? [...draft.schedule.weekDays] : [],
     sources: [...draft.sourceKeys] as DwaionRoutineDefinition['sources'],
     budget: { ...draft.budget },
     retryPolicy: { ...draft.retryPolicy },
@@ -479,11 +625,14 @@ function toRoutine(routine: DwaionPersonalRoutine): DwaionRoutine {
     status: routine.lifecycleState,
     revision: routine.revision,
     executionMode: routine.executionMode,
+    triggerType: routine.definition.triggerType,
+    webhookEventType: routine.definition.webhookEventType ?? null,
+    webhookEndpointReference: routine.definition.webhookEndpointReference ?? null,
     sourceKeys: routine.definition.sources,
     schedule: {
-      cadence: routine.definition.cadence,
-      localTime: routine.definition.localTime,
-      timeZone: routine.definition.timeZone,
+      cadence: routine.definition.cadence ?? 'WEEKDAYS',
+      localTime: routine.definition.localTime ?? '09:00',
+      timeZone: routine.definition.timeZone ?? 'UTC',
       activeFrom: routine.definition.activeFrom ?? null,
       activeUntil: routine.definition.activeUntil ?? null,
       quietHoursStart: routine.definition.quietHoursStart ?? null,
@@ -513,6 +662,9 @@ function toDraft(routine: DwaionRoutine): DwaionRoutineDraft {
   return {
     title: routine.title,
     description: routine.description,
+    triggerType: routine.triggerType,
+    webhookEventType: routine.webhookEventType ?? '',
+    webhookEndpointReference: routine.webhookEndpointReference ?? '',
     sourceKeys: routine.sourceKeys,
     schedule: routine.schedule,
     consentKeys: routine.consents
@@ -533,6 +685,7 @@ function routineConsentValue(routine: DwaionPersonalRoutine, key: (typeof CONSEN
 
 function toDryRunReceipt(receipt: ApiDryRunReceipt): DwaionRoutineDryRunReceipt {
   return {
+    routineRunId: receipt.routineRunId,
     routineId: receipt.routineId,
     routineRevision: receipt.routineRevision,
     evaluatedAt: receipt.evaluatedAt,
@@ -541,8 +694,9 @@ function toDryRunReceipt(receipt: ApiDryRunReceipt): DwaionRoutineDryRunReceipt 
     evidenceScope: 'AUTHORIZED_SOURCE_BINDING',
     businessEvidenceCount: receipt.businessEvidenceCount,
     proposalsCreated: receipt.proposalsCreated,
+    externalWritesPerformed: 0,
     validatedSources: receipt.validatedSources,
-    previewNextRunAt: receipt.previewNextRunAt,
+    previewNextRunAt: receipt.previewNextRunAt ?? null,
     schedulingAvailable: false,
   };
 }
@@ -571,4 +725,14 @@ function routineCommandReason(action: DwaionRoutineRunCommand['action'], locale:
         ? '사용자가 완료 영수증과 영향 범위를 검토하고 보상 처리를 요청했습니다.'
         : 'The user reviewed the receipt and impact and requested compensation.',
   };
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.rel = 'noopener';
+  anchor.click();
+  URL.revokeObjectURL(url);
 }

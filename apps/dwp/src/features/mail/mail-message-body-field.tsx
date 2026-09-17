@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bold, Italic, List, ListOrdered } from 'lucide-react';
 import { ActionIconButton, FormField } from '@dwp-frontend/design-system';
@@ -7,21 +7,74 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-export function MailMessageBodyField({
-  format,
-  value,
-  disabled,
-  minRows = 10,
-  onChange,
-}: {
-  format: 'TEXT' | 'HTML';
-  value: string;
-  disabled: boolean;
-  minRows?: number;
-  onChange: (value: string) => void;
-}) {
+export type MailMessageBodyFieldHandle = {
+  insertText: (text: string) => void;
+};
+
+export const MailMessageBodyField = forwardRef<
+  MailMessageBodyFieldHandle,
+  {
+    format: 'TEXT' | 'HTML';
+    value: string;
+    disabled: boolean;
+    minRows?: number;
+    onChange: (value: string) => void;
+  }
+>(function MailMessageBodyField({ format, value, disabled, minRows = 10, onChange }, forwardedRef) {
   const { t } = useTranslation('mail');
   const editorRef = useRef<HTMLDivElement | null>(null);
+  const textRef = useRef<HTMLTextAreaElement | HTMLInputElement | null>(null);
+  const htmlSelectionRef = useRef<Range | null>(null);
+
+  const rememberHtmlSelection = () => {
+    const editor = editorRef.current;
+    const selection = window.getSelection();
+    if (!editor || !selection?.rangeCount) return;
+    const range = selection.getRangeAt(0);
+    if (editor.contains(range.commonAncestorContainer)) {
+      htmlSelectionRef.current = range.cloneRange();
+    }
+  };
+
+  useImperativeHandle(
+    forwardedRef,
+    () => ({
+      insertText(text) {
+        if (disabled) return;
+        if (format === 'TEXT') {
+          const input = textRef.current;
+          const start = input?.selectionStart ?? value.length;
+          const end = input?.selectionEnd ?? start;
+          onChange(`${value.slice(0, start)}${text}${value.slice(end)}`);
+          requestAnimationFrame(() => {
+            input?.focus();
+            input?.setSelectionRange(start + text.length, start + text.length);
+          });
+          return;
+        }
+
+        const editor = editorRef.current;
+        if (!editor) return;
+        editor.focus();
+        const selection = window.getSelection();
+        const range = htmlSelectionRef.current?.cloneRange() ?? document.createRange();
+        if (!htmlSelectionRef.current) {
+          range.selectNodeContents(editor);
+          range.collapse(false);
+        }
+        range.deleteContents();
+        const node = document.createTextNode(text);
+        range.insertNode(node);
+        range.setStartAfter(node);
+        range.collapse(true);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        htmlSelectionRef.current = range.cloneRange();
+        onChange(sanitizeRichMailHtml(editor.innerHTML));
+      },
+    }),
+    [disabled, format, onChange, value]
+  );
   useEffect(() => {
     const editor = editorRef.current;
     if (!editor || document.activeElement === editor || editor.innerHTML === value) return;
@@ -36,6 +89,7 @@ export function MailMessageBodyField({
         label={t('compose.body')}
         value={value}
         disabled={disabled}
+        inputRef={textRef}
         inputProps={{ maxLength: 100_000 }}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -119,8 +173,14 @@ export function MailMessageBodyField({
             outlineOffset: -2,
           },
         }}
-        onInput={(event) => onChange(sanitizeRichMailHtml(event.currentTarget.innerHTML))}
+        onInput={(event) => {
+          rememberHtmlSelection();
+          onChange(sanitizeRichMailHtml(event.currentTarget.innerHTML));
+        }}
+        onKeyUp={rememberHtmlSelection}
+        onMouseUp={rememberHtmlSelection}
         onBlur={(event) => {
+          rememberHtmlSelection();
           const clean = sanitizeRichMailHtml(event.currentTarget.innerHTML);
           if (clean !== event.currentTarget.innerHTML) event.currentTarget.innerHTML = clean;
           onChange(clean);
@@ -128,7 +188,7 @@ export function MailMessageBodyField({
       />
     </Box>
   );
-}
+});
 
 export function sanitizeRichMailHtml(value: string) {
   if (typeof DOMParser === 'undefined') return value;
