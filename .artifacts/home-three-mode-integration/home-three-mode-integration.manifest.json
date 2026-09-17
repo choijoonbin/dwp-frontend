@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "gateId": "DWP-HOME-THREE-MODE-INTEGRATION-FINAL",
+  "status": "PASS_IMPLEMENTATION",
+  "sealedAtUtc": "2026-09-17T07:09:26+00:00",
+  "commits": {
+    "frontendProductionCode": "e96799b56dd40bfdc2093a3d920a918990ea1600",
+    "backendThreeModeRuntime": "c04e5424b64abc6789ec140701d02d45215a579b",
+    "dwaionGovernedHandoff": "a8e9bacd86e5aebeb4afb1fbf0fe8812242e0a9e"
+  },
+  "modeContract": {
+    "modes": ["CLASSIC", "FLOW_V1", "MZ_V1"],
+    "independentNamespaces": true,
+    "independentSavedViews": true,
+    "selectionEndpoint": "PUT /api/platform/v1/home-preferences/current-mode",
+    "selectionMutatesLayout": false,
+    "mzIsFlowPreset": false
+  },
+  "designAcceptance": {
+    "pixelPerfectExcluded": true,
+    "classic": "organization portal and resource hierarchy, 18 approved apps, responsive states",
+    "flow": "priority Hero, personal execution stream, expressive widget mesh, 18 approved apps",
+    "mz": "agentic workscape, compact launcher, grounded AI Stage, review-before-handoff, 18 approved apps",
+    "desktopAndMobile": true,
+    "singleDocumentScroll": true,
+    "partialFailureIsolation": true
+  },
+  "verification": {
+    "frontendFocusedUnit": {
+      "status": "PASS",
+      "files": 12,
+      "tests": 112,
+      "failures": 0
+    },
+    "frontendRuntimeBrowser": {
+      "status": "PASS",
+      "tests": 16,
+      "failures": 0,
+      "includes": [
+        "CLASSIC",
+        "FLOW_V1",
+        "MZ_V1",
+        "desktop",
+        "mobile",
+        "dark",
+        "200-percent-text",
+        "a11y",
+        "partial-failure"
+      ]
+    },
+    "frontendModeRoundTripBrowser": {
+      "status": "PASS",
+      "tests": 1,
+      "sequence": ["CLASSIC", "FLOW_V1", "MZ_V1"],
+      "layoutMutationObserved": false
+    },
+    "frontendOpenApiParity": {
+      "status": "PASS",
+      "backendCommit": "c04e5424b64abc6789ec140701d02d45215a579b",
+      "gatewayPaths": 1361
+    },
+    "frontendTypecheckHomeScope": {
+      "status": "PASS",
+      "homeErrors": 0,
+      "unrelatedBaselineErrors": 11,
+      "baselineArea": "DWAI artifact collaboration"
+    },
+    "frontendSourceSizeHomeScope": {
+      "status": "PASS",
+      "homeViolations": 0
+    },
+    "backendFocusedRegression": {
+      "status": "PASS",
+      "testClasses": 31,
+      "tests": 207,
+      "failures": 0
+    },
+    "backendScriptRegression": {
+      "status": "PASS",
+      "tests": 57,
+      "failures": 0
+    },
+    "backendOpenApi": {
+      "status": "PASS",
+      "services": 10,
+      "gatewayPaths": 1361
+    },
+    "backendMigrationVersions": {
+      "status": "PASS",
+      "duplicates": 0
+    }
+  },
+  "artifacts": [
+    {
+      "path": "apps/dwp/src/features/home/mz-home/mz-home.tsx",
+      "bytes": 9877,
+      "sha256": "5261c4e2deef9a51e93fbd4604ae88c372a4abe984436cea60695aa60f736587"
+    },
+    {
+      "path": "apps/dwp/src/features/home/mz-home/mz-ai-stage.tsx",
+      "bytes": 12267,
+      "sha256": "9ef2079d3fef450495417493653ea8bc6eaf98fe2cc5176a5921c1bce366105a"
+    },
+    {
+      "path": "apps/dwp/src/features/home/mz-home/mz-compact-launcher.tsx",
+      "bytes": 2939,
+      "sha256": "de3cce9d2da1d8a9b82b336841bb17075a74632debef53996129da1e34c1bd1f"
+    },
+    {
+      "path": "apps/dwp/src/features/home/mz-home/mz-grounded-workspace.tsx",
+      "bytes": 12448,
+      "sha256": "b7470bac9236896a64a62f2e69ce46d6afaa81d3a35e59c4685079534179bd2e"
+    },
+    {
+      "path": "apps/dwp/src/features/home/mz-home/mz-relevant-context.tsx",
+      "bytes": 5289,
+      "sha256": "44ace5b7a4425b7079a212ead17a70738fa393696dac9fa92bd7b7af7ac8b7d1"
+    },
+    {
+      "path": "e2e/home-wave4-runtime.spec.ts",
+      "bytes": 38482,
+      "sha256": "a5d0cd1e79add5d6fc7b850502231717074855d467816d4f84143b7bc7cf714e"
+    },
+    {
+      "path": "e2e/home-wave2-state-evidence.spec.ts",
+      "bytes": 41382,
+      "sha256": "518eb861cbbcba67d42b8f1b99a83d06d78d0a69bf499034a76a72de09035573"
+    },
+    {
+      "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C17-MODE-PRESET-chromium-darwin.png",
+      "bytes": 384467,
+      "sha256": "d711fd1efe4b8bfb66dc177337cc62a4430fdc9407005e8e4613af12ca48ea0b"
+    },
+    {
+      "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C17-MODE-PRESET-interaction-chromium-darwin.png",
+      "bytes": 286691,
+      "sha256": "797e5e97e2b490ff4fa2a4e612a73aa0fa5650edd3daf72373e9a95194031dca"
+    },
+    {
+      "path": ".artifacts/home-three-mode-integration/mz-active-desktop-1920.png",
+      "bytes": 602483,
+      "sha256": "2618ed4f07b8c478526a44a48a52097dd3fe9c1df9bff500682ebae118a9505e"
+    },
+    {
+      "path": ".artifacts/home-three-mode-integration/mz-active-mobile-390.png",
+      "bytes": 486681,
+      "sha256": "ac147115a11dcbcd8612395d1ea8c14c46716e9b3650c3d773f9dc3f47ed0150"
+    }
+  ],
+  "releaseBoundary": {
+    "implementationComplete": true,
+    "productionDeploymentEvidence": "LIVE_PENDING",
+    "targetIntegrationBranch": "origin/dwp-dev"
+  }
+}
