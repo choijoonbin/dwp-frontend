@@ -1,0 +1,35 @@
+{
+  "console": {
+    "maximumUpdateDepthOrPageErrors": []
+  },
+  "runtime": {
+    "data-home-assistant-rail": "header",
+    "data-home-widget-shadow-status": "INACTIVE",
+    "data-home-widget-shadow-mismatch-count": "0",
+    "data-home-widget-shadow-decision-revision": "none",
+    "data-home-runtime-path": "error",
+    "data-home-runtime-http-status": "none",
+    "data-home-runtime-not-modified": "false",
+    "data-home-runtime-refresh-failed": "none",
+    "data-home-runtime-partial": "none",
+    "data-home-runtime-unavailable-count": "0",
+    "data-home-runtime-widget-state-counts": "available:0,empty:0,partial:0,forbidden:0,unavailable:0,stale:0",
+    "data-home-legacy-fanout": "disabled",
+    "data-home-runtime-state": "unavailable",
+    "data-home-rollout-ring": "unavailable",
+    "data-home-render-authority": "none",
+    "data-home-action-authority": "disabled",
+    "data-home-registry-authoritative": "false",
+    "data-home-command-state": "disabled",
+    "data-home-shadow-outcome": "inactive",
+    "data-home-shadow-mismatch-count": "0",
+    "data-home-runtime-draft-preserved": "false",
+    "data-home-available-width-class": "desktop-standard",
+    "data-home-device-class": "DESKTOP_STANDARD",
+    "data-home-mode": "CLASSIC",
+    "data-home-personal-customization-enabled": "false",
+    "data-home-editor-state": "closed",
+    "data-home-persisted-source-state": "ready"
+  },
+  "owner": null
+}

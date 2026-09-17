@@ -37,6 +37,7 @@ const AdminSettingsHome = lazy(() =>
     default: module.AdminSettingsHome,
   }))
 );
+const AdminHomeStudio = lazy(() => import('../features/admin/admin-home-studio'));
 const AdminLayout = lazy(() =>
   import('../layouts/admin-layout').then((module) => ({ default: module.AdminLayout }))
 );
@@ -59,6 +60,12 @@ export function TenantAdminRouteGuard({ children }: { children: React.ReactNode 
   if (!isLoaded) return routeFallback;
   const regularAccess = canEnterCompanyAdministration(roles, appPermitted, resourceRoles);
   return regularAccess ? children : <Navigate to="/403" replace />;
+}
+
+export function AdminHomeStudioRouteGuard({ children }: { children: React.ReactNode }) {
+  const { hasPermission, isLoaded } = usePermissions();
+  if (!isLoaded) return routeFallback;
+  return hasPermission('ADMIN.HOME_EXPERIENCE', 'VIEW') ? children : <Navigate to="/403" replace />;
 }
 
 export function AdminLegacyRedirect() {
@@ -102,6 +109,15 @@ function AdminPeopleLegacyRedirect() {
     return <Navigate to={`/admin/identity/${view}`} replace />;
   }
   return <Navigate to="/admin" replace />;
+}
+
+export function AdminHomeLegacyRedirect({ view }: { view: 'experience' | 'composition' | 'apps' }) {
+  const [searchParams] = useSearchParams();
+  if (view === 'experience') return <Navigate to="/admin/experience/home/content" replace />;
+  if (view === 'apps') return <Navigate to="/admin/experience/home/app-dock" replace />;
+  const tab = searchParams.get('tab');
+  const section = tab === 'catalog' ? 'widgets' : tab === 'blueprints' ? 'templates' : 'modes';
+  return <Navigate to={`/admin/experience/home/${section}`} replace />;
 }
 
 export function AdminSectionRedirect() {
@@ -239,6 +255,29 @@ export const administrationRoutes: RouteObject[] = [
     children: [
       { index: true, element: <AdminLegacyRedirect /> },
       { path: 'people/:view', element: <AdminPeopleLegacyRedirect /> },
+      { path: 'experience/home', element: <Navigate to="/admin/experience/home/modes" replace /> },
+      {
+        path: 'experience/home/:studioSection',
+        element: (
+          <AdminHomeStudioRouteGuard>
+            <Suspense fallback={routeFallback}>
+              <AdminHomeStudio />
+            </Suspense>
+          </AdminHomeStudioRouteGuard>
+        ),
+      },
+      {
+        path: 'experience/home-experience',
+        element: <AdminHomeLegacyRedirect view="experience" />,
+      },
+      {
+        path: 'experience/home-composition',
+        element: <AdminHomeLegacyRedirect view="composition" />,
+      },
+      {
+        path: 'experience/home-apps',
+        element: <AdminHomeLegacyRedirect view="apps" />,
+      },
       { path: ':section', element: <AdminSectionRedirect /> },
       {
         path: ':section/:view',

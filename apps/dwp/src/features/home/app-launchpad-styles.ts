@@ -16,7 +16,7 @@ export const LAUNCHPAD_TILE_HEIGHT = HOME_LAUNCHPAD_TILE_HEIGHT;
 export const LAUNCHPAD_TILE_HEIGHT_CSS = `var(--launchpad-tile-height, ${LAUNCHPAD_TILE_HEIGHT}px)`;
 
 export function launchpadLabelFontSize(label: string) {
-  return label.length > 8 ? '0.625rem' : '0.6875rem';
+  return label.length > 6 ? '0.5625rem' : '0.6875rem';
 }
 
 export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
@@ -59,7 +59,11 @@ export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
   };
 }
 
-export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme> {
+export function launchpadTileSx(
+  editing: boolean,
+  motionDelayMs: number,
+  disabled = false
+): SxProps<Theme> {
   return {
     width: 1,
     height: LAUNCHPAD_TILE_HEIGHT_CSS,
@@ -78,7 +82,9 @@ export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProp
     borderRadius: 1,
     bgcolor: 'transparent',
     textAlign: 'center',
-    cursor: editing ? 'grab' : 'pointer',
+    cursor: disabled ? 'not-allowed' : editing ? 'grab' : 'pointer',
+    opacity: disabled ? 0.48 : 1,
+    filter: disabled ? 'grayscale(1)' : 'none',
     touchAction: 'manipulation',
     transition: (theme) =>
       theme.transitions.create(['background-color', 'border-color', 'box-shadow', 'transform'], {

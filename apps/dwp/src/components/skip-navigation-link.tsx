@@ -9,8 +9,11 @@ export function SkipNavigationLink() {
     <Box
       component="a"
       href="#dwp-main-content"
-      onClick={() => {
-        window.requestAnimationFrame(() => document.getElementById('dwp-main-content')?.focus());
+      onClick={(event) => {
+        event.preventDefault();
+        const main = document.getElementById('dwp-main-content');
+        main?.focus({ preventScroll: true });
+        main?.scrollIntoView({ block: 'start' });
       }}
       sx={{
         position: 'fixed',

@@ -20,14 +20,29 @@
     "expand": "탐색 메뉴 펼치기",
     "collapse": "탐색 메뉴 접기",
     "items": {
+      "home": "홈",
       "work": "업무",
+      "approvals": "결재",
       "ask": "DWAI·ON",
       "activity": "활동",
+      "communications": "소통",
+      "calendar": "일정",
+      "spaces": "스페이스",
       "hcm": "인사",
       "hris": "인사",
       "people": "구성원",
       "workforce": "인력 운영",
-      "apps": "앱"
+      "apps": "앱",
+      "classicOverview": "개요",
+      "classicDesks": "좌석",
+      "classicRooms": "회의실",
+      "classicDirectory": "구성원",
+      "classicTelemetry": "업무 현황",
+      "flowToday": "오늘",
+      "flowSchedule": "일정",
+      "flowSpaces": "스페이스",
+      "flowTasks": "할 일",
+      "flowTelemetry": "업무 현황"
     }
   },
   "messaging": {

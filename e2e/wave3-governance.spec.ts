@@ -230,6 +230,15 @@ test('navigation studio creates, validates, and publishes an immutable revision'
   page,
 }) => {
   await installTenantAdmin(page);
+  const duplicateKeyErrors: string[] = [];
+  page.on('console', (message) => {
+    if (
+      message.type() === 'error' &&
+      message.text().includes('Encountered two children with the same key')
+    ) {
+      duplicateKeyErrors.push(message.text());
+    }
+  });
   const publishedV1 = structuredClone(NAVIGATION_REVISION_FIXTURE);
   let published = publishedV1;
   let draft: typeof publishedV1 | null = null;
@@ -241,7 +250,11 @@ test('navigation studio creates, validates, and publishes an immutable revision'
       return fulfillSuccess(route, {
         published,
         draft,
-        history: draft ? [draft, published] : [published, publishedV1],
+        history: draft
+          ? [draft, published]
+          : published.navigationRevisionId === publishedV1.navigationRevisionId
+            ? [published]
+            : [published, publishedV1],
         currentTree: published.tree,
         currentValidation: NAVIGATION_VALIDATION_FIXTURE,
       });
@@ -305,6 +318,7 @@ test('navigation studio creates, validates, and publishes an immutable revision'
   await expect(
     page.getByText('No blocking issues were found. This revision is ready to publish.')
   ).toBeVisible();
+  expect(duplicateKeyErrors).toEqual([]);
 });
 
 test('catalog graph exposes change impact and records an explicit relationship', async ({

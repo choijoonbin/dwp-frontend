@@ -183,12 +183,7 @@ export function SearchControl({ compact = false }: { compact?: boolean }) {
           textAlign: 'left',
           transition: (theme) => theme.transitions.create(['border-color', 'background-color']),
           '&:hover': { borderColor: 'primary.main', bgcolor: 'action.selected' },
-          '@container dwp-shell-header (max-width: 900px)': compact
-            ? { display: 'none' }
-            : undefined,
-          '@container dwp-shell-header (min-width: 901px) and (max-width: 1120px)': compact
-            ? undefined
-            : { display: 'none' },
+          '@container dwp-shell-header (max-width: 1120px)': { display: 'none' },
         }}
       >
         <Search size={18} strokeWidth={1.8} aria-hidden="true" />

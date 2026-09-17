@@ -212,6 +212,17 @@ export async function listPlatformAuditEvents(): Promise<PageResult<PlatformAudi
   return response.data.data;
 }
 
+export async function listHomeStudioAuditEvents(
+  page = 0,
+  size = 100
+): Promise<PageResult<PlatformAuditEvent>> {
+  const query = new URLSearchParams({ page: String(page), size: String(size) });
+  const response = await axiosInstance.get<ApiResponse<PageResult<PlatformAuditEvent>>>(
+    `/api/platform/v1/admin/home-experience/audit-events?${query.toString()}`
+  );
+  return response.data.data;
+}
+
 export async function listReferenceSetAuditEvents(
   setKey: string
 ): Promise<PageResult<PlatformAuditEvent>> {

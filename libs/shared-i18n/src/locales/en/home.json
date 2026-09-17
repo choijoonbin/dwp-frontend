@@ -38,6 +38,26 @@
     "undoRecommendation": "Undo",
     "recommendationFeedbackError": "Recommendation feedback could not be saved."
   },
+  "command": {
+    "dismiss": {
+      "title": "Hide this recommendation?",
+      "description": "The recommendation owner will record this action after you confirm.",
+      "fallbackTitle": "Selected recommendation",
+      "confirm": "Hide recommendation",
+      "pending": "Hiding recommendation"
+    },
+    "status": {
+      "accepted": "The recommendation action was accepted.",
+      "completed": "The recommendation was hidden.",
+      "conflict": "The recommendation changed before the action completed. Review the latest item.",
+      "denied": "This action is no longer allowed.",
+      "unavailable": "The recommendation owner is temporarily unavailable.",
+      "unknown": "The action result is unknown. Check the source before trying again."
+    }
+  },
+  "action": {
+    "dismissRecommendation": "Hide recommendation"
+  },
   "dayRail": {
     "title": "Command rail",
     "description": "Your next work, meeting, and recommended follow-up",
@@ -56,6 +76,137 @@
     "recommendationLoadError": "Recommended follow-up actions could not be loaded.",
     "noRecommendation": "There are no additional recommendations to review.",
     "review": "Review"
+  },
+  "classic": {
+    "portalAriaLabel": "Organization portal",
+    "portalBadge": "Organization portal",
+    "portalTitle": "DWP Workplace organization portal",
+    "portalDescription": "Find essential organization news, knowledge, and support guidance in one place.",
+    "featuredLabel": "Featured organization update",
+    "openOrganizationUpdates": "View organization updates",
+    "openFeaturedStory": "Read original",
+    "openStudio": "Home settings",
+    "newsDetail": "View details",
+    "newsEmpty": "There are no new updates to display.",
+    "portalMetadata": "· Product Operations · {{currentDate}} · Last refreshed 09:58 KST",
+    "portalTimestamp": "· 09:58 KST",
+    "modeAriaLabel": "Home experience mode",
+    "classicModePrefix": "Classic\u00a0",
+    "flowModeLabel": "Flow personal execution",
+    "featuredCategory": "Organization update · Direction",
+    "roadmapMeta": "Execution roadmap v1.0 / Department guidance included",
+    "notice": {
+      "required": "An organization update requires your acknowledgement",
+      "complete": "All required updates are complete",
+      "completeDescription": "There are no required updates now (all required items complete · 09:58 KST).",
+      "action": "Review now"
+    },
+    "resources": {
+      "secondaryTitle": "Company news and notices",
+      "secondaryDescription": "Review the latest updates from across the organization.",
+      "knowledgeTitle": "Knowledge and organization support",
+      "knowledgeDescription": "Connect to frequently used guides and employee support channels.",
+      "states": {
+        "initial-loading": {
+          "title": "Loading the workplace usage guide",
+          "description": "Waiting for the organization support source."
+        },
+        "background-refresh": {
+          "title": "Checking the workplace usage guide",
+          "description": "You can continue using the previous content."
+        },
+        "empty": {
+          "title": "No organization guides are published",
+          "description": "New guides will appear here after they are published."
+        },
+        "partial": {
+          "title": "Company knowledge base temporarily delayed",
+          "description": "Some knowledge could not be loaded. The last verified document remains available."
+        },
+        "forbidden": {
+          "title": "Restricted item",
+          "description": "Organization policy prevents access to this item. Review the security governance access policy."
+        },
+        "stale": {
+          "title": "Refresh delayed",
+          "description": "The workplace usage guide is from the last successful check."
+        }
+      },
+      "personalTitle": "My work flow",
+      "personalDescription": "Personal work and schedule summaries follow the organization information.",
+      "summary": {
+        "nextSchedule": "Next event",
+        "openCalendar": "Open calendar",
+        "noSchedule": "No upcoming events.",
+        "priorityWork": "Priority approvals and work",
+        "itemCount": "{{count}} items",
+        "noPriorityWork": "No priority work needs your attention."
+      },
+      "cards": {
+        "handbook": {
+          "title": "Employee work handbook",
+          "description": "Review work setup, collaboration, and security standards.",
+          "action": "Open guide"
+        },
+        "onboarding": {
+          "title": "New employee onboarding",
+          "description": "Follow the steps from joining through team onboarding.",
+          "action": "View steps"
+        },
+        "workplace": {
+          "title": "Workplace usage guide",
+          "description": "Find desks, rooms, visitor, and facility support information.",
+          "action": "View support"
+        },
+        "it": {
+          "title": "IT device and account help",
+          "description": "Resolve account, device, and network issues.",
+          "action": "Get help"
+        }
+      }
+    }
+  },
+  "states": {
+    "retry": "Try again",
+    "affectedSources": "Affected sources: {{sources}}",
+    "lastSuccessfulAt": "Last successful update: {{time}}",
+    "initial-loading": {
+      "title": "Preparing your Home",
+      "description": "The layout remains stable while authorized sources load."
+    },
+    "background-refresh": {
+      "title": "Updating this information",
+      "description": "Verified information remains available while its sources refresh."
+    },
+    "empty": {
+      "title": "Nothing needs attention here",
+      "description": "This is a confirmed empty result. New items will appear automatically.",
+      "action": "Check again"
+    },
+    "partial": {
+      "title": "Some sources are delayed",
+      "description": "Available information is shown. Delayed sources are identified separately."
+    },
+    "forbidden": {
+      "title": "This area is outside your access",
+      "description": "It will appear when your role and data scope allow it."
+    },
+    "stale": {
+      "title": "This information may be out of date",
+      "description": "The last verified result remains visible with its successful update time."
+    },
+    "widget-error": {
+      "title": "This widget could not be displayed",
+      "description": "The affected widget stopped safely. The rest of Home remains available."
+    },
+    "dirty": {
+      "title": "You have unsaved Home changes",
+      "description": "Your draft is retained until you save or explicitly discard it."
+    },
+    "conflict": {
+      "title": "A newer Home version is available",
+      "description": "Your draft is preserved while you compare or reapply it to the latest version."
+    }
   },
   "flow": {
     "workscape": {
@@ -340,6 +491,7 @@
       "editLayoutDescription": "Edit widget and app position, size, and visibility.",
       "editSettings": "Home settings",
       "editSettingsDescription": "Set the mood, content, and device experience.",
+      "linkedCalendar": "Linked next event",
       "metrics": {
         "label": "Today's work summary",
         "action": "To handle",
@@ -568,6 +720,7 @@
       "unsavedDescription": "Your current home draft has not been saved. You can keep editing or discard these changes.",
       "navigationDescription": "Your current home draft has not been saved. Leaving this page will discard these changes.",
       "keepEditing": "Keep editing",
+      "closeDialog": "Close conflict dialog",
       "discardChanges": "Discard changes",
       "leaveHome": "Leave home",
       "sections": {
@@ -586,13 +739,95 @@
     "conflict": {
       "title": "Your home changed in another session",
       "description": "The latest saved version is different. Your current draft is kept safely until you choose how to continue.",
+      "closeDialog": "Close conflict dialog",
       "myChanges": "My draft: {{count}} changes",
       "latestVersion": "Latest version: {{version}}",
       "safety": "Reloading discards this draft. Reapply keeps it and saves against the latest version after your review.",
       "keepEditing": "Keep editing",
       "reload": "Reload latest",
       "reapply": "Reapply my draft",
+      "detected": "Version conflict detected",
+      "draftTitle": "My draft ({{count}} changes)",
+      "baseVersion": "Based on v{{version}}",
+      "draftSummary": "The current contract confirms {{count}} local changes. Their detailed field diff is not available, so this dialog does not infer it.",
+      "serverTitle": "Latest saved version (Version {{version}})",
+      "serverTitleUnknown": "Latest saved version changed",
+      "serverSummary": "The server reports a newer saved version. Reload it to inspect its actual contents; no unverified field changes are shown here.",
+      "localPreserved": "Safely preserved in this work tab",
+      "mergeGuidance": "Reapply my draft merges the changes in server Version {{version}} with your {{count}} local changes and returns to editing.",
+      "mergeGuidanceUnknown": "Reapply my draft keeps your {{count}} local changes and rebases them onto the latest saved version before returning to editing.",
+      "reapplyHint": "Merge my changes into v{{version}}",
+      "reapplyHintUnknown": "Merge into the latest version",
       "toast": "A newer home version was found. Your draft has been kept."
+    },
+    "meetingPrep": {
+      "title": "Prepare for the next meeting",
+      "next": "Next event",
+      "fallbackTitle": "Review the agenda and preparation items for your next meeting",
+      "startsAt": "Starts {{time}}",
+      "checks": {
+        "agenda": "Agenda reviewed",
+        "brief": "Brief prepared",
+        "room": "Room check"
+      },
+      "action": "Open prep room"
+    },
+    "future": {
+      "title": "Personalized collaboration and insights",
+      "description": "Continue work in context with a personalized set of projection widgets.",
+      "personalized": "Personalized preset",
+      "preview": "Connection preview",
+      "loadedEvidence": "Verified fixture connection",
+      "previewUnavailable": "Sample content before connection. Actions become available after the provider is connected.",
+      "lastVerified": "Today 08:50",
+      "space": {
+        "eyebrow": "SPACE CHANGE FEED",
+        "title": "Important changes in your documents",
+        "items": {
+          "one": {
+            "title": "Operations transition checklist v3",
+            "detail": "Jihyun Kim resolved two risk items."
+          },
+          "two": {
+            "title": "Mobile release plan",
+            "detail": "The release schedule and owners were updated."
+          }
+        },
+        "action": "Review in Space"
+      },
+      "meeting": {
+        "eyebrow": "MEETING PREP & DECISIONS",
+        "title": "Launch readiness review · 10:30",
+        "checks": {
+          "agenda": "4 agenda items reviewed",
+          "brief": "Pre-read complete",
+          "room": "Check room equipment"
+        },
+        "decisionLabel": "FOLLOW-UP CANDIDATE",
+        "decision": "Add the high-contrast verification results to the release checklist",
+        "accept": "Accept as my work",
+        "assign": "Assign owner"
+      },
+      "artifact": {
+        "eyebrow": "DWAI·ON ARTIFACT",
+        "title": "Continue an AI artifact",
+        "document": "H2 2026 operating strategy draft",
+        "detail": "Eight sources and two unfinished sections are safely preserved.",
+        "saved": "Last edited today at 08:42",
+        "action": "Continue in editor"
+      },
+      "booking": {
+        "eyebrow": "WORKPLACE PREP",
+        "title": "Focus booth B-14 · 13:00",
+        "detail": "Check-in opens ten minutes before the reservation. Review the floor map and Wi-Fi details.",
+        "action": "View booking and check-in"
+      },
+      "learning": {
+        "eyebrow": "ROLE DEVELOPMENT",
+        "title": "Required learning progress",
+        "detail": "Security and AI use modules 3/4 complete",
+        "progress": "Required learning 75% complete"
+      }
     }
   },
   "footer": {
@@ -726,6 +961,7 @@
     "groupFolder": "{{group}} folder",
     "groupApps": "{{group}} apps",
     "openApp": "Open {{app}}",
+    "forbiddenApp": "Permission required for {{app}}",
     "manageApp": "Manage {{app}}",
     "dragApp": "Move {{app}}",
     "removeApp": "Remove from home",
@@ -1100,6 +1336,88 @@
       "loadError": "Activity could not be loaded",
       "retry": "Try again",
       "empty": "There is no recent activity"
+    }
+  },
+  "ownerWidgets": {
+    "regionLabel": "Connected work insights",
+    "sourceLabel": "Connected source",
+    "title": {
+      "approval": {
+        "focus-queue": "Approval focus queue",
+        "my-requests": "My approval requests"
+      },
+      "meetings": {
+        "next-prep": "Next meeting preparation",
+        "followup-candidates": "Meeting follow-up candidates"
+      },
+      "notification": {
+        "app-badges": "Application notifications",
+        "response-queue": "Responses needed"
+      },
+      "space": {
+        "change-feed": "Space changes",
+        "response-queue": "Space requests"
+      },
+      "messaging": {
+        "response-queue": "Messages needing a response",
+        "change-feed": "Recent message activity"
+      },
+      "hr": {
+        "edu": "Required learning",
+        "team-pulse": "Team pulse"
+      },
+      "workplace": {
+        "booking": "Workplace bookings"
+      },
+      "dwaion": {
+        "artifact": "DWAI·ON artifact"
+      }
+    },
+    "action": { "openSource": "Open source" },
+    "metric": {
+      "pending": "Pending",
+      "dueToday": "Due today",
+      "overdue": "Overdue",
+      "inFlight": "In progress",
+      "meetingsToday": "Meetings today",
+      "meetingMinutes": "Meeting minutes",
+      "totalUnread": "Unread",
+      "urgentUnread": "Urgent",
+      "unreadSignals": "Unread changes",
+      "pendingRequests": "Pending requests",
+      "reviewQueue": "To review",
+      "unreadConversations": "Unread conversations",
+      "mentions": "Mentions",
+      "requiredLearning": "Required learning",
+      "activeGoals": "Active goals",
+      "teamPending": "Team pending",
+      "teamTimePending": "Time requests",
+      "teamAbsencePending": "Absence requests",
+      "visibleBookings": "Visible bookings",
+      "visibleArtifacts": "Visible artifacts"
+    },
+    "meta": {
+      "attendees": "{{count}} attendees",
+      "unread": "{{count}} unread",
+      "actionable": "{{count}} actionable",
+      "urgent": "{{count}} urgent",
+      "bookingLocation": "{{site}} · {{floor}}"
+    },
+    "empty": { "verified": "Checked and up to date" }
+  },
+  "widgetRuntime": {
+    "unavailableLabel": "{{label}} is unavailable",
+    "unavailableTitle": "This widget is unavailable",
+    "deprecatedNotice": "This placed widget is deprecated. It remains readable, but it cannot be newly added or restored.",
+    "reasons": {
+      "NOT_AVAILABLE": "The registered version is no longer available.",
+      "DISABLED_BY_ORGANIZATION": "Your organization has disabled this widget.",
+      "APP_ACCESS_REQUIRED": "Access to the source app is required.",
+      "INCOMPATIBLE": "This widget is incompatible with the current Home host.",
+      "TEMPORARILY_UNAVAILABLE": "The widget was stopped by a safety or availability control.",
+      "DEPRECATED": "This widget is deprecated.",
+      "AVAILABLE": "The widget is available.",
+      "ALREADY_ADDED": "The widget is already on Home."
     }
   }
 }

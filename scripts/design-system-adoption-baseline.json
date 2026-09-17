@@ -115,11 +115,6 @@
     "apps/dwp/src/components/workspace-composer/app-launchpad-model.ts": {
       "HardcodedColor": 18
     },
-    "apps/dwp/src/components/workspace-composer/workspace-composer-toolbar.tsx": {
-      "HardcodedColor": 3,
-      "RawRadius": 2,
-      "RawShadow": 1
-    },
     "apps/dwp/src/components/workspace-composer/workspace-widget-canvas.tsx": {
       "RawRadius": 4,
       "RawMotion": 9,
@@ -284,7 +279,7 @@
       "Alert": 3
     },
     "apps/dwp/src/features/admin/home-widget-manager.tsx": {
-      "Alert": 3
+      "Alert": 1
     },
     "apps/dwp/src/features/admin/identity-provisioning-manager.tsx": {
       "RawTypography": 5,
@@ -744,13 +739,10 @@
       "RawShadow": 4
     },
     "apps/dwp/src/features/home/app-launchpad.tsx": {
-      "HardcodedColor": 21,
-      "RawRadius": 2,
+      "HardcodedColor": 20,
+      "RawRadius": 1,
       "RawShadow": 1,
       "RawTypography": 3
-    },
-    "apps/dwp/src/features/home/classic-home/classic-home.tsx": {
-      "RawRadius": 1
     },
     "apps/dwp/src/features/home/command-rail-widget.tsx": {
       "RawRadius": 2,
@@ -810,10 +802,7 @@
       "RawTypography": 7
     },
     "apps/dwp/src/features/home/home-day-rail.tsx": {
-      "HardcodedColor": 31,
-      "RawTypography": 13,
-      "RawShadow": 4,
-      "RawRadius": 1
+      "RawTypography": 13
     },
     "apps/dwp/src/features/home/home-item-gallery.tsx": {
       "HardcodedColor": 2,
@@ -821,9 +810,6 @@
       "RawShadow": 1,
       "RawTypography": 1,
       "Alert": 2
-    },
-    "apps/dwp/src/features/home/home-preference-conflict-dialog.tsx": {
-      "Alert": 1
     },
     "apps/dwp/src/features/home/home-widgets.tsx": {
       "RawTypography": 3,
@@ -1387,9 +1373,6 @@
       "CircularProgress": 1,
       "RawTypography": 3
     },
-    "apps/dwp/src/features/provider/provider-widget-catalog.tsx": {
-      "Alert": 2
-    },
     "apps/dwp/src/features/rooms/room-booking-dialog.tsx": {
       "Alert": 3,
       "RawRadius": 1,
@@ -1419,8 +1402,8 @@
       "RawTypography": 5
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance-hierarchy.tsx": {
-      "RawTypography": 2,
-      "Alert": 1
+      "Alert": 1,
+      "RawTypography": 2
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance-ui.tsx": {
       "Alert": 1
@@ -1597,9 +1580,7 @@
       "RawTypography": 6
     },
     "apps/dwp/src/layouts/home-layout.tsx": {
-      "HardcodedColor": 1,
-      "RawRadius": 2,
-      "RawTypography": 1
+      "RawRadius": 2
     },
     "apps/dwp/src/layouts/provider-layout.tsx": {
       "RawTypography": 2,

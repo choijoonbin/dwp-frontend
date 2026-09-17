@@ -144,8 +144,16 @@
     "subscriptionState": "Subscription state",
     "contractReference": "Contract reference"
   },
-  "tiers": { "STANDARD": "Standard", "ENTERPRISE": "Enterprise", "REGULATED": "Regulated" },
-  "isolation": { "POOL": "Pool", "BRIDGE": "Bridge", "SILO": "Silo" },
+  "tiers": {
+    "STANDARD": "Standard",
+    "ENTERPRISE": "Enterprise",
+    "REGULATED": "Regulated"
+  },
+  "isolation": {
+    "POOL": "Pool",
+    "BRIDGE": "Bridge",
+    "SILO": "Silo"
+  },
   "states": {
     "ALL": "All",
     "PROVISIONING": "Provisioning",
@@ -347,7 +355,11 @@
       }
     }
   },
-  "domainTypes": { "LOGIN": "Sign-in", "EMAIL": "Email", "CUSTOM": "Custom" },
+  "domainTypes": {
+    "LOGIN": "Sign-in",
+    "EMAIL": "Email",
+    "CUSTOM": "Custom"
+  },
   "operationTypes": {
     "TENANT_ONBOARD": "Tenant onboarding",
     "TENANT_UPGRADE": "Tenant upgrade",
@@ -364,9 +376,16 @@
       "openOperations": "Open operations",
       "supportSessions": "Active support sessions"
     },
-    "attention": { "title": "Needs attention", "empty": "No operations require attention." },
-    "regions": { "title": "Regional distribution" },
-    "recentTenants": { "title": "Recent tenants" }
+    "attention": {
+      "title": "Needs attention",
+      "empty": "No operations require attention."
+    },
+    "regions": {
+      "title": "Regional distribution"
+    },
+    "recentTenants": {
+      "title": "Recent tenants"
+    }
   },
   "command": {
     "state": {
@@ -594,7 +613,9 @@
       "onboarding": "Onboarding",
       "state": "Lifecycle"
     },
-    "actions": { "onboard": "Onboard company" },
+    "actions": {
+      "onboard": "Onboard company"
+    },
     "onboardingCatalogUnavailable": "The customer estate remains available, but onboarding is disabled until the entitlement and region catalogs recover.",
     "empty": {
       "firstUseTitle": "There are no managed tenants yet",
@@ -681,7 +702,10 @@
       "title": "Control path",
       "description": "Every change follows the same planning, approval, execution, and recovery controls.",
       "stages": {
-        "PLAN": { "title": "Freeze plan", "detail": "Hash impact and execution steps" },
+        "PLAN": {
+          "title": "Freeze plan",
+          "detail": "Hash impact and execution steps"
+        },
         "GATE": {
           "title": "Independent approval",
           "detail": "Validate risk role and separation of duties"
@@ -776,8 +800,12 @@
       "REJECTED": "Reject"
     },
     "dialog": {
-      "APPROVED": { "title": "Approve change" },
-      "REJECTED": { "title": "Reject change" }
+      "APPROVED": {
+        "title": "Approve change"
+      },
+      "REJECTED": {
+        "title": "Reject change"
+      }
     },
     "completed": {
       "APPROVED": "The change was approved.",
@@ -1086,7 +1114,10 @@
       "scope": "Actual scope · {{value}}",
       "reason": "Denial reason · {{value}}",
       "correlation": "Canonical correlation · {{value}}",
-      "decision": { "ALLOW": "Allowed", "DENY": "Denied" },
+      "decision": {
+        "ALLOW": "Allowed",
+        "DENY": "Denied"
+      },
       "anomaly": {
         "DENIED_ATTEMPTS": "denied command attempts",
         "MALFORMED_EVIDENCE": "malformed or unclassifiable audit evidence",
@@ -1267,8 +1298,12 @@
     "decision": {
       "description": "Decide {{company}} revision {{revision}} after reviewing the term, entitlement impact, and customer evidence.",
       "reasonHelp": "Record the evidence and policy basis for this independent decision.",
-      "approve": { "title": "Approve renewal proposal" },
-      "reject": { "title": "Reject renewal proposal" }
+      "approve": {
+        "title": "Approve renewal proposal"
+      },
+      "reject": {
+        "title": "Reject renewal proposal"
+      }
     },
     "publish": {
       "title": "Publish approved contract change",
@@ -1316,7 +1351,11 @@
       "rawCode": "Raw evidence code",
       "snapshot": "Redacted event snapshot"
     },
-    "outcomes": { "SUCCESS": "Success", "FAILED": "Failed", "DENIED": "Denied" }
+    "outcomes": {
+      "SUCCESS": "Success",
+      "FAILED": "Failed",
+      "DENIED": "Denied"
+    }
   },
   "contractSurfaces": {
     "label": "Product contract areas",
@@ -1392,6 +1431,46 @@
     "revocation": {
       "title": "Target fail-closed revocation contract",
       "description": "Dynamic revocation is not connected yet. The server registry must stop affected instances regardless of Tenant or user settings before this becomes release evidence."
+    },
+    "controlPlane": {
+      "loading": "Loading widget registry readiness",
+      "unavailable": "Widget registry control plane is unavailable",
+      "unavailableDescription": "Definition and release operations stay closed until the complete registry capability contract is available.",
+      "retry": "Retry widget registry",
+      "catalogLoading": "Loading provider widget definitions",
+      "catalogFailed": "Provider widget definitions could not be loaded",
+      "catalogFailedDescription": "No lifecycle or certification state is inferred while the registry is unavailable.",
+      "shadowTitle": "Widget control plane is in shadow mode",
+      "shadowDescription": "Definitions, immutable versions, evidence, impact, and audit are visible. Publish, block, deprecate, and rollback remain disabled and Home still uses the static catalog.",
+      "activeTitle": "Authoritative widget control plane",
+      "activeDescription": "The activated registry contract controls release and runtime decisions.",
+      "resultCount_one": "{{count}} authoritative definition",
+      "resultCount_other": "{{count}} authoritative definitions",
+      "definitionState": {
+        "ACTIVE": "Active",
+        "RETIRED": "Retired"
+      },
+      "certified": "Current evidence gate passed",
+      "evidenceIncomplete": "Certification evidence incomplete",
+      "noLegacyKey": "No legacy binding",
+      "versionTitle": "Latest immutable version",
+      "versionLoading": "Loading versions",
+      "versionEmpty": "No version is registered.",
+      "evidenceTitle": "Certification evidence",
+      "evidenceSummary": "{{passed}} of {{required}} required evidence categories currently pass.",
+      "impactTitle": "Tenant and instance impact",
+      "impactSummary": "{{tenants}} tenants and {{instances}} existing instances are affected.",
+      "impactShadow": "Impact preview is read-only while commands are closed in shadow mode.",
+      "impactUnavailable": "Impact preview is unavailable.",
+      "shadowMutationDisabled": "Mutations are disabled while registry migration mode is SHADOW.",
+      "actions": {
+        "publish": "Publish",
+        "block": "Block",
+        "deprecate": "Deprecate",
+        "rollback": "Rollback"
+      },
+      "auditTitle": "Registry audit events",
+      "auditEmpty": "No registry event is available."
     }
   },
   "codeContracts": {
@@ -1814,14 +1893,28 @@
       "entitlements": "Product entitlements",
       "entitlementsDetail": "Configuration schema v{{schema}}"
     },
-    "metrics": { "services": "Healthy services", "authTenant": "Identity tenant ID" },
-    "organization": { "title": "Company and environment" },
+    "metrics": {
+      "services": "Healthy services",
+      "authTenant": "Identity tenant ID"
+    },
+    "organization": {
+      "title": "Company and environment"
+    },
     "lifecycle": {
       "updated": "Tenant lifecycle updated.",
-      "ACTIVE": { "title": "Activate tenant", "action": "Activate" },
-      "SUSPENDED": { "title": "Suspend tenant", "action": "Suspend" }
+      "ACTIVE": {
+        "title": "Activate tenant",
+        "action": "Activate"
+      },
+      "SUSPENDED": {
+        "title": "Suspend tenant",
+        "action": "Suspend"
+      }
     },
-    "services": { "title": "Service provisioning", "reconciled": "Last reconciled {{value}}" },
+    "services": {
+      "title": "Service provisioning",
+      "reconciled": "Last reconciled {{value}}"
+    },
     "domains": {
       "title": "Verified domains",
       "add": "Register domain",

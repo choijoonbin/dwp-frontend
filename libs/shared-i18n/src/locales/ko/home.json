@@ -38,6 +38,26 @@
     "undoRecommendation": "되돌리기",
     "recommendationFeedbackError": "추천 피드백을 저장하지 못했습니다."
   },
+  "command": {
+    "dismiss": {
+      "title": "이 추천을 숨길까요?",
+      "description": "확인하면 추천 제공자가 이 작업을 기록합니다.",
+      "fallbackTitle": "선택한 추천",
+      "confirm": "추천 숨기기",
+      "pending": "추천을 숨기는 중"
+    },
+    "status": {
+      "accepted": "추천 작업을 접수했습니다.",
+      "completed": "추천을 숨겼습니다.",
+      "conflict": "작업 전에 추천이 변경되었습니다. 최신 항목을 확인하세요.",
+      "denied": "이 작업은 더 이상 허용되지 않습니다.",
+      "unavailable": "추천 제공자를 일시적으로 사용할 수 없습니다.",
+      "unknown": "작업 결과를 확인할 수 없습니다. 다시 실행하기 전에 원본을 확인하세요."
+    }
+  },
+  "action": {
+    "dismissRecommendation": "추천 숨기기"
+  },
   "dayRail": {
     "audience": {
       "member": "개인 업무",
@@ -56,6 +76,137 @@
     "title": "업무 지휘",
     "description": "다음 업무, 일정, 추천 후속 조치를 한 흐름으로 확인합니다",
     "recommendationLoadError": "추천 후속 조치를 불러오지 못했습니다."
+  },
+  "classic": {
+    "portalAriaLabel": "조직 포털",
+    "portalBadge": "조직 포털",
+    "portalTitle": "DWP Workplace 조직 포털",
+    "portalDescription": "조직의 핵심 소식과 지식, 지원 안내를 한곳에서 확인합니다.",
+    "featuredLabel": "조직 핵심 소식",
+    "openOrganizationUpdates": "조직 소식 보기",
+    "openFeaturedStory": "원문 보기",
+    "openStudio": "홈 설정",
+    "newsDetail": "상세 확인",
+    "newsEmpty": "표시할 새 소식이 없습니다.",
+    "portalMetadata": "· 제품운영팀 김하린 · {{currentDate}} · 마지막 갱신 09:58 KST",
+    "portalTimestamp": "· 09:58 KST",
+    "modeAriaLabel": "홈 화면 모드",
+    "classicModePrefix": "Classic\u00a0",
+    "flowModeLabel": "Flow 개인 실행",
+    "featuredCategory": "전사 공지 · 방향성",
+    "roadmapMeta": "실행 로드맵 v1.0 / 부서별 가이드라인 포함",
+    "notice": {
+      "required": "필수 확인이 필요한 안내가 있습니다",
+      "complete": "필수 확인을 모두 완료했습니다",
+      "completeDescription": "현재 확인할 필수 항목이 없습니다 (모든 필수 확인 완료 · 09:58 KST)",
+      "action": "지금 확인"
+    },
+    "resources": {
+      "secondaryTitle": "사내 소식과 공지",
+      "secondaryDescription": "조직에서 이어지는 주요 소식을 확인합니다.",
+      "knowledgeTitle": "관련 지식과 조직 지원",
+      "knowledgeDescription": "자주 찾는 가이드와 구성원 지원 창구를 한곳에서 연결합니다.",
+      "states": {
+        "initial-loading": {
+          "title": "근무 공간 이용 안내를 불러오는 중입니다",
+          "description": "조직 지원 원천의 응답을 기다리고 있습니다."
+        },
+        "background-refresh": {
+          "title": "근무 공간 이용 안내를 확인하는 중입니다",
+          "description": "이전 내용을 계속 볼 수 있습니다."
+        },
+        "empty": {
+          "title": "등록된 조직 가이드가 없습니다",
+          "description": "새 가이드가 게시되면 이 영역에 표시됩니다."
+        },
+        "partial": {
+          "title": "사내 지식 베이스 일시적 지연",
+          "description": "일부 지식을 불러오지 못했습니다. 마지막으로 확인한 문서를 유지합니다."
+        },
+        "forbidden": {
+          "title": "접근 제한 항목",
+          "description": "조직 정책으로 이 항목을 볼 수 없습니다. 보안 거버넌스 접근 정책을 확인하세요."
+        },
+        "stale": {
+          "title": "현재 갱신 지연",
+          "description": "근무 공간 이용 안내는 마지막 성공 시점의 내용입니다."
+        }
+      },
+      "personalTitle": "나의 업무 흐름",
+      "personalDescription": "조직 정보 다음에 개인 업무와 일정을 요약합니다.",
+      "summary": {
+        "nextSchedule": "다음 일정",
+        "openCalendar": "캘린더 열기",
+        "noSchedule": "예정된 일정이 없습니다.",
+        "priorityWork": "우선 결재·업무",
+        "itemCount": "{{count}}건",
+        "noPriorityWork": "지금 확인할 우선 업무가 없습니다."
+      },
+      "cards": {
+        "handbook": {
+          "title": "구성원 업무 가이드",
+          "description": "업무 시작, 협업, 보안 기준을 확인하세요.",
+          "action": "가이드 열기"
+        },
+        "onboarding": {
+          "title": "신규 구성원 온보딩",
+          "description": "입사부터 팀 적응까지 필요한 절차를 안내합니다.",
+          "action": "절차 보기"
+        },
+        "workplace": {
+          "title": "Workplace 이용 안내",
+          "description": "좌석, 회의실, 방문과 시설 지원 정보를 확인하세요.",
+          "action": "지원 보기"
+        },
+        "it": {
+          "title": "IT 장비와 계정 지원",
+          "description": "계정, 기기, 네트워크 문제의 해결 절차입니다.",
+          "action": "도움 받기"
+        }
+      }
+    }
+  },
+  "states": {
+    "retry": "다시 시도",
+    "affectedSources": "영향받은 원천: {{sources}}",
+    "lastSuccessfulAt": "마지막 정상 업데이트: {{time}}",
+    "initial-loading": {
+      "title": "홈을 준비하고 있습니다",
+      "description": "권한이 있는 원천을 불러오는 동안 레이아웃을 안정적으로 유지합니다."
+    },
+    "background-refresh": {
+      "title": "정보를 업데이트하고 있습니다",
+      "description": "원천을 갱신하는 동안 확인된 정보는 계속 표시합니다."
+    },
+    "empty": {
+      "title": "지금 확인할 항목이 없습니다",
+      "description": "정상적으로 확인된 0건 상태입니다. 새 항목은 자동으로 표시됩니다.",
+      "action": "새로 확인"
+    },
+    "partial": {
+      "title": "일부 원천이 지연되고 있습니다",
+      "description": "확인 가능한 정보는 표시하고 지연된 원천은 따로 안내합니다."
+    },
+    "forbidden": {
+      "title": "현재 접근 범위 밖의 영역입니다",
+      "description": "역할과 데이터 범위에서 허용되면 이 영역이 표시됩니다."
+    },
+    "stale": {
+      "title": "정보가 최신 상태가 아닐 수 있습니다",
+      "description": "마지막으로 확인된 결과와 정상 업데이트 시각을 함께 표시합니다."
+    },
+    "widget-error": {
+      "title": "이 위젯을 표시하지 못했습니다",
+      "description": "문제가 발생한 위젯만 안전하게 중단되었습니다. 홈의 다른 영역은 계속 사용할 수 있습니다."
+    },
+    "dirty": {
+      "title": "저장하지 않은 홈 변경이 있습니다",
+      "description": "저장하거나 명시적으로 버릴 때까지 초안을 보존합니다."
+    },
+    "conflict": {
+      "title": "더 최신 홈 버전이 있습니다",
+      "description": "최신본과 비교하거나 다시 적용하는 동안 현재 초안을 보존합니다."
+    }
   },
   "flow": {
     "workscape": {
@@ -340,6 +491,7 @@
       "editLayoutDescription": "위젯과 앱의 위치·크기·표시를 편집합니다.",
       "editSettings": "홈 설정",
       "editSettingsDescription": "화면 분위기·콘텐츠·기기별 환경을 설정합니다.",
+      "linkedCalendar": "연결된 다음 일정",
       "metrics": {
         "label": "오늘의 업무 요약",
         "action": "처리할 업무",
@@ -568,6 +720,7 @@
       "unsavedDescription": "현재 홈 화면 초안이 아직 저장되지 않았습니다. 계속 편집하거나 변경을 취소할 수 있습니다.",
       "navigationDescription": "현재 홈 화면 초안이 아직 저장되지 않았습니다. 이 페이지를 나가면 변경 내용이 사라집니다.",
       "keepEditing": "계속 편집",
+      "closeDialog": "충돌 대화상자 닫기",
       "discardChanges": "변경 취소",
       "leaveHome": "홈 나가기",
       "sections": {
@@ -586,13 +739,95 @@
     "conflict": {
       "title": "다른 세션에서 홈 화면이 변경되었습니다",
       "description": "최근 저장본과 현재 편집 기준이 다릅니다. 계속할 방법을 선택할 때까지 현재 초안을 안전하게 유지합니다.",
+      "closeDialog": "충돌 대화상자 닫기",
       "myChanges": "내 초안: 변경 {{count}}건",
       "latestVersion": "최신 버전: {{version}}",
       "safety": "최신 버전을 불러오면 현재 초안을 버립니다. 다시 적용을 선택하면 초안을 유지하고 검토 후 최신 버전에 저장할 수 있습니다.",
       "keepEditing": "계속 편집",
       "reload": "최신 버전 불러오기",
       "reapply": "내 초안 다시 적용",
+      "detected": "버전 충돌 감지",
+      "draftTitle": "내 초안 (변경 {{count}}건)",
+      "baseVersion": "기준: v{{version}}",
+      "draftSummary": "현재 계약에서 확인된 것은 로컬 변경 {{count}}건입니다. 필드별 차이는 제공되지 않으므로 이 화면에서 추정하지 않습니다.",
+      "serverTitle": "최신 저장본 (Version {{version}})",
+      "serverTitleUnknown": "최신 저장본이 변경됨",
+      "serverSummary": "서버에 더 최신 저장본이 있습니다. 실제 내용은 최신 버전을 불러와 확인할 수 있으며, 이 화면은 확인되지 않은 필드 변경을 표시하지 않습니다.",
+      "localPreserved": "현재 작업 탭에 안전하게 보존됨",
+      "mergeGuidance": "[내 초안 다시 적용]을 선택하면 서버 Version {{version}}의 변경과 내 변경 {{count}}건을 병합하여 편집 화면으로 돌아갑니다.",
+      "mergeGuidanceUnknown": "[내 초안 다시 적용]을 선택하면 내 변경 {{count}}건을 유지하고 최신 저장본을 기준으로 다시 적용한 뒤 편집 화면으로 돌아갑니다.",
+      "reapplyHint": "v{{version}}에 내 변경 합치기",
+      "reapplyHintUnknown": "최신 버전에 내 변경 합치기",
       "toast": "더 최신 홈 버전이 있습니다. 현재 초안을 유지했습니다."
+    },
+    "meetingPrep": {
+      "title": "다음 회의 준비",
+      "next": "다음 일정",
+      "fallbackTitle": "다음 회의의 안건과 준비 항목을 확인하세요",
+      "startsAt": "{{time}} 시작",
+      "checks": {
+        "agenda": "안건 확인",
+        "brief": "자료 준비",
+        "room": "장소 점검"
+      },
+      "action": "준비실 열기"
+    },
+    "future": {
+      "title": "나에게 맞춘 협업과 인사이트",
+      "description": "업무 맥락을 이어서 실행할 수 있는 개인화 위젯입니다.",
+      "personalized": "개인화 프리셋",
+      "preview": "연결 예정 미리보기",
+      "loadedEvidence": "검증용 연결 성공",
+      "previewUnavailable": "연결 전 예시입니다. 실행 기능은 제공자 연동 후 사용할 수 있습니다.",
+      "lastVerified": "오늘 08:50",
+      "space": {
+        "eyebrow": "SPACE 변경 피드",
+        "title": "참여 중인 문서의 중요한 변경",
+        "items": {
+          "one": {
+            "title": "운영 전환 체크리스트 v3",
+            "detail": "김지현님이 위험 항목 2개를 보완했습니다."
+          },
+          "two": {
+            "title": "모바일 배포 계획",
+            "detail": "릴리즈 일정과 담당자가 업데이트되었습니다."
+          }
+        },
+        "action": "Space에서 확인"
+      },
+      "meeting": {
+        "eyebrow": "회의 준비와 결정",
+        "title": "출시 점검 회의 · 10:30",
+        "checks": {
+          "agenda": "안건 4개 확인",
+          "brief": "사전 브리프 완료",
+          "room": "회의실 장비 확인"
+        },
+        "decisionLabel": "후속 업무 후보",
+        "decision": "고대비 모드 검증 결과를 배포 체크리스트에 반영",
+        "accept": "내 업무로 수락",
+        "assign": "담당자 지정"
+      },
+      "artifact": {
+        "eyebrow": "DWAI·ON 결과물",
+        "title": "이어 쓸 AI 아티팩트",
+        "document": "2026 하반기 운영 전략 초안",
+        "detail": "근거 8개와 미완성 섹션 2개가 안전하게 보존되어 있습니다.",
+        "saved": "마지막 편집 오늘 08:42",
+        "action": "에디터에서 이어쓰기"
+      },
+      "booking": {
+        "eyebrow": "장소 이용 준비",
+        "title": "포커스 부스 B-14 · 13:00",
+        "detail": "체크인은 예약 10분 전부터 가능합니다. 층 도면과 Wi-Fi 안내를 확인하세요.",
+        "action": "예약과 체크인 보기"
+      },
+      "learning": {
+        "eyebrow": "직무 역량",
+        "title": "필수 교육 진척",
+        "detail": "보안·AI 활용 과정 3/4 완료",
+        "progress": "필수 교육 75% 완료"
+      }
     }
   },
   "apps": {
@@ -719,6 +954,7 @@
     "groupFolder": "{{group}} 폴더",
     "groupApps": "{{group}} 앱",
     "openApp": "{{app}} 열기",
+    "forbiddenApp": "{{app}} 사용 권한 필요",
     "manageApp": "{{app}} 관리",
     "dragApp": "{{app}} 이동",
     "removeApp": "홈에서 제거",
@@ -1101,5 +1337,87 @@
     "terms": "이용약관",
     "help": "헬프 데스크",
     "status": "시스템 상태"
+  },
+  "ownerWidgets": {
+    "regionLabel": "연결된 업무 인사이트",
+    "sourceLabel": "연결된 원천",
+    "title": {
+      "approval": {
+        "focus-queue": "우선 결재함",
+        "my-requests": "내 결재 요청"
+      },
+      "meetings": {
+        "next-prep": "다음 회의 준비",
+        "followup-candidates": "회의 후속 업무 후보"
+      },
+      "notification": {
+        "app-badges": "앱 알림",
+        "response-queue": "응답이 필요한 알림"
+      },
+      "space": {
+        "change-feed": "Space 변경 소식",
+        "response-queue": "Space 요청"
+      },
+      "messaging": {
+        "response-queue": "답변이 필요한 메시지",
+        "change-feed": "최근 메시지 활동"
+      },
+      "hr": {
+        "edu": "필수 학습",
+        "team-pulse": "팀 현황"
+      },
+      "workplace": {
+        "booking": "업무 공간 예약"
+      },
+      "dwaion": {
+        "artifact": "DWAI·ON 산출물"
+      }
+    },
+    "action": { "openSource": "원본 열기" },
+    "metric": {
+      "pending": "대기",
+      "dueToday": "오늘 마감",
+      "overdue": "기한 초과",
+      "inFlight": "진행 중",
+      "meetingsToday": "오늘 회의",
+      "meetingMinutes": "회의 시간",
+      "totalUnread": "읽지 않음",
+      "urgentUnread": "긴급",
+      "unreadSignals": "읽지 않은 변경",
+      "pendingRequests": "대기 요청",
+      "reviewQueue": "검토 필요",
+      "unreadConversations": "읽지 않은 대화",
+      "mentions": "멘션",
+      "requiredLearning": "필수 학습",
+      "activeGoals": "진행 목표",
+      "teamPending": "팀 대기",
+      "teamTimePending": "근태 요청",
+      "teamAbsencePending": "휴가 요청",
+      "visibleBookings": "표시 예약",
+      "visibleArtifacts": "표시 산출물"
+    },
+    "meta": {
+      "attendees": "참석자 {{count}}명",
+      "unread": "읽지 않음 {{count}}건",
+      "actionable": "조치 필요 {{count}}건",
+      "urgent": "긴급 {{count}}건",
+      "bookingLocation": "{{site}} · {{floor}}"
+    },
+    "empty": { "verified": "최신 상태를 확인했습니다" }
+  },
+  "widgetRuntime": {
+    "unavailableLabel": "{{label}}을(를) 사용할 수 없음",
+    "unavailableTitle": "이 위젯을 사용할 수 없습니다",
+    "deprecatedNotice": "지원 종료 예정인 배치 위젯입니다. 계속 읽을 수 있지만 새로 추가하거나 복원할 수 없습니다.",
+    "reasons": {
+      "NOT_AVAILABLE": "등록된 버전을 더 이상 사용할 수 없습니다.",
+      "DISABLED_BY_ORGANIZATION": "조직에서 이 위젯을 사용 중지했습니다.",
+      "APP_ACCESS_REQUIRED": "원천 앱 접근 권한이 필요합니다.",
+      "INCOMPATIBLE": "현재 홈 호스트와 호환되지 않는 위젯입니다.",
+      "TEMPORARILY_UNAVAILABLE": "안전 또는 가용성 통제로 위젯이 일시 중지되었습니다.",
+      "DEPRECATED": "지원 종료 예정인 위젯입니다.",
+      "AVAILABLE": "사용 가능한 위젯입니다.",
+      "ALREADY_ADDED": "홈에 이미 추가된 위젯입니다."
+    }
   }
 }

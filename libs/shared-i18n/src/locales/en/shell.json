@@ -20,14 +20,29 @@
     "expand": "Expand navigation",
     "collapse": "Collapse navigation",
     "items": {
+      "home": "Home",
       "work": "Work",
+      "approvals": "Approvals",
       "ask": "DWAI·ON",
       "activity": "Activity",
+      "communications": "Communications",
+      "calendar": "Calendar",
+      "spaces": "Spaces",
       "hcm": "HR",
       "hris": "HR",
       "people": "People",
       "workforce": "Workforce management",
-      "apps": "Apps"
+      "apps": "Apps",
+      "classicOverview": "Overview",
+      "classicDesks": "Desks",
+      "classicRooms": "Rooms",
+      "classicDirectory": "Directory",
+      "classicTelemetry": "Telemetry",
+      "flowToday": "Today",
+      "flowSchedule": "Schedule",
+      "flowSpaces": "Spaces",
+      "flowTasks": "Tasks",
+      "flowTelemetry": "Telemetry"
     }
   },
   "messaging": {

@@ -99,16 +99,30 @@ describe('Home page runtime state', () => {
       resolveHomeDeviceClass({
         editPreviewActive: true,
         previewDevice: 'mobile',
-        runtimeMobile: false,
+        availableWidth: 1808,
       })
-    ).toBe('MOBILE');
+    ).toBe('MOBILE_STANDARD');
     expect(
       resolveHomeDeviceClass({
         editPreviewActive: false,
         previewDevice: 'desktop',
-        runtimeMobile: true,
+        availableWidth: 390,
       })
-    ).toBe('MOBILE');
+    ).toBe('MOBILE_STANDARD');
+    expect(
+      resolveHomeDeviceClass({
+        editPreviewActive: false,
+        previewDevice: 'desktop',
+        availableWidth: 320,
+      })
+    ).toBe('MOBILE_COMPACT');
+    expect(
+      resolveHomeDeviceClass({
+        editPreviewActive: false,
+        previewDevice: 'mobile',
+        availableWidth: 1808,
+      })
+    ).toBe('DESKTOP_WIDE');
   });
 
   it('resolves localized copy through exact, language, default, and global fallbacks', () => {

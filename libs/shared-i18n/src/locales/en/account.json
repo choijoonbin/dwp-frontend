@@ -1,236 +1,16 @@
 {
-  "shell": {
-    "title": "Settings",
-    "personalSettings": "Personal workspace",
-    "providerSettings": "Provider operator settings",
-    "accountFallback": "Account",
-    "navigationLabel": "Settings navigation",
-    "openNavigation": "Open settings navigation",
-    "backToProvider": "Back to Provider Control Plane",
-    "backToWorkspace": "Back to workspace",
-    "groups": {
-      "account": "Account",
-      "preferences": "Preferences",
-      "organization": "Organization"
-    }
-  },
-  "navigation": {
-    "profile": "Profile",
-    "security": "Security & sessions",
-    "appearance": "Appearance",
-    "accessibility": "Accessibility",
-    "language": "Language & region",
-    "home": "Home workspace",
-    "notifications": "Notifications",
-    "managed": "Managed settings"
-  },
-  "settingsHome": {
-    "eyebrow": "My account",
-    "title": "Personal settings",
-    "description": "Search and manage your account, security, display, and work preferences.",
-    "providerDescription": "Manage the personal experience and security settings allowed for your Provider operator account.",
-    "providerBoundary": "Customer tenant home, notification, and organization-managed values are not shown in these account settings.",
-    "availableCount": "{{count}} available in this scope",
-    "searchLabel": "Search personal settings",
-    "searchPlaceholder": "Search security, language, notifications, and more",
-    "searchHelp": "Only settings available to your current identity and scope are searched.",
-    "emptyTitle": "No settings match",
-    "emptyDescription": "Use fewer words or try a different term.",
-    "items": {
-      "profile": "Review the authoritative sources and scope of your profile.",
-      "security": "Review sign-in policy, active sessions, and temporary privileged access.",
-      "appearance": "Choose color mode and working density.",
-      "accessibility": "Adjust contrast, motion, and persistent link cues.",
-      "language": "Choose product language, time zone, and date and number formats.",
-      "home": "Manage the apps and widgets on your personal home.",
-      "notifications": "Manage channels, focus time, and per-app delivery rules.",
-      "managed": "Review organization-managed values and supported exception requests."
-    },
-    "keywords": {
-      "profile": "account personal data source HR IdP",
-      "security": "MFA passkey sign-in session JIT privileged",
-      "appearance": "theme dark light density",
-      "accessibility": "high contrast reduce motion links",
-      "language": "region time zone date number format",
-      "home": "home apps widgets",
-      "notifications": "notifications channels focus quiet hours",
-      "managed": "organization policy exception effective value"
-    }
-  },
-  "sections": {
-    "appearance": {
-      "title": "Appearance",
-      "description": "Choose how Digital Workplace looks and fits your workflow.",
-      "groupTitle": "Display and layout",
-      "groupDescription": "These preferences are saved to your account and follow you across devices.",
-      "providerGroupDescription": "These provider operator preferences are stored only in this browser and never change a customer tenant's settings."
-    },
-    "accessibility": {
-      "title": "Accessibility",
-      "description": "Adjust visual clarity and motion for a more comfortable experience.",
-      "groupTitle": "Visual and motion preferences",
-      "groupDescription": "Changes take effect immediately across Digital Workplace."
-    },
-    "language": {
-      "title": "Language & region",
-      "description": "Choose the language used for navigation, actions, and messages.",
-      "groupTitle": "Display language",
-      "groupDescription": "Your choice is saved to your account and follows you across sessions."
-    },
-    "home": {
-      "title": "Home workspace",
-      "description": "Organize the apps and information shown on your personal home.",
-      "groupTitle": "Personal home",
-      "groupDescription": "Open the home editor to arrange apps and widgets."
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Manage channels, quiet hours, and per-app delivery rules."
-    },
-    "managed": {
-      "title": "Managed settings",
-      "description": "Review organization-managed experience defaults and exception requests.",
-      "notice": "These values are managed by {{owner}}. If work requires a different value, request an exception with evidence and impact.",
-      "groupTitle": "Organization defaults",
-      "groupDescription": "Managed values keep the experience consistent across your workspace."
-    }
-  },
-  "settings": {
-    "colorMode": {
-      "title": "Color mode",
-      "description": "Follow your system or choose a fixed light or dark appearance."
-    },
-    "density": {
-      "title": "Interface density",
-      "description": "Adjust spacing in operational controls and information lists.",
-      "ariaLabel": "Interface density"
-    },
-    "highContrast": {
-      "title": "High contrast",
-      "description": "Increase boundaries and text contrast throughout the interface."
-    },
-    "reduceMotion": {
-      "title": "Reduce motion",
-      "description": "Minimize nonessential transitions and interface movement."
-    },
-    "underlineLinks": {
-      "title": "Always underline links",
-      "description": "Add a persistent visual cue so links do not rely on color alone."
-    },
-    "reduceTransparency": {
-      "title": "Reduce transparency",
-      "description": "Remove translucent backgrounds and backdrop effects for clearer boundaries."
-    },
-    "language": {
-      "title": "Product language",
-      "description": "Change the language used by Digital Workplace."
-    },
-    "timeZone": {
-      "title": "Time zone",
-      "description": "Display dates and activity times in your preferred IANA time zone."
-    },
-    "dateFormat": {
-      "title": "Date format",
-      "description": "Choose a consistent date order for lists, details, and exports."
-    },
-    "timeFormat": {
-      "title": "Time format",
-      "description": "Use your language default or choose a 12- or 24-hour clock."
-    },
-    "firstDayOfWeek": {
-      "title": "First day of week",
-      "description": "Set the week boundary used by calendars and date ranges."
-    },
-    "numberFormat": {
-      "title": "Number format",
-      "description": "Choose the grouping and decimal separators used for numeric values."
-    },
-    "homeWorkspace": {
-      "title": "Apps and widgets",
-      "description": "Choose what appears on your home workspace and how it is arranged."
-    },
-    "productFont": {
-      "title": "Product font"
-    },
-    "brandAccent": {
-      "title": "Brand accent",
-      "ariaLabel": "Brand color {{color}}"
-    },
-    "navigationPattern": {
-      "title": "Navigation pattern"
-    },
-    "policySource": {
-      "title": "Policy source",
-      "description": "The tenant experience policy that supplies organization-managed defaults."
-    },
-    "policyOwner": {
-      "title": "Policy owner",
-      "description": "Contact this role when a managed setting needs to be reviewed."
-    }
-  },
-  "options": {
-    "colorMode": {
-      "system": "System",
-      "light": "Light",
-      "dark": "Dark"
-    },
-    "density": {
-      "compact": "Compact",
-      "standard": "Standard",
-      "comfortable": "Comfortable"
-    },
-    "navigationPattern": {
-      "sidebar": "Sidebar",
-      "rail": "Compact rail",
-      "top": "Top navigation"
-    },
-    "timeZone": {
-      "system": "System time zone",
-      "UTC": "UTC",
-      "Asia_Seoul": "Seoul (UTC+09:00)",
-      "Asia_Tokyo": "Tokyo (UTC+09:00)",
-      "Asia_Singapore": "Singapore (UTC+08:00)",
-      "Europe_London": "London",
-      "America_New_York": "New York",
-      "America_Los_Angeles": "Los Angeles"
-    },
-    "dateFormat": {
-      "locale": "Language default",
-      "iso": "2026-08-12",
-      "month_first": "08/12/2026",
-      "day_first": "12/08/2026"
-    },
-    "timeFormat": {
-      "locale": "Language default",
-      "12_hour": "12-hour",
-      "24_hour": "24-hour"
-    },
-    "firstDayOfWeek": {
-      "locale": "Language default",
-      "monday": "Monday",
-      "sunday": "Sunday"
-    },
-    "numberFormat": {
-      "locale": "Language default",
-      "comma_decimal": "1,234.56",
-      "dot_decimal": "1.234,56",
-      "space_decimal": "1 234,56"
-    }
-  },
   "actions": {
     "resetPreferences": "Reset preferences",
     "editHome": "Edit home"
   },
-  "personalPreferences": {
-    "loading": "Loading your personal preferences",
-    "loadError": "Your account preferences could not be loaded. Cached settings remain active, and changes are disabled until the service is available.",
-    "retry": "Retry",
-    "saveError": "Your personal preference could not be saved. The last confirmed settings have been restored.",
-    "autoSave": "Changes save automatically",
-    "saving": "Saving changes",
-    "saved": "Saved {{time}}",
-    "justNow": "just now",
-    "saveStateError": "Changes were not saved"
+  "homeSettings": {
+    "eyebrow": "Personal workspace",
+    "title": "Home settings",
+    "description": "Create and edit saved homes, tune each device layout, apply templates, and restore a previous revision without leaving account settings.",
+    "mode": {
+      "CLASSIC": "Classic mode",
+      "FLOW_V1": "Flow mode"
+    }
   },
   "labels": {
     "managed": "Managed"
@@ -288,6 +68,76 @@
         "failed": "The exception request operation could not be completed."
       }
     }
+  },
+  "navigation": {
+    "profile": "Profile",
+    "security": "Security & sessions",
+    "appearance": "Appearance",
+    "accessibility": "Accessibility",
+    "language": "Language & region",
+    "home": "Home workspace",
+    "notifications": "Notifications",
+    "managed": "Managed settings"
+  },
+  "options": {
+    "colorMode": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "density": {
+      "compact": "Compact",
+      "standard": "Standard",
+      "comfortable": "Comfortable"
+    },
+    "navigationPattern": {
+      "sidebar": "Sidebar",
+      "rail": "Compact rail",
+      "top": "Top navigation"
+    },
+    "timeZone": {
+      "system": "System time zone",
+      "UTC": "UTC",
+      "Asia_Seoul": "Seoul (UTC+09:00)",
+      "Asia_Tokyo": "Tokyo (UTC+09:00)",
+      "Asia_Singapore": "Singapore (UTC+08:00)",
+      "Europe_London": "London",
+      "America_New_York": "New York",
+      "America_Los_Angeles": "Los Angeles"
+    },
+    "dateFormat": {
+      "locale": "Language default",
+      "iso": "2026-08-12",
+      "month_first": "08/12/2026",
+      "day_first": "12/08/2026"
+    },
+    "timeFormat": {
+      "locale": "Language default",
+      "12_hour": "12-hour",
+      "24_hour": "24-hour"
+    },
+    "firstDayOfWeek": {
+      "locale": "Language default",
+      "monday": "Monday",
+      "sunday": "Sunday"
+    },
+    "numberFormat": {
+      "locale": "Language default",
+      "comma_decimal": "1,234.56",
+      "dot_decimal": "1.234,56",
+      "space_decimal": "1 234,56"
+    }
+  },
+  "personalPreferences": {
+    "loading": "Loading your personal preferences",
+    "loadError": "Your account preferences could not be loaded. Cached settings remain active, and changes are disabled until the service is available.",
+    "retry": "Retry",
+    "saveError": "Your personal preference could not be saved. The last confirmed settings have been restored.",
+    "autoSave": "Changes save automatically",
+    "saving": "Saving changes",
+    "saved": "Saved {{time}}",
+    "justNow": "just now",
+    "saveStateError": "Changes were not saved"
   },
   "preview": {
     "live": "Live preview",
@@ -347,6 +197,44 @@
       "identityRealm": "DWP provider control plane",
       "governanceTitle": "Provider identity data is centrally governed",
       "governanceDescription": "Name, title, email, and provider role changes must be made in the provider identity service. No customer workforce or tenant profile is exposed here."
+    }
+  },
+  "sections": {
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose how Digital Workplace looks and fits your workflow.",
+      "groupTitle": "Display and layout",
+      "groupDescription": "These preferences are saved to your account and follow you across devices.",
+      "providerGroupDescription": "These provider operator preferences are stored only in this browser and never change a customer tenant's settings."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "description": "Adjust visual clarity and motion for a more comfortable experience.",
+      "groupTitle": "Visual and motion preferences",
+      "groupDescription": "Changes take effect immediately across Digital Workplace."
+    },
+    "language": {
+      "title": "Language & region",
+      "description": "Choose the language used for navigation, actions, and messages.",
+      "groupTitle": "Display language",
+      "groupDescription": "Your choice is saved to your account and follows you across sessions."
+    },
+    "home": {
+      "title": "Home workspace",
+      "description": "Organize the apps and information shown on your personal home.",
+      "groupTitle": "Personal home",
+      "groupDescription": "Open the home editor to arrange apps and widgets."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage channels, quiet hours, and per-app delivery rules."
+    },
+    "managed": {
+      "title": "Managed settings",
+      "description": "Review organization-managed experience defaults and exception requests.",
+      "notice": "These values are managed by {{owner}}. If work requires a different value, request an exception with evidence and impact.",
+      "groupTitle": "Organization defaults",
+      "groupDescription": "Managed values keep the experience consistent across your workspace."
     }
   },
   "security": {
@@ -463,6 +351,127 @@
       "othersDescription_other": "This will sign out {{count}} other active sessions.",
       "currentDescription": "You will be returned to the sign-in screen.",
       "sessionDescription": "This browser will need to sign in again."
+    }
+  },
+  "settings": {
+    "colorMode": {
+      "title": "Color mode",
+      "description": "Follow your system or choose a fixed light or dark appearance."
+    },
+    "density": {
+      "title": "Interface density",
+      "description": "Adjust spacing in operational controls and information lists.",
+      "ariaLabel": "Interface density"
+    },
+    "highContrast": {
+      "title": "High contrast",
+      "description": "Increase boundaries and text contrast throughout the interface."
+    },
+    "reduceMotion": {
+      "title": "Reduce motion",
+      "description": "Minimize nonessential transitions and interface movement."
+    },
+    "underlineLinks": {
+      "title": "Always underline links",
+      "description": "Add a persistent visual cue so links do not rely on color alone."
+    },
+    "reduceTransparency": {
+      "title": "Reduce transparency",
+      "description": "Remove translucent backgrounds and backdrop effects for clearer boundaries."
+    },
+    "language": {
+      "title": "Product language",
+      "description": "Change the language used by Digital Workplace."
+    },
+    "timeZone": {
+      "title": "Time zone",
+      "description": "Display dates and activity times in your preferred IANA time zone."
+    },
+    "dateFormat": {
+      "title": "Date format",
+      "description": "Choose a consistent date order for lists, details, and exports."
+    },
+    "timeFormat": {
+      "title": "Time format",
+      "description": "Use your language default or choose a 12- or 24-hour clock."
+    },
+    "firstDayOfWeek": {
+      "title": "First day of week",
+      "description": "Set the week boundary used by calendars and date ranges."
+    },
+    "numberFormat": {
+      "title": "Number format",
+      "description": "Choose the grouping and decimal separators used for numeric values."
+    },
+    "homeWorkspace": {
+      "title": "Apps and widgets",
+      "description": "Choose what appears on your home workspace and how it is arranged."
+    },
+    "productFont": {
+      "title": "Product font"
+    },
+    "brandAccent": {
+      "title": "Brand accent",
+      "ariaLabel": "Brand color {{color}}"
+    },
+    "navigationPattern": {
+      "title": "Navigation pattern"
+    },
+    "policySource": {
+      "title": "Policy source",
+      "description": "The tenant experience policy that supplies organization-managed defaults."
+    },
+    "policyOwner": {
+      "title": "Policy owner",
+      "description": "Contact this role when a managed setting needs to be reviewed."
+    }
+  },
+  "settingsHome": {
+    "eyebrow": "My account",
+    "title": "Personal settings",
+    "description": "Search and manage your account, security, display, and work preferences.",
+    "providerDescription": "Manage the personal experience and security settings allowed for your Provider operator account.",
+    "providerBoundary": "Customer tenant home, notification, and organization-managed values are not shown in these account settings.",
+    "availableCount": "{{count}} available in this scope",
+    "searchLabel": "Search personal settings",
+    "searchPlaceholder": "Search security, language, notifications, and more",
+    "searchHelp": "Only settings available to your current identity and scope are searched.",
+    "emptyTitle": "No settings match",
+    "emptyDescription": "Use fewer words or try a different term.",
+    "items": {
+      "profile": "Review the authoritative sources and scope of your profile.",
+      "security": "Review sign-in policy, active sessions, and temporary privileged access.",
+      "appearance": "Choose color mode and working density.",
+      "accessibility": "Adjust contrast, motion, and persistent link cues.",
+      "language": "Choose product language, time zone, and date and number formats.",
+      "home": "Manage the apps and widgets on your personal home.",
+      "notifications": "Manage channels, focus time, and per-app delivery rules.",
+      "managed": "Review organization-managed values and supported exception requests."
+    },
+    "keywords": {
+      "profile": "account personal data source HR IdP",
+      "security": "MFA passkey sign-in session JIT privileged",
+      "appearance": "theme dark light density",
+      "accessibility": "high contrast reduce motion links",
+      "language": "region time zone date number format",
+      "home": "home apps widgets",
+      "notifications": "notifications channels focus quiet hours",
+      "managed": "organization policy exception effective value"
+    }
+  },
+  "shell": {
+    "title": "Settings",
+    "personalSettings": "Personal workspace",
+    "providerSettings": "Provider operator settings",
+    "accountFallback": "Account",
+    "navigationLabel": "Settings navigation",
+    "openNavigation": "Open settings navigation",
+    "backToProvider": "Back to Provider Control Plane",
+    "backToWorkspace": "Back to workspace",
+    "groups": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "organization": "Organization"
     }
   }
 }

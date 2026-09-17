@@ -1,4 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import {
+  HOME_CONTRACT_CAPABILITIES,
+  createHomeModeLayouts,
+  hasHomeContractCapability,
+} from '@dwp-frontend/shared-utils';
 
 import { WORKSPACE_WIDGET_SIZE_POLICY } from '../../components/workspace-composer/workspace-widget-layout-policy';
 import { HOME_WIDGET_KEYS, HOME_WIDGET_REGISTRY } from './home-widget-registry';
@@ -7,6 +12,7 @@ import {
   HOME_PERSONAL_ZONE_KEYS,
   defaultHomeCompositionPolicy,
   governedHomeZone,
+  homeCompositionPolicyWritePayload,
   isFlowHomeVariant,
   reconcileHomeCompositionPolicy,
 } from './home-composition-policy';
@@ -30,6 +36,7 @@ describe('home composition policy', () => {
     expect(WORKSPACE_WIDGET_SIZE_POLICY[commandRail!.defaultSize].lg).toBe(40);
     expect(announcements.height).toBe('short');
     expect(commandRail!.defaultHeight).toBe('short');
+    expect(policy.modeLayouts).toEqual(createHomeModeLayouts());
   });
 
   it('reconciles malformed client data back to the versioned governed contract', () => {
@@ -49,7 +56,7 @@ describe('home composition policy', () => {
       ],
     });
 
-    expect(policy.schemaVersion).toBe(3);
+    expect(policy.schemaVersion).toBe(4);
     expect(policy.experienceVariant).toBe('CLASSIC');
     expect(policy.personalCustomizationEnabled).toBe(false);
     expect(governedHomeZone(policy, 'announcements')).toMatchObject({
@@ -68,9 +75,20 @@ describe('home composition policy', () => {
       reconcileHomeCompositionPolicy({ schemaVersion: 2, governedZones: [] })
         .personalCustomizationEnabled
     ).toBe(false);
+    expect(
+      reconcileHomeCompositionPolicy({
+        schemaVersion: 4,
+        experienceVariant: 'FLOW_V1',
+        personalCustomizationEnabled: true,
+        governedZones: [],
+      })
+    ).toMatchObject({
+      personalCustomizationEnabled: false,
+      modeLayouts: createHomeModeLayouts(),
+    });
   });
 
-  it('only enables Flow Home for an explicit, valid v3 tenant variant', () => {
+  it('migrates an explicit v3 Flow policy to v4 without changing its mode', () => {
     expect(
       isFlowHomeVariant(
         reconcileHomeCompositionPolicy({
@@ -78,6 +96,52 @@ describe('home composition policy', () => {
           experienceVariant: 'FLOW_V1',
           personalCustomizationEnabled: true,
           governedZones: [],
+        })
+      )
+    ).toBe(true);
+    expect(
+      reconcileHomeCompositionPolicy({
+        schemaVersion: 3,
+        experienceVariant: 'FLOW_V1',
+        personalCustomizationEnabled: true,
+        governedZones: [],
+      })
+    ).toMatchObject({
+      schemaVersion: 4,
+      experienceVariant: 'FLOW_V1',
+      modeLayouts: createHomeModeLayouts(),
+    });
+  });
+
+  it('only serializes v4 after the backend advertises the Wave 1 contract', () => {
+    const policy = defaultHomeCompositionPolicy();
+    const partialCapabilities = {
+      homeContractCapabilities: [HOME_CONTRACT_CAPABILITIES.modeScopedViews],
+    };
+    const compositionV4Supported = hasHomeContractCapability(
+      partialCapabilities,
+      HOME_CONTRACT_CAPABILITIES.compositionV4
+    );
+    const legacyPayload = homeCompositionPolicyWritePayload(policy, compositionV4Supported);
+
+    expect(compositionV4Supported).toBe(false);
+    expect(legacyPayload.schemaVersion).toBe(3);
+    expect(legacyPayload).not.toHaveProperty('modeLayouts');
+    expect(homeCompositionPolicyWritePayload(policy, true)).toMatchObject({
+      schemaVersion: 4,
+      modeLayouts: createHomeModeLayouts(),
+    });
+  });
+
+  it('only enables Flow Home for an explicit valid versioned tenant variant', () => {
+    expect(
+      isFlowHomeVariant(
+        reconcileHomeCompositionPolicy({
+          schemaVersion: 4,
+          experienceVariant: 'FLOW_V1',
+          personalCustomizationEnabled: true,
+          governedZones: [],
+          modeLayouts: createHomeModeLayouts(),
         })
       )
     ).toBe(true);
@@ -92,7 +156,7 @@ describe('home composition policy', () => {
     ).toBe(false);
     expect(
       reconcileHomeCompositionPolicy({
-        schemaVersion: 3,
+        schemaVersion: 4,
         experienceVariant: 'UNKNOWN',
         personalCustomizationEnabled: true,
         governedZones: [],

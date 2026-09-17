@@ -149,7 +149,11 @@
     "ENTERPRISE": "엔터프라이즈",
     "REGULATED": "규제 산업"
   },
-  "isolation": { "POOL": "공유 풀", "BRIDGE": "브리지", "SILO": "완전 격리" },
+  "isolation": {
+    "POOL": "공유 풀",
+    "BRIDGE": "브리지",
+    "SILO": "완전 격리"
+  },
   "states": {
     "ALL": "전체",
     "PROVISIONING": "구성 중",
@@ -351,7 +355,11 @@
       }
     }
   },
-  "domainTypes": { "LOGIN": "로그인", "EMAIL": "이메일", "CUSTOM": "사용자 지정" },
+  "domainTypes": {
+    "LOGIN": "로그인",
+    "EMAIL": "이메일",
+    "CUSTOM": "사용자 지정"
+  },
   "operationTypes": {
     "TENANT_ONBOARD": "테넌트 온보딩",
     "TENANT_UPGRADE": "테넌트 업그레이드",
@@ -368,9 +376,16 @@
       "openOperations": "열린 작업",
       "supportSessions": "활성 지원 세션"
     },
-    "attention": { "title": "조치 필요", "empty": "조치가 필요한 작업이 없습니다." },
-    "regions": { "title": "리전 분포" },
-    "recentTenants": { "title": "최근 테넌트" }
+    "attention": {
+      "title": "조치 필요",
+      "empty": "조치가 필요한 작업이 없습니다."
+    },
+    "regions": {
+      "title": "리전 분포"
+    },
+    "recentTenants": {
+      "title": "최근 테넌트"
+    }
   },
   "command": {
     "state": {
@@ -598,7 +613,9 @@
       "onboarding": "온보딩",
       "state": "수명주기"
     },
-    "actions": { "onboard": "회사 온보딩" },
+    "actions": {
+      "onboard": "회사 온보딩"
+    },
     "onboardingCatalogUnavailable": "고객 자산은 계속 확인할 수 있지만, 권한 및 리전 카탈로그가 복구될 때까지 온보딩은 비활성화됩니다.",
     "empty": {
       "firstUseTitle": "아직 관리 중인 테넌트가 없습니다",
@@ -685,10 +702,22 @@
       "title": "통제 경로",
       "description": "모든 변경은 동일한 계획, 승인, 실행, 복구 통제를 따릅니다.",
       "stages": {
-        "PLAN": { "title": "계획 고정", "detail": "영향과 실행 단계를 해시로 고정" },
-        "GATE": { "title": "독립 승인", "detail": "위험별 역할과 직무 분리 검증" },
-        "EXECUTE": { "title": "통제 실행", "detail": "단계별 멱등 실행과 상태 기록" },
-        "RECOVER": { "title": "증적 기반 복구", "detail": "실패 단계부터 사유를 남기고 재시도" }
+        "PLAN": {
+          "title": "계획 고정",
+          "detail": "영향과 실행 단계를 해시로 고정"
+        },
+        "GATE": {
+          "title": "독립 승인",
+          "detail": "위험별 역할과 직무 분리 검증"
+        },
+        "EXECUTE": {
+          "title": "통제 실행",
+          "detail": "단계별 멱등 실행과 상태 기록"
+        },
+        "RECOVER": {
+          "title": "증적 기반 복구",
+          "detail": "실패 단계부터 사유를 남기고 재시도"
+        }
       }
     },
     "filterLabel": "작업 상태 필터",
@@ -771,8 +800,12 @@
       "REJECTED": "거절"
     },
     "dialog": {
-      "APPROVED": { "title": "변경 승인" },
-      "REJECTED": { "title": "변경 거절" }
+      "APPROVED": {
+        "title": "변경 승인"
+      },
+      "REJECTED": {
+        "title": "변경 거절"
+      }
     },
     "completed": {
       "APPROVED": "변경을 승인했습니다.",
@@ -1081,7 +1114,10 @@
       "scope": "실제 범위 · {{value}}",
       "reason": "거부 사유 · {{value}}",
       "correlation": "정규 상관 ID · {{value}}",
-      "decision": { "ALLOW": "허용", "DENY": "거부" },
+      "decision": {
+        "ALLOW": "허용",
+        "DENY": "거부"
+      },
       "anomaly": {
         "DENIED_ATTEMPTS": "거부된 명령 시도",
         "MALFORMED_EVIDENCE": "분류할 수 없거나 손상된 감사 증거",
@@ -1262,8 +1298,12 @@
     "decision": {
       "description": "{{company}} 리비전 {{revision}}의 계약 기간, 제품 권한 영향과 고객 증거를 검토한 후 결정합니다.",
       "reasonHelp": "독립 의사결정의 증거와 정책 근거를 기록합니다.",
-      "approve": { "title": "갱신안 승인" },
-      "reject": { "title": "갱신안 거절" }
+      "approve": {
+        "title": "갱신안 승인"
+      },
+      "reject": {
+        "title": "갱신안 거절"
+      }
     },
     "publish": {
       "title": "승인된 계약 변경 게시",
@@ -1311,7 +1351,11 @@
       "rawCode": "증거 원문 코드",
       "snapshot": "비식별화된 이벤트 스냅샷"
     },
-    "outcomes": { "SUCCESS": "성공", "FAILED": "실패", "DENIED": "거부" }
+    "outcomes": {
+      "SUCCESS": "성공",
+      "FAILED": "실패",
+      "DENIED": "거부"
+    }
   },
   "contractSurfaces": {
     "label": "제품 계약 영역",
@@ -1387,6 +1431,46 @@
     "revocation": {
       "title": "목표 Fail-closed 회수 계약",
       "description": "동적 회수는 아직 연결되지 않았습니다. 출시 증거가 되려면 서버 Registry가 테넌트나 사용자 설정과 무관하게 영향 인스턴스를 중지해야 합니다."
+    },
+    "controlPlane": {
+      "loading": "위젯 레지스트리 준비 상태를 불러오는 중",
+      "unavailable": "위젯 레지스트리 제어면을 사용할 수 없습니다",
+      "unavailableDescription": "완전한 레지스트리 기능 계약이 확인될 때까지 정의 및 릴리스 작업을 닫아 둡니다.",
+      "retry": "위젯 레지스트리 다시 시도",
+      "catalogLoading": "Provider 위젯 정의를 불러오는 중",
+      "catalogFailed": "Provider 위젯 정의를 불러오지 못했습니다",
+      "catalogFailedDescription": "레지스트리를 사용할 수 없는 동안 수명주기나 인증 상태를 추정하지 않습니다.",
+      "shadowTitle": "위젯 제어면이 섀도 모드입니다",
+      "shadowDescription": "정의, 불변 버전, 증거, 영향 및 감사를 조회할 수 있습니다. 게시, 차단, 지원 종료 및 롤백은 비활성화되며 홈은 정적 카탈로그를 계속 사용합니다.",
+      "activeTitle": "권한원 위젯 제어면",
+      "activeDescription": "활성화된 레지스트리 계약이 릴리스와 실행 판정을 담당합니다.",
+      "resultCount_one": "권한원 정의 {{count}}개",
+      "resultCount_other": "권한원 정의 {{count}}개",
+      "definitionState": {
+        "ACTIVE": "활성",
+        "RETIRED": "폐기"
+      },
+      "certified": "현재 증거 게이트 통과",
+      "evidenceIncomplete": "인증 증거 미완료",
+      "noLegacyKey": "레거시 바인딩 없음",
+      "versionTitle": "최신 불변 버전",
+      "versionLoading": "버전 불러오는 중",
+      "versionEmpty": "등록된 버전이 없습니다.",
+      "evidenceTitle": "인증 증거",
+      "evidenceSummary": "필수 증거 범주 {{required}}개 중 {{passed}}개가 현재 통과 상태입니다.",
+      "impactTitle": "테넌트 및 인스턴스 영향",
+      "impactSummary": "테넌트 {{tenants}}곳과 기존 인스턴스 {{instances}}개에 영향이 있습니다.",
+      "impactShadow": "섀도 모드에서는 영향 미리보기만 읽을 수 있습니다.",
+      "impactUnavailable": "영향 미리보기를 사용할 수 없습니다.",
+      "shadowMutationDisabled": "레지스트리 마이그레이션 모드가 SHADOW인 동안 변경 작업을 사용할 수 없습니다.",
+      "actions": {
+        "publish": "게시",
+        "block": "차단",
+        "deprecate": "지원 종료",
+        "rollback": "롤백"
+      },
+      "auditTitle": "레지스트리 감사 이벤트",
+      "auditEmpty": "레지스트리 이벤트가 없습니다."
     }
   },
   "codeContracts": {
@@ -1809,12 +1893,23 @@
       "entitlements": "제품 권한",
       "entitlementsDetail": "구성 스키마 v{{schema}}"
     },
-    "metrics": { "services": "정상 서비스", "authTenant": "인증 테넌트 ID" },
-    "organization": { "title": "회사 및 환경 정보" },
+    "metrics": {
+      "services": "정상 서비스",
+      "authTenant": "인증 테넌트 ID"
+    },
+    "organization": {
+      "title": "회사 및 환경 정보"
+    },
     "lifecycle": {
       "updated": "테넌트 수명주기를 변경했습니다.",
-      "ACTIVE": { "title": "테넌트 활성화", "action": "활성화" },
-      "SUSPENDED": { "title": "테넌트 일시중지", "action": "일시중지" }
+      "ACTIVE": {
+        "title": "테넌트 활성화",
+        "action": "활성화"
+      },
+      "SUSPENDED": {
+        "title": "테넌트 일시중지",
+        "action": "일시중지"
+      }
     },
     "services": {
       "title": "서비스 프로비저닝",

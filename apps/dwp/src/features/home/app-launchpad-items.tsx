@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { DragOverlay, useDroppable } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Folder, Minus } from 'lucide-react';
+import { Folder, LockKeyhole, Minus } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -158,6 +158,7 @@ function SortableItemShell({
 
 type AppTileProps = {
   app: HomeAppDefinition;
+  disabled?: boolean;
   groupId: HomeAppGroupId;
   immersive: boolean;
   editing: boolean;
@@ -176,6 +177,7 @@ type AppTileProps = {
 
 export function AppTile({
   app,
+  disabled = false,
   groupId,
   immersive,
   editing,
@@ -199,7 +201,7 @@ export function AppTile({
       groupId={groupId}
       activeId={activeId}
       canReceiveApp={activeIsApp}
-      dragDisabled={dragDisabled}
+      dragDisabled={dragDisabled || disabled}
       previewSlot={previewSlot}
       detachedOrigin={detachedOrigin}
       label={app.name}
@@ -207,10 +209,13 @@ export function AppTile({
       {({ targetRef, targetActive, activatorRef, activatorAttributes, activatorListeners }) => (
         <>
           <ButtonBase
+            component="button"
+            type="button"
             ref={activatorRef}
+            disabled={disabled}
             disableRipple
-            {...(editing ? activatorAttributes : {})}
-            {...(activatorListeners as DOMAttributes<HTMLButtonElement>)}
+            {...(editing && !disabled ? activatorAttributes : {})}
+            {...(!disabled ? (activatorListeners as DOMAttributes<HTMLButtonElement>) : {})}
             onKeyDown={(event) => {
               if (onOpenContextMenu && isLaunchpadContextMenuKeyboardEvent(event)) {
                 event.preventDefault();
@@ -233,17 +238,21 @@ export function AppTile({
               onOpenContextMenu(app.id, { top: event.clientY, left: event.clientX });
             }}
             data-launchpad-tile
+            data-launchpad-app-disabled={disabled ? app.id : undefined}
             aria-label={
-              editing
-                ? t('launchpad.dragApp', { app: app.name })
-                : t(app.managementOnly ? 'launchpad.manageApp' : 'launchpad.openApp', {
-                    app: app.name,
-                  })
+              disabled
+                ? t('launchpad.forbiddenApp', { app: app.name })
+                : editing
+                  ? t('launchpad.dragApp', { app: app.name })
+                  : t(app.managementOnly ? 'launchpad.manageApp' : 'launchpad.openApp', {
+                      app: app.name,
+                    })
             }
             onClick={() => {
-              if (!editing && !suppressLaunch.current) onLaunch(app);
+              if (!disabled && !editing && !suppressLaunch.current) onLaunch(app);
             }}
-            sx={launchpadTileSx(editing, motionDelayMs)}
+            title={disabled ? t('launchpad.forbiddenApp', { app: app.name }) : undefined}
+            sx={launchpadTileSx(editing, motionDelayMs, disabled)}
           >
             <Box
               ref={targetRef}
@@ -284,6 +293,29 @@ export function AppTile({
                     {app.badge}
                   </Box>
                 )}
+                {disabled && (
+                  <Box
+                    component="span"
+                    data-launchpad-app-lock
+                    aria-hidden="true"
+                    sx={{
+                      position: 'absolute',
+                      right: -8,
+                      bottom: -6,
+                      width: 22,
+                      height: 22,
+                      display: 'grid',
+                      placeItems: 'center',
+                      borderRadius: '50%',
+                      color: 'text.secondary',
+                      bgcolor: 'background.paper',
+                      border: 1,
+                      borderColor: 'divider',
+                    }}
+                  >
+                    <LockKeyhole size={13} />
+                  </Box>
+                )}
               </Box>
               {targetActive && (
                 <Box
@@ -315,13 +347,19 @@ export function AppTile({
                 WebkitBoxOrient: 'vertical',
                 lineHeight: editing ? 'var(--launchpad-label-line-height, 12px)' : 1.2,
                 wordBreak: 'normal',
-                overflowWrap: 'normal',
+                overflowWrap: 'anywhere',
+                '& [data-launchpad-label-full]': { display: 'none' },
               }}
             >
-              {app.shortName}
+              <Box component="span" data-launchpad-label-short aria-hidden="true">
+                {app.shortName}
+              </Box>
+              <Box component="span" data-launchpad-label-full aria-hidden="true">
+                {app.name}
+              </Box>
             </Typography>
           </ButtonBase>
-          {!editing && app.managementRoute && onManage && (
+          {!disabled && !editing && app.managementRoute && onManage && (
             <AppManagementAction app={app} variant="overlay" onManage={onManage} />
           )}
           {editing && (

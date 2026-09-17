@@ -21,7 +21,7 @@ vi.mock('web-vitals', () => ({
   }),
 }));
 
-import { registerWebVitals } from './web-vitals';
+import { registerWebVitals, setHomeWebVitalsContext } from './web-vitals';
 
 const lcpMetric = {
   name: 'LCP',
@@ -64,9 +64,79 @@ describe('Web Vitals collection boundary', () => {
   });
 
   afterEach(() => {
+    setHomeWebVitalsContext(null);
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
+  });
+
+  it('adds bounded Home rollout context and preserves each metric base unit', () => {
+    const dispatchEvent = installBrowserGlobals();
+    window.location.pathname = '/';
+    vi.stubEnv('VITE_WEB_VITALS_ENDPOINT', '');
+    setHomeWebVitalsContext({
+      deviceClass: 'MOBILE_STANDARD',
+      homeMode: 'FLOW_V1',
+      homeRuntime: 'SHADOW_COMPARE',
+      rolloutRing: 'CONTROL',
+    });
+
+    registerWebVitals();
+    metricCallbacks.CLS?.({ ...lcpMetric, name: 'CLS', value: 0.125, delta: 0.125 } as Metric);
+    metricCallbacks.INP?.({ ...lcpMetric, name: 'INP', value: 180, delta: 180 } as Metric);
+    metricCallbacks.LCP?.(lcpMetric);
+
+    const details = dispatchEvent.mock.calls.map((call) => call[0].detail);
+    expect(details.map((detail) => [detail.name, detail.value])).toEqual([
+      ['CLS', 0.125],
+      ['INP', 180],
+      ['LCP', 1_250],
+    ]);
+    expect(details[0]).toMatchObject({
+      routeGroup: 'home',
+      homeMode: 'FLOW_V1',
+      homeRuntime: 'SHADOW_COMPARE',
+      rolloutRing: 'CONTROL',
+      deviceClass: 'MOBILE_STANDARD',
+    });
+    expect(JSON.stringify(details)).not.toContain('rolloutRevision');
+  });
+
+  it('drops malformed Home context and never attaches it outside Home', () => {
+    const dispatchEvent = installBrowserGlobals();
+    vi.stubEnv('VITE_WEB_VITALS_ENDPOINT', '');
+    setHomeWebVitalsContext({
+      deviceClass: 'DESKTOP_STANDARD',
+      homeMode: 'CLASSIC',
+      homeRuntime: 'READ_ONLY_ACTIVE',
+      rolloutRing: 'INTERNAL',
+      tenantId: 42,
+    } as unknown as Parameters<typeof setHomeWebVitalsContext>[0]);
+    registerWebVitals();
+    metricCallbacks.LCP?.(lcpMetric);
+    expect(dispatchEvent.mock.calls[0]?.[0].detail).not.toHaveProperty('homeMode');
+
+    setHomeWebVitalsContext({
+      deviceClass: 'DESKTOP_STANDARD',
+      homeMode: 'CLASSIC',
+      homeRuntime: 'READ_ONLY_ACTIVE',
+      rolloutRing: 'INTERNAL',
+    });
+    metricCallbacks.LCP?.(lcpMetric);
+    expect(dispatchEvent.mock.calls[1]?.[0].detail).not.toHaveProperty('homeRuntime');
+  });
+
+  it('drops a Home sample until a complete trusted rollout context exists', () => {
+    const dispatchEvent = installBrowserGlobals();
+    window.location.pathname = '/';
+    const post = vi.spyOn(sessionNeutralHttp, 'post').mockResolvedValue({ data: undefined });
+    vi.stubEnv('VITE_WEB_VITALS_ENDPOINT', '/api/platform/v1/observability/web-vitals');
+
+    registerWebVitals();
+    metricCallbacks.LCP?.(lcpMetric);
+
+    expect(dispatchEvent).not.toHaveBeenCalled();
+    expect(post).not.toHaveBeenCalled();
   });
 
   it('emits the browser event without network traffic when no collector is configured', () => {

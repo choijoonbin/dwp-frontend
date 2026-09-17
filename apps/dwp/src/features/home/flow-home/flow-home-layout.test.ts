@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { defaultHomeWidgets } from '../home-widget-registry';
 import { deriveFlowHomeSections } from './flow-home-preference';
 import {
+  FLOW_HOME_CORE_REFERENCE_PLACEMENT,
   FLOW_HOME_DESKTOP_MIN_WIDTH,
   FLOW_HOME_REFERENCE_PLACEMENT,
   FLOW_HOME_WIDE_COMPOSITION,
@@ -46,6 +47,7 @@ describe('Flow Home read layout', () => {
       template: 'adaptive-wide',
       adaptiveEligible: true,
       adaptiveApplied: true,
+      adaptiveVariant: 'complete',
       firstSectionKey: 'today',
       supportSectionKeys: ['response-hub', 'request-tracker', 'role-pulse'],
       insightSectionKeys: ['focus-balance', 'meeting-load'],
@@ -58,8 +60,8 @@ describe('Flow Home read layout', () => {
   it.each(['focused', 'balanced', 'expressive'] as const)(
     'uses the reference desktop composition for an eligible %s presentation',
     (presentation) => {
-      expect(FLOW_HOME_WIDE_MIN_WIDTH).toBe(1200);
-      expect(FLOW_HOME_WIDE_MIN_WIDTH).toBe(FLOW_HOME_DESKTOP_MIN_WIDTH);
+      expect(FLOW_HOME_DESKTOP_MIN_WIDTH).toBe(1200);
+      expect(FLOW_HOME_WIDE_MIN_WIDTH).toBe(1600);
       expect(resolve({ presentation })).toMatchObject({
         template: 'adaptive-wide',
         adaptiveEligible: true,
@@ -68,29 +70,50 @@ describe('Flow Home read layout', () => {
     }
   );
 
-  it('maps seven widgets into the reference 8+4 main and sidebar hierarchy', () => {
+  it('maps seven widgets into the approved 38/34/28 wide hierarchy', () => {
     expect(FLOW_HOME_WIDE_COMPOSITION).toEqual({
-      columns: 60,
-      actionColumns: 40,
-      firstColumns: 20,
-      supportColumns: 20,
-      insightColumns: 20,
-      label: '8-4/4-4-4/8-4',
+      columns: 100,
+      actionColumns: 72,
+      firstColumns: 38,
+      supportColumns: 34,
+      insightColumns: 28,
+      label: '38-34-28',
     });
     expect(FLOW_HOME_REFERENCE_PLACEMENT).toEqual({
-      'action-queue': { gridColumn: '1 / span 40', row: 1 },
-      'role-pulse': { gridColumn: '41 / span 20', row: 1 },
-      today: { gridColumn: '1 / span 20', row: 2 },
-      'response-hub': { gridColumn: '21 / span 20', row: 2 },
-      'focus-balance': { gridColumn: '41 / span 20', row: 2 },
-      'request-tracker': { gridColumn: '1 / span 40', row: 3 },
-      'meeting-load': { gridColumn: '41 / span 20', row: 3 },
+      'action-queue': { gridColumn: '1 / span 72', row: 1 },
+      'role-pulse': { gridColumn: '73 / span 28', row: 1 },
+      today: { gridColumn: '1 / span 38', row: 2 },
+      'response-hub': { gridColumn: '39 / span 34', row: 2 },
+      'focus-balance': { gridColumn: '73 / span 28', row: 2 },
+      'request-tracker': { gridColumn: '1 / span 72', row: 3 },
+      'meeting-load': { gridColumn: '73 / span 28', row: 3 },
     });
     expect(Object.keys(FLOW_HOME_REFERENCE_PLACEMENT).sort()).toEqual(
       sectionsFor()
         .map((section) => section.widgetKey)
         .sort()
     );
+  });
+
+  it('maps the approved four-section Base preset into the same wide columns', () => {
+    const core = sectionsFor().map((section) =>
+      ['role-pulse', 'focus-balance', 'meeting-load'].includes(section.widgetKey)
+        ? { ...section, visible: false }
+        : section
+    );
+
+    expect(resolve({ sections: core })).toMatchObject({
+      template: 'adaptive-wide',
+      adaptiveEligible: true,
+      adaptiveApplied: true,
+      adaptiveVariant: 'core',
+    });
+    expect(FLOW_HOME_CORE_REFERENCE_PLACEMENT).toEqual({
+      'action-queue': { gridColumn: '1 / span 38', row: 1 },
+      today: { gridColumn: '39 / span 34', row: 1 },
+      'response-hub': { gridColumn: '73 / span 28', row: 1 },
+      'request-tracker': { gridColumn: '73 / span 28', row: 2 },
+    });
   });
 
   it.each([1, 2, 3])('fills reference row %s without overlaps or orphan columns', (row) => {

@@ -20,6 +20,9 @@ export type WorkspaceWidgetCatalogDefinition = Readonly<{
   /** Apps whose authorized data can independently populate the Flow purpose surface. */
   contributorAppResourceKeys: readonly string[];
   dataSource: string;
+  requiredAuthorities: readonly string[];
+  dataCapabilities: readonly string[];
+  supportedContexts: readonly ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'];
   freshnessSeconds: number;
   privacyClass: WorkspaceWidgetPrivacyClass;
   retention: 'NONE';
@@ -42,6 +45,8 @@ export type WorkspaceWidgetAccessDecision =
 
 const ITEM_LIMIT = { min: 1, max: 20 } as const;
 
+// Legacy Home semantics remain authoritative in OFF/SHADOW. Control-plane manifest
+// metadata is validated separately and must not change discovery or personalization.
 export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition[] = [
   {
     key: 'command-rail',
@@ -50,6 +55,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     sourceAppResourceKey: 'APP.WORK',
     contributorAppResourceKeys: ['APP.WORK', 'APP.APPROVALS', 'APP.HCM', 'APP.WORKPLACE'],
     dataSource: 'DWP_HOME_OVERVIEW',
+    requiredAuthorities: ['APP.WORK:VIEW'],
+    dataCapabilities: ['HOME.OVERVIEW.READ'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -73,6 +81,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     sourceAppResourceKey: 'APP.WORK',
     contributorAppResourceKeys: ['APP.CALENDAR', 'APP.APPROVALS', 'APP.NOTIFICATIONS'],
     dataSource: 'DWP_HOME_OVERVIEW',
+    requiredAuthorities: ['APP.WORK:VIEW'],
+    dataCapabilities: ['HOME.RECOMMENDATIONS.READ'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'INTERNAL',
     retention: 'NONE',
@@ -101,6 +112,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     sourceAppResourceKey: 'APP.WORK',
     contributorAppResourceKeys: ['APP.APPROVALS', 'APP.EMPLOYEE_SERVICES'],
     dataSource: 'DWP_WORKSPACE',
+    requiredAuthorities: ['APP.WORK:VIEW'],
+    dataCapabilities: ['WORK.ITEMS.LIST'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -129,6 +143,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     sourceAppResourceKey: 'APP.CALENDAR',
     contributorAppResourceKeys: ['APP.CALENDAR', 'APP.WORKPLACE'],
     dataSource: 'DWP_CALENDAR',
+    requiredAuthorities: ['APP.CALENDAR:VIEW'],
+    dataCapabilities: ['CALENDAR.EVENTS.LIST'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -164,6 +181,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
       'APP.NOTIFICATIONS',
     ],
     dataSource: 'DWP_ACTIVITY',
+    requiredAuthorities: ['APP.ACTIVITY:VIEW'],
+    dataCapabilities: ['ACTIVITY.EVENTS.LIST'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'INTERNAL',
     retention: 'NONE',
@@ -192,6 +212,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     sourceAppResourceKey: 'APP.CALENDAR',
     contributorAppResourceKeys: ['APP.CALENDAR'],
     dataSource: 'DWP_CALENDAR',
+    requiredAuthorities: ['APP.CALENDAR:VIEW'],
+    dataCapabilities: ['CALENDAR.EVENTS.LIST'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -215,6 +238,9 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     sourceAppResourceKey: 'APP.CALENDAR',
     contributorAppResourceKeys: ['APP.CALENDAR'],
     dataSource: 'DWP_CALENDAR',
+    requiredAuthorities: ['APP.CALENDAR:VIEW'],
+    dataCapabilities: ['CALENDAR.EVENTS.LIST'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',

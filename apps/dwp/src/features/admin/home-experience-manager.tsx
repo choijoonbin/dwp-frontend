@@ -26,6 +26,7 @@ import {
   resolveAdminHomeBackgroundUrl,
   resolveHomeBackgroundUrl,
   rollbackHomeExperience,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
@@ -74,17 +75,14 @@ const MIN_IMAGE_WIDTH = 1920;
 const MIN_IMAGE_HEIGHT = 480;
 const MIN_IMAGE_RATIO = 2.4;
 const MAX_IMAGE_RATIO = 6.5;
-
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
-
 function formatBytes(bytes?: number | null): string {
   if (!bytes) return '';
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${formatNumber(bytes / (1024 * 1024), { minimumFractionDigits: 1, maximumFractionDigits: 1 })} MB`;
 }
-
 function localeLabel(locale: string, language: string): string {
   try {
     return (
@@ -94,15 +92,16 @@ function localeLabel(locale: string, language: string): string {
     return locale.toUpperCase();
   }
 }
-
 export function HomeExperienceManager() {
   const { t, i18n } = useTranslation('admin');
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission } = usePermissions();
   const supportContext = useCurrentProviderSupportContext();
   const canWrite =
-    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
+    hasPermission('ADMIN.HOME_EXPERIENCE', 'MANAGE') &&
+    (!supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE'));
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previewUrlRef = useRef<string | null>(null);
   const dirtyRef = useRef(false);

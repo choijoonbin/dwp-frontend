@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
+import { alpha, lighten } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import type { CommunicationItem } from '@dwp-frontend/shared-utils';
@@ -135,15 +135,15 @@ function AnnouncementStory({
       >
         <Typography
           variant="overline"
-          sx={{
+          sx={(theme) => ({
             width: 'fit-content',
             px: 0.75,
             py: 0.125,
-            color: accent,
-            bgcolor: alpha(accent, 0.1),
+            color: theme.palette.mode === 'dark' ? lighten(accent, 0.5) : accent,
+            bgcolor: alpha(accent, theme.palette.mode === 'dark' ? 0.2 : 0.1),
             borderRadius: 0.5,
             fontWeight: 700,
-          }}
+          })}
         >
           {t(`categories.${story.categoryKey}`, { defaultValue: story.categoryKey })}
         </Typography>
@@ -311,6 +311,15 @@ export function AnnouncementsWidget({
       aria-labelledby="announcements-heading"
       data-testid="home-news-carousel"
       data-news-transitioning={transitioning ? 'true' : 'false'}
+      data-news-auto-rotation={
+        !autoRotate || stories.length < 2
+          ? 'not-applicable'
+          : reduceMotion
+            ? 'paused-reduced-motion'
+            : autoPaused || interactionPaused
+              ? 'paused-interaction'
+              : 'running'
+      }
       onMouseEnter={() => setInteractionPaused(true)}
       onMouseLeave={() => setInteractionPaused(false)}
       onFocusCapture={() => setInteractionPaused(true)}

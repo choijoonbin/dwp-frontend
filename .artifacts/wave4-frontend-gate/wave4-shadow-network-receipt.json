@@ -1,0 +1,46 @@
+{
+  "legacy": {
+    "home-overview": 1,
+    "home-experience": 1,
+    "workspace-apps": 1,
+    "notification-app-summary": 1,
+    "widget-registry": 1,
+    "home-preferences": 1,
+    "home-views": 0,
+    "home-widget-code-set": 1,
+    "work-hub-home": 2,
+    "approval-home-contribution": 1,
+    "hr-home-contribution": 1,
+    "services-home-contribution": 1,
+    "workplace-home-contribution": 1
+  },
+  "legacyTotal": 13,
+  "v2": [
+    {
+      "deviceClass": "DESKTOP_STANDARD",
+      "etag": "\"wave4-classic-desktop_standard-shadow_compare\"",
+      "forbiddenIdentityQueryKeys": [],
+      "ifNoneMatch": null,
+      "mode": "CLASSIC",
+      "ownerBindingCatalogRevisions": [
+        "d9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643"
+      ],
+      "queryKeys": ["deviceClass", "timeZone"],
+      "runtimeMode": "SHADOW",
+      "status": 200
+    },
+    {
+      "deviceClass": "DESKTOP_STANDARD",
+      "etag": "\"wave4-classic-desktop_standard-shadow_compare\"",
+      "forbiddenIdentityQueryKeys": [],
+      "ifNoneMatch": null,
+      "mode": "CLASSIC",
+      "ownerBindingCatalogRevisions": [
+        "d9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643"
+      ],
+      "queryKeys": ["deviceClass", "timeZone"],
+      "runtimeMode": "SHADOW",
+      "status": 200
+    }
+  ]
+}

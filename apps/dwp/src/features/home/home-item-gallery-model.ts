@@ -3,6 +3,7 @@ import { HOME_WIDGET_REGISTRY, homeWidgetLifecyclePolicy } from './home-widget-r
 
 import type { HomeWidgetKey, HomeWidgetPreference } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetLifecycle } from '../../components/workspace-composer/workspace-widget-catalog';
+import type { HomeWidgetRuntimeDecisions } from './runtime/widget-registry-runtime';
 import type {
   HomeAppDefinition,
   LaunchpadLayout,
@@ -72,7 +73,8 @@ export function resolveHomeWidgetGalleryItems(
   registeredWidgetKeys: readonly HomeWidgetKey[],
   widgetPreferences: readonly HomeWidgetPreference[],
   entitledApps: readonly Pick<HomeAppDefinition, 'resourceKey'>[],
-  flow: boolean
+  flow: boolean,
+  runtimeDecisions?: HomeWidgetRuntimeDecisions
 ): HomeWidgetGalleryItem[] {
   const registered = new Set(registeredWidgetKeys);
   const preferenceByKey = new Map(
@@ -91,10 +93,20 @@ export function resolveHomeWidgetGalleryItems(
       return [];
     }
     const preference = preferenceByKey.get(widget.key);
-    const state = resolveHomeWidgetLifecycleGalleryState(
-      definition.lifecycle,
-      preference?.visible ?? null
-    );
+    const runtimeDecision = runtimeDecisions?.[widget.key];
+    if (runtimeDecision?.render === 'UNAVAILABLE') return [];
+    const visible = preference?.visible ?? null;
+    const state = runtimeDecision
+      ? visible === true
+        ? 'ADDED'
+        : visible === false
+          ? runtimeDecision.canRestore
+            ? 'RESTORE'
+            : 'LOCKED'
+          : runtimeDecision.canAdd
+            ? 'ADD'
+            : null
+      : resolveHomeWidgetLifecycleGalleryState(definition.lifecycle, visible);
     if (!state) return [];
     return [{ id: `widget:${widget.key}`, kind: 'WIDGET' as const, state, widget }];
   });

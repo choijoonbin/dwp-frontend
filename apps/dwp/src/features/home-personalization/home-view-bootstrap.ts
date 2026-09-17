@@ -1,4 +1,8 @@
-import type { HomePreferenceLayout, HomeView } from '@dwp-frontend/shared-utils';
+import type {
+  HomeExperienceVariant,
+  HomePreferenceLayout,
+  HomeView,
+} from '@dwp-frontend/shared-utils';
 
 export const DEFAULT_HOME_VIEW_KEY = 'default';
 
@@ -19,10 +23,12 @@ export function resolveHomeViewCustomized(
 export function resolvePendingHomeSaveCommand(
   current: PendingHomeSaveCommand | null,
   layout: HomePreferenceLayout,
+  modeKey: HomeExperienceVariant,
+  modeScopedViews: boolean,
   createKey: () => string,
   reset = false
 ): PendingHomeSaveCommand {
-  const fingerprint = JSON.stringify({ layout, reset });
+  const fingerprint = JSON.stringify({ modeKey, modeScopedViews, layout, reset });
   if (current?.fingerprint === fingerprint) return current;
   return { fingerprint, idempotencyKey: createKey() };
 }

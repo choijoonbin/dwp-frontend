@@ -16,8 +16,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system';
 import {
   HOME_WIDGET_LIBRARY_ENABLED,
+  HOME_CONTRACT_CAPABILITIES,
   getAdminHomeExperience,
+  hasHomeContractCapability,
   updateHomeCompositionPolicy,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
@@ -43,6 +46,7 @@ import {
 } from '../../components/workspace-composer/workspace-widget-footprint-picker';
 import {
   governedHomeZone,
+  homeCompositionPolicyWritePayload,
   reconcileHomeCompositionPolicy,
 } from '../../components/workspace-composer/home-composition-policy';
 import {
@@ -68,6 +72,16 @@ function clonePolicy(policy: HomeCompositionPolicy): HomeCompositionPolicy {
   return {
     ...policy,
     governedZones: policy.governedZones.map((zone) => ({ ...zone })),
+    modeLayouts: {
+      CLASSIC: {
+        ...policy.modeLayouts.CLASSIC,
+        deviceClasses: [...policy.modeLayouts.CLASSIC.deviceClasses],
+      },
+      FLOW_V1: {
+        ...policy.modeLayouts.FLOW_V1,
+        deviceClasses: [...policy.modeLayouts.FLOW_V1.deviceClasses],
+      },
+    },
   };
 }
 
@@ -133,13 +147,15 @@ export function HomeCompositionManager() {
   );
 }
 
-function HomeCompositionPolicyPanel() {
+export function HomeCompositionPolicyPanel() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission } = usePermissions();
   const supportContext = useCurrentProviderSupportContext();
   const canWrite =
-    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
+    hasPermission('ADMIN.HOME_EXPERIENCE', 'MANAGE') &&
+    (!supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE'));
   const [draft, setDraft] = useState<HomeCompositionPolicy | null>(null);
   const experienceQuery = useQuery({
     queryKey: ['admin', 'home-experience'],
@@ -149,6 +165,10 @@ function HomeCompositionPolicyPanel() {
     () => reconcileHomeCompositionPolicy(experienceQuery.data?.compositionPolicy),
     [experienceQuery.data?.compositionPolicy]
   );
+  const compositionV4Supported = hasHomeContractCapability(
+    experienceQuery.data,
+    HOME_CONTRACT_CAPABILITIES.compositionV4
+  );
 
   useEffect(() => {
     setDraft(clonePolicy(published));
@@ -156,7 +176,11 @@ function HomeCompositionPolicyPanel() {
 
   const changed = Boolean(draft && JSON.stringify(draft) !== JSON.stringify(published));
   const saveMutation = useMutation({
-    mutationFn: () => updateHomeCompositionPolicy(draft!, experienceQuery.data?.version ?? 0),
+    mutationFn: () =>
+      updateHomeCompositionPolicy(
+        homeCompositionPolicyWritePayload(draft!, compositionV4Supported),
+        experienceQuery.data?.version ?? 0
+      ),
     onSuccess: async (next) => {
       queryClient.setQueryData(['admin', 'home-experience'], next);
       await Promise.all([

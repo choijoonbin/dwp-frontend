@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
   AlertTriangle,
+  ArrowRight,
+  BriefcaseBusiness,
+  CalendarDays,
   CheckCircle2,
   ChevronDown,
   Clock3,
@@ -13,6 +16,9 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -26,10 +32,26 @@ import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import type { HomeAudienceProfile, HomeContentAlignment } from '@dwp-frontend/shared-utils';
 import type { FlowHomeHealth, FlowHomeHealthDomain, FlowHomeHealthIssue } from './flow-home-health';
 import { FlowHomeStatusChip, type FlowHomeContextMetrics } from './flow-home-status-chip';
+
+export type FlowHomePriorityAction = Readonly<{
+  title: string;
+  detail: string;
+  route: string;
+  source: string;
+  dueAt?: string | null;
+}>;
+
+export type FlowHomeLinkedEvent = Readonly<{
+  title: string;
+  route: string;
+  startsAt: string;
+  location?: string | null;
+}>;
 
 type FlowHomeContextProps = {
   audience: HomeAudienceProfile;
@@ -40,6 +62,8 @@ type FlowHomeContextProps = {
   contentAlignment: HomeContentAlignment;
   health: FlowHomeHealth;
   metrics: FlowHomeContextMetrics;
+  priorityAction?: FlowHomePriorityAction;
+  linkedEvent?: FlowHomeLinkedEvent;
   editing: boolean;
   customizationEnabled: boolean;
   customizationBusy: boolean;
@@ -98,6 +122,8 @@ export function FlowHomeContext({
   contentAlignment,
   health,
   metrics,
+  priorityAction,
+  linkedEvent,
   editing,
   customizationEnabled,
   customizationBusy,
@@ -124,30 +150,42 @@ export function FlowHomeContext({
       data-testid="flow-home-context"
       data-flow-context-side={copyOnRight ? 'right' : 'left'}
       data-flow-context-alignment={contentAlignment.toLowerCase()}
-      data-flow-context-composition="inline-greeting"
+      data-flow-context-composition={priorityAction ? 'priority-action' : 'inline-greeting'}
       sx={{
         position: 'relative',
         width: 1,
         minWidth: 0,
-        px: compact ? 0.5 : { xs: 0.5, md: 0 },
-        py: compact ? 0.25 : { xs: 0.25, md: 0.5 },
+        minHeight: compact ? 0 : { xs: 180, sm: 232, md: 274 },
+        px: compact ? 0.5 : { xs: 1, sm: 1.5, md: 0.5 },
+        py: compact ? 0.25 : { xs: 1, sm: 1.5, md: 1 },
         display: 'grid',
         gridTemplateColumns: compact
           ? 'minmax(0, 1fr)'
           : {
               xs: 'minmax(0, 1fr)',
               md: copyOnRight
-                ? 'auto minmax(280px, 360px) minmax(0, 1fr)'
-                : 'minmax(0, 1fr) minmax(280px, 360px) auto',
-              lg: copyOnRight
-                ? 'auto minmax(300px, 390px) minmax(0, 1fr)'
-                : 'minmax(0, 1fr) minmax(300px, 390px) auto',
+                ? 'minmax(340px, 0.62fr) minmax(0, 1.38fr)'
+                : 'minmax(0, 1.38fr) minmax(340px, 0.62fr)',
+              xl: copyOnRight
+                ? 'minmax(390px, 0.68fr) minmax(0, 1.32fr)'
+                : 'minmax(0, 1.32fr) minmax(390px, 0.68fr)',
             },
-        columnGap: { md: 1.5, lg: 2 },
-        rowGap: { xs: 0.75, sm: 1 },
-        alignItems: 'center',
+        gridTemplateAreas: compact
+          ? '"copy" "status" "controls"'
+          : {
+              xs: '"copy" "status" "controls"',
+              md: copyOnRight
+                ? '"status copy" "status controls"'
+                : '"copy status" "controls status"',
+            },
+        columnGap: { md: 2.5, lg: 3.5 },
+        rowGap: { xs: 1, sm: 1.25, md: 1.5 },
+        alignItems: { xs: 'start', md: 'stretch' },
         color: '#F8FAFC',
-        '[data-flow-large-text="true"] &': { gridTemplateColumns: 'minmax(0, 1fr)' },
+        '[data-flow-large-text="true"] &': {
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gridTemplateAreas: '"copy" "status" "controls"',
+        },
         '@media (forced-colors: active)': { color: 'CanvasText' },
       }}
     >
@@ -155,14 +193,13 @@ export function FlowHomeContext({
         data-flow-context-copy
         sx={{
           minWidth: 0,
-          gridColumn: compact ? '1' : { xs: '1', md: copyOnRight ? '3' : '1' },
-          gridRow: compact ? 'auto' : { md: '1' },
+          gridArea: 'copy',
           justifySelf: copyOnRight ? { md: 'end' } : 'start',
           width: 1,
+          alignSelf: 'start',
           textAlign: { xs: 'left', md: copyOnRight ? 'right' : copyCentered ? 'center' : 'left' },
           '[data-flow-large-text="true"] &': {
-            gridColumn: '1',
-            gridRow: 'auto',
+            gridArea: 'copy',
             justifySelf: 'start',
             textAlign: 'left',
           },
@@ -216,37 +253,104 @@ export function FlowHomeContext({
         <Typography
           component="h1"
           sx={{
-            mt: 0.25,
+            mt: { xs: 0.25, md: 0.75 },
             maxWidth: 880,
-            fontSize: { xs: '1.25rem', md: '1.375rem', lg: '1.5rem' },
-            fontWeight: 720,
-            lineHeight: 1.2,
-            letterSpacing: '-0.022em',
+            fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem', xl: '2rem' },
+            fontWeight: 760,
+            lineHeight: 1.18,
+            letterSpacing: '-0.026em',
             wordBreak: 'keep-all',
             overflowWrap: 'break-word',
           }}
         >
-          {headline}
+          {priorityAction?.title ?? headline}
         </Typography>
         <Typography
           data-flow-context-description
           variant="body2"
           sx={{
-            mt: 0.35,
+            mt: { xs: 0.6, md: 1 },
             maxWidth: 780,
             color: 'rgba(248,250,252,0.84)',
-            fontSize: '0.75rem',
-            lineHeight: 1.35,
+            fontSize: { xs: '0.75rem', md: '0.875rem' },
+            lineHeight: 1.55,
+            px: { xs: 1.25, md: 1.5 },
+            py: { xs: 1, md: 1.25 },
+            border: 1,
+            borderColor: (theme) => alpha(theme.palette.common.white, 0.16),
+            borderRadius: foundationTokens.home.radius.control,
+            bgcolor: (theme) => alpha(theme.palette.common.white, 0.09),
             wordBreak: 'keep-all',
             overflowWrap: 'break-word',
-            display: priorityCompact ? 'none' : '-webkit-box',
+            display: '-webkit-box',
             overflow: 'hidden',
-            WebkitLineClamp: 1,
+            WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
           }}
         >
-          {subheadline}
+          {priorityAction?.detail ?? subheadline}
         </Typography>
+        {priorityAction && (
+          <Stack
+            data-flow-primary-action
+            direction="row"
+            alignItems="center"
+            gap={1}
+            flexWrap="wrap"
+            sx={{
+              mt: { xs: 1.25, md: 1.75 },
+              '[data-flow-primary-action-cta]': {
+                minHeight: { xs: 48, md: 46 },
+              },
+              '@media (max-width: 599.95px)': {
+                alignItems: 'stretch',
+                '& [data-flow-primary-action-cta]': {
+                  width: '100%',
+                  justifyContent: 'center',
+                },
+              },
+            }}
+          >
+            <Chip
+              size="small"
+              icon={<BriefcaseBusiness size={14} aria-hidden="true" />}
+              label={t('flow.now.title')}
+              sx={{
+                color: foundationTokens.home.color.heroChipText,
+                bgcolor: foundationTokens.home.color.heroActionSurface,
+                '& .MuiChip-icon': { color: 'inherit' },
+              }}
+            />
+            {priorityAction.dueAt && (
+              <Typography variant="caption" sx={{ color: foundationTokens.home.color.heroMuted86 }}>
+                {t('flow.now.due', {
+                  time: formatDate(priorityAction.dueAt, {
+                    dateStyle: priorityCompact ? undefined : 'short',
+                    timeStyle: 'short',
+                  }),
+                })}
+              </Typography>
+            )}
+            <ActionButton
+              component={Link}
+              to={priorityAction.route}
+              data-flow-primary-action-cta
+              intent="primary"
+              size="small"
+              endIcon={<ArrowRight size={16} aria-hidden="true" />}
+              sx={{
+                minHeight: 44,
+                px: { xs: 2, md: 2.5 },
+                bgcolor: foundationTokens.home.color.heroActionSurface,
+                color: foundationTokens.home.color.heroActionText,
+                fontWeight: foundationTokens.home.typography.weightEmphasis,
+                '&:hover': { bgcolor: foundationTokens.home.color.heroActionHover },
+              }}
+            >
+              {t('flow.now.openInSource', { source: priorityAction.source })}
+            </ActionButton>
+          </Stack>
+        )}
       </Box>
 
       <Box
@@ -254,19 +358,71 @@ export function FlowHomeContext({
         sx={{
           minWidth: 0,
           width: 1,
-          maxWidth: compact ? '100%' : { xs: '100%', md: 390 },
-          gridColumn: compact ? '1' : { xs: '1', md: '2' },
-          gridRow: compact ? 'auto' : { md: '1' },
+          maxWidth: compact ? '100%' : { xs: '100%', md: 'none' },
+          gridArea: 'status',
           justifySelf: { xs: 'stretch', md: 'center' },
+          alignSelf: { xs: 'start', md: 'stretch' },
           '[data-flow-large-text="true"] &': {
-            gridColumn: '1',
-            gridRow: 'auto',
+            gridArea: 'status',
             justifySelf: 'stretch',
             maxWidth: '100%',
           },
         }}
       >
-        <FlowHomeStatusChip metrics={metrics} />
+        <Stack gap={1} sx={{ width: 1, height: 1, justifyContent: 'center' }}>
+          {linkedEvent && !priorityCompact && (
+            <Box
+              component={Link}
+              to={linkedEvent.route}
+              data-flow-linked-calendar-context
+              sx={{
+                minHeight: { xs: 70, md: 126 },
+                px: { xs: 1.25, md: 2 },
+                py: { xs: 0.75, md: 1.5 },
+                display: 'grid',
+                gridTemplateColumns: 'auto minmax(0, 1fr)',
+                gap: 1,
+                alignItems: 'center',
+                color: foundationTokens.home.color.heroOn,
+                textDecoration: 'none',
+                bgcolor: foundationTokens.home.color.heroLinkedSurface,
+                border: 1,
+                borderColor: foundationTokens.home.color.heroLinkedBorder,
+                borderRadius: foundationTokens.home.radius.heroSurface,
+                '&:hover': { bgcolor: foundationTokens.home.color.heroLinkedHover },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: foundationTokens.home.color.heroFocus,
+                  outlineOffset: 2,
+                },
+                '@media (forced-colors: active)': {
+                  color: 'LinkText',
+                  bgcolor: 'Canvas',
+                  borderColor: 'CanvasText',
+                },
+              }}
+            >
+              <CalendarDays size={20} aria-hidden="true" />
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="caption" sx={{ display: 'block', opacity: 0.78 }}>
+                  {t('flow.context.linkedCalendar')}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={foundationTokens.home.typography.weightBold}
+                  noWrap
+                >
+                  {linkedEvent.title}
+                </Typography>
+                <Typography variant="caption" sx={{ display: 'block', opacity: 0.84 }} noWrap>
+                  {formatDate(linkedEvent.startsAt, { timeStyle: 'short' })}
+                  {linkedEvent.location ? ` · ${linkedEvent.location}` : ''}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          <FlowHomeStatusChip metrics={metrics} />
+        </Stack>
       </Box>
 
       <Stack
@@ -280,14 +436,12 @@ export function FlowHomeContext({
         flexWrap={compact ? 'wrap' : { xs: 'wrap', md: 'nowrap' }}
         sx={{
           minWidth: 0,
-          gridColumn: compact ? '1' : { xs: '1', md: copyOnRight ? '1' : '3' },
-          gridRow: compact ? 'auto' : { md: '1' },
+          gridArea: 'controls',
           justifySelf: compact ? 'stretch' : { xs: 'stretch', md: copyOnRight ? 'start' : 'end' },
-          alignSelf: { md: 'center' },
-          maxWidth: compact ? '100%' : { md: 260 },
+          alignSelf: { xs: 'start', md: 'end' },
+          maxWidth: compact ? '100%' : { md: '100%' },
           '[data-flow-large-text="true"] &': {
-            gridColumn: '1',
-            gridRow: 'auto',
+            gridArea: 'controls',
             justifySelf: 'start',
             maxWidth: '100%',
             flexWrap: 'wrap',

@@ -86,26 +86,16 @@ type AdminSessionOptions = {
   }>;
 };
 
-const DEFAULT_ADMIN_PERMISSIONS = [
-  {
-    resourceType: 'APP',
-    resourceKey: 'APP.ADMINISTRATION',
-    permissionCode: 'VIEW',
-    effect: 'ALLOW' as const,
-  },
-  {
-    resourceType: 'ADMIN',
-    resourceKey: 'ADMIN.API_MONITORING',
-    permissionCode: 'VIEW',
-    effect: 'ALLOW' as const,
-  },
-  {
-    resourceType: 'ADMIN',
-    resourceKey: 'ADMIN.AUDIT_VIEW',
-    permissionCode: 'VIEW',
-    effect: 'ALLOW' as const,
-  },
-];
+const DEFAULT_ADMIN_PERMISSIONS = FULL_PRODUCT_PERMISSIONS.filter(({ resourceKey }) =>
+  [
+    'APP.ADMINISTRATION',
+    'ADMIN.API_MONITORING',
+    'ADMIN.AUDIT_VIEW',
+    'ADMIN.HOME_EXPERIENCE',
+    'ADMIN.HOME_TEMPLATE',
+    'ADMIN.HOME_WIDGET_POLICY',
+  ].includes(resourceKey)
+);
 
 async function mockAdminSession(page: Page, options: AdminSessionOptions = {}) {
   await mockAuthenticatedRuntime(page);
@@ -202,7 +192,7 @@ test('tenant administrators govern fixed home zones without owning personal widg
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/admin/experience/home-composition');
-  await page.getByRole('tab', { name: 'Composition policy' }).click();
+  await expect(page).toHaveURL(/\/admin\/experience\/home\/modes$/u);
 
   await expect(
     page.getByRole('heading', { name: 'Home composition policy', level: 2 })
@@ -563,7 +553,8 @@ test('tenant administrators configure and reset the personal home presentation',
   );
 
   await page.goto('/admin/experience/home-experience');
-  await expect(page.getByRole('heading', { name: 'Home page settings', level: 1 })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/experience\/home\/content$/u);
+  await expect(page.getByRole('heading', { name: 'Home Studio', level: 1 })).toBeVisible();
   const workscapePreview = page.getByTestId('home-experience-preview');
   const previewFrame = page.getByTestId('home-experience-preview-frame');
   const expectPreviewGeometry = async (width: number, height: number, stageWidth: number) => {
@@ -757,8 +748,8 @@ test('tenant administrators configure and reset the personal home presentation',
   await expect(page.getByText('Home presentation published.', { exact: true })).toBeVisible();
   await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
 
-  await expect(page).toHaveURL(/\/admin\/experience\/home-experience$/);
-  await expect(page.getByRole('heading', { name: 'Home page settings', level: 1 })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/experience\/home\/content$/u);
+  await expect(page.getByRole('heading', { name: 'Home Studio', level: 1 })).toBeVisible();
   await expect(page.getByRole('alert')).toBeHidden({ timeout: 10_000 });
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
@@ -769,7 +760,7 @@ test('tenant administrators configure and reset the personal home presentation',
     page.getByRole('alertdialog', { name: 'Keep your unpublished changes?' })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Discard and leave' }).click();
-  await expect(page).toHaveURL(/\/admin\/experience\/home-apps$/);
+  await expect(page).toHaveURL(/\/admin\/experience\/home\/app-dock$/u);
 });
 
 test('brand and communications administrators manage co-branding and publish announcements', async ({

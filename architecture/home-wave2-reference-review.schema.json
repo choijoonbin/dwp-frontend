@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dwp:home-wave2-reference-review:v1",
+  "title": "DWP Home Wave 2 per-canonical reference review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "schema",
+    "purpose",
+    "status",
+    "decisionPolicy",
+    "tolerances",
+    "adaptationDefinitions",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "schema": { "const": "architecture/home-wave2-reference-review.schema.json" },
+    "purpose": { "const": "HOME_WAVE2_PER_CANONICAL_REFERENCE_REVIEW" },
+    "status": { "enum": ["DRAFT_PENDING_REVIEW", "REVIEW_COMPLETE"] },
+    "decisionPolicy": {
+      "const": "EVERY_LANDMARK_AND_AXIS_REQUIRES_EXPLICIT_PASS_OR_FAIL"
+    },
+    "tolerances": { "$ref": "#/$defs/tolerances" },
+    "adaptationDefinitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "approved-local-media",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary",
+        "permission-guard"
+      ],
+      "properties": {
+        "design-system-primitives": { "$ref": "#/$defs/adaptationDefinition" },
+        "runtime-data-values": { "$ref": "#/$defs/adaptationDefinition" },
+        "approved-local-media": { "$ref": "#/$defs/adaptationDefinition" },
+        "accessibility-semantics": { "$ref": "#/$defs/adaptationDefinition" },
+        "dynamic-content-length": { "$ref": "#/$defs/adaptationDefinition" },
+        "reference-export-boundary": { "$ref": "#/$defs/adaptationDefinition" },
+        "permission-guard": { "$ref": "#/$defs/adaptationDefinition" }
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 33,
+      "maxItems": 33,
+      "items": { "$ref": "#/$defs/reviewRecord" }
+    }
+  },
+  "$defs": {
+    "decision": { "enum": ["PENDING", "PASS", "FAIL"] },
+    "nullableFinding": {
+      "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 12 }]
+    },
+    "nullableSha256": {
+      "oneOf": [{ "type": "null" }, { "type": "string", "pattern": "^[a-f0-9]{64}$" }]
+    },
+    "nullableNonNegativeNumber": {
+      "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+    },
+    "adaptationDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "scope", "rationale"],
+      "properties": {
+        "category": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 20 },
+        "rationale": { "type": "string", "minLength": 20 }
+      }
+    },
+    "tolerances": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "desktop",
+        "mobile",
+        "maxHorizontalOverflowCss",
+        "maxUnexplainedDocumentHeightDeltaRatio",
+        "maxSectionOrderChanges",
+        "maxMissingRequiredLandmarks"
+      ],
+      "properties": {
+        "desktop": { "$ref": "#/$defs/deviceTolerance" },
+        "mobile": { "$ref": "#/$defs/deviceTolerance" },
+        "maxHorizontalOverflowCss": { "const": 0 },
+        "maxUnexplainedDocumentHeightDeltaRatio": { "const": 0.1 },
+        "maxSectionOrderChanges": { "const": 0 },
+        "maxMissingRequiredLandmarks": { "const": 0 }
+      }
+    },
+    "deviceTolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxVerticalLandmarkDriftCss", "maxHorizontalLandmarkDriftCss"],
+      "properties": {
+        "maxVerticalLandmarkDriftCss": { "type": "number", "minimum": 0 },
+        "maxHorizontalLandmarkDriftCss": { "type": "number", "minimum": 0 }
+      }
+    },
+    "landmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "decision", "finding"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "decision": { "$ref": "#/$defs/decision" },
+        "finding": { "$ref": "#/$defs/nullableFinding" }
+      }
+    },
+    "firstViewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "finding", "measurements", "landmarks"],
+      "properties": {
+        "decision": { "$ref": "#/$defs/decision" },
+        "finding": { "$ref": "#/$defs/nullableFinding" },
+        "measurements": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maxVerticalLandmarkDriftCss",
+            "maxHorizontalLandmarkDriftCss",
+            "horizontalOverflowCss"
+          ],
+          "properties": {
+            "maxVerticalLandmarkDriftCss": {
+              "$ref": "#/$defs/nullableNonNegativeNumber"
+            },
+            "maxHorizontalLandmarkDriftCss": {
+              "$ref": "#/$defs/nullableNonNegativeNumber"
+            },
+            "horizontalOverflowCss": { "$ref": "#/$defs/nullableNonNegativeNumber" }
+          }
+        },
+        "landmarks": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/landmark" }
+        }
+      }
+    },
+    "fullDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "finding", "measurements", "landmarks"],
+      "properties": {
+        "decision": { "$ref": "#/$defs/decision" },
+        "finding": { "$ref": "#/$defs/nullableFinding" },
+        "measurements": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "unexplainedHeightDeltaRatio",
+            "sectionOrderChanges",
+            "missingRequiredLandmarks",
+            "heightDeltaAdaptationId"
+          ],
+          "properties": {
+            "unexplainedHeightDeltaRatio": {
+              "$ref": "#/$defs/nullableNonNegativeNumber"
+            },
+            "sectionOrderChanges": { "$ref": "#/$defs/nullableNonNegativeNumber" },
+            "missingRequiredLandmarks": { "$ref": "#/$defs/nullableNonNegativeNumber" },
+            "heightDeltaAdaptationId": {
+              "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/adaptationId" }]
+            }
+          }
+        },
+        "landmarks": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/landmark" }
+        }
+      }
+    },
+    "adaptationId": {
+      "enum": [
+        "design-system-primitives",
+        "runtime-data-values",
+        "approved-local-media",
+        "accessibility-semantics",
+        "dynamic-content-length",
+        "reference-export-boundary",
+        "permission-guard"
+      ]
+    },
+    "reviewRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "reviewedArtifacts",
+        "reviewer",
+        "allowedAdaptationIds",
+        "appliedAdaptationIds",
+        "firstViewport",
+        "fullDocument",
+        "overallDecision",
+        "overallFinding"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "reviewedArtifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sourcePngSha256", "implementationEvidenceSha256"],
+          "properties": {
+            "sourcePngSha256": { "$ref": "#/$defs/nullableSha256" },
+            "implementationEvidenceSha256": { "$ref": "#/$defs/nullableSha256" }
+          }
+        },
+        "reviewer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "reviewedAt"],
+          "properties": {
+            "name": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 2 }] },
+            "reviewedAt": {
+              "oneOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }]
+            }
+          }
+        },
+        "allowedAdaptationIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/adaptationId" }
+        },
+        "appliedAdaptationIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/adaptationId" }
+        },
+        "firstViewport": { "$ref": "#/$defs/firstViewport" },
+        "fullDocument": { "$ref": "#/$defs/fullDocument" },
+        "overallDecision": { "$ref": "#/$defs/decision" },
+        "overallFinding": { "$ref": "#/$defs/nullableFinding" }
+      }
+    }
+  }
+}

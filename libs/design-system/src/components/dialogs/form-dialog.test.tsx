@@ -12,13 +12,14 @@ let root: Root;
 let openDeferredDialog: () => void;
 const originalMatchMedia = window.matchMedia;
 
-function setPointerEnvironment(compact: boolean, coarsePointer = false) {
+function setPointerEnvironment(compact: boolean, coarsePointer = false, reducedMotion = false) {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     value: vi.fn().mockImplementation((query: string) => ({
       matches:
         (compact && query === '(max-width:599.95px)') ||
-        (coarsePointer && query === '(pointer: coarse)'),
+        (coarsePointer && query === '(pointer: coarse)') ||
+        (reducedMotion && query === '(prefers-reduced-motion: reduce)'),
       media: query,
       onchange: null,
       addEventListener: vi.fn(),
@@ -205,5 +206,34 @@ describe('FormDialog keyboard contract', () => {
     });
     await vi.waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
     await vi.waitFor(() => expect(document.activeElement).toBe(opener));
+  });
+
+  it('removes transition motion across the portal and restores focus after its exit lifecycle', async () => {
+    setPointerEnvironment(false, false, true);
+    const onClose = vi.fn();
+    opener.focus();
+    const dialog = await renderDialog(onClose);
+    const dialogRoot = dialog.closest<HTMLElement>('.MuiDialog-root');
+    expect(dialogRoot).not.toBeNull();
+    const movingNodes = Array.from(dialogRoot!.querySelectorAll<HTMLElement>('*')).filter(
+      (node) => {
+        const style = getComputedStyle(node);
+        return (
+          parseFloat(style.transitionDuration) > 0.001 ||
+          (style.animationName !== 'none' && parseFloat(style.animationDuration) > 0.001)
+        );
+      }
+    );
+    expect(movingNodes).toEqual([]);
+
+    await act(async () => {
+      document.activeElement?.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true })
+      );
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    });
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(document.activeElement).toBe(opener);
   });
 });

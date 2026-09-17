@@ -65,6 +65,7 @@ type ExternalQuerySnapshot<T> = Readonly<{
 }>;
 
 export type UseHomeContributionModelInput = Readonly<{
+  enabled?: boolean;
   tenantId?: number | null;
   userId?: number | null;
   audience: HomeAudienceProfile;
@@ -110,6 +111,7 @@ function workplaceRange(now: Date): Readonly<{ from: string; to: string }> {
 }
 
 export function useHomeContributionModel({
+  enabled = true,
   tenantId,
   userId,
   audience,
@@ -131,7 +133,7 @@ export function useHomeContributionModel({
     () => (key, values) => t(key, values),
     [t]
   );
-  const identityReady = Boolean(tenantId && userId);
+  const identityReady = enabled && Boolean(tenantId && userId);
   const contributionPermissions = useMemo(
     () => resolveHomeContributionPermissions(permissions, roles, legacyRoleFallbackAllowed),
     [legacyRoleFallbackAllowed, permissions, roles]

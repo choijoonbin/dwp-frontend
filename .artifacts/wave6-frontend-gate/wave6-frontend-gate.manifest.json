@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "gateId": "DWP-HOME-WAVE6-FRONTEND-GUARDED-ROLLOUT",
+  "status": "PASS_PREPRODUCTION_INPUT",
+  "sealedAt": "2026-09-17T00:14:30+09:00",
+  "scope": "Wave 6 Home runtime authority UI, shadow comparison receipts, exact owner command canary, trusted RUM dimensions, rollback continuity",
+  "commit": "42a09a6c9dba6041d9fcbaa9f6aa97d2207373d9",
+  "environment": {
+    "nodeBuildAndFinalTests": "v24.19.0",
+    "yarn": "4.17.1",
+    "workdir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend"
+  },
+  "gates": {
+    "openApiSync": {
+      "status": "PASS",
+      "source": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/backend/contracts/openapi/gateway-public.json",
+      "detail": "Generated Gateway API types match the approved backend snapshot."
+    },
+    "eslint": {
+      "status": "PASS",
+      "scope": "changed Wave 6 TypeScript and generated Gateway contract"
+    },
+    "applicationTypeCheck": {
+      "status": "PASS",
+      "files": 29,
+      "scope": "committed Wave 6 apps/libs TypeScript files plus transitive imports",
+      "note": "E2E files are outside the production tsconfig and are validated by Playwright."
+    },
+    "unit": {
+      "status": "PASS",
+      "files": 10,
+      "tests": 136,
+      "failed": 0,
+      "runtime": "Node v24.19.0"
+    },
+    "browser": {
+      "status": "PASS",
+      "browser": "Chromium",
+      "logicalScenarios": 17,
+      "passed": 17,
+      "failed": 0,
+      "finalImpactedRerun": {
+        "tests": 2,
+        "passed": 2,
+        "baseUrl": "http://localhost:4201"
+      },
+      "coverage": [
+        "runtime metadata fail-closed",
+        "read-only and command-canary authority split",
+        "route-specific decision revision on commands and shadow receipts",
+        "ACTIVE to SHADOW dirty-draft continuity",
+        "owner widget governance and Wave 4 runtime regression coverage"
+      ]
+    },
+    "productionBundle": {
+      "status": "PASS",
+      "command": "node_modules/.bin/vite build",
+      "runtime": "Node v24.19.0",
+      "modulesTransformed": 5728
+    },
+    "independentReview": {
+      "status": "PASS",
+      "p0": 0,
+      "p1": 0,
+      "nonBlocking": [
+        "Shadow comparison waits for core legacy readiness but not every auxiliary catalog query.",
+        "Best-effort shadow receipt delivery does not schedule an autonomous retry after transport failure."
+      ]
+    }
+  },
+  "safety": {
+    "clientCanSelfPromote": false,
+    "missingRuntimeMetadata": "FAIL_CLOSED",
+    "commandsRequire": [
+      "COMMAND_CANARY",
+      "EXACT_ALLOWLIST",
+      "route-specific X-DWP-Decision-Revision",
+      "owner result version",
+      "idempotency key"
+    ],
+    "shadowReceiptContainsRecipientIdentifiers": false
+  },
+  "sourceIntegrity": [
+    {
+      "path": "apps/dwp/src/features/home/runtime/use-home-v2-runtime.ts",
+      "bytes": 4963,
+      "sha256": "38ceffd225824e6a0677bac55c8c94a078b3c4af94b935caafa5dd4175e91e20"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/home-v2-shadow-comparator.ts",
+      "bytes": 10944,
+      "sha256": "ec4d24337035a2e4b7306dfe69e3dd75613ab32d8942859e41b4b3e184d5569e"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/use-home-v2-shadow-receipt.ts",
+      "bytes": 2433,
+      "sha256": "8dd770ec7c3aa9f54e390b3e66b9b56b28513986898fd4e849df0d487c252c3f"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/use-home-recommendation-command.ts",
+      "bytes": 6076,
+      "sha256": "fd72dc10b0854da08d85c85feae67380e12633d053c05899c14a4ffe1bd43652"
+    },
+    {
+      "path": "apps/dwp/src/features/home/runtime/use-home-rum-context.ts",
+      "bytes": 999,
+      "sha256": "b7fcddc591da2fed33032d22d1d4748272a4bc9709127605992c128d10d19ded"
+    },
+    {
+      "path": "apps/dwp/src/observability/web-vitals.ts",
+      "bytes": 3635,
+      "sha256": "db93b7f11438a9923fab679a8fd37bd17a2e08a1ec0325e0d19c316c8327c5d1"
+    },
+    {
+      "path": "libs/shared-utils/src/api/home-v2-runtime-contract.ts",
+      "bytes": 7372,
+      "sha256": "0310c86b7a75285a7d62b2e56d18e8d966d13871e506259534bb541434d07282"
+    },
+    {
+      "path": "libs/shared-utils/src/api/home-v2-api.ts",
+      "bytes": 26212,
+      "sha256": "acdf0c845933a794df52043d1acada94e95c13e4ab8b829de37e667cd5459009"
+    },
+    {
+      "path": "libs/shared-utils/src/api/home-v2-command-api.ts",
+      "bytes": 6027,
+      "sha256": "3dcd5b333532d9a0b95e133b2671f4faa32bb4ee92e8af07a3c8801aa1950be1"
+    },
+    {
+      "path": "e2e/home-wave6-rollout.spec.ts",
+      "bytes": 11168,
+      "sha256": "f0329a82948825da3bbe22a9229a2cb23c66f20510b5c9ec33caab6c85d6df71"
+    }
+  ]
+}

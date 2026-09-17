@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, CalendarRange, Inbox, ListTodo, Zap } from 'lucide-react';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 
 import Box from '@mui/material/Box';
-import useMediaQuery from '@mui/material/useMediaQuery';
+
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
 import { WorkspaceWidgetCanvas } from '../../../components/workspace-composer/workspace-widget-canvas';
+import { useLargeTextReflow } from '../../../components/use-large-text-reflow';
 import {
   HOME_PRESENTATION_MAX_WIDTH,
   writeHomeLaunchpadGroupItemCounts,
@@ -22,6 +25,7 @@ import { resolveFlowHomeHealth } from './flow-home-health';
 import { FLOW_HOME_SECTION_REGISTRY, FLOW_HOME_STORAGE_ALIAS } from './flow-home-preference';
 import {
   FLOW_HOME_MEDIUM_MIN_WIDTH,
+  FLOW_HOME_CORE_REFERENCE_PLACEMENT,
   FLOW_HOME_REFERENCE_PLACEMENT,
   FLOW_HOME_WIDE_COMPOSITION,
   FLOW_HOME_WIDE_MIN_WIDTH,
@@ -38,11 +42,19 @@ import {
 import { resolveFlowGovernedPlacement } from './flow-governed-placement';
 import { homePurposeAllRoute } from './home-purpose-route-policy';
 import { composeHomeWorkActions, HOME_WORK_CARD_VISIBLE_LIMIT } from './home-work-action-policy';
-import { buildFlowSignals } from './flow-home-model';
+import { buildFlowHomeViewModel } from './flow-home-model';
 import { FlowHomeHeroSurface } from './flow-home-hero-surface';
 import { filterRolePulseSignals, filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
 import { NextActionCue } from './next-actions';
 import { CalendarInsightHomeWidget } from '../calendar-insight-home-widget';
+import { HomeWidgetRuntimeBoundary } from '../home-widget-runtime-boundary';
+import { HomeWidgetErrorBoundary } from '../runtime/home-content-state';
+import {
+  FlowBaseSpaceCompactPreview,
+  FlowFutureWidgetMesh,
+  type FlowFutureWidgetState,
+} from './flow-future-widget-mesh';
+import { FlowMeetingPrep } from './flow-meeting-prep';
 
 import type {
   HomeAudienceProfile,
@@ -51,6 +63,7 @@ import type {
   HomeOverview,
   HomePresentation,
   HomeRecommendation,
+  HomeV2Widget,
   HomeWidgetConfiguration,
 } from '@dwp-frontend/shared-utils';
 import type {
@@ -61,6 +74,7 @@ import type {
 import type { HomeContributionModel } from '../contributions';
 import type { FlowHomeSectionKey, FlowHomeSectionPreference } from './flow-home-preference';
 import type { HomeContentAlignment } from '@dwp-frontend/shared-utils';
+import type { HomeWidgetRuntimeDecisions } from '../runtime/widget-registry-runtime';
 
 type FlowHomeProps = {
   audience: HomeAudienceProfile;
@@ -83,6 +97,7 @@ type FlowHomeProps = {
   appLayout: LaunchpadLayout;
   sections: readonly FlowHomeSectionPreference[];
   widgetConfigurations: Record<string, HomeWidgetConfiguration>;
+  widgetRuntimeDecisions: HomeWidgetRuntimeDecisions;
   overview?: HomeOverview;
   overviewLoading: boolean;
   overviewFetching: boolean;
@@ -101,6 +116,8 @@ type FlowHomeProps = {
   presentation: HomePresentation;
   density: 'comfortable' | 'compact';
   previewDevice: 'desktop' | 'mobile';
+  /** Inline space supplied by the surrounding shell after navigation occupies its width. */
+  availableWidth: number;
   feedbackBusy: boolean;
   onBrowseAllApps: () => void;
   onStartEditing?: () => void;
@@ -111,38 +128,15 @@ type FlowHomeProps = {
   onManageApp?: (app: HomeAppDefinition) => void;
   onRetryOverview: () => void;
   onRetryContributions: () => void;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
+  /** Test/runtime adapter input. Omission keeps every future provider fail-closed. */
+  futureWidgetStateByKey?: Readonly<Record<string, FlowFutureWidgetState>>;
+  futureRuntimeWidgets?: readonly HomeV2Widget[];
+  futureRuntimeRefreshing?: boolean;
+  onOpenFutureRuntimeSource?: (route: string) => void;
+  onRetryFutureRuntime?: () => void;
+  ownerWidgetRegion?: ReactNode;
 };
-
-function useLargeTextReflow(): boolean {
-  const [largeText, setLargeText] = useState(false);
-  useEffect(() => {
-    const sync = () => {
-      const rootStyle = window.getComputedStyle(document.documentElement);
-      const rootSize = Number.parseFloat(rootStyle.fontSize);
-      const pageZoom = Number.parseFloat(rootStyle.zoom || document.documentElement.style.zoom);
-      setLargeText(
-        (Number.isFinite(rootSize) && rootSize >= 24) ||
-          (Number.isFinite(pageZoom) && pageZoom >= 1.75)
-      );
-    };
-    const resizeObserver = new ResizeObserver(sync);
-    const mutationObserver = new MutationObserver(sync);
-    resizeObserver.observe(document.documentElement);
-    mutationObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'style'],
-    });
-    window.addEventListener('resize', sync);
-    sync();
-    return () => {
-      resizeObserver.disconnect();
-      mutationObserver.disconnect();
-      window.removeEventListener('resize', sync);
-    };
-  }, []);
-  return largeText;
-}
 
 function contributionCount(items: HomeContributionModel['buckets']['action']): number {
   return Math.min(
@@ -172,6 +166,7 @@ export function FlowHome({
   appLayout,
   sections,
   widgetConfigurations,
+  widgetRuntimeDecisions,
   overview,
   overviewLoading,
   overviewFetching,
@@ -190,6 +185,7 @@ export function FlowHome({
   presentation,
   density,
   previewDevice,
+  availableWidth,
   feedbackBusy,
   onBrowseAllApps,
   onStartEditing,
@@ -201,16 +197,18 @@ export function FlowHome({
   onRetryOverview,
   onRetryContributions,
   onRecommendationFeedback,
+  futureWidgetStateByKey,
+  futureRuntimeWidgets,
+  futureRuntimeRefreshing = false,
+  onOpenFutureRuntimeSource,
+  onRetryFutureRuntime,
+  ownerWidgetRegion,
 }: FlowHomeProps) {
   const { t } = useTranslation('home');
-  const narrowViewport = useMediaQuery('(max-width:599.95px)', { noSsr: true });
-  const mediumViewport = useMediaQuery(
-    `(min-width:${FLOW_HOME_MEDIUM_MIN_WIDTH}px) and (max-width:1199.95px)`,
-    { noSsr: true }
-  );
-  const wideViewport = useMediaQuery(`(min-width:${FLOW_HOME_WIDE_MIN_WIDTH}px)`, {
-    noSsr: true,
-  });
+  const narrowViewport = availableWidth < 600;
+  const mediumViewport =
+    availableWidth >= FLOW_HOME_MEDIUM_MIN_WIDTH && availableWidth < FLOW_HOME_WIDE_MIN_WIDTH;
+  const wideViewport = availableWidth >= FLOW_HOME_WIDE_MIN_WIDTH;
   const largeTextReflow = useLargeTextReflow();
   const workHubAccessible = apps.some((app) => app.resourceKey === 'APP.WORK');
   const compactPreview = previewDevice === 'mobile' && editing;
@@ -268,7 +266,12 @@ export function FlowHome({
     timeline: contributionCount(contributionModel.buckets.timeline),
     response: contributionCount(homeWorkActions.responseItems),
   };
-  const flowSignals = buildFlowSignals(overview);
+  const flowModel = buildFlowHomeViewModel(overview, now, timeZone);
+  const flowSignals = flowModel.signals;
+  const priorityWork = flowModel.nowItems[0];
+  const linkedCalendar = flowModel.flowline.find(
+    (item) => item.kind === 'calendar' && item.state !== 'completed'
+  );
   const visibleSectionKeys = new Set(
     sections.filter((section) => section.visible).map((section) => section.widgetKey)
   );
@@ -326,7 +329,7 @@ export function FlowHome({
         stage.querySelectorAll<HTMLElement>('[data-workspace-widget]')
       ).map((widget) => {
         const surface = widget.querySelector<HTMLElement>(
-          '[data-workspace-widget-content] > section'
+          ':is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section'
         );
         const visibleRect = (surface ?? widget).getBoundingClientRect();
         return {
@@ -404,6 +407,10 @@ export function FlowHome({
       data-testid="flow-home"
       data-flow-home-presentation={presentation}
       data-flow-home-density={density}
+      data-flow-home-available-width={Math.round(availableWidth)}
+      data-flow-home-width-class={narrowViewport ? 'mobile' : wideViewport ? 'wide' : 'standard'}
+      data-home-ia="personal-action"
+      data-home-scroll-contract="single-document"
       data-flow-large-text={largeTextReflow ? 'true' : 'false'}
       data-preview-device={editing ? previewDevice : undefined}
       sx={(theme) => ({
@@ -416,6 +423,7 @@ export function FlowHome({
           theme.palette.mode === 'dark' ? theme.palette.background.paper : '#FFFFFF',
         '--home-surface-subtle':
           theme.palette.mode === 'dark' ? theme.palette.background.default : '#FAFBFC',
+        '--flow-reference-blue': foundationTokens.color.product.primary,
         width: 1,
         minWidth: 0,
         maxWidth: compactPreview ? 390 : 'var(--flow-shell-width)',
@@ -429,6 +437,11 @@ export function FlowHome({
         borderColor: 'divider',
         borderRadius: compactPreview ? 4 : 0,
         bgcolor: compactPreview ? 'background.default' : 'transparent',
+        '& [data-flow-workscape="true"]': {
+          backgroundColor: 'var(--flow-reference-blue)',
+          borderColor: theme.palette.primary.dark,
+          boxShadow: theme.shadows[4],
+        },
         '&[data-flow-home-presentation="focused"]': {
           '--flow-title-size': 'clamp(1.45rem, 1.8vw, 1.8rem)',
         },
@@ -441,6 +454,19 @@ export function FlowHome({
           },
         },
         '& [data-flow-dock-launch]': { minHeight: editing ? 72 : 62 },
+        '@media (min-width: 1600px)': {
+          '&[data-flow-home-presentation="balanced"] [data-flow-meeting-prep]': {
+            minHeight: 132,
+          },
+          '&[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="action-queue"] > [data-workspace-widget-content] > section, &[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="today"] > [data-workspace-widget-content] > section, &[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="response-hub"] > [data-workspace-widget-content] > section':
+            {
+              minHeight: 430,
+            },
+          '&[data-flow-home-presentation="balanced"] [data-flow-read-template="adaptive-wide"] [data-workspace-widget="request-tracker"] > [data-workspace-widget-content] > section':
+            {
+              minHeight: 270,
+            },
+        },
         '&[data-preview-device="mobile"] [data-workspace-presentation], &[data-flow-large-text="true"] [data-workspace-presentation]':
           {
             gridTemplateColumns: 'minmax(0, 1fr)',
@@ -475,6 +501,20 @@ export function FlowHome({
         '@media (forced-colors: active)': {
           '--home-surface': 'Canvas',
           '--home-surface-subtle': 'Canvas',
+          bgcolor: 'Canvas',
+          color: 'CanvasText',
+          '&, & *': {
+            color: 'CanvasText !important',
+            borderColor: 'CanvasText !important',
+            boxShadow: 'none !important',
+            textShadow: 'none !important',
+          },
+          '& a, & button, & [role="button"]': {
+            color: 'LinkText !important',
+          },
+          '& :disabled, & [aria-disabled="true"]': {
+            color: 'GrayText !important',
+          },
         },
       })}
     >
@@ -502,6 +542,28 @@ export function FlowHome({
             contentAlignment={resolvedContentAlignment}
             health={health}
             metrics={contextMetrics}
+            priorityAction={
+              priorityWork
+                ? {
+                    title: priorityWork.title,
+                    detail:
+                      priorityWork.reason ?? priorityWork.summary ?? t('flow.now.defaultReason'),
+                    route: workspaceWorkItemRoute(priorityWork),
+                    source: t('flow.apps.APP.WORK'),
+                    dueAt: priorityWork.dueAt,
+                  }
+                : undefined
+            }
+            linkedEvent={
+              linkedCalendar
+                ? {
+                    title: linkedCalendar.title,
+                    route: linkedCalendar.route,
+                    startsAt: linkedCalendar.startsAt,
+                    location: linkedCalendar.detail,
+                  }
+                : undefined
+            }
             editing={editing}
             customizationEnabled={customizationEnabled}
             customizationBusy={customizationBusy}
@@ -542,249 +604,320 @@ export function FlowHome({
         />
       )}
 
-      <Box
-        ref={purposeStageRef}
-        data-testid="flow-home-personal-sections"
-        data-flow-layout-contract="purpose-widgets"
-        data-flow-read-template={readLayout.template}
-        data-flow-adaptive-eligible={readLayout.adaptiveEligible ? 'true' : 'false'}
-        data-flow-adaptive-applied={readLayout.adaptiveApplied ? 'true' : 'false'}
-        data-flow-adaptive-first-section={readLayout.firstSectionKey ?? undefined}
-        data-flow-wide-composition={
-          readLayout.template === 'adaptive-wide' ? FLOW_HOME_WIDE_COMPOSITION.label : undefined
-        }
-        sx={{
-          '& [data-workspace-presentation]': {
-            gridAutoFlow: 'row',
-            alignItems: 'stretch',
-          },
-          '& [data-workspace-widget]': {
-            scrollMarginTop: 88,
-            alignSelf: 'stretch',
-          },
-          '& [data-workspace-widget-content]': {
-            height: '100%',
-          },
-          '& [data-workspace-widget-content] > section': {
-            height: '100% !important',
-            minHeight: 0,
-            bgcolor: 'var(--home-surface)',
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 'var(--flow-surface-radius)',
-            boxShadow: '0 1px 3px rgba(15,23,42,0.035)',
-          },
-          '&:not([data-flow-read-template="editing"]) [data-workspace-widget]:hover [data-workspace-widget-content] > section':
-            {
-              borderColor: 'rgba(49,95,213,0.28)',
+      {!editing && presentation === 'expressive' ? (
+        <FlowFutureWidgetMesh
+          stateByKey={futureWidgetStateByKey}
+          runtimeWidgets={futureRuntimeWidgets}
+          runtimeRefreshing={futureRuntimeRefreshing}
+          onOpenRuntimeSource={onOpenFutureRuntimeSource}
+          onRetryRuntime={onRetryFutureRuntime}
+        />
+      ) : !editing ? (
+        <FlowMeetingPrep
+          title={linkedCalendar?.title}
+          route={linkedCalendar?.route}
+          startsAt={
+            linkedCalendar?.startsAt
+              ? formatDate(new Date(linkedCalendar.startsAt), {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  timeZone,
+                })
+              : undefined
+          }
+        />
+      ) : null}
+
+      {!editing && ownerWidgetRegion}
+
+      {(editing || presentation !== 'expressive') && (
+        <Box
+          ref={purposeStageRef}
+          data-testid="flow-home-personal-sections"
+          data-flow-layout-contract="purpose-widgets"
+          data-flow-read-template={readLayout.template}
+          data-flow-adaptive-eligible={readLayout.adaptiveEligible ? 'true' : 'false'}
+          data-flow-adaptive-applied={readLayout.adaptiveApplied ? 'true' : 'false'}
+          data-flow-adaptive-variant={readLayout.adaptiveVariant ?? undefined}
+          data-flow-adaptive-first-section={readLayout.firstSectionKey ?? undefined}
+          data-flow-wide-composition={
+            readLayout.template === 'adaptive-wide' ? FLOW_HOME_WIDE_COMPOSITION.label : undefined
+          }
+          sx={{
+            '& [data-workspace-presentation]': {
+              gridAutoFlow: 'row',
+              alignItems: 'stretch',
             },
-          '& [data-flow-launcher-edge="true"] [data-workspace-widget-content] > section': {
-            '@media (min-width: 900px)': {
-              paddingInlineEnd: 'var(--flow-launcher-clearance, 0px)',
+            '& [data-workspace-widget]': {
+              scrollMarginTop: 88,
+              alignSelf: 'stretch',
             },
-          },
-          '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget="action-queue"]': {
-            gridColumn: '1 / -1',
-          },
-          '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget-policy="PERSONAL"]:not([data-workspace-widget="action-queue"])':
-            {
-              gridColumn: 'span 30',
+            '& [data-workspace-widget-content]': {
+              height: '100%',
             },
-          '&[data-flow-read-template="adaptive-wide"] [data-workspace-presentation]': {
-            rowGap: compactDensity ? 1.5 : 2,
-          },
-          ...Object.fromEntries(
-            Object.entries(FLOW_HOME_REFERENCE_PLACEMENT).map(([key, placement]) => [
-              `&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="${key}"]`,
-              { gridColumn: placement.gridColumn, gridRow: placement.row + (showUpdates ? 1 : 0) },
-            ])
-          ),
-          '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="request-tracker"]:has([data-home-content-state="empty"]), &[data-flow-read-template="adaptive-wide"] [data-workspace-widget="today"]:has([data-home-purpose-sparse-timeline="true"])':
-            {
-              alignSelf: 'start',
-              '& [data-workspace-widget-content]': { height: 'auto' },
-              '& [data-workspace-widget-content] > section': { height: 'auto !important' },
+            '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+              {
+                height: '100% !important',
+                minHeight: 0,
+                bgcolor: 'var(--home-surface)',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 'var(--flow-surface-radius)',
+                boxShadow: '0 1px 3px rgba(15,23,42,0.035)',
+              },
+            '&:not([data-flow-read-template="editing"]) [data-workspace-widget]:hover :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+              {
+                borderColor: 'rgba(49,95,213,0.28)',
+              },
+            '& [data-flow-launcher-edge="true"] :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+              {
+                '@media (min-width: 900px)': {
+                  paddingInlineEnd: 'var(--flow-launcher-clearance, 0px)',
+                },
+              },
+            '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget="action-queue"]': {
+              gridColumn: '1 / -1',
             },
-          '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
-            mx: '-7px',
-            rowGap: 2,
-          },
-          '&:not([data-flow-read-template="editing"]) [data-workspace-widget]': {
-            px: '7px !important',
-          },
-          '@media (max-width: 899.95px)': {
+            '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget-policy="PERSONAL"]:not([data-workspace-widget="action-queue"])':
+              {
+                gridColumn: 'span 30',
+              },
+            '&[data-flow-read-template="adaptive-wide"] [data-workspace-presentation]': {
+              gridTemplateColumns: `repeat(${FLOW_HOME_WIDE_COMPOSITION.columns}, minmax(0, 1fr))`,
+              rowGap: compactDensity ? 1.5 : 2,
+            },
+            ...Object.fromEntries(
+              Object.entries(FLOW_HOME_REFERENCE_PLACEMENT).map(([key, placement]) => [
+                `&[data-flow-read-template="adaptive-wide"][data-flow-adaptive-variant="complete"] [data-workspace-widget="${key}"]`,
+                {
+                  gridColumn: placement.gridColumn,
+                  gridRow: placement.row + (showUpdates ? 1 : 0),
+                },
+              ])
+            ),
+            ...Object.fromEntries(
+              Object.entries(FLOW_HOME_CORE_REFERENCE_PLACEMENT).map(([key, placement]) => [
+                `&[data-flow-read-template="adaptive-wide"][data-flow-adaptive-variant="core"] [data-workspace-widget="${key}"]`,
+                {
+                  gridColumn: placement.gridColumn,
+                  gridRow: placement.row + (showUpdates ? 1 : 0),
+                },
+              ])
+            ),
+            '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="request-tracker"]:has([data-home-content-state="empty"]), &[data-flow-read-template="adaptive-wide"] [data-workspace-widget="today"]:has([data-home-purpose-sparse-timeline="true"])':
+              {
+                alignSelf: 'start',
+                '& [data-workspace-widget-content]': { height: 'auto' },
+                '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                  { height: 'auto !important' },
+              },
             '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
-              mx: 0,
+              mx: '-7px',
               rowGap: 2,
             },
-            '& [data-workspace-widget]': { gridColumn: '1 / -1', alignSelf: 'start' },
             '&:not([data-flow-read-template="editing"]) [data-workspace-widget]': {
-              px: '0 !important',
+              px: '7px !important',
             },
-            '& [data-workspace-widget-content]': { height: editing ? '100%' : 'auto' },
-            '& [data-workspace-widget-content] > section': {
-              height: editing ? '100% !important' : 'auto !important',
-            },
-          },
-          '@media (forced-colors: active)': {
-            '& [data-workspace-widget-content] > section': { borderColor: 'CanvasText' },
-          },
-          '@media (prefers-reduced-motion: reduce)': {
-            '& [data-workspace-widget-content] > section, & [data-workspace-widget]:hover [data-workspace-widget-content] > section':
-              {
-                transition: 'none',
-                transform: 'none',
+            '@container dwp-home-workspace (max-width: 899.95px)': {
+              '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
+                mx: 0,
+                rowGap: 2,
               },
-          },
-        }}
-      >
-        <WorkspaceWidgetCanvas<FlowHomeSectionKey>
-          registry={FLOW_HOME_SECTION_REGISTRY}
-          widgets={sections}
-          governedWidgets={
-            showUpdates
-              ? [
-                  {
-                    widgetKey: 'announcements',
-                    label: t('flow.updates.title'),
-                    governance: 'ORGANIZATION',
-                    size: announcementsPlacement.renderSize,
-                    height: announcementsPolicy.height,
-                    surface: 'plain',
-                    content: (
-                      <FlowUpdates
-                        overview={overview}
-                        loading={overviewLoading}
-                        fetching={overviewFetching}
-                        requestFailed={overviewFailed}
-                        compact={compactContent}
-                        wide={presentation === 'expressive'}
-                        size={announcementsPlacement.renderSize}
-                        height={announcementsPolicy.height}
-                        itemLimit={compactContent ? 1 : 3}
-                        onRetry={onRetryOverview}
-                      />
-                    ),
-                  },
-                ]
-              : []
-          }
-          editing={editing && customizationEnabled}
-          busy={customizationBusy}
-          presentation={presentation}
-          scrollMode="document"
-          getLabel={(sectionKey) => t(`flow.editor.sections.${sectionKey}`)}
-          onStartEditing={customizationEnabled && !editing ? onStartEditing : undefined}
-          onChange={onSectionsChange}
-          renderWidget={(sectionKey, _size, height) => {
-            const common = {
-              loading: contributionLoading,
-              fetching: contributionFetching,
-              compact: compactContent,
-              footprintHeight: height,
-              referenceLayout: readLayout.template === 'adaptive-wide',
-              onRetry: onRetryContributions,
-            };
-            if (sectionKey === 'action-queue') {
-              return (
-                <HomePurposeWidget
-                  {...common}
-                  sectionKey="action"
-                  icon={Zap}
-                  items={homeWorkActions.actionItems}
-                  state={contributionModel.bucketStates.action}
-                  maxItems={HOME_WORK_CARD_VISIBLE_LIMIT}
-                  allRoute={workHubAccessible ? '/work/queue' : undefined}
-                  featuredFirst
-                  wideFeatured={readLayout.template !== 'adaptive-wide'}
-                  headerAccessory={
-                    !editing ? (
-                      <NextActionCue
-                        overview={overview}
-                        feedbackBusy={feedbackBusy}
-                        onRecommendationFeedback={onRecommendationFeedback}
-                      />
-                    ) : undefined
-                  }
-                />
-              );
-            }
-            if (sectionKey === 'today') {
-              return (
-                <HomePurposeWidget
-                  {...common}
-                  sectionKey="timeline"
-                  icon={CalendarRange}
-                  items={contributionModel.buckets.timeline}
-                  state={contributionModel.bucketStates.timeline}
-                  maxItems={sectionItemLimit('today')}
-                  allRoute={homePurposeAllRoute('timeline', contributionModel.buckets.timeline)}
-                  timeline
-                />
-              );
-            }
-            if (sectionKey === 'response-hub') {
-              return (
-                <HomePurposeWidget
-                  {...common}
-                  sectionKey="response"
-                  icon={Inbox}
-                  items={homeWorkActions.responseItems}
-                  state={contributionModel.bucketStates.response}
-                  maxItems={sectionItemLimit('response-hub')}
-                  allRoute={homePurposeAllRoute('response', homeWorkActions.responseItems)}
-                />
-              );
-            }
-            if (sectionKey === 'request-tracker') {
-              return (
-                <HomePurposeWidget
-                  {...common}
-                  sectionKey="request"
-                  icon={ListTodo}
-                  items={contributionModel.buckets.request}
-                  state={contributionModel.bucketStates.request}
-                  maxItems={sectionItemLimit('request-tracker')}
-                  allRoute={homePurposeAllRoute('request', contributionModel.buckets.request)}
-                />
-              );
-            }
-            if (sectionKey === 'role-pulse') {
-              return (
-                <HomePurposeWidget
-                  {...common}
-                  sectionKey="pulse"
-                  icon={Activity}
-                  items={rolePulseItems}
-                  state={contributionModel.bucketStates.pulse}
-                  maxItems={sectionItemLimit('role-pulse')}
-                  allRoute={homePurposeAllRoute('pulse', rolePulseItems)}
-                  roleSignals={roleSignals}
-                  signalsFetching={overviewFetching}
-                  signalsFailed={
-                    overviewFailed ||
-                    overview?.activity.status === 'UNAVAILABLE' ||
-                    overview?.activity.data?.executionSummaryStatus === 'UNAVAILABLE'
-                  }
-                  onRefreshSignals={onRetryOverview}
-                />
-              );
-            }
-            return (
-              <CalendarInsightHomeWidget
-                widgetKey={sectionKey}
-                overview={overview}
-                loading={overviewLoading}
-                fetching={overviewFetching}
-                requestFailed={overviewFailed}
-                compact={compactContent}
-                height={height}
-                onRetry={onRetryOverview}
-              />
-            );
+              '& [data-workspace-widget]': { gridColumn: '1 / -1', alignSelf: 'start' },
+              '&:not([data-flow-read-template="editing"]) [data-workspace-widget]': {
+                px: '0 !important',
+              },
+              '& [data-workspace-widget-content]': { height: editing ? '100%' : 'auto' },
+              '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                {
+                  height: editing ? '100% !important' : 'auto !important',
+                },
+            },
+            '@media (forced-colors: active)': {
+              '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                { borderColor: 'CanvasText' },
+            },
+            '@media (prefers-reduced-motion: reduce)': {
+              '& :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section, & [data-workspace-widget]:hover :is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section':
+                {
+                  transition: 'none',
+                  transform: 'none',
+                },
+            },
           }}
-        />
-      </Box>
+        >
+          <WorkspaceWidgetCanvas<FlowHomeSectionKey>
+            registry={FLOW_HOME_SECTION_REGISTRY}
+            widgets={sections}
+            governedWidgets={
+              showUpdates
+                ? [
+                    {
+                      widgetKey: 'announcements',
+                      label: t('flow.updates.title'),
+                      governance: 'ORGANIZATION',
+                      size: announcementsPlacement.renderSize,
+                      height: announcementsPolicy.height,
+                      surface: 'plain',
+                      content: (
+                        <FlowUpdates
+                          overview={overview}
+                          loading={overviewLoading}
+                          fetching={overviewFetching}
+                          requestFailed={overviewFailed}
+                          compact={compactContent}
+                          wide={presentation === 'expressive'}
+                          size={announcementsPlacement.renderSize}
+                          height={announcementsPolicy.height}
+                          itemLimit={compactContent ? 1 : 3}
+                          onRetry={onRetryOverview}
+                        />
+                      ),
+                    },
+                  ]
+                : []
+            }
+            editing={editing && customizationEnabled}
+            busy={customizationBusy}
+            presentation={presentation}
+            scrollMode="document"
+            getLabel={(sectionKey) => t(`flow.editor.sections.${sectionKey}`)}
+            onStartEditing={customizationEnabled && !editing ? onStartEditing : undefined}
+            onChange={onSectionsChange}
+            renderWidgetBoundary={(widgetKey, content) => (
+              <HomeWidgetErrorBoundary widgetKey={widgetKey} resetKey={healthUpdatedAt}>
+                {content}
+              </HomeWidgetErrorBoundary>
+            )}
+            renderAfterWidget={(sectionKey) =>
+              !editing && presentation !== 'expressive' && sectionKey === 'response-hub' ? (
+                <FlowBaseSpaceCompactPreview
+                  state={futureWidgetStateByKey?.['space-change-feed']}
+                  evidencePreview={futureWidgetStateByKey !== undefined}
+                />
+              ) : null
+            }
+            renderWidget={(sectionKey, _size, height) => {
+              const storageKey = FLOW_HOME_STORAGE_ALIAS[sectionKey];
+              const runtimeDecision = widgetRuntimeDecisions[storageKey];
+              const wrapRuntime = (content: ReactNode) => (
+                <HomeWidgetRuntimeBoundary
+                  decision={runtimeDecision}
+                  label={t(`widgets.registry.${storageKey}.label`)}
+                >
+                  {content}
+                </HomeWidgetRuntimeBoundary>
+              );
+              if (runtimeDecision.render === 'UNAVAILABLE') return wrapRuntime(null);
+              const common = {
+                loading: contributionLoading,
+                fetching: contributionFetching,
+                compact: compactContent,
+                footprintHeight: height,
+                referenceLayout: readLayout.template === 'adaptive-wide',
+                onRetry: onRetryContributions,
+              };
+              if (sectionKey === 'action-queue') {
+                return wrapRuntime(
+                  <HomePurposeWidget
+                    {...common}
+                    sectionKey="action"
+                    icon={Zap}
+                    items={homeWorkActions.actionItems}
+                    state={contributionModel.bucketStates.action}
+                    maxItems={HOME_WORK_CARD_VISIBLE_LIMIT}
+                    allRoute={workHubAccessible ? '/work/queue' : undefined}
+                    featuredFirst
+                    wideFeatured={readLayout.template !== 'adaptive-wide'}
+                    headerAccessory={
+                      !editing ? (
+                        <NextActionCue
+                          overview={overview}
+                          feedbackBusy={feedbackBusy}
+                          onRecommendationFeedback={onRecommendationFeedback}
+                        />
+                      ) : undefined
+                    }
+                  />
+                );
+              }
+              if (sectionKey === 'today') {
+                return wrapRuntime(
+                  <HomePurposeWidget
+                    {...common}
+                    sectionKey="timeline"
+                    icon={CalendarRange}
+                    items={contributionModel.buckets.timeline}
+                    state={contributionModel.bucketStates.timeline}
+                    maxItems={sectionItemLimit('today')}
+                    allRoute={homePurposeAllRoute('timeline', contributionModel.buckets.timeline)}
+                    timeline
+                  />
+                );
+              }
+              if (sectionKey === 'response-hub') {
+                return wrapRuntime(
+                  <HomePurposeWidget
+                    {...common}
+                    sectionKey="response"
+                    icon={Inbox}
+                    items={homeWorkActions.responseItems}
+                    state={contributionModel.bucketStates.response}
+                    maxItems={sectionItemLimit('response-hub')}
+                    allRoute={homePurposeAllRoute('response', homeWorkActions.responseItems)}
+                  />
+                );
+              }
+              if (sectionKey === 'request-tracker') {
+                return wrapRuntime(
+                  <HomePurposeWidget
+                    {...common}
+                    sectionKey="request"
+                    icon={ListTodo}
+                    items={contributionModel.buckets.request}
+                    state={contributionModel.bucketStates.request}
+                    maxItems={sectionItemLimit('request-tracker')}
+                    allRoute={homePurposeAllRoute('request', contributionModel.buckets.request)}
+                  />
+                );
+              }
+              if (sectionKey === 'role-pulse') {
+                return wrapRuntime(
+                  <HomePurposeWidget
+                    {...common}
+                    sectionKey="pulse"
+                    icon={Activity}
+                    items={rolePulseItems}
+                    state={contributionModel.bucketStates.pulse}
+                    maxItems={sectionItemLimit('role-pulse')}
+                    allRoute={homePurposeAllRoute('pulse', rolePulseItems)}
+                    roleSignals={roleSignals}
+                    signalsFetching={overviewFetching}
+                    signalsFailed={
+                      overviewFailed ||
+                      overview?.activity.status === 'UNAVAILABLE' ||
+                      overview?.activity.data?.executionSummaryStatus === 'UNAVAILABLE'
+                    }
+                    onRefreshSignals={onRetryOverview}
+                  />
+                );
+              }
+              return wrapRuntime(
+                <CalendarInsightHomeWidget
+                  widgetKey={sectionKey}
+                  overview={overview}
+                  loading={overviewLoading}
+                  fetching={overviewFetching}
+                  requestFailed={overviewFailed}
+                  compact={compactContent}
+                  height={height}
+                  onRetry={onRetryOverview}
+                />
+              );
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 }

@@ -27,15 +27,15 @@ export async function expectRoleMetricLabelsReadable(flowHome: Locator) {
 async function expectReferenceDesktopGeometry(stage: Locator) {
   await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
   await expect(stage).toHaveAttribute('data-flow-adaptive-applied', 'true');
-  await expect(stage).toHaveAttribute('data-flow-wide-composition', '8-4/4-4-4/8-4');
+  await expect(stage).toHaveAttribute('data-flow-wide-composition', '38-34-28');
   const placements = [
-    { key: 'action-queue', column: '1', span: 'span 40', row: 1 },
-    { key: 'role-pulse', column: '41', span: 'span 20', row: 1 },
-    { key: 'today', column: '1', span: 'span 20', row: 2 },
-    { key: 'response-hub', column: '21', span: 'span 20', row: 2 },
-    { key: 'focus-balance', column: '41', span: 'span 20', row: 2 },
-    { key: 'request-tracker', column: '1', span: 'span 40', row: 3 },
-    { key: 'meeting-load', column: '41', span: 'span 20', row: 3 },
+    { key: 'action-queue', column: '1', span: 'span 72', ratio: 0.72, row: 1 },
+    { key: 'role-pulse', column: '73', span: 'span 28', ratio: 0.28, row: 1 },
+    { key: 'today', column: '1', span: 'span 38', ratio: 0.38, row: 2 },
+    { key: 'response-hub', column: '39', span: 'span 34', ratio: 0.34, row: 2 },
+    { key: 'focus-balance', column: '73', span: 'span 28', ratio: 0.28, row: 2 },
+    { key: 'request-tracker', column: '1', span: 'span 72', ratio: 0.72, row: 3 },
+    { key: 'meeting-load', column: '73', span: 'span 28', ratio: 0.28, row: 3 },
   ];
   const geometry = await stage.evaluate((root, expected) => {
     const grid = root.querySelector<HTMLElement>('[data-workspace-presentation]')!;
@@ -80,13 +80,12 @@ async function expectReferenceDesktopGeometry(stage: Locator) {
       }),
     };
   }, placements);
-  expect(geometry.columns).toBe(60);
+  expect(geometry.columns).toBe(100);
   for (const item of geometry.items) {
     expect(item.actualColumn, item.key).toBe(item.column);
     expect(item.actualSpan, item.key).toBe(item.span);
     expect(Number(item.actualRow), item.key).toBe(item.row + geometry.rowOffset);
-    const expectedRatio = item.span === 'span 40' ? 2 / 3 : 1 / 3;
-    expect(Math.abs(item.width / geometry.gridWidth - expectedRatio), item.key).toBeLessThan(0.02);
+    expect(Math.abs(item.width / geometry.gridWidth - item.ratio), item.key).toBeLessThan(0.02);
     if (item.key === 'today' && item.visibleItems > 0 && item.visibleItems < 3) {
       expect(item.sparseTimeline, JSON.stringify(item)).toBe(true);
       expect(item.trailingSpace, JSON.stringify(item)).toBeLessThanOrEqual(24);

@@ -11,6 +11,7 @@ export type InlineFeedbackProps = {
   children: ReactNode;
   action?: ReactNode;
   icon?: ReactNode;
+  role?: 'status' | 'alert';
   sx?: SxProps<Theme>;
 } & ({ onClose: () => void; closeLabel: string } | { onClose?: never; closeLabel?: never });
 
@@ -21,6 +22,7 @@ export function InlineFeedback({
   children,
   action,
   icon,
+  role,
   sx,
   onClose,
   closeLabel,
@@ -30,8 +32,8 @@ export function InlineFeedback({
     <Alert
       severity={severity}
       variant="standard"
-      role={urgent ? 'alert' : 'status'}
-      aria-live={urgent ? 'assertive' : 'polite'}
+      role={role ?? (urgent ? 'alert' : 'status')}
+      aria-live={(role ?? (urgent ? 'alert' : 'status')) === 'alert' ? 'assertive' : 'polite'}
       aria-atomic="true"
       closeText={closeLabel}
       onClose={onClose}

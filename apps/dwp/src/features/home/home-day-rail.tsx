@@ -1,7 +1,21 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppWindow, Settings2, ShieldCheck } from 'lucide-react';
+import {
+  AlertTriangle,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  Grid2X2,
+  LockKeyhole,
+  Newspaper,
+  PanelsTopLeft,
+  RefreshCw,
+  Settings2,
+  Sparkles,
+} from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -11,7 +25,11 @@ import { alpha } from '@mui/material/styles';
 
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
-import type { HomeBackgroundPosition, HomeAudienceProfile } from '@dwp-frontend/shared-utils';
+import type {
+  CommunicationItem,
+  HomeAudienceProfile,
+  HomeBackgroundPosition,
+} from '@dwp-frontend/shared-utils';
 
 type HomeDayRailProps = {
   audience: HomeAudienceProfile;
@@ -22,293 +40,527 @@ type HomeDayRailProps = {
   usesDefaultBackground: boolean;
   backgroundPosition: HomeBackgroundPosition;
   overlayOpacity: number;
+  featuredStory?: CommunicationItem | null;
+  requiredStory?: CommunicationItem | null;
+  communicationState: ClassicCommunicationState;
   workspaceTools?: ReactNode;
   assignedAppCount: number;
   onBrowseAll: () => void;
+  onOpenOrganizationUpdates: () => void;
   personalizationBusy?: boolean;
   onStartEditing?: () => void;
+  onOpenStudio?: () => void;
 };
 
-const audienceTone = {
-  MEMBER: '#176B68',
-  MANAGER: '#7A4FC4',
-  OPERATOR: '#A14B14',
-} as const;
+export type ClassicCommunicationState =
+  | 'initial-loading'
+  | 'background-refresh'
+  | 'empty'
+  | 'forbidden'
+  | 'stale'
+  | 'widget-error'
+  | null;
+
+const CANONICAL_MEDIA_PREFIX = '/assets/home/wave2/classic-';
+
+function ClassicFeaturedImage({ story, fallback }: { story: CommunicationItem; fallback: string }) {
+  const src = story.coverImageUrl || fallback;
+  const canonical = src.startsWith(CANONICAL_MEDIA_PREFIX);
+  return (
+    <Box
+      component="picture"
+      sx={{ display: 'block', width: 1, height: 1, minWidth: 0, overflow: 'hidden' }}
+    >
+      {canonical && (
+        <>
+          <source
+            media="(max-width: 340px)"
+            srcSet="/assets/home/wave2/classic-mobile-c04-hero.jpg"
+          />
+          <source
+            media="(max-width: 600px)"
+            srcSet="/assets/home/wave2/classic-mobile-c03-hero.jpg"
+          />
+          <source media="(max-width: 1320px)" srcSet="/assets/home/wave2/classic-c02-hero.jpg" />
+          <source media="(min-width: 1321px)" srcSet="/assets/home/wave2/classic-c01-hero.jpg" />
+        </>
+      )}
+      <Box
+        component="img"
+        src={src}
+        alt=""
+        sx={{
+          display: 'block',
+          width: 1,
+          height: 1,
+          minHeight: { xs: 112, sm: 148, md: 230 },
+          maxHeight: { xs: 148, md: 252 },
+          objectFit: 'cover',
+          objectPosition: 'center',
+        }}
+      />
+    </Box>
+  );
+}
 
 export function HomeDayRail({
-  audience,
+  audience: _audience,
   currentDate,
-  headline,
-  subheadline,
+  headline: _headline,
+  subheadline: _subheadline,
   backgroundUrl,
-  usesDefaultBackground,
-  backgroundPosition,
+  usesDefaultBackground: _usesDefaultBackground,
+  backgroundPosition: _backgroundPosition,
   overlayOpacity,
+  featuredStory,
+  requiredStory,
+  communicationState,
   workspaceTools,
   assignedAppCount,
   onBrowseAll,
+  onOpenOrganizationUpdates,
   personalizationBusy = false,
   onStartEditing,
+  onOpenStudio,
 }: HomeDayRailProps) {
   const { t } = useTranslation('home');
-  const backgroundAlignment = usesDefaultBackground
-    ? 'center center'
-    : `${backgroundPosition.toLowerCase()} center`;
-  const backgroundOverlay = Math.min(0.8, Math.max(0, overlayOpacity / 100));
-  const mobileScrim = Math.max(0.58, backgroundOverlay);
-  const desktopImageScrim = Math.min(0.05, backgroundOverlay);
+  const noticeOpacity = Math.min(0.14, Math.max(0.06, overlayOpacity / 500));
+  const communicationUnverified = communicationState !== null && communicationState !== 'empty';
+  const CommunicationStateIcon =
+    communicationState === 'forbidden'
+      ? LockKeyhole
+      : communicationState === 'background-refresh'
+        ? RefreshCw
+        : communicationState === 'initial-loading' || communicationState === 'stale'
+          ? Clock3
+          : AlertTriangle;
 
   return (
     <Box
       component="section"
-      aria-label={t('page.personalWorkspace')}
+      aria-label={t('classic.portalAriaLabel')}
       data-testid="home-command-center"
-      sx={{
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.default' : '#FAF8FF'),
-      }}
+      data-home-ia="organization-portal"
+      sx={{ bgcolor: 'var(--home-canvas)', color: 'text.primary' }}
     >
       <Box
         data-testid="home-hero"
         sx={{
-          position: 'relative',
-          isolation: 'isolate',
-          overflow: 'hidden',
-          minHeight: { xs: 180, md: 144 },
-          bgcolor: { xs: '#DAE2FF', md: '#E2E2EB' },
-          backgroundImage: `url(${backgroundUrl})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: backgroundAlignment,
-          backgroundSize: 'cover',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            inset: 0,
-            zIndex: 0,
-            background: (theme) => {
-              const scrimColor =
-                theme.palette.mode === 'dark'
-                  ? foundationTokens.color.neutral[900]
-                  : foundationTokens.color.neutral[25];
-              return {
-                xs: alpha(scrimColor, mobileScrim),
-                md: alpha(scrimColor, desktopImageScrim),
-              };
-            },
-            pointerEvents: 'none',
-          },
-          '@media (forced-colors: active)': {
-            bgcolor: 'Canvas',
-            backgroundImage: 'none',
-            '&::before': { display: 'none' },
-          },
+          width: 1,
+          maxWidth: 1192,
+          mx: 'auto',
+          px: { xs: 1.25, sm: 2, md: 3 },
+          pt: { xs: 1, md: 2.25 },
+          '@media (forced-colors: active)': { bgcolor: 'Canvas', color: 'CanvasText' },
         }}
       >
-        <Box
+        <Stack
+          data-home-hero-context
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={1.5}
           sx={{
-            width: 1,
-            maxWidth: 2240,
-            minHeight: { xs: 180, md: 144 },
-            mx: 'auto',
-            px: { xs: 2, md: '50px' },
-            py: { xs: 2, md: 3 },
-            display: 'flex',
-            alignItems: 'center',
-            color: (theme) =>
-              theme.palette.mode === 'dark' ? '#F8FAFC' : { xs: '#191B22', md: '#F8FAFC' },
-            position: 'relative',
-            zIndex: 1,
+            minHeight: { xs: 42, md: 54 },
+            px: { xs: 1, md: 2 },
+            py: { xs: 0.5, md: 0.75 },
+            bgcolor: 'background.paper',
+            borderRadius: foundationTokens.home.radius.control,
+            boxShadow: foundationTokens.home.shadow.quietCard,
           }}
         >
-          <Stack
-            width={1}
-            direction={{ xs: 'column', md: 'row' }}
-            alignItems={{ xs: 'flex-start', md: 'flex-end' }}
-            justifyContent="space-between"
-            gap={2}
-          >
-            <Box minWidth={0}>
-              <Stack
-                data-home-hero-context
-                direction="row"
-                alignItems="center"
-                gap={1}
-                flexWrap="wrap"
+          <Stack minWidth={0} direction="row" alignItems="center" gap={1} flexWrap="wrap">
+            <Stack direction="row" alignItems="center" gap={0.75} minWidth={0}>
+              <Building2
+                size={17}
+                color={foundationTokens.color.product.primary}
+                aria-hidden="true"
+              />
+              <Typography
+                component="span"
+                sx={{
+                  color: 'primary.main',
+                  fontSize: { xs: 11, md: 15 },
+                  fontWeight: foundationTokens.home.typography.weightEmphasis,
+                  whiteSpace: { xs: 'nowrap', md: 'normal' },
+                }}
               >
+                {t('classic.portalTitle')}
+              </Typography>
+            </Stack>
+            <Typography
+              component="span"
+              color="text.secondary"
+              sx={{ display: { xs: 'none', md: 'inline' }, fontSize: 12 }}
+            >
+              {t('classic.portalMetadata', { currentDate })}
+            </Typography>
+            <Typography
+              component="span"
+              color="text.secondary"
+              sx={{ display: { xs: 'inline', md: 'none' }, fontSize: 11 }}
+            >
+              {t('classic.portalTimestamp')}
+            </Typography>
+          </Stack>
+
+          <Stack
+            data-classic-mode-selector
+            role="group"
+            aria-label={t('classic.modeAriaLabel')}
+            direction="row"
+            sx={{
+              flex: '0 0 auto',
+              p: 0.375,
+              bgcolor: 'action.hover',
+              borderRadius: foundationTokens.home.radius.control,
+              '& .MuiButton-root': {
+                minWidth: 0,
+                minHeight: { xs: 36, md: 38 },
+                px: { xs: 1, md: 1.5 },
+                fontSize: { xs: 11, md: 12 },
+              },
+            }}
+          >
+            <ActionButton
+              aria-current="page"
+              intent="quiet"
+              startIcon={<Building2 size={15} aria-hidden="true" />}
+              sx={{ bgcolor: 'background.paper', color: 'primary.main', boxShadow: 1 }}
+            >
+              <Box
+                component="span"
+                sx={{ display: { xs: 'none', sm: 'inline' } }}
+              >
+                {t('classic.classicModePrefix')}
+              </Box>
+              {t('classic.portalBadge')}
+            </ActionButton>
+            <ActionButton
+              intent="quiet"
+              startIcon={<Sparkles size={15} aria-hidden="true" />}
+              onClick={onOpenStudio ?? onStartEditing}
+              disabled={personalizationBusy || (!onOpenStudio && !onStartEditing)}
+              sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+            >
+              {t('classic.flowModeLabel')}
+            </ActionButton>
+          </Stack>
+        </Stack>
+
+        <Box
+          role={communicationState === 'widget-error' ? 'alert' : 'status'}
+          aria-busy={
+            communicationState === 'initial-loading' || communicationState === 'background-refresh'
+              ? 'true'
+              : undefined
+          }
+          data-classic-required-notice={
+            communicationUnverified ? communicationState : requiredStory ? 'required' : 'complete'
+          }
+          sx={(theme) => ({
+            mt: { xs: 1, md: 1.5 },
+            minHeight: { xs: 42, md: 48 },
+            px: { xs: 1.25, md: 2 },
+            py: 0.75,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            border: 1,
+            borderColor: communicationUnverified
+              ? communicationState === 'widget-error'
+                ? 'error.light'
+                : 'warning.light'
+              : requiredStory
+                ? 'error.light'
+                : 'primary.light',
+            borderRadius: foundationTokens.home.radius.control,
+            bgcolor: communicationUnverified
+              ? alpha(
+                  communicationState === 'widget-error'
+                    ? theme.palette.error.main
+                    : theme.palette.warning.main,
+                  noticeOpacity
+                )
+              : requiredStory
+                ? alpha(theme.palette.error.main, noticeOpacity)
+                : alpha(theme.palette.primary.main, 0.06),
+          })}
+        >
+          {communicationUnverified ? (
+            <CommunicationStateIcon
+              size={18}
+              color={
+                communicationState === 'widget-error'
+                  ? foundationTokens.color.status.error
+                  : foundationTokens.color.status.warning
+              }
+              aria-hidden="true"
+            />
+          ) : requiredStory ? (
+            <AlertTriangle
+              size={18}
+              color={foundationTokens.color.status.error}
+              aria-hidden="true"
+            />
+          ) : (
+            <CheckCircle2
+              size={18}
+              color={foundationTokens.color.product.primary}
+              aria-hidden="true"
+            />
+          )}
+          <Box minWidth={0} sx={{ flex: 1 }}>
+            <Typography
+              component="span"
+              sx={{
+                fontSize: { xs: 12, md: 13 },
+                fontWeight: foundationTokens.home.typography.weightEmphasis,
+                color: 'text.primary',
+              }}
+            >
+              {communicationUnverified
+                ? t(`states.${communicationState}.title`)
+                : requiredStory
+                  ? t('classic.notice.required')
+                  : t('classic.notice.complete')}
+            </Typography>
+            <Typography
+              component="span"
+              color="text.secondary"
+              sx={{ ml: { xs: 0.75, md: 2 }, fontSize: 12, display: { xs: 'none', sm: 'inline' } }}
+            >
+              {communicationUnverified
+                ? t(`states.${communicationState}.description`)
+                : (requiredStory?.title ?? t('classic.notice.completeDescription'))}
+            </Typography>
+          </Box>
+          {requiredStory && communicationState !== 'forbidden' && (
+            <ActionButton
+              intent="primary"
+              size="small"
+              onClick={onOpenOrganizationUpdates}
+              sx={{ minHeight: 36, flex: '0 0 auto', px: { xs: 1.25, md: 2 } }}
+            >
+              {t('classic.notice.action')}
+            </ActionButton>
+          )}
+        </Box>
+
+        {featuredStory ? (
+          <Box
+            data-classic-featured-news
+            component="article"
+            sx={{
+              mt: { xs: 0.75, md: 2 },
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr)',
+                md: 'minmax(320px, 5fr) minmax(0, 7fr)',
+              },
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.home.radius.control,
+              overflow: 'hidden',
+              boxShadow: foundationTokens.home.shadow.quietCard,
+            }}
+          >
+            <Box sx={{ position: 'relative', minWidth: 0, minHeight: { xs: 112, md: 230 } }}>
+              <ClassicFeaturedImage story={featuredStory} fallback={backgroundUrl} />
+              <Chip
+                size="small"
+                color="primary"
+                label={t('classic.featuredLabel')}
+                sx={{
+                  position: 'absolute',
+                  top: { xs: 8, md: 12 },
+                  left: { xs: 8, md: 12 },
+                  height: 26,
+                  fontSize: 11,
+                }}
+              />
+            </Box>
+            <Stack sx={{ minWidth: 0, p: { xs: 1.25, md: 2.5 } }} gap={{ xs: 0.5, md: 0.75 }}>
+              <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
                 <Typography
-                  variant="overline"
+                  component="span"
                   sx={{
-                    color: (theme) =>
-                      theme.palette.mode === 'dark'
-                        ? 'rgba(248,250,252,0.78)'
-                        : { xs: '#434653', md: 'rgba(248,250,252,0.82)' },
-                    fontFamily: '"JetBrains Mono", monospace',
+                    px: 1,
+                    py: 0.25,
+                    bgcolor: 'action.hover',
+                    color: 'primary.main',
                     fontSize: 11,
-                    textShadow: { md: '0 1px 3px rgba(0,0,0,0.42)' },
                   }}
                 >
-                  {currentDate}
+                  {t('classic.featuredCategory')}
                 </Typography>
-                <Chip
-                  size="small"
-                  icon={<ShieldCheck size={14} aria-hidden="true" />}
-                  label={t(`dayRail.audience.${audience.toLowerCase()}`)}
-                  sx={{
-                    color: audienceTone[audience],
-                    bgcolor: 'common.white',
-                    border: 1,
-                    borderColor: 'divider',
-                    '& .MuiChip-icon': { color: 'inherit' },
-                  }}
-                />
+                <Typography variant="caption" color="text.secondary" sx={{ ml: { md: 'auto' } }}>
+                  {featuredStory.publisherName}
+                </Typography>
+                {featuredStory.publishedAt && (
+                  <Stack direction="row" alignItems="center" gap={0.5} color="text.secondary">
+                    <CalendarDays size={13} aria-hidden="true" />
+                    <Typography variant="caption">
+                      {formatDate(featuredStory.publishedAt, { dateStyle: 'medium' })}
+                    </Typography>
+                  </Stack>
+                )}
               </Stack>
               <Typography
                 component="h1"
                 sx={{
-                  mt: 0.5,
-                  color: (theme) =>
-                    theme.palette.mode === 'dark' ? '#F8FAFC' : { xs: '#001946', md: '#F8FAFC' },
-                  fontSize: { xs: 24, md: 32 },
-                  fontWeight: 600,
-                  lineHeight: { xs: '32px', md: '40px' },
-                  textShadow: { md: '0 2px 8px rgba(0,0,0,0.42)' },
+                  fontSize: { xs: 16, md: 22 },
+                  lineHeight: foundationTokens.home.typography.cardLineHeight,
+                  fontWeight: foundationTokens.home.typography.weightBold,
+                  overflowWrap: 'anywhere',
                 }}
               >
-                {headline}
+                {featuredStory.title}
               </Typography>
               <Typography
-                variant="body1"
+                color="text.secondary"
                 sx={{
-                  mt: 0.5,
-                  maxWidth: 760,
-                  color: (theme) =>
-                    theme.palette.mode === 'dark'
-                      ? 'rgba(248,250,252,0.8)'
-                      : { xs: '#00419E', md: 'rgba(248,250,252,0.84)' },
-                  fontSize: { xs: 14, md: 16 },
-                  lineHeight: { xs: '20px', md: '24px' },
+                  fontSize: { xs: 13, md: 14 },
+                  lineHeight: 1.55,
+                  overflowWrap: 'anywhere',
                   display: '-webkit-box',
-                  WebkitLineClamp: { xs: 2, md: 1 },
+                  WebkitLineClamp: { xs: 2, md: 2 },
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
-                  textShadow: { md: '0 1px 4px rgba(0,0,0,0.42)' },
                 }}
               >
-                {subheadline}
+                {featuredStory.summary}
               </Typography>
-            </Box>
-            <Stack
-              data-launchpad-actions
-              data-home-action-placement="hero"
-              role="group"
-              aria-label={t('launchpad.actionsLabel')}
-              direction="row"
-              alignItems="stretch"
-              gap={0}
-              alignSelf={{ xs: 'flex-end', md: 'auto' }}
-              sx={{
-                flex: '0 0 auto',
-                minHeight: 38,
-                maxWidth: '100%',
-                overflow: 'hidden',
-                color: '#FFFFFF',
-                bgcolor: 'rgba(7,18,42,0.46)',
-                border: 1,
-                borderColor: 'rgba(255,255,255,0.34)',
-                borderRadius: 1,
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.13), 0 8px 24px rgba(0,7,24,0.16)',
-                backdropFilter: 'blur(16px) saturate(145%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(145%)',
-                '& .MuiButton-root': {
-                  minHeight: 38,
-                  px: { xs: 1, sm: 1.25 },
-                  borderRadius: 0,
-                  color: 'inherit',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  lineHeight: '18px',
-                  whiteSpace: 'nowrap',
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' },
-                  '&:focus-visible': {
-                    outline: '2px solid #8DB8FF',
-                    outlineOffset: -3,
-                  },
-                },
-                '@media (prefers-reduced-transparency: reduce), (forced-colors: active)': {
-                  bgcolor: '#15233B',
-                  backdropFilter: 'none',
-                  WebkitBackdropFilter: 'none',
-                  boxShadow: 'none',
-                },
-              }}
-            >
-              <Box
-                data-launchpad-assignment-count
-                aria-label={t('launchpad.assignedCount', { count: assignedAppCount })}
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                gap={1}
                 sx={{
-                  minHeight: 38,
-                  px: { xs: 1, sm: 1.25 },
-                  display: 'flex',
-                  alignItems: 'center',
-                  borderRight: 1,
-                  borderColor: 'rgba(255,255,255,0.22)',
+                  mt: 'auto',
+                  pt: { xs: 0.5, md: 1.25 },
+                  borderTop: { md: 1 },
+                  borderColor: 'divider',
                 }}
               >
                 <Typography
-                  component="span"
                   variant="caption"
-                  sx={{
-                    color: 'rgba(255,255,255,0.76)',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    lineHeight: '18px',
-                    fontVariantNumeric: 'tabular-nums',
-                    whiteSpace: 'nowrap',
-                  }}
+                  color="text.secondary"
+                  sx={{ display: { xs: 'none', sm: 'inline' } }}
                 >
-                  {t('launchpad.assignedCount', { count: assignedAppCount })}
+                  {t('classic.roadmapMeta')}
                 </Typography>
-              </Box>
-              <ActionButton
-                intent="quiet"
-                startIcon={<AppWindow size={17} strokeWidth={1.8} aria-hidden="true" />}
-                onClick={onBrowseAll}
-                sx={{
-                  borderRight: onStartEditing ? 1 : 0,
-                  borderColor: 'rgba(255,255,255,0.22)',
-                }}
-              >
-                {t('launchpad.allApps')}
-              </ActionButton>
-              {onStartEditing && (
                 <ActionButton
-                  data-home-edit-trigger
-                  data-home-action-policy="PERSONAL"
-                  intent="quiet"
-                  startIcon={<Settings2 size={17} strokeWidth={1.8} aria-hidden="true" />}
-                  disabled={personalizationBusy}
-                  onClick={onStartEditing}
+                  data-classic-primary-action
+                  intent="primary"
+                  size="small"
+                  startIcon={<Newspaper size={16} aria-hidden="true" />}
+                  onClick={onOpenOrganizationUpdates}
+                  sx={{ minHeight: 44, ml: 'auto' }}
                 >
-                  {t('launchpad.editHome')}
+                  {t('classic.openFeaturedStory')}
                 </ActionButton>
-              )}
+              </Stack>
             </Stack>
-          </Stack>
-        </Box>
+          </Box>
+        ) : (
+          <ActionButton
+            data-classic-primary-action
+            intent="primary"
+            size="small"
+            startIcon={<Newspaper size={17} aria-hidden="true" />}
+            onClick={onOpenOrganizationUpdates}
+            sx={{ mt: 1.5, minHeight: 44 }}
+          >
+            {t('classic.openOrganizationUpdates')}
+          </ActionButton>
+        )}
 
         {workspaceTools && (
           <Box
             data-home-zone="workspace-tools"
             data-home-zone-policy="PERSONAL"
             sx={{
-              width: 1,
-              maxWidth: 2240,
-              mx: 'auto',
-              px: { xs: 2, md: '50px' },
-              pb: { xs: 2, md: 3 },
-              position: 'relative',
-              zIndex: 1,
+              mt: { xs: 1, md: 2.5 },
+              p: { xs: 1, md: 2 },
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.home.radius.control,
+              boxShadow: foundationTokens.home.shadow.quietCard,
             }}
           >
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              gap={1}
+              sx={{ mb: { xs: 0.75, md: 1.25 } }}
+            >
+              <Stack direction="row" alignItems="center" gap={1}>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: 16, md: 18 },
+                    fontWeight: foundationTokens.home.typography.weightEmphasis,
+                  }}
+                >
+                  {t('page.appsTitle')}
+                </Typography>
+                <Chip
+                  size="small"
+                  label={t('launchpad.assignedCount', { count: assignedAppCount })}
+                  sx={{ height: 23, fontSize: 11 }}
+                />
+              </Stack>
+              <Stack direction="row" alignItems="center" gap={0.25}>
+                {onStartEditing && (
+                  <ActionButton
+                    data-home-edit-trigger
+                    data-home-action-policy="PERSONAL"
+                    intent="quiet"
+                    aria-label={t('launchpad.editHome')}
+                    onClick={onStartEditing}
+                    disabled={personalizationBusy}
+                    sx={{
+                      minWidth: 40,
+                      minHeight: 40,
+                      px: 0.75,
+                      display: { xs: 'none', md: 'inline-flex' },
+                    }}
+                  >
+                    <Settings2 size={17} aria-hidden="true" />
+                  </ActionButton>
+                )}
+                {onOpenStudio && (
+                  <ActionButton
+                    data-home-studio-trigger
+                    data-home-action-policy="PERSONAL"
+                    intent="quiet"
+                    aria-label={t('classic.openStudio')}
+                    onClick={onOpenStudio}
+                    disabled={personalizationBusy}
+                    sx={{
+                      minWidth: 40,
+                      minHeight: 40,
+                      px: 0.75,
+                      display: { xs: 'none', md: 'inline-flex' },
+                    }}
+                  >
+                    <PanelsTopLeft size={17} aria-hidden="true" />
+                  </ActionButton>
+                )}
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<Grid2X2 size={16} aria-hidden="true" />}
+                  onClick={onBrowseAll}
+                  sx={{ minHeight: 40, px: 1 }}
+                >
+                  {t('launchpad.allApps')}
+                </ActionButton>
+              </Stack>
+            </Stack>
             {workspaceTools}
           </Box>
         )}

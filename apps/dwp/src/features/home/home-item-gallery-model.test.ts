@@ -126,11 +126,11 @@ describe('home item gallery model', () => {
     ]);
   });
 
-  it('discovers both calendar insight widgets only with Calendar entitlement', () => {
+  it('requires Calendar entitlement for both fixed calendar insights', () => {
     const withCalendar = resolveHomeWidgetGalleryItems(
       ['focus-balance', 'meeting-load'],
       [],
-      APPS,
+      APPS.filter((app) => app.resourceKey === 'APP.CALENDAR'),
       true
     );
     const withoutCalendar = resolveHomeWidgetGalleryItems(

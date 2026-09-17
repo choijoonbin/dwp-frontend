@@ -37,6 +37,25 @@ export type HomeGovernedZoneKey = 'announcements';
 export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
 export type HomeExperienceVariant = 'CLASSIC' | 'FLOW_V1';
 export type HomePreferenceStore = 'LEGACY' | 'VIEWS';
+export const HOME_COMPOSITION_DEVICE_CLASSES = [
+  'DESKTOP_WIDE',
+  'DESKTOP_STANDARD',
+  'MOBILE_STANDARD',
+  'MOBILE_COMPACT',
+] as const;
+export type HomeCompositionDeviceClass = (typeof HOME_COMPOSITION_DEVICE_CLASSES)[number];
+export type HomeModeLayoutContract = {
+  layoutScope: 'MODE_SCOPED_VIEW';
+  deviceClasses: HomeCompositionDeviceClass[];
+};
+export type HomeModeLayouts = Record<HomeExperienceVariant, HomeModeLayoutContract>;
+export const HOME_CONTRACT_CAPABILITIES = {
+  compositionV4: 'HOME_COMPOSITION_V4',
+  modeScopedViews: 'MODE_SCOPED_HOME_VIEWS',
+  fourDeviceLayouts: 'FOUR_DEVICE_LAYOUTS',
+} as const;
+export type HomeContractCapability =
+  (typeof HOME_CONTRACT_CAPABILITIES)[keyof typeof HOME_CONTRACT_CAPABILITIES];
 
 export type GovernedHomeZone = {
   zoneKey: HomeGovernedZoneKey;
@@ -47,12 +66,22 @@ export type GovernedHomeZone = {
   sortOrder: number;
 };
 
-export type HomeCompositionPolicy = {
-  schemaVersion: 3;
+/** Tenant-level mode and governed-zone policy; distinct from a personal Home view layout. */
+export type TenantHomeCompositionPolicyV4 = {
+  schemaVersion: 4;
   experienceVariant: HomeExperienceVariant;
   personalCustomizationEnabled: boolean;
   governedZones: GovernedHomeZone[];
+  modeLayouts: HomeModeLayouts;
 };
+
+/** Compatibility name retained for existing consumers of the tenant policy API. */
+export type HomeCompositionPolicy = TenantHomeCompositionPolicyV4;
+
+export type TenantHomeCompositionPolicyV3 = Omit<
+  TenantHomeCompositionPolicyV4,
+  'schemaVersion' | 'modeLayouts'
+> & { schemaVersion: 3 };
 
 export type LegacyHomeCompositionPolicy = {
   schemaVersion: 1 | 2;
@@ -60,7 +89,44 @@ export type LegacyHomeCompositionPolicy = {
   governedZones?: GovernedHomeZone[];
 };
 
-export type HomeCompositionPolicyPayload = HomeCompositionPolicy | LegacyHomeCompositionPolicy;
+export type HomeCompositionPolicyPayload =
+  HomeCompositionPolicy | TenantHomeCompositionPolicyV3 | LegacyHomeCompositionPolicy;
+
+export function createHomeModeLayouts(): HomeModeLayouts {
+  const contract = (): HomeModeLayoutContract => ({
+    layoutScope: 'MODE_SCOPED_VIEW',
+    deviceClasses: [...HOME_COMPOSITION_DEVICE_CLASSES],
+  });
+  return { CLASSIC: contract(), FLOW_V1: contract() };
+}
+
+export function isHomeModeLayouts(value: unknown): value is HomeModeLayouts {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const layouts = value as Record<string, unknown>;
+  if (
+    Object.keys(layouts).length !== 2 ||
+    !Object.prototype.hasOwnProperty.call(layouts, 'CLASSIC') ||
+    !Object.prototype.hasOwnProperty.call(layouts, 'FLOW_V1')
+  ) {
+    return false;
+  }
+  return (['CLASSIC', 'FLOW_V1'] as const).every((mode) => {
+    const contract = layouts[mode];
+    if (!contract || typeof contract !== 'object' || Array.isArray(contract)) return false;
+    const candidate = contract as Record<string, unknown>;
+    return (
+      Object.keys(candidate).length === 2 &&
+      Object.prototype.hasOwnProperty.call(candidate, 'layoutScope') &&
+      Object.prototype.hasOwnProperty.call(candidate, 'deviceClasses') &&
+      candidate.layoutScope === 'MODE_SCOPED_VIEW' &&
+      Array.isArray(candidate.deviceClasses) &&
+      candidate.deviceClasses.length === HOME_COMPOSITION_DEVICE_CLASSES.length &&
+      candidate.deviceClasses.every(
+        (deviceClass, index) => deviceClass === HOME_COMPOSITION_DEVICE_CLASSES[index]
+      )
+    );
+  });
+}
 
 export type HomeExperience = {
   headline?: string | null;
@@ -93,10 +159,19 @@ export type HomeExperience = {
   advancedPersonalizationEnabled?: boolean;
   composerEnabled?: boolean;
   homePreferenceStore?: HomePreferenceStore;
+  /** Absent or empty until the backend fleet can safely serve the Wave 1 contracts. */
+  homeContractCapabilities?: string[];
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
 };
+
+export function hasHomeContractCapability(
+  experience: Pick<HomeExperience, 'homeContractCapabilities'> | null | undefined,
+  capability: HomeContractCapability
+): boolean {
+  return experience?.homeContractCapabilities?.includes(capability) === true;
+}
 
 export type HomeExperienceRevision = {
   revisionId: number;
@@ -209,12 +284,12 @@ export async function updateHomeLaunchpadConfiguration(
 }
 
 export async function updateHomeCompositionPolicy(
-  policy: HomeCompositionPolicy,
+  policy: HomeCompositionPolicy | TenantHomeCompositionPolicyV3,
   version: number
 ): Promise<HomeExperience> {
   const response = await axiosInstance.put<
     ApiResponse<HomeExperience>,
-    { policy: HomeCompositionPolicy; version: number }
+    { policy: HomeCompositionPolicy | TenantHomeCompositionPolicyV3; version: number }
   >('/api/platform/v1/admin/home-experience/composition', { policy, version });
   return response.data.data;
 }

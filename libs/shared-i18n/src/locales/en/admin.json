@@ -59,9 +59,9 @@
         "description": "Manage the organization identity shown across the employee experience."
       },
       "home-experience": {
-        "label": "Home page settings",
-        "title": "Home page settings",
-        "description": "Preview, validate, and publish the tenant home background and localized welcome copy."
+        "label": "Home Studio",
+        "title": "Home Studio",
+        "description": "Govern tenant home modes, app dock, widgets, templates, content, releases, and audit evidence."
       },
       "home-composition": {
         "label": "Widgets & home",
@@ -1004,6 +1004,7 @@
       "noResults": "No widget matches this search",
       "noResultsDescription": "Try a widget name, owning product, source app, or data source.",
       "listLabel": "Tenant widget definition catalog",
+      "keyboardViewport": "Tenant widget catalog results. Use Page Up, Page Down, Home, or End to browse.",
       "providerVerified": "Registered in current build",
       "runtimeContract": "Declared runtime values",
       "freshness": "Declared freshness target up to {{seconds}} sec",
@@ -1050,7 +1051,82 @@
           "description": "{{name}} revision v{{version}} will no longer be available to {{audience}}. Its {{widgets}}-widget layout cannot be newly applied. Existing personal copies remain independent; to restore availability, create and publish a new revision.",
           "action": "Revoke blueprint"
         }
+      },
+      "history": {
+        "action": "Revision history",
+        "loading": "Loading blueprint revision history",
+        "loadFailed": "Blueprint revision history could not be loaded",
+        "title": "{{name}} revision history",
+        "description": "Restoring a snapshot creates a new draft. The published blueprint remains unchanged until that draft is explicitly published.",
+        "empty": "No blueprint revisions are available",
+        "revision": "Revision {{revision}}",
+        "restore": "Restore as draft",
+        "restored": "The blueprint revision was restored as a new draft.",
+        "restoreFailed": "The blueprint revision could not be restored.",
+        "sources": {
+          "CREATE": "Created",
+          "UPDATE": "Updated",
+          "PUBLISH": "Published",
+          "REVOKE": "Revoked",
+          "RESTORE": "Restored"
+        },
+        "confirm": {
+          "title": "Restore this blueprint revision as a draft?",
+          "description": "Revision {{revision}} of {{name}} will become a new draft. Review and publish it separately before members can apply it.",
+          "action": "Restore draft"
+        }
       }
+    },
+    "controlPlane": {
+      "loading": "Loading widget registry readiness",
+      "unavailable": "Widget registry control plane is unavailable",
+      "unavailableDescription": "Tenant widget policy controls stay closed until the complete registry capability contract is available.",
+      "retry": "Retry widget registry",
+      "catalogLoading": "Loading the tenant widget catalog",
+      "catalogFailed": "Tenant widget catalog could not be loaded",
+      "catalogFailedDescription": "No policy state or certification claim is inferred while the authoritative catalog is unavailable.",
+      "shadowTitle": "Widget control plane is in shadow mode",
+      "shadowDescription": "Registry, policy, evidence, and audit records are read-only. Shadow results do not change Home runtime, layout, or placement.",
+      "activeTitle": "Authoritative widget control plane",
+      "activeDescription": "Runtime and policy decisions come from the activated registry contract.",
+      "resultCount_one": "{{count}} controlled widget definition",
+      "resultCount_other": "{{count}} controlled widget definitions",
+      "unresolved": "Unresolved version",
+      "effective": {
+        "AVAILABLE": "Available",
+        "ALREADY_ADDED": "Already placed",
+        "DEPRECATED": "Deprecated",
+        "DENY": "Denied"
+      },
+      "noPublicReason": "No public decision reason",
+      "publicReasons": {
+        "NOT_AVAILABLE": "The registered version is unavailable",
+        "DISABLED_BY_ORGANIZATION": "Disabled by the organization",
+        "APP_ACCESS_REQUIRED": "Source app access is required",
+        "INCOMPATIBLE": "Incompatible with this Home host",
+        "TEMPORARILY_UNAVAILABLE": "Temporarily stopped by a safety or availability control",
+        "DEPRECATED": "Deprecated for new placement",
+        "AVAILABLE": "Available for placement",
+        "ALREADY_ADDED": "Already placed on Home"
+      },
+      "required": "Required placement",
+      "policyTitle": "Tenant policy head",
+      "policyLoading": "Loading current policy",
+      "policySummary": "{{state}} · revision {{revision}}",
+      "policyMissing": "No published tenant policy exists. The effective result remains fail closed.",
+      "shadowMutationDisabled": "Mutations are disabled while registry migration mode is SHADOW.",
+      "actions": {
+        "impact": "Preview impact",
+        "publish": "Publish policy",
+        "block": "Block policy",
+        "rollback": "Rollback policy"
+      },
+      "auditTitle": "Policy revision history",
+      "auditEmpty": "No policy revision is available.",
+      "auditRevision": "Revision {{revision}} · {{state}}",
+      "impactTitle": "Draft policy impact",
+      "impactSummary": "{{tenants}} tenants and {{instances}} existing instances are affected.",
+      "impactUnavailable": "Impact is available only for a draft policy revision."
     }
   },
   "homeApps": {
@@ -3108,9 +3184,18 @@
     },
     "decision": {
       "description": "Decide {{person}}'s request for {{role}}. Self-approval is blocked by the server.",
-      "APPROVE": { "title": "Approve temporary privileged access", "action": "Approve" },
-      "DENY": { "title": "Deny privileged access request", "action": "Deny" },
-      "REVOKE": { "title": "Revoke active privileged access", "action": "Revoke now" }
+      "APPROVE": {
+        "title": "Approve temporary privileged access",
+        "action": "Approve"
+      },
+      "DENY": {
+        "title": "Deny privileged access request",
+        "action": "Deny"
+      },
+      "REVOKE": {
+        "title": "Revoke active privileged access",
+        "action": "Revoke now"
+      }
     },
     "policyDialog": {
       "title": "{{role}} activation policy",
@@ -4829,5 +4914,51 @@
     "exitReason": "Provider operator ended tenant support mode",
     "exited": "Support session ended.",
     "exitFailed": "The support session could not be ended. Try again."
+  },
+  "homeStudio": {
+    "eyebrow": "Tenant home governance",
+    "title": "Home Studio",
+    "description": "Preview tenant home changes, assess impact, publish controlled releases, and keep rollback evidence in one workspace.",
+    "shadow": "Widget registry · Shadow",
+    "readOnly": {
+      "title": "View-only access",
+      "description": "You can inspect Home Studio. Publishing, policy changes, and rollback require Home Experience manage access."
+    },
+    "sectionAccess": {
+      "widgetsTitle": "Widget policy access required",
+      "widgetsDescription": "Ask for Home Widget Policy view access to inspect the effective catalog, tenant policy, and impact evidence."
+    },
+    "navigationLabel": "Home Studio sections",
+    "sections": {
+      "modes": "Modes & policy",
+      "app-dock": "App dock",
+      "widgets": "Widget catalog",
+      "templates": "Home blueprints",
+      "content": "Content & preview",
+      "releases": "Releases",
+      "audit": "Audit"
+    },
+    "release": {
+      "loading": "Loading home release history",
+      "loadFailed": "Home release history could not be loaded",
+      "title": "Rollback uses a complete immutable revision",
+      "description": "Review the affected scopes before restoring. A rollback creates another auditable release and keeps later revisions available.",
+      "currentVersion": "Current release v{{version}}",
+      "revisionCount_one": "{{count}} revision",
+      "revisionCount_other": "{{count}} revisions",
+      "rollbackImpact": "Restore release v{{version}}. Affected scopes: {{scopes}}."
+    },
+    "audit": {
+      "loading": "Loading Home Studio audit evidence",
+      "loadFailed": "Home Studio audit evidence could not be loaded",
+      "empty": "No Home Studio audit evidence yet",
+      "emptyDescription": "Publish or roll back a home release to create correlated evidence.",
+      "title": "Home Studio audit evidence",
+      "description": "Publication, rollback, policy, and widget decisions are shown with outcome and correlation ID.",
+      "noCorrelation": "No correlation ID",
+      "page": "Page {{page}} of {{total}}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page"
+    }
   }
 }

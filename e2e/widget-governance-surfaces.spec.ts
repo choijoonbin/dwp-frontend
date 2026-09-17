@@ -4,6 +4,20 @@ import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import {
+  mockProviderWidgetRegistry,
+  mockTenantWidgetRegistry,
+  widgetRegistryEffectiveCatalog,
+  widgetRegistryReadiness,
+} from './support/widget-registry';
+import { mockShellHomeReadModels } from './support/shell-spec-foundation';
+import {
+  createHomeWave4Model,
+  HOME_V2_ROUTE,
+  homeWave4ResponseBody,
+  homeWave4ResponseHeaders,
+  withHomeWave6Runtime,
+} from './support/home-wave4-runtime-fixtures';
 
 const reducedMotionAppearance = {
   mode: 'light',
@@ -79,12 +93,20 @@ async function expectWidgetSurfaceScreenshot({
   }
 }
 
-test('tenant administration exposes a searchable read-only widget catalog', async ({ page }) => {
+test('tenant administration reviews shadow policy decisions without enabling mutations', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockShellSession(page, ['ADMIN'], {
     locale: 'en',
     appearance: reducedMotionAppearance,
     permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockTenantWidgetRegistry(page);
+  const writes: string[] = [];
+  page.on('request', (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.includes('/widget-policies/') && request.method() !== 'GET') writes.push(path);
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/admin/experience/home-composition?tab=catalog');
@@ -93,35 +115,34 @@ test('tenant administration exposes a searchable read-only widget catalog', asyn
     'aria-selected',
     'true'
   );
-  await expect(
-    page.getByText('Built-in widget contracts in this build — development preview')
-  ).toBeVisible();
+  await expect(page.getByText('Widget control plane is in shadow mode')).toBeVisible();
   const tenantCatalog = page.getByRole('tabpanel', { name: 'Widget catalog' });
   const tenantDefinitionList = page.getByRole('list', {
     name: 'Tenant widget definition catalog',
   });
   await expect(tenantDefinitionList).toBeVisible();
-  await expect(page.getByText('5 built-in definitions')).toBeVisible();
-  await expect(page.getByText('Registered in current build')).toBeVisible();
+  await expect(page.getByText('7 controlled widget definitions')).toBeVisible();
+  await expect(page.getByText('Denied', { exact: true }).first()).toBeVisible();
   await expectCurrentDefinition({
     list: tenantDefinitionList,
-    detail: page.getByRole('region', { name: 'Command rail' }),
-    label: 'Command rail',
+    detail: page.getByRole('region', { name: 'core.activity.activity' }),
+    label: 'core.activity.activity',
   });
+  await expect(page.getByText('DRAFT · revision 1')).toBeVisible();
+  await expect(page.getByText('2 tenants and 12 existing instances are affected.')).toBeVisible();
+  for (const action of ['Publish policy', 'Block policy', 'Rollback policy']) {
+    await expect(page.getByRole('button', { name: action })).toBeDisabled();
+  }
+  expect(writes).toEqual([]);
   await expectWidgetSurfaceScreenshot({
     page,
     surface: tenantCatalog,
     name: 'tenant-widget-catalog-1440.png',
   });
 
-  await page.getByLabel('Search widget catalog').fill('calendar');
-  await expect(page.getByText('1 built-in definition')).toBeVisible();
-  await expect(page.getByText('Schedule', { exact: true }).first()).toBeVisible();
-  await expectCurrentDefinition({
-    list: tenantDefinitionList,
-    detail: page.getByRole('region', { name: 'Schedule' }),
-    label: 'Schedule',
-  });
+  await page.getByLabel('Search widget catalog').fill('meeting-load');
+  await expect(page.getByText('1 controlled widget definition')).toBeVisible();
+  await expect(page.getByText('core.calendar.meeting-load', { exact: true }).first()).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -140,21 +161,18 @@ test('tenant administration exposes a searchable read-only widget catalog', asyn
 
   await page.setViewportSize({ width: 320, height: 720 });
   await page.getByLabel('Search widget catalog').fill('');
-  const tenantDailyBrief = tenantDefinitionList.getByRole('button', { name: /Daily brief/ });
+  const tenantDailyBrief = tenantDefinitionList.getByRole('button', {
+    name: /core.workspace.daily-brief/,
+  });
   await tenantDailyBrief.focus();
   await tenantDailyBrief.press('Enter');
   const tenantDetailHeading = page.getByRole('heading', {
-    name: 'Daily brief',
+    name: 'core.workspace.daily-brief',
     exact: true,
     level: 2,
   });
   await expect(tenantDetailHeading).toBeFocused();
   await expect(tenantDetailHeading).toBeInViewport();
-  await expectCurrentDefinition({
-    list: tenantDefinitionList,
-    detail: page.getByRole('region', { name: 'Daily brief' }),
-    label: 'Daily brief',
-  });
   await expectNoHorizontalOverflow(page);
 });
 
@@ -297,13 +315,19 @@ test('tenant administrators review blueprint impact and recovery before lifecycl
   await expect(page.getByText('The home blueprint lifecycle was updated.')).toBeVisible();
 });
 
-test('provider control labels static widget contracts as a development preview', async ({
+test('provider governance shows legacy-unverified evidence and keeps lifecycle commands closed', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockShellSession(page, ['PROVIDER_ADMIN'], {
     locale: 'en',
     appearance: reducedMotionAppearance,
+  });
+  await mockProviderWidgetRegistry(page);
+  const writes: string[] = [];
+  page.on('request', (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.includes('/widget-definition') && request.method() !== 'GET') writes.push(path);
   });
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/provider/code-contracts?tab=widgets');
@@ -312,37 +336,37 @@ test('provider control labels static widget contracts as a development preview',
     'aria-selected',
     'true'
   );
-  await expect(page.getByText('Static widget contracts packaged with this build')).toBeVisible();
+  await expect(page.getByText('Widget control plane is in shadow mode')).toBeVisible();
   const providerCatalog = page.getByRole('tabpanel', { name: 'Widget definitions' });
   const providerDefinitionList = page.getByRole('list', {
     name: 'Provider widget definition catalog',
   });
   await expect(providerDefinitionList).toBeVisible();
-  await expect(page.getByText('5 registered build definitions')).toBeVisible();
-  await expect(page.getByText('Static contract registered')).toBeVisible();
-  await expect(page.getByText('Release review criteria')).toBeVisible();
-  await expect(page.getByText('Target fail-closed revocation contract')).toBeVisible();
+  await expect(page.getByText('7 authoritative definitions')).toBeVisible();
   await expectCurrentDefinition({
     list: providerDefinitionList,
-    detail: page.getByRole('region', { name: 'Command rail' }),
-    label: 'Command rail',
+    detail: page.getByRole('region', { name: 'core.activity.activity' }),
+    label: 'core.activity.activity',
   });
-  await providerDefinitionList.getByRole('button', { name: /Daily brief/ }).click();
-  await expectCurrentDefinition({
-    list: providerDefinitionList,
-    detail: page.getByRole('region', { name: 'Daily brief' }),
-    label: 'Daily brief',
-  });
-  await providerDefinitionList.getByRole('button', { name: /Command rail/ }).click();
-  await expectCurrentDefinition({
-    list: providerDefinitionList,
-    detail: page.getByRole('region', { name: 'Command rail' }),
-    label: 'Command rail',
-  });
+  await expect(page.getByText('Certification evidence incomplete')).toBeVisible();
+  await expect(page.getByText('NOT_RUN', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 of 6 required evidence categories currently pass.')).toBeVisible();
+  await expect(page.getByText('Current evidence gate passed')).toHaveCount(0);
+  for (const action of ['Publish', 'Block', 'Deprecate', 'Rollback']) {
+    await expect(page.getByRole('button', { name: action, exact: true })).toBeDisabled();
+  }
+  expect(writes).toEqual([]);
   await expectWidgetSurfaceScreenshot({
     page,
     surface: providerCatalog,
     name: 'provider-widget-catalog-1280.png',
+  });
+
+  await providerDefinitionList.getByRole('button', { name: /core.workspace.daily-brief/ }).click();
+  await expectCurrentDefinition({
+    list: providerDefinitionList,
+    detail: page.getByRole('region', { name: 'core.workspace.daily-brief' }),
+    label: 'core.workspace.daily-brief',
   });
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
@@ -361,20 +385,144 @@ test('provider control labels static widget contracts as a development preview',
   });
 
   await page.setViewportSize({ width: 320, height: 720 });
-  const providerDailyBrief = providerDefinitionList.getByRole('button', { name: /Daily brief/ });
-  await providerDailyBrief.focus();
-  await providerDailyBrief.press('Enter');
+  const providerFocus = providerDefinitionList.getByRole('button', { name: /core.work.focus$/ });
+  await providerFocus.focus();
+  await providerFocus.press('Enter');
   const providerDetailHeading = page.getByRole('heading', {
-    name: 'Daily brief',
+    name: 'core.work.focus',
     exact: true,
     level: 2,
   });
   await expect(providerDetailHeading).toBeFocused();
   await expect(providerDetailHeading).toBeInViewport();
-  await expectCurrentDefinition({
-    list: providerDefinitionList,
-    detail: page.getByRole('region', { name: 'Daily brief' }),
-    label: 'Daily brief',
-  });
   await expectNoHorizontalOverflow(page);
+});
+
+test('shadow evaluation cannot change Home and authoritative denial fails closed', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    appearance: reducedMotionAppearance,
+  });
+  await mockShellHomeReadModels(page);
+  await page.route(HOME_V2_ROUTE, (route) =>
+    route.fulfill({
+      status: 200,
+      headers: homeWave4ResponseHeaders('SHADOW', '"widget-shadow-legacy"'),
+      contentType: 'application/json',
+      body: homeWave4ResponseBody(
+        withHomeWave6Runtime(
+          createHomeWave4Model({
+            deviceClass: 'DESKTOP_STANDARD',
+            marker: 'widget-shadow-legacy',
+            mode: 'CLASSIC',
+          }),
+          'SHADOW_COMPARE'
+        )
+      ),
+    })
+  );
+  await page.route('**/api/platform/v1/home-preferences', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return route.fulfill({
+      json: {
+        data: {
+          schemaVersion: 4,
+          surfaceKey: 'workspace-home',
+          customized: true,
+          layout: {
+            appLayout: null,
+            presentation: 'balanced',
+            widgets: [
+              { widgetKey: 'activity', visible: true, size: 'quarter' },
+              { widgetKey: 'focus', visible: true, size: 'medium' },
+              { widgetKey: 'schedule', visible: true, size: 'quarter' },
+              { widgetKey: 'daily-brief', visible: true, size: 'full' },
+            ],
+          },
+          version: 1,
+          updatedAt: '2026-09-15T05:00:00Z',
+        },
+      },
+    });
+  });
+  let mode: 'SHADOW' | 'AUTHORITATIVE' = 'SHADOW';
+  let injectUnknownRenderer = true;
+  let effectiveReads = 0;
+  await page.route('**/api/platform/v1/widget-catalog/readiness', (route) =>
+    route.fulfill({
+      json: {
+        data: widgetRegistryReadiness(mode, mode === 'AUTHORITATIVE'),
+      },
+    })
+  );
+  await page.route('**/api/platform/v1/widget-catalog/effective**', (route) => {
+    effectiveReads += 1;
+    const catalog = widgetRegistryEffectiveCatalog(mode, 'DENY');
+    if (!injectUnknownRenderer) return route.fulfill({ json: { data: catalog } });
+    const maliciousCatalog = {
+      ...catalog,
+      contexts: catalog.contexts.map((context) => ({
+        ...context,
+        items: context.items.map((item) =>
+          item.legacyWidgetKey === 'focus'
+            ? {
+                ...item,
+                effectiveState: 'AVAILABLE',
+                reasonCodes: ['AVAILABLE'],
+                placementCapabilities: {
+                  canAdd: true,
+                  canHide: true,
+                  canMove: true,
+                  canResize: true,
+                },
+                renderer: { kind: 'REMOTE', scriptUrl: 'javascript:alert(1)' },
+              }
+            : item
+        ),
+      })),
+    };
+    return route.fulfill({ json: { data: maliciousCatalog } });
+  });
+
+  await page.goto('/');
+  await expect(page.locator('[data-widget-runtime-state="unavailable"]')).toHaveCount(0);
+  // Classic's read surface is the W2 personal summary. Native catalog widgets are
+  // rendered in its editor, where SHADOW must preserve the existing content.
+  await page.getByRole('button', { name: 'Edit home', exact: true }).click();
+  await expect(page.getByText('Live activity', { exact: true }).first()).toBeVisible();
+  await expect.poll(() => effectiveReads).toBe(1);
+
+  mode = 'AUTHORITATIVE';
+  injectUnknownRenderer = false;
+  await page.reload();
+  const unavailable = page.locator('[data-widget-runtime-state="unavailable"]');
+  await expect(unavailable).toHaveCount(4);
+  await expect(
+    page.getByRole('status', { name: 'Schedule is unavailable', includeHidden: true })
+  ).toContainText('Your organization has disabled this widget.');
+  await expect.poll(() => effectiveReads).toBe(2);
+
+  // A renderer field makes the closed catalog contract invalid. The entire
+  // authoritative response must fail closed, rather than trust sibling reasons.
+  injectUnknownRenderer = true;
+  await page.reload();
+  await expect(unavailable).toHaveCount(4);
+  await expect(
+    page.getByRole('status', { name: 'Schedule is unavailable', includeHidden: true })
+  ).toContainText('The widget was stopped by a safety or availability control.');
+  await expect(
+    page.getByRole('status', { name: 'Focus now is unavailable', includeHidden: true })
+  ).toContainText('The widget was stopped by a safety or availability control.');
+  await expect.poll(() => effectiveReads).toBe(3);
+  await expect(page.getByText(/core\.(?:workspace|work|calendar|activity)/u)).toHaveCount(0);
+  await expect(page.locator('script[src^="javascript:"]')).toHaveCount(0);
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
 });

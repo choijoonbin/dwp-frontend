@@ -1,3 +1,5 @@
+import { createHomeModeLayouts, isHomeModeLayouts } from './home-experience-api';
+
 import type {
   GovernedHomeZone,
   HomeAppPlacement,
@@ -238,21 +240,37 @@ function governedZone(value: unknown, path: string): GovernedHomeZone {
 }
 
 function compositionPolicy(value: unknown, path: string): HomeCompositionPolicy {
-  const source = record(value, path, [
-    'schemaVersion',
-    'experienceVariant',
-    'personalCustomizationEnabled',
-    'governedZones',
-  ]);
-  if (source.schemaVersion !== 3) fail(`${path}.schemaVersion`, 'expected version 3');
+  const schemaVersion =
+    value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>).schemaVersion
+      : undefined;
+  const source = record(
+    value,
+    path,
+    schemaVersion === 3
+      ? ['schemaVersion', 'experienceVariant', 'personalCustomizationEnabled', 'governedZones']
+      : [
+          'schemaVersion',
+          'experienceVariant',
+          'personalCustomizationEnabled',
+          'governedZones',
+          'modeLayouts',
+        ]
+  );
+  if (source.schemaVersion !== 3 && source.schemaVersion !== 4) {
+    fail(`${path}.schemaVersion`, 'expected version 3 or 4');
+  }
   if (!Array.isArray(source.governedZones) || source.governedZones.length > 1) {
     return fail(`${path}.governedZones`, 'invalid governed zone count');
   }
   const governedZones = source.governedZones.map((zone, index) =>
     governedZone(zone, `${path}.governedZones[${index}]`)
   );
+  if (source.schemaVersion === 4 && !isHomeModeLayouts(source.modeLayouts)) {
+    return fail(`${path}.modeLayouts`, 'invalid mode layout contract');
+  }
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     experienceVariant: enumeration(
       source.experienceVariant,
       `${path}.experienceVariant`,
@@ -263,6 +281,9 @@ function compositionPolicy(value: unknown, path: string): HomeCompositionPolicy 
       `${path}.personalCustomizationEnabled`
     ),
     governedZones,
+    modeLayouts: isHomeModeLayouts(source.modeLayouts)
+      ? structuredClone(source.modeLayouts)
+      : createHomeModeLayouts(),
   };
 }
 

@@ -8,6 +8,12 @@ export type AppEntitlementPermission = {
 const APP_RESOURCE_ALIASES: Readonly<Record<string, readonly string[]>> = {
   'APP.HCM': ['APP.HCM', 'APP.HRIS'],
   'APP.HRIS': ['APP.HCM', 'APP.HRIS'],
+  'APP.MAIL': ['APP.MAIL', 'APP.MAIL_CALENDAR'],
+  'APP.MAIL_CALENDAR': ['APP.MAIL', 'APP.MAIL_CALENDAR'],
+  'APP.MESSAGING': ['APP.MESSAGING', 'APP.COLLABORATION'],
+  'APP.COLLABORATION': ['APP.MESSAGING', 'APP.COLLABORATION'],
+  'APP.WORKPLACE': ['APP.WORKPLACE', 'APP.ROOMS'],
+  'APP.ROOMS': ['APP.WORKPLACE', 'APP.ROOMS'],
 };
 
 export function appResourceAliasCandidates(resourceKey: string): readonly string[] {

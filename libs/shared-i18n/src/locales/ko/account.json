@@ -1,236 +1,16 @@
 {
-  "shell": {
-    "title": "설정",
-    "personalSettings": "개인 작업 환경",
-    "providerSettings": "프로바이더 운영자 설정",
-    "accountFallback": "계정",
-    "navigationLabel": "설정 탐색",
-    "openNavigation": "설정 탐색 열기",
-    "backToProvider": "프로바이더 제어 영역으로 돌아가기",
-    "backToWorkspace": "워크스페이스로 돌아가기",
-    "groups": {
-      "account": "계정",
-      "preferences": "환경 설정",
-      "organization": "조직"
-    }
-  },
-  "navigation": {
-    "profile": "프로필",
-    "security": "보안 및 세션",
-    "appearance": "화면 모양",
-    "accessibility": "접근성",
-    "language": "언어 및 지역",
-    "home": "홈 워크스페이스",
-    "notifications": "알림",
-    "managed": "관리형 설정"
-  },
-  "settingsHome": {
-    "eyebrow": "내 계정",
-    "title": "개인 설정",
-    "description": "내 계정, 보안, 화면과 업무 환경 설정을 검색하고 관리합니다.",
-    "providerDescription": "프로바이더 운영자 계정에 허용된 개인 환경과 보안 설정을 관리합니다.",
-    "providerBoundary": "고객 테넌트의 홈, 알림 및 조직 관리값은 이 계정 설정에 표시되지 않습니다.",
-    "availableCount": "현재 범위 {{count}}개",
-    "searchLabel": "개인 설정 검색",
-    "searchPlaceholder": "보안, 언어, 알림 등 검색",
-    "searchHelp": "현재 신원과 범위에서 열 수 있는 설정만 검색합니다.",
-    "emptyTitle": "일치하는 설정이 없습니다",
-    "emptyDescription": "검색어를 줄이거나 다른 표현으로 다시 검색하세요.",
-    "items": {
-      "profile": "내 프로필의 정본 출처와 계정 범위를 확인합니다.",
-      "security": "로그인 정책, 활성 세션과 임시 특권 접근을 확인합니다.",
-      "appearance": "색상 모드와 작업 밀도를 선택합니다.",
-      "accessibility": "대비, 움직임과 링크 표시 방식을 조정합니다.",
-      "language": "제품 언어, 시간대와 날짜·숫자 형식을 선택합니다.",
-      "home": "개인 홈의 앱과 위젯 구성을 관리합니다.",
-      "notifications": "알림 채널, 집중 시간과 앱별 전달 규칙을 관리합니다.",
-      "managed": "조직이 관리하는 값과 허용된 예외 요청을 확인합니다."
-    },
-    "keywords": {
-      "profile": "계정 개인정보 정본 HR IdP",
-      "security": "MFA 패스키 로그인 세션 JIT 특권",
-      "appearance": "테마 다크 라이트 밀도",
-      "accessibility": "고대비 동작 줄이기 링크",
-      "language": "지역 시간대 날짜 숫자 형식",
-      "home": "홈 앱 위젯",
-      "notifications": "알림 채널 집중 시간 조용한 시간",
-      "managed": "조직 정책 예외 적용값"
-    }
-  },
-  "sections": {
-    "appearance": {
-      "title": "화면 모양",
-      "description": "Digital Workplace의 표시 방식과 작업 밀도를 선택합니다.",
-      "groupTitle": "화면 및 레이아웃",
-      "groupDescription": "이 환경 설정은 사용자 계정에 저장되어 다른 기기에서도 동일하게 적용됩니다.",
-      "providerGroupDescription": "이 프로바이더 운영자 환경 설정은 현재 브라우저에만 저장되며 고객 테넌트 설정에는 영향을 주지 않습니다."
-    },
-    "accessibility": {
-      "title": "접근성",
-      "description": "더 편안하게 사용할 수 있도록 시각적 명료도와 움직임을 조정합니다.",
-      "groupTitle": "시각 및 움직임 환경 설정",
-      "groupDescription": "변경 사항은 Digital Workplace 전체에 즉시 적용됩니다."
-    },
-    "language": {
-      "title": "언어 및 지역",
-      "description": "탐색, 작업, 메시지에 사용할 언어를 선택합니다.",
-      "groupTitle": "표시 언어",
-      "groupDescription": "선택한 언어는 사용자 계정에 저장되어 이후 세션에도 적용됩니다."
-    },
-    "home": {
-      "title": "홈 워크스페이스",
-      "description": "개인 홈에 표시할 앱과 정보를 구성합니다.",
-      "groupTitle": "개인 홈",
-      "groupDescription": "홈 편집기에서 앱과 위젯을 배치할 수 있습니다."
-    },
-    "notifications": {
-      "title": "알림",
-      "description": "알림 채널, 조용한 시간과 앱별 수신 규칙을 관리합니다."
-    },
-    "managed": {
-      "title": "관리형 설정",
-      "description": "조직에서 관리하는 사용자 경험 기본값과 예외 요청을 확인합니다.",
-      "notice": "이 값은 {{owner}}에서 관리합니다. 업무상 다른 값이 필요하면 근거와 영향을 포함해 예외를 요청할 수 있습니다.",
-      "groupTitle": "조직 기본값",
-      "groupDescription": "관리형 값은 워크스페이스 전체에 일관된 사용 경험을 제공합니다."
-    }
-  },
-  "settings": {
-    "colorMode": {
-      "title": "색상 모드",
-      "description": "시스템 설정을 따르거나 라이트 또는 다크 화면을 선택합니다."
-    },
-    "density": {
-      "title": "인터페이스 밀도",
-      "description": "작업 컨트롤과 정보 목록의 간격을 조정합니다.",
-      "ariaLabel": "인터페이스 밀도"
-    },
-    "highContrast": {
-      "title": "고대비",
-      "description": "인터페이스 전체의 경계와 텍스트 대비를 높입니다."
-    },
-    "reduceMotion": {
-      "title": "움직임 줄이기",
-      "description": "필수적이지 않은 전환 효과와 인터페이스 움직임을 최소화합니다."
-    },
-    "underlineLinks": {
-      "title": "링크 항상 밑줄 표시",
-      "description": "링크가 색상에만 의존하지 않도록 지속적인 시각 단서를 표시합니다."
-    },
-    "reduceTransparency": {
-      "title": "투명도 줄이기",
-      "description": "반투명 배경과 후면 효과를 제거해 경계를 더 명확하게 표시합니다."
-    },
-    "language": {
-      "title": "제품 언어",
-      "description": "Digital Workplace에서 사용할 언어를 변경합니다."
-    },
-    "timeZone": {
-      "title": "시간대",
-      "description": "날짜와 활동 시간을 원하는 IANA 시간대로 표시합니다."
-    },
-    "dateFormat": {
-      "title": "날짜 형식",
-      "description": "목록, 상세 및 내보내기에 사용할 일관된 날짜 순서를 선택합니다."
-    },
-    "timeFormat": {
-      "title": "시간 형식",
-      "description": "언어 기본값 또는 12시간제와 24시간제를 선택합니다."
-    },
-    "firstDayOfWeek": {
-      "title": "한 주의 시작일",
-      "description": "캘린더와 기간 선택에서 사용할 주간 경계를 설정합니다."
-    },
-    "numberFormat": {
-      "title": "숫자 형식",
-      "description": "숫자에 사용할 천 단위와 소수점 구분자를 선택합니다."
-    },
-    "homeWorkspace": {
-      "title": "앱 및 위젯",
-      "description": "홈 워크스페이스에 표시할 항목과 배치를 선택합니다."
-    },
-    "productFont": {
-      "title": "제품 글꼴"
-    },
-    "brandAccent": {
-      "title": "브랜드 강조색",
-      "ariaLabel": "브랜드 색상 {{color}}"
-    },
-    "navigationPattern": {
-      "title": "탐색 패턴"
-    },
-    "policySource": {
-      "title": "정책 원천",
-      "description": "조직 관리 기본값을 제공하는 테넌트 경험 정책입니다."
-    },
-    "policyOwner": {
-      "title": "정책 담당자",
-      "description": "관리형 설정의 검토가 필요할 때 문의할 담당 역할입니다."
-    }
-  },
-  "options": {
-    "colorMode": {
-      "system": "시스템",
-      "light": "라이트",
-      "dark": "다크"
-    },
-    "density": {
-      "compact": "좁게",
-      "standard": "표준",
-      "comfortable": "넓게"
-    },
-    "navigationPattern": {
-      "sidebar": "사이드바",
-      "rail": "축소 레일",
-      "top": "상단 탐색"
-    },
-    "timeZone": {
-      "system": "기기 시간대",
-      "UTC": "UTC",
-      "Asia_Seoul": "서울 (UTC+09:00)",
-      "Asia_Tokyo": "도쿄 (UTC+09:00)",
-      "Asia_Singapore": "싱가포르 (UTC+08:00)",
-      "Europe_London": "런던",
-      "America_New_York": "뉴욕",
-      "America_Los_Angeles": "로스앤젤레스"
-    },
-    "dateFormat": {
-      "locale": "언어 기본값",
-      "iso": "2026-08-12",
-      "month_first": "08/12/2026",
-      "day_first": "12/08/2026"
-    },
-    "timeFormat": {
-      "locale": "언어 기본값",
-      "12_hour": "12시간제",
-      "24_hour": "24시간제"
-    },
-    "firstDayOfWeek": {
-      "locale": "언어 기본값",
-      "monday": "월요일",
-      "sunday": "일요일"
-    },
-    "numberFormat": {
-      "locale": "언어 기본값",
-      "comma_decimal": "1,234.56",
-      "dot_decimal": "1.234,56",
-      "space_decimal": "1 234,56"
-    }
-  },
   "actions": {
     "resetPreferences": "환경 설정 초기화",
     "editHome": "홈 편집"
   },
-  "personalPreferences": {
-    "loading": "개인 환경 설정 불러오는 중",
-    "loadError": "계정 환경 설정을 불러오지 못했습니다. 캐시된 설정은 유지되며 서비스가 복구될 때까지 변경할 수 없습니다.",
-    "retry": "다시 시도",
-    "saveError": "개인 환경 설정을 저장하지 못해 마지막으로 확인된 값으로 되돌렸습니다.",
-    "autoSave": "변경 사항 자동 저장",
-    "saving": "변경 사항 저장 중",
-    "saved": "{{time}} 저장됨",
-    "justNow": "방금",
-    "saveStateError": "변경 사항이 저장되지 않음"
+  "homeSettings": {
+    "eyebrow": "개인 작업 환경",
+    "title": "홈 설정",
+    "description": "계정 설정을 벗어나지 않고 저장된 홈을 만들고 편집하며, 기기별 배치와 템플릿을 적용하고 이전 버전을 복원합니다.",
+    "mode": {
+      "CLASSIC": "클래식 모드",
+      "FLOW_V1": "플로우 모드"
+    }
   },
   "labels": {
     "managed": "조직 관리"
@@ -288,6 +68,76 @@
         "failed": "예외 요청 작업을 완료하지 못했습니다."
       }
     }
+  },
+  "navigation": {
+    "profile": "프로필",
+    "security": "보안 및 세션",
+    "appearance": "화면 모양",
+    "accessibility": "접근성",
+    "language": "언어 및 지역",
+    "home": "홈 워크스페이스",
+    "notifications": "알림",
+    "managed": "관리형 설정"
+  },
+  "options": {
+    "colorMode": {
+      "system": "시스템",
+      "light": "라이트",
+      "dark": "다크"
+    },
+    "density": {
+      "compact": "좁게",
+      "standard": "표준",
+      "comfortable": "넓게"
+    },
+    "navigationPattern": {
+      "sidebar": "사이드바",
+      "rail": "축소 레일",
+      "top": "상단 탐색"
+    },
+    "timeZone": {
+      "system": "기기 시간대",
+      "UTC": "UTC",
+      "Asia_Seoul": "서울 (UTC+09:00)",
+      "Asia_Tokyo": "도쿄 (UTC+09:00)",
+      "Asia_Singapore": "싱가포르 (UTC+08:00)",
+      "Europe_London": "런던",
+      "America_New_York": "뉴욕",
+      "America_Los_Angeles": "로스앤젤레스"
+    },
+    "dateFormat": {
+      "locale": "언어 기본값",
+      "iso": "2026-08-12",
+      "month_first": "08/12/2026",
+      "day_first": "12/08/2026"
+    },
+    "timeFormat": {
+      "locale": "언어 기본값",
+      "12_hour": "12시간제",
+      "24_hour": "24시간제"
+    },
+    "firstDayOfWeek": {
+      "locale": "언어 기본값",
+      "monday": "월요일",
+      "sunday": "일요일"
+    },
+    "numberFormat": {
+      "locale": "언어 기본값",
+      "comma_decimal": "1,234.56",
+      "dot_decimal": "1.234,56",
+      "space_decimal": "1 234,56"
+    }
+  },
+  "personalPreferences": {
+    "loading": "개인 환경 설정 불러오는 중",
+    "loadError": "계정 환경 설정을 불러오지 못했습니다. 캐시된 설정은 유지되며 서비스가 복구될 때까지 변경할 수 없습니다.",
+    "retry": "다시 시도",
+    "saveError": "개인 환경 설정을 저장하지 못해 마지막으로 확인된 값으로 되돌렸습니다.",
+    "autoSave": "변경 사항 자동 저장",
+    "saving": "변경 사항 저장 중",
+    "saved": "{{time}} 저장됨",
+    "justNow": "방금",
+    "saveStateError": "변경 사항이 저장되지 않음"
   },
   "preview": {
     "live": "실시간 미리보기",
@@ -347,6 +197,44 @@
       "identityRealm": "DWP 프로바이더 제어 영역",
       "governanceTitle": "프로바이더 신원 데이터는 중앙에서 관리됩니다",
       "governanceDescription": "이름, 직책, 이메일과 프로바이더 역할 변경은 프로바이더 ID 서비스에서 수행해야 합니다. 고객 인력 또는 테넌트 프로필은 여기에 노출되지 않습니다."
+    }
+  },
+  "sections": {
+    "appearance": {
+      "title": "화면 모양",
+      "description": "Digital Workplace의 표시 방식과 작업 밀도를 선택합니다.",
+      "groupTitle": "화면 및 레이아웃",
+      "groupDescription": "이 환경 설정은 사용자 계정에 저장되어 다른 기기에서도 동일하게 적용됩니다.",
+      "providerGroupDescription": "이 프로바이더 운영자 환경 설정은 현재 브라우저에만 저장되며 고객 테넌트 설정에는 영향을 주지 않습니다."
+    },
+    "accessibility": {
+      "title": "접근성",
+      "description": "더 편안하게 사용할 수 있도록 시각적 명료도와 움직임을 조정합니다.",
+      "groupTitle": "시각 및 움직임 환경 설정",
+      "groupDescription": "변경 사항은 Digital Workplace 전체에 즉시 적용됩니다."
+    },
+    "language": {
+      "title": "언어 및 지역",
+      "description": "탐색, 작업, 메시지에 사용할 언어를 선택합니다.",
+      "groupTitle": "표시 언어",
+      "groupDescription": "선택한 언어는 사용자 계정에 저장되어 이후 세션에도 적용됩니다."
+    },
+    "home": {
+      "title": "홈 워크스페이스",
+      "description": "개인 홈에 표시할 앱과 정보를 구성합니다.",
+      "groupTitle": "개인 홈",
+      "groupDescription": "홈 편집기에서 앱과 위젯을 배치할 수 있습니다."
+    },
+    "notifications": {
+      "title": "알림",
+      "description": "알림 채널, 조용한 시간과 앱별 수신 규칙을 관리합니다."
+    },
+    "managed": {
+      "title": "관리형 설정",
+      "description": "조직에서 관리하는 사용자 경험 기본값과 예외 요청을 확인합니다.",
+      "notice": "이 값은 {{owner}}에서 관리합니다. 업무상 다른 값이 필요하면 근거와 영향을 포함해 예외를 요청할 수 있습니다.",
+      "groupTitle": "조직 기본값",
+      "groupDescription": "관리형 값은 워크스페이스 전체에 일관된 사용 경험을 제공합니다."
     }
   },
   "security": {
@@ -463,6 +351,127 @@
       "othersDescription_other": "다른 활성 세션 {{count}}개에서 로그아웃합니다.",
       "currentDescription": "로그인 화면으로 이동합니다.",
       "sessionDescription": "이 브라우저에서 다시 로그인해야 합니다."
+    }
+  },
+  "settings": {
+    "colorMode": {
+      "title": "색상 모드",
+      "description": "시스템 설정을 따르거나 라이트 또는 다크 화면을 선택합니다."
+    },
+    "density": {
+      "title": "인터페이스 밀도",
+      "description": "작업 컨트롤과 정보 목록의 간격을 조정합니다.",
+      "ariaLabel": "인터페이스 밀도"
+    },
+    "highContrast": {
+      "title": "고대비",
+      "description": "인터페이스 전체의 경계와 텍스트 대비를 높입니다."
+    },
+    "reduceMotion": {
+      "title": "움직임 줄이기",
+      "description": "필수적이지 않은 전환 효과와 인터페이스 움직임을 최소화합니다."
+    },
+    "underlineLinks": {
+      "title": "링크 항상 밑줄 표시",
+      "description": "링크가 색상에만 의존하지 않도록 지속적인 시각 단서를 표시합니다."
+    },
+    "reduceTransparency": {
+      "title": "투명도 줄이기",
+      "description": "반투명 배경과 후면 효과를 제거해 경계를 더 명확하게 표시합니다."
+    },
+    "language": {
+      "title": "제품 언어",
+      "description": "Digital Workplace에서 사용할 언어를 변경합니다."
+    },
+    "timeZone": {
+      "title": "시간대",
+      "description": "날짜와 활동 시간을 원하는 IANA 시간대로 표시합니다."
+    },
+    "dateFormat": {
+      "title": "날짜 형식",
+      "description": "목록, 상세 및 내보내기에 사용할 일관된 날짜 순서를 선택합니다."
+    },
+    "timeFormat": {
+      "title": "시간 형식",
+      "description": "언어 기본값 또는 12시간제와 24시간제를 선택합니다."
+    },
+    "firstDayOfWeek": {
+      "title": "한 주의 시작일",
+      "description": "캘린더와 기간 선택에서 사용할 주간 경계를 설정합니다."
+    },
+    "numberFormat": {
+      "title": "숫자 형식",
+      "description": "숫자에 사용할 천 단위와 소수점 구분자를 선택합니다."
+    },
+    "homeWorkspace": {
+      "title": "앱 및 위젯",
+      "description": "홈 워크스페이스에 표시할 항목과 배치를 선택합니다."
+    },
+    "productFont": {
+      "title": "제품 글꼴"
+    },
+    "brandAccent": {
+      "title": "브랜드 강조색",
+      "ariaLabel": "브랜드 색상 {{color}}"
+    },
+    "navigationPattern": {
+      "title": "탐색 패턴"
+    },
+    "policySource": {
+      "title": "정책 원천",
+      "description": "조직 관리 기본값을 제공하는 테넌트 경험 정책입니다."
+    },
+    "policyOwner": {
+      "title": "정책 담당자",
+      "description": "관리형 설정의 검토가 필요할 때 문의할 담당 역할입니다."
+    }
+  },
+  "settingsHome": {
+    "eyebrow": "내 계정",
+    "title": "개인 설정",
+    "description": "내 계정, 보안, 화면과 업무 환경 설정을 검색하고 관리합니다.",
+    "providerDescription": "프로바이더 운영자 계정에 허용된 개인 환경과 보안 설정을 관리합니다.",
+    "providerBoundary": "고객 테넌트의 홈, 알림 및 조직 관리값은 이 계정 설정에 표시되지 않습니다.",
+    "availableCount": "현재 범위 {{count}}개",
+    "searchLabel": "개인 설정 검색",
+    "searchPlaceholder": "보안, 언어, 알림 등 검색",
+    "searchHelp": "현재 신원과 범위에서 열 수 있는 설정만 검색합니다.",
+    "emptyTitle": "일치하는 설정이 없습니다",
+    "emptyDescription": "검색어를 줄이거나 다른 표현으로 다시 검색하세요.",
+    "items": {
+      "profile": "내 프로필의 정본 출처와 계정 범위를 확인합니다.",
+      "security": "로그인 정책, 활성 세션과 임시 특권 접근을 확인합니다.",
+      "appearance": "색상 모드와 작업 밀도를 선택합니다.",
+      "accessibility": "대비, 움직임과 링크 표시 방식을 조정합니다.",
+      "language": "제품 언어, 시간대와 날짜·숫자 형식을 선택합니다.",
+      "home": "개인 홈의 앱과 위젯 구성을 관리합니다.",
+      "notifications": "알림 채널, 집중 시간과 앱별 전달 규칙을 관리합니다.",
+      "managed": "조직이 관리하는 값과 허용된 예외 요청을 확인합니다."
+    },
+    "keywords": {
+      "profile": "계정 개인정보 정본 HR IdP",
+      "security": "MFA 패스키 로그인 세션 JIT 특권",
+      "appearance": "테마 다크 라이트 밀도",
+      "accessibility": "고대비 동작 줄이기 링크",
+      "language": "지역 시간대 날짜 숫자 형식",
+      "home": "홈 앱 위젯",
+      "notifications": "알림 채널 집중 시간 조용한 시간",
+      "managed": "조직 정책 예외 적용값"
+    }
+  },
+  "shell": {
+    "title": "설정",
+    "personalSettings": "개인 작업 환경",
+    "providerSettings": "프로바이더 운영자 설정",
+    "accountFallback": "계정",
+    "navigationLabel": "설정 탐색",
+    "openNavigation": "설정 탐색 열기",
+    "backToProvider": "프로바이더 제어 영역으로 돌아가기",
+    "backToWorkspace": "워크스페이스로 돌아가기",
+    "groups": {
+      "account": "계정",
+      "preferences": "환경 설정",
+      "organization": "조직"
     }
   }
 }

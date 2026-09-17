@@ -5,6 +5,8 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export type HomeAccessScope = Readonly<{
+  tenantId?: number | null;
+  userId?: number | null;
   personPublicId?: string | null;
   groups?: readonly Readonly<{ groupRef: string; groupKey?: string | null }>[];
   resourceRoles?: readonly ResourceRoleDTO[];
@@ -12,6 +14,19 @@ export type HomeAccessScope = Readonly<{
 
 function token(value: string): string {
   return value.trim().toLocaleUpperCase('en-US');
+}
+
+function opaqueDigest(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  const digest = (offset: bigint) => {
+    let hash = offset;
+    for (const byte of bytes) {
+      hash ^= BigInt(byte);
+      hash = BigInt.asUintN(64, hash * 1099511628211n);
+    }
+    return hash.toString(16).padStart(16, '0');
+  };
+  return `v1:${digest(14695981039346656037n)}${digest(7809847782465536322n)}`;
 }
 
 /**
@@ -50,14 +65,18 @@ export function homeAccessFingerprint(
     ].join(':')
   );
 
-  return JSON.stringify({
-    permissions: [...new Set(permissionTokens)].sort(),
-    roles: [...new Set(roleTokens)].sort(),
-    personPublicId: scope.personPublicId?.trim() ?? '',
-    groups: [...new Set(groupTokens)].sort(),
-    resourceRoles: [...new Set(resourceRoleTokens)].sort(),
-    legacyRoleFallbackAllowed,
-  });
+  return opaqueDigest(
+    JSON.stringify({
+      permissions: [...new Set(permissionTokens)].sort(),
+      roles: [...new Set(roleTokens)].sort(),
+      tenantId: scope.tenantId ?? null,
+      userId: scope.userId ?? null,
+      personPublicId: scope.personPublicId?.trim() ?? '',
+      groups: [...new Set(groupTokens)].sort(),
+      resourceRoles: [...new Set(resourceRoleTokens)].sort(),
+      legacyRoleFallbackAllowed,
+    })
+  );
 }
 
 export function homeUserAccessFingerprint(
@@ -69,6 +88,8 @@ export function homeUserAccessFingerprint(
     user?.roles ?? [],
     user?.legacyRoleFallbackAllowed === true,
     {
+      tenantId: user?.tenantId,
+      userId: user?.userId,
       personPublicId: user?.personPublicId,
       groups: user?.groups,
       resourceRoles: user?.resourceRoles,

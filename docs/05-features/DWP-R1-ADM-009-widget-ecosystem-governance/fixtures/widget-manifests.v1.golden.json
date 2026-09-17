@@ -10,7 +10,7 @@
   "fixtures": [
     {
       "legacyWidgetKey": "command-rail",
-      "expectedSha256": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+      "expectedSha256": "36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13",
       "manifest": {
         "schemaVersion": 1,
         "definitionKey": "core.workspace.command-rail",
@@ -23,21 +23,38 @@
           "rendererKey": "home.command-rail",
           "minimumHostApiVersion": 1
         },
-        "supportedSurfaces": ["workspace-home"],
-        "requiredAuthorities": ["APP.WORK:VIEW"],
+        "supportedSurfaces": [
+          "workspace-home"
+        ],
+        "requiredAuthorities": [
+          "APP.WORK:VIEW"
+        ],
         "placement": {
-          "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
-          "policyClass": "GOVERNED",
+          "supportedContexts": [
+            "CLASSIC_PERSONAL",
+            "FLOW_PERSONAL"
+          ],
+          "policyClass": "PERSONAL",
           "canHide": true,
           "defaultSize": "large",
-          "allowedSizes": ["large", "full"],
+          "allowedSizes": [
+            "large",
+            "full"
+          ],
           "defaultHeight": "short",
-          "allowedHeights": ["short", "standard"]
+          "allowedHeights": [
+            "short",
+            "standard"
+          ]
         },
         "configurationContract": null,
-        "dataCapabilities": ["HOME.OVERVIEW.READ"],
+        "dataCapabilities": [
+          "HOME.OVERVIEW.READ"
+        ],
         "actionCapabilities": [],
-        "sharing": { "presetEligible": false },
+        "sharing": {
+          "presetEligible": false
+        },
         "operations": {
           "freshnessSeconds": 30,
           "analyticsKey": "home.command-rail"
@@ -47,7 +64,8 @@
           "retention": "NONE",
           "recipientContextBinding": true
         }
-      }
+      },
+      "semanticVersion": "1.0.1"
     },
     {
       "legacyWidgetKey": "daily-brief",
@@ -64,26 +82,55 @@
           "rendererKey": "home.daily-brief",
           "minimumHostApiVersion": 1
         },
-        "supportedSurfaces": ["workspace-home"],
-        "requiredAuthorities": ["APP.WORK:VIEW"],
+        "supportedSurfaces": [
+          "workspace-home"
+        ],
+        "requiredAuthorities": [
+          "APP.WORK:VIEW"
+        ],
         "placement": {
-          "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_PERSONAL"],
+          "supportedContexts": [
+            "CLASSIC_PERSONAL",
+            "FLOW_PERSONAL"
+          ],
           "policyClass": "PERSONAL",
           "canHide": true,
           "defaultSize": "full",
-          "allowedSizes": ["compact", "large", "full"],
+          "allowedSizes": [
+            "compact",
+            "large",
+            "full"
+          ],
           "defaultHeight": "standard",
-          "allowedHeights": ["short", "standard", "tall"]
+          "allowedHeights": [
+            "short",
+            "standard",
+            "tall"
+          ]
         },
         "configurationContract": {
           "sourceKey": "RECOMMENDATION",
-          "fieldKeys": ["title", "reason", "action"],
-          "filterPresets": ["RECOMMENDED", "NEXT_ACTIONS"],
-          "itemLimit": { "min": 1, "max": 20 }
+          "fieldKeys": [
+            "title",
+            "reason",
+            "action"
+          ],
+          "filterPresets": [
+            "RECOMMENDED",
+            "NEXT_ACTIONS"
+          ],
+          "itemLimit": {
+            "min": 1,
+            "max": 20
+          }
         },
-        "dataCapabilities": ["HOME.RECOMMENDATIONS.READ"],
+        "dataCapabilities": [
+          "HOME.RECOMMENDATIONS.READ"
+        ],
         "actionCapabilities": [],
-        "sharing": { "presetEligible": true },
+        "sharing": {
+          "presetEligible": true
+        },
         "operations": {
           "freshnessSeconds": 30,
           "analyticsKey": "home.workday-insights"
@@ -110,26 +157,60 @@
           "rendererKey": "home.focus",
           "minimumHostApiVersion": 1
         },
-        "supportedSurfaces": ["workspace-home"],
-        "requiredAuthorities": ["APP.WORK:VIEW"],
+        "supportedSurfaces": [
+          "workspace-home"
+        ],
+        "requiredAuthorities": [
+          "APP.WORK:VIEW"
+        ],
         "placement": {
-          "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_PERSONAL"],
+          "supportedContexts": [
+            "CLASSIC_PERSONAL",
+            "FLOW_PERSONAL"
+          ],
           "policyClass": "PERSONAL",
           "canHide": true,
           "defaultSize": "medium",
-          "allowedSizes": ["quarter", "compact", "medium", "large", "full"],
+          "allowedSizes": [
+            "quarter",
+            "compact",
+            "medium",
+            "large",
+            "full"
+          ],
           "defaultHeight": "tall",
-          "allowedHeights": ["short", "standard", "tall", "expanded"]
+          "allowedHeights": [
+            "short",
+            "standard",
+            "tall",
+            "expanded"
+          ]
         },
         "configurationContract": {
           "sourceKey": "WORK",
-          "fieldKeys": ["title", "status", "priority", "dueAt"],
-          "filterPresets": ["ASSIGNED_TO_ME", "DUE_SOON", "HIGH_PRIORITY"],
-          "itemLimit": { "min": 1, "max": 20 }
+          "fieldKeys": [
+            "title",
+            "status",
+            "priority",
+            "dueAt"
+          ],
+          "filterPresets": [
+            "ASSIGNED_TO_ME",
+            "DUE_SOON",
+            "HIGH_PRIORITY"
+          ],
+          "itemLimit": {
+            "min": 1,
+            "max": 20
+          }
         },
-        "dataCapabilities": ["WORK.ITEMS.LIST"],
+        "dataCapabilities": [
+          "WORK.ITEMS.LIST"
+        ],
         "actionCapabilities": [],
-        "sharing": { "presetEligible": true },
+        "sharing": {
+          "presetEligible": true
+        },
         "operations": {
           "freshnessSeconds": 30,
           "analyticsKey": "home.focus"
@@ -156,26 +237,57 @@
           "rendererKey": "home.schedule",
           "minimumHostApiVersion": 1
         },
-        "supportedSurfaces": ["workspace-home"],
-        "requiredAuthorities": ["APP.CALENDAR:VIEW"],
+        "supportedSurfaces": [
+          "workspace-home"
+        ],
+        "requiredAuthorities": [
+          "APP.CALENDAR:VIEW"
+        ],
         "placement": {
-          "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_PERSONAL"],
+          "supportedContexts": [
+            "CLASSIC_PERSONAL",
+            "FLOW_PERSONAL"
+          ],
           "policyClass": "PERSONAL",
           "canHide": true,
           "defaultSize": "quarter",
-          "allowedSizes": ["fifth", "quarter", "compact", "medium"],
+          "allowedSizes": [
+            "fifth",
+            "quarter",
+            "compact",
+            "medium"
+          ],
           "defaultHeight": "standard",
-          "allowedHeights": ["short", "standard", "tall"]
+          "allowedHeights": [
+            "short",
+            "standard",
+            "tall"
+          ]
         },
         "configurationContract": {
           "sourceKey": "CALENDAR",
-          "fieldKeys": ["title", "startAt", "endAt", "location"],
-          "filterPresets": ["TODAY", "NEXT_7_DAYS"],
-          "itemLimit": { "min": 1, "max": 20 }
+          "fieldKeys": [
+            "title",
+            "startAt",
+            "endAt",
+            "location"
+          ],
+          "filterPresets": [
+            "TODAY",
+            "NEXT_7_DAYS"
+          ],
+          "itemLimit": {
+            "min": 1,
+            "max": 20
+          }
         },
-        "dataCapabilities": ["CALENDAR.EVENTS.LIST"],
+        "dataCapabilities": [
+          "CALENDAR.EVENTS.LIST"
+        ],
         "actionCapabilities": [],
-        "sharing": { "presetEligible": true },
+        "sharing": {
+          "presetEligible": true
+        },
         "operations": {
           "freshnessSeconds": 30,
           "analyticsKey": "home.schedule"
@@ -202,26 +314,57 @@
           "rendererKey": "home.activity",
           "minimumHostApiVersion": 1
         },
-        "supportedSurfaces": ["workspace-home"],
-        "requiredAuthorities": ["APP.ACTIVITY:VIEW"],
+        "supportedSurfaces": [
+          "workspace-home"
+        ],
+        "requiredAuthorities": [
+          "APP.ACTIVITY:VIEW"
+        ],
         "placement": {
-          "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_PERSONAL"],
+          "supportedContexts": [
+            "CLASSIC_PERSONAL",
+            "FLOW_PERSONAL"
+          ],
           "policyClass": "PERSONAL",
           "canHide": true,
           "defaultSize": "quarter",
-          "allowedSizes": ["fifth", "quarter", "compact", "medium"],
+          "allowedSizes": [
+            "fifth",
+            "quarter",
+            "compact",
+            "medium"
+          ],
           "defaultHeight": "tall",
-          "allowedHeights": ["short", "standard", "tall"]
+          "allowedHeights": [
+            "short",
+            "standard",
+            "tall"
+          ]
         },
         "configurationContract": {
           "sourceKey": "ACTIVITY",
-          "fieldKeys": ["eventType", "title", "occurredAt", "actor"],
-          "filterPresets": ["RECENT", "MY_ACTIVITY"],
-          "itemLimit": { "min": 1, "max": 20 }
+          "fieldKeys": [
+            "eventType",
+            "title",
+            "occurredAt",
+            "actor"
+          ],
+          "filterPresets": [
+            "RECENT",
+            "MY_ACTIVITY"
+          ],
+          "itemLimit": {
+            "min": 1,
+            "max": 20
+          }
         },
-        "dataCapabilities": ["ACTIVITY.EVENTS.LIST"],
+        "dataCapabilities": [
+          "ACTIVITY.EVENTS.LIST"
+        ],
         "actionCapabilities": [],
-        "sharing": { "presetEligible": true },
+        "sharing": {
+          "presetEligible": true
+        },
         "operations": {
           "freshnessSeconds": 30,
           "analyticsKey": "home.activity"

@@ -165,6 +165,10 @@ export type WorkspaceApp = {
   launchTarget?: string | null;
   iconKey: string;
   resourceKey: string;
+  /** Additive in the Wave 1 catalog contract; absent only during a rolling deployment. */
+  requiredPermissionCode?: string | null;
+  /** Stable notification owner; never inferred from the workspace app id. */
+  badgeSourceKey?: string | null;
   health: WorkspaceAppHealth;
   pinned: boolean;
   lastUsedAt?: string | null;

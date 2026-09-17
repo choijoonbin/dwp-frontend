@@ -237,8 +237,7 @@ export function HomeProfilesSection({
                     size="small"
                     intent="quiet"
                     onClick={() => onEdit(view)}
-                    disabled={busy || !view.isDefault}
-                    title={!view.isDefault ? t('profiles.activateBeforeEdit') : undefined}
+                    disabled={busy}
                   >
                     {t('profiles.edit')}
                   </ActionButton>
@@ -380,11 +379,13 @@ export function HomeDeviceSection({
   view,
   layouts,
   busy,
+  fourDeviceLayoutsSupported,
   onSave,
 }: {
   view: HomeView | null;
   layouts: readonly HomeDeviceLayout[];
   busy: boolean;
+  fourDeviceLayoutsSupported: boolean;
   onSave: (
     deviceClass: HomeDeviceClass,
     density: 'comfortable' | 'compact',
@@ -392,7 +393,7 @@ export function HomeDeviceSection({
   ) => void;
 }) {
   const { t } = useTranslation('homeStudio');
-  const [deviceClass, setDeviceClass] = useState<HomeDeviceClass>('DESKTOP');
+  const [deviceClass, setDeviceClass] = useState<HomeDeviceClass>('DESKTOP_STANDARD');
   const saved = layouts.find((layout) => layout.deviceClass === deviceClass);
   const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable');
   const [widgetSizes, setWidgetSizes] = useState<Record<string, HomeWidgetSize>>({});
@@ -400,6 +401,9 @@ export function HomeDeviceSection({
     () => buildFlowDeviceWidthControls(view?.layout.widgets ?? []),
     [view]
   );
+  const deviceClasses: readonly HomeDeviceClass[] = fourDeviceLayoutsSupported
+    ? ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD', 'MOBILE_COMPACT']
+    : ['DESKTOP_STANDARD', 'MOBILE_STANDARD'];
 
   useEffect(() => {
     setDensity(saved?.overlay.density ?? 'comfortable');
@@ -434,19 +438,19 @@ export function HomeDeviceSection({
           value={deviceClass}
           aria-label={t('device.title')}
           onChange={(_, next: HomeDeviceClass | null) => next && setDeviceClass(next)}
+          sx={{ flexWrap: 'wrap' }}
         >
-          <ToggleButton value="DESKTOP">
-            <Laptop size={17} />
-            <Box component="span" sx={{ ml: 1 }}>
-              {t('device.desktop')}
-            </Box>
-          </ToggleButton>
-          <ToggleButton value="MOBILE">
-            <Smartphone size={17} />
-            <Box component="span" sx={{ ml: 1 }}>
-              {t('device.mobile')}
-            </Box>
-          </ToggleButton>
+          {deviceClasses.map((value) => {
+            const mobile = value.startsWith('MOBILE');
+            return (
+              <ToggleButton key={value} value={value} data-home-device-class-option={value}>
+                {mobile ? <Smartphone size={17} /> : <Laptop size={17} />}
+                <Box component="span" sx={{ ml: 1 }}>
+                  {t(`device.classes.${value}`)}
+                </Box>
+              </ToggleButton>
+            );
+          })}
         </ToggleButtonGroup>
         <Box>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
@@ -462,7 +466,7 @@ export function HomeDeviceSection({
             <ToggleButton value="compact">{t('device.compact')}</ToggleButton>
           </ToggleButtonGroup>
         </Box>
-        {deviceClass === 'DESKTOP' && widthControls.length > 0 && (
+        {deviceClass.startsWith('DESKTOP') && widthControls.length > 0 && (
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {t('device.widgetSizes')}
@@ -508,7 +512,7 @@ export function HomeDeviceSection({
             onSave(
               deviceClass,
               density,
-              deviceClass === 'DESKTOP'
+              deviceClass === 'DESKTOP_STANDARD'
                 ? mergeFlowDeviceWidthOverrides(saved?.overlay.widgetSizes ?? {}, widgetSizes)
                 : mergeFlowDeviceWidthOverrides(saved?.overlay.widgetSizes ?? {}, {})
             )

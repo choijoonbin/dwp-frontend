@@ -39,13 +39,13 @@ type NextActionsProps = {
   supportStack?: boolean;
   itemLimit?: number;
   onRetry: () => void;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
 };
 
 type NextActionCueProps = Readonly<{
   overview?: HomeOverview;
   feedbackBusy: boolean;
-  onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
+  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
 }>;
 
 const nextBudget: Record<HomeWidgetHeight, number> = {
@@ -128,17 +128,19 @@ export function NextActionCue({
         contentSx={{ py: 2 }}
         footerContent={
           <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ width: 1 }}>
-            <ActionButton
-              intent="quiet"
-              startIcon={<EyeOff size={16} aria-hidden="true" />}
-              disabled={feedbackBusy}
-              onClick={() => {
-                setOpen(false);
-                onRecommendationFeedback(recommendation);
-              }}
-            >
-              {t('widgets.brief.notRelevant')}
-            </ActionButton>
+            {onRecommendationFeedback && (
+              <ActionButton
+                intent="quiet"
+                startIcon={<EyeOff size={16} aria-hidden="true" />}
+                disabled={feedbackBusy}
+                onClick={() => {
+                  setOpen(false);
+                  onRecommendationFeedback(recommendation);
+                }}
+              >
+                {t('widgets.brief.notRelevant')}
+              </ActionButton>
+            )}
             <ActionButton
               intent="primary"
               endIcon={<ArrowRight size={15} aria-hidden="true" />}
@@ -439,14 +441,16 @@ export function NextActions({
                 </Box>
               )}
               <Stack direction="row" alignItems="center" gap={0.5} sx={{ flex: '0 0 auto' }}>
-                <ActionIconButton
-                  label={t('widgets.brief.notRelevant')}
-                  disabled={feedbackBusy}
-                  onClick={() => onRecommendationFeedback(recommendation)}
-                  sx={{ width: 44, height: 44 }}
-                >
-                  <EyeOff size={16} />
-                </ActionIconButton>
+                {onRecommendationFeedback && (
+                  <ActionIconButton
+                    label={t('widgets.brief.notRelevant')}
+                    disabled={feedbackBusy}
+                    onClick={() => onRecommendationFeedback(recommendation)}
+                    sx={{ width: 44, height: 44 }}
+                  >
+                    <EyeOff size={16} />
+                  </ActionIconButton>
+                )}
                 <ActionButton
                   intent="quiet"
                   endIcon={<ArrowRight size={15} aria-hidden="true" />}

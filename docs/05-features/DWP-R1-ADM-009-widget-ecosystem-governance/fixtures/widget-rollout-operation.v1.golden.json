@@ -44,15 +44,15 @@
             }
           },
           "revisions": {
-            "manifestFixtureRevision": "612d9c7037040ae55da8a7ee9ae850400b54724914bf3085b33cd0e67f5c6139",
+            "manifestFixtureRevision": "ba111e674ff9eb2f38c5e1c0744a066dde63c2eb70fb8c726a86adf45a3621d3",
             "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
-            "tenantPolicyFixtureRevision": "cd91459ee7ae40e1ec4082b5d66bc848b9cbe59d57bae7b3f7f3d3dcc5e8c92b",
+            "tenantPolicyFixtureRevision": "6ad03d93e58cc482c87625fb1e7b3b937ad4da1badf8f216fab49eb6557fdb7f",
             "rolloutQuerySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480"
           },
           "verificationArtifacts": {
             "manifestGolden": {
               "immutableRefHash": "f0f734c47f135c8a97a467c0e6d0f581c4428686ea16e139453a33f39251f73c",
-              "contentDigest": "612d9c7037040ae55da8a7ee9ae850400b54724914bf3085b33cd0e67f5c6139"
+              "contentDigest": "ba111e674ff9eb2f38c5e1c0744a066dde63c2eb70fb8c726a86adf45a3621d3"
             },
             "bindingCatalogGolden": {
               "immutableRefHash": "9c34aca4882073b53a12a3b6c647a47d8f569f5de0d99fec8f53eff36cf70400",
@@ -60,7 +60,7 @@
             },
             "tenantPolicyGolden": {
               "immutableRefHash": "f6b5417efbfbb8a19e8451feed6928dff9c75dd4daacbce9155e7548afade20a",
-              "contentDigest": "f38b177a82ca976ca7352b3827315b9ce9b05fc4c1d6fd758dbbdd0c6e83ea08"
+              "contentDigest": "d42de09bfb49be02a93370a4202781861bc58ca6cf32a92af73baefc2b767be4"
             },
             "rolloutQuerySet": {
               "immutableRefHash": "2fa9c7eba616ac6d6b5d343efbbeddc941009669f75702ddc714df71320e4801",
@@ -154,7 +154,7 @@
         },
         "ciAttestation": {
           "verificationRecordId": "c1111111-1111-4111-8111-111111111111",
-          "assertionSha256": "244cafbd044914b7fe2a16fa19d90e9706ba1c390ceb55b1aa351db531a2e769"
+          "assertionSha256": "3e25c15152d4cb3f480564436d6b7084d14364806a632d74a3436e83728975f4"
         },
         "selectorKeyId": "selector-2026-08-a",
         "proposerRef": "actor:release:proposer",
@@ -168,7 +168,7 @@
         "environment": "STAGING",
         "selectorKeyId": "selector-2026-08-a",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "activationDeadline": "2026-08-27T07:00:00Z",
         "expiresAt": "2026-08-28T07:50:00Z",
@@ -184,12 +184,12 @@
       },
       "trustedAttestationVerification": {
         "verificationRecordId": "c1111111-1111-4111-8111-111111111111",
-        "assertionSha256": "244cafbd044914b7fe2a16fa19d90e9706ba1c390ceb55b1aa351db531a2e769",
+        "assertionSha256": "3e25c15152d4cb3f480564436d6b7084d14364806a632d74a3436e83728975f4",
         "kind": "CI_BOOTSTRAP",
         "issuer": "dwp-ci-attestation-authority",
         "jti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "kid": "ci-widget-bootstrap-2026-08",
-        "publicKeyFingerprint": "dc8fd8ed454e0b4ba28919436c4b417b4e5e2ff665d53feacbe0fd84b4bc0201",
+        "publicKeyFingerprint": "581bfe81c3c62a302ff39689dab7e282b9140a65839036b8fb835daff529f75f",
         "verifiedAt": "2026-08-27T06:49:00Z",
         "expiresAt": "2026-08-27T06:55:00Z",
         "result": "SUCCESS",
@@ -198,8 +198,8 @@
           "rolloutRevision": 7,
           "selectorKeyId": "selector-2026-08-a",
           "prerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "prerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
-          "requestDigest": "fbf6f71b70e91fe7e626cd3e2463fb7d3acd8959dcf3708db0a2676df8128d35"
+          "prerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
+          "requestDigest": "503fb9f57c96a8ac55d687d37cebc4742a4a3137e01dab7a68d8d1310dc2e3db"
         }
       }
     },
@@ -316,7 +316,7 @@
         "environment": "STAGING",
         "selectorKeyId": "selector-2026-08-a",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "activationDeadline": "2026-08-28T07:15:00Z",
         "expiresAt": "2026-08-29T08:05:00Z",
@@ -341,7 +341,7 @@
         "activeApprovalRevision": 1,
         "activeApprovalExpiresAt": "2026-08-28T07:50:00Z",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "activeRolloutEvidenceId": null,
         "activeRolloutEvidenceDigest": null
@@ -393,7 +393,7 @@
         "activeApprovalRevision": 1,
         "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "activeRolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
         "activeRolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097"
@@ -504,7 +504,7 @@
         "toRingBps": 10000,
         "selectorKeyId": "selector-2026-08-a",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "rolloutEvidenceId": "66666666-6666-4666-8666-666666666666",
         "rolloutEvidenceDigest": "0ab6c8739bce3a3922733f6ef8e0cb6e3308927cf6d2c86fbdc0058258aaab62",
@@ -567,7 +567,7 @@
           "environment": "STAGING",
           "selectorKeyId": "selector-2026-08-a",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activationDeadline": "2026-08-27T07:00:00Z",
           "expiresAt": "2026-08-28T07:50:00Z",
@@ -584,7 +584,7 @@
         "headLockAffectedRows": 1,
         "approvalLockAffectedRows": 1,
         "currentBootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "currentBootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "currentBootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "currentRuntimeSnapshot": {
           "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
           "migrationSetDigests": {
@@ -592,9 +592,9 @@
             "provider": "06301fe3a486f4a0c10c945a9142d790d72a9425f305c737663bce27d07100e7",
             "auth": "d823396138c3fcb984acb579d1825529bfe5a324b058cf2f95dd029104e71871"
           },
-          "catalogRevision": "612d9c7037040ae55da8a7ee9ae850400b54724914bf3085b33cd0e67f5c6139",
+          "catalogRevision": "ba111e674ff9eb2f38c5e1c0744a066dde63c2eb70fb8c726a86adf45a3621d3",
           "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
-          "policyRevision": "cd91459ee7ae40e1ec4082b5d66bc848b9cbe59d57bae7b3f7f3d3dcc5e8c92b",
+          "policyRevision": "6ad03d93e58cc482c87625fb1e7b3b937ad4da1badf8f216fab49eb6557fdb7f",
           "safetyRevision": null,
           "rolloutQuerySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
           "selectorKeyId": "selector-2026-08-a",
@@ -628,7 +628,7 @@
         "activeApprovalRevision": 1,
         "activeApprovalExpiresAt": "2026-08-28T07:50:00Z",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "activeRolloutEvidenceId": null,
         "activeRolloutEvidenceDigest": null
@@ -650,7 +650,7 @@
           "activeApprovalRevision": 1,
           "activeApprovalExpiresAt": "2026-08-28T07:50:00Z",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activeRolloutEvidenceId": null,
           "activeRolloutEvidenceDigest": null
@@ -662,7 +662,7 @@
           "environment": "STAGING",
           "selectorKeyId": "selector-2026-08-a",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activationDeadline": "2026-08-28T07:15:00Z",
           "expiresAt": "2026-08-29T08:05:00Z",
@@ -679,7 +679,7 @@
         "headLockAffectedRows": 1,
         "approvalLockAffectedRows": 1,
         "currentBootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "currentBootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "currentBootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "currentRuntimeSnapshot": {
           "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
           "migrationSetDigests": {
@@ -730,7 +730,7 @@
         "activeApprovalRevision": 1,
         "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
         "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
         "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
         "activeRolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
         "activeRolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097"
@@ -751,7 +751,7 @@
           "activeApprovalRevision": 1,
           "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activeRolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
           "activeRolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097"
@@ -763,7 +763,7 @@
           "environment": "STAGING",
           "selectorKeyId": "selector-2026-08-a",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activationDeadline": "2026-08-28T07:15:00Z",
           "expiresAt": "2026-08-29T08:05:00Z",
@@ -836,7 +836,7 @@
           "activeApprovalRevision": 1,
           "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activeRolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
           "activeRolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097"
@@ -848,7 +848,7 @@
           "environment": "STAGING",
           "selectorKeyId": "selector-2026-08-a",
           "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
-          "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "bootstrapPrerequisiteDigest": "54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256",
           "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
           "activationDeadline": "2026-08-28T07:15:00Z",
           "expiresAt": "2026-08-29T08:05:00Z",

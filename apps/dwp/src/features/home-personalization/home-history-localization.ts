@@ -37,9 +37,12 @@ export function homeRevisionSummaryLabel(
   const fixedKey = fixedSummaryKeys[summary];
   if (fixedKey) return t(fixedKey);
 
-  const deviceMatch = /^(DESKTOP|MOBILE) device overlay updated$/u.exec(summary);
+  const deviceMatch =
+    /^(DESKTOP|MOBILE|DESKTOP_WIDE|DESKTOP_STANDARD|MOBILE_STANDARD|MOBILE_COMPACT) device overlay updated$/u.exec(
+      summary
+    );
   if (deviceMatch) {
-    const device = deviceMatch[1] === 'MOBILE' ? t('device.mobile') : t('device.desktop');
+    const device = deviceMatch[1]?.startsWith('MOBILE') ? t('device.mobile') : t('device.desktop');
     return t('history.summaries.deviceUpdated', { device });
   }
 

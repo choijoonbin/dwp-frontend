@@ -1,0 +1,132 @@
+<testsuites id="" name="" tests="15" failures="0" skipped="0" errors="0" time="99.598818">
+<testsuite name="home-wave2-acceptance.spec.ts" timestamp="2026-09-16T04:39:30.125Z" hostname="chromium" tests="7" failures="0" skipped="0" time="39.863" errors="0">
+<testcase name="Classic compositions preserve the 18-app contract and document scroll at every edge" classname="home-wave2-acceptance.spec.ts" time="9.933">
+<properties>
+<property name="canonical-fixture" value="WAVE2_C01-D1440-BASE">
+</property>
+<property name="canonical-fixture" value="WAVE2_C02-D1280-BASE">
+</property>
+<property name="canonical-fixture" value="WAVE2_C03-M390-BASE">
+</property>
+<property name="canonical-fixture" value="WAVE2_C04-M320-BASE">
+</property>
+</properties>
+</testcase>
+<testcase name="HomeLayout toggles its real navigation allocation without right clipping" classname="home-wave2-acceptance.spec.ts" time="1.126">
+</testcase>
+<testcase name="Flow base and personalized compositions keep personal-action IA and all approved apps" classname="home-wave2-acceptance.spec.ts" time="11.317">
+<properties>
+<property name="canonical-fixture" value="WAVE2_FLOW-BASE-DESKTOP-FINAL">
+</property>
+<property name="canonical-fixture" value="WAVE2_FLOW-BASE-MOBILE-FINAL">
+</property>
+<property name="canonical-fixture" value="WAVE2_FLOW-PERSONALIZED-DESKTOP-FINAL">
+</property>
+<property name="canonical-fixture" value="WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL">
+</property>
+</properties>
+</testcase>
+<testcase name="Flow Studio owns panel scrolling, traps focus, and restores the launch point" classname="home-wave2-acceptance.spec.ts" time="4.083">
+<properties>
+<property name="canonical-fixture" value="WAVE2_FLOW-EDITOR-DESKTOP">
+</property>
+</properties>
+</testcase>
+<testcase name="200% browser and text reflow keep the complete Home document usable" classname="home-wave2-acceptance.spec.ts" time="5.43">
+<properties>
+<property name="canonical-fixture" value="HOME_SPEC_ZOOM_200">
+</property>
+<property name="canonical-fixture" value="HOME_SPEC_TEXT_200">
+</property>
+</properties>
+</testcase>
+<testcase name="long English content wraps without clipping or deleting its accessible meaning" classname="home-wave2-acceptance.spec.ts" time="2.544">
+<properties>
+<property name="canonical-fixture" value="HOME_SPEC_LONG_EN">
+</property>
+</properties>
+</testcase>
+<testcase name="dark and forced-color modes retain contrast, focus, and structure" classname="home-wave2-acceptance.spec.ts" time="5.43">
+<properties>
+<property name="canonical-fixture" value="HOME_SPEC_DARK">
+</property>
+<property name="canonical-fixture" value="HOME_SPEC_HIGH_CONTRAST">
+</property>
+<property name="canonical-fixture" value="HOME_SPEC_ACCESSIBILITY_SPEC">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="home-wave2-state-evidence.spec.ts" timestamp="2026-09-16T04:39:30.125Z" hostname="chromium" tests="8" failures="0" skipped="0" time="55.899" errors="0">
+<testcase name="C10 renders the required-notice complete state in the first Classic viewport" classname="home-wave2-state-evidence.spec.ts" time="4.713">
+<properties>
+<property name="canonical-fixture" value="HOME_STATE_EMPTY_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_EMPTY_MOBILE">
+</property>
+</properties>
+</testcase>
+<testcase name="C11-C13 target the accepted organization resource and preserve unaffected cards" classname="home-wave2-state-evidence.spec.ts" time="12.085">
+<properties>
+<property name="canonical-fixture" value="HOME_STATE_PARTIAL_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_PARTIAL_MOBILE">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_FORBIDDEN_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_FORBIDDEN_MOBILE">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_STALE_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_STALE_MOBILE">
+</property>
+</properties>
+</testcase>
+<testcase name="C14 loading and refresh stay in the workplace resource slot" classname="home-wave2-state-evidence.spec.ts" time="9.452">
+<properties>
+<property name="canonical-fixture" value="HOME_STATE_INITIAL_LOADING_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_INITIAL_LOADING_MOBILE">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_BACKGROUND_REFRESH_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_BACKGROUND_REFRESH_MOBILE">
+</property>
+</properties>
+</testcase>
+<testcase name="C15 dirty editing remains visible and keyboard reachable on desktop and mobile" classname="home-wave2-state-evidence.spec.ts" time="9.012">
+<properties>
+<property name="canonical-fixture" value="HOME_STATE_DIRTY_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_DIRTY_MOBILE">
+</property>
+</properties>
+</testcase>
+<testcase name="C16 an actual 409 shows the conflict dialog and preserves the draft" classname="home-wave2-state-evidence.spec.ts" time="7.452">
+<properties>
+<property name="canonical-fixture" value="HOME_STATE_CONFLICT_DESKTOP">
+</property>
+<property name="canonical-fixture" value="HOME_STATE_CONFLICT_MOBILE">
+</property>
+</properties>
+</testcase>
+<testcase name="C17 compares Classic and Flow in the real Studio after mode-scoped device round-trips" classname="home-wave2-state-evidence.spec.ts" time="4.384">
+<properties>
+<property name="canonical-fixture" value="HOME_SPEC_MODE_PRESET">
+</property>
+</properties>
+</testcase>
+<testcase name="C18 keeps the real Home keyboard path and disables motion" classname="home-wave2-state-evidence.spec.ts" time="5.969">
+<properties>
+<property name="canonical-fixture" value="HOME_SPEC_ACCESSIBILITY_SPEC">
+</property>
+</properties>
+</testcase>
+<testcase name="the canonical state sheet renders all nine production primitives" classname="home-wave2-state-evidence.spec.ts" time="2.832">
+<properties>
+<property name="canonical-fixture" value="HOME_STATE_ALL_STATES_DESKTOP">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

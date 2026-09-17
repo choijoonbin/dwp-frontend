@@ -13,9 +13,9 @@ const manifestSchemaSource = readFileSync(manifestSchemaUrl, 'utf8');
 
 const anchors = Object.freeze({
   schemaFile: '69bd79dc88a5a463f6fb875fc8ad138718bb36b24e247f08e7c8e94e0488ba0c',
-  goldenFile: '4affb65260c736ec63b5287bf53995823d9eda046183507ca5c3f0dac024c484',
+  goldenFile: '54c688d6d8207af73e446f5a52077392fe15f043e9905d85490b654df9547fd0',
   negativeFile: '0dbc45dd0fca5c800026fdfab4dc5fb302f2e875058e514843afe3331174e288',
-  positiveCommandsCanonical: '32f54c025ea9419cb8d213a055d41b1a77b3f828235f72257c23a037305514af',
+  positiveCommandsCanonical: '31cc88be9319784077ed7e2250ebcd355b2dcaaa24b22911d85ba0134c55e510',
   commandCatalogCanonical: '2666c4642aaac9aadf60464170a688162bfee04a6ea66a1d9bad293d325e3802',
   negativeCatalogCanonical: 'e1476e50a91d88714ffdbf1c25c51c69700a8cf49f02cbbd4f63017308145798',
 });

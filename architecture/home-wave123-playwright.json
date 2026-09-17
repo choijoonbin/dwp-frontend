@@ -1,0 +1,1090 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/test-results-wave123-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/test-results-wave123-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/.codex-worktrees/home-wave123/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 1,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true VITE_WEB_VITALS_ENDPOINT=/api/platform/v1/observability/web-vitals corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://localhost:4200",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "home-wave2-acceptance.spec.ts",
+      "file": "home-wave2-acceptance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Classic compositions preserve the 18-app contract and document scroll at every edge",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C01-D1440-BASE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C02-D1280-BASE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C03-M390-BASE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_C04-M320-BASE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10167,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:37:27.557Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C01-D1440-BASE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C02-D1280-BASE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C03-M390-BASE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_C04-M320-BASE"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "C03-M390-BASE-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiRFdBScK3T04g7JuM7YGs7Iqk7Y6Y7J207IqkIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIu2ZnOuPmSDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7JWM66a8IOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLshozsi50g7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOydvCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJTcGFjZSDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOyLoOyggCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2Mi44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZTsg4HtmozsnZgg7Je06riwIiwKICAgICAgIndpZHRoIjogNjIuOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxNjMsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxNjMsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLruYTspojri4jsiqQgRVJQIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuugiOqxsOyLnCDsl4XrrLQg7Je06riwIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfQogIF0sCiAgImhlcm8iOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsm5DrrLgg67O06riwIiwKICAgICAgIndpZHRoIjogOTAuNDEsCiAgICAgICJoZWlnaHQiOiA0NAogICAgfQogIF0sCiAgInJlc291cmNlcyI6IFsKICAgIHsKICAgICAgImxhYmVsIjogIuq1rOyEseybkCDsl4XrrLQg6rCA7J2065Oc7JeF66y0IOyLnOyekSwg7ZiR7JeFLCDrs7TslYgg6riw7KSA7J2EIO2ZleyduO2VmOyEuOyalC7qsIDsnbTrk5wg7Je06riwIiwKICAgICAgIndpZHRoIjogMTc5LAogICAgICAiaGVpZ2h0IjogODgKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsi6Dqt5wg6rWs7ISx7JuQIOyYqOuztOuUqeyeheyCrOu2gO2EsCDtjIAg7KCB7J2R6rmM7KeAIO2VhOyalO2VnCDsoIjssKjrpbwg7JWI64K07ZWp64uI64ukLuygiOywqCDrs7TquLAiLAogICAgICAid2lkdGgiOiAxNzksCiAgICAgICJoZWlnaHQiOiA4OAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIldvcmtwbGFjZSDsnbTsmqkg7JWI64K07KKM7ISdLCDtmozsnZjsi6QsIOuwqeusuOqzvCDsi5zshKQg7KeA7JuQIOygleuztOulvCDtmZXsnbjtlZjshLjsmpQu7KeA7JuQIOuztOq4sCIsCiAgICAgICJ3aWR0aCI6IDE3OSwKICAgICAgImhlaWdodCI6IDg4CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiSVQg7J6l67mE7JmAIOqzhOyglSDsp4Dsm5Dqs4TsoJUsIOq4sOq4sCwg64Sk7Yq47JuM7YGsIOusuOygnOydmCDtlbTqsrAg7KCI7LCo7J6F64uI64ukLuuPhOybgCDrsJvquLAiLAogICAgICAid2lkdGgiOiAxNzksCiAgICAgICJoZWlnaHQiOiA4OAogICAgfQogIF0KfQ=="
+                    },
+                    {
+                      "name": "C04-M320-BASE-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiRFdBScK3T04g7JuM7YGs7Iqk7Y6Y7J207IqkIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDQ4LjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIu2ZnOuPmSDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7JWM66a8IOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLshozsi50g7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDQ4LjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOydvCDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJTcGFjZSDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDQ4LjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuuplOyLoOyggCDsl7TquLAiLAogICAgICAid2lkdGgiOiA0OC44LAogICAgICAiaGVpZ2h0IjogODQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZTsg4HtmozsnZgg7Je06riwIiwKICAgICAgIndpZHRoIjogNDguOCwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxMjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAiLAogICAgICAid2lkdGgiOiAxMjgsCiAgICAgICJoZWlnaHQiOiA4NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAiLAogICAgICAid2lkdGgiOiA2MiwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi67mE7KaI64uI7IqkIEVSUCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2MiwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66CI6rGw7IucIOyXheustCDsl7TquLAiLAogICAgICAid2lkdGgiOiA2MiwKICAgICAgImhlaWdodCI6IDg0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDYyLAogICAgICAiaGVpZ2h0IjogODQKICAgIH0KICBdLAogICJoZXJvIjogWwogICAgewogICAgICAibGFiZWwiOiAi7JuQ66y4IOuztOq4sCIsCiAgICAgICJ3aWR0aCI6IDkwLjQxLAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0KICBdLAogICJyZXNvdXJjZXMiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLqtazshLHsm5Ag7JeF66y0IOqwgOydtOuTnOyXheustCDsi5zsnpEsIO2YkeyXhSwg67O07JWIIOq4sOykgOydhCDtmZXsnbjtlZjshLjsmpQu6rCA7J2065OcIOyXtOq4sCIsCiAgICAgICJ3aWR0aCI6IDE0NCwKICAgICAgImhlaWdodCI6IDg4CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7Iug6recIOq1rOyEseybkCDsmKjrs7TrlKnsnoXsgqzrtoDthLAg7YyAIOyggeydkeq5jOyngCDtlYTsmpTtlZwg7KCI7LCo66W8IOyViOuCtO2VqeuLiOuLpC7soIjssKgg67O06riwIiwKICAgICAgIndpZHRoIjogMTQ0LAogICAgICAiaGVpZ2h0IjogODgKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJXb3JrcGxhY2Ug7J207JqpIOyViOuCtOyijOyEnSwg7ZqM7J2Y7IukLCDrsKnrrLjqs7wg7Iuc7ISkIOyngOybkCDsoJXrs7Trpbwg7ZmV7J247ZWY7IS47JqULuyngOybkCDrs7TquLAiLAogICAgICAid2lkdGgiOiAxNDQsCiAgICAgICJoZWlnaHQiOiA4OAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIklUIOyepeu5hOyZgCDqs4TsoJUg7KeA7JuQ6rOE7KCVLCDquLDquLAsIOuEpO2KuOybjO2BrCDrrLjsoJzsnZgg7ZW06rKwIOygiOywqOyeheuLiOuLpC7rj4Tsm4Ag67Cb6riwIiwKICAgICAgIndpZHRoIjogMTQ0LAogICAgICAiaGVpZ2h0IjogODgKICAgIH0KICBdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-cf98f23dd453bf70afec",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 256,
+          "column": 1
+        },
+        {
+          "title": "HomeLayout toggles its real navigation allocation without right clipping",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1232,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:37:38.058Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-bbf99efae5a9075a9808",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 422,
+          "column": 1
+        },
+        {
+          "title": "Flow base and personalized compositions keep personal-action IA and all approved apps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-BASE-DESKTOP-FINAL"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-BASE-MOBILE-FINAL"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-PERSONALIZED-DESKTOP-FINAL"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12441,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:37:39.295Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-BASE-DESKTOP-FINAL"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-BASE-MOBILE-FINAL"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-PERSONALIZED-DESKTOP-FINAL"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-PERSONALIZED-MOBILE-FINAL"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "FLOW-BASE-MOBILE-FINAL-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJuYXZpZ2F0aW9uIjogWwogICAgewogICAgICAibGFiZWwiOiAi7Jik64qYIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuydvOyglSIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsiqTtjpjsnbTsiqQiLAogICAgICAid2lkdGgiOiA3OCwKICAgICAgImhlaWdodCI6IDY0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZWgIOydvCIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7ZiE7ZmpIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfQogIF0sCiAgInByaW1hcnlBY3Rpb24iOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLTsl5DshJwg7Je06riwIiwKICAgICAgIndpZHRoIjogMzI4LAogICAgICAiaGVpZ2h0IjogNDgKICAgIH0KICBdLAogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJEV0FJwrdPTiDsm4ztgazsiqTtjpjsnbTsiqQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZzrj5kg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLslYzrprwg7IS87YSwIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7IaM7IudIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7J28IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiU3BhY2Ug7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7Iug7KCAIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZmU7IOB7ZqM7J2YIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuu5hOymiOuLiOyKpCBFUlAg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLroIjqsbDsi5wg7JeF66y0IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9CiAgXQp9"
+                    },
+                    {
+                      "name": "FLOW-PERSONALIZED-MOBILE-FINAL-touch-targets.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJuYXZpZ2F0aW9uIjogWwogICAgewogICAgICAibGFiZWwiOiAi7Jik64qYIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuydvOyglSIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsiqTtjpjsnbTsiqQiLAogICAgICAid2lkdGgiOiA3OCwKICAgICAgImhlaWdodCI6IDY0CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZWgIOydvCIsCiAgICAgICJ3aWR0aCI6IDc4LAogICAgICAiaGVpZ2h0IjogNjQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7ZiE7ZmpIiwKICAgICAgIndpZHRoIjogNzgsCiAgICAgICJoZWlnaHQiOiA2NAogICAgfQogIF0sCiAgInByaW1hcnlBY3Rpb24iOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLTsl5DshJwg7Je06riwIiwKICAgICAgIndpZHRoIjogMzI4LAogICAgICAiaGVpZ2h0IjogNDgKICAgIH0KICBdLAogICJsYXVuY2hwYWQiOiBbCiAgICB7CiAgICAgICJsYWJlbCI6ICLsl4XrrLQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJEV0FJwrdPTiDsm4ztgazsiqTtjpjsnbTsiqQg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLtmZzrj5kg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLsoITsnpDqsrDsnqwg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLslYzrprwg7IS87YSwIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7IaM7IudIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7LqY66aw642UIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7J28IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiU3BhY2Ug7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLqt7zrrLQg6rO16rCEIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi66mU7Iug7KCAIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ZmU7IOB7ZqM7J2YIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi7ISc67mE7IqkIOyEvO2EsCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyduOyCrCDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyngOyLnSDsl7TquLAgwrcg7J297KeAIOyViuydgCDtla3rqqkgMOqwnCIsCiAgICAgICJ3aWR0aCI6IDc5LjUsCiAgICAgICJoZWlnaHQiOiA3MgogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuu5hOymiOuLiOyKpCBFUlAg7Je06riwIMK3IOydveyngCDslYrsnYAg7ZWt66qpIDDqsJwiLAogICAgICAid2lkdGgiOiA3OS41LAogICAgICAiaGVpZ2h0IjogNzIKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLroIjqsbDsi5wg7JeF66y0IOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAi6rSA66asIOyXtOq4sCDCtyDsnb3sp4Ag7JWK7J2AIO2VreuqqSAw6rCcIiwKICAgICAgIndpZHRoIjogNzkuNSwKICAgICAgImhlaWdodCI6IDcyCiAgICB9CiAgXSwKICAiZnV0dXJlV2lkZ2V0cyI6IFsKICAgIHsKICAgICAgImxhYmVsIjogIuuCtCDsl4XrrLTroZwg7IiY6529IiwKICAgICAgIndpZHRoIjogMzI0LAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICLri7Tri7nsnpAg7KeA7KCVIiwKICAgICAgIndpZHRoIjogMzI0LAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0sCiAgICB7CiAgICAgICJsYWJlbCI6ICJTcGFjZeyXkOyEnCDtmZXsnbgiLAogICAgICAid2lkdGgiOiAxMDMuMjgsCiAgICAgICJoZWlnaHQiOiA0NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyXkOuUlO2EsOyXkOyEnCDsnbTslrTsk7DquLAiLAogICAgICAid2lkdGgiOiAzMjQsCiAgICAgICJoZWlnaHQiOiA0NAogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIuyYiOyVveqzvCDssrTtgazsnbgg67O06riwIiwKICAgICAgIndpZHRoIjogMTM2LjI1LAogICAgICAiaGVpZ2h0IjogNDQKICAgIH0KICBdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-b7e8c39260dd842b1f72",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 453,
+          "column": 1
+        },
+        {
+          "title": "Flow Studio owns panel scrolling, traps focus, and restores the launch point",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "WAVE2_FLOW-EDITOR-DESKTOP"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3699,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:37:51.740Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "WAVE2_FLOW-EDITOR-DESKTOP"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-48cc509920e69aa898f2",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 698,
+          "column": 1
+        },
+        {
+          "title": "200% browser and text reflow keep the complete Home document usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_ZOOM_200"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_TEXT_200"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5416,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:37:55.444Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_ZOOM_200"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_TEXT_200"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "HOME_SPEC_ZOOM_200-browser-metrics.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJjc3NWaWV3cG9ydCI6IHsKICAgICJ3aWR0aCI6IDcyMCwKICAgICJoZWlnaHQiOiA0NTAKICB9LAogICJwaHlzaWNhbFZpZXdwb3J0IjogewogICAgIndpZHRoIjogMTQ0MCwKICAgICJoZWlnaHQiOiA5MDAKICB9LAogICJkZXZpY2VQaXhlbFJhdGlvIjogMiwKICAic2NyZWVuIjogewogICAgIndpZHRoIjogMTQ0MCwKICAgICJoZWlnaHQiOiA5MDAKICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-55cbfc0c525256f7cfaf",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 804,
+          "column": 1
+        },
+        {
+          "title": "long English content wraps without clipping or deleting its accessible meaning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_LONG_EN"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2571,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:00.864Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_LONG_EN"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-da45fa601deebaf8a022",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 916,
+          "column": 1
+        },
+        {
+          "title": "dark and forced-color modes retain contrast, focus, and structure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_DARK"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_HIGH_CONTRAST"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5600,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:03.439Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_DARK"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_HIGH_CONTRAST"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f860d0bee656d9ee4f77-a587176ca646e055ecd3",
+          "file": "home-wave2-acceptance.spec.ts",
+          "line": 950,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "home-wave2-state-evidence.spec.ts",
+      "file": "home-wave2-state-evidence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "C10 renders the required-notice complete state in the first Classic viewport",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_EMPTY_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_EMPTY_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4566,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:09.056Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_EMPTY_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_EMPTY_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-963a56dbfa6773153ed4",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 384,
+          "column": 1
+        },
+        {
+          "title": "C11-C13 target the accepted organization resource and preserve unaffected cards",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_PARTIAL_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_PARTIAL_MOBILE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_FORBIDDEN_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_FORBIDDEN_MOBILE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_STALE_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_STALE_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11993,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:13.626Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_PARTIAL_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_PARTIAL_MOBILE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_FORBIDDEN_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_FORBIDDEN_MOBILE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_STALE_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_STALE_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-930cd1b2d23992835890",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 414,
+          "column": 1
+        },
+        {
+          "title": "C14 loading and refresh stay in the workplace resource slot",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_INITIAL_LOADING_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_BACKGROUND_REFRESH_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8832,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:25.625Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_INITIAL_LOADING_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_INITIAL_LOADING_MOBILE"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_BACKGROUND_REFRESH_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_BACKGROUND_REFRESH_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-3052a8cc00ed1309ddd1",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 526,
+          "column": 1
+        },
+        {
+          "title": "C15 dirty editing remains visible and keyboard reachable on desktop and mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_DIRTY_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_DIRTY_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8907,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:34.462Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_DIRTY_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_DIRTY_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-57fba9e77df2f8035f03",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 586,
+          "column": 1
+        },
+        {
+          "title": "C16 an actual 409 shows the conflict dialog and preserves the draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_CONFLICT_DESKTOP"
+                },
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_CONFLICT_MOBILE"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7090,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:43.373Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_CONFLICT_DESKTOP"
+                    },
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_CONFLICT_MOBILE"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-f0821d3e1a440302b790",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 656,
+          "column": 1
+        },
+        {
+          "title": "C17 compares Classic and Flow in the real Studio after mode-scoped device round-trips",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_MODE_PRESET"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3974,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:50.467Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_MODE_PRESET"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-1b48a82341ec200583a6",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 702,
+          "column": 1
+        },
+        {
+          "title": "C18 keeps the real Home keyboard path and disables motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5281,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:54.444Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_SPEC_ACCESSIBILITY_SPEC"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "HOME_SPEC_ACCESSIBILITY_SPEC-motion-scope.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJyZWR1Y2UiOiB0cnVlLAogICJvZmZlbmRlcnMiOiBbXSwKICAic21vb3RoU2Nyb2xsIjogZmFsc2UsCiAgImF1dG9Sb3RhdGluZ0Nhcm91c2VscyI6IDAsCiAgInNoZWxsVmlzaWJsZSI6IHRydWUsCiAgImRpYWxvZ1Zpc2libGUiOiB0cnVlCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-e726baae304d5901cf52",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 854,
+          "column": 1
+        },
+        {
+          "title": "the canonical state sheet renders all nine production primitives",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "canonical-fixture",
+                  "description": "HOME_STATE_ALL_STATES_DESKTOP"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2130,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:38:59.730Z",
+                  "annotations": [
+                    {
+                      "type": "canonical-fixture",
+                      "description": "HOME_STATE_ALL_STATES_DESKTOP"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c84281a64d9866f66160-21d3806504496fe0508e",
+          "file": "home-wave2-state-evidence.spec.ts",
+          "line": 940,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "wave3-governance.spec.ts",
+      "file": "wave3-governance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "app access moves from employee request to governed approval and IAM synchronization",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4119,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:39:01.873Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ece2ec1789391e3c56b-898616a11591235a16e7",
+          "file": "wave3-governance.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "navigation studio creates, validates, and publishes an immutable revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1607,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:39:05.996Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ece2ec1789391e3c56b-096f7fef165a9663a1ae",
+          "file": "wave3-governance.spec.ts",
+          "line": 229,
+          "column": 1
+        },
+        {
+          "title": "catalog graph exposes change impact and records an explicit relationship",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1625,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:39:07.607Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ece2ec1789391e3c56b-ea62c11623e4cf6f68b7",
+          "file": "wave3-governance.spec.ts",
+          "line": 324,
+          "column": 1
+        },
+        {
+          "title": "catalog assurance restores deep links and records governed false-positive evidence",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1947,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-16T04:39:09.235Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ece2ec1789391e3c56b-f97ee2d857ec2ff5d2cb",
+          "file": "wave3-governance.spec.ts",
+          "line": 426,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-16T04:37:25.195Z",
+    "duration": 106060.64,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

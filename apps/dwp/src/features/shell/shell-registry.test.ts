@@ -32,6 +32,11 @@ describe('global shell registry', () => {
     expect(shellRegistry.admin.showWorkspace).toBe(true);
   });
 
+  it('reserves the approved Home desktop navigation widths', () => {
+    expect(shellRegistry.home.desktopNavigationWidth).toBe(248);
+    expect(shellRegistry.home.compactNavigationWidth).toBe(64);
+  });
+
   it('registers meetings as a workspace-aware tenant product shell', () => {
     expect(shellRegistry.meetings).toMatchObject({
       key: 'meetings',

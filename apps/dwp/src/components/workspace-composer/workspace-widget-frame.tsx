@@ -58,7 +58,7 @@ export function WorkspaceWidgetContent({
           : { xs: 'visible', sm: 'auto' },
         overscrollBehaviorY: 'auto',
         scrollbarGutter: documentScroll ? 'auto' : 'stable',
-        '& > section': {
+        '& > section, & > :where([data-workspace-widget-transparent]) > section': {
           height: documentScroll && editing ? '100% !important' : 'auto !important',
           flex: documentScroll && !editing ? '0 0 auto' : '1 1 auto',
           alignSelf: 'stretch',

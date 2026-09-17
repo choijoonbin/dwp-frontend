@@ -9071,7 +9071,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_9"];
+        get: operations["platform_list_10"];
         put?: never;
         post: operations["platform_create_17"];
         delete?: never;
@@ -9135,7 +9135,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_events_4"];
+        get: operations["platform_events_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9233,7 +9233,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_revoke_1"];
+        post: operations["platform_revoke_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9407,7 +9407,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_events_3"];
+        get: operations["platform_events_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9695,7 +9695,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_15"];
+        get: operations["platform_list_17"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9983,7 +9983,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_impact"];
+        get: operations["platform_impact_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10031,7 +10031,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_8"];
+        get: operations["platform_list_9"];
         put?: never;
         post: operations["platform_create_16"];
         delete?: never;
@@ -10127,7 +10127,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_5"];
+        get: operations["platform_get_6"];
         put: operations["platform_update_10"];
         post?: never;
         delete?: never;
@@ -10223,7 +10223,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_history_1"];
+        get: operations["platform_history_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10241,7 +10241,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_rollback_1"];
+        post: operations["platform_rollback_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11087,7 +11087,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_7"];
+        get: operations["platform_list_8"];
         put?: never;
         post: operations["platform_create_14"];
         delete?: never;
@@ -11185,7 +11185,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish_1"];
+        post: operations["platform_publish_navigation_studio_draft"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11249,7 +11249,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_retire_1"];
+        post: operations["platform_retire_navigation_item"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11295,7 +11295,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_6"];
+        get: operations["platform_list_7"];
         put?: never;
         post: operations["platform_create_13"];
         delete?: never;
@@ -11425,7 +11425,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_retire"];
+        post: operations["platform_retire_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11439,7 +11439,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_5"];
+        get: operations["platform_list_6"];
         put?: never;
         post: operations["platform_create_12"];
         delete?: never;
@@ -11839,7 +11839,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_4"];
+        get: operations["platform_get_5"];
         put: operations["platform_update_7"];
         post?: never;
         delete?: never;
@@ -11887,7 +11887,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_history"];
+        get: operations["platform_history_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -11905,7 +11905,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_rollback"];
+        post: operations["platform_rollback_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11919,7 +11919,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_13"];
+        get: operations["platform_get_16"];
         put?: never;
         post?: never;
         delete?: never;
@@ -14880,7 +14880,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_14"];
+        get: operations["platform_list_15"];
         put?: never;
         post?: never;
         delete?: never;
@@ -15265,7 +15265,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_12"];
+        get: operations["platform_get_13"];
         put?: never;
         post?: never;
         delete?: never;
@@ -15281,7 +15281,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_13"];
+        get: operations["platform_list_14"];
         put?: never;
         post?: never;
         delete?: never;
@@ -15489,7 +15489,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_11"];
+        get: operations["platform_get_12"];
         put?: never;
         post?: never;
         delete?: never;
@@ -15537,7 +15537,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_10"];
+        get: operations["platform_get_11"];
         put?: never;
         post?: never;
         delete?: never;
@@ -16881,7 +16881,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_12"];
+        get: operations["platform_list_13"];
         put?: never;
         post?: never;
         delete?: never;
@@ -16929,7 +16929,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_6"];
+        get: operations["platform_get_7"];
         put?: never;
         post?: never;
         delete?: never;
@@ -17009,7 +17009,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_9"];
+        get: operations["platform_get_10"];
         put?: never;
         post?: never;
         delete?: never;
@@ -17249,7 +17249,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_8"];
+        get: operations["platform_get_9"];
         put?: never;
         post?: never;
         delete?: never;
@@ -18737,7 +18737,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_11"];
+        get: operations["platform_list_12"];
         put?: never;
         post?: never;
         delete?: never;
@@ -18793,7 +18793,7 @@ export interface paths {
          * Read an authorized native activity audit receipt
          * @description Rechecks current source ACL. Audit hash and checkpoint require ADMIN.AUDIT_VIEW:VIEW; other viewers receive RESTRICTED without audit data.
          */
-        get: operations["platform_evidence"];
+        get: operations["platform_evidence_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -19117,7 +19117,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_7"];
+        get: operations["platform_get_8"];
         put?: never;
         post?: never;
         delete?: never;
@@ -19261,7 +19261,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_10"];
+        get: operations["platform_list_11"];
         put?: never;
         post?: never;
         delete?: never;
@@ -21092,6 +21092,767 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["auth_patchUser"];
+        trace?: never;
+    };
+    "/api/platform/v1/admin/home-experience/audit-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listHomeStudioAuditEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_admin_widget_catalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-catalog/{definitionId}/explain": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_explain"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_14"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_create_widget_policy_revision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/revisions/{revisionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_update_widget_policy_revision"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/revisions/{revisionId}/impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_impact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/revisions/{revisionId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_publish_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_revoke_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/revoke-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_revokeImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/rollback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_rollback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/widget-policies/{definitionId}/rollback-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_rollbackImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}/revisions/{revisionId}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_restoreHomeTemplateRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/widget-catalog/effective": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_effective"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/widget-catalog/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_readiness"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the recipient-bound Home v2 projection
+         * @description Returns a private conditional-read model. ETag identity is bound to tenant, recipient, authority revision, mode, device, locale and time zone.
+         */
+        get: operations["platform_readHomeV2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/home/shadow-receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record a bounded privacy-safe Home legacy/v2 comparison receipt */
+        post: operations["platform_recordHomeShadowReceiptV2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/home/widget-actions:execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Execute an idempotent Home widget action
+         * @description Disabled until the Wave 6 command promotion gate. When enabled, owner-side idempotency and an audit receipt are mandatory.
+         */
+        post: operations["platform_executeHomeWidgetActionV2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_4"];
+        put: operations["platform_update_widget_definition_version"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/block": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_block"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_decision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/deprecate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_deprecate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_evidence"];
+        put?: never;
+        post: operations["platform_evidence_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/evidence/{evidenceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_evidence_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_impact_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_publish_widget_definition_version"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/quarantine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_quarantine"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_revoke_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/rework": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_rework"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_submit_widget_definition_version"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definition-versions/{versionId}/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_validate_widget_definition_version"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_5"];
+        put?: never;
+        post: operations["platform_create_widget_definition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_15"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/channels/{channel}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_channel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/channels/{channel}/impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_channelImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/channels/{channel}/promote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_promote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/channels/{channel}/rollback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_rollback_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_retire"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/retirement-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_retirementImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-definitions/{definitionId}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_versions"];
+        put?: never;
+        post: operations["platform_createVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-registry/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_events_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-registry/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_readiness_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-runtime-controls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_16"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-runtime-controls/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_disable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-runtime-controls/{controlId}/enable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_enable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/widget-runtime-controls/{controlId}/enable-approvals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_approve_widget_runtime_enable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
 }
@@ -41714,6 +42475,12 @@ export interface components {
             scenarioVersion?: number;
             /** @enum {string} */
             state?: "SUCCEEDED" | "FAILED" | "RESULT_UNKNOWN";
+            commandKey?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            resultVersion?: string;
+            sourceRoute?: string;
+            status?: string;
         };
         platform_CommentRequest: {
             body: string;
@@ -42413,6 +43180,7 @@ export interface components {
         platform_CreateHomeViewRequest: {
             layout: components["schemas"]["platform_HomeLayoutPayload"];
             makeDefault?: boolean;
+            modeKey?: string;
             name: string;
             viewKey: string;
         };
@@ -42839,7 +43607,7 @@ export interface components {
         };
         platform_DeviceLayoutResponse: {
             /** @enum {string} */
-            deviceClass: "DESKTOP" | "MOBILE";
+            deviceClass: "DESKTOP_WIDE" | "DESKTOP_STANDARD" | "MOBILE_STANDARD" | "MOBILE_COMPACT";
             /** Format: uuid */
             deviceLayoutId: string;
             overlay: components["schemas"]["platform_DeviceLayoutOverlay"];
@@ -44153,6 +44921,9 @@ export interface components {
             /** @enum {string} */
             experienceVariant: "CLASSIC" | "FLOW_V1";
             governedZones: components["schemas"]["platform_GovernedHomeZone"][];
+            modeLayouts?: {
+                [key: string]: components["schemas"]["platform_HomeModeLayoutContract"];
+            };
             personalCustomizationEnabled: boolean;
             /** Format: int32 */
             schemaVersion: number;
@@ -44211,6 +44982,7 @@ export interface components {
             /** @enum {string} */
             effectiveExperienceVariant: "CLASSIC" | "FLOW_V1";
             headline?: string;
+            homeContractCapabilities?: string[];
             /** @enum {string} */
             homePreferenceStore: "LEGACY" | "VIEWS";
             launchpadConfiguration: components["schemas"]["platform_HomeLaunchpadConfiguration"];
@@ -44360,7 +45132,7 @@ export interface components {
             revisionNumber: number;
             snapshot: components["schemas"]["platform_HomeTemplateSnapshot"];
             /** @enum {string} */
-            source: "CREATE" | "UPDATE" | "PUBLISH" | "REVOKE";
+            source: "CREATE" | "UPDATE" | "PUBLISH" | "REVOKE" | "RESTORE";
             /** Format: uuid */
             templateId: string;
             /** Format: uuid */
@@ -44387,6 +45159,7 @@ export interface components {
             customized: boolean;
             isDefault: boolean;
             layout: components["schemas"]["platform_HomeLayoutPayload"];
+            modeKey: string;
             name: string;
             /** Format: int32 */
             schemaVersion: number;
@@ -48658,12 +49431,20 @@ export interface components {
         platform_WebVitalRequest: {
             /** Format: double */
             delta: number;
+            /** @enum {string} */
+            deviceClass?: "DESKTOP_WIDE" | "DESKTOP_STANDARD" | "MOBILE_STANDARD" | "MOBILE_COMPACT";
+            /** @enum {string} */
+            homeMode?: "CLASSIC" | "FLOW_V1";
+            /** @enum {string} */
+            homeRuntime?: "DISABLED" | "SHADOW_COMPARE" | "READ_ONLY_ACTIVE" | "COMMAND_CANARY";
             id: string;
             /** @enum {string} */
             name: "CLS" | "INP" | "LCP";
             navigationType: string;
             /** @enum {string} */
             rating: "good" | "needs-improvement" | "poor";
+            /** @enum {string} */
+            rolloutRing?: "CONTROL" | "INTERNAL" | "PILOT" | "EARLY_ADOPTER" | "GA";
             routeGroup: string;
             /** Format: double */
             value: number;
@@ -50786,6 +51567,7 @@ export interface components {
             /** Format: int64 */
             accessRequestVersion?: number;
             accessState?: string;
+            badgeSourceKey?: string;
             category?: string;
             description?: string;
             health?: string;
@@ -50800,6 +51582,7 @@ export interface components {
             name?: string;
             owner?: string;
             pinned?: boolean;
+            requiredPermissionCode?: string;
             resourceKey?: string;
             /** Format: int64 */
             version?: number;
@@ -53351,6 +54134,973 @@ export interface components {
             contentPolicy: string;
             /** Format: int64 */
             expectedVersion: number;
+        };
+        platform_Action: {
+            actionId?: string;
+            commandKey?: string;
+            expectedResultVersion?: string;
+            /** @enum {string} */
+            kind?: "SOURCE_ROUTE" | "COMMAND";
+            labelKey?: string;
+            requiresConfirmation?: boolean;
+            sourceRoute?: string;
+        };
+        platform_Announcement: {
+            /** Format: date-time */
+            dueAt?: string;
+            id?: string;
+            kind?: string;
+            sourceRoute?: string;
+            title?: string;
+        };
+        platform_ApiResponseDefinitionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_DefinitionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseDefinitionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_DefinitionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEffectiveCatalogResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EffectiveCatalogResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEvidencePage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EvidencePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseEvidenceResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EvidenceResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseHomeReadModel: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeReadModel"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseImpactResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ImpactResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseReadinessResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ReadinessResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseRegistryEventPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RegistryEventPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseReleaseChannelResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ReleaseChannelResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseRuntimeControlPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RuntimeControlPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseRuntimeControlResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RuntimeControlResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseRuntimeEnableApprovalResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RuntimeEnableApprovalResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseShadowReceiptResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ShadowReceiptResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseTenantPolicyResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_TenantPolicyResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseTenantPolicyRevisionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_TenantPolicyRevisionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseTenantPolicyRevisionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_TenantPolicyRevisionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseValidationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ValidationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseVersionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_VersionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseVersionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_VersionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_AppEntry: {
+            appKey?: string;
+            badge?: components["schemas"]["platform_Badge"];
+            /** @enum {string} */
+            badgeState?: "NOT_REQUESTED" | "AVAILABLE" | "UNAVAILABLE" | "FORBIDDEN";
+            iconKey?: string;
+            label?: string;
+            sourceRoute?: string;
+        };
+        platform_AppGroup: {
+            apps?: components["schemas"]["platform_AppEntry"][];
+            groupKey?: string;
+            label?: string;
+        };
+        platform_AudienceSelectorV1: {
+            groupRefs: string[];
+            mode: string;
+            roleCodes: string[];
+            /** Format: int32 */
+            schemaVersion: number;
+        };
+        platform_Badge: {
+            /** Format: int32 */
+            total?: number;
+            /** Format: int32 */
+            urgent?: number;
+            version?: string;
+        };
+        platform_CatalogCapabilities: {
+            brokerRead?: boolean;
+            instanceV6Write?: boolean;
+            legacyPlacementWrite?: boolean;
+            libraryRead?: boolean;
+            presetCreate?: boolean;
+            presetShare?: boolean;
+        };
+        platform_ChannelRollbackRequest: {
+            /** Format: uuid */
+            expectedCurrentVersionId: string;
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            restoreVersionId: string;
+        };
+        platform_ChannelTransitionRequest: {
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            manifestHash: string;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            validationRunId: string;
+            /** Format: uuid */
+            versionId: string;
+        };
+        platform_CommandRequest: {
+            actionId: string;
+            expectedResultVersion: string;
+            /** Format: uuid */
+            instanceId: string;
+            parameters?: {
+                [key: string]: unknown;
+            };
+        };
+        platform_DefinitionCreateRequest: {
+            dataClassification: string;
+            definitionKey: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            legacyWidgetKey?: string;
+            ownerProductKey: string;
+            ownerTeamKey: string;
+            reasonCode: string;
+            reasonText: string;
+            riskTier: string;
+        };
+        platform_DefinitionPage: {
+            hasNext?: boolean;
+            items?: components["schemas"]["platform_DefinitionResponse"][];
+            /** Format: int32 */
+            page?: number;
+            readRevision?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_DefinitionResponse: {
+            allowedTransitions?: string[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** @enum {string} */
+            dataClassification?: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
+            /** Format: uuid */
+            definitionId?: string;
+            definitionKey?: string;
+            /** @enum {string} */
+            definitionState?: "ACTIVE" | "RETIRED";
+            legacyWidgetKey?: string;
+            ownerProductKey?: string;
+            ownerTeamKey?: string;
+            /** @enum {string} */
+            riskTier?: "LOW" | "MEDIUM" | "HIGH";
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_DefinitionRetireRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            impactRevision: string;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            replacementDefinitionId?: string;
+        };
+        platform_DeprecateRequest: {
+            /** Format: date-time */
+            deprecationEndsAt: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            replacementVersionId: string;
+        };
+        platform_EffectiveCatalogResponse: {
+            bindingCatalogRevision?: string;
+            catalogRevision?: string;
+            contexts?: components["schemas"]["platform_PlacementContext"][];
+            hostContext?: components["schemas"]["platform_HostContext"];
+            mode?: string;
+            policyRevision?: string;
+            safetyRevision?: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+        };
+        platform_EffectiveItem: {
+            /** Format: int64 */
+            addedInstanceCount?: number;
+            /** Format: uuid */
+            definitionId?: string;
+            definitionKey?: string;
+            /** @enum {string} */
+            effectiveState?: "AVAILABLE" | "ALREADY_ADDED" | "DEPRECATED" | "DENY";
+            legacyWidgetKey?: string;
+            placementCapabilities?: components["schemas"]["platform_PlacementCapabilities"];
+            reasonCodes?: ("NOT_AVAILABLE" | "DISABLED_BY_ORGANIZATION" | "APP_ACCESS_REQUIRED" | "INCOMPATIBLE" | "TEMPORARILY_UNAVAILABLE" | "DEPRECATED" | "AVAILABLE" | "ALREADY_ADDED")[];
+            /** Format: uuid */
+            resolvedVersionId?: string;
+            semanticVersion?: string;
+        };
+        platform_EffectiveView: {
+            composition?: components["schemas"]["platform_HomeLayoutPayload"];
+            deviceClass?: string;
+            deviceOverlay?: components["schemas"]["platform_DeviceLayoutOverlay"];
+            mode?: string;
+            /** Format: int64 */
+            revision?: number;
+            source?: string;
+            /** Format: uuid */
+            viewId?: string;
+        };
+        platform_EvidenceCreateRequest: {
+            decision: string;
+            evidenceRef: string;
+            evidenceSha256: string;
+            evidenceType: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            /** Format: date-time */
+            expiresAt?: string;
+            manifestHash: string;
+            reasonCode: string;
+            reasonText: string;
+            reviewNote?: string;
+        };
+        platform_EvidencePage: {
+            hasNext?: boolean;
+            items?: components["schemas"]["platform_EvidenceResponse"][];
+            /** Format: int32 */
+            page?: number;
+            readRevision?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_EvidenceResponse: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            decisionRevision?: number;
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceRef?: string;
+            evidenceSha256?: string;
+            evidenceType?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            manifestHash?: string;
+            reviewedBy?: string;
+            /** @enum {string} */
+            status?: "PASS" | "FAIL" | "EXPIRED" | "WAIVED";
+            trackingTicketRef?: string;
+            /** Format: uuid */
+            versionId?: string;
+            /** Format: uuid */
+            waivedEvidenceId?: string;
+        };
+        platform_Governance: {
+            classification?: string;
+            owner?: string;
+            requiredAuthorities?: string[];
+            retention?: string;
+            sourceAppResourceKey?: string;
+            sourceRoute?: string;
+        };
+        platform_HomeModeLayoutContract: {
+            deviceClasses?: string[];
+            /** @enum {string} */
+            layoutScope?: "MODE_SCOPED_VIEW";
+        };
+        platform_HomeReadModel: {
+            appDock?: components["schemas"]["platform_AppGroup"][];
+            changeVersion?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            mode?: string;
+            partial?: boolean;
+            registryMode?: string;
+            runtime?: components["schemas"]["platform_RuntimeDecision"];
+            /** Format: int32 */
+            schemaVersion?: number;
+            shell?: components["schemas"]["platform_HomeShell"];
+            unavailableSources?: string[];
+            view?: components["schemas"]["platform_EffectiveView"];
+            widgets?: components["schemas"]["platform_Widget"][];
+        };
+        platform_HomeShell: {
+            announcements?: components["schemas"]["platform_Announcement"][];
+            backgroundAssetRoute?: string;
+            contentAlignment?: string;
+            density?: string;
+            headline?: string;
+            subheadline?: string;
+        };
+        platform_HomeViewConflictEnvelope: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeViewConflictResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_HomeViewConflictResponse: {
+            /** Format: int64 */
+            actualDeviceVersion?: number;
+            /** Format: int64 */
+            actualVersion: number;
+            changedFields: string[];
+            /** Format: int64 */
+            expectedDeviceVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            latestDeviceLayout?: components["schemas"]["platform_DeviceLayoutResponse"];
+            latestView: components["schemas"]["platform_HomeViewResponse"];
+            /** @enum {string} */
+            operation: "UPDATE_VIEW" | "RESET_VIEW" | "DELETE_VIEW" | "ACTIVATE_VIEW" | "UPDATE_WIDGET_CONFIGURATION" | "UPDATE_DEVICE_LAYOUT" | "RESTORE_REVISION" | "APPLY_TEMPLATE" | "APPLY_AI" | "APPLY_UNDO";
+            submittedDraft: unknown;
+        };
+        platform_HostContext: {
+            activeViewRef?: string;
+            /** Format: int32 */
+            compositionSchemaVersion?: number;
+            decisionRevision?: string;
+            /** Format: int64 */
+            homeExperienceVersion?: number;
+            /** Format: int32 */
+            hostCapabilityVersion?: number;
+            hostConfigurationRevision?: string;
+            /** Format: int64 */
+            layoutRevision?: number;
+            layoutSource?: string;
+            resolvedHostMode?: string;
+            surfaceKey?: string;
+        };
+        platform_ImpactResponse: {
+            /** Format: int64 */
+            activeChannelCount?: number;
+            /** Format: int64 */
+            affectedTenantCount?: number;
+            /** Format: date-time */
+            calculatedAt?: string;
+            /** Format: uuid */
+            definitionId?: string;
+            impactRevision?: string;
+            /** Format: int64 */
+            instanceReferenceCount?: number;
+            operation?: string;
+            operationAllowed?: boolean;
+            /** Format: int64 */
+            tenantPolicyReferenceCount?: number;
+            /** Format: uuid */
+            versionId?: string;
+        };
+        platform_PlacementCapabilities: {
+            canAdd?: boolean;
+            canHide?: boolean;
+            canMove?: boolean;
+            canResize?: boolean;
+        };
+        platform_PlacementContext: {
+            capabilities?: components["schemas"]["platform_CatalogCapabilities"];
+            items?: components["schemas"]["platform_EffectiveItem"][];
+            placementContext?: string;
+        };
+        platform_PublishRequest: {
+            channel: string;
+            evidenceIds: string[];
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            manifestHash: string;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            validationRunId: string;
+        };
+        platform_ReadinessResponse: {
+            /** Format: int32 */
+            activeBindingCount?: number;
+            bindingCatalogRevision?: string;
+            capabilities?: string[];
+            controlPlaneReady?: boolean;
+            /** @enum {string} */
+            migrationMode?: "STATIC" | "SHADOW" | "AUTHORITATIVE";
+            /** Format: int64 */
+            policyRevision?: number;
+            /** Format: int64 */
+            registryRevision?: number;
+            runtimeActivationReady?: boolean;
+            /** Format: int64 */
+            safetyRevision?: number;
+            /** Format: int32 */
+            schemaVersion?: number;
+        };
+        platform_RegistryEventPage: {
+            hasNext?: boolean;
+            items?: components["schemas"]["platform_RegistryEventResponse"][];
+            /** Format: int32 */
+            page?: number;
+            readRevision?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_RegistryEventResponse: {
+            actorRef?: string;
+            after?: components["schemas"]["platform_JsonNode"];
+            aggregateId?: string;
+            aggregateType?: string;
+            before?: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            commandId?: string;
+            correlationId?: string;
+            /** Format: uuid */
+            eventId?: string;
+            eventType?: string;
+            evidenceRefs?: components["schemas"]["platform_JsonNode"];
+            /** Format: date-time */
+            occurredAt?: string;
+            /** Format: int64 */
+            registryRevision?: number;
+            /** Format: int64 */
+            tenantId?: number;
+        };
+        platform_ReleaseChannelResponse: {
+            allowedTransitions?: string[];
+            channel?: string;
+            /** Format: uuid */
+            currentVersionId?: string;
+            /** Format: uuid */
+            definitionId?: string;
+            /** Format: uuid */
+            previousVersionId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ReviewDecisionRequest: {
+            decision: string;
+            evidenceIds: string[];
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            validationRunId: string;
+        };
+        platform_RuntimeControlPage: {
+            hasNext?: boolean;
+            items?: components["schemas"]["platform_RuntimeControlResponse"][];
+            /** Format: int32 */
+            page?: number;
+            readRevision?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_RuntimeControlResponse: {
+            /** Format: uuid */
+            controlId?: string;
+            /** Format: int64 */
+            controlRevision?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            providerProductKey?: string;
+            reasonCode?: string;
+            scope?: string;
+            /** @enum {string} */
+            state?: "DISABLED" | "ENABLED" | "EXPIRED";
+            targetId?: string;
+            targetType?: string;
+            /** Format: int64 */
+            tenantId?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_RuntimeDecision: {
+            commandsEnabled?: boolean;
+            /** Format: date-time */
+            expiresAt?: string;
+            homeMode?: string;
+            registryAuthoritative?: boolean;
+            rolloutRevision?: string;
+            rolloutRing?: string;
+            state?: string;
+        };
+        platform_RuntimeDisableRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            /** Format: date-time */
+            expiresAt?: string;
+            internalIncidentRef: string;
+            providerProductKey?: string;
+            publicReasonCode: string;
+            reasonCode: string;
+            reasonText: string;
+            scope: string;
+            targetId?: string;
+            targetType: string;
+            /** Format: int64 */
+            tenantId?: number;
+        };
+        platform_RuntimeEnableApprovalRequest: {
+            /** Format: int64 */
+            controlRevision: number;
+            evidenceRefs: string[];
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+        };
+        platform_RuntimeEnableApprovalResponse: {
+            /** Format: uuid */
+            approvalId?: string;
+            approvedBy?: string;
+            /** Format: date-time */
+            consumedAt?: string;
+            /** Format: uuid */
+            controlId?: string;
+            /** Format: int64 */
+            controlRevision?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            evidenceRefs?: components["schemas"]["platform_JsonNode"];
+            /** Format: date-time */
+            expiresAt?: string;
+            state?: string;
+        };
+        platform_RuntimeEnableRequest: {
+            /** Format: int64 */
+            controlRevision: number;
+            /** Format: uuid */
+            enableApprovalId: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+        };
+        platform_SafetyTransitionRequest: {
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            /** Format: date-time */
+            expiresAt?: string;
+            internalIncidentRef: string;
+            publicReasonCode: string;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            replacementVersionId?: string;
+        };
+        platform_ShadowReceiptRequest: {
+            deviceClass: string;
+            homeMode: string;
+            /** Format: int32 */
+            mismatchCount?: number;
+            /** @enum {string} */
+            outcome: "MATCH" | "EXPECTED_TRANSIENT" | "MISMATCH" | "UNAVAILABLE";
+            reasons: ("MATCH" | "EXPECTED_TRANSIENT" | "STRUCTURE" | "AUTHORITY" | "MODE" | "LAYOUT" | "APP_DOCK" | "WIDGET_STATE" | "ROUTE_ACTION" | "FRESHNESS" | "UNAVAILABLE")[];
+            rolloutRevision: string;
+            rolloutRing: string;
+            runtimeState: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+        };
+        platform_ShadowReceiptResponse: {
+            accepted?: boolean;
+            receiptVersion?: string;
+        };
+        platform_SourceState: {
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: date-time */
+            lastSuccessAt?: string;
+            reasonCode?: string;
+            resultVersion?: string;
+            retryable?: boolean;
+            sourceKey?: string;
+        };
+        platform_TenantPolicyPublishRequest: {
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+        };
+        platform_TenantPolicyResponse: {
+            allowedTransitions?: string[];
+            current?: components["schemas"]["platform_TenantPolicyRevisionResponse"];
+            /** Format: uuid */
+            currentRevisionId?: string;
+            /** Format: uuid */
+            definitionId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_TenantPolicyRevisionPage: {
+            hasNext?: boolean;
+            items?: components["schemas"]["platform_TenantPolicyRevisionResponse"][];
+            /** Format: int32 */
+            page?: number;
+            readRevision?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_TenantPolicyRevisionRequest: {
+            audienceSelector: components["schemas"]["platform_AudienceSelectorV1"];
+            channel?: string;
+            enabled?: boolean;
+            /** Format: int64 */
+            expectedVersion: number;
+            lockedConfiguration: components["schemas"]["platform_JsonNode"];
+            reasonCode: string;
+            reasonText: string;
+            required?: boolean;
+            selector: string;
+            sharingPolicy: string;
+            supportedSurfaceKeys: string[];
+            /** Format: uuid */
+            versionId?: string;
+        };
+        platform_TenantPolicyRevisionResponse: {
+            audienceSelector?: components["schemas"]["platform_JsonNode"];
+            channel?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            definitionId?: string;
+            enabled?: boolean;
+            impactRevision?: string;
+            lockedConfiguration?: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            policyRevisionId?: string;
+            /** @enum {string} */
+            policyState?: "DRAFT" | "PUBLISHED" | "SUPERSEDED" | "REVOKED";
+            /** Format: uuid */
+            predecessorRevisionId?: string;
+            required?: boolean;
+            /** Format: int64 */
+            revisionNumber?: number;
+            selector?: string;
+            sharingPolicy?: string;
+            supportedSurfaceKeys?: components["schemas"]["platform_JsonNode"];
+            /** Format: int64 */
+            tenantId?: number;
+            /** Format: int64 */
+            version?: number;
+            /** Format: uuid */
+            versionId?: string;
+        };
+        platform_TenantPolicyRevokeRequest: {
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+        };
+        platform_TenantPolicyRollbackRequest: {
+            expectedImpactRevision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
+            /** Format: uuid */
+            restoreRevisionId: string;
+        };
+        platform_ValidateRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            manifestHash: string;
+            reasonCode: string;
+            reasonText: string;
+        };
+        platform_ValidationError: {
+            code?: string;
+            jsonPointer?: string;
+        };
+        platform_ValidationResponse: {
+            bindingCatalogRevision?: string;
+            errors?: components["schemas"]["platform_ValidationError"][];
+            manifestHash?: string;
+            /** @enum {string} */
+            status?: "PASS" | "FAIL";
+            /** Format: date-time */
+            validatedAt?: string;
+            /** Format: uuid */
+            validationRunId?: string;
+            /** Format: uuid */
+            versionId?: string;
+        };
+        platform_VersionCreateRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            manifest: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            predecessorVersionId?: string;
+            reasonCode: string;
+            reasonText: string;
+            semanticVersion: string;
+        };
+        platform_VersionPage: {
+            hasNext?: boolean;
+            items?: components["schemas"]["platform_VersionResponse"][];
+            /** Format: int32 */
+            page?: number;
+            readRevision?: string;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_VersionResponse: {
+            allowedTransitions?: string[];
+            attestation?: components["schemas"]["platform_JsonNode"];
+            bindingCatalogRevision?: string;
+            /** @enum {string} */
+            certificationStatus?: "NOT_RUN" | "PASS" | "FAIL" | "EXPIRED" | "WAIVED";
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            definitionId?: string;
+            /** Format: date-time */
+            deprecationEndsAt?: string;
+            manifest?: components["schemas"]["platform_JsonNode"];
+            manifestHash?: string;
+            /** Format: uuid */
+            predecessorVersionId?: string;
+            /** @enum {string} */
+            releaseState?: "UNPUBLISHED" | "PUBLISHED" | "BLOCKED" | "DEPRECATED";
+            /** Format: uuid */
+            replacementVersionId?: string;
+            /** @enum {string} */
+            safetyState?: "CLEAR" | "QUARANTINED" | "REVOKED";
+            semanticVersion?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: uuid */
+            validationRunId?: string;
+            /** Format: int64 */
+            version?: number;
+            /** Format: uuid */
+            versionId?: string;
+            /** @enum {string} */
+            workflowState?: "DRAFT" | "VALIDATED" | "SUBMITTED" | "APPROVED" | "REJECTED";
+        };
+        platform_VersionUpdateRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            manifest: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            predecessorVersionId?: string;
+            reasonCode: string;
+            reasonText: string;
+        };
+        platform_Widget: {
+            actions?: components["schemas"]["platform_Action"][];
+            definitionKey?: string;
+            definitionManifestHash?: string;
+            definitionVersion?: string;
+            governance?: components["schemas"]["platform_Governance"];
+            /** Format: uuid */
+            instanceId?: string;
+            payload?: {
+                [key: string]: unknown;
+            };
+            redactions?: string[];
+            rendererBindingRevision?: string;
+            rendererKey?: string;
+            source?: components["schemas"]["platform_SourceState"];
+            /** @enum {string} */
+            state?: "AVAILABLE" | "EMPTY" | "PARTIAL" | "FORBIDDEN" | "UNAVAILABLE" | "STALE";
+        };
+        platform_WidgetVersionTransitionRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            reasonCode: string;
+            reasonText: string;
         };
     };
     responses: never;
@@ -71154,7 +72904,7 @@ export interface operations {
             };
         };
     };
-    platform_list_9: {
+    platform_list_10: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -71307,7 +73057,7 @@ export interface operations {
             };
         };
     };
-    platform_events_4: {
+    platform_events_5: {
         parameters: {
             query?: {
                 window?: "H1" | "H6" | "H24" | "D7" | "D30";
@@ -71467,7 +73217,7 @@ export interface operations {
             };
         };
     };
-    platform_revoke_1: {
+    platform_revoke_3: {
         parameters: {
             query?: never;
             header?: {
@@ -71786,7 +73536,7 @@ export interface operations {
             };
         };
     };
-    platform_events_3: {
+    platform_events_4: {
         parameters: {
             query?: {
                 window?: "H24" | "D7" | "D30" | "D90";
@@ -72274,7 +74024,7 @@ export interface operations {
             };
         };
     };
-    platform_list_15: {
+    platform_list_17: {
         parameters: {
             query?: {
                 page?: number;
@@ -72808,7 +74558,7 @@ export interface operations {
             };
         };
     };
-    platform_impact: {
+    platform_impact_2: {
         parameters: {
             query: {
                 ref: string;
@@ -72885,7 +74635,7 @@ export interface operations {
             };
         };
     };
-    platform_list_8: {
+    platform_list_9: {
         parameters: {
             query?: {
                 lifecycle?: "DRAFT" | "ACTIVE" | "RETIRED";
@@ -73103,7 +74853,7 @@ export interface operations {
             };
         };
     };
-    platform_get_5: {
+    platform_get_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -73309,7 +75059,7 @@ export interface operations {
             };
         };
     };
-    platform_history_1: {
+    platform_history_2: {
         parameters: {
             query?: {
                 limit?: number;
@@ -73331,7 +75081,7 @@ export interface operations {
             };
         };
     };
-    platform_rollback_1: {
+    platform_rollback_3: {
         parameters: {
             query?: never;
             header?: {
@@ -74764,7 +76514,7 @@ export interface operations {
             };
         };
     };
-    platform_list_7: {
+    platform_list_8: {
         parameters: {
             query?: never;
             header?: never;
@@ -74938,7 +76688,7 @@ export interface operations {
             };
         };
     };
-    platform_publish_1: {
+    platform_publish_navigation_studio_draft: {
         parameters: {
             query?: never;
             header?: {
@@ -75050,7 +76800,7 @@ export interface operations {
             };
         };
     };
-    platform_retire_1: {
+    platform_retire_navigation_item: {
         parameters: {
             query?: never;
             header?: {
@@ -75128,7 +76878,7 @@ export interface operations {
             };
         };
     };
-    platform_list_6: {
+    platform_list_7: {
         parameters: {
             query?: {
                 query?: string;
@@ -75397,7 +77147,7 @@ export interface operations {
             };
         };
     };
-    platform_retire: {
+    platform_retire_1: {
         parameters: {
             query?: never;
             header?: {
@@ -75425,7 +77175,7 @@ export interface operations {
             };
         };
     };
-    platform_list_5: {
+    platform_list_6: {
         parameters: {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
@@ -76216,7 +77966,7 @@ export interface operations {
             };
         };
     };
-    platform_get_4: {
+    platform_get_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -76339,7 +78089,7 @@ export interface operations {
             };
         };
     };
-    platform_history: {
+    platform_history_1: {
         parameters: {
             query?: {
                 limit?: number;
@@ -76361,7 +78111,7 @@ export interface operations {
             };
         };
     };
-    platform_rollback: {
+    platform_rollback_2: {
         parameters: {
             query?: never;
             header?: {
@@ -76389,7 +78139,7 @@ export interface operations {
             };
         };
     };
-    platform_get_13: {
+    platform_get_16: {
         parameters: {
             query?: never;
             header?: never;
@@ -82961,7 +84711,7 @@ export interface operations {
             };
         };
     };
-    platform_list_14: {
+    platform_list_15: {
         parameters: {
             query?: never;
             header?: never;
@@ -83632,7 +85382,7 @@ export interface operations {
             };
         };
     };
-    platform_get_12: {
+    platform_get_13: {
         parameters: {
             query?: {
                 locale?: string;
@@ -83658,7 +85408,7 @@ export interface operations {
             };
         };
     };
-    platform_list_13: {
+    platform_list_14: {
         parameters: {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
@@ -84053,7 +85803,7 @@ export interface operations {
             };
         };
     };
-    platform_get_11: {
+    platform_get_12: {
         parameters: {
             query?: never;
             header?: never;
@@ -84165,13 +85915,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -84239,13 +85989,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -84259,7 +86009,7 @@ export interface operations {
             };
         };
     };
-    platform_get_10: {
+    platform_get_11: {
         parameters: {
             query?: never;
             header?: never;
@@ -84771,13 +86521,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -85001,6 +86751,7 @@ export interface operations {
         parameters: {
             query?: {
                 surfaceKey?: string;
+                modeKey?: string;
             };
             header?: never;
             path?: never;
@@ -85239,13 +86990,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -85311,13 +87062,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
         };
@@ -85376,13 +87127,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -85463,7 +87214,7 @@ export interface operations {
             };
             path: {
                 viewId: string;
-                deviceClass: "DESKTOP" | "MOBILE";
+                deviceClass: "DESKTOP_WIDE" | "DESKTOP_STANDARD" | "MOBILE_STANDARD" | "MOBILE_COMPACT" | "DESKTOP" | "MOBILE";
             };
             cookie?: never;
         };
@@ -85509,13 +87260,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view or device layout version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -85583,13 +87334,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -85716,13 +87467,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -85791,13 +87542,13 @@ export interface operations {
                     "application/json": components["schemas"]["platform_ApiResponseVoid"];
                 };
             };
-            /** @description State, version, or idempotency conflict */
+            /** @description Home view version conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                    "application/json": components["schemas"]["platform_HomeViewConflictEnvelope"];
                 };
             };
             /** @description Request body exceeds the bounded limit */
@@ -87629,7 +89380,7 @@ export interface operations {
             };
         };
     };
-    platform_list_12: {
+    platform_list_13: {
         parameters: {
             query?: {
                 locale?: string;
@@ -87709,7 +89460,7 @@ export interface operations {
             };
         };
     };
-    platform_get_6: {
+    platform_get_7: {
         parameters: {
             query?: never;
             header?: never;
@@ -87875,7 +89626,7 @@ export interface operations {
             };
         };
     };
-    platform_get_9: {
+    platform_get_10: {
         parameters: {
             query?: {
                 locale?: string;
@@ -88374,7 +90125,7 @@ export interface operations {
             };
         };
     };
-    platform_get_8: {
+    platform_get_9: {
         parameters: {
             query?: never;
             header?: never;
@@ -91395,7 +93146,7 @@ export interface operations {
             };
         };
     };
-    platform_list_11: {
+    platform_list_12: {
         parameters: {
             query?: {
                 actor?: string;
@@ -91497,7 +93248,7 @@ export interface operations {
             };
         };
     };
-    platform_evidence: {
+    platform_evidence_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -92104,7 +93855,7 @@ export interface operations {
             };
         };
     };
-    platform_get_7: {
+    platform_get_8: {
         parameters: {
             query?: never;
             header?: never;
@@ -92354,7 +94105,7 @@ export interface operations {
             };
         };
     };
-    platform_list_10: {
+    platform_list_11: {
         parameters: {
             query?: {
                 page?: number;
@@ -95788,6 +97539,1524 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_UserResponse"];
+                };
+            };
+        };
+    };
+    platform_listHomeStudioAuditEvents: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAuditPage"];
+                };
+            };
+        };
+    };
+    platform_get_admin_widget_catalog: {
+        parameters: {
+            query?: {
+                surfaceKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEffectiveCatalogResponse"];
+                };
+            };
+        };
+    };
+    platform_explain: {
+        parameters: {
+            query?: {
+                surfaceKey?: string;
+            };
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEffectiveCatalogResponse"];
+                };
+            };
+        };
+    };
+    platform_get_14: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyResponse"];
+                };
+            };
+        };
+    };
+    platform_history: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyRevisionPage"];
+                };
+            };
+        };
+    };
+    platform_create_widget_policy_revision: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TenantPolicyRevisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyRevisionResponse"];
+                };
+            };
+        };
+    };
+    platform_update_widget_policy_revision: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TenantPolicyRevisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyRevisionResponse"];
+                };
+            };
+        };
+    };
+    platform_impact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                definitionId: string;
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseImpactResponse"];
+                };
+            };
+        };
+    };
+    platform_publish_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TenantPolicyPublishRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyResponse"];
+                };
+            };
+        };
+    };
+    platform_revoke_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TenantPolicyRevokeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyResponse"];
+                };
+            };
+        };
+    };
+    platform_revokeImpact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseImpactResponse"];
+                };
+            };
+        };
+    };
+    platform_rollback: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TenantPolicyRollbackRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicyResponse"];
+                };
+            };
+        };
+    };
+    platform_rollbackImpact: {
+        parameters: {
+            query: {
+                restoreRevisionId: string;
+            };
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseImpactResponse"];
+                };
+            };
+        };
+    };
+    platform_restoreHomeTemplateRevision: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_effective: {
+        parameters: {
+            query?: {
+                surfaceKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEffectiveCatalogResponse"];
+                };
+            };
+        };
+    };
+    platform_readiness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReadinessResponse"];
+                };
+            };
+        };
+    };
+    platform_readHomeV2: {
+        parameters: {
+            query: {
+                mode?: string;
+                deviceClass: string;
+                timeZone?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+                "If-None-Match"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recipient-bound Home read model */
+            200: {
+                headers: {
+                    /** @description private, max-age=0, must-revalidate */
+                    "Cache-Control"?: string;
+                    /** @description Recipient and authority-bound entity tag */
+                    ETag?: string;
+                    /** @description Trusted identity, authority and locale dimensions */
+                    Vary?: string;
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
+                    "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Rollout-Revision"?: string;
+                    "X-DWP-Home-Rollout-Ring"?: string;
+                    "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Home-Runtime-State"?: string;
+                    "X-DWP-Widget-Registry-Authoritative"?: boolean;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeReadModel"];
+                };
+            };
+            /** @description Entity tag is current; response has no body */
+            304: {
+                headers: {
+                    "Cache-Control"?: string;
+                    ETag?: string;
+                    Vary?: string;
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
+                    "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Rollout-Revision"?: string;
+                    "X-DWP-Home-Rollout-Ring"?: string;
+                    "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Home-Runtime-State"?: string;
+                    "X-DWP-Widget-Registry-Authoritative"?: boolean;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid mode, device, locale or time zone */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Trusted recipient identity is missing */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Current authority does not permit a requested source */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Runtime or trusted authority is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    platform_recordHomeShadowReceiptV2: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+                /** @description Required and fail-closed for the Home Runtime authority states 100/110/111; state 000 never enters the Home Runtime owner contract. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ShadowReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description Comparison receipt accepted */
+            202: {
+                headers: {
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseShadowReceiptResponse"];
+                };
+            };
+            /** @description Receipt or trusted rollout context is invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Home rollout decision is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    platform_executeHomeWidgetActionV2: {
+        parameters: {
+            query: {
+                mode?: string;
+                deviceClass: string;
+                timeZone?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Accept-Language"?: string;
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for the Home Runtime authority states 100/110/111; state 000 never enters the Home Runtime owner contract. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Command accepted with an audit receipt */
+            202: {
+                headers: {
+                    /** @description private, no-store, max-age=0 */
+                    "Cache-Control"?: string;
+                    /** @description Current server-owned product authority decision revision. Reuse this value as X-DWP-Expected-Decision-Revision for a subsequent governed mutation. */
+                    "X-DWP-Decision-Revision"?: string;
+                    "X-DWP-Home-Commands-Enabled"?: boolean;
+                    "X-DWP-Home-Rollout-Revision"?: string;
+                    "X-DWP-Home-Rollout-Ring"?: string;
+                    "X-DWP-Home-Runtime-Mode"?: string;
+                    "X-DWP-Home-Runtime-State"?: string;
+                    "X-DWP-Widget-Registry-Authoritative"?: boolean;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCommandReceipt"];
+                };
+            };
+            /** @description Invalid action contract or idempotency key */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Trusted recipient identity is missing */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Action is not authorized */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Idempotency key was reused with a different command */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Commands are disabled or the owner is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    platform_get_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_update_widget_definition_version: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_block: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SafetyTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_decision: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ReviewDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_deprecate: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DeprecateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_evidence: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEvidencePage"];
+                };
+            };
+        };
+    };
+    platform_evidence_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_EvidenceCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEvidenceResponse"];
+                };
+            };
+        };
+    };
+    platform_evidence_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                versionId: string;
+                evidenceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEvidenceResponse"];
+                };
+            };
+        };
+    };
+    platform_impact_1: {
+        parameters: {
+            query: {
+                operation: string;
+            };
+            header?: never;
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseImpactResponse"];
+                };
+            };
+        };
+    };
+    platform_publish_widget_definition_version: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PublishRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_quarantine: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SafetyTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_revoke_2: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SafetyTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_rework: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WidgetVersionTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_submit_widget_definition_version: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WidgetVersionTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_validate_widget_definition_version: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                versionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ValidateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseValidationResponse"];
+                };
+            };
+        };
+    };
+    platform_list_5: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                definitionState?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDefinitionPage"];
+                };
+            };
+        };
+    };
+    platform_create_widget_definition: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DefinitionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDefinitionResponse"];
+                };
+            };
+        };
+    };
+    platform_get_15: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDefinitionResponse"];
+                };
+            };
+        };
+    };
+    platform_channel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                definitionId: string;
+                channel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReleaseChannelResponse"];
+                };
+            };
+        };
+    };
+    platform_channelImpact: {
+        parameters: {
+            query: {
+                operation: string;
+                targetVersionId: string;
+            };
+            header?: never;
+            path: {
+                definitionId: string;
+                channel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseImpactResponse"];
+                };
+            };
+        };
+    };
+    platform_promote: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+                channel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ChannelTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReleaseChannelResponse"];
+                };
+            };
+        };
+    };
+    platform_rollback_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+                channel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ChannelRollbackRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReleaseChannelResponse"];
+                };
+            };
+        };
+    };
+    platform_retire: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DefinitionRetireRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDefinitionResponse"];
+                };
+            };
+        };
+    };
+    platform_retirementImpact: {
+        parameters: {
+            query?: {
+                replacementDefinitionId?: string;
+            };
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseImpactResponse"];
+                };
+            };
+        };
+    };
+    platform_versions: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionPage"];
+                };
+            };
+        };
+    };
+    platform_createVersion: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                definitionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVersionResponse"];
+                };
+            };
+        };
+    };
+    platform_events_3: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEventPage"];
+                };
+            };
+        };
+    };
+    platform_readiness_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReadinessResponse"];
+                };
+            };
+        };
+    };
+    platform_list_16: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRuntimeControlPage"];
+                };
+            };
+        };
+    };
+    platform_disable: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RuntimeDisableRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRuntimeControlResponse"];
+                };
+            };
+        };
+    };
+    platform_enable: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                controlId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RuntimeEnableRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRuntimeControlResponse"];
+                };
+            };
+        };
+    };
+    platform_approve_widget_runtime_enable: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                controlId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RuntimeEnableApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRuntimeEnableApprovalResponse"];
                 };
             };
         };

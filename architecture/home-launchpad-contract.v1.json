@@ -1,0 +1,198 @@
+{
+  "contractVersion": "home-launchpad.v1",
+  "schemaVersion": 1,
+  "groups": [
+    {
+      "groupKey": "work",
+      "sortOrder": 10,
+      "apps": [
+        {
+          "appId": "dwp-work",
+          "resourceKey": "APP.WORK",
+          "sortOrder": 10,
+          "route": "/work",
+          "iconKey": "work",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-ask",
+          "resourceKey": "APP.ASK",
+          "sortOrder": 20,
+          "route": "/dwaion",
+          "iconKey": "ask",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-activity",
+          "resourceKey": "APP.ACTIVITY",
+          "sortOrder": 30,
+          "route": "/activity",
+          "iconKey": "activity",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-approvals",
+          "resourceKey": "APP.APPROVALS",
+          "sortOrder": 40,
+          "route": "/approvals/home",
+          "iconKey": "approvals",
+          "badgeSourceKey": "approvals",
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-notifications",
+          "resourceKey": "APP.NOTIFICATIONS",
+          "sortOrder": 50,
+          "route": "/notifications/home",
+          "iconKey": "notifications",
+          "badgeSourceKey": "notifications",
+          "requiredPermissionCode": "VIEW"
+        }
+      ]
+    },
+    {
+      "groupKey": "connect",
+      "sortOrder": 20,
+      "apps": [
+        {
+          "appId": "dwp-communications",
+          "resourceKey": "APP.COMMUNICATIONS",
+          "sortOrder": 10,
+          "route": "/communications",
+          "iconKey": "communications",
+          "badgeSourceKey": "communications",
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-calendar",
+          "resourceKey": "APP.CALENDAR",
+          "sortOrder": 20,
+          "route": "/calendar/home",
+          "iconKey": "calendar",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "ref-app-mail",
+          "resourceKey": "APP.MAIL",
+          "sortOrder": 30,
+          "route": "/mail/home",
+          "iconKey": "mail",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-spaces",
+          "resourceKey": "APP.SPACES",
+          "sortOrder": 40,
+          "route": "/spaces/home",
+          "iconKey": "spaces",
+          "badgeSourceKey": "space",
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-rooms",
+          "resourceKey": "APP.WORKPLACE",
+          "sortOrder": 50,
+          "route": "/workplace/home",
+          "iconKey": "rooms",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-messaging",
+          "resourceKey": "APP.MESSAGING",
+          "sortOrder": 60,
+          "route": "/messages/home",
+          "iconKey": "messaging",
+          "badgeSourceKey": "messaging",
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-meetings",
+          "resourceKey": "APP.MEETINGS",
+          "sortOrder": 70,
+          "route": "/meetings/home",
+          "iconKey": "meetings",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        }
+      ]
+    },
+    {
+      "groupKey": "services",
+      "sortOrder": 30,
+      "apps": [
+        {
+          "appId": "ref-app-service",
+          "resourceKey": "APP.EMPLOYEE_SERVICES",
+          "sortOrder": 10,
+          "route": "/services",
+          "iconKey": "services",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "ref-app-people",
+          "resourceKey": "APP.HCM",
+          "sortOrder": 20,
+          "route": "/hr",
+          "iconKey": "hcm",
+          "badgeSourceKey": "hcm",
+          "requiredPermissionCode": "VIEW"
+        }
+      ]
+    },
+    {
+      "groupKey": "systems",
+      "sortOrder": 40,
+      "apps": [
+        {
+          "appId": "ref-app-knowledge",
+          "resourceKey": "APP.KNOWLEDGE",
+          "sortOrder": 10,
+          "route": "/apps?app=ref-app-knowledge",
+          "iconKey": "knowledge",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "ref-app-erp",
+          "resourceKey": "APP.BUSINESS_ERP",
+          "sortOrder": 20,
+          "route": "/apps?app=ref-app-erp",
+          "iconKey": "erp",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "ref-app-legacy",
+          "resourceKey": "APP.LEGACY_OPERATIONS",
+          "sortOrder": 30,
+          "route": "/apps?app=ref-app-legacy",
+          "iconKey": "legacy",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        },
+        {
+          "appId": "dwp-admin",
+          "resourceKey": "APP.ADMINISTRATION",
+          "sortOrder": 40,
+          "route": "/admin",
+          "iconKey": "admin",
+          "badgeSourceKey": null,
+          "requiredPermissionCode": "VIEW"
+        }
+      ]
+    }
+  ],
+  "legacyResourceAliases": {
+    "APP.MAIL_CALENDAR": "APP.MAIL",
+    "APP.COLLABORATION": "APP.MESSAGING",
+    "APP.ROOMS": "APP.WORKPLACE",
+    "APP.HRIS": "APP.HCM"
+  }
+}

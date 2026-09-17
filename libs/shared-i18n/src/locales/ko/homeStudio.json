@@ -3,6 +3,9 @@
   "description": "업무 맥락은 유지하고, 홈의 구성과 표현만 나에게 맞게 조정합니다.",
   "close": "홈 스튜디오 닫기",
   "sections": {
+    "overview": "개요",
+    "mode": "홈 모드",
+    "layout": "레이아웃 스튜디오",
     "profiles": "내 홈",
     "appearance": "레이아웃 스타일",
     "content": "콘텐츠",
@@ -10,6 +13,21 @@
     "templates": "템플릿",
     "history": "버전 기록",
     "ai": "AI 구성 제안"
+  },
+  "overview": {
+    "title": "홈 설정 개요",
+    "description": "현재 모드, 사용 중인 홈, 기기 동기화 상태와 다음 개인화 작업을 확인합니다.",
+    "mode": "현재 모드",
+    "activeView": "사용 중인 홈",
+    "sync": "동기화",
+    "syncing": "동기화 중",
+    "synchronized": "최신 상태",
+    "deviceSummary_one": "사용 중인 홈에 기기 레이아웃 {{count}}개가 동기화되었습니다.",
+    "deviceSummary_other": "사용 중인 홈에 기기 레이아웃 {{count}}개가 동기화되었습니다.",
+    "modes": {
+      "CLASSIC": "클래식",
+      "FLOW_V1": "플로우"
+    }
   },
   "common": {
     "retry": "다시 시도",
@@ -103,6 +121,12 @@
     "description": "의미 순서는 유지하면서 밀도와 위젯 크기만 기기별로 조정합니다.",
     "desktop": "데스크톱",
     "mobile": "모바일",
+    "classes": {
+      "DESKTOP_WIDE": "와이드 데스크톱",
+      "DESKTOP_STANDARD": "표준 데스크톱",
+      "MOBILE_STANDARD": "표준 모바일",
+      "MOBILE_COMPACT": "컴팩트 모바일"
+    },
     "density": "표시 밀도",
     "comfortable": "여유 있게",
     "compact": "간결하게",
@@ -176,6 +200,7 @@
   "ai": {
     "title": "AI Workstyle Composer",
     "description": "업무 원문 없이 현재 배치와 허용된 신호만 사용해 변경안을 제안합니다.",
+    "unavailable": "조직 정책으로 AI 제안을 사용할 수 없습니다. 저장된 홈과 기기별 배치는 계속 사용할 수 있습니다.",
     "focus": "마감 업무에 집중",
     "balance": "오늘 흐름 균형",
     "noise": "방해 요소 줄이기",
@@ -206,5 +231,176 @@
     "saved": "변경 사항을 저장했습니다.",
     "failed": "요청을 완료하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도하세요.",
     "conflict": "다른 위치에서 홈이 변경되었습니다. 최신 버전을 불러왔습니다."
+  },
+  "modePreset": {
+    "title": "사용할 홈 모드 선택",
+    "description": "Classic과 Flow의 정보 구성 방식을 비교하고 선택합니다. 모드를 바꿔도 승인된 공통 앱 18개의 순서와 접근 권한은 그대로 유지됩니다.",
+    "groupLabel": "홈 모드",
+    "current": "현재 적용 중",
+    "selected": "선택됨",
+    "apply": "변경 사항 적용하기",
+    "applying": "적용 중",
+    "options": {
+      "CLASSIC": {
+        "title": "Classic 조직 포털",
+        "description": "조직 소식, 승인 앱, 지원 정보를 익숙한 포털 구조에서 차례로 확인합니다."
+      },
+      "FLOW_V1": {
+        "title": "Flow 업무 홈",
+        "description": "지금 처리할 업무와 일정, 응답 요청을 우선순위에 따라 한 흐름으로 확인합니다."
+      }
+    },
+    "preview": {
+      "blindTestTitle": "Blind Header Test",
+      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic과 긴급 실행형 Flow가 즉시 구별됩니다.",
+      "axisIntegrity": "정보구조 · 표현 폭 · 공통 앱 18개 순서를 각각 보존",
+      "firstQuestion": "첫 질문:",
+      "primaryAction": "주 행동:",
+      "sharedApps": "내 앱 18종:",
+      "CLASSIC": {
+        "firstQuestion": "조직 지식·경영 공지",
+        "primaryAction": "전사 공지 서명과 핸드북",
+        "sharedApps": "공통 순서 100% 보존"
+      },
+      "FLOW_V1": {
+        "firstQuestion": "마감 업무·회의 사전 준비",
+        "primaryAction": "우선 큐 처리와 일정 재승인",
+        "sharedApps": "공통 순서 100% 보존"
+      },
+      "appsTitle": "내 앱 바로가기 (18개 승인 자산)",
+      "appsSynced": "공통 순서 동기화 완료",
+      "classicTag": "전사 공지",
+      "classicMeta": "인재개발팀 · 오늘 18:00 마감",
+      "classicHero": "전사 조직문화 개편안 및 온보딩 가이드라인 확정 배포",
+      "classicAction": "원문 지침 열람",
+      "flowTag": "마감 22분 전",
+      "flowMeta": "오늘의 긴급 최우선 실행 업무 #1",
+      "flowHero": "출시 점검 회의 사전 브리프 자료 취합 및 최종 검토",
+      "flowAction": "즉시 검토 및 브리프",
+      "news": "사내 소식 · 경영 브리핑 (65%)",
+      "newsItem1": "Q2 글로벌 거점 오피스 자율 좌석제 운영 변경",
+      "newsItem2": "AI 트랜스포메이션 로드맵 다시보기",
+      "handbook": "조직 지원 핸드북 (35%)",
+      "handbookItem1": "경비 청구 규정집",
+      "handbookItem2": "법인차량 배차 신청",
+      "handbookItem3": "IT 헬프데스크 접수",
+      "queue": "우선 대기 큐 (38%)",
+      "queueItem1": "[결재] 구매 품의 요청",
+      "queueItem2": "[업무] 스프린트 재할당",
+      "timeline": "시간 흐름 (34%)",
+      "timelineItem1": "10:30 출시 점검 정기 회의",
+      "timelineItem2": "13:30 집중 업무 블록",
+      "requests": "내 요청 (28%)",
+      "requestsItem1": "미확인 메일 5건",
+      "requestsItem2": "멘션 요청 1건"
+    },
+    "sharedApps": {
+      "title": "공통 앱 {{count}}개 순서 잠금",
+      "description": "두 모드는 동일한 승인 앱과 순서를 사용합니다. 모드 선택으로 앱 권한이나 배치 순서는 바뀌지 않습니다.",
+      "orderLabel": "잠긴 공통 앱 순서",
+      "position": "{{position}}번"
+    },
+    "status": {
+      "saved": "현재 적용된 모드와 선택한 모드가 같습니다.",
+      "dirty": "{{mode}} 모드를 선택했습니다. 적용 전까지 현재 홈은 유지됩니다.",
+      "applying": "선택한 홈 모드를 적용하고 있습니다.",
+      "disabled": "현재는 홈 모드를 변경할 수 없습니다."
+    }
+  },
+  "layout": {
+    "catalog": {
+      "title": "위젯 카탈로그",
+      "count": "호환 위젯 {{count}}종",
+      "search": "위젯 검색",
+      "keyboardViewport": "위젯 카탈로그 결과입니다. Page Up, Page Down, Home, End 키로 탐색하세요.",
+      "empty": "이 홈 모드에서 사용할 수 있는 위젯이 없습니다.",
+      "preview": "연결 예정",
+      "filters": {
+        "all": "전체",
+        "native": "사용 가능",
+        "projection": "연결 예정"
+      },
+      "items": {
+        "command-rail": "우선 처리 큐",
+        "schedule": "오늘의 시간 흐름",
+        "daily-brief": "답변·확인 요청",
+        "focus": "내 요청 마일스톤",
+        "activity": "역할별 업무 현황",
+        "focus-balance": "집중 시간 균형",
+        "meeting-load": "회의 부하",
+        "space-change-feed": "Space 협업 변경 피드",
+        "meetings-prep-decisions": "회의 준비와 결정 사항",
+        "dwaion-artifact": "DWAI·ON 아티팩트",
+        "workplace-booking": "장소 예약과 체크인",
+        "learning-progress": "직무 교육 진척"
+      }
+    },
+    "inspector": {
+      "title": "선택 위젯 속성",
+      "native": "현재 사용 가능",
+      "projection": "안전한 대체 표시",
+      "owner": "소유 제품",
+      "source": "데이터 원천",
+      "permission": "필요 권한",
+      "supportedWidths": "지원 너비",
+      "dataBudget": "데이터 예산",
+      "targetRegion": "대상 영역·배치",
+      "order": "키보드·화면 순서",
+      "visibility": "표시 상태",
+      "wave4Title": "안전한 렌더러 경계",
+      "wave4Description": "정의와 권한 판정은 서버 카탈로그를 따르며, 신뢰된 렌더러를 사용할 수 있을 때까지 콘텐츠를 실행하지 않고 안전하게 대체 표시합니다.",
+      "registry": {
+        "owner": "레지스트리 소유자 · {{owner}}",
+        "version": "레지스트리 버전 {{version}}",
+        "unresolved": "호환되는 렌더러 버전 없음",
+        "permission": "유효 판정 · {{reasons}}",
+        "resizable": "레지스트리 계약에서 너비 제어",
+        "fixed": "제공자 계약에서 너비 고정",
+        "dataBudget": "서버 유효 카탈로그 · 안전한 대체 표시",
+        "target": "개인 홈 · {{state}}",
+        "states": {
+          "AVAILABLE": "사용 가능",
+          "ALREADY_ADDED": "이미 추가됨",
+          "DEPRECATED": "지원 중단 예정",
+          "DENY": "사용 불가",
+          "UNKNOWN": "상태를 확인할 수 없음"
+        },
+        "reasons": {
+          "NOT_AVAILABLE": "사용할 수 없음",
+          "DISABLED_BY_ORGANIZATION": "조직 정책으로 비활성화됨",
+          "APP_ACCESS_REQUIRED": "원본 앱 접근 권한 필요",
+          "INCOMPATIBLE": "현재 홈 호스트와 호환되지 않음",
+          "TEMPORARILY_UNAVAILABLE": "일시적으로 사용할 수 없음",
+          "DEPRECATED": "신규 배치가 중단됨",
+          "AVAILABLE": "추가 가능",
+          "ALREADY_ADDED": "홈에 이미 추가됨",
+          "UNKNOWN": "사용 가능 여부를 확인할 수 없음"
+        }
+      }
+    },
+    "canvas": {
+      "title": "3영역 실시간 캔버스",
+      "description": "실제 7개 렌더러 · 데스크톱 38% / 34% / 28%",
+      "unsupportedInstances": "보존된 위젯 인스턴스",
+      "unsupportedPreserved": "지원하지 않는 렌더러를 실행하지 않고 저장된 인스턴스를 그대로 보존합니다.",
+      "projectionPreview": "향후 위젯 배치 미리보기",
+      "projectionPreviewDescription": "Wave 4 제공자 연결 전에는 표시 위치만 확인할 수 있으며 실행과 저장은 차단됩니다."
+    },
+    "status": {
+      "dirty": "저장하지 않은 변경",
+      "saved": "최신 상태"
+    },
+    "shortcuts": "⌘/Ctrl+S 저장 · ⌘/Ctrl+Z 실행 취소",
+    "actions": {
+      "history": "복원 기록",
+      "undo": "실행 취소",
+      "reset": "초기화",
+      "save": "레이아웃 저장",
+      "add": "홈에 추가",
+      "moveEarlier": "앞으로 이동",
+      "moveLater": "뒤로 이동",
+      "hide": "숨기기",
+      "show": "표시하기"
+    }
   }
 }

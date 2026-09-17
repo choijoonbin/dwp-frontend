@@ -23,6 +23,8 @@ describe('Home access fingerprint', () => {
     );
 
     expect(first).toBe(second);
+    expect(first).toMatch(/^v1:[0-9a-f]{32}$/u);
+    expect(first).not.toContain('APP.CALENDAR');
   });
 
   it('changes across grant, deny, permission-code, and role boundaries', () => {
@@ -94,6 +96,8 @@ describe('Home access fingerprint', () => {
 
   it('derives the complete scope from the verified session user', () => {
     const direct = homeAccessFingerprint([viewCalendar], ['WORKSPACE_MEMBER'], true, {
+      tenantId: 1,
+      userId: 1,
       personPublicId: 'person-1',
       groups: [{ groupRef: 'group-1' }],
       resourceRoles: [],

@@ -24,6 +24,7 @@ import {
   getAdminHomeExperience,
   getWorkspaceApps,
   updateHomeLaunchpadConfiguration,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
@@ -133,9 +134,11 @@ export function HomeAppLayoutManager() {
   const { t: homeT, i18n } = useTranslation('home');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission } = usePermissions();
   const supportContext = useCurrentProviderSupportContext();
   const canWrite =
-    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
+    hasPermission('ADMIN.HOME_EXPERIENCE', 'MANAGE') &&
+    (!supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE'));
   const [locale, setLocale] = useState<StudioLocale>('ko');
   const [selectedGroupKey, setSelectedGroupKey] = useState<string | null>(null);
   const [query, setQuery] = useState('');

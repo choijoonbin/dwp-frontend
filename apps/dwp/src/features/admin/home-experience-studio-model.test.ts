@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createHomeModeLayouts } from '@dwp-frontend/shared-utils';
 
 import {
   createHomeExperienceStudioForm,
@@ -18,10 +19,11 @@ function experience(overrides: Partial<HomeExperience> = {}): HomeExperience {
     overlayOpacity: 18,
     launchpadConfiguration: { schemaVersion: 1, groups: [], placements: [] },
     compositionPolicy: {
-      schemaVersion: 3,
+      schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
       personalCustomizationEnabled: true,
       governedZones: [],
+      modeLayouts: createHomeModeLayouts(),
     },
     version: 4,
     ...overrides,

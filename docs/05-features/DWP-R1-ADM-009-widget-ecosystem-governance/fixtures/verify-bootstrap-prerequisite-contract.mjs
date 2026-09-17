@@ -14,10 +14,10 @@ const jwksSource = readFileSync(jwksUrl, 'utf8');
 
 const anchors = Object.freeze({
   schemaFile: 'abb40678362b5522cc200e1c6644036f22a3a8d5e18b53a6da091fcaeef652b6',
-  fixtureFile: 'b6ba3b7062b839282666d191fb98261fd2e79d9a409a98867db6a14ad403f757',
+  fixtureFile: '6e8e00116cfdd6b5a78f7f7575ac00157f073a7290e96addaf624fc75c6c1ed0',
   negativeFile: '09089807841a989d33901c17d582ba1be68ae7337f72aaa3466bd147d00d1bd5',
-  jwksFile: '4ffbccf45c0bdc68c0a577a678bc91f27458a2fc5572a3c7dd5742cc5370b0df',
-  prerequisiteDigest: '1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b',
+  jwksFile: '8d234051673a577dcfff91d2c9b970a8e932eaeb2c7880e154f0d332200a3ae3',
+  prerequisiteDigest: '54edf4e80c35d73997f0ceaed4f8b00dcd43ce8fee33975d3cd427418b859256',
 });
 
 class ContractError extends Error {
@@ -509,6 +509,23 @@ assert(
   'ANCHOR_MISMATCH',
   'Independent Bootstrap prerequisite digest changed.'
 );
+
+
+// This is synthetic contract evidence. The fixture EC private key is never checked in.
+const retiredSignature = '9LK79MMpZGjiG5bRB6dHFsFm4fXr6LiL9oOK6fcD7FIjXnrLkxKfWCUIe_qJezSJm0yAnVLZZJ6Lj9UckVOXwA';
+const retiredSignatureCandidate = structuredClone(fixture);
+retiredSignatureCandidate.ciAttestation.compactJws =
+  `${fixture.ciAttestation.compactJws.split('.').slice(0, 2).join('.')}.${retiredSignature}`;
+let retiredSignatureCode = null;
+try {
+  validateContract(retiredSignatureCandidate);
+} catch (error) {
+  if (error instanceof ContractError) retiredSignatureCode = error.code;
+  else throw error;
+}
+assert(retiredSignatureCode === 'CI_SIGNATURE_INVALID', 'RETIRED_SIGNATURE_ACCEPTED',
+  'The retired fixture signature must not validate the resealed canonical prerequisite.');
+process.stdout.write('retired-fixture-signature rejected CI_SIGNATURE_INVALID\n');
 
 const negativeFixture = JSON.parse(negativeSource);
 const expectedMutations = new Set([

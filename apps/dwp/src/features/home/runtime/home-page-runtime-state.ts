@@ -1,4 +1,7 @@
-import type { HomeExperience } from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+
+import type { HomeDeviceClass, HomeExperience, HomeOverview } from '@dwp-frontend/shared-utils';
+import { homeDeviceClassForAvailableWidth } from './home-available-width';
 
 type HomeCopyExperience = Pick<
   HomeExperience,
@@ -49,14 +52,16 @@ export function canStartHomeEditing({
 export function resolveHomeDeviceClass({
   editPreviewActive,
   previewDevice,
-  runtimeMobile,
+  availableWidth,
 }: Readonly<{
   editPreviewActive: boolean;
   previewDevice: 'desktop' | 'mobile';
-  runtimeMobile: boolean;
-}>): 'DESKTOP' | 'MOBILE' {
-  if (editPreviewActive) return previewDevice === 'mobile' ? 'MOBILE' : 'DESKTOP';
-  return runtimeMobile ? 'MOBILE' : 'DESKTOP';
+  availableWidth: number;
+}>): HomeDeviceClass {
+  if (editPreviewActive) {
+    return previewDevice === 'mobile' ? 'MOBILE_STANDARD' : 'DESKTOP_STANDARD';
+  }
+  return homeDeviceClassForAvailableWidth(availableWidth);
 }
 
 export function resolveHomePageCopy({
@@ -82,4 +87,9 @@ export function resolveHomePageCopy({
     headline: localizedCopy?.headline || experience?.headline || fallbackHeadline,
     subheadline: localizedCopy?.subheadline || experience?.subheadline || fallbackSubheadline,
   };
+}
+
+export function resolveHomeWorkspaceUpdatedAt(overview?: HomeOverview): string {
+  const timestamp = overview?.work.data?.generatedAt || overview?.generatedAt;
+  return timestamp ? formatDate(new Date(timestamp), { hour: '2-digit', minute: '2-digit' }) : '-';
 }

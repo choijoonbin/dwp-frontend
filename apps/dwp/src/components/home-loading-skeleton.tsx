@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
@@ -43,7 +43,7 @@ const canvasSkeleton = {
   borderRadius: '16px',
 } as const;
 
-function browserHomeLoadingLayout(): BrowserHomeLoadingLayout {
+function browserHomeLoadingLayout(availableWidth?: number): BrowserHomeLoadingLayout {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return {
       ...resolveHomeLoadingLayout({
@@ -68,7 +68,7 @@ function browserHomeLoadingLayout(): BrowserHomeLoadingLayout {
   return {
     ...resolveHomeLoadingLayout({
       presentation: presentation ?? 'balanced',
-      viewportWidth: document.documentElement.clientWidth || window.innerWidth,
+      viewportWidth: availableWidth ?? document.documentElement.clientWidth ?? window.innerWidth,
       rootFontSize,
     }),
     presentationResolved: presentation !== null,
@@ -76,26 +76,30 @@ function browserHomeLoadingLayout(): BrowserHomeLoadingLayout {
   };
 }
 
-function useHomeLoadingLayout(): BrowserHomeLoadingLayout {
+function useHomeLoadingLayout() {
+  const elementRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState(browserHomeLoadingLayout);
-  useEffect(() => {
-    const sync = () => setLayout(browserHomeLoadingLayout());
-    const resizeObserver = new ResizeObserver(sync);
-    const mutationObserver = new MutationObserver(sync);
-    resizeObserver.observe(document.documentElement);
+  useLayoutEffect(() => {
+    const element = elementRef.current;
+    const sync = (width = element?.getBoundingClientRect().width) =>
+      setLayout(browserHomeLoadingLayout(width && width > 0 ? width : undefined));
+    const resizeObserver = new ResizeObserver(([entry]) => sync(entry?.contentRect.width));
+    const mutationObserver = new MutationObserver(() => sync());
+    if (element) resizeObserver.observe(element);
     mutationObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class', 'style'],
     });
-    window.addEventListener('resize', sync);
+    const syncWindow = () => sync();
+    window.addEventListener('resize', syncWindow);
     sync();
     return () => {
       resizeObserver.disconnect();
       mutationObserver.disconnect();
-      window.removeEventListener('resize', sync);
+      window.removeEventListener('resize', syncWindow);
     };
   }, []);
-  return layout;
+  return { elementRef, layout } as const;
 }
 
 function NeutralDockSkeleton() {
@@ -301,7 +305,7 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
 }
 
 export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkeletonProps) {
-  const layout = useHomeLoadingLayout();
+  const { elementRef, layout } = useHomeLoadingLayout();
   const loadingWidgets = [
     { key: 'action-queue', height: 232 },
     { key: 'today', height: 232 },
@@ -311,7 +315,8 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
     { key: 'focus-balance', height: 154 },
     { key: 'meeting-load', height: 154 },
   ] as const;
-  const gridColumns = layout.template === 'single-column' ? 1 : 60;
+  const gridColumns =
+    layout.template === 'single-column' ? 1 : layout.template === 'adaptive-wide' ? 100 : 60;
   const widgetColumn = (widgetKey: (typeof loadingWidgets)[number]['key']) => {
     if (layout.template === 'single-column') return '1 / -1';
     if (layout.template === 'adaptive-wide') {
@@ -324,6 +329,7 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
 
   return (
     <Box
+      ref={elementRef}
       aria-hidden="true"
       data-testid="home-loading-skeleton"
       data-home-loading-contract="flow-geometry"
@@ -332,6 +338,7 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
         layout.presentationResolved ? layout.presentation : 'unresolved'
       }
       data-home-loading-read-template={layout.presentationResolved ? layout.template : 'neutral'}
+      data-home-loading-width-contract="available-inline-size"
       sx={{
         width: 1,
         '--home-loading-line': (theme) => theme.palette.action.selected,
@@ -411,7 +418,7 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
           !layout.presentationResolved
             ? 'neutral'
             : layout.template === 'adaptive-wide'
-              ? '8-4/4-4-4/8-4'
+              ? '38-34-28'
               : layout.template === 'single-column'
                 ? 'single-column'
                 : '8-4/4-4-4/6-6'

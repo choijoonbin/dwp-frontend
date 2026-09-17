@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 const fixtureUrl = new URL('./widget-manifests.v1.golden.json', import.meta.url);
 const fixtureSource = readFileSync(fixtureUrl, 'utf8');
 const expectedFixtureFileSha256 =
-  '612d9c7037040ae55da8a7ee9ae850400b54724914bf3085b33cd0e67f5c6139';
+  'ba111e674ff9eb2f38c5e1c0744a066dde63c2eb70fb8c726a86adf45a3621d3';
 const expectedDefinitions = Object.freeze({
   activity: Object.freeze({
     definitionKey: 'core.activity.activity',
@@ -12,7 +12,7 @@ const expectedDefinitions = Object.freeze({
   }),
   'command-rail': Object.freeze({
     definitionKey: 'core.workspace.command-rail',
-    sha256: 'a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97',
+    sha256: '36de53926e21ef11e61c78f6325fdf35b37998fe42403e0df0e70d71e3f4df13',
   }),
   'daily-brief': Object.freeze({
     definitionKey: 'core.workspace.daily-brief',

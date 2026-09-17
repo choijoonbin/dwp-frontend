@@ -287,7 +287,7 @@ test('roleless provider account settings stay local and hide tenant-owned destin
     }
   });
 
-  await page.goto('/account/settings/home');
+  await page.goto('/account/settings/home/history');
 
   await expect(page).toHaveURL(/\/account\/settings\/appearance$/);
   await expect(page.getByTestId('account-header')).toHaveAttribute(

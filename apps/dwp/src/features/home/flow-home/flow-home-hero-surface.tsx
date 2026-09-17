@@ -51,6 +51,7 @@ export function FlowHomeHeroSurface({
   presentation = 'balanced',
   compact = false,
   editing = false,
+  wide = false,
   ariaLabel,
   previewViewport,
   darkPreview = false,
@@ -65,7 +66,28 @@ export function FlowHomeHeroSurface({
         : { xs: 'stretch', md: 'flex-start' };
 
   return (
-    <Box data-flow-launch-deck-frame sx={{ width: 1, minWidth: 0, display: 'grid', gap: 2 }}>
+    <Box
+      data-flow-launch-deck-frame
+      data-flow-launch-deck-width={wide ? 'wide' : 'standard'}
+      sx={{
+        width: 1,
+        minWidth: 0,
+        display: 'grid',
+        gap: { xs: 1.5, md: 2.5 },
+        '& > [data-flow-workscape="true"]': {
+          minHeight: compact ? 0 : { xs: 208, sm: 260, md: wide ? 320 : 288 },
+          alignItems: 'stretch',
+        },
+        '& > [data-flow-workscape="true"] > [data-flow-hero-surface]': {
+          flex: 1,
+        },
+        '@media (max-width: 599.95px)': {
+          '& > [data-flow-workscape="true"]': {
+            minHeight: compact ? 0 : 208,
+          },
+        },
+      }}
+    >
       <TenantWorkscape
         backgroundUrl={backgroundUrl}
         backgroundPosition={backgroundPosition}

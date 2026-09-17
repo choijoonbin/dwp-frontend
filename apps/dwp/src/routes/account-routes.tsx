@@ -18,6 +18,7 @@ const AccountLayout = lazy(() =>
 const ProfilePage = lazy(() => import('../pages/account/profile'));
 const SettingsHomePage = lazy(() => import('../pages/account/settings-home'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
+const HomeSettingsPage = lazy(() => import('../pages/account/home-settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
 
 function ProviderAccountRouteGuard({ children }: { children: React.ReactNode }) {
@@ -35,9 +36,16 @@ function ProviderAccountRouteGuard({ children }: { children: React.ReactNode }) 
   return children;
 }
 
-function AccountSettingsSectionGuard({ children }: { children: React.ReactNode }) {
+function AccountSettingsSectionGuard({
+  children,
+  sectionOverride,
+}: {
+  children: React.ReactNode;
+  sectionOverride?: string;
+}) {
   const auth = useAuth();
-  const { section } = useParams();
+  const { section: routeSection } = useParams();
+  const section = sectionOverride ?? routeSection;
   const providerAccount = isProviderIdentity(auth.user);
   if (
     providerAccount &&
@@ -77,6 +85,17 @@ export const accountRoutes: RouteObject[] = [
           <Suspense fallback={routeFallback}>
             <SettingsHomePage />
           </Suspense>
+        ),
+      },
+      { path: 'settings/home', element: <Navigate to="overview" replace /> },
+      {
+        path: 'settings/home/:homeSection',
+        element: (
+          <AccountSettingsSectionGuard sectionOverride="home">
+            <Suspense fallback={routeFallback}>
+              <HomeSettingsPage />
+            </Suspense>
+          </AccountSettingsSectionGuard>
         ),
       },
       {

@@ -9,8 +9,8 @@ const fixtureSource = readFileSync(fixtureUrl, 'utf8');
 
 const anchors = Object.freeze({
   schemaFile: 'c81d98415c948149c972dc7caf2542f2a9867c2d835515322af91f323b571c2d',
-  fixtureFile: 'f38b177a82ca976ca7352b3827315b9ce9b05fc4c1d6fd758dbbdd0c6e83ea08',
-  baselineDigest: 'cd91459ee7ae40e1ec4082b5d66bc848b9cbe59d57bae7b3f7f3d3dcc5e8c92b',
+  fixtureFile: 'd42de09bfb49be02a93370a4202781861bc58ca6cf32a92af73baefc2b767be4',
+  baselineDigest: '6ad03d93e58cc482c87625fb1e7b3b937ad4da1badf8f216fab49eb6557fdb7f',
 });
 
 function assert(condition, message) {
