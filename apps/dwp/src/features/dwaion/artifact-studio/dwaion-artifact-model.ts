@@ -28,6 +28,10 @@ export type DwaionArtifactSummary = {
   draftRevision: number;
   currentVersionNumber: number;
   publishedVersionNumber: number | null;
+  authorSubjectId: string | null;
+  tags: readonly string[];
+  projectKey: string | null;
+  reviewSlaDueAt: string | null;
   updatedAt: string;
   capabilities: DwaionArtifactCapabilities;
 };

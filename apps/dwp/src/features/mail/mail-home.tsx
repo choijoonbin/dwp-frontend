@@ -19,6 +19,7 @@ import {
   getMailAddressBook,
   getMailHome,
   getMailOrganization,
+  HttpError,
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -108,7 +109,15 @@ export function MailHome() {
         toast.success(t('proposal.dismissed'));
       }
     },
-    onError: () => toast.error(t('proposal.error')),
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409) {
+        await queryClient.invalidateQueries({ queryKey: ['mail'] });
+        setProposalToAccept(null);
+        toast.error(t('proposal.conflict'));
+        return;
+      }
+      toast.error(t('proposal.error'));
+    },
   });
   const data = query.data;
   const accountScope = data

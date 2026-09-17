@@ -9,6 +9,7 @@ import {
   getMailProposalHandoff,
   getMailProposals,
   getMailThreads,
+  HttpError,
   searchMailThreads,
   updateMailProposal,
   useToast,
@@ -435,7 +436,15 @@ function MailActionCenterWorkspace() {
         toast.success(t('proposal.dismissed'));
       }
     },
-    onError: () => toast.error(t('proposal.error')),
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409) {
+        await queryClient.invalidateQueries({ queryKey: ['mail', 'proposals'] });
+        setProposalToAccept(null);
+        toast.error(t('proposal.conflict'));
+        return;
+      }
+      toast.error(t('proposal.error'));
+    },
   });
   const update = useMutation({
     mutationFn: ({
@@ -457,7 +466,15 @@ function MailActionCenterWorkspace() {
       await queryClient.invalidateQueries({ queryKey: ['mail', 'proposals'] });
       toast.success(t('proposal.payloadEditor.saved', { defaultValue: 'Proposal details saved.' }));
     },
-    onError: () => toast.error(t('proposal.payloadEditor.error')),
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409) {
+        await queryClient.invalidateQueries({ queryKey: ['mail', 'proposals'] });
+        setProposalToEdit(null);
+        toast.error(t('proposal.conflict'));
+        return;
+      }
+      toast.error(t('proposal.payloadEditor.error'));
+    },
   });
 
   useEffect(() => {

@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 24,
-  checksum: 'be3db891d27cd0b94aa88ac706d9bc87d4b991c9f9d8e505e26b296647728b84',
-  indexChecksum: '27a35ef35cbe4d6fee7cbd5ee9493168cb52b13b32a947f6e9fbf1baeb1e8bca',
+  version: 25,
+  checksum: '805fa41852b1679d3c7c473d650020f481ace0c2a7910271872d935c223287c1',
+  indexChecksum: 'c96dbfae756bb413ef79ae7e4589993fcf3cbb331fca3703a6b6fd806611b39f',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -4789,6 +4789,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/conflicts/{conflictId}/resolve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-review-decision.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/artifact-collaboration/{artifactId}/workspace/review-stages/{stageId}/decision',
       },
     ],
   },

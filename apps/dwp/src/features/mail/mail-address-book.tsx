@@ -105,7 +105,9 @@ function isMailGroupMessageAttempt(value: unknown): value is MailGroupMessageAtt
     MAIL_CLASSIFICATIONS.has(value.input.classification) &&
     (value.input.recipientMode === 'TO' || value.input.recipientMode === 'BCC') &&
     typeof value.input.idempotencyKey === 'string' &&
-    Number.isInteger(value.input.groupVersion)
+    Number.isInteger(value.input.groupVersion) &&
+    (value.reviewRequired === undefined || typeof value.reviewRequired === 'boolean') &&
+    (value.snapshotStale === undefined || typeof value.snapshotStale === 'boolean')
   );
 }
 
@@ -319,20 +321,19 @@ export function MailAddressBook() {
       toast.success(t('addressBook.send.sent'));
     },
     onError: (error, { group }) => {
-      if (
-        mailSendErrorDisposition(error) !== 'REJECTED' ||
-        (error instanceof HttpError && error.status === 409)
-      ) {
-        return;
-      }
+      if (mailSendErrorDisposition(error) !== 'REJECTED') return;
       const scope = mailGroupSendScope(custodyOwner, group.groupId);
       const attempt = readMailSendAttempt<MailGroupMessageAttempt>(scope)?.payload;
       if (!attempt) return;
+      const conflict = error instanceof HttpError && error.status === 409;
       const nextAttempt = {
         ...attempt,
-        input: { ...attempt.input, idempotencyKey: crypto.randomUUID() },
+        input: conflict
+          ? attempt.input
+          : { ...attempt.input, idempotencyKey: crypto.randomUUID() },
         original: attempt.original ?? attempt,
         reviewRequired: true,
+        snapshotStale: conflict,
       };
       persistGroupSendAttempt(custodyOwner, nextAttempt);
       setSendAttempts((current) => ({ ...current, [group.groupId]: nextAttempt }));
@@ -353,6 +354,7 @@ export function MailAddressBook() {
         },
         original: attempt.original ?? { group: attempt.group, input: attempt.input },
         reviewRequired: true,
+        snapshotStale: false,
       };
     },
     onSuccess: (attempt) => {

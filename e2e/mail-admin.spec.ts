@@ -279,3 +279,89 @@ test('mail policy save reuses its UUID idempotency key for the same failed comma
   expect(keys[0]).toMatch(/^[0-9a-f-]{36}$/u);
   expect(keys[1]).toBe(keys[0]);
 });
+
+test('mail policy conflict keeps the draft, reloads the version, and starts a new command', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'MAIL_ADMIN'], {
+    locale: 'en',
+    displayName: 'Mail Admin',
+    permissions: [
+      ...MEMBER_PERMISSIONS,
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.MAIL',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.MAIL',
+        permissionCode: 'POLICY_MANAGE',
+        effect: 'ALLOW',
+      },
+    ],
+  });
+  let authoritativeVersion = 1;
+  const policy = () => ({
+    externalSenderBanner: true,
+    blockRemoteImages: true,
+    allowSharedInboxes: true,
+    aiAssistanceEnabled: false,
+    aiCrossAppActionsEnabled: false,
+    aiAutoExecuteEnabled: false,
+    retentionDays: 365,
+    maximumAttachmentMb: 25,
+    version: authoritativeVersion,
+  });
+  await page.route('**/api/platform/v1/admin/mail/overview', (route) =>
+    fulfill(route, {
+      personalAccounts: 1,
+      sharedAccounts: 0,
+      activeConnections: 0,
+      degradedConnections: 0,
+      openSharedThreads: 0,
+      pendingAiProposals: 0,
+      queuedDeliveries: 0,
+      failedDeliveries: 0,
+      policy: policy(),
+      connections: [],
+      sharedInboxes: [],
+      providerCatalog: [],
+      generatedAt: '2026-09-17T00:00:00.000Z',
+    })
+  );
+  const requests: Array<{ body: Record<string, unknown>; key: string }> = [];
+  await page.route('**/api/platform/v1/admin/mail/policy', async (route) => {
+    requests.push({
+      body: route.request().postDataJSON() as Record<string, unknown>,
+      key: route.request().headers()['idempotency-key'] ?? '',
+    });
+    if (requests.length === 1) {
+      authoritativeVersion = 2;
+      await route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'VERSION_CONFLICT' }),
+      });
+      return;
+    }
+    await fulfill(route, { ...policy(), externalSenderBanner: false, version: 3 });
+  });
+
+  await page.goto('/mail/admin/policies?settings=edit');
+  const externalSenderBanner = page.getByRole('switch', { name: 'External sender warning' });
+  await externalSenderBanner.uncheck();
+  const save = page.getByRole('button', { name: 'Save', exact: true });
+  await save.click();
+  await expect(page.getByText(/A newer version is available/iu)).toBeVisible();
+  await expect(externalSenderBanner).not.toBeChecked();
+  await save.click();
+  await expect(page.getByText('Mail policies were saved.')).toBeVisible();
+
+  expect(requests).toHaveLength(2);
+  expect(requests[0]?.body.version).toBe(1);
+  expect(requests[1]?.body.version).toBe(2);
+  expect(requests[1]?.body.externalSenderBanner).toBe(false);
+  expect(requests[1]?.key).not.toBe(requests[0]?.key);
+});

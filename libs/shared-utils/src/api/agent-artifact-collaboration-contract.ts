@@ -16,6 +16,26 @@ export type DwaionTeamArtifactShareState = 'ACTIVE' | 'EXPIRED' | 'REVOKED';
 export type DwaionTeamArtifactSharePermission = 'VIEW' | 'COMMENT' | 'EDIT';
 export type DwaionTeamArtifactAccessRequestState = 'PENDING' | 'APPROVED' | 'DENIED' | 'EXPIRED';
 export type DwaionTeamArtifactCommentState = 'OPEN' | 'RESOLVED';
+export type DwaionTeamArtifactReviewStageKey =
+  | 'AUTHOR'
+  | 'PRIMARY_REVIEW'
+  | 'FINAL_APPROVAL';
+export type DwaionTeamArtifactReviewStageState =
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'UNAVAILABLE';
+export type DwaionTeamArtifactReviewDecision = 'APPROVE' | 'REJECT';
+export type DwaionTeamArtifactGovernanceGateKey =
+  | 'DLP'
+  | 'CITATION'
+  | 'RECIPIENT_ACL'
+  | 'IMMUTABLE_VERSION';
+export type DwaionTeamArtifactGovernanceGateState =
+  | 'PASS'
+  | 'REVIEW'
+  | 'BLOCKED'
+  | 'UNAVAILABLE';
 
 export type DwaionTeamArtifactMemberRequest = {
   subjectId: string;
@@ -39,6 +59,8 @@ export type DwaionTeamArtifactCapabilities = {
   shareExpiryAvailable: boolean;
   shareRevocationAvailable: boolean;
   inlineComments: DwaionArtifactProviderCapability;
+  stagedReview: DwaionArtifactProviderCapability;
+  signedWormReceipt: DwaionArtifactProviderCapability;
   automaticMasking: DwaionArtifactProviderCapability;
   syntheticReplacement: DwaionArtifactProviderCapability;
   reviewNotification: DwaionArtifactProviderCapability;
@@ -111,6 +133,35 @@ export type DwaionTeamArtifactShare = {
   createdAt: string;
 };
 
+export type DwaionTeamArtifactReviewStage = {
+  stageId: string;
+  stageOrder: number;
+  stageKey: DwaionTeamArtifactReviewStageKey;
+  assigneeSubjectId: string | null;
+  state: DwaionTeamArtifactReviewStageState;
+  revision: number;
+  evidenceFingerprint: string | null;
+  decidedBySubjectId: string | null;
+  decidedAt: string | null;
+};
+
+export type DwaionTeamArtifactGovernanceGate = {
+  key: DwaionTeamArtifactGovernanceGateKey;
+  state: DwaionTeamArtifactGovernanceGateState;
+  detailCode: string;
+  evidenceReference: string | null;
+  evidenceFingerprint: string | null;
+  evaluatedAt: string | null;
+};
+
+export type DwaionTeamArtifactSignatureEvidence = {
+  capability: DwaionArtifactProviderCapability;
+  provider: string | null;
+  keyReferenceFingerprint: string | null;
+  signature: string | null;
+  signedAt: string | null;
+};
+
 export type DwaionTeamArtifactWorkspace = {
   workspaceId: string;
   artifactId: string;
@@ -122,6 +173,10 @@ export type DwaionTeamArtifactWorkspace = {
   members: DwaionTeamArtifactMember[];
   openConflict: DwaionTeamArtifactConflict | null;
   shares: DwaionTeamArtifactShare[];
+  reviewStages: DwaionTeamArtifactReviewStage[];
+  governanceGates: DwaionTeamArtifactGovernanceGate[];
+  signatureEvidence: DwaionTeamArtifactSignatureEvidence;
+  reviewSlaDueAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -167,6 +222,11 @@ export type DwaionArtifactCollaborationCommand = {
 export type DwaionArtifactCollaborationHighRiskCommand = DwaionArtifactCollaborationCommand & {
   changeReason: string;
 };
+
+export type DecideDwaionTeamArtifactReviewStageInput =
+  DwaionArtifactCollaborationHighRiskCommand & {
+    decision: DwaionTeamArtifactReviewDecision;
+  };
 
 export type RunDwaionTeamArtifactPreflightInput = DwaionArtifactCollaborationCommand & {
   teamId: string;

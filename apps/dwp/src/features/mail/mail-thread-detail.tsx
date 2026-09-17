@@ -80,13 +80,17 @@ import type {
   MailThreadDetail,
 } from '@dwp-frontend/shared-utils';
 
-function permitsSharedInboxAction(
+export function permitsSharedInboxAction(
   detail: MailThreadDetail | undefined,
   action: MailSharedInboxAction
 ) {
   if (!detail) return false;
   if (!detail.thread.sharedInboxId) return true;
   return detail.sharedInboxActions?.includes(action) === true;
+}
+
+export function mailThreadAccessRevoked(error: unknown) {
+  return error instanceof HttpError && (error.status === 403 || error.status === 404);
 }
 
 type ReplySendPayload = Readonly<{
@@ -146,8 +150,12 @@ export function MailThreadDetailPane({
   const activeReplyOwnerRef = useRef<string | null>(null);
   const currentThreadIdRef = useRef(threadId);
   const currentCustodyOwnerRef = useRef(custodyOwner);
+  const revokedThreadRef = useRef<string | null>(null);
   currentThreadIdRef.current = threadId;
   currentCustodyOwnerRef.current = custodyOwner;
+  useEffect(() => {
+    revokedThreadRef.current = null;
+  }, [threadId]);
   const query = useQuery({
     queryKey: ['mail', 'thread', threadId],
     queryFn: () => getMailThread(threadId!),
@@ -228,6 +236,20 @@ export function MailThreadDetailPane({
     if (!permitsSharedInboxAction(detail, 'COMMENT')) setComment('');
     if (!permitsSharedInboxAction(detail, 'ASSIGN')) setAssigneeId('');
   }, [custodyOwner, query.data, threadId]);
+  useEffect(() => {
+    if (!threadId || !mailThreadAccessRevoked(query.error)) return;
+    if (revokedThreadRef.current === threadId) return;
+    revokedThreadRef.current = threadId;
+    const scope = mailReplySendScope(custodyOwner, threadId);
+    clearMailSendAttempt(scope);
+    clearMailRejectedReplyReview(scope);
+    replyIdentityRef.current = null;
+    setReply('');
+    setComment('');
+    setAssigneeId('');
+    queryClient.removeQueries({ queryKey: ['mail', 'thread', threadId], exact: true });
+    onBack?.();
+  }, [custodyOwner, onBack, query.error, queryClient, threadId]);
   const refresh = async (thread: MailThread) => {
     onUpdated?.(thread);
     await queryClient.invalidateQueries({ queryKey: ['mail'] });

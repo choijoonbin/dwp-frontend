@@ -8,9 +8,11 @@ import type {
   DwaionTeamArtifactCommentReply,
   DwaionTeamArtifactConflict,
   DwaionTeamArtifactEditResult,
+  DwaionTeamArtifactGovernanceGate,
   DwaionTeamArtifactMember,
   DwaionTeamArtifactPreflight,
   DwaionTeamArtifactShare,
+  DwaionTeamArtifactReviewStage,
   DwaionTeamArtifactWorkspace,
 } from './agent-artifact-collaboration-contract';
 
@@ -128,6 +130,14 @@ export function parseDwaionTeamArtifactWorkspace(value: unknown): DwaionTeamArti
     !members(value.members) ||
     !Array.isArray(value.shares) ||
     !value.shares.every(isShare) ||
+    !Array.isArray(value.reviewStages) ||
+    value.reviewStages.length > 3 ||
+    !value.reviewStages.every(isReviewStage) ||
+    !Array.isArray(value.governanceGates) ||
+    value.governanceGates.length !== 4 ||
+    !value.governanceGates.every(isGovernanceGate) ||
+    !signatureEvidence(value.signatureEvidence) ||
+    !(value.reviewSlaDueAt === null || isAgentDate(value.reviewSlaDueAt)) ||
     !isAgentDate(value.createdAt) ||
     !isAgentDate(value.updatedAt)
   ) {
@@ -137,6 +147,9 @@ export function parseDwaionTeamArtifactWorkspace(value: unknown): DwaionTeamArti
   if (
     value.members.filter((member) => member.allowed && member.role === 'OWNER').length !== 1 ||
     value.shares.some((share) => share.workspaceId !== value.workspaceId) ||
+    value.reviewStages.some((stage, index) => stage.stageOrder !== index + 1) ||
+    new Set(value.reviewStages.map((stage) => stage.stageId)).size !== value.reviewStages.length ||
+    new Set(value.governanceGates.map((gate) => gate.key)).size !== 4 ||
     (conflict !== null &&
       (!isConflict(conflict) ||
         conflict.workspaceId !== value.workspaceId ||
@@ -255,6 +268,67 @@ function isShare(value: unknown): value is DwaionTeamArtifactShare {
   );
 }
 
+function isReviewStage(value: unknown): value is DwaionTeamArtifactReviewStage {
+  if (
+    !isAgentRecord(value) ||
+    !uuid(value.stageId) ||
+    !integer(value.stageOrder, 1, 3) ||
+    !['AUTHOR', 'PRIMARY_REVIEW', 'FINAL_APPROVAL'].includes(String(value.stageKey)) ||
+    !(value.assigneeSubjectId === null ||
+      (typeof value.assigneeSubjectId === 'string' && SUBJECT.test(value.assigneeSubjectId))) ||
+    !['PENDING', 'APPROVED', 'REJECTED', 'UNAVAILABLE'].includes(String(value.state)) ||
+    !integer(value.revision, 1) ||
+    !(value.evidenceFingerprint === null || sha(value.evidenceFingerprint)) ||
+    !(value.decidedBySubjectId === null ||
+      (typeof value.decidedBySubjectId === 'string' && SUBJECT.test(value.decidedBySubjectId))) ||
+    !(value.decidedAt === null || isAgentDate(value.decidedAt))
+  )
+    return false;
+  const decided = value.state === 'APPROVED' || value.state === 'REJECTED';
+  const completeDecision =
+    value.assigneeSubjectId !== null &&
+    value.evidenceFingerprint !== null &&
+    value.decidedBySubjectId !== null &&
+    value.decidedAt !== null;
+  return (
+    decided === completeDecision &&
+    (value.state !== 'PENDING' || value.assigneeSubjectId !== null) &&
+    (value.state !== 'UNAVAILABLE' || value.assigneeSubjectId === null)
+  );
+}
+
+function isGovernanceGate(value: unknown): value is DwaionTeamArtifactGovernanceGate {
+  return (
+    isAgentRecord(value) &&
+    ['DLP', 'CITATION', 'RECIPIENT_ACL', 'IMMUTABLE_VERSION'].includes(String(value.key)) &&
+    ['PASS', 'REVIEW', 'BLOCKED', 'UNAVAILABLE'].includes(String(value.state)) &&
+    typeof value.detailCode === 'string' &&
+    SAFE_CODE.test(value.detailCode) &&
+    (value.evidenceReference === null || boundedText(value.evidenceReference, 240)) &&
+    (value.evidenceFingerprint === null || sha(value.evidenceFingerprint)) &&
+    (value.evaluatedAt === null || isAgentDate(value.evaluatedAt))
+  );
+}
+
+function signatureEvidence(value: unknown): boolean {
+  if (
+    !isAgentRecord(value) ||
+    !providerCapability(value.capability) ||
+    !(value.provider === null || boundedText(value.provider, 80)) ||
+    !(value.keyReferenceFingerprint === null || sha(value.keyReferenceFingerprint)) ||
+    !(value.signature === null || boundedText(value.signature, 2_000)) ||
+    !(value.signedAt === null || isAgentDate(value.signedAt))
+  )
+    return false;
+  const complete = [
+    value.provider,
+    value.keyReferenceFingerprint,
+    value.signature,
+    value.signedAt,
+  ].every((item) => item !== null);
+  return value.capability.available === complete;
+}
+
 function isComment(value: unknown): value is DwaionTeamArtifactComment {
   if (
     !isAgentRecord(value) ||
@@ -343,6 +417,8 @@ const capabilityKeys = [
 
 const providerCapabilityKeys = [
   'inlineComments',
+  'stagedReview',
+  'signedWormReceipt',
   'automaticMasking',
   'syntheticReplacement',
   'reviewNotification',
@@ -350,6 +426,7 @@ const providerCapabilityKeys = [
 ] as const;
 
 const providerOnlyUnavailableKeys = [
+  'signedWormReceipt',
   'automaticMasking',
   'syntheticReplacement',
   'reviewNotification',

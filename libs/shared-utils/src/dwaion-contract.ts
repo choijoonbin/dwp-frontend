@@ -36,6 +36,14 @@ export type DwaionHandoff = {
   expiresAt: string;
 };
 
+export type DwaionProposalHandoffBinding = Readonly<{
+  version: 1;
+  handoffId: string;
+  proposalId: string;
+  actionKey: 'APPROVAL.REQUEST.CREATE';
+  handoffVersion: number;
+}>;
+
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const PLAN_HASH_PATTERN = /^[a-f0-9]{64}$/u;
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/u;
@@ -166,6 +174,36 @@ export function parseDwaionHandoff(
     origin: value.origin,
     createdAt: value.createdAt,
     expiresAt: value.expiresAt,
+  };
+}
+
+export function parseDwaionProposalHandoffBinding(
+  state: unknown,
+  now = Date.now()
+): DwaionProposalHandoffBinding | null {
+  const handoff = parseDwaionHandoff(state, 'APPROVAL.REQUEST.CREATE', now);
+  if (!handoff || !isRecord(state)) return null;
+  const value = state.dwaionProposalHandoff;
+  if (
+    !isRecord(value) ||
+    value.version !== 1 ||
+    typeof value.handoffId !== 'string' ||
+    value.handoffId !== handoff.handoffId ||
+    typeof value.proposalId !== 'string' ||
+    !UUID_PATTERN.test(value.proposalId) ||
+    value.proposalId !== handoff.origin.sourceRequestId ||
+    value.actionKey !== 'APPROVAL.REQUEST.CREATE' ||
+    !Number.isSafeInteger(value.handoffVersion) ||
+    (value.handoffVersion as number) < 1
+  ) {
+    return null;
+  }
+  return {
+    version: 1,
+    handoffId: value.handoffId,
+    proposalId: value.proposalId,
+    actionKey: value.actionKey,
+    handoffVersion: value.handoffVersion as number,
   };
 }
 

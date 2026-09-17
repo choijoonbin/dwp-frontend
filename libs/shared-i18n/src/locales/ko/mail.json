@@ -640,7 +640,10 @@
       "scanned": "확인한 대화",
       "matched": "일치한 대화",
       "planned": "예정 변경",
-      "truncated": "이번 미리보기가 처리 한도에 도달해 실행을 차단했습니다. 범위를 줄이거나 관리자에게 처리 한도 조정을 요청하세요.",
+      "truncated": "이번 미리보기는 제한된 한 개 처리 묶음입니다. 검토한 변경을 적용한 뒤 다음 묶음을 계속 진행하세요.",
+      "continuation": "동일한 메일함 스냅샷의 다음 처리 묶음을 검토하고 있습니다.",
+      "continue": "다음 묶음 계속",
+      "restart": "처음부터 다시",
       "run": "기존 메일에 적용",
       "confirmTitle": "미리보기 결과를 적용할까요?",
       "confirmDescription": "{{account}}의 기존 대화 {{count}}건을 현재 규칙과 우선순위로 정리합니다.",
@@ -772,6 +775,7 @@
   },
   "proposal": {
     "assistant": "DWP 실행 제안",
+    "conflict": "이 제안이 변경되었습니다. 최신 버전을 불러왔으니 다시 시도하기 전에 확인하세요.",
     "source": "근거 메일: {{source}}",
     "filters": {
       "status": "상태",
@@ -1391,6 +1395,20 @@
       "shortcutTab": "단축키",
       "defaultSender": "기본 발신 계정",
       "manageWritingAssets": "템플릿 및 서명 관리",
+      "capabilityBoundary": "기능 준비 상태는 계정별로 각각 검증합니다. 사용할 수 없는 기능은 관련 공급자 어댑터, 인증, 동기화 또는 신뢰된 첨부파일 검사기가 준비되어야 합니다.",
+      "capabilityLoadError": "기능 준비 상태를 확인하지 못했습니다. 발송은 계속 서버에서 통제하며 준비되지 않은 기능은 차단됩니다.",
+      "capabilityLoading": "기능 준비 상태 확인 중",
+      "capabilityStatus": "{{feature}} · {{status}}",
+      "capabilityReady": "준비됨",
+      "capabilityUnavailable": "사용 불가",
+      "capabilities": {
+        "send": "발송",
+        "bcc": "숨은 참조",
+        "html": "서식 본문",
+        "attachments": "첨부파일",
+        "scheduling": "예약 발송",
+        "sharedIdentity": "공유 발신자"
+      },
       "densityTitle": "목록 정보 밀도",
       "densityDescription": "한 화면에 표시할 메일 수와 행 간격을 선택합니다.",
       "density": "목록 표시",
@@ -1428,6 +1446,7 @@
   },
   "admin": {
     "loadError": "메일 운영 정보를 불러오지 못했습니다.",
+    "conflict": "더 최신 버전이 있습니다. 입력한 내용은 유지하고 현재 근거를 다시 불러왔습니다. 저장하기 전에 확인하세요.",
     "metrics": {
       "accounts": "개인 계정",
       "accountsDetail": "SKAX 구성원에게 배정된 계정",

@@ -14,6 +14,8 @@ import type {
   DwaionTeamArtifactAccessRequest,
   DwaionTeamArtifactConflict,
   DwaionTeamArtifactPreflight,
+  DwaionTeamArtifactReviewDecision,
+  DwaionTeamArtifactReviewStage,
   DwaionTeamArtifactShare,
   DwaionTeamArtifactWorkspace,
 } from '@dwp-frontend/shared-utils';
@@ -133,6 +135,157 @@ export function WorkspaceSummary({
         </Stack>
       </Box>
     </Box>
+  );
+}
+
+export function GovernanceReview({
+  workspace,
+  currentSubjectId,
+  busy,
+  locale,
+  onDecide,
+}: {
+  workspace: DwaionTeamArtifactWorkspace;
+  currentSubjectId: string | null;
+  busy: boolean;
+  locale: 'ko' | 'en';
+  onDecide: (input: {
+    stage: DwaionTeamArtifactReviewStage;
+    decision: DwaionTeamArtifactReviewDecision;
+  }) => Promise<unknown>;
+}) {
+  const text = COPY[locale];
+  const assignedPending = workspace.reviewStages.some(
+    (stage) => stage.state === 'PENDING' && stage.assigneeSubjectId === currentSubjectId
+  );
+  return (
+    <Stack gap={1.5} data-testid="artifact-governance-review">
+      <Box>
+        <Typography variant="subtitle2">{text.reviewWorkflowTitle}</Typography>
+        <Typography variant="caption" color="text.secondary">
+          {text.reviewWorkflowHelp}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+          {text.reviewSla}:{' '}
+          {workspace.reviewSlaDueAt
+            ? formatDate(
+                workspace.reviewSlaDueAt,
+                { dateStyle: 'medium', timeStyle: 'short' },
+                locale
+              )
+            : text.reviewSlaUnavailable}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+          gap: 1,
+        }}
+      >
+        {workspace.reviewStages.map((stage) => {
+          const mine = stage.state === 'PENDING' && stage.assigneeSubjectId === currentSubjectId;
+          return (
+            <Box
+              key={stage.stageId}
+              sx={{ p: 1.25, border: 1, borderColor: 'divider', borderRadius: 1.5, minWidth: 0 }}
+            >
+              <Stack direction="row" justifyContent="space-between" gap={0.5}>
+                <Typography variant="subtitle2">{text.reviewStages[stage.stageKey]}</Typography>
+                <Chip
+                  size="small"
+                  color={stage.state === 'APPROVED' ? 'success' : stage.state === 'REJECTED' ? 'error' : 'default'}
+                  label={text.reviewStates[stage.state]}
+                />
+              </Stack>
+              <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+                {stage.assigneeSubjectId ?? '—'} · r{stage.revision}
+              </Typography>
+              {stage.evidenceFingerprint ? (
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
+                  {text.evidenceFingerprint}: {stage.evidenceFingerprint}
+                </Typography>
+              ) : null}
+              {mine ? (
+                <Stack direction="row" gap={0.5} sx={{ mt: 1 }}>
+                  <ActionButton
+                    intent="primary"
+                    disabled={busy}
+                    onClick={() => void onDecide({ stage, decision: 'APPROVE' }).catch(() => undefined)}
+                    sx={{ minHeight: 44 }}
+                  >
+                    {text.approveReview}
+                  </ActionButton>
+                  <ActionButton
+                    intent="danger"
+                    disabled={busy}
+                    onClick={() => void onDecide({ stage, decision: 'REJECT' }).catch(() => undefined)}
+                    sx={{ minHeight: 44 }}
+                  >
+                    {text.rejectReview}
+                  </ActionButton>
+                </Stack>
+              ) : null}
+            </Box>
+          );
+        })}
+      </Box>
+      {!assignedPending ? (
+        <Typography variant="caption" color="text.secondary">
+          {text.reviewDecisionUnavailable}
+        </Typography>
+      ) : null}
+      <Box>
+        <Typography variant="subtitle2">{text.governanceTitle}</Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+            gap: 0.75,
+            mt: 0.75,
+          }}
+        >
+          {workspace.governanceGates.map((gate) => (
+            <Box key={gate.key} sx={{ p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+              <Stack direction="row" justifyContent="space-between" gap={0.5}>
+                <Typography variant="body2" fontWeight={700}>
+                  {text.governanceGates[gate.key]}
+                </Typography>
+                <Chip
+                  size="small"
+                  color={gate.state === 'PASS' ? 'success' : gate.state === 'BLOCKED' ? 'error' : 'warning'}
+                  label={text.governanceStates[gate.state]}
+                />
+              </Stack>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
+                {gate.detailCode}
+                {gate.evidenceReference ? ` · ${gate.evidenceReference}` : ''}
+              </Typography>
+              {gate.evidenceFingerprint ? (
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
+                  {gate.evidenceFingerprint}
+                </Typography>
+              ) : null}
+            </Box>
+          ))}
+        </Box>
+      </Box>
+      <Alert severity={workspace.signatureEvidence.capability.available ? 'success' : 'info'}>
+        <Typography variant="subtitle2">{text.wormEvidenceTitle}</Typography>
+        {workspace.signatureEvidence.capability.available ? (
+          <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
+            {workspace.signatureEvidence.provider} ·{' '}
+            {workspace.signatureEvidence.keyReferenceFingerprint} ·{' '}
+            {workspace.signatureEvidence.signedAt}
+          </Typography>
+        ) : (
+          <Typography variant="caption">
+            {workspace.signatureEvidence.capability.reasonCode} ·{' '}
+            {workspace.signatureEvidence.capability.recoveryHint ?? text.wormEvidenceUnavailable}
+          </Typography>
+        )}
+      </Alert>
+    </Stack>
   );
 }
 

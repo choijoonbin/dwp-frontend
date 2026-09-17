@@ -21,6 +21,8 @@ import type {
   DwaionTeamArtifactConflictResolution,
   DwaionTeamArtifactMemberRequest,
   DwaionTeamArtifactPreflight,
+  DwaionTeamArtifactReviewDecision,
+  DwaionTeamArtifactReviewStage,
   DwaionTeamArtifactShare,
   DwaionTeamArtifactSharePermission,
   DwaionTeamArtifactWorkspace,
@@ -31,6 +33,7 @@ import { DWAION_ARTIFACT_COLLABORATION_COPY as COPY } from './dwaion-artifact-co
 import { DwaionArtifactCollaborationRecovery } from './dwaion-artifact-collaboration-recovery';
 import {
   ConflictActions,
+  GovernanceReview,
   PreflightResult,
   ShareRow,
   WorkspaceSummary,
@@ -48,6 +51,7 @@ type CollaborationProps = {
   error: unknown;
   canEdit: boolean;
   canPublish: boolean;
+  currentSubjectId: string | null;
   locale: 'ko' | 'en';
   onRetry: () => void;
   onRunPreflight: (input: {
@@ -65,6 +69,10 @@ type CollaborationProps = {
   }) => Promise<unknown>;
   onRevokeShare: (shareId: string) => Promise<unknown>;
   onRequestAccess: () => Promise<unknown>;
+  onDecideReviewStage: (input: {
+    stage: DwaionTeamArtifactReviewStage;
+    decision: DwaionTeamArtifactReviewDecision;
+  }) => Promise<unknown>;
   onSaveExplanation: (explanation: string) => Promise<unknown>;
   onSavePrivateDraft: () => Promise<unknown>;
   onResubmit: (input: {
@@ -274,6 +282,13 @@ export function DwaionArtifactCollaboration(props: CollaborationProps) {
         ) : (
           <Stack gap={2}>
             <WorkspaceSummary workspace={workspace} locale={locale} />
+            <GovernanceReview
+              workspace={workspace}
+              currentSubjectId={props.currentSubjectId}
+              busy={props.busy}
+              locale={locale}
+              onDecide={props.onDecideReviewStage}
+            />
             <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
               <ActionButton
                 intent="secondary"

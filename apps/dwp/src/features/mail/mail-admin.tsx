@@ -13,6 +13,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getMailAdminOverview,
+  HttpError,
   updateMailConnection,
   updateMailPolicy,
   updateMailSharedInbox,
@@ -126,6 +127,7 @@ export function MailAdminConnections({ onBack }: { onBack?: () => void } = {}) {
   const canManage = hasPermission('ADMIN.MAIL', 'CONNECTION_MANAGE');
   const commandKeys = useRef(new Map<string, string>());
   const activeCommandScope = useRef<string | null>(null);
+  const preserveConnectionDraft = useRef(false);
   const [editing, setEditing] = useState<MailConnection | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [mailDomain, setMailDomain] = useState('');
@@ -176,16 +178,35 @@ export function MailAdminConnections({ onBack }: { onBack?: () => void } = {}) {
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.connections.saved'));
     },
-    onError: (error) =>
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409 && editing) {
+        if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
+        activeCommandScope.current = null;
+        const result = await query.refetch();
+        const latest = result.data?.connections.find(
+          (candidate) => candidate.connectionId === editing.connectionId
+        );
+        if (latest) {
+          preserveConnectionDraft.current = true;
+          setEditing(latest);
+        }
+        toast.error(t('admin.conflict'));
+        return;
+      }
       toast.error(
         error instanceof Error && error.message === MAIL_CONNECTION_ACTIVATION_BLOCKED
           ? t('admin.connections.activationBlocked')
           : t('admin.connections.saveError')
-      ),
+      );
+    },
   });
 
   useEffect(() => {
     if (!editing) return;
+    if (preserveConnectionDraft.current) {
+      preserveConnectionDraft.current = false;
+      return;
+    }
     setDisplayName(editing.displayName);
     setMailDomain(editing.mailDomain ?? '');
     setCredentialRef('');
@@ -355,6 +376,7 @@ export function MailAdminSharedInboxes({ onBack }: { onBack?: () => void } = {})
   const canManage = hasPermission('ADMIN.MAIL', 'SHARED_INBOX_MANAGE');
   const commandKeys = useRef(new Map<string, string>());
   const activeCommandScope = useRef<string | null>(null);
+  const preserveSharedInboxDraft = useRef(false);
   const [editing, setEditing] = useState<MailSharedInbox | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -382,11 +404,31 @@ export function MailAdminSharedInboxes({ onBack }: { onBack?: () => void } = {})
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.shared.saved'));
     },
-    onError: () => toast.error(t('admin.shared.saveError')),
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409 && editing) {
+        if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
+        activeCommandScope.current = null;
+        const result = await query.refetch();
+        const latest = result.data?.sharedInboxes.find(
+          (candidate) => candidate.sharedInboxId === editing.sharedInboxId
+        );
+        if (latest) {
+          preserveSharedInboxDraft.current = true;
+          setEditing(latest);
+        }
+        toast.error(t('admin.conflict'));
+        return;
+      }
+      toast.error(t('admin.shared.saveError'));
+    },
   });
 
   useEffect(() => {
     if (!editing) return;
+    if (preserveSharedInboxDraft.current) {
+      preserveSharedInboxDraft.current = false;
+      return;
+    }
     setDisplayName(editing.displayName);
     setPurpose(editing.purpose ?? '');
     setServiceTargetMinutes(editing.serviceTargetMinutes);
@@ -562,7 +604,20 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.policies.saved'));
     },
-    onError: () => toast.error(t('admin.policies.saveError')),
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409 && policy) {
+        const currentDraft = policy;
+        if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
+        activeCommandScope.current = null;
+        const result = await query.refetch();
+        if (result.data?.policy) {
+          setPolicy({ ...currentDraft, version: result.data.policy.version });
+        }
+        toast.error(t('admin.conflict'));
+        return;
+      }
+      toast.error(t('admin.policies.saveError'));
+    },
   });
   const switches = useMemo(
     () =>

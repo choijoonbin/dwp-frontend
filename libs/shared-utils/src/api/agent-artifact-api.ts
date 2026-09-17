@@ -31,10 +31,12 @@ export type DwaionArtifactExportReceipt = AgentSchemas['ArtifactExportReceipt'];
 export type DwaionArtifactExportFormat = AgentSchemas['ExportFormat'];
 
 export type DwaionArtifactConversationSource = AgentSchemas['ArtifactConversationSource'];
+export type DwaionArtifactMetadata = AgentSchemas['ArtifactMetadata'];
 
 export type CreateDwaionArtifactInput = {
   artifactType: DwaionArtifactType;
   content: DwaionArtifactDraftContent;
+  metadata?: DwaionArtifactMetadata;
 } & (
   | {
       sourceConversation: DwaionArtifactConversationSource;
@@ -89,6 +91,7 @@ export async function createDwaionArtifact(
     ...newAgentCommand(0, 'USER_ARTIFACT_CREATE'),
     artifactType: input.artifactType,
     content: input.content,
+    metadata: input.metadata ?? { tags: [], projectKey: null, reviewSlaDueAt: null },
     ...(sourceConversation ? { sourceConversation } : { sources: input.sources ?? [] }),
   };
   return mutateArtifact(ARTIFACT_BASE, body, 'post', authority);
@@ -99,12 +102,14 @@ export async function autosaveDwaionArtifact(
   expectedRevision: number,
   content: DwaionArtifactDraftContent,
   sources: DwaionArtifactSourceReference[],
-  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY
+  authority: ProductSurfaceGovernedMutationAuthority = LEGACY_AUTHORITY,
+  metadata: DwaionArtifactMetadata = { tags: [], projectKey: null, reviewSlaDueAt: null }
 ): Promise<DwaionGovernedArtifact> {
   const body: AgentSchemas['AutosaveArtifactRequest'] = {
     ...newAgentCommand(expectedRevision, 'USER_ARTIFACT_AUTOSAVE'),
     content,
     sources,
+    metadata,
   };
   return mutateArtifact(
     `${ARTIFACT_BASE}/${encodeArtifactId(artifactId)}/draft`,
@@ -345,6 +350,9 @@ function isArtifact(value: unknown): value is DwaionGovernedArtifact {
     typeof value.content.title === 'string' &&
     typeof value.content.body === 'string' &&
     Array.isArray(value.sources) &&
+    (value.authorSubjectId === null ||
+      (typeof value.authorSubjectId === 'string' && value.authorSubjectId.trim().length > 0)) &&
+    isArtifactMetadata(value.metadata) &&
     isAgentRecord(value.capabilities) &&
     typeof value.capabilities.immutableVersionsAvailable === 'boolean' &&
     typeof value.capabilities.deterministicPreflightAvailable === 'boolean' &&
@@ -357,6 +365,22 @@ function isArtifact(value: unknown): value is DwaionGovernedArtifact {
     typeof value.capabilities.sourceFreshnessAvailable === 'boolean' &&
     isAgentDate(value.createdAt) &&
     isAgentDate(value.updatedAt)
+  );
+}
+
+function isArtifactMetadata(value: unknown): value is DwaionArtifactMetadata {
+  return (
+    isAgentRecord(value) &&
+    Array.isArray(value.tags) &&
+    value.tags.length <= 20 &&
+    value.tags.every(
+      (tag) => typeof tag === 'string' && tag.trim().length > 0 && tag.length <= 40
+    ) &&
+    new Set(value.tags.map((tag) => tag.toLocaleLowerCase())).size === value.tags.length &&
+    (value.projectKey === null ||
+      (typeof value.projectKey === 'string' &&
+        /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/u.test(value.projectKey))) &&
+    (value.reviewSlaDueAt === null || isAgentDate(value.reviewSlaDueAt))
   );
 }
 

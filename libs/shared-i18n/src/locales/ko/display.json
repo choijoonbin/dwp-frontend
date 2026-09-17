@@ -343,11 +343,14 @@
   "sourceTypes": {
     "CALENDAR": "일정",
     "CUSTOM": "사용자 정의 원천",
+    "FINOPS_LEDGER": "FinOps 원장",
     "MAIL": "메일",
     "ORACLE_HCM": "Oracle HCM",
     "SAP_HCM": "SAP HCM",
     "SCIM": "SCIM",
+    "SECURITY_POLICY": "보안 정책",
     "SYSTEM": "시스템",
+    "TELEMETRY": "운영 텔레메트리",
     "WORKDAY": "Workday",
     "WORK_ITEM": "업무 항목"
   },

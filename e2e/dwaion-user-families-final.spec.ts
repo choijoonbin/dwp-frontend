@@ -21,6 +21,7 @@ const ATTACHMENT_IDS = [
   'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2',
   'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb3',
 ] as const;
+const browserRuntimeFailures = new WeakMap<Page, string[]>();
 
 test.beforeAll(() => mkdirSync(OUTPUT, { recursive: true }));
 test.setTimeout(60_000);
@@ -139,16 +140,20 @@ for (const width of [1440, 390] as const) {
     await page.goto(`/dwaion/new?mode=research&researchPlan=${PLAN_ID}&researchRun=${RUN_ID}`);
     await expect(page.getByTestId('dwaion-deep-research-run')).toBeVisible();
     await expect(page.getByText(RECEIPT_ID, { exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Copy receipt ID' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Copy receipt ID' }).first()).toBeVisible();
     const receiptBoundary = page.getByTestId('dwaion-receipt-contract-boundary');
     await expect(receiptBoundary).toBeVisible();
     await expect(receiptBoundary).toContainText('Unavailable');
     await page.getByRole('button', { name: 'View report full screen' }).click();
     const reportDialog = page.getByRole('dialog', { name: 'Verified report' });
     await expect(reportDialog).toBeVisible();
-    await capture(page, `U02-deep-research-report-${width}.png`);
+    await expect(reportDialog.getByRole('table', { name: 'Research report data' })).toBeVisible();
+    await expect(reportDialog).toContainText('Governed recommendation');
+    await expect(reportDialog).toContainText('Decision guardrails');
+    await captureViewport(page, `U02-deep-research-report-${width}.png`);
     await reportDialog.getByRole('button', { name: 'Close full screen' }).click();
     await verifySurface(page, '[data-testid="dwaion-deep-research-run"]');
+    await captureViewport(page, `U02-deep-research-viewport-${width}.png`);
     await capture(page, `U02-deep-research-${width}.png`);
     await exerciseResearchDownloads(page);
   });
@@ -184,12 +189,21 @@ for (const width of [1440, 390] as const) {
         await expect(page.getByRole('button', { name: /^이벤트 \d+$/ })).toBeVisible();
         if (width === 390) {
           await page
-            .getByRole('button', { name: /Morning priority review/ })
+            .getByRole('button', { name: /아침 우선순위 검토/ })
             .first()
             .click();
         }
         await expect(page.getByText('서버 버전·건전성·감사 증거')).toBeVisible();
         await expect(page.getByText('리비전 7 · UPDATE')).toBeVisible();
+        const dryRunInspection = page.getByTestId('dwaion-routine-dry-run-inspection');
+        await expect(dryRunInspection).toContainText('5단계');
+        const runWorkbench = page.getByTestId('dwaion-routine-run-workbench');
+        await expect(runWorkbench).toContainText('5단계 실행 DAG');
+        await expect(runWorkbench).toContainText('Zero-Write 검증');
+        await expect(runWorkbench).toContainText('트레이스·감사 원장');
+        await expect(runWorkbench).toContainText('사용 토큰');
+        await expect(runWorkbench).toContainText('실행 지연');
+        await expect(runWorkbench).toContainText('멱등성 증거');
         await expect(
           page.getByRole('button', { name: '로그 원본 다운로드 (JSONL)' })
         ).toBeVisible();
@@ -201,7 +215,9 @@ for (const width of [1440, 390] as const) {
         ]) {
           await expect(page.getByRole('button', { name: label })).toBeDisabled();
         }
-        await page.getByText('최근 실제 실행', { exact: true }).scrollIntoViewIfNeeded();
+        await dryRunInspection.scrollIntoViewIfNeeded();
+        await captureViewport(page, `U03-dry-run-inspection-${width}.png`);
+        await runWorkbench.scrollIntoViewIfNeeded();
         await captureViewport(page, `U03-routine-run-recovery-${width}.png`);
         await page.getByRole('button', { name: '설정 편집' }).click();
         const editor = page.getByRole('dialog', { name: '내 AI 루틴 편집기' });
@@ -248,14 +264,10 @@ for (const width of [1440, 390] as const) {
           await page.getByRole('button', { name: '상세 닫기' }).click();
         }
         const search = page.getByRole('searchbox', { name: '루틴 검색' });
-        await search.fill('Finance close');
+        await search.fill('결산');
         const routineList = page.locator('section[aria-label*="AI 루틴"]');
-        await expect(
-          routineList.getByText('Finance close exception monitor', { exact: true })
-        ).toBeVisible();
-        await expect(routineList.getByText('Morning priority review', { exact: true })).toHaveCount(
-          0
-        );
+        await expect(routineList.getByText('결산 예외 접근 재확인', { exact: true })).toBeVisible();
+        await expect(routineList.getByText('아침 우선순위 검토', { exact: true })).toHaveCount(0);
         await captureViewport(page, `U03-routines-search-${width}.png`);
       }
       if (surface.id === 'U05-personal-controls') {
@@ -289,13 +301,13 @@ for (const width of [1440, 390] as const) {
     ).toBeVisible();
     if (width === 390) {
       await page
-        .getByRole('button', { name: /Morning priority review/ })
+        .getByRole('button', { name: /아침 우선순위 검토/ })
         .first()
         .click();
     }
     await page.getByRole('button', { name: '설정 편집' }).click();
     const editor = page.getByRole('dialog', { name: '내 AI 루틴 편집기' });
-    await editor.getByLabel('루틴 이름').fill('Morning priority review v8');
+    await editor.getByLabel('루틴 이름').fill('아침 우선순위 검토 v8');
     await editor.getByRole('button', { name: '초안 임시 저장' }).click();
     await expect(
       page.getByText('다른 곳에서 설정이 변경되었습니다.', { exact: false })
@@ -304,16 +316,22 @@ for (const width of [1440, 390] as const) {
     if (width === 390) {
       await page.getByRole('button', { name: '상세 닫기' }).click();
     }
-    await expect(
-      page.getByRole('heading', {
-        name: '활성화 파이프라인 중단: 원격 리비전 충돌',
-        level: 2,
-      })
-    ).toBeVisible();
+    const conflictHeading = page.getByRole('heading', {
+      name: '활성화 파이프라인 중단: 원격 리비전 충돌',
+      level: 2,
+    });
+    await expect(conflictHeading).toBeVisible();
     await expect(page.getByRole('button', { name: '서버 최신본 적용' })).toBeVisible();
     await expect(page.getByRole('button', { name: '스냅샷 롤백 보기' })).toBeVisible();
     await expect(page.getByRole('button', { name: '새 버전으로 분기 저장' })).toBeDisabled();
     await expect(page.getByRole('button', { name: '필드별 선택적 병합' })).toBeDisabled();
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      const main = document.getElementById('dwp-main-content');
+      if (main) main.scrollTop = 0;
+    });
+    await conflictHeading.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
     await verifySurface(page, '#dwp-main-content');
     await captureViewport(page, `U03-activation-conflict-${width}.png`);
   });
@@ -349,6 +367,24 @@ async function prepare(page: Page, width: number, personal = false, locale: 'en'
 }
 
 async function prepareSession(page: Page, personal: boolean, locale: 'en' | 'ko' = 'en') {
+  if (!browserRuntimeFailures.has(page)) {
+    const failures: string[] = [];
+    browserRuntimeFailures.set(page, failures);
+    page.on('console', (message) => {
+      if (
+        message.type() === 'error' &&
+        !message.text().startsWith('Failed to load resource: the server responded with a status of')
+      ) {
+        failures.push(`console: ${message.text()}`);
+      }
+    });
+    page.on('pageerror', (error) => failures.push(`pageerror: ${error.message}`));
+    page.on('response', (response) => {
+      if (response.status() >= 500) {
+        failures.push(`response ${response.status()}: ${new URL(response.url()).pathname}`);
+      }
+    });
+  }
   await page.clock.setFixedTime(new Date('2026-09-17T03:00:00Z'));
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light', forcedColors: 'none' });
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
@@ -365,10 +401,11 @@ async function prepareSession(page: Page, personal: boolean, locale: 'en' | 'ko'
   await page.route('**/api/platform/v1/workspace/work-items**', (route) =>
     route.fulfill({ json: { success: true, data: [] } })
   );
-  if (personal) await mockDwaionPersonalIntelligence(page);
+  if (personal) await mockDwaionPersonalIntelligence(page, { locale });
 }
 
 async function verifySurface(page: Page, selector: string) {
+  expect(browserRuntimeFailures.get(page) ?? []).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
     await page.evaluate(() => window.innerWidth + 1)
   );
@@ -382,6 +419,8 @@ async function capture(page: Page, fileName: string) {
   await page.evaluate(() => {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   });
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(60);
   await page.screenshot({
     path: join(OUTPUT, fileName),
     fullPage: true,
@@ -394,6 +433,8 @@ async function captureViewport(page: Page, fileName: string) {
   await page.evaluate(() => {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   });
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(60);
   await page.screenshot({
     path: join(OUTPUT, fileName),
     fullPage: false,
@@ -783,7 +824,7 @@ function researchRun() {
     },
     result: {
       reportMarkdown:
-        '## Verified recommendation\n\nThe governed option meets the evidence and budget criteria.',
+        '## Governed recommendation\n\n**Option B** provides the best verified value while keeping every source inside the approved work scope.\n\n### Verified comparison\n\n| Option | Monthly cost | Availability | Policy result |\n| --- | ---: | ---: | --- |\n| Option A | $128,400 | 99.95% | Review |\n| Option B | $116,200 | 99.99% | Approved |\n| Option C | $109,800 | 99.90% | Blocked |\n\n### Decision reasons\n\n- Option B is supported by three verified citations.\n- The estimate stays below the approved budget ceiling.\n- No unapproved external source or write action was used.\n\n### Decision guardrails\n\n> Revalidate source permission and scenario sensitivity before any production handoff.\n\nThe completion receipt binds this recommendation to the immutable run and citation set.',
       citations: [
         {
           citationId: 'work-item-1042',

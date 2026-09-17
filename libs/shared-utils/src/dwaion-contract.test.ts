@@ -8,6 +8,7 @@ import {
   hasDwaionQuestionLaunchState,
   parseDwaionQuestionLaunchState,
   parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
   resolveDwaionAgentKey,
 } from './dwaion-contract';
 import type { AgentActionHandoffOrigin } from './api/agent-plan-api';
@@ -93,6 +94,46 @@ describe('dwaion contract', () => {
         undefined,
         createdAt.getTime()
       )
+    ).toBeNull();
+  });
+
+  it('accepts only a matching approval owner callback binding', () => {
+    const now = new Date('2026-09-17T01:00:00Z');
+    const handoff = createDwaionHandoff(
+      {
+        actionKey: 'APPROVAL.REQUEST.CREATE',
+        planHash: 'c'.repeat(64),
+        reviewedInputs: { title: 'Cloud capacity', businessJustification: 'Verified demand' },
+        sourceReferences: ['source-1'],
+        origin: origin(),
+      },
+      now
+    );
+    const state = {
+      dwaionHandoff: { ...handoff, handoffId: '00000000-0000-4000-8000-000000000011' },
+      dwaionProposalHandoff: {
+        version: 1,
+        handoffId: '00000000-0000-4000-8000-000000000011',
+        proposalId: '00000000-0000-4000-8000-000000000012',
+        actionKey: 'APPROVAL.REQUEST.CREATE',
+        handoffVersion: 1,
+      },
+    };
+
+    expect(parseDwaionProposalHandoffBinding(state, now.getTime())).toEqual(
+      state.dwaionProposalHandoff
+    );
+    expect(
+      parseDwaionProposalHandoffBinding({
+        ...state,
+        dwaionProposalHandoff: { ...state.dwaionProposalHandoff, proposalId: crypto.randomUUID() },
+      }, now.getTime())
+    ).toBeNull();
+    expect(
+      parseDwaionProposalHandoffBinding({
+        ...state,
+        dwaionProposalHandoff: { ...state.dwaionProposalHandoff, handoffId: crypto.randomUUID() },
+      }, now.getTime())
     ).toBeNull();
   });
 });

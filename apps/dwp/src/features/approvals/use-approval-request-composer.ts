@@ -10,6 +10,7 @@ import {
   getPublishedApprovalForms,
   HttpError,
   parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
   preflightApprovalRequest,
   submitApprovalRequest,
   useToast,
@@ -148,6 +149,12 @@ export function useApprovalRequestComposer() {
     () => parseDwaionHandoff(location.state, 'APPROVAL.REQUEST.CREATE'),
     [location.state]
   );
+  const incomingDwaionProposalHandoff = useMemo(
+    () => parseDwaionProposalHandoffBinding(location.state),
+    [location.state]
+  );
+  const [dwaionProposalHandoff, setDwaionProposalHandoff] =
+    useState(incomingDwaionProposalHandoff);
   const currentDraftDetail =
     draftId &&
     !draft.isError &&
@@ -275,6 +282,12 @@ export function useApprovalRequestComposer() {
   ]);
 
   useEffect(() => {
+    if (incomingDwaionProposalHandoff) {
+      setDwaionProposalHandoff(incomingDwaionProposalHandoff);
+    }
+  }, [incomingDwaionProposalHandoff]);
+
+  useEffect(() => {
     if (draftId || !dwaionHandoff) return;
     const handoffTitle = dwaionHandoffText(dwaionHandoff, 'title');
     const handoffSummary = dwaionHandoffText(dwaionHandoff, 'businessJustification');
@@ -357,6 +370,7 @@ export function useApprovalRequestComposer() {
     contextScopeKey: requestScope.contextScopeKey,
     isCurrent: () => sessionRef.current === sessionKey && commandScope.isCurrent(binding),
     canWrite: userSource.isReady,
+    dwaionProposalHandoff: dwaionProposalHandoff ?? undefined,
   });
   const autosaveRecovery = ['CONFLICT', 'DENIED', 'UNAVAILABLE', 'UNKNOWN', 'ERROR'].includes(
     autosave.status

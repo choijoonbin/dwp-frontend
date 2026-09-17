@@ -16,6 +16,7 @@ import {
   getMailPolicyGovernance,
   getMailRetention,
   getMailSharedInboxAccess,
+  HttpError,
   previewMailPurge,
   reconcileMailDeliveryAdmin,
   releaseMailLegalHold,
@@ -308,8 +309,10 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
   ) => {
     if (busyAction) return;
     setBusyAction(key);
+    let commandAccepted = false;
     try {
       await action();
+      commandAccepted = true;
       await after?.();
       idempotencyKeys.current.delete(idempotencyScope);
       toast.success(
@@ -317,7 +320,14 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
           defaultValue: 'The command response was received and the evidence was refreshed.',
         })
       );
-    } catch {
+    } catch (error) {
+      if (!commandAccepted && error instanceof HttpError && error.status === 409) {
+        idempotencyKeys.current.delete(idempotencyScope);
+        if (surface === 'retention') setPurgeCandidate(null);
+        await refresh();
+        toast.error(t('admin.conflict'));
+        return;
+      }
       toast.error(
         t('admin.operationsWorkspace.actionFailed', {
           defaultValue:
@@ -329,7 +339,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     }
   };
 
-  const refresh = async () => {
+  async function refresh() {
     if (props.onRefresh) {
       await props.onRefresh();
       return;
@@ -342,7 +352,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
     if (surface === 'shared-access') {
       await Promise.all(sharedAccessQueries.map((accessQuery) => accessQuery.refetch()));
     }
-  };
+  }
 
   const openException = (exception: MailAdminOperationalException) => {
     if (props.onOpenException) return props.onOpenException(exception);

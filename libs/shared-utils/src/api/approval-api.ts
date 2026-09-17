@@ -32,6 +32,7 @@ import {
 } from './approval-governed-mutation';
 
 import type { ApprovalContentAccess } from './approval-content-access';
+import type { DwaionProposalHandoffBinding } from '../dwaion-contract';
 
 import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApprovalMutationExecution } from './approval-governed-mutation';
@@ -515,6 +516,7 @@ export async function createApprovalRequest(
     summary: string;
     priority: ApprovalPriority;
     payload: Record<string, unknown>;
+    dwaionProposalHandoff?: DwaionProposalHandoffBinding;
   },
   execution: ApprovalMutationExecution,
   options?: { idempotencyKey: string }
