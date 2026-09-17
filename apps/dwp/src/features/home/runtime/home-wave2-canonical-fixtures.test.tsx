@@ -88,7 +88,7 @@ describe('Wave 2 canonical state fixture evidence', () => {
 
   it('C17-MODE-PRESET executes HOME_SPEC_MODE_PRESET across both modes and four devices', () => {
     const layouts = createHomeModeLayouts();
-    expect(Object.keys(layouts)).toEqual(['CLASSIC', 'FLOW_V1']);
+    expect(Object.keys(layouts)).toEqual(['CLASSIC', 'FLOW_V1', 'MZ_V1']);
     expect(layouts.CLASSIC.deviceClasses).toEqual(HOME_DEVICE_CLASSES);
     expect(layouts.FLOW_V1.deviceClasses).toEqual(HOME_DEVICE_CLASSES);
     const sharedAppOrder = Array.from({ length: 18 }, (_, index) => ({

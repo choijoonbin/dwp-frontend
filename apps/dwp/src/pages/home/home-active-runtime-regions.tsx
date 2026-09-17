@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react';
 
-import type { HomePresentation } from '@dwp-frontend/shared-utils';
+import type { HomeExperienceVariant, HomePresentation } from '@dwp-frontend/shared-utils';
 
 import type { FlowHome } from '../../features/home/flow-home/flow-home';
 import { FLOW_FUTURE_WIDGET_OWNER_DEFINITION_KEYS } from '../../features/home/flow-home/flow-future-widget-mesh';
@@ -25,14 +25,14 @@ type HomeActiveRuntimeRegions = Readonly<{
 /** Projects ACTIVE v2 owners once, with the expressive Flow mesh owning its five dedicated slots. */
 export function resolveHomeActiveRuntimeRegions(
   runtime: HomeV2Runtime,
-  modeKey: 'CLASSIC' | 'FLOW_V1',
+  modeKey: HomeExperienceVariant,
   presentation: HomePresentation,
   onNavigate: (route: string) => void
 ): HomeActiveRuntimeRegions {
   const activeModel =
     runtime.activation.kind === 'ACTIVE' ? runtime.activation.result.snapshot.data : null;
   const expressiveFlowRuntimeActive = Boolean(
-    activeModel && modeKey === 'FLOW_V1' && presentation === 'expressive'
+    activeModel && (modeKey === 'MZ_V1' || (modeKey === 'FLOW_V1' && presentation === 'expressive'))
   );
 
   return {

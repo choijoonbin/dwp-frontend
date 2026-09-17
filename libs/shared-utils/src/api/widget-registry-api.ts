@@ -23,6 +23,7 @@ import type {
   WidgetValidation,
   WidgetVersion,
 } from './widget-registry-contract';
+import type { HomeExperienceVariant } from './home-experience-api';
 
 const PROVIDER_BASE = '/api/provider/v1/admin';
 const TENANT_BASE = '/api/platform/v1/admin';
@@ -151,10 +152,11 @@ export async function getProviderWidgetRegistryReadiness(): Promise<WidgetRegist
 }
 
 export async function getEffectiveWidgetCatalog(
-  surfaceKey: 'workspace-home'
+  surfaceKey: 'workspace-home',
+  mode: HomeExperienceVariant
 ): Promise<EffectiveWidgetCatalog> {
   const response = await axiosInstance.get<ApiResponse<EffectiveWidgetCatalog>>(
-    appendQuery(`${MEMBER_BASE}/effective`, { surfaceKey })
+    appendQuery(`${MEMBER_BASE}/effective`, { surfaceKey, mode })
   );
   return response.data.data;
 }

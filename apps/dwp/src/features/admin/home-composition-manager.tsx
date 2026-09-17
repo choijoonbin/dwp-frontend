@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
+  WandSparkles,
   UserRound,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -17,8 +18,10 @@ import { ActionButton } from '@dwp-frontend/design-system';
 import {
   HOME_WIDGET_LIBRARY_ENABLED,
   HOME_CONTRACT_CAPABILITIES,
+  HOME_EXPERIENCE_VARIANTS,
   getAdminHomeExperience,
   hasHomeContractCapability,
+  previewHomeCompositionPolicy,
   updateHomeCompositionPolicy,
   usePermissions,
   useToast,
@@ -71,6 +74,7 @@ const announcementHeights = ['short', 'standard'] as const;
 function clonePolicy(policy: HomeCompositionPolicy): HomeCompositionPolicy {
   return {
     ...policy,
+    allowedModes: [...policy.allowedModes],
     governedZones: policy.governedZones.map((zone) => ({ ...zone })),
     modeLayouts: {
       CLASSIC: {
@@ -80,6 +84,10 @@ function clonePolicy(policy: HomeCompositionPolicy): HomeCompositionPolicy {
       FLOW_V1: {
         ...policy.modeLayouts.FLOW_V1,
         deviceClasses: [...policy.modeLayouts.FLOW_V1.deviceClasses],
+      },
+      MZ_V1: {
+        ...policy.modeLayouts.MZ_V1,
+        deviceClasses: [...policy.modeLayouts.MZ_V1.deviceClasses],
       },
     },
   };
@@ -169,6 +177,13 @@ export function HomeCompositionPolicyPanel() {
     experienceQuery.data,
     HOME_CONTRACT_CAPABILITIES.compositionV4
   );
+  const previewQuery = useQuery({
+    queryKey: ['admin', 'home-experience', 'composition-preview', draft],
+    queryFn: () => previewHomeCompositionPolicy(draft!),
+    enabled: Boolean(draft && compositionV4Supported),
+    staleTime: 15_000,
+    retry: 1,
+  });
 
   useEffect(() => {
     setDraft(clonePolicy(published));
@@ -280,33 +295,100 @@ export function HomeCompositionPolicyPanel() {
               {t('homeComposition.variant.description')}
             </Typography>
           </Box>
-          <ToggleButtonGroup
-            exclusive
-            size="small"
-            value={draft.experienceVariant}
-            disabled={!canWrite}
-            aria-label={t('homeComposition.variant.title')}
-            onChange={(_, experienceVariant: HomeExperienceVariant | null) => {
-              if (experienceVariant) setDraft({ ...draft, experienceVariant });
-            }}
-          >
-            <ToggleButton value="CLASSIC" aria-label={t('homeComposition.variant.classic')}>
-              <LayoutGrid size={16} aria-hidden="true" />
-              <Box component="span" sx={{ ml: 0.75 }}>
-                {t('homeComposition.variant.classic')}
-              </Box>
-            </ToggleButton>
-            <ToggleButton value="FLOW_V1" aria-label={t('homeComposition.variant.flow')}>
-              <Sparkles size={16} aria-hidden="true" />
-              <Box component="span" sx={{ ml: 0.75 }}>
-                {t('homeComposition.variant.flow')}
-              </Box>
-            </ToggleButton>
-          </ToggleButtonGroup>
+          <Stack gap={1.5} alignItems={{ xs: 'stretch', md: 'flex-end' }}>
+            <Box>
+              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
+                {t('homeComposition.variant.allowedTitle')}
+              </Typography>
+              <ToggleButtonGroup
+                size="small"
+                value={draft.allowedModes}
+                disabled={!canWrite}
+                aria-label={t('homeComposition.variant.allowedTitle')}
+                onChange={(_, allowedModes: HomeExperienceVariant[]) => {
+                  if (allowedModes.length === 0) return;
+                  const defaultMode = allowedModes.includes(draft.defaultMode)
+                    ? draft.defaultMode
+                    : allowedModes[0]!;
+                  setDraft({
+                    ...draft,
+                    allowedModes,
+                    defaultMode,
+                    experienceVariant: defaultMode,
+                  });
+                }}
+              >
+                {HOME_EXPERIENCE_VARIANTS.map((mode) => {
+                  const key = mode === 'CLASSIC' ? 'classic' : mode === 'FLOW_V1' ? 'flow' : 'mz';
+                  return (
+                    <ToggleButton
+                      key={mode}
+                      value={mode}
+                      aria-label={t(`homeComposition.variant.${key}`)}
+                    >
+                      {t(`homeComposition.variant.${key}`)}
+                    </ToggleButton>
+                  );
+                })}
+              </ToggleButtonGroup>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
+                {t('homeComposition.variant.defaultTitle')}
+              </Typography>
+              <ToggleButtonGroup
+                exclusive
+                size="small"
+                value={draft.defaultMode}
+                disabled={!canWrite}
+                aria-label={t('homeComposition.variant.defaultTitle')}
+                onChange={(_, defaultMode: HomeExperienceVariant | null) => {
+                  if (defaultMode)
+                    setDraft({ ...draft, defaultMode, experienceVariant: defaultMode });
+                }}
+              >
+                <ToggleButton
+                  value="CLASSIC"
+                  disabled={!draft.allowedModes.includes('CLASSIC')}
+                  aria-label={t('homeComposition.variant.classic')}
+                >
+                  <LayoutGrid size={16} aria-hidden="true" />
+                  <Box component="span" sx={{ ml: 0.75 }}>
+                    {t('homeComposition.variant.classic')}
+                  </Box>
+                </ToggleButton>
+                <ToggleButton
+                  value="FLOW_V1"
+                  disabled={!draft.allowedModes.includes('FLOW_V1')}
+                  aria-label={t('homeComposition.variant.flow')}
+                >
+                  <Sparkles size={16} aria-hidden="true" />
+                  <Box component="span" sx={{ ml: 0.75 }}>
+                    {t('homeComposition.variant.flow')}
+                  </Box>
+                </ToggleButton>
+                <ToggleButton
+                  value="MZ_V1"
+                  disabled={!draft.allowedModes.includes('MZ_V1')}
+                  aria-label={t('homeComposition.variant.mz')}
+                >
+                  <WandSparkles size={16} aria-hidden="true" />
+                  <Box component="span" sx={{ ml: 0.75 }}>
+                    {t('homeComposition.variant.mz')}
+                  </Box>
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          </Stack>
         </Stack>
-        {draft.experienceVariant === 'FLOW_V1' && (
+        {draft.defaultMode === 'FLOW_V1' && (
           <Alert severity="warning" sx={{ mb: 2 }}>
             {t('homeComposition.variant.flowNotice')}
+          </Alert>
+        )}
+        {draft.defaultMode === 'MZ_V1' && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            {t('homeComposition.variant.mzNotice')}
           </Alert>
         )}
       </Box>
@@ -354,7 +436,7 @@ export function HomeCompositionPolicyPanel() {
             onVisibilityChange={(visible) => updateZone('announcements', { visible })}
             control={
               <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="flex-end">
-                {draft.experienceVariant === 'FLOW_V1' ? (
+                {draft.defaultMode !== 'CLASSIC' ? (
                   <Chip
                     variant="outlined"
                     icon={<WorkspaceWidgetFootprintGlyph size="full" />}
@@ -413,6 +495,39 @@ export function HomeCompositionPolicyPanel() {
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
           {t('homeComposition.preview.description')}
         </Typography>
+        {previewQuery.data && (
+          <Stack gap={1} sx={{ mt: 1.5 }} data-home-composition-authoritative-preview>
+            <Stack direction="row" gap={0.75} flexWrap="wrap" alignItems="center">
+              <Typography variant="caption" color="text.secondary">
+                {t('homeComposition.preview.enabledModes')}
+              </Typography>
+              {previewQuery.data.enabledModes.map((mode) => (
+                <Chip
+                  key={mode}
+                  size="small"
+                  color={mode === previewQuery.data.effectiveDefaultMode ? 'primary' : 'default'}
+                  label={t(
+                    `homeComposition.variant.${mode === 'CLASSIC' ? 'classic' : mode === 'FLOW_V1' ? 'flow' : 'mz'}`
+                  )}
+                />
+              ))}
+            </Stack>
+            {previewQuery.data.effectiveDefaultMode !== draft.defaultMode && (
+              <Alert severity="warning">
+                {t('homeComposition.preview.effectiveDefault', {
+                  mode: t(
+                    `homeComposition.variant.${previewQuery.data.effectiveDefaultMode === 'CLASSIC' ? 'classic' : previewQuery.data.effectiveDefaultMode === 'FLOW_V1' ? 'flow' : 'mz'}`
+                  ),
+                })}
+              </Alert>
+            )}
+            {previewQuery.data.warnings.map((warning) => (
+              <Alert key={warning} severity="warning">
+                {warning}
+              </Alert>
+            ))}
+          </Stack>
+        )}
         <Box
           sx={{
             mt: 2,
@@ -425,7 +540,29 @@ export function HomeCompositionPolicyPanel() {
             bgcolor: 'background.default',
           }}
         >
-          {draft.experienceVariant === 'FLOW_V1' ? (
+          {draft.defaultMode === 'MZ_V1' ? (
+            <>
+              {[
+                ['context', 'GOVERNED'],
+                ['launcher', 'PERSONAL'],
+                ['stage', 'PERSONAL'],
+                ...(announcements.visible ? ([['required', 'GOVERNED']] as const) : []),
+                ['evidence', 'GOVERNED'],
+                ['plan', 'PERSONAL'],
+                ['related', 'GOVERNED'],
+              ].map(([zone, policy]) => (
+                <PreviewZone
+                  key={zone}
+                  columns={60}
+                  label={t(`homeComposition.preview.mz.${zone}`)}
+                  policy={policy as 'GOVERNED' | 'PERSONAL'}
+                  policyLabel={t(
+                    `homeComposition.policyKinds.${policy === 'GOVERNED' ? 'governed' : 'personal'}`
+                  )}
+                />
+              ))}
+            </>
+          ) : draft.defaultMode === 'FLOW_V1' ? (
             <>
               {[
                 ['context', 'GOVERNED'],

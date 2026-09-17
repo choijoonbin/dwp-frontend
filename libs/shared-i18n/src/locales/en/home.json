@@ -38,6 +38,128 @@
     "undoRecommendation": "Undo",
     "recommendationFeedbackError": "Recommendation feedback could not be saved."
   },
+  "mz": {
+    "stage": {
+      "eyebrow": "MZ / AI Stage",
+      "title": "What would you like to move forward?",
+      "description": "Describe the outcome you need. DWAI·ON will open a grounded workspace where you can inspect evidence, edit the plan, and review every owner action before handoff.",
+      "intentLabel": "Your intent",
+      "intentPlaceholder": "For example, prepare a launch-check meeting brief from my current work and calendar context",
+      "intentHelper": "Your request is transferred to DWAI·ON only after you choose the review action.",
+      "handoff": "Build a reviewable plan in DWAI·ON",
+      "handoffPending": "Preparing the secure handoff",
+      "handoffError": "The DWAI·ON handoff could not be prepared. Try again after checking access.",
+      "reviewBoundary": "No task is executed from Home. Review and confirmation remain required in the owner product.",
+      "contextEyebrow": "Grounded context",
+      "contextTitle": "Available for this handoff",
+      "homeContext": "Current Home brief",
+      "context": {
+        "action": "Action signals",
+        "timeline": "Timeline signals",
+        "response": "Response signals",
+        "apps": "Approved apps"
+      },
+      "startersTitle": "Start with a grounded question",
+      "suggestedTitle": "Suggested starting points (no current source evidence)",
+      "suggestedSource": "General suggestion without a source record",
+      "relatedApps": "Related approved apps",
+      "scenes": {
+        "title": "Context scene (selected by you)",
+        "focus": "Focus now",
+        "meeting": "Prepare a meeting",
+        "team": "Coordinate with my team"
+      },
+      "starters": {
+        "brief": "Prepare a brief from my current priorities",
+        "plan": "Build a plan around today's deadlines",
+        "followup": "Find follow-ups waiting for my response"
+      },
+      "aiUnavailable": "DWAI·ON is not available in your current app access. You can still inspect the grounded Home context below.",
+      "loadingEvidence": "Grounded sources are loading. Suggested counts and source-backed starters will appear after the response is known.",
+      "refreshingEvidence": "Grounded sources are refreshing. Existing source-backed context remains visible until the refresh completes.",
+      "partialEvidence": "Only part of the grounded context is available. Verify each source in the workspace below."
+    },
+    "launcher": {
+      "title": "Quick context launcher",
+      "description": "{{count}} approved apps remain available in their governed order.",
+      "all": "All apps"
+    },
+    "workspace": {
+      "title": "Evidence and review workspace",
+      "description": "Live, permission-scoped signals are separated from the editable plan preview and owner actions.",
+      "state": {
+        "READY": "Sources ready",
+        "EMPTY": "No current signals",
+        "PARTIAL": "Partial sources",
+        "STALE": "Stale sources",
+        "RESTRICTED": "Permission restricted",
+        "CONFIGURATION_REQUIRED": "Setup required",
+        "UNAVAILABLE": "Sources unavailable",
+        "LOADING": "Loading sources",
+        "REFRESHING": "Refreshing sources"
+      },
+      "stateDescription": {
+        "EMPTY": "No source currently has a visible item. This is an empty result, not a completed task.",
+        "PARTIAL": "Some providers returned partial data. Review each source before relying on the plan.",
+        "STALE": "At least one provider is showing its last successful result.",
+        "RESTRICTED": "Your current permissions do not expose grounded source records. Restricted data is not represented as an empty result.",
+        "CONFIGURATION_REQUIRED": "A required provider is not configured. Complete setup before relying on a grounded plan.",
+        "UNAVAILABLE": "Grounded sources are unavailable. AI handoff must not represent this state as verified evidence.",
+        "LOADING": "Grounded providers are still loading. No result count is shown until the source response is known.",
+        "REFRESHING": "The last known evidence remains visible while grounded providers refresh."
+      },
+      "aiUnavailable": "AI handoff is unavailable. Source links and approved apps remain available.",
+      "evidence": {
+        "title": "Grounded evidence",
+        "description": "Each item retains its owning product and freshness boundary.",
+        "empty": "There is no permission-scoped evidence to preview.",
+        "fresh": "Current",
+        "stale": "Last successful"
+      },
+      "openSource": "Open source",
+      "plan": {
+        "title": "Candidate plan preview",
+        "description": "These candidate steps are derived from visible evidence. Review and edit the final plan in DWAI·ON.",
+        "empty": "A plan preview will appear when grounded evidence is available.",
+        "reviewEvidence": "Review the source evidence and expected outcome.",
+        "reviewBoundary": "Preview only. No owner action runs until you review and confirm it in the owning product."
+      },
+      "lanes": {
+        "timeline": "Time",
+        "response": "Responses",
+        "request": "Waiting",
+        "empty": "Nothing visible in this lane"
+      },
+      "related": {
+        "title": "Related apps and materials",
+        "description": "Open the owning product to inspect or change its source record."
+      }
+    },
+    "relatedNews": {
+      "title": "Relevant news",
+      "empty": "No relevant organization news is available.",
+      "minutes": "min read",
+      "open": "Open",
+      "state": {
+        "AVAILABLE": "Current",
+        "FORBIDDEN": "Restricted",
+        "UNAVAILABLE": "Unavailable",
+        "LOADING": "Loading",
+        "REFRESHING": "Refreshing",
+        "ERROR": "Refresh failed"
+      },
+      "loading": "Relevant organization news is loading. No empty result has been concluded.",
+      "refreshing": "Relevant organization news is refreshing. Last confirmed items remain visible.",
+      "error": "Relevant organization news could not be refreshed."
+    },
+    "scope": {
+      "title": "Evidence scope",
+      "description": "MZ uses only sources and apps available to your current identity. Missing access is never presented as a zero result.",
+      "helpTitle": "Review and control",
+      "helpDescription": "Inspect personal AI controls, source boundaries, and retained work before starting a handoff.",
+      "openControls": "Open AI controls"
+    }
+  },
   "command": {
     "dismiss": {
       "title": "Hide this recommendation?",
@@ -91,7 +213,7 @@
     "portalMetadata": "· Product Operations · {{currentDate}} · Last refreshed 09:58 KST",
     "portalTimestamp": "· 09:58 KST",
     "modeAriaLabel": "Home experience mode",
-    "classicModePrefix": "Classic\u00a0",
+    "classicModePrefix": "Classic ",
     "flowModeLabel": "Flow personal execution",
     "featuredCategory": "Organization update · Direction",
     "roadmapMeta": "Execution roadmap v1.0 / Department guidance included",
@@ -1373,7 +1495,9 @@
         "artifact": "DWAI·ON artifact"
       }
     },
-    "action": { "openSource": "Open source" },
+    "action": {
+      "openSource": "Open source"
+    },
     "metric": {
       "pending": "Pending",
       "dueToday": "Due today",
@@ -1403,7 +1527,9 @@
       "urgent": "{{count}} urgent",
       "bookingLocation": "{{site}} · {{floor}}"
     },
-    "empty": { "verified": "Checked and up to date" }
+    "empty": {
+      "verified": "Checked and up to date"
+    }
   },
   "widgetRuntime": {
     "unavailableLabel": "{{label}} is unavailable",

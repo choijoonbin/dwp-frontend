@@ -20,6 +20,7 @@ import {
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
+import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -41,7 +42,7 @@ import {
 
 import type { LucideIcon } from 'lucide-react';
 
-type HomeExperienceMode = 'CLASSIC' | 'FLOW_V1';
+type HomeExperienceMode = HomeExperienceVariant;
 
 type HomeNavigationItem = {
   key:
@@ -211,7 +212,7 @@ export function HomeLayout() {
   const shell = shellRegistry.home;
   const [mode, setMode] = useState<HomeExperienceMode>('CLASSIC');
   const navigation = useDesktopNavigation(shell, {
-    defaultCompact: mode === 'FLOW_V1',
+    defaultCompact: mode !== 'CLASSIC',
     storageScope: `home:${mode}`,
   });
   const navigationItems = useMemo(
@@ -338,7 +339,7 @@ export function HomeLayout() {
               compact={navigation.compact}
               collapsible={navigation.collapsible}
               controlsId="home-desktop-navigation"
-              label={mode === 'CLASSIC' ? 'Classic' : 'Flow'}
+              label={mode === 'CLASSIC' ? 'Classic' : mode === 'FLOW_V1' ? 'Flow' : 'MZ / AI Stage'}
               onToggle={navigation.toggle}
             />
             <Divider />
@@ -359,7 +360,7 @@ export function HomeLayout() {
             compact={false}
             collapsible={false}
             controlsId="home-mobile-navigation"
-            label={mode === 'CLASSIC' ? 'Classic' : 'Flow'}
+            label={mode === 'CLASSIC' ? 'Classic' : mode === 'FLOW_V1' ? 'Flow' : 'MZ / AI Stage'}
             onDismiss={mobileNavigation.dismiss}
             onToggle={() => undefined}
           />

@@ -897,9 +897,13 @@
     "variant": {
       "title": "Published home experience",
       "description": "Choose the tenant-wide read path. Existing personal preferences remain intact when switching between experiences.",
+      "allowedTitle": "Modes available to members",
+      "defaultTitle": "Organization default mode",
       "classic": "Classic Home",
       "flow": "Flow Home",
-      "flowNotice": "Publish Flow Home only for an approved rollout cohort. The server kill switch can still return everyone to Classic Home without changing saved preferences."
+      "mz": "MZ / AI Stage",
+      "flowNotice": "Publish Flow Home only for an approved rollout cohort. The server kill switch can still return everyone to Classic Home without changing saved preferences.",
+      "mzNotice": "MZ is an independent, mode-scoped AI Stage. Intent handoff remains review-only and each owner product enforces its own action authority."
     },
     "personal": {
       "title": "Allow member home personalization",
@@ -941,7 +945,18 @@
     "preview": {
       "title": "Composition preview",
       "description": "Desktop uses the 60-unit grid. Tablet and mobile promote every zone to full width.",
+      "enabledModes": "Effective rollout modes",
+      "effectiveDefault": "The current rollout policy will serve {{mode}} as the effective default.",
       "commandRail": "Command rail",
+      "mz": {
+        "context": "Tenant context and workscape",
+        "launcher": "Compact approved app launcher",
+        "stage": "AI intent and review stage",
+        "required": "Required notice rail",
+        "evidence": "Grounded evidence and freshness",
+        "plan": "Candidate plan and owner handoff",
+        "related": "Relevant news, scope, and help"
+      },
       "flow": {
         "context": "Compact context",
         "dock": "My App Dock",

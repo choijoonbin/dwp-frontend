@@ -41,7 +41,7 @@ export type ExecuteHomeV2WidgetActionInput = Readonly<{
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const OFFSET_TIMESTAMP_PATTERN = /T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
-const HOME_MODES = new Set<HomeExperienceVariant>(['CLASSIC', 'FLOW_V1']);
+const HOME_MODES = new Set<HomeExperienceVariant>(['CLASSIC', 'FLOW_V1', 'MZ_V1']);
 const HOME_DEVICES = new Set<HomeDeviceClass>([
   'DESKTOP_WIDE',
   'DESKTOP_STANDARD',

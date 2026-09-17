@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ErrorState, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
 import {
   HOME_CONTRACT_CAPABILITIES,
   getHomeExperience,
   getHomeOverview,
+  getHomePreference,
   hasHomeContractCapability,
+  updateHomeCurrentMode,
 } from '@dwp-frontend/shared-utils';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
@@ -22,6 +24,9 @@ import {
 } from '../../features/home-personalization/home-personalization-studio';
 import { defaultHomeWidgets } from '../../features/home/home-widget-registry';
 import { useHomeWidgetRegistryRuntime } from '../../features/home/runtime/use-home-widget-registry';
+import { HOME_APPS } from '../../components/workspace-composer/app-launchpad-model';
+import { reconcileHomeCompositionPolicy } from '../../features/home/home-composition-policy';
+import { HOME_V2_QUERY_ROOT } from '../../features/home/runtime/use-home-v2-runtime';
 
 import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
@@ -73,7 +78,9 @@ function effectiveMode(
     policy &&
     typeof policy === 'object' &&
     'experienceVariant' in policy &&
-    (policy.experienceVariant === 'CLASSIC' || policy.experienceVariant === 'FLOW_V1')
+    (policy.experienceVariant === 'CLASSIC' ||
+      policy.experienceVariant === 'FLOW_V1' ||
+      policy.experienceVariant === 'MZ_V1')
   ) {
     return policy.experienceVariant;
   }
@@ -84,11 +91,8 @@ export default function AccountHomeSettingsPage() {
   const { t } = useTranslation(['account', 'homeStudio']);
   const { homeSection } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const auth = useAuth();
-  const widgetRegistry = useHomeWidgetRegistryRuntime(
-    auth.user?.tenantId ?? undefined,
-    auth.user?.userId ?? undefined
-  );
   const experienceQuery = useQuery({
     queryKey: ['home-experience'],
     queryFn: getHomeExperience,
@@ -100,6 +104,51 @@ export default function AccountHomeSettingsPage() {
     queryFn: () => getHomeOverview(),
     staleTime: 30_000,
     retry: 1,
+  });
+  const preferenceQuery = useQuery({
+    queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
+    queryFn: getHomePreference,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const registryPolicy = reconcileHomeCompositionPolicy(experienceQuery.data?.compositionPolicy);
+  const preferredRegistryMode = preferenceQuery.data?.currentMode;
+  const registryMode =
+    preferredRegistryMode && registryPolicy.allowedModes.includes(preferredRegistryMode)
+      ? preferredRegistryMode
+      : experienceQuery.data
+        ? effectiveMode(experienceQuery.data)
+        : registryPolicy.defaultMode;
+  const widgetRegistry = useHomeWidgetRegistryRuntime(
+    auth.user?.tenantId ?? undefined,
+    auth.user?.userId ?? undefined,
+    registryMode
+  );
+  const modeMutation = useMutation({
+    mutationFn: async (mode: HomeExperienceVariant) => {
+      if (!preferenceQuery.data) throw new Error('Home preference is unavailable.');
+      const enabledModes =
+        preferenceQuery.data.enabledModes ??
+        preferenceQuery.data.allowedModes ??
+        registryPolicy.allowedModes;
+      if (!enabledModes.includes(mode)) {
+        throw new Error('The requested Home mode is disabled by organization rollout policy.');
+      }
+      return updateHomeCurrentMode(preferenceQuery.data, mode);
+    },
+    onSuccess: async (preference) => {
+      queryClient.setQueryData(
+        ['home-preference', auth.user?.tenantId, auth.user?.userId],
+        preference
+      );
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
+        queryClient.invalidateQueries({ queryKey: ['home-experience'] }),
+        queryClient.invalidateQueries({ queryKey: ['home-view'] }),
+        queryClient.invalidateQueries({ queryKey: ['home-personalization'] }),
+      ]);
+    },
   });
   const seedLayout = useMemo(
     () => ({ appLayout: null, presentation: 'balanced' as const, widgets: defaultHomeWidgets() }),
@@ -125,7 +174,12 @@ export default function AccountHomeSettingsPage() {
   }
 
   const experience = experienceQuery.data;
-  const modeKey = effectiveMode(experience);
+  const policy = reconcileHomeCompositionPolicy(experience.compositionPolicy);
+  const preferenceMode = preferenceQuery.data?.currentMode;
+  const modeKey =
+    preferenceMode && policy.allowedModes.includes(preferenceMode)
+      ? preferenceMode
+      : effectiveMode(experience);
   const modeScopedViews = hasHomeContractCapability(
     experience,
     HOME_CONTRACT_CAPABILITIES.modeScopedViews
@@ -181,6 +235,27 @@ export default function AccountHomeSettingsPage() {
         widgetRuntimeDecisions={widgetRegistry.decisions}
         effectiveWidgetCatalog={widgetRegistry.effectiveCatalog}
         feedbackBusy={false}
+        modePreset={
+          preferenceQuery.data
+            ? {
+                currentMode: modeKey,
+                initialSelectedMode: modeKey,
+                allowedModes: preferenceQuery.data.allowedModes ?? policy.allowedModes,
+                enabledModes:
+                  preferenceQuery.data.enabledModes ??
+                  preferenceQuery.data.allowedModes ??
+                  policy.allowedModes,
+                disabledModeReasons: preferenceQuery.data.disabledModeReasons,
+                defaultMode: preferenceQuery.data.defaultMode ?? policy.defaultMode,
+                sharedAppOrder: HOME_APPS.map((app) => ({ id: app.id, label: app.name })),
+                disabled: preferenceQuery.isFetching || modeMutation.isPending,
+                applying: modeMutation.isPending,
+                onApply: async (mode) => {
+                  await modeMutation.mutateAsync(mode);
+                },
+              }
+            : undefined
+        }
         onRetryOverview={() => void overviewQuery.refetch()}
         onClose={() => undefined}
         onEditView={() => navigate('/account/settings/home/layout')}

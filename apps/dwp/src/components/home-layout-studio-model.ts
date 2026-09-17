@@ -285,7 +285,8 @@ export function resolveHomeStudioCatalog(
   mode: HomeView['modeKey'] | undefined
 ): readonly StudioCatalogItem[] {
   if (!effectiveCatalog) return SAFE_FALLBACK_CATALOG;
-  const placementContext = mode === 'FLOW_V1' ? 'FLOW_PERSONAL' : 'CLASSIC_PERSONAL';
+  const placementContext =
+    mode === 'FLOW_V1' ? 'FLOW_PERSONAL' : mode === 'MZ_V1' ? 'MZ_PERSONAL' : 'CLASSIC_PERSONAL';
   const context = effectiveCatalog.contexts.find(
     (candidate) => candidate.placementContext === placementContext
   );

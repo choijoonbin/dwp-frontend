@@ -22,8 +22,10 @@ import type {
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
   if (value !== null && typeof value === 'object') {
-    return `{${Object.entries(value).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
-      .map(([key, child]) => `${JSON.stringify(key)}:${canonical(child)}`).join(',')}}`;
+    return `{${Object.entries(value)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([key, child]) => `${JSON.stringify(key)}:${canonical(child)}`)
+      .join(',')}}`;
   }
   return JSON.stringify(value);
 }
@@ -168,43 +170,54 @@ describe('widget registry connection', () => {
   });
 
   it('rotates the effective cache key across identity and decision revisions', () => {
-    const initial = homeWidgetRegistryEffectiveQueryKey(1, 7, readiness());
-    expect(homeWidgetRegistryEffectiveQueryKey(1, 7, readiness())).toEqual(initial);
-    expect(homeWidgetRegistryEffectiveQueryKey(1, 7, readiness({ safetyRevision: 2 }))).not.toEqual(
-      initial
-    );
-    expect(homeWidgetRegistryEffectiveQueryKey(2, 7, readiness())).not.toEqual(initial);
+    const initial = homeWidgetRegistryEffectiveQueryKey(1, 7, 'CLASSIC', readiness());
+    expect(homeWidgetRegistryEffectiveQueryKey(1, 7, 'CLASSIC', readiness())).toEqual(initial);
+    expect(
+      homeWidgetRegistryEffectiveQueryKey(1, 7, 'CLASSIC', readiness({ safetyRevision: 2 }))
+    ).not.toEqual(initial);
+    expect(homeWidgetRegistryEffectiveQueryKey(2, 7, 'CLASSIC', readiness())).not.toEqual(initial);
+    expect(homeWidgetRegistryEffectiveQueryKey(1, 7, 'MZ_V1', readiness())).not.toEqual(initial);
   });
 });
 
 describe('native renderer allowlist', () => {
   it('matches all seven first-party fixture bindings exactly', () => {
-    const fixtureBindings = firstPartyFixture.fixtures.map(({ legacyWidgetKey, manifest, semanticVersion, expectedSha256 }) => ({
-      legacyWidgetKey,
-      definitionKey: manifest.definitionKey,
-      semanticVersion,
-      expectedManifestHash: expectedSha256,
-      rendererKey: manifest.renderer.rendererKey,
-      minimumHostApiVersion: manifest.renderer.minimumHostApiVersion,
-      supportedContexts: manifest.placement.supportedContexts,
-    }));
+    const fixtureBindings = firstPartyFixture.fixtures.map(
+      ({ legacyWidgetKey, manifest, semanticVersion, expectedSha256 }) => ({
+        legacyWidgetKey,
+        definitionKey: manifest.definitionKey,
+        semanticVersion,
+        expectedManifestHash: expectedSha256,
+        rendererKey: manifest.renderer.rendererKey,
+        minimumHostApiVersion: manifest.renderer.minimumHostApiVersion,
+        supportedContexts: manifest.placement.supportedContexts,
+      })
+    );
     expect(NATIVE_HOME_WIDGET_BINDINGS).toEqual(fixtureBindings);
     expect(new Set(fixtureBindings.map((binding) => binding.rendererKey)).size).toBe(7);
     expect(new Set(fixtureBindings.map((binding) => binding.definitionKey)).size).toBe(7);
   });
 
   it('pins the seven native manifests independently of the full runtime catalog', () => {
-    const sorted = [...NATIVE_HOME_WIDGET_BINDINGS]
-      .sort((a, b) => a.rendererKey < b.rendererKey ? -1 : a.rendererKey > b.rendererKey ? 1 : 0);
+    const sorted = [...NATIVE_HOME_WIDGET_BINDINGS].sort((a, b) =>
+      a.rendererKey < b.rendererKey ? -1 : a.rendererKey > b.rendererKey ? 1 : 0
+    );
     expect(sorted.map((binding) => binding.rendererKey)).toEqual([
-      'home.activity', 'home.command-rail', 'home.daily-brief', 'home.focus',
-      'home.focus-balance', 'home.meeting-load', 'home.schedule',
+      'home.activity',
+      'home.command-rail',
+      'home.daily-brief',
+      'home.focus',
+      'home.focus-balance',
+      'home.meeting-load',
+      'home.schedule',
     ]);
     const material = sorted
-      .map((binding) => `${binding.rendererKey}:${binding.expectedManifestHash}`).join('\n');
+      .map((binding) => `${binding.rendererKey}:${binding.expectedManifestHash}`)
+      .join('\n');
     const nativeSubsetRevision = createHash('sha256').update(material).digest('hex');
-    expect(nativeSubsetRevision)
-      .toBe('656986e3056f42073ff5af2b6501d798d33ee2fabc615c8d602bd7f0edc20939');
+    expect(nativeSubsetRevision).toBe(
+      '656986e3056f42073ff5af2b6501d798d33ee2fabc615c8d602bd7f0edc20939'
+    );
     expect(HOME_NATIVE_BINDING_CATALOG_REVISION).not.toBe(nativeSubsetRevision);
   });
 
@@ -300,29 +313,43 @@ describe('shadow drift observation', () => {
   });
 
   it.each(['owner', 'source', 'authority', 'capability', 'policy', 'preset', 'contexts'])(
-    'reports semantic %s drift even when every effective rendering decision is available', (field) => {
+    'reports semantic %s drift even when every effective rendering decision is available',
+    (field) => {
       const changed = structuredClone(firstPartyFixture.fixtures);
-      const manifest = changed.find((fixture) => fixture.legacyWidgetKey === 'focus-balance')!.manifest;
+      const manifest = changed.find(
+        (fixture) => fixture.legacyWidgetKey === 'focus-balance'
+      )!.manifest;
       if (field === 'owner') manifest.owner.productKey = 'core.work';
       if (field === 'source') manifest.owner.sourceAppResourceKey = 'APP.WORK';
       if (field === 'authority') manifest.requiredAuthorities = ['APP.WORK:VIEW'];
       if (field === 'capability') manifest.dataCapabilities = ['WORK.ITEMS.LIST'];
       if (field === 'policy') manifest.placement.policyClass = 'GOVERNED';
       if (field === 'preset') manifest.sharing.presetEligible = true;
-      if (field === 'contexts') manifest.placement.supportedContexts = ['CLASSIC_PERSONAL', 'FLOW_GOVERNED'];
-      const material = changed.sort((a, b) => a.manifest.renderer.rendererKey < b.manifest.renderer.rendererKey ? -1 : 1).map((fixture) => `${fixture.manifest.renderer.rendererKey}:${
-        createHash('sha256').update(canonical(fixture.manifest)).digest('hex')
-      }`).join('\n');
+      if (field === 'contexts')
+        manifest.placement.supportedContexts = ['CLASSIC_PERSONAL', 'FLOW_GOVERNED'];
+      const material = changed
+        .sort((a, b) =>
+          a.manifest.renderer.rendererKey < b.manifest.renderer.rendererKey ? -1 : 1
+        )
+        .map(
+          (fixture) =>
+            `${fixture.manifest.renderer.rendererKey}:${createHash('sha256')
+              .update(canonical(fixture.manifest))
+              .digest('hex')}`
+        )
+        .join('\n');
       const revision = createHash('sha256').update(material).digest('hex');
       expect(revision).not.toBe(HOME_NATIVE_BINDING_CATALOG_REVISION);
       const shadow = catalog({ mode: 'SHADOW', bindingCatalogRevision: revision });
       const observation = observeHomeWidgetShadow(shadowConnection, shadow);
       expect(observation.status).toBe('DRIFT');
       expect(observation.mismatchCount).toBe(7);
-      expect(observation.mismatches.every((mismatch) => mismatch.observedReason === 'INCOMPATIBLE'))
-        .toBe(true);
-      expect(resolveHomeWidgetRuntimeDecisions(shadowConnection, shadow)['focus-balance'].render)
-        .toBe('NATIVE');
+      expect(
+        observation.mismatches.every((mismatch) => mismatch.observedReason === 'INCOMPATIBLE')
+      ).toBe(true);
+      expect(
+        resolveHomeWidgetRuntimeDecisions(shadowConnection, shadow)['focus-balance'].render
+      ).toBe('NATIVE');
     }
   );
 
@@ -408,11 +435,34 @@ describe('authoritative widget access', () => {
     })
   );
 
+  it('projects canonical Flow-capable native manifests into the backward-compatible MZ context', () => {
+    const classic = catalog();
+    const mz = catalog({
+      hostContext: { ...classic.hostContext, resolvedHostMode: 'MZ' },
+      contexts: [
+        {
+          ...classic.contexts[0]!,
+          placementContext: 'MZ_PERSONAL',
+        },
+      ],
+    });
+
+    expect(
+      Object.values(resolveHomeWidgetRuntimeDecisions(connection, mz)).every(
+        (decision) => decision.render === 'NATIVE'
+      )
+    ).toBe(true);
+  });
+
   it('fails closed for missing, duplicate, mismatched, or unresolved definitions', () => {
     expect(resolveHomeWidgetRuntimeDecisions(connection, null).focus.render).toBe('UNAVAILABLE');
     const complete = catalog();
-    expect(resolveHomeWidgetRuntimeDecisions(connection, catalog({ bindingCatalogRevision: 'b'.repeat(64) })).focus.render)
-      .toBe('UNAVAILABLE');
+    expect(
+      resolveHomeWidgetRuntimeDecisions(
+        connection,
+        catalog({ bindingCatalogRevision: 'b'.repeat(64) })
+      ).focus.render
+    ).toBe('UNAVAILABLE');
     const missing = catalog({
       contexts: [
         {

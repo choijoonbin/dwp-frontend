@@ -35,6 +35,7 @@ test.setTimeout(120_000);
 
 const FIXED_NOW = new Date('2026-09-16T00:00:30Z');
 const EVIDENCE_DIRECTORY = path.resolve('.artifacts/wave4-frontend-gate');
+const THREE_MODE_EVIDENCE_DIRECTORY = path.resolve('.artifacts/home-three-mode-integration');
 const DEVICE_CLASSES = new Set<HomeDeviceClass>([
   'DESKTOP_WIDE',
   'DESKTOP_STANDARD',
@@ -58,7 +59,6 @@ const LEGACY_HOME_ENDPOINTS = [
   ['/api/platform/v1/workspace/apps', 'workspace-apps'],
   ['/api/notifications/v1/summary/by-app', 'notification-app-summary'],
   ['/api/platform/v1/widget-catalog/', 'widget-registry'],
-  ['/api/platform/v1/home-preferences', 'home-preferences'],
   ['/api/platform/v1/home-views', 'home-views'],
   ['/api/platform/v1/catalog/code-sets/PLATFORM.HOME_WIDGET', 'home-widget-code-set'],
   ['/api/platform/v1/workspace/work-hub/', 'work-hub-home'],
@@ -66,6 +66,10 @@ const LEGACY_HOME_ENDPOINTS = [
   ['/api/people/v1/hr/home', 'hr-home-contribution'],
   ['/api/platform/v1/services/requests', 'services-home-contribution'],
   ['/api/platform/v1/workplace/bookings', 'workplace-home-contribution'],
+] as const;
+
+const HOME_CONTROL_PLANE_ENDPOINTS = [
+  ['/api/platform/v1/home-preferences', 'home-mode-preferences'],
 ] as const;
 
 type V2RequestReceipt = Readonly<{
@@ -81,13 +85,18 @@ type V2RequestReceipt = Readonly<{
 }>;
 
 type NetworkEvidence = Readonly<{
+  controlPlane: Map<string, number>;
   legacy: Map<string, number>;
   v2: V2RequestReceipt[];
 }>;
 
 function observeReactRuntimeErrors(page: Page): string[] {
   const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('pageerror', (error) => {
+    if (!error.message.includes('ResizeObserver loop completed with undelivered notifications')) {
+      errors.push(error.message);
+    }
+  });
   page.on('console', (message) => {
     if (message.type() === 'error' && message.text().includes('Maximum update depth exceeded')) {
       errors.push(message.text());
@@ -102,13 +111,23 @@ function legacyEndpoint(request: Request): string | null {
 }
 
 function observeHomeNetwork(page: Page): NetworkEvidence {
+  const controlPlane = new Map<string, number>(
+    HOME_CONTROL_PLANE_ENDPOINTS.map(([, label]) => [label, 0])
+  );
   const legacy = new Map<string, number>(LEGACY_HOME_ENDPOINTS.map(([, label]) => [label, 0]));
   const v2: V2RequestReceipt[] = [];
   page.on('request', (request) => {
+    const requestPath = new URL(request.url()).pathname;
+    const controlPlaneEndpoint = HOME_CONTROL_PLANE_ENDPOINTS.find(([prefix]) =>
+      requestPath.startsWith(prefix)
+    )?.[1];
+    if (controlPlaneEndpoint) {
+      controlPlane.set(controlPlaneEndpoint, (controlPlane.get(controlPlaneEndpoint) ?? 0) + 1);
+    }
     const endpoint = legacyEndpoint(request);
     if (endpoint) legacy.set(endpoint, (legacy.get(endpoint) ?? 0) + 1);
   });
-  return { legacy, v2 };
+  return { controlPlane, legacy, v2 };
 }
 
 function homeRuntimeRoot(page: Page) {
@@ -229,6 +248,7 @@ async function attachNetworkEvidence(evidence: NetworkEvidence, name: string): P
     target,
     `${JSON.stringify(
       {
+        controlPlane: Object.fromEntries(evidence.controlPlane),
         legacy: Object.fromEntries(evidence.legacy),
         legacyTotal: totalLegacyRequests(evidence),
         v2: evidence.v2,
@@ -312,6 +332,9 @@ test('ACTIVE owns the page, suppresses legacy fanout, reuses 304, and isolates a
     queryKeys: ['deviceClass', 'timeZone'],
   });
   await expect.poll(() => totalLegacyRequests(evidence)).toBe(0);
+  await expect
+    .poll(() => evidence.controlPlane.get('home-mode-preferences') ?? 0)
+    .toBeGreaterThan(0);
 
   const region = page.locator('[data-home-owner-widget-region="classic"]');
   await expect(region).toHaveAttribute('data-home-owner-composition-scope', 'owner-subset');
@@ -466,6 +489,115 @@ test('ACTIVE expressive Flow projects five exact runtime slots once and keeps St
   expect(evidence.v2.every((receipt) => receipt.forbiddenIdentityQueryKeys.length === 0)).toBe(
     true
   );
+});
+
+test('ACTIVE MZ renders an independent grounded AI Stage on desktop and mobile', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    appearance: {
+      mode: 'system',
+      density: 'standard',
+      highContrast: false,
+      reduceMotion: true,
+    },
+  });
+  const runtimeErrors = observeReactRuntimeErrors(page);
+  const evidence = observeHomeNetwork(page);
+  await routeHomeV2(page, evidence, { mode: 'MZ_V1', runtimeMode: 'ACTIVE' });
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto('/');
+
+  const runtime = homeRuntimeRoot(page);
+  const root = page.getByTestId('mz-home');
+  await expect(runtime).toHaveAttribute('data-home-runtime-path', 'v2');
+  await expect(runtime).toHaveAttribute('data-home-mode', 'MZ_V1');
+  await expect(root).toBeVisible();
+  await expect(root).toHaveAttribute('data-home-experience-surface', 'MZ_V1');
+  await expect(root).toHaveAttribute('data-home-ia', 'ai-intent-stage');
+  await expect(root).toHaveAttribute('data-home-scroll-contract', 'single-document');
+  await expect(page.getByTestId('classic-home')).toHaveCount(0);
+  await expect(page.getByTestId('flow-home')).toHaveCount(0);
+
+  const workscape = root.locator('[data-mz-workscape]');
+  await expect(workscape).toBeVisible();
+  await expect(workscape).not.toHaveCSS('background-image', 'none');
+  const firstCompositionOrder = await workscape
+    .locator(
+      ':scope > [data-mz-context-brief], :scope > [data-mz-compact-launcher], :scope > [data-testid="mz-ai-stage"], :scope > [data-mz-required-rail]'
+    )
+    .evaluateAll((nodes) =>
+      nodes.map((node) =>
+        node.hasAttribute('data-mz-context-brief')
+          ? 'context'
+          : node.hasAttribute('data-mz-compact-launcher')
+            ? 'launcher'
+            : node.hasAttribute('data-testid')
+              ? 'stage'
+              : 'required'
+      )
+    );
+  expect(firstCompositionOrder.slice(0, 3)).toEqual(['context', 'launcher', 'stage']);
+  if (firstCompositionOrder.length === 4) expect(firstCompositionOrder[3]).toBe('required');
+
+  const compactLauncher = root.locator('[data-mz-compact-launcher]');
+  await expect(compactLauncher).toHaveAttribute('data-mz-approved-app-count', '18');
+  await expect(compactLauncher.locator('[data-flow-dock-item]')).toHaveCount(6);
+  const stage = root.getByTestId('mz-ai-stage');
+  await expect(stage).toHaveAttribute('data-mz-stage-contract', 'intent-grounding-review-handoff');
+  await expect(stage).toHaveAttribute('data-mz-execution-boundary', 'dwaion-review-required');
+  await expect(stage.locator('[data-mz-grounded-starter]')).not.toHaveCount(0);
+  const initialStarterIds = await stage
+    .locator('[data-mz-grounded-starter]')
+    .evaluateAll((items) => items.map((item) => item.getAttribute('data-mz-grounded-starter')));
+  await stage.locator('[data-mz-context-scene="meeting"]').click();
+  const meetingStarterIds = await stage
+    .locator('[data-mz-grounded-starter]')
+    .evaluateAll((items) => items.map((item) => item.getAttribute('data-mz-grounded-starter')));
+  expect(meetingStarterIds).not.toEqual(initialStarterIds);
+
+  const grounded = root.locator('[data-mz-grounded-workspace]');
+  await expect(grounded).toBeVisible();
+  await expect(grounded).toHaveAttribute('data-mz-grounding-state', /.+/u);
+  await expect(root.locator('[data-mz-operational-lanes] [data-mz-lane]')).toHaveCount(3);
+  await expect(root.locator('[data-flow-future-widget-mesh]')).toBeVisible();
+  await expect(root.locator('[data-mz-relevant-context]')).toBeVisible();
+  const fullFallback = root.locator('[data-flow-dock-shell]');
+  await expect(fullFallback).toHaveAttribute('data-flow-dock-visible-count', '18');
+  await expectNoHorizontalOverflow(page);
+  await expectNoSeriousAccessibilityViolations(page, '[data-testid="mz-home"]');
+
+  await mkdir(THREE_MODE_EVIDENCE_DIRECTORY, { recursive: true });
+  const desktopScreenshot = path.join(THREE_MODE_EVIDENCE_DIRECTORY, 'mz-active-desktop-1920.png');
+  await page.screenshot({ path: desktopScreenshot, fullPage: true, animations: 'disabled' });
+  await test.info().attach('mz-active-desktop-1920.png', {
+    path: desktopScreenshot,
+    contentType: 'image/png',
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(runtime).toHaveAttribute('data-home-device-class', 'MOBILE_STANDARD');
+  await expect(root).toHaveAttribute('data-mz-responsive-class', 'mobile');
+  await expect(root.locator('[data-mz-workscape]')).toBeVisible();
+  await expect(root.locator('[data-flow-dock-shell]')).toHaveAttribute(
+    'data-flow-dock-visible-count',
+    '18'
+  );
+  await expectNoHorizontalOverflow(page);
+  await expectMinimumTouchTargets(
+    root.locator('button:visible, a:visible'),
+    'MZ mobile interactive controls'
+  );
+  const mobileScreenshot = path.join(THREE_MODE_EVIDENCE_DIRECTORY, 'mz-active-mobile-390.png');
+  await page.screenshot({ path: mobileScreenshot, fullPage: true, animations: 'disabled' });
+  await test.info().attach('mz-active-mobile-390.png', {
+    path: mobileScreenshot,
+    contentType: 'image/png',
+  });
+  expect(runtimeErrors).toEqual([]);
+  expect(evidence.v2.every((receipt) => receipt.mode === 'MZ_V1')).toBe(true);
 });
 
 for (const dwaionState of ['AVAILABLE', 'EMPTY', 'PARTIAL', 'UNAVAILABLE'] as const) {

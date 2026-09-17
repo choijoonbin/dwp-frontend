@@ -175,7 +175,7 @@ const OFFSET_TIMESTAMP_PATTERN = /T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{
 const INTERNAL_ROUTE_PATTERN = /^\/[A-Za-z0-9/_?=&.%-]*$/u;
 const INVALID_PERCENT_ESCAPE_PATTERN = /%(?![0-9A-Fa-f]{2})/u;
 const ENCODED_SEQUENCE_PATTERN = /%[0-9A-Fa-f]{2}/u;
-const HOME_MODES = new Set<HomeExperienceVariant>(['CLASSIC', 'FLOW_V1']);
+const HOME_MODES = new Set<HomeExperienceVariant>(['CLASSIC', 'FLOW_V1', 'MZ_V1']);
 const HOME_APP_DOCK_GROUP_KEYS = [
   'WORK_START',
   'COLLABORATION',

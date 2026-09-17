@@ -6,6 +6,7 @@ import type {
   HomeCompositionPolicy,
   HomeLaunchpadConfiguration,
   HomeLaunchpadGroup,
+  HomeExperienceVariant,
   LocalizedHomeCopy,
 } from './home-experience-api';
 import type { TenantExperiencePreview } from './tenant-experience-preview-model';
@@ -17,7 +18,7 @@ const LOCALE = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/;
 const GROUP_KEY = /^[a-z][a-z0-9-]{1,39}$/;
 const RESOURCE_KEY = /^[A-Z][A-Z0-9_.-]{2,119}$/;
 const ALIGNMENTS = ['LEFT', 'CENTER', 'RIGHT'] as const;
-const EXPERIENCE_VARIANTS = ['CLASSIC', 'FLOW_V1'] as const;
+const EXPERIENCE_VARIANTS = ['CLASSIC', 'FLOW_V1', 'MZ_V1'] as const;
 const EXCLUDED_DATA = [
   'USER_PERSONALIZATION',
   'USER_CONTENT',
@@ -67,6 +68,11 @@ function nonBlankString(value: unknown, path: string, maximum: number): string {
 
 function boolean(value: unknown, path: string): boolean {
   if (typeof value !== 'boolean') return fail(path, 'expected a boolean');
+  return value;
+}
+
+function array(value: unknown, path: string): unknown[] {
+  if (!Array.isArray(value)) return fail(path, 'expected an array');
   return value;
 }
 
@@ -239,24 +245,54 @@ function governedZone(value: unknown, path: string): GovernedHomeZone {
   };
 }
 
+function normalizeModeLayouts(value: unknown): {
+  layouts: HomeCompositionPolicy['modeLayouts'];
+  implicitAllowedModes: HomeExperienceVariant[];
+} | null {
+  if (isHomeModeLayouts(value)) {
+    return {
+      layouts: structuredClone(value),
+      implicitAllowedModes: [...EXPERIENCE_VARIANTS],
+    };
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const candidate = value as Record<string, unknown>;
+  if (
+    Object.keys(candidate).length !== 2 ||
+    !Object.prototype.hasOwnProperty.call(candidate, 'CLASSIC') ||
+    !Object.prototype.hasOwnProperty.call(candidate, 'FLOW_V1')
+  ) {
+    return null;
+  }
+  const upgraded = {
+    ...createHomeModeLayouts(),
+    CLASSIC: candidate.CLASSIC,
+    FLOW_V1: candidate.FLOW_V1,
+  };
+  return isHomeModeLayouts(upgraded)
+    ? { layouts: upgraded, implicitAllowedModes: ['CLASSIC', 'FLOW_V1'] }
+    : null;
+}
+
 function compositionPolicy(value: unknown, path: string): HomeCompositionPolicy {
   const schemaVersion =
     value && typeof value === 'object' && !Array.isArray(value)
       ? (value as Record<string, unknown>).schemaVersion
       : undefined;
-  const source = record(
-    value,
-    path,
-    schemaVersion === 3
-      ? ['schemaVersion', 'experienceVariant', 'personalCustomizationEnabled', 'governedZones']
-      : [
-          'schemaVersion',
-          'experienceVariant',
-          'personalCustomizationEnabled',
-          'governedZones',
-          'modeLayouts',
-        ]
-  );
+  const raw = value as Record<string, unknown> | null;
+  const hasAllowedModes = Boolean(raw && Object.prototype.hasOwnProperty.call(raw, 'allowedModes'));
+  const hasDefaultMode = Boolean(raw && Object.prototype.hasOwnProperty.call(raw, 'defaultMode'));
+  if (schemaVersion === 4 && hasAllowedModes !== hasDefaultMode) {
+    fail(path, `missing field ${hasAllowedModes ? 'defaultMode' : 'allowedModes'}`);
+  }
+  const source = record(value, path, [
+    'schemaVersion',
+    'experienceVariant',
+    'personalCustomizationEnabled',
+    'governedZones',
+    ...(schemaVersion === 4 ? ['modeLayouts'] : []),
+    ...(schemaVersion === 4 && hasAllowedModes ? ['allowedModes', 'defaultMode'] : []),
+  ]);
   if (source.schemaVersion !== 3 && source.schemaVersion !== 4) {
     fail(`${path}.schemaVersion`, 'expected version 3 or 4');
   }
@@ -266,24 +302,46 @@ function compositionPolicy(value: unknown, path: string): HomeCompositionPolicy 
   const governedZones = source.governedZones.map((zone, index) =>
     governedZone(zone, `${path}.governedZones[${index}]`)
   );
-  if (source.schemaVersion === 4 && !isHomeModeLayouts(source.modeLayouts)) {
+  const normalizedModeLayouts =
+    source.schemaVersion === 4 ? normalizeModeLayouts(source.modeLayouts) : null;
+  if (source.schemaVersion === 4 && !normalizedModeLayouts) {
     return fail(`${path}.modeLayouts`, 'invalid mode layout contract');
+  }
+  const experienceVariant = enumeration(
+    source.experienceVariant,
+    `${path}.experienceVariant`,
+    EXPERIENCE_VARIANTS
+  );
+  const allowedModes =
+    source.schemaVersion === 4 && hasAllowedModes
+      ? array(source.allowedModes, `${path}.allowedModes`).map((mode, index) =>
+          enumeration(mode, `${path}.allowedModes[${index}]`, EXPERIENCE_VARIANTS)
+        )
+      : source.schemaVersion === 4
+        ? normalizedModeLayouts!.implicitAllowedModes
+        : Array.from(new Set<HomeExperienceVariant>(['CLASSIC', experienceVariant]));
+  if (allowedModes.length === 0 || new Set(allowedModes).size !== allowedModes.length) {
+    return fail(`${path}.allowedModes`, 'expected unique non-empty modes');
+  }
+  const defaultMode =
+    source.schemaVersion === 4 && hasDefaultMode
+      ? enumeration(source.defaultMode, `${path}.defaultMode`, EXPERIENCE_VARIANTS)
+      : experienceVariant;
+  if (!allowedModes.includes(defaultMode) || experienceVariant !== defaultMode) {
+    return fail(`${path}.defaultMode`, 'must be allowed and equal experienceVariant');
   }
   return {
     schemaVersion: 4,
-    experienceVariant: enumeration(
-      source.experienceVariant,
-      `${path}.experienceVariant`,
-      EXPERIENCE_VARIANTS
-    ),
+    experienceVariant,
+    allowedModes,
+    defaultMode,
     personalCustomizationEnabled: boolean(
       source.personalCustomizationEnabled,
       `${path}.personalCustomizationEnabled`
     ),
     governedZones,
-    modeLayouts: isHomeModeLayouts(source.modeLayouts)
-      ? structuredClone(source.modeLayouts)
-      : createHomeModeLayouts(),
+    modeLayouts:
+      source.schemaVersion === 4 ? normalizedModeLayouts!.layouts : createHomeModeLayouts(),
   };
 }
 

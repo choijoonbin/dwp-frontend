@@ -21,6 +21,8 @@ function experience(overrides: Partial<HomeExperience> = {}): HomeExperience {
     compositionPolicy: {
       schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      defaultMode: 'FLOW_V1',
       personalCustomizationEnabled: true,
       governedZones: [],
       modeLayouts: createHomeModeLayouts(),

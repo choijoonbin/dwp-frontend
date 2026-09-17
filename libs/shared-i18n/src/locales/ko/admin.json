@@ -4848,9 +4848,13 @@
     "variant": {
       "title": "게시할 홈 경험",
       "description": "테넌트 전체에 적용할 조회 경로를 선택합니다. 홈 경험을 전환해도 기존 개인 설정은 그대로 보존됩니다.",
+      "allowedTitle": "구성원이 사용할 수 있는 모드",
+      "defaultTitle": "조직 기본 모드",
       "classic": "Classic Home",
       "flow": "Flow Home",
-      "flowNotice": "승인된 배포 대상에만 Flow Home을 게시하세요. 서버 Kill Switch로 저장된 개인 설정을 바꾸지 않고 즉시 Classic Home으로 복귀할 수 있습니다."
+      "mz": "MZ / AI Stage",
+      "flowNotice": "승인된 배포 대상에만 Flow Home을 게시하세요. 서버 Kill Switch로 저장된 개인 설정을 바꾸지 않고 즉시 Classic Home으로 복귀할 수 있습니다.",
+      "mzNotice": "MZ는 모드별로 저장되는 독립 AI Stage입니다. 의도 인계는 검토 전용이며 실제 실행 권한은 각 담당 앱이 별도로 확인합니다."
     },
     "personal": {
       "title": "구성원 홈 개인화 허용",
@@ -4892,7 +4896,18 @@
     "preview": {
       "title": "구성 미리보기",
       "description": "데스크톱 60단 그리드 기준입니다. 태블릿과 모바일에서는 각 영역이 전체 너비로 전환됩니다.",
+      "enabledModes": "현재 배포에서 유효한 모드",
+      "effectiveDefault": "현재 배포 정책에서는 {{mode}} 모드가 실제 기본값으로 제공됩니다.",
       "commandRail": "업무 지휘",
+      "mz": {
+        "context": "테넌트 컨텍스트와 워크스케이프",
+        "launcher": "승인 앱 컴팩트 런처",
+        "stage": "AI 의도 및 검토 스테이지",
+        "required": "필수 공지 레일",
+        "evidence": "근거와 최신성",
+        "plan": "후보 계획과 담당 앱 인계",
+        "related": "관련 소식, 범위 및 도움말"
+      },
       "flow": {
         "context": "간결한 업무 맥락",
         "dock": "내 앱 Dock",

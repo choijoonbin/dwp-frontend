@@ -11,12 +11,16 @@ import {
   isAppResourceEntitled,
   launchWorkspaceApp,
   resolveHomeBackgroundUrl,
+  updateHomeCurrentMode,
   useAuth,
   usePermissions,
   useToast,
   type HomeView,
+  type HomeExperienceVariant,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { createQuestionLaunch } from '@dwp-frontend/shared-utils/api/agent-question-launch-api';
+import { createDwaionQuestionLaunchState } from '@dwp-frontend/shared-utils/dwaion-contract';
 
 import { homeViewQueryKey } from '../../components/home-view-query-key';
 import {
@@ -26,6 +30,7 @@ import {
   reconcileLaunchpadLayout,
 } from '../../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
+import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 import { classicHomeGovernedWidgets } from '../../features/home/classic-home/classic-home-governed-widgets';
 import {
   applyFlowHomeSections,
@@ -73,6 +78,8 @@ import {
   resolveHomeWorkspaceUpdatedAt,
 } from '../../features/home/runtime/home-page-runtime-state';
 import { resolveBrokeredHomeExperience } from '../../features/home/runtime/home-store-capabilities';
+import { reconcileHomeCompositionPolicy } from '../../features/home/home-composition-policy';
+import { HOME_V2_QUERY_ROOT } from '../../features/home/runtime/use-home-v2-runtime';
 import {
   HOME_WIDGET_KEYS,
   defaultHomeWidgets,
@@ -95,10 +102,25 @@ export function useHomePageController() {
   const toast = useToast();
   const { hasPermission, permissions } = usePermissions();
   const navigate = useNavigate();
-  const reportHomeMode = useOutletContext<((mode: 'CLASSIC' | 'FLOW_V1') => void) | null>();
+  const governMzIntentLaunch = useDwaionGovernedMutation(
+    'route.dwaion.work.question-launch-create.action'
+  );
+  const reportHomeMode = useOutletContext<((mode: HomeExperienceVariant) => void) | null>();
   const [searchParams, setSearchParams] = useSearchParams();
   const wave2Evidence = resolveWave2Evidence(searchParams);
   const queryClient = useQueryClient();
+  const mzIntentMutation = useMutation({
+    mutationFn: async (intent: string) => {
+      const receipt = await governMzIntentLaunch((authority) =>
+        createQuestionLaunch(intent, authority)
+      );
+      const state = createDwaionQuestionLaunchState(receipt.launchId);
+      if (!state) throw new Error('Question launch receipt is invalid.');
+      return state;
+    },
+    onSuccess: (state) => navigate('/dwaion/new', { state }),
+    onError: () => toast.error(t('mz.stage.handoffError')),
+  });
   const [editorOpen, setEditorOpen] = useState(searchParams.get('edit') === 'home');
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [discardEditorOpen, setDiscardEditorOpen] = useState(false);
@@ -153,6 +175,7 @@ export function useHomePageController() {
     homeV2Runtime,
     homeOverview,
     homeOverviewQuery,
+    homePreferenceQuery,
     launchpadCatalog,
     legacyEnabled,
     notificationAuthorizationFailed,
@@ -195,11 +218,17 @@ export function useHomePageController() {
     homeExperience,
     HOME_CONTRACT_CAPABILITIES.fourDeviceLayouts
   );
+  const homeModePolicy = reconcileHomeCompositionPolicy(homeExperience?.compositionPolicy);
+  const preferredMode = homePreferenceQuery.data?.currentMode;
+  const configuredHomeMode =
+    preferredMode && homeModePolicy.allowedModes.includes(preferredMode)
+      ? preferredMode
+      : homeModePolicy.defaultMode;
   const homeModeKey = resolveBrokeredHomeExperience(
     homeV2Runtime.activation.kind === 'ACTIVE'
       ? homeV2Runtime.activation.result.snapshot.data.mode
       : null,
-    homeExperience?.effectiveExperienceVariant ?? 'CLASSIC',
+    configuredHomeMode,
     viewStoreEnabled
   );
   useEffect(() => reportHomeMode?.(homeModeKey), [homeModeKey, reportHomeMode]);
@@ -260,7 +289,7 @@ export function useHomePageController() {
     homeCustomized,
     homePageGate,
     homePreference,
-    homePreferenceQuery,
+    homePreferenceQuery: personalizationPreferenceQuery,
     homeStudioEnabled,
     homeViewsQuery,
     personalCustomizationEnabled,
@@ -272,10 +301,40 @@ export function useHomePageController() {
     sourceHomeView,
     widgetPreferences,
   } = homeReadModel;
+  const homeModeMutation = useMutation({
+    mutationFn: async (nextMode: HomeExperienceVariant) => {
+      const preference = homePreferenceQuery.data;
+      const enabledModes =
+        preference?.enabledModes ?? preference?.allowedModes ?? homeModePolicy.allowedModes;
+      if (
+        !preference ||
+        !homeModePolicy.allowedModes.includes(nextMode) ||
+        !enabledModes.includes(nextMode)
+      ) {
+        throw new Error('The requested Home mode is not available for this tenant.');
+      }
+      return updateHomeCurrentMode(preference, nextMode);
+    },
+    onSuccess: async (preference) => {
+      queryClient.setQueryData(
+        ['home-preference', auth.user?.tenantId, auth.user?.userId],
+        preference
+      );
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['home-preference'] }),
+        queryClient.invalidateQueries({ queryKey: HOME_V2_QUERY_ROOT }),
+        queryClient.invalidateQueries({ queryKey: ['home-experience'] }),
+        queryClient.invalidateQueries({ queryKey: ['home-view'] }),
+        queryClient.invalidateQueries({ queryKey: ['home-personalization'] }),
+      ]);
+    },
+  });
   const editorSessionActive = editorOpen && editSession !== null;
   const editorActive = editorSessionActive && !homeV2Runtime.active;
+  const activeHomeMode: HomeExperienceVariant =
+    editorActive && editSession ? editSession.experienceVariant : homeModeKey;
   const editorFlowHomeEnabled =
-    editorActive && editSession ? editSession.experienceVariant === 'FLOW_V1' : flowHomeEnabled;
+    editorActive && editSession ? editSession.experienceVariant !== 'CLASSIC' : flowHomeEnabled;
   const editorResetAvailable =
     editorActive && editSession ? editSession.resetAvailable : durableResetAvailable;
   const editorSourceFailed = homeExperienceQuery.isError || persistedSourceFailed;
@@ -447,7 +506,7 @@ export function useHomePageController() {
         presentation: studioView.layout.presentation ?? 'balanced',
         resetIntent: false,
       };
-      if (studioView.modeKey === 'FLOW_V1') {
+      if (studioView.modeKey !== 'CLASSIC') {
         const migrationEligible = isFlowLegacyGeometryMigrationEligible(
           studioView.schemaVersion,
           studioView.updatedAt
@@ -695,12 +754,13 @@ export function useHomePageController() {
   const homeAssistantAvailable = !editorOpen && isAppResourceEntitled('APP.ASK', permissions);
   const { flowFutureRuntimeProps, ownerWidgetRegion } = resolveHomeActiveRuntimeRegions(
     homeV2Runtime,
-    homeModeKey,
+    activeHomeMode,
     activePresentation,
     navigate
   );
   return {
     activeAppLayout,
+    activeHomeMode,
     activeDeviceOverlay,
     activePresentation,
     activeWidgetConfigurations,
@@ -748,7 +808,26 @@ export function useHomePageController() {
     homeOverviewQuery,
     homeOverviewRefreshPartial,
     homePageGate,
-    homePreferenceQuery,
+    homePreferenceQuery: personalizationPreferenceQuery,
+    homeModePreset: homePreference
+      ? {
+          currentMode: activeHomeMode,
+          initialSelectedMode: activeHomeMode,
+          allowedModes: homePreference.allowedModes ?? homeModePolicy.allowedModes,
+          enabledModes:
+            homePreference.enabledModes ??
+            homePreference.allowedModes ??
+            homeModePolicy.allowedModes,
+          disabledModeReasons: homePreference.disabledModeReasons,
+          defaultMode: homePreference.defaultMode ?? homeModePolicy.defaultMode,
+          disabled: editorOpen || homeModeMutation.isPending,
+          applying: homeModeMutation.isPending,
+          sharedAppOrder: entitledApps.map((app) => ({ id: app.id, label: app.name })),
+          onApply: async (mode: HomeExperienceVariant) => {
+            await homeModeMutation.mutateAsync(mode);
+          },
+        }
+      : undefined,
     homeRuntimePartial,
     homeStudioEnabled,
     homeSubheadline,
@@ -758,6 +837,7 @@ export function useHomePageController() {
     launcherSummaryPartial,
     launchpadCatalog,
     markHomeStudioEditStarted,
+    mzIntentBusy: mzIntentMutation.isPending,
     navigate,
     navigationBlocker,
     openHomeStudio,
@@ -776,6 +856,7 @@ export function useHomePageController() {
     restoreHomeStudioEntryFocus,
     rolloutDraftPreserved,
     saveHome,
+    startMzIntent: (intent: string) => mzIntentMutation.mutate(intent),
     setConflictTarget,
     setDiscardEditorOpen,
     setDraftAppLayout,

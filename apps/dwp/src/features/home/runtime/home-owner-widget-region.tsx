@@ -265,7 +265,7 @@ export function ActiveHomeOwnerWidgetRegion({
     <HomeOwnerWidgetRegion
       model={model}
       excludedDefinitionKeys={excludedDefinitionKeys}
-      variant={model.mode === 'FLOW_V1' ? 'FLOW' : 'CLASSIC'}
+      variant={model.mode === 'FLOW_V1' ? 'FLOW' : model.mode === 'MZ_V1' ? 'MZ' : 'CLASSIC'}
       locale={i18n.resolvedLanguage || i18n.language || 'en'}
       refreshing={runtime.query.isFetching && !runtime.query.isLoading}
       onRetry={() => void runtime.query.refetch()}

@@ -102,6 +102,16 @@ export function useHomeCoreReadModel({
     timeZone,
     userId: auth.user?.userId,
   });
+  // Mode preference is an independent control-plane read. Keep it available even when
+  // Home v2 owns the content payload so users can change modes without collapsing their
+  // mode-scoped layouts into the legacy preference path.
+  const homePreferenceQuery = useQuery({
+    queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
+    queryFn: getHomePreference,
+    enabled: auth.user?.tenantId != null && auth.user?.userId != null,
+    staleTime: 5 * 60 * 1000,
+    retry: homeQueryRetry,
+  });
   useHomeRumContext(homeV2Runtime, requestedDeviceClass);
   const legacyEnabled = homeV2Runtime.legacyEnabled;
   const activeHomeV2Model =
@@ -123,7 +133,6 @@ export function useHomeCoreReadModel({
       queryClient.cancelQueries({ queryKey: ['home-contributions'] }),
       queryClient.cancelQueries({ queryKey: ['workspace', 'work-hub', 'home-personal'] }),
       queryClient.cancelQueries({ queryKey: ['workspace', 'work-hub', 'home-plan'] }),
-      queryClient.cancelQueries({ queryKey: ['home-preference'] }),
       queryClient.cancelQueries({ queryKey: ['home-view'] }),
       queryClient.cancelQueries({ queryKey: ['home-personalization'] }),
       queryClient.cancelQueries({ queryKey: ['system-code-set', 'PLATFORM.HOME_WIDGET'] }),
@@ -251,9 +260,20 @@ export function useHomeCoreReadModel({
     staleTime: 60_000,
     retry: 1,
   });
+  const widgetRegistryPolicy = reconcileHomeCompositionPolicy(
+    homeExperienceQuery.data?.compositionPolicy
+  );
+  const preferredWidgetRegistryMode = homePreferenceQuery.data?.currentMode;
+  const widgetRegistryMode =
+    activeHomeV2Model?.mode ??
+    (preferredWidgetRegistryMode &&
+    widgetRegistryPolicy.allowedModes.includes(preferredWidgetRegistryMode)
+      ? preferredWidgetRegistryMode
+      : widgetRegistryPolicy.defaultMode);
   const legacyWidgetRuntime = useHomeWidgetRegistryRuntime(
     auth.user?.tenantId,
     auth.user?.userId,
+    widgetRegistryMode,
     legacyEnabled
   );
   const widgetRuntimeDecisions = activeHomeV2Model
@@ -308,6 +328,7 @@ export function useHomeCoreReadModel({
     homeV2Runtime,
     homeOverview,
     homeOverviewQuery,
+    homePreferenceQuery,
     launchpadCatalog,
     notificationAuthorizationFailed,
     notificationSummaryAuthorized,
@@ -366,7 +387,9 @@ export function useHomePersonalizationReadModel({
     core.homeV2Runtime.activation.kind === 'SHADOW'
       ? core.homeV2Runtime.activation.result.snapshot.data
       : null;
-  const flowHomeEnabled = homeModeKey === 'FLOW_V1';
+  // Flow and MZ share the adaptive section geometry, while their first viewport and
+  // persistence identities remain independent.
+  const flowHomeEnabled = homeModeKey !== 'CLASSIC';
   const activeHomeViewQueryKey = useMemo(
     () =>
       homeViewQueryKey({
@@ -391,13 +414,7 @@ export function useHomePersonalizationReadModel({
   );
   const activeStoreUsesViews = activeHomeStoreUsesViews(viewStoreEnabled, editSession?.store);
   const homeStudioEnabled = advancedPersonalizationEnabled && activeStoreUsesViews;
-  const homePreferenceQuery = useQuery({
-    queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
-    queryFn: getHomePreference,
-    enabled: core.legacyEnabled && core.homeExperienceQuery.isSuccess && !activeStoreUsesViews,
-    staleTime: 5 * 60 * 1000,
-    retry: homeQueryRetry,
-  });
+  const homePreferenceQuery = core.homePreferenceQuery;
   const homeViewsQuery = useQuery({
     queryKey: activeHomeViewQueryKey,
     queryFn: () =>

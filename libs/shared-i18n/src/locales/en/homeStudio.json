@@ -234,10 +234,14 @@
   },
   "modePreset": {
     "title": "Choose a Home mode",
-    "description": "Compare how Classic and Flow organize information. Changing modes preserves the order and access rights of all 18 approved shared apps.",
+    "description": "Compare how Classic, Flow, and MZ / AI Stage organize information. Changing modes preserves the order and access rights of all 18 approved shared apps.",
     "groupLabel": "Home mode",
     "current": "Currently applied",
     "selected": "Selected",
+    "default": "Organization default",
+    "policyUnavailable": "Not enabled by your organization",
+    "rolloutUnavailable": "Temporarily unavailable by rollout policy",
+    "layoutPreservation": "Each mode keeps its own layout and device settings when you switch.",
     "apply": "Apply changes",
     "applying": "Applying",
     "options": {
@@ -248,11 +252,15 @@
       "FLOW_V1": {
         "title": "Flow work home",
         "description": "Review priority work, calendar events, and response requests in one action-oriented flow."
+      },
+      "MZ_V1": {
+        "title": "MZ / AI Stage",
+        "description": "Turn an explicit intent into grounded evidence and a reviewable plan before handing actions to their owner products."
       }
     },
     "preview": {
       "blindTestTitle": "Blind Header Test",
-      "blindTestDescription": "Classic's organization brief and Flow's urgent action canvas remain distinct without their headers.",
+      "blindTestDescription": "Classic's organization brief, Flow's urgent action canvas, and MZ's grounded AI Stage remain distinct without their headers.",
       "axisIntegrity": "Preserves information architecture, expression width, and the order of all 18 shared apps",
       "firstQuestion": "First question:",
       "primaryAction": "Primary action:",
@@ -267,6 +275,11 @@
         "primaryAction": "Triage the priority queue and timeline",
         "sharedApps": "Order preserved 100%"
       },
+      "MZ_V1": {
+        "firstQuestion": "What outcome should AI prepare with evidence?",
+        "primaryAction": "Review a grounded plan and hand off owner actions",
+        "sharedApps": "Order preserved 100%"
+      },
       "appsTitle": "My apps (18 approved assets)",
       "appsSynced": "Shared order synchronized",
       "classicTag": "Organization notice",
@@ -277,6 +290,10 @@
       "flowMeta": "Today's highest-priority action #1",
       "flowHero": "Review the launch checkpoint meeting brief and final evidence",
       "flowAction": "Review and open brief",
+      "mzTag": "Grounded AI Stage",
+      "mzMeta": "Review required before owner handoff",
+      "mzHero": "Describe an outcome and build an evidence-backed, editable plan",
+      "mzAction": "Open review workspace",
       "news": "Organization news and executive brief (65%)",
       "newsItem1": "Global hub flexible seating policy update",
       "newsItem2": "AI transformation roadmap recording",
@@ -292,11 +309,20 @@
       "timelineItem2": "13:30 Focus block",
       "requests": "My requests (28%)",
       "requestsItem1": "5 unread messages",
-      "requestsItem2": "1 mention request"
+      "requestsItem2": "1 mention request",
+      "evidence": "Grounded evidence",
+      "evidenceItem1": "Current work and due dates",
+      "evidenceItem2": "Calendar and source material",
+      "plan": "Editable plan",
+      "planItem1": "Draft steps and assumptions",
+      "planItem2": "Review evidence gaps",
+      "handoff": "Owner handoff",
+      "handoffItem1": "Confirm in DWAI·ON",
+      "handoffItem2": "Resume from receipt"
     },
     "sharedApps": {
       "title": "Shared order locked for {{count}} apps",
-      "description": "Both modes use the same approved apps in the same order. Choosing a mode does not change app access or placement order.",
+      "description": "All three modes use the same approved apps in the same order. Choosing a mode does not change app access or placement order.",
       "orderLabel": "Locked shared app order",
       "position": "Position {{position}}"
     },

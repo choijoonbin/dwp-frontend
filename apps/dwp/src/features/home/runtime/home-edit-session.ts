@@ -11,11 +11,12 @@ import type {
   CreateHomeViewRequest,
   HomePreference,
   HomePreferenceLayout,
+  HomeExperienceVariant,
   HomeView,
 } from '@dwp-frontend/shared-utils';
 
 export type HomeEditSession = {
-  experienceVariant: 'CLASSIC' | 'FLOW_V1';
+  experienceVariant: HomeExperienceVariant;
   modeScopedViews: boolean;
   store: 'LEGACY' | 'VIEWS';
   viewId: string | null;
@@ -34,7 +35,7 @@ export type HomeSaveMutation = {
 export type HomeEditConflictTarget =
   | {
       store: 'VIEWS';
-      experienceVariant: 'CLASSIC' | 'FLOW_V1';
+      experienceVariant: HomeExperienceVariant;
       viewId: string;
       viewName: string;
       version: number;
@@ -42,7 +43,7 @@ export type HomeEditConflictTarget =
     }
   | {
       store: 'LEGACY';
-      experienceVariant: 'CLASSIC' | 'FLOW_V1';
+      experienceVariant: HomeExperienceVariant;
       viewId: null;
       viewName: null;
       version: number;

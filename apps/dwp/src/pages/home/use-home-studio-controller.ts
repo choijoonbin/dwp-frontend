@@ -6,6 +6,7 @@ import type {
   HomeEditConflictTarget,
   HomeEditSession,
 } from '../../features/home/runtime/home-edit-session';
+import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 import {
   freezeHomeStudioContractScope,
   resolveActiveHomeViewScope,
@@ -14,7 +15,7 @@ import {
 import { useHomeRolloutOverlayGuard } from '../../features/home/runtime/use-home-editor-safety';
 
 type UseHomeStudioControllerOptions = {
-  homeModeKey: 'CLASSIC' | 'FLOW_V1';
+  homeModeKey: HomeExperienceVariant;
   modeScopedHomeViewsSupported: boolean;
   fourDeviceLayoutsSupported: boolean;
   editSession: HomeEditSession | null;

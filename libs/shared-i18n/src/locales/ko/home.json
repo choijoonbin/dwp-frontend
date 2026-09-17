@@ -38,6 +38,128 @@
     "undoRecommendation": "되돌리기",
     "recommendationFeedbackError": "추천 피드백을 저장하지 못했습니다."
   },
+  "mz": {
+    "stage": {
+      "eyebrow": "MZ / AI Stage",
+      "title": "지금 어떤 결과를 만들고 싶으신가요?",
+      "description": "필요한 결과를 설명하면 DWAI·ON의 근거 기반 작업 공간으로 안전하게 이어집니다. 근거를 확인하고 계획을 편집한 뒤 담당 앱의 실행을 직접 검토할 수 있습니다.",
+      "intentLabel": "업무 의도",
+      "intentPlaceholder": "예: 현재 업무와 일정 맥락을 바탕으로 출시 점검 회의 브리프를 준비해 주세요",
+      "intentHelper": "검토 작업을 선택한 뒤에만 요청이 DWAI·ON으로 전달됩니다.",
+      "handoff": "DWAI·ON에서 검토 가능한 계획 만들기",
+      "handoffPending": "안전한 인계를 준비하는 중",
+      "handoffError": "DWAI·ON 인계를 준비하지 못했습니다. 접근 권한을 확인한 뒤 다시 시도하세요.",
+      "reviewBoundary": "홈에서 업무를 자동 실행하지 않습니다. 담당 앱에서 검토와 확인을 완료해야 합니다.",
+      "contextEyebrow": "근거 맥락",
+      "contextTitle": "이번 인계에 사용할 수 있는 정보",
+      "homeContext": "현재 홈 브리프",
+      "context": {
+        "action": "실행 신호",
+        "timeline": "일정 신호",
+        "response": "응답 신호",
+        "apps": "승인 앱"
+      },
+      "startersTitle": "근거가 있는 질문으로 시작",
+      "suggestedTitle": "추천 시작점(현재 원천 근거 없음)",
+      "suggestedSource": "원천 레코드가 없는 일반 제안",
+      "relatedApps": "관련 승인 앱",
+      "scenes": {
+        "title": "컨텍스트 장면(사용자 선택)",
+        "focus": "지금 집중",
+        "meeting": "회의 준비",
+        "team": "팀과 조율"
+      },
+      "starters": {
+        "brief": "현재 우선 업무를 바탕으로 브리프 준비",
+        "plan": "오늘 마감 일정 중심으로 계획 만들기",
+        "followup": "내 응답을 기다리는 후속 작업 찾기"
+      },
+      "aiUnavailable": "현재 앱 접근 권한으로는 DWAI·ON을 사용할 수 없습니다. 아래의 근거 기반 홈 맥락은 계속 확인할 수 있습니다.",
+      "loadingEvidence": "근거 원천을 불러오고 있습니다. 응답이 확인되면 건수와 원천 기반 시작 질문을 표시합니다.",
+      "refreshingEvidence": "근거 원천을 새로고침하고 있습니다. 완료될 때까지 기존 원천 기반 맥락을 유지합니다.",
+      "partialEvidence": "일부 근거 맥락만 사용할 수 있습니다. 아래 작업 공간에서 각 원천을 확인하세요."
+    },
+    "launcher": {
+      "title": "빠른 맥락 실행기",
+      "description": "승인된 앱 {{count}}개를 관리된 순서대로 사용할 수 있습니다.",
+      "all": "전체 앱"
+    },
+    "workspace": {
+      "title": "근거 및 검토 작업 공간",
+      "description": "권한 범위의 실시간 신호와 편집 가능한 계획 미리보기, 담당 앱 실행을 명확히 구분합니다.",
+      "state": {
+        "READY": "원천 정상",
+        "EMPTY": "현재 신호 없음",
+        "PARTIAL": "일부 원천",
+        "STALE": "이전 성공 데이터",
+        "RESTRICTED": "권한으로 제한됨",
+        "CONFIGURATION_REQUIRED": "설정 필요",
+        "UNAVAILABLE": "원천 사용 불가",
+        "LOADING": "원천 불러오는 중",
+        "REFRESHING": "원천 새로고침 중"
+      },
+      "stateDescription": {
+        "EMPTY": "현재 표시할 수 있는 원천 항목이 없습니다. 업무 완료 상태를 의미하지 않습니다.",
+        "PARTIAL": "일부 제공자가 부분 데이터만 반환했습니다. 계획을 사용하기 전에 각 원천을 확인하세요.",
+        "STALE": "하나 이상의 제공자가 마지막 성공 결과를 표시하고 있습니다.",
+        "RESTRICTED": "현재 권한으로는 근거 레코드를 볼 수 없습니다. 제한된 데이터를 빈 결과로 표시하지 않습니다.",
+        "CONFIGURATION_REQUIRED": "필수 제공자가 설정되지 않았습니다. 근거 기반 계획을 사용하기 전에 설정을 완료하세요.",
+        "UNAVAILABLE": "근거 원천을 사용할 수 없습니다. AI 인계에서 이 상태를 검증된 근거로 표현하지 않습니다.",
+        "LOADING": "근거 제공자를 불러오고 있습니다. 원천 응답을 확인하기 전에는 결과 건수를 표시하지 않습니다.",
+        "REFRESHING": "근거 제공자를 새로고침하는 동안 마지막으로 확인한 근거를 유지합니다."
+      },
+      "aiUnavailable": "AI 인계를 사용할 수 없습니다. 원본 링크와 승인 앱은 계속 사용할 수 있습니다.",
+      "evidence": {
+        "title": "근거 자료",
+        "description": "각 항목은 담당 앱과 최신성 경계를 그대로 유지합니다.",
+        "empty": "권한 범위에서 미리 볼 수 있는 근거가 없습니다.",
+        "fresh": "최신",
+        "stale": "마지막 성공"
+      },
+      "openSource": "원본 열기",
+      "plan": {
+        "title": "후보 계획 미리보기",
+        "description": "표시 가능한 근거에서 도출한 후보 단계입니다. 최종 계획은 DWAI·ON에서 검토하고 편집합니다.",
+        "empty": "근거 자료가 준비되면 계획 미리보기가 표시됩니다.",
+        "reviewEvidence": "원본 근거와 기대 결과를 검토하세요.",
+        "reviewBoundary": "미리보기 전용입니다. 담당 앱에서 검토하고 확인하기 전에는 어떤 실행도 시작하지 않습니다."
+      },
+      "lanes": {
+        "timeline": "시간",
+        "response": "응답",
+        "request": "대기",
+        "empty": "이 영역에 표시할 항목이 없습니다"
+      },
+      "related": {
+        "title": "관련 앱과 자료",
+        "description": "원본 레코드를 확인하거나 변경하려면 담당 앱을 여세요."
+      }
+    },
+    "relatedNews": {
+      "title": "관련 소식",
+      "empty": "관련 조직 소식이 없습니다.",
+      "minutes": "분 읽기",
+      "open": "열기",
+      "state": {
+        "AVAILABLE": "최신",
+        "FORBIDDEN": "접근 제한",
+        "UNAVAILABLE": "사용 불가",
+        "LOADING": "불러오는 중",
+        "REFRESHING": "새로고침 중",
+        "ERROR": "새로고침 실패"
+      },
+      "loading": "관련 조직 소식을 불러오고 있습니다. 아직 빈 결과로 판단하지 않습니다.",
+      "refreshing": "관련 조직 소식을 새로고침하고 있습니다. 마지막으로 확인한 항목을 유지합니다.",
+      "error": "관련 조직 소식을 새로고침하지 못했습니다."
+    },
+    "scope": {
+      "title": "근거 범위",
+      "description": "MZ는 현재 사용자에게 허용된 원천과 앱만 사용합니다. 접근할 수 없는 데이터는 0건으로 표시하지 않습니다.",
+      "helpTitle": "검토 및 제어",
+      "helpDescription": "인계를 시작하기 전에 개인 AI 제어, 원천 경계, 보존된 작업을 확인하세요.",
+      "openControls": "AI 제어 열기"
+    }
+  },
   "command": {
     "dismiss": {
       "title": "이 추천을 숨길까요?",
@@ -91,7 +213,7 @@
     "portalMetadata": "· 제품운영팀 김하린 · {{currentDate}} · 마지막 갱신 09:58 KST",
     "portalTimestamp": "· 09:58 KST",
     "modeAriaLabel": "홈 화면 모드",
-    "classicModePrefix": "Classic\u00a0",
+    "classicModePrefix": "Classic ",
     "flowModeLabel": "Flow 개인 실행",
     "featuredCategory": "전사 공지 · 방향성",
     "roadmapMeta": "실행 로드맵 v1.0 / 부서별 가이드라인 포함",
@@ -1373,7 +1495,9 @@
         "artifact": "DWAI·ON 산출물"
       }
     },
-    "action": { "openSource": "원본 열기" },
+    "action": {
+      "openSource": "원본 열기"
+    },
     "metric": {
       "pending": "대기",
       "dueToday": "오늘 마감",
@@ -1403,7 +1527,9 @@
       "urgent": "긴급 {{count}}건",
       "bookingLocation": "{{site}} · {{floor}}"
     },
-    "empty": { "verified": "최신 상태를 확인했습니다" }
+    "empty": {
+      "verified": "최신 상태를 확인했습니다"
+    }
   },
   "widgetRuntime": {
     "unavailableLabel": "{{label}}을(를) 사용할 수 없음",

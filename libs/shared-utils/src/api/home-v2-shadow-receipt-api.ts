@@ -92,7 +92,7 @@ export function assertHomeV2ShadowReceiptRequest(
     input.reasons.length > 10 ||
     new Set(input.reasons).size !== input.reasons.length ||
     input.reasons.some((reason) => !REASONS.has(reason)) ||
-    !['CLASSIC', 'FLOW_V1'].includes(input.homeMode) ||
+    !['CLASSIC', 'FLOW_V1', 'MZ_V1'].includes(input.homeMode) ||
     !DEVICES.has(input.deviceClass) ||
     input.runtimeState !== 'SHADOW_COMPARE' ||
     !RINGS.has(input.rolloutRing) ||

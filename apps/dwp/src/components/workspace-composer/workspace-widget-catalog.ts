@@ -22,7 +22,7 @@ export type WorkspaceWidgetCatalogDefinition = Readonly<{
   dataSource: string;
   requiredAuthorities: readonly string[];
   dataCapabilities: readonly string[];
-  supportedContexts: readonly ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'];
+  supportedContexts: readonly ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'];
   freshnessSeconds: number;
   privacyClass: WorkspaceWidgetPrivacyClass;
   retention: 'NONE';
@@ -57,7 +57,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_HOME_OVERVIEW',
     requiredAuthorities: ['APP.WORK:VIEW'],
     dataCapabilities: ['HOME.OVERVIEW.READ'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -83,7 +83,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_HOME_OVERVIEW',
     requiredAuthorities: ['APP.WORK:VIEW'],
     dataCapabilities: ['HOME.RECOMMENDATIONS.READ'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'INTERNAL',
     retention: 'NONE',
@@ -114,7 +114,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_WORKSPACE',
     requiredAuthorities: ['APP.WORK:VIEW'],
     dataCapabilities: ['WORK.ITEMS.LIST'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -145,7 +145,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_CALENDAR',
     requiredAuthorities: ['APP.CALENDAR:VIEW'],
     dataCapabilities: ['CALENDAR.EVENTS.LIST'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -183,7 +183,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_ACTIVITY',
     requiredAuthorities: ['APP.ACTIVITY:VIEW'],
     dataCapabilities: ['ACTIVITY.EVENTS.LIST'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'INTERNAL',
     retention: 'NONE',
@@ -214,7 +214,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_CALENDAR',
     requiredAuthorities: ['APP.CALENDAR:VIEW'],
     dataCapabilities: ['CALENDAR.EVENTS.LIST'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',
@@ -240,7 +240,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     dataSource: 'DWP_CALENDAR',
     requiredAuthorities: ['APP.CALENDAR:VIEW'],
     dataCapabilities: ['CALENDAR.EVENTS.LIST'],
-    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL'],
+    supportedContexts: ['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'MZ_PERSONAL'],
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
     retention: 'NONE',

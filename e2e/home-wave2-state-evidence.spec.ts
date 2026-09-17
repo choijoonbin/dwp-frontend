@@ -300,10 +300,26 @@ async function routeModeIsolatedHomeViews(page: Page) {
       updatedAt: FIXED_NOW.toISOString(),
       widgetConfigurations: {},
     },
+    MZ_V1: {
+      viewId: 'wave2-mz-preset',
+      viewKey: 'mz-preset',
+      surfaceKey: 'workspace-home',
+      modeKey: 'MZ_V1',
+      name: 'MZ AI Stage preset',
+      isDefault: true,
+      schemaVersion: 5,
+      layout: { appLayout: null, presentation: 'expressive', widgets: FLOW_WIDGETS },
+      version: 3,
+      customized: true,
+      createdAt: '2026-08-01T00:00:00Z',
+      updatedAt: FIXED_NOW.toISOString(),
+      widgetConfigurations: {},
+    },
   };
   const layouts = {
     CLASSIC: createDeviceLayouts(views.CLASSIC.viewId),
     FLOW_V1: createDeviceLayouts(views.FLOW_V1.viewId),
+    MZ_V1: createDeviceLayouts(views.MZ_V1.viewId, 'compact'),
   };
   const requests: Array<{ method: string; modeKey: string | null; path: string }> = [];
   await page.route('**/api/platform/v1/home-experience', (route) =>
@@ -345,10 +361,11 @@ async function routeModeIsolatedHomeViews(page: Page) {
       return fulfillSuccess(route, modeKey && views[modeKey] ? [views[modeKey]] : []);
     }
     const deviceMatch = path.match(
-      /\/home-views\/(wave2-(classic|flow)-preset)\/device-layouts(?:\/(DESKTOP_WIDE|DESKTOP_STANDARD|MOBILE_STANDARD|MOBILE_COMPACT))?$/u
+      /\/home-views\/(wave2-(classic|flow|mz)-preset)\/device-layouts(?:\/(DESKTOP_WIDE|DESKTOP_STANDARD|MOBILE_STANDARD|MOBILE_COMPACT))?$/u
     );
     if (deviceMatch) {
-      const mode = deviceMatch[2] === 'classic' ? 'CLASSIC' : 'FLOW_V1';
+      const mode =
+        deviceMatch[2] === 'classic' ? 'CLASSIC' : deviceMatch[2] === 'flow' ? 'FLOW_V1' : 'MZ_V1';
       const deviceClass = deviceMatch[3] as EvidenceDeviceClass | undefined;
       if (request.method() === 'GET' && !deviceClass) {
         return fulfillSuccess(
@@ -705,13 +722,22 @@ test('C16 an actual 409 shows the conflict dialog and preserves the draft', asyn
   expect(missingCloseLabelWarnings).toEqual([]);
 });
 
-test('C17 compares Classic and Flow in the real Studio after mode-scoped device round-trips', async ({
+test('C17 compares Classic, Flow, and MZ in the real Studio after isolated round-trips', async ({
   page,
 }) => {
   const fixtureId = 'HOME_SPEC_MODE_PRESET';
   await page.unroute(OVERVIEW_ROUTE);
   await routeOverview(page, freshOverview());
   const runtime = await routeModeIsolatedHomeViews(page);
+  const modeWrites: Array<Record<string, unknown>> = [];
+  page.on('request', (request) => {
+    if (
+      request.method() === 'PUT' &&
+      new URL(request.url()).pathname === '/api/platform/v1/home-preferences/current-mode'
+    ) {
+      modeWrites.push(request.postDataJSON() as Record<string, unknown>);
+    }
+  });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?wave2ModePreset=comparison');
   await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
@@ -755,26 +781,35 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
     .toBeGreaterThanOrEqual(2);
 
   const roundTrip = await page.evaluate(async () => {
-    const update = await fetch(
-      '/api/platform/v1/home-views/wave2-flow-preset/device-layouts/DESKTOP_STANDARD',
-      {
+    const update = async (url: string, density: string, widgetOrder: string[]) => {
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Idempotency-Key': 'b946e9d5-53c3-4f19-a2cf-2e17d279af7f',
+          'Idempotency-Key': crypto.randomUUID(),
         },
         body: JSON.stringify({
           overlay: {
-            density: 'compact',
-            widgetOrder: ['daily-brief', 'schedule', 'focus'],
+            density,
+            widgetOrder,
             widgetSizes: { schedule: 'medium' },
           },
           viewVersion: 3,
           version: 1,
         }),
-      }
+      });
+      if (!response.ok) throw new Error(`Device save failed: ${response.status}`);
+    };
+    await update(
+      '/api/platform/v1/home-views/wave2-flow-preset/device-layouts/DESKTOP_STANDARD',
+      'compact',
+      ['daily-brief', 'schedule', 'focus']
     );
-    if (!update.ok) throw new Error(`Flow device save failed: ${update.status}`);
+    await update(
+      '/api/platform/v1/home-views/wave2-mz-preset/device-layouts/MOBILE_STANDARD',
+      'comfortable',
+      ['focus', 'daily-brief', 'schedule']
+    );
     const read = async (viewId: string) => {
       const response = await fetch(`/api/platform/v1/home-views/${viewId}/device-layouts`);
       if (!response.ok) throw new Error(`Device requery failed: ${response.status}`);
@@ -783,6 +818,7 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
     return {
       classic: await read('wave2-classic-preset'),
       flow: await read('wave2-flow-preset'),
+      mz: await read('wave2-mz-preset'),
     };
   });
   expect(roundTrip.classic.data).toEqual(
@@ -791,6 +827,9 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
   expect(roundTrip.flow.data).toEqual(
     MODE_LAYOUTS.FLOW_V1.deviceClasses.map((value) => runtime.layouts.FLOW_V1[value])
   );
+  expect(roundTrip.mz.data).toEqual(
+    MODE_LAYOUTS.MZ_V1.deviceClasses.map((value) => runtime.layouts.MZ_V1[value])
+  );
   expect(runtime.layouts.CLASSIC.MOBILE_COMPACT).not.toEqual(before.CLASSIC.MOBILE_COMPACT);
   expect(runtime.layouts.FLOW_V1.DESKTOP_STANDARD).not.toEqual(before.FLOW_V1.DESKTOP_STANDARD);
   for (const deviceClass of ['DESKTOP_WIDE', 'MOBILE_STANDARD', 'MOBILE_COMPACT'] as const) {
@@ -798,6 +837,10 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
   }
   for (const deviceClass of ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD'] as const) {
     expect(runtime.layouts.CLASSIC[deviceClass]).toEqual(before.CLASSIC[deviceClass]);
+  }
+  expect(runtime.layouts.MZ_V1.MOBILE_STANDARD).not.toEqual(before.MZ_V1.MOBILE_STANDARD);
+  for (const deviceClass of ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_COMPACT'] as const) {
+    expect(runtime.layouts.MZ_V1[deviceClass]).toEqual(before.MZ_V1[deviceClass]);
   }
   await dialog.getByRole('tab', { name: '홈 모드' }).click();
   const comparison = dialog.locator('[data-home-studio-mode-surface]');
@@ -808,27 +851,32 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
   );
   await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
     'data-selected-mode',
-    'FLOW_V1'
+    'CLASSIC'
   );
   await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
     'data-dirty',
-    'true'
+    'false'
   );
-  await expect(comparison.locator('[data-mode-choice]')).toHaveCount(2);
+  await expect(comparison.locator('[data-mode-choice]')).toHaveCount(3);
   await expect(comparison.locator('[data-mode-preview="CLASSIC"]')).toContainText(
     '사내 소식 · 경영 브리핑'
   );
   await expect(comparison.locator('[data-mode-preview="FLOW_V1"]')).toContainText('우선 대기 큐');
+  await expect(comparison.locator('[data-mode-preview="MZ_V1"]')).toContainText(
+    '근거 기반 AI Stage'
+  );
   await expect(comparison.locator('[data-shared-app-id]')).toHaveCount(18);
   const flowMode = comparison.getByRole('radio', { name: /Flow 업무 홈/u });
-  await flowMode.focus();
-  await page.keyboard.press('ArrowLeft');
+  const classicMode = comparison.getByRole('radio', { name: /Classic 조직 포털/u });
+  await classicMode.focus();
+  await page.keyboard.press('Space');
   await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
     'data-dirty',
     'false'
   );
   await expect(comparison.getByRole('button', { name: '변경 사항 적용하기' })).toBeDisabled();
-  await page.keyboard.press('ArrowRight');
+  await flowMode.focus();
+  await page.keyboard.press('Space');
   await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
     'data-dirty',
     'true'
@@ -845,6 +893,22 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
     'data-dirty',
     'false'
   );
+  await comparison.locator('[data-mode-choice="MZ_V1"] input[type="radio"]').click();
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-dirty',
+    'true'
+  );
+  await comparison.getByRole('button', { name: '변경 사항 적용하기' }).click();
+  await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-current-mode',
+    'MZ_V1'
+  );
+  await expect.poll(() => modeWrites.length).toBe(2);
+  expect(modeWrites).toEqual([
+    { currentMode: 'FLOW_V1', version: 0 },
+    { currentMode: 'MZ_V1', version: 1 },
+  ]);
+  for (const body of modeWrites) expect(body).not.toHaveProperty('layout');
   await comparison.getByRole('radio', { name: /Classic 조직 포털/u }).click();
   await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
     'data-dirty',
@@ -853,7 +917,7 @@ test('C17 compares Classic and Flow in the real Studio after mode-scoped device 
   await comparison.getByRole('button', { name: '취소' }).click();
   await expect(comparison.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
     'data-selected-mode',
-    'FLOW_V1'
+    'MZ_V1'
   );
 });
 

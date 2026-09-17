@@ -99,8 +99,15 @@ describe('home personalization store capabilities', () => {
     expect(resolveModeIsolatedHomeExperience('FLOW_V1', true)).toBe('FLOW_V1');
   });
 
+  it('keeps MZ off the Classic legacy row and preserves it only in the mode-scoped store', () => {
+    expect(resolveModeIsolatedHomeExperience('MZ_V1', false)).toBe('CLASSIC');
+    expect(resolveModeIsolatedHomeExperience('MZ_V1', true)).toBe('MZ_V1');
+  });
+
   it('renders the ACTIVE broker mode without granting legacy Flow writes', () => {
     expect(resolveBrokeredHomeExperience('FLOW_V1', 'FLOW_V1', false)).toBe('FLOW_V1');
     expect(resolveBrokeredHomeExperience(null, 'FLOW_V1', false)).toBe('CLASSIC');
+    expect(resolveBrokeredHomeExperience('MZ_V1', 'CLASSIC', false)).toBe('MZ_V1');
+    expect(resolveBrokeredHomeExperience(null, 'MZ_V1', false)).toBe('CLASSIC');
   });
 });

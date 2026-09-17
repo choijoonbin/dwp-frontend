@@ -57,7 +57,8 @@ import {
   HomeTemplatesSection,
 } from './home-studio-sections';
 import { HomeAppearanceSection } from './home-appearance-section';
-import { HomeModePresetComparison, type HomeModeSharedApp } from './home-mode-preset-comparison';
+import { HomeModePresetComparison } from './home-mode-preset-comparison';
+import type { HomeModeStudioPreset } from './home-mode-studio-preset';
 import { HomeLayoutStudioWorkbench } from '../../components/home-layout-studio-workbench';
 import {
   activeHomeView,
@@ -86,15 +87,6 @@ import type { HomeStudioSection, HomeWorkstyleIntent } from './home-personalizat
 import type { HomeWidgetRuntimeDecisions } from '../../components/home-widget-runtime-contract';
 import { HomeStudioOverviewSection } from './home-studio-overview-section';
 import { useHomeViewConflictRecovery } from './use-home-view-conflict-recovery';
-
-export interface HomeModeStudioPreset {
-  currentMode: HomeExperienceVariant;
-  initialSelectedMode: HomeExperienceVariant;
-  sharedAppOrder: readonly HomeModeSharedApp[];
-  disabled?: boolean;
-  applying?: boolean;
-  onApply?: (mode: HomeExperienceVariant) => void | Promise<void>;
-}
 
 export type HomePersonalizationStudioProps = {
   open: boolean;
@@ -173,8 +165,9 @@ export function HomePersonalizationStudio({
   const hasModePreset = modePreset !== undefined;
   const modePresetCurrentMode = modePreset?.currentMode;
   const modePresetInitialSelectedMode = modePreset?.initialSelectedMode;
+  const advancedMode = modeKey !== 'CLASSIC';
   const [section, setSection] = useState<ActiveHomeStudioSection>(
-    initialSection ?? (modePreset ? 'mode' : modeKey === 'FLOW_V1' ? 'layout' : 'profiles')
+    initialSection ?? (modePreset ? 'mode' : advancedMode ? 'layout' : 'profiles')
   );
   const [appliedMode, setAppliedMode] = useState(modePreset?.currentMode ?? modeKey);
   const [selectedMode, setSelectedMode] = useState(
@@ -258,9 +251,9 @@ export function HomePersonalizationStudio({
 
   useEffect(() => {
     if (!hasModePreset && section === 'mode') {
-      setSection(modeKey === 'FLOW_V1' ? 'layout' : 'profiles');
+      setSection(advancedMode ? 'layout' : 'profiles');
     }
-  }, [hasModePreset, modeKey, section]);
+  }, [advancedMode, hasModePreset, section]);
 
   const currentModeView = async (request: Promise<HomeView>) =>
     requireHomeViewMode(await request, modeKey, !modeScopedViews);
@@ -638,7 +631,7 @@ export function HomePersonalizationStudio({
   const navItems: Array<{ key: ActiveHomeStudioSection; icon: typeof LayoutDashboard }> = [
     ...(presentation === 'page' ? ([{ key: 'overview', icon: LayoutDashboard }] as const) : []),
     ...(modePreset ? ([{ key: 'mode', icon: PanelsTopLeft }] as const) : []),
-    ...(modeKey === 'FLOW_V1' || presentation === 'page'
+    ...(advancedMode || presentation === 'page'
       ? ([{ key: 'layout', icon: PanelsTopLeft }] as const)
       : []),
     { key: 'profiles', icon: LayoutDashboard },
@@ -680,11 +673,11 @@ export function HomePersonalizationStudio({
       sx={{
         display: 'grid',
         gridTemplateColumns:
-          modeKey === 'FLOW_V1' || presentation === 'page'
+          advancedMode || presentation === 'page'
             ? 'minmax(0, 1fr)'
             : { xs: 'minmax(0, 1fr)', md: '220px minmax(0, 1fr)' },
         gridTemplateRows:
-          modeKey === 'FLOW_V1' || presentation === 'page' ? 'auto minmax(0, 1fr)' : undefined,
+          advancedMode || presentation === 'page' ? 'auto minmax(0, 1fr)' : undefined,
         height:
           presentation === 'page'
             ? section === 'layout'
@@ -692,7 +685,7 @@ export function HomePersonalizationStudio({
               : 'auto'
             : fullScreen
               ? 'calc(100dvh - 73px)'
-              : modeKey === 'FLOW_V1'
+              : advancedMode
                 ? 'min(880px, calc(100dvh - 132px))'
                 : 'min(720px, calc(100dvh - 150px))',
         minHeight: presentation === 'page' ? { md: section === 'layout' ? 620 : 0 } : { md: 560 },
@@ -700,7 +693,7 @@ export function HomePersonalizationStudio({
     >
       <Tabs
         orientation={
-          fullScreen || modeKey === 'FLOW_V1' || presentation === 'page' ? 'horizontal' : 'vertical'
+          fullScreen || advancedMode || presentation === 'page' ? 'horizontal' : 'vertical'
         }
         variant="scrollable"
         allowScrollButtonsMobile
@@ -708,14 +701,14 @@ export function HomePersonalizationStudio({
         onChange={(_, value: ActiveHomeStudioSection) => selectSection(value)}
         aria-label={t('title')}
         sx={{
-          borderRight: { md: modeKey === 'FLOW_V1' || presentation === 'page' ? 0 : 1 },
-          borderBottom: { xs: 1, md: modeKey === 'FLOW_V1' || presentation === 'page' ? 1 : 0 },
+          borderRight: { md: advancedMode || presentation === 'page' ? 0 : 1 },
+          borderBottom: { xs: 1, md: advancedMode || presentation === 'page' ? 1 : 0 },
           borderColor: 'divider',
           bgcolor: 'background.default',
           '& .MuiTab-root': {
             minHeight: 48,
             justifyContent: {
-              md: modeKey === 'FLOW_V1' || presentation === 'page' ? 'center' : 'flex-start',
+              md: advancedMode || presentation === 'page' ? 'center' : 'flex-start',
             },
             alignItems: 'center',
             textTransform: 'none',
@@ -760,6 +753,10 @@ export function HomePersonalizationStudio({
             <HomeModePresetComparison
               currentMode={appliedMode}
               selectedMode={selectedMode}
+              allowedModes={modePreset.allowedModes}
+              enabledModes={modePreset.enabledModes}
+              disabledModeReasons={modePreset.disabledModeReasons}
+              defaultMode={modePreset.defaultMode}
               sharedAppOrder={modePreset.sharedAppOrder}
               dirty={selectedMode !== appliedMode}
               disabled={modePreset.disabled}
@@ -983,7 +980,7 @@ export function HomePersonalizationStudio({
           onClose={handleClose}
           busy={busy || modeApplying || Boolean(modePreset?.applying)}
           fullScreen={fullScreen}
-          maxWidth={modePreset || modeKey === 'FLOW_V1' ? 'xl' : 'lg'}
+          maxWidth={modePreset || advancedMode ? 'xl' : 'lg'}
           contentDividers
           contentSx={{ p: 0, overflow: 'hidden' }}
           slotProps={{ transition: { onExited } }}

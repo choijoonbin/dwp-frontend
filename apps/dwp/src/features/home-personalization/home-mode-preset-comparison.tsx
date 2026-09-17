@@ -11,6 +11,7 @@ import {
 import { alpha, darken } from '@mui/material/styles';
 import {
   Bell,
+  Bot,
   Briefcase,
   CalendarDays,
   Check,
@@ -37,6 +38,10 @@ export interface HomeModeSharedApp {
 export interface HomeModePresetComparisonProps {
   currentMode: HomeExperienceVariant;
   selectedMode: HomeExperienceVariant;
+  allowedModes: readonly HomeExperienceVariant[];
+  enabledModes?: readonly HomeExperienceVariant[];
+  disabledModeReasons?: Partial<Record<HomeExperienceVariant, string>>;
+  defaultMode: HomeExperienceVariant;
   sharedAppOrder: readonly HomeModeSharedApp[];
   dirty: boolean;
   disabled?: boolean;
@@ -46,7 +51,7 @@ export interface HomeModePresetComparisonProps {
   onApply: () => void;
 }
 
-const MODE_OPTIONS: readonly HomeExperienceVariant[] = ['CLASSIC', 'FLOW_V1'];
+const MODE_OPTIONS: readonly HomeExperienceVariant[] = ['CLASSIC', 'FLOW_V1', 'MZ_V1'];
 
 const previewAppIcons = [Briefcase, Sparkles, FileText, Bell, Newspaper, CalendarDays] as const;
 
@@ -156,6 +161,8 @@ function ModePreview({
 }) {
   const { t } = useTranslation('homeStudio');
   const flow = mode === 'FLOW_V1';
+  const mz = mode === 'MZ_V1';
+  const actionOriented = flow || mz;
 
   return (
     <Box
@@ -171,7 +178,7 @@ function ModePreview({
         border: 1,
         borderColor: 'divider',
         borderRadius: previewRadius.surface,
-        bgcolor: flow
+        bgcolor: actionOriented
           ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
           : theme.palette.background.default,
       })}
@@ -181,26 +188,44 @@ function ModePreview({
         sx={{
           p: 1.25,
           borderRadius: previewRadius.rail,
-          borderLeft: flow ? 0 : classicPreviewBorder,
-          color: flow ? 'common.white' : 'text.primary',
-          bgcolor: flow ? previewColors.flowHeroSurface : previewColors.classicHeroSurface,
-          background: flow ? flowPreviewGradient : classicPreviewGradient,
+          borderLeft: actionOriented ? 0 : classicPreviewBorder,
+          color: actionOriented ? 'common.white' : 'text.primary',
+          bgcolor: actionOriented
+            ? previewColors.flowHeroSurface
+            : previewColors.classicHeroSurface,
+          background: mz
+            ? previewColors.flowHeroSurface
+            : flow
+              ? flowPreviewGradient
+              : classicPreviewGradient,
         }}
       >
         <Stack direction="row" alignItems="center" gap={0.75}>
           <Chip
             size="small"
-            label={t(flow ? 'modePreset.preview.flowTag' : 'modePreset.preview.classicTag')}
+            label={t(
+              mz
+                ? 'modePreset.preview.mzTag'
+                : flow
+                  ? 'modePreset.preview.flowTag'
+                  : 'modePreset.preview.classicTag'
+            )}
             sx={{
               height: 22,
               color: previewColors.chipText,
-              bgcolor: flow ? previewColors.attention : previewColors.classicAccent,
+              bgcolor: actionOriented ? previewColors.attention : previewColors.classicAccent,
               fontSize: previewTypography.compact,
               fontWeight: foundationTokens.home.typography.weightHeavy,
             }}
           />
           <Typography variant="caption" sx={{ opacity: 0.82, fontSize: previewTypography.compact }}>
-            {t(flow ? 'modePreset.preview.flowMeta' : 'modePreset.preview.classicMeta')}
+            {t(
+              mz
+                ? 'modePreset.preview.mzMeta'
+                : flow
+                  ? 'modePreset.preview.flowMeta'
+                  : 'modePreset.preview.classicMeta'
+            )}
           </Typography>
         </Stack>
         <Typography
@@ -211,7 +236,13 @@ function ModePreview({
             lineHeight: foundationTokens.home.typography.cardLineHeight,
           }}
         >
-          {t(flow ? 'modePreset.preview.flowHero' : 'modePreset.preview.classicHero')}
+          {t(
+            mz
+              ? 'modePreset.preview.mzHero'
+              : flow
+                ? 'modePreset.preview.flowHero'
+                : 'modePreset.preview.classicHero'
+          )}
         </Typography>
         <Stack direction="row" gap={0.75} sx={{ mt: 1 }}>
           <Box
@@ -220,13 +251,19 @@ function ModePreview({
               px: 1,
               py: 0.5,
               borderRadius: previewRadius.action,
-              bgcolor: flow ? 'common.white' : previewColors.classicAccent,
-              color: flow ? previewColors.flowHeroSurface : 'common.white',
+              bgcolor: actionOriented ? 'common.white' : previewColors.classicAccent,
+              color: actionOriented ? previewColors.flowHeroSurface : 'common.white',
               fontSize: previewTypography.compact,
               fontWeight: foundationTokens.home.typography.weightEmphasis,
             }}
           >
-            {t(flow ? 'modePreset.preview.flowAction' : 'modePreset.preview.classicAction')}
+            {t(
+              mz
+                ? 'modePreset.preview.mzAction'
+                : flow
+                  ? 'modePreset.preview.flowAction'
+                  : 'modePreset.preview.classicAction'
+            )}
           </Box>
         </Stack>
       </Box>
@@ -235,11 +272,16 @@ function ModePreview({
           flex: 1,
           minHeight: 0,
           display: 'grid',
-          gridTemplateColumns: flow ? '1.15fr 1fr 0.82fr' : '1.85fr 1fr',
+          gridTemplateColumns: actionOriented ? '1.15fr 1fr 0.82fr' : '1.85fr 1fr',
           gap: 1,
         }}
       >
-        {(flow ? ['queue', 'timeline', 'requests'] : ['news', 'handbook']).map((area, index) => (
+        {(mz
+          ? ['evidence', 'plan', 'handoff']
+          : flow
+            ? ['queue', 'timeline', 'requests']
+            : ['news', 'handbook']
+        ).map((area, index) => (
           <Box
             key={area}
             sx={{
@@ -257,7 +299,7 @@ function ModePreview({
               >
                 {t(`modePreset.preview.${area}`)}
               </Typography>
-              {flow && (
+              {actionOriented && (
                 <Typography
                   variant="caption"
                   color="primary.main"
@@ -268,21 +310,23 @@ function ModePreview({
               )}
             </Stack>
             <Stack gap={0.5} sx={{ mt: 0.75 }}>
-              {[0, 1, 2].slice(0, index === 1 && !flow ? 3 : 2).map((row) => (
+              {[0, 1, 2].slice(0, index === 1 && !actionOriented ? 3 : 2).map((row) => (
                 <Box
                   key={row}
                   sx={{
-                    height: flow ? 27 : 24,
+                    height: actionOriented ? 27 : 24,
                     px: 0.75,
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: previewRadius.action,
                     bgcolor:
-                      row === 0 && flow
+                      row === 0 && actionOriented
                         ? previewColors.flowRowSurface
                         : previewColors.quietRowSurface,
                     color:
-                      row === 0 && flow ? previewColors.selectedText : previewColors.textSubdued,
+                      row === 0 && actionOriented
+                        ? previewColors.selectedText
+                        : previewColors.textSubdued,
                     fontSize: previewTypography.micro,
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
@@ -302,21 +346,23 @@ function ModePreview({
 
 function nextModeFromKeyboard(
   event: KeyboardEvent<HTMLDivElement>,
-  selectedMode: HomeExperienceVariant
+  selectedMode: HomeExperienceVariant,
+  allowedModes: readonly HomeExperienceVariant[]
 ): HomeExperienceVariant | null {
-  const currentIndex = MODE_OPTIONS.indexOf(selectedMode);
+  if (allowedModes.length === 0) return null;
+  const currentIndex = Math.max(0, allowedModes.indexOf(selectedMode));
 
   switch (event.key) {
     case 'ArrowLeft':
     case 'ArrowUp':
-      return MODE_OPTIONS[(currentIndex - 1 + MODE_OPTIONS.length) % MODE_OPTIONS.length] ?? null;
+      return allowedModes[(currentIndex - 1 + allowedModes.length) % allowedModes.length] ?? null;
     case 'ArrowRight':
     case 'ArrowDown':
-      return MODE_OPTIONS[(currentIndex + 1) % MODE_OPTIONS.length] ?? null;
+      return allowedModes[(currentIndex + 1) % allowedModes.length] ?? null;
     case 'Home':
-      return MODE_OPTIONS[0] ?? null;
+      return allowedModes[0] ?? null;
     case 'End':
-      return MODE_OPTIONS.at(-1) ?? null;
+      return allowedModes.at(-1) ?? null;
     default:
       return null;
   }
@@ -331,6 +377,10 @@ function nextModeFromKeyboard(
 export function HomeModePresetComparison({
   currentMode,
   selectedMode,
+  allowedModes,
+  enabledModes = allowedModes,
+  disabledModeReasons,
+  defaultMode,
   sharedAppOrder,
   dirty,
   disabled = false,
@@ -349,7 +399,7 @@ export function HomeModePresetComparison({
 
   const handleKeyboardSelection = (event: KeyboardEvent<HTMLDivElement>) => {
     if (controlsDisabled) return;
-    const nextMode = nextModeFromKeyboard(event, selectedMode);
+    const nextMode = nextModeFromKeyboard(event, selectedMode, enabledModes);
     if (!nextMode) return;
 
     event.preventDefault();
@@ -402,6 +452,9 @@ export function HomeModePresetComparison({
         <Typography id={descriptionId} color="text.secondary">
           {t('modePreset.description')}
         </Typography>
+        <Typography variant="caption" color="text.secondary" data-mode-layout-preservation>
+          {t('modePreset.layoutPreservation')}
+        </Typography>
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           alignItems={{ md: 'center' }}
@@ -453,20 +506,25 @@ export function HomeModePresetComparison({
           onKeyDown={handleKeyboardSelection}
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
             gap: 1.5,
           }}
         >
           {MODE_OPTIONS.map((mode) => {
             const isCurrent = currentMode === mode;
             const isSelected = selectedMode === mode;
-            const OptionIcon = mode === 'CLASSIC' ? Rows3 : Columns3;
+            const isTenantAllowed = allowedModes.includes(mode);
+            const isAllowed = isTenantAllowed && enabledModes.includes(mode);
+            const isDefault = defaultMode === mode;
+            const OptionIcon = mode === 'CLASSIC' ? Rows3 : mode === 'FLOW_V1' ? Columns3 : Bot;
 
             return (
               <FormControlLabel
                 key={mode}
                 value={mode}
                 data-mode-choice={mode}
+                data-mode-allowed={isAllowed ? 'true' : 'false'}
+                disabled={controlsDisabled || !isAllowed}
                 control={
                   <Radio inputProps={{ 'aria-describedby': `${descriptionId} ${sharedAppsId}` }} />
                 }
@@ -493,6 +551,27 @@ export function HomeModePresetComparison({
                           color="default"
                           label={t('modePreset.current')}
                           data-current-mode-indicator
+                        />
+                      )}
+                      {isDefault && (
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label={t('modePreset.default')}
+                          data-default-mode-indicator
+                        />
+                      )}
+                      {!isAllowed && (
+                        <Chip
+                          size="small"
+                          color="warning"
+                          variant="outlined"
+                          label={t(
+                            isTenantAllowed && disabledModeReasons?.[mode]
+                              ? 'modePreset.rolloutUnavailable'
+                              : 'modePreset.policyUnavailable'
+                          )}
+                          data-mode-policy-unavailable
                         />
                       )}
                       {isSelected && (

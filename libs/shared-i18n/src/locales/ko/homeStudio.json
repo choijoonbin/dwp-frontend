@@ -234,10 +234,14 @@
   },
   "modePreset": {
     "title": "사용할 홈 모드 선택",
-    "description": "Classic과 Flow의 정보 구성 방식을 비교하고 선택합니다. 모드를 바꿔도 승인된 공통 앱 18개의 순서와 접근 권한은 그대로 유지됩니다.",
+    "description": "Classic, Flow, MZ / AI Stage의 정보 구성 방식을 비교하고 선택합니다. 모드를 바꿔도 승인된 공통 앱 18개의 순서와 접근 권한은 그대로 유지됩니다.",
     "groupLabel": "홈 모드",
     "current": "현재 적용 중",
     "selected": "선택됨",
+    "default": "조직 기본값",
+    "policyUnavailable": "조직에서 사용 허용되지 않음",
+    "rolloutUnavailable": "배포 정책으로 일시 사용 불가",
+    "layoutPreservation": "모드를 전환해도 각 모드의 레이아웃과 기기 설정은 별도로 보존됩니다.",
     "apply": "변경 사항 적용하기",
     "applying": "적용 중",
     "options": {
@@ -248,11 +252,15 @@
       "FLOW_V1": {
         "title": "Flow 업무 홈",
         "description": "지금 처리할 업무와 일정, 응답 요청을 우선순위에 따라 한 흐름으로 확인합니다."
+      },
+      "MZ_V1": {
+        "title": "MZ / AI Stage",
+        "description": "명확한 업무 의도를 근거와 검토 가능한 계획으로 만든 뒤 담당 앱에 안전하게 인계합니다."
       }
     },
     "preview": {
       "blindTestTitle": "Blind Header Test",
-      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic과 긴급 실행형 Flow가 즉시 구별됩니다.",
+      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic, 긴급 실행형 Flow, 근거 기반 AI Stage형 MZ가 즉시 구별됩니다.",
       "axisIntegrity": "정보구조 · 표현 폭 · 공통 앱 18개 순서를 각각 보존",
       "firstQuestion": "첫 질문:",
       "primaryAction": "주 행동:",
@@ -267,6 +275,11 @@
         "primaryAction": "우선 큐 처리와 일정 재승인",
         "sharedApps": "공통 순서 100% 보존"
       },
+      "MZ_V1": {
+        "firstQuestion": "AI가 어떤 결과를 근거와 함께 준비해야 하는가",
+        "primaryAction": "근거 기반 계획 검토 후 담당 앱 인계",
+        "sharedApps": "공통 순서 100% 보존"
+      },
       "appsTitle": "내 앱 바로가기 (18개 승인 자산)",
       "appsSynced": "공통 순서 동기화 완료",
       "classicTag": "전사 공지",
@@ -277,6 +290,10 @@
       "flowMeta": "오늘의 긴급 최우선 실행 업무 #1",
       "flowHero": "출시 점검 회의 사전 브리프 자료 취합 및 최종 검토",
       "flowAction": "즉시 검토 및 브리프",
+      "mzTag": "근거 기반 AI Stage",
+      "mzMeta": "담당 앱 인계 전 검토 필수",
+      "mzHero": "필요한 결과를 설명하고 근거가 연결된 편집 가능한 계획 만들기",
+      "mzAction": "검토 작업 공간 열기",
       "news": "사내 소식 · 경영 브리핑 (65%)",
       "newsItem1": "Q2 글로벌 거점 오피스 자율 좌석제 운영 변경",
       "newsItem2": "AI 트랜스포메이션 로드맵 다시보기",
@@ -292,11 +309,20 @@
       "timelineItem2": "13:30 집중 업무 블록",
       "requests": "내 요청 (28%)",
       "requestsItem1": "미확인 메일 5건",
-      "requestsItem2": "멘션 요청 1건"
+      "requestsItem2": "멘션 요청 1건",
+      "evidence": "근거 자료",
+      "evidenceItem1": "현재 업무와 마감일",
+      "evidenceItem2": "일정과 원본 자료",
+      "plan": "편집 가능한 계획",
+      "planItem1": "작업 단계와 가정 초안",
+      "planItem2": "근거 누락 검토",
+      "handoff": "담당 앱 인계",
+      "handoffItem1": "DWAI·ON에서 확인",
+      "handoffItem2": "접수 기록에서 이어가기"
     },
     "sharedApps": {
       "title": "공통 앱 {{count}}개 순서 잠금",
-      "description": "두 모드는 동일한 승인 앱과 순서를 사용합니다. 모드 선택으로 앱 권한이나 배치 순서는 바뀌지 않습니다.",
+      "description": "세 모드는 동일한 승인 앱과 순서를 사용합니다. 모드 선택으로 앱 권한이나 배치 순서는 바뀌지 않습니다.",
       "orderLabel": "잠긴 공통 앱 순서",
       "position": "{{position}}번"
     },

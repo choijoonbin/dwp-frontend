@@ -109,8 +109,41 @@ describe('home composition policy', () => {
     ).toMatchObject({
       schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
+      allowedModes: ['CLASSIC', 'FLOW_V1'],
+      defaultMode: 'FLOW_V1',
       modeLayouts: createHomeModeLayouts(),
     });
+  });
+
+  it('migrates legacy MZ policy without silently enabling Flow', () => {
+    expect(
+      reconcileHomeCompositionPolicy({
+        schemaVersion: 3,
+        experienceVariant: 'MZ_V1',
+        personalCustomizationEnabled: true,
+        governedZones: [],
+      })
+    ).toMatchObject({
+      allowedModes: ['CLASSIC', 'MZ_V1'],
+      defaultMode: 'MZ_V1',
+      experienceVariant: 'MZ_V1',
+    });
+  });
+
+  it('uses the two-key v4 layout contract as an implicit pre-MZ allowlist', () => {
+    const layouts = createHomeModeLayouts();
+    const policy = reconcileHomeCompositionPolicy({
+      schemaVersion: 4,
+      experienceVariant: 'FLOW_V1',
+      personalCustomizationEnabled: true,
+      governedZones: [],
+      modeLayouts: { CLASSIC: layouts.CLASSIC, FLOW_V1: layouts.FLOW_V1 },
+    });
+
+    expect(policy.allowedModes).toEqual(['CLASSIC', 'FLOW_V1']);
+    expect(policy.defaultMode).toBe('FLOW_V1');
+    expect(policy.modeLayouts).toEqual(layouts);
+    expect(policy.personalCustomizationEnabled).toBe(true);
   });
 
   it('only serializes v4 after the backend advertises the Wave 1 contract', () => {

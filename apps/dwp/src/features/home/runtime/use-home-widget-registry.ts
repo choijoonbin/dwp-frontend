@@ -5,6 +5,7 @@ import {
   getWidgetRegistryReadiness,
   resolveWidgetRegistryConnection,
 } from '@dwp-frontend/shared-utils';
+import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
 import {
   homeWidgetRegistryEffectiveQueryKey,
@@ -12,7 +13,12 @@ import {
   resolveHomeWidgetRuntimeDecisions,
 } from './widget-registry-runtime';
 
-export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number, enabled = true) {
+export function useHomeWidgetRegistryRuntime(
+  tenantId: number | undefined,
+  userId: number | undefined,
+  mode: HomeExperienceVariant,
+  enabled = true
+) {
   const readinessQuery = useQuery({
     queryKey: ['widget-registry', 'readiness', tenantId, userId],
     queryFn: getWidgetRegistryReadiness,
@@ -27,8 +33,8 @@ export function useHomeWidgetRegistryRuntime(tenantId?: number, userId?: number,
   );
   const readiness = readinessQuery.data;
   const effectiveCatalogQuery = useQuery({
-    queryKey: homeWidgetRegistryEffectiveQueryKey(tenantId, userId, readiness),
-    queryFn: () => getEffectiveWidgetCatalog('workspace-home'),
+    queryKey: homeWidgetRegistryEffectiveQueryKey(tenantId, userId, mode, readiness),
+    queryFn: () => getEffectiveWidgetCatalog('workspace-home', mode),
     enabled: enabled && connection.queryEffectiveCatalog,
     staleTime: 0,
     gcTime: 0,

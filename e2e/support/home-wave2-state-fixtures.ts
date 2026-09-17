@@ -7,6 +7,10 @@ export const HOME_WAVE2_MODE_LAYOUTS = {
     layoutScope: 'MODE_SCOPED_VIEW',
     deviceClasses: ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD', 'MOBILE_COMPACT'],
   },
+  MZ_V1: {
+    layoutScope: 'MODE_SCOPED_VIEW',
+    deviceClasses: ['DESKTOP_WIDE', 'DESKTOP_STANDARD', 'MOBILE_STANDARD', 'MOBILE_COMPACT'],
+  },
 } as const;
 
 export const HOME_WAVE2_FLOW_WIDGETS = [

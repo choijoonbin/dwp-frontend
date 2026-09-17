@@ -415,6 +415,8 @@ export function homeV2ToExperience(model: HomeV2ReadModel, locale: string): Home
     compositionPolicy: {
       schemaVersion: 4,
       experienceVariant: model.mode,
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      defaultMode: model.mode,
       personalCustomizationEnabled: false,
       governedZones: [],
       modeLayouts: createHomeModeLayouts(),

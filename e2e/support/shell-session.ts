@@ -64,7 +64,7 @@ type ShellSessionOptions = {
 };
 
 type MockHomeSurface = {
-  schemaVersion: 4;
+  schemaVersion: 5;
   surfaceKey: 'workspace-home' | 'hcm-home' | 'approval-home';
   customized: boolean;
   layout: {
@@ -77,6 +77,14 @@ type MockHomeSurface = {
     }>;
   };
   version: number;
+  allowedModes?: Array<'CLASSIC' | 'FLOW_V1' | 'MZ_V1'>;
+  enabledModes?: Array<'CLASSIC' | 'FLOW_V1' | 'MZ_V1'>;
+  disabledModeReasons?: Partial<
+    Record<'CLASSIC' | 'FLOW_V1' | 'MZ_V1', 'ROLLOUT_OR_KILL_SWITCH_DISABLED'>
+  >;
+  defaultMode?: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1';
+  currentMode?: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1';
+  warnings?: string[];
   updatedAt: string | null;
 };
 
@@ -1081,9 +1089,15 @@ export async function mockShellSession(
   let preferenceExceptions: PreferenceExceptionRequest[] = [];
   const defaultHomeSurfaces: Record<MockHomeSurface['surfaceKey'], MockHomeSurface> = {
     'workspace-home': {
-      schemaVersion: 4,
+      schemaVersion: 5,
       surfaceKey: 'workspace-home',
       customized: false,
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      enabledModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      disabledModeReasons: {},
+      defaultMode: 'CLASSIC',
+      currentMode: 'CLASSIC',
+      warnings: [],
       layout: {
         appLayout: null,
         presentation: 'balanced',
@@ -1098,7 +1112,7 @@ export async function mockShellSession(
       updatedAt: null,
     },
     'hcm-home': {
-      schemaVersion: 4,
+      schemaVersion: 5,
       surfaceKey: 'hcm-home',
       customized: false,
       layout: {
@@ -1116,7 +1130,7 @@ export async function mockShellSession(
       updatedAt: null,
     },
     'approval-home': {
-      schemaVersion: 4,
+      schemaVersion: 5,
       surfaceKey: 'approval-home',
       customized: false,
       layout: {
@@ -1807,6 +1821,36 @@ export async function mockShellSession(
         },
         version: 0,
       });
+    }
+    if (path === '/api/platform/v1/home-preferences/current-mode') {
+      const body = request.postDataJSON() as {
+        currentMode: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1';
+        version: number;
+      };
+      const current = homeSurfaces['workspace-home'];
+      if (body.version !== current.version) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', message: 'Version conflict' }),
+        });
+      }
+      if (
+        !(current.enabledModes ?? current.allowedModes ?? ['CLASSIC']).includes(body.currentMode)
+      ) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', message: 'Home mode is unavailable' }),
+        });
+      }
+      homeSurfaces['workspace-home'] = {
+        ...current,
+        currentMode: body.currentMode,
+        version: current.version + 1,
+        updatedAt: '2026-08-14T00:00:00Z',
+      };
+      return fulfillSuccess(route, homeSurfaces['workspace-home']);
     }
     if (path === '/api/platform/v1/home-preferences') {
       if (request.method() === 'GET') {

@@ -1,6 +1,7 @@
 import type {
   EffectiveWidgetCatalog,
   EffectiveWidgetCatalogItem,
+  HomeExperienceVariant,
   HomeWidgetKey,
   WidgetPlacementContext,
   WidgetPublicReasonCode,
@@ -25,6 +26,7 @@ export const HOME_NATIVE_HOST_API_VERSION = 1;
 export function homeWidgetRegistryEffectiveQueryKey(
   tenantId: number | undefined,
   userId: number | undefined,
+  mode: HomeExperienceVariant,
   readiness: WidgetRegistryReadiness | undefined
 ) {
   return [
@@ -33,6 +35,7 @@ export function homeWidgetRegistryEffectiveQueryKey(
     tenantId,
     userId,
     'workspace-home',
+    mode,
     readiness?.migrationMode,
     readiness?.registryRevision,
     readiness?.policyRevision,
@@ -235,11 +238,25 @@ function expectedContext(
   catalog: EffectiveWidgetCatalog,
   binding: NativeHomeWidgetBinding
 ): WidgetPlacementContext | null {
-  const compatible = binding.supportedContexts.filter((context) =>
-    catalog.hostContext.resolvedHostMode === 'CLASSIC'
-      ? context === 'CLASSIC_PERSONAL'
-      : context === 'FLOW_PERSONAL' || context === 'FLOW_GOVERNED'
-  );
+  if (catalog.hostContext.resolvedHostMode === 'MZ') {
+    if (
+      binding.supportedContexts.includes('MZ_PERSONAL') ||
+      binding.supportedContexts.includes('FLOW_PERSONAL')
+    ) {
+      return 'MZ_PERSONAL';
+    }
+    if (
+      binding.supportedContexts.includes('MZ_GOVERNED') ||
+      binding.supportedContexts.includes('FLOW_GOVERNED')
+    ) {
+      return 'MZ_GOVERNED';
+    }
+    return null;
+  }
+  const compatible = binding.supportedContexts.filter((context) => {
+    if (catalog.hostContext.resolvedHostMode === 'CLASSIC') return context === 'CLASSIC_PERSONAL';
+    return context === 'FLOW_PERSONAL' || context === 'FLOW_GOVERNED';
+  });
   return compatible.length === 1 ? compatible[0]! : null;
 }
 
@@ -305,7 +322,9 @@ function isCatalogForMode(
   const host = value.hostContext;
   const validHost =
     host.surfaceKey === 'workspace-home' &&
-    (host.resolvedHostMode === 'CLASSIC' || host.resolvedHostMode === 'FLOW') &&
+    (host.resolvedHostMode === 'CLASSIC' ||
+      host.resolvedHostMode === 'FLOW' ||
+      host.resolvedHostMode === 'MZ') &&
     Number.isSafeInteger(host.homeExperienceVersion) &&
     Number.isSafeInteger(host.compositionSchemaVersion) &&
     (host.layoutSource === 'HOME_VIEW' || host.layoutSource === 'LEGACY_PREFERENCE') &&
@@ -321,9 +340,13 @@ function isCatalogForMode(
   return value.contexts.every((context) => {
     const placementContext = (context as { placementContext?: unknown }).placementContext;
     if (
-      !['CLASSIC_PERSONAL', 'FLOW_PERSONAL', 'FLOW_GOVERNED'].includes(
-        placementContext as string
-      ) ||
+      ![
+        'CLASSIC_PERSONAL',
+        'FLOW_PERSONAL',
+        'FLOW_GOVERNED',
+        'MZ_PERSONAL',
+        'MZ_GOVERNED',
+      ].includes(placementContext as string) ||
       seenContexts.has(placementContext as WidgetPlacementContext) ||
       !isCatalogContext(context, placementContext as WidgetPlacementContext) ||
       !context.items.every(isEffectiveItem)

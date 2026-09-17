@@ -5,6 +5,7 @@ import { productSurfaceGovernedMutationConfig } from './product-surface-governed
 import type { ApprovalMutationExecution } from './approval-governed-mutation';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 import type { ApiResponse } from '../types';
+import type { HomeExperienceVariant } from './home-experience-api';
 
 export type HomeWidgetKey =
   | 'command-rail'
@@ -61,6 +62,13 @@ export type HomePreference<WidgetKey extends string = HomeWidgetKey> = {
   customized: boolean;
   layout: HomePreferenceLayout<WidgetKey>;
   version: number;
+  /** Present on Home mode-aware servers. Optional during rolling upgrade. */
+  allowedModes?: HomeExperienceVariant[];
+  enabledModes?: HomeExperienceVariant[];
+  disabledModeReasons?: Partial<Record<HomeExperienceVariant, 'ROLLOUT_OR_KILL_SWITCH_DISABLED'>>;
+  defaultMode?: HomeExperienceVariant;
+  currentMode?: HomeExperienceVariant;
+  warnings?: string[];
   updatedAt?: string | null;
 };
 
@@ -73,13 +81,33 @@ export async function getHomePreference(): Promise<HomePreference> {
 
 export async function updateHomePreference(
   layout: HomePreferenceLayout,
-  version: number
+  version: number,
+  currentMode?: HomeExperienceVariant
 ): Promise<HomePreference> {
   const response = await axiosInstance.put<
     ApiResponse<HomePreference>,
-    { layout: HomePreferenceLayout; version: number }
-  >('/api/platform/v1/home-preferences', { layout, version });
+    { layout: HomePreferenceLayout; version: number; currentMode?: HomeExperienceVariant }
+  >('/api/platform/v1/home-preferences', {
+    layout,
+    version,
+    ...(currentMode ? { currentMode } : {}),
+  });
   return response.data.data;
+}
+
+export function updateHomeCurrentMode(
+  preference: HomePreference,
+  currentMode: HomeExperienceVariant
+): Promise<HomePreference> {
+  return axiosInstance
+    .put<ApiResponse<HomePreference>, { currentMode: HomeExperienceVariant; version: number }>(
+      '/api/platform/v1/home-preferences/current-mode',
+      {
+        currentMode,
+        version: preference.version,
+      }
+    )
+    .then((response) => response.data.data);
 }
 
 export async function resetHomePreference(version: number): Promise<HomePreference> {

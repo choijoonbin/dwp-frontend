@@ -60,7 +60,7 @@ export function resolveModeIsolatedHomeExperience(
   configuredVariant: HomeExperienceVariant,
   viewsStoreReady: boolean
 ): HomeExperienceVariant {
-  return configuredVariant === 'FLOW_V1' && !viewsStoreReady ? 'CLASSIC' : configuredVariant;
+  return configuredVariant !== 'CLASSIC' && !viewsStoreReady ? 'CLASSIC' : configuredVariant;
 }
 
 /** The broker read model owns the rendered mode without granting legacy write capabilities. */

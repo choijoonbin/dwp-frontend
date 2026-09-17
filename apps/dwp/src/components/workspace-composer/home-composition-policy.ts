@@ -1,4 +1,8 @@
-import { createHomeModeLayouts, isHomeModeLayouts } from '@dwp-frontend/shared-utils';
+import {
+  createHomeModeLayouts,
+  HOME_EXPERIENCE_VARIANTS,
+  isHomeModeLayouts,
+} from '@dwp-frontend/shared-utils';
 
 import type {
   GovernedHomeZone,
@@ -51,10 +55,38 @@ export const HOME_GOVERNED_ZONE_KEYS: readonly HomeGovernedZoneKey[] =
 
 const definitionByKey = new Map(HOME_GOVERNED_ZONE_REGISTRY.map((zone) => [zone.key, zone]));
 
+function normalizeModeLayouts(value: unknown): {
+  layouts: HomeCompositionPolicy['modeLayouts'];
+  implicitAllowedModes: HomeExperienceVariant[];
+} | null {
+  if (isHomeModeLayouts(value)) {
+    return { layouts: structuredClone(value), implicitAllowedModes: [...HOME_EXPERIENCE_VARIANTS] };
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const candidate = value as Record<string, unknown>;
+  if (
+    Object.keys(candidate).length !== 2 ||
+    !Object.prototype.hasOwnProperty.call(candidate, 'CLASSIC') ||
+    !Object.prototype.hasOwnProperty.call(candidate, 'FLOW_V1')
+  ) {
+    return null;
+  }
+  const upgraded = {
+    ...createHomeModeLayouts(),
+    CLASSIC: candidate.CLASSIC,
+    FLOW_V1: candidate.FLOW_V1,
+  };
+  return isHomeModeLayouts(upgraded)
+    ? { layouts: upgraded, implicitAllowedModes: ['CLASSIC', 'FLOW_V1'] }
+    : null;
+}
+
 export function defaultHomeCompositionPolicy(): HomeCompositionPolicy {
   return {
     schemaVersion: 4,
     experienceVariant: 'CLASSIC',
+    allowedModes: [...HOME_EXPERIENCE_VARIANTS],
+    defaultMode: 'CLASSIC',
     personalCustomizationEnabled: true,
     modeLayouts: createHomeModeLayouts(),
     governedZones: HOME_GOVERNED_ZONE_REGISTRY.map((definition) => ({
@@ -81,6 +113,8 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
   const candidate = value as Partial<HomeCompositionPolicyPayload> & {
     schemaVersion?: unknown;
     experienceVariant?: unknown;
+    allowedModes?: unknown;
+    defaultMode?: unknown;
     modeLayouts?: unknown;
   };
   const supportedSchema =
@@ -90,14 +124,54 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
     candidate.schemaVersion === 4;
   if (!supportedSchema) return failClosedHomeCompositionPolicy();
   const hasVariant = candidate.schemaVersion === 3 || candidate.schemaVersion === 4;
-  const experienceVariant: HomeExperienceVariant =
-    hasVariant && candidate.experienceVariant === 'FLOW_V1' ? 'FLOW_V1' : 'CLASSIC';
+  const legacyExperienceVariant: HomeExperienceVariant =
+    hasVariant &&
+    (candidate.experienceVariant === 'FLOW_V1' || candidate.experienceVariant === 'MZ_V1')
+      ? candidate.experienceVariant
+      : 'CLASSIC';
+  const normalizedModeLayouts = normalizeModeLayouts(candidate.modeLayouts);
+  const requestedAllowedModes = Array.isArray(candidate.allowedModes)
+    ? candidate.allowedModes.filter(
+        (mode): mode is HomeExperienceVariant =>
+          typeof mode === 'string' &&
+          HOME_EXPERIENCE_VARIANTS.includes(mode as HomeExperienceVariant)
+      )
+    : [];
+  const allowedModes = [
+    ...new Set(
+      requestedAllowedModes.length > 0
+        ? requestedAllowedModes
+        : candidate.schemaVersion === 4 && normalizedModeLayouts
+          ? normalizedModeLayouts.implicitAllowedModes
+          : candidate.schemaVersion === 4
+            ? HOME_EXPERIENCE_VARIANTS
+            : (['CLASSIC', legacyExperienceVariant] as const)
+    ),
+  ];
+  const defaultMode: HomeExperienceVariant =
+    typeof candidate.defaultMode === 'string' &&
+    HOME_EXPERIENCE_VARIANTS.includes(candidate.defaultMode as HomeExperienceVariant) &&
+    allowedModes.includes(candidate.defaultMode as HomeExperienceVariant)
+      ? (candidate.defaultMode as HomeExperienceVariant)
+      : allowedModes.includes(legacyExperienceVariant)
+        ? legacyExperienceVariant
+        : allowedModes[0]!;
+  const experienceVariant = defaultMode;
   const invalidVersionedVariant =
     hasVariant &&
     candidate.experienceVariant !== 'CLASSIC' &&
-    candidate.experienceVariant !== 'FLOW_V1';
-  const invalidModeLayouts =
-    candidate.schemaVersion === 4 && !isHomeModeLayouts(candidate.modeLayouts);
+    candidate.experienceVariant !== 'FLOW_V1' &&
+    candidate.experienceVariant !== 'MZ_V1';
+  const invalidModePolicy =
+    candidate.schemaVersion === 4 &&
+    ((candidate.allowedModes !== undefined &&
+      (!Array.isArray(candidate.allowedModes) ||
+        candidate.allowedModes.length === 0 ||
+        requestedAllowedModes.length !== candidate.allowedModes.length)) ||
+      (candidate.defaultMode !== undefined &&
+        (!HOME_EXPERIENCE_VARIANTS.includes(candidate.defaultMode as HomeExperienceVariant) ||
+          !allowedModes.includes(candidate.defaultMode as HomeExperienceVariant))));
+  const invalidModeLayouts = candidate.schemaVersion === 4 && normalizedModeLayouts === null;
   const requested = Array.isArray(candidate.governedZones) ? candidate.governedZones : [];
   const used = new Set<HomeGovernedZoneKey>();
   const zones: GovernedHomeZone[] = [];
@@ -135,19 +209,24 @@ export function reconcileHomeCompositionPolicy(value: unknown): HomeCompositionP
   return {
     schemaVersion: 4,
     experienceVariant,
+    allowedModes,
+    defaultMode,
     personalCustomizationEnabled:
       !invalidVersionedVariant &&
+      !invalidModePolicy &&
       !invalidModeLayouts &&
       candidate.personalCustomizationEnabled === true,
     governedZones: zones,
-    modeLayouts: isHomeModeLayouts(candidate.modeLayouts)
-      ? structuredClone(candidate.modeLayouts)
-      : createHomeModeLayouts(),
+    modeLayouts: normalizedModeLayouts?.layouts ?? createHomeModeLayouts(),
   };
 }
 
 export function isFlowHomeVariant(policy: HomeCompositionPolicy): boolean {
   return policy.schemaVersion === 4 && policy.experienceVariant === 'FLOW_V1';
+}
+
+export function isMzHomeVariant(policy: HomeCompositionPolicy): boolean {
+  return policy.schemaVersion === 4 && policy.experienceVariant === 'MZ_V1';
 }
 
 export function homeCompositionPolicyWritePayload(

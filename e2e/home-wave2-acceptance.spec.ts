@@ -187,7 +187,7 @@ async function expectCanonicalFlowLaunchpad(root: Locator) {
 async function expectMobileNavigation(
   navigation: Locator,
   expected: readonly { label: string; route: string }[],
-  mode: 'CLASSIC' | 'FLOW_V1'
+  mode: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1'
 ) {
   const actual = await navigation.locator('a').evaluateAll((items) =>
     items.map((item) => {

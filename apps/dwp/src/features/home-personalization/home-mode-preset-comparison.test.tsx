@@ -51,6 +51,8 @@ async function render(
   const props: HomeModePresetComparisonProps = {
     currentMode: 'CLASSIC',
     selectedMode: 'FLOW_V1',
+    allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+    defaultMode: 'CLASSIC',
     sharedAppOrder: sharedApps,
     dirty: true,
     onSelect: vi.fn(),
@@ -93,7 +95,7 @@ describe('HomeModePresetComparison', () => {
     expect(section?.dataset.currentMode).toBe('CLASSIC');
     expect(section?.dataset.selectedMode).toBe('FLOW_V1');
     expect(section?.dataset.dirty).toBe('true');
-    expect(radios).toHaveLength(2);
+    expect(radios).toHaveLength(3);
     expect(radios.every((radio) => radio.type === 'radio')).toBe(true);
     expect(radios[0]?.checked).toBe(false);
     expect(radios[1]?.checked).toBe(true);
@@ -146,8 +148,8 @@ describe('HomeModePresetComparison', () => {
     expect(document.activeElement).toBe(radios[1]);
 
     await act(async () => fireEvent.keyDown(group, { key: 'End' }));
-    expect(onSelect).toHaveBeenLastCalledWith('FLOW_V1');
-    expect(document.activeElement).toBe(radios[1]);
+    expect(onSelect).toHaveBeenLastCalledWith('MZ_V1');
+    expect(document.activeElement).toBe(radios[2]);
 
     onSelect.mockClear();
     await render({ selectedMode: 'FLOW_V1', dirty: true, onSelect });
@@ -165,6 +167,24 @@ describe('HomeModePresetComparison', () => {
     expect(Number.parseFloat(getComputedStyle(radioTouchTarget!).minHeight)).toBeGreaterThanOrEqual(
       44
     );
+  });
+
+  it('disables policy and rollout unavailable modes while distinguishing the default', async () => {
+    await render({
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      enabledModes: ['CLASSIC', 'FLOW_V1'],
+      disabledModeReasons: { MZ_V1: 'ROLLOUT_OR_KILL_SWITCH_DISABLED' },
+      defaultMode: 'FLOW_V1',
+    });
+
+    const mz = container.querySelector<HTMLElement>('[data-mode-choice="MZ_V1"]');
+    expect(mz?.querySelector('input')?.hasAttribute('disabled')).toBe(true);
+    expect(mz?.querySelector('[data-mode-policy-unavailable]')?.textContent).toBe(
+      ko.modePreset.rolloutUnavailable
+    );
+    expect(
+      container.querySelector('[data-mode-choice="FLOW_V1"] [data-default-mode-indicator]')
+    ).not.toBeNull();
   });
 
   it('announces a controlled applying state without initiating persistence', async () => {

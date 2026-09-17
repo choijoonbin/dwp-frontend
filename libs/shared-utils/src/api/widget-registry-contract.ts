@@ -237,7 +237,8 @@ export type TenantWidgetPolicyRevision = Readonly<{
   version: number;
 }>;
 
-export type WidgetPlacementContext = 'CLASSIC_PERSONAL' | 'FLOW_PERSONAL' | 'FLOW_GOVERNED';
+export type WidgetPlacementContext =
+  'CLASSIC_PERSONAL' | 'FLOW_PERSONAL' | 'FLOW_GOVERNED' | 'MZ_PERSONAL' | 'MZ_GOVERNED';
 export type WidgetEffectiveState = 'AVAILABLE' | 'ALREADY_ADDED' | 'DEPRECATED' | 'DENY';
 export type WidgetPublicReasonCode =
   | 'NOT_AVAILABLE'
@@ -288,7 +289,7 @@ export type EffectiveWidgetCatalog = Readonly<{
   safetyRevision: string;
   hostContext: Readonly<{
     surfaceKey: 'workspace-home';
-    resolvedHostMode: 'CLASSIC' | 'FLOW';
+    resolvedHostMode: 'CLASSIC' | 'FLOW' | 'MZ';
     homeExperienceVersion: number;
     compositionSchemaVersion: number;
     layoutSource: 'HOME_VIEW' | 'LEGACY_PREFERENCE';

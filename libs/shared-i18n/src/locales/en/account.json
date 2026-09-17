@@ -9,7 +9,8 @@
     "description": "Create and edit saved homes, tune each device layout, apply templates, and restore a previous revision without leaving account settings.",
     "mode": {
       "CLASSIC": "Classic mode",
-      "FLOW_V1": "Flow mode"
+      "FLOW_V1": "Flow mode",
+      "MZ_V1": "MZ / AI Stage mode"
     }
   },
   "labels": {

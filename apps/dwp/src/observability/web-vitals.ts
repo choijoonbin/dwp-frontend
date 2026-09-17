@@ -9,13 +9,13 @@ import type { Metric } from 'web-vitals';
 type DwpWebVital = components['schemas']['platform_WebVitalRequest'];
 type HomeWebVitalContext = Readonly<{
   deviceClass: 'DESKTOP_WIDE' | 'DESKTOP_STANDARD' | 'MOBILE_STANDARD' | 'MOBILE_COMPACT';
-  homeMode: 'CLASSIC' | 'FLOW_V1';
+  homeMode: 'CLASSIC' | 'FLOW_V1' | 'MZ_V1';
   homeRuntime: 'SHADOW_COMPARE' | 'READ_ONLY_ACTIVE' | 'COMMAND_CANARY';
   rolloutRing: 'CONTROL' | 'INTERNAL' | 'PILOT' | 'EARLY_ADOPTER' | 'GA';
 }>;
-type Wave6WebVital = DwpWebVital & Partial<HomeWebVitalContext>;
+type Wave6WebVital = Omit<DwpWebVital, 'homeMode'> & Partial<HomeWebVitalContext>;
 
-const HOME_MODES = new Set(['CLASSIC', 'FLOW_V1']);
+const HOME_MODES = new Set(['CLASSIC', 'FLOW_V1', 'MZ_V1']);
 const HOME_RUNTIMES = new Set(['SHADOW_COMPARE', 'READ_ONLY_ACTIVE', 'COMMAND_CANARY']);
 const HOME_RINGS = new Set(['CONTROL', 'INTERNAL', 'PILOT', 'EARLY_ADOPTER', 'GA']);
 const HOME_DEVICES = new Set([

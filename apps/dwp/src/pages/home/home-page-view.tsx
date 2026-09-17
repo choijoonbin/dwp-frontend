@@ -11,6 +11,7 @@ import { HomeItemGallery } from '../../features/home/home-item-gallery';
 import { HomeRecommendationActionFeedback } from '../../features/home/runtime/home-recommendation-action-feedback';
 import { ClassicHome } from '../../features/home/classic-home/classic-home';
 import { FlowHome } from '../../features/home/flow-home/flow-home';
+import { MzHome } from '../../features/home/mz-home/mz-home';
 import { LazyHomePersonalizationStudio } from '../../features/home-personalization/home-personalization-studio-lazy';
 import { homeV2RuntimeEvidence } from '../../features/home/runtime/home-owner-widget-region';
 import { WorkspaceComposerToolbar } from '../../components/workspace-composer/workspace-composer-toolbar';
@@ -24,6 +25,7 @@ type HomePageViewProps = ReturnType<typeof useHomePageController>;
 /** Renders the Home experience from controller-owned state without owning server behavior. */
 export function HomePageView({
   activeAppLayout,
+  activeHomeMode,
   activeDeviceOverlay,
   activePresentation,
   activeWidgetConfigurations,
@@ -66,6 +68,7 @@ export function HomePageView({
   homeDataRetry,
   homeExperience,
   homeHeadline,
+  homeModePreset,
   homeNativeRuntimeState,
   homeOverview,
   homeOverviewHardFailed,
@@ -82,6 +85,7 @@ export function HomePageView({
   launcherSummaryPartial,
   launchpadCatalog,
   markHomeStudioEditStarted,
+  mzIntentBusy,
   navigate,
   navigationBlocker,
   openHomeStudio,
@@ -100,6 +104,7 @@ export function HomePageView({
   restoreHomeStudioEntryFocus,
   rolloutDraftPreserved,
   saveHome,
+  startMzIntent,
   setConflictTarget,
   setDiscardEditorOpen,
   setDraftAppLayout,
@@ -121,6 +126,7 @@ export function HomePageView({
   widgetShadowObservation,
   workspaceUpdatedAt,
 }: HomePageViewProps) {
+  const AdaptiveHome = activeHomeMode === 'MZ_V1' ? MzHome : FlowHome;
   return (
     <Box
       ref={availableWidth.elementRef}
@@ -136,7 +142,7 @@ export function HomePageView({
       )}
       data-home-available-width-class={availableWidth.widthClass}
       data-home-device-class={deviceClass}
-      data-home-mode={editorFlowHomeEnabled ? 'FLOW_V1' : 'CLASSIC'}
+      data-home-mode={activeHomeMode}
       data-home-personal-customization-enabled={personalCustomizationEnabled ? 'true' : 'false'}
       data-home-editor-state={editorOpen ? (editSession ? 'ready' : 'opening') : 'closed'}
       data-home-persisted-source-state={
@@ -161,7 +167,7 @@ export function HomePageView({
           onRetry={homePageGate.retry}
         />
       ) : editorFlowHomeEnabled ? (
-        <FlowHome
+        <AdaptiveHome
           audience={audienceProfile}
           now={currentInstant}
           currentDate={currentDate}
@@ -169,7 +175,13 @@ export function HomePageView({
           subheadline={homeSubheadline}
           updatedAt={workspaceUpdatedAt}
           timeZone={timeZone}
-          backgroundUrl={homeExperience?.backgroundUrl ? backgroundUrl : undefined}
+          backgroundUrl={
+            activeHomeMode === 'MZ_V1'
+              ? backgroundUrl
+              : homeExperience?.backgroundUrl
+                ? backgroundUrl
+                : undefined
+          }
           backgroundPosition={homeExperience?.backgroundPosition ?? 'RIGHT'}
           focalX={homeExperience?.backgroundFocalX}
           focalY={homeExperience?.backgroundFocalY}
@@ -217,6 +229,8 @@ export function HomePageView({
           onRetryOverview={homeDataRetry.retry}
           onRetryContributions={homeDataRetry.retry}
           onRecommendationFeedback={recommendationAction.dismiss}
+          onStartMzIntent={startMzIntent}
+          mzIntentBusy={mzIntentBusy}
           futureWidgetStateByKey={wave2Evidence.loadedFlow}
           {...flowFutureRuntimeProps}
           ownerWidgetRegion={ownerWidgetRegion}
@@ -369,15 +383,18 @@ export function HomePageView({
             onClose={closeHomeStudio}
             onExited={restoreHomeStudioEntryFocus}
             modePreset={
-              wave2Evidence.modePreset
+              homeModePreset ??
+              (wave2Evidence.modePreset
                 ? {
                     ...wave2Evidence.modePreset,
+                    allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+                    defaultMode: wave2Evidence.modePreset.currentMode,
                     sharedAppOrder: entitledApps.map((app) => ({
                       id: app.id,
                       label: app.name,
                     })),
                   }
-                : undefined
+                : undefined)
             }
             onEditView={(view) => {
               markHomeStudioEditStarted();

@@ -35,7 +35,8 @@ export type HomeLaunchpadConfiguration = {
 export type HomePersonalZoneKey = 'workspace-tools';
 export type HomeGovernedZoneKey = 'announcements';
 export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
-export type HomeExperienceVariant = 'CLASSIC' | 'FLOW_V1';
+export const HOME_EXPERIENCE_VARIANTS = ['CLASSIC', 'FLOW_V1', 'MZ_V1'] as const;
+export type HomeExperienceVariant = (typeof HOME_EXPERIENCE_VARIANTS)[number];
 export type HomePreferenceStore = 'LEGACY' | 'VIEWS';
 export const HOME_COMPOSITION_DEVICE_CLASSES = [
   'DESKTOP_WIDE',
@@ -69,7 +70,10 @@ export type GovernedHomeZone = {
 /** Tenant-level mode and governed-zone policy; distinct from a personal Home view layout. */
 export type TenantHomeCompositionPolicyV4 = {
   schemaVersion: 4;
+  /** Compatibility alias; upgraded servers keep it equal to defaultMode. */
   experienceVariant: HomeExperienceVariant;
+  allowedModes: HomeExperienceVariant[];
+  defaultMode: HomeExperienceVariant;
   personalCustomizationEnabled: boolean;
   governedZones: GovernedHomeZone[];
   modeLayouts: HomeModeLayouts;
@@ -80,7 +84,7 @@ export type HomeCompositionPolicy = TenantHomeCompositionPolicyV4;
 
 export type TenantHomeCompositionPolicyV3 = Omit<
   TenantHomeCompositionPolicyV4,
-  'schemaVersion' | 'modeLayouts'
+  'schemaVersion' | 'modeLayouts' | 'allowedModes' | 'defaultMode'
 > & { schemaVersion: 3 };
 
 export type LegacyHomeCompositionPolicy = {
@@ -92,25 +96,33 @@ export type LegacyHomeCompositionPolicy = {
 export type HomeCompositionPolicyPayload =
   HomeCompositionPolicy | TenantHomeCompositionPolicyV3 | LegacyHomeCompositionPolicy;
 
+export type HomeCompositionPolicyPreview = Readonly<{
+  policy: HomeCompositionPolicy;
+  enabledModes: HomeExperienceVariant[];
+  effectiveDefaultMode: HomeExperienceVariant;
+  warnings: string[];
+}>;
+
 export function createHomeModeLayouts(): HomeModeLayouts {
   const contract = (): HomeModeLayoutContract => ({
     layoutScope: 'MODE_SCOPED_VIEW',
     deviceClasses: [...HOME_COMPOSITION_DEVICE_CLASSES],
   });
-  return { CLASSIC: contract(), FLOW_V1: contract() };
+  return { CLASSIC: contract(), FLOW_V1: contract(), MZ_V1: contract() };
 }
 
 export function isHomeModeLayouts(value: unknown): value is HomeModeLayouts {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const layouts = value as Record<string, unknown>;
   if (
-    Object.keys(layouts).length !== 2 ||
+    Object.keys(layouts).length !== HOME_EXPERIENCE_VARIANTS.length ||
     !Object.prototype.hasOwnProperty.call(layouts, 'CLASSIC') ||
-    !Object.prototype.hasOwnProperty.call(layouts, 'FLOW_V1')
+    !Object.prototype.hasOwnProperty.call(layouts, 'FLOW_V1') ||
+    !Object.prototype.hasOwnProperty.call(layouts, 'MZ_V1')
   ) {
     return false;
   }
-  return (['CLASSIC', 'FLOW_V1'] as const).every((mode) => {
+  return HOME_EXPERIENCE_VARIANTS.every((mode) => {
     const contract = layouts[mode];
     if (!contract || typeof contract !== 'object' || Array.isArray(contract)) return false;
     const candidate = contract as Record<string, unknown>;
@@ -291,6 +303,16 @@ export async function updateHomeCompositionPolicy(
     ApiResponse<HomeExperience>,
     { policy: HomeCompositionPolicy | TenantHomeCompositionPolicyV3; version: number }
   >('/api/platform/v1/admin/home-experience/composition', { policy, version });
+  return response.data.data;
+}
+
+export async function previewHomeCompositionPolicy(
+  policy: HomeCompositionPolicy
+): Promise<HomeCompositionPolicyPreview> {
+  const response = await axiosInstance.post<
+    ApiResponse<HomeCompositionPolicyPreview>,
+    { policy: HomeCompositionPolicy }
+  >('/api/platform/v1/admin/home-experience/composition/preview', { policy });
   return response.data.data;
 }
 

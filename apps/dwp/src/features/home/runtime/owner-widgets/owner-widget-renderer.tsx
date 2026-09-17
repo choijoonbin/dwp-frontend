@@ -23,7 +23,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { OwnerWidgetDefinitionKey } from './owner-widget-contracts';
 import type { NormalizedOwnerWidget } from './owner-widget-view-model';
 
-export type OwnerWidgetRendererVariant = 'CLASSIC' | 'FLOW';
+export type OwnerWidgetRendererVariant = 'CLASSIC' | 'FLOW' | 'MZ';
 
 export type OwnerWidgetLabelKey =
   | `ownerWidgets.title.${OwnerWidgetDefinitionKey}`
@@ -444,7 +444,7 @@ export function OwnerWidgetRenderer({
       sx={{
         minWidth: 0,
         height: '100%',
-        p: variant === 'FLOW' ? { xs: 2, md: 2.5 } : 2,
+        p: variant === 'CLASSIC' ? 2 : { xs: 2, md: 2.5 },
         display: 'flex',
         flexDirection: 'column',
         gap: 1.25,

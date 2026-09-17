@@ -55,6 +55,8 @@ const tenantExperiencePreviewFixture = {
     compositionPolicy: {
       schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
+      allowedModes: ['CLASSIC', 'FLOW_V1', 'MZ_V1'],
+      defaultMode: 'FLOW_V1',
       personalCustomizationEnabled: true,
       governedZones: [
         {
@@ -116,6 +118,8 @@ describe('tenant experience preview API boundary', () => {
           compositionPolicy: {
             ...tenantExperiencePreviewFixture.home.compositionPolicy,
             schemaVersion: 3,
+            allowedModes: undefined,
+            defaultMode: undefined,
             modeLayouts: undefined,
           },
         },
@@ -128,8 +132,40 @@ describe('tenant experience preview API boundary', () => {
     expect(result.home.compositionPolicy).toMatchObject({
       schemaVersion: 4,
       experienceVariant: 'FLOW_V1',
+      allowedModes: ['CLASSIC', 'FLOW_V1'],
+      defaultMode: 'FLOW_V1',
       personalCustomizationEnabled: true,
       modeLayouts: createHomeModeLayouts(),
+    });
+  });
+
+  it('upgrades the pre-MZ two-layout v4 contract without enabling MZ', async () => {
+    const layouts = createHomeModeLayouts();
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        ...tenantExperiencePreviewFixture,
+        home: {
+          ...tenantExperiencePreviewFixture.home,
+          compositionPolicy: {
+            schemaVersion: 4,
+            experienceVariant: 'FLOW_V1',
+            personalCustomizationEnabled: true,
+            governedZones: tenantExperiencePreviewFixture.home.compositionPolicy.governedZones,
+            modeLayouts: { CLASSIC: layouts.CLASSIC, FLOW_V1: layouts.FLOW_V1 },
+          },
+        },
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await getTenantExperiencePreview();
+
+    expect(result.home.compositionPolicy).toMatchObject({
+      schemaVersion: 4,
+      experienceVariant: 'FLOW_V1',
+      allowedModes: ['CLASSIC', 'FLOW_V1'],
+      defaultMode: 'FLOW_V1',
+      modeLayouts: layouts,
     });
   });
 

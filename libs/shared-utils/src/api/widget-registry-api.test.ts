@@ -33,7 +33,7 @@ describe('widget registry API boundary', () => {
     expect(first.correlationId).not.toBe(second.correlationId);
   });
 
-  it('reads readiness and the server-owned effective Home context without client mode inputs', async () => {
+  it('reads readiness and scopes the effective Home context to the current first-class mode', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ schemaVersion: 1, migrationMode: 'SHADOW' }))
@@ -43,12 +43,12 @@ describe('widget registry API boundary', () => {
 
     await getWidgetRegistryReadiness();
     await getProviderWidgetRegistryReadiness();
-    await getEffectiveWidgetCatalog('workspace-home');
+    await getEffectiveWidgetCatalog('workspace-home', 'MZ_V1');
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/platform/v1/widget-catalog/readiness');
     expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/provider/v1/admin/widget-registry/readiness');
     expect(fetchMock.mock.calls[2]?.[0]).toBe(
-      '/api/platform/v1/widget-catalog/effective?surfaceKey=workspace-home'
+      '/api/platform/v1/widget-catalog/effective?surfaceKey=workspace-home&mode=MZ_V1'
     );
     expect(String(fetchMock.mock.calls[2]?.[0])).not.toContain('placementContext');
     expect(String(fetchMock.mock.calls[2]?.[0])).not.toContain('hostMode');
