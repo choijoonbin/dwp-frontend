@@ -187,6 +187,42 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.artifact-autosave.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.artifact-collaboration-edit.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-edit.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-members.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-members.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-preflight.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-preflight.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-resolve.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-resolve.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-share.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-share.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.artifact-collaboration-workspace.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.artifact-collaboration-workspace.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.artifact-create.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
