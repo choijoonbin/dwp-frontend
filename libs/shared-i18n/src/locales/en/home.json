@@ -1367,7 +1367,8 @@
       "teamPending": "Team pending",
       "teamTimePending": "Time requests",
       "teamAbsencePending": "Absence requests",
-      "visibleBookings": "Visible bookings"
+      "visibleBookings": "Visible bookings",
+      "visibleArtifacts": "Visible artifacts"
     },
     "meta": {
       "attendees": "{{count}} attendees",

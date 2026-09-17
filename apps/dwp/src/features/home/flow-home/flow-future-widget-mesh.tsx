@@ -100,6 +100,7 @@ export type FlowFutureWidgetRuntimeProjection = Readonly<{
   state: HomeV2Widget['state'] | 'MISSING' | 'INVALID';
   widget: NormalizedOwnerWidget | null;
   runtimeWidget: HomeV2Widget | null;
+  sourceRoute: string | null;
   lastSuccessfulAt: string | null;
   retryable: boolean;
 }>;
@@ -112,6 +113,7 @@ const missingProjection = (): FlowFutureWidgetRuntimeProjection => ({
   state: 'MISSING',
   widget: null,
   runtimeWidget: null,
+  sourceRoute: null,
   lastSuccessfulAt: null,
   retryable: false,
 });
@@ -164,6 +166,7 @@ export function projectFlowFutureWidgetRuntime(
         state: runtimeWidget.state,
         widget: null,
         runtimeWidget,
+        sourceRoute: envelope.value.sourceAction?.sourceRoute ?? null,
         lastSuccessfulAt: runtimeWidget.source.lastSuccessAt,
         retryable: runtimeWidget.source.retryable,
       };
@@ -175,6 +178,7 @@ export function projectFlowFutureWidgetRuntime(
           state: runtimeWidget.state,
           widget: normalized.value,
           runtimeWidget,
+          sourceRoute: normalized.value.sourceAction?.sourceRoute ?? null,
           lastSuccessfulAt: runtimeWidget.source.lastSuccessAt,
           retryable: runtimeWidget.source.retryable,
         }
@@ -207,6 +211,7 @@ function Surface({
   onRetry,
   refreshing = false,
   showPreviewContent = false,
+  emptyAction,
 }: {
   contract: FlowFutureWidgetContract;
   state: FlowFutureSurfaceState;
@@ -220,6 +225,7 @@ function Surface({
   onRetry?: () => void;
   refreshing?: boolean;
   showPreviewContent?: boolean;
+  emptyAction?: React.ReactNode;
 }) {
   const { t } = useTranslation('home');
   const verified = (
@@ -283,16 +289,19 @@ function Surface({
           <HomeContentState kind="widget-error" size="compact" />
         )
       ) : (
-        <HomeContentState
-          kind={state}
-          affectedSources={[contract.owner]}
-          lastSuccessfulAt={
-            state === 'stale' ? (lastSuccessfulAt ?? t('flow.future.lastVerified')) : undefined
-          }
-          preservedContent={state === 'partial' || state === 'stale' ? verified : undefined}
-          busy={retrying}
-          onAction={onRetry}
-        />
+        <>
+          <HomeContentState
+            kind={state}
+            affectedSources={[contract.owner]}
+            lastSuccessfulAt={
+              state === 'stale' ? (lastSuccessfulAt ?? t('flow.future.lastVerified')) : undefined
+            }
+            preservedContent={state === 'partial' || state === 'stale' ? verified : undefined}
+            busy={retrying}
+            onAction={onRetry}
+          />
+          {state === 'empty' ? emptyAction : null}
+        </>
       )}
     </Box>
   );
@@ -398,7 +407,9 @@ function RuntimeFutureWidgetSurface({
   onOpenSource?: (route: string) => void;
   onRetry?: () => void;
 }>) {
+  const { t } = useTranslation('home');
   const runtimeWidget = projection.runtimeWidget;
+  const emptySourceRoute = projection.state === 'EMPTY' ? projection.sourceRoute : null;
   const state: FlowFutureSurfaceState =
     projection.state === 'AVAILABLE' && projection.widget
       ? 'loaded'
@@ -423,6 +434,17 @@ function RuntimeFutureWidgetSurface({
       refreshing={refreshing}
       retrying={refreshing}
       onRetry={projection.retryable ? onRetry : undefined}
+      emptyAction={
+        emptySourceRoute && onOpenSource ? (
+          <ActionButton
+            intent="quiet"
+            onClick={() => onOpenSource(emptySourceRoute)}
+            sx={{ minHeight: 44, alignSelf: 'flex-start' }}
+          >
+            {t('ownerWidgets.action.openSource')}
+          </ActionButton>
+        ) : null
+      }
     >
       {projection.widget ? (
         <FlowFutureWidgetRuntimeBody

@@ -129,7 +129,7 @@ describe('Home v2 legacy-shaped read adapters', () => {
     const native = widget('core.workspace.command-rail', rawWorkQueue);
 
     expect(native.rendererBindingRevision).toBe(
-      'b03bdd59271207ced7deaa29375ce63f4863137a4b7789d2b7c8c3a13bf345b7'
+      '2fcb00cb8df02d953d5e4be94d7659dd937f951a02fba3aeabefa73de30a024b'
     );
     expect(native.rendererBindingRevision).toBe(HOME_NATIVE_BINDING_CATALOG_REVISION);
     expect(native.rendererBindingRevision).not.toBe(native.definitionManifestHash);

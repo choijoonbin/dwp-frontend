@@ -111,6 +111,20 @@ const workplacePayload = {
   ],
 };
 
+const dwaionPayload = {
+  visibleCount: 1,
+  items: [
+    {
+      artifactId: '44444444-4444-4444-8444-444444444444',
+      title: 'Runtime DWAI·ON artifact',
+      artifactType: 'DOCUMENT',
+      state: 'DRAFT',
+      revision: 3,
+      updatedAt: '2026-09-16T03:30:00Z',
+    },
+  ],
+};
+
 describe('Flow personalized projection widget boundary', () => {
   it('keeps the five approved visual prototypes ordered and outside the runtime registry', () => {
     expect(FLOW_FUTURE_WIDGET_CONTRACTS).toEqual([
@@ -218,5 +232,49 @@ describe('Flow personalized projection widget boundary', () => {
     ).toMatchObject({
       'meetings-prep-decisions': { state: 'INVALID', widget: null, runtimeWidget: null },
     });
+  });
+
+  it.each(['AVAILABLE', 'PARTIAL'] as const)(
+    'renders DWAI·ON %s content and its validated source action inside one mesh card',
+    (state) => {
+      const markup = renderToStaticMarkup(
+        createElement(FlowFutureWidgetMesh, {
+          runtimeWidgets: [runtimeWidget('dwaion.artifact', state, dwaionPayload, true)],
+          onOpenRuntimeSource: vi.fn(),
+        })
+      );
+      expect(markup).toContain(`data-flow-provider-status="${state.toLowerCase()}"`);
+      expect(markup).toContain('Runtime DWAI·ON artifact');
+      expect(markup).toContain('ownerWidgets.metric.visibleArtifacts');
+      expect(markup).toContain('DOCUMENT · DRAFT · r3');
+      expect(markup.match(/<button/gu)).toHaveLength(1);
+      expect(markup.match(/<article/gu)).toHaveLength(5);
+      expect(markup.match(/<h3/gu)).toHaveLength(5);
+    }
+  );
+
+  it('keeps DWAI·ON unavailable free of payload rows and source actions', () => {
+    const markup = renderToStaticMarkup(
+      createElement(FlowFutureWidgetMesh, {
+        runtimeWidgets: [runtimeWidget('dwaion.artifact', 'UNAVAILABLE', {}, false)],
+        onOpenRuntimeSource: vi.fn(),
+      })
+    );
+    expect(markup.match(/data-flow-provider-status="unavailable"/gu)).toHaveLength(1);
+    expect(markup).not.toContain('Runtime DWAI·ON artifact');
+    expect(markup).not.toContain('<button');
+  });
+
+  it('keeps an EMPTY payload unparsed while preserving its validated source action', () => {
+    const markup = renderToStaticMarkup(
+      createElement(FlowFutureWidgetMesh, {
+        runtimeWidgets: [runtimeWidget('dwaion.artifact', 'EMPTY', {}, true)],
+        onOpenRuntimeSource: vi.fn(),
+      })
+    );
+    expect(markup).toContain('data-flow-provider-status="empty"');
+    expect(markup).toContain('data-home-content-state="empty"');
+    expect(markup).not.toContain('Runtime DWAI·ON artifact');
+    expect(markup.match(/<button/gu)).toHaveLength(1);
   });
 });

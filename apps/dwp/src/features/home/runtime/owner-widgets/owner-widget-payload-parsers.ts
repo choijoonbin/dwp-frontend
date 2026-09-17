@@ -3,6 +3,7 @@ import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import type { OwnerWidgetDefinitionKey } from './owner-widget-contracts';
 import type {
   OwnerApprovalItem,
+  OwnerDwaionArtifactItem,
   OwnerHrDomainState,
   OwnerMeetingItem,
   OwnerMessagingItem,
@@ -18,6 +19,9 @@ const MAX_ITEMS = 50;
 const MAX_COUNTER = 2_147_483_647;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const CODE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/u;
+const UPPER_CODE = /^[A-Z][A-Z0-9_]{0,63}$/u;
+const DWAION_ARTIFACT_TYPES = new Set(['DOCUMENT', 'WORK_PLAN', 'COMPARISON']);
+const DWAION_ARTIFACT_STATES = new Set(['DRAFT', 'REVIEW_REQUIRED']);
 const APP_KEY = /^[a-z0-9][a-z0-9-]{0,63}$/u;
 const DECIMAL_VERSION = /^[0-9]{1,40}$/u;
 const OFFSET_TIMESTAMP =
@@ -64,6 +68,10 @@ function count(value: unknown): number | null {
 
 function version(value: unknown): number | null {
   return Number.isSafeInteger(value) && (value as number) >= 0 ? (value as number) : null;
+}
+
+function positiveVersion(value: unknown): number | null {
+  return Number.isSafeInteger(value) && (value as number) >= 1 ? (value as number) : null;
 }
 
 function leapYear(year: number): boolean {
@@ -410,6 +418,53 @@ function parseWorkplaceBooking(value: unknown): unknown | null {
     : null;
 }
 
+function dwaionArtifactItem(value: unknown): OwnerDwaionArtifactItem | null {
+  const item = recordWithKeys(value, [
+    'artifactId',
+    'title',
+    'artifactType',
+    'state',
+    'revision',
+    'updatedAt',
+  ]);
+  if (!item) return null;
+  const artifactType = text(item.artifactType, 64);
+  const state = text(item.state, 64);
+  const parsed = {
+    artifactId: uuid(item.artifactId),
+    title: text(item.title, 200),
+    artifactType,
+    state,
+    revision: positiveVersion(item.revision),
+    updatedAt: timestamp(item.updatedAt),
+  };
+  return parsed.artifactId &&
+    parsed.title &&
+    artifactType &&
+    UPPER_CODE.test(artifactType) &&
+    DWAION_ARTIFACT_TYPES.has(artifactType) &&
+    state &&
+    UPPER_CODE.test(state) &&
+    DWAION_ARTIFACT_STATES.has(state) &&
+    parsed.revision !== null &&
+    parsed.updatedAt
+    ? (parsed as OwnerDwaionArtifactItem)
+    : null;
+}
+
+function parseDwaionArtifact(value: unknown): unknown | null {
+  const payload = recordWithKeys(value, ['items', 'visibleCount']);
+  if (!payload) return null;
+  const items = list(payload.items, dwaionArtifactItem);
+  const visibleCount = count(payload.visibleCount);
+  return items &&
+    visibleCount !== null &&
+    visibleCount >= items.length &&
+    uniqueBy(items, (item) => item.artifactId)
+    ? { items, visibleCount }
+    : null;
+}
+
 function parseApproval(key: OwnerWidgetDefinitionKey, value: unknown): unknown | null {
   const focus = key === 'approval.focus-queue';
   const payload = recordWithKeys(
@@ -538,8 +593,7 @@ export function parseOwnerWidgetPayload<K extends OwnerWidgetDefinitionKey>(
   else if (definitionKey.startsWith('messaging.')) value = parseMessaging(payload);
   else if (definitionKey.startsWith('hr.')) value = parseHr(definitionKey, payload);
   else if (definitionKey === 'workplace.booking') value = parseWorkplaceBooking(payload);
-  // Any content-bearing DWAI·ON state fails closed until a payload contract exists.
-  else if (definitionKey === 'dwaion.artifact') value = null;
+  else if (definitionKey === 'dwaion.artifact') value = parseDwaionArtifact(payload);
   return value === null
     ? { ok: false, code: 'MALFORMED_PAYLOAD' }
     : { ok: true, value: value as OwnerWidgetPayload<K> };

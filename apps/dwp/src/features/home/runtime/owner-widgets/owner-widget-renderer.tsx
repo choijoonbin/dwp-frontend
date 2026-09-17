@@ -48,6 +48,7 @@ export type OwnerWidgetLabelKey =
   | 'ownerWidgets.metric.teamTimePending'
   | 'ownerWidgets.metric.teamAbsencePending'
   | 'ownerWidgets.metric.visibleBookings'
+  | 'ownerWidgets.metric.visibleArtifacts'
   | 'ownerWidgets.meta.attendees'
   | 'ownerWidgets.meta.unread'
   | 'ownerWidgets.meta.actionable'
@@ -238,7 +239,13 @@ function metrics(widget: NormalizedOwnerWidget): readonly Metric[] {
         },
       ];
     case 'dwaion.artifact':
-      return [];
+      return [
+        {
+          key: 'visible-artifacts',
+          label: 'ownerWidgets.metric.visibleArtifacts',
+          value: widget.payload.visibleCount,
+        },
+      ];
   }
 }
 
@@ -302,7 +309,6 @@ function rows(
       }));
     case 'hr.edu':
     case 'hr.team-pulse':
-    case 'dwaion.artifact':
       return [];
     case 'workplace.booking':
       return widget.payload.items.map((item) => ({
@@ -314,6 +320,14 @@ function rows(
         }),
         meta: `${item.resourceType} · ${item.status}`,
         timestamp: formatTimestamp(item.startsAt, locale),
+      }));
+    case 'dwaion.artifact':
+      return widget.payload.items.map((item) => ({
+        key: item.artifactId,
+        title: item.title,
+        detail: `${item.artifactType} · ${item.state}`,
+        meta: `r${item.revision}`,
+        timestamp: formatTimestamp(item.updatedAt, locale),
       }));
   }
 }

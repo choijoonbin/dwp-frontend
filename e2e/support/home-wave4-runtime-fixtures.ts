@@ -19,10 +19,10 @@ export const HOME_V2_ROUTE = '**/api/platform/v2/home**';
 export const HOME_V2_VARY =
   'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision';
 
-// Independently pinned to the backend V264 full 21-binding catalog receipt.
+// Independently pinned to the backend V265 full 21-binding catalog receipt.
 // Do not derive this from the frontend constant: the E2E gate must detect drift.
 export const HOME_V2_BACKEND_BINDING_CATALOG_REVISION =
-  'b03bdd59271207ced7deaa29375ce63f4863137a4b7789d2b7c8c3a13bf345b7';
+  '2fcb00cb8df02d953d5e4be94d7659dd937f951a02fba3aeabefa73de30a024b';
 
 const SERVER_GROUP_BY_CONTRACT_GROUP = {
   work: 'WORK_START',
@@ -135,7 +135,19 @@ function ownerPayload(definitionKey: OwnerWidgetDefinitionKey, marker: string): 
         ],
       };
     case 'dwaion.artifact':
-      return {};
+      return {
+        visibleCount: 1,
+        items: [
+          {
+            artifactId: '66666666-6666-4666-8666-666666666666',
+            title: `Verified DWAI·ON artifact ${marker}`,
+            artifactType: 'DOCUMENT',
+            state: 'DRAFT',
+            revision: 3,
+            updatedAt: '2026-09-16T03:30:00Z',
+          },
+        ],
+      };
     default:
       return {};
   }
@@ -180,7 +192,9 @@ function ownerWidget(
       retryable: state === 'PARTIAL',
       resultVersion: `wave4-${index + 1}`,
     },
-    payload: ownerPayload(definitionKey, marker) as Readonly<Record<string, unknown>>,
+    payload: (state === 'EMPTY' || state === 'FORBIDDEN' || state === 'UNAVAILABLE'
+      ? {}
+      : ownerPayload(definitionKey, marker)) as Readonly<Record<string, unknown>>,
     actions: state === 'FORBIDDEN' || state === 'UNAVAILABLE' ? [] : [sourceAction],
     redactions: [],
     governance: {
@@ -362,7 +376,12 @@ export function createHomeWave4Model({
 
 /** Exact ACTIVE expressive projection: five mesh slots plus unrelated generic owner cards. */
 export function createHomeWave4ExpressiveFlowModel(
-  input: Readonly<{ deviceClass: HomeDeviceClass; marker: string; mode: HomeExperienceVariant }>
+  input: Readonly<{
+    deviceClass: HomeDeviceClass;
+    marker: string;
+    mode: HomeExperienceVariant;
+    dwaionState?: Extract<HomeV2WidgetState, 'AVAILABLE' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE'>;
+  }>
 ): HomeV2ReadModel {
   const base = createHomeWave4Model({ ...input, mode: 'FLOW_V1' });
   const meshDefinitions = new Set<OwnerWidgetDefinitionKey>([
@@ -377,7 +396,7 @@ export function createHomeWave4ExpressiveFlowModel(
     ownerWidget('space.change-feed', 'AVAILABLE', 21, input.marker),
     ownerWidget('hr.edu', 'STALE', 22, input.marker),
     ownerWidget('workplace.booking', 'AVAILABLE', 23, input.marker),
-    ownerWidget('dwaion.artifact', 'UNAVAILABLE', 24, input.marker),
+    ownerWidget('dwaion.artifact', input.dwaionState ?? 'UNAVAILABLE', 24, input.marker),
   ];
   const compositionWidgets = [
     ...base.view.composition.widgets.filter(

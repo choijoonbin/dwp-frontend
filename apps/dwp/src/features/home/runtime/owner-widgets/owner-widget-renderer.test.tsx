@@ -170,6 +170,35 @@ describe('OwnerWidgetRenderer', () => {
     expect(markup).not.toContain('progressbar');
   });
 
+  it('renders the verified DWAI·ON count, rows, revision, and source action', () => {
+    const markup = renderToStaticMarkup(
+      createElement(OwnerWidgetRenderer, {
+        widget: normalized('dwaion.artifact', {
+          visibleCount: 1,
+          items: [
+            {
+              artifactId: '33333333-3333-4333-8333-333333333333',
+              title: 'H2 operating strategy',
+              artifactType: 'COMPARISON',
+              state: 'DRAFT',
+              revision: 3,
+              updatedAt: '2026-09-16T06:10:30Z',
+            },
+          ],
+        }),
+        variant: 'FLOW',
+        label,
+        locale: 'en-US',
+        onOpenSource: () => undefined,
+      })
+    );
+    expect(markup).toContain('ownerWidgets.metric.visibleArtifacts');
+    expect(markup).toContain('H2 operating strategy');
+    expect(markup).toContain('COMPARISON · DRAFT');
+    expect(markup).toContain('r3');
+    expect(markup).toContain('ownerWidgets.action.openSource');
+  });
+
   it('does not place private business identifiers into data attributes', () => {
     const markup = renderToStaticMarkup(
       createElement(OwnerWidgetRenderer, {

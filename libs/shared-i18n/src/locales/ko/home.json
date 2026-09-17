@@ -1367,7 +1367,8 @@
       "teamPending": "팀 대기",
       "teamTimePending": "근태 요청",
       "teamAbsencePending": "휴가 요청",
-      "visibleBookings": "표시 예약"
+      "visibleBookings": "표시 예약",
+      "visibleArtifacts": "표시 산출물"
     },
     "meta": {
       "attendees": "참석자 {{count}}명",

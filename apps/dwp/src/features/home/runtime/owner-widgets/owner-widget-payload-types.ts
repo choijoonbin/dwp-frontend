@@ -140,8 +140,19 @@ export type OwnerWorkplaceBookingPayload = Readonly<{
   visibleCount: number;
 }>;
 
-/** V264 publishes this definition only as an UNAVAILABLE envelope. */
-export type OwnerDwaionArtifactPayload = never;
+export type OwnerDwaionArtifactItem = Readonly<{
+  artifactId: string;
+  title: string;
+  artifactType: 'DOCUMENT' | 'WORK_PLAN' | 'COMPARISON';
+  state: 'DRAFT' | 'REVIEW_REQUIRED';
+  revision: number;
+  updatedAt: string;
+}>;
+
+export type OwnerDwaionArtifactPayload = Readonly<{
+  items: readonly OwnerDwaionArtifactItem[];
+  visibleCount: number;
+}>;
 
 export type OwnerWidgetPayloadMap = Readonly<{
   'approval.focus-queue': OwnerApprovalFocusQueuePayload;

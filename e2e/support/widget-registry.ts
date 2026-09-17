@@ -13,7 +13,7 @@ const BINDINGS = [
 ] as const;
 // Pinned independently to the backend full binding catalog receipt. The server signs the
 // effective decision with all native and owner definitions, not only this fixture's native rows.
-const BINDING_REVISION = 'b03bdd59271207ced7deaa29375ce63f4863137a4b7789d2b7c8c3a13bf345b7';
+const BINDING_REVISION = '2fcb00cb8df02d953d5e4be94d7659dd937f951a02fba3aeabefa73de30a024b';
 
 const CAPABILITIES = [
   'WIDGET_REGISTRY_CONTROL_PLANE',

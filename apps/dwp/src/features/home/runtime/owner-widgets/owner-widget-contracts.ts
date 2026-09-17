@@ -18,19 +18,22 @@ export const OWNER_WIDGET_DEFINITION_KEYS = [
 ] as const;
 
 export type OwnerWidgetDefinitionKey = (typeof OWNER_WIDGET_DEFINITION_KEYS)[number];
+export type OwnerWidgetDefinitionVersion<K extends OwnerWidgetDefinitionKey> =
+  K extends 'dwaion.artifact' ? '1.1.0' : '1.0.0';
 
 export type OwnerWidgetSurface = 'WIDGET' | 'APP_DOCK';
 
-export type OwnerWidgetContract = Readonly<{
-  definitionKey: OwnerWidgetDefinitionKey;
-  definitionVersion: '1.0.0';
-  definitionManifestHash: string;
-  rendererBindingRevision: string;
-  rendererKey: `home.${string}`;
-  canonicalSourceRoute: `/${string}`;
-  surface: OwnerWidgetSurface;
-  commandCapabilities: readonly [];
-}>;
+export type OwnerWidgetContract<K extends OwnerWidgetDefinitionKey = OwnerWidgetDefinitionKey> =
+  Readonly<{
+    definitionKey: K;
+    definitionVersion: OwnerWidgetDefinitionVersion<K>;
+    definitionManifestHash: string;
+    rendererBindingRevision: string;
+    rendererKey: `home.${string}`;
+    canonicalSourceRoute: `/${string}`;
+    surface: OwnerWidgetSurface;
+    commandCapabilities: readonly [];
+  }>;
 
 export type OwnerWidgetBindingIdentity = Readonly<{
   definitionKey: unknown;
@@ -40,20 +43,25 @@ export type OwnerWidgetBindingIdentity = Readonly<{
   rendererKey: unknown;
 }>;
 
-type ContractSeed = Readonly<{
-  definitionKey: OwnerWidgetDefinitionKey;
+type ContractSeed<K extends OwnerWidgetDefinitionKey> = Readonly<{
+  definitionKey: K;
   hash: string;
   rendererKey: `home.${string}`;
   canonicalSourceRoute: `/${string}`;
   surface?: OwnerWidgetSurface;
-}>;
+}> &
+  (K extends 'dwaion.artifact'
+    ? Readonly<{ definitionVersion: '1.1.0' }>
+    : Readonly<{ definitionVersion?: '1.0.0' }>);
 
 const NO_COMMAND_CAPABILITIES = Object.freeze([]) as readonly [];
 
-function contract(seed: ContractSeed): OwnerWidgetContract {
+function contract<K extends OwnerWidgetDefinitionKey>(
+  seed: ContractSeed<K>
+): OwnerWidgetContract<K> {
   return Object.freeze({
     definitionKey: seed.definitionKey,
-    definitionVersion: '1.0.0',
+    definitionVersion: (seed.definitionVersion ?? '1.0.0') as OwnerWidgetDefinitionVersion<K>,
     definitionManifestHash: seed.hash,
     rendererBindingRevision: HOME_WIDGET_BINDING_CATALOG_REVISION,
     rendererKey: seed.rendererKey,
@@ -154,9 +162,10 @@ export const OWNER_WIDGET_CONTRACTS = Object.freeze([
   }),
   contract({
     definitionKey: 'dwaion.artifact',
-    hash: 'a525bf1c6b926984a0978386f74aeb055c6e81db0813b9ea6b2443384de188e7',
+    definitionVersion: '1.1.0',
+    hash: 'eb2152b7f1cf21611bb4a2c1781f7f267c5cd0c6d489d4edc8f680bb4fa6af54',
     rendererKey: 'home.dwaion.artifact',
-    canonicalSourceRoute: '/dwaion',
+    canonicalSourceRoute: '/dwaion/artifacts',
   }),
 ] satisfies readonly OwnerWidgetContract[]);
 

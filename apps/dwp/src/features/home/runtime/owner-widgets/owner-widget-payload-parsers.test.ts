@@ -85,6 +85,15 @@ const workplaceBookingItem = {
   checkInClosesAt: '2026-09-16T15:10:00+09:00',
 };
 
+const dwaionArtifactItem = {
+  artifactId: '33333333-3333-4333-8333-333333333333',
+  title: 'H2 operating strategy',
+  artifactType: 'DOCUMENT',
+  state: 'DRAFT',
+  revision: 3,
+  updatedAt: AT,
+};
+
 const VALID_PAYLOADS: Readonly<Record<OwnerWidgetDefinitionKey, unknown>> = {
   'approval.focus-queue': {
     pendingCount: 7,
@@ -133,8 +142,7 @@ const VALID_PAYLOADS: Readonly<Record<OwnerWidgetDefinitionKey, unknown>> = {
     state: availableHrState,
   },
   'workplace.booking': { items: [workplaceBookingItem], visibleCount: 1 },
-  // This definition has an envelope-only UNAVAILABLE contract; no payload is valid.
-  'dwaion.artifact': {},
+  'dwaion.artifact': { items: [dwaionArtifactItem], visibleCount: 1 },
 };
 
 function parse<K extends OwnerWidgetDefinitionKey>(key: K, payload: unknown, locale?: string) {
@@ -144,12 +152,9 @@ function parse<K extends OwnerWidgetDefinitionKey>(key: K, payload: unknown, loc
 describe('owner widget payload parsers', () => {
   it('strictly parses every canonical owner payload', () => {
     expect(OWNER_WIDGET_DEFINITION_KEYS).toHaveLength(14);
-    for (const key of OWNER_WIDGET_DEFINITION_KEYS.filter(
-      (candidate) => candidate !== 'dwaion.artifact'
-    )) {
+    for (const key of OWNER_WIDGET_DEFINITION_KEYS) {
       expect(parse(key, VALID_PAYLOADS[key], 'ko-KR')).toMatchObject({ ok: true });
     }
-    expect(parse('dwaion.artifact', {})).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
   });
 
   it('normalizes localized Space labels with deterministic fallback', () => {
@@ -306,6 +311,67 @@ describe('owner widget payload parsers', () => {
           },
         ],
         visibleCount: 1,
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
+  });
+
+  it('strictly validates the least-data DWAI·ON artifact projection', () => {
+    expect(parse('dwaion.artifact', VALID_PAYLOADS['dwaion.artifact'])).toMatchObject({
+      ok: true,
+    });
+    for (const artifactType of ['DOCUMENT', 'WORK_PLAN', 'COMPARISON']) {
+      expect(
+        parse('dwaion.artifact', {
+          items: [{ ...dwaionArtifactItem, artifactType }],
+          visibleCount: 1,
+        })
+      ).toMatchObject({ ok: true });
+    }
+    expect(
+      parse('dwaion.artifact', {
+        items: [{ ...dwaionArtifactItem, state: 'REVIEW_REQUIRED' }],
+        visibleCount: 1,
+      })
+    ).toMatchObject({ ok: true });
+    const invalidItems = [
+      { ...dwaionArtifactItem, internalOwnerId: 'secret' },
+      { ...dwaionArtifactItem, artifactId: 'not-a-uuid' },
+      { ...dwaionArtifactItem, title: 'x'.repeat(201) },
+      { ...dwaionArtifactItem, artifactType: 'strategy_brief' },
+      { ...dwaionArtifactItem, artifactType: 'STRATEGY_BRIEF' },
+      { ...dwaionArtifactItem, artifactType: `A${'B'.repeat(64)}` },
+      { ...dwaionArtifactItem, state: 'draft' },
+      { ...dwaionArtifactItem, state: 'PUBLISHED' },
+      { ...dwaionArtifactItem, state: 'ARCHIVED' },
+      { ...dwaionArtifactItem, state: `A${'B'.repeat(64)}` },
+      { ...dwaionArtifactItem, revision: 0 },
+      { ...dwaionArtifactItem, updatedAt: '2026-09-16T06:10:30' },
+    ];
+    for (const item of invalidItems) {
+      expect(parse('dwaion.artifact', { items: [item], visibleCount: 1 })).toEqual({
+        ok: false,
+        code: 'MALFORMED_PAYLOAD',
+      });
+    }
+    expect(
+      parse('dwaion.artifact', {
+        items: [dwaionArtifactItem, { ...dwaionArtifactItem, title: 'Duplicate' }],
+        visibleCount: 2,
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
+    expect(
+      parse('dwaion.artifact', {
+        items: Array.from({ length: 51 }, (_, index) => ({
+          ...dwaionArtifactItem,
+          artifactId: `${String(index + 1).padStart(8, '0')}-3333-4333-8333-333333333333`,
+        })),
+        visibleCount: 51,
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
+    expect(
+      parse('dwaion.artifact', {
+        items: [dwaionArtifactItem],
+        visibleCount: 0,
       })
     ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
   });

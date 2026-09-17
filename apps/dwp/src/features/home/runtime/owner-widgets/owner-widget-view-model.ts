@@ -6,6 +6,7 @@ import type {
   OwnerWidgetBindingIdentity,
   OwnerWidgetContract,
   OwnerWidgetDefinitionKey,
+  OwnerWidgetDefinitionVersion,
 } from './owner-widget-contracts';
 import { parseOwnerWidgetPayload } from './owner-widget-payload-parsers';
 import type { OwnerWidgetPayload } from './owner-widget-payload-types';
@@ -32,7 +33,7 @@ export type OwnerWidgetSourceAction = Readonly<{
 
 type NormalizedOwnerWidgetFor<K extends OwnerWidgetDefinitionKey> = Readonly<{
   definitionKey: K;
-  definitionVersion: '1.0.0';
+  definitionVersion: OwnerWidgetDefinitionVersion<K>;
   rendererKey: `home.${string}`;
   surface: OwnerWidgetContract['surface'];
   sourceRoute: OwnerWidgetContract['canonicalSourceRoute'];

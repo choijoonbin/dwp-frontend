@@ -92,7 +92,12 @@ describe('OwnerWidgetRuntimeBoundary', () => {
   });
 
   it('maps EMPTY and FORBIDDEN to blocking content states without parsing an empty payload', () => {
-    expect(render(record('EMPTY'))).toContain('data-home-content-state="empty"');
+    const empty = render(record('EMPTY'), { onOpenSource: () => undefined });
+    expect(empty).toContain('data-home-content-state="empty"');
+    expect(empty).toContain('ownerWidgets.action.openSource');
+    expect(
+      render(record('EMPTY', { actions: [] }), { onOpenSource: () => undefined })
+    ).not.toContain('<button');
     expect(render(record('FORBIDDEN'))).toContain('data-home-content-state="forbidden"');
     expect(render(record('FORBIDDEN'))).not.toContain('검증된 승인');
   });

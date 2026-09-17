@@ -468,6 +468,55 @@ test('ACTIVE expressive Flow projects five exact runtime slots once and keeps St
   );
 });
 
+for (const dwaionState of ['AVAILABLE', 'EMPTY', 'PARTIAL', 'UNAVAILABLE'] as const) {
+  test(`ACTIVE expressive Flow renders DWAI·ON ${dwaionState} with its exact v1.1 contract`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const evidence = observeHomeNetwork(page);
+    await routeHomeV2(page, evidence, {
+      mode: 'FLOW_V1',
+      runtimeMode: 'ACTIVE',
+      modelFactory: (input) => createHomeWave4ExpressiveFlowModel({ ...input, dwaionState }),
+    });
+    await page.goto('/');
+
+    const surface = page.locator('[data-flow-future-widget="dwaion-artifact"]');
+    await expect(surface).toHaveCount(1);
+    await expect(surface).toHaveAttribute('data-flow-provider-status', dwaionState.toLowerCase());
+    await expect(surface.locator('article')).toHaveCount(0);
+    await expect(surface.locator('h3')).toHaveCount(1);
+
+    const sourceAction = surface.getByRole('button', { name: 'Open source' });
+    if (dwaionState === 'UNAVAILABLE') {
+      await expect(surface).not.toContainText('Verified DWAI·ON artifact');
+      await expect(sourceAction).toHaveCount(0);
+      return;
+    }
+
+    if (dwaionState === 'EMPTY') {
+      await expect(surface.locator('[data-home-content-state="empty"]')).toBeVisible();
+      await expect(surface).not.toContainText('Verified DWAI·ON artifact');
+      await expect(sourceAction).toBeVisible();
+      await sourceAction.click();
+      await expect(page).toHaveURL(/\/dwaion\/artifacts$/u);
+      return;
+    }
+
+    await expect(surface).toContainText('Verified DWAI·ON artifact flow_v1-desktop_standard');
+    await expect(surface).toContainText('Visible artifacts');
+    await expect(surface).toContainText('DOCUMENT · DRAFT · r3');
+    await expect(sourceAction).toBeVisible();
+    if (dwaionState === 'PARTIAL') {
+      await expect(surface.locator('[data-home-content-state="partial"]')).toBeVisible();
+      return;
+    }
+
+    await sourceAction.click();
+    await expect(page).toHaveURL(/\/dwaion\/artifacts$/u);
+  });
+}
+
 test('SHADOW keeps the legacy requests and legacy UI authoritative', async ({ page }) => {
   const runtimeErrors = observeReactRuntimeErrors(page);
   await page.setViewportSize({ width: 1280, height: 800 });

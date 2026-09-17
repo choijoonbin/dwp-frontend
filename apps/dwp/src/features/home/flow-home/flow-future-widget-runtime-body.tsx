@@ -155,7 +155,26 @@ export function FlowFutureWidgetRuntimeBody({
       );
       break;
     case 'dwaion.artifact':
-      body = null;
+      body = (
+        <>
+          <RuntimeMetric
+            label={t('ownerWidgets.metric.visibleArtifacts')}
+            value={count(widget.payload.visibleCount)}
+          />
+          <Stack component="ul" gap={0.75} sx={{ p: 0, m: 0, listStyle: 'none' }}>
+            {widget.payload.items.slice(0, 3).map((item) => (
+              <RuntimeItem
+                key={item.artifactId}
+                itemKey={item.artifactId}
+                title={item.title}
+                detail={`${item.artifactType} · ${item.state} · r${item.revision} · ${at(
+                  item.updatedAt
+                )}`}
+              />
+            ))}
+          </Stack>
+        </>
+      );
       break;
     default:
       body = null;

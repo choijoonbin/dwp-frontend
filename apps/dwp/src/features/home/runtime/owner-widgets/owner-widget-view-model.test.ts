@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { OWNER_WIDGET_CONTRACTS } from './owner-widget-contracts';
 import { normalizeOwnerWidget } from './owner-widget-view-model';
 
+import type { OwnerWidgetContract } from './owner-widget-contracts';
+
 const approval = OWNER_WIDGET_CONTRACTS.find(
   (value) => value.definitionKey === 'approval.focus-queue'
 )!;
@@ -30,7 +32,7 @@ const approvalPayload = {
   ],
 };
 
-function input(contract = approval) {
+function input(contract: OwnerWidgetContract = approval) {
   return {
     definitionKey: contract.definitionKey,
     definitionVersion: contract.definitionVersion,
@@ -196,10 +198,36 @@ describe('normalizeOwnerWidget', () => {
     ).toEqual({ ok: false, code: 'ACTION_CONTRACT_MISMATCH' });
   });
 
-  it('keeps DWAI·ON envelope-only by rejecting every content-bearing state', () => {
-    expect(normalizeOwnerWidget({ ...input(dwaion), actions: [], payload: {} })).toEqual({
-      ok: false,
-      code: 'MALFORMED_PAYLOAD',
-    });
+  it('accepts only the exact DWAI·ON v1.1 payload and source route', () => {
+    const payload = {
+      visibleCount: 1,
+      items: [
+        {
+          artifactId: '44444444-4444-4444-8444-444444444444',
+          title: 'H2 operating strategy',
+          artifactType: 'WORK_PLAN',
+          state: 'DRAFT',
+          revision: 2,
+          updatedAt: '2026-09-16T08:00:00Z',
+        },
+      ],
+    };
+    const candidate = { ...input(dwaion), payload };
+    const result = normalizeOwnerWidget(candidate);
+    expect(result.ok && result.value.definitionVersion).toBe('1.1.0');
+    expect(result.ok && result.value.sourceRoute).toBe('/dwaion/artifacts');
+    expect(result.ok && result.value.sourceAction?.sourceRoute).toBe('/dwaion/artifacts');
+    expect(
+      normalizeOwnerWidget({
+        ...candidate,
+        actions: [{ ...candidate.actions[0], sourceRoute: '/dwaion' }],
+      })
+    ).toEqual({ ok: false, code: 'ACTION_CONTRACT_MISMATCH' });
+    expect(
+      normalizeOwnerWidget({
+        ...candidate,
+        payload: { ...payload, internalRecipientId: 'private' },
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
   });
 });

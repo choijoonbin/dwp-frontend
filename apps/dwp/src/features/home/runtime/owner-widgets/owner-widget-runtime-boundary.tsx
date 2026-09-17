@@ -1,3 +1,5 @@
+import { ActionButton } from '@dwp-frontend/design-system';
+
 import { HomeContentState, HomeWidgetErrorBoundary } from '../home-content-state';
 import { OwnerWidgetRenderer } from './owner-widget-renderer';
 import { normalizeOwnerWidget, normalizeOwnerWidgetEnvelope } from './owner-widget-view-model';
@@ -57,7 +59,20 @@ export function OwnerWidgetRuntimeBoundary({
   if (envelope.value.contract.surface === 'APP_DOCK') return null;
 
   if (runtimeWidget.state === 'EMPTY') {
-    return <HomeContentState kind="empty" size="compact" />;
+    return (
+      <>
+        <HomeContentState kind="empty" size="compact" />
+        {envelope.value.sourceAction && onOpenSource ? (
+          <ActionButton
+            intent="quiet"
+            onClick={() => onOpenSource(envelope.value.contract.canonicalSourceRoute)}
+            sx={{ minHeight: 44, alignSelf: 'flex-start' }}
+          >
+            {label('ownerWidgets.action.openSource')}
+          </ActionButton>
+        ) : null}
+      </>
+    );
   }
   if (runtimeWidget.state === 'FORBIDDEN') {
     return <HomeContentState kind="forbidden" size="compact" />;

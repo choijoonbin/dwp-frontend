@@ -107,9 +107,9 @@ const EXPECTED_TUPLES = [
   ],
   [
     'dwaion.artifact',
-    'a525bf1c6b926984a0978386f74aeb055c6e81db0813b9ea6b2443384de188e7',
+    'eb2152b7f1cf21611bb4a2c1781f7f267c5cd0c6d489d4edc8f680bb4fa6af54',
     'home.dwaion.artifact',
-    '/dwaion',
+    '/dwaion/artifacts',
     'WIDGET',
   ],
 ] as const;
@@ -131,7 +131,9 @@ describe('Wave 4 owner widget contracts', () => {
 
   it('uses the backend catalog-wide renderer binding revision', () => {
     for (const value of OWNER_WIDGET_CONTRACTS) {
-      expect(value.definitionVersion).toBe('1.0.0');
+      expect(value.definitionVersion).toBe(
+        value.definitionKey === 'dwaion.artifact' ? '1.1.0' : '1.0.0'
+      );
       expect(value.definitionManifestHash).toMatch(/^[a-f0-9]{64}$/u);
       expect(value.rendererBindingRevision).toBe(HOME_WIDGET_BINDING_CATALOG_REVISION);
       expect(value.rendererBindingRevision).not.toBe(value.definitionManifestHash);
