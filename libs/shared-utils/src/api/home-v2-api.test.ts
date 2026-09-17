@@ -215,6 +215,18 @@ describe('Home v2 read contract', () => {
     });
   });
 
+  it('accepts unset optional tenant shell copy', () => {
+    const fixture = responseFixture();
+    const shell = (fixture.data as Record<string, unknown>).shell as Record<string, unknown>;
+    shell.headline = null;
+    shell.subheadline = null;
+
+    expect(parseHomeV2ReadModel(fixture).shell).toMatchObject({
+      headline: null,
+      subheadline: null,
+    });
+  });
+
   it.each([
     ['schema version', ['data', 'schemaVersion'], 1],
     ['mode mismatch', ['data', 'view', 'mode'], 'FLOW_V1'],
@@ -418,6 +430,16 @@ describe('Home v2 read contract', () => {
     const incompleteVary = responseHeaders();
     incompleteVary.set('Vary', 'Accept-Language, X-DWP-Tenant-ID');
     expect(() => parseHomeV2ResponseMetadata(incompleteVary)).toThrow('headers.Vary');
+
+    const corsAwareVary = responseHeaders();
+    corsAwareVary.set(
+      'Vary',
+      `Origin, Access-Control-Request-Method, Access-Control-Request-Headers, ${corsAwareVary.get('Vary')}`
+    );
+    expect(parseHomeV2ResponseMetadata(corsAwareVary)).toMatchObject({
+      renderAuthority: 'HOME_V2',
+      runtimeMode: 'ACTIVE',
+    });
 
     const commandsEnabled = responseHeaders();
     commandsEnabled.set('X-DWP-Home-Commands-Enabled', 'true');

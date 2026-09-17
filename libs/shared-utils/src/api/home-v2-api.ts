@@ -136,8 +136,8 @@ export type HomeV2ReadModel = Readonly<{
     backgroundAssetRoute: string | null;
     contentAlignment: string;
     density: string;
-    headline: string;
-    subheadline: string;
+    headline: string | null;
+    subheadline: string | null;
   }>;
   unavailableSources: readonly string[];
   view: Readonly<{
@@ -682,8 +682,8 @@ export function parseHomeV2ReadModel(value: unknown): HomeV2ReadModel {
       backgroundAssetRoute: optionalNullableRoute(shell, 'backgroundAssetRoute', 'data.shell'),
       contentAlignment: string(shell.contentAlignment, 'data.shell.contentAlignment')!,
       density: string(shell.density, 'data.shell.density')!,
-      headline: string(shell.headline, 'data.shell.headline')!,
-      subheadline: string(shell.subheadline, 'data.shell.subheadline')!,
+      headline: string(shell.headline, 'data.shell.headline', true),
+      subheadline: string(shell.subheadline, 'data.shell.subheadline', true),
     },
     unavailableSources: strings(data.unavailableSources, 'data.unavailableSources'),
     view: {

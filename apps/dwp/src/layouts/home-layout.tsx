@@ -33,7 +33,6 @@ import { DesktopNavigationHeader } from '../components/desktop-navigation-header
 import { HOME_LIGHT_CANVAS, HOME_LIGHT_SURFACE } from '../components/home-surface-tokens';
 import { ShellHeader } from '../components/shell-header';
 import { useLargeTextReflow } from '../components/use-large-text-reflow';
-import { useDesktopNavigation } from '../features/shell/desktop-navigation';
 import { shellRegistry } from '../features/shell/shell-registry';
 import {
   ShellMobileNavigationDrawer,
@@ -68,7 +67,6 @@ type HomeNavigationItem = {
   resourceKey?: string;
 };
 
-const HOME_DESKTOP_NAVIGATION_MIN_WIDTH = 1200;
 const HOME_MOBILE_BOTTOM_NAVIGATION_MAX_WIDTH = 600;
 
 const HOME_NAVIGATION: readonly HomeNavigationItem[] = [
@@ -113,7 +111,7 @@ const FLOW_HOME_MOBILE_NAVIGATION: readonly HomeNavigationItem[] = [
 ];
 
 function currentViewportWidth(): number {
-  if (typeof window === 'undefined') return HOME_DESKTOP_NAVIGATION_MIN_WIDTH;
+  if (typeof window === 'undefined') return 1440;
   return document.documentElement.clientWidth || window.innerWidth;
 }
 
@@ -205,16 +203,11 @@ export function HomeLayout() {
       window.visualViewport?.removeEventListener('resize', syncViewportWidth);
     };
   }, []);
-  const desktopNavigationVisible = viewportWidth >= HOME_DESKTOP_NAVIGATION_MIN_WIDTH;
   const bottomNavigationVisible = viewportWidth <= HOME_MOBILE_BOTTOM_NAVIGATION_MAX_WIDTH;
-  const drawerNavigationVisible = !desktopNavigationVisible && !bottomNavigationVisible;
+  const drawerNavigationVisible = !bottomNavigationVisible;
   const mobileNavigation = useShellMobileNavigation({ headerTestId: 'home-header' });
   const shell = shellRegistry.home;
   const [mode, setMode] = useState<HomeExperienceMode>('CLASSIC');
-  const navigation = useDesktopNavigation(shell, {
-    defaultCompact: mode !== 'CLASSIC',
-    storageScope: `home:${mode}`,
-  });
   const navigationItems = useMemo(
     () =>
       HOME_NAVIGATION.filter(
@@ -235,7 +228,7 @@ export function HomeLayout() {
       data-testid="personal-home-shell"
       data-home-experience-mode={mode}
       data-home-large-text={largeText ? 'true' : 'false'}
-      data-dwp-navigation-state={navigation.compact ? 'compact' : 'expanded'}
+      data-home-navigation-pattern={bottomNavigationVisible ? 'bottom' : 'drawer'}
       sx={{
         '--home-canvas': (theme) =>
           theme.palette.mode === 'dark' ? theme.palette.background.default : HOME_LIGHT_CANVAS,
@@ -310,43 +303,6 @@ export function HomeLayout() {
         },
       }}
     >
-      {desktopNavigationVisible && (
-        <Box
-          component="aside"
-          id="home-desktop-navigation"
-          data-testid="home-sidebar"
-          data-home-navigation-mode={mode}
-          data-home-navigation-width={navigation.sidebarWidth}
-          sx={{
-            position: 'fixed',
-            inset: '0 auto 0 0',
-            width: navigation.sidebarWidth,
-            minWidth: 0,
-            bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? 'background.paper' : HOME_LIGHT_SURFACE,
-            borderRight: 1,
-            borderColor: 'divider',
-            zIndex: (theme) => theme.zIndex.drawer,
-            overflow: 'hidden',
-            '@media (forced-colors: active)': {
-              bgcolor: 'Canvas',
-              borderColor: 'CanvasText',
-            },
-          }}
-        >
-          <Stack sx={{ height: 1, minHeight: 0 }}>
-            <DesktopNavigationHeader
-              compact={navigation.compact}
-              collapsible={navigation.collapsible}
-              controlsId="home-desktop-navigation"
-              label={mode === 'CLASSIC' ? 'Classic' : mode === 'FLOW_V1' ? 'Flow' : 'MZ / AI Stage'}
-              onToggle={navigation.toggle}
-            />
-            <Divider />
-            <HomeNavigationList compact={navigation.compact} items={navigationItems} />
-          </Stack>
-        </Box>
-      )}
       <ShellMobileNavigationDrawer
         controlsId="home-mobile-navigation"
         label={t('navigation.label')}
@@ -381,13 +337,14 @@ export function HomeLayout() {
         showWorkspace={shell.showWorkspace}
         compactSearch
         maxContentWidth={2560}
-        desktopOffset={desktopNavigationVisible ? navigation.desktopOffset : 0}
+        desktopOffset={0}
         navigation={
           drawerNavigationVisible
             ? {
                 controlsId: 'home-mobile-navigation',
                 expanded: mobileNavigation.open,
                 label: t('navigation.open'),
+                showOnDesktop: true,
                 testId: 'home-mobile-navigation-trigger',
                 onOpen: mobileNavigation.openFrom,
               }
@@ -408,7 +365,7 @@ export function HomeLayout() {
             />
             <BrandLockup
               variant="full"
-              sx={{ display: { xs: 'none', sm: 'inline-flex', lg: 'none' }, flexShrink: 0 }}
+              sx={{ display: { xs: 'none', sm: 'inline-flex' }, flexShrink: 0 }}
             />
           </>
         }
@@ -422,8 +379,8 @@ export function HomeLayout() {
         data-home-layout-owner="home-layout"
         data-home-width-contract="available-inline-size"
         sx={{
-          width: desktopNavigationVisible ? `calc(100% - ${navigation.desktopOffset}px)` : 1,
-          ml: desktopNavigationVisible ? `${navigation.desktopOffset}px` : 0,
+          width: 1,
+          ml: 0,
           maxWidth: '100%',
           minWidth: 0,
           minHeight: 0,

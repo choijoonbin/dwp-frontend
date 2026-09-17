@@ -129,10 +129,11 @@ export function parseHomeV2ResponseMetadata(headers: Headers | undefined): HomeV
   const vary = headers.get('Vary')?.trim();
   if (!vary) invalid('headers.Vary');
   const varyTokens = vary.split(',').map((token) => token.trim().toLowerCase());
+  const varyTokenSet = new Set(varyTokens);
   if (
-    varyTokens.length !== HOME_V2_VARY_TOKENS.size ||
-    new Set(varyTokens).size !== HOME_V2_VARY_TOKENS.size ||
-    varyTokens.some((token) => !HOME_V2_VARY_TOKENS.has(token))
+    varyTokens.some((token) => token.length === 0) ||
+    varyTokenSet.size !== varyTokens.length ||
+    [...HOME_V2_VARY_TOKENS].some((token) => !varyTokenSet.has(token))
   ) {
     invalid('headers.Vary');
   }

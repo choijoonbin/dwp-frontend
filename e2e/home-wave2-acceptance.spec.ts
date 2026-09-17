@@ -267,7 +267,6 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       width: 1440,
       height: 900,
       widthClass: 'desktop-standard',
-      navigationWidth: 248,
     },
     {
       id: 'C02-D1280-BASE',
@@ -275,7 +274,6 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       width: 1280,
       height: 900,
       widthClass: 'desktop-standard',
-      navigationWidth: 248,
     },
     {
       id: 'C03-M390-BASE',
@@ -283,7 +281,6 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       width: 390,
       height: 844,
       widthClass: 'mobile-standard',
-      navigationWidth: 0,
     },
     {
       id: 'C04-M320-BASE',
@@ -291,7 +288,6 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
       width: 320,
       height: 720,
       widthClass: 'mobile-compact',
-      navigationWidth: 0,
     },
   ] as const;
 
@@ -304,23 +300,23 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
     await expectSingleVisibleGlobalSearchTrigger(page);
     await expect(root).toHaveAttribute('data-home-ia', 'organization-portal');
     await expect(root).toHaveAttribute('data-home-scroll-contract', 'single-document');
-    const sidebar = page.getByTestId('home-sidebar');
     const main = page.getByTestId('personal-home-main');
-    if (item.navigationWidth > 0) {
-      await expect(sidebar).toBeVisible();
-      await expect(sidebar).toHaveAttribute('data-home-navigation-mode', 'CLASSIC');
+    await expect(page.getByTestId('home-sidebar')).toHaveCount(0);
+    if (item.width > 600) {
       await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
-        'data-dwp-navigation-state',
-        'expanded'
+        'data-home-navigation-pattern',
+        'drawer'
       );
       await expect
-        .poll(async () => Math.round((await sidebar.boundingBox())?.width ?? 0))
-        .toBe(item.navigationWidth);
-      await expect
         .poll(async () => Math.round((await main.boundingBox())?.width ?? 0))
-        .toBe(item.width - item.navigationWidth);
+        .toBe(item.width);
+      await expect(page.getByTestId('home-mobile-navigation-trigger')).toBeVisible();
+      await expect(page.getByTestId('home-mobile-bottom-navigation')).toHaveCount(0);
     } else {
-      await expect(sidebar).toBeHidden();
+      await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
+        'data-home-navigation-pattern',
+        'bottom'
+      );
       const mobileNavigation = page.getByTestId('home-mobile-bottom-navigation');
       await expect(mobileNavigation).toBeVisible();
       const mobileTargets = mobileNavigation.locator('a');
@@ -423,32 +419,31 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
   }
 });
 
-test('HomeLayout toggles its real navigation allocation without right clipping', async ({
+test('HomeLayout keeps the root Home sidebar-free and exposes navigation from the header', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1080 });
   await page.goto('/');
-  const shell = page.getByTestId('personal-home-shell');
-  const sidebar = page.getByTestId('home-sidebar');
   const main = page.getByTestId('personal-home-main');
   const root = page.getByTestId('classic-home');
   await expect(main).toHaveAttribute('data-home-layout-owner', 'home-layout');
   await expect(main).toHaveCSS('container-name', 'dwp-home-workspace');
-  await expect(shell).toHaveAttribute('data-dwp-navigation-state', 'expanded');
-  await expect.poll(async () => Math.round((await sidebar.boundingBox())?.width ?? 0)).toBe(248);
-  await expect.poll(async () => Math.round((await main.boundingBox())?.width ?? 0)).toBe(1192);
+  await expect(page.getByTestId('home-sidebar')).toHaveCount(0);
+  await expect.poll(async () => Math.round((await main.boundingBox())?.width ?? 0)).toBe(1440);
   await expect
     .poll(async () => Number(await root.getAttribute('data-classic-home-available-width')))
-    .toBe(1192);
+    .toBe(1440);
   await expectNoDocumentOrNestedScroll(root);
 
-  await sidebar.getByTestId('desktop-navigation-toggle').click();
-  await expect(shell).toHaveAttribute('data-dwp-navigation-state', 'compact');
-  await expect.poll(async () => Math.round((await sidebar.boundingBox())?.width ?? 0)).toBe(64);
-  await expect.poll(async () => Math.round((await main.boundingBox())?.width ?? 0)).toBe(1376);
-  await expect
-    .poll(async () => Number(await root.getAttribute('data-classic-home-available-width')))
-    .toBe(1376);
+  const navigationTrigger = page.getByTestId('home-mobile-navigation-trigger');
+  await expect(navigationTrigger).toBeVisible();
+  await navigationTrigger.click();
+  const navigation = page.getByTestId('home-mobile-navigation');
+  await expect(navigation).toBeVisible();
+  await expect(navigation.locator('[data-testid^="home-navigation-item-"]')).toHaveCount(7);
+  await navigation.getByRole('button', { name: '탐색 메뉴 닫기' }).click();
+  await expect(navigation).toBeHidden();
+  await expect(navigationTrigger).toBeFocused();
   await expectCanonicalClassicLaunchpad(root);
   await expectNoLaunchpadLabelClipping(root);
   await expectNoDocumentOrNestedScroll(root);
@@ -509,23 +504,19 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
     await expect(root).toHaveAttribute('data-home-ia', 'personal-action');
     await expect(root).toHaveAttribute('data-home-scroll-contract', 'single-document');
     await expect(root).toHaveAttribute('data-flow-home-presentation', item.presentation);
-    const sidebar = page.getByTestId('home-sidebar');
+    await expect(page.getByTestId('home-sidebar')).toHaveCount(0);
     if (item.width >= 1200) {
-      await expect(sidebar).toBeVisible();
-      await expect(sidebar).toHaveAttribute('data-home-navigation-mode', 'FLOW_V1');
       await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
-        'data-dwp-navigation-state',
-        'compact'
+        'data-home-navigation-pattern',
+        'drawer'
       );
-      await expect.poll(async () => Math.round((await sidebar.boundingBox())?.width ?? 0)).toBe(64);
       await expect
         .poll(async () =>
           Math.round((await page.getByTestId('personal-home-main').boundingBox())?.width ?? 0)
         )
-        .toBe(item.width - 64);
+        .toBe(item.width);
       await expect.poll(async () => Math.round((await root.boundingBox())?.width ?? 0)).toBe(1808);
     } else {
-      await expect(sidebar).toBeHidden();
       const mobileNavigation = page.getByTestId('home-mobile-bottom-navigation');
       await expect(mobileNavigation).toBeVisible();
       await expect(mobileNavigation.locator('a')).toHaveCount(5);
@@ -698,7 +689,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       await expect(standardRoot).toBeVisible();
       await expect
         .poll(async () => Number(await standardRoot.getAttribute('data-flow-home-available-width')))
-        .toBe(1376);
+        .toBe(1440);
       await expect(standardRoot.getByTestId('flow-home-personal-sections')).toHaveAttribute(
         'data-flow-read-template',
         'adaptive-medium'

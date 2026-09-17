@@ -47,6 +47,7 @@ type ShellHeaderProps = {
     controlsId?: string;
     expanded?: boolean;
     label: string;
+    showOnDesktop?: boolean;
     testId?: string;
     onOpen: (trigger: HTMLButtonElement) => void;
   };
@@ -148,7 +149,7 @@ export function ShellHeader({
         {navigation && (
           <Box
             sx={{
-              display: { lg: 'none' },
+              display: navigation.showOnDesktop ? 'block' : { lg: 'none' },
               flex: '0 0 auto',
             }}
           >
